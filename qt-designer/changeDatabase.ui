@@ -1,0 +1,139 @@
+<ui version="4.0" >
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>390</width>
+    <height>203</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Change Database</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Host</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QLineEdit" name="host_lineEdit" >
+     <property name="text" >
+      <string>localhost</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>User</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QLineEdit" name="user_lineEdit" >
+     <property name="text" >
+      <string>user</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="label_3" >
+     <property name="text" >
+      <string>Password</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QCheckBox" name="checkBox" >
+     <property name="text" >
+      <string>display password</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="label_4" >
+     <property name="text" >
+      <string>Database</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QLineEdit" name="database_lineEdit" >
+     <property name="text" >
+      <string>openmolar</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="3" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QLineEdit" name="password_lineEdit" >
+     <property name="text" >
+      <string>password</string>
+     </property>
+     <property name="echoMode" >
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <zorder>label</zorder>
+  <zorder>host_lineEdit</zorder>
+  <zorder>label_2</zorder>
+  <zorder>user_lineEdit</zorder>
+  <zorder>label_3</zorder>
+  <zorder>checkBox</zorder>
+  <zorder>label_4</zorder>
+  <zorder>database_lineEdit</zorder>
+  <zorder>buttonBox</zorder>
+  <zorder>password_lineEdit</zorder>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

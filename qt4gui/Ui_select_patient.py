@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/select_patient.ui'
+#
+# Created: Sun Mar 22 11:55:48 2009
+#      by: PyQt4 UI code generator 4.4.3
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(1014, 398)
+        self.vboxlayout = QtGui.QVBoxLayout(Dialog)
+        self.vboxlayout.setObjectName("vboxlayout")
+        self.tableWidget = QtGui.QTableWidget(Dialog)
+        self.tableWidget.setAlternatingRowColors(True)
+        self.tableWidget.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(0)
+        self.tableWidget.setRowCount(0)
+        self.vboxlayout.addWidget(self.tableWidget)
+        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.vboxlayout.addWidget(self.buttonBox)
+
+        self.retranslateUi(Dialog)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Make a Selection", None, QtGui.QApplication.UnicodeUTF8))
+
