@@ -15,11 +15,18 @@ class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
         self.dialog=dialog
         self.practitioners=localsettings.activedents+localsettings.activehygs
         self.dents_comboBox.addItems(self.practitioners)
+    def setPractitioner(self,arg):
+        try:
+            inits=localsettings.ops[arg]
+            self.dents_comboBox.setCurrentIndex(self.practitioners.index(inits))
+        except:
+            self.dents_comboBox.setCurrentIndex(-1)
+            
     def getInput(self):
         if self.dialog.exec_():
             if self.sp_radioButton.isChecked():
                 trt="SP"
-            elif self.xtsp_radioButton.isChecked():
+            elif self.extsp_radioButton.isChecked():
                 trt="ext SP"
             elif self.twovisit1_radioButton.isChecked():
                 trt="SP+/1"
@@ -27,22 +34,23 @@ class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
                 trt="SP+/2"
             retarg=[trt,str(self.dents_comboBox.currentText())]
             retarg.append(self.getNotes())
+            retarg.append(int(self.doubleSpinBox.value()*100))
             return retarg
         else:
             return()
     def getNotes(self):
         notes=[]
         if self.checkBox.checkState():
-            notes.append("pt c/o %s"%str(self.co_comboBox.currentText()))
-        if self.oh_checkBox.checkState():
             notes.append("OHI instruction given")
         return tuple(notes)
     
 if __name__ == "__main__":
+    localsettings.initiate(False)
     import sys
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
     ui = Ui_Dialog(Dialog)
+    ui.setPractitioner(6)
     print ui.getInput()
     #if Dialog.exec_():
     #        print "accepted"

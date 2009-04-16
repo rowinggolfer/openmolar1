@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>3</number>
+              <number>4</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>516</width>
+                    <width>602</width>
                     <height>503</height>
                    </rect>
                   </property>
@@ -1375,7 +1375,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>493</width>
+                    <width>602</width>
                     <height>443</height>
                    </rect>
                   </property>
@@ -2044,8 +2044,8 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>0</y>
-                    <width>483</width>
+                    <y>-47</y>
+                    <width>633</width>
                     <height>373</height>
                    </rect>
                   </property>
@@ -2170,6 +2170,13 @@
                        </property>
                        <property name="text" >
                         <string>Exam</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="hygWizard_pushButton" >
+                       <property name="text" >
+                        <string>Hyg</string>
                        </property>
                       </widget>
                      </item>
@@ -2312,8 +2319,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>116</width>
-                    <height>105</height>
+                    <width>622</width>
+                    <height>302</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2713,7 +2720,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>185</width>
+                    <width>606</width>
                     <height>392</height>
                    </rect>
                   </property>
@@ -2837,7 +2844,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
+                        <width>462</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3058,8 +3065,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>133</width>
+                <height>250</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3076,8 +3083,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>132</width>
+                <height>250</height>
                </rect>
               </property>
              </widget>
@@ -3093,8 +3100,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>133</width>
+                <height>250</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3290,8 +3297,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>96</width>
-             <height>28</height>
+             <width>167</width>
+             <height>50</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3607,8 +3614,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>28</height>
+               <width>167</width>
+               <height>47</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -4517,7 +4524,6 @@
   <tabstop>newBPE_pushButton</tabstop>
   <tabstop>planSummary_textBrowser</tabstop>
   <tabstop>exampushButton</tabstop>
-  <tabstop>charge_pushButton</tabstop>
   <tabstop>medNotes_pushButton</tabstop>
   <tabstop>callXrays_pushButton</tabstop>
   <tabstop>surgeryNo_spinBox</tabstop>

@@ -11,8 +11,8 @@ from openmolar.settings import localsettings
 
 class Ui_Dialog(Ui_exam_wizard.Ui_Dialog):
     def __init__(self,dialog,parent=None):
-        self.setupUi(dialog)
         self.dialog=dialog
+        self.setupUi(dialog)
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         self.dents_comboBox.addItems(localsettings.activedents)
     def getInput(self):

@@ -35,7 +35,7 @@
       <string>Scale and Polish</string>
      </property>
      <property name="checked" >
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -45,7 +45,7 @@
       <string>Extensive Scaling</string>
      </property>
      <property name="checked" >
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -136,11 +136,24 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="oh_checkBox" >
+    <widget class="QCheckBox" name="checkBox" >
      <property name="text" >
       <string>OHI given</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>29</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox" >

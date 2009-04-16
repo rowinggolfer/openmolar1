@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/hygenist_wizard.ui'
 #
-# Created: Wed Apr 15 13:51:02 2009
+# Created: Thu Apr 16 14:14:04 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -24,11 +24,11 @@ class Ui_Dialog(object):
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         self.sp_radioButton = QtGui.QRadioButton(Dialog)
-        self.sp_radioButton.setChecked(False)
+        self.sp_radioButton.setChecked(True)
         self.sp_radioButton.setObjectName("sp_radioButton")
         self.verticalLayout.addWidget(self.sp_radioButton)
         self.extsp_radioButton = QtGui.QRadioButton(Dialog)
-        self.extsp_radioButton.setChecked(True)
+        self.extsp_radioButton.setChecked(False)
         self.extsp_radioButton.setObjectName("extsp_radioButton")
         self.verticalLayout.addWidget(self.extsp_radioButton)
         self.twovisit1_radioButton = QtGui.QRadioButton(Dialog)
@@ -76,9 +76,11 @@ class Ui_Dialog(object):
         self.label_5.setAlignment(QtCore.Qt.AlignCenter)
         self.label_5.setObjectName("label_5")
         self.verticalLayout.addWidget(self.label_5)
-        self.oh_checkBox = QtGui.QCheckBox(Dialog)
-        self.oh_checkBox.setObjectName("oh_checkBox")
-        self.verticalLayout.addWidget(self.oh_checkBox)
+        self.checkBox = QtGui.QCheckBox(Dialog)
+        self.checkBox.setObjectName("checkBox")
+        self.verticalLayout.addWidget(self.checkBox)
+        spacerItem = QtGui.QSpacerItem(20, 29, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
@@ -102,5 +104,5 @@ class Ui_Dialog(object):
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "Fee", None, QtGui.QApplication.UnicodeUTF8))
         self.doubleSpinBox.setPrefix(QtGui.QApplication.translate("Dialog", "£", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Dialog", "Notes", None, QtGui.QApplication.UnicodeUTF8))
-        self.oh_checkBox.setText(QtGui.QApplication.translate("Dialog", "OHI given", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBox.setText(QtGui.QApplication.translate("Dialog", "OHI given", None, QtGui.QApplication.UnicodeUTF8))
 

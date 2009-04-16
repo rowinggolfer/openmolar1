@@ -17,7 +17,7 @@ Ui_specify_appointment,Ui_appointment_length,Ui_phraseBook,Ui_changeDatabase,\
 Ui_payments,Ui_related_patients,Ui_daylist_print,Ui_raiseCharge,Ui_options                                   ## guis made with designer
 from openmolar.qt4gui import finalise_appt_time,chartwidget,appointmentwidget,\
 appointment_overviewwidget,paymentwidget,recall_app,examWizard,toothProps,colours,medNotes,\
-perioToothProps,perioChartWidget,saveDiscardCancel,newBPE,newCourse,completeTreat                                               ##custom gui modules
+perioToothProps,perioChartWidget,saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard                                               ##custom gui modules
 from openmolar.qt4gui.printing import receiptPrint,notesPrint,chartPrint,bookprint,letterprint\
 ,recallprint,daylistprint,multiDayListPrint,accountPrint,estimatePrint,GP17                                                     ##printing modules
 
@@ -1687,6 +1687,10 @@ def final_choice(candidates):
 def find_patient():
     if enteringNewPatient():
             return
+    if not okToLeaveRecord():
+        print "not loading"
+        advise("Not loading patient")
+        return
     Dialog = QtGui.QDialog(MainWindow)
     dl = Ui_patient_finder.Ui_Dialog()
     dl.setupUi(Dialog)
@@ -1754,17 +1758,19 @@ def save_patient_tofile():
     except Exception,e:
         advise("Patient File not saved - %s"%e,2)
 def open_patient_fromfile():
-    global pt #,pt_dbstate
+    global pt,pt_dbstate
     advise("opening patient file")
     filename = QtGui.QFileDialog.getOpenFileName()
     if filename!='':
         advise("opening patient file")
         try:
             f=open(filename,"r")
-            pt=pickle.loads(f.read())
-            #pt=copy.deepcopy(pt_dbstate) - don't do this.... otherwise "changes" won't be apparenet
+            loadedpt=pickle.loads(f.read())
+            if loadedpt.serialno!=pt.serialno:
+                pt_dbstate=patient_class.patient(0)
+                pt_dbstate=loadedpt.serialno
+            pt=loadedpt
             f.close()
-            pt_dbstate=patient_class.patient(0)
         except Exception,e:
             advise("error loading patient file - %s"%e,2)
     else:
@@ -2170,7 +2176,6 @@ def showExamDialog():
         if result:
             '''['CE', '', PyQt4.QtCore.QDate(2009, 3, 14),
             ('pt c/o nil', 'Soft Tissues Checked - NAD', 'OHI instruction given', 'Palpated for upper canines - NAD'), "000000")]'''
-
             if result[1] ==localsettings.ops[pt.dnt1]: #normal dentist.
                 if pt.dnt2==0 or pt.dnt2==pt.dnt1: #no dnt2
                     APPLIED=True
@@ -2213,6 +2218,39 @@ def showExamDialog():
         else:
             advise("Examination not applied",2)
             break
+def showHygDialog():
+    global pt
+    if pt.serialno==0:
+        advise("no patient selected",1)
+        return
+    if not pt.underTreatment:
+        if not newCourseSetup():
+            advise("unable to perform exam",1)
+            return
+    Dialog = QtGui.QDialog(MainWindow)
+    dl = hygTreatWizard.Ui_Dialog(Dialog)
+    dl.setPractitioner(7)
+    if pt.cset=="P":
+        dl.doubleSpinBox.setValue(28.5)
+    result=dl.getInput()
+    print result
+    if result:
+        ##['SP+/2', 'HW', (), 0]
+        newnotes=str(ui.notesEnter_textEdit.toPlainText().toAscii())
+        newnotes+="%s performed by %s\n"%(result[0],result[1])
+        pt.addHiddenNote("treatment","Perio %s"%result[0])
+        money=result[3]
+        if money>0:
+            pt.money1+=money
+            updateFees()
+        pt.periocmp+=result[0]+" "
+        for note in result[2]:
+           newnotes+=note+", "
+        ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+    else:
+        advise("Hyg Treatment not applied",2)
+        
+
 def userOptionsDialog():
     Dialog = QtGui.QDialog(MainWindow)
     dl = Ui_options.Ui_Dialog()
@@ -2227,16 +2265,22 @@ def userOptionsDialog():
 def unsavedChanges():
     fieldsToExclude=("notestuple","fees")
     changes=[]
-    if len(ui.notesEnter_textEdit.toPlainText())!=0:
-        changes.append("New Notes")
-    for attr in pt.__dict__:
-        newval=str(pt.__dict__[attr])
-        oldval=str(pt_dbstate.__dict__[attr])
-        if oldval != newval and attr not in fieldsToExclude:
-            if attr!="memo" or oldval.replace(chr(13),"")!=newval:                  #ok - windows line ends were creating an issue
-                changes.append(attr)
-    return changes
+    if pt.serialno==pt_dbstate.serialno:
 
+        if len(ui.notesEnter_textEdit.toPlainText())!=0:
+            changes.append("New Notes")
+        for attr in pt.__dict__:
+            newval=str(pt.__dict__[attr])
+            oldval=str(pt_dbstate.__dict__[attr])
+            if oldval != newval:
+                if attr not in fieldsToExclude:
+                    if attr!="memo" or oldval.replace(chr(13),"")!=newval:                  #ok - windows line ends were creating an issue
+                        changes.append(attr)
+        return changes
+    else: #this should NEVER happen!!!
+        advise( "POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS %d and %d"%(pt.serialno,pt_dbstate.serialno),2)
+        return changes
+        
 def save_changes():
     '''updates the database when the save button is pressed'''
     global pt,pt_dbstate
@@ -2293,6 +2337,7 @@ def signals():
     #misc buttons
     QtCore.QObject.connect(ui.saveButton,QtCore.SIGNAL("clicked()"), save_changes)
     QtCore.QObject.connect(ui.exampushButton,QtCore.SIGNAL("clicked()"), showExamDialog)
+    QtCore.QObject.connect(ui.hygWizard_pushButton,QtCore.SIGNAL("clicked()"), showHygDialog)
     QtCore.QObject.connect(ui.newBPE_pushButton,QtCore.SIGNAL("clicked()"), newBPE_Dialog)
     QtCore.QObject.connect(ui.charge_pushButton,QtCore.SIGNAL("clicked()"), raiseACharge)
     QtCore.QObject.connect(ui.medNotes_pushButton,QtCore.SIGNAL("clicked()"), showMedNotes)
@@ -2602,7 +2647,7 @@ def addCustomWidgets():
 def enableEdit(arg=True):
     for but in (ui.printEst_pushButton, ui.printAccount_pushButton, ui.relatedpts_pushButton, ui.saveButton,
     ui.phraseBook_pushButton, ui.exampushButton,ui.medNotes_pushButton,ui.callXrays_pushButton,
-    ui.charge_pushButton,ui.printGP17_pushButton,ui.newBPE_pushButton):
+    ui.charge_pushButton,ui.printGP17_pushButton,ui.newBPE_pushButton,ui.hygWizard_pushButton):
         but.setEnabled(arg)
     for i in (0,1,2,5,6,7,8,9):
         if ui.tabWidget.isTabEnabled(i)!=arg: ui.tabWidget.setTabEnabled(i,arg)
