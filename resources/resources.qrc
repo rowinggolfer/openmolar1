@@ -1,0 +1,31 @@
+<RCC>
+  <qresource>
+    <file alias="logo.png" >logo.png</file>
+    <file alias="back.png" >icons/agt_back.png</file>
+    <file alias="agt_family.png" >icons/agt_family.png</file>
+    <file alias="forward.png" >icons/agt_forward.png</file>
+    <file alias="agt_home.png" >icons/agt_home.png</file>
+    <file alias="agt_reload.png" >icons/agt_reload.png</file>
+    <file alias="back.png" >icons/back.png</file>
+    <file alias="button_ok.png" >icons/button_ok.png</file>
+    <file alias="down.png" >icons/down.png</file>
+    <file alias="eraser.png" >icons/eraser.png</file>
+    <file alias="exit.png" >icons/exit.png</file>
+    <file alias="gohome.png" >icons/gohome.png</file>
+    <file alias="home.png" >icons/home.png</file>
+    <file alias="kaddressbook.png" >icons/kaddressbook.png</file>
+    <file alias="karm.png" >icons/karm.png</file>
+    <file alias="kdmconfig.png" >icons/kdmconfig.png</file>
+    <file alias="kfm_home.png" >icons/kfm_home.png</file>
+    <file alias="month.png" >icons/month.png</file>
+    <file alias="save_all.png" >icons/save_all.png</file>
+    <file alias="search.png" >icons/search.png</file>
+    <file alias="vcalendar.png" >icons/vcalendar.png</file>
+    <file alias="txt.png" >icons/txt.png</file>
+    <file alias="schedule.png" >icons/schedule.png</file>
+    <file alias="vcard.png" >icons/vcard.png</file>
+    <file alias="ps.png" >icons/ps.png</file>
+    <file alias="kfm.png" >icons/kfm.png</file>
+    <file alias="add_user.png" >icons/add_user.png</file>
+  </qresource>
+</RCC>

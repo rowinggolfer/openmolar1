@@ -27,6 +27,10 @@
   <property name="windowTitle" >
    <string>Open Molar - YOUR dental database application</string>
   </property>
+  <property name="windowIcon" >
+   <iconset resource="../resources/resources.qrc" >
+    <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
+  </property>
   <property name="styleSheet" >
    <string notr="true" />
   </property>
@@ -453,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>633</width>
+                    <width>516</width>
                     <height>503</height>
                    </rect>
                   </property>
@@ -1371,8 +1375,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>649</width>
-                    <height>458</height>
+                    <width>493</width>
+                    <height>443</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_20" >
@@ -2041,8 +2045,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>649</width>
-                    <height>458</height>
+                    <width>483</width>
+                    <height>373</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2308,8 +2312,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>653</width>
-                    <height>462</height>
+                    <width>116</width>
+                    <height>105</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2489,8 +2493,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>207</width>
-                    <height>458</height>
+                    <width>201</width>
+                    <height>382</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_11" >
@@ -2709,8 +2713,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>653</width>
-                    <height>462</height>
+                    <width>185</width>
+                    <height>392</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
@@ -2833,7 +2837,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>509</width>
+                        <width>96</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3054,8 +3058,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>212</width>
-                <height>523</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3072,8 +3076,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>213</width>
-                <height>523</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
              </widget>
@@ -3089,8 +3093,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>212</width>
-                <height>523</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3286,8 +3290,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>167</width>
-             <height>98</height>
+             <width>96</width>
+             <height>28</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3603,8 +3607,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>167</width>
-               <height>191</height>
+               <width>96</width>
+               <height>28</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >

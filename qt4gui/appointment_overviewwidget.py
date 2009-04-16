@@ -133,18 +133,15 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 self.highlightedRect=rect
                 self.emit(QtCore.SIGNAL("DentistHeading"),(dent,self.date))
                 return
-            col+=1
-        if event.button()==1: #left click
-            for slot in self.freeslots[dent]:
-                (slotstart,length)=slot
-                startcell=(localsettings.minutesPastMidnight(slotstart)-self.startTime)/self.slotLength
-                rect=QtCore.QRect(leftx,startcell*self.slotHeight+self.headingHeight,columnWidth,(length/self.slotLength)*self.slotHeight)
-                if rect.contains(event.pos()):
-                    self.emit(QtCore.SIGNAL("PySig"),(self.day,slot,dent))
-                    break
-                col+=1
-        else:   #right click
-            for dent in self.dents:
+            if event.button()==1: #left click
+                for slot in self.freeslots[dent]:
+                    (slotstart,length)=slot
+                    startcell=(localsettings.minutesPastMidnight(slotstart)-self.startTime)/self.slotLength
+                    rect=QtCore.QRect(leftx,startcell*self.slotHeight+self.headingHeight,columnWidth,(length/self.slotLength)*self.slotHeight)
+                    if rect.contains(event.pos()):
+                        self.emit(QtCore.SIGNAL("PySig"),(self.day,slot,dent))
+                        break
+            else:   #right click
                 leftx=self.timeOffset+(col)*columnWidth
                 rightx=self.timeOffset+(col+1)*columnWidth
 
@@ -187,11 +184,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                         feedback='%d mins starting at '%length +localsettings.wystimeToHumanTime(slotstart)+"  with "+localsettings.apptix_reverse[dent]
                         QtGui.QMessageBox.information(self,"Info","You've right clicked on an emergency slot<br />%s"%feedback)
                         return
-
-
-                col+=1
-
-
+            col+=1
 
     def leaveEvent(self,event):
         self.highlightedRect=None
@@ -297,13 +290,15 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     form = appointmentOverviewWidget(1,"0800","1900",15,2)     #initiate a book starttime 08:00 endtime 10:00 five minute slots, text every 3 slots
     form.clear()
-    form.dents=(4,)
-    form.setStartTime(4,830)
-    form.setEndTime(4,1800)
-    form.freeslots[4]=((1015, 30), (1735, 20))
+    form.dents=(4,5)
+    for dent in form.dents:
+        form.setStartTime(dent,830)
+        form.setEndTime(dent,1800)
+        form.freeslots[dent]=((1015, 30), (1735, 20))
+        form.appts[dent]=((900,40),(1000,15))
+        form.eTimes[dent]=((1115, 15), (1300, 60), (1600, 30))
     form.lunch=(1300,60)
-    form.appts[4]=((900,40),(1000,15))
-    form.eTimes[4]=((1115, 15), (1300, 60), (1600, 30))
+    print form.freeslots    
     form.show()
     QtCore.QObject.connect(form,QtCore.SIGNAL("PySig"),clicktest)
     QtCore.QObject.connect(form,QtCore.SIGNAL("DentistHeading"),headerclicktest)
