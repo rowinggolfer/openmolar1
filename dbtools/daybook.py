@@ -63,7 +63,7 @@ def details(regdent,trtdent,startdate,enddate):
     retarg+='<tr><td colspan="5"></td><td><b>TOTAL</b></td><td align="right"><b>&pound; %d.%02d</b></td></tr>'%(total/100,total%100)
     retarg+='</table>'
     cursor.close()
-    #db.close()
+    db.close()
     return retarg
 
 if __name__ == "__main__":

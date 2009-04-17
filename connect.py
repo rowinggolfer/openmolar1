@@ -4,25 +4,36 @@ using 3rd party MySQLdb module'''
 import MySQLdb
 
 ##--local variables----------------------------------------------------------
-#
-myHost="localhost"              ## put in the ip of your mysql server
-myUser="user"                   ## the mysql user
-myPassword="password"           ## the mysql password for this user
+#<start_delete_point>   #this delete point is important for my anonymous code export script.
+myHost="localhost" #this computer alternatives - "192.168.88.2" work or "192.168.0.3" home
+myUser="user"
+myPassword="password"
 myDb="openmolar"
+#<end_delete_point>
 ##----------------------------------------------------------------------------
 
+currentConnection=None
 
 def connect():
-        return MySQLdb.connect(host=myHost,user=myUser,passwd=myPassword,db=myDb)
+    global currentConnection
+    if not (currentConnection and currentConnection.open):
+        print "New connection needed",
+        currentConnection=MySQLdb.connect(host=myHost,user=myUser,passwd=myPassword,db=myDb)
+        print currentConnection
+    return currentConnection
+    
 if __name__=="__main__":
-    try:
-        print "opening...",
-        db=connect()
-        db.close()
-        print '''ok... we can make Mysql connections!!
-        database - '%s'
-        host - '%s'
-        using user - '%s'
-        and password - '%s' '''%(myDb,myHost,myUser,myPassword)
-    except:
-        print "error"
+    import time
+    for i in range(1,11):
+        try:
+            print "connecting",
+            db=connect()
+            print 'ok... we can make Mysql connections!!'
+            
+        except:
+            print "error"
+        print "loop no ",i
+        if i==8:db.close()
+        time.sleep(5)
+    print dir(db)
+    db.close()

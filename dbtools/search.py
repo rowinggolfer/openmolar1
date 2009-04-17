@@ -42,7 +42,7 @@ def getcandidates(dob,addr,tel,sname,similar_sname,fname,similar_fname,pcde):
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
-        #db.close()
+        db.close()
         return results
     else:
         return ()
@@ -102,7 +102,7 @@ def getcandidates_from_serialnos(list_of_snos):
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
-        #db.close()
+        db.close()
         return results
     else:
         return()

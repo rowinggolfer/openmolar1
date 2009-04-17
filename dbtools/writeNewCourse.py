@@ -42,7 +42,7 @@ def write(sno,dnt,accd):
         print e
         result=False
     cursor.close()
-    #db.close()
+    db.close()
 
     return (result,cno)
 

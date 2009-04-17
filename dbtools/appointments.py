@@ -35,7 +35,7 @@ def todays_patients(dents=("*")):
     WHERE adate="%s" and %s serialno!=0 ORDER BY name'%(localsettings.sqlToday(),cond))
     rows = cursor.fetchall()                                                   #SQL QUERY
     cursor.close()
-    #db.close()
+    db.close()
     return rows
 
 def getWorkingDents(adate,dents=()):
@@ -55,7 +55,7 @@ def getWorkingDents(adate,dents=()):
     "%s" AND (flag=1 or flag=2) %s'%(adate,mystr))                                           #SQL QUERY
     rows = cursor.fetchall()
     cursor.close()
-    #db.close()
+    db.close()
     return rows
 
     #dents,starts,ends=[],[],[]
@@ -82,7 +82,7 @@ def allAppointmentData(adate,dents=()):
     cursor.execute('select %s from aslot where adate="%s" %s order by apptix,start'%(fields,adate,mystr))                                    #SQL QUERY
     data= cursor.fetchall()
     cursor.close
-    #db.close()
+    db.close()
     return (dents,data)
 def convertResults(appointments):
     '''changes (830,845) to (830,15)'''
@@ -123,7 +123,7 @@ def printableDaylistData(adate,dent):                                           
             if apttime<row[1]:
                 apttime=row[1]
     cursor.close
-    #db.close()
+    db.close()
     return retlist
 
 
@@ -148,7 +148,7 @@ def daysummary(adate,dent):                                                    #
         results=cursor.fetchall()                                              ##todo - should I join this 2 queries??
         retarg=convertResults(results)
     cursor.close
-    #db.close()
+    db.close()
     return retarg                                                                                                #day not used, return a blank tuple
 
 def getBlocks(adate,dent):
@@ -170,7 +170,7 @@ def getBlocks(adate,dent):
         %s AND flag0=-128 and name!="LUNCH" ORDER BY start'%query)                               #SQL QUERY
         results=cursor.fetchall()                                              ##todo - again, should I join these queries??
         cursor.close
-        #db.close()
+        db.close()
         return convertResults(results)
     else:
         return()                                                               #day not used!
@@ -182,7 +182,7 @@ def clearEms(adate):
         db.commit()                              #SQL QUERY
         result=True
     cursor.close()
-    #db.close()
+    db.close()
     return result
 
 
@@ -196,7 +196,7 @@ def get_pts_appts(sno):
     FROM apr WHERE serialno=%d ORDER BY aprix'''%(localsettings.sqlDateFormat,sno))   #SQL QUERY
     data= cursor.fetchall()                                                    
     cursor.close
-    #db.close()
+    db.close()
     return data
 
 def add_pt_appt(serialno,practix,length,code0,aprix=-1,\
@@ -225,7 +225,7 @@ def add_pt_appt(serialno,practix,length,code0,aprix=-1,\
     else:
         result=False                                                           #if something wene wrong, return False
     cursor.close
-    #db.close()
+    db.close()
     return result
 
 def pt_appt_made(serialno,aprix,date,time,dent):
@@ -241,7 +241,7 @@ def pt_appt_made(serialno,aprix,date,time,dent):
     else:
         result=False
     cursor.close
-    #db.close()
+    db.close()
     return result
 def made_appt_to_proposed(serialno,aprix):
     '''modifies the apr table, when an appointment has been postponed,
@@ -255,7 +255,7 @@ def made_appt_to_proposed(serialno,aprix):
     else:
         result=False
     cursor.close
-    #db.close()
+    db.close()
     return result
 
 def make_appt(adate,apptix,start,end,name,serialno,\
@@ -274,7 +274,7 @@ def make_appt(adate,apptix,start,end,name,serialno,\
     else:
         result=False
     cursor.close
-    #db.close()
+    db.close()
     return result
 def delete_appt_from_apr(serialno,aprix):
     '''this deletes an appointment from the apr table'''                       ##todo - I don't like this code.. one smart SQL query could do the lot?
@@ -298,7 +298,7 @@ def delete_appt_from_apr(serialno,aprix):
             serialno=%d and aprix=%d'%(i,serialno,curval[0]))                  #SQL QUERY for each line :( to  update them - YEUCH!!!!
         db.commit()
         cursor.close
-        #db.close()
+        db.close()
         return True
     except:
         return False
@@ -312,7 +312,7 @@ def delete_appt_from_aslot(dent,start,adate,serialno):                         #
             db.commit()
             result=True
         cursor.close()
-        #db.close()
+        db.close()
         return result
 
 def daysSlots(adate,dent):                                                     #was dent="NW" 23/2/2009
@@ -334,7 +334,7 @@ def daysSlots(adate,dent):                                                     #
         %query)                                                                #SQL QUERY
         results=cursor.fetchall()
         cursor.close
-        #db.close()
+        db.close()
         return slots(daydata[0][0],results,daydata[0][1])
     else:                                                                      #day not used or no slots
         return()
@@ -386,7 +386,7 @@ def future_slots(length,startdate,enddate,dents,override_emergencies=False):
         retlist.append((day[0],day[1],slots(daystart,\
         results,dayfin,length)))
     cursor.close
-    #db.close()
+    db.close()
     return tuple(retlist)
 if __name__ == "__main__":
     '''test procedures......'''

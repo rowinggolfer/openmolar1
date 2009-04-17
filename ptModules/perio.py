@@ -43,7 +43,7 @@ if __name__ == "__main__":
     cursor.execute('select chartdata from perio where serialno=%d'%serialno)
     chartdata=cursor.fetchall()
     cursor.close()
-    #db.close()
+    db.close()
     perioData=get_perioData(chartdata[0][0])
     newdict={}
     for key in perioData.keys():

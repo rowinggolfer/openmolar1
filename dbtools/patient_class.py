@@ -168,7 +168,7 @@ class patient():
             self.dayBookHistory=cursor.fetchall()
 
             cursor.close()
-            #db.close()
+            db.close()
 
             self.updateChartgrid()
             self.updateFees()
@@ -187,7 +187,7 @@ class patient():
         cursor.execute('select serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         if disconnectNeeded:
             cursor.close()
-            #db.close()
+            db.close()
         self.tsfees = cursor.fetchall()
 
 
@@ -216,7 +216,7 @@ class patient():
             self.underTreatment=True
         if disconnectNeeded:
             cursor.close()
-            #db.close()
+            db.close()
     def getNotesTuple(self,cursor=None):
         '''this is either called when the class is initiated (when cursor will be an active db cursor) or to refresh the notes.
         in the latter case, a new cursor needs to be initiated here.
@@ -227,7 +227,7 @@ class patient():
             cursor.execute("select lineno,line from notes where serialno=%d"%self.serialno)
             self.notestuple = cursor.fetchall()                                                     # so "notes" is a tuple like this ((0,'notes'),(1,"morenotes"),...etc...)
             cursor.close()
-            #db.close()
+            db.close()
         else:
             cursor.execute("select lineno,line from notes where serialno=%d"%self.serialno)
             self.notestuple = cursor.fetchall()                                                     # so "notes" is a tuple like this ((0,'notes'),(1,"morenotes"),...etc...)

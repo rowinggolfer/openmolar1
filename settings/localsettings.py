@@ -154,7 +154,7 @@ def initiate(debug=False):
     rows=cursor.fetchall()
     for row in rows:
         fees[row[0][:4]]=row[1]              ##this is a hack.... there are more keys in here than this :(
-    #db.close()
+    db.close()
 
     if "win" in sys.platform:
         referralfile=sys.argv[0].replace('\\main.pyw','')+"\\resources"+"\\referral_data.xml"

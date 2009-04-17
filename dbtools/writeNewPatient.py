@@ -33,7 +33,7 @@ def commit(pt):
         newserialno=cursor.fetchone()[0]
     except:
         cursor.close()
-        #db.close()
+        db.close()
         return -1
     if cursor.execute(sqlcommand+'serialno=%d'%(newserialno+1)) and cursor.execute('update sysdata set serialno=%d'%(newserialno+1)):
         db.commit()
@@ -41,7 +41,7 @@ def commit(pt):
     else:
         result=-1
     cursor.close()
-    #db.close()
+    db.close()
     return result
 
 if __name__ == "__main__":
