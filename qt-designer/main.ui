@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>901</width>
+    <width>865</width>
     <height>556</height>
    </rect>
   </property>
@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>4</number>
+              <number>7</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>602</width>
+                    <width>597</width>
                     <height>503</height>
                    </rect>
                   </property>
@@ -1375,7 +1375,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>602</width>
+                    <width>597</width>
                     <height>443</height>
                    </rect>
                   </property>
@@ -1687,7 +1687,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>643</width>
+                    <width>607</width>
                     <height>493</height>
                    </rect>
                   </property>
@@ -2044,8 +2044,8 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>-47</y>
-                    <width>633</width>
+                    <y>-63</y>
+                    <width>664</width>
                     <height>373</height>
                    </rect>
                   </property>
@@ -2188,14 +2188,32 @@
                       </widget>
                      </item>
                      <item>
+                      <widget class="QLabel" name="underTreatment_label_2" >
+                       <property name="font" >
+                        <font>
+                         <pointsize>12</pointsize>
+                         <weight>75</weight>
+                         <bold>true</bold>
+                         <underline>true</underline>
+                        </font>
+                       </property>
+                       <property name="text" >
+                        <string>Under Active Treatment</string>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
                       <spacer name="horizontalSpacer_3" >
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
                        <property name="sizeHint" stdset="0" >
                         <size>
-                         <width>20</width>
-                         <height>20</height>
+                         <width>28</width>
+                         <height>17</height>
                         </size>
                        </property>
                       </spacer>
@@ -2211,25 +2229,6 @@
                       <widget class="QPushButton" name="callXrays_pushButton" >
                        <property name="text" >
                         <string>Call-Xrays from Durr</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="surgeryNo_spinBox" >
-                       <property name="minimumSize" >
-                        <size>
-                         <width>80</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="prefix" >
-                        <string>surgery</string>
-                       </property>
-                       <property name="minimum" >
-                        <number>1</number>
-                       </property>
-                       <property name="maximum" >
-                        <number>3</number>
                        </property>
                       </widget>
                      </item>
@@ -2319,8 +2318,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>622</width>
-                    <height>302</height>
+                    <width>617</width>
+                    <height>330</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2499,7 +2498,7 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>0</y>
+                    <y>-72</y>
                     <width>201</width>
                     <height>382</height>
                    </rect>
@@ -2720,7 +2719,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>606</width>
+                    <width>601</width>
                     <height>392</height>
                    </rect>
                   </property>
@@ -2844,7 +2843,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>462</width>
+                        <width>457</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3065,8 +3064,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>133</width>
-                <height>250</height>
+                <width>200</width>
+                <height>391</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3083,8 +3082,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>132</width>
-                <height>250</height>
+                <width>201</width>
+                <height>391</height>
                </rect>
               </property>
              </widget>
@@ -3100,8 +3099,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>133</width>
-                <height>250</height>
+                <width>200</width>
+                <height>391</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3298,7 +3297,7 @@
              <x>0</x>
              <y>0</y>
              <width>167</width>
-             <height>50</height>
+             <height>57</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3615,7 +3614,7 @@
                <x>0</x>
                <y>0</y>
                <width>167</width>
-               <height>47</height>
+               <height>59</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -4304,7 +4303,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>901</width>
+     <width>865</width>
      <height>24</height>
     </rect>
    </property>
@@ -4526,7 +4525,6 @@
   <tabstop>exampushButton</tabstop>
   <tabstop>medNotes_pushButton</tabstop>
   <tabstop>callXrays_pushButton</tabstop>
-  <tabstop>surgeryNo_spinBox</tabstop>
   <tabstop>perioCharts_scrollArea</tabstop>
   <tabstop>newPerioChartPushButton</tabstop>
   <tabstop>bpeDateComboBox</tabstop>

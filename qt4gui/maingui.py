@@ -14,10 +14,11 @@ from openmolar.settings import localsettings
 
 from openmolar.qt4gui import Ui_patient_finder, Ui_main,Ui_select_patient,Ui_enter_letter_text,\
 Ui_specify_appointment,Ui_appointment_length,Ui_phraseBook,Ui_changeDatabase,\
-Ui_payments,Ui_related_patients,Ui_daylist_print,Ui_raiseCharge,Ui_options                                   ## guis made with designer
+Ui_payments,Ui_related_patients,Ui_daylist_print,Ui_raiseCharge,Ui_options,Ui_surgeryNumber                                   ## guis made with designer
 from openmolar.qt4gui import finalise_appt_time,chartwidget,appointmentwidget,\
 appointment_overviewwidget,paymentwidget,recall_app,examWizard,toothProps,colours,medNotes,\
-perioToothProps,perioChartWidget,saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard                                               ##custom gui modules
+perioToothProps,perioChartWidget,saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, \
+addTreat                                              ##custom gui modules
 from openmolar.qt4gui.printing import receiptPrint,notesPrint,chartPrint,bookprint,letterprint\
 ,recallprint,daylistprint,multiDayListPrint,accountPrint,estimatePrint,GP17                                                     ##printing modules
 
@@ -126,6 +127,7 @@ def clearRecord():
             chart.clear()                                                                     #necessary to restore the chart to full dentition
             chart.update()
         ui.underTreatment_label.hide() 
+        ui.underTreatment_label_2.hide()
 def home():
     '''home push_button - clear the patient, and blank the screen'''
     if enteringNewPatient():
@@ -1021,13 +1023,16 @@ def updateCharts(arg):
         ui.staticChartWidget.setToothProps(tooth,arg)
         ui.staticChartWidget.update()
     elif selectedChartWidget=="pl":
-        pt.__dict__[tooth+selectedChartWidget]=arg  #update the patient!!
-        ui.planChartWidget.setToothProps(tooth,arg)
-        ui.planChartWidget.update()
+        if not pt.underTreatment:
+            if not newCourseSetup():
+                advise("unable to plan or perform treatment if pt does not have an active course",1)
+                return
+        if selectedChartWidget=="pl":
+            pt.__dict__[tooth+selectedChartWidget]=arg  #update the patient!!
+            ui.planChartWidget.setToothProps(tooth,arg)
+            ui.planChartWidget.update()
     elif selectedChartWidget=="cmp":
-        pt.__dict__[tooth+selectedChartWidget]=arg  #update the patient!!
-        ui.completedChartWidget.setToothProps(tooth,arg)
-        ui.completedChartWidget.update()
+        advise("for the moment, please enter treatment into plan first, then complete it.",1)     
     else:
         advise("unable to update chart - this shouldn't happen!!!",2)           ###should never happen
 
@@ -1264,6 +1269,26 @@ def toothHistory(arg):
     th=th.rstrip("<br />")
     QtGui.QToolTip.showText(arg[1],arg[0]+th)
 
+
+def addXrayItems():
+    global pt
+    if not pt.underTreatment:
+        if not newCourseSetup():
+            advise("unable to plan or perform treatment if pt does not have an active course",1)
+            return
+    list=((0,"S","Small Xrays",0),(0,"M","Medium Xrays",0),(0,"P","Panoral Xray",0))
+    chosenTreatments=offerTreatmentItems(list)
+    print chosenTreatments
+    for item in chosenTreatments:
+        pt.xraypl+="%s%s "%(item[0],item[1])
+    load_planpage()
+    #######todo - add fee to current ests
+
+def offerTreatmentItems(arg):
+    Dialog = QtGui.QDialog(MainWindow)
+    dl = addTreat.treatment(Dialog,arg)                   ########################## this should be treating dentist!!!!!!!
+    return dl.getInput()
+    
 def completeToothTreatments(arg):
     global pt
     Dialog = QtGui.QDialog(MainWindow)
@@ -1623,13 +1648,15 @@ def loadpatient():
     if pt.underTreatment:
         ui.treatmentPlan_groupBox.setTitle(curtext+"- started "+ str(pt.accd))
         ui.underTreatment_label.show()
+        ui.underTreatment_label_2.show()
         ui.newCourse_pushButton.setEnabled(False)
         ui.closeTx_pushButton.setEnabled(True)        
     else:
         ui.treatmentPlan_groupBox.setTitle(curtext+"- No Current Course")
         ui.newCourse_pushButton.setEnabled(True)
         ui.closeTx_pushButton.setEnabled(False)    
-        ui.underTreatment_label.hide()            
+        ui.underTreatment_label.hide()     
+        ui.underTreatment_label_2.hide()       
     localsettings.defaultNewPatientDetails=(pt.sname,pt.addr1,pt.addr2,pt.addr3,pt.town,pt.county,pt.pcde,pt.tel1)
     if not pt.serialno in localsettings.recent_snos:
         localsettings.recent_snos.append(pt.serialno)
@@ -1725,6 +1752,7 @@ def find_patient():
         advise("dialog rejected")
 def labels_and_tabs():
     ui.underTreatment_label.hide() 
+    ui.underTreatment_label_2.hide()
     ui.main_tabWidget.setCurrentIndex(0)
     if localsettings.station=="surgery":
         ui.tabWidget.setCurrentIndex(4)
@@ -2103,8 +2131,15 @@ def phraseBookDialog():
 def addNewNote(arg):
     ui.notesEnter_textEdit.setText(ui.notesEnter_textEdit.toPlainText()+" "+arg)
 def callXrays():
-    surg=ui.surgeryNo_spinBox.value()
-    calldurr.commit(pt.serialno,surg)
+    if localsettings.surgeryno==-1:
+        Dialog=QtGui.QDialog(MainWindow)
+        dl=Ui_surgeryNumber.Ui_Dialog()
+        dl.setupUi(Dialog)
+        if Dialog.exec_():
+            localsettings.surgeryno=dl.comboBox.currentIndex()+1
+        else:
+            return
+    calldurr.commit(pt.serialno,localsettings.surgeryno)
 
 def showMedNotes():
     if pt.serialno==0:
@@ -2154,11 +2189,25 @@ def newCourseSetup():
             load_estpage(estimateHtml)
             load_planpage()
             ui.underTreatment_label.show() 
+            ui.underTreatment_label_2.show()
             return True
         else:
             advise("ERROR STARTING NEW COURSE, sorry",2)
 def closeCourse():
-    advise("openmolar doesn't do this yet, sorry",1)
+    message="Close current course of treatment?"
+    result=QtGui.QMessageBox.question(MainWindow,"Confirm",message,QtGui.QMessageBox.Yes, \
+                    QtGui.QMessageBox.No)             
+    if result==QtGui.QMessageBox.Yes:
+        pt.courseno1=pt.courseno1
+        pt.courseno0=0
+        pt.getCurrtrt()
+        pt.getEsts()
+        estimateHtml=estimates.toHtml(pt.estimates,pt.tsfees)
+        load_estpage(estimateHtml)
+        load_planpage()
+        ui.underTreatment_label.hide() 
+        ui.underTreatment_label_2.hide()
+        return True
 def showExamDialog():
     global pt
     if pt.serialno==0:
@@ -2225,7 +2274,7 @@ def showHygDialog():
         return
     if not pt.underTreatment:
         if not newCourseSetup():
-            advise("unable to perform exam",1)
+            advise("unable to perform treatment if pt does not have an active course",1)
             return
     Dialog = QtGui.QDialog(MainWindow)
     dl = hygTreatWizard.Ui_Dialog(Dialog)
@@ -2395,7 +2444,8 @@ def signals():
     QtCore.QObject.connect(ui.newCourse_pushButton,QtCore.SIGNAL("clicked()"),newCourseSetup)
     QtCore.QObject.connect(ui.closeTx_pushButton,QtCore.SIGNAL("clicked()"),closeCourse)
     QtCore.QObject.connect(ui.completePlanItems_pushButton,QtCore.SIGNAL("clicked()"),completeTreatments)
-
+    QtCore.QObject.connect(ui.xrayTxpushButton,QtCore.SIGNAL("clicked()"),addXrayItems)
+    
     #daybook - cashbook
     QtCore.QObject.connect(ui.daybookGoPushButton,QtCore.SIGNAL("clicked()"),daybookTab)
     QtCore.QObject.connect(ui.cashbookGoPushButton,QtCore.SIGNAL("clicked()"),cashbookTab)

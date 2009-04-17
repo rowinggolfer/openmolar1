@@ -36,7 +36,7 @@ class course(Ui_newCourse.Ui_Dialog):
             retarg.append(self.dateEdit.date())
             return (True,retarg)
         else:
-            return()
+            return(False,)
     
 if __name__ == "__main__":
     import sys

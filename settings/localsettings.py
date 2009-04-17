@@ -38,7 +38,7 @@ appointmentFontSize=7
 message=""
 defaultNewPatientDetails=("",)*8
 dentDict={}
-
+surgeryno=-1                                                                  #for call durr purposes only
 csetypes=["P","I","N","N OR","N O"] 
 
 practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV1 1PP")

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Thu Apr 16 12:59:58 2009
+# Created: Fri Apr 17 00:20:49 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(901, 556)
+        MainWindow.resize(865, 556)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -824,7 +824,7 @@ class Ui_MainWindow(object):
         self.scrollArea_6.setWidgetResizable(True)
         self.scrollArea_6.setObjectName("scrollArea_6")
         self.scrollAreaWidgetContents_9 = QtGui.QWidget(self.scrollArea_6)
-        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, -47, 633, 373))
+        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 664, 373))
         self.scrollAreaWidgetContents_9.setObjectName("scrollAreaWidgetContents_9")
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents_9)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -890,7 +890,17 @@ class Ui_MainWindow(object):
         self.charge_pushButton = QtGui.QPushButton(self.scrollAreaWidgetContents_9)
         self.charge_pushButton.setObjectName("charge_pushButton")
         self.horizontalLayout_13.addWidget(self.charge_pushButton)
-        spacerItem7 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.underTreatment_label_2 = QtGui.QLabel(self.scrollAreaWidgetContents_9)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setWeight(75)
+        font.setUnderline(True)
+        font.setBold(True)
+        self.underTreatment_label_2.setFont(font)
+        self.underTreatment_label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.underTreatment_label_2.setObjectName("underTreatment_label_2")
+        self.horizontalLayout_13.addWidget(self.underTreatment_label_2)
+        spacerItem7 = QtGui.QSpacerItem(28, 17, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_13.addItem(spacerItem7)
         self.medNotes_pushButton = QtGui.QPushButton(self.scrollAreaWidgetContents_9)
         self.medNotes_pushButton.setObjectName("medNotes_pushButton")
@@ -898,12 +908,6 @@ class Ui_MainWindow(object):
         self.callXrays_pushButton = QtGui.QPushButton(self.scrollAreaWidgetContents_9)
         self.callXrays_pushButton.setObjectName("callXrays_pushButton")
         self.horizontalLayout_13.addWidget(self.callXrays_pushButton)
-        self.surgeryNo_spinBox = QtGui.QSpinBox(self.scrollAreaWidgetContents_9)
-        self.surgeryNo_spinBox.setMinimumSize(QtCore.QSize(80, 0))
-        self.surgeryNo_spinBox.setMinimum(1)
-        self.surgeryNo_spinBox.setMaximum(3)
-        self.surgeryNo_spinBox.setObjectName("surgeryNo_spinBox")
-        self.horizontalLayout_13.addWidget(self.surgeryNo_spinBox)
         self.gridLayout_4.addLayout(self.horizontalLayout_13, 3, 0, 1, 2)
         self.scrollArea_6.setWidget(self.scrollAreaWidgetContents_9)
         self.horizontalLayout_12.addWidget(self.scrollArea_6)
@@ -1779,7 +1783,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.addWidget(self.main_tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 901, 24))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 865, 24))
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")
@@ -1980,8 +1984,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.planSummary_textBrowser, self.exampushButton)
         MainWindow.setTabOrder(self.exampushButton, self.medNotes_pushButton)
         MainWindow.setTabOrder(self.medNotes_pushButton, self.callXrays_pushButton)
-        MainWindow.setTabOrder(self.callXrays_pushButton, self.surgeryNo_spinBox)
-        MainWindow.setTabOrder(self.surgeryNo_spinBox, self.perioCharts_scrollArea)
+        MainWindow.setTabOrder(self.callXrays_pushButton, self.perioCharts_scrollArea)
         MainWindow.setTabOrder(self.perioCharts_scrollArea, self.newPerioChartPushButton)
         MainWindow.setTabOrder(self.newPerioChartPushButton, self.bpeDateComboBox)
         MainWindow.setTabOrder(self.bpeDateComboBox, self.perioChartData_scrollArea)
@@ -2119,9 +2122,9 @@ class Ui_MainWindow(object):
         self.exampushButton.setText(QtGui.QApplication.translate("MainWindow", "Exam", None, QtGui.QApplication.UnicodeUTF8))
         self.hygWizard_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Hyg", None, QtGui.QApplication.UnicodeUTF8))
         self.charge_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Charge", None, QtGui.QApplication.UnicodeUTF8))
+        self.underTreatment_label_2.setText(QtGui.QApplication.translate("MainWindow", "Under Active Treatment", None, QtGui.QApplication.UnicodeUTF8))
         self.medNotes_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Med Notes", None, QtGui.QApplication.UnicodeUTF8))
         self.callXrays_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Call-Xrays from Durr", None, QtGui.QApplication.UnicodeUTF8))
-        self.surgeryNo_spinBox.setPrefix(QtGui.QApplication.translate("MainWindow", "surgery", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("MainWindow", "Clinical Summary", None, QtGui.QApplication.UnicodeUTF8))
         self.label_35.setText(QtGui.QApplication.translate("MainWindow", "Verbosity Level", None, QtGui.QApplication.UnicodeUTF8))
         self.notesMinimumVerbosity_radioButton.setText(QtGui.QApplication.translate("MainWindow", "minimum", None, QtGui.QApplication.UnicodeUTF8))
