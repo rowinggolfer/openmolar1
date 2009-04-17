@@ -61,7 +61,7 @@ def write_changes(pt,changes):
             else:
                 result=False
         cursor.close()
-        db.close()
+        #db.close()
 
     return result
 
@@ -92,7 +92,7 @@ def toNotes(serialno,newnotes):
     except:
         result=-1
     cursor.close()
-    db.close()
+    #db.close()
     return result
 
 def discreet_changes(pt_changed,changes):
@@ -123,5 +123,5 @@ def discreet_changes(pt_changed,changes):
         else:
             result=False
         cursor.close()
-        db.close()
+        #db.close()
     return result

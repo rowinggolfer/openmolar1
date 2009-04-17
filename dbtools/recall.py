@@ -18,7 +18,7 @@ def getpatients(month,year):
     cursor.execute('select title,fname,sname,dnt1,familyno,dob,addr1,addr2,addr3,town,county,pcde,recd from patients where recd>="%s" and recd<"%s" order by familyno,dob,fname,sname'%(startdate,enddate))
     rows = cursor.fetchall()
     cursor.close()
-    db.close()
+    #db.close()
     return rows
 
 if __name__ == "__main__":

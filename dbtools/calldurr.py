@@ -17,7 +17,7 @@ def commit(serialno,surgeryno):
     if result:
         result=db.commit()
     cursor.close()
-    db.close()
+    #db.close()
     return result
 
 if __name__ == "__main__":
