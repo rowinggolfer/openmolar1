@@ -16,7 +16,7 @@ import sys,os,hashlib
 from PyQt4 import QtGui,QtCore
 
 __version__ = "0.0.5 - 15th April 2009"
-__build__= "2009-04-16 00:02:30.405856"
+__build__= "2009-04-18 09:25:57.843375"
 
 class LoginError(Exception):pass
 
