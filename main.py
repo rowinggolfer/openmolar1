@@ -16,18 +16,12 @@ import sys,os,hashlib
 from PyQt4 import QtGui,QtCore
 
 __version__ = "0.0.5 - 15th April 2009"
-__build__= "2009-04-18 09:25:57.843375"
+__build__= "N/A dev_machine"
 
 class LoginError(Exception):pass
 
 def main(app):
-    if "win" in sys.platform:
-        #temporarily append to the python path
-        wkdir=sys.argv[0].replace('\\openmolar\\main.pyw','')
-    else:
-        wkdir=os.getcwd()
-        if "/openmolar" in wkdir:
-            wkdir=wkdir[:wkdir.rindex("/openmolar")]
+    wkdir=os.path.dirname(os.getcwd())
     sys.path.append(wkdir)
     from openmolar.qt4gui import Ui_startscreen
     from openmolar.settings import localsettings
@@ -45,23 +39,23 @@ def main(app):
         dl.setupUi(Dialog)
         QtCore.QObject.connect(dl.user1_lineEdit,QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
         if Dialog.exec_():
-            if uninitiated:
-                localsettings.initiate(False)
-                uninitiated=False
             try:
                 pword=str(dl.password_lineEdit.text())
                 s=hashlib.md5(hashlib.sha1(pword).hexdigest()).hexdigest()
-                ##start password check##
-                if False: # insert your own hash hashed password check here
+                if s != '800b28e2f8f456bc9d7b0bf98b7c32ab':##end password check##
                     raise LoginError 
-                u1=dl.user1_lineEdit.text().toUpper()                                               #toUpper is a method of QString
+                if uninitiated:
+                    localsettings.initiate(False)                                                  #this will attempt to connect to mysql server
+                    uninitiated=False
+            
+                u1=dl.user1_lineEdit.text().toUpper()                                              #toUpper is a method of QString
                 u2=dl.user2_lineEdit.text().toUpper()
                 if not u1 in localsettings.allowed_logins:
                     raise LoginError
                 if u2!="" and not u2 in localsettings.allowed_logins:
                     raise LoginError
 
-                localsettings.successful_login=True #allow the main program to run
+                localsettings.successful_login=True                                                #allow the main program to run
                 if dl.reception_radioButton.isChecked():
                     localsettings.station="reception"
                 if u2=="":
@@ -78,6 +72,6 @@ def main(app):
     app.closeAllWindows()
 
 if __name__=="__main__":
-    print "starting Open_Molar",__version__
+    print "starting openMolar",__version__
     app=QtGui.QApplication(sys.argv)
     main(app)

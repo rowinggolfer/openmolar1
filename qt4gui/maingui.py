@@ -466,7 +466,7 @@ def modifyAppt():
             code1=dl.trt2_comboBox.currentText()
             code2=dl.trt3_comboBox.currentText()
             note=str(dl.lineEdit.text().toAscii())
-            start=ui.ptAppointmentTableWidget.item(rowno,2).text()
+            start=localsettings.humanTimetoWystime(str(ui.ptAppointmentTableWidget.item(rowno,2).text()))
             aprix=int(ui.ptAppointmentTableWidget.item(rowno,9).text()) #   rowno+1                                                                                   #aprix is a UNIQUE, iterating field in the database starting at 1,
             adate=localsettings.uk_to_sqlDate(dateText)
             print "modifying appt", adate,aprix,practix,length,code0,code1,code2,note                                             ##todo - note NO MODIFICATIONS TO THE DATABASE YET!!!
@@ -477,14 +477,12 @@ def modifyAppt():
             
             appointments.modify_pt_appt(adate,aprix,pt.serialno,practix,length,code0,code1,code2,note,"",cst)                #sucessful WRITE appointement to DATABASE
             if dateText=="TBA":
-                layout_apptTable()
                 if dl.makeNow:
                     makeApptButtonClicked()
             else:#modify_aslot_appt(adate,apptix,start,serialno,code0,code1,code2,note,flag0,flag1,flag2,flag3
-                if not appointments.modify_aslot_appt(adate,practix,start,pt.serialno,code0,code1,code2,note,cst):
+                if not appointments.modify_aslot_appt(adate,practix,start,pt.serialno,code0,code1,code2,note,cst,0,0,0):
                     advise("Error putting into dentists book",2)
-                
-            
+            layout_apptTable()
             
 def makeApptButtonClicked():
     rowno=ui.ptAppointmentTableWidget.currentRow()

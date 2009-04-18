@@ -2,8 +2,9 @@
 about='''<p>
 openMolar - open Source dental practice management software.<br />
 Copyright (C) 2009  Neil A. Wallace B.Ch.D.<br .>
-sourcecode available at <a href="http://launchpad.net/rowinggolfer">"http://launchpad.net/rowinggolfer"</a>.
-</p>'''
+sourcecode available at <a href="http://launchpad.net/rowinggolfer">"http://launchpad.net/openmolar"</a>.
+</p>
+Thanks to <a href="http://rfquerin.org>Richard Querin</a> for the wonderful icon and Logo.'''
 
 license='''<hr />
 <p>

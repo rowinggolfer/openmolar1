@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>217</width>
-    <height>258</height>
+    <width>524</width>
+    <height>316</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -18,183 +18,203 @@
   <property name="windowTitle" >
    <string>openMolar</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" colspan="3" >
-    <layout class="QHBoxLayout" name="horizontalLayout" >
-     <item>
-      <widget class="QLabel" name="label_3" >
-       <property name="layoutDirection" >
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text" >
-        <string>System Password</string>
-       </property>
-       <property name="wordWrap" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="password_lineEdit" >
-       <property name="minimumSize" >
-        <size>
-         <width>80</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>71</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maxLength" >
-        <number>10</number>
-       </property>
-       <property name="echoMode" >
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0" colspan="3" >
-    <widget class="Line" name="line" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="3" >
-    <layout class="QHBoxLayout" name="horizontalLayout_3" >
-     <item>
-      <widget class="QLabel" name="label" >
-       <property name="layoutDirection" >
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="text" >
-        <string>User 1(required)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="user1_lineEdit" >
-       <property name="maximumSize" >
-        <size>
-         <width>40</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maxLength" >
-        <number>6</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0" colspan="3" >
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
-     <item>
-      <widget class="QLabel" name="label_2" >
-       <property name="layoutDirection" >
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="text" >
-        <string>User 2 (optional)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="user2_lineEdit" >
-       <property name="maximumSize" >
-        <size>
-         <width>40</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maxLength" >
-        <number>6</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item rowspan="2" row="4" column="0" >
-    <spacer name="horizontalSpacer" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>24</width>
-       <height>51</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="1" >
-    <widget class="QRadioButton" name="surgery_radioButton" >
-     <property name="layoutDirection" >
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="text" >
-      <string>Surgery Machine</string>
-     </property>
-     <property name="checked" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item rowspan="2" row="4" column="2" >
-    <spacer name="horizontalSpacer_2" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>23</width>
-       <height>51</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="5" column="1" >
-    <widget class="QRadioButton" name="reception_radioButton" >
-     <property name="layoutDirection" >
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="text" >
-      <string>Reception Machine</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1" >
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>20</width>
-       <height>103</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="7" column="0" colspan="3" >
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-     <property name="centerButtons" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-  </layout>
+  <widget class="Line" name="line" >
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>104</y>
+     <width>199</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="surgery_radioButton" >
+   <property name="geometry" >
+    <rect>
+     <x>173</x>
+     <y>179</y>
+     <width>134</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="layoutDirection" >
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="text" >
+    <string>Surgery Machine</string>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="reception_radioButton" >
+   <property name="geometry" >
+    <rect>
+     <x>173</x>
+     <y>209</y>
+     <width>134</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="layoutDirection" >
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="text" >
+    <string>Reception Machine</string>
+   </property>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox" >
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>280</y>
+     <width>199</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons" >
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4" >
+   <property name="geometry" >
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>491</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="" >
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>71</y>
+     <width>199</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout" >
+    <item>
+     <widget class="QLabel" name="label_3" >
+      <property name="layoutDirection" >
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="text" >
+       <string>System Password</string>
+      </property>
+      <property name="wordWrap" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="password_lineEdit" >
+      <property name="minimumSize" >
+       <size>
+        <width>80</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>71</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="maxLength" >
+       <number>10</number>
+      </property>
+      <property name="echoMode" >
+       <enum>QLineEdit::Password</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="" >
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>113</y>
+     <width>199</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3" >
+    <item>
+     <widget class="QLabel" name="label" >
+      <property name="layoutDirection" >
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text" >
+       <string>User 1(required)</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="user1_lineEdit" >
+      <property name="maximumSize" >
+       <size>
+        <width>40</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="maxLength" >
+       <number>6</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="" >
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>146</y>
+     <width>199</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2" >
+    <item>
+     <widget class="QLabel" name="label_2" >
+      <property name="layoutDirection" >
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text" >
+       <string>User 2 (optional)</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="user2_lineEdit" >
+      <property name="maximumSize" >
+       <size>
+        <width>40</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="maxLength" >
+       <number>6</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections>

@@ -1,15 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 2 of the License, or
-# version 3 of the License, or (at your option) any later version. It is
-# provided for educational purposes and is distributed in the hope that
-# it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
-# the GNU General Public License for more details.
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version. See the GNU General Public License for more details.
+
 
 #I removed these... '#B', '#B,CO', '#DO', '#MO', '#MOD', '#P,CO', '+P', '+S', '-M,2'
 #and '-D,2', '-M,1', '-M,2',
@@ -96,6 +91,7 @@ frontToothCodes=( "+P", "+S", "-D,2", "-M,1", "-M,2", "AP", "AP,RR",
 "PID,CO", "PIM", "PM", "PM,GL", "PMB", "PMI", "PMID", "PV",
 "PX", "RI", "RP", "RT", "ST", "TM", "UE", "VP", )
 
+treatment_only=("EX","EX/S1","EX/S2")  #not exhaustive
 
 if __name__ == "__main__":
     print "Unique to FrontTeeth"

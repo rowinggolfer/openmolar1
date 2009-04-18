@@ -232,11 +232,6 @@ def modify_pt_appt(adate,aprix,serialno,practix,length,code0,code1="",code2="",n
     #db.close()
     return result
 
-
-
-
-
-
 def pt_appt_made(serialno,aprix,date,time,dent):
     '''modifies the apr table, finding the unscheduled version and putting scheduled data in'''
     db = connect()
@@ -281,11 +276,10 @@ def modify_aslot_appt(adate,apptix,start,serialno,code0,code1,code2,note,flag0,f
     '''this makes an appointment in the aslot table'''                         ##todo check for possible clashes from multi users
     db = connect()
     cursor = db.cursor()
-    columns='code0,code1,code2,note,flag0,flag1,flag2,flag3'
-    values='"%s","%s","%s","%s",%d,%d,%d,%d'%(adate,apptix,start,end,name,serialno,
+    changes='''code0="%s",code1="%s",code2="%s",note="%s",flag0=%d,flag1=%d,flag2=%d,flag3=%d'''%(
     code0,code1,code2,note,flag0,flag1,flag2,flag3)
-    if cursor.execute('update aslot (%s) VALUES (%s) where adate=%s and apptix=%d and start=%d and serialno=%d)'%(
-    columns,values,adate,apptix,start,serialno)):
+    
+    if cursor.execute('update aslot set %s where adate="%s" and apptix=%d and start=%d and serialno=%d'%(changes,adate,apptix,start,serialno)):
         db.commit()
         result=True
     else:
