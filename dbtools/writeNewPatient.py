@@ -11,8 +11,6 @@ from openmolar.dbtools import patient_class
 from openmolar.settings import localsettings
 
 def commit(pt):
-    attrs=pt.__dict__.keys()
-    attrs.remove("notestuple")
     sqlcond=""
 
     for attr in patient_class.patientTableAtts:
@@ -28,21 +26,17 @@ def commit(pt):
     sqlcommand= "insert into patients SET %s"%sqlcond
     db=connect()
     cursor = db.cursor()
-    try:
-        cursor.execute("select serialno from sysdata")
-        newserialno=cursor.fetchone()[0]
-    except:
-        cursor.close()
-        db.close()
-        return -1
-    if cursor.execute(sqlcommand+'serialno=%d'%(newserialno+1)) and cursor.execute('update sysdata set serialno=%d'%(newserialno+1)):
-        db.commit()
-        result=newserialno+1
-    else:
-        result=-1
+    sql1 = "update sysdata set serialno = last_insert_id(serialno + 1)"
+    sql2 = "select last_insert_id()"
+    newSerialno=-1
+    cursor.execute(sql1)
+    cursor.execute(sql2)
+    newSerialno=cursor.fetchall()[0][0]
+    cursor.execute(sqlcommand+'serialno=%d'%(newSerialno))
+    db.commit()
     cursor.close()
-    db.close()
-    return result
+    #db.close()
+    return newSerialno
 
 if __name__ == "__main__":
     global pt

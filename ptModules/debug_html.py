@@ -15,6 +15,7 @@ def toHtml(p1,p2):
     attributesDict={
     "Patient Table":patient_class.patientTableAtts,
     "Treatment Items":patient_class.currtrtmtTableAtts,
+    "User Defined Data":patient_class.userdataTableAtts
     }
     for key in attributesDict.keys():
         attribs=attributesDict[key]

@@ -59,7 +59,7 @@ def getFees():
     cursor.execute('select ix,id,descr from pfkey order by ix')
     rowHeaders = cursor.fetchall()
     cursor.close()
-    db.close()
+    #db.close()
     return (feescales,rowHeaders)
 
 def feesHtml():

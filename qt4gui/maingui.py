@@ -337,23 +337,27 @@ def clearApptButtonClicked():
         advise("No appointment selected",1)
         return
     aprix=rowno+1                                                                                   #aprix is a UNIQUE, iterating field in the database starting at 1,
-    dateText=ui.ptAppointmentTableWidget.item(rowno,0).text()
-    if dateText=="TBA" or QtCore.QDate.fromString(dateText,"dd'/'MM'/'yyyy")<QtCore.QDate.\
-    currentDate():                                                                                  #appointment is not is aslot (appt book proper) or in the past
+    dateText=str(ui.ptAppointmentTableWidget.item(rowno,0).text())
+    checkdate=localsettings.uk_to_sqlDate(dateText)
+    atime=ui.ptAppointmentTableWidget.item(rowno,2).text()
+    if atime=="":
+        appttime=None
+    else:
+        appttime=int(atime.replace(":",""))
+    if dateText=="TBA" or QtCore.QDate.fromString(dateText,"dd'/'MM'/'yyyy")<QtCore.QDate.currentDate():                                                                                  #appointment is not is aslot (appt book proper) or in the past
         result=QtGui.QMessageBox.question(MainWindow,"Confirm",
         "Confirm Delete Unscheduled or Past Appointment",\
         QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
         if result == QtGui.QMessageBox.Cancel:                                                      #dialog rejected
             return
         else:
-            if appointments.delete_appt_from_apr(pt.serialno,aprix):
+            if appointments.delete_appt_from_apr(pt.serialno,aprix,checkdate,appttime):
                 advise("Sucessfully removed appointment")
                 layout_apptTable()
             else:
                 advise("Error removing proposed appointment",2)
     else:
         dent=ui.ptAppointmentTableWidget.item(rowno,1).text()                                       #get dentists number value
-        atime=ui.ptAppointmentTableWidget.item(rowno,2).text()
         result=QtGui.QMessageBox.question(MainWindow,"Confirm",
         "Confirm Delete appointment at %s on %s  with %s"%(atime,dateText,dent),
         QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)                                             #get user confirmation
@@ -372,7 +376,7 @@ def clearApptButtonClicked():
                     if not appointments.made_appt_to_proposed(pt.serialno,aprix):
                         advise("Error removing Proposed appointment",2)
                 else:
-                    if not appointments.delete_appt_from_apr(pt.serialno,aprix):                    #??????note - only delete from the book if in the past
+                    if not appointments.delete_appt_from_apr(pt.serialno,aprix,checkdate,appttime):                    #??????note - only delete from the book if in the past
                             advise("Error removing proposed appointment",2)
             else:                                                                                   #proc has returned False!
                 advise("Error Removing from Appointment Book",2)                                    #let the user know, and go no further

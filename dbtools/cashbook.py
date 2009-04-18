@@ -36,10 +36,10 @@ def paymenttaken(sno,name,dent,csetyp,cash,cheque,debit,credit,sundries,hdp,othe
         dbOK=True
         for query in queries:
             dbOK=dbOK and cursor.execute(query)
-        cursor.close()
         if dbOK:
             db.commit()
-        db.close()
+        cursor.close()
+        #db.close()
         return dbOK
 def details(dent,startdate,enddate):
     '''returns an html set showing pt name etc...'''
@@ -87,7 +87,7 @@ def details(dent,startdate,enddate):
     retarg+='<tr><td colspan="6"></td><td><b>TOTAL</b></td><td align="right"><b>&pound; %d.%02d</b></td></tr>'%(total/100,total%100)
     retarg+='</table>'
     cursor.close()
-    db.close()
+    #db.close()
     return retarg
 
 if __name__ == "__main__":

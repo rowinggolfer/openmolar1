@@ -70,7 +70,7 @@ def formatDate(d):
     try:
         retarg= "%02d/%02d/%d"%(d.day,d.month,d.year)
     except Exception,e:
-        print "error converting date to uk format",e
+        print "uable convert date to uk format - will return ",e
         retarg="no date"
     return retarg
 def uk_to_sqlDate(d):
@@ -79,7 +79,7 @@ def uk_to_sqlDate(d):
         ds=d.split("/")
         retarg="%04d%02d%02d"%(int(ds[2]),int(ds[1]),int(ds[0]))
     except Exception,e:
-        print "error converting date",e
+        print "incorrect uk date, returning None"
         retarg=None
     return retarg
 
@@ -154,7 +154,7 @@ def initiate(debug=False):
     rows=cursor.fetchall()
     for row in rows:
         fees[row[0][:4]]=row[1]              ##this is a hack.... there are more keys in here than this :(
-    db.close()
+    #db.close()
 
     if "win" in sys.platform:
         referralfile=sys.argv[0].replace('\\main.pyw','')+"\\resources"+"\\referral_data.xml"

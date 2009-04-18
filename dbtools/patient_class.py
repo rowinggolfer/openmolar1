@@ -75,6 +75,7 @@ mouth= ['ul8','ul7','ul6','ul5','ul4','ul3','ul2','ul1','ur1','ur2','ur3','ur4',
 decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA','urA','urB','urC','urD','urE','***','***','***',
 '***','***','***','lrE','lrD','lrC','lrB','lrA','llA','llB','llC','llD','llE','***','***','***']
 
+userdataTableAtts=('data',)
 
 class patient():
     def __init__(self,sno):
@@ -101,6 +102,11 @@ class patient():
         #from prvfees
         self.estimates=()
         self.tsfees=()
+        
+        ##from userdata
+        self.data=()
+        
+        ##from userdata
 
         ####NEIL'S STUFF####
         self.perioData={}
@@ -117,58 +123,74 @@ class patient():
         self.underTreatment=False
 
         if self.serialno!=0:
-            #load stuff from the database
-            db=connect()
-            cursor = db.cursor()
-            ############################experiment
-            cursor.execute('select DATE_FORMAT(bpedate,"%s"),bpe from bpe where serialno=%d'%(localsettings.sqlDateFormat,self.serialno))
-            values = cursor.fetchall()
-            for value in values:
-                self.bpe.append(value)
-
-            #table - patients
-
-            fields=patientTableAtts
-            query=""
-            for field in fields:
-                if field in dateFields:
-                    query+='DATE_FORMAT(%s,"%s"),'%(field,localsettings.sqlDateFormat)
-                else:
-                    query+=field+","
-            query=query.strip(",")
-            cursor.execute('select %s from patients where serialno=%d'%(query,self.serialno))
-            values= cursor.fetchall()
-            i=0
-            for field in fields:
-                if values[0][i] !=None:
-                    self.__dict__[field]=values[0][i]
-                i+=1
-            
-            self.getCurrtrt(cursor)
-            self.getEsts(cursor)
-            self.getNotesTuple(cursor)
-
-            cursor.execute('select chartdate,chartdata from perio where serialno=%d'%self.serialno)
-            perioData=cursor.fetchall()
-            for data in perioData:
-                self.perioData[formatDate(data[0])]=perio.get_perioData(data[1])             #a dictionary (keys=dates) of dictionaries with keys like "ur8" and containing 7 tuples of data
-
             try:
-                cursor.execute('select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other from mednotes where serialno=%d'%self.serialno)
-                self.MH=cursor.fetchall()
-                if self.MH!=():
-                    allerg=self.MH[0][4]
-                    if len(allerg)>0 and not "med ok" in allerg.lower():
-                        self.MEDALERT=True
-            except:
-                print "patient class - error getting mednotes"
+                #load stuff from the database
+                db=connect()
+                cursor = db.cursor()
+                ############################experiment
+                cursor.execute('select DATE_FORMAT(bpedate,"%s"),bpe from bpe where serialno=%d'%(localsettings.sqlDateFormat,self.serialno))
+                values = cursor.fetchall()
+                for value in values:
+                    self.bpe.append(value)
 
+                #table - patients
 
-            cursor.execute('select DATE_FORMAT(date,"%s"), trtid, chart from daybook where serialno = %d'%(localsettings.sqlDateFormat,self.serialno))
-            self.dayBookHistory=cursor.fetchall()
+                fields=patientTableAtts
+                query=""
+                for field in fields:
+                    if field in dateFields:
+                        query+='DATE_FORMAT(%s,"%s"),'%(field,localsettings.sqlDateFormat)
+                    else:
+                        query+=field+","
+                query=query.strip(",")
+                try:
+                    cursor.execute('select %s from patients where serialno=%d'%(query,self.serialno))
+                    values= cursor.fetchall()
+                except:
+                    print "patient class - error getting data from patients table"
+                
+                i=0
+                for field in fields:
+                    if values[0][i] !=None:
+                        self.__dict__[field]=values[0][i]
+                    i+=1
+                
+                self.getCurrtrt(cursor)
+                self.getEsts(cursor)
+                self.getNotesTuple(cursor)
+                try:
+                    cursor.execute('select chartdate,chartdata from perio where serialno=%d'%self.serialno)
+                    perioData=cursor.fetchall()
+                    for data in perioData:
+                        self.perioData[formatDate(data[0])]=perio.get_perioData(data[1])             #a dictionary (keys=dates) of dictionaries with keys like "ur8" and containing 7 tuples of data
+                except:
+                    print "patient class - error getting peridata"
+                try:
+                    cursor.execute('select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other from mednotes where serialno=%d'%self.serialno)
+                    self.MH=cursor.fetchall()
+                    if self.MH!=():
+                        allerg=self.MH[0][4]
+                        if len(allerg)>0 and not "med ok" in allerg.lower():
+                            self.MEDALERT=True
+                except:
+                    print "patient class - error getting mednotes"
+                
+                try:
+                    cursor.execute('select data from userdata where serialno=%d'%self.serialno);
+                    self.data=cursor.fetchall()
+                except:
+                    print "patient class - error getting userdata"
+                    
+                cursor.execute('select DATE_FORMAT(date,"%s"), trtid, chart from daybook where serialno = %d'%(localsettings.sqlDateFormat,self.serialno))
+                self.dayBookHistory=cursor.fetchall()
 
-            cursor.close()
-            db.close()
+                cursor.close()
+                #db.close()
+
+            except Exception,e:
+                print "Exception getting patient"
+                print e
+                print
 
             self.updateChartgrid()
             self.updateFees()
@@ -182,14 +204,13 @@ class patient():
             db=connect()
             cursor=db.cursor()
       
-        cursor.execute('select  serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
+        cursor.execute('select serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         self.estimates = cursor.fetchall()
         cursor.execute('select serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         if disconnectNeeded:
             cursor.close()
-            db.close()
+            #db.close()
         self.tsfees = cursor.fetchall()
-
 
     def getCurrtrt(self,cursor=None):
         disconnectNeeded=False
@@ -216,7 +237,7 @@ class patient():
             self.underTreatment=True
         if disconnectNeeded:
             cursor.close()
-            db.close()
+            #db.close()
     def getNotesTuple(self,cursor=None):
         '''this is either called when the class is initiated (when cursor will be an active db cursor) or to refresh the notes.
         in the latter case, a new cursor needs to be initiated here.
@@ -227,7 +248,7 @@ class patient():
             cursor.execute("select lineno,line from notes where serialno=%d"%self.serialno)
             self.notestuple = cursor.fetchall()                                                     # so "notes" is a tuple like this ((0,'notes'),(1,"morenotes"),...etc...)
             cursor.close()
-            db.close()
+            #db.close()
         else:
             cursor.execute("select lineno,line from notes where serialno=%d"%self.serialno)
             self.notestuple = cursor.fetchall()                                                     # so "notes" is a tuple like this ((0,'notes'),(1,"morenotes"),...etc...)

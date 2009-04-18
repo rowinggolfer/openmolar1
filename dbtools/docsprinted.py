@@ -16,7 +16,7 @@ def previousDocs(sno):
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
-    db.close()
+    #db.close()
     return rows
 
 if __name__ == "__main__":
