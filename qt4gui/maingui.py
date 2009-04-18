@@ -117,6 +117,8 @@ def clearRecord():
             ui.moneytextBrowser.setHtml(localsettings.message)
         ui.chartsTableWidget.clear()
         ui.ptAppointmentTableWidget.clear()
+        while ui.ptAppointmentTableWidget.rowCount()>0:                                                 #delete row by row :(
+            ui.ptAppointmentTableWidget.removeRow(0)
         ui.notesEnter_textEdit.setHtml("")
         load_editpage()
         load_planpage()
@@ -316,15 +318,14 @@ def newAppt():
         code0=dl.trt1_comboBox.currentText()
         code1=dl.trt2_comboBox.currentText()
         code2=dl.trt3_comboBox.currentText()
-        note=dl.lineEdit.text()
+        note=str(dl.lineEdit.text().toAscii())
         #print practix,length,code0,code1,code2,note
 
         if pt.cset=="":
             cst=32
         else:
             cst=ord(pt.cset[0])                                                                                            ######todo - add datespec.
-        if appointments.add_pt_appt(pt.serialno,practix,length,\
-        code0,-1,code1,code2,note,"",cst):                                                 #sucessful WRITE appointement to DATABASE
+        if appointments.add_pt_appt(pt.serialno,practix,length,code0,-1,code1,code2,note,"",cst):                  #sucessful WRITE appointement to DATABASE
             layout_apptTable()
             if dl.makeNow:
                 makeApptButtonClicked()
@@ -336,7 +337,7 @@ def clearApptButtonClicked():
     if rowno==-1:
         advise("No appointment selected",1)
         return
-    aprix=rowno+1                                                                                   #aprix is a UNIQUE, iterating field in the database starting at 1,
+    aprix=int(ui.ptAppointmentTableWidget.item(rowno,9).text()) #   rowno+1                                                                                   #aprix is a UNIQUE, iterating field in the database starting at 1,
     dateText=str(ui.ptAppointmentTableWidget.item(rowno,0).text())
     checkdate=localsettings.uk_to_sqlDate(dateText)
     atime=ui.ptAppointmentTableWidget.item(rowno,2).text()
@@ -386,12 +387,17 @@ def clearApptButtonClicked():
 def modifyAppt():
     '''user is changing an appointment'''
     rowno=ui.ptAppointmentTableWidget.currentRow()
+    def makeNow():
+        dl.makeNow=True
+
     if rowno==-1:
         advise("No appointment selected",1)
     else:
         Dialog = QtGui.QDialog(MainWindow)                                                          ##todo - this code is repeated from add appointment proc
         dl = Ui_specify_appointment.Ui_Dialog()                                                     ## should bundle into a proc??
         dl.setupUi(Dialog)
+        dl.makeNow=False
+
         dents=localsettings.apptix.keys()
         for dent in dents:
             s=QtCore.QString(dent)
@@ -402,8 +408,7 @@ def modifyAppt():
             if apptType!="EXAM":
                 dl.trt2_comboBox.addItem(s)
                 dl.trt3_comboBox.addItem(s)                                                         #now get current values
-        length=int(ui.ptAppointmentTableWidget.\
-        item(rowno,3).text())
+        length=int(ui.ptAppointmentTableWidget.item(rowno,3).text())
         hours = length//60
         mins = length%60
         if hours==1:
@@ -416,7 +421,10 @@ def modifyAppt():
         lengthText=lengthText.strip(" ")
         dentist=str(ui.ptAppointmentTableWidget.item(rowno,1)\
         .text())
-        start=ui.ptAppointmentTableWidget.item(rowno,2).text()
+        dateText=str(ui.ptAppointmentTableWidget.item(rowno,0).text())
+        if dateText!="TBA":
+            for widget in (dl.apptlength_comboBox,dl.practix_comboBox,dl.scheduleNow_pushButton):
+                widget.setEnabled(False)
         trt1=ui.ptAppointmentTableWidget.item(rowno,4).text()
         trt2=ui.ptAppointmentTableWidget.item(rowno,5).text()
         trt3=ui.ptAppointmentTableWidget.item(rowno,6).text()
@@ -435,19 +443,21 @@ def modifyAppt():
         pos=dl.trt3_comboBox.findText(trt3)
         dl.trt3_comboBox.setCurrentIndex(pos)
         dl.lineEdit.setText(memo)
-        QtCore.QObject.connect(dl.scheduleNow_pushButton,QtCore.\
-        SIGNAL("clicked()"), makeApptButtonClicked)                                                 ##todo this doesn't work as wanted
+        dl.apptlength_comboBox.setCurrentIndex(2)
+        QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.\
+        SIGNAL("currentIndexChanged(int)"),oddApptLength)                                               #add a signal to catch the "other" appointment length option
+        QtCore.QObject.connect(dl.scheduleNow_pushButton,QtCore.SIGNAL("clicked()"),
+        makeNow)                                                                          ##todo - this doesn't work as desired
         if Dialog.exec_():
-            print "accepted"
             practixText=str(dl.practix_comboBox.currentText())
             practix=localsettings.apptix[practixText]
-            lengthText=str(dl.apptlength_comboBox.currentText())
+            lengthText=str(dl.apptlength_comboBox.currentText())                                        #appointment length
             if "hour" in lengthText and not "hours " in lengthText:
                 lengthText=lengthText.replace("hour","hours ")
             if "hour" in lengthText:
                 length=60*int(lengthText[:lengthText.index("hour")])
-                lengthText=lengthText[lengthText.index\
-                (" ",lengthText.index("hour")):]
+                lengthText=lengthText[lengthText.index(" ",lengthText.\
+                index("hour")):]
             else:
                 length=0
             if "minute" in lengthText:
@@ -456,7 +466,26 @@ def modifyAppt():
             code1=dl.trt2_comboBox.currentText()
             code2=dl.trt3_comboBox.currentText()
             note=str(dl.lineEdit.text().toAscii())
-            print practix,length,code0,code1,code2,note                                             ##todo - note NO MODIFICATIONS TO THE DATABASE YET!!!
+            start=ui.ptAppointmentTableWidget.item(rowno,2).text()
+            aprix=int(ui.ptAppointmentTableWidget.item(rowno,9).text()) #   rowno+1                                                                                   #aprix is a UNIQUE, iterating field in the database starting at 1,
+            adate=localsettings.uk_to_sqlDate(dateText)
+            print "modifying appt", adate,aprix,practix,length,code0,code1,code2,note                                             ##todo - note NO MODIFICATIONS TO THE DATABASE YET!!!
+            if pt.cset=="":
+                cst=32
+            else:
+                cst=ord(pt.cset[0])                                                                                            ######todo - add datespec.
+            
+            appointments.modify_pt_appt(adate,aprix,pt.serialno,practix,length,code0,code1,code2,note,"",cst)                #sucessful WRITE appointement to DATABASE
+            if dateText=="TBA":
+                layout_apptTable()
+                if dl.makeNow:
+                    makeApptButtonClicked()
+            else:#modify_aslot_appt(adate,apptix,start,serialno,code0,code1,code2,note,flag0,flag1,flag2,flag3
+                if not appointments.modify_aslot_appt(adate,practix,start,pt.serialno,code0,code1,code2,note,cst):
+                    advise("Error putting into dentists book",2)
+                
+            
+            
 def makeApptButtonClicked():
     rowno=ui.ptAppointmentTableWidget.currentRow()
     if rowno==-1:
@@ -555,6 +584,7 @@ def makeAppt(arg):                                                              
     trt2=ui.ptAppointmentTableWidget.item(rowno,5).text()
     trt3=ui.ptAppointmentTableWidget.item(rowno,6).text()
     memo=str(ui.ptAppointmentTableWidget.item(rowno,7).text().toAscii())
+    aprix=int(ui.ptAppointmentTableWidget.item(rowno,9).text()) #   rowno+1                        #aprix is a UNIQUE, iterating field in the database starting at 1,
     caldate=ui.apptOV_calendarWidget.selectedDate()
     appointment_made=False
     dayno=caldate.dayOfWeek()                                                                       #find out which day has been chosen
@@ -595,7 +625,7 @@ def makeAppt(arg):                                                              
         if appointments.make_appt(
             selecteddate.toPyDate(),localsettings.apptix[selectedDent],selectedtime,endtime,
             name,pt.serialno,trt1,trt2,trt3,memo,1,cst,0,0):                            ##todo flag0,flag1,flag2,flag3): these will be different for family and double
-            if appointments.pt_appt_made(pt.serialno,rowno+1,selecteddate.toPyDate(),selectedtime,\
+            if appointments.pt_appt_made(pt.serialno,aprix,selecteddate.toPyDate(),selectedtime,\
             localsettings.apptix[selectedDent]):                                                    #sucess so....
                 layout_apptTable()                                                                  #now update the patient apr table
                 result=QtGui.QMessageBox.question(MainWindow,"Confirm","Print Appointment Card?",\
@@ -658,7 +688,7 @@ def layout_apptTable():
         ui.ptAppointmentTableWidget.removeRow(0)
     ui.ptAppointmentTableWidget.setSortingEnabled(False)
     #ui.ptAppointmentTableWidget.verticalHeader().hide()
-    headers=["Date","Pract..","Time","Length","Treat 1","Treat 2","Treat 3","MEMO","date spec"]
+    headers=["Date","Pract..","Time","Length","Treat 1","Treat 2","Treat 3","MEMO","date spec","orderAdded"]
     ui.ptAppointmentTableWidget.setColumnCount(len(headers))
     ui.ptAppointmentTableWidget.setHorizontalHeaderLabels(headers)
     colWidth=(ui.ptAppointmentTableWidget.width()-60)/len(headers)                                 #the 20 is the width of the vertical scrollbar
@@ -698,6 +728,7 @@ def layout_apptTable():
         ui.ptAppointmentTableWidget.setItem(rowno,6,QtGui.QTableWidgetItem(trt3))
         ui.ptAppointmentTableWidget.setItem(rowno,7,QtGui.QTableWidgetItem(memo))
         ui.ptAppointmentTableWidget.setItem(rowno,8,QtGui.QTableWidgetItem(datespec))
+        ui.ptAppointmentTableWidget.setItem(rowno,9,QtGui.QTableWidgetItem(str(row[1])))
     ui.ptAppointmentTableWidget.setCurrentCell(selectedrow,0)
     ptApptTableNav()
 def apptTicker():
@@ -910,6 +941,7 @@ def layout_apptOV():
 def layout_appointments():
     '''this populates the appointment book widgets (on maintab, pageindex 1) '''
     global appointmentData
+    '''setAppointment(self,start,finish,name,flag,cset="",sno=0,trt1="",trt2="",trt3="",memo="")'''
     '''ui.apptBookWidget.setAppointment("0820","0900","NAME","FILL","SP","IMPS","Memo")'''
     advise("Refreshing appointments")
     for book in ui.apptBookWidgets:
@@ -945,7 +977,7 @@ def layout_appointments():
         for app in apps:
             dent=app[1]                                                                                 #his will be a number
             book=ui.apptBookWidgets[todaysDents.index(dent)]
-            book.setAppointment(str(app[2]),str(app[3]),app[4],app[5],app[6],app[7],app[8],app[9])
+            book.setAppointment(str(app[2]),str(app[3]),app[4],app[5],app[6],app[7],app[8],app[9],app[10],chr(app[11]))
     else:
         advise("all off today")
     triangles()
@@ -965,9 +997,10 @@ def appointment_clicked(list_of_snos):
 def findApptButtonClicked():
     r=ui.ptAppointmentTableWidget.currentRow()
     d=QtCore.QDate.fromString(ui.ptAppointmentTableWidget.item(r,0).text(),"dd'/'MM'/'yyyy")
+    QtCore.QObject.disconnect(ui.main_tabWidget,QtCore.SIGNAL("currentChanged(int)"),handle_mainTab)
     ui.appointmentCalendarWidget.setSelectedDate(d)
     ui.main_tabWidget.setCurrentIndex(1)
-
+    QtCore.QObject.connect(ui.main_tabWidget,QtCore.SIGNAL("currentChanged(int)"),handle_mainTab)
 def docsPrinted():
     ui.previousCorrespondence_listWidget.clear()
     docs=docsprinted.previousDocs(pt.serialno)

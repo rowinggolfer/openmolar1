@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>7</number>
+              <number>3</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>597</width>
+                    <width>602</width>
                     <height>503</height>
                    </rect>
                   </property>
@@ -1375,7 +1375,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>597</width>
+                    <width>602</width>
                     <height>443</height>
                    </rect>
                   </property>
@@ -1686,7 +1686,7 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>0</y>
+                    <y>-157</y>
                     <width>607</width>
                     <height>493</height>
                    </rect>
@@ -1940,38 +1940,6 @@
                          </widget>
                         </item>
                         <item>
-                         <widget class="QPushButton" name="modifyAppt_pushButton" >
-                          <property name="enabled" >
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>28</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Modify</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="clearAppt_pushButton" >
-                          <property name="enabled" >
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>28</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Clear/Cancel</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
                          <widget class="QPushButton" name="makeAppt_pushButton" >
                           <property name="enabled" >
                            <bool>false</bool>
@@ -2004,6 +1972,22 @@
                          </widget>
                         </item>
                         <item>
+                         <widget class="QPushButton" name="clearAppt_pushButton" >
+                          <property name="enabled" >
+                           <bool>false</bool>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>16777215</width>
+                            <height>28</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Clear/Cancel</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
                          <widget class="QPushButton" name="printAppt_pushButton" >
                           <property name="enabled" >
                            <bool>false</bool>
@@ -2016,6 +2000,22 @@
                           </property>
                           <property name="text" >
                            <string>Print Card</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="modifyAppt_pushButton" >
+                          <property name="enabled" >
+                           <bool>false</bool>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>16777215</width>
+                            <height>28</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Change Memo</string>
                           </property>
                          </widget>
                         </item>
@@ -2044,7 +2044,7 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>-63</y>
+                    <y>0</y>
                     <width>664</width>
                     <height>373</height>
                    </rect>
@@ -2318,8 +2318,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>617</width>
-                    <height>330</height>
+                    <width>622</width>
+                    <height>302</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2498,7 +2498,7 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>-72</y>
+                    <y>0</y>
                     <width>201</width>
                     <height>382</height>
                    </rect>
@@ -2719,7 +2719,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>601</width>
+                    <width>606</width>
                     <height>392</height>
                    </rect>
                   </property>
@@ -2843,7 +2843,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>457</width>
+                        <width>462</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3064,8 +3064,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>200</width>
-                <height>391</height>
+                <width>133</width>
+                <height>250</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3082,8 +3082,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>201</width>
-                <height>391</height>
+                <width>132</width>
+                <height>250</height>
                </rect>
               </property>
              </widget>
@@ -3099,8 +3099,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>200</width>
-                <height>391</height>
+                <width>133</width>
+                <height>250</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3297,7 +3297,7 @@
              <x>0</x>
              <y>0</y>
              <width>167</width>
-             <height>57</height>
+             <height>50</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3614,7 +3614,7 @@
                <x>0</x>
                <y>0</y>
                <width>167</width>
-               <height>59</height>
+               <height>47</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -4435,8 +4435,6 @@
   <tabstop>printAccount_pushButton</tabstop>
   <tabstop>takePayment_pushButton</tabstop>
   <tabstop>newAppt_pushButton</tabstop>
-  <tabstop>modifyAppt_pushButton</tabstop>
-  <tabstop>clearAppt_pushButton</tabstop>
   <tabstop>makeAppt_pushButton</tabstop>
   <tabstop>findAppt_pushButton</tabstop>
   <tabstop>printAppt_pushButton</tabstop>

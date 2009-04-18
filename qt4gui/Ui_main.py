@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/main.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Fri Apr 17 00:20:49 2009
+# Created: Sat Apr 18 13:41:17 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -685,7 +685,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 643, 493))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, -157, 607, 493))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.gridLayout_16 = QtGui.QGridLayout(self.scrollAreaWidgetContents_5)
         self.gridLayout_16.setObjectName("gridLayout_16")
@@ -786,16 +786,6 @@ class Ui_MainWindow(object):
         self.newAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.newAppt_pushButton.setObjectName("newAppt_pushButton")
         self.verticalLayout_10.addWidget(self.newAppt_pushButton)
-        self.modifyAppt_pushButton = QtGui.QPushButton(self.groupBox)
-        self.modifyAppt_pushButton.setEnabled(False)
-        self.modifyAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 28))
-        self.modifyAppt_pushButton.setObjectName("modifyAppt_pushButton")
-        self.verticalLayout_10.addWidget(self.modifyAppt_pushButton)
-        self.clearAppt_pushButton = QtGui.QPushButton(self.groupBox)
-        self.clearAppt_pushButton.setEnabled(False)
-        self.clearAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 28))
-        self.clearAppt_pushButton.setObjectName("clearAppt_pushButton")
-        self.verticalLayout_10.addWidget(self.clearAppt_pushButton)
         self.makeAppt_pushButton = QtGui.QPushButton(self.groupBox)
         self.makeAppt_pushButton.setEnabled(False)
         self.makeAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
@@ -806,11 +796,21 @@ class Ui_MainWindow(object):
         self.findAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.findAppt_pushButton.setObjectName("findAppt_pushButton")
         self.verticalLayout_10.addWidget(self.findAppt_pushButton)
+        self.clearAppt_pushButton = QtGui.QPushButton(self.groupBox)
+        self.clearAppt_pushButton.setEnabled(False)
+        self.clearAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 28))
+        self.clearAppt_pushButton.setObjectName("clearAppt_pushButton")
+        self.verticalLayout_10.addWidget(self.clearAppt_pushButton)
         self.printAppt_pushButton = QtGui.QPushButton(self.groupBox)
         self.printAppt_pushButton.setEnabled(False)
         self.printAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.printAppt_pushButton.setObjectName("printAppt_pushButton")
         self.verticalLayout_10.addWidget(self.printAppt_pushButton)
+        self.modifyAppt_pushButton = QtGui.QPushButton(self.groupBox)
+        self.modifyAppt_pushButton.setEnabled(False)
+        self.modifyAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 28))
+        self.modifyAppt_pushButton.setObjectName("modifyAppt_pushButton")
+        self.verticalLayout_10.addWidget(self.modifyAppt_pushButton)
         self.horizontalLayout_17.addLayout(self.verticalLayout_10)
         self.gridLayout_16.addWidget(self.groupBox, 2, 0, 1, 4)
         self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_5)
@@ -1855,7 +1855,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.main_tabWidget.setCurrentIndex(0)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(3)
         self.contract_tabWidget.setCurrentIndex(0)
         self.stackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -1894,9 +1894,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.moneytextBrowser, self.printAccount_pushButton)
         MainWindow.setTabOrder(self.printAccount_pushButton, self.takePayment_pushButton)
         MainWindow.setTabOrder(self.takePayment_pushButton, self.newAppt_pushButton)
-        MainWindow.setTabOrder(self.newAppt_pushButton, self.modifyAppt_pushButton)
-        MainWindow.setTabOrder(self.modifyAppt_pushButton, self.clearAppt_pushButton)
-        MainWindow.setTabOrder(self.clearAppt_pushButton, self.makeAppt_pushButton)
+        MainWindow.setTabOrder(self.newAppt_pushButton, self.makeAppt_pushButton)
         MainWindow.setTabOrder(self.makeAppt_pushButton, self.findAppt_pushButton)
         MainWindow.setTabOrder(self.findAppt_pushButton, self.printAppt_pushButton)
         MainWindow.setTabOrder(self.printAppt_pushButton, self.notesMinimumVerbosity_radioButton)
@@ -2111,11 +2109,11 @@ class Ui_MainWindow(object):
         self.takePayment_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Take &Payment", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Appointments", None, QtGui.QApplication.UnicodeUTF8))
         self.newAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "&New", None, QtGui.QApplication.UnicodeUTF8))
-        self.modifyAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Modify", None, QtGui.QApplication.UnicodeUTF8))
-        self.clearAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Clear/Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.makeAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Schedule", None, QtGui.QApplication.UnicodeUTF8))
         self.findAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Find in Book", None, QtGui.QApplication.UnicodeUTF8))
+        self.clearAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Clear/Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.printAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Print Card", None, QtGui.QApplication.UnicodeUTF8))
+        self.modifyAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Change Memo", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), QtGui.QApplication.translate("MainWindow", "Reception", None, QtGui.QApplication.UnicodeUTF8))
         self.bpe_groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "BPE", None, QtGui.QApplication.UnicodeUTF8))
         self.newBPE_pushButton.setText(QtGui.QApplication.translate("MainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))

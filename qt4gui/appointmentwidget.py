@@ -12,6 +12,9 @@ from openmolar.settings import localsettings
 BGCOLOR=QtCore.Qt.white
 LINECOLOR=QtGui.QColor("#dddddd")
 APPTCOLORS={
+    "P":QtGui.QColor("#ffff99"),
+    "N":QtGui.QColor("#99ffff"),
+    "I":QtGui.QColor("#ff99ff"),    
     "BUSY":QtGui.QColor("#adb3ff"),
     "LUNCH":QtGui.QColor("#fffaad"),
     "FREE":QtCore.Qt.transparent,
@@ -47,6 +50,7 @@ class appointmentWidget(QtGui.QWidget):
         self.dentist="DENTIST"
         self.selected=(0,0)  #hmmmm
         self.setMouseTracking(True)
+        self.duplicateNo=-1 #use this for serialnos =0
     def sizeHint(self):
         return QtCore.QSize(180, 800)
     def minimumSizeHint(self):
@@ -65,21 +69,23 @@ class appointmentWidget(QtGui.QWidget):
         self.doubleAppts=[]
         self.rows={}
 
-    def setAppointment(self,start,finish,name,sno,trt1,trt2="",trt3="",memo=""):
+    def setAppointment(self,start,finish,name,sno=0,trt1="",trt2="",trt3="",memo="",flag=0,cset=0):
         '''adds an appointment to the widget dictionary of appointments
         typical useage is instance.setAppointment("0820","0900","NAME","serialno","trt1",
         "trt2","trt3","Memo")NOTE - this also appts to the widgets dictionary which has
         row number as key, used for signals when appts are clicked
         '''
+        '''('17/04/2009', 4, 830, 845, 'HAAS D', 10203L, 'EXAM', '', '', '', 1, 80, 0, 0)'''
         startcell=self.getCell_from_time(start)
         endcell=self.getCell_from_time(finish)
         if endcell==startcell:                                                                      #double and family appointments!!
             endcell+=1
-            self.doubleAppts.append((startcell,endcell,start,finish,name,sno,trt1,trt2,trt3,memo))
+            self.doubleAppts.append((startcell,endcell,start,finish,name,sno,trt1,trt2,trt3,memo,flag,cset))
         else:
-            self.appts.append((startcell,endcell,start,finish,name,sno,trt1,trt2,trt3,memo))
+            self.appts.append((startcell,endcell,start,finish,name,sno,trt1,trt2,trt3,memo,flag,cset))
         if sno==0:
-            return
+            sno=self.duplicateNo
+            self.duplicateNo-=1
         for row in range(startcell,endcell):
             if self.rows.has_key(row):
                 self.rows[row].append(sno)
@@ -160,8 +166,7 @@ class appointmentWidget(QtGui.QWidget):
                 self.selected=(self.getPrev(row),self.getNext(row))
                 self.update()
             QtGui.QToolTip.showText(event.globalPos(),"")
-
-
+        
     def mousePressEvent(self, event):
         '''catch the mouse press event - and if you have clicked on an appointment, emit a signal
         the signal has a LIST as argument -
@@ -170,17 +175,23 @@ class appointmentWidget(QtGui.QWidget):
         yOffset = self.height() / self.slotNo
         row=event.y()//yOffset
         if self.rows.has_key(row):
-            if event.button()==1: #left click
-                selectedPatients=tuple(self.rows[row])
-                self.emit(QtCore.SIGNAL("PySig"),selectedPatients)
-            else:
-                QtGui.QMessageBox.information(self,"Info","You've right clicked on an appointment<br />options to follow - watch this space!<br />%s %s"\
-                %(self.selected))
+            selectedPatients=self.rows[row]
+            if event.button()==1:
+                if selectedPatients[0]>0:  #ignore lunch and emergencies
+                    self.emit(QtCore.SIGNAL("PySig"),tuple(selectedPatients))
+            if event.button()==2:
+                s=self.humanTime(int(self.startTime+self.selected[0]*self.slotLength))
+                len=(self.selected[1]-self.selected[0])*self.slotLength
+                if selectedPatients[0]>0:  #ignore lunch and emergencies
+                    QtGui.QMessageBox.information(self,"Info",'''Clear appointment?<br />
+                    Start %s<br />Length %d mins<br />Dentist %s'''%(s,len,self.dentist))
+                else:
+                    QtGui.QMessageBox.information(self,"Info","Clear Lunch/Emergency slot?")
         else:
             s=self.humanTime(int(self.startTime+self.selected[0]*self.slotLength))
-            len=self.selected[1]*self.slotLength
-            QtGui.QMessageBox.information(self,"Info","You've clicked on an empty slot<br />options to follow - watch this space!<br />%s %d %s"\
-            %(s,len,self.dentist))
+            len=(self.selected[1]-self.selected[0])*self.slotLength
+            QtGui.QMessageBox.information(self,"Info",'''You've clicked on an empty slot<br />options to follow - watch this space!<br />
+            Start %s<br />Length %d mins<br />Dentist %s'''%(s,len,self.dentist))
     def leaveEvent(self,event):
         self.selected=[-1,-1]
         self.update()
@@ -225,11 +236,11 @@ class appointmentWidget(QtGui.QWidget):
         option.setWrapMode(QtGui.QTextOption.WordWrap)
 
         for appt in self.appts:
-            (startcell,endcell,start,fin,name,sno, trt1,trt2,trt3,memo)=appt
+            (startcell,endcell,start,fin,name,sno, trt1,trt2,trt3,memo,flag,cset)=appt
             rect=QtCore.QRect(timeWidth,startcell*slotHeight,self.width()-timeWidth,\
             (endcell-startcell)*slotHeight)
-            if APPTCOLORS.has_key(trt1):
-                painter.setBrush(APPTCOLORS[trt1])
+            if APPTCOLORS.has_key(cset):
+                painter.setBrush(APPTCOLORS[cset])
             elif APPTCOLORS.has_key(name.upper()):
                 painter.setBrush(APPTCOLORS[name.upper()])
             else:
@@ -241,7 +252,7 @@ class appointmentWidget(QtGui.QWidget):
             #painter.drawText(rect.adjusted(fm.width("A very long name "),0,0,0),\
             #QtCore.Qt.AlignLeft,(QtCore.QString("%s %s %s %s"%(trt1,trt2,trt3,memo))))
         for appt in self.doubleAppts:
-            (startcell,endcell,start,fin,name,sno, trt1,trt2,trt3,memo)=appt
+            (startcell,endcell,start,fin,name,sno, trt1,trt2,trt3,memo,flag,cset)=appt
             rect=QtCore.QRect(self.width()-timeWidth,startcell*slotHeight,self.width()-\
             timeWidth,slotHeight)
             painter.setBrush(APPTCOLORS["DOUBLE"])
@@ -281,18 +292,25 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate(False)
     app = QtGui.QApplication(sys.argv)
-    form = appointmentWidget("0800","1200",5,3)                                                     #initiate a book starttime 08:00 endtime 10:00 five minute slots, text every 3 slots
+    form = appointmentWidget("0800","1700",5,3)                                                     #initiate a book starttime 08:00 endtime 10:00 five minute slots, text every 3 slots
     print "created a calendar with start %d minutes past midnight - end %d minutes past midnight - %d slots"%(form.startTime,form.endTime,form.slotNo)
     form.setCurrentTime("945")
     form.clearAppts()
-    form.setAppointment("0820","0820","WALLACE N","3266","DOUBLE","","","Good Patient")
-    form.setAppointment("0820","0900","WALLACE I","3245","FILL","SP","","Good Patient")
-    form.setAppointment("0915","0930","JOHNSTONE J","3672","EXAM","","","")
+    form.setAppointment("0820","0820","WALLACE N",3266,"DOUBLE","","","Good Patient",0,"P")
+    form.setAppointment("0820","0900","WALLACE I",36,"FILL","SP","","Good Patient",0,"N")
+    form.setAppointment("0915","0930","JOHNSTONE J",3673,"EXAM","","","",0,"P")
+    form.setAppointment("1000","1005","turell J",3674,"EXAM","","","",0,"I")
+    form.setAppointment("1430","1500","JOHN J",3675,"EXAM","","","",0,"P")
+    form.setAppointment("1600","1610","JOHNSTONE T",3676,"EXAM","","","",0,"P")
+    form.setAppointment("1300","1400","LUNCH",0)
     QtCore.QObject.connect(form,QtCore.SIGNAL("PySig"),clicktest)
 
-    form.setEndTime(1900)
+    form.setEndTime(1700)
     form.update()
-
+    rowlist=form.rows.keys()
+    rowlist.sort()
+    for row in rowlist:
+        print row,form.rows[row]
     #print "attributes - ",dir(form)
     form.show()
 

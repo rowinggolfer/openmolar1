@@ -181,7 +181,7 @@ def get_pts_appts(sno):
     db = connect()
     cursor = db.cursor()                                                       
     cursor.execute('''SELECT serialno,aprix,practix,code0,code1,code2,note,DATE_FORMAT(adate,"%s"),atime,length,flag0,flag1,flag2,flag3,flag4,datespec
-    FROM apr WHERE serialno=%d ORDER BY aprix'''%(localsettings.sqlDateFormat,sno))   #SQL QUERY
+    FROM apr WHERE serialno=%d ORDER BY adate'''%(localsettings.sqlDateFormat,sno))   #SQL QUERY
     data= cursor.fetchall()                                                    
     cursor.close()
     #db.close()
@@ -189,7 +189,7 @@ def get_pts_appts(sno):
 
 def add_pt_appt(serialno,practix,length,code0,aprix=-1,code1="",code2="",note="",datespec="",flag1=80,\
     flag0=1,flag2=0, flag3=0,flag4=0):                                         #that's a LOT of arguments!!!
-    '''modifies the apr table by adding/inserting an appt'''
+    '''modifies the apr table by adding an appt'''
     db = connect()
     cursor = db.cursor()
     if aprix==-1:                                                              #this means put the appointment at the end
@@ -212,6 +212,30 @@ def add_pt_appt(serialno,practix,length,code0,aprix=-1,code1="",code2="",note=""
     cursor.close()
     #db.close()
     return result
+
+def modify_pt_appt(adate,aprix,serialno,practix,length,code0,code1="",code2="",note="",datespec="",flag1=80,\
+    flag0=1,flag2=0, flag3=0,flag4=0):                                         #that's a LOT of arguments!!!
+    '''modifies the apr table by updating an existing appt'''
+    db = connect()
+    cursor = db.cursor()
+    changes='practix=%d,code0="%s",code1="%s",code2="%s",note="%s",length=%d,flag0=%d,flag1=%d,flag2=%d,flag3=%d,flag4=%d,datespec="%s"'%(
+    practix,code0,code1,code2,note,length,flag0,flag1,flag2,flag3,flag4,datespec)
+        
+    query='update apr set %s where serialno=%d and aprix=%d'%(changes,serialno,aprix)
+    print query
+    if cursor.execute(query):                                                        #SQL QUERY
+        db.commit()
+        result=True
+    else:
+        result=False                                                           #if something wene wrong, return False
+    cursor.close()
+    #db.close()
+    return result
+
+
+
+
+
 
 def pt_appt_made(serialno,aprix,date,time,dent):
     '''modifies the apr table, finding the unscheduled version and putting scheduled data in'''
@@ -253,6 +277,24 @@ def make_appt(adate,apptix,start,end,name,serialno,code0,code1,code2,note,flag0,
     cursor.close()
     #db.close()
     return result
+def modify_aslot_appt(adate,apptix,start,serialno,code0,code1,code2,note,flag0,flag1,flag2,flag3):
+    '''this makes an appointment in the aslot table'''                         ##todo check for possible clashes from multi users
+    db = connect()
+    cursor = db.cursor()
+    columns='code0,code1,code2,note,flag0,flag1,flag2,flag3'
+    values='"%s","%s","%s","%s",%d,%d,%d,%d'%(adate,apptix,start,end,name,serialno,
+    code0,code1,code2,note,flag0,flag1,flag2,flag3)
+    if cursor.execute('update aslot (%s) VALUES (%s) where adate=%s and apptix=%d and start=%d and serialno=%d)'%(
+    columns,values,adate,apptix,start,serialno)):
+        db.commit()
+        result=True
+    else:
+        result=False
+    cursor.close()
+    #db.close()
+    return result
+
+
 def delete_appt_from_apr(serialno,aprix,adate,atime):
     '''this deletes an appointment from the apr table'''                       ##todo - I don't like this code.. one smart SQL query could do the lot?
     try:

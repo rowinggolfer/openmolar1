@@ -6,13 +6,13 @@
     <x>0</x>
     <y>0</y>
     <width>593</width>
-    <height>351</height>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Enter an appointment</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4" >
+  <layout class="QGridLayout" name="gridLayout_2" >
    <item row="0" column="0" >
     <spacer name="horizontalSpacer_3" >
      <property name="orientation" >
@@ -138,56 +138,42 @@
        </item>
       </widget>
      </item>
+     <item row="2" column="0" colspan="2" >
+      <widget class="QCheckBox" name="combinedApptcheckBox" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="layoutDirection" >
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text" >
+        <string>Combined Appointment With Hygenist?</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="0" column="2" >
-    <layout class="QGridLayout" name="gridLayout_2" >
-     <item rowspan="2" row="0" column="0" colspan="2" >
-      <widget class="QLabel" name="label_7" >
-       <property name="text" >
-        <string>Combined Appointment with Hygenist</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="wordWrap" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QCheckBox" name="combinedApptcheckBox" >
-       <property name="layoutDirection" >
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text" >
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="3" >
     <spacer name="horizontalSpacer_2" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeHint" stdset="0" >
       <size>
-       <width>55</width>
+       <width>152</width>
        <height>20</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="1" column="0" colspan="4" >
+   <item row="1" column="0" colspan="3" >
     <widget class="Line" name="line" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="4" >
+   <item row="2" column="0" colspan="3" >
     <layout class="QGridLayout" name="gridLayout" >
      <item row="0" column="0" >
       <widget class="QLabel" name="label_3" >
@@ -288,14 +274,14 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0" colspan="4" >
+   <item row="3" column="0" colspan="3" >
     <widget class="Line" name="line_2" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="4" >
+   <item row="4" column="0" colspan="3" >
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
       <widget class="QLabel" name="label_6" >
@@ -323,7 +309,7 @@
        </property>
        <property name="maximumSize" >
         <size>
-         <width>181</width>
+         <width>300</width>
          <height>16777215</height>
         </size>
        </property>
@@ -334,14 +320,14 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="0" colspan="4" >
+   <item row="5" column="0" colspan="3" >
     <widget class="Line" name="line_3" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="4" >
+   <item row="6" column="0" colspan="3" >
     <layout class="QHBoxLayout" name="horizontalLayout_2" >
      <item>
       <widget class="QPushButton" name="scheduleNow_pushButton" >
