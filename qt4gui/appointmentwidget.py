@@ -8,24 +8,12 @@
 from __future__ import division
 from PyQt4 import QtGui,QtCore
 from openmolar.settings import localsettings
+from openmolar.qt4gui import colours
 
-BGCOLOR=QtCore.Qt.white
-LINECOLOR=QtGui.QColor("#dddddd")
-APPTCOLORS={
-    "P":QtGui.QColor("#ffff99"),
-    "N":QtGui.QColor("#99ffff"),
-    "I":QtGui.QColor("#ff99ff"),    
-    "BUSY":QtGui.QColor("#adb3ff"),
-    "LUNCH":QtGui.QColor("#fffaad"),
-    "FREE":QtCore.Qt.transparent,
-    "EMERGENCY":QtGui.QColor("#ffaddc"),
-    "default":QtGui.QColor("#adb3ff"),
-    "//BLOCKED//":QtCore.Qt.transparent,
-    "//Blocked//":QtCore.Qt.transparent,
-    "blocked":QtCore.Qt.transparent,
-    "DOUBLE":QtCore.Qt.blue
-    }
-TRANSPARENT=QtCore.Qt.transparent
+BGCOLOR=colours.APPT_Background
+LINECOLOR=colours.APPT_LINECOLOUR
+APPTCOLORS=colours.APPTCOLORS
+TRANSPARENT=colours.TRANSPARENT
 
 class appointmentWidget(QtGui.QWidget):
     '''a custom widget to for a dental appointment book'''
