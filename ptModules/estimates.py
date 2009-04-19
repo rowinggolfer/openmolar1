@@ -17,7 +17,7 @@ def toBriefHtml(currEst):
     for row in currEst[0]:
         retarg+='<tr><td>%s</td><td>%s</td><td align="right">&pound;%d.%02d</td></tr>'%(row[0],row[1],row[2]/100,row[2]%100)
     retarg+='<tr><td></td><td><b>TOTAL<b></td><td align="right"><b>&pound;%d.%02d</b></td></tr>'%(total/100,total%100)
-    retarg+='</table></body></html>'
+    retarg+='</table></body></htsml>'
     return retarg
 
 def getCurrentEstimate(rows,tsrows):
@@ -27,18 +27,35 @@ def getCurrentEstimate(rows,tsrows):
     total=0
     retarg=[]
     for d in dec:
-        retarg.append((d[0],d[1],d[2]))
+        number_of_items=d[0]
+        mult=""
+        if int(number_of_items)>1:
+            mult="s"
+        item=d[1].replace("*",mult)
+        if "^" in item:
+            item=item.replace("^","")
+            number_of_items=""
+            
+        retarg.append((number_of_items,item,d[2]))  #(d[0],d[1],d[2]))
         total+=d[2]
     dec=()
     if tsrows!=():
         dec=decodeTS(tsrows[0][4])
     for d in dec:
-        retarg.append((d[0],d[1],d[2]))
+        number_of_items=d[0]
+        mult=""
+        if int(number_of_items)>1:
+            mult="s"
+        item=d[1].replace("*",mult)
+        if "^" in item:
+            item=item.replace("^","")
+            number_of_items=""
+        retarg.append((number_of_items,item,d[2]))  #(d[0],d[1],d[2]))
         total+=d[2]
     
     return (retarg,total)
 
-def toHtml(estrows,tsrows):
+def toHtml(estrows,tsrows):  ##########################not really used anymore    18.04.
     retarg="<h3>ESTIMATE</h3>"
     retarg+='<table width="100%" border="1">'
     headers=("Serialno","Course no","Dent","esta","acta","estb","actb")  #,"Decrypted data")
@@ -90,19 +107,11 @@ def decode(blob):
         cost=struct.unpack_from('i',blob,i+4)[0]
         retlist.append((number,item_text,cost))
     return retlist
-def decode(blob):
-    '''estimates are blocks of 8 bytes - format ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')'''
-    retlist=[]
-    for i in range(0,len(blob),8):                                              
-        number=struct.unpack_from('b',blob,i)[0]                                ## this could be a lot tidier.... struct.unpack("bHi",blob) returns a tuple (number,item,cost)
-        item=struct.unpack_from('H',blob,i+2)[0]
-        try:
-            item_text=localsettings.fees['%04d'%item]
-        except:
-            item_text="unknown item! - '%s'"%item
-        cost=struct.unpack_from('i',blob,i+4)[0]
-        retlist.append((number,item_text,cost))
-    return retlist
+
+def encode(number,item,fee):
+    return struct.pack("bHi",number,item,fee)
+    
+
 def decodeTS(blob):
     '''estimates are blocks of 8 bytes - format ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')'''
     retlist=[]
@@ -131,5 +140,9 @@ if __name__ == "__main__":
     pt=patient_class.patient(serialno)
     #print pt.estimates
     #print toHtml(pt.estimates,pt.tsfees)
-    #print toBriefHtml(pt.currEstimate)
-    print "stop"
+    
+    print toBriefHtml(pt.currEstimate)
+    print
+    est=((1,101,1950),(2,1739,5600),(1,6521,0))
+    blob=encode(est)
+    print decode(blob)

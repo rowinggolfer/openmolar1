@@ -23,7 +23,7 @@ apptix={}                                                                      #
 apptix_reverse={}
 referralfile=""                                                                #contains a link to the xml document with the referral info in it - this data will eventually be in the mysql?
 stylesheet="resources/style.css"
-fees={}                                                                        #treatment codes..
+descriptions={}                                                                        #treatment codes..
 apptTypes=("EXAM","BITE","BT","DOUBLE",
 "FAMILY","FILL","FIT","HYG","IMPS","LF","ORTHO",
 "PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")                       #could pull from dental.atype
@@ -162,7 +162,7 @@ def initiate(debug=False):
         cursor.execute("select * from descr")
         rows=cursor.fetchall()
         for row in rows:
-            fees[row[0][:4]]=row[1]              ##this is a hack.... there are more keys in here than this :(
+            descriptions[row[0][:4]]=row[1]              ##this is a hack.... there are more keys in here than this :(
     except:
         print "error loading from descr"
 

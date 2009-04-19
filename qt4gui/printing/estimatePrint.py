@@ -58,14 +58,7 @@ class estimate():
 
         for line in self.estItems:
             number_of_items=str(line[0])
-            mult=""
-            if int(number_of_items)>1:
-                mult="s"
-            item=line[1].replace("*",mult)
-            if "^" in item:
-                item=item.replace("^","")
-                number_of_items=""
-                
+            item=line[1]
             amount=line[2]
             painter.drawText(QtCore.QRectF(x,y,40,serifLineHeight),QtCore.QString(number_of_items))
             painter.drawText(QtCore.QRectF(x+40,y,280,serifLineHeight),QtCore.QString(item))            

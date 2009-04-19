@@ -19,13 +19,13 @@ APPT_Background=QtCore.Qt.white
 APPT_LINECOLOUR=QtGui.QColor("#dddddd")
 
 APPTCOLORS={
-    "P":QtGui.QColor("#cfa5ce"),
-    "N":QtGui.QColor("#a5b9cf"),
-    "I":QtGui.QColor("#a5cfa6"),    
+    "I":QtGui.QColor("#ffe5cc"),
+    "N":QtGui.QColor("#cce5ff"),
+    "P":QtGui.QColor("#ccffcc"),    
     "BUSY":QtGui.QColor("#adb3ff"),
-    "LUNCH":QtGui.QColor("#cfbba5"),
+    "LUNCH":QtGui.QColor("#eeeeee"),
     "FREE":QtCore.Qt.transparent,
-    "EMERGENCY":QtGui.QColor("#cfbba5"),
+    "EMERGENCY":QtGui.QColor("#ff6600"),
     "default":QtGui.QColor("#adb3ff"),
     "//BLOCKED//":QtCore.Qt.transparent,
     "//Blocked//":QtCore.Qt.transparent,

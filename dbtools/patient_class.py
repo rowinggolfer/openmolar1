@@ -113,7 +113,6 @@ class patient():
         self.bpe=[]
         self.fees=0
         self.notestuple=()
-        self.estimates=()
         self.currEstimate=((),0)
         self.MH=()
         self.MEDALERT=False
@@ -121,6 +120,7 @@ class patient():
         self.chartgrid={}
         self.dayBookHistory=()
         self.underTreatment=False
+        self.estblob=""
 
         if self.serialno!=0:
             try:
@@ -206,6 +206,7 @@ class patient():
       
         cursor.execute('select serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         self.estimates = cursor.fetchall()
+        
         cursor.execute('select serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         if disconnectNeeded:
             cursor.close()
@@ -299,8 +300,15 @@ class patient():
 
     def setCurrentEstimate(self):
         self.currEstimate=estimates.getCurrentEstimate(self.estimates,self.tsfees)
-
-
+        
+    def addToEstimate(self,number,item,fee):
+        
+        blob=estimates.encode(number,item,fee)
+        
+        est=self.estimates[0]
+        newEst=(est[0],est[1],est[2],est[3],est[4],est[5],est[6],est[7]+blob)
+        self.estimates=(newEst,)
+        
     def addHiddenNote(self,notetype,note=""):
         if notetype=="payment":
             note=chr(3)+chr(119)+note

@@ -94,7 +94,7 @@ def handle_patientTab():
     if ci==0:
         ui.patientEdit_groupBox.setTitle("Edit Patient %d"%pt.serialno)
     if ci==7:
-        estimateHtml=estimates.toHtml(pt.estimates,pt.tsfees)
+        estimateHtml=estimates.toBriefHtml(pt.currEstimate)
         load_estpage(estimateHtml)
         load_planpage()
     if ci==2:
@@ -106,11 +106,16 @@ def handle_patientTab():
 def clearRecord():
     global pt,pt_dbstate
     if pt.serialno!=0:
-        pt_dbstate=patient_class.patient(0)
-        pt=copy.deepcopy(pt_dbstate)
-        ui.memoEdit.setText("")
+        ui.underTreatment_label.hide() 
+        ui.underTreatment_label_2.hide()        
+        #ui.memoEdit.setText("")
+        ui.adminMemoEdit.setText("")
         ui.detailsBrowser.setText("")
         ui.moneytextBrowser.setText("")
+        for chart in (ui.staticChartWidget,ui.planChartWidget,ui.completedChartWidget\
+        ,ui.perioChartWidget,ui.summaryChartWidget):
+            chart.clear()                                                                     #necessary to restore the chart to full dentition
+            chart.update()
         if localsettings.station=="surgery":
             ui.notesSummary_textBrowser.setHtml(localsettings.message)
         else:
@@ -120,16 +125,13 @@ def clearRecord():
         while ui.ptAppointmentTableWidget.rowCount()>0:                                                 #delete row by row :(
             ui.ptAppointmentTableWidget.removeRow(0)
         ui.notesEnter_textEdit.setHtml("")
+        pt_dbstate=patient_class.patient(0)
+        pt=copy.deepcopy(pt_dbstate)
         load_editpage()
         load_planpage()
         load_estpage("")
         
-        for chart in (ui.staticChartWidget,ui.planChartWidget,ui.completedChartWidget\
-        ,ui.perioChartWidget,ui.summaryChartWidget):
-            chart.clear()                                                                     #necessary to restore the chart to full dentition
-            chart.update()
-        ui.underTreatment_label.hide() 
-        ui.underTreatment_label_2.hide()
+        
 def home():
     '''home push_button - clear the patient, and blank the screen'''
     if enteringNewPatient():
@@ -159,7 +161,8 @@ def enterNewPatient():
     ui.saveButton.setEnabled(True)
     ui.tabWidget.setCurrentIndex(0)
     ui.patientEdit_groupBox.setTitle("Enter New Patient")
-    ui.detailsBrowser.setHtml('<div align="center"><h3>Enter New Patient</h3></div>')
+    ui.detailsBrowser.setHtml('<div align="center"><h3>Enter New Patient</h3>Please enter at least the required fields,'
+    +' then use the Save Changes button to commit this patient to the database.</div>')
 
 def enteringNewPatient():
     if ui.newPatientPushButton.isEnabled():  #not entering a new patient
@@ -1473,7 +1476,7 @@ def updateMemo():
     '''this is called when the text in the memo on the admin page changes'''
     ui.memoEdit.setText(ui.adminMemoEdit.toPlainText())
 def updateAdminMemo():
-    '''this is called when the text in the memo on the memo page changes'''
+    '''this is called when the admin summary tab is selected'''
     ui.adminMemoEdit.setText(ui.memoEdit.toPlainText())
 
 
@@ -1560,7 +1563,7 @@ def load_editpage():
     else:
         ui.sexEdit.setCurrentIndex(1)
     ui.pcdeEdit.setText(pt.pcde)
-    ui.memoEdit.setText(pt.memo)
+    ui.adminMemoEdit.setText(pt.memo)
     ui.tel1Edit.setText(pt.tel1)
     ui.tel2Edit.setText(pt.tel2)
     ui.mobileEdit.setText(pt.mobile)
@@ -1697,7 +1700,6 @@ def loadpatient():
         localsettings.recent_snos.append(pt.serialno)
     if ui.tabWidget.currentIndex()==4:  #clinical summary
         ui.summaryChartWidget.update()
-        updateAdminMemo()
     if pt.MEDALERT:
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(colours.med_warning)
@@ -2220,7 +2222,7 @@ def newCourseSetup():
             advise("Sucessfully started new course of treatment",1)
             pt.getCurrtrt()
             pt.getEsts()
-            estimateHtml=estimates.toHtml(pt.estimates,pt.tsfees)
+            estimateHtml=estimates.toBriefHtml(pt.currEstimate)
             load_estpage(estimateHtml)
             load_planpage()
             ui.underTreatment_label.show() 
@@ -2233,15 +2235,16 @@ def closeCourse():
     result=QtGui.QMessageBox.question(MainWindow,"Confirm",message,QtGui.QMessageBox.Yes, \
                     QtGui.QMessageBox.No)             
     if result==QtGui.QMessageBox.Yes:
-        pt.courseno1=pt.courseno1
+        pt.courseno1=pt.courseno0
         pt.courseno0=0
         pt.getCurrtrt()
-        pt.getEsts()
-        estimateHtml=estimates.toHtml(pt.estimates,pt.tsfees)
+        #pt.getEsts()
+        estimateHtml=estimates.toBriefHtml(pt.currEstimate)
         load_estpage(estimateHtml)
         load_planpage()
-        ui.underTreatment_label.hide() 
-        ui.underTreatment_label_2.hide()
+        pt.underTreatment=False
+        #ui.underTreatment_label.hide() 
+        #ui.underTreatment_label_2.hide()
         return True
 def showExamDialog():
     global pt
@@ -2292,9 +2295,14 @@ def showExamDialog():
                 newnotes=str(ui.notesEnter_textEdit.toPlainText().toAscii())
                 newnotes+="CE examination performed by %s\n"%result[1]
                 pt.addHiddenNote("exam","CE EXAM")
-                if pt.cset=="P":
-                    pt.money1+=1950
-                    updateFees()
+                
+                if "P" in pt.cset:
+                    itemfee=1950
+                else:
+                    itemfee=0
+                pt.addToEstimate(1,101,itemfee)
+                pt.money1+=itemfee
+                updateFees()
                     
                 for note in result[3]:
                    newnotes+=note+", "
@@ -2571,6 +2579,7 @@ def signals():
     connectAptOVdentcbs()
     connectAptOVhygcbs()
     QtCore.QObject.connect(ui.adminMemoEdit,QtCore.SIGNAL("textChanged()"),updateMemo)              #memos - we have more than one... and need to keep them synchronised
+    
     ui.mondayLabel.connect(ui.mondayLabel,QtCore.SIGNAL("clicked()"),mondaylabelClicked)
     ui.tuesdayLabel.connect(ui.tuesdayLabel,QtCore.SIGNAL("clicked()"),tuesdaylabelClicked)
     ui.wednesdayLabel.connect(ui.wednesdayLabel,QtCore.SIGNAL("clicked()"),wednesdaylabelClicked)

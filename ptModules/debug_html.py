@@ -7,7 +7,7 @@
 
 from openmolar.dbtools import patient_class
 
-def toHtml(p1,p2):
+def toHtml(p1,p2,verbose=False):
     '''this sub puts all the attributes found for patient 1 and patient 2 (normally a deep copy) into an html table (for comparison)'''
     retarg='<html><body><div align="center">'
     #attribs=p1.__dict__.keys()
@@ -15,8 +15,15 @@ def toHtml(p1,p2):
     attributesDict={
     "Patient Table":patient_class.patientTableAtts,
     "Treatment Items":patient_class.currtrtmtTableAtts,
-    "User Defined Data":patient_class.userdataTableAtts
+    "User Defined Data":patient_class.userdataTableAtts,
+    "Estimates":("estimates","tsfees")
     }
+    
+    if verbose: #let's see exactly what the class is about:
+        attributesDict["all attributes"]=p1.__dict__.keys()
+
+    
+    
     for key in attributesDict.keys():
         attribs=attributesDict[key]
         retarg+="<h2>%s</h2>"%key
@@ -28,3 +35,15 @@ def toHtml(p1,p2):
         retarg+="</table>"
     retarg +='</div></body></html>'
     return retarg
+
+if __name__ == "__main__":
+    from openmolar.settings import localsettings 
+    import sys
+    localsettings.initiate(False)
+    try:
+        serialno=int(sys.argv[len(sys.argv)-1])
+    except:
+        serialno=29283
+    
+    pt=patient_class.patient(serialno)
+    print toHtml(pt,pt,True)

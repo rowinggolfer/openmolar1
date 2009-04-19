@@ -33,6 +33,9 @@ def write_changes(pt,changes):
                     patchanges+='%s=%s ,'%(change,value)
             if change == "bpe":
                 sqlcommands['bpe']='insert into bpe set serialno=%d,bpedate="%s",bpe="%s"'%(pt.serialno,localsettings.uk_to_sqlDate(pt.bpe[-1][0]),pt.bpe[-1][1])
+            if change == "estimates":
+                sqlcommands["prvfees"]='update prvfees set data="%s" where serialno=%d and courseno=%d '%(pt.estimates[0][7],pt.serialno,pt.courseno)
+                    
             if change in patient_class.currtrtmtTableAtts:
                 value=pt.__dict__[change]
                 if change in patient_class.dateFields:
@@ -44,13 +47,13 @@ def write_changes(pt,changes):
                     trtchanges+='%s="%s" ,'%(change,value)
                 else: #integer or float
                     trtchanges+='%s=%s ,'%(change,value)
-
+                
     result=True
     if patchanges != "":
         print "update patients SET %s where serialno=%s"%(patchanges.strip(","),pt.serialno)
-        sqlcommands['patient'] = "update patients SET %s where serialno=%s"%(patchanges.strip(","),pt.serialno)
+        sqlcommands['patient'] = "update patients SET %s where serialno=%d"%(patchanges.strip(","),pt.serialno)
     if trtchanges != "":
-        sqlcommands['currtrtmt'] = "update currtrtmt SET %s where serialno=%s and courseno=%d"%(trtchanges.strip(","),pt.serialno,pt.courseno0)
+        sqlcommands['currtrtmt'] = "update currtrtmt SET %s where serialno=%d and courseno=%d"%(trtchanges.strip(","),pt.serialno,pt.courseno0)
 
     if sqlcommands!={}:
         db=connect()
