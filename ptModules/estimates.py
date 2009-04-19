@@ -101,7 +101,7 @@ def decode(blob):
         number=struct.unpack_from('b',blob,i)[0]                                ## this could be a lot tidier.... struct.unpack(bHi,blob) returns a tuple (number,item,cost)
         item=struct.unpack_from('H',blob,i+2)[0]
         try:
-            item_text=localsettings.fees['%04d'%item]
+            item_text=localsettings.descriptions['%04d'%item]
         except:
             item_text="unknown item! - '%s'"%item
         cost=struct.unpack_from('i',blob,i+4)[0]
@@ -120,7 +120,7 @@ def decodeTS(blob):
         item=struct.unpack_from('H',blob,i)[0]                                ## this could be a lot tidier.... struct.unpack(bHi,blob) returns a tuple (number,item,cost)
         tooth=struct.unpack_from('B',blob,i+2)[0]
         try:
-            item_text=localsettings.fees['%04d'%item]
+            item_text=localsettings.descriptions['%04d'%item]
         except:
             item_text="unknown item! - '%s'"%item
         cost=struct.unpack_from('i',blob,i+4)[0]
