@@ -24,6 +24,7 @@ apptix_reverse={}
 referralfile=""                                                                #contains a link to the xml document with the referral info in it - this data will eventually be in the mysql?
 stylesheet="resources/style.css"
 descriptions={}                                                                        #treatment codes..
+abbreviations={}
 apptTypes=("EXAM","BITE","BT","DOUBLE",
 "FAMILY","FILL","FIT","HYG","IMPS","LF","ORTHO",
 "PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")                       #could pull from dental.atype
@@ -166,6 +167,15 @@ def initiate(debug=False):
     except:
         print "error loading from descr"
 
+    try:
+        cursor.execute("select * from abbrv")
+        rows=cursor.fetchall()
+        for row in rows:
+            abbreviations[row[0]]=row[1]              ##this is a hack.... there are more keys in here than this :(
+    except:
+        print "error loading from abbrv - probably no loss!"
+
+
     wkdir=os.path.dirname(os.getcwd())
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")
     
@@ -189,6 +199,7 @@ def initiate(debug=False):
         print curTime()
         print sqlToday()
         print dentDict
+        print abbreviations
         #print fees
 
 if __name__ == "__main__":

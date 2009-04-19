@@ -7,14 +7,16 @@
 
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui import Ui_addTreatment,Ui_treatmentItemWidget
-from openmolar.settings import localsettings
+from openmolar.settings import localsettings,fee_keys
 
 class treatment(Ui_addTreatment.Ui_Dialog):
-    def __init__(self,dialog,items):
+    def __init__(self,dialog,items,cset):
         self.setupUi(dialog)
         self.dialog=dialog
         self.items=items
+        self.cset=cset
         self.showItems()
+        
     def showItems(self):
         self.itemWidgets=[]
         vlayout = QtGui.QVBoxLayout(self.frame)
@@ -22,12 +24,18 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             number=item[0]
             code=item[1]
             description=item[2]
-            fee=item[3]
+            if self.cset=="P":
+                code=fee_keys.getKey(code)
+                fee=0
+                if fee==None:
+                    fee=0
+            else:
+                fee=0
             iw=QtGui.QWidget()
             i=Ui_treatmentItemWidget.Ui_Form()
             i.setupUi(iw)
             i.spinBox.setValue(number)
-            i.label.setText(description)
+            i.label.setText(description+" (%s)"%code)
             i.doubleSpinBox.setValue(fee/100)
             self.itemWidgets.append(i)
             vlayout.addWidget(iw)
@@ -50,7 +58,7 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
     items=[]
     for i in range(10):
-        items.append((0,"CODE","Treatment Description",100))
-    ui = treatment(Dialog,items)
+        items.append((0,"CODE","Treatment Description"))
+    ui = treatment(Dialog,items,"P")
     print ui.getInput()
    

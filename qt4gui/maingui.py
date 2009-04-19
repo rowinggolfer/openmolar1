@@ -1314,17 +1314,32 @@ def addXrayItems():
         if not newCourseSetup():
             advise("unable to plan or perform treatment if pt does not have an active course",1)
             return
-    list=((0,"S","Small Xrays",0),(0,"M","Medium Xrays",0),(0,"P","Panoral Xray",0))
+    list=((0,"S","Small Xrays"),(0,"M","Medium Xrays"),(0,"P","Panoral Xray"))
     chosenTreatments=offerTreatmentItems(list)
     print chosenTreatments
     for item in chosenTreatments:
         pt.xraypl+="%s%s "%(item[0],item[1])
     load_planpage()
     #######todo - add fee to current ests
-
+def addOtherItems():
+    global pt
+    if not pt.underTreatment:
+        if not newCourseSetup():
+            advise("unable to plan or perform treatment if pt does not have an active course",1)
+            return
+    list=()
+    items=localsettings.abbreviations.keys()
+    items.sort()
+    for item in items:
+        list+=((0,item,localsettings.abbreviations[item]),)
+    chosenTreatments=offerTreatmentItems(list)
+    for treat in chosenTreatments:
+        print treat
+    load_planpage()
+    #######todo - add fee to current ests
 def offerTreatmentItems(arg):
     Dialog = QtGui.QDialog(MainWindow)
-    dl = addTreat.treatment(Dialog,arg)                   ########################## this should be treating dentist!!!!!!!
+    dl = addTreat.treatment(Dialog,arg,pt.cset)                  
     return dl.getInput()
     
 def completeToothTreatments(arg):
@@ -2488,6 +2503,8 @@ def signals():
     QtCore.QObject.connect(ui.closeTx_pushButton,QtCore.SIGNAL("clicked()"),closeCourse)
     QtCore.QObject.connect(ui.completePlanItems_pushButton,QtCore.SIGNAL("clicked()"),completeTreatments)
     QtCore.QObject.connect(ui.xrayTxpushButton,QtCore.SIGNAL("clicked()"),addXrayItems)
+    QtCore.QObject.connect(ui.otherTxpushButton,QtCore.SIGNAL("clicked()"),addOtherItems)
+
     
     #daybook - cashbook
     QtCore.QObject.connect(ui.daybookGoPushButton,QtCore.SIGNAL("clicked()"),daybookTab)
