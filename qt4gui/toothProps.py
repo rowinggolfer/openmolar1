@@ -68,17 +68,14 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         fillList=currentFill.split(":")
         for f in fillList:
             if not self.checkProp(f):
-                return
-        self.tooth.clear()
-        self.tooth.update()
-        self.finishedEdit()
-        
+                return False
+        return True
     def checkProp(self,f):
         result=True
         if f!="":
             if self.tooth.isBacktooth and not (f in allowed.backToothCodes):
                 result=False
-            elif not self.tooth.isBacktooth and not (f in allowed.frontToothCodes):
+            if not self.tooth.isBacktooth and not (f in allowed.frontToothCodes):
                 result=False
         if not result:
             message="'%s' is not recognised - do you want to accept anyway?"%f
