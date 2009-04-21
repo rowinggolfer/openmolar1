@@ -13,7 +13,7 @@ from openmolar.dbtools import patient_class
 def write_changes(pt,changes):
     print "write_changes"
     if changes==[]:
-        print "no changes"
+        print "write changes called, but no changes for patient %d"%pt.serialno
         return True
     else:
         sqlcommands={}
@@ -54,22 +54,23 @@ def write_changes(pt,changes):
         sqlcommands['patient'] = "update patients SET %s where serialno=%d"%(patchanges.strip(","),pt.serialno)
     if trtchanges != "":
         sqlcommands['currtrtmt'] = "update currtrtmt SET %s where serialno=%d and courseno=%d"%(trtchanges.strip(","),pt.serialno,pt.courseno0)
-
     if sqlcommands!={}:
         db=connect()
         cursor = db.cursor()
         for table in sqlcommands.keys():
-            if cursor.execute(sqlcommands[table]):
+            try:
+                cursor.execute(sqlcommands[table])
                 db.commit()
-            else:
-                result=False
+            except Exception,e:
+                print "error saving %s for patient %d"%(table,pt.serialno)
+                result = False
         cursor.close()
         #db.close()
     return result
 
 def toNotes(serialno,newnotes):
-    print "write changes - toNotes"
-    print "writing to db",serialno,newnotes
+    print "write changes - toNotes for patient %d"%serialno
+    #print "writing to db",serialno,newnotes
     query="select max(lineno) from notes where serialno=%d"%serialno
     db=connect()
     cursor = db.cursor()
@@ -89,11 +90,11 @@ def toNotes(serialno,newnotes):
             query='insert into notes (serialno,lineno,line) values (%d,%d,"%s")'%(serialno,lineNo+n,note)
             cursor.execute(query)
             n+=1
-        db.commit()
         result=lineNo
     except:
         result=-1
     cursor.close()
+    db.commit()
     #db.close()
     return result
 
@@ -117,13 +118,14 @@ def discreet_changes(pt_changed,changes):
     print "update patients  SET %s where serialno=%s"%(sqlcond.strip(","),pt_changed.serialno)
     result=True
     if sqlcond!="":
-        sqlcommand= "update patients  SET %s where serialno=%s"%(sqlcond.strip(","),pt_changed.serialno)
         db=connect()
         cursor = db.cursor()
         #print cursor.execute(sqlcommand)
-        if cursor.execute(sqlcommand):
+        try:
+            sqlcommand= "update patients  SET %s where serialno=%s"%(sqlcond.strip(","),pt_changed.serialno)
+            cursor.execute(sqlcommand)
             db.commit()
-        else:
+        except:
             result=False
         cursor.close()
         #db.close()

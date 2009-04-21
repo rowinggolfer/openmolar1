@@ -209,8 +209,8 @@ def initiate(debug=False):
 
 if __name__ == "__main__":
     sys.path.append("/home/neil/openmolar")
-    initiate(False)
-    keys=privateFees.keys()
-    keys.sort()
-    for key in keys:
-        print key,privateFees[key]
+    initiate(True)
+    #keys=privateFees.keys()
+    #keys.sort()
+    #for key in keys:
+    #    print key,privateFees[key]

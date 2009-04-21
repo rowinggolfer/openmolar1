@@ -12,8 +12,6 @@ from openmolar.connect import connect
 
 def details(regdent,trtdent,startdate,enddate):
     '''returns an html table, for regdent, trtdent,startdate,enddate'''
-    db = connect()
-    cursor = db.cursor()
     if regdent=="*ALL*":
         cond1=""
     else:
@@ -22,8 +20,15 @@ def details(regdent,trtdent,startdate,enddate):
         cond2=""
     else:
         cond2='trtid="%s" and'%localsettings.ops_reverse[trtdent]
-    fields= '''DATE_FORMAT(date,"%s"),serialno,coursetype,dntid,trtid,diagn,perio,anaes,misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc,id''' %localsettings.sqlDateFormat  
+    fields= 'DATE_FORMAT(date,"%s"),serialno,coursetype,dntid,trtid,diagn,perio,' %localsettings.sqlDateFormat
+    fields+='anaes,misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc,id'  
+
+    db = connect()
+    cursor = db.cursor()
     cursor.execute('select %s from daybook where %s %s date>="%s" and date<="%s" order by date'%(fields,cond1,cond2,startdate,enddate))
+    cursor.close()
+    #db.close()
+        
     rows = cursor.fetchall()
     format=[regdent,trtdent]
     for d in (startdate,enddate):
@@ -62,8 +67,7 @@ def details(regdent,trtdent,startdate,enddate):
         retarg+='</tr>\n'
     retarg+='<tr><td colspan="5"></td><td><b>TOTAL</b></td><td align="right"><b>&pound; %d.%02d</b></td></tr>'%(total/100,total%100)
     retarg+='</table>'
-    cursor.close()
-    #db.close()
+    
     return retarg
 
 if __name__ == "__main__":

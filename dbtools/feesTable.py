@@ -74,6 +74,9 @@ def getPrivateFeeDict():
     feescale = cursor.fetchone()
     cursor.execute('select code from abbrv')
     feescaleKeys = cursor.fetchall()
+    cursor.close() #--oops this was missing until 2009-04-21
+    #db.close()
+    
     retarg={}
     rows=decode(feescale[0])
     i=0
@@ -91,5 +94,5 @@ def feesHtml():
 if __name__ == "__main__":
     #localsettings.initiate(False)
     #print localsettings.privateFees
-    #print feesHtml()
-    print getPrivateFeeDict()
+    print feesHtml()
+    #print getPrivateFeeDict()

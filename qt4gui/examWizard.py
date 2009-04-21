@@ -10,11 +10,19 @@ from openmolar.qt4gui import Ui_exam_wizard
 from openmolar.settings import localsettings
 
 class Ui_Dialog(Ui_exam_wizard.Ui_Dialog):
-    def __init__(self,dialog,parent=None):
+    def __init__(self,dialog,performingDent,parent=None):
         self.dialog=dialog
         self.setupUi(dialog)
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         self.dents_comboBox.addItems(localsettings.activedents)
+        
+        if localsettings.apptix_reverse.has_key(performingDent):
+            if localsettings.apptix_reverse[performingDent] in localsettings.activedents:
+                pos=localsettings.activedents.index(localsettings.apptix_reverse[performingDent])                                      
+                self.dents_comboBox.setCurrentIndex(pos)
+        else:
+            self.dents_comboBox.setCurrentIndex(-1)
+    
     def getInput(self):
         if self.dialog.exec_():
             if self.examA_radioButton.isChecked():
@@ -45,7 +53,7 @@ if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
-    ui = Ui_Dialog(Dialog)
+    ui = Ui_Dialog(Dialog,5)
     print ui.getInput()
     #if Dialog.exec_():
     #        print "accepted"

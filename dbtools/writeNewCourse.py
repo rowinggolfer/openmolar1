@@ -36,10 +36,10 @@ def write(sno,dnt,accd):
         print cno
         cursor.execute("insert into currtrtmt set serialno=%d,courseno=%s,%s "%(sno,cno,query.strip(",")))
         cursor.execute("INSERT INTO prvfees set serialno=%d,courseno=%s,dent=%d,esta=%d,acta=%d,estb=%d,actb=%d,data=''"%(sno,cno,dnt,0,0,0,0))
-        db.commit()
     except Exception,e:
         print e
         result=False
+    db.commit()
     cursor.close()
     #db.close()
 

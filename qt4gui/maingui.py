@@ -60,7 +60,7 @@ def advise(arg,warning_level=0):
     elif warning_level==2:
         now=QtCore.QTime.currentTime()
         QtGui.QMessageBox.warning(MainWindow,"Error",arg)  
-        print "%s:%s ERROR MESSAGE"%(now.hour(),now.minute()),arg  #for logging
+        print "%d:%02d ERROR MESSAGE"%(now.hour(),now.minute()),arg  #for logging
 
  ####TODO - link the application's box to this procedure
 def quit():
@@ -1060,10 +1060,7 @@ def clearTodaysEmergencyTime():
     result=QtGui.QMessageBox.question(MainWindow,"Confirm","Clear today's emergency slots?",QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.No)
     if result==QtGui.QMessageBox.Yes:
-        if appointments.clearEms(localsettings.sqlToday()):
-            advise("sucessfully cleared emergency slots",1)
-        else:
-            advise("error clearing slots - were there any?",2)
+        advise("Cleared %d emergency slots"%appointments.clearEms(localsettings.sqlToday()),1)
             
 def apptOVdents():
     '''called by checking the all dentists checkbox on the apptov tab'''
@@ -2581,7 +2578,8 @@ def showExamDialog():
             advise("unable to perform exam",1)
             return
     Dialog = QtGui.QDialog(MainWindow)
-    dl = examWizard.Ui_Dialog(Dialog)
+    dl = examWizard.Ui_Dialog(Dialog,pt.dnt1)
+    
     ####TODO - set dentist correctly in this dialog
     APPLIED=False
     while not APPLIED:
@@ -2623,6 +2621,7 @@ def showExamDialog():
                 pt.examt=result[0]
                 examd=result[2].toString("dd/MM/yyyy")
                 pt.pd4=examd
+                pt.recd=result[2].addMonths(6).toString("dd/MM/yyyy")
                 newnotes=str(ui.notesEnter_textEdit.toPlainText().toAscii())
                 newnotes+="CE examination performed by %s\n"%result[1]
                 pt.addHiddenNote("exam","CE EXAM")

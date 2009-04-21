@@ -67,27 +67,12 @@ def getsimilar(serialno,addr,sname,family):
         addresses = cursor.fetchall()
     else:
         addresses=()
-    '''
-    query=""
-    if sname!='':
-        query+='sname like "%s" or '%(sname+r'%')
-    if sname[:3]=="MAC":
-        query+='sname like "%s" or '%(sname.replace("MAC","MC")+r'%')
-    if sname[:2]=="MC":
-        query+='sname like "%s" or '%(sname.replace("MC","MAC")+r'%')
-    if query!='':
-        query="select %s from patients where %s order by sname,fname"%(fields,query[0:query.rindex("or")])
-        cursor.execute(query)
-        snames = cursor.fetchall()
-    else:
-        snames=()
-    '''
     query='select %s from patients where serialno != %d and sname sounds like "%s" order by fname,sname'%(fields,serialno,sname)
     cursor.execute(query)
     snames = cursor.fetchall()
 
     cursor.close()
-    db.close
+    #db.close()
     return (families,addresses,snames)
 
 def getcandidates_from_serialnos(list_of_snos):

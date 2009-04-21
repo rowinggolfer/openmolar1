@@ -132,7 +132,6 @@ class patient():
                 values = cursor.fetchall()
                 for value in values:
                     self.bpe.append(value)
-
                 #table - patients
 
                 fields=patientTableAtts

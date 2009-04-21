@@ -36,8 +36,7 @@ def paymenttaken(sno,name,dent,csetyp,cash,cheque,debit,credit,sundries,hdp,othe
         dbOK=True
         for query in queries:
             dbOK=dbOK and cursor.execute(query)
-        if dbOK:
-            db.commit()
+        db.commit()
         cursor.close()
         #db.close()
         return dbOK

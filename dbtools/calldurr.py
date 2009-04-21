@@ -14,8 +14,7 @@ def commit(serialno,surgeryno):
     print sqlcommand
     cursor = db.cursor()
     result=cursor.execute(sqlcommand)
-    if result:
-        result=db.commit()
+    result=db.commit()
     cursor.close()
     #db.close()
     return result
