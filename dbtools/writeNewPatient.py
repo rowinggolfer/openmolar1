@@ -26,12 +26,11 @@ def commit(pt):
     sqlcommand= "insert into patients SET %s"%sqlcond
     db=connect()
     cursor = db.cursor()
-    sql1 = "update sysdata set serialno = last_insert_id(serialno + 1)"
-    sql2 = "select last_insert_id()"
-    newSerialno=-1
+    sql1 = "select serialno from sysdata"
+    sql2 = "update sysdata set serialno = (serialno + 1)"
     cursor.execute(sql1)
+    newSerialno=cursor.fetchall()[0][0]+1
     cursor.execute(sql2)
-    newSerialno=cursor.fetchall()[0][0]
     cursor.execute(sqlcommand+'serialno=%d'%(newSerialno))
     db.commit()
     cursor.close()

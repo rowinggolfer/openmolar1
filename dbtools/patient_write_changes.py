@@ -103,6 +103,7 @@ def discreet_changes(pt_changed,changes):
     only updates the patients table'''
     sqlcond=""
     for change in changes:
+        value=pt_changed.__dict__[change]
         if change in patient_class.dateFields:
             if value!="" and value!=None:
                 sqlcond+='%s="%s" ,'%(change,localsettings.uk_to_sqlDate(value))

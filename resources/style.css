@@ -2,6 +2,8 @@
 
 body{background-color:#ffffff;}
 
+.notes{font-size:11pt;}
+
 /*-- DIVS --*/
 div.newstext1{color:black;background-color:#cccccc; padding:10px;}
 div.newstext2{color:black;background-color:#eeeeee; padding:10px;}

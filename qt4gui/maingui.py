@@ -2634,7 +2634,7 @@ def showExamDialog():
                 pt.addToEstimate(1,item,itemfee)
                 pt.money1+=itemfee
                 updateFees()
-                updateEsts()    
+                #updateEsts()    
                 for note in result[3]:
                    newnotes+=note+", "
                 ui.notesEnter_textEdit.setText(newnotes.strip(", "))
