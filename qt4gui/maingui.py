@@ -304,7 +304,7 @@ def finishedNewPatientInput():
     #--enable the default tabs, and go to the appropriate one
     ui.tabWidget.setTabEnabled(4,True)
     ui.tabWidget.setTabEnabled(3,True)
-    gotoDefaulttab()
+    gotoDefaultTab()
     
     #--disable the edit tab
     ui.tabWidget.setTabEnabled(0,False)
