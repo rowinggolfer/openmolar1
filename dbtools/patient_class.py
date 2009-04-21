@@ -302,7 +302,7 @@ class patient():
         self.currEstimate=estimates.getCurrentEstimate(self.estimates,self.tsfees)
         
     def addToEstimate(self,number,item,fee):
-        
+        print "adding to estimate ",number,item,fee
         blob=estimates.encode(number,item,fee)
         
         est=self.estimates[0]

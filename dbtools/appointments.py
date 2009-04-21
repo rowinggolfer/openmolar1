@@ -64,7 +64,6 @@ def allAppointmentData(adate,dents=()):
     cursor = db.cursor()
     table="aslot"
     if dents!=():
-        print "dents=",dents
         mystr=" and ("
         for dent in dents:
             mystr+="apptix=%d or "%dent[0]
@@ -108,7 +107,6 @@ def printableDaylistData(adate,dent):                                           
             if row[2]==None:
                 retlist.append((row[0],row[1],row[-1])+row[3:]) #emergency..
             else:
-                print "row[2]=",row[2]
                 retlist.append(row)
             if apttime<row[1]:
                 apttime=row[1]
@@ -195,7 +193,6 @@ def add_pt_appt(serialno,practix,length,code0,aprix=-1,code1="",code2="",note=""
     if aprix==-1:                                                              #this means put the appointment at the end
         cursor.execute('SELECT max(aprix) FROM apr WHERE serialno=%d'%serialno)
         data= cursor.fetchall()
-        print data
         currentMax=data[0][0]
         if currentMax:
             aprix=currentMax+1
@@ -222,7 +219,6 @@ def modify_pt_appt(adate,aprix,serialno,practix,length,code0,code1="",code2="",n
     practix,code0,code1,code2,note,length,flag0,flag1,flag2,flag3,flag4,datespec)
         
     query='update apr set %s where serialno=%d and aprix=%d'%(changes,serialno,aprix)
-    print query
     if cursor.execute(query):                                                        #SQL QUERY
         db.commit()
         result=True
@@ -303,7 +299,6 @@ def delete_appt_from_apr(serialno,aprix,adate,atime):
             query+=' and atime is NULL'
         else:
             query+=' and atime =%d'%atime
-        print "QUERY:",query
         cursor.execute(query)
         db.commit()
         #now refresh rows
@@ -384,7 +379,6 @@ def future_slots(length,startdate,enddate,dents,override_emergencies=False):
         mystr=""
     query='SELECT adate,apptix,start,end FROM aday WHERE adate>="%s"AND adate<="%s"'%(startdate,enddate) 
     query+='AND (flag=1 OR flag= 2) %s ORDER BY adate'%mystr
-    print query
     cursor.execute(query)                                         #SQL QUERY
     possible_days= cursor.fetchall()                                           #get days when a suitable appointment is possible
     query=""
@@ -395,7 +389,9 @@ def future_slots(length,startdate,enddate,dents,override_emergencies=False):
         results=cursor.fetchall()
         daystart=day[2]
         dayfin=day[3]
-        retlist.append((day[0],day[1],slots(daystart,results,dayfin,length)))
+        s=slots(daystart,results,dayfin,length)
+        if s!=():
+            retlist.append((day[0],day[1],s))
     cursor.close()
     #db.close()
     return tuple(retlist)

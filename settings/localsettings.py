@@ -39,7 +39,7 @@ practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV
 
 #localsettings.defaultNewPatientDetails=(pt.sname,pt.addr1,pt.addr2,pt.addr3,pt.town,pt.county,pt.pcde,pt.tel1)
 defaultNewPatientDetails=("",)*8
-
+privateFees={}
 
 def curTime():
     return datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
@@ -107,8 +107,9 @@ def humanTime(t):
 
 def initiate(debug=False):
     print "initiating settings"
-    global referralfile,stylesheet,fees,message,dentDict
+    global referralfile,stylesheet,fees,message,dentDict,privateFees
     from openmolar.connect import connect
+    from openmolar.dbtools import feesTable
     db=connect()
     cursor = db.cursor()
     #set up four lists with key/value pairs reversedto make for easy referencing
@@ -171,11 +172,15 @@ def initiate(debug=False):
         cursor.execute("select * from abbrv")
         rows=cursor.fetchall()
         for row in rows:
-            abbreviations[row[0]]=row[1]              ##this is a hack.... there are more keys in here than this :(
+            abbreviations[row[0]]=row[1]
     except:
         print "error loading from abbrv - probably no loss!"
-
-
+    
+    try:
+        privateFees=feesTable.getPrivateFeeDict()
+    except Exception,e:
+        print "error getting privatefees",e
+    
     wkdir=os.path.dirname(os.getcwd())
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")
     
@@ -204,4 +209,8 @@ def initiate(debug=False):
 
 if __name__ == "__main__":
     sys.path.append("/home/neil/openmolar")
-    initiate(True)
+    initiate(False)
+    keys=privateFees.keys()
+    keys.sort()
+    for key in keys:
+        print key,privateFees[key]

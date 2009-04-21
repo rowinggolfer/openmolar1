@@ -23,8 +23,7 @@ def getplantext(pt):
     for attrib in attribs:
         if attrib[-3:]=="cmp" and pt.__dict__[attrib]!="":
             retarg+="<li>%s - %s</li>"%(attrib[0:-3],pt.__dict__[attrib])
-    else:
-        retarg+="<li>no plan/completed data found</li>"
+    #retarg+="<li>no plan/completed data found</li>"
     retarg+="</ul></td></tr></table>"
     
     return retarg+"\n</body></html>"
@@ -42,8 +41,7 @@ def summary(pt):
     for attrib in attribs:
         if attrib[-3:]=="cmp" and pt.__dict__[attrib]!="":
             retarg+='%s - %s<br />'%(attrib[0:-3],pt.__dict__[attrib])
-    else:
-        retarg+="no plan/completed data found"
+    #retarg+="no plan/completed data found"
     
     return retarg+"</body></html>"
     

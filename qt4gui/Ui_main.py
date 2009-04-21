@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Sat Apr 18 15:28:50 2009
+# Created: Mon Apr 20 23:28:35 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -685,7 +685,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, -157, 607, 493))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 607, 493))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.gridLayout_16 = QtGui.QGridLayout(self.scrollAreaWidgetContents_5)
         self.gridLayout_16.setObjectName("gridLayout_16")
@@ -2107,7 +2107,7 @@ class Ui_MainWindow(object):
         self.printEst_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Print &Estimate", None, QtGui.QApplication.UnicodeUTF8))
         self.printAccount_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Print &Account", None, QtGui.QApplication.UnicodeUTF8))
         self.takePayment_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Take &Payment", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Appointments", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Patient\'s Diary", None, QtGui.QApplication.UnicodeUTF8))
         self.newAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "&New", None, QtGui.QApplication.UnicodeUTF8))
         self.makeAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Schedule", None, QtGui.QApplication.UnicodeUTF8))
         self.findAppt_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Find in Book", None, QtGui.QApplication.UnicodeUTF8))

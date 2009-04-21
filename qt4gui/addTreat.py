@@ -56,7 +56,7 @@ if __name__ == "__main__":
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
-    items=[]
+    items=[(1,"CE","Exam"),(1,"M","Medium Xray")]
     for i in range(10):
         items.append((0,"CODE","Treatment Description"))
     ui = treatment(Dialog,items,"P")

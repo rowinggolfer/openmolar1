@@ -1686,7 +1686,7 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>-157</y>
+                    <y>0</y>
                     <width>607</width>
                     <height>493</height>
                    </rect>
@@ -1890,7 +1890,7 @@
                       </size>
                      </property>
                      <property name="title" >
-                      <string>Appointments</string>
+                      <string>Patient's Diary</string>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_17" >
                       <item>

@@ -9,8 +9,9 @@
 import sys
 import struct
 from openmolar.connect import connect
+from openmolar.settings import localsettings
 
-def toHtml((columns,rowHeaders)):
+def toHtml((columns,rowHeaders,smallrowHeaders)):
     retarg="<h3>Fees</h3>" 
     retarg+='<table width="100%" border="1">'
     retarg+='<tr><th>ix</th><th>code</th><th>decription</th>'
@@ -32,7 +33,9 @@ def toHtml((columns,rowHeaders)):
             retarg+='<tr>'
             odd=True
         #retarg+="<td>%d</td>"%i
-        retarg+="<td>%s</td><td>%s</td><td>%s</td>"%rowHeaders[i]
+        retarg+="<td>%s</td><td>%s</td>"%smallrowHeaders[i]
+                
+        retarg+="<td>%s</td><td>%s</td>"%rowHeaders[i]
         for col in range(len(columns)):
             if col==4:
                 retarg+='<td align="right"><b>%s</b></td>'%values[col][row]
@@ -56,14 +59,37 @@ def getFees():
     cursor=db.cursor()
     cursor.execute('select name,label,data from fees')
     feescales = cursor.fetchall()
-    cursor.execute('select ix,id,descr from pfkey order by ix')
+    cursor.execute('select id,descr from pfkey')
     rowHeaders = cursor.fetchall()
+    cursor.execute('select code,abbrv from abbrv')
+    smallrowHeaders = cursor.fetchall()
     cursor.close()
     #db.close()
-    return (feescales,rowHeaders)
+    return (feescales,rowHeaders,smallrowHeaders)
+
+def getPrivateFeeDict():
+    db=connect()
+    cursor=db.cursor()
+    cursor.execute('select data from fees where name = "PFA"')
+    feescale = cursor.fetchone()
+    cursor.execute('select code from abbrv')
+    feescaleKeys = cursor.fetchall()
+    retarg={}
+    rows=decode(feescale[0])
+    i=0
+    for key in feescaleKeys:
+        if i>=len(rows):
+            break
+        
+        retarg[key[0]]=rows[i]
+        i+=1
+    return retarg
 
 def feesHtml():
     return toHtml(getFees())
 
 if __name__ == "__main__":
-    print feesHtml()
+    #localsettings.initiate(False)
+    #print localsettings.privateFees
+    #print feesHtml()
+    print getPrivateFeeDict()

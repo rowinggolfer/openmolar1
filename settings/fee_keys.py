@@ -63,10 +63,10 @@ def getExamCode(arg):
     
 def getPerioCode(arg):
     if perio.has_key(arg):
-        return PerioCode[arg]
+        return perio[arg]
     else:
         if perio.has_key(arg[:3]):  #SP+
-            return PerioCode[arg[:3]]
+            return perio[arg[:3]]
         
 def getCrownCode(arg):
     if arg=="PV":

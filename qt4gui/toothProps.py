@@ -9,6 +9,7 @@ from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui import Ui_toothProps,colours,Ui_crownChoice
 from openmolar.settings import allowed
 
+    
 class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
     def __init__(self,parent=None):
         super(tpWidget,self).__init__(parent)
@@ -63,19 +64,31 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         self.tooth.update()
         self.finishedEdit() #doesn';t work!
     def checkEntry(self):
-
         currentFill=str(self.lineEdit.text().toAscii())
         fillList=currentFill.split(":")
-        result=True
         for f in fillList:
-            if f!="":
-                if self.tooth.isBacktooth and not (f in allowed.backToothCodes):
-                    result=False
-                elif not self.tooth.isBacktooth and not (f in allowed.frontToothCodes):
-                    result=False
-            if not result:
-                QtGui.QMessageBox.warning(self,"Error","'%s' is not recognised"%f)
+            if not self.checkProp(f):
+                return
+        self.tooth.clear()
+        self.tooth.update()
+        self.finishedEdit()
+        
+    def checkProp(self,f):
+        result=True
+        if f!="":
+            if self.tooth.isBacktooth and not (f in allowed.backToothCodes):
+                result=False
+            elif not self.tooth.isBacktooth and not (f in allowed.frontToothCodes):
+                result=False
+        if not result:
+            message="'%s' is not recognised - do you want to accept anyway?"%f
+            input=QtGui.QMessageBox.question(self,"Confirm",message,QtGui.QMessageBox.No,QtGui.QMessageBox.Yes) 
+            if input==QtGui.QMessageBox.Yes:
+                result=True
+            else:
+                result=False
         return result
+        
     def additional(self):
         existing=str(self.lineEdit.text().toAscii())
         if ":" in existing:
@@ -86,15 +99,12 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
             currentFill=existing
         if currentFill=="":
             return
-        if self.tooth.isBacktooth and not (currentFill in allowed.backToothCodes):
-            QtGui.QMessageBox.warning(self.tooth,"Error",currentFill+" is not recognised")              ##todo - I need to allow user to add exceptions
-        elif not self.tooth.isBacktooth and not (currentFill in allowed.frontToothCodes):
-            QtGui.QMessageBox.warning(self.tooth,"Error",currentFill+" is not recognised")
-        else:
+        if self.checkProp(currentFill):
             self.lineEdit.setText(existing+":")
             self.tooth.clear()
             self.tooth.update()
             self.finishedEdit()
+            
     def updateSurfaces(self):
         existing=str(self.lineEdit.text().toAscii())
         if ":" in existing:                             #we have an existing filling/property in the tooth
