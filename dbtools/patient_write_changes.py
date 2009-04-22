@@ -5,7 +5,7 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
-import MySQLdb,sys
+import MySQLdb,sys,types
 from openmolar.connect import connect
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
@@ -20,21 +20,23 @@ def write_changes(pt,changes):
         patchanges=""
         trtchanges=""
         for change in changes:
+            
             if change in patient_class.patientTableAtts:
                 value=pt.__dict__[change]
+                print change,type(value)
                 if change in patient_class.dateFields:
                     if value!=None and value!="":
                         patchanges+='%s="%s" ,'%(change,localsettings.uk_to_sqlDate(value))
                 elif value==None:
                     patchanges+='%s=NULL ,'%(change)
-                elif type(value)!=type(1):
-                    patchanges+='%s="%s" ,'%(change,value)
-                else: #integer or float
+                elif (type(value) is types.IntType) or  (type(value) is types.LongType):
                     patchanges+='%s=%s ,'%(change,value)
+                else:
+                    patchanges+='%s="%s" ,'%(change,value)
             if change == "bpe":
                 sqlcommands['bpe']='insert into bpe set serialno=%d,bpedate="%s",bpe="%s"'%(pt.serialno,localsettings.uk_to_sqlDate(pt.bpe[-1][0]),pt.bpe[-1][1])
             if change == "estimates":
-                sqlcommands["prvfees"]='update prvfees set data="%s" where serialno=%d and courseno=%d '%(pt.estimates[0][7],pt.serialno,pt.courseno)
+                sqlcommands["prvfees"]="update prvfees set data='%s' where serialno=%d and courseno=%d "%(pt.estimates[0][7],pt.serialno,pt.courseno)
                     
             if change in patient_class.currtrtmtTableAtts:
                 value=pt.__dict__[change]
@@ -43,10 +45,10 @@ def write_changes(pt,changes):
                         trtchanges+='%s="%s" ,'%(change,localsettings.uk_to_sqlDate(value))
                 elif value==None:
                     trtchanges+='%s=NULL ,'%(change)
-                elif type(value)!=type(1):
-                    trtchanges+='%s="%s" ,'%(change,value)
-                else: #integer or float
+                elif (type(value) is types.IntType) or  (type(value) is types.LongType) :
                     trtchanges+='%s=%s ,'%(change,value)
+                else:
+                    trtchanges+='%s="%s" ,'%(change,value)
                 
     result=True
     if patchanges != "":
@@ -59,10 +61,12 @@ def write_changes(pt,changes):
         cursor = db.cursor()
         for table in sqlcommands.keys():
             try:
+                print sqlcommands[table]
                 cursor.execute(sqlcommands[table])
                 db.commit()
             except Exception,e:
                 print "error saving %s for patient %d"%(table,pt.serialno)
+                print e
                 result = False
         cursor.close()
         #db.close()
@@ -91,7 +95,8 @@ def toNotes(serialno,newnotes):
             cursor.execute(query)
             n+=1
         result=lineNo
-    except:
+    except Exception,e:
+        print e
         result=-1
     cursor.close()
     db.commit()
@@ -105,27 +110,29 @@ def discreet_changes(pt_changed,changes):
     sqlcond=""
     for change in changes:
         value=pt_changed.__dict__[change]
+        print change,type(value)
         if change in patient_class.dateFields:
             if value!="" and value!=None:
                 sqlcond+='%s="%s" ,'%(change,localsettings.uk_to_sqlDate(value))
         elif value==None:
             sqlcond+='%s=NULL ,'%(change)
-        elif type(value)!=type(1):
-            sqlcond+='%s="%s" ,'%(change,value)
-        else: #integer or float
+        elif (type(value) is types.IntType) or  (type(value) is types.LongType) :
             sqlcond+='%s=%s ,'%(change,value)
-            
-    print "update patients  SET %s where serialno=%s"%(sqlcond.strip(","),pt_changed.serialno)
+        else:
+            sqlcond+='%s="%s" ,'%(change,value)
+                   
+    print "update patients SET %s where serialno=%s"%(sqlcond.strip(","),pt_changed.serialno)
     result=True
     if sqlcond!="":
         db=connect()
         cursor = db.cursor()
         #print cursor.execute(sqlcommand)
         try:
-            sqlcommand= "update patients  SET %s where serialno=%s"%(sqlcond.strip(","),pt_changed.serialno)
+            sqlcommand= "update patients SET %s where serialno=%s"%(sqlcond.strip(","),pt_changed.serialno)
             cursor.execute(sqlcommand)
             db.commit()
-        except:
+        except Exception,e:
+            print e
             result=False
         cursor.close()
         #db.close()

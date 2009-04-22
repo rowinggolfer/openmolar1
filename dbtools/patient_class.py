@@ -143,7 +143,7 @@ class patient():
                         query+=field+","
                 query=query.strip(",")
                 try:
-                    cursor.execute('select %s from patients where serialno=%d'%(query,self.serialno))
+                    cursor.execute('SELECT SQL_NO_CACHE %s from patients where serialno=%d'%(query,self.serialno))
                     values= cursor.fetchall()
                 except:
                     print "patient class - error getting data from patients table"
@@ -175,7 +175,7 @@ class patient():
                     print "patient class - error getting mednotes"
                 
                 try:
-                    cursor.execute('select data from userdata where serialno=%d'%self.serialno);
+                    cursor.execute('SELECT SQL_NO_CACHE data from userdata where serialno=%d'%self.serialno);
                     self.data=cursor.fetchall()
                 except:
                     print "patient class - error getting userdata"
@@ -203,10 +203,10 @@ class patient():
             db=connect()
             cursor=db.cursor()
       
-        cursor.execute('select serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
+        cursor.execute('SELECT SQL_NO_CACHE serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         self.estimates = cursor.fetchall()
         
-        cursor.execute('select serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
+        cursor.execute('SELECT SQL_NO_CACHE serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         if disconnectNeeded:
             cursor.close()
             #db.close()
@@ -226,7 +226,7 @@ class patient():
             else:
                 query+=field+","
         query=query.strip(",")
-        cursor.execute('select %s from currtrtmt where serialno=%d and courseno=%d'%(query,self.serialno,self.courseno0))               ##todo - I should lever these multiple tx plans!!!!
+        cursor.execute('SELECT SQL_NO_CACHE %s from currtrtmt where serialno=%d and courseno=%d'%(query,self.serialno,self.courseno0))               ##todo - I should lever these multiple tx plans!!!!
         values= cursor.fetchall()
         for value in values:
             i=0
@@ -245,12 +245,12 @@ class patient():
         if cursor==None:
             db=connect()
             cursor=db.cursor()
-            cursor.execute("select lineno,line from notes where serialno=%d"%self.serialno)
+            cursor.execute("SELECT SQL_NO_CACHE lineno,line from notes where serialno=%d"%self.serialno)
             self.notestuple = cursor.fetchall()                                                     # so "notes" is a tuple like this ((0,'notes'),(1,"morenotes"),...etc...)
             cursor.close()
             #db.close()
         else:
-            cursor.execute("select lineno,line from notes where serialno=%d"%self.serialno)
+            cursor.execute("SELECT SQL_NO_CACHE lineno,line from notes where serialno=%d"%self.serialno)
             self.notestuple = cursor.fetchall()                                                     # so "notes" is a tuple like this ((0,'notes'),(1,"morenotes"),...etc...)
 
     def flipDec_Perm(self,tooth):

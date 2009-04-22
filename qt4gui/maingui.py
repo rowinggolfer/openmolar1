@@ -5,6 +5,9 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
+from __future__ import division
+
+
 from PyQt4 import QtGui, QtCore
 import sys,copy
 
@@ -1967,6 +1970,7 @@ def loadpatient():
     updateDetails()
     load_editpage()
     
+    ui.planSummary_textBrowser.setHtml(plan.summary(pt))
     
     briefHtml=estimates.toBriefHtml(pt.currEstimate)
     receptionSummary(briefHtml)
@@ -2633,7 +2637,7 @@ def showExamDialog():
                 pt.addToEstimate(1,item,itemfee)
                 pt.money1+=itemfee
                 updateFees()
-                #updateEsts()    
+                  
                 for note in result[3]:
                    newnotes+=note+", "
                 ui.notesEnter_textEdit.setText(newnotes.strip(", "))
@@ -2652,13 +2656,15 @@ def showHygDialog():
     Dialog = QtGui.QDialog(MainWindow)
     dl = hygTreatWizard.Ui_Dialog(Dialog)
     dl.setPractitioner(7)
-    item=fee_keys.getPerioCode("SP")
+    item=1121 #fee_keys.getPerioCode("SP")    ####################this is NOT CORRECT#############
+    
     if "P" in pt.cset:
         itemfee=localsettings.privateFees[item]
     else:
         itemfee=0
     if pt.cset=="P":
-        dl.doubleSpinBox.setValue(itemfee/100)
+        fee=itemfee / 100
+        dl.doubleSpinBox.setValue(fee)
     result=dl.getInput()
     print result
     if result:
@@ -2666,11 +2672,10 @@ def showHygDialog():
         newnotes=str(ui.notesEnter_textEdit.toPlainText().toAscii())
         newnotes+="%s performed by %s\n"%(result[0],result[1])
         pt.addHiddenNote("treatment","Perio %s"%result[0])
-        pt.addToEstimate(1,item,itemfee)
-        pt.money1+=itemfee
-        money=result[3]
-        if money>0:
-            pt.money1+=money
+        actfee=result[3]
+        pt.addToEstimate(1,item,actfee)
+        if actfee>0:
+            pt.money1+=actfee
             updateFees()
         pt.periocmp+=result[0]+" "
         for note in result[2]:

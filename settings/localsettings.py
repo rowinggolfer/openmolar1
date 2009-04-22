@@ -181,7 +181,7 @@ def initiate(debug=False):
     except Exception,e:
         print "error getting privatefees",e
     
-    wkdir=os.path.dirname(os.getcwd())
+    wkdir=os.getcwd()
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")
     
 
@@ -209,8 +209,8 @@ def initiate(debug=False):
 
 if __name__ == "__main__":
     sys.path.append("/home/neil/openmolar")
-    initiate(True)
-    #keys=privateFees.keys()
-    #keys.sort()
-    #for key in keys:
-    #    print key,privateFees[key]
+    initiate(False)
+    keys=privateFees.keys()
+    keys.sort()
+    for key in keys:
+        print key,privateFees[key]

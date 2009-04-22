@@ -103,13 +103,13 @@ def printableDaylistData(adate,dent):
     if daydata!=():                                                             
         #--dentist is working!!
         retlist.append(daydata[0][2])
-        query=""                                                                   
         #--now get data for those days so that we can find slots within
-        query= ' adate = "%s" and apptix = %d '%(adate,dent)
-
-        cursor.execute('SELECT start,end,concat(patients.title," ",patients.fname," ",patients.sname)'
-        +'patients.serialno,code0,code1,code2,note,name,patients.cset FROM patients right join aslot '
-        +'on patients.serialno=aslot.serialno where %s order by start'%query)
+        query='SELECT start,end,concat(patients.title," ",patients.fname," ",patients.sname),'
+        query+='patients.serialno,code0,code1,code2,note,name,patients.cset FROM patients right join aslot '
+        query+='on patients.serialno=aslot.serialno where' 
+        query+= ' adate = "%s" and apptix = %d  order by start'%(adate,dent)
+        print query
+        cursor.execute(query)
         results=cursor.fetchall()
         
         #--yes that was a long query
@@ -457,7 +457,7 @@ if __name__ == "__main__":
     adate="2009_02_02"
     edate="2009_02_27"
     localsettings.initiate(False)
-    #print printableDaylistData("20090504",6)
+    print printableDaylistData("20090504",6)
     #print todays_patients()
     #print todays_patients(("NW","AH"))
     #dents= getWorkingDents(edate)

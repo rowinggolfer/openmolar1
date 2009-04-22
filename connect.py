@@ -17,23 +17,33 @@ currentConnection=None
 def connect():
     global currentConnection
     if not (currentConnection and currentConnection.open):
-        print "New connection needed",
+        print "New connection needed"
         currentConnection=MySQLdb.connect(host=myHost,user=myUser,passwd=myPassword,db=myDb)
+        currentConnection.autocommit(True)
         print currentConnection
+    else:
+        currentConnection.commit()
     return currentConnection
     
 if __name__=="__main__":
     import time
     for i in range(1,11):
         try:
-            print "connecting",
+            print "connecting....",
             db=connect()
+            print db.info()
             print 'ok... we can make Mysql connections!!'
-            
         except:
             print "error"
         print "loop no ",i
-        if i==8:db.close()
+        if i==2:
+            #close the db... let's check it reconnects
+            db.close()
+        if i==4:
+            #make a slightly bad query... let's check we get a warning
+            c=db.cursor()
+            c.execute('update patients set dob="19691209" where serialno=11956')
+            c.close()
         time.sleep(5)
     print dir(db)
     db.close()

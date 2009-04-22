@@ -15,7 +15,7 @@
 import sys,os,hashlib
 from PyQt4 import QtGui,QtCore
 
-__version__ = "0.0.5 - 15th April 2009"
+__version__ = "0.0.6 - 22nd April 2009"
 __build__= "N/A dev_machine"
 
 class LoginError(Exception):pass
@@ -42,7 +42,7 @@ def main(app):
             try:
                 pword=str(dl.password_lineEdit.text())
                 s=hashlib.md5(hashlib.sha1(pword).hexdigest()).hexdigest()
-                if s != '800b28e2f8f456bc9d7b0bf98b7c32ab':##end password check##
+                if s != ''0144712dd81be0c3d9724f5e56ce6685'':##end password check##
                     raise LoginError 
                 if uninitiated:
                     localsettings.initiate(False)                                                  #this will attempt to connect to mysql server

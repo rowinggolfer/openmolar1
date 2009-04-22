@@ -48,7 +48,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_10" >
        <attribute name="title" >
@@ -2910,7 +2910,7 @@
           </property>
           <property name="maximumSize" >
            <size>
-            <width>174</width>
+            <width>16777215</width>
             <height>16777215</height>
            </size>
           </property>
@@ -3064,8 +3064,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>200</width>
+                <height>391</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3082,8 +3082,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>201</width>
+                <height>391</height>
                </rect>
               </property>
              </widget>
@@ -3099,8 +3099,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>200</width>
+                <height>391</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3296,8 +3296,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>96</width>
-             <height>28</height>
+             <width>167</width>
+             <height>57</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3613,8 +3613,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>28</height>
+               <width>167</width>
+               <height>59</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
