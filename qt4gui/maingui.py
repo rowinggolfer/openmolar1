@@ -29,7 +29,7 @@ addTreat
 
 #--printing modules
 from openmolar.qt4gui.printing import receiptPrint,notesPrint,chartPrint,bookprint,letterprint\
-,recallprint,daylistprint,multiDayListPrint,accountPrint,estimatePrint,GP17                                                     
+,recallprint,daylistprint,multiDayListPrint,accountPrint,estimatePrint,GP17,apptcardPrint                                                     
 
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)########
 from openmolar.dbtools import cashbook,daybook,patient_write_changes,recall,\
@@ -875,20 +875,20 @@ def ptApptTableNav():
         ui.modifyAppt_pushButton.setEnabled(False)
         ui.clearAppt_pushButton.setEnabled(False)
         ui.findAppt_pushButton.setEnabled(False)
-        ui.printAppt_pushButton.setEnabled(False)
+        #ui.printAppt_pushButton.setEnabled(False)
         return
     if ui.ptAppointmentTableWidget.item(r,0).text()=="TBA":
         ui.makeAppt_pushButton.setEnabled(True)
         ui.modifyAppt_pushButton.setEnabled(True)
         ui.clearAppt_pushButton.setEnabled(True)
         ui.findAppt_pushButton.setEnabled(False)
-        ui.printAppt_pushButton.setEnabled(False)
+        #ui.printAppt_pushButton.setEnabled(False)
     else:
         ui.makeAppt_pushButton.setEnabled(False)
         ui.modifyAppt_pushButton.setEnabled(True)
         ui.clearAppt_pushButton.setEnabled(True)
         ui.findAppt_pushButton.setEnabled(True)
-        ui.printAppt_pushButton.setEnabled(True)
+        #ui.printAppt_pushButton.setEnabled(True)
 
 def layout_apptTable():
     '''populates the patients appointment table'''
@@ -1627,8 +1627,8 @@ def completeToothTreatments(arg):
             newplan=existingplan.replace(result[1],"")
             pt.__dict__[planATT]=newplan
             existingcompleted=pt.__dict__[completedATT]
-            newcompleted=existingcompleted+result[1]
-            pt.__dict__[completedATT]=newcompleted
+            newcompleted=result[1]
+            pt.__dict__[completedATT]=existingcompleted+newcompleted
 
             if planATT[:2] in ("ur","ul","ll","lr"): 
                 #--treatment is on a tooth (as opposed to denture etc....)
@@ -2217,9 +2217,16 @@ def printChart():
     myclass=chartPrint.printChart(pt,staticimage)
     myclass.printpage()
 def printApptCard():
-    print "appointment card please!!"                                                               
-    ####TODO print appt cards
-    advise("openMolar can't print appointment cards yet, sorry!",2)
+    rowcount=ui.ptAppointmentTableWidget.rowCount()
+    futureAppts=()
+    for row in range(rowcount):
+        adate=str(ui.ptAppointmentTableWidget.item(row,0).text())
+        if localsettings.uk_to_sqlDate(adate)>=localsettings.sqlToday():
+            futureAppts+=((adate,str(ui.ptAppointmentTableWidget.item(row,2).text()),str(ui.ptAppointmentTableWidget.item(row,1).text())),)
+    card=apptcardPrint.card()
+    card.setProps(pt.title,pt.fname,pt.sname,pt.serialno,futureAppts)
+    card.print_()
+    
 def printaccount(tone="A"):
     if pt.serialno==0:
         advise("no patient selected",1)
@@ -3101,7 +3108,7 @@ def addCustomWidgets():
 def enableEdit(arg=True):
     for but in (ui.printEst_pushButton, ui.printAccount_pushButton, ui.relatedpts_pushButton, ui.saveButton,
     ui.phraseBook_pushButton, ui.exampushButton,ui.medNotes_pushButton,ui.callXrays_pushButton,
-    ui.charge_pushButton,ui.printGP17_pushButton,ui.newBPE_pushButton,ui.hygWizard_pushButton):
+    ui.charge_pushButton,ui.printGP17_pushButton,ui.newBPE_pushButton,ui.hygWizard_pushButton,ui.printAppt_pushButton):
         but.setEnabled(arg)
     for i in (0,1,2,5,6,7,8,9):
         if ui.tabWidget.isTabEnabled(i)!=arg: ui.tabWidget.setTabEnabled(i,arg)
@@ -3151,7 +3158,8 @@ def main(arg):
     loadDentistComboboxes()
     load_todays_patients_combobox()                                                                 
     #--adds items to the daylist comboBox
-    if "win" in sys.platform:
+    if __name__ != "__main__":
+        #don't maximise the window for dev purposes.
         MainWindow.setWindowState(QtCore.Qt.WindowMaximized)
     MainWindow.show()
     sys.exit(app.exec_())

@@ -13,13 +13,11 @@ class letter():
         self.html=html
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A4)
-        self.printer.setResolution(QtGui.QPrinter.ScreenResolution)
-    
+        
     def printpage(self,askfirst=True):
         dialog = QtGui.QPrintDialog(self.printer)
         if askfirst and not dialog.exec_():
             return
-        #print dir(self.printer)
         document = QtGui.QTextDocument()
         document.setHtml(self.html)
         document.print_(self.printer)

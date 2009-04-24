@@ -54,7 +54,7 @@ def getHtml(desc,pt):
             retarg+= '%s <br /><br />'%d.year
             retarg+="Dear %s,<br />"%greeting
             retarg+='<div align="center"><b>Re. %s %s %s - '%(pt.title.title(),pt.fname.title(),pt.sname.title())
-            retarg+='DOB %s</b><br />'%localsettings.formatDate(pt.dob)
+            retarg+='DOB %s</b><br />'%pt.dob
             for val in (pt.addr1,pt.addr2,pt.addr3,pt.town,pt.county):
                 if val!="":
                     retarg+=val+","
