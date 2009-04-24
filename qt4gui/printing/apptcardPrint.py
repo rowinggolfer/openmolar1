@@ -71,9 +71,9 @@ class card():
             y += serifLineHeight
         
         
-        painter.drawLine(int(x),int(y),int(pageRect.width()),int(y))
         
         y = pageRect.height()-70
+        painter.drawLine(int(x),int(y),int(pageRect.width()),int(y))
         
         painter.setFont(font)
         painter.drawText(QtCore.QRectF(0, y,pageRect.width(), 70),
