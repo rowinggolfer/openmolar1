@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>865</width>
-    <height>556</height>
+    <width>1109</width>
+    <height>614</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -48,7 +48,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>1</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="tab_10" >
        <attribute name="title" >
@@ -1687,7 +1687,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>607</width>
+                    <width>534</width>
                     <height>493</height>
                    </rect>
                   </property>
@@ -3064,8 +3064,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>200</width>
-                <height>391</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3082,8 +3082,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>201</width>
-                <height>391</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
              </widget>
@@ -3099,8 +3099,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>200</width>
-                <height>391</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3296,8 +3296,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>167</width>
-             <height>57</height>
+             <width>96</width>
+             <height>28</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3613,8 +3613,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>167</width>
-               <height>59</height>
+               <width>96</width>
+               <height>28</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -4254,43 +4254,151 @@
         <string>Feescales</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_19" >
-        <item row="0" column="0" >
-         <spacer name="horizontalSpacer_10" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
+        <item rowspan="3" row="0" column="0" >
+         <widget class="QTabWidget" name="fees_tabWidget" >
+          <property name="currentIndex" >
+           <number>0</number>
           </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>416</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+          <widget class="QWidget" name="tab_23" >
+           <attribute name="title" >
+            <string>Diagnosis</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_20" >
+            <item>
+             <widget class="QTableWidget" name="fees_diagnosis_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_30" >
+           <attribute name="title" >
+            <string>Preventive</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_21" >
+            <item>
+             <widget class="QTableWidget" name="fees_prevention_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_24" >
+           <attribute name="title" >
+            <string>Perio</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_22" >
+            <item>
+             <widget class="QTableWidget" name="fees_perio_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_25" >
+           <attribute name="title" >
+            <string>Conservation</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_23" >
+            <item>
+             <widget class="QTableWidget" name="fees_conservation_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_26" >
+           <attribute name="title" >
+            <string>Surgical</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_24" >
+            <item>
+             <widget class="QTableWidget" name="fees_surgical_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_27" >
+           <attribute name="title" >
+            <string>Prosthetics</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_25" >
+            <item>
+             <widget class="QTableWidget" name="fees_prosthetics_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_28" >
+           <attribute name="title" >
+            <string>Orthodontics</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_26" >
+            <item>
+             <widget class="QTableWidget" name="fees_ortho_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_29" >
+           <attribute name="title" >
+            <string>Other</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_27" >
+            <item>
+             <widget class="QTableWidget" name="fees_other_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_31" >
+           <attribute name="title" >
+            <string>Capitation(minors)</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_28" >
+            <item>
+             <widget class="QTableWidget" name="fees_capitation_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_32" >
+           <attribute name="title" >
+            <string>Occasional</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_29" >
+            <item>
+             <widget class="QTableWidget" name="fees_occasional_tableWidget" />
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </item>
         <item row="0" column="1" >
          <widget class="QPushButton" name="loadFeescale_pushButton" >
           <property name="text" >
-           <string>Load the Table</string>
-          </property>
-          <property name="icon" >
-           <iconset resource="../resources/resources.qrc" >
-            <normaloff>:/button_ok.png</normaloff>:/button_ok.png</iconset>
+           <string>Load Feescale Tables</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="2" >
-         <widget class="QPushButton" name="printFeescale_pushButton" >
-          <property name="text" >
-           <string>Print Selected Letters</string>
-          </property>
-          <property name="icon" >
-           <iconset resource="../resources/resources.qrc" >
-            <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-          </property>
+        <item row="1" column="1" >
+         <widget class="QComboBox" name="chooseFeescale_comboBox" >
+          <item>
+           <property name="text" >
+            <string>Show All Fee Scales</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Private FeeScale</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>NHS FeeScale 2008</string>
+           </property>
+          </item>
          </widget>
         </item>
-        <item row="1" column="0" colspan="3" >
-         <widget class="QTextBrowser" name="feesScale_textBrowser" />
+        <item row="2" column="1" >
+         <spacer name="verticalSpacer_3" >
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>433</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -4303,7 +4411,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>865</width>
+     <width>1109</width>
      <height>24</height>
     </rect>
    </property>
@@ -4551,9 +4659,6 @@
   <tabstop>apptPrevDay_pushButton</tabstop>
   <tabstop>apptNextDay_pushButton</tabstop>
   <tabstop>loadAccountsTable_pushButton</tabstop>
-  <tabstop>loadFeescale_pushButton</tabstop>
-  <tabstop>printFeescale_pushButton</tabstop>
-  <tabstop>feesScale_textBrowser</tabstop>
  </tabstops>
  <resources>
   <include location="../resources/resources.qrc" />

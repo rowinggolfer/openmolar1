@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui,QtCore
-from openmolar.qt4gui import Ui_payments
+from openmolar.qt4gui.dialogs import Ui_payments
 
 class paymentWidget(Ui_payments.Ui_Dialog,QtGui.QDialog):
     def __init__(self,parent=None):

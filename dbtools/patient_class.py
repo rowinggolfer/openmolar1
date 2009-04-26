@@ -302,7 +302,12 @@ class patient():
         
     def addToEstimate(self,number,item,fee):
         print "adding to estimate ",number,item,fee
-        blob=estimates.encode(number,item,fee)
+        intitem=4001  #'other treatment
+        try:
+            intitem=int(item)
+        except:
+            pass
+        blob=estimates.encode(number,intitem,fee)
         
         est=self.estimates[0]
         newEst=(est[0],est[1],est[2],est[3],est[4],est[5],est[6],est[7]+blob)
@@ -366,4 +371,6 @@ if __name__ =="__main__":
     #print pt.dent1,pt.dent0,pt.dent3,pt.dent2
     #pt.flipDec_Perm("ur8")
     #print pt.dent1,pt.dent0,pt.dent3,pt.dent2
-    print pt.dayBookHistory
+    #print pt.dayBookHistory
+    print pt.dob
+    #print pt.chartgrid

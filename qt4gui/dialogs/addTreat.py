@@ -5,8 +5,10 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
+from __future__ import division
+
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui import Ui_addTreatment,Ui_treatmentItemWidget
+from openmolar.qt4gui.dialogs import Ui_addTreatment,Ui_treatmentItemWidget
 from openmolar.settings import localsettings,fee_keys
 
 class treatment(Ui_addTreatment.Ui_Dialog):
@@ -20,25 +22,35 @@ class treatment(Ui_addTreatment.Ui_Dialog):
     def showItems(self):
         self.itemWidgets=[]
         vlayout = QtGui.QVBoxLayout(self.frame)
+        total=0
         for item in self.items:
             number=item[0]
-            code=item[1]
-            description=item[2]
-            if self.cset=="P":
-                code=fee_keys.getKey(code)
-                fee=0
-                if fee==None:
-                    fee=0
-            else:
-                fee=0
+            usercode=item[1]
+            itemcode="4001" #unknown item
+            itemfee=0
+            if "P" in self.cset:
+                try:
+                    itemcode=fee_keys.getKeyCode(usercode)
+                    itemfee=localsettings.privateFees[itemcode]
+                except:
+                    print "no fee found for item %s"%usercode
+            description=""
+            try:
+                description=localsettings.descriptions[itemcode]
+            except:
+                print "no description found for item %s"%itemcode
+            fee=itemfee / 100
+            total+=itemfee
             iw=QtGui.QWidget()
             i=Ui_treatmentItemWidget.Ui_Form()
             i.setupUi(iw)
             i.spinBox.setValue(number)
-            i.label.setText(description+" (%s)"%code)
-            i.doubleSpinBox.setValue(fee/100)
+            i.label.setText(description+" (%s)"%itemcode)
+            i.doubleSpinBox.setValue(fee)
             self.itemWidgets.append(i)
             vlayout.addWidget(iw)
+        self.fee_doubleSpinBox.setValue(total/100)
+        
     def getInput(self):
         if self.dialog.exec_():
             retarg=()
@@ -56,9 +68,9 @@ if __name__ == "__main__":
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
-    items=[(1,"CE","Exam"),(1,"M","Medium Xray")]
-    for i in range(10):
-        items.append((0,"CODE","Treatment Description"))
+    items=[(1,"CE"),(1,"M"),(1,"SP")]
+    for i in range(2):
+        items.append((1,"ECE"),)
     ui = treatment(Dialog,items,"P")
     print ui.getInput()
    

@@ -9,7 +9,7 @@ from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 
-from openmolar.qt4gui import Ui_medhist
+from openmolar.qt4gui.dialogs import Ui_medhist
 
 def showDialog(Dialog,data):
     dl = Ui_medhist.Ui_Dialog()

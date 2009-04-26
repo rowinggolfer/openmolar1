@@ -34,6 +34,7 @@ message=""
 dentDict={}
 surgeryno=-1                                                                  #for call durr purposes only
 csetypes=["P","I","N","N OR","N O"] 
+feeKey={}
 
 practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV1 1PP")
 
@@ -160,26 +161,23 @@ def initiate(debug=False):
     except:
         print "error loading from opid"
 
-    try:
-        cursor.execute("select * from descr")
+    try:   #this breaks compatibility with the old database schema
+        cursor.execute("select code,description,pfa,USERCODE from newfeetable")
         rows=cursor.fetchall()
         for row in rows:
-            descriptions[row[0][:4]]=row[1]              ##this is a hack.... there are more keys in here than this :(
-    except:
-        print "error loading from descr"
-
-    try:
-        cursor.execute("select * from abbrv")
-        rows=cursor.fetchall()
-        for row in rows:
-            abbreviations[row[0]]=row[1]
-    except:
-        print "error loading from abbrv - probably no loss!"
-    
-    try:
-        privateFees=feesTable.getPrivateFeeDict()
+            code=row[0]
+            userkey=row[3]
+            if code!="":
+                #privateFees[row[0]]=row[2]
+                while privateFees.has_key(code):
+                    code+="."
+                privateFees[code]=row[2]
+                descriptions[code]=row[1]
+                if userkey!="" and userkey!=None:
+                    feeKey[userkey]=row[0]
+                
     except Exception,e:
-        print "error getting privatefees",e
+        print "error loading from newfeetable",e
     
     wkdir=os.getcwd()
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")
@@ -204,13 +202,12 @@ def initiate(debug=False):
         print curTime()
         print sqlToday()
         print dentDict
-        print abbreviations
+        print descriptions
+        print privateFees
+        #print abbreviations
         #print fees
-
+    
 if __name__ == "__main__":
     sys.path.append("/home/neil/openmolar")
-    initiate(False)
-    keys=privateFees.keys()
-    keys.sort()
-    for key in keys:
-        print key,privateFees[key]
+    initiate(True)
+    

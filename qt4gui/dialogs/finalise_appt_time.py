@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui import Ui_finalise_appt_time
+from openmolar.qt4gui.dialogs import Ui_finalise_appt_time
 from openmolar.settings.localsettings import minutesPastMidnight,humanTime,minutesPastMidnighttoWystime
 
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
-    ui = ftDialog(830,60,15)
+    ui = ftDialog(Dialog,830,60,15)
     if Dialog.exec_():
             print "accepted - selected appointment is (%d,%d)"%(ui.selectedtime,ui.length)
             (ui.selectedtime,ui.length)

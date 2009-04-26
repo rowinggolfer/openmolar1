@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui import Ui_saveDiscardCancel
+from openmolar.qt4gui.dialogs import Ui_saveDiscardCancel
 
 class sdcDialog(Ui_saveDiscardCancel.Ui_Dialog):
     def __init__(self,dialog,detail,changelist,parent=None):

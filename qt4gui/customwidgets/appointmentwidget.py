@@ -35,6 +35,7 @@ class appointmentWidget(QtGui.QWidget):
         self.appts=[]
         self.rows={}
         self.setTime="None"
+        self.clearAppts()
         self.dentist="DENTIST"
         self.selected=(0,0)  #hmmmm
         self.setMouseTracking(True)

@@ -6,7 +6,8 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui import Ui_toothPerioProps,colours
+from openmolar.qt4gui.customwidgets import Ui_toothPerioProps
+from openmolar.qt4gui import colours
 from openmolar.settings import allowed
 
 class tpWidget(Ui_toothPerioProps.Ui_Form,QtGui.QWidget):

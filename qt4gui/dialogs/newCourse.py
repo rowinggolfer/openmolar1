@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui import Ui_newCourse
+from openmolar.qt4gui.dialogs import Ui_newCourse
 from openmolar.settings import localsettings
 
 class course(Ui_newCourse.Ui_Dialog):

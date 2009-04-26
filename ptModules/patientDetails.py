@@ -98,12 +98,11 @@ def details(pt):
     return retarg+'</div></body></html>'
 
 if __name__ == '__main__':
-    ### todo - this won't run because localsettings aren't loaded
     localsettings.initiate(False)
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=31763
+        serialno=707
     if '-v' in sys.argv:
         verbose=True
     else:

@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui import Ui_completeTreatment
+from openmolar.qt4gui.dialogs import Ui_completeTreatment
 from openmolar.settings import localsettings
 
 class treatment(Ui_completeTreatment.Ui_Dialog):
