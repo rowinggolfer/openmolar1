@@ -14,7 +14,7 @@ columntypes=("smallint(6)","CHAR(20)","CHAR(12)","CHAR(12)","CHAR(20)","CHAR(30)
 
 
 def main(filepath):
-    db=MySQLdb.connect(host=myhost,user=myuser,db=database,passwd="focus")   #not using a password for my version
+    db=MySQLdb.connect(host=myhost,user=myuser,db=database,passwd="password")   #not using a password for my version
     cursor=db.cursor()
     if True:  #this only needs to be run once - it will throw an error if the columns are already there
         cursor.execute("CREATE TABLE %s (ix SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (ix))"%table) 
