@@ -35,7 +35,7 @@ dentDict={}
 surgeryno=-1                                                                  #for call durr purposes only
 csetypes=["P","I","N","N OR","N O"] 
 feeKey={}
-
+logqueries=True      #for debugging purposes... set this to true.- not yet implemented throughout. 
 practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV1 1PP")
 
 #localsettings.defaultNewPatientDetails=(pt.sname,pt.addr1,pt.addr2,pt.addr3,pt.town,pt.county,pt.pcde,pt.tel1)

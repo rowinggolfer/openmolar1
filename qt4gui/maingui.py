@@ -313,7 +313,7 @@ class appointmentClass():
                     else:
                         #remove from the patients diary
                         if not appointments.delete_appt_from_apr(self.pt.serialno,aprix,checkdate,appttime):                    
-                                self.advise("Error removing proposed appointment",2)
+                            self.advise("Error removing proposed appointment",2)
                 else:
                     #--aslot proc has returned False!
                     #let the user know, and go no further
@@ -383,7 +383,7 @@ class appointmentClass():
             dl.lineEdit.setText(memo)
             dl.apptlength_comboBox.setCurrentIndex(2)
             QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.\
-            SIGNAL("currentIndexChanged(int)"),oddApptLength)                                               
+            SIGNAL("currentIndexChanged(int)"),self.oddApptLength)                                               
             QtCore.QObject.connect(dl.scheduleNow_pushButton,QtCore.SIGNAL("clicked()"), makeNow)                                                                          
             if Dialog.exec_():
                 practixText=str(dl.practix_comboBox.currentText())

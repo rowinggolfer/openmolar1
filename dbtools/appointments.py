@@ -36,8 +36,10 @@ def todays_patients(dents=("*")):
     
     if " or" in cond:
         cond="("+cond[:cond.rindex(" or")]+") and"
-    cursor.execute(' SELECT serialno,name FROM aslot WHERE adate="%s" and %s serialno!=0 ORDER BY name'%(
-    localsettings.sqlToday(),cond))
+    fullquery='SELECT serialno,name FROM aslot WHERE adate="%s" and %s serialno!=0 ORDER BY name'%(localsettings.sqlToday(),cond)
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
     rows = cursor.fetchall()                                           
     cursor.close()
     #db.close()
@@ -56,8 +58,11 @@ def getWorkingDents(adate,dents=()):
         mystr=mystr[0:mystr.rindex(" OR")]+")"
     else:
         mystr=""
-    cursor.execute('SELECT apptix,start,end FROM aday WHERE adate="%s" AND (flag=1 or flag=2) %s'%
-    (adate,mystr))    
+    fullquery='SELECT apptix,start,end FROM aday WHERE adate="%s" AND (flag=1 or flag=2) %s'%(adate,mystr)
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
+   
     rows = cursor.fetchall()
     cursor.close()
     #db.close()
@@ -77,7 +82,12 @@ def allAppointmentData(adate,dents=()):
         mystr=""
     fields='''DATE_FORMAT(adate,'%s'),apptix,start,end,name,serialno,code0,'''%localsettings.sqlDateFormat
     fields+='''code1,code2,note,flag0,flag1,flag2,flag3'''
-    cursor.execute('select %s from aslot where adate="%s" %s order by apptix,start'%(fields,adate,mystr))                                    
+ 
+    fullquery='select %s from aslot where adate="%s" %s order by apptix,start'%(fields,adate,mystr)
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
+   
     data= cursor.fetchall()
     cursor.close()
     #db.close()
@@ -95,8 +105,14 @@ def printableDaylistData(adate,dent):
     '''gets start,finish and booked appointments for this date'''
     db = connect()
     cursor = db.cursor()
-    cursor.execute('''SELECT start,end,memo FROM aday WHERE adate="%s" and (flag=1 or flag=2) and apptix=%d'''%(
-    adate,dent))                            
+
+    
+    fullquery='''SELECT start,end,memo FROM aday WHERE adate="%s" and (flag=1 or flag=2) and apptix=%d'''%(adate,dent)
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
+    
+                              
     daydata= cursor.fetchall()
     retlist=[]
     
@@ -104,12 +120,14 @@ def printableDaylistData(adate,dent):
         #--dentist is working!!
         retlist.append(daydata[0][2])
         #--now get data for those days so that we can find slots within
-        query='SELECT start,end,concat(patients.title," ",patients.fname," ",patients.sname),'
-        query+='patients.serialno,code0,code1,code2,note,name,patients.cset FROM patients right join aslot '
-        query+='on patients.serialno=aslot.serialno where' 
-        query+= ' adate = "%s" and apptix = %d  order by start'%(adate,dent)
-        print query
-        cursor.execute(query)
+        fullquery='SELECT start,end,concat(patients.title," ",patients.fname," ",patients.sname),'
+        fullquery+='patients.serialno,code0,code1,code2,note,name,patients.cset FROM patients right join aslot '
+        fullquery+='on patients.serialno=aslot.serialno where' 
+        fullquery+= ' adate = "%s" and apptix = %d  order by start'%(adate,dent)
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+
         results=cursor.fetchall()
         
         #--yes that was a long query
@@ -140,14 +158,23 @@ def daysummary(adate,dent):
         apptix="AND apptix=%d"%dent
         
     #--fist get start date and end date    
-    cursor.execute('''SELECT start,end FROM aday WHERE adate="%s" and (flag=1 or flag=2) %s'''%(adate,apptix))  
+    fullquery='''SELECT start,end FROM aday WHERE adate="%s" and (flag=1 or flag=2) %s'''%(adate,apptix)
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
+ 
     daydata= cursor.fetchall()
     query=""
     retarg=()                                                                 
     #--now get data for those days so that we can find slots within
     if daydata!=():
         query= ' adate = "%s" and apptix = %d '%(adate,dent)
-        cursor.execute('SELECT start,end FROM aslot WHERE %s AND flag0!=-128 ORDER BY start'%query)                      
+
+        fullquery='SELECT start,end FROM aslot WHERE %s AND flag0!=-128 ORDER BY start'%query
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+        
         results=cursor.fetchall()                                              
         ##TODO - this works, but would it be more efficient to join thess 2 queries??
         retarg=convertResults(results)
@@ -165,7 +192,13 @@ def getBlocks(adate,dent):
         apptix=""
     else:
         apptix="and apptix=%d"%dent
-    cursor.execute('''SELECT start,end FROM aday WHERE adate="%s" AND (flag=1 OR flag=2) %s'''%(adate,apptix))                    
+
+    fullquery='''SELECT start,end FROM aday WHERE adate="%s" AND (flag=1 OR flag=2) %s'''%(adate,apptix)
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
+
+
     #--SQL query to get start and end
     daydata= cursor.fetchall()                                                 
     #--now get data for those days so that we can find slots within
@@ -173,7 +206,11 @@ def getBlocks(adate,dent):
     query=""
     if daydata!=():
         query= ' adate = "%s" and apptix = %d '%(adate,dent)
-        cursor.execute('SELECT start,end FROM aslot WHERE %s AND flag0=-128 and name!="LUNCH" ORDER BY start'%query)                               
+        fullquery='SELECT start,end FROM aslot WHERE %s AND flag0=-128 and name!="LUNCH" ORDER BY start'%query
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+                             
         results=cursor.fetchall()                                              
         ##TODO - again, should I join these queries??
         cursor.close()
@@ -188,7 +225,11 @@ def clearEms(adate):
     cursor=db.cursor()
     number=0
     try:
-        number=cursor.execute('delete from aslot WHERE adate="%s" and flag0=-128 and name!="LUNCH"'%adate)
+        fullquery='delete from aslot WHERE adate="%s" and flag0=-128 and name!="LUNCH"'%adate
+        if localsettings.logqueries:
+            print fullquery
+        number=cursor.execute(fullquery)
+
         db.commit()                      
     except Exception,e:
         print "exception in appointments module, clearEms"
@@ -204,8 +245,12 @@ def get_pts_appts(sno):
     db = connect()
     cursor = db.cursor()                                                    
        
-    cursor.execute('SELECT serialno,aprix,practix,code0,code1,code2,note,DATE_FORMAT(adate,"%s"),atime,length,'%localsettings.sqlDateFormat
-    +'flag0,flag1,flag2,flag3,flag4,datespec FROM apr WHERE serialno=%d ORDER BY adate'%sno)
+    fullquery='SELECT serialno,aprix,practix,code0,code1,code2,note,DATE_FORMAT(adate,"%s"),atime,length,'%localsettings.sqlDateFormat
+    fullquery+='flag0,flag1,flag2,flag3,flag4,datespec FROM apr WHERE serialno=%d ORDER BY adate'%sno
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
+
     data= cursor.fetchall()                                                    
 
     cursor.close()
@@ -220,7 +265,11 @@ def add_pt_appt(serialno,practix,length,code0,aprix=-1,code1="",code2="",note=""
     try:
         if aprix==-1:
             #--this means put the appointment at the end
-            cursor.execute('SELECT max(aprix) FROM apr WHERE serialno=%d'%serialno)
+            fullquery='SELECT max(aprix) FROM apr WHERE serialno=%d'%serialno
+            if localsettings.logqueries:
+                print fullquery
+            cursor.execute(fullquery)
+
             data= cursor.fetchall()
             currentMax=data[0][0]
             if currentMax:
@@ -232,10 +281,15 @@ def add_pt_appt(serialno,practix,length,code0,aprix=-1,code1="",code2="",note=""
         values='%d,%d,%d,"%s","%s","%s","%s",%d,%d,%d,%d,%d,%d,"%s"'%(serialno,aprix,practix,code0,code1,\
         code2,note,length,flag0,flag1,flag2,flag3,flag4,datespec)
 
-        cursor.execute('INSERT INTO apr (%s) VALUES (%s)'%(columns,values))                                                       
+        fullquery='INSERT INTO apr (%s) VALUES (%s)'%(columns,values)
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+                                                      
         db.commit()
         result=True
-    except:
+    except Exception,e:
+        print "exception in appointments.add_pt_appt ",e
         result=False                                                           
     cursor.close()
     #db.close()
@@ -249,12 +303,15 @@ def modify_pt_appt(adate,aprix,serialno,practix,length,code0,code1="",code2="",n
     changes='practix=%d,code0="%s",code1="%s",code2="%s",note="%s",length=%d,flag0=%d,flag1=%d,flag2=%d,flag3=%d,flag4=%d,datespec="%s"'%(
     practix,code0,code1,code2,note,length,flag0,flag1,flag2,flag3,flag4,datespec)
         
-    query='update apr set %s where serialno=%d and aprix=%d'%(changes,serialno,aprix)
+    fullquery='update apr set %s where serialno=%d and aprix=%d'%(changes,serialno,aprix)
     result=True
     try:
-        cursor.execute(query)                                                      
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
         db.commit()
-    except:
+    except Exception,e:
+        print "exception in appointments.modify_pt_appt ",e
         result=False                           
     cursor.close()
     #db.close()
@@ -266,9 +323,14 @@ def pt_appt_made(serialno,aprix,date,time,dent):
     cursor = db.cursor()
     result=True
     try:
-        cursor.execute('UPDATE apr SET adate="%s" ,atime=%d, practix=%d WHERE serialno=%d AND aprix=%d'%(date,time,dent,serialno,aprix))
+        fullquery='UPDATE apr SET adate="%s" ,atime=%d, practix=%d WHERE serialno=%d AND aprix=%d'%(date,time,dent,serialno,aprix)
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+
         db.commit()
-    except:
+    except Exception,e:
+        print "exception in appointments.pt_appt_made ",e
         result=False
     cursor.close()
     #db.close()
@@ -280,9 +342,14 @@ def made_appt_to_proposed(serialno,aprix):
     cursor = db.cursor()
     result=True
     try:
-        cursor.execute('UPDATE apr SET adate=NULL, atime=NULL WHERE serialno=%d AND aprix=%d'%(serialno,aprix))                  
+        
+        fullquery='UPDATE apr SET adate=NULL, atime=NULL WHERE serialno=%d AND aprix=%d'%(serialno,aprix)
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
         db.commit()
-    except:
+    except Exception,e:
+        print "exception in appointments.made_appt_to_proposed ",e
         result=False
     cursor.close()
     #db.close()
@@ -297,7 +364,11 @@ def make_appt(adate,apptix,start,end,name,serialno,code0,code1,code2,note,flag0,
     values='"%s",%d,%d,%d,"%s",%d,"%s","%s","%s","%s",%d,%d,%d,%d'%(adate,apptix,start,end,name,serialno,
     code0,code1,code2,note,flag0,flag1,flag2,flag3)
     
-    if cursor.execute('INSERT INTO aslot (%s) VALUES (%s)'%(columns,values)): 
+    fullquery='INSERT INTO aslot (%s) VALUES (%s)'%(columns,values)
+    if localsettings.logqueries:
+        print fullquery
+
+    if cursor.execute(fullquery): 
         #-- insert call.. so this will always be true unless we have key value errors?
         db.commit()
         result=True
@@ -315,10 +386,15 @@ def modify_aslot_appt(adate,apptix,start,serialno,code0,code1,code2,note,flag0,f
     changes='''code0="%s",code1="%s",code2="%s",note="%s",flag0=%d,flag1=%d,flag2=%d,flag3=%d'''%(
     code0,code1,code2,note,flag0,flag1,flag2,flag3)
     
-    if cursor.execute('update aslot set %s where adate="%s" and apptix=%d and start=%d and serialno=%d'%(changes,adate,apptix,start,serialno)):
+    fullquery='update aslot set %s where adate="%s" and apptix=%d and start=%d and serialno=%d'%(changes,adate,apptix,start,serialno)
+    if localsettings.logqueries:
+        print fullquery
+    try:
+        cursor.execute(fullquery)
         db.commit()
         result=True
-    else:
+    except Exception,e:
+        print "exception in appointments.modify_aslot_appt ",e        
         print "couldn't modify aslot %s %s %s serialno %d"%(adate,apptix,start,serialno)
         result=False
     cursor.close()
@@ -332,32 +408,51 @@ def delete_appt_from_apr(serialno,aprix,adate,atime):
     db = connect()
     cursor = db.cursor()
     try:
-        query='DELETE FROM apr WHERE serialno=%d AND aprix=%d'%(serialno,aprix)
+        fullquery='DELETE FROM apr WHERE serialno=%d AND aprix=%d'%(serialno,aprix)
         if adate==None:
-            query+=' and adate is NULL'
+            fullquery+=' and adate is NULL'
         else:
-            query+=' and adate =%s'%adate
+            fullquery+=' and adate =%s'%adate
         if atime==None:
-            query+=' and atime is NULL'
+            fullquery+=' and atime is NULL'
         else:
-            query+=' and atime =%d'%atime
-        cursor.execute(query)
+            fullquery+=' and atime =%d'%atime
+        
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+
         db.commit()
         #--now refresh rows
-        cursor.execute('SELECT aprix FROM apr WHERE serialno=%d'%serialno)     
-        #SQL QUERY - get all aprix values for updating
-        curvals=cursor.fetchall()
-        i=0
-        for curval in curvals:
-            i+=1
-            cursor.execute('UPDATE apr set aprix=%d where serialno=%d and aprix=%d'%(i,serialno,curval[0]))                  
-            #--SQL QUERY for each line :( to  update them - YEUCH!!!!
         
-        db.commit()
+        ####----this is unecessary and causing issues???????################   removede 27.4.2008
+        if False:
+            fullquery='SELECT aprix FROM apr WHERE serialno=%d'%serialno 
+            if localsettings.logqueries:
+                print fullquery
+            cursor.execute(fullquery)
+        
+            #SQL QUERY - get all aprix values for updating
+            curvals=cursor.fetchall()
+            
+            i=0
+            for curval in curvals:
+                i+=1
+                
+                fullquery='UPDATE apr set aprix=%d where serialno=%d and aprix=%d'%(i,serialno,curval[0]) 
+                if localsettings.logqueries:
+                    print fullquery
+                cursor.execute(fullquery)
+                #--SQL QUERY for each line :( to  update them - YEUCH!!!!
+            
+            db.commit()
         #db.close()
         result= True
-    except:
+    except Exception,e:
+        print "exception in appointments.delete_appt_from_apr ",e
         result= False
+    
+    return result
     cursor.close()
     
 def delete_appt_from_aslot(dent,start,adate,serialno):                         
@@ -366,10 +461,13 @@ def delete_appt_from_aslot(dent,start,adate,serialno):
     db=connect()
     cursor=db.cursor()
     try:
-        query= 'DELETE FROM aslot WHERE serialno=%d AND apptix=%d AND start=%d AND adate="%s"'%(serialno,dent,start,adate)
-        cursor.execute(query)
+        fullquery= 'DELETE FROM aslot WHERE serialno=%d AND apptix=%d AND start=%d AND adate="%s"'%(serialno,dent,start,adate)
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
         db.commit()
-    except:
+    except Exception,e:
+        print "exception in appointments.delete_appt_from_aslot ",e
         result=False
     cursor.close()
     #db.close()
@@ -389,9 +487,12 @@ def daysSlots(adate,dent):
     #--now get data for those days so that we can find slots within
     query=""
     if daydata!=():
-        query= ' adate = "%s" and apptix = %d '%(adate,\
-        localsettings.apptix[dent])
-        cursor.execute('SELECT start,end FROM aslot WHERE %s ORDER BY start'%query)                                                               
+        query= ' adate = "%s" and apptix = %d '%(adate,localsettings.apptix[dent])
+        fullquery='SELECT start,end FROM aslot WHERE %s ORDER BY start'%query
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+                                                              
         results=cursor.fetchall()
         cursor.close()
         #db.close()
@@ -430,9 +531,11 @@ def future_slots(length,startdate,enddate,dents,override_emergencies=False):
         mystr=mystr[0:mystr.rindex(" or")]+")"
     else:
         mystr=""
-    query='SELECT adate,apptix,start,end FROM aday WHERE adate>="%s"AND adate<="%s"'%(startdate,enddate) 
-    query+='AND (flag=1 OR flag= 2) %s ORDER BY adate'%mystr
-    cursor.execute(query)                                         
+    fullquery='SELECT adate,apptix,start,end FROM aday WHERE adate>="%s"AND adate<="%s"'%(startdate,enddate) 
+    fullquery+='AND (flag=1 OR flag= 2) %s ORDER BY adate'%mystr
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
     possible_days= cursor.fetchall()                                           
     #--get days when a suitable appointment is possible
     query=""
@@ -440,7 +543,11 @@ def future_slots(length,startdate,enddate,dents,override_emergencies=False):
     #--now get data for those days so that we can find slots within
     for day in possible_days:
         query= ' adate = "%s" and apptix = %d '%(day[0],day[1])
-        cursor.execute('select start,end from aslot where %s and flag0!=72 order by start'%query)           
+        fullquery='select start,end from aslot where %s and flag0!=72 order by start'%query
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+          
         #--flag0!=72 necessary to avoid zero length apps like pain/double/fam
         results=cursor.fetchall()
         daystart=day[2]
@@ -458,15 +565,15 @@ if __name__ == "__main__":
     edate="2009_02_27"
     localsettings.initiate(False)
     print printableDaylistData("20090504",6)
-    #print todays_patients()
-    #print todays_patients(("NW","AH"))
-    #dents= getWorkingDents(edate)
-    #print dents
-    #print allAppointmentData(adate,dents)
-    #print add_pt_appt(11956,5,15,"exam")
-    #print future_slots(30,adate,edate,(4,13))
-    #print slots(830,((830, 845), (900, 915), (1115, 1130), (1300, 1400), (1400, 1420), (1600, 1630)),1800,30)
-    #print daysummary(adate)
-    #print getBlocks(adate)
-    #print daysSlots("2009_2_02")
+    print todays_patients()
+    print todays_patients(("NW","AH"))
+    dents= getWorkingDents(edate)
+    print dents
+    print allAppointmentData(adate,dents)
+    print add_pt_appt(11956,5,15,"exam")
+    print future_slots(30,adate,edate,(4,13))
+    print slots(830,((830, 845), (900, 915), (1115, 1130), (1300, 1400), (1400, 1420), (1600, 1630)),1800,30)
+    print daysummary(adate,4)
+    print getBlocks(adate,4)
+    print daysSlots("2009_2_02","NW")
     #delete_appt(420,2)
