@@ -8,9 +8,9 @@ Homepage: <http://launchpad.net/openmolar>
 Standards-Version: 3.7.3
 Build-Depends: cdbs (>= 0.4.49), debhelper (>= 5), python-central (>= 0.5.6)
 Checksums-Sha1: 
- 215ab8bd55211f940c0333be4750c4e91352fe7d 405331 openmolar_0.0.6-1.tar.gz
+ 2f78a6a8f2d1b2545bb43249f92d6f3938093ee7 405350 openmolar_0.0.6-1.tar.gz
 Checksums-Sha256: 
- fb4610a89b1fe59e6ebaabfda0c4e51081b401aa84fbc05cdb7a5e923cf0e6df 405331 openmolar_0.0.6-1.tar.gz
+ e7f86480d825de64a0c884c0360873c5cb57c360a12e0569f3cf6634d9067c64 405350 openmolar_0.0.6-1.tar.gz
 Files: 
- b17e70d504f5000ed7c6fe589f57687a 405331 openmolar_0.0.6-1.tar.gz
+ ea818a10750c581f2844045ecdccc62d 405350 openmolar_0.0.6-1.tar.gz
 Python-Version: >=2.5

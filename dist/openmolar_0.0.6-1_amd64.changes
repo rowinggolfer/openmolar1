@@ -16,14 +16,14 @@ Changes:
  .
    * Initial release (LP: #368222)  <nnnn is the bug number of your ITP>
 Checksums-Sha1: 
- ae6fe021a3a66808b4ab7ce580185e37a7ad009b 587 openmolar_0.0.6-1.dsc
- 215ab8bd55211f940c0333be4750c4e91352fe7d 405331 openmolar_0.0.6-1.tar.gz
- f093b73e5180a91118e0fa87af552a06b1d1e79d 410106 openmolar_0.0.6-1_all.deb
+ 112300e5fd41bbfb03293a658aad6404ab18b828 587 openmolar_0.0.6-1.dsc
+ 2f78a6a8f2d1b2545bb43249f92d6f3938093ee7 405350 openmolar_0.0.6-1.tar.gz
+ 257bd8a3005a02f03bc6aed68e90c2ef2a54e239 410122 openmolar_0.0.6-1_all.deb
 Checksums-Sha256: 
- 6ad1a725d1ea346f5c3d39d6b2127d69f42f62753cbeca6b104e100f18a9e912 587 openmolar_0.0.6-1.dsc
- fb4610a89b1fe59e6ebaabfda0c4e51081b401aa84fbc05cdb7a5e923cf0e6df 405331 openmolar_0.0.6-1.tar.gz
- 389c693249230499ea3d698707e169643fa8c92e327ec338136616ba8a9e20b7 410106 openmolar_0.0.6-1_all.deb
+ cbd8087386ef023f9619cb85b414c96e5d4c401265a0d9c7f90ff3d50474906c 587 openmolar_0.0.6-1.dsc
+ e7f86480d825de64a0c884c0360873c5cb57c360a12e0569f3cf6634d9067c64 405350 openmolar_0.0.6-1.tar.gz
+ 727c8e863d6d1ec9ab1d3934bf045b5eb62d615bce58525eda881c94a26e47b7 410122 openmolar_0.0.6-1_all.deb
 Files: 
- 12ac61cdb97ae28fd36dd1a14f3e49f9 587 science extra openmolar_0.0.6-1.dsc
- b17e70d504f5000ed7c6fe589f57687a 405331 science extra openmolar_0.0.6-1.tar.gz
- f1bfb0482b363844a385df774ad949f6 410106 science extra openmolar_0.0.6-1_all.deb
+ 1def2a4c36a39bb5548927d43b55602f 587 science extra openmolar_0.0.6-1.dsc
+ ea818a10750c581f2844045ecdccc62d 405350 science extra openmolar_0.0.6-1.tar.gz
+ 174ec2ccab5a2b6981bcdf430452077f 410122 science extra openmolar_0.0.6-1_all.deb
