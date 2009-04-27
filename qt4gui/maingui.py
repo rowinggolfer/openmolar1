@@ -2845,9 +2845,9 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             try:
                 f=open(filename,"r")
                 loadedpt=pickle.loads(f.read())
-                if loadedself.pt.serialno!=self.pt.serialno:
+                if loadedpt.serialno!=self.pt.serialno:
                     self.pt_dbstate=patient_class.patient(0)
-                    self.pt_dbstate=loadedself.pt.serialno
+                    self.pt_dbstate.serialno=loadedpt.serialno
                 self.pt=loadedpt
                 f.close()
             except Exception,e:

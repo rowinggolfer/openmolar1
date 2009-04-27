@@ -1,0 +1,3 @@
+include MANIFEST.in setup.py *.sql
+include openmolar __init__.py 
+recursive-include qt-designer *.ui
