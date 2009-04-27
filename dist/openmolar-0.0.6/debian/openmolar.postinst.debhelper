@@ -1,0 +1,8 @@
+# Automatically added by dh_pycentral
+if which pycentral >/dev/null 2>&1; then
+	pycentral pkginstall openmolar
+	if grep -qs '^openmolar$' /var/lib/pycentral/delayed-pkgs; then
+		sed -i '/^openmolar$/d' /var/lib/pycentral/delayed-pkgs
+	fi
+fi
+# End automatically added section

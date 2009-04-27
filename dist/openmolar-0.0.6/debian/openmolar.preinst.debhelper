@@ -1,0 +1,62 @@
+# Automatically added by dh_pycentral
+if which pycentral >/dev/null 2>&1 && pycentral --help 2>/dev/null | grep -q '^ *version'; then
+	pycentral pkgprepare openmolar <<PYEOF
+[python-package]
+format = 1
+python-version = >=2.5
+[pycentral]
+version = 0.6.7
+[files]
+/usr/share/pyshared/openmolar=d
+/usr/share/pyshared/openmolar/qt4gui=d
+/usr/share/pyshared/openmolar/qt4gui/colours.py=f
+/usr/share/pyshared/openmolar/qt4gui/maingui.py=f
+/usr/share/pyshared/openmolar/qt4gui/Ui_startscreen.py=f
+/usr/share/pyshared/openmolar/qt4gui/Ui_main.py=f
+/usr/share/pyshared/openmolar/qt4gui/__init__.py=f
+/usr/share/pyshared/openmolar/qt4gui/resources_rc.py=f
+/usr/share/pyshared/openmolar/ptModules=d
+/usr/share/pyshared/openmolar/ptModules/estimates.py=f
+/usr/share/pyshared/openmolar/ptModules/plan.py=f
+/usr/share/pyshared/openmolar/ptModules/dec_perm.py=f
+/usr/share/pyshared/openmolar/ptModules/referral.py=f
+/usr/share/pyshared/openmolar/ptModules/debug_html.py=f
+/usr/share/pyshared/openmolar/ptModules/standardletter.py=f
+/usr/share/pyshared/openmolar/ptModules/notes.py=f
+/usr/share/pyshared/openmolar/ptModules/__init__.py=f
+/usr/share/pyshared/openmolar/ptModules/perio.py=f
+/usr/share/pyshared/openmolar/ptModules/patientDetails.py=f
+/usr/share/pyshared/openmolar/dbtools=d
+/usr/share/pyshared/openmolar/dbtools/writeNewCourse.py=f
+/usr/share/pyshared/openmolar/dbtools/feesTable_old.py=f
+/usr/share/pyshared/openmolar/dbtools/cashbook.py=f
+/usr/share/pyshared/openmolar/dbtools/day_class.py=f
+/usr/share/pyshared/openmolar/dbtools/recall.py=f
+/usr/share/pyshared/openmolar/dbtools/feesTable.py=f
+/usr/share/pyshared/openmolar/dbtools/calldurr.py=f
+/usr/share/pyshared/openmolar/dbtools/writeNewPatient.py=f
+/usr/share/pyshared/openmolar/dbtools/appointments_html.py=f
+/usr/share/pyshared/openmolar/dbtools/docsprinted.py=f
+/usr/share/pyshared/openmolar/dbtools/__init__.py=f
+/usr/share/pyshared/openmolar/dbtools/patient_class.py=f
+/usr/share/pyshared/openmolar/dbtools/patient_write_changes.py=f
+/usr/share/pyshared/openmolar/dbtools/accounts.py=f
+/usr/share/pyshared/openmolar/dbtools/search.py=f
+/usr/share/pyshared/openmolar/dbtools/appointments.py=f
+/usr/share/pyshared/openmolar/dbtools/daybook.py=f
+/usr/share/pyshared/openmolar/connect.py=f
+/usr/share/pyshared/openmolar/__init__.py=f
+/usr/share/pyshared/openmolar/settings=d
+/usr/share/pyshared/openmolar/settings/licensingText.py=f
+/usr/share/pyshared/openmolar/settings/__init__.py=f
+/usr/share/pyshared/openmolar/settings/localsettings.py=f
+/usr/share/pyshared/openmolar/settings/allowed.py=f
+/usr/share/pyshared/openmolar/settings/fee_keys.py=f
+/usr/share/pyshared/openmolar/createdemodatase.py=f
+/usr/share/pyshared/openmolar-0.0.6.egg-info=f
+PYEOF
+else
+	mkdir -p /var/lib/pycentral
+	echo openmolar >> /var/lib/pycentral/delayed-pkgs
+fi
+# End automatically added section

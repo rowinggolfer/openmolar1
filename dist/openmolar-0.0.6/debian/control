@@ -1,0 +1,18 @@
+Source: openmolar
+Section: science
+Priority: extra
+Maintainer: Neil Wallace <rowinggolfer@googlemail.com>
+Build-Depends: cdbs (>=0.4.49), debhelper (>= 5), python-central (>=0.5.6)
+XS-Python-Version: >=2.5
+Standards-Version: 3.7.3
+Homepage: <http://launchpad.net/openmolar>
+
+Package: openmolar
+Architecture: all
+XB-Python-Version: ${python:Versions}
+Depends: python-mysqldb,python-qt4,${python:Depends},${misc:Depends}
+Suggests:
+Description: Dental Practice Management Software 
+ OpenMolar is a dental practice management application which acts as a frontend to a mysql database.
+ .
+ This is alpha software not production ready and undergoing very active development. 

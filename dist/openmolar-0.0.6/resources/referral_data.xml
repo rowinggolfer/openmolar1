@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<referrals>
+<referral>
+<description>Michael Gough</description>
+<surgeon_postal>Dr. Michael Gough</surgeon_postal>
+<surgeon_greeting>Michael</surgeon_greeting>
+<address>
+<line>Southside Dental Practice</line> 
+<line>28 Southside Road</line>
+<line>Inverness</line>
+</address>
+</referral>
+
+<referral>
+<description>High School Dental Unit</description>
+<surgeon_postal>The Community Dental Officer</surgeon_postal>
+<surgeon_greeting>Dear Sir/Madam</surgeon_greeting>
+<address> 
+<line>High School Dental Unit</line>
+<line>Montague Row</line>
+<line>Inverness</line>
+</address>
+</referral>
+<referral>
+<description>Oral Surgery - Raigmore</description>
+<surgeon_postal>Dr Duncan Railton</surgeon_postal>
+<surgeon_greeting>Duncan</surgeon_greeting>
+<address>
+<line>The Acting Consultant</line>
+<line>Oral Surgery</line>
+<line>Raigmore Hospital</line>
+<line>Inverness</line>
+</address>
+</referral>
+
+<referral>
+<description>Orthodontics - Raigmore</description>
+<surgeon_postal>Mr Adrian Hart</surgeon_postal>
+<surgeon_greeting>Mr Hart</surgeon_greeting>
+<address>
+<line>Consultant Orthodontist</line>
+<line>Department of Orthodontics</line>
+<line>Raigmore Hospital</line>
+<line>Inverness</line>
+</address>
+</referral>
+<referral>
+<description>Dr. Chris Buchanan - Highland Ortho</description>
+<surgeon_postal>Dr. Chris Buchanan</surgeon_postal>
+<surgeon_greeting>Dr. Buchanan</surgeon_greeting>
+<address>
+<line>Highland Orthodontics</line>
+<line>67 Kenneth Street</line>
+<line>Inverness</line>
+<line>IV3 5QF</line>
+</address>
+</referral>
+
+<referral>
+<description>Special Care - RNI/New Craigs</description>
+<surgeon_postal>Dr. Rhona Brown</surgeon_postal>
+<surgeon_greeting>Dr. Brown</surgeon_greeting>
+<address>
+<line>Dental Department</line>
+<line>RNI Community Hospital</line>
+<line>Ness Walk</line>
+<line>Inverness</line>
+</address>
+</referral>
+
+<referral>
+<description>Oral Surgery, Dundee</description>
+<surgeon_postal>The Consultant Oral Surgeon</surgeon_postal>
+<surgeon_greeting>Dear Sir/Madam</surgeon_greeting>
+<address>
+<line>Department of Oral Surgery</line>
+<line>Dundee Dental Hospital</line>
+<line>University of Dundee</line>
+<line>Dundee</line>
+</address>
+</referral>
+
+<referral>
+<description>Raigmore Restorative</description>
+<surgeon_postal>Dr M.A. Donachie</surgeon_postal>
+<surgeon_greeting>Dr Donachie</surgeon_greeting>
+<address>
+<line>Restorative Consultant</line>
+<line>Dental Department</line>
+<line>Raigmore Hospital</line>
+<line>Inverness</line>
+</address>
+</referral>
+
+<referral>
+<description>Oral Surgery, Glasgow</description>
+<surgeon_postal>The Consultant Oral Surgeon</surgeon_postal>
+<surgeon_greeting>Dear Sir/Madam</surgeon_greeting>
+<address>
+<line>Department of Oral Surgery</line>
+<line>Glasgow Dental Hospital</line>
+<line>Glasgow</line>
+</address>
+</referral>
+
+</referrals>
+
