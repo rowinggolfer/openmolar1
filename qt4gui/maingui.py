@@ -318,7 +318,10 @@ class appointmentClass():
         
         #--connect the dialogs "make now" buttons to the procs just coded
         QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)                                               
+        
         QtCore.QObject.connect(dl.scheduleNow_pushButton,QtCore.SIGNAL("clicked()"), makeNow)                                     
+        ##TODO - fix this
+        dl.scheduleNow_pushButton.setEnabled(False)
         if Dialog.exec_():
             #--practitioner
             practix=localsettings.apptix[str(dl.practix_comboBox.currentText())]
@@ -328,8 +331,7 @@ class appointmentClass():
                 lengthText=lengthText.replace("hour","hours ")
             if "hour" in lengthText:
                 length=60*int(lengthText[:lengthText.index("hour")])
-                lengthText=lengthText[lengthText.index(" ",lengthText.\
-                index("hour")):]
+                lengthText=lengthText[lengthText.index(" ",lengthText.index("hour")):]
             else:
                 length=0
             if "minute" in lengthText:
@@ -434,6 +436,10 @@ class appointmentClass():
         #--much of this code is a duplicate of make new appt
         rowno=self.ui.ptAppointmentTableWidget.currentRow()
         def makeNow():
+            ######temporarily disabled this
+            self.advise("this function has been temporarily disabled by Neil,sorry",1)
+            return
+            
             dl.makeNow=True
         
         
@@ -490,7 +496,10 @@ class appointmentClass():
             dl.trt3_comboBox.setCurrentIndex(pos)
             dl.lineEdit.setText(memo)
             QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)                                               
-            QtCore.QObject.connect(dl.scheduleNow_pushButton,QtCore.SIGNAL("clicked()"), makeNow)                                                                          
+            QtCore.QObject.connect(dl.scheduleNow_pushButton,QtCore.SIGNAL("clicked()"), makeNow)   
+            ##TODO fix this!!
+            dl.scheduleNow_pushButton.setEnabled(False)
+                                                                               
             if Dialog.exec_():
                 practixText=str(dl.practix_comboBox.currentText())
                 practix=localsettings.apptix[practixText]
