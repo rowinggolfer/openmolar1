@@ -89,8 +89,7 @@ class feeClass():
             if cashbook.paymenttaken(paymentPt.serialno,name,paymentPt.dnt1,paymentPt.cset,cash,cheque,debit,credit,sundries,hdp,other):
                 paymentPt.addHiddenNote("payment"," treatment %.02f sundries %.02f"%(dl.paymentsForTreatment,dl.otherPayments))
                 if self.pt.serialno!=0:
-                    printReceipt({"Professional Services":dl.paymentsForTreatment*100,
-                    "Other Items":dl.otherPayments*100})                                                    
+                    self.printReceipt({"Professional Services":dl.paymentsForTreatment*100,"Other Items":dl.otherPayments*100})                                                    
                     #-- always refer to money in terms of pence 
                     if self.pt.cset[:1]=="N":
                         self.pt.money2+=int(dl.paymentsForTreatment*100)
@@ -98,7 +97,7 @@ class feeClass():
                         self.pt.money3+=int(dl.paymentsForTreatment*100)
                     self.pt.updateFees()
                     self.updateDetails()
-                patient_write_changes.toNotes(paymentself.pt.serialno,paymentPt.HIDDENNOTES)
+                patient_write_changes.toNotes(paymentPt.serialno,paymentPt.HIDDENNOTES)
                 if patient_write_changes.discreet_changes(paymentPt,("money2","money3")) and self.pt.serialno!=0:
                     self.pt_dbstate.money2=self.pt.money2
                     self.pt_dbstate.money3=self.pt.money3
@@ -237,28 +236,55 @@ class feeClass():
 
 class appointmentClass():  
         
-    def oddApptLength(self,i):
+    def oddApptLength(self):
         '''this is called from within the a dialog when the appointment lenghts offered aren't enough!!'''
-        if i==15:                                                                                      
-            Dialog = QtGui.QDialog(self.mainWindow)
-            dl = Ui_appointment_length.Ui_Dialog()
-            dl.setupUi(Dialog)
-            if Dialog.exec_():
-                hours=dl.hours_spinBox.value()
-                mins=dl.mins_spinBox.value()
-                print hours,"hours",mins,"mins"
-                return (hours,min)
-            
+        Dialog = QtGui.QDialog(self.mainWindow)
+        dl2 = Ui_appointment_length.Ui_Dialog()
+        dl2.setupUi(Dialog)
+        if Dialog.exec_():
+            hours=dl2.hours_spinBox.value()
+            mins=dl2.mins_spinBox.value()
+            print hours,"hours",mins,"mins"
+            return (hours,mins)
+
+    def addApptLength(self,dl,hourstext,minstext):
+        hours,mins=int(hourstext),int(minstext)
+        if hours==1:
+            lengthText="1 hour "
+        elif hours>1:
+            lengthText="%d hours "%hours
+        else: lengthText=""
+        if mins>0:
+            lengthText+="%d minutes"%mins
+        lengthText=lengthText.strip(" ")
+        try:
+            dl.apptlength_comboBox.insertItem(0,QtCore.QString(lengthText))
+            dl.apptlength_comboBox.setCurrentIndex(0)
+            return
+        except Exception,e:
+            print e
+            self.advise("unable to set the length of the appointment",1)
+            return
+
     def newAppt(self):
         '''this shows a dialog to get variables required for an appointment'''
-        #--a sub proc for a subsequent dialog
-        def makeNow():
-            dl.makeNow=True
-        
         #--check there is a patient attached to this request!
         if self.pt.serialno==0:                                                                              
             self.advise("You need to select a patient before performing this action.",1)
             return
+                
+        #--a sub proc for a subsequent dialog
+        def makeNow():
+            dl.makeNow=True
+        
+        def oddLength(i):
+            if i==dl.apptlength_comboBox.count()-1:   #15 is the number of items in the appointment length combobox.                                                                                      
+                ol=self.oddApptLength()
+                if ol:
+                    QtCore.QObject.disconnect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)                                               
+                    self.addApptLength(dl,ol[0],ol[1])
+                    QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)                                               
+        
         #--initiate a custom dialog
         Dialog = QtGui.QDialog(self.mainWindow)                                                              
         dl = Ui_specify_appointment.Ui_Dialog()
@@ -291,7 +317,7 @@ class appointmentClass():
         dl.apptlength_comboBox.setCurrentIndex(2)
         
         #--connect the dialogs "make now" buttons to the procs just coded
-        QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),self.oddApptLength)                                               
+        QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)                                               
         QtCore.QObject.connect(dl.scheduleNow_pushButton,QtCore.SIGNAL("clicked()"), makeNow)                                     
         if Dialog.exec_():
             #--practitioner
@@ -369,9 +395,9 @@ class appointmentClass():
             dent=self.ui.ptAppointmentTableWidget.item(rowno,1).text()                                      
             #--raise a dialog
             result=QtGui.QMessageBox.question(self.mainWindow,"Confirm","Confirm Delete appointment at %s on %s  with %s"%(
-            atime,dateText,dent),QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)  
+            atime,dateText,dent),QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)  
             
-            if result == QtGui.QMessageBox.Ok:
+            if result == QtGui.QMessageBox.Yes:
                 #convert into database varaibles (dentist number)
                 dent=localsettings.apptix[str(dent)]            
                 # time in 830 format (integer)
@@ -409,7 +435,17 @@ class appointmentClass():
         rowno=self.ui.ptAppointmentTableWidget.currentRow()
         def makeNow():
             dl.makeNow=True
-
+        
+        
+        def oddLength(i):
+            if i==dl.apptlength_comboBox.count()-1:   #15 is the number of items in the appointment length combobox.                                                                                      
+                ol=self.oddApptLength()
+                if ol:
+                    QtCore.QObject.disconnect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)                                               
+                    self.addApptLength(dl,ol[0],ol[1])
+                    QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)                                               
+        
+            
         if rowno==-1:
             self.advise("No appointment selected",1)
         else:
@@ -431,14 +467,7 @@ class appointmentClass():
             length=int(self.ui.ptAppointmentTableWidget.item(rowno,3).text())
             hours = length//60
             mins = length%60
-            if hours==1:
-                lengthText="1 hour "
-            elif hours>1:
-                lengthText="%d hours "%hours
-            else: lengthText=""
-            if mins>0:
-                lengthText+="%d minutes"%mins
-            lengthText=lengthText.strip(" ")
+            self.addApptLength(dl,hours,mins)
             dentist=str(self.ui.ptAppointmentTableWidget.item(rowno,1).text())
             dateText=str(self.ui.ptAppointmentTableWidget.item(rowno,0).text())
             if dateText!="TBA":
@@ -453,8 +482,6 @@ class appointmentClass():
                 dl.practix_comboBox.setCurrentIndex(pos)
             else:
                 print "dentist not found"
-            pos=dl.apptlength_comboBox.findText(lengthText)
-            dl.apptlength_comboBox.setCurrentIndex(pos)
             pos=dl.trt1_comboBox.findText(trt1)
             dl.trt1_comboBox.setCurrentIndex(pos)
             pos=dl.trt2_comboBox.findText(trt2)
@@ -462,9 +489,7 @@ class appointmentClass():
             pos=dl.trt3_comboBox.findText(trt3)
             dl.trt3_comboBox.setCurrentIndex(pos)
             dl.lineEdit.setText(memo)
-            dl.apptlength_comboBox.setCurrentIndex(2)
-            QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.\
-            SIGNAL("currentIndexChanged(int)"),self.oddApptLength)                                               
+            QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)                                               
             QtCore.QObject.connect(dl.scheduleNow_pushButton,QtCore.SIGNAL("clicked()"), makeNow)                                                                          
             if Dialog.exec_():
                 practixText=str(dl.practix_comboBox.currentText())
@@ -663,8 +688,7 @@ class appointmentClass():
                 #dialog rejected
                 return
 
-            endtime=localsettings.minutesPastMidnighttoWystime(localsettings.minutesPastMidnight\
-            (selectedtime)+length)
+            endtime=localsettings.minutesPastMidnighttoWystime(localsettings.minutesPastMidnight(selectedtime)+length)
             name=self.pt.sname+" "+self.pt.fname[0]
             
             #--make name conform to the 30 character sql limitation on this field.
@@ -688,7 +712,7 @@ class appointmentClass():
                     #== and offer an appointment card
                     result=QtGui.QMessageBox.question(self.mainWindow,"Confirm","Print Appointment Card?",QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
                     if result == QtGui.QMessageBox.Ok:
-                        printApptCard()
+                        self.printApptCard()
                 else:
                     self.advise("Error putting appointment back onto patient record - it may be in the appointment book though?",2)
                 
@@ -961,20 +985,20 @@ class appointmentClass():
             AllDentsChecked and dent.checkState()
         if self.ui.aptOV_alldentscheckBox.checkState() != AllDentsChecked:
             QtCore.QObject.disconnect(self.ui.aptOV_alldentscheckBox,QtCore.SIGNAL("stateChanged(int)"),\
-            apptOVdents)
+            self.apptOVdents)
             self.ui.aptOV_alldentscheckBox.setChecked(AllDentsChecked)
             QtCore.QObject.connect(self.ui.aptOV_alldentscheckBox,QtCore.SIGNAL("stateChanged(int)"),\
-            apptOVdents)
+            self.apptOVdents)
         AllHygsChecked=True
         #--same for the hygenists
         for hyg in self.ui.aptOVhyg_checkBoxes.values():
             AllHygsChecked=AllHygsChecked and hyg.checkState()
         if self.ui.aptOV_allhygscheckBox.checkState() != AllHygsChecked:
             QtCore.QObject.disconnect(self.ui.aptOV_allhygscheckBox,QtCore.SIGNAL("stateChanged(int)"),\
-            apptOVdents)
+            self.apptOVdents)
             self.ui.aptOV_allhygscheckBox.setChecked(AllHygsChecked)
             QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox,QtCore.SIGNAL("stateChanged(int)"),\
-            apptOVdents)
+            self.apptOVdents)
 
         date=self.ui.apptOV_calendarWidget.selectedDate()
         dayno=date.dayOfWeek()
@@ -1968,7 +1992,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         ci=self.ui.main_tabWidget.currentIndex()
         if ci!=2 and self.ui.aptOVmode_label.text()=="Scheduling Mode":                                      
             self.advise("Appointment not made",1)
-            aptOVviewMode(True)
+            self.aptOVviewMode(True)
             
         #--user is viewing appointment book
         if ci==1:           
@@ -1984,6 +2008,9 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         #--user is viewing apointment overview
         if ci==2:           
             self.layout_apptOV()
+            
+        if ci==9:
+            self.loadFeesTable()
 
 
     def handle_patientTab(self):

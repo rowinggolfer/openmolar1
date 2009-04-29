@@ -1,72 +1,75 @@
 <ui version="4.0" >
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog" >
+  <property name="windowModality" >
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>293</width>
-    <height>148</height>
+    <width>256</width>
+    <height>134</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Select Appointment Length</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>Hours</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QLabel" name="label_2" >
-       <property name="text" >
-        <string>Minutes</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" >
-      <widget class="QSpinBox" name="hours_spinBox" >
-       <property name="maximumSize" >
-        <size>
-         <width>70</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maximum" >
-        <number>8</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QSpinBox" name="mins_spinBox" >
-       <property name="maximumSize" >
-        <size>
-         <width>70</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maximum" >
-        <number>55</number>
-       </property>
-       <property name="singleStep" >
-        <number>5</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
+  <property name="windowIcon" >
+   <iconset resource="../resources/resources.qrc" >
+    <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Hours</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
    </item>
-   <item>
+   <item row="0" column="1" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Minutes</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QSpinBox" name="hours_spinBox" >
+     <property name="maximumSize" >
+      <size>
+       <width>70</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="maximum" >
+      <number>8</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QSpinBox" name="mins_spinBox" >
+     <property name="maximumSize" >
+      <size>
+       <width>70</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="maximum" >
+      <number>55</number>
+     </property>
+     <property name="singleStep" >
+      <number>5</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2" >
     <spacer name="verticalSpacer" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -79,19 +82,24 @@
      </property>
     </spacer>
    </item>
-   <item>
+   <item row="3" column="0" colspan="2" >
     <widget class="QDialogButtonBox" name="buttonBox" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons" >
+      <bool>true</bool>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/resources.qrc" />
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
@@ -110,14 +118,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>Dialog</sender>
    <signal>rejected()</signal>
    <receiver>Dialog</receiver>
-   <slot>reject()</slot>
+   <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>316</x>
-     <y>260</y>
+     <x>127</x>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
