@@ -132,11 +132,12 @@ def printableDaylistData(adate,dent):
         
         #--yes that was a long query
         apttime=daydata[0][0]
-        for row in results:                                                                     
+        for row in results:  
             if apttime<row[0]:                                                                     
                 #--either a gap or a double appointment
                 retlist.append((apttime,row[0],None,None,None,None,None,None))
             if row[2]==None:
+                print "None Found"
                 retlist.append((row[0],row[1],row[-1])+row[3:]) 
             else:
                 retlist.append(row)
