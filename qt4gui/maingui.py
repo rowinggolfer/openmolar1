@@ -152,7 +152,88 @@ class feeClass():
             feesTable.private_only=False
             feesTable.nhs_only=False
         self.ui.loadFeescale_pushButton.setEnabled(True)
+    
+    def noNewCourseNeeded(self):
+        if self.pt.underTreatment:
+            return True        
+        else:
+            if self.newCourseSetup():
+                return True
+            else:
+                self.advise("unable to plan or perform treatment if pt does not have an active course",1)
             
+            
+    def addXrayItems(self):
+        if self.noNewCourseNeeded():
+            list=((0,"S"),(0,"M"),(0,"P"))
+            chosenTreatments=self.offerTreatmentItems(list)
+            print chosenTreatments
+            for item in chosenTreatments:
+                #item will be in the form (n,code,usercode,fee)
+                self.pt.otherpl+="%s%s "%(item[0],item[2])
+                self.pt.addToEstimate(item[0],int(item[1]),item[3])
+            self.load_planpage()
+    
+    def addPerioItems(self):
+        if self.noNewCourseNeeded():
+            list=((0,"SP"),(0,"SP+"))
+            chosenTreatments=self.offerTreatmentItems(list)
+            print chosenTreatments
+            for item in chosenTreatments:
+                #item will be in the form (n,code,usercode,fee)
+                self.pt.periopl+="%s%s "%(item[0],item[2])
+                self.pt.addToEstimate(item[0],int(item[1]),item[3])
+            self.load_planpage()
+   
+    def addOtherItems(self):
+        if self.noNewCourseNeeded():
+            list=()
+            items=localsettings.treatmentCodes.keys()
+            items.sort()
+            for item in items:
+                list+=((0,item,localsettings.treatmentCodes[item]),)
+            chosenTreatments=self.offerTreatmentItems(list)
+            for treat in chosenTreatments:
+                self.pt.xraypl+="%s%s "%(item[0],item[2])
+                self.pt.addToEstimate(item[0],int(item[1]),item[3])
+            self.load_planpage()
+       
+    def offerTreatmentItems(self,arg):
+        Dialog = QtGui.QDialog(self.mainWindow)
+        dl = addTreat.treatment(Dialog,arg,self.pt.cset)                  
+        return dl.getInput()
+        
+    def completeToothTreatments(self,arg):
+        Dialog = QtGui.QDialog(self.mainWindow)
+        dl = completeTreat.treatment(Dialog,localsettings.ops[self.pt.dnt1],arg,0)                   
+        ####TODO this should be treating dentist!!!!!!!
+        results=dl.getInput()
+        for result in results:
+            planATT=result[0]
+            completedATT=result[0].replace("pl","cmp")
+            print "moving '%s' from %s to %s"%(result[1],planATT,completedATT)
+            if result[1] in self.pt.__dict__[planATT]:
+                existingplan=self.pt.__dict__[planATT]
+                newplan=existingplan.replace(result[1],"")
+                self.pt.__dict__[planATT]=newplan
+                existingcompleted=self.pt.__dict__[completedATT]
+                newcompleted=result[1]
+                self.pt.__dict__[completedATT]=existingcompleted+newcompleted
+
+                if planATT[:2] in ("ur","ul","ll","lr"): 
+                    #--treatment is on a tooth (as opposed to denture etc....)
+                    self.updateChartsAfterTreatment(planATT[:3],newplan,newcompleted)
+                self.pt.addHiddenNote("treatment",planATT[:-2].upper()+" "+newcompleted)
+    def completeTreatments(self):
+        currentPlanItems=[]
+        for att in patient_class.currtrtmtTableAtts:
+            if att[-2:]=="pl" and self.pt.__dict__[att]!="":
+                currentPlanItems.append((att,self.pt.__dict__[att]))
+        if currentPlanItems!=[]:
+            self.completeToothTreatments(currentPlanItems)
+            self.load_planpage() 
+        else:
+            self.advise("No treatment items to move!",1)
 
 class appointmentClass():  
         
@@ -272,10 +353,10 @@ class appointmentClass():
         #--is appointment not is aslot (appt book proper) or in the past??
         if dateText=="TBA" or QtCore.QDate.fromString(dateText,"dd'/'MM'/'yyyy")<QtCore.QDate.currentDate():                                                                                  
             #--raise a dialog (centred on self.mainWindow)
-            result=QtGui.QMessageBox.question(self.mainWindow,"Confirm","Confirm Delete Unscheduled or Past Appointment",
-            QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
+            result=QtGui.QMessageBox.question(self.mainWindow,"Confirm","Delete this Unscheduled or Past Appointment?",
+            QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
             
-            if result == QtGui.QMessageBox.Cancel:                                                      
+            if result == QtGui.QMessageBox.No:                                                      
                 return
             else:
                 if appointments.delete_appt_from_apr(self.pt.serialno,aprix,checkdate,appttime):
@@ -525,8 +606,8 @@ class appointmentClass():
                 self.advise("no slots available for selected week")
                 if firstRun:   
                     #--we reached this proc to offer 1st appointmentm but haven't found it                                                                         
-                    aptOV_weekForward()
-                    offerAppt(True)
+                    self.aptOV_weekForward()
+                    self.offerAppt(True)
 
     def makeAppt(self,arg):
         '''called by a click on my custom overview slot - user has selected an offered appointment'''
@@ -1083,6 +1164,7 @@ class signals():
         QtCore.QObject.connect(self.ui.closeTx_pushButton,QtCore.SIGNAL("clicked()"), self.closeCourse)
         QtCore.QObject.connect(self.ui.completePlanItems_pushButton,QtCore.SIGNAL("clicked()"), self.completeTreatments)
         QtCore.QObject.connect(self.ui.xrayTxpushButton,QtCore.SIGNAL("clicked()"), self.addXrayItems)
+        QtCore.QObject.connect(self.ui.perioTxpushButton,QtCore.SIGNAL("clicked()"), self.addPerioItems)
         QtCore.QObject.connect(self.ui.otherTxpushButton,QtCore.SIGNAL("clicked()"), self.addOtherItems)
 
         
@@ -1930,8 +2012,6 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             self.ui.perioChartWidget.selected=[0,0]                   
 
         if ci==7:
-            estimateHtml=estimates.toBriefHtml(self.pt.currEstimate)
-            self.load_estpage(estimateHtml)
             self.load_planpage()
 
         #--debug tab 
@@ -2098,10 +2178,8 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             self.ui.staticChartWidget.setToothProps(tooth,arg)
             self.ui.staticChartWidget.update()
         elif self.selectedChartWidget=="pl":
-            if not self.pt.underTreatment:
-                if not self.newCourseSetup():
-                    self.advise("unable to plan or perform treatment if pt does not have an active course",1)
-                    return
+            if not self.noNewCourseNeeded():
+                return
             if self.selectedChartWidget=="pl":
                 self.pt.__dict__[tooth+self.selectedChartWidget]=arg  
                 #--update the patient!!
@@ -2356,70 +2434,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         QtGui.QToolTip.showText(arg[1],arg[0]+th)
 
 
-    def addXrayItems(self):
-        if not self.pt.underTreatment:
-            if not self.newCourseSetup():
-                self.advise("unable to plan or perform treatment if pt does not have an active course",1)
-                return
-        list=((0,"S"),(0,"M"),(0,"P"))
-        chosenTreatments=self.offerTreatmentItems(list)
-        print chosenTreatments
-        for item in chosenTreatments:
-            self.pt.xraypl+="%s%s "%(item[0],item[1])
-        self.load_planpage()
-        #######todo - add fee to current ests
-    def addOtherItems(self):
-        if not self.pt.underTreatment:
-            if not self.newCourseSetup():
-                self.advise("unable to plan or perform treatment if pt does not have an active course",1)
-                return
-        list=()
-        items=localsettings.abbreviations.keys()
-        items.sort()
-        for item in items:
-            list+=((0,item,localsettings.abbreviations[item]),)
-        chosenTreatments=self.offerTreatmentItems(list)
-        for treat in chosenTreatments:
-            print treat
-        self.load_planpage()
-        #######todo - add fee to current ests
-    def offerTreatmentItems(self,arg):
-        Dialog = QtGui.QDialog(self.mainWindow)
-        dl = addTreat.treatment(Dialog,arg,self.pt.cset)                  
-        return dl.getInput()
-        
-    def completeToothTreatments(self,arg):
-        Dialog = QtGui.QDialog(self.mainWindow)
-        dl = completeTreat.treatment(Dialog,localsettings.ops[self.pt.dnt1],arg,0)                   
-        ####TODO this should be treating dentist!!!!!!!
-        results=dl.getInput()
-        for result in results:
-            planATT=result[0]
-            completedATT=result[0].replace("pl","cmp")
-            print "moving '%s' from %s to %s"%(result[1],planATT,completedATT)
-            if result[1] in self.pt.__dict__[planATT]:
-                existingplan=self.pt.__dict__[planATT]
-                newplan=existingplan.replace(result[1],"")
-                self.pt.__dict__[planATT]=newplan
-                existingcompleted=self.pt.__dict__[completedATT]
-                newcompleted=result[1]
-                self.pt.__dict__[completedATT]=existingcompleted+newcompleted
-
-                if planATT[:2] in ("ur","ul","ll","lr"): 
-                    #--treatment is on a tooth (as opposed to denture etc....)
-                    self.updateChartsAfterTreatment(planATT[:3],newplan,newcompleted)
-                self.pt.addHiddenNote("treatment",planATT[:-2].upper()+" "+newcompleted)
-    def completeTreatments(self):
-        currentPlanItems=[]
-        for att in patient_class.currtrtmtTableAtts:
-            if att[-2:]=="pl" and self.pt.__dict__[att]!="":
-                currentPlanItems.append((att,self.pt.__dict__[att]))
-        if currentPlanItems!=[]:
-            self.completeToothTreatments(currentPlanItems)
-            self.load_planpage() 
-        else:
-            self.advise("No treatment items to move!",1)
-
+   
     def load_todays_patients_combobox(self):
         '''loads the quick select combobox, with all of todays's
         patients - if a list(tuple) of dentists is passed eg ,(("NW"))
@@ -2522,22 +2537,28 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         try:
             last_serialno=recent[recent.index(cp)+1]
             self.getrecord(last_serialno)
-        except Exception,e:
-            print e
+        except:
             self.advise("Reached End of  List")
 
     def last_patient(self):
         cp= self.pt.serialno
         recent=localsettings.recent_snos
-        try:
-            last_serialno=recent[recent.index(cp)-1]
-            getrecord(last_serialno)
-        except Exception,e:
-            print e
-            self.advise("Reached start of  List")
+        if cp==0 and len(recent)>0:
+            last_serialno=recent[-1]
+            self.getrecord(last_serialno)
+        else:
+            try:
+                last_serialno=recent[recent.index(cp)-1]
+                self.getrecord(last_serialno)
+            except:
+                self.advise("Reached start of  List")
+            
     def load_estpage(self,estHtml):
         self.ui.bigEstimate_textBrowser.setText(estHtml)
     def load_planpage(self):
+        estimateHtml=estimates.toBriefHtml(self.pt.currEstimate)
+        self.load_estpage(estimateHtml)
+                
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         plantext=plan.getplantext(self.pt)
         self.ui.treatmentPlanTextBrowser.setText(plantext)
@@ -2770,18 +2791,30 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             print "not loading"
             self.advise("Not loading patient")
             return
+        def repeat():
+            dl.dob.setText(localsettings.lastsearch[2])
+            dl.addr1.setText(localsettings.lastsearch[4])
+            dl.tel.setText(localsettings.lastsearch[3])
+            dl.sname.setText(localsettings.lastsearch[0])
+            dl.fname.setText(localsettings.lastsearch[1])
+            dl.pcde.setText(localsettings.lastsearch[5])
         Dialog = QtGui.QDialog(self.mainWindow)
         dl = Ui_patient_finder.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.dob.setText("00/00/0000")
         dl.dob.setInputMask("00/00/0000")
+        QtCore.QObject.connect(dl.repeat_pushButton,QtCore.SIGNAL("clicked()"),repeat)
+        dl.sname.setFocus()
         if Dialog.exec_():
-            dob=localsettings.uk_to_sqlDate(dl.dob.text())
+            dob=str(dl.dob.text())
             addr=str(dl.addr1.text().toAscii())
             tel=str(dl.tel.text().toAscii())
             sname=str(dl.sname.text().toAscii())
             fname=str(dl.fname.text().toAscii())
             pcde=str(dl.pcde.text().toAscii())
+            localsettings.lastsearch=(sname,fname,dob,tel,addr,pcde)
+            dob=localsettings.uk_to_sqlDate(dl.dob.text())
+            
             try:
                 serialno=int(sname)
             except:
@@ -2942,8 +2975,6 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
                 self.advise("Sucessfully started new course of treatment",1)
                 self.pt.getCurrtrt()
                 self.pt.getEsts()
-                estimateHtml=estimates.toBriefHtml(self.pt.currEstimate)
-                self.load_estpage(estimateHtml)
                 self.load_planpage()
                 self.ui.underTreatment_label.show() 
                 self.ui.underTreatment_label_2.show()
@@ -2959,8 +2990,6 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             self.pt.courseno0=0
             self.pt.getCurrtrt()
             #self.pt.getEsts()
-            estimateHtml=estimates.toBriefHtml(self.pt.currEstimate)
-            self.load_estpage(estimateHtml)
             self.load_planpage()
             self.pt.underTreatment=False
             #self.ui.underTreatment_label.hide() 
@@ -3019,6 +3048,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
                     self.pt.examt=result[0]
                     examd=result[2].toString("dd/MM/yyyy")
                     self.pt.pd4=examd
+                    self.pt.examd=examd
                     self.pt.recd=result[2].addMonths(6).toString("dd/MM/yyyy")
                     newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
                     newnotes+="CE examination performed by %s\n"%result[1]

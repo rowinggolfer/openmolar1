@@ -9,12 +9,12 @@ import localsettings
 
 def getKeyCode(arg):
     try:
-        return localsettings.feeKey[arg]
+        return localsettings.treatmentCodes[arg]
     except Exception,e:
         print "Caught error in fee_keys.getKeyCode with code '%s'"%arg
     
 if __name__ == "__main__":
     localsettings.initiate(False)
-    print localsettings.feeKey
+    print localsettings.treatmentCodes
     for arg in ("CE","MOD","PV"):
         print getKeyCode(arg)

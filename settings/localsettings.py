@@ -15,6 +15,7 @@ operator="unknown"
 allowed_logins=[]
 recent_snos=[]
 recent_names={}
+lastsearch=("","","","","","")
 activedents=[]
 activehygs=[]
 ops={}                                                                         #this dictionary is upated when this file is initiate - it links dentist keys with practioners eg ops[1]="JJ"
@@ -24,7 +25,6 @@ apptix_reverse={}
 referralfile=""                                                                #contains a link to the xml document with the referral info in it - this data will eventually be in the mysql?
 stylesheet="resources/style.css"
 descriptions={}                                                                        #treatment codes..
-abbreviations={}
 apptTypes=("EXAM","BITE","BT","DOUBLE",
 "FAMILY","FILL","FIT","HYG","IMPS","LF","ORTHO",
 "PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")                       #could pull from dental.atype
@@ -34,7 +34,7 @@ message=""
 dentDict={}
 surgeryno=-1                                                                  #for call durr purposes only
 csetypes=["P","I","N","N OR","N O"] 
-feeKey={}
+treatmentCodes={}
 logqueries=True      #for debugging purposes... set this to true.- not yet implemented throughout. 
 practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV1 1PP")
 
@@ -162,19 +162,19 @@ def initiate(debug=False):
         print "error loading from opid"
 
     try:   #this breaks compatibility with the old database schema
-        cursor.execute("select code,description,pfa,USERCODE from newfeetable")
+        cursor.execute("select code,description,pfa,USERCODE,description1 from newfeetable")
         rows=cursor.fetchall()
         for row in rows:
             code=row[0]
-            userkey=row[3]
+            usercode=row[3]
             if code!="":
                 #privateFees[row[0]]=row[2]
                 while privateFees.has_key(code):
                     code+="."
                 privateFees[code]=row[2]
                 descriptions[code]=row[1]
-                if userkey!="" and userkey!=None:
-                    feeKey[userkey]=row[0]
+                if usercode!="" and usercode!=None:
+                    treatmentCodes[usercode]=row[0]
                 
     except Exception,e:
         print "error loading from newfeetable",e
@@ -204,7 +204,7 @@ def initiate(debug=False):
         print dentDict
         print descriptions
         print privateFees
-        #print abbreviations
+        print treatmentCodes
         #print fees
     
 if __name__ == "__main__":

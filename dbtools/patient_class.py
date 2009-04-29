@@ -312,6 +312,7 @@ class patient():
         est=self.estimates[0]
         newEst=(est[0],est[1],est[2],est[3],est[4],est[5],est[6],est[7]+blob)
         self.estimates=(newEst,)
+        self.setCurrentEstimate()
         
     def addHiddenNote(self,notetype,note=""):
         if notetype=="payment":
