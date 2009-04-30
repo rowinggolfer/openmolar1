@@ -27,7 +27,11 @@ class course(Ui_newCourse.Ui_Dialog):
             pos=-1
         self.dnt2_comboBox.setCurrentIndex(pos)
         self.cseType_comboBox.addItems(localsettings.csetypes)
-        pos=localsettings.csetypes.index(csetype)                                      
+        try:
+            pos=localsettings.csetypes.index(csetype)  
+        except ValueError:
+            QtGui.QMessageBox.information(self.dialog,"Advisory","Please set a Valid Course Type")
+            pos=-1
         self.cseType_comboBox.setCurrentIndex(pos)
     def getInput(self):
         if self.dialog.exec_():
@@ -43,6 +47,6 @@ if __name__ == "__main__":
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
-    ui = course(Dialog,"BW","AH","I")
+    ui = course(Dialog,"BW","AH","")
     print ui.getInput()
    

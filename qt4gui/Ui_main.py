@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Thu Apr 30 16:13:56 2009
+# Created: Thu Apr 30 17:17:49 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
