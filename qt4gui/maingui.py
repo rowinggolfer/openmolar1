@@ -138,8 +138,6 @@ class feeClass():
             table.resizeColumnsToContents()
             n+=1
 
-        self.ui.loadFeescale_pushButton.setEnabled(False)
-        #self.ui.feesScale_textBrowser.setHtml(feesTable.feesHtml())
     def feestableProperties(self):
         if self.ui.chooseFeescale_comboBox.currentIndex()==1:
             feesTable.private_only=True
@@ -150,7 +148,8 @@ class feeClass():
         else: 
             feesTable.private_only=False
             feesTable.nhs_only=False
-        self.ui.loadFeescale_pushButton.setEnabled(True)
+            
+        self.loadFeesTable()
     
     def noNewCourseNeeded(self):
         if self.pt.underTreatment:
@@ -1215,7 +1214,6 @@ class signals():
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,QtCore.SIGNAL("clicked()"), self.printSelectedAccounts)
 
         #feeScale
-        QtCore.QObject.connect(self.ui.loadFeescale_pushButton,QtCore.SIGNAL("clicked()"), self.loadFeesTable)
         QtCore.QObject.connect(self.ui.chooseFeescale_comboBox,QtCore.SIGNAL("currentIndexChanged(int)"), self.feestableProperties)
         
         #QtCore.QObject.connect(self.ui.printFeescale_pushButton,QtCore.SIGNAL("clicked()"), self.printFeesTable)
@@ -2018,7 +2016,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         if ci==2:           
             self.layout_apptOV()
             
-        if ci==9:
+        if ci==7:
             self.loadFeesTable()
 
 

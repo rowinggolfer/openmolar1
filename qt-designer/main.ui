@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1109</width>
+    <width>985</width>
     <height>614</height>
    </rect>
   </property>
@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>3</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>516</width>
+                    <width>707</width>
                     <height>503</height>
                    </rect>
                   </property>
@@ -1301,19 +1301,6 @@
                <string>Contract</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_23" >
-               <item row="0" column="2" >
-                <spacer name="horizontalSpacer_5" >
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0" >
-                  <size>
-                   <width>368</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
                <item row="0" column="0" >
                 <widget class="QLabel" name="label_21" >
                  <property name="text" >
@@ -1331,7 +1318,27 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="3" >
+               <item row="0" column="2" >
+                <widget class="QLabel" name="contractType_label" >
+                 <property name="text" >
+                  <string>under a Private Contract</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3" >
+                <spacer name="horizontalSpacer_5" >
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>368</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="1" column="0" colspan="4" >
                 <widget class="QTabWidget" name="contract_tabWidget" >
                  <property name="currentIndex" >
                   <number>0</number>
@@ -1340,16 +1347,69 @@
                   <attribute name="title" >
                    <string>Private</string>
                   </attribute>
+                  <widget class="QComboBox" name="privatefeeScale_comboBox" >
+                   <property name="geometry" >
+                    <rect>
+                     <x>96</x>
+                     <y>31</y>
+                     <width>81</width>
+                     <height>24</height>
+                    </rect>
+                   </property>
+                  </widget>
+                  <widget class="QLabel" name="label_8" >
+                   <property name="geometry" >
+                    <rect>
+                     <x>31</x>
+                     <y>31</y>
+                     <width>59</width>
+                     <height>24</height>
+                    </rect>
+                   </property>
+                   <property name="text" >
+                    <string>Fee Scale</string>
+                   </property>
+                  </widget>
                  </widget>
                  <widget class="QWidget" name="tab_19" >
                   <attribute name="title" >
                    <string>Highland Dental Plan</string>
                   </attribute>
+                  <layout class="QHBoxLayout" name="horizontalLayout_31" >
+                   <item>
+                    <widget class="QLabel" name="contractHDP_label" >
+                     <property name="text" >
+                      <string>This label is for displaying HDP contractual stuff</string>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                     <property name="wordWrap" >
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                  <widget class="QWidget" name="tab_20" >
                   <attribute name="title" >
                    <string>NHS</string>
                   </attribute>
+                  <layout class="QHBoxLayout" name="horizontalLayout_30" >
+                   <item>
+                    <widget class="QLabel" name="contractNHS_label" >
+                     <property name="text" >
+                      <string>This label is for displaying NHS contractual stuff</string>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                     <property name="wordWrap" >
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                  <widget class="QWidget" name="tab_21" >
                   <attribute name="title" >
@@ -1359,6 +1419,11 @@
                 </widget>
                </item>
               </layout>
+              <zorder>label_21</zorder>
+              <zorder>dnt1comboBox</zorder>
+              <zorder>comboBox</zorder>
+              <zorder>contractType_label</zorder>
+              <zorder>contract_tabWidget</zorder>
              </widget>
              <widget class="QWidget" name="tab_6" >
               <attribute name="title" >
@@ -1375,7 +1440,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>493</width>
+                    <width>707</width>
                     <height>443</height>
                    </rect>
                   </property>
@@ -1687,7 +1752,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>534</width>
+                    <width>717</width>
                     <height>493</height>
                    </rect>
                   </property>
@@ -2045,8 +2110,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>664</width>
-                    <height>373</height>
+                    <width>723</width>
+                    <height>384</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2318,8 +2383,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>116</width>
-                    <height>105</height>
+                    <width>727</width>
+                    <height>388</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2499,8 +2564,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>201</width>
-                    <height>382</height>
+                    <width>207</width>
+                    <height>384</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_11" >
@@ -2719,7 +2784,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>185</width>
+                    <width>711</width>
                     <height>392</height>
                    </rect>
                   </property>
@@ -2843,7 +2908,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
+                        <width>567</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3064,8 +3129,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>240</width>
+                <height>449</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3082,8 +3147,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>241</width>
+                <height>449</height>
                </rect>
               </property>
              </widget>
@@ -3099,8 +3164,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>240</width>
+                <height>449</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3296,8 +3361,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>96</width>
-             <height>28</height>
+             <width>167</width>
+             <height>57</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3613,8 +3678,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>28</height>
+               <width>167</width>
+               <height>117</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -4361,13 +4426,6 @@
           </widget>
          </widget>
         </item>
-        <item row="0" column="1" >
-         <widget class="QPushButton" name="loadFeescale_pushButton" >
-          <property name="text" >
-           <string>Load Feescale Tables</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1" >
          <widget class="QComboBox" name="chooseFeescale_comboBox" >
           <item>
@@ -4411,7 +4469,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1109</width>
+     <width>985</width>
      <height>24</height>
     </rect>
    </property>

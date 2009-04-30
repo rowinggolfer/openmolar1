@@ -15,21 +15,24 @@ def details(regdent,trtdent,startdate,enddate):
     if regdent=="*ALL*":
         cond1=""
     else:
-        cond1='dntid="%s" and'%localsettings.ops_reverse[regdent]
+        cond1='dntid=%s and'%localsettings.ops_reverse[regdent]
     if trtdent=="*ALL*":
         cond2=""
     else:
-        cond2='trtid="%s" and'%localsettings.ops_reverse[trtdent]
+        cond2='trtid=%s and'%localsettings.ops_reverse[trtdent]
     fields= 'DATE_FORMAT(date,"%s"),serialno,coursetype,dntid,trtid,diagn,perio,' %localsettings.sqlDateFormat
     fields+='anaes,misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc,id'  
 
     db = connect()
     cursor = db.cursor()
-    cursor.execute('select %s from daybook where %s %s date>="%s" and date<="%s" order by date'%(fields,cond1,cond2,startdate,enddate))
-    cursor.close()
-    #db.close()
+    query='select %s from daybook where %s %s date>="%s" and date<="%s" order by date'%(fields,cond1,cond2,startdate,enddate)
+    if localsettings.logqueries:
+        print query
+    cursor.execute(query)
         
     rows = cursor.fetchall()
+    
+    
     format=[regdent,trtdent]
     for d in (startdate,enddate):
         rev=d.split("_")
@@ -67,6 +70,11 @@ def details(regdent,trtdent,startdate,enddate):
         retarg+='</tr>\n'
     retarg+='<tr><td colspan="5"></td><td><b>TOTAL</b></td><td align="right"><b>&pound; %d.%02d</b></td></tr>'%(total/100,total%100)
     retarg+='</table>'
+    
+    
+    cursor.close()
+    #db.close()
+        
     
     return retarg
 
