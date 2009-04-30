@@ -24,13 +24,16 @@ def commit(pt):
         else:
             sqlcond+='%s=%s,'%(attr,pt.__dict__[attr])
     sqlcommand= "insert into patients SET %s"%sqlcond
+    query = "select max(serialno) from patients"
+    if localsettings.logqueries:
+        print query
     db=connect()
     cursor = db.cursor()
-    sql1 = "select serialno from sysdata"
-    sql2 = "update sysdata set serialno = (serialno + 1)"
-    cursor.execute(sql1)
-    newSerialno=cursor.fetchall()[0][0]+1
-    cursor.execute(sql2)
+    cursor.execute(query)
+    newSerialno=cursor.fetchone()[0]+1
+    query=sqlcommand+'serialno=%d'%(newSerialno)
+    if localsettings.logqueries:
+        print query
     cursor.execute(sqlcommand+'serialno=%d'%(newSerialno))
     db.commit()
     cursor.close()

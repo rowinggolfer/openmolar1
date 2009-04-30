@@ -42,6 +42,10 @@ practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV
 defaultNewPatientDetails=("",)*8
 privateFees={}
 
+class PatientNotFoundError(Exception):
+    pass
+
+
 def curTime():
     return datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
 

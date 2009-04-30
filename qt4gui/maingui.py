@@ -1983,7 +1983,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             QtGui.QMessageBox.warning(self.mainWindow,"Error",arg)  
             print "%d:%02d ERROR MESSAGE"%(now.hour(),now.minute()),arg  #for logging
 
-     ####TODO - link the application's box to this procedure
+    ####TODO - link the application's box to this procedure
     def quit(self):
         '''check for unsaved changes then politely close the app'''                        
         if self.okToLeaveRecord():
@@ -2070,7 +2070,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         if self.pt.serialno!=0:
             self.ui.underTreatment_label.hide() 
             self.ui.underTreatment_label_2.hide()        
-            
+            self.ui.dobEdit.setDate(QtCore.QDate(1900,1,1))
             self.ui.adminMemoEdit.setText("")
             self.ui.detailsBrowser.setText("")
             self.ui.moneytextBrowser.setText("")
@@ -2096,7 +2096,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             self.pt_dbstate=patient_class.patient(0)
             #--and have the comparison copy identical (to check for changes)
             self.pt=copy.deepcopy(self.pt_dbstate)
-
+            
             self.load_editpage()
             self.load_planpage()
             self.load_estpage("")
@@ -2342,7 +2342,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
 
         else: 
             #--shouldn't happen??
-            advise ("ERROR IN chartNavigation- please report",2)
+            self.advise ("ERROR IN chartNavigation- please report",2)
             column=0 
             #-- set this otherwise this variable will create an error in 2 lines time!
         if not callerIsTable:
@@ -2573,9 +2573,10 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         try:
             last_serialno=recent[recent.index(cp)+1]
             self.getrecord(last_serialno)
-        except:
+        except ValueError:
             self.advise("Reached End of  List")
-
+        except Exception,e:
+            print "Exception in maingui.next_patient",e
     def last_patient(self):
         cp= self.pt.serialno
         recent=localsettings.recent_snos
@@ -2586,9 +2587,11 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             try:
                 last_serialno=recent[recent.index(cp)-1]
                 self.getrecord(last_serialno)
-            except:
+            except ValueError:
                 self.advise("Reached start of  List")
-            
+            except Exception,e:
+                print "Exception in maingui.next_patient",e
+                
     def load_estpage(self,estHtml):
         self.ui.bigEstimate_textBrowser.setText(estHtml)
     def load_planpage(self):
@@ -2632,17 +2635,19 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         try:
             self.ui.dnt1comboBox.setCurrentIndex(localsettings.activedents.index(localsettings.ops[self.pt.dnt1]))    
             #-- these below have been move from the edit ta
-        except:
+        except Exception,e:
             self.ui.dnt1comboBox.setCurrentIndex(-1)
             if self.pt.dnt1!=0:
                 print "self.pt.dnt1 error - record %d"%self.pt.serialno
+                print "Handled Exception",e
                 self.advise("%s is no longer an active dentist in this practice"%localsettings.ops[self.pt.dnt1],2)
         if self.pt.dnt2>0:
             try:
                 self.ui.dnt2comboBox.setCurrentIndex(localsettings.activedents.index(localsettings.ops\
                 [self.pt.dnt2]))
-            except:
+            except Exception,e:
                 print "self.pt.dnt1 error - record %d"
+                print "Handled Exception",e
                 self.ui.dnt2comboBox.setCurrentIndex(-1)
                 self.advise("%s (dentist 2) is no longer an active dentist in this practice"%localsettings.\
                 ops[self.pt.dnt2],1)
@@ -2650,13 +2655,15 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             self.ui.dnt2comboBox.setCurrentIndex(-1)
 
     def apply_editpage_changes(self):
-        '''this is called by clicking the save button'''                                                
-        if self.pt.serialno==0 and self.ui.newPatientPushButton.isEnabled(): return
+        '''this is called by clicking the save button''' 
+        if self.pt.serialno==0 and self.ui.newPatientPushButton.isEnabled(): 
+            ###firstly.. don't apply edit page changes if there is no patient loaded, and no new patient to apply
+            return  
+
         self.pt.title=str(self.ui.titleEdit.text().toAscii()).upper()                                                          
         #--NB - these are QSTRINGs... hence toUpper() not PYTHON equiv upper()
         self.pt.fname=str(self.ui.fnameEdit.text().toAscii()).upper()
         self.pt.sname=str(self.ui.snameEdit.text().toAscii()).upper()
-        print "applying dob", self.ui.dobEdit.date().toPyDate()
         self.pt.dob=localsettings.formatDate(self.ui.dobEdit.date().toPyDate())
         self.pt.addr1=str(self.ui.addr1Edit.text().toAscii()).upper()
         self.pt.addr2=str(self.ui.addr2Edit.text().toAscii()).upper()
@@ -2675,31 +2682,38 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         self.pt.email2=str(self.ui.email2Edit.text().toAscii())
         self.pt.occup=str(self.ui.occupationEdit.text().toAscii()).upper()
 
-    def getrecord(self,serialno):
+    def getrecord(self,serialno,checkedNeedToLeaveAlready=False):
         print "get record %d"%serialno
         if self.enteringNewPatient():
             return
-        if not self.okToLeaveRecord():
+        if not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
             print "not loading"
             self.advise("Not loading patient")
             return
         if serialno!=0:
             self.advise("connecting to database to get patient details..")
+            
             try:
-                self.pt_dbstate=patient_class.patient(serialno)                                              
+                loadPt=patient_class.patient(serialno)
+                #--work on a copy only, so that changes can be tested for later
+                #--has to be a deep copy, as opposed to shallow
+                #--otherwise changes to attributes which are lists aren't spotted
                 #--new "instance" of patient
+                self.pt=loadPt
+                self.pt_dbstate=copy.deepcopy(self.pt)                                                                    
+                self.loadpatient()
+            except localsettings.PatientNotFoundError:
+                print "NOT FOUND ERROR"
+                self.advise ("error getting serialno %d - please check this number is correct?"%serialno,1)
+                return
             except Exception,e:
                 print "#"*20
-                print "maingself.ui.getrecord - error getting record %d - does it exist?"%serialno
+                print "SERIOUS ERROR???"
                 print e
+                print "maingself.ui.getrecord - error getting record %d - does it exist?"%serialno
                 print "#"*20
-                advise ("error getting serialno %d - please check this number is correct?"%serialno,2)
-                return
-            self.pt=copy.deepcopy(self.pt_dbstate)                                                                    
-            #--work on a copy only, so that changes can be tested for later
-            #--has to be a deep copy, as opposed to shallow
-            #--otherwise changes to attributes which are lists aren't spotted
-            self.loadpatient()
+                
+            
         else:
             self.advise("get record called with serialno 0")
     def reload_patient(self):
@@ -2719,10 +2733,6 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         '''load a patient from the database'''
         if self.enteringNewPatient():
             return
-        '''if not self.okToLeaveRecord():
-            print "not loading"
-            self.advise("Not loading patient")
-            return'''
         print "loading patient"
         self.advise("loading patient")
         self.ui.main_tabWidget.setCurrentIndex(0)
@@ -2827,7 +2837,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             print "not loading"
             self.advise("Not loading patient")
             return
-        def repeat():
+        def repeat_last_search():
             dl.dob.setText(localsettings.lastsearch[2])
             dl.addr1.setText(localsettings.lastsearch[4])
             dl.tel.setText(localsettings.lastsearch[3])
@@ -2839,7 +2849,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         dl.setupUi(Dialog)
         dl.dob.setText("00/00/0000")
         dl.dob.setInputMask("00/00/0000")
-        QtCore.QObject.connect(dl.repeat_pushButton,QtCore.SIGNAL("clicked()"),repeat)
+        QtCore.QObject.connect(dl.repeat_pushButton,QtCore.SIGNAL("clicked()"),repeat_last_search)
         dl.sname.setFocus()
         if Dialog.exec_():
             dob=str(dl.dob.text())
@@ -2856,7 +2866,7 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
             except:
                 serialno=0
             if serialno>0:
-                self.getrecord(serialno)
+                self.getrecord(serialno,True)
             else:
                 candidates=search.getcandidates(dob,addr,tel,sname,\
                 dl.snameSoundex_checkBox.checkState(),fname,dl.fnameSoundex_checkBox.checkState(),pcde)
@@ -2866,9 +2876,9 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
                     if len(candidates)>1:
                         sno=self.final_choice(candidates)
                         if sno!=None:
-                            self.getrecord(int(sno))
+                            self.getrecord(int(sno),True)
                     else:
-                        self.getrecord(int(candidates[0][0]))
+                        self.getrecord(int(candidates[0][0]),True)
         else:
             self.advise("dialog rejected")
     def labels_and_tabs(self):
@@ -2907,6 +2917,12 @@ class openmolarGui(customWidgets,newPatientClass,appointmentClass,signals,feeCla
         except Exception,e:
             self.advise("Patient File not saved - %s"%e,2)
     def open_patient_fromfile(self):
+        if self.enteringNewPatient():
+            return
+        if not self.okToLeaveRecord():
+            print "not loading"
+            self.advise("Not loading patient")
+            return
         self.advise("opening patient file")
         filename = QtGui.QFileDialog.getOpenFileName()
         if filename!='':

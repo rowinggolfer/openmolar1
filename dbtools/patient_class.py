@@ -77,6 +77,8 @@ decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA','urA','urB','urC','
 
 userdataTableAtts=('data',)
 
+
+
 class patient():
     def __init__(self,sno):
         '''initiate the class with default variables, then load from database'''
@@ -123,74 +125,65 @@ class patient():
         self.estblob=""
 
         if self.serialno!=0:
-            try:
-                #load stuff from the database
-                db=connect()
-                cursor = db.cursor()
-                ############################experiment
-                cursor.execute('select DATE_FORMAT(bpedate,"%s"),bpe from bpe where serialno=%d'%(localsettings.sqlDateFormat,self.serialno))
-                values = cursor.fetchall()
-                for value in values:
-                    self.bpe.append(value)
-                #table - patients
+            #load stuff from the database
+            db=connect()
+            cursor = db.cursor()
+            ############################experiment
+            #table - patients
 
-                fields=patientTableAtts
-                query=""
-                for field in fields:
-                    if field in dateFields:
-                        query+='DATE_FORMAT(%s,"%s"),'%(field,localsettings.sqlDateFormat)
-                    else:
-                        query+=field+","
-                query=query.strip(",")
-                try:
-                    cursor.execute('SELECT SQL_NO_CACHE %s from patients where serialno=%d'%(query,self.serialno))
-                    values= cursor.fetchall()
-                except:
-                    print "patient class - error getting data from patients table"
+            fields=patientTableAtts
+            query=""
+            for field in fields:
+                if field in dateFields:
+                    query+='DATE_FORMAT(%s,"%s"),'%(field,localsettings.sqlDateFormat)
+                else:
+                    query+=field+","
+            query=query.strip(",")
+            
+            cursor.execute('SELECT %s from patients where serialno=%d'%(query,self.serialno))
+            values= cursor.fetchall()
+            
+            if values==():
+                print "raising an exception"
+                raise localsettings.PatientNotFoundError
+            
+            i=0
+            for field in fields:
+                if values[0][i] !=None:
+                    self.__dict__[field]=values[0][i]
+                i+=1
+            
+            cursor.execute('select DATE_FORMAT(bpedate,"%s"),bpe from bpe where serialno=%d'%(localsettings.sqlDateFormat,self.serialno))
+            values = cursor.fetchall()
+            for value in values:
+                self.bpe.append(value)
+            
+            self.getCurrtrt(cursor)
+            self.getEsts(cursor)
+            self.getNotesTuple(cursor)
+
+            cursor.execute('select chartdate,chartdata from perio where serialno=%d'%self.serialno)
+            perioData=cursor.fetchall()
+            for data in perioData:
+                self.perioData[formatDate(data[0])]=perio.get_perioData(data[1])             #a dictionary (keys=dates) of dictionaries with keys like "ur8" and containing 7 tuples of data
+            cursor.execute('select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other from mednotes where serialno=%d'%self.serialno)
+
+            self.MH=cursor.fetchall()
+            if self.MH!=():
+                allerg=self.MH[0][4]
+                if len(allerg)>0 and not "med ok" in allerg.lower():
+                    self.MEDALERT=True
+            
+            cursor.execute('SELECT data from userdata where serialno=%d'%self.serialno);
+            self.data=cursor.fetchall()
                 
-                i=0
-                for field in fields:
-                    if values[0][i] !=None:
-                        self.__dict__[field]=values[0][i]
-                    i+=1
-                
-                self.getCurrtrt(cursor)
-                self.getEsts(cursor)
-                self.getNotesTuple(cursor)
-                try:
-                    cursor.execute('select chartdate,chartdata from perio where serialno=%d'%self.serialno)
-                    perioData=cursor.fetchall()
-                    for data in perioData:
-                        self.perioData[formatDate(data[0])]=perio.get_perioData(data[1])             #a dictionary (keys=dates) of dictionaries with keys like "ur8" and containing 7 tuples of data
-                except:
-                    print "patient class - error getting peridata"
-                try:
-                    cursor.execute('select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other from mednotes where serialno=%d'%self.serialno)
-                    self.MH=cursor.fetchall()
-                    if self.MH!=():
-                        allerg=self.MH[0][4]
-                        if len(allerg)>0 and not "med ok" in allerg.lower():
-                            self.MEDALERT=True
-                except:
-                    print "patient class - error getting mednotes"
-                
-                try:
-                    cursor.execute('SELECT SQL_NO_CACHE data from userdata where serialno=%d'%self.serialno);
-                    self.data=cursor.fetchall()
-                except:
-                    print "patient class - error getting userdata"
-                    
-                cursor.execute('select DATE_FORMAT(date,"%s"), trtid, chart from daybook where serialno = %d'%(localsettings.sqlDateFormat,self.serialno))
-                self.dayBookHistory=cursor.fetchall()
+            cursor.execute('select DATE_FORMAT(date,"%s"), trtid, chart from daybook where serialno = %d'%(localsettings.sqlDateFormat,self.serialno))
+            self.dayBookHistory=cursor.fetchall()
 
-                cursor.close()
-                #db.close()
+            cursor.close()
+            #db.close()
 
-            except Exception,e:
-                print "Exception getting patient"
-                print e
-                print
-
+        
             self.updateChartgrid()
             self.updateFees()
             self.setCurrentEstimate()
@@ -203,10 +196,10 @@ class patient():
             db=connect()
             cursor=db.cursor()
       
-        cursor.execute('SELECT SQL_NO_CACHE serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
+        cursor.execute('SELECT serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         self.estimates = cursor.fetchall()
         
-        cursor.execute('SELECT SQL_NO_CACHE serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
+        cursor.execute('SELECT serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
         if disconnectNeeded:
             cursor.close()
             #db.close()
@@ -226,7 +219,7 @@ class patient():
             else:
                 query+=field+","
         query=query.strip(",")
-        cursor.execute('SELECT SQL_NO_CACHE %s from currtrtmt where serialno=%d and courseno=%d'%(query,self.serialno,self.courseno0))               ##todo - I should lever these multiple tx plans!!!!
+        cursor.execute('SELECT %s from currtrtmt where serialno=%d and courseno=%d'%(query,self.serialno,self.courseno0))               ##todo - I should lever these multiple tx plans!!!!
         values= cursor.fetchall()
         for value in values:
             i=0
@@ -245,12 +238,12 @@ class patient():
         if cursor==None:
             db=connect()
             cursor=db.cursor()
-            cursor.execute("SELECT SQL_NO_CACHE lineno,line from notes where serialno=%d"%self.serialno)
+            cursor.execute("SELECT lineno,line from notes where serialno=%d"%self.serialno)
             self.notestuple = cursor.fetchall()                                                     # so "notes" is a tuple like this ((0,'notes'),(1,"morenotes"),...etc...)
             cursor.close()
             #db.close()
         else:
-            cursor.execute("SELECT SQL_NO_CACHE lineno,line from notes where serialno=%d"%self.serialno)
+            cursor.execute("SELECT lineno,line from notes where serialno=%d"%self.serialno)
             self.notestuple = cursor.fetchall()                                                     # so "notes" is a tuple like this ((0,'notes'),(1,"morenotes"),...etc...)
 
     def flipDec_Perm(self,tooth):
@@ -349,7 +342,7 @@ if __name__ =="__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=106
+        serialno=101
     if "-v" in sys.argv:
         verbose=True
     else:
