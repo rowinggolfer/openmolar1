@@ -24,14 +24,21 @@ PYTHON=python
 
 #.PHONY: all clean install pyflakes
 
-all: build
+all: clean build
 
-build:
+build: clean
 	@echo "Building openMolar"
 	$(PYTHON) setup.py build
+
+package: clean
+	@echo "Building generic debian package"
+	touch qt-designer/__init__.py
+	touch resources/__init__.py
+	$(PYTHON) setup.py sdist
+
 install: 
-	@echo "Building and installing openMolar"
-	$(PYTHON) setup.py install 
+	@echo "Building and installing openMolar to $(DESTDIR)"
+	$(PYTHON) setup.py install --prefix "$(DESTDIR)"  
 
 
 # Run Python style checker (apt-get install pyflakes)
@@ -48,4 +55,5 @@ pyflakes-nounused:
 
 clean:
 	$(PYTHON) setup.py clean
+	rm -f MANIFEST
 	-find . -name "*.pyc" -o -name "*.pyo" -o -name "*.so" | xargs rm -f
