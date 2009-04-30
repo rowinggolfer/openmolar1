@@ -116,27 +116,34 @@ class feeClass():
         self.ui.fees_other_tableWidget,self.ui.fees_capitation_tableWidget,self.ui.fees_occasional_tableWidget)
         n=0
         for table in tables:        
+            table.clear()
+            table.setRowCount(0)
             table.setColumnCount(len(headers))
             table.setHorizontalHeaderLabels(headers)
             table.verticalHeader().hide()
             table.setSortingEnabled(False)
             table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        
+            if n<len(fdKeys):
+                
+                diagDict=feeDict[fdKeys[n]]
+                keys=diagDict.keys()
+                keys.sort()
+                table.setRowCount(len(keys))
+                rowno=0
+                for key in keys:
+                    item=QtGui.QTableWidgetItem(str(key))
+                    table.setItem(rowno,0,item)            
+                    for col in range(len(diagDict[key])):
+                        item=QtGui.QTableWidgetItem(str(diagDict[key][col]))
+                        table.setItem(rowno,col+1,item)
+                    rowno+=1
+                #table.setSortingEnabled(True)
+                table.resizeColumnsToContents()
             
-            diagDict=feeDict[fdKeys[n]]
-            keys=diagDict.keys()
-            keys.sort()
-            table.setRowCount(len(keys))
-            rowno=0
-            for key in keys:
-                item=QtGui.QTableWidgetItem(str(key))
-                table.setItem(rowno,0,item)            
-                for col in range(len(diagDict[key])):
-                    item=QtGui.QTableWidgetItem(str(diagDict[key][col]))
-                    table.setItem(rowno,col+1,item)
-                rowno+=1
-            #table.setSortingEnabled(True)
-            table.resizeColumnsToContents()
+                
             n+=1
+            
 
     def feestableProperties(self):
         if self.ui.chooseFeescale_comboBox.currentIndex()==1:
@@ -779,8 +786,8 @@ class appointmentClass():
         '''populates the patients appointment table'''
         self.ui.ptAppointmentTableWidget.clear()                                                             
         #clear only empties the contents.... so delete row by row :(
-        while self.ui.ptAppointmentTableWidget.rowCount()>0:                                                 
-            self.ui.ptAppointmentTableWidget.removeRow(0)
+        self.ui.ptAppointmentTableWidget.setRowCount(0)
+            
         self.ui.ptAppointmentTableWidget.setSortingEnabled(False)
         #self.ui.ptAppointmentTableWidget.verticalHeader().hide()
         headers=["Date","Pract..","Time","Length","Treat 1","Treat 2","Treat 3","MEMO","date spec","orderAdded"]
@@ -790,11 +797,6 @@ class appointmentClass():
         #--hide the last column (order added)
         self.ui.ptAppointmentTableWidget.setColumnWidth(len(headers),0)
         #--the 60 is the next line allows for the width of the vertical scrollbar
-        colWidth=(self.ui.ptAppointmentTableWidget.width()-60)/(len(headers)-1)                                
-        if colWidth>30:
-            for col in range(len(headers)-1):
-                self.ui.ptAppointmentTableWidget.setColumnWidth(col,colWidth)
-        
         rows=appointments.get_pts_appts(self.pt.serialno) 
         #--which will give us stuff like...
         #--(4820L, 7, 4, 'RCT', '', '', 'OR PREP', datetime.date(2008, 12, 15), 1200, 60, 0, 73, 0, 0, 0, '')                                                  
@@ -835,7 +837,8 @@ class appointmentClass():
             self.ui.ptAppointmentTableWidget.setItem(rowno,8,QtGui.QTableWidgetItem(datespec))
             self.ui.ptAppointmentTableWidget.setItem(rowno,9,QtGui.QTableWidgetItem(str(row[1])))
         self.ui.ptAppointmentTableWidget.setCurrentCell(selectedrow,0)
-        
+        self.ui.ptAppointmentTableWidget.resizeColumnsToContents()
+       
         #--programmatically ensure the correct buttons are enabled
         self.ptApptTableNav()
         
