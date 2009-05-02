@@ -1091,11 +1091,11 @@ class appointmentClass():
         else:
             self.ui.goTodayPushButton.setEnabled(True)
         i=0
-        for d in todaysDents:
+        for dent in todaysDents:
             try:
-                self.ui.apptBookWidgets[i].dentist=localsettings.apptix_reverse[d]
-                self.ui.apptBookWidgets[i].setStartTime(self.appointmentData[0][todaysDents.index(d)][1])
-                self.ui.apptBookWidgets[i].setEndTime(self.appointmentData[0][todaysDents.index(d)][2])
+                self.ui.apptBookWidgets[i].dentist=localsettings.apptix_reverse[dent]
+                self.ui.apptBookWidgets[i].setStartTime(self.appointmentData[0][todaysDents.index(dent)][1])
+                self.ui.apptBookWidgets[i].setEndTime(self.appointmentData[0][todaysDents.index(dent)][2])
             except IndexError,e:
                 self.advise("Damn! too many dentists today!! only 3 widgets available - file a bug!<br /><br />%s"%str(e),2)      
                 ####TODO - sort this out... no of widgets shouldn't be fixed.
@@ -1122,6 +1122,7 @@ class appointmentClass():
     
     def appointment_clicked(self,list_of_snos):
         if len(list_of_snos)==1:
+            
             sno=list_of_snos[0]
             self.advise("getting record %s"%sno)
             self.getrecord(sno)
@@ -1129,6 +1130,13 @@ class appointmentClass():
             sno=self.final_choice(search.getcandidates_from_serialnos(list_of_snos))
             if sno!=None:
                 self.getrecord(int(sno))
+    def clearEmergencySlot(self,tup):
+        print "clear",tup
+        
+    
+    def blockEmptySlot(self,tup):
+        print "block ",tup
+
 
 class signals():
     def setupSignals(self):
@@ -1274,7 +1282,8 @@ class signals():
         QtCore.QObject.connect(self.ui.fontSize_spinBox,QtCore.SIGNAL("valueChanged (int)"), self.aptFontSize)
         for book in self.ui.apptBookWidgets:
             book.connect(book,QtCore.SIGNAL("PySig"), self.appointment_clicked)
-
+            book.connect(book,QtCore.SIGNAL("ClearEmergencySlot"),self.clearEmergencySlot)
+            book.connect(book,QtCore.SIGNAL("BlockEmptySlot"),self.blockEmptySlot)
         #appointment overview tab
         QtCore.QObject.connect(self.ui.apptOV_calendarWidget,QtCore.SIGNAL("selectionChanged()"), self.layout_apptOV)
         QtCore.QObject.connect(self.ui.aptOVprevweek,QtCore.SIGNAL("clicked()"), self.aptOV_weekBack)
@@ -2417,9 +2426,9 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             #--and have the comparison copy identical (to check for changes)
             self.pt=copy.deepcopy(self.pt_dbstate)
             
-            self.load_editpage()
+            self.load_editpage()##################################################is this wise???????
             self.load_planpage()
-            self.load_estpage("")
+            self.load_estpage()
            
     def home(self):
         '''User has clicked the homw push_button - clear the patient, and blank the screen'''

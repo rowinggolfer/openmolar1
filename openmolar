@@ -14,11 +14,13 @@
 
 import sys,os,hashlib
 from PyQt4 import QtGui,QtCore
+from xml.dom import minidom
 
 __version__ = "0.0.6 - 22nd April 2009"
 __build__= "N/A dev_machine"
 
 class LoginError(Exception):pass
+
 
 def main(app):
     wkdir=os.path.dirname(os.getcwd())
@@ -29,6 +31,13 @@ def main(app):
     localsettings.__build__ = __build__
     uninitiated=True
     
+    if not os.path.exists("/etc/openmolar/openmolar.conf"):
+        from openmolar import firstRun
+        if not firstRun.newsetup():
+            sys.exit()
+    d=minidom.parse("/etc/openmolar/openmolar.conf")
+    sysPassword=d.getElementsByTagName("system_password")[0].firstChild.data
+        
     def autoreception(arg):    #arg is a QString
         if arg.toLower()=="rec":
             dl.reception_radioButton.setChecked(True)
@@ -41,21 +50,31 @@ def main(app):
         if Dialog.exec_():
             try:
                 pword=str(dl.password_lineEdit.text())
+                #-- hash the password (twice!) and compare to the value in /etc/openmolar/openmolar.conf   
                 s=hashlib.md5(hashlib.sha1(pword).hexdigest()).hexdigest()
-                if s != '0144712dd81be0c3d9724f5e56ce6685':                                 ##end password check##
+                if s != sysPassword:##end password check##
                     raise LoginError 
                 if uninitiated:
-                    localsettings.initiate(False)                                                  #this will attempt to connect to mysql server
+                    #-- user has entered the correct password
+                    #-- so now we connect to the mysql database for the 1st time
+                    #-- I do it this way so that anyone sniffing the network won't see the mysql password until this point
+                    #-- this could and should possibly still be improved upon
+                    #-- maybe by using an ssl connection to the server.
+                    localsettings.initiate(False)                                                  
                     uninitiated=False
             
-                u1=dl.user1_lineEdit.text().toUpper()                                              #toUpper is a method of QString
+                u1=dl.user1_lineEdit.text().toUpper()  #toUpper is a method of QString
                 u2=dl.user2_lineEdit.text().toUpper()
-                '''if not u1 in localsettings.allowed_logins:
+                
+                #-- localsettings module now has user variables.
+                #-- allowed_logins in a list of practice staff.
+                if not u1 in localsettings.allowed_logins:
                     raise LoginError
                 if u2!="" and not u2 in localsettings.allowed_logins:
                     raise LoginError
-                '''  #skip this for the demo version...
-                localsettings.successful_login=True                                                #allow the main program to run
+
+                #-- set a variable to allow the main program to run
+                localsettings.successful_login=True 
                 if dl.reception_radioButton.isChecked():
                     localsettings.station="reception"
                 if u2=="":
@@ -74,4 +93,5 @@ def main(app):
 if __name__=="__main__":
     print "starting openMolar",__version__
     app=QtGui.QApplication(sys.argv)
+    
     main(app)

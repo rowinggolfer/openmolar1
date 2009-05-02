@@ -2,23 +2,27 @@
 using 3rd party MySQLdb module'''
 
 import MySQLdb
+from xml.dom import minidom
 
-##--local variables----------------------------------------------------------
-#<start_delete_point>   #this delete point is important for my anonymous code export script.
-myHost="localhost" #this computer alternatives - "192.168.88.2" work or "192.168.0.3" home
-myUser="user"
-myPassword="password"
-myDb="openmolar"
-#<end_delete_point>
-##----------------------------------------------------------------------------
-
-currentConnection=None
+currentConnection,myHost,myUser,myPassword,myDb,myPort=None,"","","","",""
 
 def connect():
-    global currentConnection
+    global currentConnection, myHost,myUser,myPassword,myDb,myPort
+    if currentConnection==None:
+        dom=minidom.parse("/etc/openmolar/openmolar.conf")
+        sysPassword=dom.getElementsByTagName("system_password")[0].firstChild.data
+        print sysPassword
+        xmlnode=dom.getElementsByTagName("server")[0]
+        myHost=xmlnode.getElementsByTagName("location")[0].firstChild.data
+        myPort=int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
+        xmlnode=dom.getElementsByTagName("database")[0]
+        myUser=xmlnode.getElementsByTagName("user")[0].firstChild.data
+        myPassword=xmlnode.getElementsByTagName("password")[0].firstChild.data
+        myDb=xmlnode.getElementsByTagName("dbname")[0].firstChild.data
+    
     if not (currentConnection and currentConnection.open):
         print "New connection needed"
-        currentConnection=MySQLdb.connect(host=myHost,user=myUser,passwd=myPassword,db=myDb)
+        currentConnection=MySQLdb.connect(host=myHost,port=myPort,user=myUser,passwd=myPassword,db=myDb)
         currentConnection.autocommit(True)
         print currentConnection
     else:
@@ -30,20 +34,20 @@ if __name__=="__main__":
     for i in range(1,11):
         try:
             print "connecting....",
-            db=connect()
-            print db.info()
+            dbc=connect()
+            print dbc.info()
             print 'ok... we can make Mysql connections!!'
-        except:
-            print "error"
+        except Exception,e:
+            print "error",e
         print "loop no ",i
         if i==2:
             #close the db... let's check it reconnects
-            db.close()
+            dbc.close()
         if i==4:
             #make a slightly bad query... let's check we get a warning
-            c=db.cursor()
+            c=dbc.cursor()
             c.execute('update patients set dob="19691209" where serialno=11956')
             c.close()
         time.sleep(5)
-    print dir(db)
-    db.close()
+    
+    dbc.close()

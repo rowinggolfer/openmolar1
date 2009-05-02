@@ -175,12 +175,13 @@ class appointmentWidget(QtGui.QWidget):
                     QtGui.QMessageBox.information(self,"Info",'''Clear appointment?<br />
                     Start %s<br />Length %d mins<br />Dentist %s'''%(s,len,self.dentist))
                 else:
-                    QtGui.QMessageBox.information(self,"Info","Clear Lunch/Emergency slot?")
+                    self.emit(QtCore.SIGNAL("ClearEmergencySlot"),(s,len,self.dentist))
+                    
         else:
             s=self.humanTime(int(self.startTime+self.selected[0]*self.slotLength))
             len=(self.selected[1]-self.selected[0])*self.slotLength
-            QtGui.QMessageBox.information(self,"Info",'''You've clicked on an empty slot<br />options to follow - watch this space!<br />
-            Start %s<br />Length %d mins<br />Dentist %s'''%(s,len,self.dentist))
+            self.emit(QtCore.SIGNAL("BlockEmptySlot"),(s,len,self.dentist))
+            
     def leaveEvent(self,event):
         self.selected=[-1,-1]
         self.update()
