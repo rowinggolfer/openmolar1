@@ -9,6 +9,15 @@ import MySQLdb,sys,datetime,os
 
 __version__=""
 __build__=""
+
+
+#-- sorry about this... but cross platform is a goal :(
+if "win" in sys.platform:
+    configfilelocation=('C:\\Program Files\\openmolar\\openmolar.conf')
+
+else: #-- linux hurrah!!
+    configfilelocation=('/etc/openmolar/openmolar.conf')
+
 successful_login=False                                                         #updated if correct password is given
 sqlDateFormat=r"%d/%m/%Y"                                                      #gives me dd-mm-YYYY  (%e-%m-%Y would give d-mm-YYYY if preferred)
 operator="unknown"

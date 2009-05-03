@@ -220,7 +220,12 @@ def getBlocks(adate,dent):
     else:
         #--day not used!
         return()                                                               
-        
+       
+    
+    
+    
+    
+     
 def clearEms(adate):
     db=connect()
     cursor=db.cursor()
@@ -379,6 +384,32 @@ def make_appt(adate,apptix,start,end,name,serialno,code0,code1,code2,note,flag0,
     cursor.close()
     #db.close()
     return result
+
+
+def block_appt(adate,apptix,start,end):
+    db = connect()
+    cursor = db.cursor()
+    columns='adate,apptix,start,end,name,serialno,code0,code1,code2,note,flag0,flag1,flag2,flag3'
+    values='"%s",%d,%d,%d,"%s",%d,"%s","%s","%s","%s",%d,%d,%d,%d'%(adate,apptix,start,end,"//BLOCKED//",0,
+    "","","","",-128,0,0,0)
+    
+    fullquery='INSERT INTO aslot (%s) VALUES (%s)'%(columns,values)
+    if localsettings.logqueries:
+        print fullquery
+
+    if cursor.execute(fullquery): 
+        #-- insert call.. so this will always be true unless we have key value errors?
+        db.commit()
+        result=True
+    else:
+        print "couldn't insert into aslot %s %s %s serialno %d"%(adate,apptix,start,serialno)
+        result=False
+    cursor.close()
+    #db.close()
+    return result
+    
+
+
 
 def modify_aslot_appt(adate,apptix,start,serialno,code0,code1,code2,note,flag0,flag1,flag2,flag3):
     '''this modifies an appointment in the aslot table'''

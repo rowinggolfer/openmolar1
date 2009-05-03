@@ -15,6 +15,7 @@ from PyQt4 import QtGui,QtCore
 from xml.dom import minidom
 import MySQLdb
 from openmolar.qt4gui import Ui_newSetup
+from openmolar.settings import localsettings
 
 
 blankXML='''<?xml version="1.0" ?>
@@ -107,6 +108,8 @@ def newsetup():
     def stage2():
         global myPassword
         '''user has entered the main password once'''
+        dl.main_password_lineEdit.setFocus()
+        
         QtCore.QObject.disconnect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage2)
         myPassword=dl.main_password_lineEdit.text()
         dl.mainPassword_label.setText("Please re-enter this password")
@@ -147,7 +150,7 @@ def newsetup():
         try:
             dom=minidom.parseString(blankXML)
             #-- hash the password and save it
-            s=hashlib.md5(hashlib.sha1(str(myPassword)).hexdigest()).hexdigest()
+            s=hashlib.md5(hashlib.sha1(str("diqug_ADD_SALT_3i2some"+myPassword)).hexdigest()).hexdigest()
             dom.getElementsByTagName("system_password")[0].firstChild.replaceWholeText(s)
 
             #-- server settings
@@ -164,10 +167,11 @@ def newsetup():
             xmlnode.getElementsByTagName("password")[0].firstChild.replaceWholeText(myMysqlPassword)
             xmlnode.getElementsByTagName("dbname")[0].firstChild.replaceWholeText(myDB)
             
-            if not os.path.exists("/etc/openmolar"):
-                os.mkdir("/etc/openmolar")
+            settingsDir=os.path.dirname(localsettings.configfilelocation)
+            if not os.path.exists(settingsDir):
+                os.mkdir(settingsDir)
             
-            f=open("/etc/openmolar/openmolar.conf","w")
+            f=open(localsettings.configfilelocation,"w")
             f.write(dom.toxml())
             f.close()
             Dialog.accept()

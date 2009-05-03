@@ -8,7 +8,7 @@
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-import sys,copy,pickle,time,threading
+import os,sys,copy,pickle,time,threading
 
 from openmolar.settings import localsettings,fee_keys
 
@@ -1091,6 +1091,9 @@ class appointmentClass():
         else:
             self.ui.goTodayPushButton.setEnabled(True)
         i=0
+        #-- clean past links to dentists
+        for book in self.ui.apptBookWidgets:
+            book.dentist=None
         for dent in todaysDents:
             try:
                 self.ui.apptBookWidgets[i].dentist=localsettings.apptix_reverse[dent]
@@ -1131,12 +1134,16 @@ class appointmentClass():
             if sno!=None:
                 self.getrecord(int(sno))
     def clearEmergencySlot(self,tup):
-        print "clear",tup
+        print "clear emergency slot",tup
         
-    
     def blockEmptySlot(self,tup):
         print "block ",tup
-
+        adate=self.ui.appointmentCalendarWidget.selectedDate().toPyDate()
+        start=localsettings.humanTimetoWystime(tup[0])
+        end=localsettings.humanTimetoWystime(tup[1])
+        dent=tup[2]
+        appointments.block_appt(adate,dent,start,end)
+        self.layout_appointments()
 
 class signals():
     def setupSignals(self):
@@ -3342,18 +3349,23 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
 def main(arg):
     global app                                                                        
     #--global ui enables reference to all objects - self.mainWindow referred to for dialog placement and app required for polite shutdown
-    if not localsettings.successful_login:                                                          
-        ####TODO - change this for production versions
-        #--skip password check for dev purpose
-        localsettings.initiate(False)                                                                
-        #--grabs some resources and settings kept in the database(dentists names etc..)
     app = QtGui.QApplication(arg)
     mainWindow = QtGui.QMainWindow()
     omGui=openmolarGui(mainWindow)
-    if __name__ != "__main__":
-        #don't maximise the window for dev purposes.
-        mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
     mainWindow.show()
+    
+    #-- user could easily play with this code and avoid login... the app would however, not have initialised.
+    if __name__ != "__main__":
+        #don't maximise the window for dev purposes - I like to see all the error messages in a terminal ;).
+        mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
+    
+    
+    #--this is a hack to allow me (neil) to run this module without going through security... to be removed. 
+    if  not "neil" in os.getcwd():
+        omGui.advise("How dare you try and skip the login stage!<br />openmolar will now close.",2)
+        omGui.quit()
+    else:
+        localsettings.initiate()
     sys.exit(app.exec_())
 
 if __name__ == "__main__":

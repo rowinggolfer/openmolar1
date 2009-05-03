@@ -21,7 +21,6 @@ __build__= "N/A dev_machine"
 
 class LoginError(Exception):pass
 
-
 def main(app):
     wkdir=os.path.dirname(os.getcwd())
     sys.path.append(wkdir)
@@ -31,11 +30,17 @@ def main(app):
     localsettings.__build__ = __build__
     uninitiated=True
     
-    if not os.path.exists("/etc/openmolar/openmolar.conf"):
+    
+    
+    
+    
+    
+    
+    if not os.path.exists(localsettings.configfilelocation):
         from openmolar import firstRun
         if not firstRun.newsetup():
             sys.exit()
-    d=minidom.parse("/etc/openmolar/openmolar.conf")
+    d=minidom.parse(localsettings.configfilelocation)
     sysPassword=d.getElementsByTagName("system_password")[0].firstChild.data
         
     def autoreception(arg):    #arg is a QString
@@ -49,8 +54,8 @@ def main(app):
         QtCore.QObject.connect(dl.user1_lineEdit,QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
         if Dialog.exec_():
             try:
-                pword=str(dl.password_lineEdit.text())
-                #-- hash the password (twice!) and compare to the value in /etc/openmolar/openmolar.conf   
+                pword="diqug_ADD_SALT_3i2some"+str(dl.password_lineEdit.text())
+                #-- hash the salted password (twice!) and compare to the value in /etc/openmolar/openmolar.conf   
                 s=hashlib.md5(hashlib.sha1(pword).hexdigest()).hexdigest()
                 if s != sysPassword:##end password check##
                     raise LoginError 
