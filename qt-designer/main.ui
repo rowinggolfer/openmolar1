@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>707</width>
+                    <width>702</width>
                     <height>503</height>
                    </rect>
                   </property>
@@ -1321,11 +1321,24 @@
                <item row="0" column="2" >
                 <widget class="QLabel" name="contractType_label" >
                  <property name="text" >
-                  <string>under a Private Contract</string>
+                  <string>Course Type</string>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
                <item row="0" column="3" >
+                <widget class="QComboBox" name="cseType_comboBox" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>50</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="4" >
                 <spacer name="horizontalSpacer_5" >
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
@@ -1338,7 +1351,7 @@
                  </property>
                 </spacer>
                </item>
-               <item row="1" column="0" colspan="4" >
+               <item row="1" column="0" colspan="5" >
                 <widget class="QTabWidget" name="contract_tabWidget" >
                  <property name="currentIndex" >
                   <number>0</number>
@@ -1419,11 +1432,6 @@
                 </widget>
                </item>
               </layout>
-              <zorder>label_21</zorder>
-              <zorder>dnt1comboBox</zorder>
-              <zorder>comboBox</zorder>
-              <zorder>contractType_label</zorder>
-              <zorder>contract_tabWidget</zorder>
              </widget>
              <widget class="QWidget" name="tab_6" >
               <attribute name="title" >
@@ -1440,7 +1448,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>707</width>
+                    <width>702</width>
                     <height>443</height>
                    </rect>
                   </property>
@@ -1752,7 +1760,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>717</width>
+                    <width>712</width>
                     <height>493</height>
                    </rect>
                   </property>
@@ -2110,7 +2118,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>723</width>
+                    <width>718</width>
                     <height>384</height>
                    </rect>
                   </property>
@@ -2383,7 +2391,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>727</width>
+                    <width>722</width>
                     <height>388</height>
                    </rect>
                   </property>
@@ -2784,7 +2792,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>711</width>
+                    <width>706</width>
                     <height>392</height>
                    </rect>
                   </property>
@@ -2908,7 +2916,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>567</width>
+                        <width>562</width>
                         <height>1218</height>
                        </rect>
                       </property>

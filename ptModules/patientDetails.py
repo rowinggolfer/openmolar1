@@ -39,7 +39,7 @@ def age(dob):
             return retarg+"<hr />"
     except Exception,e:
         print "error calculating pt age - ",e
-        return "unknown age"
+        return "unknown age<hr />"
         
 def details(pt):
     '''returns an html set showing pt name etc...'''
@@ -56,7 +56,7 @@ def details(pt):
                 line=line.title()
             retarg+=line +'<br />'
     retarg=retarg.rstrip('<br />') + '<hr />'
-    retarg+='TYPE = %s <br />'%pt.cset
+    retarg+='TYPE = %s <br />'%str(pt.cset)
     if pt.pf11!=0:
         retarg+='FEESCALE %s<br />'%chr(pt.pf11)
     try:
@@ -64,8 +64,7 @@ def details(pt):
         if pt.dnt2!=0 and pt.dnt1!=pt.dnt2:
             retarg+='/%s'%localsettings.ops[pt.dnt2]
     except KeyError,e:
-        retarg+='''<h4>ERROR GETTING DENTIST the database has a dentist value of %s this WILL cause problems -
-        PLEASE REPORT THIS TO YOUR SYSTEM'S ADMINISTRATOR</h4>'''%e
+        retarg+='''<h4>Please Set a Dentist for this patient!</h4>'''
     retarg+='<hr />'
     if pt.memo !='':
         retarg+='<h4>Memo</h4>'

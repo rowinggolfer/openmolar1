@@ -1264,7 +1264,7 @@ class signals():
         #contracts
         QtCore.QObject.connect(self.ui.dnt1comboBox,QtCore.SIGNAL("activated(const QString&)"), self.changeContractedDentist)
         QtCore.QObject.connect(self.ui.dnt2comboBox,QtCore.SIGNAL("activated(const QString&)"), self.changeCourseDentist)
-        
+        QtCore.QObject.connect(self.ui.cseType_comboBox,QtCore.SIGNAL("activated(const QString&)"), self.changeCourseType)
 
         #periochart
         #### defunct  QtCore.QObject.connect(self.ui.perioChartWidget,QtCore.SIGNAL("toothSelected"), self.periocharts)
@@ -2099,6 +2099,7 @@ class printingClass():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
             myclass.printpage()
+            docsprinted.add(self.pt.serialno,"std letter",html)
     def printReferral(self):
         '''prints a referal letter controlled by referal.xml file'''                                    
         ####TODO this file should really be in the sql database
@@ -2115,6 +2116,7 @@ class printingClass():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
             myclass.printpage()
+            docsprinted.add(self.pt.serialno,"referral",html)
     def printChart(self):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -2148,7 +2150,7 @@ class printingClass():
                 self.pt.updateBilling(tone)
                 self.pt.addHiddenNote("printed","account - tone %s"%tone)
                 self.addNewNote("Account Printed")
-
+                
     def testGP17(self):
         printGP17(True)
 
@@ -2508,14 +2510,13 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         print "changing contracted dentist to ",inits
         self.pt.dnt1=newdentist
         self.updateDetails()
-    
 
     def changeCourseDentist(self,inits):
         newdentist=localsettings.ops_reverse[str(inits)]
         if newdentist==self.pt.dnt2:
             return
         if self.pt.cset=="N" and self.pt.underTreatment:
-            self.advise("",1)
+            self.advise("think about getting some nhs forms signed for both dentists",1)
         else:
             self.advise("changed course dentist to %s"%inits,1)
         
@@ -2523,7 +2524,12 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         self.pt.dnt2=newdentist
         self.updateDetails()
 
-
+    def changeCourseType(self,cset):
+        print "changing course type of %d to %s"%(self.pt.serialno,cset)
+        self.pt.cset=str(cset)
+        self.advise("changed course type to %s"%cset,1)
+        self.updateDetails()
+        
 
     def load_todays_patients_combobox(self):
         '''loads the quick select combobox, with all of todays's
@@ -2556,21 +2562,14 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.getrecord(serialno)
             
     def loadDentistComboboxes(self):
-        #first - allow an "all dentists option"
-        s=QtCore.QString("*ALL*")
-        self.ui.daybookDent1ComboBox.addItem(s)
-        self.ui.daybookDent2ComboBox.addItem(s)
-        self.ui.cashbookDentComboBox.addItem(s)
-       #now add dentists found in the database
-        for dent in localsettings.ops.keys():
-            s=QtCore.QString(localsettings.ops[dent])
-            self.ui.daybookDent1ComboBox.addItem(s)
-            self.ui.daybookDent2ComboBox.addItem(s)
-            self.ui.cashbookDentComboBox.addItem(s)
-        for dent in localsettings.activedents:
-            s=QtCore.QString(dent)
-            self.ui.dnt1comboBox.addItem(s)
-            self.ui.dnt2comboBox.addItem(s)
+        #--populate comboboxes with dentists
+        s=["*ALL*"] + localsettings.ops.values()
+        self.ui.daybookDent1ComboBox.addItems(s)
+        self.ui.daybookDent2ComboBox.addItems(s)
+        self.ui.cashbookDentComboBox.addItems(s)
+        self.ui.dnt1comboBox.addItems(localsettings.activedents)
+        self.ui.dnt2comboBox.addItems(localsettings.activedents)
+        
     def find_related(self):
         if self.pt.serialno==0:
             self.advise("No patient to compare to",2)
@@ -2765,10 +2764,10 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
                 print "#"*20
                 print "SERIOUS ERROR???"
                 print e
-                print "maingself.ui.getrecord - error getting record %d - does it exist?"%serialno
+                print "maingself.ui.getrecord - serialno%d"%serialno
                 print "#"*20
+                self.advise ("Serious Error - Tell Neil<br />%s"%e,2)
                 
-            
         else:
             self.advise("get record called with serialno 0")
     def reload_patient(self):
@@ -2809,13 +2808,18 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         self.ui.notesSummary_textBrowser.scrollToAnchor('anchor')
         self.ui.notesBrowser.setHtml("")
         self.ui.notesEnter_textEdit.setText("")
-        for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,self.ui.completedChartWidget\
-        ,self.ui.perioChartWidget,self.ui.summaryChartWidget):
+        for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,self.ui.completedChartWidget,self.ui.perioChartWidget,self.ui.summaryChartWidget):
             chart.clear()                                                                     
             #--necessary to restore the chart to full dentition
         self.ui.staticChartWidget.setSelected(0,0)  #select the UR8
         self.chartsTable()
-        self.bpe_dates()                                                                                 
+        self.bpe_dates()  
+        try:
+            pos=localsettings.csetypes.index(self.pt.cset)  
+        except ValueError:
+            QtGui.QMessageBox.information(self.mainWindow,"Advisory","Please set a Valid Course Type for this patient")
+            pos=-1
+        self.ui.cseType_comboBox.setCurrentIndex(pos)
         #--update bpe
         curtext="Current Treatment "
         if self.pt.underTreatment:
@@ -2958,10 +2962,10 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         brush = QtGui.QBrush(colours.LINEEDIT)
         palette = QtGui.QPalette()
         palette.setBrush(QtGui.QPalette.Base,  brush)
-        for widg in (self.ui.snameEdit,self.ui.titleEdit,self.ui.fnameEdit,self.ui.addr1Edit,self.ui.dobEdit,self.ui.pcdeEdit,\
-        self.ui.sexEdit):
+        for widg in (self.ui.snameEdit,self.ui.titleEdit,self.ui.fnameEdit,self.ui.addr1Edit,self.ui.dobEdit,self.ui.pcdeEdit,self.ui.sexEdit):
             widg.setPalette(palette)
-
+        self.ui.cseType_comboBox.addItems(localsettings.csetypes)
+  
     def save_patient_tofile(self):
         try:
             filepath = QtGui.QFileDialog.getSaveFileName()
@@ -3352,21 +3356,20 @@ def main(arg):
     #--global ui enables reference to all objects - self.mainWindow referred to for dialog placement and app required for polite shutdown
     app = QtGui.QApplication(arg)
     mainWindow = QtGui.QMainWindow()
-    omGui=openmolarGui(mainWindow)
-    mainWindow.show()
+   
     
     #-- user could easily play with this code and avoid login... the app would however, not have initialised.
     if __name__ != "__main__":
         #don't maximise the window for dev purposes - I like to see all the error messages in a terminal ;).
         mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
-    
-    
-    #--this is a hack to allow me (neil) to run this module without going through security... to be removed. 
-    if  not "neil" in os.getcwd():
-        omGui.advise("How dare you try and skip the login stage!<br />openmolar will now close.",2)
-        omGui.quit()
     else:
-        localsettings.initiate()
+        if not localsettings.successful_login:
+            if "neil" in os.getcwd():
+                print "dev mode"
+                localsettings.initiate()
+    
+    omGui=openmolarGui(mainWindow)
+    mainWindow.show()
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
