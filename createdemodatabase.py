@@ -1,3 +1,19 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Copyright (c) 2009 Neil Wallace. All rights reserved.
+# This program or module is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation, either version 2 of the License, or
+# version 3 of the License, or (at your option) any later version. It is
+# provided for educational purposes and is distributed in the hope that
+# it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+# the GNU General Public License for more details.
+
+import MySQLdb
+
+
+dumpString='''
 -- MySQL dump 10.11
 --
 -- Host: localhost    Database: newdemo
@@ -800,135 +816,27 @@ LOCK TABLES `practitioners` WRITE;
 /*!40000 ALTER TABLE `practitioners` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
 --
--- Table structure for table `sysdata`
+-- Table structure for table `prvfees`
 --
 
-DROP TABLE IF EXISTS `sysdata`;
+DROP TABLE IF EXISTS `prvfees`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `sysdata` (
-  `currdate` date default NULL,
-  `lastdate` date default NULL,
-  `siteno` int(11) default NULL,
-  `pds` tinyint(4) default NULL,
-  `country` tinyint(4) default NULL,
-  `audit` tinyint(4) default NULL,
-  `notesmode` tinyint(4) default NULL,
-  `manualnotesmode` tinyint(4) default NULL,
-  `ga` tinyint(4) default NULL,
-  `defaultnhs` tinyint(4) default NULL,
-  `feestyle` tinyint(4) default NULL,
-  `deprivedward` tinyint(4) default NULL,
-  `recallbase` tinyint(4) default NULL,
-  `recall1` tinyint(4) default NULL,
-  `recall2` tinyint(4) default NULL,
-  `recall3` tinyint(4) default NULL,
-  `receipt` tinyint(4) default NULL,
-  `edtactive` tinyint(4) default NULL,
-  `apptsactive` tinyint(4) default NULL,
-  `apptcheck` tinyint(4) default NULL,
-  `ppref0` tinyint(4) default NULL,
-  `ppref1` tinyint(4) default NULL,
-  `ppref2` tinyint(4) default NULL,
-  `ppref3` tinyint(4) default NULL,
-  `sstart` tinyint(4) default NULL,
-  `tstart` tinyint(4) default NULL,
-  `chtsqptr` tinyint(4) default NULL,
-  `auditplusp` tinyint(4) default NULL,
-  `auditplusrp` tinyint(4) default NULL,
-  `fppswd` tinyint(4) default NULL,
-  `writecb` tinyint(4) default NULL,
-  `sendin` tinyint(4) default NULL,
-  `multi` tinyint(4) default NULL,
-  `f0` smallint(6) default NULL,
-  `f1` smallint(6) default NULL,
-  `f2` smallint(6) default NULL,
-  `f3` smallint(6) default NULL,
-  `f4` smallint(6) default NULL,
-  `f5` smallint(6) default NULL,
-  `f6` smallint(6) default NULL,
-  `f7` smallint(6) default NULL,
-  `f8` smallint(6) default NULL,
-  `f9` smallint(6) default NULL,
-  `addr1` varchar(30) default NULL,
-  `addr2` varchar(30) default NULL,
-  `addr3` varchar(30) default NULL,
-  `telno` varchar(30) default NULL,
-  `location` varchar(6) default NULL,
-  `pctname` varchar(48) default NULL,
-  `col0` int(11) default NULL,
-  `col1` int(11) default NULL,
-  `col2` int(11) default NULL,
-  `col3` int(11) default NULL,
-  `col4` int(11) default NULL,
-  `col5` int(11) default NULL,
-  `col6` int(11) default NULL,
-  `col7` int(11) default NULL,
-  `col8` int(11) default NULL,
-  `col9` int(11) default NULL,
-  `col10` int(11) default NULL,
-  `col11` int(11) default NULL,
-  `col12` int(11) default NULL,
-  `col13` int(11) default NULL,
-  `col14` int(11) default NULL,
-  `col15` int(11) default NULL,
-  `col16` int(11) default NULL,
-  `col17` int(11) default NULL,
-  `col18` int(11) default NULL,
-  `col19` int(11) default NULL,
-  `a0` smallint(6) default NULL,
-  `a1` smallint(6) default NULL,
-  `a2` smallint(6) default NULL,
-  `a3` smallint(6) default NULL,
-  `a4` smallint(6) default NULL,
-  `a5` smallint(6) default NULL,
-  `a6` smallint(6) default NULL,
-  `a7` smallint(6) default NULL,
-  `a8` smallint(6) default NULL,
-  `a9` smallint(6) default NULL,
-  `a10` smallint(6) default NULL,
-  `a11` smallint(6) default NULL,
-  `a12` smallint(6) default NULL,
-  `a13` smallint(6) default NULL,
-  `a14` smallint(6) default NULL,
-  `a15` smallint(6) default NULL,
-  `a16` smallint(6) default NULL,
-  `a17` smallint(6) default NULL,
-  `a18` smallint(6) default NULL,
-  `a19` smallint(6) default NULL,
-  `a20` smallint(6) default NULL,
-  `a21` smallint(6) default NULL,
-  `a22` smallint(6) default NULL,
-  `a23` smallint(6) default NULL,
-  `a24` smallint(6) default NULL,
-  `a25` smallint(6) default NULL,
-  `a26` smallint(6) default NULL,
-  `a27` smallint(6) default NULL,
-  `a28` smallint(6) default NULL,
-  `a29` smallint(6) default NULL,
-  `bd` blob,
-  `serialno` int(11) default NULL,
-  `courseno` int(11) default NULL,
-  `familyno` int(11) default NULL,
-  `coursetype0` varchar(20) default NULL,
-  `coursetype1` varchar(20) default NULL,
-  `coursetype2` varchar(20) default NULL,
-  `coursetype3` varchar(20) default NULL,
-  `coursetype4` varchar(20) default NULL,
-  `laststart` date default NULL,
-  `mainstn` smallint(6) default NULL
+CREATE TABLE `prvfees` (
+  `serialno` int(11) NOT NULL default '0',
+  `courseno` int(11) NOT NULL default '0',
+  `dent` smallint(6) default NULL,
+  `esta` smallint(6) default NULL,
+  `acta` smallint(6) default NULL,
+  `estb` smallint(6) default NULL,
+  `actb` smallint(6) default NULL,
+  `data` blob,
+  PRIMARY KEY  (`serialno`,`courseno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
---
--- Dumping data for table `sysdata`
---
-
-LOCK TABLES `sysdata` WRITE;
-/*!40000 ALTER TABLE `sysdata` DISABLE KEYS */;
-/*!40000 ALTER TABLE `sysdata` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `tsfees`
@@ -955,6 +863,34 @@ LOCK TABLES `tsfees` WRITE;
 /*!40000 ALTER TABLE `tsfees` DISABLE KEYS */;
 /*!40000 ALTER TABLE `tsfees` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+
+--
+-- Table structure for table `userdata`
+--
+
+DROP TABLE IF EXISTS `userdata`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `userdata` (
+  `serialno` int(11) NOT NULL,
+  `data` blob,
+  PRIMARY KEY  (`serialno`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+
+
+
+
+
+
+
+
+
+
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -966,3 +902,46 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2009-04-27 22:32:07
+'''
+
+
+def createDB(myhost,myport,myuser,mypassword,databaseName,rootMySQLpassword):
+    #-- connect as mysqlroot to create the database
+
+    db=MySQLdb.connect(host=myhost,port=myport,user="root",passwd=rootMySQLpassword)   #not using a password for my version
+    cursor=db.cursor()
+    try:
+        cursor.execute("DROP DATABASE IF EXISTS %s"%databaseName)
+    except:
+        pass
+    cursor.execute("CREATE DATABASE %s"%databaseName)
+    query='GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY "%s"'%(databaseName,myuser,myhost,mypassword)
+    print query
+    cursor.execute(query)
+    cursor.close()
+    db.commit()
+    db.close()
+    return True
+    
+def loadTables(myhost,myport,myuser,mypassword,databaseName):
+    db=MySQLdb.connect(host=myhost,port=myport,user=myuser,db=databaseName,passwd=mypassword)   #not using a password for my version
+    cursor=db.cursor()
+    cursor.execute(dumpString)
+    cursor.close()
+    db.commit()
+
+    cursor=db.cursor()
+    cursor.execute('insert into opid set id="USER"') 
+    cursor.close()
+    db.commit()
+    db.close()
+    return True
+
+if __name__ == "__main__":
+    rootpass=raw_input("please enter your MySQL root users password :")
+    if createDB("localhost",3306,"OMuser","password","openmolar_demo",rootpass):
+        print "New database created sucessfully"
+        loadTables("localhost",3306,"OMuser","password","openmolar_demo")
+
+
+

@@ -30,7 +30,11 @@ def commit(pt):
     db=connect()
     cursor = db.cursor()
     cursor.execute(query)
-    newSerialno=cursor.fetchone()[0]+1
+    currentMax=cursor.fetchone()[0]
+    if currentMax:
+        newSerialno=currentMax+1
+    else:
+        newSerialno=1
     query=sqlcommand+'serialno=%d'%(newSerialno)
     if localsettings.logqueries:
         print query

@@ -31,11 +31,6 @@ def main(app):
     uninitiated=True
     
     
-    
-    
-    
-    
-    
     if not os.path.exists(localsettings.configfilelocation):
         from openmolar import firstRun
         if not firstRun.newsetup():

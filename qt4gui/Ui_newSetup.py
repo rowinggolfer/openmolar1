@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/newSetup.ui'
 #
-# Created: Sat May  2 23:49:17 2009
+# Created: Sun May  3 12:38:17 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(365, 232)
+        Dialog.resize(420, 232)
         self.horizontalLayout = QtGui.QHBoxLayout(Dialog)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.stackedWidget = QtGui.QStackedWidget(Dialog)
@@ -35,6 +35,7 @@ class Ui_Dialog(object):
         self.gridLayout_2 = QtGui.QGridLayout(self.page_1)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.mainPassword_label = QtGui.QLabel(self.page_1)
+        self.mainPassword_label.setMinimumSize(QtCore.QSize(0, 50))
         font = QtGui.QFont()
         font.setWeight(50)
         font.setBold(False)
@@ -57,11 +58,11 @@ class Ui_Dialog(object):
         self.gridLayout_2.addWidget(self.mainpassword_checkBox, 1, 3, 1, 1)
         spacerItem = QtGui.QSpacerItem(20, 82, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem, 2, 2, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(115, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_2.addItem(spacerItem1, 3, 1, 1, 1)
         self.pushButton_2 = QtGui.QPushButton(self.page_1)
         self.pushButton_2.setObjectName("pushButton_2")
         self.gridLayout_2.addWidget(self.pushButton_2, 3, 3, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(115, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem1, 3, 1, 1, 1)
         self.stackedWidget.addWidget(self.page_1)
         self.page_6 = QtGui.QWidget()
         self.page_6.setObjectName("page_6")
@@ -199,11 +200,43 @@ class Ui_Dialog(object):
         self.saveQuit_pushButton.setObjectName("saveQuit_pushButton")
         self.gridLayout_6.addWidget(self.saveQuit_pushButton, 1, 0, 1, 1)
         self.stackedWidget.addWidget(self.page_3)
+        self.page_2 = QtGui.QWidget()
+        self.page_2.setObjectName("page_2")
+        self.gridLayout_7 = QtGui.QGridLayout(self.page_2)
+        self.gridLayout_7.setObjectName("gridLayout_7")
+        self.mainPassword_label_2 = QtGui.QLabel(self.page_2)
+        font = QtGui.QFont()
+        font.setWeight(50)
+        font.setBold(False)
+        self.mainPassword_label_2.setFont(font)
+        self.mainPassword_label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.mainPassword_label_2.setWordWrap(True)
+        self.mainPassword_label_2.setObjectName("mainPassword_label_2")
+        self.gridLayout_7.addWidget(self.mainPassword_label_2, 0, 0, 1, 4)
+        self.label_6 = QtGui.QLabel(self.page_2)
+        self.label_6.setObjectName("label_6")
+        self.gridLayout_7.addWidget(self.label_6, 1, 0, 1, 1)
+        self.rootPassword_lineEdit = QtGui.QLineEdit(self.page_2)
+        self.rootPassword_lineEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
+        self.rootPassword_lineEdit.setObjectName("rootPassword_lineEdit")
+        self.gridLayout_7.addWidget(self.rootPassword_lineEdit, 1, 1, 1, 2)
+        self.rootPassword_checkBox = QtGui.QCheckBox(self.page_2)
+        self.rootPassword_checkBox.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.rootPassword_checkBox.setObjectName("rootPassword_checkBox")
+        self.gridLayout_7.addWidget(self.rootPassword_checkBox, 1, 3, 1, 1)
+        spacerItem7 = QtGui.QSpacerItem(20, 82, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_7.addItem(spacerItem7, 2, 2, 1, 1)
+        self.createDB_pushButton_2 = QtGui.QPushButton(self.page_2)
+        self.createDB_pushButton_2.setObjectName("createDB_pushButton_2")
+        self.gridLayout_7.addWidget(self.createDB_pushButton_2, 3, 0, 1, 4)
+        self.stackedWidget.addWidget(self.page_2)
         self.horizontalLayout.addWidget(self.stackedWidget)
 
         self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(4)
+        self.stackedWidget.setCurrentIndex(5)
         QtCore.QObject.connect(self.main_password_lineEdit, QtCore.SIGNAL("returnPressed()"), self.pushButton_2.click)
+        QtCore.QObject.connect(self.rootPassword_lineEdit, QtCore.SIGNAL("returnPressed()"), self.createDB_pushButton_2.click)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.pushButton, self.main_password_lineEdit)
         Dialog.setTabOrder(self.main_password_lineEdit, self.pushButton_2)
@@ -242,7 +275,7 @@ class Ui_Dialog(object):
         self.haveDB_pushButton.setText(QtGui.QApplication.translate("Dialog", "No, I have a database already.", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("Dialog", "Please enter a mysql user who has privileges for the openmolar database.", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "Database Name", None, QtGui.QApplication.UnicodeUTF8))
-        self.database_lineEdit.setText(QtGui.QApplication.translate("Dialog", "openmolar", None, QtGui.QApplication.UnicodeUTF8))
+        self.database_lineEdit.setText(QtGui.QApplication.translate("Dialog", "openmolar_demo", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Dialog", "User", None, QtGui.QApplication.UnicodeUTF8))
         self.user_lineEdit.setText(QtGui.QApplication.translate("Dialog", "user", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "Password", None, QtGui.QApplication.UnicodeUTF8))
@@ -250,6 +283,15 @@ class Ui_Dialog(object):
         self.dbpassword_checkBox.setText(QtGui.QApplication.translate("Dialog", "display password", None, QtGui.QApplication.UnicodeUTF8))
         self.testDB_pushButton.setText(QtGui.QApplication.translate("Dialog", "Test connection to this database", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_9.setText(QtGui.QApplication.translate("Dialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Dialog", "OK.... you are all set to go.", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Dialog", "OK.... you are all set to go.\n"
+"You will be presented with a login screen.\n"
+"I trust you remember your password?\n"
+"\n"
+"If you created a demo database... \n"
+"enter user into the user field of the login screen.", None, QtGui.QApplication.UnicodeUTF8))
         self.saveQuit_pushButton.setText(QtGui.QApplication.translate("Dialog", "Save settings and launch openmolar", None, QtGui.QApplication.UnicodeUTF8))
+        self.mainPassword_label_2.setText(QtGui.QApplication.translate("Dialog", "To create a database, please enter the password of your ROOT mysql user.", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("Dialog", "Password", None, QtGui.QApplication.UnicodeUTF8))
+        self.rootPassword_checkBox.setText(QtGui.QApplication.translate("Dialog", "show password", None, QtGui.QApplication.UnicodeUTF8))
+        self.createDB_pushButton_2.setText(QtGui.QApplication.translate("Dialog", "Create openmolar_demo database, and continue", None, QtGui.QApplication.UnicodeUTF8))
 

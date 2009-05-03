@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
+    <width>420</width>
     <height>232</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget" >
      <property name="currentIndex" >
-      <number>4</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="page" >
       <layout class="QGridLayout" name="gridLayout_5" >
@@ -47,6 +47,12 @@ You need to enter some information before we can proceed.</string>
       <layout class="QGridLayout" name="gridLayout_2" >
        <item row="0" column="0" colspan="4" >
         <widget class="QLabel" name="mainPassword_label" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>50</height>
+          </size>
+         </property>
          <property name="font" >
           <font>
            <weight>50</weight>
@@ -110,13 +116,6 @@ You need to enter some information before we can proceed.</string>
          </property>
         </spacer>
        </item>
-       <item row="3" column="3" >
-        <widget class="QPushButton" name="pushButton_2" >
-         <property name="text" >
-          <string>OK</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="1" >
         <spacer name="horizontalSpacer_2" >
          <property name="orientation" >
@@ -129,6 +128,13 @@ You need to enter some information before we can proceed.</string>
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="3" column="3" >
+        <widget class="QPushButton" name="pushButton_2" >
+         <property name="text" >
+          <string>OK</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -371,7 +377,7 @@ You need to enter some information before we can proceed.</string>
           </size>
          </property>
          <property name="text" >
-          <string>openmolar</string>
+          <string>openmolar_demo</string>
          </property>
         </widget>
        </item>
@@ -483,7 +489,12 @@ You need to enter some information before we can proceed.</string>
        <item row="0" column="0" >
         <widget class="QLabel" name="label" >
          <property name="text" >
-          <string>OK.... you are all set to go.</string>
+          <string>OK.... you are all set to go.
+You will be presented with a login screen.
+I trust you remember your password?
+
+If you created a demo database... 
+enter user into the user field of the login screen.</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignCenter</set>
@@ -494,6 +505,82 @@ You need to enter some information before we can proceed.</string>
         <widget class="QPushButton" name="saveQuit_pushButton" >
          <property name="text" >
           <string>Save settings and launch openmolar</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2" >
+      <layout class="QGridLayout" name="gridLayout_7" >
+       <item row="0" column="0" colspan="4" >
+        <widget class="QLabel" name="mainPassword_label_2" >
+         <property name="font" >
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>To create a database, please enter the password of your ROOT mysql user.</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="label_6" >
+         <property name="text" >
+          <string>Password</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="2" >
+        <widget class="QLineEdit" name="rootPassword_lineEdit" >
+         <property name="minimumSize" >
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="echoMode" >
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3" >
+        <widget class="QCheckBox" name="rootPassword_checkBox" >
+         <property name="focusPolicy" >
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text" >
+          <string>show password</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" >
+        <spacer name="verticalSpacer_6" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>82</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="0" colspan="4" >
+        <widget class="QPushButton" name="createDB_pushButton_2" >
+         <property name="text" >
+          <string>Create openmolar_demo database, and continue</string>
          </property>
         </widget>
        </item>
@@ -536,6 +623,22 @@ You need to enter some information before we can proceed.</string>
     <hint type="destinationlabel" >
      <x>292</x>
      <y>195</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rootPassword_lineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>createDB_pushButton_2</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>139</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>209</x>
+     <y>204</y>
     </hint>
    </hints>
   </connection>

@@ -83,14 +83,39 @@ def newsetup():
         return result
     
     def createDB():
-        QtGui.QMessageBox.information(None,"oops!","I am working on this.....sorry!")
-        
+        global rootpass
+        dl.stackedWidget.setCurrentIndex(6)
+        dl.rootPassword_lineEdit.setFocus()
+        QtCore.QObject.connect(dl.rootPassword_checkBox,QtCore.SIGNAL("stateChanged(int)"), rootechomode)
+        QtCore.QObject.connect(dl.createDB_pushButton_2,QtCore.SIGNAL("clicked()"), actuallyCreateDB)
+
+    def actuallyCreateDB():
+        rootpass=str(dl.rootPassword_lineEdit.text())
+        try:
+            from openmolar import createdemodatabase
+            applystage5()
+            if createdemodatabase.createDB(myHost,myPort,myMysqlUser,myMysqlPassword,myDB,rootpass):
+                print "New database created sucessfully... attempting to loadtables"
+                if createdemodatabase.loadTables(myHost,myPort,myMysqlUser,myMysqlPassword,myDB):
+                    print "successfully loaded tables"
+            
+        except Exception,e:
+            print "error creating database"
+            print e
+            QtGui.QMessageBox.warning(Dialog,"Error Creating Database",str(e))
+            Dialog.reject()
+        stage6()
 
     def echomode(arg):
         if arg==0:
             dl.main_password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         else:
             dl.main_password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
+    def rootechomode(arg):
+        if arg==0:
+            dl.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
+        else:
+            dl.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
     
     def dbechomode(arg):
         if arg==0:
