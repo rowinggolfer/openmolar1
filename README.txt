@@ -4,63 +4,49 @@ I will give instructions tested on ubuntu8.10
 
 ####INSTALL INSTRUCTIONS#####
 
+----------------------------------------------------------------------------------------------------------------
 ##CLIENT MACHINE##
 ensure depenencies are met on the client machine
 ~$sudo apt-get install python-mysqldb python-qt4
 
 that's it!
 
+----------------------------------------------------------------------------------------------------------------
+
 ##SERVER MACHINE##
 ensure dependencies are met on the server machine (which will probably be the same machine for testing purposes)
 ~$sudo apt-get install mysql-server-5.0
 
+MAKE A CAREFUL NOTE OF THE ROOT USER PASSWORD YOU SET UP.
+
+----------------------------------------------------------------------------------------------------------------
 
 
-##STANDARD MYSQL SERVER SETUP
+You are ready to try openmolar.
 
-this assumes you have the server running on your client machine (localhost)
-you need to create a database called "openmolar", and set up a non-privileged user.
-to do so you need to log into mysql as the root mysql user.
-To do this open a terminal and type the following
+cd into the openmolar directory and type
+./openmolar
 
-~$mysql -u root -p
 
-you will be prompted for your mysql root user's password. (this is NOT the same as your sudo password)
-all being well, this will get you a mysql prompt, so continue (note the ; used in sql.
+on first run of openMolar, you set a password for the app, you are given an opportunity to install a test database. 
 
-mysql>CREATE DATABASE openmolar;
 
-hopefully.. you're still receiving nice messages from mysql... so let's add our user... 
-as this is a test database, let's set a user "user" and a password "password". 
-(You needn't copy these, but changing will mean you need to tweak the openmolar files also.- see below)
+NB - The test database is currently very limited with no patients or appointments made, but The app will not run 
+without it!
 
-mysql>GRANT ALL ON openmolar.* TO user@localhost IDENTIFIED BY "password";
 
-ok... quit the mysql session by hitting ctrl-C.
+the test database has one operator - "user". So when prompted, enter the system password you just set up, and put
+"user" into the user1 field.
 
-let's load in some data - I have supplied a backup file called demoDataBase.sql
-to dump this into your newly created database - navigate into the openmolar directory and type
 
-~$mysql -u user -ppassword openmolar < demoDataBase.sql
-
-(note the pp in password... this caught me out 1st time)
-
-AND YOU ARE READY TO GO!!
-
-~$./main.py
-
-leave the password blank, and enter "user" in user1.
-
-you are done!!
+if you wish to re-initiate your settings at any point, delete the file /etc/openmolar/openmolar.conf
 
 
 
-###ALTERNATE MYSQL install######
-if you have the mysql server running remotely, or refused to use my stupid password... simply 
-find the file openmaolar/connect.py, and point it to your newly created test database by altering the variables
-myHost
-myUser
-myPassword
-myDb
 
-THANKYOU FOR TRYING OPENMOLAR!!
+Any problems, get back to me on rowinggolfer@googlemail.com
+
+regards
+
+Neil Wallace
+Sunday May 3rd 2009.

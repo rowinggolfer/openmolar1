@@ -64,9 +64,10 @@ class feeClass():
                 self.pt.clearHiddenNotes()
 
     def updateFees(self):
-        self.pt.updateFees()
-        self.updateDetails()
-        self.load_planpage()
+        if self.pt.serialno!=0:
+            self.pt.updateFees()
+            self.updateDetails()
+            self.load_planpage()
 
     def takePayment(self):
         if self.pt.serialno==0:
