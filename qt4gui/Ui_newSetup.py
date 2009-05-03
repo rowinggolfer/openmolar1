@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/newSetup.ui'
 #
-# Created: Sun May  3 21:10:00 2009
+# Created: Mon May  4 00:27:12 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -240,9 +240,7 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.stackedWidget)
 
         self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(6)
-        QtCore.QObject.connect(self.main_password_lineEdit, QtCore.SIGNAL("returnPressed()"), self.pushButton_2.click)
-        QtCore.QObject.connect(self.rootPassword_lineEdit, QtCore.SIGNAL("returnPressed()"), self.createDB_pushButton_2.click)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.pushButton, self.main_password_lineEdit)
         Dialog.setTabOrder(self.main_password_lineEdit, self.pushButton_2)

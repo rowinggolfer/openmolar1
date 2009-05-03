@@ -16,7 +16,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget" >
      <property name="currentIndex" >
-      <number>6</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page" >
       <layout class="QVBoxLayout" name="verticalLayout" >
@@ -645,38 +645,5 @@ p, li { white-space: pre-wrap; }
   <tabstop>saveQuit_pushButton</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>main_password_lineEdit</sender>
-   <signal>returnPressed()</signal>
-   <receiver>pushButton_2</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>180</x>
-     <y>98</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>388</x>
-     <y>212</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rootPassword_lineEdit</sender>
-   <signal>returnPressed()</signal>
-   <receiver>createDB_pushButton_2</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>139</x>
-     <y>80</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>209</x>
-     <y>204</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

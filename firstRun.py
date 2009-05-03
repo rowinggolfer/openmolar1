@@ -10,7 +10,7 @@
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
 
-import sys,os,hashlib
+import sys,os,hashlib,time
 from PyQt4 import QtGui,QtCore
 from xml.dom import minidom
 import MySQLdb
@@ -125,14 +125,16 @@ def newsetup():
         
             
     def stage1():
-        '''user has clicked the first "ok" button'''
+        '''user has clicked the first "ok" button
+        this prompts for a password'''
         dl.stackedWidget.setCurrentIndex(1)
         dl.main_password_lineEdit.setFocus()
         QtCore.QObject.connect(dl.mainpassword_checkBox,QtCore.SIGNAL("stateChanged(int)"), echomode)
         QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage2)
     def stage2():
         global myPassword
-        '''user has entered the main password once'''
+        '''user has entered the main password once
+        get it re-entered'''
         dl.main_password_lineEdit.setFocus()
         
         QtCore.QObject.disconnect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage2)
@@ -141,14 +143,16 @@ def newsetup():
         dl.main_password_lineEdit.setText("")
         QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
     def stage3():
+        '''check the passwords match'''
+        QtCore.QObject.disconnect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
         if dl.main_password_lineEdit.text()!=myPassword:
             print "passwords do not match"
             QtGui.QMessageBox.information(None,"Advisory","Passwords did not match, please try again")
             dl.mainPassword_label.setText("Please enter a password to prevent unauthorised running of this application.")
-            QtCore.QObject.disconnect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
             dl.main_password_lineEdit.setText("")
             stage1()
         else:
+            print "pwords match...."
             dl.stackedWidget.setCurrentIndex(2)
             QtCore.QObject.connect(dl.ping_pushButton,QtCore.SIGNAL("clicked()"), ping)
             QtCore.QObject.connect(dl.pushButton_8,QtCore.SIGNAL("clicked()"), stage4)
