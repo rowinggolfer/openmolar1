@@ -3,13 +3,15 @@ using 3rd party MySQLdb module'''
 
 import MySQLdb
 from xml.dom import minidom
+from openmolar.settings.localsettings import cflocation
 
 currentConnection,myHost,myUser,myPassword,myDb,myPort=None,"","","","",""
 
 def connect():
     global currentConnection, myHost,myUser,myPassword,myDb,myPort
     if currentConnection==None:
-        dom=minidom.parse("/etc/openmolar/openmolar.conf")
+        print "need to parse the settings file"
+        dom=minidom.parse(cflocation)
         sysPassword=dom.getElementsByTagName("system_password")[0].firstChild.data
         print sysPassword
         xmlnode=dom.getElementsByTagName("server")[0]
@@ -31,6 +33,7 @@ def connect():
     
 if __name__=="__main__":
     import time
+    print localsettings.cflocation
     for i in range(1,11):
         try:
             print "connecting....",

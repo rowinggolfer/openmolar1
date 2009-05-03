@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>1</number>
+              <number>7</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >

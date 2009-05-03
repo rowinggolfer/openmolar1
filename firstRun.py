@@ -21,16 +21,16 @@ from openmolar.settings import localsettings
 blankXML='''<?xml version="1.0" ?>
 <settings>
     <version>1.0</version>
-	<server>
-		<location> </location>
-		<port> </port>
-	</server>
-	<database>
-		<dbname> </dbname>
-		<user> </user>
-		<password> </password>
-	</database>
-	<system_password> </system_password>
+    <server>		
+        <location> </location>
+        <port> </port>
+    </server>
+    <database>
+        <dbname> </dbname>
+        <user> </user>
+    <password> </password>
+    </database>
+    <system_password> </system_password>
 </settings>'''
 
 
@@ -192,15 +192,18 @@ def newsetup():
             xmlnode.getElementsByTagName("password")[0].firstChild.replaceWholeText(myMysqlPassword)
             xmlnode.getElementsByTagName("dbname")[0].firstChild.replaceWholeText(myDB)
             
-            settingsDir=os.path.dirname(localsettings.configfilelocation)
-            if not os.path.exists(settingsDir):
-                os.mkdir(settingsDir)
-            
-            f=open(localsettings.configfilelocation,"w")
-            f.write(dom.toxml())
-            f.close()
-            Dialog.accept()
-        
+            settingsDir=os.path.dirname(localsettings.cflocation)
+            print dom.toxml()
+            try:
+                if not os.path.exists(settingsDir):
+                    os.mkdir(settingsDir)
+                f=open(localsettings.cflocation,"w")
+                f.write(dom.toxml())
+                f.close()
+                Dialog.accept()
+            except IOError:
+                QtGui.QMessageBox.warning(None,"IO ERROR","unable to save to %s - please re-run as root"%localsettings.cflocation)
+                Dialog.reject()
         except Exception,e:
             print "error saving settings"
             print e

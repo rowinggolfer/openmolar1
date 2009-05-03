@@ -1151,6 +1151,7 @@ class signals():
         #misc buttons
         QtCore.QObject.connect(self.ui.saveButton,QtCore.SIGNAL("clicked()"), self.save_changes)
         QtCore.QObject.connect(self.ui.exampushButton,QtCore.SIGNAL("clicked()"), self.showExamDialog)
+        QtCore.QObject.connect(self.ui.examTxpushButton,QtCore.SIGNAL("clicked()"), self.showExamDialog)
         QtCore.QObject.connect(self.ui.hygWizard_pushButton,QtCore.SIGNAL("clicked()"), self.showHygDialog)
         QtCore.QObject.connect(self.ui.newBPE_pushButton,QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
         QtCore.QObject.connect(self.ui.charge_pushButton,QtCore.SIGNAL("clicked()"), self.raiseACharge)
@@ -2821,19 +2822,6 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             pos=-1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         #--update bpe
-        curtext="Current Treatment "
-        if self.pt.underTreatment:
-            self.ui.treatmentPlan_groupBox.setTitle(curtext+"- started "+ str(self.pt.accd))
-            self.ui.underTreatment_label.show()
-            self.ui.underTreatment_label_2.show()
-            self.ui.newCourse_pushButton.setEnabled(False)
-            self.ui.closeTx_pushButton.setEnabled(True)        
-        else:
-            self.ui.treatmentPlan_groupBox.setTitle(curtext+"- No Current Course")
-            self.ui.newCourse_pushButton.setEnabled(True)
-            self.ui.closeTx_pushButton.setEnabled(False)    
-            self.ui.underTreatment_label.hide()     
-            self.ui.underTreatment_label_2.hide()       
         localsettings.defaultNewPatientDetails=(self.pt.sname,self.pt.addr1,self.pt.addr2,self.pt.addr3,self.pt.town,self.pt.county,self.pt.pcde,self.pt.tel1)
         if not self.pt.serialno in localsettings.recent_snos:
             localsettings.recent_snos.append(self.pt.serialno)
@@ -2853,6 +2841,20 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         details=patientDetails.details(self.pt)
         self.ui.detailsBrowser.setText(details)
         self.ui.detailsBrowser.update()
+        curtext="Current Treatment "
+        if self.pt.underTreatment:
+            self.ui.treatmentPlan_groupBox.setTitle(curtext+"- started "+ str(self.pt.accd))
+            self.ui.underTreatment_label.show()
+            self.ui.underTreatment_label_2.show()
+            self.ui.newCourse_pushButton.setEnabled(False)
+            self.ui.closeTx_pushButton.setEnabled(True)        
+        else:
+            self.ui.treatmentPlan_groupBox.setTitle(curtext+"- No Current Course")
+            self.ui.newCourse_pushButton.setEnabled(True)
+            self.ui.closeTx_pushButton.setEnabled(False)    
+            self.ui.underTreatment_label.hide()     
+            self.ui.underTreatment_label_2.hide()       
+       
     def final_choice(self,candidates):
         def DoubleClick():
             '''user double clicked on an item... accept the dialog'''
@@ -3080,8 +3082,20 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             cdnt=self.pt.dnt2
         dl = newCourse.course(Dialog,localsettings.ops[self.pt.dnt1],localsettings.ops[cdnt],self.pt.cset)
         result=dl.getInput()
+        
+        #-- (True, ['BW', 'AH', '', PyQt4.QtCore.QDate(2009, 5, 3)])
+        
         if result[0]:
             atts=result[1]
+            dnt1=localsettings.ops_reverse[atts[0]]
+            if dnt1!=self.pt.dnt1:
+                self.changeContractedDentist(atts[0])
+            dnt2=localsettings.ops_reverse[atts[1]]
+            if dnt2!=self.pt.dnt2:
+                self.changeCourseDentist(atts[1])
+            if atts[2]!=self.pt.cset:
+                self.changeCourseType(atts[2])
+            
             sqldate="%04d%02d%02d"%(atts[3].year(),atts[3].month(),atts[3].day())
             course=writeNewCourse.write(self.pt.serialno,localsettings.ops_reverse[atts[1]],sqldate)           
             if course[0]:
@@ -3089,12 +3103,14 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
                 self.advise("Sucessfully started new course of treatment",1)
                 self.pt.getCurrtrt()
                 self.pt.getEsts()
+                self.pt.underTreatment=True
                 self.load_planpage()
-                self.ui.underTreatment_label.show() 
-                self.ui.underTreatment_label_2.show()
+                self.updateDetails()
                 return True
             else:
                 self.advise("ERROR STARTING NEW COURSE, sorry",2)
+            
+                
     def closeCourse(self):
         message="Close current course of treatment?"
         result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",message,QtGui.QMessageBox.Yes, \
@@ -3105,8 +3121,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.pt.getCurrtrt()
             self.load_planpage()
             self.pt.underTreatment=False
-            self.ui.underTreatment_label.hide() 
-            self.ui.underTreatment_label_2.hide()
+            self.updateDetails()
             return True
     def showExamDialog(self):
         global pt

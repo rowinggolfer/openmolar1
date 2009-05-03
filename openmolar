@@ -24,23 +24,26 @@ class LoginError(Exception):pass
 def main(app):
     wkdir=os.path.dirname(os.getcwd())
     sys.path.append(wkdir)
-    from openmolar.qt4gui import Ui_startscreen
+    print sys.path
+    import openmolar
     from openmolar.settings import localsettings
     localsettings.__version__ = __version__
     localsettings.__build__ = __build__
     uninitiated=True
     
-    
-    if not os.path.exists(localsettings.configfilelocation):
+    print dir(localsettings)
+    if not os.path.exists("/etc/openmolar/openmolar.conf"):
         from openmolar import firstRun
         if not firstRun.newsetup():
             sys.exit()
-    d=minidom.parse(localsettings.configfilelocation)
+    d=minidom.parse(localsettings.cflocation)
     sysPassword=d.getElementsByTagName("system_password")[0].firstChild.data
         
     def autoreception(arg):    #arg is a QString
         if arg.toLower()=="rec":
             dl.reception_radioButton.setChecked(True)
+    
+    from openmolar.qt4gui import Ui_startscreen
     
     while True:        
         Dialog = QtGui.QDialog()
