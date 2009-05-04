@@ -12,7 +12,7 @@
 
 '''this module puts "openmolar" onto the python path, and starts the gui'''
 
-import sys,os,hashlib
+import sys,os,hashlib,time
 from PyQt4 import QtGui,QtCore
 from xml.dom import minidom
 
@@ -24,32 +24,53 @@ class LoginError(Exception):pass
 def main(app):
     wkdir=os.path.dirname(os.getcwd())
     sys.path.append(wkdir)
-    print sys.path
     import openmolar
     from openmolar.settings import localsettings
+    from openmolar.qt4gui import Ui_startscreen
+
     localsettings.__version__ = __version__
     localsettings.__build__ = __build__
     uninitiated=True
     
-    print dir(localsettings)
-    if not os.path.exists("/etc/openmolar/openmolar.conf"):
-        from openmolar import firstRun
-        if not firstRun.newsetup():
-            sys.exit()
-    d=minidom.parse(localsettings.cflocation)
-    sysPassword=d.getElementsByTagName("system_password")[0].firstChild.data
-        
     def autoreception(arg):    #arg is a QString
         if arg.toLower()=="rec":
             dl.reception_radioButton.setChecked(True)
     
-    from openmolar.qt4gui import Ui_startscreen
+    
+    if not os.path.exists(localsettings.cflocation):
+        result=QtGui.QMessageBox.question(None,"First Run",
+        '''<center>This appears to be your first running of openMolar<br />
+        Before you run this application, it needs to set up a settings file, which may require root access on some systems<br />Proceed?</center>''',
+        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+             
+        if result == QtGui.QMessageBox.Yes:              
+        
+            import subprocess
+            if os.environ.has_key("GDM_LANG"):
+                p=subprocess.Popen(['gksu','python firstRun.py'])
+            elif os.environ.has_key("KDE_FULL_SESSION"):
+                p=subprocess.Popen(['kdsu','python firstRun.py'])
+            else:
+                #-- don't know the desktop variant.. and could be windows and not need root anyway?
+                p=subprocess.Popen(['python firstRun.py'])
+            
+            result=p.wait()
+    try:
+        d=minidom.parse(localsettings.cflocation)
+        sysPassword=d.getElementsByTagName("system_password")[0].firstChild.data
+    except:
+        print "still no settings... quitting politely"
+        QtGui.QMessageBox.information(None,"Unable to Run OpenMolar","Good Bye!")
+        app.closeAllWindows()
+        sys.exit("unable to run - openMolar needs a settings file")
+
+    Dialog = QtGui.QDialog()
+    dl = Ui_startscreen.Ui_Dialog()
+    dl.setupUi(Dialog)
+    QtCore.QObject.connect(dl.user1_lineEdit,QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
+    
     
     while True:        
-        Dialog = QtGui.QDialog()
-        dl = Ui_startscreen.Ui_Dialog()
-        dl.setupUi(Dialog)
-        QtCore.QObject.connect(dl.user1_lineEdit,QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
         if Dialog.exec_():
             try:
                 pword="diqug_ADD_SALT_3i2some"+str(dl.password_lineEdit.text())

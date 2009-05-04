@@ -14,6 +14,7 @@ import sys,os,hashlib,time
 from PyQt4 import QtGui,QtCore
 from xml.dom import minidom
 import MySQLdb
+sys.path.append("/home/neil/openmolar/")
 from openmolar.qt4gui import Ui_newSetup
 from openmolar.settings import localsettings
 
@@ -197,7 +198,6 @@ def newsetup():
             xmlnode.getElementsByTagName("dbname")[0].firstChild.replaceWholeText(myDB)
             
             settingsDir=os.path.dirname(localsettings.cflocation)
-            print dom.toxml()
             try:
                 if not os.path.exists(settingsDir):
                     os.mkdir(settingsDir)
@@ -206,7 +206,7 @@ def newsetup():
                 f.close()
                 Dialog.accept()
             except IOError:
-                QtGui.QMessageBox.warning(None,"IO ERROR","unable to save to %s - please re-run as root"%localsettings.cflocation)
+                QtGui.QMessageBox.warning(None,"IO ERROR","unable to save to %s - please re-run 'firstRun.py' as root"%localsettings.cflocation)
                 Dialog.reject()
         except Exception,e:
             print "error saving settings"

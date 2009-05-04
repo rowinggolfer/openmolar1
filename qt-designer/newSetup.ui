@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>420</width>
-    <height>244</height>
+    <height>269</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -16,7 +16,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="page" >
       <layout class="QVBoxLayout" name="verticalLayout" >
@@ -29,8 +29,13 @@
           </size>
          </property>
          <property name="text" >
-          <string>This Appears to be the first time you have run OpenMolar on this computer. 
-You need to enter some information before we can proceed.</string>
+          <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Welcome to the openMolar settings wizard.&lt;/p>
+&lt;p align="center" style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This will set your system password, configure your mysql server, and install a small demo database if required.&lt;/p>&lt;/body>&lt;/html></string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignCenter</set>
@@ -64,31 +69,6 @@ You need to enter some information before we can proceed.</string>
      </widget>
      <widget class="QWidget" name="page_1" >
       <layout class="QGridLayout" name="gridLayout_2" >
-       <item row="0" column="0" colspan="3" >
-        <widget class="QLabel" name="mainPassword_label" >
-         <property name="minimumSize" >
-          <size>
-           <width>0</width>
-           <height>100</height>
-          </size>
-         </property>
-         <property name="font" >
-          <font>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text" >
-          <string>Please enter a password to prevent unauthorised running of this application.</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="wordWrap" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="label_5" >
          <property name="text" >
@@ -142,7 +122,37 @@ You need to enter some information before we can proceed.</string>
          </property>
         </widget>
        </item>
+       <item row="0" column="0" colspan="3" >
+        <widget class="QLabel" name="mainPassword_label" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>80</height>
+          </size>
+         </property>
+         <property name="font" >
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Please enter a password to prevent unauthorised running of this application.</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
+      <zorder>label_5</zorder>
+      <zorder>main_password_lineEdit</zorder>
+      <zorder>mainpassword_checkBox</zorder>
+      <zorder>pushButton_2</zorder>
+      <zorder>mainPassword_label</zorder>
      </widget>
      <widget class="QWidget" name="page_6" >
       <layout class="QGridLayout" name="gridLayout_3" >
@@ -429,7 +439,7 @@ You need to enter some information before we can proceed.</string>
           <bool>true</bool>
          </property>
          <property name="text" >
-          <string>Password</string>
+          <string>(mysql)Password</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

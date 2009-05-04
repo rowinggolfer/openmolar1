@@ -18,9 +18,6 @@ if "win" in sys.platform:
 else: #-- linux hurrah!!
     cflocation='/etc/openmolar/openmolar.conf'
 
-print cflocation
-
-
 successful_login=False                                                         #updated if correct password is given
 sqlDateFormat=r"%d/%m/%Y"                                                      #gives me dd-mm-YYYY  (%e-%m-%Y would give d-mm-YYYY if preferred)
 operator="unknown"

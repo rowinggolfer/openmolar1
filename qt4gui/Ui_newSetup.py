@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/newSetup.ui'
 #
-# Created: Mon May  4 00:27:12 2009
+# Created: Mon May  4 20:58:45 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(420, 244)
+        Dialog.resize(420, 269)
         self.horizontalLayout = QtGui.QHBoxLayout(Dialog)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.stackedWidget = QtGui.QStackedWidget(Dialog)
@@ -37,16 +37,6 @@ class Ui_Dialog(object):
         self.page_1.setObjectName("page_1")
         self.gridLayout_2 = QtGui.QGridLayout(self.page_1)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.mainPassword_label = QtGui.QLabel(self.page_1)
-        self.mainPassword_label.setMinimumSize(QtCore.QSize(0, 100))
-        font = QtGui.QFont()
-        font.setWeight(50)
-        font.setBold(False)
-        self.mainPassword_label.setFont(font)
-        self.mainPassword_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.mainPassword_label.setWordWrap(True)
-        self.mainPassword_label.setObjectName("mainPassword_label")
-        self.gridLayout_2.addWidget(self.mainPassword_label, 0, 0, 1, 3)
         self.label_5 = QtGui.QLabel(self.page_1)
         self.label_5.setObjectName("label_5")
         self.gridLayout_2.addWidget(self.label_5, 1, 0, 1, 1)
@@ -64,6 +54,16 @@ class Ui_Dialog(object):
         self.pushButton_2 = QtGui.QPushButton(self.page_1)
         self.pushButton_2.setObjectName("pushButton_2")
         self.gridLayout_2.addWidget(self.pushButton_2, 3, 0, 1, 3)
+        self.mainPassword_label = QtGui.QLabel(self.page_1)
+        self.mainPassword_label.setMinimumSize(QtCore.QSize(0, 80))
+        font = QtGui.QFont()
+        font.setWeight(50)
+        font.setBold(False)
+        self.mainPassword_label.setFont(font)
+        self.mainPassword_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.mainPassword_label.setWordWrap(True)
+        self.mainPassword_label.setObjectName("mainPassword_label")
+        self.gridLayout_2.addWidget(self.mainPassword_label, 0, 0, 1, 3)
         self.stackedWidget.addWidget(self.page_1)
         self.page_6 = QtGui.QWidget()
         self.page_6.setObjectName("page_6")
@@ -240,7 +240,7 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.stackedWidget)
 
         self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.pushButton, self.main_password_lineEdit)
         Dialog.setTabOrder(self.main_password_lineEdit, self.pushButton_2)
@@ -260,13 +260,18 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "First Run", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("Dialog", "This Appears to be the first time you have run OpenMolar on this computer. \n"
-"You need to enter some information before we can proceed.", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Sans Serif\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Welcome to the openMolar settings wizard.</p>\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This will set your system password, configure your mysql server, and install a small demo database if required.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setText(QtGui.QApplication.translate("Dialog", "OK, continue", None, QtGui.QApplication.UnicodeUTF8))
-        self.mainPassword_label.setText(QtGui.QApplication.translate("Dialog", "Please enter a password to prevent unauthorised running of this application.", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Dialog", "Password", None, QtGui.QApplication.UnicodeUTF8))
         self.mainpassword_checkBox.setText(QtGui.QApplication.translate("Dialog", "show password", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_2.setText(QtGui.QApplication.translate("Dialog", "OK, continue", None, QtGui.QApplication.UnicodeUTF8))
+        self.mainPassword_label.setText(QtGui.QApplication.translate("Dialog", "Please enter a password to prevent unauthorised running of this application.", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("Dialog", "Where is your mysql server located?", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("Dialog", "Host", None, QtGui.QApplication.UnicodeUTF8))
         self.host_lineEdit.setText(QtGui.QApplication.translate("Dialog", "localhost", None, QtGui.QApplication.UnicodeUTF8))
@@ -282,7 +287,7 @@ class Ui_Dialog(object):
         self.database_lineEdit.setText(QtGui.QApplication.translate("Dialog", "openmolar_demo", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Dialog", "User", None, QtGui.QApplication.UnicodeUTF8))
         self.user_lineEdit.setText(QtGui.QApplication.translate("Dialog", "user", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("Dialog", "Password", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("Dialog", "(mysql)Password", None, QtGui.QApplication.UnicodeUTF8))
         self.password_lineEdit.setText(QtGui.QApplication.translate("Dialog", "password", None, QtGui.QApplication.UnicodeUTF8))
         self.dbpassword_checkBox.setText(QtGui.QApplication.translate("Dialog", "display password", None, QtGui.QApplication.UnicodeUTF8))
         self.testDB_pushButton.setText(QtGui.QApplication.translate("Dialog", "Test this connection to this database", None, QtGui.QApplication.UnicodeUTF8))

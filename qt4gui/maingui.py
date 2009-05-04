@@ -2034,8 +2034,7 @@ class newPatientClass():
         self.ui.main_tabWidget.setCurrentIndex(0)
         
         #--ask the question (centred over self.mainWindow)
-        result=QtGui.QMessageBox.question(self.mainWindow,
-        "Confirm","New Patient not saved. Abandon Changes?",
+        result=QtGui.QMessageBox.question(self.mainWindow,"Confirm","New Patient not saved. Abandon Changes?",
         QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
 
         #--act on the answer
