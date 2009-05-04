@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/medhist.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/medhist.ui'
 #
-# Created: Wed Mar 25 09:43:11 2009
+# Created: Tue May  5 00:45:59 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ class Ui_Dialog(object):
         self.doctor_lineEdit = QtGui.QLineEdit(Dialog)
         self.doctor_lineEdit.setMaxLength(60)
         self.doctor_lineEdit.setObjectName("doctor_lineEdit")
-        self.gridLayout_2.addWidget(self.doctor_lineEdit, 0, 2, 1, 3)
+        self.gridLayout_2.addWidget(self.doctor_lineEdit, 0, 2, 1, 2)
         self.label_2 = QtGui.QLabel(Dialog)
         self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName("label_2")
@@ -31,7 +31,7 @@ class Ui_Dialog(object):
         self.doctorAddy_lineEdit = QtGui.QLineEdit(Dialog)
         self.doctorAddy_lineEdit.setMaxLength(60)
         self.doctorAddy_lineEdit.setObjectName("doctorAddy_lineEdit")
-        self.gridLayout_2.addWidget(self.doctorAddy_lineEdit, 1, 2, 1, 3)
+        self.gridLayout_2.addWidget(self.doctorAddy_lineEdit, 1, 2, 1, 2)
         self.label_3 = QtGui.QLabel(Dialog)
         self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName("label_3")
@@ -39,7 +39,7 @@ class Ui_Dialog(object):
         self.curMeds_lineEdit = QtGui.QLineEdit(Dialog)
         self.curMeds_lineEdit.setMaxLength(60)
         self.curMeds_lineEdit.setObjectName("curMeds_lineEdit")
-        self.gridLayout_2.addWidget(self.curMeds_lineEdit, 2, 2, 1, 3)
+        self.gridLayout_2.addWidget(self.curMeds_lineEdit, 2, 2, 1, 2)
         self.label_4 = QtGui.QLabel(Dialog)
         self.label_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_4.setObjectName("label_4")
@@ -47,7 +47,7 @@ class Ui_Dialog(object):
         self.pastMeds_lineEdit = QtGui.QLineEdit(Dialog)
         self.pastMeds_lineEdit.setMaxLength(60)
         self.pastMeds_lineEdit.setObjectName("pastMeds_lineEdit")
-        self.gridLayout_2.addWidget(self.pastMeds_lineEdit, 3, 2, 1, 3)
+        self.gridLayout_2.addWidget(self.pastMeds_lineEdit, 3, 2, 1, 2)
         self.label_5 = QtGui.QLabel(Dialog)
         self.label_5.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_5.setObjectName("label_5")
@@ -55,7 +55,7 @@ class Ui_Dialog(object):
         self.allergies_lineEdit = QtGui.QLineEdit(Dialog)
         self.allergies_lineEdit.setMaxLength(60)
         self.allergies_lineEdit.setObjectName("allergies_lineEdit")
-        self.gridLayout_2.addWidget(self.allergies_lineEdit, 4, 2, 1, 3)
+        self.gridLayout_2.addWidget(self.allergies_lineEdit, 4, 2, 1, 2)
         self.groupBox = QtGui.QGroupBox(Dialog)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout = QtGui.QGridLayout(self.groupBox)
@@ -116,30 +116,12 @@ class Ui_Dialog(object):
         self.other_lineEdit.setMaxLength(60)
         self.other_lineEdit.setObjectName("other_lineEdit")
         self.gridLayout.addWidget(self.other_lineEdit, 6, 1, 1, 1)
-        self.gridLayout_2.addWidget(self.groupBox, 5, 0, 1, 5)
-        self.history_pushButton = QtGui.QPushButton(Dialog)
-        self.history_pushButton.setObjectName("history_pushButton")
-        self.gridLayout_2.addWidget(self.history_pushButton, 6, 0, 1, 1)
-        self.comboBox = QtGui.QComboBox(Dialog)
-        self.comboBox.setObjectName("comboBox")
-        self.gridLayout_2.addWidget(self.comboBox, 6, 1, 1, 1)
-        self.checked_pushButton = QtGui.QPushButton(Dialog)
-        self.checked_pushButton.setObjectName("checked_pushButton")
-        self.gridLayout_2.addWidget(self.checked_pushButton, 6, 2, 1, 1)
-        self.label_13 = QtGui.QLabel(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_13.sizePolicy().hasHeightForWidth())
-        self.label_13.setSizePolicy(sizePolicy)
-        self.label_13.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_13.setObjectName("label_13")
-        self.gridLayout_2.addWidget(self.label_13, 6, 3, 1, 1)
+        self.gridLayout_2.addWidget(self.groupBox, 5, 0, 1, 4)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.gridLayout_2.addWidget(self.buttonBox, 6, 4, 1, 1)
+        self.gridLayout_2.addWidget(self.buttonBox, 6, 3, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
@@ -161,7 +143,4 @@ class Ui_Dialog(object):
         self.label_9.setText(QtGui.QApplication.translate("Dialog", "Kidneys", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("Dialog", "Anaesthetic / operations", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("Dialog", "Other", None, QtGui.QApplication.UnicodeUTF8))
-        self.history_pushButton.setText(QtGui.QApplication.translate("Dialog", "History", None, QtGui.QApplication.UnicodeUTF8))
-        self.checked_pushButton.setText(QtGui.QApplication.translate("Dialog", "Mark as Checked Today", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_13.setText(QtGui.QApplication.translate("Dialog", "openMolar can\'t update MH yet!", None, QtGui.QApplication.UnicodeUTF8))
 

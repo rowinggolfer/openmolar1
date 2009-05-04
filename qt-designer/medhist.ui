@@ -29,7 +29,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2" colspan="3" >
+   <item row="0" column="2" colspan="2" >
     <widget class="QLineEdit" name="doctor_lineEdit" >
      <property name="maxLength" >
       <number>60</number>
@@ -46,7 +46,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2" colspan="3" >
+   <item row="1" column="2" colspan="2" >
     <widget class="QLineEdit" name="doctorAddy_lineEdit" >
      <property name="maxLength" >
       <number>60</number>
@@ -63,7 +63,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2" colspan="3" >
+   <item row="2" column="2" colspan="2" >
     <widget class="QLineEdit" name="curMeds_lineEdit" >
      <property name="maxLength" >
       <number>60</number>
@@ -80,7 +80,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2" colspan="3" >
+   <item row="3" column="2" colspan="2" >
     <widget class="QLineEdit" name="pastMeds_lineEdit" >
      <property name="maxLength" >
       <number>60</number>
@@ -97,14 +97,14 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2" colspan="3" >
+   <item row="4" column="2" colspan="2" >
     <widget class="QLineEdit" name="allergies_lineEdit" >
      <property name="maxLength" >
       <number>60</number>
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="5" >
+   <item row="5" column="0" colspan="4" >
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
       <string>Known Conditions</string>
@@ -232,40 +232,7 @@
      </layout>
     </widget>
    </item>
-   <item row="6" column="0" >
-    <widget class="QPushButton" name="history_pushButton" >
-     <property name="text" >
-      <string>History</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1" >
-    <widget class="QComboBox" name="comboBox" />
-   </item>
-   <item row="6" column="2" >
-    <widget class="QPushButton" name="checked_pushButton" >
-     <property name="text" >
-      <string>Mark as Checked Today</string>
-     </property>
-    </widget>
-   </item>
    <item row="6" column="3" >
-    <widget class="QLabel" name="label_13" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text" >
-      <string>openMolar can't update MH yet!</string>
-     </property>
-     <property name="alignment" >
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="4" >
     <widget class="QDialogButtonBox" name="buttonBox" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
