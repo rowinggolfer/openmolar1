@@ -23,16 +23,18 @@ def write(sno,dnt,accd):
             pass
         else: #integer or float
             query+='%s="",'%att
-    sql1 = "select courseno from sysdata"
-    sql2 = "update sysdata set courseno = (courseno + 1)"
+    sql1 = "select max(courseno) from currtrtmt"
     db=connect()
     cursor = db.cursor()
     result=True
     cno=0
     try:
         cursor.execute(sql1)
-        cno=cursor.fetchall()[0][0]
-        cursor.execute(sql2)
+        currentMax=cursor.fetchone()[0]
+        if currentMax:
+            cno=currentMax+1
+        else:
+            cno=1
         print cno
         cursor.execute("insert into currtrtmt set serialno=%d,courseno=%s,%s "%(sno,cno,query.strip(",")))
         cursor.execute("INSERT INTO prvfees set serialno=%d,courseno=%s,dent=%d,esta=%d,acta=%d,estb=%d,actb=%d,data=''"%(sno,cno,dnt,0,0,0,0))

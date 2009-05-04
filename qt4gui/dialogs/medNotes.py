@@ -8,13 +8,14 @@
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
-
 from openmolar.qt4gui.dialogs import Ui_medhist
+from openmolar.dbtools import updateMH
 
-def showDialog(Dialog,data):
+def showDialog(Dialog,pt):
     dl = Ui_medhist.Ui_Dialog()
     dl.setupUi(Dialog)
-    if data!=():
+    data=pt.MH
+    if data != ():
         item=0
         for lineEdit in (
         dl.doctor_lineEdit,
@@ -33,11 +34,48 @@ def showDialog(Dialog,data):
             lineEdit.setText(data[-1][item])
             item+=1
     if Dialog.exec_():
-        return True
-
+        newdata=[]
+        for lineEdit in (
+        dl.doctor_lineEdit,
+        dl.doctorAddy_lineEdit,
+        dl.curMeds_lineEdit,
+        dl.pastMeds_lineEdit,
+        dl.allergies_lineEdit,
+        dl.heart_lineEdit,
+        dl.lungs_lineEdit,
+        dl.liver_lineEdit,
+        dl.bleeding_lineEdit,
+        dl.kidneys_lineEdit,
+        dl.anaesthetic_lineEdit,
+        dl.other_lineEdit
+        ):
+            newdata.append(str(lineEdit.text().toAscii()))
+        
+        result=tuple(newdata)
+        
+        if data==() or data[-1]!=result:
+            print "MH changed"
+            updateMH.write(pt.serialno,result)
+            pt.MH=(result,)
+            #-- this is a hack... mh table should have an "ALERT" field
+            if len(dl.allergies_lineEdit.text())>0:
+                self.pt.MEDALERT=True
+            
+            if data!=():
+                for a in range(11):
+                    if data[-1][a]!=result[a]:
+                        print data[-1][a]
+                    ##todo - update mnhist
+            
+                    
+            return True
+        else:
+            print "unchanged"
+    
 
 if __name__=="__main__":
     app=QtGui.QApplication([])
     Dialog = QtGui.QDialog()
-    showDialog(Dialog,(("doctor","address","curmeds","pastmeds","allergies","heart","lungs","liver","bleeding","Kidneys",
-    "ops","other"),))
+    from openmolar.dbtools import patient_class
+    pt=patient_class.patient(11956)
+    showDialog(Dialog,pt)

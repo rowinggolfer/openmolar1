@@ -2826,6 +2826,9 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             localsettings.recent_snos.append(self.pt.serialno)
         if self.ui.tabWidget.currentIndex()==4:  #clinical summary
             self.ui.summaryChartWidget.update()
+        self.medalert()
+        
+    def medalert(self):
         if self.pt.MEDALERT:
             palette = QtGui.QPalette()
             brush = QtGui.QBrush(colours.med_warning)
@@ -3048,7 +3051,9 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.advise("no patient selected",1)
             return
         Dialog = QtGui.QDialog(self.mainWindow)
-        medNotes.showDialog(Dialog,self.pt.MH)
+        if medNotes.showDialog(Dialog,self.pt):
+            self.advise("Updated Medical Notes",1)
+            self.medalert()
 
     def newBPE_Dialog(self):
         global pt
