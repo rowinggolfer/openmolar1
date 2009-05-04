@@ -14,7 +14,8 @@ import sys,os,hashlib,time
 from PyQt4 import QtGui,QtCore
 from xml.dom import minidom
 import MySQLdb
-sys.path.append("/home/neil/openmolar/")
+wkdir=os.path.dirname(os.getcwd())
+sys.path.append(wkdir)
 from openmolar.qt4gui import Ui_newSetup
 from openmolar.settings import localsettings
 

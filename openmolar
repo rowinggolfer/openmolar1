@@ -24,7 +24,6 @@ class LoginError(Exception):pass
 def main(app):
     wkdir=os.path.dirname(os.getcwd())
     sys.path.append(wkdir)
-    import openmolar
     from openmolar.settings import localsettings
     from openmolar.qt4gui import Ui_startscreen
 
