@@ -33,6 +33,10 @@ def createDB(myhost,myport,myuser,mypassword,databaseName,rootMySQLpassword):
     return True
     
 def loadTables(myhost,myport,myuser,mypassword,databaseName):
+    f=open("demodump.sql","r")
+    dumpString=f.read()
+    f.close()
+    
     db=MySQLdb.connect(host=myhost,port=myport,user=myuser,db=databaseName,passwd=mypassword)   #not using a password for my version
     cursor=db.cursor()
     cursor.execute(dumpString)
@@ -42,16 +46,10 @@ def loadTables(myhost,myport,myuser,mypassword,databaseName):
     return True
 
 if __name__ == "__main__":
-  if True:
-    print os.cwd
-  else:      
     rootpass=raw_input("please enter your MySQL root users password :")
     if createDB("localhost",3306,"OMuser","password","openmolar_demo",rootpass):
         print "New database created sucessfully"
     
-    f=open("demodump.sql","r")
-    dumpString=f.read()
-    f.close()
     
     loadTables("localhost",3306,"user","password","openmolar_demo")
 
