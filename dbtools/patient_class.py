@@ -320,6 +320,10 @@ class patient():
         if notetype=="treatment":               #other treatment
             note=chr(3)+chr(107)+note
             self.HIDDENNOTES.append(note)
+        if notetype=="mednotes":               #other treatment
+            note=chr(3)+chr(100)+note
+            self.HIDDENNOTES.append(note)
+        
 
     def clearHiddenNotes(self):
         self.HIDDENNOTES=[]

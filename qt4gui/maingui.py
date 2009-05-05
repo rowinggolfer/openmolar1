@@ -2062,7 +2062,8 @@ class printingClass():
         dupdate=self.ui.dupReceiptDate_lineEdit.text()
         amount=self.ui.receiptDoubleSpinBox.value()*100
         self.printReceipt({"Professional Services":amount},True,dupdate)
-
+        self.pt.addHiddenNote("printed","duplicate receipt for %.02f"%amount)
+                
     def printReceipt(self,valDict,duplicate=False,dupdate=""):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -2073,8 +2074,11 @@ class printingClass():
         if duplicate:
             myreceipt.isDuplicate=duplicate
             myreceipt.dupdate=dupdate
+        else:
+            self.pt.addHiddenNote("printed","receipt")
+  
         myreceipt.print_()
-
+         
     def printEstimate(self):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -2084,7 +2088,8 @@ class printingClass():
         est.estItems=self.pt.currEstimate[0]
         est.total=self.pt.currEstimate[1]
         est.print_()
-
+        self.pt.addHiddenNote("printed","estimate")
+  
     def printLetter(self):
         '''prints a letter to the patient'''
         if self.pt.serialno==0:
@@ -2100,6 +2105,8 @@ class printingClass():
             myclass=letterprint.letter(html)
             myclass.printpage()
             docsprinted.add(self.pt.serialno,"std letter",html)
+            self.pt.addHiddenNote("printed","std letter")
+  
     def printReferral(self):
         '''prints a referal letter controlled by referal.xml file'''                                    
         ####TODO this file should really be in the sql database
@@ -2117,6 +2124,8 @@ class printingClass():
             myclass=letterprint.letter(html)
             myclass.printpage()
             docsprinted.add(self.pt.serialno,"referral",html)
+            self.pt.addHiddenNote("printed","referral")
+  
     def printChart(self):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -2125,6 +2134,8 @@ class printingClass():
         staticimage=chartimage.grabWidget(self.ui.summaryChartWidget)
         myclass=chartPrint.printChart(self.pt,staticimage)
         myclass.printpage()
+        self.pt.addHiddenNote("printed","static chart")
+  
     def printApptCard(self):
         rowcount=self.ui.ptAppointmentTableWidget.rowCount()
         futureAppts=()
@@ -2135,7 +2146,8 @@ class printingClass():
         card=apptcardPrint.card()
         card.setProps(self.pt.title,self.pt.fname,self.pt.sname,self.pt.serialno,futureAppts)
         card.print_()
-        
+        self.pt.addHiddenNote("printed","appt card")
+  
     def printaccount(self,tone="A"):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -2153,12 +2165,15 @@ class printingClass():
                 
     def testGP17(self):
         printGP17(True)
+        
 
     def printGP17(self,test=False):
         #-- if test is true.... you also get boxes
         form=GP17.gp17(self.pt,test)
         form.print_()
-
+        if not test:
+            self.pt.addHiddenNote("printed","GP17")
+  
     def accountButton2Clicked(self):
         if self.ui.accountB_radioButton.isChecked():
             self.printaccount("B")
@@ -2264,11 +2279,12 @@ class printingClass():
             args=((self.pt.title,self.pt.fname,self.pt.sname,self.pt.dnt1,self.pt.serialno,self.pt.addr1,self.pt.addr2,self.pt.addr3,\
             self.pt.town,self.pt.county,self.pt.pcde),)
             recallprint.printRecall(args)
+            self.pt.addHiddenNote("printed","recall - non batch")  
 
     def printNotesV(self):
         '''verbose notes print'''
         self.printNotes(1)
-
+        
     def printNotes(self,detailed=False):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -2277,11 +2293,9 @@ class printingClass():
         #--not verbose...
         myclass=notesPrint.printNotes(note)
         myclass.printpage()
-
-
-
-
-
+        self.pt.addHiddenNote("printed","notes")
+        
+  
 
 class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,signals,feeClass,printingClass,cashbooks):
     def __init__(self,parent):
@@ -2694,17 +2708,22 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             if self.pt.dnt1!=0:
                 print "self.pt.dnt1 error - record %d"%self.pt.serialno
                 print "Handled Exception",e
-                self.advise("%s is no longer an active dentist in this practice"%localsettings.ops[self.pt.dnt1],2)
+                if localsettings.ops.has_key(self.pt.dnt1):
+                    self.advise("%s is no longer an active dentist in this practice"%localsettings.ops[self.pt.dnt1],2)
+                else:
+                    self.advise("unknown contract dentist - please correct this",2)
         if self.pt.dnt2>0:
             try:
-                self.ui.dnt2comboBox.setCurrentIndex(localsettings.activedents.index(localsettings.ops\
-                [self.pt.dnt2]))
-            except Exception,e:
+                self.ui.dnt2comboBox.setCurrentIndex(localsettings.activedents.index(localsettings.ops[self.pt.dnt2]))
+            except KeyError,e:
                 print "self.pt.dnt1 error - record %d"
                 print "Handled Exception",e
                 self.ui.dnt2comboBox.setCurrentIndex(-1)
-                self.advise("%s (dentist 2) is no longer an active dentist in this practice"%localsettings.\
-                ops[self.pt.dnt2],1)
+                if localsettings.ops.has_key(self.pt.dnt1):
+                    self.advise("%s (dentist 2) is no longer an active dentist in this practice"%localsettings.ops[self.pt.dnt2],1)
+                else:
+                    self.advise("unknown course dentist - please correct this",2)
+        
         else:
             self.ui.dnt2comboBox.setCurrentIndex(-1)
 
@@ -2760,9 +2779,10 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
                 print "NOT FOUND ERROR"
                 self.advise ("error getting serialno %d - please check this number is correct?"%serialno,1)
                 return
-            except Exception,e:
+                #except Exception,e:            
                 print "#"*20
                 print "SERIOUS ERROR???"
+                print str(Exception)
                 print e
                 print "maingself.ui.getrecord - serialno%d"%serialno
                 print "#"*20
@@ -3376,7 +3396,6 @@ def main(arg):
     app = QtGui.QApplication(arg)
     mainWindow = QtGui.QMainWindow()
    
-    
     #-- user could easily play with this code and avoid login... the app would however, not have initialised.
     if __name__ != "__main__":
         #don't maximise the window for dev purposes - I like to see all the error messages in a terminal ;).

@@ -95,7 +95,7 @@ def get_notes_for_date(line):
 def get_reception_for_date(line):
     recep=""
     for l in line:
-        if ("PRINT" in l[0]) or ("RECEIVED" in l[0])or ("FINAL" in l[0]) or ("UNKNOWN" in l[0]):
+        if ("PRINT" in l[0]) or ("RECEIVED" in l[0])or ("FINAL" in l[0]) or ("UNKNOWN" in l[0]) or ("UPDATE" in l[0]):
             recep+=l[0]+l[1]+"<br />"
     if recep=="":
         return "-"
@@ -143,12 +143,14 @@ def decipher_noteline(noteline):
             systemdate+=" %02d:%02d"%(char(noteline[i+3]),char(noteline[i+4]))
             retarg[1]+="%s %s"%(operator,systemdate)
         elif noteline[0]==chr(3):   #
+        
+            #-- hidden nodes start with chr(3) then another character
             if noteline[1]==chr(97):
                 retarg[0]="COURSE CLOSED"
                 retarg[1]="="*10
             elif noteline[1]==chr(100):
                 retarg[0]="UPDATED:"
-                retarg[1]="Medical Notes"
+                retarg[1]="Medical Notes "+noteline[2:]
             elif noteline[1]==chr(101):
                 retarg[0]="UPDATED:"
                 retarg[1]="Perio Chart"

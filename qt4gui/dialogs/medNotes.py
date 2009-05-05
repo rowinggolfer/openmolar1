@@ -59,14 +59,21 @@ def showDialog(Dialog,pt):
             pt.MH=(result,)
             #-- this is a hack... mh table should have an "ALERT" field
             if len(dl.allergies_lineEdit.text())>0:
-                self.pt.MEDALERT=True
+                pt.MEDALERT=True
+            else:
+                pt.MEDALERT=False
+                
+            pt.addHiddenNote("mednotes")
             
+            mnhistChanges=[]
             if data!=():
                 for a in range(11):
-                    if data[-1][a]!=result[a]:
-                        print data[-1][a]
-                    ##todo - update mnhist
+                    if data[-1][a]!=result[a] and str(data[-1][a])!="":
+                        mnhistChanges.append((a+140,data[-1][a]))
+            if mnhistChanges!=[]:
+                updateMH.writeHist(pt.serialno,mnhistChanges)
             
+            pt.addHiddenNote("mednotes","saved previous")
                     
             return True
         else:
@@ -77,5 +84,9 @@ if __name__=="__main__":
     app=QtGui.QApplication([])
     Dialog = QtGui.QDialog()
     from openmolar.dbtools import patient_class
-    pt=patient_class.patient(11956)
-    showDialog(Dialog,pt)
+    try:
+        pt=patient_class.patient(11956)
+        showDialog(Dialog,pt)
+    except localsettings.PatientNotFoundError:
+        print "no such pt in THIS database"
+        

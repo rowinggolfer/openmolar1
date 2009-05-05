@@ -75,7 +75,10 @@ def details(dent,startdate,enddate):
             odd=True
         for i in range(len(row)):
             if i==6:
-               retarg+='<td>%s</td>'%localsettings.ops[row[i]]
+                try:
+                    retarg+='<td>%s</td>'%localsettings.ops[row[i]]
+                except KeyError:
+                    retarg+='<td>unrecognised</td>'
             elif i==7:
                 retarg+='<td align="right">&pound; %d.%02d</td>'%(int(row[i])/100,int(row[i]%100))
             else:

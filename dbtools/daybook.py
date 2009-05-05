@@ -12,14 +12,18 @@ from openmolar.connect import connect
 
 def details(regdent,trtdent,startdate,enddate):
     '''returns an html table, for regdent, trtdent,startdate,enddate'''
-    if regdent=="*ALL*":
-        cond1=""
-    else:
-        cond1='dntid=%s and'%localsettings.ops_reverse[regdent]
-    if trtdent=="*ALL*":
-        cond2=""
-    else:
-        cond2='trtid=%s and'%localsettings.ops_reverse[trtdent]
+    try:
+        if regdent=="*ALL*":
+            cond1=""
+        else:
+            cond1='dntid=%s and'%localsettings.ops_reverse[regdent]
+        if trtdent=="*ALL*":
+            cond2=""
+        else:
+            cond2='trtid=%s and'%localsettings.ops_reverse[trtdent]
+    except KeyError:
+        print "Key Error - %s unregconised"%trtdent
+        return"<html><body>Error - unrecognised practioner- sorry</body></html>"
     fields= 'DATE_FORMAT(date,"%s"),serialno,coursetype,dntid,trtid,diagn,perio,' %localsettings.sqlDateFormat
     fields+='anaes,misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc,id'  
 
@@ -50,8 +54,18 @@ def details(regdent,trtdent,startdate,enddate):
             retarg+='<tr>'
             odd=True
         retarg+='<td>%s</td>'%row[0]
-        retarg+='<td>%s / %s</td>'%(localsettings.ops[row[3]],localsettings.ops[row[4]])
-        retarg+='<td>%s</td>'%str(row[1])
+        retarg+='<td>'
+        try:
+            retarg+=localsettings.ops[row[3]]
+        except KeyError:
+            retarg+="??"
+        retarg+=' / '
+        try:        
+            retarg+=localsettings.ops[row[4]]
+        except KeyError:
+            retarg+="??"
+        
+        retarg+='</td><td>%s</td>'%str(row[1])
         cursor.execute('select fname,sname from patients where serialno=%s'%row[1])
         names=cursor.fetchall()
         if names!=():
