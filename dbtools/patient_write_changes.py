@@ -87,9 +87,21 @@ def toNotes(serialno,newnotes):
     try:
         n=1
         t=localsettings.curTime()
-        year,month,day,hour,min=t.year-1900,t.month,t.day,t.hour,t.minute                           #grrr - crap date implementation
+        year,month,day,hour,min=t.year-1900,t.month,t.day,t.hour,t.minute                           
         openstr="\x01"+"%s"%localsettings.operator+chr(day)+chr(month)+chr(year)+chr(day)+chr(month)+chr(year)+chr(hour)+chr(min)
+        
+        
+        #-- grrr - crap date implementation
+        #-- ok, for backwards compatibility reasons, I have to put a little hack in here, because of the idiotic way time is stored 
+        #-- in the original data. If I build an sql query with a " in it (which happens at 34 minutes past the hour... 
+        #-- notes writing fails.
+         
+        ################## start ugly hack ############################
+        if min==34:
+            min=33
+        ################# end ugly hack ###############################
         closestr="\x02"+"%s"%localsettings.operator+chr(day)+chr(month)+chr(year)+chr(hour)+chr(min)
+        
         for note in [openstr]+newnotes+[closestr]:
             query='insert into notes (serialno,lineno,line) values (%d,%d,"%s")'%(serialno,lineNo+n,note)
             cursor.execute(query)
