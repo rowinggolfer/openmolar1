@@ -2164,7 +2164,7 @@ class printingClass():
                 self.addNewNote("Account Printed")
                 
     def testGP17(self):
-        printGP17(True)
+        self.printGP17(True)
         
 
     def printGP17(self,test=False):
