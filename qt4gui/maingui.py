@@ -2427,6 +2427,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.ui.adminMemoEdit.setText("")
             self.ui.detailsBrowser.setText("")
             self.ui.moneytextBrowser.setText("")
+            self.ui.notesBrowser.setText("")
+            self.ui.notesSummary_textBrowser.setText("")
+            self.ui.bpe_groupBox.setTitle("BPE")
+            self.ui.bpe_textBrowser.setText("")
+            self.ui.planSummary_textBrowser.setText("")
             
             #--restore the charts to full dentition
             ##TODO - perhaps handle this with the tabwidget calls?
@@ -2434,10 +2439,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             ,self.ui.perioChartWidget,self.ui.summaryChartWidget):
                 chart.clear()                                                                     
                 chart.update()
-            if localsettings.station=="surgery":
-                self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
-            else:
-                self.ui.moneytextBrowser.setHtml(localsettings.message)
+            self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
+            self.ui.moneytextBrowser.setHtml(localsettings.message)
             self.ui.chartsTableWidget.clear()
             self.ui.ptAppointmentTableWidget.clear()
             #-clearing the table isn't enough... I have to remove the rows one at a time :(
@@ -2451,8 +2454,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.pt=copy.deepcopy(self.pt_dbstate)
             
             self.load_editpage()##################################################is this wise???????
-            self.load_planpage()
-            self.load_estpage()
+            #self.load_planpage()
+            #self.load_estpage()
            
     def home(self):
         '''User has clicked the homw push_button - clear the patient, and blank the screen'''
@@ -2470,7 +2473,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         
     def okToLeaveRecord(self):
         '''leaving a pt record - has state changed?'''
-        
+        if self.pt.serialno==0:
+            return True
         #--a debug print statement
         print "leaving record checking to see if save is required...",
         
@@ -2528,6 +2532,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
     def changeCourseDentist(self,inits):
         newdentist=localsettings.ops_reverse[str(inits)]
         if newdentist==self.pt.dnt2:
+            return
+        if self.pt.dent2=="" and newdentist==self.pt.dnt1:
             return
         if self.pt.cset=="N" and self.pt.underTreatment:
             self.advise("think about getting some nhs forms signed for both dentists",1)
@@ -3356,10 +3362,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
     
         
     def enableEdit(self,arg=True):
-        for but in (self.ui.printEst_pushButton, self.ui.printAccount_pushButton, self.ui.relatedpts_pushButton, self.ui.saveButton,
+        for widg in (self.ui.printEst_pushButton, self.ui.printAccount_pushButton, self.ui.relatedpts_pushButton, self.ui.saveButton,
         self.ui.phraseBook_pushButton, self.ui.exampushButton,self.ui.medNotes_pushButton,self.ui.callXrays_pushButton,
-        self.ui.charge_pushButton,self.ui.printGP17_pushButton,self.ui.newBPE_pushButton,self.ui.hygWizard_pushButton,self.ui.printAppt_pushButton):
-            but.setEnabled(arg)
+        self.ui.charge_pushButton,self.ui.printGP17_pushButton,self.ui.newBPE_pushButton,self.ui.hygWizard_pushButton,
+        self.ui.notesEnter_textEdit,self.ui.printAppt_pushButton):
+            widg.setEnabled(arg)
         for i in (0,1,2,5,6,7,8,9):
             if self.ui.tabWidget.isTabEnabled(i)!=arg: self.ui.tabWidget.setTabEnabled(i,arg)
         if arg==True and "N" in self.pt.cset:

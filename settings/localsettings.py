@@ -197,6 +197,9 @@ def initiate(debug=False):
     
 
     message='''<html><head><link rel="stylesheet" href="%s" type="text/css"></head><body><div align="center">
+    <img src="html/images/newlogo.png" width="150",height="100", align="left" />
+    
+    <img src="html/images/newlogo.png" width="150",height="100", align="right" />
     <h1>Welcome to OpenMolar!</h1><ul><li>Version %s</li><li>Build %s</li></ul>
     <p>Your Data is Accessible, and the server reports no issues.</p>
     <p>Have a great day!</p></div></body></html>'''%(stylesheet,__version__,__build__)
