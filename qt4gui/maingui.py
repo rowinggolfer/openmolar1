@@ -1312,7 +1312,7 @@ class signals():
 
         self.connectAptOVdentcbs()
         self.connectAptOVhygcbs()
-        QtCore.QObject.connect(self.ui.adminMemoEdit,QtCore.SIGNAL("textChanged()"), self.updateMemo)              
+        QtCore.QObject.connect(self.ui.memoEdit,QtCore.SIGNAL("textChanged()"), self.updateMemo)              
         #--memos - we have more than one... and need to keep them synchronised
         
         self.ui.mondayLabel.connect(self.ui.mondayLabel,QtCore.SIGNAL("clicked()"), self.mondaylabelClicked)
@@ -2295,7 +2295,7 @@ class printingClass():
         myclass.printpage()
         self.pt.addHiddenNote("printed","notes")
         
-  
+ 
 
 class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,signals,feeClass,printingClass,cashbooks):
     def __init__(self,parent):
@@ -2320,6 +2320,9 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()   
         self.appointmentData=()
+    
+        self.editPageVisited=False
+            
     
     def advise(self,arg,warning_level=0):
         '''inform the user of events -
@@ -2381,14 +2384,12 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         #--admin tab selected
         if ci==0:
             self.ui.patientEdit_groupBox.setTitle("Edit Patient %d"%self.pt.serialno)
-
+            self.load_editpage()
+            self.editPageVisited=True
+            
         if ci==2:
             self.docsPrinted()
 
-        if ci==3:
-            #the 2 memo widgets are synchronised
-            self.updateAdminMemo()  
-        
         if ci==5:
             self.updateNotesPage()
 
@@ -2452,8 +2453,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.pt_dbstate=patient_class.patient(0)
             #--and have the comparison copy identical (to check for changes)
             self.pt=copy.deepcopy(self.pt_dbstate)
-            
-            self.load_editpage()##################################################is this wise???????
+            if self.editPageVisited:
+                self.load_editpage()##################################################is this wise???????
             #self.load_planpage()
             #self.load_estpage()
            
@@ -2479,7 +2480,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         print "leaving record checking to see if save is required...",
         
         #--apply changes to patient details
-        self.apply_editpage_changes()
+        if self.editPageVisited:
+            self.apply_editpage_changes()
         
         #--check pt against the original loaded state
         #--this returns a LIST of changes ie [] if none.
@@ -2677,11 +2679,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         self.load_estpage()
     def updateMemo(self):
         '''this is called when the text in the memo on the admin page changes'''
-        self.ui.memoEdit.setText(self.ui.adminMemoEdit.toPlainText())
-    def updateAdminMemo(self):
-        '''this is called when the admin summary tab is selected'''
         self.ui.adminMemoEdit.setText(self.ui.memoEdit.toPlainText())
-
 
     def load_editpage(self):
         self.ui.titleEdit.setText(self.pt.title)
@@ -2698,7 +2696,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         else:
             self.ui.sexEdit.setCurrentIndex(1)
         self.ui.pcdeEdit.setText(self.pt.pcde)
-        self.ui.adminMemoEdit.setText(self.pt.memo)
+        self.ui.memoEdit.setText(self.pt.memo)
         self.ui.tel1Edit.setText(self.pt.tel1)
         self.ui.tel2Edit.setText(self.pt.tel2)
         self.ui.mobileEdit.setText(self.pt.mobile)
@@ -2821,7 +2819,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         else:
             self.ui.tabWidget.setCurrentIndex(3)
         self.updateDetails()
-        self.load_editpage()
+        self.editPageVisited=False
+        self.ui.adminMemoEdit.setText(self.pt.memo)
         self.layout_apptTable()
         self.load_planpage()
         
@@ -2854,6 +2853,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.ui.summaryChartWidget.update()
         self.medalert()
         
+        
     def medalert(self):
         if self.pt.MEDALERT:
             palette = QtGui.QPalette()
@@ -2881,7 +2881,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.ui.newCourse_pushButton.setEnabled(True)
             self.ui.closeTx_pushButton.setEnabled(False)    
             self.ui.underTreatment_label.hide()     
-            self.ui.underTreatment_label_2.hide()       
+            self.ui.underTreatment_label_2.hide()  
+        
        
     def final_choice(self,candidates):
         def DoubleClick():
@@ -2977,10 +2978,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         self.ui.main_tabWidget.setCurrentIndex(0)
         if localsettings.station=="surgery":
             self.ui.tabWidget.setCurrentIndex(4)
-            self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
-            self.ui.moneytextBrowser.setHtml(localsettings.message)
+        self.ui.moneytextBrowser.setHtml(localsettings.message)
+        self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
+        
         today=QtCore.QDate().currentDate()
         self.ui.daybookEndDateEdit.setDate(today)
         self.ui.daybookStartDateEdit.setDate(today)
@@ -3280,6 +3282,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             GP17.offsetTop=dl.topMargin_spinBox.value()
 
     def unsavedChanges(self):
+        self.pt.memo=str(self.ui.adminMemoEdit.toPlainText().toAscii())
         fieldsToExclude=("notestuple","fees")
         changes=[]
         if self.pt.serialno==self.pt_dbstate.serialno:
@@ -3304,7 +3307,9 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
             return
-        self.apply_editpage_changes()
+        if self.editPageVisited:
+            self.apply_editpage_changes()
+            
         if self.pt.HIDDENNOTES!=[]:    #treatment codes... money etc..
             print "saving hiddennotes"
             patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
@@ -3365,7 +3370,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         for widg in (self.ui.printEst_pushButton, self.ui.printAccount_pushButton, self.ui.relatedpts_pushButton, self.ui.saveButton,
         self.ui.phraseBook_pushButton, self.ui.exampushButton,self.ui.medNotes_pushButton,self.ui.callXrays_pushButton,
         self.ui.charge_pushButton,self.ui.printGP17_pushButton,self.ui.newBPE_pushButton,self.ui.hygWizard_pushButton,
-        self.ui.notesEnter_textEdit,self.ui.printAppt_pushButton):
+        self.ui.notesEnter_textEdit,self.ui.adminMemoEdit,self.ui.printAppt_pushButton):
             widg.setEnabled(arg)
         for i in (0,1,2,5,6,7,8,9):
             if self.ui.tabWidget.isTabEnabled(i)!=arg: self.ui.tabWidget.setTabEnabled(i,arg)
