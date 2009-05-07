@@ -189,7 +189,7 @@ class feeClass():
             print chosenTreatments
             for item in chosenTreatments:
                 #item will be in the form (n,code,usercode,fee)
-                self.pt.otherpl+="%s%s "%(item[0],item[2])
+                self.pt.xraypl+="%s%s "%(item[0],item[2])
                 self.pt.addToEstimate(item[0],int(item[1]),item[3])
             self.load_planpage()
 
@@ -213,8 +213,8 @@ class feeClass():
                 list+=((0,item,localsettings.treatmentCodes[item]),)
             chosenTreatments=self.offerTreatmentItems(list)
             for treat in chosenTreatments:
-                self.pt.xraypl+="%s%s "%(item[0],item[2])
-                self.pt.addToEstimate(item[0],int(item[1]),item[3])
+                self.pt.otherpl+="%s%s "%(treat[0],treat[2])
+                self.pt.addToEstimate(treat[0],int(treat[1]),treat[3])
             self.load_planpage()
 
     def offerTreatmentItems(self,arg):
@@ -3359,7 +3359,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             sqldate="%04d%02d%02d"%(atts[3].year(),atts[3].month(),atts[3].day())
             course=writeNewCourse.write(self.pt.serialno,localsettings.ops_reverse[atts[1]],sqldate)
             if course[0]:
-                self.pt.courseno0=course[1]
+                self.pt.courseno1=course[1]
                 self.advise("Sucessfully started new course of treatment",1)
                 self.pt.getCurrtrt()
                 self.pt.getEsts()

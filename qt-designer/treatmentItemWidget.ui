@@ -47,6 +47,9 @@
      <property name="prefix" >
       <string>£</string>
      </property>
+     <property name="maximum" >
+      <double>500.000000000000000</double>
+     </property>
     </widget>
    </item>
   </layout>

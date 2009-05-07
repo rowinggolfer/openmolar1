@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/treatmentItemWidget.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/treatmentItemWidget.ui'
 #
-# Created: Fri Apr 17 01:55:54 2009
+# Created: Fri May  8 00:11:54 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,6 +26,7 @@ class Ui_Form(object):
         self.doubleSpinBox = QtGui.QDoubleSpinBox(Form)
         self.doubleSpinBox.setMaximumSize(QtCore.QSize(100, 16777215))
         self.doubleSpinBox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBox.setMaximum(500.0)
         self.doubleSpinBox.setObjectName("doubleSpinBox")
         self.horizontalLayout.addWidget(self.doubleSpinBox)
 

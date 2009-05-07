@@ -104,10 +104,10 @@ class patient():
         #from prvfees
         self.estimates=()
         self.tsfees=()
-        
+
         ##from userdata
         self.data=()
-        
+
         ##from userdata
 
         ####NEIL'S STUFF####
@@ -139,25 +139,25 @@ class patient():
                 else:
                     query+=field+","
             query=query.strip(",")
-            
+
             cursor.execute('SELECT %s from patients where serialno=%d'%(query,self.serialno))
             values= cursor.fetchall()
-            
+
             if values==():
                 print "raising an exception"
                 raise localsettings.PatientNotFoundError
-            
+
             i=0
             for field in fields:
                 if values[0][i] !=None:
                     self.__dict__[field]=values[0][i]
                 i+=1
-            
+
             cursor.execute('select DATE_FORMAT(bpedate,"%s"),bpe from bpe where serialno=%d'%(localsettings.sqlDateFormat,self.serialno))
             values = cursor.fetchall()
             for value in values:
                 self.bpe.append(value)
-            
+
             self.getCurrtrt(cursor)
             self.getEsts(cursor)
             self.getNotesTuple(cursor)
@@ -173,32 +173,32 @@ class patient():
                 allerg=self.MH[0][4]
                 if len(allerg)>0 and not "med ok" in allerg.lower():
                     self.MEDALERT=True
-            
+
             cursor.execute('SELECT data from userdata where serialno=%d'%self.serialno);
             self.data=cursor.fetchall()
-                
+
             cursor.execute('select DATE_FORMAT(date,"%s"), trtid, chart from daybook where serialno = %d'%(localsettings.sqlDateFormat,self.serialno))
             self.dayBookHistory=cursor.fetchall()
 
             cursor.close()
             #db.close()
 
-        
+
             self.updateChartgrid()
             self.updateFees()
             self.setCurrentEstimate()
 
     def getEsts(self,cursor=None):
         disconnectNeeded=False
-        
+
         if cursor==None:
             disconnectNeeded=True
             db=connect()
             cursor=db.cursor()
-      
+
         cursor.execute('SELECT serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno1))
         self.estimates = cursor.fetchall()
-        
+
         cursor.execute('SELECT serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno1))
         if disconnectNeeded:
             cursor.close()
@@ -221,6 +221,8 @@ class patient():
         query=query.strip(",")
         cursor.execute('SELECT %s from currtrtmt where serialno=%d and courseno=%d'%(query,self.serialno,self.courseno1))               ##todo - I should lever these multiple tx plans!!!!
         values= cursor.fetchall()
+        print "currtrtmt"
+        print str(values)
         for value in values:
             i=0
             for field in fields:
@@ -292,7 +294,7 @@ class patient():
 
     def setCurrentEstimate(self):
         self.currEstimate=estimates.getCurrentEstimate(self.estimates,self.tsfees)
-        
+
     def addToEstimate(self,number,item,fee):
         print "adding to estimate ",number,item,fee
         intitem=4001  #'other treatment
@@ -301,12 +303,12 @@ class patient():
         except:
             pass
         blob=estimates.encode(number,intitem,fee)
-        
+
         est=self.estimates[0]
         newEst=(est[0],est[1],est[2],est[3],est[4],est[5],est[6],est[7]+blob)
         self.estimates=(newEst,)
         self.setCurrentEstimate()
-        
+
     def addHiddenNote(self,notetype,note=""):
         if notetype=="payment":
             note=chr(3)+chr(119)+note
@@ -323,7 +325,7 @@ class patient():
         if notetype=="mednotes":               #other treatment
             note=chr(3)+chr(100)+note
             self.HIDDENNOTES.append(note)
-        
+
 
     def clearHiddenNotes(self):
         self.HIDDENNOTES=[]
