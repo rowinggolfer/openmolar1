@@ -39,7 +39,7 @@ def write_changes(pt,changes):
                 mydata=pt.estimates[0][7]
                 if '"' in mydata:
                     mydata=mydata.replace('"',r'\"')
-                sqlcommands["prvfees"]='update prvfees set data="%s" where serialno=%d and courseno=%d '%(mydata,pt.serialno,pt.courseno)
+                sqlcommands["prvfees"]='update prvfees set data="%s" where serialno=%d and courseno=%d '%(mydata,pt.serialno,pt.courseno1)
                     
             if change in patient_class.currtrtmtTableAtts:
                 value=pt.__dict__[change]
@@ -58,7 +58,7 @@ def write_changes(pt,changes):
         print "update patients SET %s where serialno=%s"%(patchanges.strip(","),pt.serialno)
         sqlcommands['patient'] = "update patients SET %s where serialno=%d"%(patchanges.strip(","),pt.serialno)
     if trtchanges != "":
-        sqlcommands['currtrtmt'] = "update currtrtmt SET %s where serialno=%d and courseno=%d"%(trtchanges.strip(","),pt.serialno,pt.courseno0)
+        sqlcommands['currtrtmt'] = "update currtrtmt SET %s where serialno=%d and courseno=%d"%(trtchanges.strip(","),pt.serialno,pt.courseno1)
     if sqlcommands!={}:
         db=connect()
         cursor = db.cursor()

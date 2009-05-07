@@ -196,10 +196,10 @@ class patient():
             db=connect()
             cursor=db.cursor()
       
-        cursor.execute('SELECT serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
+        cursor.execute('SELECT serialno,courseno,dent,esta,acta, estb,actb ,data from prvfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno1))
         self.estimates = cursor.fetchall()
         
-        cursor.execute('SELECT serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno0))
+        cursor.execute('SELECT serialno,courseno, dent, ct,data from tsfees where serialno=%d and courseno=%d'%(self.serialno,self.courseno1))
         if disconnectNeeded:
             cursor.close()
             #db.close()
@@ -219,7 +219,7 @@ class patient():
             else:
                 query+=field+","
         query=query.strip(",")
-        cursor.execute('SELECT %s from currtrtmt where serialno=%d and courseno=%d'%(query,self.serialno,self.courseno0))               ##todo - I should lever these multiple tx plans!!!!
+        cursor.execute('SELECT %s from currtrtmt where serialno=%d and courseno=%d'%(query,self.serialno,self.courseno1))               ##todo - I should lever these multiple tx plans!!!!
         values= cursor.fetchall()
         for value in values:
             i=0

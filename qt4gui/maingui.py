@@ -3376,8 +3376,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",message,QtGui.QMessageBox.Yes, \
                         QtGui.QMessageBox.No)
         if result==QtGui.QMessageBox.Yes:
-            self.pt.courseno1=self.pt.courseno0
-            self.pt.courseno0=0
+            self.pt.courseno2=self.pt.courseno1
+            self.pt.courseno1=0
             self.pt.getCurrtrt()
             self.load_planpage()
             self.pt.underTreatment=False
