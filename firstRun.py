@@ -23,7 +23,7 @@ from openmolar.settings import localsettings
 blankXML='''<?xml version="1.0" ?>
 <settings>
     <version>1.0</version>
-    <server>		
+    <server>
         <location> </location>
         <port> </port>
     </server>
@@ -42,7 +42,7 @@ myDB,myMysqlPassword,myMysqlUser="","",""
 
 
 def newsetup():
-    
+
     def applystage3():
         global myHost,myPort
         myHost=str(dl.host_lineEdit.text())
@@ -52,14 +52,14 @@ def newsetup():
         myMysqlUser=str(dl.user_lineEdit.text())
         myDB=str(dl.database_lineEdit.text())
         myMysqlPassword=str(dl.password_lineEdit.text())
-    
+
     def ping():
         applystage3()
         testConnection()
     def testDB():
         applystage5()
         testConnection()
-    
+
     def testConnection():
         result=False
         try:
@@ -76,14 +76,14 @@ def newsetup():
             else:
                 message="Database"
                 additional="from user %s"%myMysqlUser
-            
+
             QtGui.QMessageBox.information(None,"Success!","The %s accepted the connection %s."%(message,additional))
         else:
             QtGui.QMessageBox.warning(None,"FAILURE",str(e))
             print "Connection failed!"
-            
+
         return result
-    
+
     def createDB():
         global rootpass
         dl.stackedWidget.setCurrentIndex(6)
@@ -100,7 +100,7 @@ def newsetup():
                 print "New database created sucessfully... attempting to loadtables"
                 if createdemodatabase.loadTables(myHost,myPort,myMysqlUser,myMysqlPassword,myDB):
                     print "successfully loaded tables"
-            
+
         except Exception,e:
             print "error creating database"
             print e
@@ -118,14 +118,14 @@ def newsetup():
             dl.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         else:
             dl.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
-    
+
     def dbechomode(arg):
         if arg==0:
             dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         else:
             dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
-        
-            
+
+
     def stage1():
         '''user has clicked the first "ok" button
         this prompts for a password'''
@@ -133,20 +133,25 @@ def newsetup():
         dl.main_password_lineEdit.setFocus()
         QtCore.QObject.connect(dl.mainpassword_checkBox,QtCore.SIGNAL("stateChanged(int)"), echomode)
         QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage2)
+        QtCore.QObject.connect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage2)
     def stage2():
         global myPassword
         '''user has entered the main password once
         get it re-entered'''
         dl.main_password_lineEdit.setFocus()
-        
         QtCore.QObject.disconnect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage2)
+        QtCore.QObject.disconnect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage2)
         myPassword=dl.main_password_lineEdit.text()
         dl.mainPassword_label.setText("Please re-enter this password")
         dl.main_password_lineEdit.setText("")
         QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
+        QtCore.QObject.connect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage3)
+
     def stage3():
         '''check the passwords match'''
         QtCore.QObject.disconnect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
+        QtCore.QObject.disconnect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage3)
+
         if dl.main_password_lineEdit.text()!=myPassword:
             print "passwords do not match"
             QtGui.QMessageBox.information(None,"Advisory","Passwords did not match, please try again")
@@ -158,24 +163,24 @@ def newsetup():
             dl.stackedWidget.setCurrentIndex(2)
             QtCore.QObject.connect(dl.ping_pushButton,QtCore.SIGNAL("clicked()"), ping)
             QtCore.QObject.connect(dl.pushButton_8,QtCore.SIGNAL("clicked()"), stage4)
-    
+
     def stage4():
         applystage3()
         dl.stackedWidget.setCurrentIndex(3)
         QtCore.QObject.connect(dl.createDB_pushButton,QtCore.SIGNAL("clicked()"), createDB)
         QtCore.QObject.connect(dl.haveDB_pushButton,QtCore.SIGNAL("clicked()"), stage5)
-        
+
     def stage5():
         dl.stackedWidget.setCurrentIndex(4)
         QtCore.QObject.connect(dl.testDB_pushButton,QtCore.SIGNAL("clicked()"), testDB)
         QtCore.QObject.connect(dl.dbpassword_checkBox,QtCore.SIGNAL("stateChanged(int)"), dbechomode)
         QtCore.QObject.connect(dl.pushButton_9,QtCore.SIGNAL("clicked()"), stage6)
-        
+
     def stage6():
         applystage5()
-        dl.stackedWidget.setCurrentIndex(5)        
+        dl.stackedWidget.setCurrentIndex(5)
         QtCore.QObject.connect(dl.saveQuit_pushButton,QtCore.SIGNAL("clicked()"), finish)
-    
+
     def finish():
         result=False
         try:
@@ -190,14 +195,14 @@ def newsetup():
             xmlnode.getElementsByTagName("location")[0].firstChild.replaceWholeText(myHost)
             #--port
             xmlnode.getElementsByTagName("port")[0].firstChild.replaceWholeText(str(myPort))
-            
+
             #-- database settings
             xmlnode=dom.getElementsByTagName("database")[0]
             #--user
             xmlnode.getElementsByTagName("user")[0].firstChild.replaceWholeText(myMysqlUser)
             xmlnode.getElementsByTagName("password")[0].firstChild.replaceWholeText(myMysqlPassword)
             xmlnode.getElementsByTagName("dbname")[0].firstChild.replaceWholeText(myDB)
-            
+
             settingsDir=os.path.dirname(localsettings.cflocation)
             try:
                 if not os.path.exists(settingsDir):
@@ -214,10 +219,10 @@ def newsetup():
             print e
             QtGui.QMessageBox.warning(None,"FAILURE",str(e))
             Dialog.reject()
-    
+
     '''a new setup'''
-    
-    
+
+
     Dialog = QtGui.QDialog()
     dl = Ui_newSetup.Ui_Dialog()
     dl.setupUi(Dialog)
@@ -226,7 +231,7 @@ def newsetup():
     QtCore.QObject.connect(dl.pushButton,QtCore.SIGNAL("clicked()"), stage1)
     if not Dialog.exec_():
         result=False
-        
+
     return result
 
 

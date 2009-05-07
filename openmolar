@@ -37,24 +37,32 @@ def main(app):
 
 
     if not os.path.exists(localsettings.cflocation):
+        message='''<center>This appears to be your first running of openMolar<br />
+Before you run this application ,<br />
+You need to set up a settings file.<br />
+So that openmolar knows where your mysql server resides<br />
+If you do not have a database, you will be prompted to create one<br /><br/>
+Purely because settings are saved in a system directory.<br />
+You may be prompted to raise privileges on some systems<br /><br />
+Are you ready to proceed?</center>'''
         result=QtGui.QMessageBox.question(None,"First Run",
-        '''<center>This appears to be your first running of openMolar<br />
-        Before you run this application <br />,
-        You need to set up a settings file.<br /><br />
-       You may be prompted to raise privileges on some systems<br /><br />
-       Are you ready to proceed?</center>''',
+        message,
         QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
 
         if result == QtGui.QMessageBox.Yes:
 
             import subprocess
-            if os.environ.has_key("GDM_LANG"):
-                p=subprocess.Popen(['gksu','python firstRun.py'])
-            elif os.environ.has_key("KDE_FULL_SESSION"):
-                p=subprocess.Popen(['kdsu','python firstRun.py'])
+            if os.getuid()==0:
+                #-- already root!
+                p=subprocess.Popen(['./firstRun.py'])
             else:
-                #-- don't know the desktop variant.. and could be windows and not need root anyway?
-                p=subprocess.Popen(['python firstRun.py'])
+                if os.environ.has_key("GDM_LANG"):
+                    p=subprocess.Popen(['gksu','./firstRun.py'])
+                elif os.environ.has_key("KDE_FULL_SESSION"):
+                    p=subprocess.Popen(['kdsu','./firstRun.py'])
+                else:
+                    #-- don't know the desktop variant.. and could be windows and not need root anyway?
+                    p=subprocess.Popen(['./firstRun.py'])
 
             result=p.wait()
     try:
