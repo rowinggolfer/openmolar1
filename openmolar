@@ -10,7 +10,7 @@
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
 
-'''this module puts "openmolar" onto the python path, and starts the gui'''
+'''this module puts the "openmolar" modules onto the python path, and starts the gui'''
 
 import sys,os,hashlib,time
 from PyQt4 import QtGui,QtCore
@@ -30,20 +30,23 @@ def main(app):
     localsettings.__version__ = __version__
     localsettings.__build__ = __build__
     uninitiated=True
-    
+
     def autoreception(arg):    #arg is a QString
         if arg.toLower()=="rec":
             dl.reception_radioButton.setChecked(True)
-    
-    
+
+
     if not os.path.exists(localsettings.cflocation):
         result=QtGui.QMessageBox.question(None,"First Run",
         '''<center>This appears to be your first running of openMolar<br />
-        Before you run this application, it needs to set up a settings file, which may require root access on some systems<br />Proceed?</center>''',
+        Before you run this application <br />,
+        You need to set up a settings file.<br /><br />
+       You may be prompted to raise privileges on some systems<br /><br />
+       Are you ready to proceed?</center>''',
         QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
-             
-        if result == QtGui.QMessageBox.Yes:              
-        
+
+        if result == QtGui.QMessageBox.Yes:
+
             import subprocess
             if os.environ.has_key("GDM_LANG"):
                 p=subprocess.Popen(['gksu','python firstRun.py'])
@@ -52,7 +55,7 @@ def main(app):
             else:
                 #-- don't know the desktop variant.. and could be windows and not need root anyway?
                 p=subprocess.Popen(['python firstRun.py'])
-            
+
             result=p.wait()
     try:
         d=minidom.parse(localsettings.cflocation)
@@ -66,29 +69,32 @@ def main(app):
     Dialog = QtGui.QDialog()
     dl = Ui_startscreen.Ui_Dialog()
     dl.setupUi(Dialog)
-    QtCore.QObject.connect(dl.user1_lineEdit,QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
-    
-    
-    while True:        
+    QtCore.QObject.connect(dl.user1_lineEdit,QtCore.SIGNAL("textEdited (const QString&)"),
+                                                                        autoreception)
+
+
+    while True:
         if Dialog.exec_():
             try:
                 pword="diqug_ADD_SALT_3i2some"+str(dl.password_lineEdit.text())
-                #-- hash the salted password (twice!) and compare to the value in /etc/openmolar/openmolar.conf   
+                #-- hash the salted password (twice!) and compare to the value in
+                #-- /etc/openmolar/openmolar.conf (linux)
                 s=hashlib.md5(hashlib.sha1(pword).hexdigest()).hexdigest()
                 if s != sysPassword:##end password check##
-                    raise LoginError 
+                    raise LoginError
                 if uninitiated:
                     #-- user has entered the correct password
                     #-- so now we connect to the mysql database for the 1st time
-                    #-- I do it this way so that anyone sniffing the network won't see the mysql password until this point
+                    #-- I do it this way so that anyone sniffing the network won't see
+                    #-- the mysql password until this point
                     #-- this could and should possibly still be improved upon
                     #-- maybe by using an ssl connection to the server.
-                    localsettings.initiate(False)                                                  
+                    localsettings.initiate(False)
                     uninitiated=False
-            
+
                 u1=dl.user1_lineEdit.text().toUpper()  #toUpper is a method of QString
                 u2=dl.user2_lineEdit.text().toUpper()
-                
+
                 #-- localsettings module now has user variables.
                 #-- allowed_logins in a list of practice staff.
                 if not u1 in localsettings.allowed_logins:
@@ -97,7 +103,7 @@ def main(app):
                     raise LoginError
 
                 #-- set a variable to allow the main program to run
-                localsettings.successful_login=True 
+                localsettings.successful_login=True
                 if dl.reception_radioButton.isChecked():
                     localsettings.station="reception"
                 if u2=="":
@@ -108,7 +114,8 @@ def main(app):
                 sys.exit(maingui.main(sys.argv))
 
             except LoginError:
-                QtGui.QMessageBox.warning(Dialog,"Login Error","Incorrect<br />User/password<br />combination!<br />Please Try Again.")
+                QtGui.QMessageBox.warning(Dialog,"Login Error","Incorrect<br />User/password<br />\
+                combination!<br />Please Try Again.")
         else:
             break
     app.closeAllWindows()
@@ -116,5 +123,5 @@ def main(app):
 if __name__=="__main__":
     print "starting openMolar",__version__
     app=QtGui.QApplication(sys.argv)
-    
+
     main(app)

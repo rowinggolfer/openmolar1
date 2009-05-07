@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>253</width>
+    <width>261</width>
     <height>161</height>
    </rect>
   </property>
@@ -253,7 +253,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
      </property>
      <property name="centerButtons" >
       <bool>true</bool>
@@ -262,6 +262,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>bpe_comboBox</tabstop>
+  <tabstop>bpe2_comboBox</tabstop>
+  <tabstop>bpe3_comboBox</tabstop>
+  <tabstop>bpe6_comboBox</tabstop>
+  <tabstop>bpe5_comboBox</tabstop>
+  <tabstop>bpe4_comboBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -271,12 +280,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>248</x>
-     <y>254</y>
+     <x>251</x>
+     <y>145</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
-     <y>274</y>
+     <y>160</y>
     </hint>
    </hints>
   </connection>
@@ -287,12 +296,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>316</x>
-     <y>260</y>
+     <x>251</x>
+     <y>145</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>286</x>
-     <y>274</y>
+     <x>260</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>

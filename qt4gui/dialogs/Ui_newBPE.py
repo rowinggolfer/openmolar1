@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/newBPE.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/newBPE.ui'
 #
-# Created: Sat Apr 11 12:08:26 2009
+# Created: Thu May  7 22:52:44 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(253, 161)
+        Dialog.resize(261, 161)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.frame = QtGui.QFrame(Dialog)
@@ -85,7 +85,7 @@ class Ui_Dialog(object):
         self.verticalLayout.addWidget(self.frame)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Save)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
@@ -94,6 +94,12 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.setTabOrder(self.buttonBox, self.bpe_comboBox)
+        Dialog.setTabOrder(self.bpe_comboBox, self.bpe2_comboBox)
+        Dialog.setTabOrder(self.bpe2_comboBox, self.bpe3_comboBox)
+        Dialog.setTabOrder(self.bpe3_comboBox, self.bpe6_comboBox)
+        Dialog.setTabOrder(self.bpe6_comboBox, self.bpe5_comboBox)
+        Dialog.setTabOrder(self.bpe5_comboBox, self.bpe4_comboBox)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "New CPITN score", None, QtGui.QApplication.UnicodeUTF8))
