@@ -36,7 +36,10 @@ def write_changes(pt,changes):
             if change == "bpe":
                 sqlcommands['bpe']='insert into bpe set serialno=%d,bpedate="%s",bpe="%s"'%(pt.serialno,localsettings.uk_to_sqlDate(pt.bpe[-1][0]),pt.bpe[-1][1])
             if change == "estimates":
-                sqlcommands["prvfees"]="update prvfees set data='%s' where serialno=%d and courseno=%d "%(pt.estimates[0][7],pt.serialno,pt.courseno)
+                mydata=pt.estimates[0][7]
+                if '"' in mydata:
+                    mydata=mydata.replace('"',r'\"')
+                sqlcommands["prvfees"]='update prvfees set data="%s" where serialno=%d and courseno=%d '%(mydata,pt.serialno,pt.courseno)
                     
             if change in patient_class.currtrtmtTableAtts:
                 value=pt.__dict__[change]
@@ -88,19 +91,19 @@ def toNotes(serialno,newnotes):
         n=1
         t=localsettings.curTime()
         year,month,day,hour,min=t.year-1900,t.month,t.day,t.hour,t.minute                           
-        openstr="\x01"+"%s"%localsettings.operator+chr(day)+chr(month)+chr(year)+chr(day)+chr(month)+chr(year)+chr(hour)+chr(min)
         
-        
-        #-- grrr - crap date implementation
-        #-- ok, for backwards compatibility reasons, I have to put a little hack in here, because of the idiotic way time is stored 
+        #-- grrr - crap date implementation coming up......
+        #-- ok, for backwards compatibility reasons, I have to put a little hack in here, because of the idiotic (though arguably efficient) way time is stored 
         #-- in the original data. If I build an sql query with a " in it (which happens at 34 minutes past the hour... 
-        #-- notes writing fails.
-         
-        ################## start ugly hack ############################
-        if min==34:
-            min=33
-        ################# end ugly hack ###############################
-        closestr="\x02"+"%s"%localsettings.operator+chr(day)+chr(month)+chr(year)+chr(hour)+chr(min)
+        #-- so I have to escape any "
+        
+        openstr="\x01%s%s%s%s%s%s%s%s%s"%(localsettings.operator,chr(day),chr(month),chr(year),chr(day),chr(month),chr(year),chr(hour),chr(min))
+        if '"' in openstr:
+            openstr=openstr.replace('"',r'\"')
+        
+        closestr="\x02%s%s%s%s%s%s"%(localsettings.operator,chr(day),chr(month),chr(year),chr(hour),chr(min))
+        if '"' in closestr:
+            closestr=closestr.replace('"',r'\"')
         
         for note in [openstr]+newnotes+[closestr]:
             query='insert into notes (serialno,lineno,line) values (%d,%d,"%s")'%(serialno,lineNo+n,note)
