@@ -3359,7 +3359,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             sqldate="%04d%02d%02d"%(atts[3].year(),atts[3].month(),atts[3].day())
             course=writeNewCourse.write(self.pt.serialno,localsettings.ops_reverse[atts[1]],sqldate)
             if course[0]:
-                self.pt.courseno1=course[1]
+                self.pt.courseno0=course[1]
                 self.advise("Sucessfully started new course of treatment",1)
                 self.pt.getCurrtrt()
                 self.pt.getEsts()
@@ -3377,7 +3377,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
                         QtGui.QMessageBox.No)
         if result==QtGui.QMessageBox.Yes:
             self.pt.courseno2=self.pt.courseno1
-            self.pt.courseno1=0
+            self.pt.courseno1=self.pt.courseno0
+            self.pt.courseno0=0
             self.pt.getCurrtrt()
             self.load_planpage()
             self.pt.underTreatment=False
