@@ -1,6 +1,6 @@
 To get openMolar running, you need to do the following.
 
-I will give instructions tested on ubuntu8.10
+I will give instructions tested on ubuntu8.10 and 9.04
 
 ####INSTALL INSTRUCTIONS#####
 
@@ -31,17 +31,14 @@ cd into the openmolar directory and type
 on first run of openMolar, you set a password for the app, you are given an opportunity to install a test database. 
 
 
-NB - The test database is currently very limited with no patients or appointments made, but The app will not run 
-without it!
+NB - The test database is currently very limited with only 1 patient. (serial no 1)
+But The app will not run without it!
 
 
-the test database has one operator - "user". So when prompted, enter the system password you just set up, and put
-"user" into the user1 field.
+the test database has one operator - "user". So when prompted, enter the system password you just set up, and put "user" into the user1 field.
 
 
-if you wish to re-initiate your settings at any point, delete the file /etc/openmolar/openmolar.conf
-
-
+if you wish to re-initiate your settings at any point, delete the file /etc/openmolar/openmolar.conf, or edit this file (with care)
 
 
 Any problems, get back to me on rowinggolfer@googlemail.com
@@ -49,4 +46,4 @@ Any problems, get back to me on rowinggolfer@googlemail.com
 regards
 
 Neil Wallace
-Sunday May 3rd 2009.
+Updated 8th May 2009
