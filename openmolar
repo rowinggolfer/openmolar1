@@ -50,21 +50,26 @@ Are you ready to proceed?</center>'''
         QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
 
         if result == QtGui.QMessageBox.Yes:
-
-            import subprocess
-            if os.getuid()==0:
-                #-- already root!
-                p=subprocess.Popen(['./firstRun.py'])
-            else:
-                if os.environ.has_key("GDM_LANG"):
-                    p=subprocess.Popen(['gksu','./firstRun.py'])
-                elif os.environ.has_key("KDE_FULL_SESSION"):
-                    p=subprocess.Popen(['kdsu','./firstRun.py'])
-                else:
-                    #-- don't know the desktop variant.. and could be windows and not need root anyway?
+            try:
+                import subprocess
+                if os.getuid()==0:
+                    #-- already root!
                     p=subprocess.Popen(['./firstRun.py'])
-
-            result=p.wait()
+                else:
+                    if os.environ.has_key("GDM_LANG"):
+                        p=subprocess.Popen(['gksu','./firstRun.py'])
+                    elif os.environ.has_key("KDE_FULL_SESSION"):
+                        try:
+                            p=subprocess.Popen(['kdesu','./firstRun.py'])
+                        except:
+                            #-- kubuntu doesn't use kdesu!!! ?????
+                            p=subprocess.Popen(['kdesudo','./firstRun.py'])
+                    else:
+                        #-- don't know the desktop variant.. and could be windows and not need root anyway?
+                        p=subprocess.Popen(['./firstRun.py'])
+                result=p.wait()
+            except:
+                QtGui.QMessageBox.information(None,"error","Unable to get superuser permisions")
     try:
         d=minidom.parse(localsettings.cflocation)
         sysPassword=d.getElementsByTagName("system_password")[0].firstChild.data
