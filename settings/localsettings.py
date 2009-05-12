@@ -18,8 +18,12 @@ if "win" in sys.platform:
 else: #-- linux hurrah!!
     cflocation='/etc/openmolar/openmolar.conf'
 
-successful_login=False                                                         #updated if correct password is given
-sqlDateFormat=r"%d/%m/%Y"                                                      #gives me dd-mm-YYYY  (%e-%m-%Y would give d-mm-YYYY if preferred)
+#updated if correct password is given
+successful_login=False
+
+#gives me dd-mm-YYYY  (%e-%m-%Y would give d-mm-YYYY if preferred)
+sqlDateFormat=r"%d/%m/%Y"
+
 operator="unknown"
 allowed_logins=[]
 recent_snos=[]
@@ -27,39 +31,63 @@ recent_names={}
 lastsearch=("","","","","","")
 activedents=[]
 activehygs=[]
-ops={}                                                                         #this dictionary is upated when this file is initiate - it links dentist keys with practioners eg ops[1]="JJ"
-ops_reverse={}                                                                 #keys/dents the other way round.
-apptix={}                                                                      #this dictionary is upated when this file is initiate - it links appointment keys with practioners eg app[13]="jj"
+
+#--this dictionary is upated when this file is initiate - it links dentist keys with practioners
+#--eg ops[1]="JJ"
+ops={}
+
+#--keys/dents the other way round.
+ops_reverse={}
+apptix={}
+#--this dictionary is upated when this file is initiate - it links appointment keys with practioners
+#--eg app[13]="jj"
+
 apptix_reverse={}
-referralfile=""                                                                #contains a link to the xml document with the referral info in it - this data will eventually be in the mysql?
+referralfile=""
+#contains a link to the xml document with the referral info in it - this data will eventually
+#--be in the mysql?
 stylesheet="resources/style.css"
-descriptions={}                                                                        #treatment codes..
+
+
+##TODO - is this obselete now?
+descriptions={}
+#--treatment codes..
+
 apptTypes=("EXAM","BITE","BT","DOUBLE",
 "FAMILY","FILL","FIT","HYG","IMPS","LF","ORTHO",
-"PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")                       #could pull from dental.atype
+"PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")
+#--could pull from dental.atype
+
 station="surgery"
 appointmentFontSize=7
 message=""
 dentDict={}
-surgeryno=-1                                                                  #for call durr purposes only
-csetypes=["P","I","N","N OR","N O"] 
+
+surgeryno=-1
+#--for call durr purposes only
+
+csetypes=["P","I","N","N OR","N O"]
 treatmentCodes={}
-logqueries=True      #for debugging purposes... set this to true.- not yet implemented throughout. 
+logqueries=True
+#--for debugging purposes... set this to true.- not yet implemented throughout.
+
 practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV1 1PP")
 
-#localsettings.defaultNewPatientDetails=(pt.sname,pt.addr1,pt.addr2,pt.addr3,pt.town,pt.county,pt.pcde,pt.tel1)
+#--localsettings.defaultNewPatientDetails=(pt.sname,pt.addr1,pt.addr2,pt.addr3,pt.town,
+#--pt.county,pt.pcde,pt.tel1)
 defaultNewPatientDetails=("",)*8
+
 privateFees={}
 
+#-- my own class of excpetion, for when a serialno is called from the database and no match is found
 class PatientNotFoundError(Exception):
     pass
-
 
 def curTime():
     return datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
 
 def ukToday():
-    d=datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)    
+    d=datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
     return "%02d/%02d/%04d"%(d.day,d.month,d.year)
 def sqlToday():
     '''returns today in sql compatible format'''
@@ -75,7 +103,7 @@ def GP17formatDate(d):
     else:
         return d.replace("/","") #"%02d%02d%04d"%(d.day,d.month,d.year)
 
-def formatDate(d):                        
+def formatDate(d):
     '''takes a date, returns a uk type date string'''
     try:
         retarg= "%02d/%02d/%d"%(d.day,d.month,d.year)
@@ -123,6 +151,7 @@ def initiate(debug=False):
     print "initiating settings"
     global referralfile,stylesheet,fees,message,dentDict,privateFees
     from openmolar.connect import connect
+    from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
     db=connect()
     cursor = db.cursor()
@@ -144,22 +173,30 @@ def initiate(debug=False):
 
     try:
         ##correspondence details for NHS forms
-        cursor.execute(" select id,inits,name,formalname,fpcno,quals from practitioners where flag0=1;")
+        query="select id,inits,name,formalname,fpcno,quals from practitioners where flag0=1"
+        if logqueries:
+            cursor.execute(query)
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
             dentDict[practitioner[0]]=practitioner[1:]
-        
+
         #now get only practitioners who have an active daybook
-        cursor.execute("select apptix,inits from practitioners where flag3=1")
+        query="select apptix,inits from practitioners where flag3=1"
+        if logqueries:
+            print query
+        cursor.execute(query)
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
             if practitioner[0] != 0 and practitioner[0] != None: #apptix
                 apptix[practitioner[1]]=practitioner[0]
-        cursor.execute("select inits from practitioners where flag3=1 and flag0=1")                     #dentists where appts active
+        cursor.execute("select inits from practitioners where flag3=1 and flag0=1")
+        #dentists where appts active
+
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
             activedents.append(practitioner[0])
-        cursor.execute("select inits from practitioners where flag3=1 and flag0=0")                     #hygenists where appts active
+        cursor.execute("select inits from practitioners where flag3=1 and flag0=0")
+        #hygenists where appts active
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
             activehygs.append(practitioner[0])
@@ -167,38 +204,53 @@ def initiate(debug=False):
         print "error loading practitioners"
 
     try:
-        cursor.execute("select id from opid")                                                           #grab initials of those currently allowed to log in
+        cursor.execute("select id from opid")
+        #grab initials of those currently allowed to log in
         trows = cursor.fetchall()
         for row in trows:
             allowed_logins.append(row[0])
     except:
         print "error loading from opid"
 
+
+    #-- majorly important dictionary being created. the keys are treatment codes form NHS scotland
+    #-- the values are a custom data class in the fee_keys module
+
     try:   #this breaks compatibility with the old database schema
-        cursor.execute("select code,description,pfa,USERCODE,description1 from newfeetable")
+        query="select code,description,pfa,USERCODE,description1,regulation from newfeetable"
+        if logqueries:
+            print query
+        cursor.execute(query)
         rows=cursor.fetchall()
         for row in rows:
             code=row[0]
             usercode=row[3]
             if code!="":
-                #privateFees[row[0]]=row[2]
-                while privateFees.has_key(code):
-                    code+="."
-                privateFees[code]=row[2]
-                descriptions[code]=row[1]
-                if usercode!="" and usercode!=None:
-                    treatmentCodes[usercode]=row[0]
-                
+                if privateFees.has_key(code):
+                    privateFees[code].addFee(row[2])
+                else:
+                    newFee=fee_keys.prvFee()
+                    newFee.description=row[4]
+                    newFee.setRegulations(row[5])
+                    newFee.addFee(row[2])
+                    privateFees[code]=newFee
+
+                    descriptions[code]=row[1]
+
+            if usercode!="" and usercode!=None:
+                treatmentCodes[usercode]=code
+
     except Exception,e:
         print "error loading from newfeetable",e
-    
+
     wkdir=os.getcwd()
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")
-    
 
-    message='''<html><head><link rel="stylesheet" href="%s" type="text/css"></head><body><div align="center">
+
+    message='''<html><head><link rel="stylesheet" href="%s" type="text/css">
+    </head><body><div align="center">
     <img src="html/images/newlogo.png" width="150",height="100", align="left" />
-    
+
     <img src="html/images/newlogo.png" width="150",height="100", align="right" />
     <h1>Welcome to OpenMolar!</h1><ul><li>Version %s</li><li>Build %s</li></ul>
     <p>Your Data is Accessible, and the server reports no issues.</p>
@@ -222,9 +274,9 @@ def initiate(debug=False):
         print privateFees
         print treatmentCodes
         #print fees
-    
+
 if __name__ == "__main__":
+    '''testing only'''
     sys.path.append("/home/neil/openmolar/openmolar")
     print cflocation
     initiate(True)
-    

@@ -25,11 +25,11 @@ def getFee(cset,numberOfItems,itemcode):
     feePerItem=0
     if "P" in cset:
         try:
-            feePerItem=localsettings.privateFees[itemcode]
+            return localsettings.privateFees[itemcode].getFee(numberOfItems)
         except:
             print "no fee found for item %s"%itemcode
     return numberOfItems*feePerItem
-    
+
 def getDescription(arg):
     description=""
     try:
@@ -44,15 +44,15 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.setupUi(widget)
         QtCore.QObject.connect(self.spinBox,QtCore.SIGNAL("valueChanged(int)"), self.feeCalc)
         #self.itemfee=0
-        
+
     def setNumber(self,arg):
         self.spinBox.setValue(arg)
-        
+
     def setItem(self,itemcode):
         self.itemcode=itemcode
         description=getDescription(self.itemcode)
         self.label.setText(description+"\t(%s)"%self.itemcode)
-        
+
     def feeCalc(self,arg):
         fee=getFee(self.parent.cset,arg,self.itemcode) / 100
         self.doubleSpinBox.setValue(fee)
@@ -67,7 +67,7 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             self.items.append((item[0],getCode(item[1]),item[1]),)
         self.cset=cset
         self.showItems()
-                
+
     def showItems(self):
         self.itemWidgets=[]
         vlayout = QtGui.QVBoxLayout(self.frame)
@@ -79,14 +79,14 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             i.usercode=item[2]
             self.itemWidgets.append(i)
             vlayout.addWidget(iw)
-        
+
     def updateTotal(self):
         total=0
         for widg in self.itemWidgets:
             total+=widg.doubleSpinBox.value()
-    
+
         self.fee_doubleSpinBox.setValue(total)
-        
+
     def getInput(self):
         if self.dialog.exec_():
             retarg=()
@@ -98,7 +98,7 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             return retarg
         else:
             return()
-    
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
@@ -109,4 +109,4 @@ if __name__ == "__main__":
         items.append((0,"ECE"),)
     ui = treatment(Dialog,items,"P")
     print ui.getInput()
-   
+

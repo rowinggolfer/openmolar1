@@ -65,7 +65,8 @@ Are you ready to proceed?</center>'''
                             #-- kubuntu doesn't use kdesu!!! ?????
                             p=subprocess.Popen(['kdesudo','./firstRun.py'])
                     else:
-                        #-- don't know the desktop variant.. and could be windows and not need root anyway?
+                        #-- don't know the desktop variant.. and could be windows
+                        #-- and not need root anyway?
                         p=subprocess.Popen(['./firstRun.py'])
                 result=p.wait()
             except:

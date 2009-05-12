@@ -208,9 +208,10 @@ class feeClass():
         if self.noNewCourseNeeded():
             list=()
             items=localsettings.treatmentCodes.keys()
-            items.sort()
             for item in items:
-                list+=((0,item,localsettings.treatmentCodes[item]),)
+                code=localsettings.treatmentCodes[item]
+                if code>"3000":
+                    list+=((0,item,code),)
             chosenTreatments=self.offerTreatmentItems(list)
             for treat in chosenTreatments:
                 self.pt.otherpl+="%s%s "%(treat[0],treat[2])
@@ -3451,7 +3452,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
                     self.pt.addHiddenNote("exam","CE EXAM")
                     item=fee_keys.getKeyCode("CE")
                     if "P" in self.pt.cset:
-                        itemfee=localsettings.privateFees[item]
+                        itemfee=localsettings.privateFees[item].getFee()
                     else:
                         itemfee=0
                     self.pt.addToEstimate(1,item,itemfee)
@@ -3481,7 +3482,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         itemfee=0
         if "P" in self.pt.cset:
             try:
-                itemfee=localsettings.privateFees[item]
+                itemfee=localsettings.privateFees[item].getFee()
             except:
                 print "no fee found for item %s"%item
         fee=itemfee / 100

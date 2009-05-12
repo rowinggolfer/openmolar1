@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or 
+# by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import sys
@@ -12,7 +12,7 @@ from openmolar.settings import localsettings
 private_only = False
 nhs_only = False
 
-newfeetable_Headers="section,code,oldcode,USERCODE,description,description1,NF08,NF08_pt,PFA"
+newfeetable_Headers="section,code,oldcode,USERCODE,regulation,description,description1,NF08,NF08_pt,PFA"
 
 def getFeeHeaders():
     return newfeetable_Headers.split(",")[1:]
@@ -27,7 +27,7 @@ def getFeeDict():
         option+="where PFA>0"
     elif nhs_only:
         option+="where NF08>0"
-        
+
     db=connect()
     cursor=db.cursor()
     cursor.execute('select %s from newfeetable %s'%(newfeetable_Headers,option))
@@ -36,7 +36,7 @@ def getFeeDict():
     #db.close()
 
     sections={}
-    
+
     for row in feescales:
         if not sections.has_key(row[0]):
             sections[row[0]]={}
@@ -45,7 +45,7 @@ def getFeeDict():
             feecode+="."
         sections[row[0]][feecode]=row[2:]
     return sections
-       
+
 def decode(blob):
     '''decode in blocks of 4 bytes - this is a relic from the old database
     '''
@@ -53,10 +53,10 @@ def decode(blob):
     retlist=[]
     for i in range(0,len(blob),4):
         cost=struct.unpack_from('H',blob,i)[0]
-        retlist.append(cost)  
+        retlist.append(cost)
     return retlist
 
-    
+
 def feesHtml():
     return toHtml(getFees())
 
@@ -64,4 +64,3 @@ if __name__ == "__main__":
     #localsettings.initiate(False)
     #print localsettings.privateFees
     print getFeeDict()
-    

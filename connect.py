@@ -21,16 +21,18 @@ def connect():
         myUser=xmlnode.getElementsByTagName("user")[0].firstChild.data
         myPassword=xmlnode.getElementsByTagName("password")[0].firstChild.data
         myDb=xmlnode.getElementsByTagName("dbname")[0].firstChild.data
-    
+
     if not (currentConnection and currentConnection.open):
         print "New connection needed"
-        currentConnection=MySQLdb.connect(host=myHost,port=myPort,user=myUser,passwd=myPassword,db=myDb)
+        print "connecting to %s on %s port %s"%(myDb, myHost, myPort)
+        currentConnection=MySQLdb.connect(host=myHost,port=myPort,user=myUser,passwd=myPassword,
+                                          db=myDb)
         currentConnection.autocommit(True)
         print currentConnection
     else:
         currentConnection.commit()
     return currentConnection
-    
+
 if __name__=="__main__":
     import time
     print localsettings.cflocation
@@ -52,5 +54,5 @@ if __name__=="__main__":
             c.execute('update patients set dob="19691209" where serialno=11956')
             c.close()
         time.sleep(5)
-    
+
     dbc.close()
