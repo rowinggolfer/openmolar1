@@ -130,5 +130,38 @@
   <tabstop>fee_doubleSpinBox</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>yes_pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>520</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>442</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>later_pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>254</x>
+     <y>271</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>364</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

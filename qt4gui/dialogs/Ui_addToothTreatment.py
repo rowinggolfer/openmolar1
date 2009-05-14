@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/planToothTreatment.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/addToothTreatment.ui'
 #
-# Created: Thu May 14 14:13:30 2009
+# Created: Thu May 14 14:48:59 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,6 +56,8 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.label_4, 2, 0, 1, 2)
 
         self.retranslateUi(Dialog)
+        QtCore.QObject.connect(self.yes_pushButton, QtCore.SIGNAL("clicked()"), Dialog.accept)
+        QtCore.QObject.connect(self.later_pushButton, QtCore.SIGNAL("clicked()"), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.yes_pushButton, self.later_pushButton)
         Dialog.setTabOrder(self.later_pushButton, self.scrollArea)

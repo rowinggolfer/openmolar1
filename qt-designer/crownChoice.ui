@@ -5,71 +5,104 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>178</width>
-    <height>197</height>
+    <width>249</width>
+    <height>228</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Choose</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" >
+   <item row="0" column="0" colspan="2" >
     <widget class="QPushButton" name="gold" >
      <property name="text" >
       <string>Gold</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" >
+   <item row="0" column="2" colspan="2" >
     <widget class="QPushButton" name="resin" >
      <property name="text" >
       <string>Resin</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
+   <item row="1" column="0" colspan="2" >
     <widget class="QPushButton" name="pjc" >
      <property name="text" >
       <string>PJC</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
+   <item row="1" column="2" colspan="2" >
     <widget class="QPushButton" name="temp" >
      <property name="text" >
       <string>Temporary</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" >
+   <item row="2" column="0" colspan="2" >
     <widget class="QPushButton" name="lava" >
      <property name="text" >
       <string>Lava</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" >
+   <item row="2" column="2" colspan="2" >
     <widget class="QPushButton" name="fortress" >
      <property name="text" >
       <string>Fortress</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" >
+   <item row="3" column="0" colspan="2" >
     <widget class="QPushButton" name="bonded" >
      <property name="text" >
       <string>Bonded</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1" >
+   <item row="3" column="2" colspan="2" >
     <widget class="QPushButton" name="other" >
      <property name="text" >
       <string>Other</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2" >
+   <item row="4" column="0" >
+    <spacer name="horizontalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>68</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="1" colspan="2" >
+    <widget class="QPushButton" name="pushButton" >
+     <property name="text" >
+      <string>Recement</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3" >
+    <spacer name="horizontalSpacer_2" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>68</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="0" colspan="4" >
     <widget class="QPushButton" name="cancel_pushButton" >
      <property name="text" >
       <string>Cancel</string>

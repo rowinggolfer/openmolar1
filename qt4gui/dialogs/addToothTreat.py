@@ -30,7 +30,7 @@ def getCode(fill):
     converts fillings into four digit codes used in the feescale
     eg "MOD" -> "1404" (both are strings)
     '''
-    
+
     return fee_keys.getKeyCode(fill)
 
 def getFee(cset,itemcode):
@@ -68,6 +68,7 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
         self.tooth=""
 
     def setTooth(self, tooth):
+        self.tooth=tooth
         self.tooth_label.setText(tooth.upper())
     def setItem(self,usercode):
         self.itemcode=getCode(usercode)
@@ -92,8 +93,21 @@ class treatment(Ui_addToothTreatment.Ui_Dialog):
         self.dialog=dialog
         self.items=[]
         self.cset=cset
-        
-        
+
+
+    def itemsPerTooth(self, tooth, props):
+        '''
+        this is called when treatment is added to a single tooth
+        usage
+        itemsPerTooth("ul6","MOD RT")
+        provides a more convenient way of calling setItems
+        '''
+        treats=[]
+        items=props.strip(" ").split(" ")
+        for item in items:
+            treats.append((tooth, item), )
+        self.setItems(treats)
+
     def setItems(self, items):
         '''
         useage setItems((("ul6", "MO"), ("ul6","RT")),)
@@ -127,13 +141,9 @@ class treatment(Ui_addToothTreatment.Ui_Dialog):
         if self.dialog.exec_():
             retarg=()
             for i in self.itemWidgets:
-                number=i.spinBox.value()
                 fee=int(i.doubleSpinBox.value()*100)
-                if number>0:
-                    retarg+=((number,i.itemcode,i.usercode,fee),)
+                retarg+=((i.tooth, i.itemcode,fee),)
             return retarg
-        else:
-            return()
 
 if __name__ == "__main__":
     import sys
@@ -150,4 +160,9 @@ if __name__ == "__main__":
     #ui.setItems(toothSpecificCodesList(pt))
     ui.setItems((("ul6", "CR,GO"), ("ul6","RT")),)
     ui.showItems()
-    print ui.getInput()
+
+    chosen = ui.getInput()
+    if chosen:
+        print chosen
+    else:
+        print "rejected"

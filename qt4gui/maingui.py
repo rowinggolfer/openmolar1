@@ -237,6 +237,31 @@ class feeClass():
         dl = addTreat.treatment(Dialog,arg,self.pt.cset)
         return dl.getInput()
 
+    def toothTreatAdd(self, tooth, item):
+        '''
+        adds treatment to a tooth, offers an estimate check
+        '''
+        print "toothTreatAdded ", tooth, item
+        self.pt.__dict__[tooth+self.selectedChartWidget]=item
+        #--update the patient!!
+        self.ui.planChartWidget.setToothProps(tooth,item)
+        self.ui.planChartWidget.update()
+
+
+        Dialog = QtGui.QDialog()
+        ui = addToothTreat.treatment(Dialog,"P")
+
+        ui.itemsPerTooth(tooth, item)
+        ui.showItems()
+
+        chosen = ui.getInput()
+        if chosen:
+            print chosen
+        else:
+            self.ui.estimateRequired_checkBox.setChecked(True)
+
+
+
     def completeToothTreatments(self,arg):
         Dialog = QtGui.QDialog(self.mainWindow)
         dl = completeTreat.treatment(Dialog,localsettings.ops[self.pt.dnt1],arg,0)
@@ -1740,11 +1765,7 @@ class chartsClass():
         elif self.selectedChartWidget=="pl":
             if not self.noNewCourseNeeded():
                 return
-            if self.selectedChartWidget=="pl":
-                self.pt.__dict__[tooth+self.selectedChartWidget]=arg
-                #--update the patient!!
-                self.ui.planChartWidget.setToothProps(tooth,arg)
-                self.ui.planChartWidget.update()
+            self.toothTreatAdd(tooth, arg)
         elif self.selectedChartWidget=="cmp":
             self.advise("for the moment, please enter treatment into plan first, "+
             "then complete it.",1)

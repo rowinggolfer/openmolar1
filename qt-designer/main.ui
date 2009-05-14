@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>985</width>
+    <width>950</width>
     <height>614</height>
    </rect>
   </property>
@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>7</number>
+              <number>6</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>709</width>
+                    <width>682</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1448,7 +1448,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>709</width>
+                    <width>682</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -1760,7 +1760,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>719</width>
+                    <width>692</width>
                     <height>469</height>
                    </rect>
                   </property>
@@ -2118,8 +2118,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>725</width>
-                    <height>392</height>
+                    <width>701</width>
+                    <height>376</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2391,7 +2391,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>729</width>
+                    <width>702</width>
                     <height>396</height>
                    </rect>
                   </property>
@@ -2463,16 +2463,10 @@
                         </widget>
                        </item>
                        <item rowspan="3" row="0" column="1" >
-                        <widget class="QFrame" name="toothProps_frame" >
-                         <property name="sizePolicy" >
-                          <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
+                        <widget class="QFrame" name="frame_4" >
                          <property name="maximumSize" >
                           <size>
-                           <width>180</width>
+                           <width>190</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -2482,6 +2476,40 @@
                          <property name="frameShadow" >
                           <enum>QFrame::Raised</enum>
                          </property>
+                         <layout class="QVBoxLayout" name="verticalLayout_14" >
+                          <property name="margin" >
+                           <number>3</number>
+                          </property>
+                          <item>
+                           <widget class="QFrame" name="toothProps_frame" >
+                            <property name="sizePolicy" >
+                             <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="maximumSize" >
+                             <size>
+                              <width>180</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="frameShape" >
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow" >
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="estimateRequired_checkBox" >
+                            <property name="text" >
+                             <string>Estimate Required</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </widget>
                        </item>
                        <item row="1" column="0" >
@@ -2567,7 +2595,7 @@
                  </property>
                  <property name="minimumSize" >
                   <size>
-                   <width>211</width>
+                   <width>240</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -2579,7 +2607,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>208</width>
+                    <width>236</width>
                     <height>392</height>
                    </rect>
                   </property>
@@ -2805,7 +2833,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>729</width>
+                    <width>702</width>
                     <height>396</height>
                    </rect>
                   </property>
@@ -2929,7 +2957,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>585</width>
+                        <width>558</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3150,7 +3178,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>235</width>
+                <width>223</width>
                 <height>455</height>
                </rect>
               </property>
@@ -3168,7 +3196,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>235</width>
+                <width>224</width>
                 <height>455</height>
                </rect>
               </property>
@@ -3185,7 +3213,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>235</width>
+                <width>223</width>
                 <height>455</height>
                </rect>
               </property>
@@ -4490,7 +4518,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>985</width>
+     <width>950</width>
      <height>22</height>
     </rect>
    </property>
