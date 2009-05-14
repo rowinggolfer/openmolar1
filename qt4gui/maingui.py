@@ -21,7 +21,7 @@ Ui_payments,paymentwidget,Ui_specify_appointment,Ui_appointment_length,Ui_daylis
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,medNotes,\
-saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, addTreat
+saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, addTreat, addToothTreat
 
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)########
 from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,writeNewPatient,\
@@ -218,6 +218,20 @@ class feeClass():
                 self.pt.addToEstimate(treat[0],int(treat[1]),treat[3])
             self.load_planpage()
 
+    def costToothItems(self):
+        items=estimates.toothSpecificCodesList(self)
+        #-- this will be such as (("UR3 - P","1421"),)
+        print items
+
+        '''list=()
+        for item in items:
+            list+=((1,item[0],item[1]),)
+        Ui_planToothTreatment.py
+        chosenTreatments=self.offerTreatmentItems(list)
+        for treat in chosenTreatments:
+            self.pt.addToEstimate(treat[0],int(treat[1]),treat[3])
+        self.load_planpage()
+        '''
     def offerTreatmentItems(self,arg):
         Dialog = QtGui.QDialog(self.mainWindow)
         dl = addTreat.treatment(Dialog,arg,self.pt.cset)
@@ -1330,6 +1344,9 @@ class signals():
                                                                                 self.addPerioItems)
         QtCore.QObject.connect(self.ui.otherTxpushButton,QtCore.SIGNAL("clicked()"),
                                                                                 self.addOtherItems)
+        QtCore.QObject.connect(self.ui.toothCost_pushButton,QtCore.SIGNAL("clicked()"),
+                                                                                self.costToothItems)
+
 
 
         #daybook - cashbook

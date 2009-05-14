@@ -11,24 +11,34 @@ __version__=""
 __build__=""
 
 
-#-- sorry about this... but cross platform is a goal :(
-
 if "win" in sys.platform:
+    #-- sorry about this... but cross platform is a goal :(
     cflocation='C:\\Program Files\\openmolar\\openmolar.conf'
-else: #-- linux hurrah!!
+elif "linux" in sys.platform:
+    #-- linux hurrah!!
+    cflocation='/etc/openmolar/openmolar.conf'
+else:
+    print "unknown system platform - defaulting to settings in /etc/openmolar"
     cflocation='/etc/openmolar/openmolar.conf'
 
 #updated if correct password is given
 successful_login=False
 
-#gives me dd-mm-YYYY  (%e-%m-%Y would give d-mm-YYYY if preferred)
+#-- this variable is used when using DATE_FORMAT from the database
+#-- my preference is the UK style dd/mm/YYYY
 sqlDateFormat=r"%d/%m/%Y"
 
+#-- undated at login
 operator="unknown"
 allowed_logins=[]
+
+#-- this list is used for navigating back and forth through the list
 recent_snos=[]
-recent_names={}
+
+#-- update whenever a manual search is made
 lastsearch=("","","","","","")
+
+#-- used to load combobboxes etc....
 activedents=[]
 activehygs=[]
 
@@ -56,27 +66,36 @@ descriptions={}
 apptTypes=("EXAM","BITE","BT","DOUBLE",
 "FAMILY","FILL","FIT","HYG","IMPS","LF","ORTHO",
 "PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")
-#--could pull from dental.atype
 
+
+#-- surgery or reception machine?
 station="surgery"
-appointmentFontSize=7
+
+#-- default appt font size
+appointmentFontSize=8
+
 message=""
 dentDict={}
 
+#-- openmolar needs to know where it is when calling x-rays
 surgeryno=-1
-#--for call durr purposes only
 
+#-- pt's are "private, independent, NHS etc...."
 csetypes=["P","I","N","N OR","N O"]
-treatmentCodes={}
-logqueries=True
-#--for debugging purposes... set this to true.- not yet implemented throughout.
 
+treatmentCodes={}
+
+#--for debugging purposes... set this to true.- not yet implemented throughout.
+logqueries=False
+
+#-- self evident
 practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV1 1PP")
 
 #--localsettings.defaultNewPatientDetails=(pt.sname,pt.addr1,pt.addr2,pt.addr3,pt.town,
 #--pt.county,pt.pcde,pt.tel1)
 defaultNewPatientDetails=("",)*8
 
+#-- this gets initiated
 privateFees={}
 
 #-- my own class of excpetion, for when a serialno is called from the database and no match is found

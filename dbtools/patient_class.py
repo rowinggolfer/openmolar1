@@ -348,7 +348,7 @@ if __name__ =="__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=101
+        serialno=1
     if "-v" in sys.argv:
         verbose=True
     else:

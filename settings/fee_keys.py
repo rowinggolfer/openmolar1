@@ -81,7 +81,8 @@ def getKeyCode(arg):
     try:
         return localsettings.treatmentCodes[arg]
     except Exception,e:
-        print "Caught error in fee_keys.getKeyCode with code '%s'"%arg
+        #print "Caught error in fee_keys.getKeyCode with code '%s'"%arg
+        return "4001" #other treatment!!
 
 if __name__ == "__main__":
     #localsettings.initiate(False)

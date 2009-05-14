@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/newSetup.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/newSetup.ui'
 #
-# Created: Mon May  4 20:58:45 2009
+# Created: Wed May 13 15:52:02 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,6 +37,8 @@ class Ui_Dialog(object):
         self.page_1.setObjectName("page_1")
         self.gridLayout_2 = QtGui.QGridLayout(self.page_1)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        spacerItem1 = QtGui.QSpacerItem(358, 31, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem1, 2, 0, 1, 3)
         self.label_5 = QtGui.QLabel(self.page_1)
         self.label_5.setObjectName("label_5")
         self.gridLayout_2.addWidget(self.label_5, 1, 0, 1, 1)
@@ -49,8 +51,6 @@ class Ui_Dialog(object):
         self.mainpassword_checkBox.setFocusPolicy(QtCore.Qt.NoFocus)
         self.mainpassword_checkBox.setObjectName("mainpassword_checkBox")
         self.gridLayout_2.addWidget(self.mainpassword_checkBox, 1, 2, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(358, 31, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem1, 2, 0, 1, 3)
         self.pushButton_2 = QtGui.QPushButton(self.page_1)
         self.pushButton_2.setObjectName("pushButton_2")
         self.gridLayout_2.addWidget(self.pushButton_2, 3, 0, 1, 3)
@@ -240,23 +240,24 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.stackedWidget)
 
         self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.pushButton, self.main_password_lineEdit)
         Dialog.setTabOrder(self.main_password_lineEdit, self.pushButton_2)
-        Dialog.setTabOrder(self.pushButton_2, self.pushButton_8)
-        Dialog.setTabOrder(self.pushButton_8, self.host_lineEdit)
+        Dialog.setTabOrder(self.pushButton_2, self.host_lineEdit)
         Dialog.setTabOrder(self.host_lineEdit, self.port_lineEdit)
         Dialog.setTabOrder(self.port_lineEdit, self.ping_pushButton)
-        Dialog.setTabOrder(self.ping_pushButton, self.haveDB_pushButton)
+        Dialog.setTabOrder(self.ping_pushButton, self.pushButton_8)
+        Dialog.setTabOrder(self.pushButton_8, self.haveDB_pushButton)
         Dialog.setTabOrder(self.haveDB_pushButton, self.createDB_pushButton)
         Dialog.setTabOrder(self.createDB_pushButton, self.pushButton_9)
         Dialog.setTabOrder(self.pushButton_9, self.database_lineEdit)
         Dialog.setTabOrder(self.database_lineEdit, self.user_lineEdit)
         Dialog.setTabOrder(self.user_lineEdit, self.password_lineEdit)
-        Dialog.setTabOrder(self.password_lineEdit, self.dbpassword_checkBox)
-        Dialog.setTabOrder(self.dbpassword_checkBox, self.testDB_pushButton)
+        Dialog.setTabOrder(self.password_lineEdit, self.testDB_pushButton)
         Dialog.setTabOrder(self.testDB_pushButton, self.saveQuit_pushButton)
+        Dialog.setTabOrder(self.saveQuit_pushButton, self.rootPassword_lineEdit)
+        Dialog.setTabOrder(self.rootPassword_lineEdit, self.createDB_pushButton_2)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "First Run", None, QtGui.QApplication.UnicodeUTF8))

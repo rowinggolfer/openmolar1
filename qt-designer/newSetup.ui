@@ -16,7 +16,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget" >
      <property name="currentIndex" >
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="page" >
       <layout class="QVBoxLayout" name="verticalLayout" >
@@ -69,6 +69,19 @@ p, li { white-space: pre-wrap; }
      </widget>
      <widget class="QWidget" name="page_1" >
       <layout class="QGridLayout" name="gridLayout_2" >
+       <item row="2" column="0" colspan="3" >
+        <spacer name="verticalSpacer_2" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>358</width>
+           <height>31</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="label_5" >
          <property name="text" >
@@ -101,19 +114,6 @@ p, li { white-space: pre-wrap; }
           <string>show password</string>
          </property>
         </widget>
-       </item>
-       <item row="2" column="0" colspan="3" >
-        <spacer name="verticalSpacer_2" >
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>358</width>
-           <height>31</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="3" column="0" colspan="3" >
         <widget class="QPushButton" name="pushButton_2" >
@@ -148,11 +148,6 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
       </layout>
-      <zorder>label_5</zorder>
-      <zorder>main_password_lineEdit</zorder>
-      <zorder>mainpassword_checkBox</zorder>
-      <zorder>pushButton_2</zorder>
-      <zorder>mainPassword_label</zorder>
      </widget>
      <widget class="QWidget" name="page_6" >
       <layout class="QGridLayout" name="gridLayout_3" >
@@ -640,19 +635,20 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButton</tabstop>
   <tabstop>main_password_lineEdit</tabstop>
   <tabstop>pushButton_2</tabstop>
-  <tabstop>pushButton_8</tabstop>
   <tabstop>host_lineEdit</tabstop>
   <tabstop>port_lineEdit</tabstop>
   <tabstop>ping_pushButton</tabstop>
+  <tabstop>pushButton_8</tabstop>
   <tabstop>haveDB_pushButton</tabstop>
   <tabstop>createDB_pushButton</tabstop>
   <tabstop>pushButton_9</tabstop>
   <tabstop>database_lineEdit</tabstop>
   <tabstop>user_lineEdit</tabstop>
   <tabstop>password_lineEdit</tabstop>
-  <tabstop>dbpassword_checkBox</tabstop>
   <tabstop>testDB_pushButton</tabstop>
   <tabstop>saveQuit_pushButton</tabstop>
+  <tabstop>rootPassword_lineEdit</tabstop>
+  <tabstop>createDB_pushButton_2</tabstop>
  </tabstops>
  <resources/>
  <connections/>

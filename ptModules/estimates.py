@@ -35,7 +35,7 @@ def getCurrentEstimate(rows,tsrows):
         if "^" in item:
             item=item.replace("^","")
             number_of_items=""
-            
+
         retarg.append((number_of_items,item,d[2]))  #(d[0],d[1],d[2]))
         total+=d[2]
     dec=()
@@ -52,7 +52,7 @@ def getCurrentEstimate(rows,tsrows):
             number_of_items=""
         retarg.append((number_of_items,item,d[2]))  #(d[0],d[1],d[2]))
         total+=d[2]
-    
+
     return (retarg,total)
 
 def toHtml(estrows,tsrows):  ##########################not really used anymore    18.04.
@@ -97,7 +97,7 @@ def toHtml(estrows,tsrows):  ##########################not really used anymore  
 def decode(blob):
     '''estimates are blocks of 8 bytes - format ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')'''
     retlist=[]
-    for i in range(0,len(blob),8):                                              
+    for i in range(0,len(blob),8):
         number=struct.unpack_from('b',blob,i)[0]                                ## this could be a lot tidier.... struct.unpack(bHi,blob) returns a tuple (number,item,cost)
         item=struct.unpack_from('H',blob,i+2)[0]
         try:
@@ -110,12 +110,12 @@ def decode(blob):
 
 def encode(number,item,fee):
     return struct.pack("bHi",number,item,fee)
-    
+
 
 def decodeTS(blob):
     '''estimates are blocks of 8 bytes - format ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')'''
     retlist=[]
-    for i in range(0,len(blob),8): 
+    for i in range(0,len(blob),8):
         #print struct.unpack("Hbi",blob[i:i+8])
         item=struct.unpack_from('H',blob,i)[0]                                ## this could be a lot tidier.... struct.unpack(bHi,blob) returns a tuple (number,item,cost)
         tooth=struct.unpack_from('B',blob,i+2)[0]
@@ -127,7 +127,7 @@ def decodeTS(blob):
         print "unknown tooth code",tooth
         retlist.append((1,item_text,cost))
     return retlist
-    
+
 
 if __name__ == "__main__":
     from openmolar.dbtools import patient_class
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     pt=patient_class.patient(serialno)
     #print pt.estimates
     #print toHtml(pt.estimates,pt.tsfees)
-    
+
     print toBriefHtml(pt.currEstimate)
     print
     est=((1,101,1950),(2,1739,5600),(1,6521,0))

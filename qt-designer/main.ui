@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>533</width>
+                    <width>709</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1448,7 +1448,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>516</width>
+                    <width>709</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -1760,7 +1760,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>567</width>
+                    <width>719</width>
                     <height>469</height>
                    </rect>
                   </property>
@@ -2118,8 +2118,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>701</width>
-                    <height>367</height>
+                    <width>725</width>
+                    <height>392</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2391,8 +2391,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>121</width>
-                    <height>105</height>
+                    <width>729</width>
+                    <height>396</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2532,6 +2532,13 @@
                       <property name="icon" >
                        <iconset resource="../resources/resources.qrc" >
                         <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="toothCost_pushButton" >
+                      <property name="text" >
+                       <string>cost 'tooth' items </string>
                       </property>
                      </widget>
                     </item>
@@ -2798,8 +2805,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>185</width>
-                    <height>386</height>
+                    <width>729</width>
+                    <height>396</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
@@ -2922,7 +2929,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
+                        <width>585</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3143,8 +3150,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>235</width>
+                <height>455</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3161,8 +3168,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>235</width>
+                <height>455</height>
                </rect>
               </property>
              </widget>
@@ -3178,8 +3185,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>235</width>
+                <height>455</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3375,8 +3382,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>96</width>
-             <height>28</height>
+             <width>167</width>
+             <height>57</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3692,8 +3699,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>28</height>
+               <width>167</width>
+               <height>131</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >

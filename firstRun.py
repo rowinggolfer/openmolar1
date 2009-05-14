@@ -42,6 +42,11 @@ myDB,myMysqlPassword,myMysqlUser="","",""
 
 
 def newsetup():
+    '''
+    a new setup - creates and saves a config file
+    creates a database if required
+    loads a demo set of data.
+    '''
 
     def applystage3():
         global myHost,myPort
@@ -52,7 +57,6 @@ def newsetup():
         myMysqlUser=str(dl.user_lineEdit.text())
         myDB=str(dl.database_lineEdit.text())
         myMysqlPassword=str(dl.password_lineEdit.text())
-
     def ping():
         applystage3()
         testConnection()
@@ -61,10 +65,14 @@ def newsetup():
         testConnection()
 
     def testConnection():
+        '''
+        tries to connect to a mysql database with the settings
+        '''
         result=False
         try:
             print "attempting to connect to mysql server on ",myHost,"port",myPort,"...."
-            db=MySQLdb.connect(host=myHost,port=myPort,db=myDB,passwd=myMysqlPassword,user=myMysqlUser)
+            db=MySQLdb.connect(host=myHost,port=myPort,db=myDB,
+                               passwd=myMysqlPassword,user=myMysqlUser)
             result=db.open
             db.close()
         except Exception,e:
@@ -77,7 +85,8 @@ def newsetup():
                 message="Database"
                 additional="from user %s"%myMysqlUser
 
-            QtGui.QMessageBox.information(None,"Success!","The %s accepted the connection %s."%(message,additional))
+            QtGui.QMessageBox.information(None,
+            "Success!","The %s accepted the connection %s."%(message,additional))
         else:
             QtGui.QMessageBox.warning(None,"FAILURE",str(e))
             print "Connection failed!"
@@ -88,8 +97,11 @@ def newsetup():
         global rootpass
         dl.stackedWidget.setCurrentIndex(6)
         dl.rootPassword_lineEdit.setFocus()
-        QtCore.QObject.connect(dl.rootPassword_checkBox,QtCore.SIGNAL("stateChanged(int)"), rootechomode)
-        QtCore.QObject.connect(dl.createDB_pushButton_2,QtCore.SIGNAL("clicked()"), actuallyCreateDB)
+        QtCore.QObject.connect(dl.rootPassword_checkBox,QtCore.SIGNAL(
+        "stateChanged(int)"), rootechomode)
+
+        QtCore.QObject.connect(dl.createDB_pushButton_2,QtCore.SIGNAL(
+        "clicked()"), actuallyCreateDB)
 
     def actuallyCreateDB():
         rootpass=str(dl.rootPassword_lineEdit.text())
@@ -131,7 +143,8 @@ def newsetup():
         this prompts for a password'''
         dl.stackedWidget.setCurrentIndex(1)
         dl.main_password_lineEdit.setFocus()
-        QtCore.QObject.connect(dl.mainpassword_checkBox,QtCore.SIGNAL("stateChanged(int)"), echomode)
+        QtCore.QObject.connect(dl.mainpassword_checkBox,QtCore.SIGNAL("stateChanged(int)"),
+                                                                                    echomode)
         QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage2)
         QtCore.QObject.connect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage2)
     def stage2():
@@ -140,40 +153,48 @@ def newsetup():
         get it re-entered'''
         dl.main_password_lineEdit.setFocus()
         QtCore.QObject.disconnect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage2)
-        QtCore.QObject.disconnect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage2)
+        QtCore.QObject.disconnect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"),
+                                                                                         stage2)
         myPassword=dl.main_password_lineEdit.text()
         dl.mainPassword_label.setText("Please re-enter this password")
         dl.main_password_lineEdit.setText("")
-        QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
+        #QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
         QtCore.QObject.connect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage3)
 
     def stage3():
         '''check the passwords match'''
+        print "stage3"
         QtCore.QObject.disconnect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
         QtCore.QObject.disconnect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage3)
 
         if dl.main_password_lineEdit.text()!=myPassword:
             print "passwords do not match"
-            QtGui.QMessageBox.information(None,"Advisory","Passwords did not match, please try again")
-            dl.mainPassword_label.setText("Please enter a password to prevent unauthorised running of this application.")
+            QtGui.QMessageBox.information(None,"Advisory",
+            "Passwords did not match, please try again")
+            dl.mainPassword_label.setText(
+            "Please enter a password to prevent unauthorised running of this application.")
+
             dl.main_password_lineEdit.setText("")
             stage1()
         else:
             print "pwords match...."
-            dl.stackedWidget.setCurrentIndex(2)
             QtCore.QObject.connect(dl.ping_pushButton,QtCore.SIGNAL("clicked()"), ping)
             QtCore.QObject.connect(dl.pushButton_8,QtCore.SIGNAL("clicked()"), stage4)
+            dl.stackedWidget.setCurrentIndex(2)
 
     def stage4():
+        print 'stage4'
         applystage3()
         dl.stackedWidget.setCurrentIndex(3)
         QtCore.QObject.connect(dl.createDB_pushButton,QtCore.SIGNAL("clicked()"), createDB)
         QtCore.QObject.connect(dl.haveDB_pushButton,QtCore.SIGNAL("clicked()"), stage5)
 
     def stage5():
+        print 'stage5'
         dl.stackedWidget.setCurrentIndex(4)
         QtCore.QObject.connect(dl.testDB_pushButton,QtCore.SIGNAL("clicked()"), testDB)
-        QtCore.QObject.connect(dl.dbpassword_checkBox,QtCore.SIGNAL("stateChanged(int)"), dbechomode)
+        QtCore.QObject.connect(dl.dbpassword_checkBox,QtCore.SIGNAL(
+        "stateChanged(int)"), dbechomode)
         QtCore.QObject.connect(dl.pushButton_9,QtCore.SIGNAL("clicked()"), stage6)
 
     def stage6():
@@ -186,7 +207,9 @@ def newsetup():
         try:
             dom=minidom.parseString(blankXML)
             #-- hash the password and save it
-            s=hashlib.md5(hashlib.sha1(str("diqug_ADD_SALT_3i2some"+myPassword)).hexdigest()).hexdigest()
+            s=hashlib.md5(hashlib.sha1(str("diqug_ADD_SALT_3i2some"+myPassword)).hexdigest()
+                                           ).hexdigest()
+
             dom.getElementsByTagName("system_password")[0].firstChild.replaceWholeText(s)
 
             #-- server settings
@@ -212,7 +235,10 @@ def newsetup():
                 f.close()
                 Dialog.accept()
             except IOError:
-                QtGui.QMessageBox.warning(None,"IO ERROR","unable to save to %s - please re-run 'firstRun.py' as root"%localsettings.cflocation)
+                QtGui.QMessageBox.warning(None,
+                "IO ERROR","unable to save to %s - please re-run 'firstRun.py' as root"%
+                localsettings.cflocation)
+
                 Dialog.reject()
         except Exception,e:
             print "error saving settings"
@@ -220,7 +246,7 @@ def newsetup():
             QtGui.QMessageBox.warning(None,"FAILURE",str(e))
             Dialog.reject()
 
-    '''a new setup'''
+
 
 
     Dialog = QtGui.QDialog()
