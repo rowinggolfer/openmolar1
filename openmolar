@@ -10,7 +10,10 @@
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
 
-'''this module puts the "openmolar" modules onto the python path, and starts the gui'''
+'''
+this module puts the "openmolar" modules onto the python path,
+and starts the gui
+'''
 
 import sys,os,hashlib,time
 from PyQt4 import QtGui,QtCore
@@ -67,48 +70,53 @@ Are you ready to proceed?</center>'''
                             #-- kubuntu doesn't use kdesu!!! ?????
                             p=subprocess.Popen(['kdesudo','./firstRun.py'])
                     else:
-                        #-- don't know the desktop variant.. and could be windows
+                        #-- don't know the desktop variant..
+                        #-- and could be windows
                         #-- and not need root anyway?
                         p=subprocess.Popen(['./firstRun.py'])
                 result=p.wait()
             except:
-                QtGui.QMessageBox.information(None,"error","Unable to get superuser permisions")
+                QtGui.QMessageBox.information(None,"error",
+                "Unable to get superuser permisions")
     try:
         d=minidom.parse(localsettings.cflocation)
         sysPassword=d.getElementsByTagName("system_password")[0].firstChild.data
     except:
         print "still no settings... quitting politely"
-        QtGui.QMessageBox.information(None,"Unable to Run OpenMolar","Good Bye!")
+        QtGui.QMessageBox.information(None,"Unable to Run OpenMolar",
+        "Good Bye!")
+
         app.closeAllWindows()
         sys.exit("unable to run - openMolar needs a settings file")
 
     Dialog = QtGui.QDialog()
     dl = Ui_startscreen.Ui_Dialog()
     dl.setupUi(Dialog)
-    QtCore.QObject.connect(dl.user1_lineEdit,QtCore.SIGNAL("textEdited (const QString&)"),
-                                                                        autoreception)
+    QtCore.QObject.connect(dl.user1_lineEdit,
+                    QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
 
 
     while True:
         if Dialog.exec_():
             try:
                 pword="diqug_ADD_SALT_3i2some"+str(dl.password_lineEdit.text())
-                #-- hash the salted password (twice!) and compare to the value in
-                #-- /etc/openmolar/openmolar.conf (linux)
+                #-- hash the salted password (twice!) and compare to the value
+                #-- stored in /etc/openmolar/openmolar.conf (linux)
                 s=hashlib.md5(hashlib.sha1(pword).hexdigest()).hexdigest()
                 if s != sysPassword:##end password check##
                     raise LoginError
                 if uninitiated:
                     #-- user has entered the correct password
                     #-- so now we connect to the mysql database for the 1st time
-                    #-- I do it this way so that anyone sniffing the network won't see
-                    #-- the mysql password until this point
+                    #-- I do it this way so that anyone sniffing the network
+                    #-- won't see the mysql password until this point
                     #-- this could and should possibly still be improved upon
                     #-- maybe by using an ssl connection to the server.
                     localsettings.initiate(False)
                     uninitiated=False
 
-                u1=dl.user1_lineEdit.text().toUpper()  #toUpper is a method of QString
+                u1=dl.user1_lineEdit.text().toUpper()
+                #toUpper is a method of QString
                 u2=dl.user2_lineEdit.text().toUpper()
 
                 #-- localsettings module now has user variables.
@@ -130,7 +138,8 @@ Are you ready to proceed?</center>'''
                 sys.exit(maingui.main(sys.argv))
 
             except LoginError:
-                QtGui.QMessageBox.warning(Dialog,"Login Error","Incorrect<br />User/password<br />\
+                QtGui.QMessageBox.warning(Dialog,
+                "Login Error","Incorrect<br />User/password<br />\
                 combination!<br />Please Try Again.")
         else:
             break

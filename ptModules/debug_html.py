@@ -16,7 +16,7 @@ def toHtml(p1,p2,verbose=False):
     "Patient Table":patient_class.patientTableAtts,
     "Treatment Items":patient_class.currtrtmtTableAtts,
     "User Defined Data":patient_class.userdataTableAtts,
-    "Estimates":("estimates","tsfees")
+    "Estimates":("estimates","tsfees","currEstimate")
     }
     
     if verbose: #let's see exactly what the class is about:

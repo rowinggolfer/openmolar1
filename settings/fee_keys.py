@@ -128,7 +128,7 @@ def getKeyCodeToothUserCode(tooth,arg):
     #-- PV
 
 
-    if tooth[2]>3:
+    if int(tooth[2])>3:
         default="AM"
     else:
         default="CO"
