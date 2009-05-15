@@ -14,10 +14,10 @@ that's it!
 ----------------------------------------------------------------------------------------------------------------
 
 ##SERVER MACHINE##
-ensure dependencies are met on the server machine (which will probably be the same machine for testing purposes)
-~$sudo apt-get install mysql-server-5.0
+ensure dependencies are met on the server machine (which will probably be the same machine as your client for testing purposes, providing a service on "localhost")
+~$sudo apt-get install mysql-server
 
-MAKE A CAREFUL NOTE OF THE ROOT USER PASSWORD YOU SET UP.
+MAKE A CAREFUL NOTE OF THE PASSWORD YOU SET UP FOR THE ROOT MYSQL-USER. YOU CANNOT CREATE A DATABASE WITHOUT THIS.
 
 ----------------------------------------------------------------------------------------------------------------
 

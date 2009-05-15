@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/addToothTreatment.ui'
 #
-# Created: Thu May 14 14:48:59 2009
+# Created: Thu May 14 22:30:13 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,9 +65,9 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Plan Treatment", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Dialog", "Add this Treatment to the plan now?", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Dialog", "Confirm Fees for this Treatment now?", None, QtGui.QApplication.UnicodeUTF8))
         self.fee_doubleSpinBox.setPrefix(QtGui.QApplication.translate("Dialog", "£", None, QtGui.QApplication.UnicodeUTF8))
-        self.yes_pushButton.setText(QtGui.QApplication.translate("Dialog", "Add Now", None, QtGui.QApplication.UnicodeUTF8))
-        self.later_pushButton.setText(QtGui.QApplication.translate("Dialog", "Continue adding items - Ask me when I\'m finished", None, QtGui.QApplication.UnicodeUTF8))
+        self.yes_pushButton.setText(QtGui.QApplication.translate("Dialog", "Yes, Confirm Now", None, QtGui.QApplication.UnicodeUTF8))
+        self.later_pushButton.setText(QtGui.QApplication.translate("Dialog", "Continue adding items - I\'ll confirm later", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "Total Fee", None, QtGui.QApplication.UnicodeUTF8))
 

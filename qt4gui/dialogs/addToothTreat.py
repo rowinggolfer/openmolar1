@@ -10,6 +10,7 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.dialogs import Ui_addToothTreatment,Ui_toothtreatmentItemWidget
 from openmolar.settings import localsettings,fee_keys
+import re
 
 def toothSpecificCodesList(pt):
     '''
@@ -17,7 +18,11 @@ def toothSpecificCodesList(pt):
     '''
     treats=[]
     for quadrant in ("ur","ul", "ll", "lr"):
-        for tooth in (8, 7, 6, 5, 4, 3, 2, 1):
+        if "r" in quadrant:
+            order=(8, 7, 6, 5, 4, 3, 2, 1)
+        else:
+            order=(1, 2, 3, 4, 5, 6, 7, 8)
+        for tooth in order:
             att="%s%spl"%(quadrant, tooth)
             if pt.__dict__[att] != "":
                 items=pt.__dict__[att].strip(" ").split(" ")
@@ -25,13 +30,12 @@ def toothSpecificCodesList(pt):
                     treats.append(("%s%s"%(quadrant, tooth), item), )
     return treats
 
-def getCode(fill):
+def getCode(tooth,fill):
     '''
     converts fillings into four digit codes used in the feescale
     eg "MOD" -> "1404" (both are strings)
     '''
-
-    return fee_keys.getKeyCode(fill)
+    return fee_keys.getKeyCodeToothUserCode(tooth,fill)
 
 def getFee(cset,itemcode):
     '''
@@ -67,13 +71,12 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
         self.itemfee=0
         self.tooth=""
 
-    def setTooth(self, tooth):
+    def setItem(self,tooth, usercode):
         self.tooth=tooth
-        self.tooth_label.setText(tooth.upper())
-    def setItem(self,usercode):
-        self.itemcode=getCode(usercode)
+        self.tooth_label.setText("%s %s"%(tooth.upper(), usercode))
+        self.itemcode=getCode(tooth,usercode)
         description=getDescription(self.itemcode)
-        self.description_label.setText("%s\t%s\t(%s)"%(usercode,description,self.itemcode))
+        self.description_label.setText("%s\t(%s)"%(description,self.itemcode))
         self.feeCalc()
     def feeCalc(self):
         '''
@@ -84,7 +87,7 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
         self.doubleSpinBox.setValue(fee)
         self.parent.updateTotal()
 
-class treatment(Ui_addToothTreatment.Ui_Dialog):
+class treatment(Ui_addToothTreatment.Ui_Dialog,):
     '''
     A custom class with a scrollArea, a dentist comboBox, and a total double spin box
     '''
@@ -105,6 +108,10 @@ class treatment(Ui_addToothTreatment.Ui_Dialog):
         treats=[]
         items=props.strip(" ").split(" ")
         for item in items:
+            if re.match(".*,PR.*",props):
+                treats.append((tooth,"PR"),)
+                item=item.replace(",PR","")
+            
             treats.append((tooth, item), )
         self.setItems(treats)
 
@@ -121,13 +128,12 @@ class treatment(Ui_addToothTreatment.Ui_Dialog):
         self.itemWidgets=[]
         vlayout = QtGui.QVBoxLayout(self.frame)
         for item in self.items:
-            print item
+            #-- item will be ("UL6","CO")
             #-- initiate a QWidget
             iw=QtGui.QWidget()
             #-- initiate an itemWidget with this class as parent, and inheriting from iw
             i=itemWidget(self,iw)
-            i.setItem(item[1])
-            i.setTooth(item[0])
+            i.setItem(item[0], item[1])
             self.itemWidgets.append(i)
             vlayout.addWidget(iw)
 
@@ -157,8 +163,8 @@ if __name__ == "__main__":
     #print "PLAN for ", toothPlan[0],toothPlan[1]
 
     ui = treatment(Dialog,"P")
-    #ui.setItems(toothSpecificCodesList(pt))
-    ui.setItems((("ul6", "CR,GO"), ("ul6","RT")),)
+    ui.setItems(toothSpecificCodesList(pt))
+    #ui.setItems((("ul6", "CR,GO"), ("ul6","RT")),)
     ui.showItems()
 
     chosen = ui.getInput()

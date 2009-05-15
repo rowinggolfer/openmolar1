@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/toothtreatmentItemWidget.ui'
 #
-# Created: Thu May 14 14:01:23 2009
+# Created: Thu May 14 22:30:26 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -16,7 +16,7 @@ class Ui_Form(object):
         self.gridLayout = QtGui.QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
         self.tooth_label = QtGui.QLabel(Form)
-        self.tooth_label.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.tooth_label.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.tooth_label.setObjectName("tooth_label")
         self.gridLayout.addWidget(self.tooth_label, 0, 0, 1, 1)
         self.description_label = QtGui.QLabel(Form)

@@ -17,7 +17,7 @@
     <widget class="QLabel" name="tooth_label" >
      <property name="maximumSize" >
       <size>
-       <width>50</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>

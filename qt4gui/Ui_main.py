@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Thu May 14 16:43:40 2009
+# Created: Thu May 14 23:43:40 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -1009,12 +1009,12 @@ class Ui_MainWindow(object):
         self.static_groupBox.setObjectName("static_groupBox")
         self.gridLayout_14.addWidget(self.static_groupBox, 0, 0, 1, 1)
         self.frame_4 = QtGui.QFrame(self.charts)
-        self.frame_4.setMaximumSize(QtCore.QSize(190, 16777215))
+        self.frame_4.setMinimumSize(QtCore.QSize(200, 0))
+        self.frame_4.setMaximumSize(QtCore.QSize(200, 16777215))
         self.frame_4.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_4.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_4.setObjectName("frame_4")
         self.verticalLayout_14 = QtGui.QVBoxLayout(self.frame_4)
-        self.verticalLayout_14.setMargin(3)
         self.verticalLayout_14.setObjectName("verticalLayout_14")
         self.toothProps_frame = QtGui.QFrame(self.frame_4)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
@@ -1030,6 +1030,11 @@ class Ui_MainWindow(object):
         self.estimateRequired_checkBox = QtGui.QCheckBox(self.frame_4)
         self.estimateRequired_checkBox.setObjectName("estimateRequired_checkBox")
         self.verticalLayout_14.addWidget(self.estimateRequired_checkBox)
+        self.confirmFees_pushButton = QtGui.QPushButton(self.frame_4)
+        self.confirmFees_pushButton.setCheckable(False)
+        self.confirmFees_pushButton.setChecked(False)
+        self.confirmFees_pushButton.setObjectName("confirmFees_pushButton")
+        self.verticalLayout_14.addWidget(self.confirmFees_pushButton)
         self.gridLayout_14.addWidget(self.frame_4, 0, 1, 3, 1)
         self.plan_groupBox = QtGui.QGroupBox(self.charts)
         self.plan_groupBox.setObjectName("plan_groupBox")
@@ -1059,9 +1064,6 @@ class Ui_MainWindow(object):
         self.completePlanItems_pushButton.setIcon(icon6)
         self.completePlanItems_pushButton.setObjectName("completePlanItems_pushButton")
         self.horizontalLayout_5.addWidget(self.completePlanItems_pushButton)
-        self.toothCost_pushButton = QtGui.QPushButton(self.treatmentPlan_groupBox)
-        self.toothCost_pushButton.setObjectName("toothCost_pushButton")
-        self.horizontalLayout_5.addWidget(self.toothCost_pushButton)
         self.completedItems_pushButton = QtGui.QPushButton(self.treatmentPlan_groupBox)
         self.completedItems_pushButton.setEnabled(False)
         self.completedItems_pushButton.setObjectName("completedItems_pushButton")
@@ -2276,13 +2278,13 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Notes", None, QtGui.QApplication.UnicodeUTF8))
         self.chartsview_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Charts View", None, QtGui.QApplication.UnicodeUTF8))
         self.static_groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Static", None, QtGui.QApplication.UnicodeUTF8))
-        self.estimateRequired_checkBox.setText(QtGui.QApplication.translate("MainWindow", "Estimate Required", None, QtGui.QApplication.UnicodeUTF8))
+        self.estimateRequired_checkBox.setText(QtGui.QApplication.translate("MainWindow", "Fee Confirm. Required", None, QtGui.QApplication.UnicodeUTF8))
+        self.confirmFees_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Confirm Now", None, QtGui.QApplication.UnicodeUTF8))
         self.plan_groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Plan", None, QtGui.QApplication.UnicodeUTF8))
         self.completed_groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Completed", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Charts", None, QtGui.QApplication.UnicodeUTF8))
         self.treatmentPlan_groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Current Treatment Plan", None, QtGui.QApplication.UnicodeUTF8))
         self.completePlanItems_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Complete Items", None, QtGui.QApplication.UnicodeUTF8))
-        self.toothCost_pushButton.setText(QtGui.QApplication.translate("MainWindow", "cost \'tooth\' items ", None, QtGui.QApplication.UnicodeUTF8))
         self.completedItems_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Delete Items from this list", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_5.setTitle(QtGui.QApplication.translate("MainWindow", "Course Management", None, QtGui.QApplication.UnicodeUTF8))
         self.newCourse_pushButton.setText(QtGui.QApplication.translate("MainWindow", "New Course Of Treatment", None, QtGui.QApplication.UnicodeUTF8))

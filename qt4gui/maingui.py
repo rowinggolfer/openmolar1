@@ -218,24 +218,11 @@ class feeClass():
                 self.pt.addToEstimate(treat[0],int(treat[1]),treat[3])
             self.load_planpage()
 
-    def costToothItems(self):
-        items=estimates.toothSpecificCodesList(self)
-        #-- this will be such as (("UR3 - P","1421"),)
-        print items
-
-        '''list=()
-        for item in items:
-            list+=((1,item[0],item[1]),)
-        Ui_planToothTreatment.py
-        chosenTreatments=self.offerTreatmentItems(list)
-        for treat in chosenTreatments:
-            self.pt.addToEstimate(treat[0],int(treat[1]),treat[3])
-        self.load_planpage()
-        '''
     def offerTreatmentItems(self,arg):
         Dialog = QtGui.QDialog(self.mainWindow)
         dl = addTreat.treatment(Dialog,arg,self.pt.cset)
         return dl.getInput()
+
 
     def toothTreatAdd(self, tooth, item):
         '''
@@ -245,18 +232,31 @@ class feeClass():
         self.pt.__dict__[tooth+self.selectedChartWidget]=item
         #--update the patient!!
         self.ui.planChartWidget.setToothProps(tooth,item)
+        if not self.ui.estimateRequired_checkBox.checkState():
+            self.costToothItems(tooth, item, False)
+
+    def costToothItems(self, tooth="", item="", ALL=True):
+        '''
+        prompts the user to confirm tooth treatment fees
+        '''
         self.ui.planChartWidget.update()
 
-
         Dialog = QtGui.QDialog()
-        ui = addToothTreat.treatment(Dialog,"P")
+        dl = addToothTreat.treatment(Dialog,"P")
+        if ALL==False:
+            dl.itemsPerTooth(tooth, item)
+        else:
+            dl.setItems(addToothTreat.toothSpecificCodesList(self.pt))
 
-        ui.itemsPerTooth(tooth, item)
-        ui.showItems()
+        dl.showItems()
 
-        chosen = ui.getInput()
+        chosen = dl.getInput()
         if chosen:
-            print chosen
+            for treat in chosen:
+                #-- treat[0]= the tooth name
+                #-- treat[1] = item code
+                #-- treat[2]= adjusted fee
+                self.pt.addToEstimate(1, int(treat[1]), treat[2])
         else:
             self.ui.estimateRequired_checkBox.setChecked(True)
 
@@ -1356,7 +1356,12 @@ class signals():
         QtCore.QObject.connect(self.ui.actionOptions,QtCore.SIGNAL("triggered()"),
                                                                             self.userOptionsDialog)
 
+
         #course ManageMent
+
+        QtCore.QObject.connect(self.ui.confirmFees_pushButton,QtCore.SIGNAL("clicked()"),
+                                                                                self.costToothItems)
+
         QtCore.QObject.connect(self.ui.newCourse_pushButton,QtCore.SIGNAL("clicked()"),
                                                                                 self.newCourseSetup)
         QtCore.QObject.connect(self.ui.closeTx_pushButton,QtCore.SIGNAL("clicked()"),
@@ -1369,8 +1374,6 @@ class signals():
                                                                                 self.addPerioItems)
         QtCore.QObject.connect(self.ui.otherTxpushButton,QtCore.SIGNAL("clicked()"),
                                                                                 self.addOtherItems)
-        QtCore.QObject.connect(self.ui.toothCost_pushButton,QtCore.SIGNAL("clicked()"),
-                                                                                self.costToothItems)
 
 
 
@@ -2628,6 +2631,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
         '''handles navigation of patient record'''
         ci=self.ui.tabWidget.currentIndex()
         #--admin tab selected
+
+        if self.ui.estimateRequired_checkBox.checkState() and ci!=6:
+            self.advise("please confirm fees", 1)
+            ci=self.ui.tabWidget.setCurrentIndex(6)
+
         if ci==0:
             self.ui.patientEdit_groupBox.setTitle("Edit Patient %d"%self.pt.serialno)
             self.load_editpage()
@@ -2679,6 +2687,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,si
             self.ui.bpe_groupBox.setTitle("BPE")
             self.ui.bpe_textBrowser.setText("")
             self.ui.planSummary_textBrowser.setText("")
+            self.ui.estimateRequired_checkBox.setChecked(False)
 
             #--restore the charts to full dentition
             ##TODO - perhaps handle this with the tabwidget calls?
