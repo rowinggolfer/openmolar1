@@ -42,7 +42,8 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
     def __init__(self,parent,widget):
         self.parent=parent
         self.setupUi(widget)
-        QtCore.QObject.connect(self.spinBox,QtCore.SIGNAL("valueChanged(int)"), self.feeCalc)
+        QtCore.QObject.connect(self.spinBox,
+                               QtCore.SIGNAL("valueChanged(int)"), self.feeCalc)
         #self.itemfee=0
 
     def setNumber(self,arg):
@@ -50,8 +51,8 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
 
     def setItem(self,itemcode):
         self.itemcode=itemcode
-        description=getDescription(self.itemcode)
-        self.label.setText(description+"\t(%s)"%self.itemcode)
+        self.description=getDescription(self.itemcode)
+        self.label.setText(self.description+"\t(%s)"%self.itemcode)
 
     def feeCalc(self,arg):
         fee=getFee(self.parent.cset,arg,self.itemcode) / 100
@@ -94,7 +95,7 @@ class treatment(Ui_addTreatment.Ui_Dialog):
                 number=i.spinBox.value()
                 fee=int(i.doubleSpinBox.value()*100)
                 if number>0:
-                    retarg+=((number,i.itemcode,i.usercode,fee),)
+                    retarg+=((number,i.itemcode,i.usercode,i.description, fee),)
             return retarg
         else:
             return()

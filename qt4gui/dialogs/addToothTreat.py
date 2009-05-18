@@ -3,18 +3,23 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. See the GNU General Public License
+# for more details.
 
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.dialogs import Ui_addToothTreatment,Ui_toothtreatmentItemWidget
-from openmolar.settings import localsettings,fee_keys
 import re
+
+from openmolar.qt4gui.dialogs import Ui_addToothTreatment,\
+Ui_toothtreatmentItemWidget
+
+from openmolar.settings import localsettings,fee_keys
 
 def toothSpecificCodesList(pt):
     '''
-    cycles through the patient attriubutes, and brings up planned treatment on teeth only
+    cycles through the patient attriubutes,
+    and brings up planned treatment on teeth only
     '''
     treats=[]
     for quadrant in ("ur","ul", "ll", "lr"):
@@ -66,7 +71,8 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
     def __init__(self,parent,widget):
         self.parent=parent
         self.setupUi(widget)
-        #QtCore.QObject.connect(self.spinBox,QtCore.SIGNAL("valueChanged(int)"), self.feeCalc)
+        #QtCore.QObject.connect(self.spinBox,QtCore.\
+        #SIGNAL("valueChanged(int)"), self.feeCalc)
         self.itemcode=""
         self.itemfee=0
         self.tooth=""
@@ -75,21 +81,24 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
         self.tooth=tooth
         self.tooth_label.setText("%s %s"%(tooth.upper(), usercode))
         self.itemcode=getCode(tooth,usercode)
-        description=getDescription(self.itemcode)
-        self.description_label.setText("%s\t(%s)"%(description,self.itemcode))
+        self.description=getDescription(self.itemcode)
+        self.description_label.setText("%s\t(%s)"%(self.description,
+                                                    self.itemcode))
         self.feeCalc()
     def feeCalc(self):
         '''
         puts the fee into widget's double spinbox
        '''
-        #-- here is why we need to import the division from the future... no rounding errors please!
+        #-- here is why we need to import the division from the future...
+        #-- no rounding errors please!
         fee=getFee(self.parent.cset,self.itemcode) / 100
         self.doubleSpinBox.setValue(fee)
         self.parent.updateTotal()
 
 class treatment(Ui_addToothTreatment.Ui_Dialog,):
     '''
-    A custom class with a scrollArea, a dentist comboBox, and a total double spin box
+    A custom class with a scrollArea, a dentist comboBox,
+    and a total double spin box
     '''
     def __init__(self,dialog,cset):
         self.setupUi(dialog)
@@ -111,7 +120,7 @@ class treatment(Ui_addToothTreatment.Ui_Dialog,):
             if re.match(".*,PR.*",props):
                 treats.append((tooth,"PR"),)
                 item=item.replace(",PR","")
-            
+
             treats.append((tooth, item), )
         self.setItems(treats)
 
@@ -131,7 +140,8 @@ class treatment(Ui_addToothTreatment.Ui_Dialog,):
             #-- item will be ("UL6","CO")
             #-- initiate a QWidget
             iw=QtGui.QWidget()
-            #-- initiate an itemWidget with this class as parent, and inheriting from iw
+            #-- initiate an itemWidget with this class as parent,
+            #-- and inheriting from iw
             i=itemWidget(self,iw)
             i.setItem(item[0], item[1])
             self.itemWidgets.append(i)
@@ -148,7 +158,7 @@ class treatment(Ui_addToothTreatment.Ui_Dialog,):
             retarg=()
             for i in self.itemWidgets:
                 fee=int(i.doubleSpinBox.value()*100)
-                retarg+=((i.tooth, i.itemcode,fee),)
+                retarg+=((i.tooth, i.itemcode,i.description, fee),)
             return retarg
 
 if __name__ == "__main__":

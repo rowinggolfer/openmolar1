@@ -16,20 +16,20 @@ def toHtml(p1,p2,verbose=False):
     "Patient Table":patient_class.patientTableAtts,
     "Treatment Items":patient_class.currtrtmtTableAtts,
     "User Defined Data":patient_class.userdataTableAtts,
-    "Estimates":("estimates","tsfees","currEstimate")
+    "Estimates":("estimates", )
     }
-    
+
     if verbose: #let's see exactly what the class is about:
         attributesDict["all attributes"]=p1.__dict__.keys()
 
-    
-    
+
+
     for key in attributesDict.keys():
         attribs=attributesDict[key]
         retarg+="<h2>%s</h2>"%key
         retarg+='<table width="100%" border="1">'
         retarg+='<tr><th>Attribute</th><th>orig</th><th>changed</th>'
-    
+
         for att in attribs:
             retarg+= "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"%(att,p1.__dict__[att],p2.__dict__[att])
         retarg+="</table>"
@@ -37,13 +37,13 @@ def toHtml(p1,p2,verbose=False):
     return retarg
 
 if __name__ == "__main__":
-    from openmolar.settings import localsettings 
+    from openmolar.settings import localsettings
     import sys
     localsettings.initiate(False)
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
         serialno=29283
-    
+
     pt=patient_class.patient(serialno)
     print toHtml(pt,pt,True)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/hygenist_wizard.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/hygenist_wizard.ui'
 #
-# Created: Thu Apr 16 14:14:04 2009
+# Created: Mon May 18 13:13:28 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -32,9 +32,11 @@ class Ui_Dialog(object):
         self.extsp_radioButton.setObjectName("extsp_radioButton")
         self.verticalLayout.addWidget(self.extsp_radioButton)
         self.twovisit1_radioButton = QtGui.QRadioButton(Dialog)
+        self.twovisit1_radioButton.setEnabled(False)
         self.twovisit1_radioButton.setObjectName("twovisit1_radioButton")
         self.verticalLayout.addWidget(self.twovisit1_radioButton)
         self.twovisit2_radioButton = QtGui.QRadioButton(Dialog)
+        self.twovisit2_radioButton.setEnabled(False)
         self.twovisit2_radioButton.setObjectName("twovisit2_radioButton")
         self.verticalLayout.addWidget(self.twovisit2_radioButton)
         self.gridLayout = QtGui.QGridLayout()

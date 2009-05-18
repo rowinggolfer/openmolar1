@@ -90,33 +90,33 @@ def getKeyCodeToothUserCode(tooth,arg):
     arg will be something like "CR,GO" or "MOD,CO"
     '''
     print "decrypting tooth code",arg
-    
+
 
 
     if arg in ("PV","AP","RT","ST","EX","EX/S1","EX/S2"):
         return getKeyCode(arg)
-    
+
     if arg in ("CR,GO","CR,V1","CR,A1","CR,RC","CR,OT","CR,V2"):
         return getKeyCode(arg)
 
         arg=arg.replace(",PR","")
-        
+
     if "PI/" in arg:
         return getKeyCode("Porc")
-        
-        
+
+
     if re.match("BR/P.*",arg):
         return getKeyCode(arg)
-        
+
     if re.match("BR/CR.*",arg):
         return getKeyCode(arg)
 
     if re.match("CR/.*",arg):
         return getKeyCode(arg)
-    
+
     if re.match(".*GL.*",arg):
-        return getKeyCode(GLfill)
-        
+        return getKeyCode("GLfill")
+
     #-- ok... so it's probably a filling
 
     array=arg.split(",")
@@ -136,16 +136,16 @@ def getKeyCodeToothUserCode(tooth,arg):
     if len(array)==1:
         surfaces=array[0]
         return getKeyCode("%s-%ssurf"%(default,len(surfaces)))   #-- AM-3surf etc..
-    
+
     if len(array)==2:
         surfaces=array[0]
         material=array[1]
         return getKeyCode("%s-%ssurf"%(material,len(surfaces)))   #-- AM-3surf etc..
-    
-    
+
+
     print "no match in getKeyCodeToothUserCode for ",arg
     print "returning 4001"
-    return "4001" 
+    return "4001"
 
 if __name__ == "__main__":
     #localsettings.initiate(False)

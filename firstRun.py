@@ -158,7 +158,7 @@ def newsetup():
         myPassword=dl.main_password_lineEdit.text()
         dl.mainPassword_label.setText("Please re-enter this password")
         dl.main_password_lineEdit.setText("")
-        #QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
+        QtCore.QObject.connect(dl.pushButton_2,QtCore.SIGNAL("clicked()"), stage3)
         QtCore.QObject.connect(dl.main_password_lineEdit,QtCore.SIGNAL("returnPressed()"), stage3)
 
     def stage3():

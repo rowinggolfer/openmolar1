@@ -19,7 +19,7 @@ import sys,os,hashlib,time
 from PyQt4 import QtGui,QtCore
 from xml.dom import minidom
 
-__version__ = "0.0.7 - 5th May 2009"
+__version__ = "0.0.8 - 17th May 2009"
 __build__= "N/A dev_machine"
 
 class LoginError(Exception):pass

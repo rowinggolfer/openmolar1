@@ -212,10 +212,10 @@ class feeClass():
             list=((0,"S"),(0,"M"),(0,"P"))
             chosenTreatments=self.offerTreatmentItems(list)
             print chosenTreatments
-            for item in chosenTreatments:
-                #item will be in the form (n,code,usercode,fee)
-                self.pt.xraypl+="%s%s "%(item[0],item[2])
-                self.pt.addToEstimate(item[0],int(item[1]),item[3])
+            for treat in chosenTreatments:
+                self.pt.xraypl+="%s%s "%(treat[0],treat[2])
+                self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
+                                       treat[4], self.pt.dnt1, self.pt.cset)
             self.load_planpage()
 
     def addPerioItems(self):
@@ -223,10 +223,11 @@ class feeClass():
             list=((0,"SP"),(0,"SP+"))
             chosenTreatments=self.offerTreatmentItems(list)
             print chosenTreatments
-            for item in chosenTreatments:
+            for treat in chosenTreatments:
                 #item will be in the form (n,code,usercode,fee)
-                self.pt.periopl+="%s%s "%(item[0],item[2])
-                self.pt.addToEstimate(item[0],int(item[1]),item[3])
+                self.pt.periopl+="%s%s "%(treat[0],treat[2])
+                self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
+                                       treat[4], self.pt.dnt1, self.pt.cset)
             self.load_planpage()
 
     def addOtherItems(self):
@@ -239,14 +240,20 @@ class feeClass():
                     list+=((0,item,code),)
             chosenTreatments=self.offerTreatmentItems(list)
             for treat in chosenTreatments:
+                #--treat=(1, '5112', 'CR,RC', 'recementing crown*', 4400)
+                #--ie.. number,code,usercode,description,fee
                 self.pt.otherpl+="%s%s "%(treat[0],treat[2])
-                self.pt.addToEstimate(treat[0],int(treat[1]),treat[3])
+                self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
+                                       treat[4], self.pt.dnt1, self.pt.cset)
             self.load_planpage()
 
     def offerTreatmentItems(self,arg):
         Dialog = QtGui.QDialog(self.mainWindow)
         dl = addTreat.treatment(Dialog,arg,self.pt.cset)
-        return dl.getInput()
+        result= dl.getInput()
+        print result
+        return result
+
 
 
     def toothTreatAdd(self, tooth, item):
@@ -280,8 +287,11 @@ class feeClass():
             for treat in chosen:
                 #-- treat[0]= the tooth name
                 #-- treat[1] = item code
-                #-- treat[2]= adjusted fee
-                self.pt.addToEstimate(1, int(treat[1]), treat[2])
+                #-- treat[2]= description
+                #-- treat[3]= adjusted fee
+                self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[3],
+                                       self.pt.dnt1, self.pt.cset, treat[0])
+                self.load_planpage()
         else:
             self.ui.estimateRequired_checkBox.setChecked(True)
 
@@ -482,8 +492,8 @@ class appointmentClass():
             appttime=int(atime.replace(":",""))
 
         #--is appointment not is aslot (appt book proper) or in the past??
-        if dateText=="TBA" or QtCore.QDate.fromString(dateText,"dd'/'MM'/'yyyy")<\
-        QtCore.QDate.currentDate():
+        if dateText=="TBA" or QtCore.QDate.fromString(dateText,
+        "dd'/'MM'/'yyyy")<QtCore.QDate.currentDate():
             #--raise a dialog (centred on self.mainWindow)
             result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",
             "Delete this Unscheduled or Past Appointment?",
@@ -808,7 +818,8 @@ class appointmentClass():
         trt1=self.ui.ptAppointmentTableWidget.item(rowno,4).text()
         trt2=self.ui.ptAppointmentTableWidget.item(rowno,5).text()
         trt3=self.ui.ptAppointmentTableWidget.item(rowno,6).text()
-        memo=str(self.ui.ptAppointmentTableWidget.item(rowno,7).text().toAscii())
+        memo=str(self.ui.ptAppointmentTableWidget.item(rowno,7).text().\
+                 toAscii())
         #--aprix is a UNIQUE field in the database starting at 1,
         aprix=int(self.ui.ptAppointmentTableWidget.item(rowno,9).text())
         caldate=self.ui.apptOV_calendarWidget.selectedDate()
@@ -834,7 +845,8 @@ class appointmentClass():
             #--the slot selected is bigger than the appointment length so
             #--fire up a dialog to allow for fine tuning
             Dialog = QtGui.QDialog(self.mainWindow)
-            dl = finalise_appt_time.ftDialog(Dialog,selectedtime,slotlength,length)
+            dl = finalise_appt_time.ftDialog(Dialog,selectedtime,
+                                             slotlength,length)
 
             if Dialog.exec_():
                 #--dialog accepted
@@ -1982,14 +1994,18 @@ class chartsClass():
         self.chart_navigate()
 
     def chartNavigation(self,tstring,callerIsTable=False):
+        '''
+        one way or another, a tooth has been selected...
+        this updates all relevant widgets
+        '''
         #--called by a navigating a chart or the underlying table
-        '''one way or another, a tooth has been selected... this updates all relevant widgets'''
         #--convert from QString
         tooth=str(tstring)
 
-        grid = (["ur8","ur7","ur6","ur5",'ur4','ur3','ur2','ur1','ul1','ul2','ul3','ul4','ul5',\
-        'ul6','ul7','ul8'],["lr8","lr7","lr6","lr5",'lr4','lr3','lr2','lr1','ll1','ll2','ll3',\
-        'll4','ll5','ll6','ll7','ll8'])
+        grid = (["ur8","ur7","ur6","ur5",'ur4','ur3','ur2','ur1',
+        'ul1','ul2','ul3','ul4','ul5','ul6','ul7','ul8'],
+        ["lr8","lr7","lr6","lr5",'lr4','lr3','lr2','lr1',
+        'll1','ll2','ll3','ll4','ll5','ll6','ll7','ll8'])
 
         if tooth in grid[0]:
             y=0
@@ -2012,11 +2028,13 @@ class chartsClass():
 
         #--calculate x,y co-ordinates for the chartwisdgets
         x=grid[y].index(tooth)
-        self.ui.toothPropsWidget.tooth_label.setText(self.pt.chartgrid[tooth].upper())
+        self.ui.toothPropsWidget.tooth_label.setText(
+                                            self.pt.chartgrid[tooth].upper())
         #--ALLOWS for deciduos teeth
 
         if self.selectedChartWidget=="st":
-            self.ui.toothPropsWidget.setExistingProps(self.pt.__dict__[tooth+"st"])
+            self.ui.toothPropsWidget.setExistingProps(
+                                                self.pt.__dict__[tooth+"st"])
             self.ui.staticChartWidget.selected=[x,y]
             self.ui.staticChartWidget.update()
             if self.ui.planChartWidget.selected!=[-1,-1]:
@@ -2027,7 +2045,8 @@ class chartsClass():
                 self.ui.completedChartWidget.update()
             column=2
         elif self.selectedChartWidget=="pl":
-            self.ui.toothPropsWidget.setExistingProps(self.pt.__dict__[tooth+"pl"])
+            self.ui.toothPropsWidget.setExistingProps(
+                                                self.pt.__dict__[tooth+"pl"])
             self.ui.planChartWidget.selected=[x,y]
             self.ui.planChartWidget.update()
             if self.ui.staticChartWidget.selected!=[-1,-1]:
@@ -2038,7 +2057,8 @@ class chartsClass():
                 self.ui.completedChartWidget.update()
             column=3
         elif self.selectedChartWidget=="cmp":
-            self.ui.toothPropsWidget.lineEdit.setText(self.pt.__dict__[tooth+"cmp"])
+            self.ui.toothPropsWidget.lineEdit.setText(
+                                                self.pt.__dict__[tooth+"cmp"])
             self.ui.completedChartWidget.selected=[x,y]
             self.ui.completedChartWidget.update()
             if self.ui.staticChartWidget.selected!=[-1,-1]:
@@ -2053,7 +2073,8 @@ class chartsClass():
             #--shouldn't happen??
             self.advise ("ERROR IN chartNavigation- please report",2)
             column=0
-            #-- set this otherwise this variable will create an error in 2 lines time!
+            #-- set this otherwise this variable will
+            #-- create an error in 2 lines time!
         if not callerIsTable:
             #-- keep the table correct
             self.ui.chartsTableWidget.setCurrentCell(x+y*16,column)
@@ -2199,8 +2220,8 @@ class cashbooks():
         d=self.ui.cashbookEndDateEdit.date()
         edate="%s_%s_%s"%(d.year(),d.month(),d.day())
         html=cashbook.details(dent1,sdate,edate)
-        self.ui.cashbookTextBrowser.setHtml('<html><body><table border="1">'+html+
-        "</table></body></html>")
+        self.ui.cashbookTextBrowser.setHtml('<html><body><table border="1">'
+        +html+"</table></body></html>")
 
     def daybookTab(self):
         dent1=str(self.ui.daybookDent1ComboBox.currentText())
@@ -2210,8 +2231,8 @@ class cashbooks():
         d=self.ui.daybookEndDateEdit.date()
         edate="%s_%s_%s"%(d.year(),d.month(),d.day())
         html=daybook.details(dent1,dent2,sdate,edate)
-        self.ui.daybookTextBrowser.setHtml('<html><body><table border="1">'+html+
-        "</table></body></html>")
+        self.ui.daybookTextBrowser.setHtml('<html><body><table border="1">'
+        +html+"</table></body></html>")
 
     def daybookPrint(self):
         dent1=str(self.ui.daybookDent1ComboBox.currentText())
@@ -2433,7 +2454,8 @@ class newPatientClass():
         else:
             #--set that serialno
             self.pt.serialno=sno
-            #--messy, but avoids a "previous pt has changed" dialog when reloaded
+            #--messy, but avoids a "previous pt has changed"
+            #--dialog when reloaded
             self.pt_dbstate=copy.deepcopy(self.pt)
             return True
 
@@ -2524,8 +2546,7 @@ class printingClass():
             return
         est=estimatePrint.estimate()
         est.setProps(self.pt.title,self.pt.fname,self.pt.sname,self.pt.serialno)
-        est.estItems=self.pt.currEstimate[0]
-        est.total=self.pt.currEstimate[1]
+        est.estItems=self.pt.estimates
         est.print_()
         self.pt.addHiddenNote("printed","estimate")
 
@@ -3007,7 +3028,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         newdentist=localsettings.ops_reverse[str(inits)]
         if newdentist==self.pt.dnt2:
             return
-        if self.pt.dent2=="" and newdentist==self.pt.dnt1:
+        if self.pt.dnt2==0 and newdentist==self.pt.dnt1:
             return
         if self.pt.cset=="N" and self.pt.underTreatment:
             self.advise(
@@ -3156,7 +3177,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 print "Exception in maingui.next_patient",e
 
     def load_estpage(self):
-        estimateHtml=estimates.toBriefHtml(self.pt.currEstimate)
+        estimateHtml=estimates.toBriefHtml(self.pt.estimates)
         self.ui.moneytextBrowser.setText(estimateHtml)
         self.ui.bigEstimate_textBrowser.setText(estimateHtml)
 
@@ -3273,8 +3294,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 loadPt=patient_class.patient(serialno)
                 #--work on a copy only, so that changes can be tested for later
                 #--has to be a deep copy, as opposed to shallow
-                #--otherwise changes to attributes which are lists aren't spotted
-                #--new "instance" of patient
+                #--otherwise changes to attributes which are lists aren't
+                #--spotted new "instance" of patient
                 self.pt=loadPt
                 self.pt_dbstate=copy.deepcopy(self.pt)
                 self.loadpatient()
@@ -3507,7 +3528,8 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         self.ui.cashbookEndDateEdit.setDate(today)
         self.ui.recalldateEdit.setDate(today)
         self.ui.stackedWidget.setCurrentIndex(1)
-        self.ui.dupReceiptDate_lineEdit.setText(today.toString("dd'/'MM'/'yyyy"))
+        self.ui.dupReceiptDate_lineEdit.setText(today.toString(
+        "dd'/'MM'/'yyyy"))
         brush = QtGui.QBrush(colours.LINEEDIT)
         palette = QtGui.QPalette()
         palette.setBrush(QtGui.QPalette.Base,  brush)
@@ -3654,9 +3676,10 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                                         ops_reverse[atts[1]],sqldate)
             if course[0]:
                 self.pt.courseno0=course[1]
+                self.pt.accd=localsettings.ukToday()
                 self.advise("Sucessfully started new course of treatment",1)
-                self.pt.getCurrtrt()
-                self.pt.getEsts()
+                self.pt.blankCurrtrt()
+                self.pt.estimates=[]
                 self.pt.underTreatment=True
                 self.load_planpage()
                 self.updateDetails()
@@ -3672,11 +3695,16 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         if result==QtGui.QMessageBox.Yes:
             self.pt.courseno2=self.pt.courseno1
             self.pt.courseno1=self.pt.courseno0
+            self.pt.cmpd=localsettings.ukToday()
             self.pt.courseno0=0
-            self.pt.getCurrtrt()
-            self.load_planpage()
-            self.pt.underTreatment=False
-            self.updateDetails()
+            self.reload_patient()
+            #blank things off
+            #self.pt.estimates=[]
+            #self.pt.blankCurrtrt()
+
+            #self.load_planpage()
+            #self.pt.underTreatment=False
+            #self.updateDetails()
             return True
     def showExamDialog(self):
         global pt
@@ -3700,13 +3728,14 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 #--('pt c/o nil', 'Soft Tissues Checked - NAD',
                 #-- 'OHI instruction given',
                 #--'Palpated for upper canines - NAD'), "000000")]
-                if result[1] ==localsettings.ops[self.pt.dnt1]:
+                examdent=result[1]
+                if examdent ==localsettings.ops[self.pt.dnt1]:
                     #--normal dentist.
                     if self.pt.dnt2==0 or self.pt.dnt2==self.pt.dnt1:
                         #--no dnt2
                         APPLIED=True
                     else:
-                        message='%s is now'%result[1]\
+                        message='%s is now'%examdent\
                         +'both the registered and course dentist.<br />'\
                         +'Is this correct?<br /><i>confirming this will '\
                         +'remove reference to %s</i>'%\
@@ -3723,7 +3752,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                             self.updateDetails()
                             APPLIED=True
                 else:
-                    message='%s performed this exam<br />'%result[1]+\
+                    message='%s performed this exam<br />'%examdent+\
                     'Is this correct?'
                     if result[2]!=localsettings.ops[self.pt.dnt2]:
                         message +='<br /><i>confirming this will change the '+\
@@ -3738,7 +3767,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
 
                     if confirm == QtGui.QMessageBox.Yes:
                         #--dialog rejected
-                        self.pt.dnt2=localsettings.ops_reverse[result[1]]
+                        self.pt.dnt2=localsettings.ops_reverse[examdent]
                         self.updateDetails()
                         APPLIED=True
 
@@ -3750,14 +3779,22 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                     self.pt.recd=result[2].addMonths(6).toString("dd/MM/yyyy")
                     newnotes=str(self.ui.notesEnter_textEdit.toPlainText()\
                                  .toAscii())
-                    newnotes+="CE examination performed by %s\n"%result[1]
+                    newnotes+="CE examination performed by %s\n"%examdent
                     self.pt.addHiddenNote("exam","CE EXAM")
                     item=fee_keys.getKeyCode("CE")
                     if "P" in self.pt.cset:
                         itemfee=localsettings.privateFees[item].getFee()
                     else:
                         itemfee=0
-                    self.pt.addToEstimate(1,item,itemfee)
+                    try:
+                        item_description=localsettings.descriptions[item]
+                    except KeyError:
+                        item_description="unknown exam type"
+
+                    self.pt.addToEstimate(1,item,item_description,itemfee,
+                    itemfee, localsettings.ops_reverse[examdent], self.pt.cset,
+                    "N/A",True)
+
                     self.pt.money1+=itemfee
                     self.updateFees()
                     self.updateDetails()
@@ -3781,10 +3818,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         Dialog = QtGui.QDialog(self.mainWindow)
         dl = hygTreatWizard.Ui_Dialog(Dialog)
         dl.setPractitioner(7)
-        ####################this is NOT CORRECT#############
-
         item=fee_keys.getKeyCode("SP")
-        ####################this is NOT CORRECT#############
         itemfee=0
         if "P" in self.pt.cset:
             try:
@@ -3801,7 +3835,13 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             newnotes+="%s performed by %s\n"%(result[0],result[1])
             self.pt.addHiddenNote("treatment","Perio %s"%result[0])
             actfee=result[3]
-            self.pt.addToEstimate(1,item,actfee)
+            item=result[0]
+            try:
+                item_description=localsettings.descriptions[item]
+            except KeyError:
+                item_description="unknown exam type"
+            self.pt.addToEstimate(1,item,item_description,actfee,
+            actfee, self.pt.dnt1, self.pt.cset, "N/A",True)
             if actfee>0:
                 self.pt.money1+=actfee
                 self.updateFees()
@@ -3864,7 +3904,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         uc=self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
-            result=patient_write_changes.write_changes(self.pt,uc)
+            result=patient_write_changes.all_changes(self.pt,uc, self.pt_dbstate.estimates)
             if result: #True if sucessful
                 self.pt_dbstate=copy.deepcopy(self.pt)
                 message="Sucessfully altered the following items<ul>"
@@ -3979,8 +4019,8 @@ def main(arg):
     #--the app would however, not have initialised.
 
     if __name__ != "__main__":
-        #--don't maximise the window for dev purposes - I like to see all the error
-        #--messages in a terminal ;).
+        #--don't maximise the window for dev purposes - I like to see
+        #--all the error messages in a terminal ;).
         mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
     else:
         if not localsettings.successful_login:

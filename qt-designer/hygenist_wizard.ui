@@ -51,6 +51,9 @@
    </item>
    <item>
     <widget class="QRadioButton" name="twovisit1_radioButton" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
      <property name="text" >
       <string>Part 1 of 2 visit treatment</string>
      </property>
@@ -58,6 +61,9 @@
    </item>
    <item>
     <widget class="QRadioButton" name="twovisit2_radioButton" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
      <property name="text" >
       <string>Part 2 of 2 visit treatment</string>
      </property>

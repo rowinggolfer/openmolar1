@@ -378,6 +378,42 @@ LOCK TABLES `docsprinted` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `estimates`
+--
+
+DROP TABLE IF EXISTS `estimates`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `estimates` (
+  `ix` int(10) unsigned NOT NULL auto_increment,
+  `serialno` int(11) default NULL,
+  `courseno` int(10) unsigned NOT NULL,
+  `tooth` char(3) default NULL,
+  `number` tinyint(4) default NULL,
+  `itemcode` char(4) default NULL,
+  `description` char(50) default NULL,
+  `fee` int(11) default NULL,
+  `ptfee` int(11) default NULL,
+  `feescale` char(1) default NULL,
+  `csetype` char(5) default NULL,
+  `dent` tinyint(1) default NULL,
+  `completed` tinyint(1) default NULL,
+  `carriedover` tinyint(1) default NULL,
+  PRIMARY KEY  (`ix`)
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COMMENT='new table to store better estimates';
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `estimates`
+--
+
+LOCK TABLES `estimates` WRITE;
+/*!40000 ALTER TABLE `estimates` DISABLE KEYS */;
+INSERT INTO `estimates` VALUES (1,1,147660,NULL,1,'101','clinical examination^',1950,1950,NULL,NULL,4,NULL,NULL),(2,1,147660,NULL,1,'1403','mo/do amalgam filling*',5500,5500,NULL,NULL,4,NULL,NULL),(3,1,147660,NULL,1,'1706','full gold crown*',33000,33000,NULL,NULL,4,NULL,NULL),(4,1,147660,NULL,1,'1001','scale and polish^',2850,2850,NULL,NULL,4,NULL,NULL),(5,2,147666,NULL,1,'1706','full gold crown*',33000,33000,NULL,NULL,4,NULL,NULL),(6,2,147666,NULL,1,'101','clinical examination^',1950,1950,NULL,NULL,4,NULL,NULL),(7,2,147666,NULL,1,'1415','1-sfce composite filling*',5200,5200,NULL,NULL,4,NULL,NULL),(8,2,147666,NULL,1,'1416','2-sfce composite filling*',6050,6050,NULL,NULL,4,NULL,NULL),(9,2,147666,NULL,1,'1417','3-sfce composite filling*',8000,8000,NULL,NULL,4,NULL,NULL);
+/*!40000 ALTER TABLE `estimates` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `families`
 --
 
@@ -901,4 +937,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2009-05-15  0:14:32
+-- Dump completed on 2009-05-18 22:42:35

@@ -4,7 +4,7 @@
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or 
 # (at your option) any later version. See the GNU General Public License for more details.
-
+from __future__ import division
 from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
 
@@ -12,7 +12,7 @@ import datetime
 DATE_FORMAT = "d, MMMM, yyyy"
 
 def toMoneyString(i):
-    return u"£"+"%d.%02d"%(i/100,i%100)
+    return u"£"+"%.02f"%(i/100)
 
 class estimate():
     def __init__(self,parent=None):
@@ -56,11 +56,18 @@ class estimate():
         x=LeftMargin+10
         y+=serifLineHeight*2
 
-        for line in self.estItems:
-            number_of_items=str(line[0])
-            item=line[1]
-            amount=line[2]
-            painter.drawText(QtCore.QRectF(x,y,40,serifLineHeight),QtCore.QString(number_of_items))
+
+        total=0
+        pt_total=0
+        for est in self.estItems:
+            total+=est.fee
+            pt_total+=est.ptfee
+            
+            number=est.number
+            item=est.description
+            amount=est.ptfee
+            
+            painter.drawText(QtCore.QRectF(x,y,40,serifLineHeight),QtCore.QString(number))
             painter.drawText(QtCore.QRectF(x+40,y,280,serifLineHeight),QtCore.QString(item))            
             painter.drawText(QtCore.QRectF(x+280, y,100,serifLineHeight),\
             QtCore.QString(toMoneyString(amount)),alignRight)

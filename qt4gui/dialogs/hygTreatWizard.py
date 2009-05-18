@@ -21,13 +21,13 @@ class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
             self.dents_comboBox.setCurrentIndex(self.practitioners.index(inits))
         except:
             self.dents_comboBox.setCurrentIndex(-1)
-            
+
     def getInput(self):
         if self.dialog.exec_():
             if self.sp_radioButton.isChecked():
                 trt="SP"
             elif self.extsp_radioButton.isChecked():
-                trt="ext SP"
+                trt="SP+"
             elif self.twovisit1_radioButton.isChecked():
                 trt="SP+/1"
             else:    # self.twovisit1_radioButton.isChecked():
@@ -43,7 +43,7 @@ class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
         if self.checkBox.checkState():
             notes.append("OHI instruction given")
         return tuple(notes)
-    
+
 if __name__ == "__main__":
     localsettings.initiate(False)
     import sys

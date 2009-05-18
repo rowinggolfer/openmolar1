@@ -3,14 +3,15 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. See the GNU General Public License
+# for more details.
 
 import MySQLdb,sys,types
 from openmolar.connect import connect
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 
-def write_changes(pt,changes):
+def all_changes(pt,changes, existingEstimates):
     print "write_changes"
     if changes==[]:
         print "write changes called, but no changes for patient %d"%pt.serialno
@@ -20,61 +21,86 @@ def write_changes(pt,changes):
         patchanges=""
         trtchanges=""
         for change in changes:
-
-            if change in patient_class.patientTableAtts:
+            if change=="courseno":
+                pass #these values should never get munged.
+            elif change in patient_class.patientTableAtts:
                 value=pt.__dict__[change]
                 print change,type(value)
                 if change in patient_class.dateFields:
                     if value!=None and value!="":
-                        patchanges+='%s="%s" ,'%(change,localsettings.uk_to_sqlDate(value))
+                        patchanges+='%s="%s" ,'%(
+                                    change,localsettings.uk_to_sqlDate(value))
                 elif value==None:
                     patchanges+='%s=NULL ,'%(change)
-                elif (type(value) is types.IntType) or  (type(value) is types.LongType):
+                elif (type(value) is types.IntType) or (type(value) is types.LongType):
                     patchanges+='%s=%s ,'%(change,value)
                 else:
                     patchanges+='%s="%s" ,'%(change,value)
-            if change == "bpe":
+            elif change == "bpe":
                 sqlcommands['bpe']='insert into bpe set serialno=%d,bpedate="%s",bpe="%s"'%(
                 pt.serialno,localsettings.uk_to_sqlDate(pt.bpe[-1][0]),pt.bpe[-1][1])
 
                 alternate_bpe_command='update bpe set bpe="%s" where serialno=%d and bpedate="%s"'%(
                 pt.bpe[-1][1], pt.serialno,localsettings.uk_to_sqlDate(pt.bpe[-1][0]))
 
-            if change == "estimates":
-                mydata=pt.estimates[0][7]
-                if '"' in mydata:
-                    mydata=mydata.replace('"',r'\"')
-                query='update prvfees set data="%s" where serialno=%d and courseno=%d '%(mydata,
-                                                                    pt.serialno,pt.courseno0)
-                sqlcommands["prvfees"]=query
-            if change in patient_class.currtrtmtTableAtts:
+            elif change == "estimates":
+                print "ESTIMATE CODE NEEDED"
+                sqlcommands["estimates"]=[]
+                for est in pt.estimates:
+                    if est.ix==None: #--new item
+                        print "new estimate item"
+                        query='''insert into estimates set
+                        serialno=%d, courseno=%d, tooth="%s", number=%d,
+                        itemcode="%s",description="%s", fee=%d , ptfee=%d,
+                        feescale="%s",csetype="%s",dent=%d,completed=%s,
+                        carriedover=%s'''%(pt.serialno, pt.courseno0, est.tooth,
+                        est.number, est.itemcode, est.description, est.fee,
+                        est.ptfee, est.feescale, est.csetype, est.dent,
+                        est.completed, est.carriedover)
+
+                        sqlcommands["estimates"].append(query)
+                    elif not est in existingEstimates:
+                        print "estimate has been adjusted...."
+                        print "YOU NEED TO WRITE CODE HERE!!"
+
+                #mydata=pt.estimates[0][7]
+                #if '"' in mydata:
+                #    mydata=mydata.replace('"',r'\"')
+                ##TODO - old code
+                #query='update prvfees set data="%s" where serialno=%d
+                #and courseno=%d '%(mydata,
+                #pt.serialno,pt.courseno0)
+                #sqlcommands["prvfees"]=query
+            elif change in patient_class.currtrtmtTableAtts:
                 value=pt.__dict__[change]
                 if change in patient_class.dateFields:
                     if value!=None and value!="":
-                        trtchanges+='%s="%s" ,'%(change,localsettings.uk_to_sqlDate(value))
+                        trtchanges+='%s="%s" ,'%(
+                                    change,localsettings.uk_to_sqlDate(value))
                 elif value==None:
                     trtchanges+='%s=NULL ,'%(change)
-                elif (type(value) is types.IntType) or  (type(value) is types.LongType) :
+                elif (type(value) is types.IntType) or (
+                                                type(value) is types.LongType) :
                     trtchanges+='%s=%s ,'%(change,value)
                 else:
                     trtchanges+='%s="%s" ,'%(change,value)
 
     result=True
     if patchanges != "":
-        print "update patients SET %s where serialno=%s"%(patchanges.strip(","),pt.serialno)
-
-        sqlcommands['patient'] = "update patients SET %s where serialno=%d"%(patchanges.strip(","),
-        pt.serialno)
-
+        sqlcommands['patients'] = "update patients SET %s where serialno=%d"%(
+                                    patchanges.strip(","),pt.serialno)
     if trtchanges != "":
-        sqlcommands['currtrtmt'] = "update currtrtmt SET %s where serialno=%d and courseno=%d"%(
-        trtchanges.strip(","),pt.serialno,pt.courseno0)
+        sqlcommands['currtrtmt'] = \
+        '''update currtrtmt SET %s where serialno=%d and courseno=%d'''%(
+                                trtchanges.strip(","),pt.serialno,pt.courseno)
+
     if sqlcommands!={}:
         db=connect()
         cursor = db.cursor()
         tables=sqlcommands.keys()
+        print tables
         if "bpe" in tables:
-            tables=tables.remove("bpe")
+            tables.remove("bpe")
             try:
                 if localsettings.logqueries:
                     print sqlcommands["bpe"]
@@ -85,9 +111,18 @@ def write_changes(pt,changes):
                 if localsettings.logqueries:
                     print alternate_bpe_command
                 cursor.execute(alternate_bpe_command)
+        if "estimates" in tables:
+            tables.remove("estimates")
+
+            for query in sqlcommands["estimates"]:
+                if localsettings.logqueries:
+                    print query
+                cursor.execute(query)
+
         if tables:
-            #-- if the keys were bpe alone... tables would be a None type at this point
-            #-- and uniterable
+            #-- if the keys were bpe and or estimates alone...
+            #--tables would be a None type at this point
+            #-- and uniterable - hence the "if tables"
             for table in tables:
                 try:
                     if localsettings.logqueries:
@@ -168,15 +203,16 @@ def discreet_changes(pt_changed,changes):
         else:
             sqlcond+='%s="%s" ,'%(change,value)
 
-    print "update patients SET %s where serialno=%s"%(sqlcond.strip(","),pt_changed.serialno)
+    print "update patients SET %s where serialno=%s"%(sqlcond.strip(","),
+                                                      pt_changed.serialno)
     result=True
     if sqlcond!="":
         db=connect()
         cursor = db.cursor()
         #print cursor.execute(sqlcommand)
         try:
-            sqlcommand= "update patients SET %s where serialno=%s"%(sqlcond.strip(","),
-            pt_changed.serialno)
+            sqlcommand= "update patients SET %s where serialno=%s"%(
+                                    sqlcond.strip(","),pt_changed.serialno)
 
             cursor.execute(sqlcommand)
             db.commit()

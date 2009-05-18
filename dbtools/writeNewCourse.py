@@ -3,7 +3,8 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. See the GNU General Public License for
+# more details.
 
 import MySQLdb,sys
 from openmolar.connect import connect
@@ -36,8 +37,18 @@ def write(sno,dnt,accd):
         else:
             cno=1
         print cno
-        cursor.execute("insert into currtrtmt set serialno=%d,courseno=%s,%s "%(sno,cno,query.strip(",")))
-        cursor.execute("INSERT INTO prvfees set serialno=%d,courseno=%s,dent=%d,esta=%d,acta=%d,estb=%d,actb=%d,data=''"%(sno,cno,dnt,0,0,0,0))
+        query="insert into currtrtmt set serialno=%d,courseno=%s,%s "%(
+                                                    sno,cno,query.strip(","))
+        if localsettings.logqueries:
+            print query
+        cursor.execute(query)
+
+        ##OBSOLETE OLD CODE
+        #query="INSERT INTO prvfees set serialno=%d,courseno=%s,"%(sno,cno)
+        #query+="dent=%d,esta=%d,acta=%d,estb=%d,actb=%d,data=''"%(dnt,0, 0,0,0)
+        #if localsettings.logqueries:
+        #    print query
+        #cursor.execute(query)
     except Exception,e:
         print e
         result=False
@@ -49,4 +60,3 @@ def write(sno,dnt,accd):
 
 if __name__ == "__main__":
     write(31720,4,"20081225")
-    

@@ -3,24 +3,91 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. See the GNU General Public License
+# for more details.
 
-
+from __future__ import division
 import sys
 from openmolar.settings import localsettings
 import struct
 
+
+
+class est():
+    '''
+    this class has attributes suitable for storing in the estimates table
+    '''
+    def __init__(self):
+        self.ix=None
+        self.serialno=None
+        self.courseno=None
+        self.tooth=None
+        self.number=None
+        self.itemcode=None
+        self.description=None
+        self.fee=None
+        self.ptfee=None
+        self.feescale=None
+        self.csetype=None
+        self.dent=None
+        self.completed=None
+        self.carriedover=None
+    
+    def __repr__(self):
+        retarg="("
+        for att in self.__dict__:
+            retarg+="%s ,"%self.__dict__[att]
+        return retarg+")"
+        
+    
+    def __str__(self):
+        retarg="("
+        for att in self.__dict__:
+            retarg+="%s ,"%self.__dict__[att]
+        return retarg+")"
+            
+
+
 def toBriefHtml(currEst):
+    if currEst==[]:
+        retarg='<html><body>No current estimate</body></html>'
+        return retarg
     '''just the final row - ie... current estimate'''
-    retarg='<html><body><table width ="100%" border="1"><tr><td colspan="3"><h3>ESTIMATE</h3></td></tr>'
-    total=currEst[1]
-    for row in currEst[0]:
-        retarg+='<tr><td>%s</td><td>%s</td><td align="right">&pound;%d.%02d</td></tr>'%(row[0],row[1],row[2]/100,row[2]%100)
-    retarg+='<tr><td></td><td><b>TOTAL<b></td><td align="right"><b>&pound;%d.%02d</b></td></tr>'%(total/100,total%100)
+    retarg='<html><body><table width ="100%" border="1">'
+    retarg+='<tr><td colspan="7"><h3>ESTIMATE</h3></td></tr>'
+    retarg+='''<tr><th>No.</th><th>Description</th><th>Tooth</th><th>Type</th>
+    <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>'''
+    total=0
+    pt_total=0
+    for est in currEst:
+        total+=est.fee
+        pt_total+=est.ptfee
+        retarg+='<tr><td>%s</td><td>%s</td>'%(est.number,est.description)
+        retarg+='<td align="center">%s</td>'%est.tooth
+        if est.csetype==None:
+            retarg+='<td align="center">?</td>'
+        else:
+            retarg+='<td align="center">%s</td>'%est.csetype
+        retarg+='<td align="right">&pound;%.02f</td>'%(est.fee/100)
+        retarg+='<td align="right"><b>&pound;%.02f</b></td>'%(est.ptfee/100)
+        retarg+='<td align="center">'
+        if est.completed:
+            retarg+='YES'
+        else:
+            retarg+='NO'                
+        retarg+="</td></tr>"
+
+    retarg+='<tr><td colspan="4"></td>'
+    retarg+='<td align="right">&pound;%.02f</td>'%(total/100)
+    retarg+='<td align="right"><b>&pound;%.02f</b></td>'%(pt_total/100)
+    retarg+='<td></td></tr>'
+    
     retarg+='</table></body></htsml>'
+    
     return retarg
 
 def getCurrentEstimate(rows,tsrows):
+    ##OLD CODE.
     dec=()
     if rows!=():
         dec=decode(rows[0][7])
@@ -55,50 +122,16 @@ def getCurrentEstimate(rows,tsrows):
 
     return (retarg,total)
 
-def toHtml(estrows,tsrows):  ##########################not really used anymore    18.04.
-    retarg="<h3>ESTIMATE</h3>"
-    retarg+='<table width="100%" border="1">'
-    headers=("Serialno","Course no","Dent","esta","acta","estb","actb")  #,"Decrypted data")
-    retarg+='<tr>'
-    for header in headers:
-        retarg+="<th>%s</th>"%str(header)
-    retarg+='<th>Decrypted data</th>'
-    retarg+='</tr>'
-    total=0
-    for estrow in estrows:
-        retarg+="<tr>"
-        for col in range(7):
-            retarg+='<td>%s</td>'%str(estrow[col])
-        col=7
-        dec=decode(estrow[col])
-        retarg+='<td><table border="1">'
-        for d in dec:
-            retarg+='<tr><td>%s</td><td>%s</td><td align="right">%d</td></tr>'%(d[0],d[1],d[2])
-            total+=d[2]
-        retarg+='</table></td></tr>\n'
-
-    for estrow in tsrows:
-        retarg+='<tr bgcolor="#eeeeee">'
-        for col in range(4):
-            retarg+='<td>%s</td>'%str(estrow[col])
-        retarg+="<td></td>"*3
-        col=4
-        dec=decodeTS(estrow[col])
-        retarg+='<td><table border="1">'
-        for d in dec:
-            retarg+='<tr><td>%s</td><td>%s</td><td align="right">%d</td></tr>'%(d[0],d[1],d[2])
-            total+=d[2]
-        retarg+='</table></td></tr>\n'
-
-    retarg+='<tr>'+'<td></td>'*6+'<td><b>TOTAL<b></td><td align="right"><b>%d</b></td></tr>'%total
-    retarg+='</table>'
-    return retarg
-
 def decode(blob):
-    '''estimates are blocks of 8 bytes - format ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')'''
+    '''
+    estimates are blocks of 8 bytes - format
+    ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')
+    '''
     retlist=[]
     for i in range(0,len(blob),8):
-        number=struct.unpack_from('b',blob,i)[0]                                ## this could be a lot tidier.... struct.unpack(bHi,blob) returns a tuple (number,item,cost)
+        number=struct.unpack_from('b',blob,i)[0]
+        ## this could be a lot tidier.... struct.unpack(bHi,blob)
+        ## returns a tuple (number,item,cost)
         item=struct.unpack_from('H',blob,i+2)[0]
         try:
             item_text=localsettings.descriptions['%04d'%item]
@@ -113,11 +146,16 @@ def encode(number,item,fee):
 
 
 def decodeTS(blob):
-    '''estimates are blocks of 8 bytes - format ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')'''
+    '''
+    estimates are blocks of 8 bytes - format
+    ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')
+    '''
     retlist=[]
     for i in range(0,len(blob),8):
         #print struct.unpack("Hbi",blob[i:i+8])
-        item=struct.unpack_from('H',blob,i)[0]                                ## this could be a lot tidier.... struct.unpack(bHi,blob) returns a tuple (number,item,cost)
+        item=struct.unpack_from('H',blob,i)[0]
+        #--this could be a lot tidier.... struct.unpack(bHi,blob)
+        #--returns a tuple (number,item,cost)
         tooth=struct.unpack_from('B',blob,i+2)[0]
         try:
             item_text=localsettings.descriptions['%04d'%item]

@@ -3,7 +3,8 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. See the GNU General Public License
+# for more details.
 
 import MySQLdb,sys,datetime,os
 
@@ -42,20 +43,22 @@ lastsearch=("","","","","","")
 activedents=[]
 activehygs=[]
 
-#--this dictionary is upated when this file is initiate - it links dentist keys with practioners
+#--this dictionary is upated when this file is initiate -
+#--it links dentist keys with practioners
 #--eg ops[1]="JJ"
 ops={}
 
 #--keys/dents the other way round.
 ops_reverse={}
 apptix={}
-#--this dictionary is upated when this file is initiate - it links appointment keys with practioners
+#--this dictionary is upated when this file is initiate -
+#--it links appointment keys with practioners
 #--eg app[13]="jj"
 
 apptix_reverse={}
 referralfile=""
-#contains a link to the xml document with the referral info in it - this data will eventually
-#--be in the mysql?
+#contains a link to the xml document with the referral info in it -
+#--this data will eventually be in the mysql?
 stylesheet="resources/style.css"
 
 
@@ -89,20 +92,23 @@ treatmentCodes={}
 logqueries=False
 
 #-- self evident
-practiceAddress=("The Academy Dental Practice","19 Union Street","Inverness","IV1 1PP")
+practiceAddress=("The Academy Dental Practice","19 Union Street",
+"Inverness","IV1 1PP")
 
-#--localsettings.defaultNewPatientDetails=(pt.sname,pt.addr1,pt.addr2,pt.addr3,pt.town,
+#--localsettings.defaultNewPatientDetails=(pt.sname,
+#--pt.addr1,pt.addr2,pt.addr3,pt.town,
 #--pt.county,pt.pcde,pt.tel1)
 defaultNewPatientDetails=("",)*8
 
 #-- this gets initiated
 privateFees={}
 
-#-- my own class of excpetion, for when a serialno is called from the database and no match is found
+#-- my own class of excpetion, for when a serialno is called
+#--from the database and no match is found
 class PatientNotFoundError(Exception):
     pass
 
-def curTime():
+def curTime():        #self.estimates = cursor.fetchall()
     return datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
 
 def ukToday():
@@ -154,11 +160,16 @@ def humanTimetoWystime(t):
     except:
         return None
 def minutesPastMidnighttoWystime(t):
-    '''converts minutes past midnight(int) to format HHMM  (integer)'''
+    '''
+    converts minutes past midnight(int) to format HHMM  (integer)
+    '''
     hour,min=t//60,int(t)%60
     return hour*100+min
 def minutesPastMidnight(t):
-    '''converts a time in the format of 0830 or 1420 to minutes past midnight (integer)'''
+    '''
+    converts a time in the format of 0830 or 1420
+    to minutes past midnight (integer)
+    '''
     hour,min=int(t)//100,int(t)%100
     return hour*60+min
 def humanTime(t):
@@ -192,7 +203,8 @@ def initiate(debug=False):
 
     try:
         ##correspondence details for NHS forms
-        query="select id,inits,name,formalname,fpcno,quals from practitioners where flag0=1"
+        query="select id,inits,name,formalname,fpcno,quals"
+        query+="from practitioners where flag0=1"
         if logqueries:
             cursor.execute(query)
         practitioners = cursor.fetchall()
@@ -208,13 +220,15 @@ def initiate(debug=False):
         for practitioner in practitioners:
             if practitioner[0] != 0 and practitioner[0] != None: #apptix
                 apptix[practitioner[1]]=practitioner[0]
-        cursor.execute("select inits from practitioners where flag3=1 and flag0=1")
+        cursor.execute(
+        "select inits from practitioners where flag3=1 and flag0=1")
         #dentists where appts active
 
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
             activedents.append(practitioner[0])
-        cursor.execute("select inits from practitioners where flag3=1 and flag0=0")
+        cursor.execute(
+        "select inits from practitioners where flag3=1 and flag0=0")
         #hygenists where appts active
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
@@ -232,11 +246,13 @@ def initiate(debug=False):
         print "error loading from opid"
 
 
-    #-- majorly important dictionary being created. the keys are treatment codes form NHS scotland
+    #-- majorly important dictionary being created.
+    #-- the keys are treatment codes form NHS scotland
     #-- the values are a custom data class in the fee_keys module
 
     try:   #this breaks compatibility with the old database schema
-        query="select code,description,pfa,USERCODE,description1,regulation from newfeetable"
+        query="select code, description, pfa, USERCODE,"
+        query+="description1, regulation from newfeetable"
         if logqueries:
             print query
         cursor.execute(query)
@@ -276,22 +292,22 @@ def initiate(debug=False):
     <p>Have a great day!</p></div></body></html>'''%(stylesheet,__version__,__build__)
 
     if debug:
-        print formatMoney(1150)
-        print "ops = ",ops
-        print "ops_reverse = ",ops_reverse
-        print "apptix = ",apptix
-        print "apptix_reverse = ",apptix_reverse
-        print "activedents =",activedents
-        print "activehygs=",activehygs
-        print "allowed logins=",allowed_logins
-        print stylesheet
-        print referralfile
-        print curTime()
-        print sqlToday()
-        print dentDict
+        #print formatMoney(1150)
+        #print "ops = ",ops
+        #print "ops_reverse = ",ops_reverse
+        #print "apptix = ",apptix
+        #print "apptix_reverse = ",apptix_reverse
+        #print "activedents =",activedents
+        #print "activehygs=",activehygs
+        #print "allowed logins=",allowed_logins
+        #print stylesheet
+        #print referralfile
+        #print curTime()
+        #print sqlToday()
+        #print dentDict
         print descriptions
-        print privateFees
-        print treatmentCodes
+        #print privateFees
+        #print treatmentCodes
         #print fees
 
 if __name__ == "__main__":
