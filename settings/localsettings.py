@@ -103,6 +103,11 @@ defaultNewPatientDetails=("",)*8
 #-- this gets initiated
 privateFees={}
 
+
+#-- 1 less dialog box for these lucky people
+defaultPrinterforGP17=True
+
+
 #-- my own class of excpetion, for when a serialno is called
 #--from the database and no match is found
 class PatientNotFoundError(Exception):
@@ -199,14 +204,14 @@ def initiate(debug=False):
         else:
             ops[0]="NONE"
             ops_reverse["NONE"]=0
-    dentDict={}
-
+    
     try:
         ##correspondence details for NHS forms
-        query="select id,inits,name,formalname,fpcno,quals"
+        query="select id,inits,name,formalname,fpcno,quals "
         query+="from practitioners where flag0=1"
         if logqueries:
-            cursor.execute(query)
+            print query
+        cursor.execute(query)
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
             dentDict[practitioner[0]]=practitioner[1:]
@@ -292,20 +297,20 @@ def initiate(debug=False):
     <p>Have a great day!</p></div></body></html>'''%(stylesheet,__version__,__build__)
 
     if debug:
-        #print formatMoney(1150)
-        #print "ops = ",ops
-        #print "ops_reverse = ",ops_reverse
-        #print "apptix = ",apptix
-        #print "apptix_reverse = ",apptix_reverse
-        #print "activedents =",activedents
-        #print "activehygs=",activehygs
-        #print "allowed logins=",allowed_logins
-        #print stylesheet
-        #print referralfile
-        #print curTime()
-        #print sqlToday()
-        #print dentDict
-        print descriptions
+        print formatMoney(1150)
+        print "ops = ",ops
+        print "ops_reverse = ",ops_reverse
+        print "apptix = ",apptix
+        print "apptix_reverse = ",apptix_reverse
+        print "activedents =",activedents
+        print "activehygs=",activehygs
+        print "allowed logins=",allowed_logins
+        print stylesheet
+        print referralfile
+        print curTime()
+        print sqlToday()
+        print dentDict
+        #print descriptions
         #print privateFees
         #print treatmentCodes
         #print fees

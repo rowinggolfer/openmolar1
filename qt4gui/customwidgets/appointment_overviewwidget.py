@@ -192,7 +192,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
     def paintEvent(self,event=None):
         '''draws the widget - recalled at any point by instance.update()'''
-        if True: #try:
+        try:
             if len(self.dents)==0: return  #blank widget if no dents working
             painter = QtGui.QPainter(self)
             painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
@@ -278,7 +278,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 painter.setPen(QtGui.QPen(QtCore.Qt.red,2))
                 painter.setBrush(TRANSPARENT)
                 painter.drawRect(self.highlightedRect)
-        else: #except Exception:
+        except Exception:
             print "error painting widget",Exception
 if __name__ == "__main__":
     def clicktest(a):

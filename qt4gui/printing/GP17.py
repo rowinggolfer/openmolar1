@@ -97,11 +97,12 @@ misccbs2Top = offsetTop + 290
 misccbs3Top = offsetTop + 316
 
 class gp17():
-    def __init__(self,pt,testtingMode=False,parent=None):
+    def __init__(self,pt,dentist,testtingMode=False,parent=None):
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A4)
         self.printer.setPaperSource(QtGui.QPrinter.Middle)  #set bin 2
         self.pt=pt
+        self.dentist=dentist
         self.setStampText()
         self.sizes()
         self.testingMode=testtingMode
@@ -186,9 +187,10 @@ class gp17():
         self.miscCBS[2]=QtCore.QRectF(misccbsLeft,misccbs3Top,checkBoxWidth,checkBoxHeight)
         
     def print_(self):
-        dialog = QtGui.QPrintDialog(self.printer)
-        if not dialog.exec_():
-            return
+        if not localsettings.defaultPrinterforGP17:
+            dialog = QtGui.QPrintDialog(self.printer)
+            if not dialog.exec_():
+                return
         print "printing GP17 with offset (%d,%d)"%(offsetLeft,offsetTop)
         print "printer paper source = ",self.printer.paperSource()
         serifFont = QtGui.QFont("Courier", 12)
@@ -298,15 +300,16 @@ class gp17():
         print "treatment on referral,special needs, cancel registration not implemented"
     def setStampText(self):
         try:
-            self.stampText = localsettings.dentDict[self.pt.dnt1][2]+"\n"
+            self.stampText = localsettings.dentDict[self.dentist][2]+"\n"
         except KeyError:
-            self.stampText = "UNKNOWN DENTIST"
+            print "Key Error getting dentist",self.dentist
+            self.stampText = "\n"
         for line in localsettings.practiceAddress:
             self.stampText += line+"\n"
         try:
-            self.stampText += localsettings.dentDict[self.pt.dnt1][3]
+            self.stampText += localsettings.dentDict[self.dentist][3]
         except KeyError:
-            self.stampText += "CONTRACT NUMBER"
+            self.stampText += ""
             
 if __name__ == "__main__":
     import sys

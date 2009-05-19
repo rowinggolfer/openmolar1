@@ -19,7 +19,8 @@ from openmolar.qt4gui import Ui_main,colours
 from openmolar.qt4gui.dialogs import Ui_patient_finder,Ui_select_patient,\
 Ui_enter_letter_text,Ui_phraseBook,Ui_changeDatabase,Ui_related_patients,\
 Ui_raiseCharge,Ui_options,Ui_surgeryNumber,Ui_payments,paymentwidget,\
-Ui_specify_appointment,Ui_appointment_length,Ui_daylist_print
+Ui_specify_appointment,Ui_appointment_length,Ui_daylist_print,\
+Ui_confirmDentist
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
@@ -2635,10 +2636,31 @@ class printingClass():
 
     def printGP17(self,test=False):
         #-- if test is true.... you also get boxes
-        form=GP17.gp17(self.pt,test)
-        form.print_()
-        if not test:
-            self.pt.addHiddenNote("printed","GP17")
+        
+        #--check that the form is goin gto have the correct dentist
+        if self.pt.dnt2 !=0:
+            dent=self.pt.dnt2
+        else:
+            dent=self.pt.dnt1
+        
+        Dialog = QtGui.QDialog(self.mainWindow)
+        dl = Ui_confirmDentist.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.dents_comboBox.addItems(localsettings.activedents)
+        if localsettings.apptix_reverse[dent] in localsettings.activedents:
+            pos=localsettings.activedents.index(localsettings.apptix_reverse[dent])                                      
+            dl.dents_comboBox.setCurrentIndex(pos)
+        else:
+            dl.dents_comboBox.setCurrentIndex(-1)
+              
+        if Dialog.exec_():
+            #-- see if user has overridden the dentist
+            chosenDent=str(dl.dents_comboBox.currentText())
+            dent=localsettings.ops_reverse[chosenDent]
+            form=GP17.gp17(self.pt,dent,test)
+            form.print_()
+            if not test:
+                self.pt.addHiddenNote("printed","GP17 %s"%chosenDent)
 
     def accountButton2Clicked(self):
         if self.ui.accountB_radioButton.isChecked():
