@@ -292,6 +292,7 @@ class feeClass():
                 self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[3],
                                        self.pt.dnt1, self.pt.cset, treat[0])
                 self.load_planpage()
+                self.ui.estimateRequired_checkBox.setChecked(False)
         else:
             self.ui.estimateRequired_checkBox.setChecked(True)
 
@@ -3728,6 +3729,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 #--('pt c/o nil', 'Soft Tissues Checked - NAD',
                 #-- 'OHI instruction given',
                 #--'Palpated for upper canines - NAD'), "000000")]
+                examtype=result[0]
                 examdent=result[1]
                 if examdent ==localsettings.ops[self.pt.dnt1]:
                     #--normal dentist.
@@ -3779,9 +3781,10 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                     self.pt.recd=result[2].addMonths(6).toString("dd/MM/yyyy")
                     newnotes=str(self.ui.notesEnter_textEdit.toPlainText()\
                                  .toAscii())
-                    newnotes+="CE examination performed by %s\n"%examdent
-                    self.pt.addHiddenNote("exam","CE EXAM")
-                    item=fee_keys.getKeyCode("CE")
+                    newnotes+="%s examination performed by %s\n"%(
+                    examtype,examdent)
+                    self.pt.addHiddenNote("exam","%s EXAM"%examtype)
+                    item=fee_keys.getKeyCode(examtype)
                     if "P" in self.pt.cset:
                         itemfee=localsettings.privateFees[item].getFee()
                     else:
@@ -3835,11 +3838,12 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             newnotes+="%s performed by %s\n"%(result[0],result[1])
             self.pt.addHiddenNote("treatment","Perio %s"%result[0])
             actfee=result[3]
-            item=result[0]
+            usercode=result[0]
+            item=fee_keys.getKeyCode(usercode)
             try:
                 item_description=localsettings.descriptions[item]
             except KeyError:
-                item_description="unknown exam type"
+                item_description="unknown perio treatment"
             self.pt.addToEstimate(1,item,item_description,actfee,
             actfee, self.pt.dnt1, self.pt.cset, "N/A",True)
             if actfee>0:
