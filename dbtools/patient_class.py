@@ -265,7 +265,7 @@ class patient():
     def blankCurrtrt(self):
         for att in currtrtmtTableAtts:
             if att =='courseno':
-                self.__dict__[att]=0
+                pass
             elif att in ('examd','accd','cmpd'):
                 self.__dict__[att]=nullDate
             else:
