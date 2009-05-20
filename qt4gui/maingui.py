@@ -3693,13 +3693,15 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             if atts[2]!=self.pt.cset:
                 self.changeCourseType(atts[2])
 
-            sqldate="%04d%02d%02d"%(atts[3].year(),atts[3].month(),\
-                                    atts[3].day())
-            course=writeNewCourse.write(self.pt.serialno,localsettings.\
-                                        ops_reverse[atts[1]],sqldate)
+            accd=atts[3].toPyDate()
+            
+            course=writeNewCourse.write(self.pt.serialno,
+            localsettings.ops_reverse[atts[1]],str(accd))
+            
             if course[0]:
+                self.pt.courseno=course[1]
                 self.pt.courseno0=course[1]
-                self.pt.accd=localsettings.ukToday()
+                self.pt.accd=localsettings.formatDate(accd)
                 self.advise("Sucessfully started new course of treatment",1)
                 self.pt.blankCurrtrt()
                 self.pt.estimates=[]
