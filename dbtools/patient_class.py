@@ -107,6 +107,7 @@ class patient():
         initiate the class with default variables, then load from database
         '''
         self.serialno=sno
+        self.courseno=None
         i=0
         for att in patientTableAtts:
             self.__dict__[att]=patientTableVals[i]
