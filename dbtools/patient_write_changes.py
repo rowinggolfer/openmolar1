@@ -59,24 +59,45 @@ def all_changes(pt,changes, existingEstimates):
                         serialno=%d, courseno=%d, tooth="%s", number=%d,
                         itemcode="%s",description="%s", fee=%d , ptfee=%d,
                         feescale="%s",csetype="%s",dent=%d,completed=%s,
-                        carriedover=%s'''%(pt.serialno, pt.courseno, est.code,
+                        carriedover=%s'''%(pt.serialno, pt.courseno, 
+                        est.code,
                         est.number, est.itemcode, est.description, est.fee,
                         est.ptfee, est.feescale, est.csetype, est.dent,
                         est.completed, est.carriedover)
 
                         sqlcommands["estimates"].append(query)
                     elif est.ix in oldEstDict.keys():
-                        query='''update estimates set
-                        serialno=%d, courseno=%d, tooth="%s", number=%d,
-                        itemcode="%s",description="%s", fee=%d , ptfee=%d,
-                        feescale="%s",csetype="%s",dent=%d,completed=%s,
-                        carriedover=%s where ix=%s'''%(pt.serialno,
-                        pt.courseno, est.code,
-                        est.number, est.itemcode, est.description, est.fee,
-                        est.ptfee, est.feescale, est.csetype, est.dent,
-                        est.completed, est.carriedover,est.ix)
+                        oldEst = oldEstDict[est.ix]
+                              
+                        if str(oldEst)!=str(est):
+                            #-- have to use the str because est class does not
+                            #-- have a _eq_ property ??
+                            query='update estimates set '
+                            if oldEst.code!=est.code:
+                                query+="tooth=%s,"%est.code
+                            if oldEst.number!=est.number:
+                                query+="number=%d,"%est.number
+                            if oldEst.itemcode!=est.itemcode:
+                                query+='itemcode="%s",'%est.itemcode
+                            if oldEst.description!=est.description:
+                                query+= 'description="%s",'%est.description
+                            if oldEst.fee!=est.fee:
+                                query+='fee=%d,'%est.fee
+                            if oldEst.ptfee!=est.ptfee:
+                                query+="ptfee=%d,"%est.ptfee
+                            if oldEst.feescale!=est.feescale:
+                                query+='feescale="%s",'%pt.feescale
+                            if oldEst.csetype!=est.csetype:
+                                query+='csetype="%s",'%est.csetype
+                            if oldEst.dent!=est.dent:
+                                query+='dent=%d,'%est.dent
+                            if oldEst.completed!=est.completed:
+                                query+='completed=%s,'%est.completed
+                            if oldEst.carriedover!=est.carriedover:
+                                query+='carriedover=%s,'%est.carriedover
+                            query=query.strip(",")+" where ix = %d"%est.ix
 
-                        sqlcommands["estimates"].append(query)
+                            sqlcommands["estimates"].append(query)
 
                         oldEstDict.pop(est.ix)
                 #-- all that is left in oldEstDict now are items which

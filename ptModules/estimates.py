@@ -20,9 +20,9 @@ class est():
         self.ix=None
         self.serialno=None
         self.courseno=None
-        self.code=None
+        self.code=""
         self.number=None
-        self.itemcode=None
+        self.itemcode="4001"
         self.description=None
         self.fee=None
         self.ptfee=None
@@ -44,8 +44,7 @@ class est():
         for att in self.__dict__:
             retarg+="%s ,"%self.__dict__[att]
         return retarg+")"
-
-
+        
 
 def toBriefHtml(currEst):
     if currEst==[]:

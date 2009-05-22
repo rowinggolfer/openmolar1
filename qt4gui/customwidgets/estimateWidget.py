@@ -62,31 +62,28 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
 
     def update_cset(self,arg):
         self.item.csetype=str(arg)
-        self.userInput()
     def update_number(self,arg):
         try:
             newVal=int(arg)
         except ValueError:
             newVal=0
         self.item.number=newVal
-        self.userInput()
     def update_descr(self,arg):
         self.item.description=str(arg).replace('"', '\"')
-        self.userInput()
     def update_Fee(self,arg):
         try:
             newVal=int(float(arg)*100)
         except ValueError:
             newVal=0
         self.item.fee=newVal
-        self.userInput(True)
+        self.userInput()
     def update_ptFee(self,arg):
         try:
             newVal=int(float(arg)*100)
         except ValueError:
             newVal=0
         self.item.ptfee=newVal
-        self.userInput(True)
+        self.userInput()
     def setNumber(self,arg):
         self.number_lineEdit.setText(str(arg))
 
@@ -120,8 +117,8 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.userInput()
         self.parent.emit(QtCore.SIGNAL("completedItem"), (self.item))
 
-    def userInput(self, feesChanged=False):
-        self.parent.emit(QtCore.SIGNAL("user_interaction"), (feesChanged))
+    def userInput(self):
+        self.parent.emit(QtCore.SIGNAL("user_interaction"))
 
 
 
@@ -148,19 +145,10 @@ class estWidget(QtGui.QFrame):
         self.estimate_layout.addStretch(-1)
         self.estItemWidgets={}
         self.ests=()
-        self.clear()
-        self.userChanges=False
+        #self.clear()
+        #self.userChanges=False
 
-    def input(self, updateNeeded):
-        '''
-        this simply changes a boolean attribute so that the maingui knows
-        the user has edited the estimate.
-        '''
-        print "estWidget - user interaction noted"
-        self.userChanges=True
-        if updateNeeded:
-            self.updateTotals()
-
+    
     def minimumSizeHint(self):
         return QtCore.QSize(400,500)
 
@@ -182,7 +170,8 @@ class estWidget(QtGui.QFrame):
             i=estItemWidget(iw)
             i.item=item
             i.loadValues()
-            iw.connect(iw,QtCore.SIGNAL("user_interaction"),self.input)
+            iw.connect(iw,QtCore.SIGNAL("user_interaction"),self.updateTotals
+            )
             iw.connect(iw,QtCore.SIGNAL("deleteMe"),self.deleteItemWidget)
             iw.connect(iw,QtCore.SIGNAL("completedItem"), self.itemCompletionState)
             self.estItemWidgets[item.ix]=i
@@ -201,6 +190,7 @@ class estWidget(QtGui.QFrame):
         '''
         clears all est widget in anticipation of a new estimate
         '''
+        print "clearing %d estItemWidgets"%len(self.estItemWidgets)
         for widg in self.estItemWidgets.values():
             self.estimate_layout.removeWidget(widg.parent)
             widg.parent.setParent(None)

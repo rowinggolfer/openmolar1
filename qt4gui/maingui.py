@@ -80,7 +80,7 @@ class feeClass():
         if self.pt.serialno!=0:
             self.pt.updateFees()
             self.updateDetails()
-            self.load_planpage()
+            #self.load_newEstPage()
 
     def takePayment(self):
         if self.pt.serialno==0:
@@ -214,7 +214,7 @@ class feeClass():
         self.pt.money1+=arg
         self.updateFees()
         self.updateDetails()
-        self.load_estpage()
+        #self.load_estpage()
 
     def showExamDialog(self):
         global pt
@@ -375,7 +375,7 @@ class feeClass():
                 self.pt.xraypl+="%s%s "%(treat[0],treat[2])
                 self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
                                        treat[4], self.pt.dnt1, self.pt.cset)
-            self.load_planpage()
+            self.load_newEstPage()
 
     def addPerioItems(self):
         if self.noNewCourseNeeded():
@@ -387,7 +387,7 @@ class feeClass():
                 self.pt.periopl+="%s%s "%(treat[0],treat[2])
                 self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
                                        treat[4], self.pt.dnt1, self.pt.cset)
-            self.load_planpage()
+            self.load_newEstPage()
 
     def addOtherItems(self):
         if self.noNewCourseNeeded():
@@ -404,7 +404,7 @@ class feeClass():
                 self.pt.otherpl+="%s%s "%(treat[0],treat[2])
                 self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
                                        treat[4], self.pt.dnt1, self.pt.cset)
-            self.load_planpage()
+            self.load_newEstPage()
 
     def addCustomItem(self):
         if self.noNewCourseNeeded():
@@ -420,7 +420,7 @@ class feeClass():
                 #self,number,item,descr,fee,ptfee,dent,csetype,tooth="",
                 self.pt.addToEstimate(no,"4001",descr, fee,
                                        ptfee,self.pt.dnt1, "P",tooth)
-                self.load_planpage()
+                self.load_newEstPage()
 
 
     def offerTreatmentItems(self,arg):
@@ -434,15 +434,16 @@ class feeClass():
 
     def toothTreatAdd(self, tooth, item):
         '''
-        adds treatment to a tooth, offers an estimate check
+        adds treatment to a tooth
         '''
         print "toothTreatAdded ", tooth, item
         self.pt.__dict__[tooth+self.selectedChartWidget]=item
         #--update the patient!!
         self.ui.planChartWidget.setToothProps(tooth,item)
+        
         if not self.ui.estimateRequired_checkBox.checkState():
-            self.costToothItems(tooth, item, False)
-
+            self.ui.estimateRequired_checkBox.setChecked(True)
+            
     def costToothItems(self, tooth="", item="", ALL=True):
         '''
         prompts the user to confirm tooth treatment fees
@@ -467,7 +468,7 @@ class feeClass():
                 #-- treat[3]= adjusted fee
                 self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[3],
                                        self.pt.dnt1, self.pt.cset, treat[0])
-                self.load_planpage()
+                self.load_newEstPage()
                 self.ui.estimateRequired_checkBox.setChecked(False)
         else:
             self.ui.estimateRequired_checkBox.setChecked(True)
@@ -507,7 +508,7 @@ class feeClass():
                 currentPlanItems.append((att,self.pt.__dict__[att]))
         if currentPlanItems!=[]:
             self.completeToothTreatments(currentPlanItems)
-            self.load_planpage()
+            self.load_newEstPage()
         else:
             self.advise("No treatment items to move!",1)
 
@@ -3089,7 +3090,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             self.ui.perioChartWidget.selected=[0,0]
 
         if ci==7:
-            self.load_planpage()
+            self.load_newEstPage()
 
         #--debug tab
         ##TODO - this is a development tab- remove eventually
@@ -3149,7 +3150,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             self.pt=copy.deepcopy(self.pt_dbstate)
             if self.editPageVisited:
                 self.load_editpage()####################is this wise???????
-            #self.load_planpage()
+            #self.load_newEstPage()
             #self.load_estpage()
 
     def home(self):
@@ -3391,7 +3392,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
 
 
 
-    def load_planpage(self):
+    def load_newEstPage(self):
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         self.load_estpage()
     def updateMemo(self):
@@ -3551,11 +3552,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         self.editPageVisited=False
         self.ui.adminMemoEdit.setText(self.pt.memo)
         self.layout_apptTable()
-        self.load_planpage()
+        self.load_newEstPage()
 
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-        #--load_planpage also loads the ests
-        self.load_planpage
+        #--load_newEstPage also loads the ests
+        self.load_newEstPage
         note=notes.notes(self.pt.notestuple)
         #--notes not verbose
         self.ui.notesSummary_textBrowser.setHtml(note)
@@ -3889,7 +3890,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 self.pt.blankCurrtrt()
                 self.pt.estimates=[]
                 self.pt.underTreatment=True
-                self.load_planpage()
+                self.load_newEstPage()
                 self.updateDetails()
                 return True
             else:
@@ -3910,7 +3911,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             #self.pt.estimates=[]
             #self.pt.blankCurrtrt()
 
-            #self.load_planpage()
+            #self.load_newEstPage()
             #self.pt.underTreatment=False
             #self.updateDetails()
             return True
