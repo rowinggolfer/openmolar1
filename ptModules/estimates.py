@@ -12,7 +12,6 @@ from openmolar.settings import localsettings
 import struct
 
 
-
 class est():
     '''
     this class has attributes suitable for storing in the estimates table
@@ -21,7 +20,7 @@ class est():
         self.ix=None
         self.serialno=None
         self.courseno=None
-        self.tooth=None
+        self.code=None
         self.number=None
         self.itemcode=None
         self.description=None
@@ -32,20 +31,20 @@ class est():
         self.dent=None
         self.completed=None
         self.carriedover=None
-    
+
     def __repr__(self):
         retarg="("
         for att in self.__dict__:
             retarg+="%s ,"%self.__dict__[att]
         return retarg+")"
-        
-    
+
+
     def __str__(self):
         retarg="("
         for att in self.__dict__:
             retarg+="%s ,"%self.__dict__[att]
         return retarg+")"
-            
+
 
 
 def toBriefHtml(currEst):
@@ -63,7 +62,7 @@ def toBriefHtml(currEst):
         total+=est.fee
         pt_total+=est.ptfee
         retarg+='<tr><td>%s</td><td>%s</td>'%(est.number,est.description)
-        retarg+='<td align="center">%s</td>'%est.tooth
+        retarg+='<td align="center">%s</td>'%est.code
         if est.csetype==None:
             retarg+='<td align="center">?</td>'
         else:
@@ -74,16 +73,16 @@ def toBriefHtml(currEst):
         if est.completed:
             retarg+='YES'
         else:
-            retarg+='NO'                
+            retarg+='NO'
         retarg+="</td></tr>"
 
     retarg+='<tr><td colspan="4"></td>'
     retarg+='<td align="right">&pound;%.02f</td>'%(total/100)
     retarg+='<td align="right"><b>&pound;%.02f</b></td>'%(pt_total/100)
     retarg+='<td></td></tr>'
-    
+
     retarg+='</table></body></htsml>'
-    
+
     return retarg
 
 def getCurrentEstimate(rows,tsrows):

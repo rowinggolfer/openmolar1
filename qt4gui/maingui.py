@@ -20,7 +20,7 @@ from openmolar.qt4gui.dialogs import Ui_patient_finder,Ui_select_patient,\
 Ui_enter_letter_text,Ui_phraseBook,Ui_changeDatabase,Ui_related_patients,\
 Ui_raiseCharge,Ui_options,Ui_surgeryNumber,Ui_payments,paymentwidget,\
 Ui_specify_appointment,Ui_appointment_length,Ui_daylist_print,\
-Ui_confirmDentist
+Ui_confirmDentist,Ui_customTreatment
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
@@ -44,7 +44,7 @@ accountPrint,estimatePrint,GP17,apptcardPrint, bookprint
 #--custom widgets
 from openmolar.qt4gui.customwidgets import chartwidget,appointmentwidget,\
 toothProps, appointment_overviewwidget,toothProps,perioToothProps,\
-perioChartWidget
+perioChartWidget,estimateWidget
 
 #--the main gui class inherits from a lot of smaller classes to make the \
 #--code more manageable. (supposedly!)
@@ -74,6 +74,7 @@ class feeClass():
                 self.pt_dbstate.money1=self.pt.money1
                 self.pt_dbstate.money0=self.pt.money0
                 self.pt.clearHiddenNotes()
+
 
     def updateFees(self):
         if self.pt.serialno!=0:
@@ -207,6 +208,163 @@ class feeClass():
                 self.advise("unable to plan or perform treatment if pt does "+\
                 "not have an active course",1)
 
+    def applyFeeNow(self, arg):
+        #--TODO - this need fine tuning for course type etc....
+        print "applying", arg
+        self.pt.money1+=arg
+        self.updateFees()
+        self.updateDetails()
+        self.load_estpage()
+
+    def showExamDialog(self):
+        global pt
+        if self.pt.serialno==0:
+            self.advise("no patient selected",1)
+            return
+        if not self.pt.underTreatment:
+            if not self.newCourseSetup():
+                self.advise("unable to perform exam",1)
+                return
+        Dialog = QtGui.QDialog(self.mainWindow)
+        dl = examWizard.Ui_Dialog(Dialog,self.pt.dnt1)
+
+        ####TODO - set dentist correctly in this dialog
+        APPLIED=False
+        while not APPLIED:
+            result=dl.getInput()
+            if result:
+                #-- result is like this....
+                #--['CE', '', PyQt4.QtCore.QDate(2009, 3, 14),
+                #--('pt c/o nil', 'Soft Tissues Checked - NAD',
+                #-- 'OHI instruction given',
+                #--'Palpated for upper canines - NAD'), "000000")]
+                examtype=result[0]
+                examdent=result[1]
+                if examdent ==localsettings.ops[self.pt.dnt1]:
+                    #--normal dentist.
+                    if self.pt.dnt2==0 or self.pt.dnt2==self.pt.dnt1:
+                        #--no dnt2
+                        APPLIED=True
+                    else:
+                        message='%s is now'%examdent\
+                        +'both the registered and course dentist.<br />'\
+                        +'Is this correct?<br /><i>confirming this will '\
+                        +'remove reference to %s</i>'%\
+                        localsettings.ops[self.pt.dnt2]
+
+                        confirm=QtGui.QMessageBox.question(self.mainWindow,
+                        "Confirm",message,
+                        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                        #--check this was intentional!!
+
+                        if confirm == QtGui.QMessageBox.Yes:
+                            #--dialog rejected
+                            self.pt.dnt2=0
+                            self.updateDetails()
+                            APPLIED=True
+                else:
+                    message='%s performed this exam<br />'%examdent+\
+                    'Is this correct?'
+                    if result[2]!=localsettings.ops[self.pt.dnt2]:
+                        message +='<br /><i>confirming this will change the '+\
+                        'course dentist,but not the registered dentist</i>'
+                    else:
+                        message+='<i>consider making %s the'%result[1]\
+                        + 'registered dentist</i>'
+                    confirm=QtGui.QMessageBox.question(self.mainWindow,
+                    "Confirm",
+                    message,QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                    #--check this was intentional!!
+
+                    if confirm == QtGui.QMessageBox.Yes:
+                        #--dialog rejected
+                        self.pt.dnt2=localsettings.ops_reverse[examdent]
+                        self.updateDetails()
+                        APPLIED=True
+
+                if APPLIED:
+                    self.pt.examt=result[0]
+                    examd=result[2].toString("dd/MM/yyyy")
+                    self.pt.pd4=examd
+                    self.pt.examd=examd
+                    self.pt.recd=result[2].addMonths(6).toString("dd/MM/yyyy")
+                    newnotes=str(self.ui.notesEnter_textEdit.toPlainText()\
+                                 .toAscii())
+                    newnotes+="%s examination performed by %s\n"%(
+                    examtype,examdent)
+                    self.pt.addHiddenNote("exam","%s EXAM"%examtype)
+                    item=fee_keys.getKeyCode(examtype)
+                    if "P" in self.pt.cset:
+                        itemfee=localsettings.privateFees[item].getFee()
+                    else:
+                        itemfee=0
+                    try:
+                        item_description=localsettings.descriptions[item]
+                    except KeyError:
+                        item_description="unknown exam type"
+
+                    self.pt.addToEstimate(1,item,item_description,itemfee,
+                    itemfee, localsettings.ops_reverse[examdent], self.pt.cset,
+                    "N/A",True)
+
+                    self.pt.money1+=itemfee
+                    self.updateFees()
+                    self.updateDetails()
+                    self.load_estpage()
+                    for note in result[3]:
+                       newnotes+=note+", "
+                    self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+            else:
+                self.advise("Examination not applied",2)
+                break
+    def showHygDialog(self):
+        global pt
+        if self.pt.serialno==0:
+            self.advise("no patient selected",1)
+            return
+        if not self.pt.underTreatment:
+            if not self.newCourseSetup():
+                self.advise("unable to perform treatment if pt does not "+
+                            "have an active course",1)
+                return
+        Dialog = QtGui.QDialog(self.mainWindow)
+        dl = hygTreatWizard.Ui_Dialog(Dialog)
+        dl.setPractitioner(7)
+        item=fee_keys.getKeyCode("SP")
+        itemfee=0
+        if "P" in self.pt.cset:
+            try:
+                itemfee=localsettings.privateFees[item].getFee()
+            except:
+                print "no fee found for item %s"%item
+        fee=itemfee / 100
+        dl.doubleSpinBox.setValue(fee)
+        result=dl.getInput()
+        print result
+        if result:
+            ##['SP+/2', 'HW', (), 0]
+            newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes+="%s performed by %s\n"%(result[0],result[1])
+            self.pt.addHiddenNote("treatment","Perio %s"%result[0])
+            actfee=result[3]
+            usercode=result[0]
+            item=fee_keys.getKeyCode(usercode)
+            try:
+                item_description=localsettings.descriptions[item]
+            except KeyError:
+                item_description="unknown perio treatment"
+            self.pt.addToEstimate(1,item,item_description,actfee,
+            actfee, self.pt.dnt1, self.pt.cset, "N/A",True)
+            if actfee>0:
+                self.pt.money1+=actfee
+                self.updateFees()
+            self.pt.periocmp+=result[0]+" "
+            for note in result[2]:
+               newnotes+=note+", "
+            self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+        else:
+            self.advise("Hyg Treatment not applied",2)
+
 
     def addXrayItems(self):
         if self.noNewCourseNeeded():
@@ -248,6 +406,23 @@ class feeClass():
                                        treat[4], self.pt.dnt1, self.pt.cset)
             self.load_planpage()
 
+    def addCustomItem(self):
+        if self.noNewCourseNeeded():
+            Dialog = QtGui.QDialog(self.mainWindow)
+            dl=Ui_customTreatment.Ui_Dialog()
+            dl.setupUi(Dialog)
+            if Dialog.exec_():
+                no=dl.number_spinBox.value()
+                descr=str(dl.description_lineEdit.text())
+                tooth=str(dl.tooth_lineEdit.text()).lower()
+                fee=int(dl.fee_doubleSpinBox.value()*100)
+                ptfee=int(dl.ptFee_doubleSpinBox.value()*100)
+                #self,number,item,descr,fee,ptfee,dent,csetype,tooth="",
+                self.pt.addToEstimate(no,"4001",descr, fee,
+                                       ptfee,self.pt.dnt1, "P",tooth)
+                self.load_planpage()
+
+
     def offerTreatmentItems(self,arg):
         Dialog = QtGui.QDialog(self.mainWindow)
         dl = addTreat.treatment(Dialog,arg,self.pt.cset)
@@ -274,7 +449,7 @@ class feeClass():
         '''
         self.ui.planChartWidget.update()
 
-        Dialog = QtGui.QDialog()
+        Dialog = QtGui.QDialog(self.mainWindow)
         dl = addToothTreat.treatment(Dialog,"P")
         if ALL==False:
             dl.itemsPerTooth(tooth, item)
@@ -1503,9 +1678,11 @@ class signals():
                                QtCore.SIGNAL("triggered()"), self.testGP17)
         QtCore.QObject.connect(self.ui.actionOptions,
                         QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
+        QtCore.QObject.connect(self.ui.actionLog_queries_in_underlying_terminal,
+                    QtCore.SIGNAL("triggered()"), localsettings.setlogqueries)
 
 
-        #course ManageMent
+        #Estimates and course ManageMent
 
         QtCore.QObject.connect(self.ui.confirmFees_pushButton,
                                QtCore.SIGNAL("clicked()"),self.costToothItems)
@@ -1513,15 +1690,17 @@ class signals():
                                QtCore.SIGNAL("clicked()"), self.newCourseSetup)
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
                                QtCore.SIGNAL("clicked()"), self.closeCourse)
-        QtCore.QObject.connect(self.ui.completePlanItems_pushButton,
-                            QtCore.SIGNAL("clicked()"), self.completeTreatments)
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
                                QtCore.SIGNAL("clicked()"), self.addXrayItems)
         QtCore.QObject.connect(self.ui.perioTxpushButton,
                                QtCore.SIGNAL("clicked()"), self.addPerioItems)
         QtCore.QObject.connect(self.ui.otherTxpushButton,
                                QtCore.SIGNAL("clicked()"), self.addOtherItems)
+        QtCore.QObject.connect(self.ui.customTx_pushButton,
+                               QtCore.SIGNAL("clicked()"), self.addCustomItem)
 
+        QtCore.QObject.connect(self.ui.estWidget,
+                               QtCore.SIGNAL("applyFeeNow"), self.applyFeeNow)
 
 
         #daybook - cashbook
@@ -1832,19 +2011,19 @@ class customWidgets():
         self.ui.aptOVhyg_checkBoxes={}
 
         #vlayout=QtGui.QVBoxLayout(self.ui.aptOVdents_frame)
-        vlayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
+        glayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
         self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
                                                 QtCore.QString("All Dentists"))
 
         self.ui.aptOV_alldentscheckBox.setChecked(True)
         row=0
-        vlayout.addWidget(self.ui.aptOV_alldentscheckBox,row,0,1,2)
+        glayout.addWidget(self.ui.aptOV_alldentscheckBox,row,0,1,2)
         for dent in localsettings.activedents:
             cb=QtGui.QCheckBox(QtCore.QString(dent))
             cb.setChecked(True)
             self.ui.aptOVdent_checkBoxes[localsettings.apptix[dent]]=cb
             row+=1
-            vlayout.addWidget(cb,row,1,1,1)
+            glayout.addWidget(cb,row,1,1,1)
         #hl=QtGui.QFrame(self.ui.aptOVdents_frame)
         #--I quite like the line here.... but room doesn;t permit
         #hl.setFrameShape(QtGui.QFrame.HLine)
@@ -1855,13 +2034,13 @@ class customWidgets():
                                                 QtCore.QString("All Hygenists"))
         self.ui.aptOV_allhygscheckBox.setChecked(True)
         row+=1
-        vlayout.addWidget(self.ui.aptOV_allhygscheckBox,row,0,1,2)
+        glayout.addWidget(self.ui.aptOV_allhygscheckBox,row,0,1,2)
         for hyg in localsettings.activehygs:
             cb=QtGui.QCheckBox(QtCore.QString(hyg))
             cb.setChecked(True)
             self.ui.aptOVhyg_checkBoxes[localsettings.apptix[hyg]]=cb
             row+=1
-            vlayout.addWidget(cb,row,1,1,1)
+            glayout.addWidget(cb,row,1,1,1)
 
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
@@ -1873,6 +2052,10 @@ class customWidgets():
         for desc in referral.getDescriptions():
             s=QtCore.QString(desc)
             self.ui.referralLettersComboBox.addItem(s)
+
+        #-- add a header to the estimates page
+        self.ui.estWidget=estimateWidget.estWidget()
+        self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
 class chartsClass():
 
@@ -2636,23 +2819,23 @@ class printingClass():
 
     def printGP17(self,test=False):
         #-- if test is true.... you also get boxes
-        
+
         #--check that the form is goin gto have the correct dentist
         if self.pt.dnt2 !=0:
             dent=self.pt.dnt2
         else:
             dent=self.pt.dnt1
-        
+
         Dialog = QtGui.QDialog(self.mainWindow)
         dl = Ui_confirmDentist.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.dents_comboBox.addItems(localsettings.activedents)
         if localsettings.apptix_reverse[dent] in localsettings.activedents:
-            pos=localsettings.activedents.index(localsettings.apptix_reverse[dent])                                      
+            pos=localsettings.activedents.index(localsettings.apptix_reverse[dent])
             dl.dents_comboBox.setCurrentIndex(pos)
         else:
             dl.dents_comboBox.setCurrentIndex(-1)
-              
+
         if Dialog.exec_():
             #-- see if user has overridden the dentist
             chosenDent=str(dl.dents_comboBox.currentText())
@@ -2836,6 +3019,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
     ####TODO - link the application's box to this procedure
     def quit(self):
         '''check for unsaved changes then politely close the app'''
+        print "quit called"
         if self.okToLeaveRecord():
             app.closeAllWindows()
 
@@ -3202,12 +3386,13 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
     def load_estpage(self):
         estimateHtml=estimates.toBriefHtml(self.pt.estimates)
         self.ui.moneytextBrowser.setText(estimateHtml)
-        self.ui.bigEstimate_textBrowser.setText(estimateHtml)
+
+        self.ui.estWidget.setEstimate(self.pt.estimates)
+
+
 
     def load_planpage(self):
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-        plantext=plan.getplantext(self.pt)
-        self.ui.treatmentPlanTextBrowser.setText(plantext)
         self.load_estpage()
     def updateMemo(self):
         '''this is called when the text in the memo on the admin page changes'''
@@ -3422,14 +3607,14 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         self.ui.detailsBrowser.update()
         curtext="Current Treatment "
         if self.pt.underTreatment:
-            self.ui.treatmentPlan_groupBox.setTitle(curtext+"- started "+
+            self.ui.estimate_groupBox.setTitle(curtext+"- started "+
                                                     str(self.pt.accd))
             self.ui.underTreatment_label.show()
             self.ui.underTreatment_label_2.show()
             self.ui.newCourse_pushButton.setEnabled(False)
             self.ui.closeTx_pushButton.setEnabled(True)
         else:
-            self.ui.treatmentPlan_groupBox.setTitle(
+            self.ui.estimate_groupBox.setTitle(
                                                 curtext+"- No Current Course")
             self.ui.newCourse_pushButton.setEnabled(True)
             self.ui.closeTx_pushButton.setEnabled(False)
@@ -3656,8 +3841,6 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         dl = newBPE.Ui_Dialog(Dialog)
         result=dl.getInput()
         if result[0]:
-            ####TODO put code to check that a BPE hasn't been recorded today
-            #- somthing like....if self.pt.bpe[-1][0]!=(localsettings.ukToday())
             self.pt.bpe.append((localsettings.ukToday(),result[1]),)
             #--add a bpe
             newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
@@ -3694,10 +3877,10 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 self.changeCourseType(atts[2])
 
             accd=atts[3].toPyDate()
-            
+
             course=writeNewCourse.write(self.pt.serialno,
             localsettings.ops_reverse[atts[1]],str(accd))
-            
+
             if course[0]:
                 self.pt.courseno=course[1]
                 self.pt.courseno0=course[1]
@@ -3731,154 +3914,6 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             #self.pt.underTreatment=False
             #self.updateDetails()
             return True
-    def showExamDialog(self):
-        global pt
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
-            return
-        if not self.pt.underTreatment:
-            if not self.newCourseSetup():
-                self.advise("unable to perform exam",1)
-                return
-        Dialog = QtGui.QDialog(self.mainWindow)
-        dl = examWizard.Ui_Dialog(Dialog,self.pt.dnt1)
-
-        ####TODO - set dentist correctly in this dialog
-        APPLIED=False
-        while not APPLIED:
-            result=dl.getInput()
-            if result:
-                #-- result is like this....
-                #--['CE', '', PyQt4.QtCore.QDate(2009, 3, 14),
-                #--('pt c/o nil', 'Soft Tissues Checked - NAD',
-                #-- 'OHI instruction given',
-                #--'Palpated for upper canines - NAD'), "000000")]
-                examtype=result[0]
-                examdent=result[1]
-                if examdent ==localsettings.ops[self.pt.dnt1]:
-                    #--normal dentist.
-                    if self.pt.dnt2==0 or self.pt.dnt2==self.pt.dnt1:
-                        #--no dnt2
-                        APPLIED=True
-                    else:
-                        message='%s is now'%examdent\
-                        +'both the registered and course dentist.<br />'\
-                        +'Is this correct?<br /><i>confirming this will '\
-                        +'remove reference to %s</i>'%\
-                        localsettings.ops[self.pt.dnt2]
-
-                        confirm=QtGui.QMessageBox.question(self.mainWindow,
-                        "Confirm",message,
-                        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-                        #--check this was intentional!!
-
-                        if confirm == QtGui.QMessageBox.Yes:
-                            #--dialog rejected
-                            self.pt.dnt2=0
-                            self.updateDetails()
-                            APPLIED=True
-                else:
-                    message='%s performed this exam<br />'%examdent+\
-                    'Is this correct?'
-                    if result[2]!=localsettings.ops[self.pt.dnt2]:
-                        message +='<br /><i>confirming this will change the '+\
-                        'course dentist,but not the registered dentist</i>'
-                    else:
-                        message+='<i>consider making %s the'%result[1]\
-                        + 'registered dentist</i>'
-                    confirm=QtGui.QMessageBox.question(self.mainWindow,
-                    "Confirm",
-                    message,QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-                    #--check this was intentional!!
-
-                    if confirm == QtGui.QMessageBox.Yes:
-                        #--dialog rejected
-                        self.pt.dnt2=localsettings.ops_reverse[examdent]
-                        self.updateDetails()
-                        APPLIED=True
-
-                if APPLIED:
-                    self.pt.examt=result[0]
-                    examd=result[2].toString("dd/MM/yyyy")
-                    self.pt.pd4=examd
-                    self.pt.examd=examd
-                    self.pt.recd=result[2].addMonths(6).toString("dd/MM/yyyy")
-                    newnotes=str(self.ui.notesEnter_textEdit.toPlainText()\
-                                 .toAscii())
-                    newnotes+="%s examination performed by %s\n"%(
-                    examtype,examdent)
-                    self.pt.addHiddenNote("exam","%s EXAM"%examtype)
-                    item=fee_keys.getKeyCode(examtype)
-                    if "P" in self.pt.cset:
-                        itemfee=localsettings.privateFees[item].getFee()
-                    else:
-                        itemfee=0
-                    try:
-                        item_description=localsettings.descriptions[item]
-                    except KeyError:
-                        item_description="unknown exam type"
-
-                    self.pt.addToEstimate(1,item,item_description,itemfee,
-                    itemfee, localsettings.ops_reverse[examdent], self.pt.cset,
-                    "N/A",True)
-
-                    self.pt.money1+=itemfee
-                    self.updateFees()
-                    self.updateDetails()
-                    self.load_estpage()
-                    for note in result[3]:
-                       newnotes+=note+", "
-                    self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
-            else:
-                self.advise("Examination not applied",2)
-                break
-    def showHygDialog(self):
-        global pt
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
-            return
-        if not self.pt.underTreatment:
-            if not self.newCourseSetup():
-                self.advise("unable to perform treatment if pt does not "+
-                            "have an active course",1)
-                return
-        Dialog = QtGui.QDialog(self.mainWindow)
-        dl = hygTreatWizard.Ui_Dialog(Dialog)
-        dl.setPractitioner(7)
-        item=fee_keys.getKeyCode("SP")
-        itemfee=0
-        if "P" in self.pt.cset:
-            try:
-                itemfee=localsettings.privateFees[item].getFee()
-            except:
-                print "no fee found for item %s"%item
-        fee=itemfee / 100
-        dl.doubleSpinBox.setValue(fee)
-        result=dl.getInput()
-        print result
-        if result:
-            ##['SP+/2', 'HW', (), 0]
-            newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
-            newnotes+="%s performed by %s\n"%(result[0],result[1])
-            self.pt.addHiddenNote("treatment","Perio %s"%result[0])
-            actfee=result[3]
-            usercode=result[0]
-            item=fee_keys.getKeyCode(usercode)
-            try:
-                item_description=localsettings.descriptions[item]
-            except KeyError:
-                item_description="unknown perio treatment"
-            self.pt.addToEstimate(1,item,item_description,actfee,
-            actfee, self.pt.dnt1, self.pt.cset, "N/A",True)
-            if actfee>0:
-                self.pt.money1+=actfee
-                self.updateFees()
-            self.pt.periocmp+=result[0]+" "
-            for note in result[2]:
-               newnotes+=note+", "
-            self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
-        else:
-            self.advise("Hyg Treatment not applied",2)
 
 
     def userOptionsDialog(self):
@@ -4032,8 +4067,13 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             connect.myHost=str(dl.host_lineEdit.text())
             connect.myPassword=str(dl.password_lineEdit.text())
             connect.myUser=str(dl.user_lineEdit.text())
-            self.advise("Applying changes",1)
-
+            try:
+                connect.currentConnection.close()
+                self.advise("Applying changes",1)
+                localsettings.initiate()
+            except Exception,e:
+                print "unable to close existing connection!"
+                print e
 
 def main(arg):
     global app
@@ -4058,6 +4098,7 @@ def main(arg):
 
     omGui=openmolarGui(mainWindow)
     mainWindow.show()
+    app.connect(app,QtCore.SIGNAL("aboutToQuit()"),omGui.quit)
     sys.exit(app.exec_())
 
 if __name__ == "__main__":

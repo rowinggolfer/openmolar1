@@ -79,6 +79,8 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
                 result=False
             if not self.tooth.isBacktooth and not (f in allowed.frontToothCodes):
                 result=False
+            if f in allowed.treatment_only:
+                result=True
         if not result:
             message="'%s' is not recognised - do you want to accept anyway?"%f
             input=QtGui.QMessageBox.question(self,"Confirm",message,QtGui.QMessageBox.No,QtGui.QMessageBox.Yes) 

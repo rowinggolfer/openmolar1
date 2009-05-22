@@ -249,7 +249,7 @@ class patient():
             est.number=row[1]
             est.itemcode=row[2]
             est.description=row[3]
-            est.tooth=row[4]
+            est.code=row[4]
             est.fee=row[5]
             est.ptfee=row[6]
             est.feescale=row[7]

@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>6</number>
+              <number>7</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -2554,47 +2554,37 @@
              </widget>
              <widget class="QWidget" name="tab_5" >
               <attribute name="title" >
-               <string>Treatment Plan</string>
+               <string>Estimate/Plan</string>
               </attribute>
-              <layout class="QGridLayout" name="gridLayout_21" >
-               <item row="0" column="0" >
-                <widget class="QGroupBox" name="treatmentPlan_groupBox" >
+              <layout class="QHBoxLayout" name="horizontalLayout_5" >
+               <item>
+                <widget class="QGroupBox" name="estimate_groupBox" >
                  <property name="title" >
-                  <string>Current Treatment Plan</string>
+                  <string>Estimate</string>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_13" >
                   <item>
-                   <widget class="QTextBrowser" name="treatmentPlanTextBrowser" />
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_5" >
-                    <item>
-                     <widget class="QPushButton" name="completePlanItems_pushButton" >
-                      <property name="text" >
-                       <string>Complete Items</string>
-                      </property>
-                      <property name="icon" >
-                       <iconset resource="../resources/resources.qrc" >
-                        <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="completedItems_pushButton" >
-                      <property name="enabled" >
-                       <bool>false</bool>
-                      </property>
-                      <property name="text" >
-                       <string>Delete Items from this list</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                   <widget class="QScrollArea" name="estimate_scrollArea" >
+                    <property name="widgetResizable" >
+                     <bool>true</bool>
+                    </property>
+                    <widget class="QWidget" name="scrollAreaWidgetContents_11" >
+                     <property name="geometry" >
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>430</width>
+                       <height>353</height>
+                      </rect>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_19" />
+                    </widget>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
                </item>
-               <item rowspan="2" row="0" column="1" >
+               <item>
                 <widget class="QScrollArea" name="scrollArea" >
                  <property name="sizePolicy" >
                   <sizepolicy vsizetype="Expanding" hsizetype="Minimum" >
@@ -2803,23 +2793,18 @@
                         </property>
                        </widget>
                       </item>
+                      <item>
+                       <widget class="QPushButton" name="customTx_pushButton" >
+                        <property name="text" >
+                         <string>Add Custom Item</string>
+                        </property>
+                       </widget>
+                      </item>
                      </layout>
                     </widget>
                    </item>
                   </layout>
                  </widget>
-                </widget>
-               </item>
-               <item row="1" column="0" >
-                <widget class="QGroupBox" name="groupBox_11" >
-                 <property name="title" >
-                  <string>Estimate</string>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_19" >
-                  <item>
-                   <widget class="QTextBrowser" name="bigEstimate_textBrowser" />
-                  </item>
-                 </layout>
                 </widget>
                </item>
               </layout>
@@ -4556,6 +4541,7 @@
     <addaction name="actionClear_Today_s_Emergency_Slots" />
     <addaction name="actionTest_Print_an_NHS_Form" />
     <addaction name="actionOptions" />
+    <addaction name="actionLog_queries_in_underlying_terminal" />
    </widget>
    <addaction name="menuMenu" />
    <addaction name="menu_Prefences" />
@@ -4619,6 +4605,11 @@
   <action name="actionOptions" >
    <property name="text" >
     <string>options</string>
+   </property>
+  </action>
+  <action name="actionLog_queries_in_underlying_terminal" >
+   <property name="text" >
+    <string>log queries in underlying terminal</string>
    </property>
   </action>
  </widget>

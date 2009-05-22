@@ -90,7 +90,6 @@ treatmentCodes={}
 
 #--for debugging purposes... set this to true.- not yet implemented throughout.
 logqueries=False
-
 #-- self evident
 practiceAddress=("The Academy Dental Practice","19 Union Street",
 "Inverness","IV1 1PP")
@@ -181,6 +180,11 @@ def humanTime(t):
     '''converts minutes past midnight(int) to format 'HH:MM' (string)'''
     hour,min=t//60,int(t)%60
     return "%s:%02d"%(hour,min)
+
+def setlogqueries():
+    global logqueries
+    logqueries=True
+
 
 def initiate(debug=False):
     print "initiating settings"
