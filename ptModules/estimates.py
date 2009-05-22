@@ -12,7 +12,7 @@ from openmolar.settings import localsettings
 import struct
 
 
-class est():
+class est(object):
     '''
     this class has attributes suitable for storing in the estimates table
     '''
@@ -41,9 +41,13 @@ class est():
 
     def __str__(self):
         retarg="("
-        for att in self.__dict__:
+        for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
+            retarg+='"%s" ,'%self.__dict__[att]
+        for att in ("code","itemcode","description","csetype","feescale"):
             retarg+="%s ,"%self.__dict__[att]
-        return retarg+")"
+        for att in ("completed","carriedover"):
+            retarg+="%s ,"%bool(self.__dict__[att])
+        return "%s)"%retarg.strip(",")
         
 
 def toBriefHtml(currEst):

@@ -111,8 +111,14 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
     def completeItem(self,arg):
         '''
         a slot for the checkbox state change
+        should only happen when this is altered by user (not prgramatically)
         '''
+        print "Estitem checkbox changed"
         result=(arg==2)
+        self.delete_pushButton.setEnabled(not result)
+        self.fee_lineEdit.setEnabled(not result)
+        self.ptFee_lineEdit.setEnabled(not result)
+        
         self.item.completed=result
         self.userInput()
         self.parent.emit(QtCore.SIGNAL("completedItem"), (self.item))

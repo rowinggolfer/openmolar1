@@ -69,7 +69,10 @@ def all_changes(pt,changes, existingEstimates):
                     elif est.ix in oldEstDict.keys():
                         oldEst = oldEstDict[est.ix]
                               
-                        if str(oldEst)!=str(est):
+                        if str(oldEst) !=   str(est):
+                            print "est changed"
+                            print "old %s"%oldEst
+                            print "new %s"%est
                             #-- have to use the str because est class does not
                             #-- have a _eq_ property ??
                             query='update estimates set '
