@@ -170,13 +170,18 @@ class estWidget(QtGui.QFrame):
             i=estItemWidget(iw)
             i.item=item
             i.loadValues()
-            iw.connect(iw,QtCore.SIGNAL("user_interaction"),self.updateTotals
-            )
+            iw.connect(iw,QtCore.SIGNAL("user_interaction"),
+            self.updateTotals)
+
             iw.connect(iw,QtCore.SIGNAL("deleteMe"),self.deleteItemWidget)
-            iw.connect(iw,QtCore.SIGNAL("completedItem"), self.itemCompletionState)
+
+            iw.connect(iw,QtCore.SIGNAL("completedItem"), 
+            self.itemCompletionState)
+
             self.estItemWidgets[item.ix]=i
             self.estimate_layout.insertWidget(1,iw)
 
+        print len(self.estItemWidgets),"est Item widgets added"
         self.updateTotals()
 
     def itemCompletionState(self, item):
