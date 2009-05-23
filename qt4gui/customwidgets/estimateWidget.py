@@ -149,7 +149,7 @@ class estWidget(QtGui.QFrame):
         self.estimate_layout.addWidget(footer)
 
         self.estimate_layout.addStretch(-1)
-        self.estItemWidgets={}
+        self.estItemWidgets=[]
         self.ests=()
         #self.clear()
         #self.userChanges=False
@@ -183,11 +183,9 @@ class estWidget(QtGui.QFrame):
 
             iw.connect(iw,QtCore.SIGNAL("completedItem"), 
             self.itemCompletionState)
-
-            self.estItemWidgets[item.ix]=i
+            self.estItemWidgets.append(i)
             self.estimate_layout.insertWidget(1,iw)
 
-        print len(self.estItemWidgets),"est Item widgets added"
         self.updateTotals()
 
     def itemCompletionState(self, item):
@@ -201,11 +199,14 @@ class estWidget(QtGui.QFrame):
         '''
         clears all est widget in anticipation of a new estimate
         '''
-        print "clearing %d estItemWidgets"%len(self.estItemWidgets)
-        for widg in self.estItemWidgets.values():
+        print "widget count=",self.estimate_layout.count()#            self.estimate_layout.takeAt(1)
+        print "dictionary length=",len(self.estItemWidgets)
+        
+        while self.estItemWidgets!=[]:
+            widg = self.estItemWidgets.pop()
             self.estimate_layout.removeWidget(widg.parent)
             widg.parent.setParent(None)
-        self.estItemWidgets={}
+            
         self.updateTotals()
 
     def deleteItemWidget(self,arg):

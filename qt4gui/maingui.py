@@ -3506,8 +3506,13 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 #--otherwise changes to attributes which are lists aren't
                 #--spotted new "instance" of patient
                 self.pt=loadPt
-                self.pt_dbstate=copy.deepcopy(self.pt)
-                self.loadpatient()
+                try:
+                    self.loadpatient()
+                except Exception,e:
+                    self.advise("Error populating interface\n%s\n%s"%(Exception,e),2)
+                finally:
+                    self.pt_dbstate=copy.deepcopy(self.pt)
+                
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
                 self.advise ("error getting serialno %d"%serialno+

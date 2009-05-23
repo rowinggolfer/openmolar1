@@ -12,7 +12,7 @@ from openmolar.settings import localsettings
 import struct
 
 
-class est(object):
+class est():
     '''
     this class has attributes suitable for storing in the estimates table
     '''
