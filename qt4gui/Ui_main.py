@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Sat May 23 19:29:57 2009
+# Created: Sun May 24 23:02:42 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -1061,10 +1061,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_13 = QtGui.QVBoxLayout(self.estimate_groupBox)
         self.verticalLayout_13.setObjectName("verticalLayout_13")
         self.estimate_scrollArea = QtGui.QScrollArea(self.estimate_groupBox)
+        self.estimate_scrollArea.setMinimumSize(QtCore.QSize(0, 202))
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName("estimate_scrollArea")
         self.scrollAreaWidgetContents_11 = QtGui.QWidget(self.estimate_scrollArea)
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 430, 122))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 430, 198))
         self.scrollAreaWidgetContents_11.setObjectName("scrollAreaWidgetContents_11")
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
@@ -1180,11 +1181,21 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.groupBox_10)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.plan_treeWidget = QtGui.QTreeWidget(self.groupBox_10)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.plan_treeWidget.sizePolicy().hasHeightForWidth())
+        self.plan_treeWidget.setSizePolicy(sizePolicy)
         self.plan_treeWidget.setAnimated(True)
         self.plan_treeWidget.setHeaderHidden(False)
         self.plan_treeWidget.setObjectName("plan_treeWidget")
         self.horizontalLayout_5.addWidget(self.plan_treeWidget)
         self.comp_treeWidget = QtGui.QTreeWidget(self.groupBox_10)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comp_treeWidget.sizePolicy().hasHeightForWidth())
+        self.comp_treeWidget.setSizePolicy(sizePolicy)
         self.comp_treeWidget.setObjectName("comp_treeWidget")
         self.horizontalLayout_5.addWidget(self.comp_treeWidget)
         self.gridLayout_21.addWidget(self.groupBox_10, 1, 0, 1, 1)

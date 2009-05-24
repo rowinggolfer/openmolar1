@@ -11,7 +11,6 @@ import sys
 from openmolar.settings import localsettings
 import struct
 
-
 class est():
     '''
     this class has attributes suitable for storing in the estimates table
@@ -20,7 +19,7 @@ class est():
         self.ix=None
         self.serialno=None
         self.courseno=None
-        self.code=""
+        self.type=""
         self.number=None
         self.itemcode="4001"
         self.description=None
@@ -42,22 +41,26 @@ class est():
     def __str__(self):
         retarg="("
         for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
+            retarg+='%s ,'%self.__dict__[att]
+        for att in ("type","itemcode","description","csetype","feescale"):
             retarg+='"%s" ,'%self.__dict__[att]
-        for att in ("code","itemcode","description","csetype","feescale"):
-            retarg+="%s ,"%self.__dict__[att]
         for att in ("completed","carriedover"):
-            retarg+="%s ,"%bool(self.__dict__[att])
+            retarg+="%s ,"%self.__dict__[att]
         return "%s)"%retarg.strip(",")
-        
+
+
 
 def toBriefHtml(currEst):
+    '''
+    returns an HTML table showing the estimate in a receptionist friendly format
+    '''
     if currEst==[]:
         retarg='<html><body>No current estimate</body></html>'
         return retarg
     '''just the final row - ie... current estimate'''
     retarg='<html><body><table width ="100%" border="1">'
     retarg+='<tr><td colspan="7"><h3>ESTIMATE</h3></td></tr>'
-    retarg+='''<tr><th>No.</th><th>Description</th><th>Tooth</th><th>Type</th>
+    retarg+='''<tr><th>No.</th><th>Description</th><th>Type</th><th>Course</th>
     <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>'''
     total=0
     pt_total=0
@@ -65,7 +68,7 @@ def toBriefHtml(currEst):
         total+=est.fee
         pt_total+=est.ptfee
         retarg+='<tr><td>%s</td><td>%s</td>'%(est.number,est.description)
-        retarg+='<td align="center">%s</td>'%est.code
+        retarg+='<td align="center">%s</td>'%est.type
         if est.csetype==None:
             retarg+='<td align="center">?</td>'
         else:
@@ -126,7 +129,7 @@ def getCurrentEstimate(rows,tsrows):
 
 def decode(blob):
     '''
-    estimates are blocks of 8 bytes - format
+    old estimates were blocks of 8 bytes - format
     ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')
     '''
     retlist=[]
@@ -149,7 +152,7 @@ def encode(number,item,fee):
 
 def decodeTS(blob):
     '''
-    estimates are blocks of 8 bytes - format
+    old estimates were blocks of 8 bytes - format
     ('N','/x00','ITEM','ITEM','COST','COST','COST','/x00')
     '''
     retlist=[]
@@ -167,7 +170,6 @@ def decodeTS(blob):
         print "unknown tooth code",tooth
         retlist.append((1,item_text,cost))
     return retlist
-
 
 if __name__ == "__main__":
     from openmolar.dbtools import patient_class

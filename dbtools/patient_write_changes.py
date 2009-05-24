@@ -56,11 +56,11 @@ def all_changes(pt,changes, existingEstimates):
                     if est.ix==None: #--new item
                         print "new estimate item"
                         query='''insert into estimates set
-                        serialno=%d, courseno=%d, tooth="%s", number=%d,
+                        serialno=%d, courseno=%d, type="%s", number=%d,
                         itemcode="%s",description="%s", fee=%d , ptfee=%d,
                         feescale="%s",csetype="%s",dent=%d,completed=%s,
-                        carriedover=%s'''%(pt.serialno, pt.courseno, 
-                        est.code,
+                        carriedover=%s'''%(pt.serialno, pt.courseno,
+                        est.type,
                         est.number, est.itemcode, est.description, est.fee,
                         est.ptfee, est.feescale, est.csetype, est.dent,
                         est.completed, est.carriedover)
@@ -68,16 +68,16 @@ def all_changes(pt,changes, existingEstimates):
                         sqlcommands["estimates"].append(query)
                     elif est.ix in oldEstDict.keys():
                         oldEst = oldEstDict[est.ix]
-                              
-                        if str(oldEst) !=   str(est):
+
+                        if str(oldEst) !=  str(est):
                             print "est changed"
                             print "old %s"%oldEst
                             print "new %s"%est
                             #-- have to use the str because est class does not
                             #-- have a _eq_ property ??
                             query='update estimates set '
-                            if oldEst.code!=est.code:
-                                query+="tooth=%s,"%est.code
+                            if oldEst.type!=est.type:
+                                query+="type=%s,"%est.type
                             if oldEst.number!=est.number:
                                 query+="number=%d,"%est.number
                             if oldEst.itemcode!=est.itemcode:

@@ -3066,7 +3066,7 @@ class pageHandlingClass():
         populate my custom widget (estWidget)
         this is probably quite computationally expensive
         so should only be done if the widget is visible
-        ''' 
+        '''
         self.ui.estWidget.setEstimate(self.pt.estimates)
 
     def load_treatTrees(self):
@@ -3088,7 +3088,7 @@ class pageHandlingClass():
             #-- next line causes drawing errors?
             #self.ui.plan_treeWidget.expandItem(parent)
         self.ui.plan_treeWidget.resizeColumnToContents(0)
-        
+
         self.ui.comp_treeWidget.clear()
         pdict=plan.completedDict(self.pt)
         #-- pdict is a dictionary in the format
@@ -3104,7 +3104,7 @@ class pageHandlingClass():
             for item in items:
                 child = QtGui.QTreeWidgetItem(parent, [item])
         self.ui.plan_treeWidget.resizeColumnToContents(0)
-        
+
     def updateMemo(self):
         '''this is called when the text in the memo on the admin page changes'''
         self.ui.adminMemoEdit.setText(self.ui.memoEdit.toPlainText())
@@ -4092,10 +4092,9 @@ printingClass,cashbooks):
         important function, checks for changes since the patient was loaded
         '''
         self.pt.memo=str(self.ui.adminMemoEdit.toPlainText().toAscii())
-        fieldsToExclude=("notestuple","fees")
+        fieldsToExclude=("notestuple","fees")#, "estimates")
         changes=[]
         if self.pt.serialno==self.pt_dbstate.serialno:
-
             if len(self.ui.notesEnter_textEdit.toPlainText())!=0:
                 changes.append("New Notes")
             for attr in self.pt.__dict__:
@@ -4108,6 +4107,7 @@ printingClass,cashbooks):
                             #-- creating an issue
                             #-- memo was reporting that update had occurred.
                             changes.append(attr)
+
             return changes
         else: #this should NEVER happen!!!
             self.advise( "POTENTIALLY SERIOUS CONFUSION PROBLEM"+

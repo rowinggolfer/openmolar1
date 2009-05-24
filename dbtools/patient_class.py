@@ -99,8 +99,6 @@ decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA',
 
 userdataTableAtts=('data',)
 
-
-
 class patient():
     def __init__(self,sno):
         '''
@@ -214,7 +212,6 @@ class patient():
             cursor.close()
             #db.close()
 
-
             self.updateChartgrid()
             self.updateFees()
             #self.setCurrentEstimate()
@@ -227,7 +224,7 @@ class patient():
             db=connect()
             cursor=db.cursor()
 
-        #--old code
+        #--old code for old (non om schema) database
         #cursor.execute('''SELECT serialno,courseno,dent,esta,acta, estb,actb ,
         #data from prvfees where serialno=%d and courseno=%d'''%(
         #self.serialno,self.courseno0))
@@ -237,9 +234,9 @@ class patient():
         #self.tsfees = cursor.fetchall()
 
         #--replaced with
-        cursor.execute('''SELECT ix, number, itemcode, description, tooth,
+        cursor.execute('''SELECT ix, number, itemcode, description, type,
         fee, ptfee, feescale, csetype, dent, completed, carriedover from
-        estimates where serialno=%d and courseno=%d'''%(
+        estimates where serialno=%d and courseno=%d order by ix'''%(
         self.serialno,self.courseno0))
         rows = cursor.fetchall()
         for row in rows:
@@ -249,14 +246,14 @@ class patient():
             est.number=row[1]
             est.itemcode=row[2]
             est.description=row[3]
-            est.code=row[4]
+            est.type=row[4]
             est.fee=row[5]
             est.ptfee=row[6]
             est.feescale=row[7]
             est.csetype=row[8]
             est.dent=row[9]
-            est.completed=row[10]
-            est.carriedover=row[11]
+            est.completed=bool(row[10])
+            est.carriedover=bool(row[11])
             self.estimates.append(est)
 
         if disconnectNeeded:

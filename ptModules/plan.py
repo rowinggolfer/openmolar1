@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 
-import sys
+import sys,re
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 
@@ -62,7 +62,14 @@ def plannedItems(pt):
         if tx != "":
             items=tx.strip(" ").split(" ")
             for item in items:
-                plannedList.append((attrib, item), )
+                #-- look for things like 2S - I want these as separate items
+                numbered=re.findall("^\d",item)
+                if numbered!=[]:
+                    number=numbered[0]
+                    for i in range(int(number)):
+                        plannedList.append((attrib, item.replace(number,"")),)
+                else:    
+                    plannedList.append((attrib, item), )
     return plannedList
 
 def completedItems(pt):
@@ -70,8 +77,18 @@ def completedItems(pt):
     if pt.examt!="":
         compList.append(("Exam",pt.examt) )
     for attrib in tup_Atts+tup_toothAtts:
-        if pt.__dict__[attrib+"cmp"]!="":
-            compList.append((attrib,pt.__dict__[attrib+"cmp"]) )
+        tx=pt.__dict__[attrib+"cmp"]
+        if tx != "":
+            items=tx.strip(" ").split(" ")
+            for item in items:
+                #-- look for things like 2S - I want these as separate items
+                numbered=re.findall("^\d",item)
+                if numbered!=[]:
+                    number=numbered[0]
+                    for i in range(int(number)):
+                        compList.append((attrib, item.replace(number,"")),)
+                else:    
+                    compList.append((attrib, item), )
     return compList
 
 def summary(pt):

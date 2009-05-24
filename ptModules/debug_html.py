@@ -22,8 +22,6 @@ def toHtml(p1,p2,verbose=False):
     if verbose: #let's see exactly what the class is about:
         attributesDict["all attributes"]=p1.__dict__.keys()
 
-
-
     for key in attributesDict.keys():
         attribs=attributesDict[key]
         retarg+="<h2>%s</h2>"%key
@@ -31,7 +29,8 @@ def toHtml(p1,p2,verbose=False):
         retarg+='<tr><th>Attribute</th><th>orig</th><th>changed</th>'
 
         for att in attribs:
-            retarg+= "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"%(att,p1.__dict__[att],p2.__dict__[att])
+            retarg+= "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"%(
+                                        att,p1.__dict__[att],p2.__dict__[att])
         retarg+="</table>"
     retarg +='</div></body></html>'
     return retarg

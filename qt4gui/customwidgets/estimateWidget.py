@@ -8,6 +8,7 @@
 
 from __future__ import division
 
+import re
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.customwidgets import Ui_estimateItemWidget,\
 Ui_estHeaderWidget,Ui_estFooterWidget
@@ -19,14 +20,14 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.setupUi(self.parent)
         self.signals()
         self.validators
-       
+
     def loadValues(self):
         if self.item.number!=None:
             self.setNumber(self.item.number)
         self.setFee(self.item.fee)
         self.setPtFee(self.item.ptfee)
         self.setDescription(self.item.description)
-        self.setCode(self.item.code)
+        self.setType(self.item.type)
         self.setCompleted(self.item.completed)
 
     def validators(self):
@@ -90,10 +91,10 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
     def setDescription(self,arg):
         self.description_lineEdit.setText(arg)
 
-    def setCode(self,arg):
+    def setType(self,arg):
         if arg in (None,""):
             arg="-"
-        self.code_label.setText(str(arg))
+        self.code_label.setText(arg.split(" ")[0])
 
     def setFee(self,arg):
         self.fee_lineEdit.setText("%.02f"%(arg/100))
@@ -117,7 +118,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.delete_pushButton.setEnabled(not result)
         self.fee_lineEdit.setEnabled(not result)
         self.ptFee_lineEdit.setEnabled(not result)
-        
+
         self.item.completed=result
         self.userInput()
         self.parent.emit(QtCore.SIGNAL("completedItem"), (self.item))
@@ -145,15 +146,15 @@ class estWidget(QtGui.QFrame):
         self.estFooter=Ui_estFooterWidget.Ui_Form()
         self.estFooter.setupUi(footer)
         self.estimate_layout.addWidget(footer)
-        
+
         self.estimate_layout.addStretch(-1)
         self.estItemWidgets=[]
         self.ests=()
-        
+
         self.bareMinimumHeight=header.height()+footer.height()
-        
+
         self.setMinimumSize(self.minimumSizeHint())
-        
+
     def minimumSizeHint(self):
         height=self.bareMinimumHeight
         height+=len(self.estItemWidgets)*30
@@ -182,11 +183,11 @@ class estWidget(QtGui.QFrame):
 
             iw.connect(iw,QtCore.SIGNAL("deleteMe"),self.deleteItemWidget)
 
-            iw.connect(iw,QtCore.SIGNAL("completedItem"), 
+            iw.connect(iw,QtCore.SIGNAL("completedItem"),
             self.itemCompletionState)
             self.estItemWidgets.append(i)
             self.estimate_layout.insertWidget(1,iw)
-        
+
         self.setMinimumSize(self.minimumSizeHint())
         self.updateTotals()
 
@@ -205,7 +206,7 @@ class estWidget(QtGui.QFrame):
             widg = self.estItemWidgets.pop()
             self.estimate_layout.removeWidget(widg.parent)
             widg.parent.setParent(None)
-            
+
         self.updateTotals()
 
     def deleteItemWidget(self,arg):
