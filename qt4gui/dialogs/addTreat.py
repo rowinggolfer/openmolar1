@@ -21,13 +21,14 @@ def getCode(arg):
         print "no itemcode found for item %s - will revert to OTHER TREATMENT"%arg
     return itemcode
 
-def getFee(cset,numberOfItems,itemcode):
+def getFee(cset,itemcode, numberOfItems=1):
     feePerItem=0
     if "P" in cset:
         try:
             return localsettings.privateFees[itemcode].getFee(numberOfItems)
         except:
-            print "no fee found for item %s"%itemcode
+            print "no fee found for item %s - will see fee of 0"%itemcode
+
     return numberOfItems*feePerItem
 
 def getDescription(arg):
@@ -55,7 +56,7 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.label.setText(self.description+"\t(%s)"%self.itemcode)
 
     def feeCalc(self,arg):
-        fee=getFee(self.parent.cset,arg,self.itemcode) / 100
+        fee=getFee(self.parent.cset,self.itemcode, arg) / 100
         self.doubleSpinBox.setValue(fee)
         self.parent.updateTotal()
 

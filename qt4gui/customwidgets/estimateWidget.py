@@ -19,7 +19,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.setupUi(self.parent)
         self.signals()
         self.validators
-
+       
     def loadValues(self):
         if self.item.number!=None:
             self.setNumber(self.item.number)
@@ -91,7 +91,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.description_lineEdit.setText(arg)
 
     def setCode(self,arg):
-        if arg==None:
+        if arg in (None,""):
             arg="-"
         self.code_label.setText(str(arg))
 
@@ -113,7 +113,6 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         a slot for the checkbox state change
         should only happen when this is altered by user (not prgramatically)
         '''
-        print "Estitem checkbox changed"
         result=(arg==2)
         self.delete_pushButton.setEnabled(not result)
         self.fee_lineEdit.setEnabled(not result)
@@ -134,9 +133,8 @@ class estWidget(QtGui.QFrame):
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding))
 
-        self.setMinimumSize(self.minimumSizeHint())
-
         self.estimate_layout=QtGui.QVBoxLayout(self)
+        self.estimate_layout.setSpacing(0)
 
         header=QtGui.QWidget()
         estHeader=Ui_estHeaderWidget.Ui_Form()
@@ -147,16 +145,19 @@ class estWidget(QtGui.QFrame):
         self.estFooter=Ui_estFooterWidget.Ui_Form()
         self.estFooter.setupUi(footer)
         self.estimate_layout.addWidget(footer)
-
+        
         self.estimate_layout.addStretch(-1)
         self.estItemWidgets=[]
         self.ests=()
-        #self.clear()
-        #self.userChanges=False
-
-    
+        
+        self.bareMinimumHeight=header.height()+footer.height()
+        
+        self.setMinimumSize(self.minimumSizeHint())
+        
     def minimumSizeHint(self):
-        return QtCore.QSize(400,500)
+        height=self.bareMinimumHeight
+        height+=len(self.estItemWidgets)*30
+        return QtCore.QSize(600,height)
 
     def updateTotals(self):
         self.total=0
@@ -185,7 +186,8 @@ class estWidget(QtGui.QFrame):
             self.itemCompletionState)
             self.estItemWidgets.append(i)
             self.estimate_layout.insertWidget(1,iw)
-
+        
+        self.setMinimumSize(self.minimumSizeHint())
         self.updateTotals()
 
     def itemCompletionState(self, item):
@@ -199,9 +201,6 @@ class estWidget(QtGui.QFrame):
         '''
         clears all est widget in anticipation of a new estimate
         '''
-        print "widget count=",self.estimate_layout.count()#            self.estimate_layout.takeAt(1)
-        print "dictionary length=",len(self.estItemWidgets)
-        
         while self.estItemWidgets!=[]:
             widg = self.estItemWidgets.pop()
             self.estimate_layout.removeWidget(widg.parent)

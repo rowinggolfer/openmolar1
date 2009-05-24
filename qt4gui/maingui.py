@@ -55,7 +55,7 @@ class feeClass():
         if self.pt.serialno==0:
             self.advise("No patient Selected",1)
             return
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_raiseCharge.Ui_Dialog()
         dl.setupUi(Dialog)
         if Dialog.exec_():
@@ -86,7 +86,7 @@ class feeClass():
         if self.pt.serialno==0:
             self.advise("No patient Selected <br />Monies will be "+\
             "allocated to Other Payments, and no receipt offered",1)
-        dl=paymentwidget.paymentWidget(self.mainWindow)
+        dl=paymentwidget.paymentWidget(self)
         dl.setDefaultAmount(self.pt.fees)
         if dl.exec_():
             if self.pt.serialno==0:
@@ -225,7 +225,7 @@ class feeClass():
             if not self.newCourseSetup():
                 self.advise("unable to perform exam",1)
                 return
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = examWizard.Ui_Dialog(Dialog,self.pt.dnt1)
 
         ####TODO - set dentist correctly in this dialog
@@ -252,7 +252,7 @@ class feeClass():
                         +'remove reference to %s</i>'%\
                         localsettings.ops[self.pt.dnt2]
 
-                        confirm=QtGui.QMessageBox.question(self.mainWindow,
+                        confirm=QtGui.QMessageBox.question(self,
                         "Confirm",message,
                         QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
                         #--check this was intentional!!
@@ -271,7 +271,7 @@ class feeClass():
                     else:
                         message+='<i>consider making %s the'%result[1]\
                         + 'registered dentist</i>'
-                    confirm=QtGui.QMessageBox.question(self.mainWindow,
+                    confirm=QtGui.QMessageBox.question(self,
                     "Confirm",
                     message,QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
                     #--check this was intentional!!
@@ -310,7 +310,7 @@ class feeClass():
                     self.pt.money1+=itemfee
                     self.updateFees()
                     self.updateDetails()
-                    self.load_estpage()
+                    #self.load_estpage()
                     for note in result[3]:
                        newnotes+=note+", "
                     self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
@@ -327,7 +327,7 @@ class feeClass():
                 self.advise("unable to perform treatment if pt does not "+
                             "have an active course",1)
                 return
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = hygTreatWizard.Ui_Dialog(Dialog)
         dl.setPractitioner(7)
         item=fee_keys.getKeyCode("SP")
@@ -408,7 +408,7 @@ class feeClass():
 
     def addCustomItem(self):
         if self.noNewCourseNeeded():
-            Dialog = QtGui.QDialog(self.mainWindow)
+            Dialog = QtGui.QDialog(self)
             dl=Ui_customTreatment.Ui_Dialog()
             dl.setupUi(Dialog)
             if Dialog.exec_():
@@ -424,7 +424,7 @@ class feeClass():
 
 
     def offerTreatmentItems(self,arg):
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = addTreat.treatment(Dialog,arg,self.pt.cset)
         result= dl.getInput()
         print result
@@ -440,17 +440,17 @@ class feeClass():
         self.pt.__dict__[tooth+self.selectedChartWidget]=item
         #--update the patient!!
         self.ui.planChartWidget.setToothProps(tooth,item)
-        
+
         if not self.ui.estimateRequired_checkBox.checkState():
             self.ui.estimateRequired_checkBox.setChecked(True)
-            
+
     def costToothItems(self, tooth="", item="", ALL=True):
         '''
         prompts the user to confirm tooth treatment fees
         '''
         self.ui.planChartWidget.update()
 
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = addToothTreat.treatment(Dialog,"P")
         if ALL==False:
             dl.itemsPerTooth(tooth, item)
@@ -476,7 +476,7 @@ class feeClass():
 
 
     def completeToothTreatments(self,arg):
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = completeTreat.treatment(Dialog,localsettings.ops[self.pt.dnt1],
                                      arg,0)
         ####TODO this should be treating dentist!!!!!!!
@@ -519,7 +519,7 @@ class appointmentClass():
         this is called from within the a dialog when the appointment lenghts
         offered aren't enough!!
         '''
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl2 = Ui_appointment_length.Ui_Dialog()
         dl2.setupUi(Dialog)
         if Dialog.exec_():
@@ -571,7 +571,7 @@ class appointmentClass():
                     "currentIndexChanged(int)"),oddLength)
 
         #--initiate a custom dialog
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_specify_appointment.Ui_Dialog()
         dl.setupUi(Dialog)
         #--add an attribute to the dialog
@@ -672,8 +672,8 @@ class appointmentClass():
         #--is appointment not is aslot (appt book proper) or in the past??
         if dateText=="TBA" or QtCore.QDate.fromString(dateText,
         "dd'/'MM'/'yyyy")<QtCore.QDate.currentDate():
-            #--raise a dialog (centred on self.mainWindow)
-            result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",
+            #--raise a dialog (centred on self)
+            result=QtGui.QMessageBox.question(self,"Confirm",
             "Delete this Unscheduled or Past Appointment?",
             QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
 
@@ -690,7 +690,7 @@ class appointmentClass():
             #--get dentists number value
             dent=self.ui.ptAppointmentTableWidget.item(rowno,1).text()
             #--raise a dialog
-            result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",\
+            result=QtGui.QMessageBox.question(self,"Confirm",\
             "Confirm Delete appointment at %s on %s  with %s"%(
             atime,dateText,dent),QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
@@ -710,7 +710,7 @@ class appointmentClass():
                     print "future appointment deleted - add to notes!!"
 
                     #--keep in apr? the patient's diary
-                    result=QtGui.QMessageBox.question(self.mainWindow,
+                    result=QtGui.QMessageBox.question(self,
                     "Question",
                     "Removed from appointment book - keep for rescheduling?",
                     QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
@@ -763,7 +763,7 @@ class appointmentClass():
         if rowno==-1:
             self.advise("No appointment selected",1)
         else:
-            Dialog = QtGui.QDialog(self.mainWindow)
+            Dialog = QtGui.QDialog(self)
             dl = Ui_specify_appointment.Ui_Dialog()
             dl.setupUi(Dialog)
             dl.makeNow=False
@@ -1012,7 +1012,7 @@ class appointmentClass():
             #--raise a dialog to check this was intentional!!
             message='You have chosen an appointment with %s<br />'\
             %selectedDent+'Is this correct?'
-            result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",message,
+            result=QtGui.QMessageBox.question(self,"Confirm",message,
             QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
 
             if result == QtGui.QMessageBox.Cancel:
@@ -1022,7 +1022,7 @@ class appointmentClass():
         if slotlength>length:
             #--the slot selected is bigger than the appointment length so
             #--fire up a dialog to allow for fine tuning
-            Dialog = QtGui.QDialog(self.mainWindow)
+            Dialog = QtGui.QDialog(self)
             dl = finalise_appt_time.ftDialog(Dialog,selectedtime,
                                              slotlength,length)
 
@@ -1040,7 +1040,7 @@ class appointmentClass():
             formatDate(selecteddate.toPyDate()),selectedDent)
 
             #--get final confirmation
-            result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",message,
+            result=QtGui.QMessageBox.question(self,"Confirm",message,
             QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
             if result == QtGui.QMessageBox.Cancel:
                 #dialog rejected
@@ -1074,7 +1074,7 @@ class appointmentClass():
                     #-- proc returned True so....update the patient apr table
                     self.layout_apptTable()
                     #== and offer an appointment card
-                    result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",
+                    result=QtGui.QMessageBox.question(self,"Confirm",
                     "Print Appointment Card?",QtGui.QMessageBox.Ok,
                     QtGui.QMessageBox.Cancel)
 
@@ -1101,7 +1101,7 @@ class appointmentClass():
         '''a click on the dentist portion of the appointment overview widget'''
 
         ##TODO doing this should offer the user better options than just this..
-        result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",
+        result=QtGui.QMessageBox.question(self,"Confirm",
         "Confirm Print Daybook",QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
 
         if result == QtGui.QMessageBox.Ok:
@@ -1328,7 +1328,7 @@ class appointmentClass():
     def clearTodaysEmergencyTime(self):
         '''clears emergency slots for today'''
         #-- raise a dialog to check
-        result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",
+        result=QtGui.QMessageBox.question(self,"Confirm",
         "Clear today's emergency slots?",
         QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
 
@@ -1702,7 +1702,6 @@ class signals():
 
         QtCore.QObject.connect(self.ui.estWidget,
                                QtCore.SIGNAL("applyFeeNow"), self.applyFeeNow)
-
 
         #daybook - cashbook
         QtCore.QObject.connect(self.ui.daybookGoPushButton,
@@ -2673,8 +2672,8 @@ class newPatientClass():
         #--let user see what they were up to
         self.ui.main_tabWidget.setCurrentIndex(0)
 
-        #--ask the question (centred over self.mainWindow)
-        result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",
+        #--ask the question (centred over self)
+        result=QtGui.QMessageBox.question(self,"Confirm",
         "New Patient not saved. Abandon Changes?",
         QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
 
@@ -2742,7 +2741,7 @@ class printingClass():
             self.advise("no patient selected",1)
             return
         html=standardletter.getHtml(self.pt)
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_enter_letter_text.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.textEdit.setHtml(html)
@@ -2761,7 +2760,7 @@ class printingClass():
             return
         desc=self.ui.referralLettersComboBox.currentText()
         html=referral.getHtml(desc,self.pt)
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_enter_letter_text.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.textEdit.setHtml(html)
@@ -2827,7 +2826,7 @@ class printingClass():
         else:
             dent=self.pt.dnt1
 
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_confirmDentist.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.dents_comboBox.addItems(localsettings.activedents)
@@ -2911,7 +2910,7 @@ class printingClass():
         def checkAll(arg):
             for cb in checkBoxes.values():
                 cb.setChecked(arg)
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_daylist_print.Ui_Dialog()
         dl.setupUi(Dialog)
         vlayout = QtGui.QGridLayout(dl.scrollArea)
@@ -2970,67 +2969,7 @@ class printingClass():
         self.pt.addHiddenNote("printed","notes")
 
 
-
-class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
-                   signals,feeClass,printingClass,cashbooks):
-    def __init__(self,parent):
-        #--initiate a blank version of the patient class this
-        #--is used to check for state.
-        self.pt_dbstate=patient_class.patient(0)
-        #--make a deep copy to check for changes
-        self.pt=copy.deepcopy(self.pt_dbstate)
-        self.selectedChartWidget="st" #other values are "pl" or "cmp"
-        self.grid = ("ur8","ur7","ur6","ur5",'ur4','ur3','ur2','ur1','ul1',
-        'ul2','ul3','ul4','ul5','ul6','ul7','ul8',"lr8","lr7","lr6","lr5",
-        'lr4','lr3','lr2','lr1','ll1','ll2','ll3','ll4','ll5','ll6','ll7','ll8')
-        self.mainWindow=parent
-        self.ui=Ui_main.Ui_MainWindow()
-        self.ui.setupUi(parent)
-        self.labels_and_tabs()
-        self.addCustomWidgets()
-        self.setValidators()
-        self.setupSignals()
-        self.loadDentistComboboxes()
-        self.feestableLoaded=False
-
-        #--adds items to the daylist comboBox
-        self.load_todays_patients_combobox()
-        self.appointmentData=()
-
-        self.editPageVisited=False
-
-
-    def advise(self,arg,warning_level=0):
-        '''
-        inform the user of events -
-        warning level0 = status bar only.
-        warning level 1 advisory
-        warning level 2 critical (and logged)
-        '''
-        if warning_level==0:
-            self.ui.statusbar.showMessage(arg,5000) #5000 milliseconds=5secs
-        elif warning_level==1:
-            QtGui.QMessageBox.information(self.mainWindow,"Advisory",arg)
-        elif warning_level==2:
-            now=QtCore.QTime.currentTime()
-            QtGui.QMessageBox.warning(self.mainWindow,"Error",arg)
-            #--for logging purposes
-            print "%d:%02d ERROR MESSAGE"%(now.hour(),now.minute()),arg
-
-    ####TODO - link the application's box to this procedure
-    def quit(self):
-        '''check for unsaved changes then politely close the app'''
-        print "quit called"
-        if self.okToLeaveRecord():
-            app.closeAllWindows()
-
-    def aboutOM(self):
-        '''called by menu - help - about openmolar'''
-        from openmolar.settings import licensingText
-        self.advise( licensingText.about+
-        "version %s Alpha<br />build %s"%(localsettings.\
-                                          __version__,localsettings.__build__)+
-        licensingText.license,1)
+class pageHandlingClass():
 
     def handle_mainTab(self):
         '''procedure called when user navigates the top tab'''
@@ -3078,6 +3017,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         if ci==2:
             self.docsPrinted()
 
+        if ci==3:
+            self.load_receptionSummaryPage()
+        if ci==4:
+            self.load_clinicalSummaryPage()
+
         if ci==5:
             self.updateNotesPage()
 
@@ -3090,8 +3034,9 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             self.ui.perioChartWidget.selected=[0,0]
 
         if ci==7:
+            #-- estimate/plan page.
             self.load_newEstPage()
-
+            self.load_treatTrees()
         #--debug tab
         ##TODO - this is a development tab- remove eventually
         if ci==9:
@@ -3109,292 +3054,57 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             self.ui.tabWidget.setCurrentIndex(3)
 
 
-    def clearRecord(self):
-        '''
-        clears the memory of all references to the last patient.. and
-        ensures that tab pages for reception and clinical summary are cleared.
-        Other pages are disabled.
-        '''
+    def load_clinicalSummaryPage(self):
+        self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
 
-        if self.pt.serialno!=0:
-            self.ui.underTreatment_label.hide()
-            self.ui.underTreatment_label_2.hide()
-            self.ui.dobEdit.setDate(QtCore.QDate(1900,1,1))
-            self.ui.adminMemoEdit.setText("")
-            self.ui.detailsBrowser.setText("")
-            self.ui.moneytextBrowser.setText("")
-            self.ui.notesBrowser.setText("")
-            self.ui.notesSummary_textBrowser.setText("")
-            self.ui.bpe_groupBox.setTitle("BPE")
-            self.ui.bpe_textBrowser.setText("")
-            self.ui.planSummary_textBrowser.setText("")
-            self.ui.estimateRequired_checkBox.setChecked(False)
-
-            #--restore the charts to full dentition
-            ##TODO - perhaps handle this with the tabwidget calls?
-            for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,
-            self.ui.completedChartWidget,self.ui.perioChartWidget,
-            self.ui.summaryChartWidget):
-                chart.clear()
-                chart.update()
-            self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
-            self.ui.moneytextBrowser.setHtml(localsettings.message)
-            self.ui.chartsTableWidget.clear()
-            self.ui.ptAppointmentTableWidget.clear()
-            self.ui.ptAppointmentTableWidget.setRowCount(0)
-            self.ui.notesEnter_textEdit.setHtml("")
-
-            #--load a blank version of the patient class
-            self.pt_dbstate=patient_class.patient(0)
-            #--and have the comparison copy identical (to check for changes)
-            self.pt=copy.deepcopy(self.pt_dbstate)
-            if self.editPageVisited:
-                self.load_editpage()####################is this wise???????
-            #self.load_newEstPage()
-            #self.load_estpage()
-
-    def home(self):
-        '''
-        User has clicked the homw push_button -
-        clear the patient, and blank the screen
-        '''
-        if self.enteringNewPatient():
-            return
-        if not self.okToLeaveRecord():
-            print "not clearing record"
-            return
-        self.clearRecord()
-        #--disable much of the UI
-        self.enableEdit(False)
-
-        #--go to either "reception" or "clinical summary"
-        self.gotoDefaultTab()
-
-    def okToLeaveRecord(self):
-        '''leaving a pt record - has state changed?'''
-        if self.pt.serialno==0:
-            return True
-        #--a debug print statement
-        print "leaving record checking to see if save is required...",
-
-        #--apply changes to patient details
-        if self.editPageVisited:
-            self.apply_editpage_changes()
-
-        #--check pt against the original loaded state
-        #--this returns a LIST of changes ie [] if none.
-        uc=self.unsavedChanges()
-        if uc != []:
-            #--raise a custom dialog to get user input
-            #--(centred over self.mainWindow)
-            Dialog = QtGui.QDialog(self.mainWindow)
-            dl = saveDiscardCancel.sdcDialog(Dialog,self.pt.fname+" "+\
-                        self.pt.sname+" (%s)"%self.pt.serialno,uc)
-            if Dialog.exec_():
-                if dl.result == "discard":
-                    print "user discarding changes"
-                    return True
-                elif dl.result=="save":
-                    print "user is saving"
-                    self.save_changes()
-                    return True
-                #--cancelled action
-                else:
-                    print "user chose to continue editing"
-                    return False
-        else:
-            print "no changes"
-            return True
-
-    def showAdditionalFields(self):
-        '''more Fields Button has been pressed'''
-        self.advise("not yet available",1)
-
-    def docsPrinted(self):
-        self.ui.previousCorrespondence_listWidget.clear()
-        docs=docsprinted.previousDocs(self.pt.serialno)
-        for d in docs:
-            self.ui.previousCorrespondence_listWidget.addItem(str(d))
-
-
-    def changeContractedDentist(self,inits):
-        newdentist=localsettings.ops_reverse[str(inits)]
-        if newdentist==self.pt.dnt1:
-            return
-        if self.pt.cset=="I":
-            self.advise("Let Highland Dental Plan know of this change",1)
-        elif self.pt.cset=="N":
-            self.advise(
-            "Get an NHS form signed to change the patients contract",1)
-        else:
-            self.advise("changed dentist to %s"%inits,1)
-        print "changing contracted dentist to ",inits
-        self.pt.dnt1=newdentist
-        self.updateDetails()
-
-    def changeCourseDentist(self,inits):
-        newdentist=localsettings.ops_reverse[str(inits)]
-        if newdentist==self.pt.dnt2:
-            return
-        if self.pt.dnt2==0 and newdentist==self.pt.dnt1:
-            return
-        if self.pt.cset=="N" and self.pt.underTreatment:
-            self.advise(
-            "think about getting some nhs forms signed for both dentists",1)
-        else:
-            self.advise("changed course dentist to %s"%inits,1)
-
-        print "changing course dentist to ",inits
-        self.pt.dnt2=newdentist
-        self.updateDetails()
-
-    def changeCourseType(self,cset):
-        print "changing course type of %d to %s"%(self.pt.serialno,cset)
-        self.pt.cset=str(cset)
-        self.advise("changed course type to %s"%cset,1)
-        self.updateDetails()
-
-
-    def load_todays_patients_combobox(self):
-        '''loads the quick select combobox, with all of todays's
-        patients - if a list(tuple) of dentists is passed eg ,(("NW"))
-         then only pt's of that dentist show up'''
-        if "/" in localsettings.operator:
-            dent_initials=localsettings.operator[:localsettings.\
-                                                 operator.index("/")]
-        else:
-            dent_initials=localsettings.operator
-        if dent_initials in localsettings.activedents:
-            dent=(str(dent_initials),)
-            visibleItem="Today's Patients (%s)"%dent
-        else:
-            dent=("*",)
-            visibleItem="Today's Patients (ALL)"
-        self.advise("loading today's patients")
-        self.ui.daylistBox.addItem(visibleItem)
-
-        for pt in appointments.todays_patients(dent):
-            val=pt[1]+" -- " + str(pt[0])
-            #--be wary of changing this -- is used as a marker some
-            #--pt's have hyphonated names!
-            self.ui.daylistBox.addItem(QtCore.QString(val))
-
-    def todays_pts(self):
-        arg=str(self.ui.daylistBox.currentText())
-        if arg[0:7] !="Today's":
-            self.ui.daylistBox.setCurrentIndex(0)
-            serialno=int(arg[arg.index("--")+2:])
-            #--see above comment
-            self.getrecord(serialno)
-
-    def loadDentistComboboxes(self):
-        #--populate comboboxes with dentists
-        s=["*ALL*"] + localsettings.ops.values()
-        self.ui.daybookDent1ComboBox.addItems(s)
-        self.ui.daybookDent2ComboBox.addItems(s)
-        self.ui.cashbookDentComboBox.addItems(s)
-        self.ui.dnt1comboBox.addItems(localsettings.activedents)
-        self.ui.dnt2comboBox.addItems(localsettings.activedents)
-
-    def find_related(self):
-        if self.pt.serialno==0:
-            self.advise("No patient to compare to",2)
-            return
-        def family_navigated():
-            dl.selected = dl.family_tableWidget.item(dl.family_tableWidget.\
-                                                     currentRow(),0).text()
-        def address_navigated():
-            dl.selected = dl.address_tableWidget.item(dl.address_tableWidget.\
-                                                      currentRow(),0).text()
-        def soundex_navigated():
-            dl.selected = dl.soundex_tableWidget.item(dl.soundex_tableWidget.\
-                                                      currentRow(),0).text()
-
-        candidates=search.getsimilar(self.pt.serialno,self.pt.addr1,self.\
-                                     pt.sname,self.pt.familyno)
-        if candidates!=():
-            Dialog = QtGui.QDialog(self.mainWindow)
-            dl = Ui_related_patients.Ui_Dialog()
-            dl.setupUi(Dialog)
-            dl.selected=0
-
-            dl.thisPatient_label.setText(
-            "Possible Matches for patient - %d - %s %s - %s"%(
-            self.pt.serialno,self.pt.fname, self.pt.sname, self.pt.addr1))
-
-            Dialog.setFixedSize(self.mainWindow.width()-50,self.\
-                                mainWindow.height()-50)
-            headers=['Serialno','Surname','Forename','dob','Address1',\
-            'Address2','POSTCODE']
-            tableNo=0
-            for table in (dl.family_tableWidget,dl.address_tableWidget,
-            dl.soundex_tableWidget):
-                table.clear()
-                table.setSortingEnabled(False)
-                #--good practice to disable this while loading
-                table.setRowCount(len(candidates[tableNo]))
-                table.setColumnCount(len(headers))
-                table.setHorizontalHeaderLabels(headers)
-                #table.verticalHeader().hide()
-                row=0
-                for candidate in candidates[tableNo]:
-                    col=0
-                    for attr in candidate:
-                        item=QtGui.QTableWidgetItem(str(attr))
-                        table.setItem(row,col,item)
-                        col+=1
-                    row+=1
-                table.resizeColumnsToContents()
-                table.setSortingEnabled(True)
-                #--allow user to sort pt attributes
-                tableNo+=1
-            QtCore.QObject.connect(dl.family_tableWidget,QtCore.SIGNAL(
-            "itemSelectionChanged()"), family_navigated)
-            QtCore.QObject.connect(dl.address_tableWidget,QtCore.SIGNAL(
-            "itemSelectionChanged()"),address_navigated)
-            QtCore.QObject.connect(dl.soundex_tableWidget,QtCore.SIGNAL(
-            "itemSelectionChanged()"),  soundex_navigated)
-
-            if Dialog.exec_():
-                self.getrecord(int(dl.selected))
-        else:
-            self.advise("no similar patients found")
-    def next_patient(self):
-        cp= self.pt.serialno
-        recent=localsettings.recent_snos
-        try:
-            last_serialno=recent[recent.index(cp)+1]
-            self.getrecord(last_serialno)
-        except ValueError:
-            self.advise("Reached End of  List")
-        except Exception,e:
-            print "Exception in maingui.next_patient",e
-    def last_patient(self):
-        cp= self.pt.serialno
-        recent=localsettings.recent_snos
-        if cp==0 and len(recent)>0:
-            last_serialno=recent[-1]
-            self.getrecord(last_serialno)
-        else:
-            try:
-                last_serialno=recent[recent.index(cp)-1]
-                self.getrecord(last_serialno)
-            except ValueError:
-                self.advise("Reached start of  List")
-            except Exception,e:
-                print "Exception in maingui.next_patient",e
-
-    def load_estpage(self):
+    def load_receptionSummaryPage(self):
         estimateHtml=estimates.toBriefHtml(self.pt.estimates)
         self.ui.moneytextBrowser.setText(estimateHtml)
 
+    def load_newEstPage(self):
+        '''
+        populate my custom widget (estWidget)
+        this is probably quite computationally expensive
+        so should only be done if the widget is visible
+        ''' 
         self.ui.estWidget.setEstimate(self.pt.estimates)
 
+    def load_treatTrees(self):
+        self.ui.plan_treeWidget.clear()
+        pdict=plan.plannedDict(self.pt)
+        #-- pdict is a dictionary in the format
+        #-- {'Perio': ['perio - SP'], Diagnosis': ['xray - 2S', 'xray - M']}
+        #-- so the keys are treatment categories... and they contain a list
+        #-- of treatments within that category
+        #-- display as a tree view
 
-
-    def load_newEstPage(self):
-        self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-        self.load_estpage()
+        for category in pdict.keys():
+            items=pdict[category]
+            header=category + '(%d items)'%len(items)
+            parent = QtGui.QTreeWidgetItem(
+                    self.ui.plan_treeWidget,[header])
+            for item in items:
+                child = QtGui.QTreeWidgetItem(parent, [item])
+            #-- next line causes drawing errors?
+            #self.ui.plan_treeWidget.expandItem(parent)
+        self.ui.plan_treeWidget.resizeColumnToContents(0)
+        
+        self.ui.comp_treeWidget.clear()
+        pdict=plan.completedDict(self.pt)
+        #-- pdict is a dictionary in the format
+        #-- {'Perio': ['perio - SP'], Diagnosis': ['xray - 2S', 'xray - M']}
+        #-- so the keys are treatment categories... and they contain a list
+        #-- of treatments within that category
+        #-- display as a tree view
+        for category in pdict.keys():
+            items=pdict[category]
+            header=category + '(%d items)'%len(items)
+            parent = QtGui.QTreeWidgetItem(
+                    self.ui.comp_treeWidget,[header])
+            for item in items:
+                child = QtGui.QTreeWidgetItem(parent, [item])
+        self.ui.plan_treeWidget.resizeColumnToContents(0)
+        
     def updateMemo(self):
         '''this is called when the text in the memo on the admin page changes'''
         self.ui.adminMemoEdit.setText(self.ui.memoEdit.toPlainText())
@@ -3458,8 +3168,395 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         else:
             self.ui.dnt2comboBox.setCurrentIndex(-1)
 
+
+
+
+
+class openmolarGui(QtGui.QMainWindow, customWidgets,chartsClass,
+pageHandlingClass, newPatientClass,appointmentClass,signals,feeClass,
+printingClass,cashbooks):
+    def __init__(self):
+        QtGui.QMainWindow.__init__(self)
+        self.ui=Ui_main.Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        #--initiate a blank version of the patient class this
+        #--is used to check for state.
+        self.pt_dbstate=patient_class.patient(0)
+        #--make a deep copy to check for changes
+        self.pt=copy.deepcopy(self.pt_dbstate)
+        self.selectedChartWidget="st" #other values are "pl" or "cmp"
+        self.grid = ("ur8","ur7","ur6","ur5",'ur4','ur3','ur2','ur1','ul1',
+        'ul2','ul3','ul4','ul5','ul6','ul7','ul8',"lr8","lr7","lr6","lr5",
+        'lr4','lr3','lr2','lr1','ll1','ll2','ll3','ll4','ll5','ll6','ll7','ll8')
+        self.labels_and_tabs()
+        self.addCustomWidgets()
+        self.setValidators()
+        self.setupSignals()
+        self.loadDentistComboboxes()
+        self.feestableLoaded=False
+
+        #--adds items to the daylist comboBox
+        self.load_todays_patients_combobox()
+        self.appointmentData=()
+
+        self.editPageVisited=False
+
+    def advise(self,arg,warning_level=0):
+        '''
+        inform the user of events -
+        warning level0 = status bar only.
+        warning level 1 advisory
+        warning level 2 critical (and logged)
+        '''
+        if warning_level==0:
+            self.ui.statusbar.showMessage(arg,5000) #5000 milliseconds=5secs
+        elif warning_level==1:
+            QtGui.QMessageBox.information(self,"Advisory",arg)
+        elif warning_level==2:
+            now=QtCore.QTime.currentTime()
+            QtGui.QMessageBox.warning(self,"Error",arg)
+            #--for logging purposes
+            print "%d:%02d ERROR MESSAGE"%(now.hour(),now.minute()),arg
+
+    def quit(self):
+        '''
+        function called by the quit button in the menu
+        '''
+        self.app.closeAllWindows()
+
+    def closeEvent(self, event=None):
+        '''
+        overrule QMaindow's close event
+        check for unsaved changes then politely close the app if appropriate
+        '''
+        print "quit called"
+        if self.okToLeaveRecord():
+            #TODO - save some settings here????
+            pass
+        else:
+            print "user overuled"
+            event.ignore()
+
+    def aboutOM(self):
+        '''
+        called by menu - help - about openmolar
+        '''
+        from openmolar.settings import licensingText
+        self.advise('''%s <br />version %s Alpha<br />
+        build %s<br />%s'''%(licensingText.about,
+        localsettings.__version__,localsettings.__build__,
+        licensingText.license), 1)
+
+    def clearRecord(self):
+        '''
+        clears the memory of all references to the last patient.. and
+        ensures that tab pages for reception and clinical summary are cleared.
+        Other pages are disabled.
+        '''
+        if self.pt.serialno!=0:
+            self.ui.underTreatment_label.hide()
+            self.ui.underTreatment_label_2.hide()
+            self.ui.dobEdit.setDate(QtCore.QDate(1900,1,1))
+            self.ui.adminMemoEdit.setText("")
+            self.ui.detailsBrowser.setText("")
+            self.ui.moneytextBrowser.setText("")
+            self.ui.notesBrowser.setText("")
+            self.ui.notesSummary_textBrowser.setText("")
+            self.ui.bpe_groupBox.setTitle("BPE")
+            self.ui.bpe_textBrowser.setText("")
+            self.ui.planSummary_textBrowser.setText("")
+            self.ui.estimateRequired_checkBox.setChecked(False)
+
+            #--restore the charts to full dentition
+            ##TODO - perhaps handle this with the tabwidget calls?
+            for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,
+            self.ui.completedChartWidget,self.ui.perioChartWidget,
+            self.ui.summaryChartWidget):
+                chart.clear()
+                chart.update()
+            self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
+            self.ui.moneytextBrowser.setHtml(localsettings.message)
+            self.ui.chartsTableWidget.clear()
+            self.ui.ptAppointmentTableWidget.clear()
+            self.ui.ptAppointmentTableWidget.setRowCount(0)
+            self.ui.notesEnter_textEdit.setHtml("")
+
+            #--load a blank version of the patient class
+            self.pt_dbstate=patient_class.patient(0)
+            #--and have the comparison copy identical (to check for changes)
+            self.pt=copy.deepcopy(self.pt_dbstate)
+            if self.editPageVisited:
+                self.load_editpage()####################is this wise???????
+            #self.load_newEstPage()
+            #self.load_estpage()
+
+    def home(self):
+        '''
+        User has clicked the homw push_button -
+        clear the patient, and blank the screen
+        '''
+        if self.enteringNewPatient():
+            return
+        if not self.okToLeaveRecord():
+            print "not clearing record"
+            return
+        self.clearRecord()
+        #--disable much of the UI
+        self.enableEdit(False)
+
+        #--go to either "reception" or "clinical summary"
+        self.gotoDefaultTab()
+
+    def okToLeaveRecord(self):
+        '''
+        leaving a pt record - has state changed?
+        '''
+        if self.pt.serialno==0:
+            return True
+        #--a debug print statement
+        print "leaving record checking to see if save is required...",
+
+        #--apply changes to patient details
+        if self.editPageVisited:
+            self.apply_editpage_changes()
+
+        #--check pt against the original loaded state
+        #--this returns a LIST of changes ie [] if none.
+        uc=self.unsavedChanges()
+        if uc != []:
+            #--raise a custom dialog to get user input
+            #--(centred over self)
+            Dialog = QtGui.QDialog(self)
+            dl = saveDiscardCancel.sdcDialog(Dialog,self.pt.fname+" "+\
+                        self.pt.sname+" (%s)"%self.pt.serialno,uc)
+            if Dialog.exec_():
+                if dl.result == "discard":
+                    print "user discarding changes"
+                    return True
+                elif dl.result=="save":
+                    print "user is saving"
+                    self.save_changes()
+                    return True
+                #--cancelled action
+                else:
+                    print "user chose to continue editing"
+                    return False
+        else:
+            print "no changes"
+            return True
+
+    def showAdditionalFields(self):
+        '''
+        more Fields Button has been pressed
+        '''
+        self.advise("not yet available",1)
+        #TODO - add more code here!!
+
+    def docsPrinted(self):
+        '''
+        load the docsprinted listWidget
+        '''
+        self.ui.previousCorrespondence_listWidget.clear()
+        docs=docsprinted.previousDocs(self.pt.serialno)
+        for d in docs:
+            self.ui.previousCorrespondence_listWidget.addItem(str(d))
+
+    def changeContractedDentist(self,inits):
+        '''
+        changes dnt1
+        '''
+        newdentist=localsettings.ops_reverse[str(inits)]
+        if newdentist==self.pt.dnt1:
+            return
+        if self.pt.cset=="I":
+            self.advise("Let Highland Dental Plan know of this change",1)
+        elif self.pt.cset=="N":
+            self.advise(
+            "Get an NHS form signed to change the patients contract",1)
+        else:
+            self.advise("changed dentist to %s"%inits,1)
+        print "changing contracted dentist to ",inits
+        self.pt.dnt1=newdentist
+        self.updateDetails()
+
+    def changeCourseDentist(self,inits):
+        '''
+        changes dnt2
+        '''
+        newdentist=localsettings.ops_reverse[str(inits)]
+        if newdentist==self.pt.dnt2:
+            return
+        if self.pt.dnt2==0 and newdentist==self.pt.dnt1:
+            return
+        if self.pt.cset=="N" and self.pt.underTreatment:
+            self.advise(
+            "think about getting some nhs forms signed for both dentists",1)
+        else:
+            self.advise("changed course dentist to %s"%inits,1)
+
+        print "changing course dentist to ",inits
+        self.pt.dnt2=newdentist
+        self.updateDetails()
+
+    def changeCourseType(self,cset):
+        '''
+        change cset
+        '''
+        print "changing course type of %d to %s"%(self.pt.serialno,cset)
+        self.pt.cset=str(cset)
+        self.advise("changed course type to %s"%cset,1)
+        self.updateDetails()
+
+    def load_todays_patients_combobox(self):
+        '''
+        loads the quick select combobox, with all of todays's
+        patients - if a list(tuple) of dentists is passed eg ,(("NW"))
+        then only pt's of that dentist show up
+        '''
+        if "/" in localsettings.operator:
+            dent_initials=localsettings.operator[:localsettings.\
+                                                 operator.index("/")]
+        else:
+            dent_initials=localsettings.operator
+        if dent_initials in localsettings.activedents:
+            dent=(str(dent_initials),)
+            visibleItem="Today's Patients (%s)"%dent
+        else:
+            dent=("*",)
+            visibleItem="Today's Patients (ALL)"
+        self.advise("loading today's patients")
+        self.ui.daylistBox.addItem(visibleItem)
+
+        for pt in appointments.todays_patients(dent):
+            val=pt[1]+" -- " + str(pt[0])
+            #--be wary of changing this -- is used as a marker some
+            #--pt's have hyphonated names!
+            self.ui.daylistBox.addItem(QtCore.QString(val))
+
+    def todays_pts(self):
+        arg=str(self.ui.daylistBox.currentText())
+        if arg[0:7] !="Today's":
+            self.ui.daylistBox.setCurrentIndex(0)
+            serialno=int(arg[arg.index("--")+2:])
+            #--see above comment
+            self.getrecord(serialno)
+
+    def loadDentistComboboxes(self):
+        '''
+        populate several comboboxes with the activedentists
+        '''
+        s=["*ALL*"] + localsettings.ops.values()
+        self.ui.daybookDent1ComboBox.addItems(s)
+        self.ui.daybookDent2ComboBox.addItems(s)
+        self.ui.cashbookDentComboBox.addItems(s)
+        self.ui.dnt1comboBox.addItems(localsettings.activedents)
+        self.ui.dnt2comboBox.addItems(localsettings.activedents)
+
+    def find_related(self):
+        '''
+        looks for patients with similar name, family or address
+        to the current pt
+        '''
+        if self.pt.serialno==0:
+            self.advise("No patient to compare to",2)
+            return
+        def family_navigated():
+            dl.selected = dl.family_tableWidget.item(dl.family_tableWidget.\
+                                                     currentRow(),0).text()
+        def address_navigated():
+            dl.selected = dl.address_tableWidget.item(dl.address_tableWidget.\
+                                                      currentRow(),0).text()
+        def soundex_navigated():
+            dl.selected = dl.soundex_tableWidget.item(dl.soundex_tableWidget.\
+                                                      currentRow(),0).text()
+
+        candidates=search.getsimilar(self.pt.serialno,self.pt.addr1,self.\
+                                     pt.sname,self.pt.familyno)
+        if candidates!=():
+            Dialog = QtGui.QDialog(self)
+            dl = Ui_related_patients.Ui_Dialog()
+            dl.setupUi(Dialog)
+            dl.selected=0
+
+            dl.thisPatient_label.setText(
+            "Possible Matches for patient - %d - %s %s - %s"%(
+            self.pt.serialno,self.pt.fname, self.pt.sname, self.pt.addr1))
+
+            Dialog.setFixedSize(self.width()-50,self.\
+                                mainWindow.height()-50)
+            headers=['Serialno','Surname','Forename','dob','Address1',\
+            'Address2','POSTCODE']
+            tableNo=0
+            for table in (dl.family_tableWidget,dl.address_tableWidget,
+            dl.soundex_tableWidget):
+                table.clear()
+                table.setSortingEnabled(False)
+                #--good practice to disable this while loading
+                table.setRowCount(len(candidates[tableNo]))
+                table.setColumnCount(len(headers))
+                table.setHorizontalHeaderLabels(headers)
+                #table.verticalHeader().hide()
+                row=0
+                for candidate in candidates[tableNo]:
+                    col=0
+                    for attr in candidate:
+                        item=QtGui.QTableWidgetItem(str(attr))
+                        table.setItem(row,col,item)
+                        col+=1
+                    row+=1
+                table.resizeColumnsToContents()
+                table.setSortingEnabled(True)
+                #--allow user to sort pt attributes
+                tableNo+=1
+            QtCore.QObject.connect(dl.family_tableWidget,QtCore.SIGNAL(
+            "itemSelectionChanged()"), family_navigated)
+            QtCore.QObject.connect(dl.address_tableWidget,QtCore.SIGNAL(
+            "itemSelectionChanged()"),address_navigated)
+            QtCore.QObject.connect(dl.soundex_tableWidget,QtCore.SIGNAL(
+            "itemSelectionChanged()"),  soundex_navigated)
+
+            if Dialog.exec_():
+                self.getrecord(int(dl.selected))
+        else:
+            self.advise("no similar patients found")
+
+    def next_patient(self):
+        '''
+        cycle forwards through the list of recently visited records
+        '''
+        cp= self.pt.serialno
+        recent=localsettings.recent_snos
+        try:
+            last_serialno=recent[recent.index(cp)+1]
+            self.getrecord(last_serialno)
+        except ValueError:
+            self.advise("Reached End of  List")
+        except Exception,e:
+            print "Exception in maingui.next_patient",e
+
+    def last_patient(self):
+        '''
+        cycle backwards through recently visited records
+        '''
+        cp= self.pt.serialno
+        recent=localsettings.recent_snos
+        if cp==0 and len(recent)>0:
+            last_serialno=recent[-1]
+            self.getrecord(last_serialno)
+        else:
+            try:
+                last_serialno=recent[recent.index(cp)-1]
+                self.getrecord(last_serialno)
+            except ValueError:
+                self.advise("Reached start of  List")
+            except Exception,e:
+                print "Exception in maingui.next_patient",e
+
     def apply_editpage_changes(self):
-        '''this is called by clicking the save button'''
+        '''
+        apply any changes made on the edit patient page
+        '''
         if self.pt.serialno==0 and self.ui.newPatientPushButton.isEnabled():
             ###firstly.. don't apply edit page changes if there
             ####is no patient loaded,
@@ -3489,9 +3586,12 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         self.pt.occup=str(self.ui.occupationEdit.text().toAscii()).upper()
 
     def getrecord(self,serialno,checkedNeedToLeaveAlready=False):
-        print "get record %d"%serialno
+        '''
+        a record has been called byone of several means
+        '''
         if self.enteringNewPatient():
             return
+        print "get record %d"%serialno
         if not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
             print "not loading"
             self.advise("Not loading patient")
@@ -3512,7 +3612,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                     self.advise("Error populating interface\n%s\n%s"%(Exception,e),2)
                 finally:
                     self.pt_dbstate=copy.deepcopy(self.pt)
-                
+
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
                 self.advise ("error getting serialno %d"%serialno+
@@ -3529,7 +3629,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
 
         else:
             self.advise("get record called with serialno 0")
+
     def reload_patient(self):
+        '''
+        reload the current record
+        '''
         self.getrecord(self.pt.serialno)
 
     def updateNotesPage(self):
@@ -3543,7 +3647,10 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         self.ui.notesBrowser.scrollToAnchor('anchor')
 
     def loadpatient(self):
-        '''load a patient from the database'''
+        '''
+        self.pt is now a patient... time to push to the gui.
+        '''
+        #-- don't load a patient if you are entering a new one.
         if self.enteringNewPatient():
             return
         print "loading patient"
@@ -3553,15 +3660,12 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
+
         self.updateDetails()
         self.editPageVisited=False
         self.ui.adminMemoEdit.setText(self.pt.memo)
-        self.layout_apptTable()
-        self.load_newEstPage()
-
+        #self.layout_apptTable()
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-        #--load_newEstPage also loads the ests
-        self.load_newEstPage
         note=notes.notes(self.pt.notestuple)
         #--notes not verbose
         self.ui.notesSummary_textBrowser.setHtml(note)
@@ -3579,7 +3683,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         try:
             pos=localsettings.csetypes.index(self.pt.cset)
         except ValueError:
-            QtGui.QMessageBox.information(self.mainWindow,"Advisory",
+            QtGui.QMessageBox.information(self,"Advisory",
             "Please set a Valid Course Type for this patient")
             pos=-1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
@@ -3603,11 +3707,13 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                              QtGui.QPalette.Button, brush)
             self.ui.medNotes_pushButton.setPalette(palette)
         else:
-            self.ui.medNotes_pushButton.setPalette(self.mainWindow.palette())
+            self.ui.medNotes_pushButton.setPalette(self.palette())
         self.enableEdit(True)
 
     def updateDetails(self):
-        '''sets the patient information into the left column'''
+        '''
+        sets the patient information into the left column
+        '''
         details=patientDetails.details(self.pt)
         self.ui.detailsBrowser.setText(details)
         self.ui.detailsBrowser.update()
@@ -3632,7 +3738,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         def DoubleClick():
             '''user double clicked on an item... accept the dialog'''
             Dialog.accept()
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_select_patient.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.tableWidget.clear()
@@ -3647,7 +3753,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         dl.tableWidget.setHorizontalHeaderLabels(headers)
         dl.tableWidget.verticalHeader().hide()
         row=0
-        Dialog.setFixedWidth(self.mainWindow.width()-100)
+        Dialog.setFixedWidth(self.width()-100)
         for col in range(len(headers)):
             dl.tableWidget.setColumnWidth(col,widthFraction[col]*\
                                           (Dialog.width()-100)/130)
@@ -3684,7 +3790,7 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             dl.sname.setText(localsettings.lastsearch[0])
             dl.fname.setText(localsettings.lastsearch[1])
             dl.pcde.setText(localsettings.lastsearch[5])
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_patient_finder.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.dob.setText("00/00/0000")
@@ -3753,6 +3859,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
 
     def save_patient_tofile(self):
+        '''
+        our "patient" is a python object,
+        so can be pickled
+        save to file is really just a development feature
+        '''
         try:
             filepath = QtGui.QFileDialog.getSaveFileName()
             if filepath!='':
@@ -3762,7 +3873,12 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 self.advise("Patient File Saved",1)
         except Exception,e:
             self.advise("Patient File not saved - %s"%e,2)
+
     def open_patient_fromfile(self):
+        '''
+        reload a saved (pickled) patient
+        only currently works is the OM version is compatible
+        '''
         if self.enteringNewPatient():
             return
         if not self.okToLeaveRecord():
@@ -3787,8 +3903,11 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             self.advise("no file chosen",1)
         self.loadpatient()
 
-
     def exportRecalls(self):
+        '''
+        gets patients who have the recall date stipulated
+        by the ui.recallDateEdit value
+        '''
         month=self.ui.recalldateEdit.date().month()
         year=self.ui.recalldateEdit.date().year()
         print "exporting recalls for %s,%s"%(month,year)
@@ -3797,10 +3916,21 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         dialog.exec_()
 
     def showChartTable(self):
+        '''
+        flips a stackedwidget to display the table underlying the charts
+        '''
         self.ui.stackedWidget.setCurrentIndex(0)
+
     def showChartCharts(self):
+        '''
+        flips a stackedwidget to show the charts (default)
+        '''
         self.ui.stackedWidget.setCurrentIndex(1)
+
     def phraseBookDialog(self):
+        '''
+        show the phraseBook
+        '''
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
             return
@@ -3815,12 +3945,20 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                     newNotes+=cb.text()+"\n"
             if newNotes!="":
                 self.addNewNote(newNotes)
+
     def addNewNote(self,arg):
-        self.ui.notesEnter_textEdit.setText(self.ui.notesEnter_textEdit.\
-                                            toPlainText()+" "+arg)
+        '''
+        used when I programatically add text to the user textEdit
+        '''
+        self.ui.notesEnter_textEdit.setText(
+                self.ui.notesEnter_textEdit.toPlainText()+" "+arg)
+
     def callXrays(self):
+        '''
+        this updates a database with the record in use
+        '''
         if localsettings.surgeryno==-1:
-            Dialog=QtGui.QDialog(self.mainWindow)
+            Dialog=QtGui.QDialog(self)
             dl=Ui_surgeryNumber.Ui_Dialog()
             dl.setupUi(Dialog)
             if Dialog.exec_():
@@ -3830,20 +3968,25 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         calldurr.commit(self.pt.serialno,localsettings.surgeryno)
 
     def showMedNotes(self):
+        '''
+        user has called for medical notes to be shown
+        '''
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
             return
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         if medNotes.showDialog(Dialog,self.pt):
             self.advise("Updated Medical Notes",1)
             self.medalert()
 
     def newBPE_Dialog(self):
-        global pt
+        '''
+        enter a new BPE
+        '''
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
             return
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = newBPE.Ui_Dialog(Dialog)
         result=dl.getInput()
         if result[0]:
@@ -3851,7 +3994,6 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             #--add a bpe
             newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes+=" bpe of %s recorded \n"%result[1]
-
             self.ui.notesEnter_textEdit.setText(newnotes)
             self.ui.bpe_textBrowser
         else:
@@ -3860,7 +4002,10 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
         self.bpe_table(0)
 
     def newCourseSetup(self):
-        Dialog = QtGui.QDialog(self.mainWindow)
+        '''
+        set up a new course of treament
+        '''
+        Dialog = QtGui.QDialog(self)
         if self.pt.dnt2==0:
             cdnt=self.pt.dnt1
         else:
@@ -3895,35 +4040,44 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 self.pt.blankCurrtrt()
                 self.pt.estimates=[]
                 self.pt.underTreatment=True
-                self.load_newEstPage()
+                #self.load_newEstPage()
                 self.updateDetails()
                 return True
             else:
                 self.advise("ERROR STARTING NEW COURSE, sorry",2)
 
-
     def closeCourse(self):
+        '''
+        close a treatment course
+        '''
         message="Close current course of treatment?"
-        result=QtGui.QMessageBox.question(self.mainWindow,"Confirm",message,\
+        result=QtGui.QMessageBox.question(self,"Confirm",message,\
                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
         if result==QtGui.QMessageBox.Yes:
             self.pt.courseno2=self.pt.courseno1
             self.pt.courseno1=self.pt.courseno0
             self.pt.cmpd=localsettings.ukToday()
             self.pt.courseno0=0
+
+            #-- new line
             self.reload_patient()
+
+            ##-- I removed these lines because I think it is safer to
+            ##-- reload the pateint
             #blank things off
             #self.pt.estimates=[]
             #self.pt.blankCurrtrt()
-
             #self.load_newEstPage()
             #self.pt.underTreatment=False
             #self.updateDetails()
             return True
 
-
     def userOptionsDialog(self):
-        Dialog = QtGui.QDialog(self.mainWindow)
+        '''
+        not too many user options available yet
+        this will change.
+        '''
+        Dialog = QtGui.QDialog(self)
         dl = Ui_options.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.leftMargin_spinBox.setValue(GP17.offsetLeft)
@@ -3934,6 +4088,9 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             GP17.offsetTop=dl.topMargin_spinBox.value()
 
     def unsavedChanges(self):
+        '''
+        important function, checks for changes since the patient was loaded
+        '''
         self.pt.memo=str(self.ui.adminMemoEdit.toPlainText().toAscii())
         fieldsToExclude=("notestuple","fees")
         changes=[]
@@ -3959,21 +4116,26 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             return changes
 
     def save_changes(self):
-        '''updates the database when the save button is pressed'''
+        '''
+        updates the database when the save is requested
+        '''
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
             return
         if self.editPageVisited:
+            #-- only make changes if user has visited this tab
             self.apply_editpage_changes()
-
-        if self.pt.HIDDENNOTES!=[]:    #treatment codes... money etc..
+        if self.pt.HIDDENNOTES!=[]:
+            #-- hidden notes is
+            #-- treatment codes... money, printing etc..
             print "saving hiddennotes"
             patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
             self.pt.clearHiddenNotes()
         uc=self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
-            result=patient_write_changes.all_changes(self.pt,uc, self.pt_dbstate.estimates)
+            result=patient_write_changes.all_changes(
+                                        self.pt,uc, self.pt_dbstate.estimates)
             if result: #True if sucessful
                 self.pt_dbstate=copy.deepcopy(self.pt)
                 message="Sucessfully altered the following items<ul>"
@@ -4024,7 +4186,9 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
 
 
     def enableEdit(self,arg=True):
-
+        '''
+        disable/enable widgets "en mass" when no patient loaded
+        '''
         for widg in (self.ui.printEst_pushButton,
         self.ui.printAccount_pushButton,
         self.ui.relatedpts_pushButton,
@@ -4047,22 +4211,27 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
             if self.ui.tabWidget.isTabEnabled(i)!=arg:
                 self.ui.tabWidget.setTabEnabled(i,arg)
         if arg==True and "N" in self.pt.cset:
+            #-- show NHS form printing button
             self.ui.NHSadmin_groupBox.show()
         else:
             self.ui.NHSadmin_groupBox.hide()
 
     def setValidators(self):
-        '''add user Input validators to some existing widgets'''
+        '''
+        add user Input validators to some existing widgets
+        '''
         self.ui.dupReceiptDate_lineEdit.setInputMask("00/00/0000")
 
     def changeDB(self):
-        '''a dialog to user a different database (or backup server etc...)'''
+        '''
+        a dialog to user a different database (or backup server etc...)
+        '''
         def togglePassword(e):
             if not dl.checkBox.checkState():
                 dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
             else:
                 dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
-        Dialog = QtGui.QDialog(self.mainWindow)
+        Dialog = QtGui.QDialog(self)
         dl = Ui_changeDatabase.Ui_Dialog()
         dl.setupUi(Dialog)
         QtCore.QObject.connect(dl.checkBox,QtCore.SIGNAL("stateChanged(int)"),
@@ -4082,32 +4251,28 @@ class openmolarGui(customWidgets,chartsClass,newPatientClass,appointmentClass,
                 print e
 
 def main(arg):
-    global app
-    #--self.mainWindow referred to for dialog placement
-   #-- app required for polite shutdown
+    #-- app required for polite shutdown
+    if not localsettings.successful_login and not "neil" in os.getcwd():
+        print "unable to run... no login"
+        sys.exit()
 
     app = QtGui.QApplication(arg)
-    mainWindow = QtGui.QMainWindow()
-
     #-- user could easily play with this code and avoid login...
     #--the app would however, not have initialised.
+    mainWindow=openmolarGui()
+    mainWindow.app=app
+    mainWindow.show()
 
     if __name__ != "__main__":
         #--don't maximise the window for dev purposes - I like to see
         #--all the error messages in a terminal ;).
         mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
-    else:
-        if not localsettings.successful_login:
-            if "neil" in os.getcwd():
-                print "dev mode"
-                localsettings.initiate()
-
-    omGui=openmolarGui(mainWindow)
-    mainWindow.show()
-    app.connect(app,QtCore.SIGNAL("aboutToQuit()"),omGui.quit)
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
+    print "dev mode"
+    localsettings.initiate()
+
     print "Qt Version: ", QtCore.QT_VERSION_STR
     print "PyQt Version: ", QtCore.PYQT_VERSION_STR
     main(sys.argv)

@@ -12,7 +12,8 @@ from openmolar.settings import localsettings
 private_only = False
 nhs_only = False
 
-newfeetable_Headers="section,code,oldcode,USERCODE,regulation,description,description1,NF08,NF08_pt,PFA"
+newfeetable_Headers="section,code,oldcode,USERCODE,regulation,"+\
+"description,description1,NF08,NF08_pt,PFA"
 
 def getFeeHeaders():
     return newfeetable_Headers.split(",")[1:]

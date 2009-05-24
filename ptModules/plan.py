@@ -3,48 +3,102 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
-
+# (at your option) any later version. See the GNU General Public License
+# for more details.
 
 import sys
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 
-def getplantext(pt):
-    '''returns an html set showing pt name etc...'''
-    retarg='''<html><body><head><link rel="stylesheet" href="%s" type="text/css"></head>\n'''%localsettings.stylesheet
-    attribs=pt.__dict__.keys()
-    retarg+='<table width="100%" border="2"><tr><td>'
-    retarg+='<h2>PLAN</h2><ul>'
-    for attrib in attribs:
-        if attrib[-2:]=="pl" and pt.__dict__[attrib]!="":
-            retarg+="<li>%s - %s</li>"%(attrib[0:-2],pt.__dict__[attrib])
-    retarg+="</ul></td><td><h2>Completed</h2><ul>"
-    for attrib in attribs:
-        if attrib[-3:]=="cmp" and pt.__dict__[attrib]!="":
-            retarg+="<li>%s - %s</li>"%(attrib[0:-3],pt.__dict__[attrib])
-    #retarg+="<li>no plan/completed data found</li>"
-    retarg+="</ul></td></tr></table>"
-    
-    return retarg+"\n</body></html>"
+
+treatmentTypeHeaders={
+    "Diagnosis":("Exam","xray", ),
+    "Perio":("perio", ),
+    "Tooth":("ul", "ll", "ur", "lr", ),
+    "Prosthetics":("ndu", "nld", "odu", "odl", ),
+    "Other":("other",)}
+
+templist=[]
+for quad in ("ur", "ul", "ll", "lr"):
+    for tooth in range(1, 9):
+        templist.append("%s%d"%(quad, tooth))
+tup_toothAtts=tuple(templist)
+
+tup_Atts=('xray','perio','anaes','other','ndu',
+'ndl','odu','odl')
+
+def plannedDict(pt):
+    items=plannedItems(pt)
+    pdict={}
+    for header in treatmentTypeHeaders.keys():
+        for att in treatmentTypeHeaders[header]:
+            for item in items:
+                if att in item[0]:
+                    istring="%s - %s"%(item)
+                    if pdict.has_key(header):
+                        pdict[header].append(istring)
+                    else:
+                        pdict[header]=[istring]
+    return pdict
+
+def completedDict(pt):
+    items=completedItems(pt)
+    pdict={}
+    for header in treatmentTypeHeaders.keys():
+        for att in treatmentTypeHeaders[header]:
+            for item in items:
+                if att in item[0]:
+                    istring="%s - %s"%(item)
+                    if pdict.has_key(header):
+                        pdict[header].append(istring)
+                    else:
+                        pdict[header]=[istring]
+    return pdict
+
+def plannedItems(pt):
+    plannedList=[]
+    for attrib in tup_Atts+tup_toothAtts:
+        tx=pt.__dict__[attrib+"pl"]
+        if tx != "":
+            items=tx.strip(" ").split(" ")
+            for item in items:
+                plannedList.append((attrib, item), )
+    return plannedList
+
+def completedItems(pt):
+    compList=[]
+    if pt.examt!="":
+        compList.append(("Exam",pt.examt) )
+    for attrib in tup_Atts+tup_toothAtts:
+        if pt.__dict__[attrib+"cmp"]!="":
+            compList.append((attrib,pt.__dict__[attrib+"cmp"]) )
+    return compList
 
 def summary(pt):
-    '''returns an html set showing pt name etc...'''
-    retarg='''<html><body><head><link rel="stylesheet" href="%s" type="text/css"></head>\n'''%localsettings.stylesheet
-    attribs=pt.__dict__.keys()
-    retarg+='<h4>PLAN</h4>'
-    for attrib in attribs:
-        if attrib[-2:]=="pl" and pt.__dict__[attrib]!="":
-            retarg+='%s - %s<br />'%(attrib[0:-2],pt.__dict__[attrib])
-    
-    retarg+='<hr /><h4>COMPLETED</h4>'
-    for attrib in attribs:
-        if attrib[-3:]=="cmp" and pt.__dict__[attrib]!="":
-            retarg+='%s - %s<br />'%(attrib[0:-3],pt.__dict__[attrib])
-    #retarg+="no plan/completed data found"
-    
-    return retarg+"</body></html>"
-    
+    '''
+    returns html set showing a summary of planned or completed treatment
+    '''
+
+    retarg='''<html><body><head>
+    <link rel="stylesheet" href="%s" type="text/css">
+    </head>\n'''%localsettings.stylesheet
+
+    plan=""
+    for item in plannedItems(pt):
+        plan+='%s - %s<br />'%(item)
+    comp=""
+    for item in completedItems(pt):
+        comp+='%s - %s<br />'%(item)
+
+    if plan=="" and comp=="":
+        return "%sNo treatment</body></html>"%retarg
+    else:
+        return '%s<h4>PLAN</h4>%s<hr /><h4>COMPLETED</h4>%s</body></html>'%(
+                                                            retarg, plan, comp)
+
+
+    return retarg+""
+
 
 
 if __name__ == "__main__":
@@ -54,5 +108,8 @@ if __name__ == "__main__":
     except:
         serialno=29833
     pt=patient_class.patient(serialno)
-    #print getplantext(pt)
+    print plannedItems(pt)
+    print completedItems(pt)
     print summary(pt)
+    print plannedDict(pt)
+    print completedDict(pt)
