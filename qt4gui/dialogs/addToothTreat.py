@@ -16,54 +16,6 @@ Ui_toothtreatmentItemWidget
 
 from openmolar.settings import localsettings,fee_keys
 
-def toothSpecificCodesList(pt):
-    '''
-    cycles through the patient attriubutes,
-    and brings up planned treatment on teeth only
-    '''
-    treats=[]
-    for quadrant in ("ur","ul", "ll", "lr"):
-        if "r" in quadrant:
-            order=(8, 7, 6, 5, 4, 3, 2, 1)
-        else:
-            order=(1, 2, 3, 4, 5, 6, 7, 8)
-        for tooth in order:
-            att="%s%spl"%(quadrant, tooth)
-            if pt.__dict__[att] != "":
-                items=pt.__dict__[att].strip(" ").split(" ")
-                for item in items:
-                    treats.append(("%s%s"%(quadrant, tooth), item), )
-    return treats
-
-def getCode(tooth,fill):
-    '''
-    converts fillings into four digit codes used in the feescale
-    eg "MOD" -> "1404" (both are strings)
-    '''
-    return fee_keys.getKeyCodeToothUserCode(tooth,fill)
-
-def getFee(cset,itemcode):
-    '''
-    useage = getFee("P","4001")
-    get the fee for itemcode "4001" for a private patient
-    '''
-    fee=0
-    if "P" in cset:
-        fee= localsettings.privateFees[itemcode].getFee()
-    return fee
-
-def getDescription(arg):
-    '''
-    usage=getDescription("4001")
-    get a description for itemcode "4001"
-    '''
-    description=""
-    try:
-        description=localsettings.descriptions[arg]
-    except:
-        print "no description found for item %s"%arg
-    return description
-
 class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
     '''
     a custom gui widget with a description and a double spin box
@@ -80,8 +32,8 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
     def setItem(self,tooth, usercode):
         self.tooth=tooth
         self.tooth_label.setText("%s %s"%(tooth.upper(), usercode))
-        self.itemcode=getCode(tooth,usercode)
-        self.description=getDescription(self.itemcode)
+        self.itemcode=fee_keys.getCode(tooth,usercode)
+        self.description=fee_keys.getDescription(self.itemcode)
         self.description_label.setText("%s\t(%s)"%(self.description,
                                                     self.itemcode))
         self.feeCalc()
@@ -91,7 +43,7 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
        '''
         #-- here is why we need to import the division from the future...
         #-- no rounding errors please!
-        fee=getFee(self.parent.cset,self.itemcode) / 100
+        fee=fee_keys.getFee(self.parent.cset,self.itemcode) / 100
         self.doubleSpinBox.setValue(fee)
         self.parent.updateTotal()
 
@@ -114,15 +66,8 @@ class treatment(Ui_addToothTreatment.Ui_Dialog,):
         itemsPerTooth("ul6","MOD RT")
         provides a more convenient way of calling setItems
         '''
-        treats=[]
-        items=props.strip(" ").split(" ")
-        for item in items:
-            if re.match(".*,PR.*",props):
-                treats.append((tooth,"PR"),)
-                item=item.replace(",PR","")
-
-            treats.append((tooth, item), )
-        self.setItems(treats)
+       
+        self.setItems(fee_keys.itemsPerTooth(tooth,props))
 
     def setItems(self, items):
         '''
@@ -168,12 +113,12 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
 
     from openmolar.dbtools import patient_class
-    pt=patient_class.patient(6169)  #29833)
+    pt=patient_class.patient(1)  #29833)
 
     #print "PLAN for ", toothPlan[0],toothPlan[1]
 
     ui = treatment(Dialog,"P")
-    ui.setItems(toothSpecificCodesList(pt))
+    ui.setItems(fee_keys.toothSpecificCodesList(pt))
     #ui.setItems((("ul6", "CR,GO"), ("ul6","RT")),)
     ui.showItems()
 

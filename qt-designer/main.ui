@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>682</width>
+                    <width>602</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1448,7 +1448,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>682</width>
+                    <width>602</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -1760,7 +1760,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>692</width>
+                    <width>612</width>
                     <height>469</height>
                    </rect>
                   </property>
@@ -2119,7 +2119,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>701</width>
-                    <height>376</height>
+                    <height>367</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2505,26 +2505,6 @@
                             </property>
                            </widget>
                           </item>
-                          <item>
-                           <widget class="QCheckBox" name="estimateRequired_checkBox" >
-                            <property name="text" >
-                             <string>Fee Confirm. Required</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="confirmFees_pushButton" >
-                            <property name="text" >
-                             <string>Confirm Now</string>
-                            </property>
-                            <property name="checkable" >
-                             <bool>false</bool>
-                            </property>
-                            <property name="checked" >
-                             <bool>false</bool>
-                            </property>
-                           </widget>
-                          </item>
                          </layout>
                         </widget>
                        </item>
@@ -2618,8 +2598,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>236</width>
-                    <height>392</height>
+                    <width>220</width>
+                    <height>407</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_11" >
@@ -2671,6 +2651,19 @@
                        </widget>
                       </item>
                      </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="confirmFees_pushButton" >
+                     <property name="text" >
+                      <string>Recalculate Estimate</string>
+                     </property>
+                     <property name="checkable" >
+                      <bool>false</bool>
+                     </property>
+                     <property name="checked" >
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -2887,8 +2880,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>702</width>
-                    <height>396</height>
+                    <width>606</width>
+                    <height>386</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
@@ -3011,7 +3004,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>558</width>
+                        <width>462</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3232,8 +3225,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>223</width>
-                <height>455</height>
+                <width>127</width>
+                <height>250</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3250,8 +3243,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>224</width>
-                <height>455</height>
+                <width>128</width>
+                <height>250</height>
                </rect>
               </property>
              </widget>
@@ -3267,8 +3260,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>223</width>
-                <height>455</height>
+                <width>127</width>
+                <height>250</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3465,7 +3458,7 @@
              <x>0</x>
              <y>0</y>
              <width>167</width>
-             <height>57</height>
+             <height>53</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3782,7 +3775,7 @@
                <x>0</x>
                <y>0</y>
                <width>167</width>
-               <height>131</height>
+               <height>51</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >

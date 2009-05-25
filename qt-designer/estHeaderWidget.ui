@@ -520,7 +520,7 @@
       </size>
      </property>
      <property name="text" >
-      <string>Tooth</string>
+      <string>Type</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignCenter</set>
@@ -548,7 +548,7 @@
       </size>
      </property>
      <property name="text" >
-      <string>Type</string>
+      <string>P/N/I</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignCenter</set>

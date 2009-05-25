@@ -75,9 +75,28 @@ class prvFee():
 
             return fee
 
+
+def itemsPerTooth(tooth,props):
+    '''
+    usage itemsPerTooth("ul7","MOD,CO,PR ")
+    returns (("ul7","MOD,CO"),("ul7","PR"))
+    '''
+    treats=[]
+    items=props.strip(" ").split(" ")
+    for item in items:
+        if re.match(".*,PR.*",props):
+            treats.append((tooth,"PR"),)
+            item=item.replace(",PR","")
+
+        treats.append((tooth, item), )
+    return treats
+
 def getKeyCode(arg):
-    '''you pass a USERCODE (eg 'EX' for extraction... and get returned the numeric code for this
-    class of treatments'''
+    '''
+    you pass a USERCODE (eg 'EX' for extraction... 
+    and get returned the numeric code for this
+    class of treatments
+    '''
     try:
         return localsettings.treatmentCodes[arg]
     except Exception,e:
@@ -90,7 +109,6 @@ def getKeyCodeToothUserCode(tooth,arg):
     arg will be something like "CR,GO" or "MOD,CO"
     '''
     print "decrypting tooth code",arg
-
 
 
     if arg in ("PV","AP","RT","ST","EX","EX/S1","EX/S2"):
@@ -146,6 +164,56 @@ def getKeyCodeToothUserCode(tooth,arg):
     print "no match in getKeyCodeToothUserCode for ",arg
     print "returning 4001"
     return "4001"
+
+
+def toothSpecificCodesList(pt):
+    '''
+    cycles through the patient attriubutes,
+    and brings up planned treatment on teeth only
+    '''
+    treats=[]
+    for quadrant in ("ur","ul", "ll", "lr"):
+        if "r" in quadrant:
+            order=(8, 7, 6, 5, 4, 3, 2, 1)
+        else:
+            order=(1, 2, 3, 4, 5, 6, 7, 8)
+        for tooth in order:
+            att="%s%spl"%(quadrant, tooth)
+            if pt.__dict__[att] != "":
+                items=pt.__dict__[att].strip(" ").split(" ")
+                for item in items:
+                    treats.append(("%s%s"%(quadrant, tooth), item), )
+    return treats
+
+def getCode(tooth,fill):
+    '''
+    converts fillings into four digit codes used in the feescale
+    eg "MOD" -> "1404" (both are strings)
+    '''
+    return getKeyCodeToothUserCode(tooth,fill)
+
+def getFee(cset,itemcode):
+    '''
+    useage = getFee("P","4001")
+    get the fee for itemcode "4001" for a private patient
+    '''
+    fee=0
+    if "P" in cset:
+        fee= localsettings.privateFees[itemcode].getFee()
+    return fee
+
+def getDescription(arg):
+    '''
+    usage=getDescription("4001")
+    get a description for itemcode "4001"
+    '''
+    description=""
+    try:
+        description=localsettings.descriptions.get(arg)
+    except:
+        print "no description found for item %s"%arg
+    return description
+
 
 if __name__ == "__main__":
     #localsettings.initiate(False)

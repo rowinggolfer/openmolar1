@@ -294,18 +294,24 @@ class feeClass():
                     examtype,examdent)
                     self.pt.addHiddenNote("exam","%s EXAM"%examtype)
                     item=fee_keys.getKeyCode(examtype)
+
+                    #
+                    #TODO - implement other course types
+                    #
                     if "P" in self.pt.cset:
                         itemfee=localsettings.privateFees[item].getFee()
                     else:
                         itemfee=0
-                    try:
-                        item_description=localsettings.descriptions[item]
-                    except KeyError:
+                    ptfee=itemfee
+                    #
+
+                    item_description=localsettings.descriptions.get(item)
+                    if item_description==None:
                         item_description="unknown exam type"
 
                     self.pt.addToEstimate(1,item,item_description,itemfee,
-                    itemfee, localsettings.ops_reverse[examdent], self.pt.cset,
-                    "N/A",True)
+                    ptfee, localsettings.ops_reverse[examdent], self.pt.cset,
+                    "exam %s"%examtype,True)
 
                     self.pt.money1+=itemfee
                     self.updateFees()
@@ -338,6 +344,7 @@ class feeClass():
             except:
                 print "no fee found for item %s"%item
         fee=itemfee / 100
+        ##TODO put this dialog needs to be smarter, and update when SP+ selected
         dl.doubleSpinBox.setValue(fee)
         result=dl.getInput()
         print result
@@ -346,15 +353,22 @@ class feeClass():
             newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes+="%s performed by %s\n"%(result[0],result[1])
             self.pt.addHiddenNote("treatment","Perio %s"%result[0])
+            
+            ##todo - not right - ptfee may differ?
             actfee=result[3]
+            ptfee=actfee
+            
             usercode=result[0]
             item=fee_keys.getKeyCode(usercode)
             try:
                 item_description=localsettings.descriptions[item]
             except KeyError:
                 item_description="unknown perio treatment"
+            
             self.pt.addToEstimate(1,item,item_description,actfee,
-            actfee, self.pt.dnt1, self.pt.cset, "N/A",True)
+            ptfee, self.pt.dnt1, self.pt.cset,
+            "perio %s"%result[0],True)
+            
             if actfee>0:
                 self.pt.money1+=actfee
                 self.updateFees()
@@ -372,9 +386,14 @@ class feeClass():
             chosenTreatments=self.offerTreatmentItems(list)
             print chosenTreatments
             for treat in chosenTreatments:
-                self.pt.xraypl+="%s%s "%(treat[0],treat[2])
+                if treat[0]==1:
+                    usercode=treat[2]
+                else:
+                    usercode="%s%s"%(treat[0],treat[2])
+                self.pt.xraypl+=usercode+" "
                 self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
-                                       treat[4], self.pt.dnt1, self.pt.cset)
+                treat[4], self.pt.dnt1, self.pt.cset,"xray %s"%usercode)
+            self.load_treatTrees()
             self.load_newEstPage()
 
     def addPerioItems(self):
@@ -383,10 +402,17 @@ class feeClass():
             chosenTreatments=self.offerTreatmentItems(list)
             print chosenTreatments
             for treat in chosenTreatments:
-                #item will be in the form (n,code,usercode,fee)
-                self.pt.periopl+="%s%s "%(treat[0],treat[2])
+                
+                #treat will be in the form (n,code,usercode,fee)
+                
+                if treat[0]==1:
+                    usercode=treat[2]
+                else:
+                    usercode="%s%s"%(treat[0],treat[2])
+                self.pt.periopl+=usercode+" "
                 self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
-                                       treat[4], self.pt.dnt1, self.pt.cset)
+                treat[4], self.pt.dnt1, self.pt.cset,"perio %s"%usercode)
+            self.load_treatTrees()
             self.load_newEstPage()
 
     def addOtherItems(self):
@@ -395,7 +421,7 @@ class feeClass():
             items=localsettings.treatmentCodes.keys()
             for item in items:
                 code=localsettings.treatmentCodes[item]
-                if code>"3000":
+                if 3500<int(code)<4002:
                     list+=((0,item,code),)
             chosenTreatments=self.offerTreatmentItems(list)
             for treat in chosenTreatments:
@@ -403,7 +429,7 @@ class feeClass():
                 #--ie.. number,code,usercode,description,fee
                 self.pt.otherpl+="%s%s "%(treat[0],treat[2])
                 self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
-                                       treat[4], self.pt.dnt1, self.pt.cset)
+                treat[4], self.pt.dnt1, self.pt.cset,"other OT")
             self.load_newEstPage()
 
     def addCustomItem(self):
@@ -418,10 +444,12 @@ class feeClass():
                 fee=int(dl.fee_doubleSpinBox.value()*100)
                 ptfee=int(dl.ptFee_doubleSpinBox.value()*100)
                 #self,number,item,descr,fee,ptfee,dent,csetype,tooth="",
-                self.pt.addToEstimate(no,"4001",descr, fee,
-                                       ptfee,self.pt.dnt1, "P",tooth)
-                self.load_newEstPage()
 
+                ##TODO - implement something like this...
+                #self.pt.custompl+="%s%s"
+                self.pt.addToEstimate(no,"4002",descr, fee,
+                ptfee,self.pt.dnt1, "P","custom %s"%tooth)
+                self.load_newEstPage()
 
     def offerTreatmentItems(self,arg):
         Dialog = QtGui.QDialog(self)
@@ -432,22 +460,37 @@ class feeClass():
 
 
 
-    def toothTreatAdd(self, tooth, item):
+    def toothTreatAdd(self, tooth, input):
         '''
         adds treatment to a tooth
         '''
-        print "toothTreatAdded ", tooth, item
-        self.pt.__dict__[tooth+self.selectedChartWidget]=item
+        print "toothTreatAdded '%s','%s'"%(tooth, input)
+        self.pt.__dict__[tooth+self.selectedChartWidget]=input
         #--update the patient!!
-        self.ui.planChartWidget.setToothProps(tooth,item)
+        self.ui.planChartWidget.setToothProps(tooth,input)
 
-        if not self.ui.estimateRequired_checkBox.checkState():
-            self.ui.estimateRequired_checkBox.setChecked(True)
-
-    def costToothItems(self, tooth="", item="", ALL=True):
+        print "NEED TO ADD TO ESTIMATE HERE"
+        print "tooth= '%s' input= '%s'"%(tooth,input)
+    
+        items=fee_keys.itemsPerTooth(tooth, input)
+        print "items=",items
+        for item in items:
+            print "item=",item
+            itemcode=fee_keys.getCode(item[0],item[1])
+            description=fee_keys.getDescription(itemcode)
+            fee=fee_keys.getFee(self.pt.cset,itemcode)
+            ptfee=fee
+            self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
+                        self.pt.dnt1, self.pt.cset, "%s %s"%(item))
+        
+        self.load_newEstPage()
+    
+    def costToothItems(self, ALL=True):
         '''
+        Adds ALL tooth items to the estimate.
         prompts the user to confirm tooth treatment fees
         '''
+        ##TODO - redesign this!!!
         self.ui.planChartWidget.update()
 
         Dialog = QtGui.QDialog(self)
@@ -455,11 +498,12 @@ class feeClass():
         if ALL==False:
             dl.itemsPerTooth(tooth, item)
         else:
-            dl.setItems(addToothTreat.toothSpecificCodesList(self.pt))
+            dl.setItems(fee_keys.toothSpecificCodesList(self.pt))
 
         dl.showItems()
 
         chosen = dl.getInput()
+        print "chosen=",chosen
         if chosen:
             for treat in chosen:
                 #-- treat[0]= the tooth name
@@ -3002,10 +3046,6 @@ class pageHandlingClass():
         '''handles navigation of patient record'''
         ci=self.ui.tabWidget.currentIndex()
         #--admin tab selected
-
-        if self.ui.estimateRequired_checkBox.checkState() and ci!=6:
-            self.advise("please confirm fees", 1)
-            ci=self.ui.tabWidget.setCurrentIndex(6)
 
         if ci==0:
             self.ui.patientEdit_groupBox.setTitle(

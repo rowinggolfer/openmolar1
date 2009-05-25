@@ -369,7 +369,7 @@ class patient():
         self.money11 - self.money2 - self.money3 - self.money8)
 
     def addToEstimate(self,number,item,descr,fee,ptfee,dent,csetype,
-    tooth="", completed=False, feescale="A",carriedover=False):
+    type="", completed=False, feescale="A",carriedover=False):
         print "adding to estimate ",number,item,fee
         print "NEW CODE NEEDED"
         est=estimates.est()
@@ -379,7 +379,7 @@ class patient():
         est.number=number
         est.itemcode=item
         est.description=descr
-        est.tooth=tooth
+        est.type=type
         est.fee=fee
         est.ptfee=ptfee
         est.feescale=feescale
