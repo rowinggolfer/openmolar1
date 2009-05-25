@@ -6,17 +6,17 @@
     <x>0</x>
     <y>0</y>
     <width>595</width>
-    <height>300</height>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Plan Treatment</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" colspan="3" >
+   <item row="0" column="0" colspan="5" >
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>Confirm Fees for this Treatment now?</string>
+      <string>Add these items to the estimate?</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignCenter</set>
@@ -26,7 +26,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3" >
+   <item row="1" column="0" colspan="5" >
     <widget class="QScrollArea" name="scrollArea" >
      <property name="minimumSize" >
       <size>
@@ -43,7 +43,7 @@
         <x>0</x>
         <y>0</y>
         <width>573</width>
-        <height>191</height>
+        <height>390</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout" >
@@ -61,7 +61,17 @@
      </widget>
     </widget>
    </item>
-   <item row="2" column="2" >
+   <item row="2" column="0" >
+    <widget class="QLabel" name="label_4" >
+     <property name="text" >
+      <string>Total Fee</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
     <widget class="QDoubleSpinBox" name="fee_doubleSpinBox" >
      <property name="enabled" >
       <bool>false</bool>
@@ -77,51 +87,34 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2" >
-    <widget class="QPushButton" name="yes_pushButton" >
-     <property name="text" >
-      <string>Yes, Confirm Now</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" >
-    <widget class="QPushButton" name="later_pushButton" >
-     <property name="text" >
-      <string>Continue adding items - I'll confirm later</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" >
+   <item row="2" column="2" >
     <spacer name="horizontalSpacer" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeHint" stdset="0" >
       <size>
-       <width>155</width>
+       <width>160</width>
        <height>26</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="2" column="0" colspan="2" >
-    <widget class="QLabel" name="label_4" >
+   <item row="2" column="3" >
+    <widget class="QPushButton" name="later_pushButton" >
      <property name="text" >
-      <string>Total Fee</string>
+      <string>Cancel</string>
      </property>
-     <property name="alignment" >
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </widget>
+   </item>
+   <item row="2" column="4" >
+    <widget class="QPushButton" name="yes_pushButton" >
+     <property name="text" >
+      <string>Yes, add these Items Now</string>
      </property>
     </widget>
    </item>
   </layout>
-  <zorder>label</zorder>
-  <zorder>scrollArea</zorder>
-  <zorder>fee_doubleSpinBox</zorder>
-  <zorder>yes_pushButton</zorder>
-  <zorder>later_pushButton</zorder>
-  <zorder>horizontalSpacer</zorder>
-  <zorder>label_4</zorder>
  </widget>
  <tabstops>
   <tabstop>yes_pushButton</tabstop>

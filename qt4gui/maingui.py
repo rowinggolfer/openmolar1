@@ -9,7 +9,7 @@
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-import os,sys,copy,pickle,time,threading
+import os,sys,copy,pickle,time,threading,re
 
 from openmolar.settings import localsettings,fee_keys
 
@@ -76,12 +76,6 @@ class feeClass():
                 self.pt.clearHiddenNotes()
 
 
-    def updateFees(self):
-        if self.pt.serialno!=0:
-            self.pt.updateFees()
-            self.updateDetails()
-            #self.load_newEstPage()
-
     def takePayment(self):
         if self.pt.serialno==0:
             self.advise("No patient Selected <br />Monies will be "+\
@@ -121,8 +115,7 @@ class feeClass():
                     else:
                         self.pt.money3+=int(dl.paymentsForTreatment*100)
                     self.pt.updateFees()
-                    self.updateDetails()
-
+                    
                 patient_write_changes.toNotes(paymentPt.serialno,
                                               paymentPt.HIDDENNOTES)
 
@@ -181,7 +174,6 @@ class feeClass():
                 #table.setSortingEnabled(True)
                 table.resizeColumnsToContents()
 
-
             n+=1
 
 
@@ -208,14 +200,20 @@ class feeClass():
                 self.advise("unable to plan or perform treatment if pt does "+\
                 "not have an active course",1)
 
-    def applyFeeNow(self, arg):
+    def applyFeeNow(self, arg ,cset=None):
         #--TODO - this need fine tuning for course type etc....
         print "applying", arg
+        if cset==None:
+            cset=self.pt.cset
         self.pt.money1+=arg
         self.updateFees()
-        self.updateDetails()
-        #self.load_estpage()
-
+    
+    def updateFees(self):
+        if self.pt.serialno!=0:
+            self.pt.updateFees()
+            self.updateDetails()
+            #self.load_newEstPage()
+    
     def showExamDialog(self):
         global pt
         if self.pt.serialno==0:
@@ -225,6 +223,11 @@ class feeClass():
             if not self.newCourseSetup():
                 self.advise("unable to perform exam",1)
                 return
+        if self.pt.examt!="":
+            self.advise("You already have an exam on this course of treatment"+
+            "<br />Unable to perform exam",1)
+            return
+            
         Dialog = QtGui.QDialog(self)
         dl = examWizard.Ui_Dialog(Dialog,self.pt.dnt1)
 
@@ -313,13 +316,16 @@ class feeClass():
                     ptfee, localsettings.ops_reverse[examdent], self.pt.cset,
                     "exam %s"%examtype,True)
 
-                    self.pt.money1+=itemfee
-                    self.updateFees()
-                    self.updateDetails()
-                    #self.load_estpage()
+                    self.applyFeeNow(ptfee)
+                    
                     for note in result[3]:
                        newnotes+=note+", "
                     self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+                    
+                    if self.ui.tabWidget.currentIndex()==7:
+                        self.load_newEstPage()
+                        self.load_treatTrees()
+                    
             else:
                 self.advise("Examination not applied",2)
                 break
@@ -370,12 +376,16 @@ class feeClass():
             "perio %s"%result[0],True)
 
             if actfee>0:
-                self.pt.money1+=actfee
-                self.updateFees()
+                self.applyFeeNow(ptfee)
+            
             self.pt.periocmp+=result[0]+" "
             for note in result[2]:
                newnotes+=note+", "
             self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+            if self.ui.tabWidget.currentIndex()==7:
+                #-- it won't be ;)
+                self.load_newEstPage()
+                self.load_treatTrees()                    
         else:
             self.advise("Hyg Treatment not applied",2)
 
@@ -431,6 +441,7 @@ class feeClass():
                 self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
                 treat[4], self.pt.dnt1, self.pt.cset,"other OT")
             self.load_newEstPage()
+            self.load_treatTrees()
 
     def addCustomItem(self):
         if self.noNewCourseNeeded():
@@ -450,6 +461,7 @@ class feeClass():
                 self.pt.addToEstimate(no,"4002",descr, fee,
                 ptfee,self.pt.dnt1, "P","custom %s"%tooth)
                 self.load_newEstPage()
+                self.load_treatTrees()
 
     def offerTreatmentItems(self,arg):
         Dialog = QtGui.QDialog(self)
@@ -457,7 +469,6 @@ class feeClass():
         result= dl.getInput()
         print result
         return result
-
 
 
     def toothTreatAdd(self, tooth, input):
@@ -483,9 +494,7 @@ class feeClass():
             self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
 
-        self.load_newEstPage()
-
-    def costToothItems(self, ALL=True):
+    def recalculateEstimate(self, ALL=True):
         '''
         Adds ALL tooth items to the estimate.
         prompts the user to confirm tooth treatment fees
@@ -503,7 +512,7 @@ class feeClass():
         dl.showItems()
 
         chosen = dl.getInput()
-        print "chosen=",chosen
+        
         if chosen:
             for treat in chosen:
                 #-- treat[0]= the tooth name
@@ -512,16 +521,24 @@ class feeClass():
                 #-- treat[3]= adjusted fee
                 self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[3],
                                        self.pt.dnt1, self.pt.cset, treat[0])
-                self.load_newEstPage()
+            self.load_newEstPage()
+            self.load_treatTrees()
 
 
-
-    def completeToothTreatments(self,arg):
+    def completeTreatments(self,arg):
+        '''
+        called when double clicking on a tooth
+        '''
+        print "completing Tooth Treatment",arg
         Dialog = QtGui.QDialog(self)
-        dl = completeTreat.treatment(Dialog,localsettings.ops[self.pt.dnt1],
+        if self.pt.dnt2==None:
+            dent=self.pt.dnt2
+        else:
+            dent=self.pt.dnt1
+        dl = completeTreat.treatment(Dialog,localsettings.ops[dent],
                                      arg,0)
-        ####TODO this should be treating dentist!!!!!!!
         results=dl.getInput()
+        print "results = ",results
         for result in results:
             planATT=result[0]
             completedATT=result[0].replace("pl","cmp")
@@ -538,17 +555,69 @@ class feeClass():
                     #--treatment is on a tooth (as opposed to denture etc....)
                     self.updateChartsAfterTreatment(planATT[:3],
                                                     newplan,newcompleted)
-
-                self.pt.addHiddenNote("treatment",planATT[:-2].upper()+\
+                
+                    self.checkEstBox(planATT[:3],newcompleted)
+                
+                self.pt.addHiddenNote("treatment",planATT[:-2].upper()+
                 " "+newcompleted)
 
-    def completeTreatments(self):
+    def checkEstBox(self,tooth,treat):
+        '''
+        when a "tooth" item is completed
+        this looks through the estimates, applies the fee
+        and marks the item as completed.
+        '''
+        completed="%s %s"%(tooth,treat)
+        print "looking for est item where type= '%s'?"%completed
+        found=False
+        for est in self.pt.estimates:
+            if est.type == completed.strip(" "):
+                est.completed=True
+                self.applyFeeNow(est.ptfee)
+                found=True
+                break
+        if not found:
+            self.advise("couldn't locate "+
+            "%s in estimate<br /> Please complete manually"%completed,1)
+     
+    def completeItem(self,type):
+        '''
+        the oposite of checkEstBox function
+        when treatment is completed by user input on the estimate itself
+        '''
+        print "completed item ",type
+        tup=type.split(" ")
+        try:
+            att=tup[0]
+            treat=tup[1]+" "
+            plan=self.pt.__dict__[att+"pl"].replace(treat,"")
+            self.pt.__dict__[att+"pl"]=plan
+            completed= self.pt.__dict__[att+"cmp"]+treat
+            self.pt.__dict__[att+"cmp"]=completed
+            
+            #-- now update the charts
+            if re.findall("[ul][lr][1-8]",att):
+                self.updateChartsAfterTreatment(att,plan,completed)
+            
+            self.load_treatTrees()
+    
+        except Exception,e:
+            self.advise("Error moving %s from plan to completed<br />"%type+
+            "Please complete manually",1)
+            print Exception,e
+            
+    def completeAllTreatments(self):
+        '''
+        old code
+        called by a button which allowed any item to be completed
+        may be re-instated soon?
+        '''
         currentPlanItems=[]
         for att in patient_class.currtrtmtTableAtts:
             if att[-2:]=="pl" and self.pt.__dict__[att]!="":
                 currentPlanItems.append((att,self.pt.__dict__[att]))
         if currentPlanItems!=[]:
-            self.completeToothTreatments(currentPlanItems)
+            self.completeTreatments(currentPlanItems)
             self.load_newEstPage()
         else:
             self.advise("No treatment items to move!",1)
@@ -1726,8 +1795,8 @@ class signals():
 
         #Estimates and course ManageMent
 
-        QtCore.QObject.connect(self.ui.confirmFees_pushButton,
-                               QtCore.SIGNAL("clicked()"),self.costToothItems)
+        QtCore.QObject.connect(self.ui.recalcEst_pushButton,
+                               QtCore.SIGNAL("clicked()"),self.recalculateEstimate)
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
                                QtCore.SIGNAL("clicked()"), self.newCourseSetup)
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
@@ -1743,6 +1812,9 @@ class signals():
 
         QtCore.QObject.connect(self.ui.estWidget,
                                QtCore.SIGNAL("applyFeeNow"), self.applyFeeNow)
+
+        QtCore.QObject.connect(self.ui.estWidget,
+                               QtCore.SIGNAL("completedItem"), self.completeItem)
 
         #daybook - cashbook
         QtCore.QObject.connect(self.ui.daybookGoPushButton,
@@ -1790,7 +1862,7 @@ class signals():
         QtCore.QObject.connect(self.ui.completedChartWidget,
                     QtCore.SIGNAL("toothSelected"), self.comp_chartNavigation)
         QtCore.QObject.connect(self.ui.planChartWidget,
-            QtCore.SIGNAL("completeTreatment"), self.completeToothTreatments)
+            QtCore.SIGNAL("completeTreatment"), self.completeTreatments)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                                QtCore.SIGNAL("NextTooth"),  self.navigateCharts)
         #--fillings have changed!!

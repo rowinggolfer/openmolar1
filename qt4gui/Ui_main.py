@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Mon May 25 12:04:08 2009
+# Created: Mon May 25 16:58:48 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -713,7 +713,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, -67, 692, 529))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 567, 529))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.gridLayout_16 = QtGui.QGridLayout(self.scrollAreaWidgetContents_5)
         self.gridLayout_16.setObjectName("gridLayout_16")
@@ -1101,11 +1101,11 @@ class Ui_MainWindow(object):
         self.closeTx_pushButton.setObjectName("closeTx_pushButton")
         self.verticalLayout_12.addWidget(self.closeTx_pushButton)
         self.verticalLayout_11.addWidget(self.groupBox_5)
-        self.confirmFees_pushButton = QtGui.QPushButton(self.scrollAreaWidgetContents_4)
-        self.confirmFees_pushButton.setCheckable(False)
-        self.confirmFees_pushButton.setChecked(False)
-        self.confirmFees_pushButton.setObjectName("confirmFees_pushButton")
-        self.verticalLayout_11.addWidget(self.confirmFees_pushButton)
+        self.recalcEst_pushButton = QtGui.QPushButton(self.scrollAreaWidgetContents_4)
+        self.recalcEst_pushButton.setCheckable(False)
+        self.recalcEst_pushButton.setChecked(False)
+        self.recalcEst_pushButton.setObjectName("recalcEst_pushButton")
+        self.verticalLayout_11.addWidget(self.recalcEst_pushButton)
         self.groupBox_4 = QtGui.QGroupBox(self.scrollAreaWidgetContents_4)
         self.groupBox_4.setMinimumSize(QtCore.QSize(170, 221))
         self.groupBox_4.setObjectName("groupBox_4")
@@ -1183,6 +1183,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.plan_treeWidget.sizePolicy().hasHeightForWidth())
         self.plan_treeWidget.setSizePolicy(sizePolicy)
+        self.plan_treeWidget.setAlternatingRowColors(True)
         self.plan_treeWidget.setAnimated(True)
         self.plan_treeWidget.setHeaderHidden(False)
         self.plan_treeWidget.setObjectName("plan_treeWidget")
@@ -1193,6 +1194,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.comp_treeWidget.sizePolicy().hasHeightForWidth())
         self.comp_treeWidget.setSizePolicy(sizePolicy)
+        self.comp_treeWidget.setAlternatingRowColors(True)
+        self.comp_treeWidget.setAnimated(True)
         self.comp_treeWidget.setObjectName("comp_treeWidget")
         self.horizontalLayout_5.addWidget(self.comp_treeWidget)
         self.gridLayout_21.addWidget(self.groupBox_10, 1, 0, 1, 1)
@@ -2020,7 +2023,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.main_tabWidget.setCurrentIndex(0)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(7)
         self.contract_tabWidget.setCurrentIndex(0)
         self.stackedWidget.setCurrentIndex(1)
         self.fees_tabWidget.setCurrentIndex(0)
@@ -2306,7 +2309,7 @@ class Ui_MainWindow(object):
         self.newCourse_pushButton.setText(QtGui.QApplication.translate("MainWindow", "New Course Of Treatment", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("MainWindow", "Course Dentist", None, QtGui.QApplication.UnicodeUTF8))
         self.closeTx_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Close Current Course", None, QtGui.QApplication.UnicodeUTF8))
-        self.confirmFees_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Recalculate Estimate", None, QtGui.QApplication.UnicodeUTF8))
+        self.recalcEst_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Recalculate Estimate", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_4.setTitle(QtGui.QApplication.translate("MainWindow", "Enter Treatment", None, QtGui.QApplication.UnicodeUTF8))
         self.examTxpushButton.setText(QtGui.QApplication.translate("MainWindow", "Perform Exam", None, QtGui.QApplication.UnicodeUTF8))
         self.perioTxpushButton.setText(QtGui.QApplication.translate("MainWindow", "Perio", None, QtGui.QApplication.UnicodeUTF8))
@@ -2318,6 +2321,7 @@ class Ui_MainWindow(object):
         self.groupBox_10.setTitle(QtGui.QApplication.translate("MainWindow", "Details", None, QtGui.QApplication.UnicodeUTF8))
         self.plan_treeWidget.setSortingEnabled(True)
         self.plan_treeWidget.headerItem().setText(0, QtGui.QApplication.translate("MainWindow", "Plan", None, QtGui.QApplication.UnicodeUTF8))
+        self.comp_treeWidget.setSortingEnabled(True)
         self.comp_treeWidget.headerItem().setText(0, QtGui.QApplication.translate("MainWindow", "Completed", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), QtGui.QApplication.translate("MainWindow", "Estimate/Plan", None, QtGui.QApplication.UnicodeUTF8))
         self.label_41.setText(QtGui.QApplication.translate("MainWindow", "Chart Date", None, QtGui.QApplication.UnicodeUTF8))

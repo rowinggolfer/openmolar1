@@ -197,6 +197,7 @@ class estWidget(QtGui.QFrame):
         else:
             amountToRaise=item.ptfee*-1
         self.emit(QtCore.SIGNAL("applyFeeNow"), (amountToRaise))
+        self.emit(QtCore.SIGNAL("completedItem"),item.type)
 
     def clear(self):
         '''
