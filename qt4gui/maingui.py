@@ -353,22 +353,22 @@ class feeClass():
             newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes+="%s performed by %s\n"%(result[0],result[1])
             self.pt.addHiddenNote("treatment","Perio %s"%result[0])
-            
+
             ##todo - not right - ptfee may differ?
             actfee=result[3]
             ptfee=actfee
-            
+
             usercode=result[0]
             item=fee_keys.getKeyCode(usercode)
             try:
                 item_description=localsettings.descriptions[item]
             except KeyError:
                 item_description="unknown perio treatment"
-            
+
             self.pt.addToEstimate(1,item,item_description,actfee,
             ptfee, self.pt.dnt1, self.pt.cset,
             "perio %s"%result[0],True)
-            
+
             if actfee>0:
                 self.pt.money1+=actfee
                 self.updateFees()
@@ -402,9 +402,9 @@ class feeClass():
             chosenTreatments=self.offerTreatmentItems(list)
             print chosenTreatments
             for treat in chosenTreatments:
-                
+
                 #treat will be in the form (n,code,usercode,fee)
-                
+
                 if treat[0]==1:
                     usercode=treat[2]
                 else:
@@ -471,7 +471,7 @@ class feeClass():
 
         print "NEED TO ADD TO ESTIMATE HERE"
         print "tooth= '%s' input= '%s'"%(tooth,input)
-    
+
         items=fee_keys.itemsPerTooth(tooth, input)
         print "items=",items
         for item in items:
@@ -482,9 +482,9 @@ class feeClass():
             ptfee=fee
             self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
-        
+
         self.load_newEstPage()
-    
+
     def costToothItems(self, ALL=True):
         '''
         Adds ALL tooth items to the estimate.
@@ -513,9 +513,6 @@ class feeClass():
                 self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[3],
                                        self.pt.dnt1, self.pt.cset, treat[0])
                 self.load_newEstPage()
-                self.ui.estimateRequired_checkBox.setChecked(False)
-        else:
-            self.ui.estimateRequired_checkBox.setChecked(True)
 
 
 
@@ -3100,6 +3097,7 @@ class pageHandlingClass():
     def load_receptionSummaryPage(self):
         estimateHtml=estimates.toBriefHtml(self.pt.estimates)
         self.ui.moneytextBrowser.setText(estimateHtml)
+        self.layout_apptTable()
 
     def load_newEstPage(self):
         '''
@@ -3306,7 +3304,6 @@ printingClass,cashbooks):
             self.ui.bpe_groupBox.setTitle("BPE")
             self.ui.bpe_textBrowser.setText("")
             self.ui.planSummary_textBrowser.setText("")
-            self.ui.estimateRequired_checkBox.setChecked(False)
 
             #--restore the charts to full dentition
             ##TODO - perhaps handle this with the tabwidget calls?
@@ -3523,8 +3520,7 @@ printingClass,cashbooks):
             "Possible Matches for patient - %d - %s %s - %s"%(
             self.pt.serialno,self.pt.fname, self.pt.sname, self.pt.addr1))
 
-            Dialog.setFixedSize(self.width()-50,self.\
-                                mainWindow.height()-50)
+            Dialog.setFixedSize(self.width()-50,self.height()-50)
             headers=['Serialno','Surname','Forename','dob','Address1',\
             'Address2','POSTCODE']
             tableNo=0
@@ -3700,11 +3696,11 @@ printingClass,cashbooks):
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
+            self.layout_apptTable()
 
         self.updateDetails()
         self.editPageVisited=False
         self.ui.adminMemoEdit.setText(self.pt.memo)
-        #self.layout_apptTable()
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         note=notes.notes(self.pt.notestuple)
         #--notes not verbose
