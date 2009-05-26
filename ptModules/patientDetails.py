@@ -41,7 +41,7 @@ def age(dob):
         print "error calculating pt age - ",e
         return "unknown age<hr />"
         
-def details(pt):
+def details(pt,Saved=True):
     '''returns an html set showing pt name etc...'''
     retarg='<html><head>'
     retarg+='''<link rel="stylesheet" href="%s" type="text/css">'''%localsettings.stylesheet
@@ -87,13 +87,18 @@ def details(pt):
     
     retarg+='<tr><td>Recall Date</td><td>%s</td></tr>'%pt.recd
     retarg+='</table>'
+
+    if not Saved:
+        alert="<br />NOT SAVED"   
+    else:
+        alert=""
     if pt.fees>0:
         amount="&pound;%d.%02d"%(pt.fees//100,pt.fees%100)
-        retarg+='<hr /><h3 class="debt">Account = %s</h3>'%amount
+        retarg+='<hr /><h3 class="debt">Account = %s %s</h3>'%(amount,alert)
     if pt.fees<0:
         amount="&pound;%d.%02d"%(-pt.fees//100,-pt.fees%100) 
-        retarg+='<hr /><h3>%s in credit</h3>'%amount
-
+        retarg+='<hr /><h3>%s in credit %s</h3>'%(amount,alert)
+    
     return retarg+'</div></body></html>'
 
 if __name__ == '__main__':

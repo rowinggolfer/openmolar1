@@ -3858,7 +3858,7 @@ printingClass,cashbooks):
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
-            self.layout_apptTable()
+            self.load_receptionSummaryPage()
 
         self.updateDetails()
         self.editPageVisited=False
@@ -3912,7 +3912,8 @@ printingClass,cashbooks):
         '''
         sets the patient information into the left column
         '''
-        details=patientDetails.details(self.pt)
+        Saved= (self.pt_dbstate.fees==self.pt.fees)
+        details=patientDetails.details(self.pt,Saved)
         self.ui.detailsBrowser.setText(details)
         self.ui.detailsBrowser.update()
         curtext="Current Treatment "
