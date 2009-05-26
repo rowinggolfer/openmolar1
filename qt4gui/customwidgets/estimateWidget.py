@@ -20,7 +20,11 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.setupUi(self.parent)
         self.signals()
         self.validators
-
+        
+    def setItem(self,item):
+        self.item=item
+        self.code_label.setToolTip(str(item.type))
+        
     def loadValues(self):
         if self.item.number!=None:
             self.setNumber(self.item.number)
@@ -176,7 +180,7 @@ class estWidget(QtGui.QFrame):
         for item in self.ests:
             iw=QtGui.QWidget()
             i=estItemWidget(iw)
-            i.item=item
+            i.setItem(item)
             i.loadValues()
             iw.connect(iw,QtCore.SIGNAL("user_interaction"),
             self.updateTotals)
@@ -194,11 +198,13 @@ class estWidget(QtGui.QFrame):
     def itemCompletionState(self, item):
         if item.completed:
             amountToRaise=item.ptfee
+            self.emit(QtCore.SIGNAL("completedItem"),item.type)
         else:
             amountToRaise=item.ptfee*-1
-        self.emit(QtCore.SIGNAL("applyFeeNow"), (amountToRaise))
-        self.emit(QtCore.SIGNAL("completedItem"),item.type)
+            self.emit(QtCore.SIGNAL("unCompletedItem"),item.type)
 
+        self.emit(QtCore.SIGNAL("applyFeeNow"), (amountToRaise))
+        
     def clear(self):
         '''
         clears all est widget in anticipation of a new estimate
@@ -225,6 +231,8 @@ class estWidget(QtGui.QFrame):
             for est in self.ests:
                 if est.ix==arg.item.ix:
                     self.ests.remove(est)
+                    self.emit(QtCore.SIGNAL("deleteItem"),est.type)
+
 
             self.updateTotals()
 

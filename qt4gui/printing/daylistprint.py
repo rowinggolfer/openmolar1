@@ -105,13 +105,16 @@ class printDaylist():
                 x=LeftMargin
                 col=0
                 for att in printApp:
-                    if att:
-                        if col==2:
-                            if not att in ("EMERGENCY","BLOCKED","LUNCH"):
-                                att=str(att).title()
                     rect=QtCore.QRectF(x, y,colwidths[col], rowHeight)
                     painter.drawRect(rect)
-                    painter.drawText(rect.adjusted(2,0,-2,0),str(att),option)
+                    if col==2:
+                        if att:
+                            att=str(att).title()
+                        else:
+                            if len(app)>8:
+                                att=app[8]
+                    if att:
+                        painter.drawText(rect.adjusted(2,0,-2,0),str(att),option)
                     x+=colwidths[col]
                     col+=1
                 y += rowHeight

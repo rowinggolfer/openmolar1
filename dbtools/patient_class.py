@@ -64,9 +64,9 @@ bpeTableAtts=('bpedate','bpe')
 bpeTableVals=(nullDate,'',())
 
 currtrtmtTableAtts=('courseno','xraypl','periopl','anaespl','otherpl',
-'ndupl','ndlpl','odupl',
-'odlpl','xraycmp','periocmp','anaescmp','othercmp','nducmp','ndlcmp',
-'oducmp','odlcmp','ur8pl','ur7pl',
+'ndupl','ndlpl','odupl','odlpl',"custompl",
+'xraycmp','periocmp','anaescmp','othercmp','nducmp','ndlcmp',
+'oducmp','odlcmp',"customcmp",'ur8pl','ur7pl',
 'ur6pl','ur5pl','ur4pl','ur3pl','ur2pl','ur1pl','ul1pl','ul2pl','ul3pl',
 'ul4pl','ul5pl','ul6pl','ul7pl',
 'ul8pl','ll8pl','ll7pl','ll6pl','ll5pl','ll4pl','ll3pl','ll2pl','ll1pl',

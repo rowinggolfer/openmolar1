@@ -16,7 +16,8 @@ treatmentTypeHeaders={
     "Perio":("perio", ),
     "Tooth":("ul", "ll", "ur", "lr", ),
     "Prosthetics":("ndu", "nld", "odu", "odl", ),
-    "Other":("other",)}
+    "Other":("other",),
+    "Custom":("custom",)}
 
 templist=[]
 for quad in ("ur", "ul", "ll", "lr"):
@@ -25,7 +26,7 @@ for quad in ("ur", "ul", "ll", "lr"):
 tup_toothAtts=tuple(templist)
 
 tup_Atts=('xray','perio','anaes','other','ndu',
-'ndl','odu','odl')
+'ndl','odu','odl','custom')
 
 def plannedDict(pt):
     items=plannedItems(pt)
@@ -59,7 +60,7 @@ def plannedItems(pt):
     plannedList=[]
     for attrib in tup_Atts+tup_toothAtts:
         tx=pt.__dict__[attrib+"pl"]
-        if tx != "":
+        if not tx in ("",None):
             items=tx.strip(" ").split(" ")
             for item in items:
                 #-- look for things like 2S - I want these as separate items
@@ -78,7 +79,7 @@ def completedItems(pt):
         compList.append(("Exam",pt.examt) )
     for attrib in tup_Atts+tup_toothAtts:
         tx=pt.__dict__[attrib+"cmp"]
-        if tx != "":
+        if not tx in ("",None):
             items=tx.strip(" ").split(" ")
             for item in items:
                 #-- look for things like 2S - I want these as separate items

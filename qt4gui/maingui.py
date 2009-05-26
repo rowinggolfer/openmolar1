@@ -126,7 +126,7 @@ class feeClass():
                     self.pt_dbstate.money3=self.pt.money3
 
                 paymentPt.clearHiddenNotes()
-
+                self.updateDetails()
             else:
                 self.advise("error applying payment.... sorry!<br />"\
                 +"Please write this down and tell Neil what happened",2)
@@ -451,15 +451,18 @@ class feeClass():
             if Dialog.exec_():
                 no=dl.number_spinBox.value()
                 descr=str(dl.description_lineEdit.text())
-                tooth=str(dl.tooth_lineEdit.text()).lower()
+                if descr=="":
+                    descr="??"
+                type="%s%s"%(no,descr.replace(" ","_"))
+                if len(type)>5:
+                    #-- necessary because the est table type col is char(12)
+                    type=type[:5]
                 fee=int(dl.fee_doubleSpinBox.value()*100)
                 ptfee=int(dl.ptFee_doubleSpinBox.value()*100)
-                #self,number,item,descr,fee,ptfee,dent,csetype,tooth="",
 
-                ##TODO - implement something like this...
-                #self.pt.custompl+="%s%s"
+                self.pt.custompl+="%s "%type
                 self.pt.addToEstimate(no,"4002",descr, fee,
-                ptfee,self.pt.dnt1, "P","custom %s"%tooth)
+                ptfee,self.pt.dnt1, "P","custom %s"%type)
                 self.load_newEstPage()
                 self.load_treatTrees()
 
@@ -584,10 +587,11 @@ class feeClass():
         '''
         the oposite of checkEstBox function
         when treatment is completed by user input on the estimate itself
+        ie. checking the checkbox
         '''
         print "completed item ",type
-        tup=type.split(" ")
         try:
+            tup=type.split(" ")
             att=tup[0]
             treat=tup[1]+" "
             plan=self.pt.__dict__[att+"pl"].replace(treat,"")
@@ -600,11 +604,69 @@ class feeClass():
                 self.updateChartsAfterTreatment(att,plan,completed)
             
             self.load_treatTrees()
-    
+            self.pt.addHiddenNote("treatment","%s %s"%(att.upper(),treat))
+        
         except Exception,e:
             self.advise("Error moving %s from plan to completed<br />"%type+
             "Please complete manually",1)
-            print Exception,e
+            print "UNABLE TO MOVE %s item"%type
+            
+    def unCompleteItem(self,type):
+        '''
+        as completeItem, but 
+        unchecking the checkbox
+        '''
+        print "reversing previously completed item ",type
+        try:
+            tup=type.split(" ")
+            att=tup[0]
+            treat=tup[1]+" "
+            plan=self.pt.__dict__[att+"pl"]+treat
+            self.pt.__dict__[att+"pl"]=plan
+            completed= self.pt.__dict__[att+"cmp"].replace(treat,"")
+            self.pt.__dict__[att+"cmp"]=completed
+            
+            #-- now update the charts
+            if re.findall("[ul][lr][1-8]",att):
+                self.updateChartsAfterTreatment(att,plan,completed)
+            
+            self.load_treatTrees()
+            self.pt.addHiddenNote("treatment","{%s %s}"%(att.upper(),treat))
+        
+        except Exception,e:
+            self.advise("Error moving %s from completed to plan<br />"%type+
+            "Please complete manually",1)
+            print "UNABLE TO MOVE %s item"%type
+            
+            
+    def deleteTxItem(self,type):
+        '''
+        estWidget has removed an item from the estimates.
+        (user clicked on the delete button)
+        now try and remove from the plan
+        '''
+        print "delete item from treament plan",type
+        tup=type.split(" ")
+        try:
+            att=tup[0]
+            treat=tup[1]+" "
+            plan=self.pt.__dict__[att+"pl"].replace(treat,"")
+            self.pt.__dict__[att+"pl"]=plan
+            completed= self.pt.__dict__[att+"cmp"]
+            
+            #-- now update the charts
+            if re.findall("[ul][lr][1-8]",att):
+                self.updateChartsAfterTreatment(att,plan,completed)
+            
+            self.load_treatTrees()
+            
+        except Exception,e:
+            self.advise("Error deleting %s from plan<br />"%type+
+            "Please remove manually",1)
+            print "handled this in maingui.completeItem",Exception,e
+            
+            
+            
             
     def completeAllTreatments(self):
         '''
@@ -1796,9 +1858,9 @@ class signals():
         #Estimates and course ManageMent
 
         QtCore.QObject.connect(self.ui.recalcEst_pushButton,
-                               QtCore.SIGNAL("clicked()"),self.recalculateEstimate)
+                        QtCore.SIGNAL("clicked()"),self.recalculateEstimate)
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.newCourseSetup)
+                            QtCore.SIGNAL("clicked()"), self.newCourseSetup)
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
                                QtCore.SIGNAL("clicked()"), self.closeCourse)
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
@@ -1814,7 +1876,14 @@ class signals():
                                QtCore.SIGNAL("applyFeeNow"), self.applyFeeNow)
 
         QtCore.QObject.connect(self.ui.estWidget,
-                               QtCore.SIGNAL("completedItem"), self.completeItem)
+                        QtCore.SIGNAL("completedItem"), self.completeItem)
+        QtCore.QObject.connect(self.ui.estWidget,
+                        QtCore.SIGNAL("unCompletedItem"), self.unCompleteItem)
+                            
+        QtCore.QObject.connect(self.ui.estWidget,
+                              QtCore.SIGNAL("deleteItem"), self.deleteTxItem)
+                            
+                            
 
         #daybook - cashbook
         QtCore.QObject.connect(self.ui.daybookGoPushButton,
