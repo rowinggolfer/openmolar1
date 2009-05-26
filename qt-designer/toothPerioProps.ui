@@ -5,14 +5,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>144</width>
-    <height>399</height>
+    <width>499</width>
+    <height>148</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
     <width>0</width>
-    <height>350</height>
+    <height>120</height>
    </size>
   </property>
   <property name="maximumSize" >
@@ -24,8 +24,8 @@
   <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3" >
-   <item row="0" column="0" colspan="2" >
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" >
     <widget class="QLabel" name="tooth_label" >
      <property name="maximumSize" >
       <size>
@@ -46,29 +46,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="QFrame" name="orig_frame" >
-     <property name="minimumSize" >
-      <size>
-       <width>100</width>
-       <height>100</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>16777215</width>
-       <height>100</height>
-      </size>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2" >
+   <item row="0" column="3" colspan="2" >
     <widget class="QComboBox" name="comboBox" >
      <item>
       <property name="text" >
@@ -112,7 +90,29 @@
      </item>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2" >
+   <item rowspan="2" row="1" column="0" >
+    <widget class="QFrame" name="orig_frame" >
+     <property name="minimumSize" >
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="2" row="1" column="1" >
     <widget class="QFrame" name="new_frame" >
      <property name="minimumSize" >
       <size>
@@ -134,7 +134,80 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2" >
+   <item row="1" column="2" >
+    <widget class="QPushButton" name="copy_pushButton" >
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>Copy &amp;All</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3" >
+    <widget class="QPushButton" name="cp_pushButton" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>40</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>delete tooth data</string>
+     </property>
+     <property name="text" >
+      <string>Cp</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4" >
+    <widget class="QPushButton" name="clear_pushButton" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>40</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>delete tooth data</string>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="icon" >
+      <iconset resource="../resources/resources.qrc" >
+       <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" colspan="2" >
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
       <widget class="QPushButton" name="leftTooth_pushButton" >
@@ -218,48 +291,7 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="0" >
-    <widget class="QPushButton" name="copy_pushButton" >
-     <property name="maximumSize" >
-      <size>
-       <width>16777215</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="text" >
-      <string>Copy &amp;All</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" >
-    <widget class="QPushButton" name="cp_pushButton" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>0</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>40</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="toolTip" >
-      <string>delete tooth data</string>
-     </property>
-     <property name="text" >
-      <string>Cp</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" >
+   <item row="2" column="4" >
     <widget class="QComboBox" name="mobilitycomboBox" >
      <property name="maximumSize" >
       <size>
@@ -287,38 +319,6 @@
        <string>III</string>
       </property>
      </item>
-    </widget>
-   </item>
-   <item row="6" column="1" >
-    <widget class="QPushButton" name="clear_pushButton" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>0</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>40</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="toolTip" >
-      <string>delete tooth data</string>
-     </property>
-     <property name="text" >
-      <string/>
-     </property>
-     <property name="icon" >
-      <iconset resource="../resources/resources.qrc" >
-       <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
-     </property>
     </widget>
    </item>
   </layout>

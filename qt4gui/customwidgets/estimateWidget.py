@@ -33,7 +33,8 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.setDescription(self.item.description)
         self.setType(self.item.type)
         self.setCompleted(self.item.completed)
-
+        self.setCset(self.item.csetype)
+        
     def validators(self):
         self.fee_lineEdit.setValidator(QtGui.\
         QDoubleValidator(0.0, 3000.0, 2, self.fee_lineEdit) )
@@ -99,7 +100,10 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         if arg in (None,""):
             arg="-"
         self.code_label.setText(arg.split(" ")[0])
-
+    def setCset(self,arg):
+        if arg in (None,""):
+            arg="-"        
+        self.cset_lineEdit.setText(str(arg))
     def setFee(self,arg):
         self.fee_lineEdit.setText("%.02f"%(arg/100))
     def setPtFee(self,arg):
@@ -243,7 +247,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
-    pt=patient_class.patient(25195)
+    pt=patient_class.patient(11956)
     form=estWidget()
     form.setEstimate(pt.estimates)
     print "loaded once"

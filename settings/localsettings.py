@@ -99,9 +99,9 @@ practiceAddress=("The Academy Dental Practice","19 Union Street",
 #--pt.county,pt.pcde,pt.tel1)
 defaultNewPatientDetails=("",)*8
 
-#-- this gets initiated
+#-- these gets initiated
 privateFees={}
-
+nhsFees={}
 
 #-- 1 less dialog box for these lucky people
 defaultPrinterforGP17=True
@@ -214,7 +214,7 @@ def setlogqueries():
 
 def initiate(debug=False):
     print "initiating settings"
-    global referralfile,stylesheet,fees,message,dentDict,privateFees
+    global referralfile,stylesheet,fees,message,dentDict,privateFees,nhsFees
     from openmolar.connect import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
@@ -299,7 +299,7 @@ def initiate(debug=False):
                 if privateFees.has_key(code):
                     privateFees[code].addFee(row[2])
                 else:
-                    newFee=fee_keys.prvFee()
+                    newFee=fee_keys.fee()
                     newFee.description=row[4]
                     newFee.setRegulations(row[5])
                     newFee.addFee(row[2])
@@ -313,6 +313,41 @@ def initiate(debug=False):
     except Exception,e:
         print "error loading from newfeetable",e
 
+
+
+#############################################################
+#NEW CODE - copying the above, but forming an NHS dict
+#############################################################
+
+    try:   #this breaks compatibility with the old database schema
+        query="select code, description, NF08, USERCODE,"
+        query+="description1, regulation, NF08_pt from newfeetable"
+        if logqueries:
+            print query
+        cursor.execute(query)
+        rows=cursor.fetchall()
+        for row in rows:
+            code=row[0]
+            usercode=row[3]
+            if code!="":
+                if nhsFees.has_key(code):
+                    nhsFees[code].addFee(row[2])
+                    nhsFees[code].addPtFee(row[6])
+                else:
+                    newFee=fee_keys.fee()
+                    newFee.description=row[4]
+                    newFee.setRegulations(row[5])
+                    newFee.addFee(row[2])
+                    newFee.addPtFee(row[6])
+                    nhsFees[code]=newFee
+
+    except Exception,e:
+        print "error loading from newfeetable",e
+
+####################    
+#    ends
+###################    
+    
     wkdir=os.getcwd()
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")
 
@@ -340,8 +375,10 @@ def initiate(debug=False):
         print curTime()
         print sqlToday()
         print dentDict
-        #print descriptions
-        #print privateFees
+        #print descripŕtions
+        for key in privateFees.keys():
+            print privateFees[key].fees,
+            print nhsFees[key].fees
         #print treatmentCodes
         #print fees
 

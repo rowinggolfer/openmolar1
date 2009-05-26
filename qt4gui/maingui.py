@@ -75,6 +75,18 @@ class feeClass():
                 self.pt_dbstate.money0=self.pt.money0
                 self.pt.clearHiddenNotes()
 
+    def getItemFees(self,item,no_items=1):
+        itemfee,ptfee=0,0
+        if "P" in self.pt.cset:
+            itemfee=localsettings.privateFees[item].getFee(no_items)
+            ptfee=itemfee
+        elif "N" in self.pt.cset:
+            itemfee=localsettings.nhsFees[item].getFee(no_items)
+            if self.pt.exmpt=="":
+                ptfee=localsettings.nhsFees[item].getPtFee(no_items)
+        return itemfee,ptfee
+
+
 
     def takePayment(self):
         if self.pt.serialno==0:
@@ -115,7 +127,7 @@ class feeClass():
                     else:
                         self.pt.money3+=int(dl.paymentsForTreatment*100)
                     self.pt.updateFees()
-                    
+
                 patient_write_changes.toNotes(paymentPt.serialno,
                                               paymentPt.HIDDENNOTES)
 
@@ -207,13 +219,13 @@ class feeClass():
             cset=self.pt.cset
         self.pt.money1+=arg
         self.updateFees()
-    
+
     def updateFees(self):
         if self.pt.serialno!=0:
             self.pt.updateFees()
             self.updateDetails()
             #self.load_newEstPage()
-    
+
     def showExamDialog(self):
         global pt
         if self.pt.serialno==0:
@@ -227,7 +239,7 @@ class feeClass():
             self.advise("You already have an exam on this course of treatment"+
             "<br />Unable to perform exam",1)
             return
-            
+
         Dialog = QtGui.QDialog(self)
         dl = examWizard.Ui_Dialog(Dialog,self.pt.dnt1)
 
@@ -288,7 +300,12 @@ class feeClass():
                 if APPLIED:
                     self.pt.examt=result[0]
                     examd=result[2].toString("dd/MM/yyyy")
-                    self.pt.pd4=examd
+                    if self.pt.examt=="CE":
+                        self.pt.pd5=examd
+                    if self.pt.examt=="ECE":
+                        self.pt.pd6=examd
+                    if self.pt.examt=="FCA":
+                        self.pt.pd7=examd
                     self.pt.examd=examd
                     self.pt.recd=result[2].addMonths(6).toString("dd/MM/yyyy")
                     newnotes=str(self.ui.notesEnter_textEdit.toPlainText()\
@@ -298,15 +315,8 @@ class feeClass():
                     self.pt.addHiddenNote("exam","%s EXAM"%examtype)
                     item=fee_keys.getKeyCode(examtype)
 
-                    #
-                    #TODO - implement other course types
-                    #
-                    if "P" in self.pt.cset:
-                        itemfee=localsettings.privateFees[item].getFee()
-                    else:
-                        itemfee=0
-                    ptfee=itemfee
-                    #
+                    #-- get the fee and patien fee
+                    itemfee,ptfee=self.getItemFees(item,1)
 
                     item_description=localsettings.descriptions.get(item)
                     if item_description==None:
@@ -317,15 +327,15 @@ class feeClass():
                     "exam %s"%examtype,True)
 
                     self.applyFeeNow(ptfee)
-                    
+
                     for note in result[3]:
                        newnotes+=note+", "
                     self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
-                    
+
                     if self.ui.tabWidget.currentIndex()==7:
                         self.load_newEstPage()
                         self.load_treatTrees()
-                    
+
             else:
                 self.advise("Examination not applied",2)
                 break
@@ -343,14 +353,12 @@ class feeClass():
         dl = hygTreatWizard.Ui_Dialog(Dialog)
         dl.setPractitioner(7)
         item=fee_keys.getKeyCode("SP")
-        itemfee=0
-        if "P" in self.pt.cset:
-            try:
-                itemfee=localsettings.privateFees[item].getFee()
-            except:
-                print "no fee found for item %s"%item
+
+        itemfee,ptfee=self.getItemFees(item,1)
+
         fee=itemfee / 100
         ##TODO put this dialog needs to be smarter, and update when SP+ selected
+
         dl.doubleSpinBox.setValue(fee)
         result=dl.getInput()
         print result
@@ -377,7 +385,7 @@ class feeClass():
 
             if actfee>0:
                 self.applyFeeNow(ptfee)
-            
+
             self.pt.periocmp+=result[0]+" "
             for note in result[2]:
                newnotes+=note+", "
@@ -385,7 +393,7 @@ class feeClass():
             if self.ui.tabWidget.currentIndex()==7:
                 #-- it won't be ;)
                 self.load_newEstPage()
-                self.load_treatTrees()                    
+                self.load_treatTrees()
         else:
             self.advise("Hyg Treatment not applied",2)
 
@@ -468,7 +476,7 @@ class feeClass():
 
     def offerTreatmentItems(self,arg):
         Dialog = QtGui.QDialog(self)
-        dl = addTreat.treatment(Dialog,arg,self.pt.cset)
+        dl = addTreat.treatment(Dialog,arg,self.pt)
         result= dl.getInput()
         print result
         return result
@@ -492,8 +500,7 @@ class feeClass():
             print "item=",item
             itemcode=fee_keys.getCode(item[0],item[1])
             description=fee_keys.getDescription(itemcode)
-            fee=fee_keys.getFee(self.pt.cset,itemcode)
-            ptfee=fee
+            fee,ptfee=self.getItemFees(itemcode)
             self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
 
@@ -515,7 +522,7 @@ class feeClass():
         dl.showItems()
 
         chosen = dl.getInput()
-        
+
         if chosen:
             for treat in chosen:
                 #-- treat[0]= the tooth name
@@ -558,9 +565,9 @@ class feeClass():
                     #--treatment is on a tooth (as opposed to denture etc....)
                     self.updateChartsAfterTreatment(planATT[:3],
                                                     newplan,newcompleted)
-                
+
                     self.checkEstBox(planATT[:3],newcompleted)
-                
+
                 self.pt.addHiddenNote("treatment",planATT[:-2].upper()+
                 " "+newcompleted)
 
@@ -582,7 +589,7 @@ class feeClass():
         if not found:
             self.advise("couldn't locate "+
             "%s in estimate<br /> Please complete manually"%completed,1)
-     
+
     def completeItem(self,type):
         '''
         the oposite of checkEstBox function
@@ -598,22 +605,22 @@ class feeClass():
             self.pt.__dict__[att+"pl"]=plan
             completed= self.pt.__dict__[att+"cmp"]+treat
             self.pt.__dict__[att+"cmp"]=completed
-            
+
             #-- now update the charts
             if re.findall("[ul][lr][1-8]",att):
                 self.updateChartsAfterTreatment(att,plan,completed)
-            
+
             self.load_treatTrees()
             self.pt.addHiddenNote("treatment","%s %s"%(att.upper(),treat))
-        
+
         except Exception,e:
             self.advise("Error moving %s from plan to completed<br />"%type+
             "Please complete manually",1)
             print "UNABLE TO MOVE %s item"%type
-            
+
     def unCompleteItem(self,type):
         '''
-        as completeItem, but 
+        as completeItem, but
         unchecking the checkbox
         '''
         print "reversing previously completed item ",type
@@ -625,20 +632,20 @@ class feeClass():
             self.pt.__dict__[att+"pl"]=plan
             completed= self.pt.__dict__[att+"cmp"].replace(treat,"")
             self.pt.__dict__[att+"cmp"]=completed
-            
+
             #-- now update the charts
             if re.findall("[ul][lr][1-8]",att):
                 self.updateChartsAfterTreatment(att,plan,completed)
-            
+
             self.load_treatTrees()
             self.pt.addHiddenNote("treatment","{%s %s}"%(att.upper(),treat))
-        
+
         except Exception,e:
             self.advise("Error moving %s from completed to plan<br />"%type+
             "Please complete manually",1)
             print "UNABLE TO MOVE %s item"%type
-            
-            
+
+
     def deleteTxItem(self,type):
         '''
         estWidget has removed an item from the estimates.
@@ -653,21 +660,21 @@ class feeClass():
             plan=self.pt.__dict__[att+"pl"].replace(treat,"")
             self.pt.__dict__[att+"pl"]=plan
             completed= self.pt.__dict__[att+"cmp"]
-            
+
             #-- now update the charts
             if re.findall("[ul][lr][1-8]",att):
                 self.updateChartsAfterTreatment(att,plan,completed)
-            
+
             self.load_treatTrees()
-            
+
         except Exception,e:
             self.advise("Error deleting %s from plan<br />"%type+
             "Please remove manually",1)
             print "handled this in maingui.completeItem",Exception,e
-            
-            
-            
-            
+
+
+
+
     def completeAllTreatments(self):
         '''
         old code
@@ -1547,7 +1554,7 @@ class appointmentClass():
         QtCore.QObject.connect(self.ui.main_tabWidget,
         QtCore.SIGNAL("currentChanged(int)"),self.handle_mainTab)
 
-    
+
     def layout_apptOV(self):
         '''
         called by checking a dentist checkbox on apptov tab
@@ -1600,7 +1607,7 @@ class appointmentClass():
 
             label.setText(weekdates[i].toString("d MMMM yyyy"))
             label.setToolTip("Hello!")
-            
+
             i+=1
         if QtCore.QDate.currentDate() in weekdates:
             self.ui.apptOVtoday_pushButton.setEnabled(False)
@@ -1757,8 +1764,8 @@ class appointmentClass():
             start=localsettings.humanTimetoWystime(arg[0])
             appointments.delete_appt_from_aslot(arg[2],start,adate,0)
             self.layout_appointments()
-            
-    
+
+
     def blockEmptySlot(self,tup):
         print "block ",tup
         adate=self.ui.appointmentCalendarWidget.selectedDate().toPyDate()
@@ -1901,11 +1908,11 @@ class signals():
                         QtCore.SIGNAL("completedItem"), self.completeItem)
         QtCore.QObject.connect(self.ui.estWidget,
                         QtCore.SIGNAL("unCompletedItem"), self.unCompleteItem)
-                            
+
         QtCore.QObject.connect(self.ui.estWidget,
                               QtCore.SIGNAL("deleteItem"), self.deleteTxItem)
-                            
-                            
+
+
 
         #daybook - cashbook
         QtCore.QObject.connect(self.ui.daybookGoPushButton,
@@ -3196,7 +3203,7 @@ class pageHandlingClass():
         #--user is viewing apointment overview
         if ci==2:
             self.layout_apptOV()
-            
+
         if ci==7:
             self.loadFeesTable()
 

@@ -8,7 +8,7 @@
 from openmolar.settings import localsettings
 import re
 
-class prvFee():
+class fee():
     '''this class handles the calculation of private fees
     part of the challenge is recognising the fact that 2x an item is not necessarily
    the same as double the fee for a single item etc.. '''
@@ -17,18 +17,31 @@ class prvFee():
         self.description=""
         self.numberPerCourse=0
         self.fees=[]
+        self.ptFees=[]
         self.regulations=""
     def addFee(self, arg):
         '''add a fee to the list of fees contained by this class
         frequently this list will have only one item'''
         self.fees.append(int(arg))
+    def addPtFee(self,arg):
+        self.ptFees.append(int(arg))
+    
     def setRegulations(self, arg):
         '''pass a string which sets the conditions for applying fees to this treatment item'''
         self.regulations=arg
-    def getFee(self, no_items=1):
+        
+    def getPtFee(self,no_items=1):
+        return self.getFee(no_items,True)
+        
+    def getFee(self, no_items=1,patient=False):
         '''get a fee for x items of this type'''
+
+        if patient:
+            feeList=self.ptFees
+        else:
+            feeList=self.fees
         if self.regulations=="":
-            return self.fees[0]*no_items
+            return feeList[0]*no_items
         else:
             #-- this is the "regulation" for small xrays
             #--  n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E
@@ -38,7 +51,7 @@ class prvFee():
             directMatch=re.findall("n=%d:."%no_items,self.regulations)
             if directMatch:
                 column=directMatch[0][-1]
-                fee=self.fees[ord(column)-65]
+                fee=feeList[ord(column)-65]
 
             #--check for a greater than
             greaterThan=re.findall("n>\d", self.regulations)
@@ -53,23 +66,23 @@ class prvFee():
                     print "formula", formula
                     #--get the base fee
                     column=formula[0]
-                    fee=self.fees[ord(column)-65]
+                    fee=feeList[ord(column)-65]
                     #--add additional items fees
                     a_items=re.findall("\(n-\d\)",formula)[0].strip("()")
                     n_a_items=no_items-int(a_items[2:])
                     column=formula[-1]
-                    fee+=n_a_items*self.fees[ord(column)-65]
+                    fee+=n_a_items*feeList[ord(column)-65]
 
             #-- if fee is still zero
             if fee==0:
                 print "returning linear fee (n* singleItem Fee)"
-                fee=self.fees[0]*no_items
+                fee=feeList[0]*no_items
 
             #check for a max amount
             max= re.findall("max=.",self.regulations)
             if max:
                 column=max[0][-1:]
-                maxFee=self.fees[ord(column)-65]
+                maxFee=feeList[ord(column)-65]
                 if maxFee<fee:
                     fee=maxFee
 

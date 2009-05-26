@@ -21,15 +21,17 @@ def getCode(arg):
         print "no itemcode found for item %s - will revert to OTHER TREATMENT"%arg
     return itemcode
 
-def getFee(cset,itemcode, numberOfItems=1):
-    feePerItem=0
+def getItemFees(cset, item,no_items=1, exmpt=""):
+    print cset, item
+    itemfee,ptfee=0,0
     if "P" in cset:
-        try:
-            return localsettings.privateFees[itemcode].getFee(numberOfItems)
-        except:
-            print "no fee found for item %s - will see fee of 0"%itemcode
-
-    return numberOfItems*feePerItem
+        itemfee=localsettings.privateFees[item].getFee(no_items)
+        ptfee=itemfee
+    elif "N" in cset:
+        itemfee=localsettings.nhsFees[item].getFee(no_items)
+        if exmpt=="":
+            ptfee=localsettings.nhsFees[item].getPtFee(no_items)
+    return itemfee,ptfee
 
 def getDescription(arg):
     description=""
@@ -56,18 +58,20 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.label.setText(self.description+"\t(%s)"%self.itemcode)
 
     def feeCalc(self,arg):
-        fee=getFee(self.parent.cset,self.itemcode, arg) / 100
-        self.doubleSpinBox.setValue(fee)
+        fee, ptfee=getItemFees(self.parent.pt.cset,self.itemcode, arg,
+                                self.parent.pt.exmpt)
+        self.doubleSpinBox.setValue(fee/100)
+        self.pt_doubleSpinBox.setValue(ptfee/100)
         self.parent.updateTotal()
 
 class treatment(Ui_addTreatment.Ui_Dialog):
-    def __init__(self,dialog,items,cset):
+    def __init__(self,dialog,items,pt):
         self.setupUi(dialog)
         self.dialog=dialog
         self.items=[]
         for item in items:
             self.items.append((item[0],getCode(item[1]),item[1]),)
-        self.cset=cset
+        self.pt=pt
         self.showItems()
 
     def showItems(self):
@@ -83,11 +87,12 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             vlayout.addWidget(iw)
 
     def updateTotal(self):
-        total=0
+        total, pt_total=0, 0
         for widg in self.itemWidgets:
             total+=widg.doubleSpinBox.value()
-
+            pt_total+=widg.pt_doubleSpinBox.value()
         self.fee_doubleSpinBox.setValue(total)
+        self.pt_fee_doubleSpinBox.setValue(pt_total)
 
     def getInput(self):
         if self.dialog.exec_():
@@ -106,9 +111,11 @@ if __name__ == "__main__":
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
+    from openmolar.dbtools import patient_class
+    pt=patient_class.patient(11956)
     items=[(0,"CE"),(0,"M"),(1,"SP")]
     for i in range(2):
         items.append((0,"ECE"),)
-    ui = treatment(Dialog,items,"P")
+    ui = treatment(Dialog,items,pt)
     print ui.getInput()
 

@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>7</number>
+              <number>8</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>533</width>
+                    <width>682</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1448,7 +1448,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>516</width>
+                    <width>682</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -1760,7 +1760,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>567</width>
+                    <width>692</width>
                     <height>529</height>
                    </rect>
                   </property>
@@ -2119,7 +2119,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>701</width>
-                    <height>367</height>
+                    <height>376</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2391,8 +2391,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>311</width>
-                    <height>105</height>
+                    <width>702</width>
+                    <height>396</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2892,12 +2892,12 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>185</width>
-                    <height>386</height>
+                    <width>702</width>
+                    <height>396</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
-                   <item rowspan="5" row="0" column="0" >
+                   <item row="0" column="0" colspan="3" >
                     <widget class="QFrame" name="perioChart_frame" >
                      <property name="sizePolicy" >
                       <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
@@ -2925,82 +2925,7 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1" >
-                    <widget class="QLabel" name="label_41" >
-                     <property name="font" >
-                      <font>
-                       <pointsize>12</pointsize>
-                      </font>
-                     </property>
-                     <property name="text" >
-                      <string>Chart Date</string>
-                     </property>
-                     <property name="alignment" >
-                      <set>Qt::AlignCenter</set>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1" >
-                    <widget class="QComboBox" name="perioChartDateComboBox" />
-                   </item>
-                   <item row="2" column="1" >
-                    <widget class="QPushButton" name="newPerioChartPushButton" >
-                     <property name="text" >
-                      <string>New</string>
-                     </property>
-                     <property name="autoDefault" >
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1" >
-                    <widget class="QComboBox" name="bpeDateComboBox" >
-                     <property name="sizePolicy" >
-                      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize" >
-                      <size>
-                       <width>0</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="sizeAdjustPolicy" >
-                      <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item rowspan="2" row="4" column="1" >
-                    <widget class="QFrame" name="perioToothProps_frame" >
-                     <property name="sizePolicy" >
-                      <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize" >
-                      <size>
-                       <width>100</width>
-                       <height>250</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize" >
-                      <size>
-                       <width>150</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="frameShape" >
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow" >
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0" >
+                   <item row="1" column="0" colspan="3" >
                     <widget class="QScrollArea" name="perioChartData_scrollArea" >
                      <property name="minimumSize" >
                       <size>
@@ -3015,8 +2940,8 @@
                       <property name="geometry" >
                        <rect>
                         <x>0</x>
-                        <y>0</y>
-                        <width>96</width>
+                        <y>-97</y>
+                        <width>664</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3039,6 +2964,127 @@
                        </item>
                       </layout>
                      </widget>
+                    </widget>
+                   </item>
+                   <item row="2" column="0" >
+                    <widget class="QGroupBox" name="groupBox_11" >
+                     <property name="title" >
+                      <string>Choose Data</string>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_16" >
+                      <item>
+                       <widget class="QLabel" name="label_41" >
+                        <property name="font" >
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text" >
+                         <string>Chart Date</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="perioChartDateComboBox" />
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="newPerioChartPushButton" >
+                        <property name="text" >
+                         <string>New</string>
+                        </property>
+                        <property name="autoDefault" >
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item row="2" column="1" >
+                    <widget class="QFrame" name="perioToothProps_frame" >
+                     <property name="sizePolicy" >
+                      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize" >
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize" >
+                      <size>
+                       <width>16777215</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="frameShape" >
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow" >
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2" >
+                    <widget class="QGroupBox" name="groupBox_12" >
+                     <property name="maximumSize" >
+                      <size>
+                       <width>120</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="title" >
+                      <string>BPE</string>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_15" >
+                      <item>
+                       <widget class="QTextBrowser" name="bpe_textBrowser_2" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>65</height>
+                         </size>
+                        </property>
+                        <property name="verticalScrollBarPolicy" >
+                         <enum>Qt::ScrollBarAlwaysOff</enum>
+                        </property>
+                        <property name="horizontalScrollBarPolicy" >
+                         <enum>Qt::ScrollBarAlwaysOff</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="bpeDateComboBox" >
+                        <property name="sizePolicy" >
+                         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize" >
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="sizeAdjustPolicy" >
+                         <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                   </layout>
@@ -3237,8 +3283,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>223</width>
+                <height>455</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3255,8 +3301,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>224</width>
+                <height>455</height>
                </rect>
               </property>
              </widget>
@@ -3272,8 +3318,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>223</width>
+                <height>455</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3469,8 +3515,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>96</width>
-             <height>28</height>
+             <width>167</width>
+             <height>57</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3786,8 +3832,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>28</height>
+               <width>167</width>
+               <height>131</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
