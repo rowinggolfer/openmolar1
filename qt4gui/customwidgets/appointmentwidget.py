@@ -166,30 +166,21 @@ class appointmentWidget(QtGui.QWidget):
         if self.rows.has_key(row):
             selectedPatients=self.rows[row]
 
-            #-- left click
-            if event.button()==1:
-                if selectedPatients[0]>0:  #ignore lunch and emergencies - serialno number is positive
-                    self.emit(QtCore.SIGNAL("PySig"),tuple(selectedPatients))
-            
-            #-- right click
+            if selectedPatients[0]>0:  #ignore lunch and emergencies - serialno number is positive
+                self.emit(QtCore.SIGNAL("PySig"),tuple(selectedPatients))
             else:
                 start=self.humanTime(int(self.startTime+self.selected[0]*self.slotLength))
                 finish=self.humanTime(int(self.startTime+self.selected[1]*self.slotLength))
-                if selectedPatients[0]>0:  #ignore lunch and emergencies
-                    QtGui.QMessageBox.information(self,"Info",'''Clear appointment?<br />
-                    Start %s<br />finish %s mins<br />Dentist %s'''%(start,finish,self.dentist))
-                else:
-                    self.emit(QtCore.SIGNAL("ClearEmergencySlot"),(start,finish,localsettings.apptix[self.dentist]))
+                self.emit(QtCore.SIGNAL("ClearEmergencySlot"),(start,finish,localsettings.apptix[self.dentist]))
         else:
             #-- no-one in the book... right click
-            if event.button()==2:
-                start=self.humanTime(int(self.startTime+self.selected[0]*self.slotLength))
-                finish=self.humanTime(int(self.startTime+self.selected[1]*self.slotLength))
-                if localsettings.apptix.has_key(self.dentist):
-                    result=QtGui.QMessageBox.question(self,"Confirm","Block this slot?",
-                    QtGui.QMessageBox.Yes,QtGui.QMessageBox.No) 
-                    if result == QtGui.QMessageBox.Yes:            
-                        self.emit(QtCore.SIGNAL("BlockEmptySlot"),(start,finish,localsettings.apptix[self.dentist]))
+            start=self.humanTime(int(self.startTime+self.selected[0]*self.slotLength))
+            finish=self.humanTime(int(self.startTime+self.selected[1]*self.slotLength))
+            if localsettings.apptix.has_key(self.dentist):
+                result=QtGui.QMessageBox.question(self,"Confirm","Block this slot?",
+                QtGui.QMessageBox.Yes,QtGui.QMessageBox.No) 
+                if result == QtGui.QMessageBox.Yes:            
+                    self.emit(QtCore.SIGNAL("BlockEmptySlot"),(start,finish,localsettings.apptix[self.dentist]))
     def leaveEvent(self,event):
         self.selected=[-1,-1]
         self.update()

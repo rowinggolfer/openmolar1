@@ -493,7 +493,7 @@ def delete_appt_from_aslot(dent,start,adate,serialno):
     db=connect()
     cursor=db.cursor()
     try:
-        fullquery= 'DELETE FROM aslot WHERE serialno=%d AND apptix=%d AND start=%d AND adate="%s"'%(serialno,dent,start,adate)
+        fullquery= 'DELETE FROM aslot WHERE adate="%s" AND serialno=%d AND apptix=%d AND start=%d'%(adate,serialno,dent,start)
         if localsettings.logqueries:
             print fullquery
         cursor.execute(fullquery)

@@ -1547,6 +1547,7 @@ class appointmentClass():
         QtCore.QObject.connect(self.ui.main_tabWidget,
         QtCore.SIGNAL("currentChanged(int)"),self.handle_mainTab)
 
+    
     def layout_apptOV(self):
         '''
         called by checking a dentist checkbox on apptov tab
@@ -1598,6 +1599,8 @@ class appointmentClass():
             self.ui.thursdayLabel,self.ui.fridayLabel):
 
             label.setText(weekdates[i].toString("d MMMM yyyy"))
+            label.setToolTip("Hello!")
+            
             i+=1
         if QtCore.QDate.currentDate() in weekdates:
             self.ui.apptOVtoday_pushButton.setEnabled(False)
@@ -1734,9 +1737,28 @@ class appointmentClass():
                             search.getcandidates_from_serialnos(list_of_snos))
             if sno!=None:
                 self.getrecord(int(sno))
-    def clearEmergencySlot(self,tup):
-        print "clear emergency slot",tup
-
+    def clearEmergencySlot(self,arg):
+        '''
+        this function is the slot for a signal invoked when the user clicks
+        on a "blocked" slot.
+        only question is... do they want to free it?
+        it expects an arg like ('8:50', '11:00', 4)
+        '''
+        adate=self.ui.appointmentCalendarWidget.selectedDate().toPyDate()
+        message="Do you want to unblock the selected slot?<br />"
+        message+="%s - %s <br />"%(arg[0],arg[1])
+        message+="%s<br />"%localsettings.longDate(adate)
+        message+="with %s?"%localsettings.ops.get(arg[2])
+        result=QtGui.QMessageBox.question(self,"Confirm",
+        message,
+        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+        if result==QtGui.QMessageBox.Yes:
+            print "ok. unblocking"
+            start=localsettings.humanTimetoWystime(arg[0])
+            appointments.delete_appt_from_aslot(arg[2],start,adate,0)
+            self.layout_appointments()
+            
+    
     def blockEmptySlot(self,tup):
         print "block ",tup
         adate=self.ui.appointmentCalendarWidget.selectedDate().toPyDate()
@@ -3173,9 +3195,8 @@ class pageHandlingClass():
 
         #--user is viewing apointment overview
         if ci==2:
-            self.updateFees()
             self.layout_apptOV()
-
+            
         if ci==7:
             self.loadFeesTable()
 

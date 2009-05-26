@@ -132,6 +132,32 @@ def GP17formatDate(d):
     else:
         return d.replace("/","") #"%02d%02d%04d"%(d.day,d.month,d.year)
 
+def dayName(d):
+    '''
+    expects a datetime object, returns the day
+    '''
+    try:
+        return ("Monday","Tuesday","Wednesday","Thursday",
+        "Friday","Saturday","Sunday")[d.isoweekday()] 
+    except:
+        pass
+        
+def monthName(d):
+    '''
+    expects a datetime object, returns the month
+    '''
+    try:
+        return("January","February","March","April","May","June","July",
+        "August","September","October","November","December")[d.month]
+    except:
+        pass
+
+def longDate(d):
+    try:
+        return "%s, %d %s %d"%(dayName(d),d.day,monthName(d),d.year)
+    except:
+        pass
+        
 def formatDate(d):
     '''takes a date, returns a uk type date string'''
     try:
