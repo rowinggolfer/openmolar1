@@ -20,13 +20,12 @@ class estimate():
         self.printer.setPageSize(QtGui.QPrinter.A5)
         self.setProps()
         self.estItems=[]
-    def setProps(self,tit="",fn="",sn="",serialno=0,t=0):
+    def setProps(self,tit="",fn="",sn="",serialno=0):
         self.title=tit
         self.fname=fn
         self.sname=sn
         self.ourref=serialno
-        self.total=t
-
+        
     def print_(self):
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
@@ -56,11 +55,8 @@ class estimate():
         x=LeftMargin+10
         y+=serifLineHeight*2
 
-
-        total=0
         pt_total=0
         for est in self.estItems:
-            total+=est.fee
             pt_total+=est.ptfee
             
             number=est.number
@@ -77,8 +73,8 @@ class estimate():
         painter.drawLine(int(x),int(y),int(x)+380,int(y))#130+150=280
         y += serifLineHeight*1.5
         painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString("TOTAL"))
-        painter.drawText(QtCore.QRectF(x+280, y,100,serifLineHeight),\
-        QtCore.QString(toMoneyString(self.total)),alignRight)
+        painter.drawText(QtCore.QRectF(x+280, y,100,serifLineHeight),
+        QtCore.QString(toMoneyString(pt_total)),alignRight)
 
         y += serifLineHeight*4
 

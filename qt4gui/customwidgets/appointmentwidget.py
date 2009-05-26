@@ -136,25 +136,26 @@ class appointmentWidget(QtGui.QWidget):
             selectedPatients=self.rows[row]
             self.selected=self.getApptBounds(selectedPatients)
             self.update()
-            feedback=""
-            for patient in selectedPatients:
-                for appt in self.appts+self.doubleAppts:
-                    if appt[5]==patient:
-                        feedback += '''<center>%s<br />%s %s-%s'''\
-                        %(appt[4],self.dentist,appt[2],appt[3])
-                        for val in (appt[6],appt[7],appt[8]):
-                            if val!="":
-                                feedback+="<br />%s"%val
-                        if appt[9]!="":
-                            feedback+="<br /><i>%s</i>"%appt[9]
-                        feedback+="<hr />"
-            QtGui.QToolTip.showText(event.globalPos(),\
-            feedback.rstrip("<hr />")+"</center>")
+            if selectedPatients!=[-1]:
+                feedback="<center>"
+                for patient in selectedPatients:
+                    for appt in self.appts+self.doubleAppts:
+                        if appt[5]==patient:
+                            feedback += '''%s<br />%s %s-%s'''\
+                            %(appt[4],self.dentist,appt[2],appt[3])
+                            for val in (appt[6],appt[7],appt[8]):
+                                if val!="":
+                                    feedback+="<br />%s"%val
+                            if appt[9]!="":
+                                feedback+="<br /><i>%s</i>"%appt[9]
+                            feedback+="<hr />"
+                
+                QtGui.QToolTip.showText(event.globalPos(),feedback.rstrip("<hr />")+"</center>")
         else:
             if not (self.selected[0]<=row<=self.selected[1]):                                       #slot already highlighted
                 self.selected=(self.getPrev(row),self.getNext(row))
                 self.update()
-            QtGui.QToolTip.showText(event.globalPos(),"")
+            QtGui.QToolTip.showText(event.globalPos(),"?? minutes")
         
     def mousePressEvent(self, event):
         '''catch the mouse press event - and if you have clicked on an appointment, emit a signal
