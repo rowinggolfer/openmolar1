@@ -229,7 +229,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         self.lineEdit.setText("EX")
         self.nextTooth()
     def rt(self):
-        existing=self.lineEdit.text()
+        existing=str(self.lineEdit.text().toAscii()) 
         self.lineEdit.setText(existing+"RT")
         self.additional()
     def crown(self):
@@ -257,6 +257,9 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         def bonded():
             self.lineEdit.setText(existing+"CR,V1")
             Dialog.accept()
+        def recem():
+            self.lineEdit.setText(existing+"CR,RC")
+            Dialog.accept()
             
         existing=self.lineEdit.text()
         Dialog = QtGui.QDialog(self)
@@ -270,6 +273,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         ccwidg.gold.connect(ccwidg.bonded,QtCore.SIGNAL("clicked()"), bonded)
         ccwidg.gold.connect(ccwidg.temp,QtCore.SIGNAL("clicked()"), temp)
         ccwidg.gold.connect(ccwidg.resin,QtCore.SIGNAL("clicked()"), resin)
+        ccwidg.gold.connect(ccwidg.recement,QtCore.SIGNAL("clicked()"), recem)
         
         if Dialog.exec_():
             self.nextTooth()

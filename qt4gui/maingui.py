@@ -68,13 +68,17 @@ class feeClass():
             self.pt.addHiddenNote("treatment"," %s - fee %.02f"%\
                                   (str(dl.lineEdit.text().toAscii()),fee))
 
-            patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
-            if patient_write_changes.discreet_changes(
-            self.pt,("money0","money1")):
-                self.pt_dbstate.money1=self.pt.money1
-                self.pt_dbstate.money0=self.pt.money0
-                self.pt.clearHiddenNotes()
-
+        
+##############################################################################           
+#--DISABLED THIS BIT.... CAUSING CONFUSION
+#            patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
+#            
+#            if patient_write_changes.discreet_changes(
+#            self.pt,("money0","money1")):
+#                self.pt_dbstate.money1=self.pt.money1
+#                self.pt_dbstate.money0=self.pt.money0
+#                self.pt.clearHiddenNotes()
+##############################################################################
     def getItemFees(self,item,no_items=1):
         itemfee,ptfee=0,0
         if "P" in self.pt.cset:
@@ -3811,12 +3815,15 @@ printingClass,cashbooks):
                 #--otherwise changes to attributes which are lists aren't
                 #--spotted new "instance" of patient
                 self.pt=loadPt
+                #-- this next line is to prevent a "not saved warning"
+                self.pt_dbstate.fees=self.pt.fees
                 try:
                     self.loadpatient()
                 except Exception,e:
                     self.advise("Error populating interface\n%s\n%s"%(Exception,e),2)
                 finally:
                     self.pt_dbstate=copy.deepcopy(self.pt)
+                            
 
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
@@ -4388,7 +4395,7 @@ printingClass,cashbooks):
             else:
                 #--exception writing to db
                 self.advise("error writing notes to database... sorry!",2)
-
+        self.updateDetails()
 
 
     def enableEdit(self,arg=True):

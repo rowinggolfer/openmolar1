@@ -83,7 +83,7 @@
     </spacer>
    </item>
    <item row="4" column="1" colspan="2" >
-    <widget class="QPushButton" name="pushButton" >
+    <widget class="QPushButton" name="recement" >
      <property name="text" >
       <string>Recement</string>
      </property>

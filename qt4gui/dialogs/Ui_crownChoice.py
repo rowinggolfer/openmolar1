@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/crownChoice.ui'
 #
-# Created: Thu May 14 14:45:33 2009
+# Created: Wed May 27 09:08:59 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,9 +41,9 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.other, 3, 2, 1, 2)
         spacerItem = QtGui.QSpacerItem(68, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 4, 0, 1, 1)
-        self.pushButton = QtGui.QPushButton(Dialog)
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout.addWidget(self.pushButton, 4, 1, 1, 2)
+        self.recement = QtGui.QPushButton(Dialog)
+        self.recement.setObjectName("recement")
+        self.gridLayout.addWidget(self.recement, 4, 1, 1, 2)
         spacerItem1 = QtGui.QSpacerItem(68, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem1, 4, 3, 1, 1)
         self.cancel_pushButton = QtGui.QPushButton(Dialog)
@@ -67,7 +67,7 @@ class Ui_Dialog(object):
         self.fortress.setText(QtGui.QApplication.translate("Dialog", "Fortress", None, QtGui.QApplication.UnicodeUTF8))
         self.bonded.setText(QtGui.QApplication.translate("Dialog", "Bonded", None, QtGui.QApplication.UnicodeUTF8))
         self.other.setText(QtGui.QApplication.translate("Dialog", "Other", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("Dialog", "Recement", None, QtGui.QApplication.UnicodeUTF8))
+        self.recement.setText(QtGui.QApplication.translate("Dialog", "Recement", None, QtGui.QApplication.UnicodeUTF8))
         self.cancel_pushButton.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc
