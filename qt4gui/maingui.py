@@ -68,11 +68,11 @@ class feeClass():
             self.pt.addHiddenNote("treatment"," %s - fee %.02f"%\
                                   (str(dl.lineEdit.text().toAscii()),fee))
 
-        
-##############################################################################           
+
+##############################################################################
 #--DISABLED THIS BIT.... CAUSING CONFUSION
 #            patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
-#            
+#
 #            if patient_write_changes.discreet_changes(
 #            self.pt,("money0","money1")):
 #                self.pt_dbstate.money1=self.pt.money1
@@ -490,16 +490,18 @@ class feeClass():
         '''
         adds treatment to a tooth
         '''
+        existing=self.pt.__dict__[tooth+self.selectedChartWidget]
+        
+        
         print "toothTreatAdded '%s','%s'"%(tooth, input)
         self.pt.__dict__[tooth+self.selectedChartWidget]=input
         #--update the patient!!
         self.ui.planChartWidget.setToothProps(tooth,input)
 
-        print "NEED TO ADD TO ESTIMATE HERE"
-        print "tooth= '%s' input= '%s'"%(tooth,input)
+        if existing in input:
+            input=input.replace(existing,"")
 
         items=fee_keys.itemsPerTooth(tooth, input)
-        print "items=",items
         for item in items:
             print "item=",item
             itemcode=fee_keys.getCode(item[0],item[1])
@@ -521,7 +523,10 @@ class feeClass():
         if ALL==False:
             dl.itemsPerTooth(tooth, item)
         else:
-            dl.setItems(fee_keys.toothSpecificCodesList(self.pt))
+            treatmentDict=fee_keys.toothTreatDict(self.pt)
+            dl.setItems(treatmentDict["pl"],)
+            dl.setItems(treatmentDict["cmp"],)
+
 
         dl.showItems()
 
@@ -676,8 +681,47 @@ class feeClass():
             "Please remove manually",1)
             print "handled this in maingui.completeItem",Exception,e
 
+    def planItemClicked(self,arg,arg1):
+        '''
+        user has double clicked on the treatment plan tree
+        arg1 is of no importance as I only have 1 column
+        '''
+        self.txOptions(arg,"pl")
+    
+    def cmpItemClicked(self,arg,arg1):
+        '''
+        user has double clicked on the treatment competled tree
+        '''
+        self.txOptions(arg,"cmp")
+    
+    def txOptions(self,treeWidgetItem,pl_cmp):
+        '''
+        user has clicked on a planned item in the treewidget if pl_cmp="pl"
+        or a completed one if pl_cmp="cmp"
+        ''' 
+        if pl_cmp=="pl":
+            type="Planned Item"
+        else:
+            type="Completed Item"
+        
+        #-- check to see if it is end of a branch.
+        if treeWidgetItem.parent()==None:
+            #--header
+            message="You've selected %ss <ul>%s"%(
+            type,treeWidgetItem.text(0))
 
+            for i in range(treeWidgetItem.childCount()):
+                message+="<li>%s</li>"%treeWidgetItem.child(i).text(0)
+            message+="</ul>"
+        else:
+            #--item
+            message="You've selected %ss<br /> %s"%(
+            type,treeWidgetItem.parent().text(0))
 
+            message+="<br />%s"%treeWidgetItem.text(0)
+            
+        self.advise(message,1)
+    
 
     def completeAllTreatments(self):
         '''
@@ -1916,6 +1960,10 @@ class signals():
         QtCore.QObject.connect(self.ui.estWidget,
                               QtCore.SIGNAL("deleteItem"), self.deleteTxItem)
 
+        QtCore.QObject.connect(self.ui.plan_treeWidget,QtCore.SIGNAL(
+        "itemDoubleClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
+        QtCore.QObject.connect(self.ui.comp_treeWidget,QtCore.SIGNAL(
+        "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
 
 
         #daybook - cashbook
@@ -3823,7 +3871,7 @@ printingClass,cashbooks):
                     self.advise("Error populating interface\n%s\n%s"%(Exception,e),2)
                 finally:
                     self.pt_dbstate=copy.deepcopy(self.pt)
-                            
+
 
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"

@@ -104,7 +104,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
             self.lineEdit.setText(existing+":")
             self.tooth.clear()
             self.tooth.update()
-            self.finishedEdit()
+            #self.finishedEdit()
             
     def updateSurfaces(self):
         existing=str(self.lineEdit.text().toAscii())

@@ -9,9 +9,12 @@ from openmolar.settings import localsettings
 import re
 
 class fee():
-    '''this class handles the calculation of private fees
-    part of the challenge is recognising the fact that 2x an item is not necessarily
-   the same as double the fee for a single item etc.. '''
+    '''
+    this class handles the calculation of fees
+    part of the challenge is recognising the fact that
+     2x an item is not necessarily
+   the same as double the fee for a single item etc..
+    '''
     def __init__(self):
         '''initiate the class with the default settings for a private fee'''
         self.description=""
@@ -25,16 +28,19 @@ class fee():
         self.fees.append(int(arg))
     def addPtFee(self,arg):
         self.ptFees.append(int(arg))
-    
+
     def setRegulations(self, arg):
         '''pass a string which sets the conditions for applying fees to this treatment item'''
         self.regulations=arg
-        
-    def getPtFee(self,no_items=1):
-        return self.getFee(no_items,True)
-        
-    def getFee(self, no_items=1,patient=False):
-        '''get a fee for x items of this type'''
+
+    def getPtFee(self,no_items=1, conditions=""):
+        return self.getFee(no_items,conditions)
+
+    def getFee(self, no_items=1,conditions="",patient=False):
+        '''
+        get a fee for x items of this type
+        conditions allows some flexibility (eg conditions=lower premolar)
+        '''
 
         if patient:
             feeList=self.ptFees
@@ -98,6 +104,7 @@ def itemsPerTooth(tooth,props):
     items=props.strip(" ").split(" ")
     for item in items:
         if re.match(".*,PR.*",props):
+            print "removing .pr" 
             treats.append((tooth,"PR"),)
             item=item.replace(",PR","")
 
@@ -106,7 +113,7 @@ def itemsPerTooth(tooth,props):
 
 def getKeyCode(arg):
     '''
-    you pass a USERCODE (eg 'EX' for extraction... 
+    you pass a USERCODE (eg 'SP' for scale/polish...
     and get returned the numeric code for this
     class of treatments
     '''
@@ -123,18 +130,26 @@ def getKeyCodeToothUserCode(tooth,arg):
     '''
     print "decrypting tooth code",arg
 
-
-    if arg in ("PV","AP","RT","ST","EX","EX/S1","EX/S2"):
+    if arg in ("PV","AP","ST","EX","EX/S1","EX/S2"):
         return getKeyCode(arg)
 
     if arg in ("CR,GO","CR,V1","CR,A1","CR,RC","CR,OT","CR,V2"):
         return getKeyCode(arg)
-
+    
+    if re.match("RT.*",arg):
+        if re.match("u.[45]",tooth):
+            return getKeyCode("Rt_upm")
+        if re.match("l.[45]",tooth):
+            return getKeyCode("Rt_lpm")        
+        if re.match("..[123]",tooth):
+            return getKeyCode("Rt_inc_can")
+        else:
+            return getKeyCode("Rt_molar")
+    
         arg=arg.replace(",PR","")
 
     if "PI/" in arg:
         return getKeyCode("Porc")
-
 
     if re.match("BR/P.*",arg):
         return getKeyCode(arg)
@@ -146,8 +161,9 @@ def getKeyCodeToothUserCode(tooth,arg):
         return getKeyCode(arg)
 
     if re.match(".*GL.*",arg):
-        return getKeyCode("GLfill")
-
+        return getKeyCode("Glfill")
+    
+        
     #-- ok... so it's probably a filling
 
     array=arg.split(",")
@@ -174,28 +190,29 @@ def getKeyCodeToothUserCode(tooth,arg):
         return getKeyCode("%s-%ssurf"%(material,len(surfaces)))   #-- AM-3surf etc..
 
 
-    print "no match in getKeyCodeToothUserCode for ",arg
+    print "no match in getKeyCodeToothUserCode for ",tooth,arg
     print "returning 4001"
     return "4001"
 
 
-def toothSpecificCodesList(pt):
+def toothTreatDict(pt):
     '''
     cycles through the patient attriubutes,
     and brings up planned treatment on teeth only
     '''
-    treats=[]
+    treats={"pl":[], "cmp":[]}
     for quadrant in ("ur","ul", "ll", "lr"):
         if "r" in quadrant:
             order=(8, 7, 6, 5, 4, 3, 2, 1)
         else:
             order=(1, 2, 3, 4, 5, 6, 7, 8)
         for tooth in order:
-            att="%s%spl"%(quadrant, tooth)
-            if pt.__dict__[att] != "":
-                items=pt.__dict__[att].strip(" ").split(" ")
-                for item in items:
-                    treats.append(("%s%s"%(quadrant, tooth), item), )
+            for type in ("pl", "cmp"):
+                att="%s%spl"%(quadrant, tooth)
+                if pt.__dict__[att] != "":
+                    items=pt.__dict__[att].strip(" ").split(" ")
+                    for item in items:
+                        treats[type].append(("%s%s"%(quadrant, tooth), item), )
     return treats
 
 def getCode(tooth,fill):
@@ -210,16 +227,21 @@ def getFee(cset,itemcode):
     useage = getFee("P","4001")
     get the fee for itemcode "4001" for a private patient
     '''
+    print "WARNING fee_keys.getFee is deprecated - please use the class"
     fee=0
     if "P" in cset:
         fee= localsettings.privateFees[itemcode].getFee()
+    if "N" in cset:
+        fee= localsettings.nhsFees[itemcode].getFee()
     return fee
+
 
 def getDescription(arg):
     '''
     usage=getDescription("4001")
     get a description for itemcode "4001"
     '''
+    print "WARNING fee_keys.getDescription is deprecated - please use the class"
     description=""
     try:
         description=localsettings.descriptions.get(arg)
@@ -229,15 +251,19 @@ def getDescription(arg):
 
 
 if __name__ == "__main__":
-    #localsettings.initiate(False)
-    #print localsettings.treatmentCodes
-    #for arg in ("CE","MOD","PV"):
-    #    print getKeyCode(arg)
+    localsettings.initiate(False)
+    print localsettings.treatmentCodes
+    for arg in ("CE","MOD","PV","Rt_upm"):
+        print getKeyCode(arg)
 
-    pf=prvFee()
+    pf=fee()
     pf.description="small x-ray"
     for fee in (990, 1500,2000, 395, 2800) :
         pf.addFee(fee)
     pf.setRegulations("n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E")
     print pf.getFee(5)
+
+    print getFee("P", "0101")
+    print getFee("N", "0101")
+    print getKeyCodeToothUserCode("ul7","RT ")
 

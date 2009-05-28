@@ -66,7 +66,7 @@ class treatment(Ui_addToothTreatment.Ui_Dialog,):
         itemsPerTooth("ul6","MOD RT")
         provides a more convenient way of calling setItems
         '''
-       
+
         self.setItems(fee_keys.itemsPerTooth(tooth,props))
 
     def setItems(self, items):
@@ -113,13 +113,14 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
 
     from openmolar.dbtools import patient_class
-    pt=patient_class.patient(1)  #29833)
+    pt=patient_class.patient(29833)
 
     #print "PLAN for ", toothPlan[0],toothPlan[1]
 
     ui = treatment(Dialog,"P")
-    ui.setItems(fee_keys.toothSpecificCodesList(pt))
-    #ui.setItems((("ul6", "CR,GO"), ("ul6","RT")),)
+    treatmentDict=fee_keys.toothTreatDict(pt)
+    ui.setItems(treatmentDict["pl"],)
+    ui.setItems(treatmentDict["cmp"],)
     ui.showItems()
 
     chosen = ui.getInput()
