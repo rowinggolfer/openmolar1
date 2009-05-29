@@ -1,6 +1,8 @@
 <RCC>
   <qresource>
-    <file alias="speaker.svg">icons/Speaker_Icon.svg</file>
+    <file>hdp.png</file>
+    <file>nhs_scot.png</file>
+    <file alias="speaker.svg" >icons/Speaker_Icon.svg</file>
     <file alias="logo.png" >icons/logo.png</file>
     <file alias="widelogo.png" >icons/widelogo.png</file>
     <file alias="back.png" >icons/agt_back.png</file>

@@ -257,7 +257,10 @@ def get_pts_appts(sno):
         print fullquery
     cursor.execute(fullquery)
 
-    data= cursor.fetchall()                                                    
+    data= cursor.fetchall()            
+    
+    
+                                            
 
     cursor.close()
     #db.close()

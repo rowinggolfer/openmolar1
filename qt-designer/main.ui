@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>950</width>
-    <height>614</height>
+    <width>1009</width>
+    <height>677</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>8</number>
+              <number>3</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,7 +457,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>682</width>
+                    <width>533</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1301,6 +1301,19 @@
                <string>Contract</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_23" >
+               <item row="0" column="4" >
+                <spacer name="horizontalSpacer_5" >
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>368</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
                <item row="0" column="0" >
                 <widget class="QLabel" name="label_21" >
                  <property name="text" >
@@ -1338,19 +1351,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="4" >
-                <spacer name="horizontalSpacer_5" >
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0" >
-                  <size>
-                   <width>368</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
                <item row="1" column="0" colspan="5" >
                 <widget class="QTabWidget" name="contract_tabWidget" >
                  <property name="currentIndex" >
@@ -1360,36 +1360,54 @@
                   <attribute name="title" >
                    <string>Private</string>
                   </attribute>
-                  <widget class="QComboBox" name="privatefeeScale_comboBox" >
-                   <property name="geometry" >
-                    <rect>
-                     <x>96</x>
-                     <y>31</y>
-                     <width>81</width>
-                     <height>24</height>
-                    </rect>
-                   </property>
-                  </widget>
-                  <widget class="QLabel" name="label_8" >
-                   <property name="geometry" >
-                    <rect>
-                     <x>31</x>
-                     <y>31</y>
-                     <width>59</width>
-                     <height>24</height>
-                    </rect>
-                   </property>
-                   <property name="text" >
-                    <string>Fee Scale</string>
-                   </property>
-                  </widget>
+                  <layout class="QGridLayout" name="gridLayout_26" >
+                   <item rowspan="2" row="0" column="0" >
+                    <widget class="QLabel" name="contractHDP_label_2" >
+                     <property name="text" >
+                      <string>This label is for displaying HDP contractual stuff</string>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                     <property name="wordWrap" >
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" >
+                    <spacer name="verticalSpacer_6" >
+                     <property name="orientation" >
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0" >
+                      <size>
+                       <width>147</width>
+                       <height>281</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item row="2" column="1" >
+                    <widget class="QPushButton" name="editPriv_pushButton" >
+                     <property name="maximumSize" >
+                      <size>
+                       <width>150</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text" >
+                      <string>Edit</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                  <widget class="QWidget" name="tab_19" >
                   <attribute name="title" >
                    <string>Highland Dental Plan</string>
                   </attribute>
-                  <layout class="QHBoxLayout" name="horizontalLayout_31" >
-                   <item>
+                  <layout class="QGridLayout" name="gridLayout_25" >
+                   <item rowspan="2" row="0" column="0" >
                     <widget class="QLabel" name="contractHDP_label" >
                      <property name="text" >
                       <string>This label is for displaying HDP contractual stuff</string>
@@ -1402,14 +1420,60 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="1" column="1" >
+                    <spacer name="verticalSpacer_5" >
+                     <property name="orientation" >
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0" >
+                      <size>
+                       <width>108</width>
+                       <height>162</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item row="2" column="1" >
+                    <widget class="QPushButton" name="editHDP_pushButton" >
+                     <property name="maximumSize" >
+                      <size>
+                       <width>150</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text" >
+                      <string>Edit</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1" >
+                    <widget class="QLabel" name="label_20" >
+                     <property name="maximumSize" >
+                      <size>
+                       <width>150</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text" >
+                      <string/>
+                     </property>
+                     <property name="pixmap" >
+                      <pixmap resource="../resources/resources.qrc" >:/hdp.png</pixmap>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
+                  <zorder>contractHDP_label</zorder>
+                  <zorder>verticalSpacer_5</zorder>
+                  <zorder>editHDP_pushButton</zorder>
+                  <zorder>label_20</zorder>
                  </widget>
                  <widget class="QWidget" name="tab_20" >
                   <attribute name="title" >
                    <string>NHS</string>
                   </attribute>
-                  <layout class="QHBoxLayout" name="horizontalLayout_30" >
-                   <item>
+                  <layout class="QGridLayout" name="gridLayout_24" >
+                   <item rowspan="2" row="0" column="0" >
                     <widget class="QLabel" name="contractNHS_label" >
                      <property name="text" >
                       <string>This label is for displaying NHS contractual stuff</string>
@@ -1422,12 +1486,98 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="0" column="1" >
+                    <widget class="QLabel" name="label_8" >
+                     <property name="maximumSize" >
+                      <size>
+                       <width>111</width>
+                       <height>129</height>
+                      </size>
+                     </property>
+                     <property name="text" >
+                      <string/>
+                     </property>
+                     <property name="pixmap" >
+                      <pixmap resource="../resources/resources.qrc" >:/nhs_scot.png</pixmap>
+                     </property>
+                     <property name="scaledContents" >
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" >
+                    <spacer name="verticalSpacer_4" >
+                     <property name="orientation" >
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0" >
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item row="2" column="1" >
+                    <widget class="QPushButton" name="editNHS_pushButton" >
+                     <property name="maximumSize" >
+                      <size>
+                       <width>150</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text" >
+                      <string>Edit</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                  <widget class="QWidget" name="tab_21" >
                   <attribute name="title" >
-                   <string>Occasional</string>
+                   <string>Registered Elsewhere</string>
                   </attribute>
+                  <layout class="QGridLayout" name="gridLayout_27" >
+                   <item rowspan="2" row="0" column="0" >
+                    <widget class="QLabel" name="contractHDP_label_3" >
+                     <property name="text" >
+                      <string>No Details of Pt's Registered Dentist Found</string>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                     <property name="wordWrap" >
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" >
+                    <spacer name="verticalSpacer_7" >
+                     <property name="orientation" >
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0" >
+                      <size>
+                       <width>147</width>
+                       <height>281</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item row="2" column="1" >
+                    <widget class="QPushButton" name="editRegDent_pushButton" >
+                     <property name="maximumSize" >
+                      <size>
+                       <width>150</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text" >
+                      <string>Edit</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </widget>
                </item>
@@ -1448,7 +1598,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>682</width>
+                    <width>516</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -1760,7 +1910,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>692</width>
+                    <width>751</width>
                     <height>529</height>
                    </rect>
                   </property>
@@ -1967,34 +2117,18 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_17" >
                       <item>
-                       <widget class="QTableWidget" name="ptAppointmentTableWidget" >
-                        <property name="maximumSize" >
-                         <size>
-                          <width>16777215</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="autoFillBackground" >
-                         <bool>true</bool>
-                        </property>
-                        <property name="verticalScrollBarPolicy" >
-                         <enum>Qt::ScrollBarAlwaysOn</enum>
-                        </property>
-                        <property name="editTriggers" >
-                         <set>QAbstractItemView::NoEditTriggers</set>
-                        </property>
+                       <widget class="QTreeWidget" name="ptAppointment_treeWidget" >
                         <property name="alternatingRowColors" >
                          <bool>true</bool>
                         </property>
-                        <property name="selectionMode" >
-                         <enum>QAbstractItemView::SingleSelection</enum>
+                        <property name="animated" >
+                         <bool>true</bool>
                         </property>
-                        <property name="selectionBehavior" >
-                         <enum>QAbstractItemView::SelectRows</enum>
-                        </property>
-                        <property name="wordWrap" >
-                         <bool>false</bool>
-                        </property>
+                        <column>
+                         <property name="text" >
+                          <string>1</string>
+                         </property>
+                        </column>
                        </widget>
                       </item>
                       <item>
@@ -2118,8 +2252,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>701</width>
-                    <height>376</height>
+                    <width>757</width>
+                    <height>455</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2391,8 +2525,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>702</width>
-                    <height>396</height>
+                    <width>311</width>
+                    <height>105</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2565,7 +2699,7 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>430</width>
+                       <width>96</width>
                        <height>198</height>
                       </rect>
                      </property>
@@ -2598,7 +2732,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>220</width>
+                    <width>208</width>
                     <height>407</height>
                    </rect>
                   </property>
@@ -2892,8 +3026,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>702</width>
-                    <height>396</height>
+                    <width>242</width>
+                    <height>359</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
@@ -2940,8 +3074,8 @@
                       <property name="geometry" >
                        <rect>
                         <x>0</x>
-                        <y>-97</y>
-                        <width>664</width>
+                        <y>0</y>
+                        <width>96</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3283,8 +3417,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>223</width>
-                <height>455</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3301,8 +3435,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>224</width>
-                <height>455</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
              </widget>
@@ -3318,8 +3452,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>223</width>
-                <height>455</height>
+                <width>96</width>
+                <height>26</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3515,8 +3649,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>167</width>
-             <height>57</height>
+             <width>96</width>
+             <height>28</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3832,8 +3966,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>167</width>
-               <height>131</height>
+               <width>96</width>
+               <height>28</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -4623,7 +4757,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>950</width>
+     <width>1009</width>
      <height>22</height>
     </rect>
    </property>
@@ -4729,7 +4863,6 @@
   <tabstop>newPatientPushButton</tabstop>
   <tabstop>saveButton</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>ptAppointmentTableWidget</tabstop>
   <tabstop>debugBrowser</tabstop>
   <tabstop>backButton</tabstop>
   <tabstop>nextButton</tabstop>
