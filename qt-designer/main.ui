@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>3</number>
+              <number>6</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -2111,7 +2111,7 @@
                      <property name="maximumSize" >
                       <size>
                        <width>16777215</width>
-                       <height>16777215</height>
+                       <height>231</height>
                       </size>
                      </property>
                      <property name="title" >
@@ -2135,7 +2135,7 @@
                         <property name="maximumSize" >
                          <size>
                           <width>16777215</width>
-                          <height>200</height>
+                          <height>192</height>
                          </size>
                         </property>
                         <property name="alternatingRowColors" >
@@ -2191,6 +2191,10 @@
                         <property name="text" >
                          <string>Schedule</string>
                         </property>
+                        <property name="icon" >
+                         <iconset resource="../resources/resources.qrc" >
+                          <normaloff>:/month.png</normaloff>:/month.png</iconset>
+                        </property>
                        </widget>
                       </item>
                       <item row="2" column="1" >
@@ -2206,6 +2210,10 @@
                         </property>
                         <property name="text" >
                          <string>Modify</string>
+                        </property>
+                        <property name="icon" >
+                         <iconset resource="../resources/resources.qrc" >
+                          <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
                         </property>
                        </widget>
                       </item>
@@ -2223,6 +2231,10 @@
                         <property name="text" >
                          <string>Find in Book</string>
                         </property>
+                        <property name="icon" >
+                         <iconset resource="../resources/resources.qrc" >
+                          <normaloff>:/schedule.png</normaloff>:/schedule.png</iconset>
+                        </property>
                        </widget>
                       </item>
                       <item row="3" column="1" >
@@ -2239,6 +2251,10 @@
                         <property name="text" >
                          <string>Print Card</string>
                         </property>
+                        <property name="icon" >
+                         <iconset resource="../resources/resources.qrc" >
+                          <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                        </property>
                        </widget>
                       </item>
                       <item row="3" column="2" >
@@ -2254,6 +2270,10 @@
                         </property>
                         <property name="text" >
                          <string>Clear/Cancel</string>
+                        </property>
+                        <property name="icon" >
+                         <iconset resource="../resources/resources.qrc" >
+                          <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
                         </property>
                        </widget>
                       </item>
@@ -2330,7 +2350,7 @@
                      <property name="maximumSize" >
                       <size>
                        <width>120</width>
-                       <height>16777215</height>
+                       <height>135</height>
                       </size>
                      </property>
                      <property name="title" >
