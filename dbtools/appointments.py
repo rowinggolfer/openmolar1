@@ -259,9 +259,6 @@ def get_pts_appts(sno):
 
     data= cursor.fetchall()            
     
-    
-                                            
-
     cursor.close()
     #db.close()
     return data
