@@ -2097,7 +2097,7 @@
                    <item row="2" column="0" colspan="4" >
                     <widget class="QGroupBox" name="groupBox" >
                      <property name="sizePolicy" >
-                      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+                      <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>

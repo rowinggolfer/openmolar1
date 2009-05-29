@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Fri May 29 09:04:48 2009
+# Created: Fri May 29 11:03:32 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -830,7 +830,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.takePayment_pushButton, 3, 1, 1, 1)
         self.gridLayout_28.addWidget(self.adminAccount_groupBox, 1, 0, 1, 4)
         self.groupBox = QtGui.QGroupBox(self.scrollAreaWidgetContents_5)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
