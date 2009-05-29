@@ -149,49 +149,32 @@ class feeClass():
 
     def loadFeesTable(self):
         headers=feesTable.getFeeHeaders()
+        #self.ui.fees_treeWidget.setColumnCount(9)
+
+        self.ui.fees_treeWidget.setHeaderLabels(headers)
         feeDict=feesTable.getFeeDict()
         fdKeys=feeDict.keys()
         fdKeys.sort()
         print fdKeys
-        tables=(self.ui.fees_diagnosis_tableWidget,
-                self.ui.fees_prevention_tableWidget,
-                self.ui.fees_perio_tableWidget,
-                self.ui.fees_conservation_tableWidget,
-                self.ui.fees_surgical_tableWidget,
-                self.ui.fees_prosthetics_tableWidget,
-                self.ui.fees_ortho_tableWidget,
-                self.ui.fees_other_tableWidget,
-                self.ui.fees_capitation_tableWidget,
-                self.ui.fees_occasional_tableWidget)
-        n=0
-        for table in tables:
-            table.clear()
-            table.setRowCount(0)
-            table.setColumnCount(len(headers))
-            table.setHorizontalHeaderLabels(headers)
-            table.verticalHeader().hide()
-            table.setSortingEnabled(False)
-            table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-
-            if n<len(fdKeys):
-
-                diagDict=feeDict[fdKeys[n]]
-                keys=diagDict.keys()
-                keys.sort()
-                table.setRowCount(len(keys))
-                rowno=0
-                for key in keys:
-                    item=QtGui.QTableWidgetItem(str(key))
-                    table.setItem(rowno,0,item)
-                    for col in range(len(diagDict[key])):
-                        item=QtGui.QTableWidgetItem(str(diagDict[key][col]))
-                        table.setItem(rowno,col+1,item)
-                    rowno+=1
-                #table.setSortingEnabled(True)
-                table.resizeColumnsToContents()
-
-            n+=1
-
+        headers=("Diagnosis","Preventive","Perio","Conservation","Surgical",
+        "Prosthetics","Orthodontics","Other","Capitation (minors)",
+        "Occasional")
+        for fdKey in fdKeys:
+            feeLists=feeDict[fdKey]
+            headerText=headers[fdKeys.index(fdKey)]
+            header=QtGui.QTreeWidgetItem(self.ui.fees_treeWidget, [headerText])
+            for feeTup in feeLists:
+                feeList=[]
+                for item in feeTup:
+                    feeList.append(str(item))
+                QtGui.QTreeWidgetItem(header, feeList)
+        self.ui.fees_treeWidget.expandAll()
+        for i in range(self.ui.fees_treeWidget.columnCount()):
+            self.ui.fees_treeWidget.resizeColumnToContents(i)
+        #-- hide the geeky column
+        self.ui.fees_treeWidget.setColumnWidth(3, 0)
+        #-- hide the description column
+        self.ui.fees_treeWidget.setColumnWidth(4, 0)
 
     def feestableProperties(self):
         if self.ui.chooseFeescale_comboBox.currentIndex()==1:
@@ -491,8 +474,8 @@ class feeClass():
         adds treatment to a tooth
         '''
         existing=self.pt.__dict__[tooth+self.selectedChartWidget]
-        
-        
+
+
         print "toothTreatAdded '%s','%s'"%(tooth, input)
         self.pt.__dict__[tooth+self.selectedChartWidget]=input
         #--update the patient!!
@@ -687,23 +670,23 @@ class feeClass():
         arg1 is of no importance as I only have 1 column
         '''
         self.txOptions(arg,"pl")
-    
+
     def cmpItemClicked(self,arg,arg1):
         '''
         user has double clicked on the treatment competled tree
         '''
         self.txOptions(arg,"cmp")
-    
+
     def txOptions(self,treeWidgetItem,pl_cmp):
         '''
         user has clicked on a planned item in the treewidget if pl_cmp="pl"
         or a completed one if pl_cmp="cmp"
-        ''' 
+        '''
         if pl_cmp=="pl":
             type="Planned Item"
         else:
             type="Completed Item"
-        
+
         #-- check to see if it is end of a branch.
         if treeWidgetItem.parent()==None:
             #--header
@@ -719,9 +702,9 @@ class feeClass():
             type,treeWidgetItem.parent().text(0))
 
             message+="<br />%s"%treeWidgetItem.text(0)
-            
+
         self.advise(message,1)
-    
+
 
     def completeAllTreatments(self):
         '''
@@ -797,14 +780,14 @@ class contractClass():
         i=["P","I","N"].index(self.pt.cset[:1])
         self.ui.contract_tabWidget.setCurrentIndex(i)
         self.advise("changed course type to %s"%cset,1)
-        
+
     def editNHScontract(self):
         self.advise("edit NHS",1)
-        
+
     def editPrivateContract(self):
         self.advise("edit Private",1)
     def editHDPcontract(self):
-        self.advise("edit HDP",1)        
+        self.advise("edit HDP",1)
     def editOtherContract(self):
         self.advise("edit other Practitioner",1)
 
@@ -1036,7 +1019,7 @@ class appointmentClass():
 
         #--much of this code is a duplicate of make new appt
         selectedAppt=self.ui.ptAppointment_treeWidget.currentItem()
-        
+
         def makeNow():
             ######temporarily disabled this
             self.advise(
@@ -1175,16 +1158,16 @@ class appointmentClass():
         #--does the patient has a previous appointment booked?
 
 
-##############################################################################        
+##############################################################################
         print "NEW CODE NEEDED"
-        
+
         #need new code here!!!
-        
+
         previousApptRow=-1#    rowno-1
         if previousApptRow>=0:
             #--get the date of preceeding appointment
             try:
-                
+
                 pdateText=str(self.ui.ptAppointmentTableWidget.item(
                                                 previousApptRow,0).text())
                 qdate=QtCore.QDate.fromString(pdateText,"dd'/'MM'/'yyyy")
@@ -1293,7 +1276,7 @@ class appointmentClass():
         [arg[0]]
 
         self.advise("offer appointment for %s %s"%(day,str(arg[1])))
-        
+
         selectedAppt=self.ui.ptAppointment_treeWidget.currentItem()
         dentist=str(selectedAppt.text(1))
         start=selectedAppt.text(2)
@@ -1413,7 +1396,7 @@ class appointmentClass():
 
     def ptApptTableNav(self):
         '''called by signals from the patient's appointment table'''
-        
+
         selected=self.ui.ptAppointment_treeWidget.currentItem()
         if selected is None or selected.childCount()!=0:
             self.ui.makeAppt_pushButton.setEnabled(False)
@@ -1437,10 +1420,10 @@ class appointmentClass():
 
     def layout_apptTable(self):
         '''populates the patients appointment table'''
-        
+
         ##new
         headers=["Date","Pract..","Time","Length","Trt1","Trt2","Trt3",
-        "MEMO","date spec","orderAdded"]        
+        "MEMO","date spec","orderAdded"]
         self.ui.ptAppointment_treeWidget.clear()
         self.ui.ptAppointment_treeWidget.setHeaderLabels(headers)
         parents={}
@@ -1483,35 +1466,35 @@ class appointmentClass():
             appointmentList.append(memo)
             appointmentList.append(datespec)
             appointmentList.append(str(row[1]))
-                        
+
             if date=="TBA":
                 parent=parents["Unscheduled"]
             elif date==today:
                 parent=parents["TODAY"]
             elif localsettings.uk_to_sqlDate(date)<localsettings.sqlToday():
-                parent=parents["Past"]                                
+                parent=parents["Past"]
             else:
-                parent=parents["Future"]                
+                parent=parents["Future"]
 
             w=QtGui.QTreeWidgetItem(parent,appointmentList)
         self.ui.ptAppointment_treeWidget.expandAll()
-        
-            
+
+
         for i in range(self.ui.ptAppointment_treeWidget.columnCount()):
             self.ui.ptAppointment_treeWidget.resizeColumnToContents(i)
-        
+
         if parents["Past"].childCount()!=0:
             parents["Past"].setExpanded(False)
-                
-        
+
+
         for parent in parents.values():
             if parent.childCount()==0:
                 self.ui.ptAppointment_treeWidget.removeItemWidget(parent,0)
             else:
                 parent.setFlags(QtCore.Qt.ItemIsEnabled)
-        
+
         #self.ui.ptAppointment_treeWidget.setColumnWidth(9,0)
-        
+
 
         #--programmatically ensure the correct buttons are enabled
         self.ptApptTableNav()
@@ -2088,8 +2071,8 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.editHDPcontract)
         QtCore.QObject.connect(self.ui.editRegDent_pushButton,
                         QtCore.SIGNAL("clicked()"),self.editOtherContract)
-        
-        
+
+
 
 
 
@@ -2142,7 +2125,7 @@ class signals():
         QtCore.QObject.connect(self.ui.notesMediumVerbosity_radioButton,
                                QtCore.SIGNAL("clicked()"), self.updateNotesPage)
 
-        
+
         #periochart
         #### defunct  QtCore.QObject.connect(self.ui.perioChartWidget,
         ####QtCore.SIGNAL("toothSelected"), self.periocharts)
@@ -3139,7 +3122,7 @@ class printingClass():
     def printApptCard(self):
         iter=QtGui.QTreeWidgetItemIterator(self.ui.ptAppointment_treeWidget,
         QtGui.QTreeWidgetItemIterator.Selectable)
-        
+
         futureAppts=()
         while iter.value():
             #self.ui.ptAppointment_treeWidget.setItemSelected(iter)
@@ -3397,6 +3380,61 @@ class pageHandlingClass():
             self.ui.debugBrowser.setText(
                                     debug_html.toHtml(self.pt_dbstate,self.pt))
 
+    def home(self):
+        '''
+        User has clicked the homw push_button -
+        clear the patient, and blank the screen
+        '''
+        if self.enteringNewPatient():
+            return
+        if not self.okToLeaveRecord():
+            print "not clearing record"
+            return
+        self.clearRecord()
+        #--disable much of the UI
+        self.enableEdit(False)
+
+        #--go to either "reception" or "clinical summary"
+        self.gotoDefaultTab()
+
+    def clearRecord(self):
+        '''
+        clears the memory of all references to the last patient.. and
+        ensures that tab pages for reception and clinical summary are cleared.
+        Other pages are disabled.
+        '''
+        if self.pt.serialno!=0:
+            self.ui.underTreatment_label.hide()
+            self.ui.underTreatment_label_2.hide()
+            self.ui.dobEdit.setDate(QtCore.QDate(1900,1,1))
+            self.ui.adminMemoEdit.setText("")
+            self.ui.detailsBrowser.setText("")
+            self.ui.notesBrowser.setText("")
+            self.ui.notesSummary_textBrowser.setText("")
+            self.ui.bpe_groupBox.setTitle("BPE")
+            self.ui.bpe_textBrowser.setText("")
+            self.ui.planSummary_textBrowser.setText("")
+
+            #--restore the charts to full dentition
+            ##TODO - perhaps handle this with the tabwidget calls?
+            for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,
+            self.ui.completedChartWidget,self.ui.perioChartWidget,
+            self.ui.summaryChartWidget):
+                chart.clear()
+                chart.update()
+            self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
+            self.ui.moneytextBrowser.setHtml(localsettings.message)
+            self.ui.chartsTableWidget.clear()
+            self.ui.ptAppointment_treeWidget.clear()
+            self.ui.notesEnter_textEdit.setHtml("")
+
+            #--load a blank version of the patient class
+            self.pt_dbstate=patient_class.patient(0)
+            #--and have the comparison copy identical (to check for changes)
+            self.pt=copy.deepcopy(self.pt_dbstate)
+            if self.editPageVisited:
+                self.load_editpage()####################is this wise???????
+
     def gotoDefaultTab(self):
         '''
         go to either "reception" or "clinical summary"
@@ -3405,7 +3443,6 @@ class pageHandlingClass():
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
-
 
     def load_clinicalSummaryPage(self):
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
@@ -3602,63 +3639,7 @@ printingClass,cashbooks,contractClass):
         localsettings.__version__,localsettings.__build__,
         licensingText.license), 1)
 
-    def clearRecord(self):
-        '''
-        clears the memory of all references to the last patient.. and
-        ensures that tab pages for reception and clinical summary are cleared.
-        Other pages are disabled.
-        '''
-        if self.pt.serialno!=0:
-            self.ui.underTreatment_label.hide()
-            self.ui.underTreatment_label_2.hide()
-            self.ui.dobEdit.setDate(QtCore.QDate(1900,1,1))
-            self.ui.adminMemoEdit.setText("")
-            self.ui.detailsBrowser.setText("")
-            self.ui.moneytextBrowser.setText("")
-            self.ui.notesBrowser.setText("")
-            self.ui.notesSummary_textBrowser.setText("")
-            self.ui.bpe_groupBox.setTitle("BPE")
-            self.ui.bpe_textBrowser.setText("")
-            self.ui.planSummary_textBrowser.setText("")
 
-            #--restore the charts to full dentition
-            ##TODO - perhaps handle this with the tabwidget calls?
-            for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,
-            self.ui.completedChartWidget,self.ui.perioChartWidget,
-            self.ui.summaryChartWidget):
-                chart.clear()
-                chart.update()
-            self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
-            self.ui.moneytextBrowser.setHtml(localsettings.message)
-            self.ui.chartsTableWidget.clear()
-            self.ui.ptAppointment_treeWidget.clear()
-            self.ui.notesEnter_textEdit.setHtml("")
-
-            #--load a blank version of the patient class
-            self.pt_dbstate=patient_class.patient(0)
-            #--and have the comparison copy identical (to check for changes)
-            self.pt=copy.deepcopy(self.pt_dbstate)
-            if self.editPageVisited:
-                self.load_editpage()####################is this wise???????
-            #self.load_newEstPage()
-            #self.load_estpage()
-
-    def home(self):
-        '''
-        User has clicked the homw push_button -
-        clear the patient, and blank the screen
-        '''
-        if self.enteringNewPatient():
-            return
-        if not self.okToLeaveRecord():
-            print "not clearing record"
-            return
-        self.clearRecord()
-        #--disable much of the UI
-        self.enableEdit(False)
-
-        #--go to either "reception" or "clinical summary"
-        self.gotoDefaultTab()
 
     def okToLeaveRecord(self):
         '''
@@ -3714,7 +3695,7 @@ printingClass,cashbooks,contractClass):
         for d in docs:
             self.ui.previousCorrespondence_listWidget.addItem(str(d))
 
-    
+
     def load_todays_patients_combobox(self):
         '''
         loads the quick select combobox, with all of todays's

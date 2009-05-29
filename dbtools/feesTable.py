@@ -18,9 +18,10 @@ newfeetable_Headers="section,code,oldcode,USERCODE,regulation,"+\
 def getFeeHeaders():
     return newfeetable_Headers.split(",")[1:]
 def getFeeDict():
-    '''returns a dictionary of dictionaries of the feestructure
+    '''
+    returns a dictionary of lists of tuples (!)
     dict[section]=feedict
-    feedict[code]=("item description",fees)
+    feedict=[(code1,desc1,fees1),(code2,desc2,fees2)]
     '''
     global newtable_Headers
     option=""
@@ -40,15 +41,13 @@ def getFeeDict():
 
     for row in feescales:
         if not sections.has_key(row[0]):
-            sections[row[0]]={}
-        feecode=row[1]
-        while sections[row[0]].has_key(feecode):
-            feecode+="."
-        sections[row[0]][feecode]=row[2:]
+            sections[row[0]]=[]
+        sections[row[0]].append(row[1:])
     return sections
 
 def decode(blob):
-    '''decode in blocks of 4 bytes - this is a relic from the old database
+    '''
+    decode in blocks of 4 bytes - this is a relic from the old database
     '''
     i=0
     retlist=[]

@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1009</width>
-    <height>734</height>
+    <width>985</width>
+    <height>569</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -48,7 +48,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>0</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="tab_10" >
        <attribute name="title" >
@@ -440,7 +440,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>6</number>
+              <number>3</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,8 +457,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>757</width>
-                    <height>512</height>
+                    <width>533</width>
+                    <height>481</height>
                    </rect>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_10" >
@@ -1598,8 +1598,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>757</width>
-                    <height>512</height>
+                    <width>516</width>
+                    <height>423</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_20" >
@@ -1910,8 +1910,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>767</width>
-                    <height>522</height>
+                    <width>727</width>
+                    <height>465</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_28" >
@@ -2138,7 +2138,15 @@
                           <height>192</height>
                          </size>
                         </property>
+                        <property name="font" >
+                         <font>
+                          <pointsize>10</pointsize>
+                         </font>
+                        </property>
                         <property name="alternatingRowColors" >
+                         <bool>false</bool>
+                        </property>
+                        <property name="rootIsDecorated" >
                          <bool>true</bool>
                         </property>
                         <property name="animated" >
@@ -2299,10 +2307,10 @@
                  <widget class="QWidget" name="scrollAreaWidgetContents_9" >
                   <property name="geometry" >
                    <rect>
-                    <x>0</x>
+                    <x>-201</x>
                     <y>0</y>
-                    <width>757</width>
-                    <height>512</height>
+                    <width>701</width>
+                    <height>367</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2574,8 +2582,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>761</width>
-                    <height>516</height>
+                    <width>520</width>
+                    <height>351</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2748,8 +2756,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>489</width>
-                       <height>236</height>
+                       <width>248</width>
+                       <height>198</height>
                       </rect>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_19" />
@@ -2781,8 +2789,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>236</width>
-                    <height>512</height>
+                    <width>220</width>
+                    <height>407</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_11" >
@@ -3075,8 +3083,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>761</width>
-                    <height>516</height>
+                    <width>504</width>
+                    <height>359</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
@@ -3123,8 +3131,8 @@
                       <property name="geometry" >
                        <rect>
                         <x>0</x>
-                        <y>0</y>
-                        <width>723</width>
+                        <y>-20</y>
+                        <width>466</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3466,8 +3474,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>243</width>
-                <height>575</height>
+                <width>235</width>
+                <height>410</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3484,8 +3492,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>243</width>
-                <height>575</height>
+                <width>235</width>
+                <height>410</height>
                </rect>
               </property>
              </widget>
@@ -3501,8 +3509,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>243</width>
-                <height>575</height>
+                <width>235</width>
+                <height>410</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3699,7 +3707,7 @@
              <x>0</x>
              <y>0</y>
              <width>167</width>
-             <height>135</height>
+             <height>57</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -4016,7 +4024,7 @@
                <x>0</x>
                <y>0</y>
                <width>167</width>
-               <height>251</height>
+               <height>86</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -4656,114 +4664,20 @@
         <string>Feescales</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_19" >
-        <item rowspan="3" row="0" column="0" >
-         <widget class="QTabWidget" name="fees_tabWidget" >
-          <property name="currentIndex" >
-           <number>0</number>
+        <item row="0" column="0" >
+         <spacer name="horizontalSpacer_2" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="QWidget" name="tab_23" >
-           <attribute name="title" >
-            <string>Diagnosis</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_20" >
-            <item>
-             <widget class="QTableWidget" name="fees_diagnosis_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_30" >
-           <attribute name="title" >
-            <string>Preventive</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_21" >
-            <item>
-             <widget class="QTableWidget" name="fees_prevention_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_24" >
-           <attribute name="title" >
-            <string>Perio</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_22" >
-            <item>
-             <widget class="QTableWidget" name="fees_perio_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_25" >
-           <attribute name="title" >
-            <string>Conservation</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_23" >
-            <item>
-             <widget class="QTableWidget" name="fees_conservation_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_26" >
-           <attribute name="title" >
-            <string>Surgical</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_24" >
-            <item>
-             <widget class="QTableWidget" name="fees_surgical_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_27" >
-           <attribute name="title" >
-            <string>Prosthetics</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_25" >
-            <item>
-             <widget class="QTableWidget" name="fees_prosthetics_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_28" >
-           <attribute name="title" >
-            <string>Orthodontics</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_26" >
-            <item>
-             <widget class="QTableWidget" name="fees_ortho_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_29" >
-           <attribute name="title" >
-            <string>Other</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_27" >
-            <item>
-             <widget class="QTableWidget" name="fees_other_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_31" >
-           <attribute name="title" >
-            <string>Capitation(minors)</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_28" >
-            <item>
-             <widget class="QTableWidget" name="fees_capitation_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_32" >
-           <attribute name="title" >
-            <string>Occasional</string>
-           </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_29" >
-            <item>
-             <widget class="QTableWidget" name="fees_occasional_tableWidget" />
-            </item>
-           </layout>
-          </widget>
-         </widget>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>385</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
-        <item row="1" column="1" >
+        <item row="0" column="1" >
          <widget class="QComboBox" name="chooseFeescale_comboBox" >
           <item>
            <property name="text" >
@@ -4782,18 +4696,27 @@
           </item>
          </widget>
         </item>
-        <item row="2" column="1" >
-         <spacer name="verticalSpacer_3" >
+        <item row="0" column="2" >
+         <spacer name="horizontalSpacer_10" >
           <property name="orientation" >
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0" >
            <size>
-            <width>20</width>
-            <height>433</height>
+            <width>388</width>
+            <height>20</height>
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="1" column="0" colspan="3" >
+         <widget class="QTreeWidget" name="fees_treeWidget" >
+          <column>
+           <property name="text" >
+            <string>1</string>
+           </property>
+          </column>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -4806,7 +4729,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1009</width>
+     <width>985</width>
      <height>22</height>
     </rect>
    </property>
