@@ -1415,9 +1415,7 @@ class appointmentClass():
         '''called by signals from the patient's appointment table'''
         
         selected=self.ui.ptAppointment_treeWidget.currentItem()
-        if selected:
-            print selected.text(7)
-        else:
+        if selected is None or selected.childCount()!=0:
             self.ui.makeAppt_pushButton.setEnabled(False)
             self.ui.modifyAppt_pushButton.setEnabled(False)
             self.ui.clearAppt_pushButton.setEnabled(False)
@@ -1447,7 +1445,7 @@ class appointmentClass():
         self.ui.ptAppointment_treeWidget.setHeaderLabels(headers)
         parents={}
         #hflag=QtCore.Qt.QItemFlags(QtCore.Qt.ItemIsSelectable)
-        for heading in ("Past","Unscheduled","Todays","Future"):
+        for heading in ("Past","Unscheduled","TODAY","Future"):
             parents[heading]=QtGui.QTreeWidgetItem(
             self.ui.ptAppointment_treeWidget, [heading])
         rows=appointments.get_pts_appts(self.pt.serialno)
@@ -1489,7 +1487,7 @@ class appointmentClass():
             if date=="TBA":
                 parent=parents["Unscheduled"]
             elif date==today:
-                parent=parents["Todays"]
+                parent=parents["TODAY"]
             elif localsettings.uk_to_sqlDate(date)<localsettings.sqlToday():
                 parent=parents["Past"]                                
             else:
