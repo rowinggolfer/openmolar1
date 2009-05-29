@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>1009</width>
-    <height>677</height>
+    <height>734</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -457,8 +457,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>533</width>
-                    <height>481</height>
+                    <width>757</width>
+                    <height>512</height>
                    </rect>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_10" >
@@ -1598,8 +1598,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>516</width>
-                    <height>423</height>
+                    <width>757</width>
+                    <height>512</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_20" >
@@ -1910,11 +1910,11 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>751</width>
-                    <height>529</height>
+                    <width>767</width>
+                    <height>522</height>
                    </rect>
                   </property>
-                  <layout class="QGridLayout" name="gridLayout_16" >
+                  <layout class="QGridLayout" name="gridLayout_28" >
                    <item row="0" column="0" >
                     <widget class="QTextEdit" name="adminMemoEdit" >
                      <property name="minimumSize" >
@@ -1984,7 +1984,7 @@
                    <item row="1" column="0" colspan="4" >
                     <widget class="QGroupBox" name="adminAccount_groupBox" >
                      <property name="sizePolicy" >
-                      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+                      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -1998,19 +1998,25 @@
                      <property name="maximumSize" >
                       <size>
                        <width>16777215</width>
-                       <height>200</height>
+                       <height>16777215</height>
                       </size>
                      </property>
                      <property name="title" >
                       <string>Account</string>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_3" >
-                      <item rowspan="2" row="0" column="0" >
+                      <item rowspan="4" row="0" column="0" >
                        <widget class="QTextBrowser" name="moneytextBrowser" >
+                        <property name="sizePolicy" >
+                         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
                         <property name="minimumSize" >
                          <size>
-                          <width>300</width>
-                          <height>400</height>
+                          <width>0</width>
+                          <height>0</height>
                          </size>
                         </property>
                         <property name="maximumSize" >
@@ -2035,59 +2041,55 @@
                        </spacer>
                       </item>
                       <item row="1" column="1" >
-                       <layout class="QVBoxLayout" name="verticalLayout_9" >
-                        <item>
-                         <widget class="QPushButton" name="printEst_pushButton" >
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Print &amp;Estimate</string>
-                          </property>
-                          <property name="icon" >
-                           <iconset resource="../resources/resources.qrc" >
-                            <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="printAccount_pushButton" >
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Print &amp;Account</string>
-                          </property>
-                          <property name="icon" >
-                           <iconset resource="../resources/resources.qrc" >
-                            <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="takePayment_pushButton" >
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Take &amp;Payment</string>
-                          </property>
-                          <property name="icon" >
-                           <iconset resource="../resources/resources.qrc" >
-                            <normaloff>:/vcard.png</normaloff>:/vcard.png</iconset>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
+                       <widget class="QPushButton" name="printEst_pushButton" >
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>Print &amp;Estimate</string>
+                        </property>
+                        <property name="icon" >
+                         <iconset resource="../resources/resources.qrc" >
+                          <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1" >
+                       <widget class="QPushButton" name="printAccount_pushButton" >
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>Print &amp;Account</string>
+                        </property>
+                        <property name="icon" >
+                         <iconset resource="../resources/resources.qrc" >
+                          <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1" >
+                       <widget class="QPushButton" name="takePayment_pushButton" >
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>Take &amp;Payment</string>
+                        </property>
+                        <property name="icon" >
+                         <iconset resource="../resources/resources.qrc" >
+                          <normaloff>:/vcard.png</normaloff>:/vcard.png</iconset>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </widget>
@@ -2115,9 +2117,27 @@
                      <property name="title" >
                       <string>Patient's Diary</string>
                      </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_17" >
-                      <item>
+                     <layout class="QGridLayout" name="gridLayout_16" >
+                      <item rowspan="4" row="0" column="0" >
                        <widget class="QTreeWidget" name="ptAppointment_treeWidget" >
+                        <property name="sizePolicy" >
+                         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize" >
+                         <size>
+                          <width>0</width>
+                          <height>180</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>200</height>
+                         </size>
+                        </property>
                         <property name="alternatingRowColors" >
                          <bool>true</bool>
                         </property>
@@ -2131,102 +2151,111 @@
                         </column>
                        </widget>
                       </item>
-                      <item>
-                       <layout class="QVBoxLayout" name="verticalLayout_10" >
-                        <item>
-                         <widget class="QPushButton" name="newAppt_pushButton" >
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>&amp;New</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="makeAppt_pushButton" >
-                          <property name="enabled" >
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Schedule</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="findAppt_pushButton" >
-                          <property name="enabled" >
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Find in Book</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="clearAppt_pushButton" >
-                          <property name="enabled" >
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>28</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Clear/Cancel</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="printAppt_pushButton" >
-                          <property name="enabled" >
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Print Card</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="modifyAppt_pushButton" >
-                          <property name="enabled" >
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize" >
-                           <size>
-                            <width>16777215</width>
-                            <height>28</height>
-                           </size>
-                          </property>
-                          <property name="text" >
-                           <string>Modify</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
+                      <item row="0" column="1" colspan="2" >
+                       <spacer name="verticalSpacer_8" >
+                        <property name="orientation" >
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0" >
+                         <size>
+                          <width>20</width>
+                          <height>78</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item row="1" column="1" >
+                       <widget class="QPushButton" name="newAppt_pushButton" >
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>&amp;New</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="2" >
+                       <widget class="QPushButton" name="makeAppt_pushButton" >
+                        <property name="enabled" >
+                         <bool>false</bool>
+                        </property>
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>Schedule</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1" >
+                       <widget class="QPushButton" name="modifyAppt_pushButton" >
+                        <property name="enabled" >
+                         <bool>false</bool>
+                        </property>
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>28</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>Modify</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="2" >
+                       <widget class="QPushButton" name="findAppt_pushButton" >
+                        <property name="enabled" >
+                         <bool>false</bool>
+                        </property>
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>Find in Book</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1" >
+                       <widget class="QPushButton" name="printAppt_pushButton" >
+                        <property name="enabled" >
+                         <bool>false</bool>
+                        </property>
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>Print Card</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="2" >
+                       <widget class="QPushButton" name="clearAppt_pushButton" >
+                        <property name="enabled" >
+                         <bool>false</bool>
+                        </property>
+                        <property name="maximumSize" >
+                         <size>
+                          <width>16777215</width>
+                          <height>28</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string>Clear/Cancel</string>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </widget>
@@ -2253,7 +2282,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>757</width>
-                    <height>455</height>
+                    <height>512</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2525,8 +2554,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>311</width>
-                    <height>105</height>
+                    <width>761</width>
+                    <height>516</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2699,8 +2728,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>96</width>
-                       <height>198</height>
+                       <width>489</width>
+                       <height>236</height>
                       </rect>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_19" />
@@ -2732,8 +2761,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>208</width>
-                    <height>407</height>
+                    <width>236</width>
+                    <height>512</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_11" >
@@ -3026,8 +3055,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>242</width>
-                    <height>359</height>
+                    <width>761</width>
+                    <height>516</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
@@ -3075,7 +3104,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
+                        <width>723</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3417,8 +3446,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>243</width>
+                <height>575</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3435,8 +3464,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>243</width>
+                <height>575</height>
                </rect>
               </property>
              </widget>
@@ -3452,8 +3481,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>26</height>
+                <width>243</width>
+                <height>575</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3649,8 +3678,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>96</width>
-             <height>28</height>
+             <width>167</width>
+             <height>135</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -3966,8 +3995,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>28</height>
+               <width>167</width>
+               <height>251</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
