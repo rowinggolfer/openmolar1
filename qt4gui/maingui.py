@@ -1498,17 +1498,20 @@ class appointmentClass():
             w=QtGui.QTreeWidgetItem(parent,appointmentList)
         self.ui.ptAppointment_treeWidget.expandAll()
         
+            
+        for i in range(self.ui.ptAppointment_treeWidget.columnCount()):
+            self.ui.ptAppointment_treeWidget.resizeColumnToContents(i)
+        
         if parents["Past"].childCount()!=0:
             parents["Past"].setExpanded(False)
-            
+                
+        
         for parent in parents.values():
             if parent.childCount()==0:
                 self.ui.ptAppointment_treeWidget.removeItemWidget(parent,0)
             else:
                 parent.setFlags(QtCore.Qt.ItemIsEnabled)
         
-        for i in range(self.ui.ptAppointment_treeWidget.columnCount()):
-            self.ui.ptAppointment_treeWidget.resizeColumnToContents(i)
         #self.ui.ptAppointment_treeWidget.setColumnWidth(9,0)
         
 
