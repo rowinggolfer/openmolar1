@@ -19,9 +19,6 @@ import sys,os,hashlib,time
 from PyQt4 import QtGui,QtCore
 from xml.dom import minidom
 
-__version__ = "0.0.8 - 17th May 2009"
-__build__= "N/A dev_machine"
-
 class LoginError(Exception):pass
 
 def main(app):
@@ -30,8 +27,6 @@ def main(app):
     from openmolar.settings import localsettings
     from openmolar.qt4gui import Ui_startscreen
 
-    localsettings.__version__ = __version__
-    localsettings.__build__ = __build__
     uninitiated=True
 
     def autoreception(arg):    #arg is a QString
@@ -146,7 +141,7 @@ Are you ready to proceed?</center>'''
     app.closeAllWindows()
 
 if __name__=="__main__":
-    print "starting openMolar",__version__
+    print "starting openMolar"
     app=QtGui.QApplication(sys.argv)
 
     main(app)

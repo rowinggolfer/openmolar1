@@ -48,7 +48,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>7</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_10" >
        <attribute name="title" >
@@ -117,6 +117,9 @@
                  <width>32</width>
                  <height>24</height>
                 </size>
+               </property>
+               <property name="shortcut" >
+                <string>Esc</string>
                </property>
               </widget>
              </item>
@@ -194,6 +197,9 @@
                  <height>24</height>
                 </size>
                </property>
+               <property name="shortcut" >
+                <string>Ctrl+F</string>
+               </property>
               </widget>
              </item>
             </layout>
@@ -256,6 +262,9 @@
                 <iconset resource="../resources/resources.qrc" >
                  <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
                </property>
+               <property name="shortcut" >
+                <string>Ctrl+R</string>
+               </property>
               </widget>
              </item>
              <item>
@@ -307,6 +316,9 @@
                <property name="icon" >
                 <iconset resource="../resources/resources.qrc" >
                  <normaloff>:/agt_family.png</normaloff>:/agt_family.png</iconset>
+               </property>
+               <property name="shortcut" >
+                <string>Ctrl+G</string>
                </property>
               </widget>
              </item>
@@ -418,11 +430,14 @@
               <string>Save the changes made to this record.</string>
              </property>
              <property name="text" >
-              <string>&amp;Save Changes</string>
+              <string>Save Changes</string>
              </property>
              <property name="icon" >
               <iconset resource="../resources/resources.qrc" >
                <normaloff>:/save_all.png</normaloff>:/save_all.png</iconset>
+             </property>
+             <property name="shortcut" >
+              <string>Ctrl+S</string>
              </property>
             </widget>
            </item>
@@ -435,12 +450,15 @@
               <iconset resource="../resources/resources.qrc" >
                <normaloff>:/txt.png</normaloff>:/txt.png</iconset>
              </property>
+             <property name="shortcut" >
+              <string>Ins</string>
+             </property>
             </widget>
            </item>
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>3</number>
+              <number>4</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -457,7 +475,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>533</width>
+                    <width>717</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1598,7 +1616,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>516</width>
+                    <width>717</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -2307,9 +2325,9 @@
                  <widget class="QWidget" name="scrollAreaWidgetContents_9" >
                   <property name="geometry" >
                    <rect>
-                    <x>-201</x>
+                    <x>0</x>
                     <y>0</y>
-                    <width>701</width>
+                    <width>717</width>
                     <height>367</height>
                    </rect>
                   </property>
@@ -2582,7 +2600,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>520</width>
+                    <width>737</width>
                     <height>351</height>
                    </rect>
                   </property>
@@ -2756,7 +2774,7 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>248</width>
+                       <width>465</width>
                        <height>198</height>
                       </rect>
                      </property>
@@ -2790,10 +2808,10 @@
                     <x>0</x>
                     <y>0</y>
                     <width>220</width>
-                    <height>407</height>
+                    <height>440</height>
                    </rect>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_11" >
+                  <layout class="QVBoxLayout" name="verticalLayout_9" >
                    <item>
                     <widget class="QGroupBox" name="groupBox_5" >
                      <property name="title" >
@@ -2842,6 +2860,16 @@
                        </widget>
                       </item>
                      </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="estLetter_pushButton" >
+                     <property name="text" >
+                      <string>Estimate Letter</string>
+                     </property>
+                     <property name="checkable" >
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -3083,7 +3111,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>504</width>
+                    <width>721</width>
                     <height>359</height>
                    </rect>
                   </property>
@@ -3131,8 +3159,8 @@
                       <property name="geometry" >
                        <rect>
                         <x>0</x>
-                        <y>-20</y>
-                        <width>466</width>
+                        <y>0</y>
+                        <width>683</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3308,6 +3336,9 @@
        <attribute name="icon" >
         <iconset resource="../resources/resources.qrc" >
          <normaloff>:/kaddressbook.png</normaloff>:/kaddressbook.png</iconset>
+       </attribute>
+       <attribute name="toolTip" >
+        <string>Appointments - Will Load today by default</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5" >
         <item row="0" column="0" colspan="3" >

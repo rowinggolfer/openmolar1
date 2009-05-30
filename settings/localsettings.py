@@ -7,10 +7,12 @@
 # for more details.
 
 import MySQLdb,sys,datetime,os
+import _version
 
-__version__=""
-__build__=""
+__version__= "0.0.9"
+__build__= _version.version_info.get("date")
 
+print "Version %s\nDate %s"%(__version__,__build__)
 
 if "win" in sys.platform:
     #-- sorry about this... but cross platform is a goal :(
@@ -24,6 +26,50 @@ else:
 
 #updated if correct password is given
 successful_login=False
+
+#-- self-explanatory?
+about='''<p>
+openMolar - open Source dental practice management software.<br />
+Version %s  -  Build Date %s<br />
+Copyright (C) 2009  Neil A. Wallace B.Ch.D.<br />
+sourcecode available at <a href="http://launchpad.net/openmolar">
+"http://launchpad.net/openmolar"</a>.
+</p>
+Thanks to <a href="http://rfquerin.org">Richard Querin</a>
+for the wonderful icon and Logo.'''%(__version__,__build__)
+
+license='''<hr />
+<p>
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+<br />
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+<br />
+You should have received a copy of the GNU General Public License
+along with this program.
+If not, see <a href="http://www.gnu.org/licenses">
+http://www.gnu.org/licenses</a>.</p>'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #-- this variable is used when using DATE_FORMAT from the database
 #-- my preference is the UK style dd/mm/YYYY

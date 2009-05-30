@@ -493,6 +493,11 @@ class feeClass():
             self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
 
+    def estLetter(self):
+        self.advise("Est Letter - Not yet available",1)
+
+
+
     def recalculateEstimate(self, ALL=True):
         '''
         Adds ALL tooth items to the estimate.
@@ -1998,13 +2003,14 @@ class signals():
 
 
         #Estimates and course ManageMent
-
-        QtCore.QObject.connect(self.ui.recalcEst_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.recalculateEstimate)
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
                             QtCore.SIGNAL("clicked()"), self.newCourseSetup)
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
                                QtCore.SIGNAL("clicked()"), self.closeCourse)
+        QtCore.QObject.connect(self.ui.estLetter_pushButton,
+                        QtCore.SIGNAL("clicked()"),self.estLetter)
+        QtCore.QObject.connect(self.ui.recalcEst_pushButton,
+                        QtCore.SIGNAL("clicked()"),self.recalculateEstimate)
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
                                QtCore.SIGNAL("clicked()"), self.addXrayItems)
         QtCore.QObject.connect(self.ui.perioTxpushButton,
@@ -3633,11 +3639,8 @@ printingClass,cashbooks,contractClass):
         '''
         called by menu - help - about openmolar
         '''
-        from openmolar.settings import licensingText
-        self.advise('''%s <br />version %s Alpha<br />
-        build %s<br />%s'''%(licensingText.about,
-        localsettings.__version__,localsettings.__build__,
-        licensingText.license), 1)
+        self.advise('''<p>%s</p><p>%s</p>'''%(localsettings.about,
+        localsettings.license), 1)
 
 
 
