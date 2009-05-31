@@ -10,11 +10,21 @@ import _mysql
 from openmolar.connect import connect
 from openmolar.settings import localsettings
 
+
+def getData(ix):
+    db = connect()
+    cursor = db.cursor()
+    query='''select data from newdocsprinted where ix=%d'''%ix
+    cursor.execute(query)
+    rows = cursor.fetchone()
+    cursor.close()
+    return str(rows[0])
+
 def previousDocs(sno):
     db = connect()
     cursor = db.cursor()
-    query='''select DATE_FORMAT(printdate,'%s'),docname,docversion,fieldvalues 
-    from docsprinted where serialno=%s order by printdate DESC'''%(localsettings.sqlDateFormat,sno)
+    query='''select DATE_FORMAT(printdate,'%s'),docname,docversion,ix
+    from newdocsprinted where serialno=%s order by printdate DESC'''%(localsettings.sqlDateFormat,sno)
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
@@ -28,7 +38,7 @@ def add(sno,docname,object):
 
     #object=object.replace('"','\"')
     object=_mysql.escape_string(object)
-    query='''insert into docsprinted set serialno=%d,printdate=%s,docname="%s",docversion=1,fieldvalues="%s"'''%(
+    query='''insert into newdocsprinted set serialno=%d,printdate=%s,docname="%s",docversion=1,data="%s"'''%(
     sno,localsettings.sqlToday(),docname,object)
     if True or localsettings.logqueries:
         print query
@@ -36,10 +46,11 @@ def add(sno,docname,object):
     db.commit()
     cursor.close()
     #db.close()
-    
+
 
 
 if __name__ == "__main__":
-    docs=previousDocs(4944)
+    docs=previousDocs(11956)
     for d in docs:
         print str(d)
+    print getData(80978)

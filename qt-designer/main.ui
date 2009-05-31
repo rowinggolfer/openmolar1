@@ -458,7 +458,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>4</number>
+              <number>2</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -1615,7 +1615,7 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>0</y>
+                    <y>-76</y>
                     <width>717</width>
                     <height>423</height>
                    </rect>
@@ -1893,7 +1893,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_16" >
                       <item>
-                       <widget class="QListWidget" name="previousCorrespondence_listWidget" />
+                       <widget class="QTreeWidget" name="previousCorrespondence_treeWidget" >
+                        <property name="alternatingRowColors" >
+                         <bool>true</bool>
+                        </property>
+                        <property name="animated" >
+                         <bool>true</bool>
+                        </property>
+                        <column>
+                         <property name="text" >
+                          <string>1</string>
+                         </property>
+                        </column>
+                       </widget>
                       </item>
                      </layout>
                     </widget>
@@ -5009,7 +5021,6 @@
   <tabstop>accountB_radioButton</tabstop>
   <tabstop>accountC_radioButton</tabstop>
   <tabstop>account2_pushButton</tabstop>
-  <tabstop>previousCorrespondence_listWidget</tabstop>
   <tabstop>apptPrevDay_pushButton</tabstop>
   <tabstop>apptNextDay_pushButton</tabstop>
   <tabstop>loadAccountsTable_pushButton</tabstop>

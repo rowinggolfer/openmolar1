@@ -57,20 +57,6 @@ http://www.gnu.org/licenses</a>.</p>'''
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #-- this variable is used when using DATE_FORMAT from the database
 #-- my preference is the UK style dd/mm/YYYY
 sqlDateFormat=r"%d/%m/%Y"

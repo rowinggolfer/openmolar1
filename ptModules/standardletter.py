@@ -23,7 +23,11 @@ def getHtml(pt):
             retarg+="%s, "%("January","February","March","April","May","June","July","August","September","October","November","December")[d.month-1]
             retarg+= '%s <br /><br />'%d.year
             retarg+="Dear %s. %s,<br />"%(pt.title.title(),pt.sname.title())
+            #######################################################
+            #-- this next line is used to insert text for estimates
+            #-- do not change
             retarg+="<br />"*(12)
+            #######################################################
             retarg+="Yours Sincerely,"+"<br />"*4
             retarg+="</body></html>"
             return retarg

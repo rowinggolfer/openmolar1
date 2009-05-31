@@ -494,9 +494,10 @@ class feeClass():
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
 
     def estLetter(self):
-        self.advise("Est Letter - Not yet available",1)
-
-
+        '''
+        user has clicked on custom estimate
+        '''
+        self.customEstimate()
 
     def recalculateEstimate(self, ALL=True):
         '''
@@ -649,20 +650,24 @@ class feeClass():
         (user clicked on the delete button)
         now try and remove from the plan
         '''
-        print "delete item from treament plan",type
+        print "delete item from treament plan or completed",type
         tup=type.split(" ")
         try:
             att=tup[0]
             treat=tup[1]+" "
-            plan=self.pt.__dict__[att+"pl"].replace(treat,"")
-            self.pt.__dict__[att+"pl"]=plan
-            completed= self.pt.__dict__[att+"cmp"]
+            result=QtGui.QMessageBox.question(self,"question",
+            "remove %s %sfrom this course of treatment?"%(att,treat),QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if result==QtGui.QMessageBox.Yes:
+                plan=self.pt.__dict__[att+"pl"].replace(treat,"")
+                self.pt.__dict__[att+"pl"]=plan
+                completed=self.pt.__dict__[att+"cmp"].replace(treat,"")
+                self.pt.__dict__[att+"cmp"]=completed
 
-            #-- now update the charts
-            if re.findall("[ul][lr][1-8]",att):
-                self.updateChartsAfterTreatment(att,plan,completed)
+                #-- now update the charts
+                if re.findall("[ul][lr][1-8]",att):
+                    self.updateChartsAfterTreatment(att,plan,completed)
 
-            self.load_treatTrees()
+                self.load_treatTrees()
 
         except Exception,e:
             self.advise("Error deleting %s from plan<br />"%type+
@@ -1976,8 +1981,8 @@ class signals():
                                QtCore.SIGNAL("clicked()"),self.exportRecalls)
         QtCore.QObject.connect(self.ui.account2_pushButton,
                         QtCore.SIGNAL("clicked()"),self.accountButton2Clicked)
-        QtCore.QObject.connect(self.ui.previousCorrespondence_listWidget,
-            QtCore.SIGNAL("itemDoubleClicked (QListWidgetItem *)"),self.showDoc)
+        QtCore.QObject.connect(self.ui.previousCorrespondence_treeWidget,
+        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),self.showDoc)
         #menu
         QtCore.QObject.connect(self.ui.action_save_patient,
                         QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
@@ -3080,7 +3085,7 @@ class printingClass():
         
         if est.print_():
             pdfDup=estimatePrint.getPDF()
-            docsprinted.add(self.pt.serialno,"estimate",pdfDup)
+            docsprinted.add(self.pt.serialno,"auto estimate (pdf)",pdfDup)
         else:
             self.advise("Error saving PDF copy",2)
         self.pt.addHiddenNote("printed","estimate")
@@ -3101,6 +3106,55 @@ class printingClass():
             myclass.printpage()
             docsprinted.add(self.pt.serialno,"std letter",html)
             self.pt.addHiddenNote("printed","std letter")
+    
+    def customEstimate(self,html=""):
+        '''
+        prints a custom estimate to the patient
+        '''
+        if self.pt.serialno==0:
+            self.advise("no patient selected",1)
+            return
+        if html=="":
+            html=standardletter.getHtml(self.pt)
+            pt_total=0
+            ehtml="<br />Here is an estimate for your treament."
+            ehtml+="<br />"*4
+            ehtml+="<table border=1>"
+            for est in self.pt.estimates:
+                pt_total+=est.ptfee
+                number=est.number
+                item=est.description
+                amount=est.ptfee
+                            
+                mult=""
+                if number>1:
+                    mult="s"
+                item=item.replace("*",mult)
+                if "^" in item:
+                    item=item.replace("^","")
+                    
+                ehtml+='<tr><td>%s</td><td>%s</td><td align="right">\xa3%s</td></tr>'%(
+                number,item,localsettings.formatMoney(amount))
+            ehtml+='<tr><td></td><td><b>TOTAL</b></td>'
+            ehtml+='<td align="right">\xa3%s</td></tr>'%(
+            localsettings.formatMoney(pt_total))
+            ehtml+="</table>"
+            ehtml+="<br />"*4
+            html=html.replace("<br />"*(12),ehtml)
+            html+="<i>Please note, this estimate may be subject to change if "
+            html+="clinical circumstances dictate.</i>"
+        else:
+            print "html",html
+        Dialog = QtGui.QDialog(self)
+        dl = Ui_enter_letter_text.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.textEdit.setHtml(html)
+        if Dialog.exec_():
+            html=dl.textEdit.toHtml()
+            myclass=letterprint.letter(html)
+            myclass.printpage()
+            docsprinted.add(self.pt.serialno,"cust estimate (html)",html)
+            self.pt.addHiddenNote("printed","cust estimate")
 
     def printReferral(self):
         '''prints a referal letter controlled by referal.xml file'''
@@ -3699,19 +3753,43 @@ printingClass,cashbooks,contractClass):
         '''
         load the docsprinted listWidget
         '''
-        self.ui.previousCorrespondence_listWidget.clear()
+        self.ui.previousCorrespondence_treeWidget.clear()
+        self.ui.previousCorrespondence_treeWidget.setHeaderLabels(["Date","Type","Version","Index"])
         docs=docsprinted.previousDocs(self.pt.serialno)
         for d in docs:
-            self.ui.previousCorrespondence_listWidget.addItem(str(d))
-
-    def showDoc(self,item):
+            doc=[str(d[0]),str(d[1]),str(d[2]),str(d[3])]
+            i=QtGui.QTreeWidgetItem(
+            self.ui.previousCorrespondence_treeWidget,doc)
+        self.ui.previousCorrespondence_treeWidget.expandAll()
+        for i in range(self.ui.previousCorrespondence_treeWidget.columnCount()):
+            self.ui.previousCorrespondence_treeWidget.resizeColumnToContents(i)
+        #-- hide the index column
+        self.ui.previousCorrespondence_treeWidget.setColumnWidth(3,0)
+        
+    def showDoc(self,item,index):
         '''
         called by a double click on the documents listview
         '''
         print "showDoc"
-        print '''showDoc needs work - suggest os.popen("temp.pdf")'''
-        print self.advise(item.text(),1)
-
+        
+        ix=int(item.text(3))
+        if "html" in item.text(1):
+            print "html file found!"
+            result=QtGui.QMessageBox.question(self,"Re-open",
+            "Do you want to review and/or reprint this item?",
+                    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if result==QtGui.QMessageBox.Yes:
+                html=docsprinted.getData(ix)
+                print html
+                self.customEstimate(html)
+            
+        elif "pdf" in item.text(1):
+            print '''showDoc needs work - suggest os.popen("temp.pdf")'''
+            self.advise("unable to review PDFs currently",1) 
+        else: #unknown data type... probably plain text.
+            print "other type of doc"
+            self.advise(docsprinted.getData(ix),1)
+        
     def load_todays_patients_combobox(self):
         '''
         loads the quick select combobox, with all of todays's

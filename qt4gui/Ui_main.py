@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Sat May 30 11:31:33 2009
+# Created: Sun May 31 23:12:03 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -610,7 +610,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollArea_5.setObjectName("scrollArea_5")
         self.scrollAreaWidgetContents_8 = QtGui.QWidget(self.scrollArea_5)
-        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 717, 423))
+        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, -76, 717, 423))
         self.scrollAreaWidgetContents_8.setObjectName("scrollAreaWidgetContents_8")
         self.gridLayout_20 = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
         self.gridLayout_20.setObjectName("gridLayout_20")
@@ -738,9 +738,11 @@ class Ui_MainWindow(object):
         self.groupBox_3.setObjectName("groupBox_3")
         self.horizontalLayout_16 = QtGui.QHBoxLayout(self.groupBox_3)
         self.horizontalLayout_16.setObjectName("horizontalLayout_16")
-        self.previousCorrespondence_listWidget = QtGui.QListWidget(self.groupBox_3)
-        self.previousCorrespondence_listWidget.setObjectName("previousCorrespondence_listWidget")
-        self.horizontalLayout_16.addWidget(self.previousCorrespondence_listWidget)
+        self.previousCorrespondence_treeWidget = QtGui.QTreeWidget(self.groupBox_3)
+        self.previousCorrespondence_treeWidget.setAlternatingRowColors(True)
+        self.previousCorrespondence_treeWidget.setAnimated(True)
+        self.previousCorrespondence_treeWidget.setObjectName("previousCorrespondence_treeWidget")
+        self.horizontalLayout_16.addWidget(self.previousCorrespondence_treeWidget)
         self.gridLayout_20.addWidget(self.groupBox_3, 4, 0, 1, 2)
         self.scrollArea_5.setWidget(self.scrollAreaWidgetContents_8)
         self.horizontalLayout_11.addWidget(self.scrollArea_5)
@@ -2005,7 +2007,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.main_tabWidget.setCurrentIndex(0)
-        self.tabWidget.setCurrentIndex(7)
+        self.tabWidget.setCurrentIndex(2)
         self.contract_tabWidget.setCurrentIndex(0)
         self.stackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -2155,8 +2157,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.accountA_radioButton, self.accountB_radioButton)
         MainWindow.setTabOrder(self.accountB_radioButton, self.accountC_radioButton)
         MainWindow.setTabOrder(self.accountC_radioButton, self.account2_pushButton)
-        MainWindow.setTabOrder(self.account2_pushButton, self.previousCorrespondence_listWidget)
-        MainWindow.setTabOrder(self.previousCorrespondence_listWidget, self.apptPrevDay_pushButton)
+        MainWindow.setTabOrder(self.account2_pushButton, self.apptPrevDay_pushButton)
         MainWindow.setTabOrder(self.apptPrevDay_pushButton, self.apptNextDay_pushButton)
         MainWindow.setTabOrder(self.apptNextDay_pushButton, self.loadAccountsTable_pushButton)
 
@@ -2167,17 +2168,22 @@ class Ui_MainWindow(object):
         self.newPatientPushButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Add a New Patient to the database.", None, QtGui.QApplication.UnicodeUTF8))
         self.findButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Click on this Button to search for in patient in your database.", None, QtGui.QApplication.UnicodeUTF8))
         self.findButton.setText(QtGui.QApplication.translate("MainWindow", "Find", None, QtGui.QApplication.UnicodeUTF8))
+        self.findButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+F", None, QtGui.QApplication.UnicodeUTF8))
         self.backButton.setToolTip(QtGui.QApplication.translate("MainWindow", "This cycles back through the history of records loaded today.", None, QtGui.QApplication.UnicodeUTF8))
         self.reloadButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Reload the patient from the database.", None, QtGui.QApplication.UnicodeUTF8))
+        self.reloadButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
         self.nextButton.setToolTip(QtGui.QApplication.translate("MainWindow", "This cycles forwards through the history of records loaded today.", None, QtGui.QApplication.UnicodeUTF8))
         self.relatedpts_pushButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Show patients who live at the same address, or who have a similar name.", None, QtGui.QApplication.UnicodeUTF8))
         self.relatedpts_pushButton.setText(QtGui.QApplication.translate("MainWindow", "&Related", None, QtGui.QApplication.UnicodeUTF8))
+        self.relatedpts_pushButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+G", None, QtGui.QApplication.UnicodeUTF8))
         self.daylistBox.setToolTip(QtGui.QApplication.translate("MainWindow", "A drop down box of all patients who have an appointment today.", None, QtGui.QApplication.UnicodeUTF8))
         self.newNotesLabel.setText(QtGui.QApplication.translate("MainWindow", "Today\'s Notes", None, QtGui.QApplication.UnicodeUTF8))
         self.notesEnter_textEdit.setToolTip(QtGui.QApplication.translate("MainWindow", "Enter Notes.", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Save the changes made to this record.", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveButton.setText(QtGui.QApplication.translate("MainWindow", "&Save Changes", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveButton.setText(QtGui.QApplication.translate("MainWindow", "Save Changes", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.phraseBook_pushButton.setText(QtGui.QApplication.translate("MainWindow", "PhraseBook", None, QtGui.QApplication.UnicodeUTF8))
+        self.phraseBook_pushButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Ins", None, QtGui.QApplication.UnicodeUTF8))
         self.patientEdit_groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Details", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Title", None, QtGui.QApplication.UnicodeUTF8))
         self.label_17.setText(QtGui.QApplication.translate("MainWindow", "Sex", None, QtGui.QApplication.UnicodeUTF8))
@@ -2255,6 +2261,7 @@ class Ui_MainWindow(object):
         self.accountC_radioButton.setText(QtGui.QApplication.translate("MainWindow", "\"C\" letter", None, QtGui.QApplication.UnicodeUTF8))
         self.account2_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Print A Statement of Account", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("MainWindow", "Previous Correspondence", None, QtGui.QApplication.UnicodeUTF8))
+        self.previousCorrespondence_treeWidget.headerItem().setText(0, QtGui.QApplication.translate("MainWindow", "1", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), QtGui.QApplication.translate("MainWindow", "Printing", None, QtGui.QApplication.UnicodeUTF8))
         self.underTreatment_label.setText(QtGui.QApplication.translate("MainWindow", "Under Active Treatment", None, QtGui.QApplication.UnicodeUTF8))
         self.NHSadmin_groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "NHS", None, QtGui.QApplication.UnicodeUTF8))
@@ -2332,6 +2339,7 @@ class Ui_MainWindow(object):
         self.label_42.setText(QtGui.QApplication.translate("MainWindow", "Font Size", None, QtGui.QApplication.UnicodeUTF8))
         self.printDaylists_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Print Daylists", None, QtGui.QApplication.UnicodeUTF8))
         self.main_tabWidget.setTabText(self.main_tabWidget.indexOf(self.tab_13), QtGui.QApplication.translate("MainWindow", "Appointment Book", None, QtGui.QApplication.UnicodeUTF8))
+        self.main_tabWidget.setTabToolTip(self.main_tabWidget.indexOf(self.tab_13), QtGui.QApplication.translate("MainWindow", "Appointments - Will Load today by default", None, QtGui.QApplication.UnicodeUTF8))
         self.aptOVmode_label.setText(QtGui.QApplication.translate("MainWindow", "View Mode", None, QtGui.QApplication.UnicodeUTF8))
         self.apptOVtoday_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Go To Current Week", None, QtGui.QApplication.UnicodeUTF8))
         self.label_62.setText(QtGui.QApplication.translate("MainWindow", "Week", None, QtGui.QApplication.UnicodeUTF8))
