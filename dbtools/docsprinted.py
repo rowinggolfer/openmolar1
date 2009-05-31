@@ -5,6 +5,8 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
+
+import _mysql
 from openmolar.connect import connect
 from openmolar.settings import localsettings
 
@@ -23,10 +25,12 @@ def add(sno,docname,object):
     '''add a not in the database of stuff which has been printed'''
     db = connect()
     cursor = db.cursor()
-    object=object.replace('"',"'")
+
+    #object=object.replace('"','\"')
+    object=_mysql.escape_string(object)
     query='''insert into docsprinted set serialno=%d,printdate=%s,docname="%s",docversion=1,fieldvalues="%s"'''%(
     sno,localsettings.sqlToday(),docname,object)
-    if localsettings.logqueries:
+    if True or localsettings.logqueries:
         print query
     cursor.execute(query)
     db.commit()

@@ -1976,7 +1976,8 @@ class signals():
                                QtCore.SIGNAL("clicked()"),self.exportRecalls)
         QtCore.QObject.connect(self.ui.account2_pushButton,
                         QtCore.SIGNAL("clicked()"),self.accountButton2Clicked)
-
+        QtCore.QObject.connect(self.ui.previousCorrespondence_listWidget,
+            QtCore.SIGNAL("itemDoubleClicked (QListWidgetItem *)"),self.showDoc)
         #menu
         QtCore.QObject.connect(self.ui.action_save_patient,
                         QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
@@ -3076,7 +3077,12 @@ class printingClass():
         est=estimatePrint.estimate()
         est.setProps(self.pt.title,self.pt.fname,self.pt.sname,self.pt.serialno)
         est.estItems=self.pt.estimates
-        est.print_()
+        
+        if est.print_():
+            pdfDup=estimatePrint.getPDF()
+            docsprinted.add(self.pt.serialno,"estimate",pdfDup)
+        else:
+            self.advise("Error saving PDF copy",2)
         self.pt.addHiddenNote("printed","estimate")
 
     def printLetter(self):
@@ -3698,6 +3704,13 @@ printingClass,cashbooks,contractClass):
         for d in docs:
             self.ui.previousCorrespondence_listWidget.addItem(str(d))
 
+    def showDoc(self,item):
+        '''
+        called by a double click on the documents listview
+        '''
+        print "showDoc"
+        print '''showDoc needs work - suggest os.popen("temp.pdf")'''
+        print self.advise(item.text(),1)
 
     def load_todays_patients_combobox(self):
         '''
