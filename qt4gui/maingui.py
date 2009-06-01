@@ -148,6 +148,7 @@ class feeClass():
                 +"Please write this down and tell Neil what happened",2)
 
     def loadFeesTable(self):
+        
         headers=feesTable.getFeeHeaders()
         #self.ui.fees_treeWidget.setColumnCount(9)
 
@@ -175,7 +176,11 @@ class feeClass():
         self.ui.fees_treeWidget.setColumnWidth(3, 0)
         #-- hide the description column
         self.ui.fees_treeWidget.setColumnWidth(4, 0)
-
+    
+        #-- prevent it getting loaded again 
+        #--(and undoing any user changes to col widths, expanded items etc...
+        self.feestableLoaded=True
+        
     def feestableProperties(self):
         if self.ui.chooseFeescale_comboBox.currentIndex()==1:
             feesTable.private_only=True
@@ -3111,7 +3116,7 @@ class printingClass():
             docsprinted.add(self.pt.serialno,"std letter",html)
             self.pt.addHiddenNote("printed","std letter")
     
-    def customEstimate(self,html=""):
+    def customEstimate(self,html="",version=0):
         '''
         prints a custom estimate to the patient
         '''
@@ -3121,7 +3126,7 @@ class printingClass():
         if html=="":
             html=standardletter.getHtml(self.pt)
             pt_total=0
-            ehtml="<br />Here is an estimate for your treament."
+            ehtml="<br />Estimate for your current course of treatment."
             ehtml+="<br />"*4
             ehtml+="<table border=1>"
             for est in self.pt.estimates:
@@ -3157,7 +3162,12 @@ class printingClass():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
             myclass.printpage()
-            docsprinted.add(self.pt.serialno,"cust estimate (html)",html)
+            ####try this... 
+            html=str(dl.textEdit.toHtml().toAscii())
+            
+            docsprinted.add(self.pt.serialno,
+            "cust estimate (html)",html,version+1)
+
             self.pt.addHiddenNote("printed","cust estimate")
 
     def printReferral(self):
@@ -3405,7 +3415,8 @@ class pageHandlingClass():
             self.layout_apptOV()
 
         if ci==7:
-            self.loadFeesTable()
+            if not self.feestableLoaded:
+                self.loadFeesTable()
 
 
     def handle_patientTab(self):
@@ -3783,9 +3794,8 @@ printingClass,cashbooks,contractClass):
             "Do you want to review and/or reprint this item?",
                     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if result==QtGui.QMessageBox.Yes:
-                html=docsprinted.getData(ix)
-                print html
-                self.customEstimate(html)
+                html,version=docsprinted.getData(ix)
+                self.customEstimate(html,version)
             
         elif "pdf" in item.text(1):
             print '''showDoc needs work - suggest os.popen("temp.pdf")'''
