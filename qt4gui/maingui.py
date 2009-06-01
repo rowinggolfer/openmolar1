@@ -3195,7 +3195,7 @@ class printingClass():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
             myclass.printpage()
-            docsprinted.add(self.pt.serialno,"referral",html)
+            docsprinted.add(self.pt.serialno,"referral (html)",html)
             self.pt.addHiddenNote("printed","referral")
 
     def printChart(self):
