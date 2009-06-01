@@ -8,6 +8,7 @@
 from PyQt4 import QtGui
 #import qrc_resources
 
+
 class letter():
     def __init__(self,html):
         self.html=html
@@ -21,6 +22,7 @@ class letter():
         document = QtGui.QTextDocument()
         document.setHtml(self.html)
         document.print_(self.printer)
+        return True
             
 if __name__ == "__main__":
     import sys

@@ -9,9 +9,9 @@
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-import os,sys,copy,pickle,time,threading,re
+import os,sys,copy,pickle,time,threading,re,subprocess
 
-from openmolar.settings import localsettings,fee_keys
+from openmolar.settings import localsettings,fee_keys,utilities
 
 from openmolar.qt4gui import Ui_main,colours
 
@@ -497,12 +497,6 @@ class feeClass():
             fee,ptfee=self.getItemFees(itemcode)
             self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
-
-    def estLetter(self):
-        '''
-        user has clicked on custom estimate
-        '''
-        self.customEstimate()
 
     def recalculateEstimate(self, ALL=True):
         '''
@@ -2019,7 +2013,7 @@ class signals():
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
                                QtCore.SIGNAL("clicked()"), self.closeCourse)
         QtCore.QObject.connect(self.ui.estLetter_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.estLetter)
+                        QtCore.SIGNAL("clicked()"),self.customEstimate)
         QtCore.QObject.connect(self.ui.recalcEst_pushButton,
                         QtCore.SIGNAL("clicked()"),self.recalculateEstimate)
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
@@ -3059,6 +3053,18 @@ class newPatientClass():
 
 
 class printingClass():
+    def commitPDFtoDB(self,descr):
+        '''
+        grabs "temp.pdf" and puts into the db.
+        '''
+        try:
+            pdfDup=utilities.getPDF()
+            #-field is 20 chars max.. hence the [:14]
+            docsprinted.add(self.pt.serialno,descr[:14] + " (pdf)",pdfDup)
+        except:
+            self.advise("Error saving PDF copy",2)
+        
+    
     def printDupReceipt(self):
         dupdate=self.ui.dupReceiptDate_lineEdit.text()
         amount=self.ui.receiptDoubleSpinBox.value()*100
@@ -3079,10 +3085,15 @@ class printingClass():
         if duplicate:
             myreceipt.isDuplicate=duplicate
             myreceipt.dupdate=dupdate
+            self.pt.addHiddenNote("printed","dup receipt")
         else:
             self.pt.addHiddenNote("printed","receipt")
 
-        myreceipt.print_()
+        if myreceipt.print_():
+            if duplicate:
+                self.commitPDFtoDB("dup receipt")
+            else:
+                self.commitPDFtoDB("receipt")
 
     def printEstimate(self):
         if self.pt.serialno==0:
@@ -3093,10 +3104,7 @@ class printingClass():
         est.estItems=self.pt.estimates
         
         if est.print_():
-            pdfDup=estimatePrint.getPDF()
-            docsprinted.add(self.pt.serialno,"auto estimate (pdf)",pdfDup)
-        else:
-            self.advise("Error saving PDF copy",2)
+            self.commitPDFtoDB("auto estimate")
         self.pt.addHiddenNote("printed","estimate")
 
     def printLetter(self):
@@ -3113,9 +3121,10 @@ class printingClass():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
             myclass.printpage()
-            docsprinted.add(self.pt.serialno,"std letter",html)
+            html=str(html.toAscii())
+            docsprinted.add(self.pt.serialno,"std letter (html)",html)
             self.pt.addHiddenNote("printed","std letter")
-    
+        
     def customEstimate(self,html="",version=0):
         '''
         prints a custom estimate to the patient
@@ -3128,7 +3137,7 @@ class printingClass():
             pt_total=0
             ehtml="<br />Estimate for your current course of treatment."
             ehtml+="<br />"*4
-            ehtml+="<table border=1>"
+            ehtml+='<table border=1 width=400>'
             for est in self.pt.estimates:
                 pt_total+=est.ptfee
                 number=est.number
@@ -3162,7 +3171,7 @@ class printingClass():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
             myclass.printpage()
-            ####try this... 
+            
             html=str(dl.textEdit.toHtml().toAscii())
             
             docsprinted.add(self.pt.serialno,
@@ -3233,6 +3242,7 @@ class printingClass():
                 self.pt.updateBilling(tone)
                 self.pt.addHiddenNote("printed","account - tone %s"%tone)
                 self.addNewNote("Account Printed")
+                self.commitPDFtoDB("Account tone%s"%tone)
 
     def testGP17(self):
         self.printGP17(True)
@@ -3798,11 +3808,23 @@ printingClass,cashbooks,contractClass):
                 self.customEstimate(html,version)
             
         elif "pdf" in item.text(1):
-            print '''showDoc needs work - suggest os.popen("temp.pdf")'''
-            self.advise("unable to review PDFs currently",1) 
+            result=QtGui.QMessageBox.question(self,"Re-open",
+            "Do you want to review and/or reprint this item?",
+                    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if result==QtGui.QMessageBox.Yes:
+                try:
+                    data,version=docsprinted.getData(ix)
+                    f=open("temp.pdf","w")
+                    f.write(data)
+                    f.close()
+                    subprocess.call(["evince","temp.pdf"])
+                except Exception,e:
+                    print "view PDF error"
+                    print Exception,e
+                    self.advise("error reviewing PDF file",1) 
         else: #unknown data type... probably plain text.
             print "other type of doc"
-            self.advise(docsprinted.getData(ix),1)
+            self.advise(docsprinted.getData(ix)[0],1)
         
     def load_todays_patients_combobox(self):
         '''

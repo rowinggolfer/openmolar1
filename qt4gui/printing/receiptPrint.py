@@ -18,6 +18,8 @@ class receipt():
     def __init__(self,parent=None):
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A5)
+        self.pdfprinter = QtGui.QPrinter()
+        self.pdfprinter.setPageSize(QtGui.QPrinter.A5)
         self.setProps()
         self.receivedDict={}
         self.isDuplicate=False
@@ -37,78 +39,83 @@ class receipt():
         self.samount=s
         self.total=t
 
-
     def print_(self):
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
-        LeftMargin = 50
-        TopMargin = 150
-        serifFont = QtGui.QFont("Times", 11)
-        fm=QtGui.QFontMetrics(serifFont)
-        serifLineHeight = fm.height()
-        painter = QtGui.QPainter(self.printer)
-        pageRect = self.printer.pageRect()
-        painter.setPen(QtCore.Qt.black)
-        painter.setFont(serifFont)
-        center = QtGui.QTextOption(QtCore.Qt.AlignCenter)
-        alignRight = QtGui.QTextOption(QtCore.Qt.AlignRight)
-        if self.isDuplicate:
-            painter.drawText(QtCore.QRectF(0, 100,pageRect.width()\
-            ,serifLineHeight),\
-            QtCore.QString("DUPLICATE RECEIPT"),
-            center)
+        self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
+        self.pdfprinter.setOutputFileName("temp.pdf")
+    
+        for printer in (self.printer,self.pdfprinter):
+        
+            LeftMargin = 50
+            TopMargin = 150
+            serifFont = QtGui.QFont("Times", 11)
+            fm=QtGui.QFontMetrics(serifFont)
+            serifLineHeight = fm.height()
+            painter = QtGui.QPainter(printer)
+            pageRect = printer.pageRect()
+            painter.setPen(QtCore.Qt.black)
+            painter.setFont(serifFont)
+            center = QtGui.QTextOption(QtCore.Qt.AlignCenter)
+            alignRight = QtGui.QTextOption(QtCore.Qt.AlignRight)
+            if self.isDuplicate:
+                painter.drawText(QtCore.QRectF(0, 100,pageRect.width()\
+                ,serifLineHeight),\
+                QtCore.QString("DUPLICATE RECEIPT"),
+                center)
 
-        x,y = LeftMargin,TopMargin+30
-        painter.drawText(x, y, "%s %s %s"%(self.title.title(),self.fname.title(),self.sname.title()))
-        y += serifLineHeight
-        for line in (self.addr1,self.addr2,self.addr3,self.town,self.county):
-            if line!="":
-                painter.drawText(x, y, str(line).title()+",")
-                y += serifLineHeight
-        if self.pcde!="":
-            painter.drawText(x, y, str(self.pcde+"."))  #postcode
-
-
-        x,y=LeftMargin+50,TopMargin+serifLineHeight*10
-        mystr='Received on  '
-        w=fm.width(mystr)
-        painter.drawText(x, y, mystr)
-        if not self.isDuplicate:
-            painter.drawText(x+w, y, QtCore.QDate.currentDate().toString(DATE_FORMAT))
-        else:
-            painter.drawText(x+w, y, self.dupdate)
-
-        y += serifLineHeight*2
+            x,y = LeftMargin,TopMargin+30
+            painter.drawText(x, y, "%s %s %s"%(self.title.title(),self.fname.title(),self.sname.title()))
+            y += serifLineHeight
+            for line in (self.addr1,self.addr2,self.addr3,self.town,self.county):
+                if line!="":
+                    painter.drawText(x, y, str(line).title()+",")
+                    y += serifLineHeight
+            if self.pcde!="":
+                painter.drawText(x, y, str(self.pcde+"."))  #postcode
 
 
-        painter.drawText(x, y, QtCore.QString('relating to:-'))
-        y += serifLineHeight
-        total=0
-        for key in self.receivedDict.keys():
-            amount=self.receivedDict[key]
-            if amount !=0:
-                painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString(key))
-                painter.drawText(QtCore.QRectF(x+180, y,100,serifLineHeight),\
-                QtCore.QString(toMoneyString(amount)),alignRight)
+            x,y=LeftMargin+50,TopMargin+serifLineHeight*10
+            mystr='Received on  '
+            w=fm.width(mystr)
+            painter.drawText(x, y, mystr)
+            if not self.isDuplicate:
+                painter.drawText(x+w, y, QtCore.QDate.currentDate().toString(DATE_FORMAT))
+            else:
+                painter.drawText(x+w, y, self.dupdate)
 
-                y += serifLineHeight
-                total+=amount
+            y += serifLineHeight*2
 
-        y += serifLineHeight
-        painter.drawLine(int(x),int(y),int(x)+280,int(y))#130+150=280
-        y += serifLineHeight*1.5
-        painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString("TOTAL"))
-        painter.drawText(QtCore.QRectF(x+180, y,100,serifLineHeight),\
-        QtCore.QString(toMoneyString(total)),alignRight)
 
-        y += serifLineHeight*4
+            painter.drawText(x, y, QtCore.QString('relating to:-'))
+            y += serifLineHeight
+            total=0
+            for key in self.receivedDict.keys():
+                amount=self.receivedDict[key]
+                if amount !=0:
+                    painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString(key))
+                    painter.drawText(QtCore.QRectF(x+180, y,100,serifLineHeight),\
+                    QtCore.QString(toMoneyString(amount)),alignRight)
 
-        font = QtGui.QFont("Helvetica", 7)
-        font.setItalic(True)
-        painter.setFont(font)
-        painter.drawText(x, y, QtCore.QString("Thankyou for your custom."))
+                    y += serifLineHeight
+                    total+=amount
 
+            y += serifLineHeight
+            painter.drawLine(int(x),int(y),int(x)+280,int(y))#130+150=280
+            y += serifLineHeight*1.5
+            painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString("TOTAL"))
+            painter.drawText(QtCore.QRectF(x+180, y,100,serifLineHeight),\
+            QtCore.QString(toMoneyString(total)),alignRight)
+
+            y += serifLineHeight*4
+
+            font = QtGui.QFont("Helvetica", 7)
+            font.setItalic(True)
+            painter.setFont(font)
+            painter.drawText(x, y, QtCore.QString("Thankyou for your custom."))
+        return True
+    
 if __name__ == "__main__":
     import sys
     localsettings.initiate(False)

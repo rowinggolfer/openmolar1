@@ -7,7 +7,7 @@
 # for more details.
 
 from __future__ import division
-import os
+
 from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
 
@@ -17,12 +17,7 @@ DATE_FORMAT = "d, MMMM, yyyy"
 def toMoneyString(i):
     return u"£"+"%.02f"%(i/100)
 
-def getPDF():
-        f=open("temp.pdf","rb")
-        data=f.read()
-        f.close()
-        os.remove("temp.pdf")
-        return data
+
 
 class estimate():
     def __init__(self,parent=None):
