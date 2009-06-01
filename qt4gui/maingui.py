@@ -2334,6 +2334,10 @@ class customWidgets():
         self.ui.apptBookWidgets.append(appointmentwidget.
                                        appointmentWidget("0800","1900",5,3))
         self.ui.appt3scrollArea.setWidget(self.ui.apptBookWidgets[2])
+        
+        self.ui.apptBookWidgets.append(appointmentwidget.
+                                       appointmentWidget("0800","1900",5,3))
+        self.ui.appt4scrollArea.setWidget(self.ui.apptBookWidgets[3])
 
         ##aptOV
         self.ui.apptoverviews=[]

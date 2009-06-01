@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>985</width>
-    <height>569</height>
+    <width>932</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -48,7 +48,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_10" >
        <attribute name="title" >
@@ -475,7 +475,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>717</width>
+                    <width>602</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1615,8 +1615,8 @@
                   <property name="geometry" >
                    <rect>
                     <x>0</x>
-                    <y>-76</y>
-                    <width>717</width>
+                    <y>0</y>
+                    <width>664</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -1940,7 +1940,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>727</width>
+                    <width>612</width>
                     <height>465</height>
                    </rect>
                   </property>
@@ -2339,7 +2339,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>717</width>
+                    <width>701</width>
                     <height>367</height>
                    </rect>
                   </property>
@@ -2612,8 +2612,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>737</width>
-                    <height>351</height>
+                    <width>622</width>
+                    <height>302</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2786,7 +2786,7 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>465</width>
+                       <width>350</width>
                        <height>198</height>
                       </rect>
                      </property>
@@ -3123,7 +3123,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>721</width>
+                    <width>606</width>
                     <height>359</height>
                    </rect>
                   </property>
@@ -3172,7 +3172,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>683</width>
+                        <width>568</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3507,6 +3507,84 @@
              </property>
             </widget>
            </item>
+           <item row="0" column="6" >
+            <widget class="QLabel" name="apptFrameLabel4" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string>Book</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7" >
+            <widget class="QPushButton" name="printBook4_pushButton" >
+             <property name="maximumSize" >
+              <size>
+               <width>51</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string>Print</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="../resources/resources.qrc" >
+               <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="8" >
+            <widget class="QLabel" name="apptFrameLabel5" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string>Book</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="9" >
+            <widget class="QPushButton" name="printBook5_pushButton" >
+             <property name="maximumSize" >
+              <size>
+               <width>51</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string>Print</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="../resources/resources.qrc" >
+               <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="0" colspan="2" >
             <widget class="QScrollArea" name="appt1scrollArea" >
              <property name="widgetResizable" >
@@ -3517,8 +3595,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>235</width>
-                <height>410</height>
+                <width>127</width>
+                <height>449</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3535,8 +3613,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>235</width>
-                <height>410</height>
+                <width>127</width>
+                <height>449</height>
                </rect>
               </property>
              </widget>
@@ -3552,11 +3630,47 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>235</width>
-                <height>410</height>
+                <width>128</width>
+                <height>449</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
+             </widget>
+            </widget>
+           </item>
+           <item row="1" column="6" colspan="2" >
+            <widget class="QScrollArea" name="appt4scrollArea" >
+             <property name="widgetResizable" >
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="appt3scrollAreaWidgetContents_2" >
+              <property name="geometry" >
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>127</width>
+                <height>449</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="_2" />
+             </widget>
+            </widget>
+           </item>
+           <item row="1" column="8" colspan="2" >
+            <widget class="QScrollArea" name="appt5scrollArea" >
+             <property name="widgetResizable" >
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="appt3scrollAreaWidgetContents_3" >
+              <property name="geometry" >
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>127</width>
+                <height>449</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="_3" />
              </widget>
             </widget>
            </item>
@@ -4067,7 +4181,7 @@
                <x>0</x>
                <y>0</y>
                <width>167</width>
-               <height>86</height>
+               <height>125</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -4772,7 +4886,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>985</width>
+     <width>932</width>
      <height>22</height>
     </rect>
    </property>
