@@ -237,25 +237,32 @@ def toothTreatDict(pt):
     return treats
 
 
-def getFee(cset,itemcode, no_items=1, conditions=""):
+def getFee(cset,itemcode, no_items=1, conditions=[]):
     '''
     useage = getFee("P","4001")
     get the fee for itemcode "4001" for a private patient
     '''
-
-    fee=0
-    if "P" in cset:
-        fee= localsettings.privateFees[itemcode].getFee(no_items, conditions)
-        ptfee= fee
-    if "I" in cset:
-        fee= localsettings.privateFees[itemcode].getFee(no_items, conditions)
-        ptfee= 0
-
+    fee,ptfee=0,0
+    nhsExempt=False
+    #-- presently conditions is just NHS stuff.
+    for condition in conditions:
+        if "NHS exempt=" in condition:
+            nhsExempt=True
+            print "Exemption - ",condition[condition.index("=")+1:]
+            print "Exmeption found warning - partial exemptions not handled"
+            
     if "N" in cset:
         fee= localsettings.nhsFees[itemcode].getFee()
-        ptfee= localsettings.nhsFees[itemcode].getPtFee(no_items, conditions)
+        if not nhsExempt:
+            ptfee= localsettings.nhsFees[itemcode].getPtFee(no_items, conditions)
+    elif "I" in cset:
+        fee= localsettings.privateFees[itemcode].getFee(no_items, conditions)
+        ptfee= 0
+    else:
+        fee= localsettings.privateFees[itemcode].getFee(no_items, conditions)
+        ptfee= fee
+        
     return (fee, ptfee)
-
 
 def getDescription(arg):
     '''

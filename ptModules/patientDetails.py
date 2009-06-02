@@ -40,25 +40,41 @@ def age(dob):
     except Exception,e:
         print "error calculating pt age - ",e
         return "unknown age<hr />"
-        
+
 def details(pt,Saved=True):
     '''returns an html set showing pt name etc...'''
     retarg='<html><head>'
-    retarg+='''<link rel="stylesheet" href="%s" type="text/css">'''%localsettings.stylesheet
+    retarg+='''<link rel="stylesheet" href="%s" type="text/css">'''%\
+    localsettings.stylesheet
+
     retarg+='</head><body><div align="center">'
     retarg+='<h4>Patient %d</h4>'%pt.serialno
-    retarg+='<h3>%s %s %s</h3>'%(pt.title.title(),pt.fname.title(),pt.sname.title())
+    retarg+='<h3>%s %s %s</h3>'%(pt.title.title(),pt.fname.title(),
+    pt.sname.title())
+
     retarg+='%s'%pt.dob
-    retarg+=' %s<br />'%age(pt.dob)
+    retarg+=' %s'%age(pt.dob)
     for line in (pt.addr1,pt.addr2,pt.addr3,pt.town,pt.county,pt.pcde):
         if str(line)!='':
             if line!=pt.pcde:
                 line=line.title()
             retarg+=line +'<br />'
     retarg=retarg.rstrip('<br />') + '<hr />'
-    retarg+='TYPE = %s <br />'%str(pt.cset)
+    if "N" in pt.cset:
+        retarg+='NHS '
+        if pt.exmpt!="":
+            retarg+=" exemption=%s"%str(pt.exmpt)
+        else:
+            retarg+="NOT EXEMPT"
+        retarg+="<br />"
+    elif "I" in pt.cset:
+        retarg+='HDP<br />'
+    elif "P" in pt.cset:
+        retarg+="PRIVATE<br />"
+    else:
+        retarg+='UNKNOWN COURSETYPE = %s <br />'%str(pt.cset)
     if pt.pf11!=0:
-        retarg+='FEESCALE %s<br />'%chr(pt.pf11)
+        retarg+='P FEES %s<br />'%chr(pt.pf11)
     try:
         retarg+='dentist      = %s'%localsettings.ops[pt.dnt1]
         if pt.dnt2!=0 and pt.dnt1!=pt.dnt2:
@@ -79,26 +95,27 @@ def details(pt,Saved=True):
         letype="(CE)"
         i=0
         for date in (pt.pd6,pt.pd7):
-            if date and localsettings.uk_to_sqlDate(date)>localsettings.uk_to_sqlDate(lastexam):
+            if date and localsettings.uk_to_sqlDate(date)>\
+            localsettings.uk_to_sqlDate(lastexam):
                 lastexam=date
                 letype=("(ECE)","(FCA)")[i]
                 i+=1
     retarg+='<tr><td>Last Exam %s</td><td>%s</td></tr>'%(letype,lastexam)
-    
+
     retarg+='<tr><td>Recall Date</td><td>%s</td></tr>'%pt.recd
     retarg+='</table>'
 
     if not Saved:
-        alert="<br />NOT SAVED"   
+        alert="<br />NOT SAVED"
     else:
         alert=""
     if pt.fees>0:
         amount="&pound;%d.%02d"%(pt.fees//100,pt.fees%100)
         retarg+='<hr /><h3 class="debt">Account = %s %s</h3>'%(amount,alert)
     if pt.fees<0:
-        amount="&pound;%d.%02d"%(-pt.fees//100,-pt.fees%100) 
+        amount="&pound;%d.%02d"%(-pt.fees//100,-pt.fees%100)
         retarg+='<hr /><h3>%s in credit %s</h3>'%(amount,alert)
-    
+
     return retarg+'</div></body></html>'
 
 if __name__ == '__main__':
@@ -106,7 +123,7 @@ if __name__ == '__main__':
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=707
+        serialno=27222
     if '-v' in sys.argv:
         verbose=True
     else:

@@ -90,14 +90,11 @@ class feeClass():
         currently this gets the csetype from the pt coursetype.
         returns a tuple
         '''
-        itemfee,ptfee=0,0
-        if "P" in self.pt.cset:
-            itemfee=localsettings.privateFees[item].getFee(no_items)
-            ptfee=itemfee
-        elif "N" in self.pt.cset:
-            itemfee=localsettings.nhsFees[item].getFee(no_items)
-            if self.pt.exmpt=="":
-                ptfee=localsettings.nhsFees[item].getPtFee(no_items)
+        conditions=[]
+        if self.pt.cset=="N":
+            if self.pt.exmpt!="":
+                conditions.append("NHS exempt=%s"%self.pt.exmpt)
+        itemfee,ptfee=fee_keys.getFee(self.pt.cset,item,no_items,conditions)
         return itemfee,ptfee
 
     def takePayment(self):
@@ -182,17 +179,104 @@ class feeClass():
                 for item in feeTup:
                     feeList.append(str(item))
                 QtGui.QTreeWidgetItem(header, feeList)
-        self.ui.fees_treeWidget.expandAll()
-        for i in range(self.ui.fees_treeWidget.columnCount()):
-            self.ui.fees_treeWidget.resizeColumnToContents(i)
-        #-- hide the geeky column
-        self.ui.fees_treeWidget.setColumnWidth(3, 0)
-        #-- hide the description column
-        self.ui.fees_treeWidget.setColumnWidth(4, 0)
-    
+        self.chooseFeeColumns(0)
         #-- prevent it getting loaded again 
         #--(and undoing any user changes to col widths, expanded items etc...
         self.feestableLoaded=True
+        self.feesTable_searchList=[]
+        self.feesTable_searchpos=0    
+    
+    def feeSearch(self):
+        '''
+        fee search button clicked... the values are already stored.
+        '''
+        n=len(self.feesTable_searchList)
+        if n==0:
+            self.advise("Not found, or invalid search")
+            return
+        if self.feesTable_searchpos>=n:
+            self.feesTable_searchpos=0
+        item = self.feesTable_searchList[self.feesTable_searchpos]
+        self.ui.fees_treeWidget.scrollToItem(item)
+        self.ui.fees_treeWidget.setCurrentItem(item)
+        self.feesTable_searchpos+=1
+        
+    def newFeeSearch(self):
+        '''
+        user has finished editing the 
+        feesearchLineEdit - time to refill the searchList
+        '''
+        searchField=self.ui.feeSearch_lineEdit.text()
+        print "search for",searchField
+        
+        matchflags=QtCore.Qt.MatchFlags(
+        QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
+
+        #--get a list of items containing that string
+        self.feesTable_searchList=self.ui.fees_treeWidget.findItems(
+        searchField,matchflags,4)
+
+        self.feesTable_searchpos=0
+        
+    def nhsRegsPDF(self):
+        try:
+            proc=subprocess.Popen(["evince",
+            "../resources/Dental_Information_Guide_2008_v4.pdf"])
+        except Exception,e:
+            print Exception,e
+            self.advise("Error opening PDF file",2)
+    def chooseFeescale(self,arg):
+        '''
+        recieves signals from the choose feescale combobox
+        '''
+        print "choose Feescale needs work"
+        ##TODO - neds work
+        
+        if arg==0:
+            #show all
+            pass
+        elif arg==1:
+            #show private
+            pass
+        elif arg==2:
+            #show NHS
+            pass
+    def chooseFeeItemDisplay(self,arg):
+        '''
+        recieves signals from the choose feescale Items combobox
+        '''
+        print "choose Feescale Items needs work"
+        ##TODO - neds work
+        
+        if arg==0:
+            #show all
+            pass
+        elif arg==1:
+            #show favourites
+            pass
+    def showHideFees(self):
+        '''
+        the expand or collapse radio buttons on the fees page
+        have been clicked.
+        '''
+        if self.ui.feeExpand_radioButton.isChecked():
+            self.ui.fees_treeWidget.expandAll()
+        else:
+            self.ui.fees_treeWidget.collapseAll()
+    def chooseFeeColumns(self,arg):
+        '''
+        expand columns within the fees table
+        '''
+        self.ui.fees_treeWidget.expandAll()
+        for i in range(self.ui.fees_treeWidget.columnCount()):
+            self.ui.fees_treeWidget.resizeColumnToContents(i)
+        if arg<1:
+            #-- hide the geeky column
+            self.ui.fees_treeWidget.setColumnWidth(3, 0)
+        if arg<2:
+            #-- hide the extra description column
+            self.ui.fees_treeWidget.setColumnWidth(4, 0)
+        self.showHideFees()
         
     def feestableProperties(self):
         ##TODO this needs work
@@ -2029,6 +2113,7 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.accountButton2Clicked)
         QtCore.QObject.connect(self.ui.previousCorrespondence_treeWidget,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),self.showDoc)
+        
         #menu
         QtCore.QObject.connect(self.ui.action_save_patient,
                         QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
@@ -2106,6 +2191,7 @@ class signals():
         "clicked()"), self.cashbookPrint)
         QtCore.QObject.connect(self.ui.daybookPrintButton,QtCore.SIGNAL(
         "clicked()"), self.daybookPrint)
+
         #accounts
         QtCore.QObject.connect(self.ui.loadAccountsTable_pushButton,
                         QtCore.SIGNAL("clicked()"), self.populateAccountsTable)
@@ -2131,14 +2217,30 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.editOtherContract)
 
 
-
-
-
-
+        #feesTable
         ##TODO bring this functionality back
         #QtCore.QObject.connect(self.ui.printFeescale_pushButton,
         #QtCore.SIGNAL("clicked()"), self.printFeesTable)
-
+        QtCore.QObject.connect(self.ui.chooseFeescale_comboBox,
+        QtCore.SIGNAL("currentIndexChanged(int)"), self.chooseFeescale)
+        QtCore.QObject.connect(self.ui.feeItems_comboBox,
+        QtCore.SIGNAL("currentIndexChanged(int)"), self.chooseFeeItemDisplay)
+        QtCore.QObject.connect(self.ui.feesColumn_comboBox,
+        QtCore.SIGNAL("currentIndexChanged(int)"), self.chooseFeeColumns)
+                
+        QtCore.QObject.connect(self.ui.feeExpand_radioButton,
+                        QtCore.SIGNAL("clicked()"), self.showHideFees)
+        QtCore.QObject.connect(self.ui.feeCompress_radioButton,
+                        QtCore.SIGNAL("clicked()"), self.showHideFees)
+        QtCore.QObject.connect(self.ui.nhsRegs_pushButton,
+                        QtCore.SIGNAL("clicked()"), self.nhsRegsPDF)
+        QtCore.QObject.connect(self.ui.feeSearch_lineEdit,
+        QtCore.SIGNAL("editingFinished ()"),self.newFeeSearch)
+        QtCore.QObject.connect(self.ui.feeSearch_pushButton,
+                        QtCore.SIGNAL("clicked()"), self.feeSearch)
+        
+        
+        
 
         #charts (including underlying table)
         QtCore.QObject.connect(self.ui.chartsview_pushButton,
@@ -3868,7 +3970,9 @@ printingClass,cashbooks,contractClass):
                 except Exception,e:
                     print "view PDF error"
                     print Exception,e
-                    self.advise("error reviewing PDF file",1) 
+                    self.advise("error reviewing PDF file<br />"
+                    +"tried to open with evince on Linux"
+                    +" or default PDF reader on windows",1) 
         else: #unknown data type... probably plain text.
             print "other type of doc"
             self.advise(docsprinted.getData(ix)[0],1)

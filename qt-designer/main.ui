@@ -48,7 +48,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>0</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="tab_10" >
        <attribute name="title" >
@@ -475,7 +475,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>664</width>
+                    <width>533</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1616,7 +1616,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>664</width>
+                    <width>516</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -1940,7 +1940,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>674</width>
+                    <width>567</width>
                     <height>465</height>
                    </rect>
                   </property>
@@ -2340,7 +2340,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>701</width>
-                    <height>370</height>
+                    <height>367</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2612,8 +2612,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>684</width>
-                    <height>390</height>
+                    <width>311</width>
+                    <height>105</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -3128,8 +3128,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>684</width>
-                    <height>390</height>
+                    <width>242</width>
+                    <height>359</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
@@ -3177,7 +3177,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>646</width>
+                        <width>96</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -4768,54 +4768,252 @@ Note - this will not remove items which are currently there. </string>
        <attribute name="title" >
         <string>Feescales</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_19" >
-        <item row="0" column="0" >
-         <spacer name="horizontalSpacer_2" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
+       <layout class="QHBoxLayout" name="horizontalLayout_17" >
+        <item>
+         <widget class="QFrame" name="frame_5" >
+          <property name="minimumSize" >
            <size>
-            <width>385</width>
-            <height>20</height>
+            <width>180</width>
+            <height>0</height>
            </size>
           </property>
-         </spacer>
-        </item>
-        <item row="0" column="1" >
-         <widget class="QComboBox" name="chooseFeescale_comboBox" >
-          <item>
-           <property name="text" >
-            <string>Show All Fee Scales</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Private FeeScale</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>NHS FeeScale 2008</string>
-           </property>
-          </item>
+          <property name="maximumSize" >
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="frameShape" >
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow" >
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_10" >
+           <item>
+            <widget class="QComboBox" name="chooseFeescale_comboBox" >
+             <item>
+              <property name="text" >
+               <string>Show All Fee Scales</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Private FeeScale</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>NHS FeeScale 2008</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="feeItems_comboBox" >
+             <item>
+              <property name="text" >
+               <string>Show All Items</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Favourite Items Only</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="feeExpand_radioButton" >
+             <property name="text" >
+              <string>Expand All Sections</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="feeCompress_radioButton" >
+             <property name="text" >
+              <string>Compress All Sections</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_6" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_19" >
+              <item row="0" column="0" colspan="2" >
+               <widget class="QLabel" name="label_26" >
+                <property name="text" >
+                 <string>Search for an Item</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2" >
+               <widget class="QLineEdit" name="feeSearch_lineEdit" />
+              </item>
+              <item row="2" column="0" >
+               <spacer name="horizontalSpacer_2" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>67</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="2" column="1" >
+               <widget class="QPushButton" name="feeSearch_pushButton" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize" >
+                 <size>
+                  <width>80</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>70</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="toolTip" >
+                 <string>Click on this Button to search for in patient in your database.</string>
+                </property>
+                <property name="text" >
+                 <string>Find</string>
+                </property>
+                <property name="icon" >
+                 <iconset resource="../resources/resources.qrc" >
+                  <normaloff>:/search.png</normaloff>:/search.png</iconset>
+                </property>
+                <property name="iconSize" >
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="shortcut" >
+                 <string>Ctrl+F</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_7" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_29" >
+              <item row="0" column="0" colspan="2" >
+               <widget class="QLabel" name="label_27" >
+                <property name="text" >
+                 <string>NHS Regulation Document</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <spacer name="horizontalSpacer_10" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>72</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QPushButton" name="nhsRegs_pushButton" >
+                <property name="toolTip" >
+                 <string>Open A PDF of the latest NHS Regulations</string>
+                </property>
+                <property name="text" >
+                 <string>Open</string>
+                </property>
+                <property name="icon" >
+                 <iconset resource="../resources/resources.qrc" >
+                  <normaloff>:/txt.png</normaloff>:/txt.png</iconset>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_3" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>20</width>
+               <height>162</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QComboBox" name="feesColumn_comboBox" >
+             <item>
+              <property name="text" >
+               <string>Default Columns</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Show Geek Column</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>All Columns</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item row="0" column="2" >
-         <spacer name="horizontalSpacer_10" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>388</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="0" colspan="3" >
+        <item>
          <widget class="QTreeWidget" name="fees_treeWidget" >
+          <property name="alternatingRowColors" >
+           <bool>false</bool>
+          </property>
+          <property name="animated" >
+           <bool>true</bool>
+          </property>
           <column>
            <property name="text" >
             <string>1</string>
@@ -4960,7 +5158,6 @@ Note - this will not remove items which are currently there. </string>
   <tabstop>daybookDent1ComboBox</tabstop>
   <tabstop>daybookDent2ComboBox</tabstop>
   <tabstop>daybookTextBrowser</tabstop>
-  <tabstop>main_tabWidget</tabstop>
   <tabstop>home_pushButton</tabstop>
   <tabstop>reloadButton</tabstop>
   <tabstop>relatedpts_pushButton</tabstop>
