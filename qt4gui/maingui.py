@@ -221,7 +221,7 @@ class feeClass():
     def nhsRegsPDF(self):
         try:
             proc=subprocess.Popen(["evince",
-            "../resources/Dental_Information_Guide_2008_v4.pdf"])
+            "resources/Dental_Information_Guide_2008_v4.pdf"])
         except Exception,e:
             print Exception,e
             self.advise("Error opening PDF file",2)
