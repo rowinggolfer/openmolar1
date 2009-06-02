@@ -25,12 +25,14 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.item=item
         self.code_label.setToolTip(self.toolTip())
     def toolTip(self):
-        return "<center>Type - '%s'<br />ItemCode - '%s'<br />Feescale - %s<br />CSEtype - %s<br />Dent - %s</center>"%(
+        return '''<center>Type - '%s'<br />ItemCode - '%s'<br />Feescale - %s
+        <br />CSEtype - %s<br />Dent - %s</center>DBindex - %s'''%(
         self.item.type,
         self.item.itemcode,
         self.item.feescale,
         self.item.csetype,
-        self.item.dent)
+        self.item.dent,
+        self.item.ix)
         
         
     def loadValues(self):
@@ -239,13 +241,13 @@ class estWidget(QtGui.QFrame):
 
         if input==QtGui.QMessageBox.Yes:
             self.estimate_layout.removeWidget(arg.parent)
+
             arg.parent.setParent(None)
             for est in self.ests:
-                if est.ix==arg.item.ix:
+                if est.ix==arg.item.ix and est.type==arg.item.type:
                     self.ests.remove(est)
                     self.emit(QtCore.SIGNAL("deleteItem"),est.type)
-
-
+                
             self.updateTotals()
 
 
