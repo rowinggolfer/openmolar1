@@ -208,11 +208,13 @@ def toothTreatDict(pt):
             order=(1, 2, 3, 4, 5, 6, 7, 8)
         for tooth in order:
             for type in ("pl", "cmp"):
-                att="%s%spl"%(quadrant, tooth)
+                att="%s%s%s"%(quadrant, tooth,type)
                 if pt.__dict__[att] != "":
                     items=pt.__dict__[att].strip(" ").split(" ")
                     for item in items:
                         treats[type].append(("%s%s"%(quadrant, tooth), item), )
+    print "toothTreatDict"
+    print "returning ",treats
     return treats
 
 def getCode(tooth,fill):

@@ -52,6 +52,10 @@ perioChartWidget,estimateWidget
 
 class feeClass():
     def raiseACharge(self):
+        '''
+        this is called by the "raise a charge" button on the 
+        clinical summary page
+        '''
         if self.pt.serialno==0:
             self.advise("No patient Selected",1)
             return
@@ -79,7 +83,13 @@ class feeClass():
 #                self.pt_dbstate.money0=self.pt.money0
 #                self.pt.clearHiddenNotes()
 ##############################################################################
+    
     def getItemFees(self,item,no_items=1):
+        '''
+        pass itemcode eg"0101", get a tuple (fee,ptfee)
+        currently this gets the csetype from the pt coursetype.
+        returns a tuple
+        '''
         itemfee,ptfee=0,0
         if "P" in self.pt.cset:
             itemfee=localsettings.privateFees[item].getFee(no_items)
@@ -90,9 +100,10 @@ class feeClass():
                 ptfee=localsettings.nhsFees[item].getPtFee(no_items)
         return itemfee,ptfee
 
-
-
     def takePayment(self):
+        '''
+        raise a dialog, and take some money
+        '''
         if self.pt.serialno==0:
             self.advise("No patient Selected <br />Monies will be "+\
             "allocated to Other Payments, and no receipt offered",1)
@@ -148,7 +159,9 @@ class feeClass():
                 +"Please write this down and tell Neil what happened",2)
 
     def loadFeesTable(self):
-        
+        '''
+        loads the fee table (you guessed, huh?)
+        '''
         headers=feesTable.getFeeHeaders()
         #self.ui.fees_treeWidget.setColumnCount(9)
 
@@ -182,6 +195,7 @@ class feeClass():
         self.feestableLoaded=True
         
     def feestableProperties(self):
+        ##TODO this needs work
         if self.ui.chooseFeescale_comboBox.currentIndex()==1:
             feesTable.private_only=True
             feesTable.nhs_only=False
@@ -195,14 +209,18 @@ class feeClass():
         self.loadFeesTable()
 
     def noNewCourseNeeded(self):
+        '''
+        checks to see if the patient is under treatment.
+        if not, start a course
+        '''
         if self.pt.underTreatment:
             return True
         else:
             if self.newCourseSetup():
                 return True
             else:
-                self.advise("unable to plan or perform treatment if pt does "+\
-                "not have an active course",1)
+                self.advise("unable to plan or perform treatment if pt "+\
+                "does not have an active course",1)
 
     def applyFeeNow(self, arg ,cset=None):
         #--TODO - this need fine tuning for course type etc....
@@ -213,6 +231,10 @@ class feeClass():
         self.updateFees()
 
     def updateFees(self):
+        '''
+        recalc money and
+        update the details down the left hand side
+        '''
         if self.pt.serialno!=0:
             self.pt.updateFees()
             self.updateDetails()
@@ -331,8 +353,8 @@ class feeClass():
             else:
                 self.advise("Examination not applied",2)
                 break
+            
     def showHygDialog(self):
-        global pt
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
             return
@@ -480,7 +502,6 @@ class feeClass():
         '''
         existing=self.pt.__dict__[tooth+self.selectedChartWidget]
 
-
         print "toothTreatAdded '%s','%s'"%(tooth, input)
         self.pt.__dict__[tooth+self.selectedChartWidget]=input
         #--update the patient!!
@@ -507,14 +528,13 @@ class feeClass():
         self.ui.planChartWidget.update()
 
         Dialog = QtGui.QDialog(self)
-        dl = addToothTreat.treatment(Dialog,"P")
+        dl = addToothTreat.treatment(Dialog,self.pt.cset)
         if ALL==False:
             dl.itemsPerTooth(tooth, item)
         else:
             treatmentDict=fee_keys.toothTreatDict(self.pt)
             dl.setItems(treatmentDict["pl"],)
             dl.setItems(treatmentDict["cmp"],)
-
 
         dl.showItems()
 

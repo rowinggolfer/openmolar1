@@ -31,6 +31,7 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
 
     def setItem(self,tooth, usercode):
         self.tooth=tooth
+        self.usercode=usercode
         self.tooth_label.setText("%s %s"%(tooth.upper(), usercode))
         self.itemcode=fee_keys.getCode(tooth,usercode)
         self.description=fee_keys.getDescription(self.itemcode)
@@ -103,7 +104,10 @@ class treatment(Ui_addToothTreatment.Ui_Dialog,):
             retarg=()
             for i in self.itemWidgets:
                 fee=int(i.doubleSpinBox.value()*100)
-                retarg+=((i.tooth, i.itemcode,i.description, fee),)
+                retarg+=(
+                ("%s %s"%(i.tooth,i.usercode) ,
+                i.itemcode,i.description, fee),
+                )
             return retarg
 
 if __name__ == "__main__":

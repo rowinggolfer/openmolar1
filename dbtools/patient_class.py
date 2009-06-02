@@ -370,8 +370,7 @@ class patient():
 
     def addToEstimate(self,number,item,descr,fee,ptfee,dent,csetype,
     type="", completed=False, feescale="A",carriedover=False):
-        print "adding to estimate ",number,item,fee
-        print "NEW CODE NEEDED"
+        print "adding to estimate ",number,type,item,fee
         est=estimates.est()
         est.ix=None #-- this will be generated but autoincrement
         est.serialno=self.serialno

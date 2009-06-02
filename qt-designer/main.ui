@@ -48,7 +48,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_10" >
        <attribute name="title" >
@@ -458,7 +458,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>2</number>
+              <number>7</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -475,7 +475,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>602</width>
+                    <width>664</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1940,7 +1940,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>612</width>
+                    <width>674</width>
                     <height>465</height>
                    </rect>
                   </property>
@@ -2340,7 +2340,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>701</width>
-                    <height>367</height>
+                    <height>370</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_4" >
@@ -2612,8 +2612,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>622</width>
-                    <height>302</height>
+                    <width>684</width>
+                    <height>390</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -2786,7 +2786,7 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>350</width>
+                       <width>412</width>
                        <height>198</height>
                       </rect>
                      </property>
@@ -2886,8 +2886,13 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="recalcEst_pushButton" >
+                     <property name="toolTip" >
+                      <string>Use this feature to re-price all items in the "tooth" category of treatments. i.e all those which appear on the charts.
+
+Note - this will not remove items which are currently there. </string>
+                     </property>
                      <property name="text" >
-                      <string>Recalculate Estimate</string>
+                      <string>Re-price "Tooth" Items</string>
                      </property>
                      <property name="checkable" >
                       <bool>false</bool>
@@ -3123,8 +3128,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>606</width>
-                    <height>359</height>
+                    <width>684</width>
+                    <height>390</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15" >
@@ -3172,7 +3177,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>568</width>
+                        <width>646</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3546,45 +3551,6 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="8" >
-            <widget class="QLabel" name="apptFrameLabel5" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize" >
-              <size>
-               <width>16777215</width>
-               <height>18</height>
-              </size>
-             </property>
-             <property name="text" >
-              <string>Book</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="9" >
-            <widget class="QPushButton" name="printBook5_pushButton" >
-             <property name="maximumSize" >
-              <size>
-               <width>51</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="text" >
-              <string>Print</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="../resources/resources.qrc" >
-               <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0" colspan="2" >
             <widget class="QScrollArea" name="appt1scrollArea" >
              <property name="widgetResizable" >
@@ -3595,7 +3561,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>127</width>
+                <width>162</width>
                 <height>449</height>
                </rect>
               </property>
@@ -3613,7 +3579,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>127</width>
+                <width>161</width>
                 <height>449</height>
                </rect>
               </property>
@@ -3630,7 +3596,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>128</width>
+                <width>162</width>
                 <height>449</height>
                </rect>
               </property>
@@ -3648,29 +3614,11 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>127</width>
+                <width>161</width>
                 <height>449</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="_2" />
-             </widget>
-            </widget>
-           </item>
-           <item row="1" column="8" colspan="2" >
-            <widget class="QScrollArea" name="appt5scrollArea" >
-             <property name="widgetResizable" >
-              <bool>true</bool>
-             </property>
-             <widget class="QWidget" name="appt3scrollAreaWidgetContents_3" >
-              <property name="geometry" >
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>127</width>
-                <height>449</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="_3" />
              </widget>
             </widget>
            </item>

@@ -23,7 +23,15 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         
     def setItem(self,item):
         self.item=item
-        self.code_label.setToolTip(str(item.type))
+        self.code_label.setToolTip(self.toolTip())
+    def toolTip(self):
+        return "<center>Type - '%s'<br />ItemCode - '%s'<br />Feescale - %s<br />CSEtype - %s<br />Dent - %s</center>"%(
+        self.item.type,
+        self.item.itemcode,
+        self.item.feescale,
+        self.item.csetype,
+        self.item.dent)
+        
         
     def loadValues(self):
         if self.item.number!=None:
