@@ -44,8 +44,9 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
        '''
         #-- here is why we need to import the division from the future...
         #-- no rounding errors please!
-        fee=fee_keys.getFee(self.parent.cset,self.itemcode) / 100
-        self.doubleSpinBox.setValue(fee)
+        fee, ptfee=fee_keys.getFee(self.parent.cset,self.itemcode)
+        self.doubleSpinBox.setValue(fee/100)
+        self.doubleSpinBox_2.setValue(ptfee/100)
         self.parent.updateTotal()
 
 class treatment(Ui_addToothTreatment.Ui_Dialog,):

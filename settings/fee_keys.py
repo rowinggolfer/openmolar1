@@ -3,7 +3,8 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. See the GNU General Public License
+# for more details.
 
 from openmolar.settings import localsettings
 import re
@@ -23,18 +24,23 @@ class fee():
         self.ptFees=[]
         self.regulations=""
     def addFee(self, arg):
-        '''add a fee to the list of fees contained by this class
-        frequently this list will have only one item'''
+        '''
+        add a fee to the list of fees contained by this class
+        frequently this list will have only one item
+        '''
         self.fees.append(int(arg))
     def addPtFee(self,arg):
         self.ptFees.append(int(arg))
 
     def setRegulations(self, arg):
-        '''pass a string which sets the conditions for applying fees to this treatment item'''
+        '''
+        pass a string which sets the conditions for
+        applying fees to this treatment item
+        '''
         self.regulations=arg
 
     def getPtFee(self,no_items=1, conditions=""):
-        return self.getFee(no_items,conditions)
+        return self.getFee(no_items,conditions, True)
 
     def getFee(self, no_items=1,conditions="",patient=False):
         '''
@@ -46,6 +52,7 @@ class fee():
             feeList=self.ptFees
         else:
             feeList=self.fees
+        print "feelist=", feeList
         if self.regulations=="":
             return feeList[0]*no_items
         else:
@@ -95,18 +102,26 @@ class fee():
             return fee
 
 
+
 def itemsPerTooth(tooth,props):
     '''
     usage itemsPerTooth("ul7","MOD,CO,PR ")
     returns (("ul7","MOD,CO"),("ul7","PR"))
     '''
     treats=[]
-    items=props.strip(" ").split(" ")
+    items=props.strip("() ").split(" ")
     for item in items:
-        if re.match(".*,PR.*",props):
-            print "removing .pr" 
-            treats.append((tooth,"PR"),)
+        #--look for pins and posts
+        if re.match(".*,PR.*",item):
+            print "removing .pr"
+            treats.append((tooth,",PR"),)
             item=item.replace(",PR","")
+        if re.match("CR.*,C[1-4].*",item):
+            posts=re.findall(",C[1-4]",item)
+            print "making Post a separate item"
+            for post in posts:
+                treats.append((tooth,"CR%s"%post),)
+            item=item.replace(post,"")
 
         treats.append((tooth, item), )
     return treats
@@ -123,30 +138,30 @@ def getKeyCode(arg):
         #print "Caught error in fee_keys.getKeyCode with code '%s'"%arg
         return "4001" #other treatment!!
 
-
-def getKeyCodeToothUserCode(tooth,arg):
+def getCode(tooth,arg):
     '''
+    converts fillings into four digit codes used in the feescale
+    eg "MOD" -> "1404" (both are strings)
     arg will be something like "CR,GO" or "MOD,CO"
     '''
-    print "decrypting tooth code",arg
+    print "decrypting tooth %s code %s "%(tooth, arg)
 
-    if arg in ("PV","AP","ST","EX","EX/S1","EX/S2"):
+    if arg in ("PV","AP","ST","EX","EX/S1","EX/S2",",PR"):
         return getKeyCode(arg)
 
-    if arg in ("CR,GO","CR,V1","CR,A1","CR,RC","CR,OT","CR,V2"):
+    if re.match("CR,..$", arg):
+        #-- CR,V1 etc....
         return getKeyCode(arg)
-    
-    if re.match("RT.*",arg):
+
+    if re.match("RT",arg):
         if re.match("u.[45]",tooth):
             return getKeyCode("Rt_upm")
         if re.match("l.[45]",tooth):
-            return getKeyCode("Rt_lpm")        
+            return getKeyCode("Rt_lpm")
         if re.match("..[123]",tooth):
             return getKeyCode("Rt_inc_can")
         else:
             return getKeyCode("Rt_molar")
-    
-        arg=arg.replace(",PR","")
 
     if "PI/" in arg:
         return getKeyCode("Porc")
@@ -154,46 +169,50 @@ def getKeyCodeToothUserCode(tooth,arg):
     if re.match("BR/P.*",arg):
         return getKeyCode(arg)
 
-    if re.match("BR/CR.*",arg):
-        return getKeyCode(arg)
-
-    if re.match("CR/.*",arg):
+    if re.match("BR/CR,..$",arg):
         return getKeyCode(arg)
 
     if re.match(".*GL.*",arg):
         return getKeyCode("Glfill")
-    
-        
-    #-- ok... so it's probably a filling
 
+    #-- ok... so it's probably a filling
+    #-- split off the material, and if not present, add one.
     array=arg.split(",")
 
     #-- MOD
     #-- MOD,CO
-    #-- MOD,PR
-    #-- RT
-    #-- PV
 
 
-    if int(tooth[2])>3:
-        default="AM"
+    material=""
+    if re.match("u.[4-8]",tooth):
+        #--upper back tooth
+        material="AM"
+        no_of_surfaces=len(re.findall("M|O|D|B|P",array[0]))
+    elif re.match("l.[4-8]",tooth):
+        #--lower back tooth
+        material="AM"
+        no_of_surfaces=len(re.findall("M|O|D|B|L",array[0]))
+    elif re.match("u.[1-3]",tooth):
+        #-- upper anterior
+        material="CO"
+        no_of_surfaces=len(re.findall("M|I|D|B|P",array[0]))
     else:
-        default="CO"
+        #--lower anterior
+        material="CO"
+        no_of_surfaces=len(re.findall("M|I|D|B|L",array[0]))
 
-    if len(array)==1:
-        surfaces=array[0]
-        return getKeyCode("%s-%ssurf"%(default,len(surfaces)))   #-- AM-3surf etc..
-
-    if len(array)==2:
-        surfaces=array[0]
+    if len (array)!=1:
         material=array[1]
-        return getKeyCode("%s-%ssurf"%(material,len(surfaces)))   #-- AM-3surf etc..
 
-
-    print "no match in getKeyCodeToothUserCode for ",tooth,arg
-    print "returning 4001"
-    return "4001"
-
+    if no_of_surfaces==len(array[0]):
+        #-- to stop "MOV" being classed as an "MO"
+        if no_of_surfaces>3:
+            no_of_surfaces=3
+        return getKeyCode("%s-%ssurf"%(material,no_of_surfaces))
+    else:
+        print "no match in getKeyCodeToothUserCode for ",tooth,arg
+        print "returning 4001"
+        return "4001"
 
 def toothTreatDict(pt):
     '''
@@ -217,25 +236,25 @@ def toothTreatDict(pt):
     print "returning ",treats
     return treats
 
-def getCode(tooth,fill):
-    '''
-    converts fillings into four digit codes used in the feescale
-    eg "MOD" -> "1404" (both are strings)
-    '''
-    return getKeyCodeToothUserCode(tooth,fill)
 
-def getFee(cset,itemcode):
+def getFee(cset,itemcode, no_items=1, conditions=""):
     '''
     useage = getFee("P","4001")
     get the fee for itemcode "4001" for a private patient
     '''
-    print "WARNING fee_keys.getFee is deprecated - please use the class"
+
     fee=0
     if "P" in cset:
-        fee= localsettings.privateFees[itemcode].getFee()
+        fee= localsettings.privateFees[itemcode].getFee(no_items, conditions)
+        ptfee= fee
+    if "I" in cset:
+        fee= localsettings.privateFees[itemcode].getFee(no_items, conditions)
+        ptfee= 0
+
     if "N" in cset:
         fee= localsettings.nhsFees[itemcode].getFee()
-    return fee
+        ptfee= localsettings.nhsFees[itemcode].getPtFee(no_items, conditions)
+    return (fee, ptfee)
 
 
 def getDescription(arg):
@@ -254,18 +273,28 @@ def getDescription(arg):
 
 if __name__ == "__main__":
     localsettings.initiate(False)
-    print localsettings.treatmentCodes
-    for arg in ("CE","MOD","PV","Rt_upm"):
-        print getKeyCode(arg)
+    #print localsettings.treatmentCodes
+    #for arg in ("CE","MOD","PV","Rt_upm"):
+    #    print getKeyCode(arg)
 
-    pf=fee()
-    pf.description="small x-ray"
-    for fee in (990, 1500,2000, 395, 2800) :
-        pf.addFee(fee)
-    pf.setRegulations("n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E")
-    print pf.getFee(5)
+    #pf=fee()
+    #pf.description="small x-ray"
+    #for fee in (990, 1500,2000, 395, 2800) :
+    #    pf.addFee(fee)
+    #pf.setRegulations("n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E")
+    #print pf.getFee(5)
 
-    print getFee("P", "0101")
-    print getFee("N", "0101")
-    print getKeyCodeToothUserCode("ul7","RT ")
-
+    #print getFee("P", "0101")
+    #print getFee("N", "0101")
+    while True:
+        tooth=raw_input("Enter Tooth :")
+        tooth=tooth.lower()
+        input=raw_input("Enter Treatment for %s :"%tooth)
+        if input=="exit":
+            break
+        items=itemsPerTooth(tooth, input)
+        for item in items:
+            code=getCode(item[0],item[1])
+            description=getDescription(code)
+            fee=getFee("P", code)
+            print code,description,fee

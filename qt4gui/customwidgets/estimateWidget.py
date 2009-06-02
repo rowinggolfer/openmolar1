@@ -232,7 +232,7 @@ class estWidget(QtGui.QFrame):
 
     def deleteItemWidget(self,arg):
         '''
-        deletes a widget when delet button pressed.
+        deletes a widget when delete button pressed.
         '''
         message="Delete %s %s from estimate?"%(
         arg.number_lineEdit.text(),arg.description_lineEdit.text())

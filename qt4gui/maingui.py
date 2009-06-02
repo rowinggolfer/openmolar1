@@ -496,26 +496,53 @@ class feeClass():
         return result
 
 
-    def toothTreatAdd(self, tooth, input):
+    def toothTreatAdd(self, tooth, properties):
         '''
-        adds treatment to a tooth
+        properties for tooth has changed. 
         '''
+        
+        #-- important stuff. user has added treatment to a tooth
+        #-- let's cite this eample to show how this funtion works
+        #-- assume the UR1 has a root treatment and a palatal fill.
+        #-- user enters UR1 RT P,CO  
+        
+        #-- what is the current item in ur1pl?
         existing=self.pt.__dict__[tooth+self.selectedChartWidget]
-
-        print "toothTreatAdded '%s','%s'"%(tooth, input)
-        self.pt.__dict__[tooth+self.selectedChartWidget]=input
+        
+        self.pt.__dict__[tooth+self.selectedChartWidget]=properties
         #--update the patient!!
-        self.ui.planChartWidget.setToothProps(tooth,input)
+        self.ui.planChartWidget.setToothProps(tooth,properties)
+        
+        #-- new items are input - existing.
+        if existing in properties:
+            input=properties.replace(existing,"")
+        else:
+            input=properties
+        #-- send a note to the console for debugging
+        print "toothTreatAdded '%s','%s'"%(tooth, input)
 
-        if existing in input:
-            input=input.replace(existing,"")
-
+        #--split our string into a list of treatments.
+        #-- so UR1 RT P,CO -> [("UR1","RT"),("UR1","P,CO")]
+        #-- this also separates off any postsetc..
+        #-- and bridge brackets
         items=fee_keys.itemsPerTooth(tooth, input)
+        
+        #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
         for item in items:
             print "item=",item
+            #--ok, so now lookup the four digit itemcode
+            ###############################################
+            #-- this is critical bit"!!!!!
+            #-- if this is incorrect... est will be crap.
+            #-- the function returns "4001" - unknown if it is confused by
+            #-- the input.
             itemcode=fee_keys.getCode(item[0],item[1])
+            ###############################################
+            #--get a description (for the estimate)
             description=fee_keys.getDescription(itemcode)
+            #-- get a fee and pt fee
             fee,ptfee=self.getItemFees(itemcode)
+            #--add to estimate
             self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
 
