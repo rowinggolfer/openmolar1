@@ -28,7 +28,7 @@ def age(dob):
         if nextbirthday==today:
             return "<h5> %s TODAY!</h5>"%age
         if age>18:
-            return "(%syo)"%age
+            return "(%syo)<hr />"%age
         else:
             retarg="<br />%s years"%age
             if age==1:
@@ -54,12 +54,13 @@ def details(pt,Saved=True):
 
     retarg+='%s'%pt.dob
     retarg+=' %s'%age(pt.dob)
-    for line in (pt.addr1,pt.addr2,pt.addr3,pt.town,pt.county,pt.pcde):
+    for line in (pt.addr1,pt.addr2,pt.addr3,pt.town,pt.county):
         if str(line)!='':
             if line!=pt.pcde:
                 line=line.title()
             retarg+=line +'<br />'
-    retarg=retarg.rstrip('<br />') + '<hr />'
+    
+    retarg+=pt.pcde + '<hr />'
     if "N" in pt.cset:
         retarg+='NHS '
         if pt.exmpt!="":

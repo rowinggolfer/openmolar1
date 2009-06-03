@@ -396,7 +396,7 @@ class feeClass():
                         APPLIED=True
 
                 if APPLIED:
-                    self.pt.examt=result[0]
+                    self.pt.examt=examtype
                     examd=result[2].toString("dd/MM/yyyy")
                     if self.pt.examt=="CE":
                         self.pt.pd5=examd
@@ -410,7 +410,7 @@ class feeClass():
                                  .toAscii())
                     newnotes+="%s examination performed by %s\n"%(
                     examtype,examdent)
-                    self.pt.addHiddenNote("exam","%s EXAM"%examtype)
+                    self.pt.addHiddenNote("exam","%s"%examtype)
                     item=fee_keys.getKeyCode(examtype)
 
                     #-- get the fee and patien fee
@@ -723,18 +723,24 @@ class feeClass():
             tup=type.split(" ")
             att=tup[0]
             treat=tup[1]+" "
-            plan=self.pt.__dict__[att+"pl"].replace(treat,"")
-            self.pt.__dict__[att+"pl"]=plan
-            completed= self.pt.__dict__[att+"cmp"]+treat
-            self.pt.__dict__[att+"cmp"]=completed
+            if att =="exam":
+                self.pt.examt=tup[1]
+                self.pt.examd=localsettings.ukToday()
+                self.pt.addHiddenNote("exam","%s"%tup[1])
+                    
+            else:            
+                plan=self.pt.__dict__[att+"pl"].replace(treat,"")
+                self.pt.__dict__[att+"pl"]=plan
+                completed= self.pt.__dict__[att+"cmp"]+treat
+                self.pt.__dict__[att+"cmp"]=completed
 
-            #-- now update the charts
-            if re.findall("[ul][lr][1-8]",att):
-                self.updateChartsAfterTreatment(att,plan,completed)
+                #-- now update the charts
+                if re.findall("[ul][lr][1-8]",att):
+                    self.updateChartsAfterTreatment(att,plan,completed)
+                    self.pt.addHiddenNote("treatment","%s %s"%(att.upper(),treat))
 
             self.load_treatTrees()
-            self.pt.addHiddenNote("treatment","%s %s"%(att.upper(),treat))
-
+            
         except Exception,e:
             self.advise("Error moving %s from plan to completed<br />"%type+
             "Please complete manually",1)
@@ -750,18 +756,25 @@ class feeClass():
             tup=type.split(" ")
             att=tup[0]
             treat=tup[1]+" "
-            plan=self.pt.__dict__[att+"pl"]+treat
-            self.pt.__dict__[att+"pl"]=plan
-            completed= self.pt.__dict__[att+"cmp"].replace(treat,"")
-            self.pt.__dict__[att+"cmp"]=completed
+            if att =="exam":
+                self.pt.examt=""
+                self.pt.examd=""
+                self.pt.addHiddenNote("exam","%s"%tup[1],True)
+                                    
+            else:
+                plan=self.pt.__dict__[att+"pl"]+treat
+                self.pt.__dict__[att+"pl"]=plan
+                completed= self.pt.__dict__[att+"cmp"].replace(treat,"")
+                self.pt.__dict__[att+"cmp"]=completed
 
-            #-- now update the charts
-            if re.findall("[ul][lr][1-8]",att):
-                self.updateChartsAfterTreatment(att,plan,completed)
+                #-- now update the charts
+                if re.findall("[ul][lr][1-8]",att):
+                    self.updateChartsAfterTreatment(att,plan,completed)
+                    self.pt.addHiddenNote("treatment","%s %s"%(
+                    att.upper(),treat),True)
 
             self.load_treatTrees()
-            self.pt.addHiddenNote("treatment","{%s %s}"%(att.upper(),treat))
-
+            
         except Exception,e:
             self.advise("Error moving %s from completed to plan<br />"%type+
             "Please complete manually",1)
@@ -779,17 +792,28 @@ class feeClass():
         try:
             att=tup[0]
             treat=tup[1]+" "
+            #--in teh special case of an exam... it shouldn't need to be removed.
+            #-- as you can't "plan" an exam....
+            #-- however check anyway, better safe than sorry.
+            if att=="exam" and self.pt.examt=="":
+                self.load_treatTrees()
+                return
             result=QtGui.QMessageBox.question(self,"question",
             "remove %s %sfrom this course of treatment?"%(att,treat),QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if result==QtGui.QMessageBox.Yes:
-                plan=self.pt.__dict__[att+"pl"].replace(treat,"")
-                self.pt.__dict__[att+"pl"]=plan
-                completed=self.pt.__dict__[att+"cmp"].replace(treat,"")
-                self.pt.__dict__[att+"cmp"]=completed
+                if att =="exam":
+                    self.pt.examt=""
+                    self.pt.examd=""
+                    self.pt.addHiddenNote("exam","%s"%tup[1],True)
+                else:    
+                    plan=self.pt.__dict__[att+"pl"].replace(treat,"")
+                    self.pt.__dict__[att+"pl"]=plan
+                    completed=self.pt.__dict__[att+"cmp"].replace(treat,"")
+                    self.pt.__dict__[att+"cmp"]=completed
 
-                #-- now update the charts
-                if re.findall("[ul][lr][1-8]",att):
-                    self.updateChartsAfterTreatment(att,plan,completed)
+                    #-- now update the charts
+                    if re.findall("[ul][lr][1-8]",att):
+                        self.updateChartsAfterTreatment(att,plan,completed)
 
                 self.load_treatTrees()
 
@@ -4622,12 +4646,13 @@ printingClass,cashbooks,contractClass):
                 self.pt.courseno=course[1]
                 self.pt.courseno0=course[1]
                 self.pt.accd=localsettings.formatDate(accd)
-                self.advise("Sucessfully started new course of treatment",1)
+                self.advise("Sucessfully started new course of treatment")
                 self.pt.blankCurrtrt()
                 self.pt.estimates=[]
                 self.pt.underTreatment=True
                 #self.load_newEstPage()
                 self.updateDetails()
+                self.pt.addHiddenNote("open_course")
                 return True
             else:
                 self.advise("ERROR STARTING NEW COURSE, sorry",2)
@@ -4644,12 +4669,11 @@ printingClass,cashbooks,contractClass):
             self.pt.courseno1=self.pt.courseno0
             self.pt.cmpd=localsettings.ukToday()
             self.pt.courseno0=0
-
-            #-- new line
+            self.pt.addHiddenNote("close_course")
             self.reload_patient()
 
             ##-- I removed these lines because I think it is safer to
-            ##-- reload the pateint
+            ##-- reload the patient
             #blank things off
             #self.pt.estimates=[]
             #self.pt.blankCurrtrt()

@@ -5,10 +5,22 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
-
+from __future__ import division
 import sys
 from openmolar.settings import localsettings
 from openmolar.connect import connect
+
+cashbookCodesDict={}
+
+db=connect()
+cursor = db.cursor()
+query="select code,descr from cbcodes where flag>1"
+cursor.execute(query)
+rows=cursor.fetchall()
+cursor.close()
+for row in rows:
+    cashbookCodesDict[int(row[0])]=row[1]
+print cashbookCodesDict
 
 def paymenttaken(sno,name,dent,csetyp,cash,cheque,debit,credit,sundries,hdp,other):
     if sno==0: #won't happ
@@ -44,14 +56,14 @@ def details(dent,startdate,enddate):
     '''returns an html set showing pt name etc...'''
     db = connect()
     cursor = db.cursor()
-    headers=("id","cbdate","ref","linkid","descr","code","dntid","amt")
+    headers=("cbdate","Serial NO","Dentist","Patient","code","cash","cheque","card","unknown","amt")
     if dent=="*ALL*":
         cond1=""
         dentist = "All Dentists"
     else:
         dentist=localsettings.ops_reverse[str(dent)]
         cond1='dntid="%s" and'%dentist
-    query="id,DATE_FORMAT(cbdate,'%s'),ref,linkid,descr,code,dntid,amt"%localsettings.sqlDateFormat
+    query="DATE_FORMAT(cbdate,'%s'),ref,dntid,descr,code,amt"%localsettings.sqlDateFormat
     cursor.execute('select %s from cashbook where %s cbdate>="%s" and cbdate<="%s" order by cbdate'%(query,cond1,startdate,enddate))
     rows = cursor.fetchall()
     format=[dentist]
@@ -65,7 +77,7 @@ def details(dent,startdate,enddate):
         retarg+="<th>%s</th>"%header
     retarg+='</tr>'
     odd=True
-    total=0
+    total,cashTOT,chequeTOT,cardTOT,otherTOT=0,0,0,0,0
     for row in rows:
         if odd:
             retarg+='<tr bgcolor="#eeeeee">'
@@ -73,20 +85,46 @@ def details(dent,startdate,enddate):
         else:
             retarg+='<tr>'
             odd=True
-        for i in range(len(row)):
-            if i==6:
-                try:
-                    retarg+='<td>%s</td>'%localsettings.ops[row[i]]
-                except KeyError:
-                    retarg+='<td>unrecognised</td>'
-            elif i==7:
-                retarg+='<td align="right">&pound; %d.%02d</td>'%(int(row[i])/100,int(row[i]%100))
-            else:
-                retarg+='<td>%s</td>'%str(row[i])
-
+            
+        #-- a row is  (date,sno,dnt,patient,code,amount)
+            
+        retarg+='<td>%s</td><td>%s</td>'%(row[0],row[1])
+        retarg+='<td>%s</td>'%localsettings.ops.get(row[2])
+        retarg+='<td>%s</td>'%row[3]
+        CODE=cashbookCodesDict.get(row[4])
+        retarg+='<td>%s</td>'%CODE                
+        amt=row[5]/100
+        if "CASH" in CODE:
+            retarg+='<td align="right">&pound;%.02F</td>'%amt
+            cashTOT+=amt
+            retarg+="<td> </td>"*3
+        elif "CHEQUE" in CODE:
+            retarg+='<td align="right">&pound;%.02F</td>'%amt
+            chequeTOT+=amt
+            retarg+="<td> </td>"*2
+        elif "CARD" in CODE:
+            retarg+="<td> </td>"*2
+            retarg+='<td align="right">&pound;%.02F</td>'%amt
+            cardTOT+=amt
+            retarg+="<td> </td>"
+        else:
+            retarg+="<td> </td>"*3
+            retarg+='<td align="right">&pound;%.02F</td>'%amt
+            otherTOT+=amt
+        
+        retarg+='<td align="right">&pound;%.02f</td>'%amt
+    
         retarg+='</tr>\n'
-        total+=int(row[7])
-    retarg+='<tr><td colspan="6"></td><td><b>TOTAL</b></td><td align="right"><b>&pound; %d.%02d</b></td></tr>'%(total/100,total%100)
+        total+=amt
+    retarg+='''<tr><td colspan="4"></td>
+    <td><b>TOTAL</b></td>
+    <td align="right"><b>&pound; %.02f</b></td>
+    <td align="right"><b>&pound; %.02f</b></td>
+    <td align="right"><b>&pound; %.02f</b></td>
+    <td align="right"><b>&pound; %.02f</b></td>
+    <td align="right"><b>&pound; %.02f</b></td></tr>'''%(
+    cashTOT,chequeTOT,cardTOT,otherTOT,total)
+    
     retarg+='</table>'
     cursor.close()
     #db.close()

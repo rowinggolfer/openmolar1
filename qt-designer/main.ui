@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>932</width>
-    <height>608</height>
+    <height>569</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -48,7 +48,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>7</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_10" >
        <attribute name="title" >
@@ -458,7 +458,7 @@
            <item row="0" column="0" colspan="4" >
             <widget class="QTabWidget" name="tabWidget" >
              <property name="currentIndex" >
-              <number>7</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tab_4" >
               <attribute name="title" >
@@ -475,7 +475,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>533</width>
+                    <width>664</width>
                     <height>481</height>
                    </rect>
                   </property>
@@ -1616,7 +1616,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>516</width>
+                    <width>664</width>
                     <height>423</height>
                    </rect>
                   </property>
@@ -1940,7 +1940,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>567</width>
+                    <width>674</width>
                     <height>465</height>
                    </rect>
                   </property>
@@ -2612,8 +2612,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>311</width>
-                    <height>105</height>
+                    <width>684</width>
+                    <height>351</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -3128,7 +3128,7 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>242</width>
+                    <width>668</width>
                     <height>359</height>
                    </rect>
                   </property>
@@ -3177,7 +3177,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
+                        <width>630</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3562,7 +3562,7 @@ Note - this will not remove items which are currently there. </string>
                 <x>0</x>
                 <y>0</y>
                 <width>162</width>
-                <height>449</height>
+                <height>410</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3580,7 +3580,7 @@ Note - this will not remove items which are currently there. </string>
                 <x>0</x>
                 <y>0</y>
                 <width>161</width>
-                <height>449</height>
+                <height>410</height>
                </rect>
               </property>
              </widget>
@@ -3597,7 +3597,7 @@ Note - this will not remove items which are currently there. </string>
                 <x>0</x>
                 <y>0</y>
                 <width>162</width>
-                <height>449</height>
+                <height>410</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" />
@@ -3615,7 +3615,7 @@ Note - this will not remove items which are currently there. </string>
                 <x>0</x>
                 <y>0</y>
                 <width>161</width>
-                <height>449</height>
+                <height>410</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="_2" />
@@ -4129,7 +4129,7 @@ Note - this will not remove items which are currently there. </string>
                <x>0</x>
                <y>0</y>
                <width>167</width>
-               <height>125</height>
+               <height>86</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3" >

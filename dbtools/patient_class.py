@@ -388,22 +388,34 @@ class patient():
         est.carriedover=carriedover
         self.estimates.append(est)
 
-    def addHiddenNote(self,notetype,note=""):
+    def addHiddenNote(self,notetype,note="",deleteIfPossible=False):
+        HN=""
         if notetype=="payment":
-            note=chr(3)+chr(119)+note
-            self.HIDDENNOTES.append(note)
+            HN=chr(3)+chr(119)+note
         if notetype=="printed":
-            note=chr(3)+"v"+note
-            self.HIDDENNOTES.append(note)
+            HN=chr(3)+"v"+note
         if notetype=="exam":               #other treatment
-            note=chr(3)+chr(112)+note
-            self.HIDDENNOTES.append(note)
+            HN=chr(3)+chr(112)+note
         if notetype=="treatment":               #other treatment
-            note=chr(3)+chr(107)+note
-            self.HIDDENNOTES.append(note)
+            HN=chr(3)+chr(107)+note
         if notetype=="mednotes":               #other treatment
-            note=chr(3)+chr(100)+note
-            self.HIDDENNOTES.append(note)
+            HN=chr(3)+chr(100)+note
+        if notetype=="close_course":
+            HN=chr(3)+chr(97)
+        if notetype=="open_course":
+            pass #- should this be something???
+            
+        if HN=="":
+            return
+        if deleteIfPossible:
+            if HN in self.HIDDENNOTES:
+                self.HIDDENNOTES.remove(HN)
+            else:
+                self.HIDDENNOTES.append("%s {%s}"%(HN[:2],note))
+        else:
+            self.HIDDENNOTES.append(HN)
+        
+        print self.HIDDENNOTES
 
 
     def clearHiddenNotes(self):
