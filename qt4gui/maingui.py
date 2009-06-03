@@ -451,40 +451,34 @@ class feeClass():
         dl = hygTreatWizard.Ui_Dialog(Dialog)
         dl.setPractitioner(7)
         item=fee_keys.getKeyCode("SP")
-
-        itemfee,ptfee=self.getItemFees(item,1)
-
-        fee=itemfee / 100
-        ##TODO put this dialog needs to be smarter, and update when SP+ selected
-
-        dl.doubleSpinBox.setValue(fee)
+        fee,ptfee=self.getItemFees(item,1)
+        item2=fee_keys.getKeyCode("SP+")
+        fee2,ptfee2=self.getItemFees(item2,1)
+        dl.setFees(((fee,ptfee),(fee2,ptfee2)))
         result=dl.getInput()
-        print result
+        
         if result:
-            ##['SP+/2', 'HW', (), 0]
             newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
-            newnotes+="%s performed by %s\n"%(result[0],result[1])
-            self.pt.addHiddenNote("treatment","Perio %s"%result[0])
+            newnotes+="%s performed by %s\n"%(dl.trt,dl.dent)
+            self.pt.addHiddenNote("treatment","Perio %s"%dl.trt)
 
-            ##todo - not right - ptfee may differ?
-            actfee=result[3]
-            ptfee=actfee
+            fee=dl.fee
+            ptfee=dl.ptFee
 
-            usercode=result[0]
-            item=fee_keys.getKeyCode(usercode)
+            item=fee_keys.getKeyCode(dl.trt)
             try:
                 item_description=localsettings.descriptions[item]
             except KeyError:
                 item_description="unknown perio treatment"
 
-            self.pt.addToEstimate(1,item,item_description,actfee,
+            self.pt.addToEstimate(1,item,item_description,fee,
             ptfee, self.pt.dnt1, self.pt.cset,
-            "perio %s"%result[0],True)
+            "perio %s"%dl.trt,True)
 
-            if actfee>0:
+            if ptfee>0:
                 self.applyFeeNow(ptfee)
 
-            self.pt.periocmp+=result[0]+" "
+            self.pt.periocmp+=dl.trt+" "
             for note in result[2]:
                newnotes+=note+", "
             self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
@@ -2030,7 +2024,26 @@ class appointmentClass():
 
 class signals():
     def setupSignals(self):
-        #misc buttons
+        self.signals_miscbuttons()
+        self.signals_admin()
+        self.signals_reception()
+        self.signals_printing()
+        self.signals_menu()
+        self.signals_estimates()
+        self.signals_daybook()
+        self.signals_accounts()
+        self.signals_contract()
+        self.signals_feesTable()
+        self.signals_charts()
+        self.signals_editPatient()
+        self.signals_notesPage()
+        self.signals_periochart()
+        self.signals_tabs()
+        self.signals_appointmentTab()
+        self.signals_appointmentOVTab()
+        
+    def signals_miscbuttons(self):
+        #misc button
         QtCore.QObject.connect(self.ui.saveButton,
                         QtCore.SIGNAL("clicked()"), self.okToLeaveRecord)
         QtCore.QObject.connect(self.ui.exampushButton,
@@ -2049,7 +2062,7 @@ class signals():
                         QtCore.SIGNAL("clicked()"), self.callXrays)
         QtCore.QObject.connect(self.ui.phraseBook_pushButton,
                         QtCore.SIGNAL("clicked()"), self.phraseBookDialog)
-
+    def signals_admin(self):
         #admin page
         QtCore.QObject.connect(self.ui.home_pushButton,
                         QtCore.SIGNAL("clicked()"), self.home)
@@ -2077,7 +2090,7 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.printrecall)
         QtCore.QObject.connect(self.ui.takePayment_pushButton,
                         QtCore.SIGNAL("clicked()"), self.takePayment)
-
+    def signals_reception(self):
         #admin summary widgets
         QtCore.QObject.connect(self.ui.newAppt_pushButton,
                         QtCore.SIGNAL("clicked()"), self.newAppt)
@@ -2093,7 +2106,7 @@ class signals():
                         QtCore.SIGNAL("clicked()"), self.printApptCard)
         QtCore.QObject.connect(self.ui.printGP17_pushButton,
                         QtCore.SIGNAL("clicked()"), self.printGP17)
-
+    def signals_printing(self):
         #printing buttons
         QtCore.QObject.connect(self.ui.receiptPrintButton,
                         QtCore.SIGNAL("clicked()"),self.printDupReceipt)
@@ -2113,7 +2126,7 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.accountButton2Clicked)
         QtCore.QObject.connect(self.ui.previousCorrespondence_treeWidget,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),self.showDoc)
-        
+    def signals_menu(self):
         #menu
         QtCore.QObject.connect(self.ui.action_save_patient,
                         QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
@@ -2137,7 +2150,7 @@ class signals():
                         QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
         QtCore.QObject.connect(self.ui.actionLog_queries_in_underlying_terminal,
                     QtCore.SIGNAL("triggered()"), localsettings.setlogqueries)
-
+    def signals_estimates(self):
 
         #Estimates and course ManageMent
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
@@ -2172,7 +2185,7 @@ class signals():
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
         QtCore.QObject.connect(self.ui.comp_treeWidget,QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
-
+    def signals_daybook(self):
 
         #daybook - cashbook
         QtCore.QObject.connect(self.ui.daybookGoPushButton,
@@ -2191,13 +2204,13 @@ class signals():
         "clicked()"), self.cashbookPrint)
         QtCore.QObject.connect(self.ui.daybookPrintButton,QtCore.SIGNAL(
         "clicked()"), self.daybookPrint)
-
+    def signals_accounts(self):
         #accounts
         QtCore.QObject.connect(self.ui.loadAccountsTable_pushButton,
                         QtCore.SIGNAL("clicked()"), self.populateAccountsTable)
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,
                         QtCore.SIGNAL("clicked()"),self.printSelectedAccounts)
-
+    def signals_contract(self):
         #contract
         QtCore.QObject.connect(self.ui.contract_tabWidget,
             QtCore.SIGNAL("currentChanged(int)"),self.handle_ContractTab)
@@ -2215,7 +2228,7 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.editHDPcontract)
         QtCore.QObject.connect(self.ui.editRegDent_pushButton,
                         QtCore.SIGNAL("clicked()"),self.editOtherContract)
-
+    def signals_feesTable(self):
 
         #feesTable
         ##TODO bring this functionality back
@@ -2239,7 +2252,7 @@ class signals():
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
                         QtCore.SIGNAL("clicked()"), self.feeSearch)
         
-        
+    def signals_charts(self):
         
 
         #charts (including underlying table)
@@ -2270,13 +2283,13 @@ class signals():
                                QtCore.SIGNAL("completed"), self.editCompleted)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                         QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
-
+    def signals_editPatient(self):
         #edit page
         QtCore.QObject.connect(self.ui.editMore_pushButton,
                         QtCore.SIGNAL("clicked()"), self.showAdditionalFields)
         QtCore.QObject.connect(self.ui.defaultNP_pushButton,
                                QtCore.SIGNAL("clicked()"), self.defaultNP)
-
+    def signals_notesPage(self):
         #notes page
         QtCore.QObject.connect(self.ui.notesMaximumVerbosity_radioButton,
                                QtCore.SIGNAL("clicked()"), self.updateNotesPage)
@@ -2284,7 +2297,7 @@ class signals():
                                QtCore.SIGNAL("clicked()"), self.updateNotesPage)
         QtCore.QObject.connect(self.ui.notesMediumVerbosity_radioButton,
                                QtCore.SIGNAL("clicked()"), self.updateNotesPage)
-
+    def signals_periochart(self):
 
         #periochart
         #### defunct  QtCore.QObject.connect(self.ui.perioChartWidget,
@@ -2294,13 +2307,13 @@ class signals():
                     SIGNAL("currentIndexChanged(int)"), self.layoutPerioCharts)
         QtCore.QObject.connect(self.ui.bpeDateComboBox,QtCore.SIGNAL
                                ("currentIndexChanged(int)"), self.bpe_table)
-
+    def signals_tabs(self):
         #tab widget
         QtCore.QObject.connect(self.ui.main_tabWidget,
                 QtCore.SIGNAL("currentChanged(int)"),self.handle_mainTab)
         QtCore.QObject.connect(self.ui.tabWidget,
                 QtCore.SIGNAL("currentChanged(int)"),self.handle_patientTab)
-
+    def signals_appointmentTab(self):
         #main appointment tab
         QtCore.QObject.connect(self.ui.appointmentCalendarWidget,QtCore.SIGNAL(
         "selectionChanged()"), self.layout_appointments)
@@ -2332,6 +2345,7 @@ class signals():
                          self.clearEmergencySlot)
             book.connect(book,QtCore.SIGNAL("BlockEmptySlot"),
                          self.blockEmptySlot)
+    def signals_appointmentOVTab(self):
         #appointment overview tab
         QtCore.QObject.connect(self.ui.apptOV_calendarWidget,
                     QtCore.SIGNAL("selectionChanged()"),  self.layout_apptOV)

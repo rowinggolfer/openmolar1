@@ -5,15 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>256</width>
-    <height>359</height>
+    <width>266</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Hygenist Wizard</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <item>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" colspan="2" >
     <widget class="QLabel" name="label" >
      <property name="font" >
       <font>
@@ -29,7 +29,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0" colspan="2" >
     <widget class="QRadioButton" name="sp_radioButton" >
      <property name="text" >
       <string>Scale and Polish</string>
@@ -39,7 +39,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0" colspan="2" >
     <widget class="QRadioButton" name="extsp_radioButton" >
      <property name="text" >
       <string>Extensive Scaling</string>
@@ -49,7 +49,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="3" column="0" colspan="2" >
     <widget class="QRadioButton" name="twovisit1_radioButton" >
      <property name="enabled" >
       <bool>false</bool>
@@ -59,7 +59,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="4" column="0" colspan="2" >
     <widget class="QRadioButton" name="twovisit2_radioButton" >
      <property name="enabled" >
       <bool>false</bool>
@@ -69,63 +69,133 @@
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label_2" >
-       <property name="font" >
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text" >
-        <string>Dentist/Hygenist</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="wordWrap" >
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QComboBox" name="dents_comboBox" />
-     </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="label_3" >
-       <property name="font" >
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text" >
-        <string>Fee</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QDoubleSpinBox" name="doubleSpinBox" >
-       <property name="prefix" >
-        <string>£</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="5" column="0" >
+    <widget class="QLabel" name="label_2" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Dentist/Hygenist</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
-   <item>
+   <item row="5" column="1" >
+    <widget class="QComboBox" name="dents_comboBox" >
+     <property name="maximumSize" >
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" >
+    <widget class="QLabel" name="label_4" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Standard Fee</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" >
+    <widget class="QDoubleSpinBox" name="fee_doubleSpinBox" >
+     <property name="maximumSize" >
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="prefix" >
+      <string>£</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" >
+    <widget class="QLabel" name="label_3" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Charge to Patient</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1" >
+    <widget class="QDoubleSpinBox" name="ptFee_doubleSpinBox" >
+     <property name="maximumSize" >
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font" >
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="prefix" >
+      <string>£</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2" >
+    <spacer name="verticalSpacer_2" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>51</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="9" column="0" colspan="2" >
     <widget class="Line" name="line" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="10" column="0" colspan="2" >
     <widget class="QLabel" name="label_5" >
      <property name="font" >
       <font>
@@ -141,14 +211,14 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="11" column="0" colspan="2" >
     <widget class="QCheckBox" name="checkBox" >
      <property name="text" >
       <string>OHI given</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="12" column="0" colspan="2" >
     <spacer name="verticalSpacer" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -161,7 +231,7 @@
      </property>
     </spacer>
    </item>
-   <item>
+   <item row="13" column="0" colspan="2" >
     <widget class="QDialogButtonBox" name="buttonBox" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>

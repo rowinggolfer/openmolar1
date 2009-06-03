@@ -15,6 +15,15 @@ class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
         self.dialog=dialog
         self.practitioners=localsettings.activedents+localsettings.activehygs
         self.dents_comboBox.addItems(self.practitioners)
+        self.fees=[] #to store the fees for the items offered 
+        self.ptFees=[] #to store the ptfees
+        self.signals()
+        self.trt=None
+        self.dent=None
+        self.notes=None
+        self.fee=None
+        self.ptFee=None
+        
     def setPractitioner(self,arg):
         try:
             inits=localsettings.ops[arg]
@@ -22,27 +31,54 @@ class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
         except:
             self.dents_comboBox.setCurrentIndex(-1)
 
+    def setFees(self,arg):
+        for fees in arg:
+            self.fees.append(fees[0])
+            self.ptFees.append(fees[1])
+        self.treatmentChanged(True)
+    def treatmentChanged(self,arg):
+        '''
+        called when the radio boxes are toggled
+        '''
+        
+        i=1
+        if arg:
+            i=0
+        fee,ptfee=self.fees[i],self.ptFees[i]
+        self.fee_doubleSpinBox.setValue(fee/100)
+        self.ptFee_doubleSpinBox.setValue(ptfee/100)
+        
+
     def getInput(self):
         if self.dialog.exec_():
             if self.sp_radioButton.isChecked():
-                trt="SP"
+                self.trt="SP"
             elif self.extsp_radioButton.isChecked():
-                trt="SP+"
+               self.trt="SP+"
             elif self.twovisit1_radioButton.isChecked():
-                trt="SP+/1"
+                self.trt="SP+/1"
             else:    # self.twovisit1_radioButton.isChecked():
-                trt="SP+/2"
-            retarg=[trt,str(self.dents_comboBox.currentText())]
-            retarg.append(self.getNotes())
-            retarg.append(int(self.doubleSpinBox.value()*100))
-            return retarg
-        else:
-            return()
+                self.trt="SP+/2"
+            self.dent=str(self.dents_comboBox.currentText())
+            self.notes=(self.getNotes())
+            self.fee=int(self.fee_doubleSpinBox.value()*100)
+            self.ptFee=int(self.ptFee_doubleSpinBox.value()*100)
+            
+            return True
+        
     def getNotes(self):
         notes=[]
         if self.checkBox.checkState():
             notes.append("OHI instruction given")
         return tuple(notes)
+
+    def signals(self):
+        '''
+        only signal require is when the radio buttons are toggled
+        '''
+        QtCore.QObject.connect(self.sp_radioButton,
+        QtCore.SIGNAL("toggled (bool)"), self.treatmentChanged)
+        
 
 if __name__ == "__main__":
     localsettings.initiate(False)
@@ -51,8 +87,10 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
     ui = Ui_Dialog(Dialog)
     ui.setPractitioner(6)
-    print ui.getInput()
-    #if Dialog.exec_():
-    #        print "accepted"
-    #else:
-    #        print "rejected"
+    ui.setFees(((2000,1800),(3760,2800)))
+    if ui.getInput():
+        print ui.trt
+        print ui.dent
+        print ui.fee
+        print ui.notes
+        print ui.ptFee

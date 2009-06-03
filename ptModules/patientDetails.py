@@ -74,7 +74,7 @@ def details(pt,Saved=True):
     else:
         retarg+='UNKNOWN COURSETYPE = %s <br />'%str(pt.cset)
     if pt.pf11!=0:
-        retarg+='P FEES %s<br />'%chr(pt.pf11)
+        retarg+='(feescale %s)<br />'%chr(pt.pf11)
     try:
         retarg+='dentist      = %s'%localsettings.ops[pt.dnt1]
         if pt.dnt2!=0 and pt.dnt1!=pt.dnt2:
