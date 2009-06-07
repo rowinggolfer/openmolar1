@@ -176,9 +176,15 @@ class feeClass():
             header=QtGui.QTreeWidgetItem(self.ui.fees_treeWidget, [headerText])
             for feeTup in feeLists:
                 feeList=[]
+                col=0
                 for item in feeTup:
-                    feeList.append(str(item))
-                QtGui.QTreeWidgetItem(header, feeList)
+                    if col>5:
+                        feeList.append(localsettings.formatMoney(item))
+                    else:
+                        feeList.append(str(item))
+                    col+=1
+                QtGui.QTreeWidgetItem(header,feeList)
+        
         self.chooseFeeColumns(0)
         #-- prevent it getting loaded again 
         #--(and undoing any user changes to col widths, expanded items etc...

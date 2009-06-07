@@ -156,8 +156,11 @@ def sqlToday():
     return "%04d%02d%02d"%(t.year,t.month,t.day)
 def formatMoney(m):
     '''takes an integer, returns "7.30"'''
-    return "%d.%02d"%(m/100,m%100)
-
+    try:
+        return "%d.%02d"%(m/100,m%100)
+    except:
+        return "???"
+        
 def GP17formatDate(d):
     if d=="" or d==None:
         return" "*8

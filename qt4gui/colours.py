@@ -8,6 +8,7 @@ GI=QtGui.QColor("#75d185")
 GOLD=QtGui.QColor("#ffff00")
 COMP=QtGui.QColor("#ffffff")
 PORC=QtGui.QColor("#ddffff")
+FISSURE=QtGui.QColor("#bbd0d0")
 AMALGAM=QtGui.QColor("#666666")
 METAL=QtGui.QColor("#000075")
 GUTTA_PERCHA=QtGui.QColor("#bb0000")
@@ -32,3 +33,5 @@ APPTCOLORS={
     "blocked":QtCore.Qt.transparent,
     "DOUBLE":QtCore.Qt.blue
 }
+
+
