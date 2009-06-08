@@ -930,7 +930,9 @@ class forumClass():
         '''
         loads the forum (you guessed, huh?)
         '''
+        #-- I have 2 forums. one for computer issues, and one for general
         for topic in ("forum", "OMforum"):
+            #-- set the column headers (stored in another module)
             headers=forum.headers
             if topic=="OMforum":
                 twidg=self.ui.OM_forum_treeWidget
@@ -938,10 +940,11 @@ class forumClass():
                 twidg=self.ui.forum_treeWidget
             twidg.clear()
             twidg.setHeaderLabels(headers)
+            #-- get the posts
             posts=forum.getPosts(topic)
             parents={None:twidg}
             #--set the forum alternating topic colours
-            colours={True:QtGui.QColor("blue"),False:QtGui.QColor("red")}
+            mcolours={True:QtGui.QColor("blue"),False:QtGui.QColor("red")}
             highlighted=True
             for post in posts:
                 parentIndex=post[1]
@@ -954,7 +957,7 @@ class forumClass():
                 item=QtGui.QTreeWidgetItem(parent,formatList)
                 if parentIndex==None:
                     highlighted=not highlighted
-                    colour=colours[highlighted]
+                    colour=mcolours[highlighted]
                 else:
                     colour=item.parent().textColor(2)
                 for i in range(item.columnCount()):
@@ -1673,6 +1676,9 @@ class appointmentClass():
         for heading in ("Past","Unscheduled","TODAY","Future"):
             parents[heading]=QtGui.QTreeWidgetItem(
             self.ui.ptAppointment_treeWidget, [heading])
+            
+            parents[heading].setTextColor(0,colours.diary[heading])
+
         rows=appointments.get_pts_appts(self.pt.serialno)
         #--which will give us stuff like...
         #--(4820L, 7, 4, 'RCT', '', '', 'OR PREP', datetime.date(2008, 12, 15),
@@ -1719,6 +1725,8 @@ class appointmentClass():
                 parent=parents["Future"]
 
             w=QtGui.QTreeWidgetItem(parent,appointmentList)
+            for i in range (w.columnCount()):
+                w.setTextColor(i,parent.textColor(0))
         self.ui.ptAppointment_treeWidget.expandAll()
 
 

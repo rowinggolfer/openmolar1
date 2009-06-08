@@ -19,6 +19,16 @@ med_warning=QtGui.QColor("red")
 APPT_Background=QtCore.Qt.white
 APPT_LINECOLOUR=QtGui.QColor("#dddddd")
 
+diary={
+"Unscheduled":QtGui.QColor("red"),
+"Past":QtGui.QColor("#8c7d3b"),
+"TODAY":QtGui.QColor("#3b8c55"),
+"Future":QtGui.QColor("#3b4a8c")
+}
+
+
+
+
 APPTCOLORS={
     "I":QtGui.QColor("#ffe5cc"),
     "N":QtGui.QColor("#cce5ff"),
