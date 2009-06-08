@@ -47,8 +47,6 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.setupUi(widget)
         QtCore.QObject.connect(self.spinBox,
                                QtCore.SIGNAL("valueChanged(int)"), self.feeCalc)
-        QtCore.QObject.connect(self.pt_spinBox,
-                               QtCore.SIGNAL("valueChanged(int)"), self.feeCalc)
 
         #self.itemfee=0
 
