@@ -13,16 +13,18 @@ def toHtml(p1,p2,verbose=False):
     #attribs=p1.__dict__.keys()
     #attribs.sort()
     attributesDict={
-    "Patient Table":patient_class.patientTableAtts,
-    "Treatment Items":patient_class.currtrtmtTableAtts,
-    "User Defined Data":patient_class.userdataTableAtts,
-    "Estimates":("estimates", )
+    "1 Patient Table":patient_class.patientTableAtts,
+    "2 Treatment Items":patient_class.currtrtmtTableAtts,
+    "3 User Defined Data":patient_class.userdataTableAtts,
+    "4 Estimates":("estimates", ),
+    "5 Perio Data":("perioData",)
     }
 
     if verbose: #let's see exactly what the class is about:
         attributesDict["all attributes"]=p1.__dict__.keys()
-
-    for key in attributesDict.keys():
+    keys=attributesDict.keys()
+    keys.sort()
+    for key in keys:
         attribs=attributesDict[key]
         retarg+="<h2>%s</h2>"%key
         retarg+='<table width="100%" border="1">'

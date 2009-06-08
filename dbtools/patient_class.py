@@ -404,6 +404,8 @@ class patient():
             HN=chr(3)+chr(97)
         if notetype=="open_course":
             pass #- should this be something???
+        if notetype=="fee":
+            HN=chr(3)+chr(131)+note
             
         if HN=="":
             return

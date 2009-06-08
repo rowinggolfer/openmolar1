@@ -20,7 +20,7 @@ from openmolar.qt4gui.dialogs import Ui_patient_finder,Ui_select_patient,\
 Ui_enter_letter_text,Ui_phraseBook,Ui_changeDatabase,Ui_related_patients,\
 Ui_raiseCharge,Ui_options,Ui_surgeryNumber,Ui_payments,paymentwidget,\
 Ui_specify_appointment,Ui_appointment_length,Ui_daylist_print,\
-Ui_confirmDentist,Ui_customTreatment
+Ui_confirmDentist,Ui_customTreatment, Ui_chooseDocument
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
@@ -69,9 +69,10 @@ class feeClass():
             else:
                 self.pt.money1+=int(fee*100)
             self.updateFees()
-            self.pt.addHiddenNote("treatment"," %s - fee %.02f"%\
-                                  (str(dl.lineEdit.text().toAscii()),fee))
+            self.pt.addHiddenNote("treatment"," %s"%
+            str(dl.lineEdit.text().toAscii()))
 
+            self.pt.addHiddenNote("fee","%.02f"%fee)
 
 ##############################################################################
 #--DISABLED THIS BIT.... CAUSING CONFUSION
@@ -203,7 +204,10 @@ class feeClass():
         if self.feesTable_searchpos>=n:
             self.feesTable_searchpos=0
         item = self.feesTable_searchList[self.feesTable_searchpos]
-        self.ui.fees_treeWidget.scrollToItem(item)
+
+        self.ui.fees_treeWidget.scrollToItem(item,
+        QtGui.QAbstractItemView.ScrollHint(QtGui.QAbstractItemView.PositionAtCenter))
+
         self.ui.fees_treeWidget.setCurrentItem(item)
         self.feesTable_searchpos+=1
 
@@ -223,14 +227,24 @@ class feeClass():
         searchField,matchflags,4)
 
         self.feesTable_searchpos=0
+        self.ui.feeSearch_pushButton.setFocus()
+        self.feeSearch()
 
     def nhsRegsPDF(self):
-        try:
-            proc=subprocess.Popen(["evince",
-            "resources/Dental_Information_Guide_2008_v4.pdf"])
-        except Exception,e:
-            print Exception,e
-            self.advise("Error opening PDF file",2)
+        Dialog=QtGui.QDialog(self)
+        dl=Ui_chooseDocument.Ui_Dialog()
+        dl.setupUi(Dialog)
+        if Dialog.exec_():
+            if dl.info_radioButton.isChecked():
+                doc="Dental_Information_Guide_2008_v4.pdf"
+            else:
+                doc="scotNHSremuneration08.pdf"
+            try:
+                proc=subprocess.Popen(["evince",
+                "resources/%s"%doc])
+            except Exception,e:
+                print Exception,e
+                self.advise("Error opening PDF file",2)
     def chooseFeescale(self,arg):
         '''
         recieves signals from the choose feescale combobox

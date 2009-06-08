@@ -95,7 +95,9 @@ def get_notes_for_date(line):
 def get_reception_for_date(line):
     recep=""
     for l in line:
-        if ("PRINT" in l[0]) or ("RECEIVED" in l[0])or ("FINAL" in l[0]) or ("UNKNOWN" in l[0]) or ("UPDATE" in l[0]):
+        if ("PRINT" in l[0]) or ("RECEIVED" in l[0]) or \
+        ("FINAL" in l[0]) or ("UNKNOWN" in l[0]) or \
+        ("UPDATE" in l[0]) or ("COURSE" in l[0]):
             recep+=l[0]+l[1]+"<br />"
     if recep=="":
         return "-"
