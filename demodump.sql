@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: openmolar_demo
 -- ------------------------------------------------------
--- Server version	5.0.67-0ubuntu6
+-- Server version	5.0.75-0ubuntu10.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,34 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `OMforum`
+--
+
+DROP TABLE IF EXISTS `OMforum`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `OMforum` (
+  `ix` int(10) unsigned NOT NULL auto_increment,
+  `parent_ix` int(10) unsigned default NULL,
+  `inits` char(5) default NULL,
+  `fdate` datetime default NULL,
+  `topic` char(30) default NULL,
+  `comment` char(200) default NULL,
+  `open` tinyint(1) NOT NULL default '1',
+  PRIMARY KEY  (`ix`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `OMforum`
+--
+
+LOCK TABLES `OMforum` WRITE;
+/*!40000 ALTER TABLE `OMforum` DISABLE KEYS */;
+/*!40000 ALTER TABLE `OMforum` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aday`
@@ -198,6 +226,30 @@ LOCK TABLES `cashbook` WRITE;
 /*!40000 ALTER TABLE `cashbook` DISABLE KEYS */;
 INSERT INTO `cashbook` VALUES (37424,'1996-06-14','000001',0,'MOLAR O',1,2,1076),(40664,'1996-12-23','000001',0,'MOLAR O',1,2,416),(51621,'1998-10-07','000001',0,'MOLAR O',1,4,2108),(54730,'1999-06-28','000001',0,'MOLAR O',1,4,1064),(55284,'1999-08-05','000001',0,'MOLAR O',7,4,7300),(58957,'2000-04-28','000001',0,'MOLAR O',2,4,1175),(63432,'2001-03-23','000001',0,'MOLAR O',2,4,3150),(70944,'2002-07-01','000001',0,'MOLAR O',2,4,3300),(90356,'2005-03-08','000001',0,'MOLAR O',2,4,4200),(97681,'2006-02-08','000001',0,'MOLAR O',2,4,4700),(98076,'2006-02-27','000001',0,'MOLAR O',2,4,5000),(105259,'2007-01-22','000001',0,'MOLAR O',6,4,3100),(109326,'2007-07-13','000001',0,'MOLAR O',2,4,1850),(109327,'2007-07-13','000001',0,'MOLAR O',18,4,600),(112368,'2007-11-12','000001',0,'MOLAR O',6,4,33000);
 /*!40000 ALTER TABLE `cashbook` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cbcodes`
+--
+
+DROP TABLE IF EXISTS `cbcodes`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `cbcodes` (
+  `code` tinyint(3) unsigned default NULL,
+  `flag` tinyint(4) default NULL,
+  `descr` char(20) default NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `cbcodes`
+--
+
+LOCK TABLES `cbcodes` WRITE;
+/*!40000 ALTER TABLE `cbcodes` DISABLE KEYS */;
+INSERT INTO `cbcodes` VALUES (0,2,'DPB'),(1,2,'NHS CASH'),(2,2,'PRIVATE CASH'),(3,2,'NHS CHEQUE'),(4,2,'PRIVATE CHEQUE'),(5,2,'NHS CREDIT CARD'),(6,2,'PRIVATE CREDIT CARD'),(7,2,'NHS SWITCH CARD'),(8,2,'PRIVATE SWITCH CARD'),(9,0,''),(10,0,''),(11,0,''),(12,0,''),(13,1,'HIGHLAND DENTAL PLAN'),(14,2,'SUNDRIES CASH'),(15,2,'SUNDRIES CHEQUE'),(16,2,'SUNDRIES SWITCH'),(17,2,'SUNDRIES CREDIT CARD'),(18,3,'SUNDRIES'),(19,0,''),(20,0,''),(21,3,'ANNUAL HDPS'),(22,0,''),(23,0,''),(24,3,'OTHER'),(25,0,''),(100,1,'DIST WATER'),(101,1,'SANDWICHES'),(102,1,'POSTAGE'),(103,1,'CLEANING MATERIALS'),(104,1,'WINDOW CLEANING'),(105,1,'MILK'),(106,1,'BISCUITS'),(107,1,'TEA & COFFEE'),(108,0,''),(109,0,''),(110,0,''),(111,0,''),(112,0,''),(113,0,''),(114,0,''),(115,0,''),(116,0,''),(117,0,''),(118,0,''),(119,0,''),(120,0,''),(121,0,''),(122,0,''),(123,0,''),(124,2,'RETURNED CHEQUES'),(125,2,'PATIENT REFUNDS');
+/*!40000 ALTER TABLE `cbcodes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -436,6 +488,34 @@ SET character_set_client = @saved_cs_client;
 LOCK TABLES `families` WRITE;
 /*!40000 ALTER TABLE `families` DISABLE KEYS */;
 /*!40000 ALTER TABLE `families` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forum`
+--
+
+DROP TABLE IF EXISTS `forum`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `forum` (
+  `ix` int(10) unsigned NOT NULL auto_increment,
+  `parent_ix` int(10) unsigned default NULL,
+  `inits` char(5) default NULL,
+  `fdate` datetime default NULL,
+  `topic` char(30) default NULL,
+  `comment` char(200) default NULL,
+  `open` tinyint(1) NOT NULL default '1',
+  PRIMARY KEY  (`ix`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `forum`
+--
+
+LOCK TABLES `forum` WRITE;
+/*!40000 ALTER TABLE `forum` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forum` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -967,4 +1047,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2009-06-01 22:14:11
+-- Dump completed on 2009-06-08  0:23:11
