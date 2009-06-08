@@ -46,8 +46,11 @@ def todays_patients(dents=("*")):
     return rows
 
 def getWorkingDents(adate,dents=()):
-    '''dentists are part time, or take holidays...this proc takes a date, and optionally a tuple of dents
-    then checks to see if they are flagged as off that day'''
+    '''
+    dentists are part time, or take holidays...this proc takes a date,
+    and optionally a tuple of dents
+    then checks to see if they are flagged as off that day
+    '''
     db=connect()
     cursor = db.cursor()
     if dents!=():
@@ -58,7 +61,8 @@ def getWorkingDents(adate,dents=()):
         mystr=mystr[0:mystr.rindex(" OR")]+")"
     else:
         mystr=""
-    fullquery='SELECT apptix,start,end FROM aday WHERE adate="%s" AND (flag=1 or flag=2) %s'%(adate,mystr)
+    fullquery='''SELECT apptix,start,end FROM aday
+    WHERE adate="%s" AND (flag=1 or flag=2) %s'''%(adate,mystr)
     if localsettings.logqueries:
         print fullquery
     cursor.execute(fullquery)
@@ -69,7 +73,10 @@ def getWorkingDents(adate,dents=()):
     return rows
 
 def allAppointmentData(adate,dents=()):
-    '''this gets appointment data for a specifc date and dents 2nd arg will frequently be getWorkingDents(adate)'''
+    '''
+    this gets appointment data for a specifc date and dents
+    2nd arg will frequently be getWorkingDents(adate)
+    '''
     db = connect()
     cursor = db.cursor()
     table="aslot"

@@ -30,7 +30,7 @@ addTreat, addToothTreat
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,\
 writeNewPatient,patient_class,search,appointments,accounts,calldurr,feesTable,\
-docsprinted,writeNewCourse
+docsprinted,writeNewCourse, forum
 
 #--modules which act upon the pt class type
 from openmolar.ptModules import patientDetails,notes,plan,referral,\
@@ -53,7 +53,7 @@ perioChartWidget,estimateWidget
 class feeClass():
     def raiseACharge(self):
         '''
-        this is called by the "raise a charge" button on the 
+        this is called by the "raise a charge" button on the
         clinical summary page
         '''
         if self.pt.serialno==0:
@@ -83,7 +83,7 @@ class feeClass():
 #                self.pt_dbstate.money0=self.pt.money0
 #                self.pt.clearHiddenNotes()
 ##############################################################################
-    
+
     def getItemFees(self,item,no_items=1):
         '''
         pass itemcode eg"0101", get a tuple (fee,ptfee)
@@ -184,14 +184,14 @@ class feeClass():
                         feeList.append(str(item))
                     col+=1
                 QtGui.QTreeWidgetItem(header,feeList)
-        
+
         self.chooseFeeColumns(0)
-        #-- prevent it getting loaded again 
+        #-- prevent it getting loaded again
         #--(and undoing any user changes to col widths, expanded items etc...
         self.feestableLoaded=True
         self.feesTable_searchList=[]
-        self.feesTable_searchpos=0    
-    
+        self.feesTable_searchpos=0
+
     def feeSearch(self):
         '''
         fee search button clicked... the values are already stored.
@@ -206,15 +206,15 @@ class feeClass():
         self.ui.fees_treeWidget.scrollToItem(item)
         self.ui.fees_treeWidget.setCurrentItem(item)
         self.feesTable_searchpos+=1
-        
+
     def newFeeSearch(self):
         '''
-        user has finished editing the 
+        user has finished editing the
         feesearchLineEdit - time to refill the searchList
         '''
         searchField=self.ui.feeSearch_lineEdit.text()
         print "search for",searchField
-        
+
         matchflags=QtCore.Qt.MatchFlags(
         QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
 
@@ -223,7 +223,7 @@ class feeClass():
         searchField,matchflags,4)
 
         self.feesTable_searchpos=0
-        
+
     def nhsRegsPDF(self):
         try:
             proc=subprocess.Popen(["evince",
@@ -237,7 +237,7 @@ class feeClass():
         '''
         print "choose Feescale needs work"
         ##TODO - neds work
-        
+
         if arg==0:
             #show all
             pass
@@ -253,7 +253,7 @@ class feeClass():
         '''
         print "choose Feescale Items needs work"
         ##TODO - neds work
-        
+
         if arg==0:
             #show all
             pass
@@ -283,7 +283,7 @@ class feeClass():
             #-- hide the extra description column
             self.ui.fees_treeWidget.setColumnWidth(4, 0)
         self.showHideFees()
-        
+
     def feestableProperties(self):
         ##TODO this needs work
         if self.ui.chooseFeescale_comboBox.currentIndex()==1:
@@ -443,7 +443,7 @@ class feeClass():
             else:
                 self.advise("Examination not applied",2)
                 break
-            
+
     def showHygDialog(self):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -462,7 +462,7 @@ class feeClass():
         fee2,ptfee2=self.getItemFees(item2,1)
         dl.setFees(((fee,ptfee),(fee2,ptfee2)))
         result=dl.getInput()
-        
+
         if result:
             newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes+="%s performed by %s\n"%(dl.trt,dl.dent)
@@ -582,21 +582,21 @@ class feeClass():
 
     def toothTreatAdd(self, tooth, properties):
         '''
-        properties for tooth has changed. 
+        properties for tooth has changed.
         '''
-        
+
         #-- important stuff. user has added treatment to a tooth
         #-- let's cite this eample to show how this funtion works
         #-- assume the UR1 has a root treatment and a palatal fill.
-        #-- user enters UR1 RT P,CO  
-        
+        #-- user enters UR1 RT P,CO
+
         #-- what is the current item in ur1pl?
         existing=self.pt.__dict__[tooth+self.selectedChartWidget]
-        
+
         self.pt.__dict__[tooth+self.selectedChartWidget]=properties
         #--update the patient!!
         self.ui.planChartWidget.setToothProps(tooth,properties)
-        
+
         #-- new items are input - existing.
         if existing in properties:
             input=properties.replace(existing,"")
@@ -610,7 +610,7 @@ class feeClass():
         #-- this also separates off any postsetc..
         #-- and bridge brackets
         items=fee_keys.itemsPerTooth(tooth, input)
-        
+
         #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
         for item in items:
             print "item=",item
@@ -652,13 +652,18 @@ class feeClass():
         chosen = dl.getInput()
 
         if chosen:
+            if self.pt.dnt2!=0:
+                dent=self.pt.dnt2
+            else:
+                dent=self.pt.dnt1
+
             for treat in chosen:
                 #-- treat[0]= the tooth name
                 #-- treat[1] = item code
                 #-- treat[2]= description
                 #-- treat[3]= adjusted fee
                 self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[3],
-                                       self.pt.dnt1, self.pt.cset, treat[0])
+                                       dent, self.pt.cset, treat[0])
             self.load_newEstPage()
             self.load_treatTrees()
 
@@ -669,12 +674,18 @@ class feeClass():
         '''
         print "completing Tooth Treatment",arg
         Dialog = QtGui.QDialog(self)
-        if self.pt.dnt2==None:
-            dent=self.pt.dnt2
+        if localsettings.clinicianNo!=0:
+            dent=localsettings.clinicianInits
+        elif self.pt.dnt2==None:
+            dent=localsettings.ops.get(self.pt.dnt2)
         else:
-            dent=self.pt.dnt1
-        dl = completeTreat.treatment(Dialog,localsettings.ops[dent],
-                                     arg,0)
+            dent=localsettings.ops.get(self.pt.dnt1)
+        if dent==None:
+            dent=""
+        feeTup=self.getFeesFromEst(arg[0][0], arg[0][1])
+        print " line 686", arg, feeTup
+        dl = completeTreat.treatment(Dialog,dent,arg,feeTup)
+
         results=dl.getInput()
         print "results = ",results
         for result in results:
@@ -698,6 +709,20 @@ class feeClass():
 
                 self.pt.addHiddenNote("treatment",planATT[:-2].upper()+
                 " "+newcompleted)
+
+    def getFeesFromEst(self, tooth, treat):
+        '''
+        iterate through the ests... find this item
+        '''
+        completed="%s %s"%(tooth[:3],treat)
+        print "looking for est item where type= '%s'?"%completed
+        retarg=None
+        for est in self.pt.estimates:
+            print "comparing '%s' and '%s'"%(est.type, completed.strip(" "))
+            if est.type == completed.strip(" "):
+                retarg=(est.fee, est.ptfee)
+                break
+        return retarg
 
     def checkEstBox(self,tooth,treat):
         '''
@@ -733,8 +758,8 @@ class feeClass():
                 self.pt.examt=tup[1]
                 self.pt.examd=localsettings.ukToday()
                 self.pt.addHiddenNote("exam","%s"%tup[1])
-                    
-            else:            
+
+            else:
                 plan=self.pt.__dict__[att+"pl"].replace(treat,"")
                 self.pt.__dict__[att+"pl"]=plan
                 completed= self.pt.__dict__[att+"cmp"]+treat
@@ -746,7 +771,7 @@ class feeClass():
                     self.pt.addHiddenNote("treatment","%s %s"%(att.upper(),treat))
 
             self.load_treatTrees()
-            
+
         except Exception,e:
             self.advise("Error moving %s from plan to completed<br />"%type+
             "Please complete manually",1)
@@ -766,7 +791,7 @@ class feeClass():
                 self.pt.examt=""
                 self.pt.examd=""
                 self.pt.addHiddenNote("exam","%s"%tup[1],True)
-                                    
+
             else:
                 plan=self.pt.__dict__[att+"pl"]+treat
                 self.pt.__dict__[att+"pl"]=plan
@@ -780,7 +805,7 @@ class feeClass():
                     att.upper(),treat),True)
 
             self.load_treatTrees()
-            
+
         except Exception,e:
             self.advise("Error moving %s from completed to plan<br />"%type+
             "Please complete manually",1)
@@ -811,7 +836,7 @@ class feeClass():
                     self.pt.examt=""
                     self.pt.examd=""
                     self.pt.addHiddenNote("exam","%s"%tup[1],True)
-                else:    
+                else:
                     plan=self.pt.__dict__[att+"pl"].replace(treat,"")
                     self.pt.__dict__[att+"pl"]=plan
                     completed=self.pt.__dict__[att+"cmp"].replace(treat,"")
@@ -885,6 +910,45 @@ class feeClass():
             self.load_newEstPage()
         else:
             self.advise("No treatment items to move!",1)
+
+class forumClass():
+    def loadForum(self):
+        '''
+        loads the forum (you guessed, huh?)
+        '''
+        for topic in ("forum", "OMforum"):
+            headers=forum.headers
+            if topic=="OMforum":
+                twidg=self.ui.OM_forum_treeWidget
+            else:
+                twidg=self.ui.forum_treeWidget
+            twidg.clear()
+            twidg.setHeaderLabels(headers)
+            posts=forum.getPosts(topic)
+            parents={None:twidg}
+            #--set the forum alternating topic colours
+            colours={True:QtGui.QColor("blue"),False:QtGui.QColor("red")}
+            highlighted=True
+            for post in posts:
+                parentIndex=post[1]
+                formatList=[]
+                for item in post[2:]:
+                    if item==None:
+                        item=""
+                    formatList.append(str(item))
+                parent=parents[parentIndex]
+                item=QtGui.QTreeWidgetItem(parent,formatList)
+                if parentIndex==None:
+                    highlighted=not highlighted
+                    colour=colours[highlighted]
+                else:
+                    colour=item.parent().textColor(2)
+                for i in range(item.columnCount()):
+                    item.setTextColor(i, colour)
+                parents[post[0]]=item
+            twidg.expandAll()
+            for i in range(twidg.columnCount()):
+                twidg.resizeColumnToContents(i)
 
 class contractClass():
     def handle_ContractTab(self,i):
@@ -1686,16 +1750,16 @@ class appointmentClass():
             for book in self.ui.apptBookWidgets:
                 book.setCurrentTime(currenttime)
 
-    def getappointmentData(self,d):
+    def getappointmentData(self,d, dents=()):
         '''
-        not sure that I need use a global self.appointmentData anymore.....
+        gets appointment data for date d.
         '''
         ad=copy.deepcopy(self.appointmentData)
         adate="%d%02d%02d"%(d.year(),d.month(),d.day())
-        workingdents=appointments.getWorkingDents(adate)
+        workingdents=appointments.getWorkingDents(adate, dents)
         self.appointmentData= appointments.allAppointmentData(adate,workingdents)
         if self.appointmentData!=ad:
-            self.advise('appointments on %s have changed'%adate)
+            self.advise('appointment data modified on %s'%adate)
             return True
         else:
             self.advise('apointments on %s are unchanged'%adate)
@@ -1984,8 +2048,8 @@ class appointmentClass():
                 "file a bug!<br /><br />%s"%str(e),2)
                 ####TODO - sort this out... no of widgets shouldn't be fixed.
             i+=1
-        for label in (self.ui.apptFrameLabel1,
-        self.ui.apptFrameLabel2,self.ui.apptFrameLabel3):
+        for label in (self.ui.apptFrameLabel1,self.ui.apptFrameLabel2,
+        self.ui.apptFrameLabel3, self.ui.apptFrameLabel4):
             label.setText("")
         if i>0 :
             self.ui.apptFrameLabel1.setText(
@@ -1996,6 +2060,10 @@ class appointmentClass():
             if i>2 :
                 self.ui.apptFrameLabel3.setText(
                                 localsettings.apptix_reverse[todaysDents[2]])
+            if i>3 :
+                self.ui.apptFrameLabel4.setText(
+                                localsettings.apptix_reverse[todaysDents[3]])
+
             apps=self.appointmentData[1]
             for app in apps:
                 dent=app[1]
@@ -2009,6 +2077,10 @@ class appointmentClass():
         self.triangles()
         for book in self.ui.apptBookWidgets:
             book.update()
+            if len(book.appts)==0:
+                book.hide()
+            else:
+                book.show()
 
     def appointment_clicked(self,list_of_snos):
         if len(list_of_snos)==1:
@@ -2071,7 +2143,7 @@ class signals():
         self.signals_tabs()
         self.signals_appointmentTab()
         self.signals_appointmentOVTab()
-        
+
     def signals_miscbuttons(self):
         #misc button
         QtCore.QObject.connect(self.ui.saveButton,
@@ -2162,6 +2234,8 @@ class signals():
                         QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
         QtCore.QObject.connect(self.ui.action_Open_Patient,
                     QtCore.SIGNAL("triggered()"), self.open_patient_fromfile)
+        QtCore.QObject.connect(self.ui.actionSet_Clinician,
+                    QtCore.SIGNAL("triggered()"), self.setClinician)
         QtCore.QObject.connect(self.ui.actionChoose_Database,
                                QtCore.SIGNAL("triggered()"), self.changeDB)
         QtCore.QObject.connect(self.ui.action_About,
@@ -2270,7 +2344,7 @@ class signals():
         QtCore.SIGNAL("currentIndexChanged(int)"), self.chooseFeeItemDisplay)
         QtCore.QObject.connect(self.ui.feesColumn_comboBox,
         QtCore.SIGNAL("currentIndexChanged(int)"), self.chooseFeeColumns)
-                
+
         QtCore.QObject.connect(self.ui.feeExpand_radioButton,
                         QtCore.SIGNAL("clicked()"), self.showHideFees)
         QtCore.QObject.connect(self.ui.feeCompress_radioButton,
@@ -2281,9 +2355,9 @@ class signals():
         QtCore.SIGNAL("editingFinished ()"),self.newFeeSearch)
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
                         QtCore.SIGNAL("clicked()"), self.feeSearch)
-        
+
     def signals_charts(self):
-        
+
 
         #charts (including underlying table)
         QtCore.QObject.connect(self.ui.chartsview_pushButton,
@@ -2452,10 +2526,22 @@ class customWidgets():
     def addCustomWidgets(self):
         print "adding custom widgets"
         ##statusbar
-        opLabel = QtGui.QLabel()
-        opLabel.setText("%s using %s mode"%(localsettings.operator,
-                                            localsettings.station))
-        self.ui.statusbar.addPermanentWidget(opLabel)
+
+        if localsettings.clinicianNo==0:
+            if localsettings.station=="surgery":
+                op_text = " <b>NO CLINICIAN SET</b> - "
+            else:
+                op_text = ""
+        else:
+            op_text = " <b>CLINICIAN (%s)</b> - "%localsettings.clinicianInits
+        if "/" in localsettings.operator:
+            op_text += " team "
+        op_text += " %s using %s mode. "%(localsettings.operator,
+        localsettings.station)
+
+        self.ui.operatorLabel = QtGui.QLabel()
+        self.ui.operatorLabel.setText(op_text)
+        self.ui.statusbar.addPermanentWidget(self.ui.operatorLabel)
 
         ##summary chart
         self.ui.summaryChartWidget=chartwidget.chartWidget()
@@ -2526,7 +2612,7 @@ class customWidgets():
         self.ui.apptBookWidgets.append(appointmentwidget.
                                        appointmentWidget("0800","1900",5,3))
         self.ui.appt3scrollArea.setWidget(self.ui.apptBookWidgets[2])
-        
+
         self.ui.apptBookWidgets.append(appointmentwidget.
                                        appointmentWidget("0800","1900",5,3))
         self.ui.appt4scrollArea.setWidget(self.ui.apptBookWidgets[3])
@@ -3256,8 +3342,8 @@ class printingClass():
             docsprinted.add(self.pt.serialno,descr[:14] + " (pdf)",pdfDup)
         except:
             self.advise("Error saving PDF copy",2)
-        
-    
+
+
     def printDupReceipt(self):
         dupdate=self.ui.dupReceiptDate_lineEdit.text()
         amount=self.ui.receiptDoubleSpinBox.value()*100
@@ -3295,7 +3381,7 @@ class printingClass():
         est=estimatePrint.estimate()
         est.setProps(self.pt.title,self.pt.fname,self.pt.sname,self.pt.serialno)
         est.estItems=self.pt.estimates
-        
+
         if est.print_():
             self.commitPDFtoDB("auto estimate")
         self.pt.addHiddenNote("printed","estimate")
@@ -3317,7 +3403,7 @@ class printingClass():
             html=str(html.toAscii())
             docsprinted.add(self.pt.serialno,"std letter (html)",html)
             self.pt.addHiddenNote("printed","std letter")
-        
+
     def customEstimate(self,html="",version=0):
         '''
         prints a custom estimate to the patient
@@ -3336,14 +3422,14 @@ class printingClass():
                 number=est.number
                 item=est.description
                 amount=est.ptfee
-                            
+
                 mult=""
                 if number>1:
                     mult="s"
                 item=item.replace("*",mult)
                 if "^" in item:
                     item=item.replace("^","")
-                    
+
                 ehtml+='<tr><td>%s</td><td>%s</td><td align="right">\xa3%s</td></tr>'%(
                 number,item,localsettings.formatMoney(amount))
             ehtml+='<tr><td></td><td><b>TOTAL</b></td>'
@@ -3364,9 +3450,9 @@ class printingClass():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
             myclass.printpage()
-            
+
             html=str(dl.textEdit.toHtml().toAscii())
-            
+
             docsprinted.add(self.pt.serialno,
             "cust estimate (html)",html,version+1)
 
@@ -3620,7 +3706,8 @@ class pageHandlingClass():
         if ci==7:
             if not self.feestableLoaded:
                 self.loadFeesTable()
-
+        if ci==8:
+            self.loadForum()
 
     def handle_patientTab(self):
         '''handles navigation of patient record'''
@@ -3843,13 +3930,9 @@ class pageHandlingClass():
         else:
             self.ui.dnt2comboBox.setCurrentIndex(-1)
 
-
-
-
-
 class openmolarGui(QtGui.QMainWindow, customWidgets,chartsClass,
 pageHandlingClass, newPatientClass,appointmentClass,signals,feeClass,
-printingClass,cashbooks,contractClass):
+printingClass,cashbooks,contractClass, forumClass):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui=Ui_main.Ui_MainWindow()
@@ -3874,7 +3957,6 @@ printingClass,cashbooks,contractClass):
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()
         self.appointmentData=()
-
         self.editPageVisited=False
 
     def advise(self,arg,warning_level=0):
@@ -3920,6 +4002,8 @@ printingClass,cashbooks,contractClass):
         self.advise('''<p>%s</p><p>%s</p>'''%(localsettings.about,
         localsettings.license), 1)
 
+    def setClinician(self):
+        self.advise("change practitioner?",1)
 
 
     def okToLeaveRecord(self):
@@ -3983,13 +4067,13 @@ printingClass,cashbooks,contractClass):
             self.ui.previousCorrespondence_treeWidget.resizeColumnToContents(i)
         #-- hide the index column
         self.ui.previousCorrespondence_treeWidget.setColumnWidth(3,0)
-        
+
     def showDoc(self,item,index):
         '''
         called by a double click on the documents listview
         '''
         print "showDoc"
-        
+
         ix=int(item.text(3))
         if "html" in item.text(1):
             print "html file found!"
@@ -3999,7 +4083,7 @@ printingClass,cashbooks,contractClass):
             if result==QtGui.QMessageBox.Yes:
                 html,version=docsprinted.getData(ix)
                 self.customEstimate(html,version)
-            
+
         elif "pdf" in item.text(1):
             result=QtGui.QMessageBox.question(self,"Re-open",
             "Do you want to review and/or reprint this item?",
@@ -4016,32 +4100,27 @@ printingClass,cashbooks,contractClass):
                     print Exception,e
                     self.advise("error reviewing PDF file<br />"
                     +"tried to open with evince on Linux"
-                    +" or default PDF reader on windows",1) 
+                    +" or default PDF reader on windows",1)
         else: #unknown data type... probably plain text.
             print "other type of doc"
             self.advise(docsprinted.getData(ix)[0],1)
-        
+
     def load_todays_patients_combobox(self):
         '''
         loads the quick select combobox, with all of todays's
         patients - if a list(tuple) of dentists is passed eg ,(("NW"))
         then only pt's of that dentist show up
         '''
-        if "/" in localsettings.operator:
-            dent_initials=localsettings.operator[:localsettings.\
-                                                 operator.index("/")]
+        if localsettings.clinicianNo !=0:
+            dents=(localsettings.clinicianInits,)
+            visibleItem="Today's Patients (%s)"%dents
         else:
-            dent_initials=localsettings.operator
-        if dent_initials in localsettings.activedents:
-            dent=(str(dent_initials),)
-            visibleItem="Today's Patients (%s)"%dent
-        else:
-            dent=("*",)
+            dents=("*",)
             visibleItem="Today's Patients (ALL)"
         self.advise("loading today's patients")
         self.ui.daylistBox.addItem(visibleItem)
 
-        for pt in appointments.todays_patients(dent):
+        for pt in appointments.todays_patients(dents):
             val=pt[1]+" -- " + str(pt[0])
             #--be wary of changing this -- is used as a marker some
             #--pt's have hyphonated names!
@@ -4622,7 +4701,12 @@ printingClass,cashbooks,contractClass):
         set up a new course of treament
         '''
         Dialog = QtGui.QDialog(self)
-        if self.pt.dnt2==0:
+
+        if localsettings.clinicianNo!=0 and \
+        localsettings.clinicianInits in localsettings.activedents:
+            #-- clinician could be a hygenist!
+            cdnt=localsettings.clinicianNo
+        elif self.pt.dnt2==0:
             cdnt=self.pt.dnt1
         else:
             cdnt=self.pt.dnt2

@@ -3,7 +3,10 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. See the GNU General Public License
+# for more details.
+
+from __future__ import division
 
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.dialogs import Ui_completeTreatment
@@ -15,9 +18,15 @@ class treatment(Ui_completeTreatment.Ui_Dialog):
         self.dialog=dialog
         practlist=localsettings.activedents+localsettings.activehygs
         self.dnt_comboBox.addItems(practlist)
-        pos=practlist.index(dnt)                                      
+        pos=practlist.index(dnt)
         self.dnt_comboBox.setCurrentIndex(pos)
-        self.fee_doubleSpinBox.setValue(amount/100)
+        if amount:
+            self.fee_doubleSpinBox.setValue(amount[0]/100)
+            self.ptfee_doubleSpinBox.setValue(amount[1]/100)
+        else:
+            quote='''Fees Not found in estimate <br />
+            raise a charge if appropriate'''
+            QtGui.QMessageBox.information(self.dialog,"Advisory",quote)
         self.items=items
         self.showItems()
     def showItems(self):
@@ -31,7 +40,7 @@ class treatment(Ui_completeTreatment.Ui_Dialog):
             cb.setChecked(True)
             self.checkBoxes.append(cb)
             vlayout.addWidget(cb)
-    
+
     def getInput(self):
         if self.dialog.exec_():
             retarg=()
@@ -41,15 +50,15 @@ class treatment(Ui_completeTreatment.Ui_Dialog):
             return retarg
         else:
             return()
-    
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
     items=[]
-    for i in range(10):
-        items.append(("ul5","B,GL"))
-    ui = treatment(Dialog,"BW",items,7699)
+    for i in range(4, 6):
+        items.append(("ul%d"%i,"B,GL"))
+    ui = treatment(Dialog,"BW",items,(7699, 6862))
     print ui.getInput()
-   
+

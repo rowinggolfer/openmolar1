@@ -11,7 +11,7 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 import re
 
-from openmolar.qt4gui.dialogs import Ui_addToothTreatment,\
+from openmolar.qt4gui.dialogs import Ui_addTreatment,\
 Ui_toothtreatmentItemWidget
 
 from openmolar.settings import localsettings,fee_keys
@@ -28,6 +28,11 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
         self.itemcode=""
         self.itemfee=0
         self.tooth=""
+        QtCore.QObject.connect(self.doubleSpinBox,
+            QtCore.SIGNAL("valueChanged(double)"), self.parent.updateTotal)
+        QtCore.QObject.connect(self.pt_doubleSpinBox,
+            QtCore.SIGNAL("valueChanged(double)"), self.parent.updateTotal)
+
 
     def setItem(self,tooth, usercode):
         self.tooth=tooth
@@ -46,10 +51,10 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
         #-- no rounding errors please!
         fee, ptfee=fee_keys.getFee(self.parent.cset,self.itemcode)
         self.doubleSpinBox.setValue(fee/100)
-        self.doubleSpinBox_2.setValue(ptfee/100)
+        self.pt_doubleSpinBox.setValue(ptfee/100)
         self.parent.updateTotal()
 
-class treatment(Ui_addToothTreatment.Ui_Dialog,):
+class treatment(Ui_addTreatment.Ui_Dialog,):
     '''
     A custom class with a scrollArea, a dentist comboBox,
     and a total double spin box
@@ -95,19 +100,23 @@ class treatment(Ui_addToothTreatment.Ui_Dialog,):
             vlayout.addWidget(iw)
 
     def updateTotal(self):
-        total=0
+        total, pt_total = 0, 0
         for widg in self.itemWidgets:
             total+=widg.doubleSpinBox.value()
+            pt_total += widg.pt_doubleSpinBox.value()
         self.fee_doubleSpinBox.setValue(total)
+        self.pt_fee_doubleSpinBox.setValue(pt_total)
+
 
     def getInput(self):
         if self.dialog.exec_():
             retarg=()
             for i in self.itemWidgets:
                 fee=int(i.doubleSpinBox.value()*100)
+                ptfee=int(i.pt_doubleSpinBox.value()*100)
                 retarg+=(
                 ("%s %s"%(i.tooth,i.usercode) ,
-                i.itemcode,i.description, fee),
+                i.itemcode,i.description, (fee, ptfee)),
                 )
             return retarg
 

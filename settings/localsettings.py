@@ -69,11 +69,17 @@ allowed_logins=[]
 recent_snos=[]
 
 #-- update whenever a manual search is made
+#-- sname,fname dob... etc
 lastsearch=("","","","","","")
 
 #-- used to load combobboxes etc....
 activedents=[]
 activehygs=[]
+clinicianNo=0
+clinicianInits=""
+
+#-- surgery or reception machine?
+station="surgery"
 
 #--this dictionary is upated when this file is initiate -
 #--it links dentist keys with practioners
@@ -101,10 +107,6 @@ descriptions={}
 apptTypes=("EXAM","BITE","BT","DOUBLE",
 "FAMILY","FILL","FIT","HYG","IMPS","LF","ORTHO",
 "PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")
-
-
-#-- surgery or reception machine?
-station="surgery"
 
 #-- default appt font size
 appointmentFontSize=8
@@ -160,7 +162,7 @@ def formatMoney(m):
         return "%d.%02d"%(m/100,m%100)
     except:
         return "???"
-        
+
 def GP17formatDate(d):
     if d=="" or d==None:
         return" "*8
@@ -173,10 +175,10 @@ def dayName(d):
     '''
     try:
         return ("Monday","Tuesday","Wednesday","Thursday",
-        "Friday","Saturday","Sunday")[d.isoweekday()] 
+        "Friday","Saturday","Sunday")[d.isoweekday()]
     except:
         pass
-        
+
 def monthName(d):
     '''
     expects a datetime object, returns the month
@@ -192,7 +194,7 @@ def longDate(d):
         return "%s, %d %s %d"%(dayName(d),d.day,monthName(d),d.year)
     except:
         pass
-        
+
 def formatDate(d):
     '''takes a date, returns a uk type date string'''
     try:
@@ -246,6 +248,17 @@ def setlogqueries():
     global logqueries
     logqueries=True
 
+def setOperator(u1, u2):
+    global operator, clinicianNo, clinicianInits
+    if u2 == "":
+        operator = u1
+    else:
+        operator = "%s/%s"%(u1, u2)
+    if u1 in activedents+activehygs:
+        clinicianNo = ops_reverse.get(u1)
+        clinicianInits = u1
+    else:
+        print "no clinician!"
 
 def initiate(debug=False):
     print "initiating settings"
@@ -269,7 +282,7 @@ def initiate(debug=False):
         else:
             ops[0]="NONE"
             ops_reverse["NONE"]=0
-    
+
     try:
         ##correspondence details for NHS forms
         query="select id,inits,name,formalname,fpcno,quals "
@@ -379,10 +392,10 @@ def initiate(debug=False):
     except Exception,e:
         print "error loading from newfeetable",e
 
-####################    
+####################
 #    ends
-###################    
-    
+###################
+
     wkdir=os.getcwd()
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")
 

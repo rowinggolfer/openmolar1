@@ -125,10 +125,9 @@ Are you ready to proceed?</center>'''
                 localsettings.successful_login=True
                 if dl.reception_radioButton.isChecked():
                     localsettings.station="reception"
-                if u2=="":
-                    localsettings.operator=str(u1)
-                else:
-                    localsettings.operator=str(u1+"/"+u2)
+
+                localsettings.setOperator(str(u1), str(u2))
+
                 from openmolar.qt4gui import maingui
                 sys.exit(maingui.main(sys.argv))
 
