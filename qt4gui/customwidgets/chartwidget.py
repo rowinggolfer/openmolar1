@@ -31,6 +31,7 @@ class chartWidget(QtGui.QWidget):
         self.setMinimumSize(self.minimumSizeHint())
         self.showLeftRight=True
         self.showSelected=True
+        self.setMouseTracking(True)
 
     def clear(self):
         '''
@@ -61,6 +62,8 @@ class chartWidget(QtGui.QWidget):
 
         #-- select the ur8
         self.selected = [-1,-1]
+        self.multiSelection=[]
+        self.highlighted=[-1,-1]
 
     def sizeHint(self):
         return QtCore.QSize(500, 200)
@@ -74,11 +77,34 @@ class chartWidget(QtGui.QWidget):
     def setShowSelected(self,arg):
         self.showSelected=arg
 
-    def setSelected(self,x,y):
+    def multiSelectADD(self):
+        if self.selected in self.multiSelection:
+            self.multiSelection.remove(self.selected)
+            return False
+        else:
+            self.multiSelection.append(self.selected)
+            return True
+        
+    def multiSelectCLEAR(self):
+        self.multiSelection=[self.selected]
+    
+    def setHighlighted(self,x,y):
+        if [x,y] != self.highlighted:
+            self.highlighted=[x,y]
+            self.update()
+        
+    def setSelected(self,x,y,multiselect=False):
             self.selected=[x,y]
-            self.repaint()
+            self.update()
             #--emit a signal that the user has selected a tooth
             #--will be in the form "ur1"
+            if multiselect:
+                if not self.multiSelectADD():
+                    #-- don't send a signal if user is simply 
+                    #--deselecting a tooth
+                   return 
+            else:
+                self.multiSelectCLEAR()
             self.emit(QtCore.SIGNAL("toothSelected"),self.grid[y][x])
 
     def setToothProps(self,tooth,props):
@@ -95,8 +121,21 @@ class chartWidget(QtGui.QWidget):
                 if prop[0]!="!":
                     self.__dict__[tooth].append(prop.lower()+" ")
 
+    def mouseMoveEvent(self, event):
+        '''overrides QWidget's mouse event'''
+        xOffset = self.width() / 16
+        yOffset = self.height() / 2
+        x= int(event.x()//xOffset)
+        if event.y() < yOffset:
+            y = 0
+        else:
+            y = 1
+        self.setHighlighted(x,y)
+
     def mousePressEvent(self, event):
         '''overrides QWidget's mouse event'''
+        ctrlClick=(event.modifiers()==QtCore.Qt.ControlModifier)
+        
         xOffset = self.width() / 16
         yOffset = self.height() / 2
         x= int(event.x()//xOffset)
@@ -109,7 +148,7 @@ class chartWidget(QtGui.QWidget):
             self.setSelected(x, y)
             self.emit(QtCore.SIGNAL("showHistory"),(tooth,event.globalPos()))
         else:
-            self.setSelected(x,y)
+            self.setSelected(x,y,ctrlClick)
 
     def mouseDoubleClickEvent(self, event):
         '''overrides QWidget's mouse double click event'''
@@ -185,11 +224,19 @@ class chartWidget(QtGui.QWidget):
 
                 #-- draw a tooth (subroutine)
                 self.tooth(painter,rect,tooth_notation)
-                if self.showSelected and [x, y] == self.selected:
+                if [x,y]==self.highlighted:
+                    painter.setPen(QtGui.QPen(QtCore.Qt.cyan, 1))
+                    painter.setBrush(colours.TRANSPARENT)
+                    painter.drawRect(rect.adjusted(1,1,-1,-1))
+                    
+                if self.showSelected and [x, y] in self.multiSelection:
                     #-- these conditions mean that the tooth needs to be
                     #--highlighted draw a rectangle around the selected tooth,
                     #--but don't overwrite the centre
-                    painter.setPen(QtGui.QPen(QtCore.Qt.blue, 2))
+                    if [x,y]==self.selected:
+                        painter.setPen(QtGui.QPen(QtCore.Qt.darkBlue, 2))
+                    else:
+                        painter.setPen(QtGui.QPen(QtCore.Qt.blue, 2))                        
                     painter.setBrush(colours.TRANSPARENT)
                     painter.drawRect(rect.adjusted(1,1,-1,-1))
 
@@ -647,8 +694,8 @@ if __name__ == "__main__":
     ("ur2","d,co b"),("ur1","pv rt"),("ul1","cr,pj"),("ul2","d,co b,co"),
     ("lr4","b"),("ll4","b,gl"),("ll5","ol"),("ll6","mod,co"),("ll7","pe"),
     ("lr7","fs"),("lr6","modbl"),("ll8","ue !watch")):
-        print prop
         form.setToothProps(prop[0],prop[1])
     form.show()
+    form.selected=[0,2]
     sys.exit(app.exec_())
 
