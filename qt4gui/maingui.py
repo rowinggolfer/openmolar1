@@ -327,11 +327,15 @@ class feeClass():
                 "does not have an active course",1)
 
     def applyFeeNow(self, arg ,cset=None):
-        #--TODO - this need fine tuning for course type etc....
         print "applying", arg
         if cset==None:
             cset=self.pt.cset
-        self.pt.money1+=arg
+        
+        if "N" in cset: 
+            self.pt.money0+=arg
+        else:
+            self.pt.money1+=arg
+
         self.updateFees()
 
     def updateFees(self):
@@ -359,7 +363,7 @@ class feeClass():
             return
 
         Dialog = QtGui.QDialog(self)
-        dl = examWizard.Ui_Dialog(Dialog,self.pt.dnt1)
+        dl = examWizard.Ui_Dialog(Dialog,localsettings.clinicianNo)
 
         ####TODO - set dentist correctly in this dialog
         APPLIED=False
@@ -469,7 +473,7 @@ class feeClass():
                 return
         Dialog = QtGui.QDialog(self)
         dl = hygTreatWizard.Ui_Dialog(Dialog)
-        dl.setPractitioner(7)
+        dl.setPractitioner(localsettings.clinicianNo)
         item=fee_keys.getKeyCode("SP")
         fee,ptfee=self.getItemFees(item,1)
         item2=fee_keys.getKeyCode("SP+")
@@ -515,6 +519,29 @@ class feeClass():
             list=((0,"S"),(0,"M"),(0,"P"))
             chosenTreatments=self.offerTreatmentItems(list)
             print chosenTreatments
+            for treat in chosenTreatments:
+                if treat[0]==1:
+                    usercode=treat[2]
+                else:
+                    usercode="%s%s"%(treat[0],treat[2])
+                self.pt.xraypl+=usercode+" "
+                self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
+                treat[4], self.pt.dnt1, self.pt.cset,"xray %s"%usercode)
+            self.load_treatTrees()
+            self.load_newEstPage()
+            
+            
+    ######################doesn't work....
+    def addXrayItems__EXPERIMENTAL(self):
+        if self.noNewCourseNeeded():
+            list=()
+            for i in range(200,1000):
+                itemCode="%04d"%i
+                if itemCode in localsettings.itemCodes:
+                    userCode="???" #################################FIX THIS
+                    list+=((0,userCode,itemCode),)
+                        
+            chosenTreatments=self.offerTreatmentItems(list)
             for treat in chosenTreatments:
                 if treat[0]==1:
                     usercode=treat[2]

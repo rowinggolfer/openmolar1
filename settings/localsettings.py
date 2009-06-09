@@ -120,7 +120,6 @@ surgeryno=-1
 #-- pt's are "private, independent, NHS etc...."
 csetypes=["P","I","N","N OR","N O"]
 
-treatmentCodes={}
 
 #--for debugging purposes... set this to true.- not yet implemented throughout.
 logqueries=False
@@ -136,6 +135,8 @@ defaultNewPatientDetails=("",)*8
 #-- these gets initiated
 privateFees={}
 nhsFees={}
+treatmentCodes={}
+itemCodes=[]
 
 #-- 1 less dialog box for these lucky people
 defaultPrinterforGP17=True
@@ -262,7 +263,7 @@ def setOperator(u1, u2):
 
 def initiate(debug=False):
     print "initiating settings"
-    global referralfile,stylesheet,fees,message,dentDict,privateFees,nhsFees
+    global referralfile,stylesheet,fees,message,dentDict,privateFees,nhsFees,itemCodes
     from openmolar.connect import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
@@ -342,6 +343,7 @@ def initiate(debug=False):
         rows=cursor.fetchall()
         for row in rows:
             code=row[0]
+            itemCodes.append(code)
             usercode=row[3]
             if code!="":
                 if privateFees.has_key(code):

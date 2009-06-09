@@ -24,19 +24,30 @@ class Ui_Dialog(Ui_exam_wizard.Ui_Dialog):
             self.dents_comboBox.setCurrentIndex(-1)
     
     def getInput(self):
-        if self.dialog.exec_():
+        result=True
+        while result==True:
+            result=self.dialog.exec_()
             if self.examA_radioButton.isChecked():
                 exam="CE"
             elif self.examB_radioButton.isChecked():
                 exam="ECE"
             else:
                 exam="FCA"
-            retarg=[exam,str(self.dents_comboBox.currentText())]
-            retarg.append(self.dateEdit.date())
-            retarg.append(self.getNotes())
+            dent=str(self.dents_comboBox.currentText())
+            if dent!="":
+                retarg=[exam,dent]
+                retarg.append(self.dateEdit.date())
+                retarg.append(self.getNotes())
+                break
+            else:
+                message="Please enter the examining Dentist"
+                QtGui.QMessageBox.information(self.dialog,"Whoops",message)   
+
+        if result:
             return retarg
         else:
             return()
+            
     def getNotes(self):
         notes=[]
         if self.checkBox.checkState():
@@ -50,10 +61,11 @@ class Ui_Dialog(Ui_exam_wizard.Ui_Dialog):
         return tuple(notes)
     
 if __name__ == "__main__":
+    localsettings.initiate(False)
     import sys
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
-    ui = Ui_Dialog(Dialog,5)
+    ui = Ui_Dialog(Dialog,0)
     print ui.getInput()
     #if Dialog.exec_():
     #        print "accepted"

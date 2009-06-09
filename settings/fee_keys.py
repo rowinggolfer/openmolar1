@@ -293,7 +293,10 @@ if __name__ == "__main__":
 
     #print getFee("P", "0101")
     #print getFee("N", "0101")
-    while True:
+    
+    
+    ###########################this is to test tooth entry stuff
+    while False:
         tooth=raw_input("Enter Tooth :")
         tooth=tooth.lower()
         input=raw_input("Enter Treatment for %s :"%tooth)

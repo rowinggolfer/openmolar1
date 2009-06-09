@@ -50,7 +50,9 @@ class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
         
 
     def getInput(self):
-        if self.dialog.exec_():
+        result=True
+        while result==True:
+            result=self.dialog.exec_()
             if self.sp_radioButton.isChecked():
                 self.trt="SP"
             elif self.extsp_radioButton.isChecked():
@@ -63,8 +65,12 @@ class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
             self.notes=(self.getNotes())
             self.fee=int(self.fee_doubleSpinBox.value()*100)
             self.ptFee=int(self.ptFee_doubleSpinBox.value()*100)
-            
-            return True
+            if self.dent!="":
+                break
+            else:
+                message="Please enter a dentist / hygenist"
+                QtGui.QMessageBox.information(self.dialog,"Whoops",message)   
+        return result
         
     def getNotes(self):
         notes=[]
@@ -86,7 +92,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
     ui = Ui_Dialog(Dialog)
-    ui.setPractitioner(6)
+    ui.setPractitioner(0)
     ui.setFees(((2000,1800),(3760,2800)))
     if ui.getInput():
         print ui.trt
