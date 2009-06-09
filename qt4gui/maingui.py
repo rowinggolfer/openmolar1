@@ -2755,7 +2755,7 @@ class chartsClass():
         else:
             widg=self.ui.staticChartWidget
             column=2
-        x,y=widg.selected[0],widg.selected[1]
+        [x,y]=widg.selected
         if y==0:
             #--upper teeth
             if e=="up":
@@ -2820,11 +2820,13 @@ class chartsClass():
 
     def flipDeciduous(self):
         if self.selectedChartWidget=="st":
-            row=self.ui.chartsTableWidget.currentRow()
-            selectedTooth=str(
-                        self.ui.chartsTableWidget.item(row,0).text().toAscii())
-            print "flipping tooth ",selectedTooth
-            self.pt.flipDec_Perm(selectedTooth)
+            selectedCells=self.ui.chartsTableWidget.selectedIndexes()
+            for cell in selectedCells:  #=self.ui.chartsTableWidget.currentRow()
+                row=cell.row()
+                selectedTooth=str(
+                            self.ui.chartsTableWidget.item(row,0).text().toAscii())
+                print "flipping tooth ",selectedTooth
+                self.pt.flipDec_Perm(selectedTooth)
             for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,
             self.ui.completedChartWidget,self.ui.perioChartWidget,
             self.ui.summaryChartWidget):
@@ -2904,10 +2906,10 @@ class chartsClass():
             self.ui.staticChartWidget.selected=[x,y]
             self.ui.staticChartWidget.update()
             if self.ui.planChartWidget.selected!=[-1,-1]:
-                self.ui.planChartWidget.selected=[-1,-1]
+                self.ui.planChartWidget.setSelected(-1,-1)
                 self.ui.planChartWidget.update()
             if self.ui.completedChartWidget.selected!=[-1,-1]:
-                self.ui.completedChartWidget.selected=[-1,-1]
+                self.ui.completedChartWidget.setSelected(-1,-1)
                 self.ui.completedChartWidget.update()
             column=2
         elif self.selectedChartWidget=="pl":
@@ -2916,10 +2918,10 @@ class chartsClass():
             self.ui.planChartWidget.selected=[x,y]
             self.ui.planChartWidget.update()
             if self.ui.staticChartWidget.selected!=[-1,-1]:
-                self.ui.staticChartWidget.selected=[-1,-1]
+                self.ui.staticChartWidget.setSelected(-1,-1)
                 self.ui.staticChartWidget.update()
             if self.ui.completedChartWidget.selected!=[-1,-1]:
-                self.ui.completedChartWidget.selected=[-1,-1]
+                self.ui.completedChartWidget.setSelected(-1,-1)
                 self.ui.completedChartWidget.update()
             column=3
         elif self.selectedChartWidget=="cmp":
@@ -2928,10 +2930,10 @@ class chartsClass():
             self.ui.completedChartWidget.selected=[x,y]
             self.ui.completedChartWidget.update()
             if self.ui.staticChartWidget.selected!=[-1,-1]:
-                self.ui.staticChartWidget.selected=[-1,-1]
+                self.ui.staticChartWidget.setSelected(-1,-1)
                 self.ui.staticChartWidget.update()
             if self.ui.planChartWidget.selected!=[-1,-1]:
-                self.ui.planChartWidget.selected=[-1,-1]
+                self.ui.planChartWidget.setSelected(-1,-1)
                 self.ui.planChartWidget.update()
             column=4
 

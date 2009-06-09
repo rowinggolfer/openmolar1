@@ -105,7 +105,8 @@ class chartWidget(QtGui.QWidget):
                    return 
             else:
                 self.multiSelectCLEAR()
-            self.emit(QtCore.SIGNAL("toothSelected"),self.grid[y][x])
+            if x!=-1:
+                self.emit(QtCore.SIGNAL("toothSelected"),self.grid[y][x])
 
     def setToothProps(self,tooth,props):
         '''adds fillings and comments to a tooth'''
@@ -132,10 +133,13 @@ class chartWidget(QtGui.QWidget):
             y = 1
         self.setHighlighted(x,y)
 
+    def leaveEvent(self,event):
+        self.setHighlighted(-1,-1)
+
     def mousePressEvent(self, event):
         '''overrides QWidget's mouse event'''
         ctrlClick=(event.modifiers()==QtCore.Qt.ControlModifier)
-        
+        shiftClick=(event.modifiers()==QtCore.Qt.ShiftModifier)
         xOffset = self.width() / 16
         yOffset = self.height() / 2
         x= int(event.x()//xOffset)
@@ -143,9 +147,18 @@ class chartWidget(QtGui.QWidget):
             y = 0
         else:
             y = 1
-        tooth=self.grid[y][x]
+            
+        if shiftClick and self.selected!=[-1,-1]:
+            [px,py]=self.selected
+            print "old",px,py,"new",x,y
+            for i in range(0,16):
+                if px<=i<=x or x<=i<=px:
+                    self.selected=[i,py]
+                    self.multiSelectADD()
+            ctrlClick=True
         if event.button()==2 and self.isStaticChart:
-            self.setSelected(x, y)
+            self.setSelected(x,y)
+            tooth=self.grid[y][x]
             self.emit(QtCore.SIGNAL("showHistory"),(tooth,event.globalPos()))
         else:
             self.setSelected(x,y,ctrlClick)
@@ -224,7 +237,7 @@ class chartWidget(QtGui.QWidget):
 
                 #-- draw a tooth (subroutine)
                 self.tooth(painter,rect,tooth_notation)
-                if [x,y]==self.highlighted:
+                if [x,y]==self.highlighted:                    
                     painter.setPen(QtGui.QPen(QtCore.Qt.cyan, 1))
                     painter.setBrush(colours.TRANSPARENT)
                     painter.drawRect(rect.adjusted(1,1,-1,-1))
