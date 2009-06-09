@@ -77,10 +77,11 @@ class chartWidget(QtGui.QWidget):
     def setShowSelected(self,arg):
         self.showSelected=arg
 
-    def multiSelectADD(self):
+    def multiSelectADD(self,removeDups=True):
         if self.selected in self.multiSelection:
-            self.multiSelection.remove(self.selected)
-            return False
+            if removeDups:
+                self.multiSelection.remove(self.selected)
+                return False
         else:
             self.multiSelection.append(self.selected)
             return True
@@ -94,19 +95,23 @@ class chartWidget(QtGui.QWidget):
             self.update()
         
     def setSelected(self,x,y,multiselect=False):
-            self.selected=[x,y]
-            self.update()
-            #--emit a signal that the user has selected a tooth
-            #--will be in the form "ur1"
-            if multiselect:
-                if not self.multiSelectADD():
-                    #-- don't send a signal if user is simply 
-                    #--deselecting a tooth
-                   return 
-            else:
-                self.multiSelectCLEAR()
-            if x!=-1:
-                self.emit(QtCore.SIGNAL("toothSelected"),self.grid[y][x])
+        print "selecting ",x,y,multiselect
+        self.selected=[x,y]
+        self.update()
+                
+        #--emit a signal that the user has selected a tooth
+        #--will be in the form "ur1"
+        if multiselect:
+            if not self.multiSelectADD():
+                #-- don't send a signal if user is simply 
+                #--deselecting a tooth
+                return 
+        else:
+            self.multiSelectCLEAR()
+                    
+        if x!=-1:
+            print "emitting signal"
+            self.emit(QtCore.SIGNAL("toothSelected"),self.grid[y][x])
 
     def setToothProps(self,tooth,props):
         '''adds fillings and comments to a tooth'''
@@ -147,22 +152,28 @@ class chartWidget(QtGui.QWidget):
             y = 0
         else:
             y = 1
-            
-        if shiftClick and self.selected!=[-1,-1]:
-            [px,py]=self.selected
-            print "old",px,py,"new",x,y
-            for i in range(0,16):
-                if px<=i<=x or x<=i<=px:
-                    self.selected=[i,py]
-                    self.multiSelectADD()
-            ctrlClick=True
+        
+        [px,py]=self.selected
+        #-- needed for shiftClick
+        
+        if shiftClick:
+            for row in set((py,y)):
+                for column in range(0,16):
+                    if px<=column<=x or x<=column<=px:
+                        if not [column,row] in self.multiSelection:
+                            self.setSelected(column,row,True)
+            return
+            #--add.. but don't exclude duplicates
+            #self.multiSelectADD(False) 
+
         if event.button()==2 and self.isStaticChart:
             self.setSelected(x,y)
             tooth=self.grid[y][x]
             self.emit(QtCore.SIGNAL("showHistory"),(tooth,event.globalPos()))
-        else:
-            self.setSelected(x,y,ctrlClick)
-
+        
+        self.setSelected(x,y,ctrlClick or shiftClick)
+    
+        
     def mouseDoubleClickEvent(self, event):
         '''overrides QWidget's mouse double click event'''
         if not self.isPlanChart:
@@ -197,7 +208,7 @@ class chartWidget(QtGui.QWidget):
         elif event.key() == QtCore.Qt.Key_Down:
             self.selected[1]=0 if self.selected[1] == 1 else self.selected[1]+1
         event.handled=True
-        self.repaint()
+        self.update()
 
     def paintEvent(self,event=None):
         '''
