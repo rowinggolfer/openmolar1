@@ -121,7 +121,12 @@ class feeClass():
             other=dl.misc_lineEdit.text()
             total=dl.total_doubleSpinBox.value()
             name=paymentPt.sname+" "+paymentPt.fname[:1]
-            if cashbook.paymenttaken(paymentPt.serialno,name,paymentPt.dnt1,
+            if paymentPt.dnt2!=0:
+                dent=paymentPt.dnt2
+            else:
+                dent=paymentPt.dnt1
+            
+            if cashbook.paymenttaken(paymentPt.serialno,name,dent,
             paymentPt.cset,cash,cheque,debit,credit,sundries,hdp,other):
 
                 paymentPt.addHiddenNote(
@@ -503,7 +508,7 @@ class feeClass():
                 self.applyFeeNow(ptfee)
 
             self.pt.periocmp+=dl.trt+" "
-            for note in result[2]:
+            for note in dl.notes:
                newnotes+=note+", "
             self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
             if self.ui.tabWidget.currentIndex()==7:
@@ -518,40 +523,18 @@ class feeClass():
         if self.noNewCourseNeeded():
             list=((0,"S"),(0,"M"),(0,"P"))
             chosenTreatments=self.offerTreatmentItems(list)
-            print chosenTreatments
             for treat in chosenTreatments:
+                #(number,usercode,itemcode,description, fee,ptfee)
                 if treat[0]==1:
-                    usercode=treat[2]
+                    usercode=treat[1]
                 else:
-                    usercode="%s%s"%(treat[0],treat[2])
+                    usercode="%s%s"%(treat[0],treat[1])
                 self.pt.xraypl+=usercode+" "
-                self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
-                treat[4], self.pt.dnt1, self.pt.cset,"xray %s"%usercode)
+                self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
+                treat[5], self.pt.dnt1, self.pt.cset,"xray %s"%usercode)
             self.load_treatTrees()
             self.load_newEstPage()
-            
-            
-    ######################doesn't work....
-    def addXrayItems__EXPERIMENTAL(self):
-        if self.noNewCourseNeeded():
-            list=()
-            for i in range(200,1000):
-                itemCode="%04d"%i
-                if itemCode in localsettings.itemCodes:
-                    userCode="???" #################################FIX THIS
-                    list+=((0,userCode,itemCode),)
-                        
-            chosenTreatments=self.offerTreatmentItems(list)
-            for treat in chosenTreatments:
-                if treat[0]==1:
-                    usercode=treat[2]
-                else:
-                    usercode="%s%s"%(treat[0],treat[2])
-                self.pt.xraypl+=usercode+" "
-                self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
-                treat[4], self.pt.dnt1, self.pt.cset,"xray %s"%usercode)
-            self.load_treatTrees()
-            self.load_newEstPage()
+
 
     def addPerioItems(self):
         if self.noNewCourseNeeded():
@@ -560,15 +543,13 @@ class feeClass():
             print chosenTreatments
             for treat in chosenTreatments:
 
-                #treat will be in the form (n,code,usercode,fee)
-
                 if treat[0]==1:
-                    usercode=treat[2]
+                    usercode=treat[1]
                 else:
-                    usercode="%s%s"%(treat[0],treat[2])
+                    usercode="%s%s"%(treat[0],treat[1])
                 self.pt.periopl+=usercode+" "
-                self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
-                treat[4], self.pt.dnt1, self.pt.cset,"perio %s"%usercode)
+                self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
+                treat[5], self.pt.dnt1, self.pt.cset,"perio %s"%usercode)
             self.load_treatTrees()
             self.load_newEstPage()
 
@@ -582,11 +563,9 @@ class feeClass():
                     list+=((0,item,code),)
             chosenTreatments=self.offerTreatmentItems(list)
             for treat in chosenTreatments:
-                #--treat=(1, '5112', 'CR,RC', 'recementing crown*', 4400)
-                #--ie.. number,code,usercode,description,fee
-                self.pt.otherpl+="%s%s "%(treat[0],treat[2])
-                self.pt.addToEstimate(treat[0],treat[1],treat[3], treat[4],
-                treat[4], self.pt.dnt1, self.pt.cset,"other OT")
+                self.pt.otherpl+="%s%s "%(treat[0],treat[1])
+                self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
+                treat[5], self.pt.dnt1, self.pt.cset,"other OT")
             self.load_newEstPage()
             self.load_treatTrees()
 
@@ -617,7 +596,7 @@ class feeClass():
         Dialog = QtGui.QDialog(self)
         dl = addTreat.treatment(Dialog,arg,self.pt)
         result= dl.getInput()
-        print result
+        print "offerTreatmentItems returned",result
         return result
 
 
@@ -703,7 +682,8 @@ class feeClass():
                 #-- treat[1] = item code
                 #-- treat[2]= description
                 #-- treat[3]= adjusted fee
-                self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[3],
+                
+                self.pt.addToEstimate(1, treat[1], treat[2], treat[3][0], treat[3][0],
                                        dent, self.pt.cset, treat[0])
             self.load_newEstPage()
             self.load_treatTrees()
@@ -809,7 +789,7 @@ class feeClass():
                 #-- now update the charts
                 if re.findall("[ul][lr][1-8]",att):
                     self.updateChartsAfterTreatment(att,plan,completed)
-                    self.pt.addHiddenNote("treatment","%s %s"%(att.upper(),treat))
+                self.pt.addHiddenNote("treatment","%s %s"%(att.upper(),treat))
 
             self.load_treatTrees()
 
@@ -2945,6 +2925,7 @@ class chartsClass():
             #-- create an error in 2 lines time!
         if not callerIsTable:
             #-- keep the table correct
+            print "updating charts table"
             self.ui.chartsTableWidget.setCurrentCell(x+y*16,column)
 
     def bpe_dates(self):

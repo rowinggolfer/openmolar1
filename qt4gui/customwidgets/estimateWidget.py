@@ -42,6 +42,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.setPtFee(self.item.ptfee)
         self.setDescription(self.item.description)
         self.setType(self.item.type)
+        self.setItemCode(self.item.itemcode)
         self.setCompleted(self.item.completed)
         self.setCset(self.item.csetype)
         
@@ -110,6 +111,11 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         if arg in (None,""):
             arg="-"
         self.code_label.setText(arg.split(" ")[0])
+    def setItemCode(self,arg):
+        if arg in (None,""):
+            arg="-"
+        self.itemCode_label.setText(arg)
+        
     def setCset(self,arg):
         if arg in (None,""):
             arg="-"        
@@ -175,15 +181,15 @@ class estWidget(QtGui.QFrame):
 
     def minimumSizeHint(self):
         height=self.bareMinimumHeight
-        height+=len(self.estItemWidgets)*30
+        height+=len(self.estItemWidgets)*28
         return QtCore.QSize(600,height)
 
     def updateTotals(self):
         self.total=0
         self.ptTotal=0
-        for item in self.ests:
-            self.total+=item.fee
-            self.ptTotal+=item.ptfee
+        for est in self.ests:
+            self.total+=est.fee
+            self.ptTotal+=est.ptfee
 
         self.estFooter.fee_lineEdit.setText("%.02f"%(self.total/100))
         self.estFooter.ptfee_lineEdit.setText("%.02f"%(self.ptTotal/100))
@@ -257,12 +263,9 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
-    pt=patient_class.patient(11956)
+    pt=patient_class.patient(707)
     form=estWidget()
     form.setEstimate(pt.estimates)
-    print "loaded once"
-    form.setEstimate(pt.estimates)
     form.show()
-
 
     sys.exit(app.exec_())

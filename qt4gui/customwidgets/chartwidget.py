@@ -110,8 +110,9 @@ class chartWidget(QtGui.QWidget):
             self.multiSelectCLEAR()
                     
         if x!=-1:
-            print "emitting signal"
-            self.emit(QtCore.SIGNAL("toothSelected"),self.grid[y][x])
+            tooth=self.grid[y][x]
+            print "emitting signal",tooth
+            self.emit(QtCore.SIGNAL("toothSelected"),tooth)
 
     def setToothProps(self,tooth,props):
         '''adds fillings and comments to a tooth'''
@@ -564,6 +565,10 @@ class chartWidget(QtGui.QWidget):
 
                 if prop[:2]=="fs":
                     material="fs"
+                
+                if prop[:2]=="dr":
+                    prop="o"
+                    material="dr"
 
                 #--put an outline around the filling
                 painter.setPen(QtGui.QPen(colours.FILL_OUTLINE, 1))
@@ -581,6 +586,8 @@ class chartWidget(QtGui.QWidget):
                     painter.setBrush(colours.AMALGAM)
                 elif material=="mr":
                     painter.setBrush(colours.METAL)
+                elif material=="dr":
+                    painter.setBrush(colours.DRESSING)                    
                 elif material=="fs":
                     ##TODO TEST CODE
                     painter.setPen(QtGui.QPen(colours.FISSURE,1))
@@ -657,6 +664,7 @@ class chartWidget(QtGui.QWidget):
                         [dx,ey-1,fx,ey-1,fx+1,ey+1,dx,ey+1]))
                         shapes.append(QtGui.QPolygon(
                         [ex-1,dy,ex+1,dy,ex+1,fy,ex-1,fy]))
+                        
                     #if "modpb" in prop:
                     #    n=QtGui.QPolygon([ax,ay,ix,ay,ix,iy,ax,iy])
                     #    shapes.append(n)
@@ -717,7 +725,7 @@ if __name__ == "__main__":
     for prop in (("ur7","ex "),("ur5","cr,go"),("ul4","do"),("ur3","AT"),
     ("ur2","d,co b"),("ur1","pv rt"),("ul1","cr,pj"),("ul2","d,co b,co"),
     ("lr4","b"),("ll4","b,gl"),("ll5","ol"),("ll6","mod,co"),("ll7","pe"),
-    ("lr7","fs"),("lr6","modbl"),("ll8","ue !watch")):
+    ("lr5","dr"),("lr7","fs"),("lr6","modbl"),("ll8","ue !watch")):
         form.setToothProps(prop[0],prop[1])
     form.show()
     form.selected=[0,2]

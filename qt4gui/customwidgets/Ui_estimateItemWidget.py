@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/estimateItemWidget.ui'
 #
-# Created: Thu May 21 10:57:06 2009
-#      by: PyQt4 UI code generator 4.4.3
+# Created: Tue Jun  9 17:53:24 2009
+#      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,12 +12,13 @@ from PyQt4 import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(709, 27)
+        Form.resize(752, 26)
         self.horizontalLayout = QtGui.QHBoxLayout(Form)
-        self.horizontalLayout.setSpacing(2)
-        self.horizontalLayout.setContentsMargins(2, 0, 2, 0)
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.number_lineEdit = QtGui.QLineEdit(Form)
+        self.number_lineEdit.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -29,8 +30,14 @@ class Ui_Form(object):
         self.number_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.number_lineEdit.setObjectName("number_lineEdit")
         self.horizontalLayout.addWidget(self.number_lineEdit)
+        self.itemCode_label = QtGui.QLabel(Form)
+        self.itemCode_label.setMinimumSize(QtCore.QSize(50, 0))
+        self.itemCode_label.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.itemCode_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.itemCode_label.setObjectName("itemCode_label")
+        self.horizontalLayout.addWidget(self.itemCode_label)
         self.description_lineEdit = QtGui.QLineEdit(Form)
-        self.description_lineEdit.setMinimumSize(QtCore.QSize(300, 0))
+        self.description_lineEdit.setMinimumSize(QtCore.QSize(250, 0))
         self.description_lineEdit.setMaxLength(50)
         self.description_lineEdit.setObjectName("description_lineEdit")
         self.horizontalLayout.addWidget(self.description_lineEdit)
@@ -100,7 +107,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.number_lineEdit.setText(QtGui.QApplication.translate("Form", "10", None, QtGui.QApplication.UnicodeUTF8))
+        self.itemCode_label.setText(QtGui.QApplication.translate("Form", "code", None, QtGui.QApplication.UnicodeUTF8))
         self.description_lineEdit.setText(QtGui.QApplication.translate("Form", "small xrays", None, QtGui.QApplication.UnicodeUTF8))
         self.code_label.setText(QtGui.QApplication.translate("Form", "code", None, QtGui.QApplication.UnicodeUTF8))
         self.cset_lineEdit.setText(QtGui.QApplication.translate("Form", "P", None, QtGui.QApplication.UnicodeUTF8))

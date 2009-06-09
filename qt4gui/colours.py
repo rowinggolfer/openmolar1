@@ -11,6 +11,7 @@ PORC=QtGui.QColor("#ddffff")
 FISSURE=QtGui.QColor("#bbd0d0")
 AMALGAM=QtGui.QColor("#666666")
 METAL=QtGui.QColor("#000075")
+DRESSING=QtGui.QColor("magenta")
 GUTTA_PERCHA=QtGui.QColor("#bb0000")
 FILL_OUTLINE=QtGui.QColor("#333333")                                                                #used to be blue
 TRANSPARENT=QtCore.Qt.transparent

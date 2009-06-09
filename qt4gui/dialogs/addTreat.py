@@ -101,8 +101,9 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             for i in self.itemWidgets:
                 number=i.spinBox.value()
                 fee=int(i.doubleSpinBox.value()*100)
+                ptfee=int(i.pt_doubleSpinBox.value()*100)
                 if number>0:
-                    retarg+=((number,i.itemcode,i.usercode,i.description, fee),)
+                    retarg+=((number,i.usercode,i.itemcode,i.description, fee,ptfee),)
             return retarg
         else:
             return()
