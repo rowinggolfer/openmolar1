@@ -49,7 +49,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_10">
        <attribute name="icon">
@@ -459,7 +459,7 @@
            <item row="0" column="0" colspan="4">
             <widget class="QTabWidget" name="tabWidget">
              <property name="currentIndex">
-              <number>0</number>
+              <number>7</number>
              </property>
              <widget class="QWidget" name="tab_4">
               <attribute name="title">
@@ -1383,7 +1383,7 @@
                    <item row="0" column="0" rowspan="2">
                     <widget class="QLabel" name="contractHDP_label_2">
                      <property name="text">
-                      <string>This label is for displaying HDP contractual stuff</string>
+                      <string>This label is for displaying Private contractual stuff</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
@@ -1604,7 +1604,7 @@
              </widget>
              <widget class="QWidget" name="tab_6">
               <attribute name="title">
-               <string>Printing</string>
+               <string>Correspondence</string>
               </attribute>
               <layout class="QHBoxLayout" name="horizontalLayout_11">
                <item>
@@ -1617,7 +1617,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>522</width>
+                    <width>675</width>
                     <height>432</height>
                    </rect>
                   </property>
@@ -1941,7 +1941,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>569</width>
+                    <width>685</width>
                     <height>471</height>
                    </rect>
                   </property>
@@ -2613,8 +2613,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>314</width>
-                    <height>105</height>
+                    <width>695</width>
+                    <height>366</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2787,7 +2787,7 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>96</width>
+                       <width>423</width>
                        <height>198</height>
                       </rect>
                      </property>
@@ -2819,8 +2819,8 @@
                   <property name="geometry">
                    <rect>
                     <x>0</x>
-                    <y>0</y>
-                    <width>213</width>
+                    <y>-83</y>
+                    <width>220</width>
                     <height>445</height>
                    </rect>
                   </property>
@@ -3129,8 +3129,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>249</width>
-                    <height>360</height>
+                    <width>695</width>
+                    <height>366</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15">
@@ -3178,7 +3178,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
+                        <width>657</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3941,9 +3941,6 @@ Note - this will not remove items which are currently there. </string>
                 </widget>
                </item>
               </layout>
-              <zorder>appt4scrollArea</zorder>
-              <zorder>apptFrameLabel4</zorder>
-              <zorder>printBook4_pushButton</zorder>
              </widget>
             </widget>
            </item>

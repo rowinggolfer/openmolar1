@@ -116,8 +116,9 @@ class treatment(Ui_addTreatment.Ui_Dialog,):
                 ptfee=int(i.pt_doubleSpinBox.value()*100)
                 retarg+=(
                 ("%s %s"%(i.tooth,i.usercode) ,
-                i.itemcode,i.description, (fee, ptfee)),
+                i.itemcode,i.description, fee, ptfee),
                 )
+            print "addTreat.getInput() returning", retarg
             return retarg
 
 if __name__ == "__main__":

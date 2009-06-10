@@ -4,7 +4,7 @@
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
-
+from __future__ import division
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.dialogs import Ui_hygenistWizard
 from openmolar.settings import localsettings
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
     ui = Ui_Dialog(Dialog)
     ui.setPractitioner(0)
-    ui.setFees(((2000,1800),(3760,2800)))
+    ui.setFees(((2050,1800),(3760,2800)))
     if ui.getInput():
         print ui.trt
         print ui.dent

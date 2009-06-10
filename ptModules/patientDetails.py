@@ -62,7 +62,7 @@ def details(pt,Saved=True):
     
     retarg+=pt.pcde + '<hr />'
     if "N" in pt.cset:
-        retarg+='NHS '
+        retarg+='NHS<br />'
         if pt.exmpt!="":
             retarg+=" exemption=%s"%str(pt.exmpt)
         else:
@@ -74,8 +74,8 @@ def details(pt,Saved=True):
         retarg+="PRIVATE<br />"
     else:
         retarg+='UNKNOWN COURSETYPE = %s <br />'%str(pt.cset)
-    if pt.pf11!=0:
-        retarg+='(feescale %s)<br />'%chr(pt.pf11)
+    #if pt.pf11!=0:
+    #    retarg+='(feescale %s)<br />'%chr(pt.pf11)
     try:
         retarg+='dentist      = %s'%localsettings.ops[pt.dnt1]
         if pt.dnt2!=0 and pt.dnt1!=pt.dnt2:

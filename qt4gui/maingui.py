@@ -682,8 +682,9 @@ class feeClass():
                 #-- treat[1] = item code
                 #-- treat[2]= description
                 #-- treat[3]= adjusted fee
+                #-- treat[4]=adjusted ptfee
                 
-                self.pt.addToEstimate(1, treat[1], treat[2], treat[3][0], treat[3][0],
+                self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
                                        dent, self.pt.cset, treat[0])
             self.load_newEstPage()
             self.load_treatTrees()
@@ -3184,6 +3185,7 @@ class cashbooks():
                         "billct","billdate","billtype"))
                         patient_write_changes.toNotes(
                                                 sno,printself.pt.HIDDENNOTES)
+                        
 
     def datemanage(self):
         if self.ui.daybookStartDateEdit.date() > \
@@ -3372,6 +3374,9 @@ class printingClass():
             pdfDup=utilities.getPDF()
             #-field is 20 chars max.. hence the [:14]
             docsprinted.add(self.pt.serialno,descr[:14] + " (pdf)",pdfDup)
+            #--now refresh the docprinted widget (if visible)
+            if self.ui.previousCorrespondence_treeWidget.isVisible():
+                self.docsPrinted()
         except:
             self.advise("Error saving PDF copy",2)
 
@@ -3435,7 +3440,9 @@ class printingClass():
             html=str(html.toAscii())
             docsprinted.add(self.pt.serialno,"std letter (html)",html)
             self.pt.addHiddenNote("printed","std letter")
-
+            if self.ui.previousCorrespondence_treeWidget.isVisible():
+                self.docsPrinted()
+        
     def customEstimate(self,html="",version=0):
         '''
         prints a custom estimate to the patient
@@ -3508,7 +3515,9 @@ class printingClass():
             myclass.printpage()
             docsprinted.add(self.pt.serialno,"referral (html)",html)
             self.pt.addHiddenNote("printed","referral")
-
+            if self.ui.previousCorrespondence_treeWidget.isVisible():
+                self.docsPrinted()
+        
     def printChart(self):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -3554,7 +3563,7 @@ class printingClass():
                 self.pt.addHiddenNote("printed","account - tone %s"%tone)
                 self.addNewNote("Account Printed")
                 self.commitPDFtoDB("Account tone%s"%tone)
-
+    
     def testGP17(self):
         self.printGP17(True)
 
@@ -3872,33 +3881,41 @@ class pageHandlingClass():
         #-- of treatments within that category
         #-- display as a tree view
 
+        #-- PLANNED ITEMS
+        itemToCompress=None
         for category in pdict.keys():
             items=pdict[category]
-            header=category + '(%d items)'%len(items)
+            header=category + '(%d items)'%len(items)                
             parent = QtGui.QTreeWidgetItem(
                     self.ui.plan_treeWidget,[header])
+            if category=="Tooth":
+                itemToCompress=parent
             for item in items:
                 child = QtGui.QTreeWidgetItem(parent, [item])
             #-- next line causes drawing errors?
             #self.ui.plan_treeWidget.expandItem(parent)
+        self.ui.plan_treeWidget.expandAll()
         self.ui.plan_treeWidget.resizeColumnToContents(0)
+        if itemToCompress:
+            itemToCompress.setExpanded(False)
+        #--COMPLETED ITEMS
 
         self.ui.comp_treeWidget.clear()
         pdict=plan.completedDict(self.pt)
-        #-- pdict is a dictionary in the format
-        #-- {'Perio': ['perio - SP'], Diagnosis': ['xray - 2S', 'xray - M']}
-        #-- so the keys are treatment categories... and they contain a list
-        #-- of treatments within that category
-        #-- display as a tree view
         for category in pdict.keys():
             items=pdict[category]
             header=category + '(%d items)'%len(items)
             parent = QtGui.QTreeWidgetItem(
                     self.ui.comp_treeWidget,[header])
+            if category=="Tooth":
+                itemToCompress=parent
             for item in items:
                 child = QtGui.QTreeWidgetItem(parent, [item])
-        self.ui.plan_treeWidget.resizeColumnToContents(0)
-
+        self.ui.comp_treeWidget.expandAll()
+        self.ui.comp_treeWidget.resizeColumnToContents(0)
+        if itemToCompress:
+            itemToCompress.setExpanded(False)
+        
     def updateMemo(self):
         '''this is called when the text in the memo on the admin page changes'''
         self.ui.adminMemoEdit.setText(self.ui.memoEdit.toPlainText())
@@ -3927,15 +3944,20 @@ class pageHandlingClass():
         self.ui.email1Edit.setText(self.pt.email1)
         self.ui.email2Edit.setText(self.pt.email2)
         self.ui.occupationEdit.setText(self.pt.occup)
+        
+    def load_dentComboBoxes(self):
+        print "loading dnt comboboxes."
         try:
-            self.ui.dnt1comboBox.setCurrentIndex(localsettings.activedents.\
-                                        index(localsettings.ops[self.pt.dnt1]))
-            #-- these below have been move from the edit ta
+            self.ui.dnt1comboBox.setCurrentIndex(
+            localsettings.activedents.index(localsettings.ops[self.pt.dnt1]))
+
+            self.ui.dnt2comboBox.setCurrentIndex(
+            localsettings.activedents.index(localsettings.ops[self.pt.dnt1]))
+
         except Exception,e:
             self.ui.dnt1comboBox.setCurrentIndex(-1)
             if self.pt.dnt1!=0:
                 print "self.pt.dnt1 error - record %d"%self.pt.serialno
-                print "Handled Exception",e
                 if localsettings.ops.has_key(self.pt.dnt1):
                     self.advise(
                     "%s is no longer an active dentist in this practice"%\
@@ -3948,8 +3970,7 @@ class pageHandlingClass():
                 self.ui.dnt2comboBox.setCurrentIndex(localsettings.activedents.\
                                         index(localsettings.ops[self.pt.dnt2]))
             except KeyError,e:
-                print "self.pt.dnt1 error - record %d"
-                print "Handled Exception",e
+                print "self.pt.dnt2 error - record %d"
                 self.ui.dnt2comboBox.setCurrentIndex(-1)
                 if localsettings.ops.has_key(self.pt.dnt1):
                     self.advise("%s (dentist 2) "%localsettings.\
@@ -3958,9 +3979,6 @@ class pageHandlingClass():
                 else:
                     self.advise(
                     "unknown course dentist - please correct this",2)
-
-        else:
-            self.ui.dnt2comboBox.setCurrentIndex(-1)
 
 class openmolarGui(QtGui.QMainWindow, customWidgets,chartsClass,
 pageHandlingClass, newPatientClass,appointmentClass,signals,feeClass,
@@ -4135,7 +4153,10 @@ printingClass,cashbooks,contractClass, forumClass):
                     +" or default PDF reader on windows",1)
         else: #unknown data type... probably plain text.
             print "other type of doc"
-            self.advise(docsprinted.getData(ix)[0],1)
+            data=docsprinted.getData(ix)[0]
+            if data==None:
+                data="No information available about this document, sorry"
+            self.advise(data,1)
 
     def load_todays_patients_combobox(self):
         '''
@@ -4387,7 +4408,8 @@ printingClass,cashbooks,contractClass, forumClass):
         else:
             self.ui.tabWidget.setCurrentIndex(3)
             self.load_receptionSummaryPage()
-
+        #--populate dnt1 and dnt2 comboboxes
+        self.load_dentComboBoxes()
         self.updateDetails()
         self.editPageVisited=False
         self.ui.adminMemoEdit.setText(self.pt.memo)

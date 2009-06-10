@@ -7,6 +7,7 @@
 # for more details.
 
 import MySQLdb,sys,datetime,os
+from xml.dom import minidom
 import _version
 
 __version__= "0.0.9"
@@ -23,6 +24,7 @@ elif "linux" in sys.platform:
 else:
     print "unknown system platform - defaulting to settings in /etc/openmolar"
     cflocation='/etc/openmolar/openmolar.conf'
+
 
 #updated if correct password is given
 successful_login=False
@@ -261,6 +263,43 @@ def setOperator(u1, u2):
     else:
         print "no clinician!"
 
+def getLocalSettings():
+    '''
+    check for a local settings file (which has preferences etc...
+    and "knows" it's surgery number etc...
+    if one doesn't exist... knock one up.
+    '''
+    localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
+    if not os.path.exists(localFileDirectory):
+        os.mkdir(localFileDirectory)
+
+    localSets=os.path.join(localFileDirectory,"localsettings.conf")
+    if os.path.exists(localSets):
+        dom=minidom.parse(localSets)
+        node=dom.getElementsByTagName("station")
+        if node:
+            station=node[0].firstChild.data
+  
+    else:
+        f=open(localSets,"w")
+        f.write('''<?xml version="1.0" ?>
+        <settings><version>1.0</version></settings>''')
+        f.close()
+
+def updateLocalSettings(setting,value):
+    localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
+    localSets=os.path.join(localFileDirectory,"localsettings.conf")
+    if os.path.exists(localSets):
+        dom=minidom.parse(localSets)
+        settings=dom.getElementsByTagName("settings")
+        nodeToChange=settings.getElementsByTagName(setting)
+        if len(nodeToChange)==0:
+            settings.createNode(setting)
+        else:
+            #nodeToChange.append
+            station=node[0].firstChild.data
+
+
 def initiate(debug=False):
     print "initiating settings"
     global referralfile,stylesheet,fees,message,dentDict,privateFees,nhsFees,itemCodes
@@ -364,11 +403,6 @@ def initiate(debug=False):
         print "error loading from newfeetable",e
 
 
-
-#############################################################
-#NEW CODE - copying the above, but forming an NHS dict
-#############################################################
-
     try:   #this breaks compatibility with the old database schema
         query="select code, description, NF08, USERCODE,"
         query+="description1, regulation, NF08_pt from newfeetable"
@@ -394,9 +428,8 @@ def initiate(debug=False):
     except Exception,e:
         print "error loading from newfeetable",e
 
-####################
-#    ends
-###################
+
+    getLocalSettings()
 
     wkdir=os.getcwd()
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")

@@ -104,6 +104,7 @@ class treatment(Ui_addTreatment.Ui_Dialog):
                 ptfee=int(i.pt_doubleSpinBox.value()*100)
                 if number>0:
                     retarg+=((number,i.usercode,i.itemcode,i.description, fee,ptfee),)
+            print "addTreat.getInput() returning", retarg
             return retarg
         else:
             return()
