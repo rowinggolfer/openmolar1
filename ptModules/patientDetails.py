@@ -73,7 +73,8 @@ def details(pt,Saved=True):
         retarg+='<img src="resources/hdp_small.png" alt="HDP"><br />'
         #retarg+='HDP<br />'
     elif "P" in pt.cset:
-        retarg+="PRIVATE<br />"
+         retarg+='<img src="resources/private.png" alt="PRIVATE"><br />'
+        #retarg+="PRIVATE<br />"
     else:
         retarg+='UNKNOWN COURSETYPE = %s <br />'%str(pt.cset)
     #if pt.pf11!=0:
@@ -84,7 +85,7 @@ def details(pt,Saved=True):
             retarg+='/%s'%localsettings.ops[pt.dnt2]
     except KeyError,e:
         retarg+='''<h4>Please Set a Dentist for this patient!</h4>'''
-    retarg+='<hr />'
+        retarg+='<hr />'
     if pt.memo !='':
         retarg+='<h4>Memo</h4>'
         retarg+=pt.memo+'<hr />'
