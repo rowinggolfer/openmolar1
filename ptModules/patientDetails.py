@@ -62,14 +62,16 @@ def details(pt,Saved=True):
     
     retarg+=pt.pcde + '<hr />'
     if "N" in pt.cset:
-        retarg+='NHS<br />'
+        retarg+='<img src="resources/nhs_scot.png" alt="NHS"><br />'
+        #retarg+='NHS<br />'
         if pt.exmpt!="":
             retarg+=" exemption=%s"%str(pt.exmpt)
         else:
             retarg+="NOT EXEMPT"
         retarg+="<br />"
     elif "I" in pt.cset:
-        retarg+='HDP<br />'
+        retarg+='<img src="resources/hdp_small.png" alt="HDP"><br />'
+        #retarg+='HDP<br />'
     elif "P" in pt.cset:
         retarg+="PRIVATE<br />"
     else:

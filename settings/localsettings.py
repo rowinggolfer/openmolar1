@@ -18,12 +18,17 @@ print "Version %s\nDate %s"%(__version__,__build__)
 if "win" in sys.platform:
     #-- sorry about this... but cross platform is a goal :(
     cflocation='C:\\Program Files\\openmolar\\openmolar.conf'
+    localFileDirectory=os.path.join(os.environ.get("HOMEPATH"),".openmolar")
+    
 elif "linux" in sys.platform:
     #-- linux hurrah!!
     cflocation='/etc/openmolar/openmolar.conf'
+    localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
+    
 else:
     print "unknown system platform - defaulting to settings in /etc/openmolar"
     cflocation='/etc/openmolar/openmolar.conf'
+    localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
 
 
 #updated if correct password is given
@@ -269,7 +274,6 @@ def getLocalSettings():
     and "knows" it's surgery number etc...
     if one doesn't exist... knock one up.
     '''
-    localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
     if not os.path.exists(localFileDirectory):
         os.mkdir(localFileDirectory)
 
@@ -277,27 +281,29 @@ def getLocalSettings():
     if os.path.exists(localSets):
         dom=minidom.parse(localSets)
         node=dom.getElementsByTagName("station")
-        if node:
+        if node and node[0].hasChildNodes():
             station=node[0].firstChild.data
-  
+            print station
     else:
+        #-- no file found..
+        #--so create a settings file.
         f=open(localSets,"w")
         f.write('''<?xml version="1.0" ?>
         <settings><version>1.0</version></settings>''')
         f.close()
 
 def updateLocalSettings(setting,value):
-    localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
     localSets=os.path.join(localFileDirectory,"localsettings.conf")
     if os.path.exists(localSets):
         dom=minidom.parse(localSets)
-        settings=dom.getElementsByTagName("settings")
-        nodeToChange=settings.getElementsByTagName(setting)
+        nodeToChange=dom.getElementsByTagName(setting)
         if len(nodeToChange)==0:
-            settings.createNode(setting)
-        else:
-            #nodeToChange.append
-            station=node[0].firstChild.data
+            nodeToChange=dom.createElement(setting)
+            dom.firstChild.appendChild(nodeToChange)
+        nodeToChange[0].data=value
+        f=open(localSets,"w")
+        f.write(dom.toxml())
+        f.close()
 
 
 def initiate(debug=False):
@@ -470,3 +476,4 @@ if __name__ == "__main__":
     sys.path.append("/home/neil/openmolar/openmolar")
     print cflocation
     initiate(True)
+    updateLocalSettings("station","surgery3")
