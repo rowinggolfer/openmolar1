@@ -90,7 +90,7 @@ def get_notes_for_date(line):
     note=""
     for l in line:
         if "NOTE" in l[0]:
-            note+=l[1]+" "
+            note+=l[1].replace("<","&lt;")+" "
     return note
 def get_reception_for_date(line):
     recep=""

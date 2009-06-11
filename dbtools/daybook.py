@@ -10,6 +10,27 @@ import sys
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
+
+def add(sno,cset,dent,trtid,t,fee,ptfee):
+    '''
+    add an item to the daybook table
+    '''
+    db = connect()
+    cursor = db.cursor()
+    
+    query='''insert into daybook 
+    (date,serialno,coursetype,dntid,trtid,diagn,perio,anaes,misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
+    values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+   
+    values=(localsettings.sqlToday(),sno,cset,dent,trtid,t["diagn"],t["perio"],t["anaes"],
+    t["misc"],t["ndu"],t["ndl"],t["odu"],t["odl"],t["other"],t["chart"],fee,ptfee,0)
+    
+    print query
+    print values
+    print cursor.execute(query,values) 
+
+    cursor.close()
+
 def details(regdent,trtdent,startdate,enddate):
     '''returns an html table, for regdent, trtdent,startdate,enddate'''
     try:

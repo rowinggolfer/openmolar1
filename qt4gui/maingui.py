@@ -932,7 +932,48 @@ class feeClass():
             self.load_newEstPage()
         else:
             self.advise("No treatment items to move!",1)
+            
+    def updateDaybook(self):
+        '''
+        looks for attributes like *cmp, when record is closed
+        '''
+        daybookdict={"diagn":"","perio":"","anaes":"","misc":"",
+        "ndu":"","ndl":"","odu":"","odl":"","other":"","chart":""}
+        feesa=0         #fee
+        feesb=0         #ptfee
+        writeNeeded=False
+        for att in patient_class.currtrtmtTableAtts:
+            if att=="examt" or att[-3:]=="cmp": #be wary of "cmpd"
+                if self.pt.__dict__[att]!=self.pt_dbstate.__dict__[att]:
+                    treatment=self.pt.__dict__[att]
+                    
+                    print "completed treat",att,treatment
+                    writeNeeded=True
+                    
+                    key=att.rstrip("cmp")
+                    if key in daybookdict.keys():
+                        daybookdict[key]+="%s "%self.pt.__dict__[att]
+                    elif key=="xray" or key=="examt":
+                        daybookdict["diagn"]+="%s "%self.pt.__dict__[att]
+                    elif key=="custom":
+                        daybookdict["other"]+="%s "%self.pt.__dict__[att]
+                    else:
+                        #--tooth include the key ie ul7 etc...
+                        daybookdict["chart"]+="%s %s "%(
+                        key,self.pt.__dict__[att])
+                    
+                    ##todo - get the real fee if poss!                    
+                    fee,ptfee=0,0
+        if writeNeeded:
+            if self.pt.dnt2!=0:
+                dent=self.pt.dnt2
+            else:
+                dent=self.pt.dnt1
+            trtid=localsettings.clinicianNo
 
+            daybook.add(self.pt.serialno,self.pt.cset,dent,trtid,
+            daybookdict,fee,ptfee)
+            
 class forumClass():
     def loadForum(self):
         '''
@@ -4886,8 +4927,12 @@ printingClass,cashbooks,contractClass, forumClass):
         uc=self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
-            result=patient_write_changes.all_changes(
-                                        self.pt,uc, self.pt_dbstate.estimates)
+
+            self.updateDaybook()
+
+            result=patient_write_changes.all_changes(self.pt,uc, 
+            self.pt_dbstate.estimates)
+
             if result: #True if sucessful
                 self.pt_dbstate=copy.deepcopy(self.pt)
                 message="Sucessfully altered the following items<ul>"
