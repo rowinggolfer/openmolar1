@@ -296,11 +296,16 @@ def updateLocalSettings(setting,value):
     localSets=os.path.join(localFileDirectory,"localsettings.conf")
     if os.path.exists(localSets):
         dom=minidom.parse(localSets)
+        print dom.toxml()
         nodeToChange=dom.getElementsByTagName(setting)
         if len(nodeToChange)==0:
+            print "creating node"
             nodeToChange=dom.createElement(setting)
             dom.firstChild.appendChild(nodeToChange)
         nodeToChange[0].data=value
+        print nodeToChange[0].data
+        
+        
         f=open(localSets,"w")
         f.write(dom.toxml())
         f.close()

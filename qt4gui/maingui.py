@@ -1027,13 +1027,11 @@ class contractClass():
         '''
         change cset
         '''
-        print "changing course type of %d to %s"%(self.pt.serialno,cset)
         self.pt.cset=str(cset)
         self.updateDetails()
         i=["P","I","N"].index(self.pt.cset[:1])
         self.ui.contract_tabWidget.setCurrentIndex(i)
-        self.advise("changed course type to %s"%cset,1)
-
+        
     def editNHScontract(self):
         self.advise("edit NHS",1)
 
