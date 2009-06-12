@@ -5,7 +5,9 @@
 # by the Free Software Foundation, either version 3 of the License, or 
 # (at your option) any later version. See the GNU General Public License for more details.
 
-'''this script connects to the database and gets all information about a patient'''
+
+from __future__ import division
+
 import sys
 from openmolar.settings import localsettings
 from openmolar.connect import connect
@@ -63,10 +65,12 @@ def details(regdent,trtdent,startdate,enddate):
         rev=d.split("_")
         format+=[rev[2],rev[1],rev[0]]
     retarg="<h3>Patients of %s treated by %s - %s/%s/%s - %s/%s/%s (inclusive)</h3>"%tuple(format) 
-    retarg+='<table width="100%" border="1">'
-    retarg+='<tr><th>DATE</th><th>Dents</th><th>Serial Number</th><th>Name</th><th>Pt Type</th><th>Treatment</th><th>Gross Fee</th>'
+    retarg+='''<table width="100%" border="1">
+    <tr><th>DATE</th><th>Dents</th><th>Serial Number</th>
+    <th>Name</th><th>Pt Type</th><th>Treatment</th>
+    <th>Gross Fee</th><th>Net Fee</th>'''
     odd=True
-    total=0
+    total,nettotal=0,0
     for row in rows:
         if odd:
             retarg+='<tr bgcolor="#eeeeee">'
@@ -100,10 +104,15 @@ def details(regdent,trtdent,startdate,enddate):
             if row[item]!=None and row[item]!="":
                 tx+="%s "%str(row[item])
         retarg+='<td>%s</td>'%tx.strip(chr(0)+" ")
-        retarg+='<td align="right">&pound; %d.%02d</td>'%(int(row[15])/100,int(row[15]%100))
+        retarg+='<td align="right">&pound; %.02f</td>'%(row[15]/100)
+        retarg+='<td align="right">&pound; %.02f</td>'%(row[16]/100)       
         total+=int(row[15])
+        nettotal+=int(row[16])
         retarg+='</tr>\n'
-    retarg+='<tr><td colspan="5"></td><td><b>TOTAL</b></td><td align="right"><b>&pound; %d.%02d</b></td></tr>'%(total/100,total%100)
+    retarg+='''<tr><td colspan="5"></td><td><b>TOTAL</b></td>
+    <td align="right"><b>&pound; %.02f</b></td>
+    <td align="right"><b>&pound; %.02f</b></td></tr>
+    '''%(total/100,nettotal/100)
     retarg+='</table>'
     
     

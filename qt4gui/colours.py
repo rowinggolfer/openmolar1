@@ -31,9 +31,9 @@ diary={
 
 
 APPTCOLORS={
-    "I":QtGui.QColor("#ffe5cc"),
-    "N":QtGui.QColor("#cce5ff"),
-    "P":QtGui.QColor("#ccffcc"),    
+    "N":QtGui.QColor("#99ccff"),
+    "I":QtGui.QColor("#ccff99"),
+    "P":QtGui.QColor("#ffff99"),    
     "BUSY":QtGui.QColor("#adb3ff"),
     "LUNCH":QtGui.QColor("#eeeeee"),
     "FREE":QtCore.Qt.transparent,

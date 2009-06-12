@@ -368,6 +368,15 @@ class patient():
         self.fees=(self.money0 + self.money1 + self.money9 + self.money10 +
         self.money11 - self.money2 - self.money3 - self.money8)
 
+    def removeFromEstimate(self,tooth,item):
+        type="%s %s"%(tooth,item)
+        print "removing from estimate '%s'"%type
+        for est in self.estimates:
+            if est.type==type and est.completed==False:
+                print "MATCH!"
+                self.estimates.remove(est)
+            
+
     def addToEstimate(self,number,item,descr,fee,ptfee,dent,csetype,
     type="", completed=False, feescale="A",carriedover=False):
         print "adding to estimate ",number,type,item,fee, ptfee

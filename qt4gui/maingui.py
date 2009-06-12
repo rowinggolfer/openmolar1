@@ -200,7 +200,9 @@ class feeClass():
 
     def feeSearch(self):
         '''
-        fee search button clicked... the values are already stored.
+        fee search button clicked... 
+        user is looking up a fee from the fee table
+        the values are already stored.
         '''
         n=len(self.feesTable_searchList)
         if n==0:
@@ -236,6 +238,10 @@ class feeClass():
         self.feeSearch()
 
     def nhsRegsPDF(self):
+        '''
+        I have some stored PDF documents
+        the user wants to see these
+        '''
         Dialog=QtGui.QDialog(self)
         dl=Ui_chooseDocument.Ui_Dialog()
         dl.setupUi(Dialog)
@@ -620,19 +626,30 @@ class feeClass():
         #-- new items are input - existing.
         if existing in properties:
             input=properties.replace(existing,"")
+            oldItems=[]
         else:
             input=properties
+            oldItems=fee_keys.itemsPerTooth(tooth, existing)
+            
+        if input=="":
+            return
         #-- send a note to the console for debugging
         print "toothTreatAdded '%s','%s'"%(tooth, input)
-
+    
         #--split our string into a list of treatments.
         #-- so UR1 RT P,CO -> [("UR1","RT"),("UR1","P,CO")]
         #-- this also separates off any postsetc..
         #-- and bridge brackets
-        items=fee_keys.itemsPerTooth(tooth, input)
+        updatedItems=fee_keys.itemsPerTooth(tooth, input)
 
+        for olditem in oldItems:
+            if olditem in updatedItems:
+                updatedItems.remove(olditem)
+            else:
+                self.pt.removeFromEstimate(olditem[0],olditem[1])
+            
         #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
-        for item in items:
+        for item in updatedItems:
             print "item=",item
             #--ok, so now lookup the four digit itemcode
             ###############################################
@@ -736,7 +753,8 @@ class feeClass():
         '''
         iterate through the ests... find this item
         '''
-        completed="%s %s"%(tooth[:3],treat)
+        tooth=tooth.rstrip("pl")
+        completed="%s %s"%(tooth,treat)
         print "looking for est item where type= '%s'?"%completed
         retarg=None
         for est in self.pt.estimates:
@@ -745,6 +763,7 @@ class feeClass():
                 retarg=(est.fee, est.ptfee)
                 break
         return retarg
+    
 
     def checkEstBox(self,tooth,treat):
         '''
@@ -944,26 +963,38 @@ class feeClass():
         writeNeeded=False
         for att in patient_class.currtrtmtTableAtts:
             if att=="examt" or att[-3:]=="cmp": #be wary of "cmpd"
-                if self.pt.__dict__[att]!=self.pt_dbstate.__dict__[att]:
-                    treatment=self.pt.__dict__[att]
-                    
-                    print "completed treat",att,treatment
+                newcmp=self.pt.__dict__[att]
+                existingcmp=self.pt_dbstate.__dict__[att]
+                
+                if newcmp != existingcmp:
+                    treatment=newcmp.replace(existingcmp,"")
+                    print att,newcmp,existingcmp,treatment
                     writeNeeded=True
                     
-                    key=att.rstrip("cmp")
+                    if att=="examt":
+                        key="exam"
+                    else:
+                        key=att.rstrip("cmp")
+                    
                     if key in daybookdict.keys():
-                        daybookdict[key]+="%s "%self.pt.__dict__[att]
-                    elif key=="xray" or key=="examt":
-                        daybookdict["diagn"]+="%s "%self.pt.__dict__[att]
+                        daybookdict[key]+="%s "%treatment
+                    elif key=="xray" or key=="exam":
+                        daybookdict["diagn"]+="%s "%treatment
                     elif key=="custom":
-                        daybookdict["other"]+="%s "%self.pt.__dict__[att]
+                        daybookdict["other"]+="%s "%treatment
                     else:
                         #--tooth include the key ie ul7 etc...
                         daybookdict["chart"]+="%s %s "%(
-                        key,self.pt.__dict__[att])
+                        key.upper(),treatment)
                     
-                    ##todo - get the real fee if poss!                    
-                    fee,ptfee=0,0
+                    ##todo - get the real fee if poss! 
+                    for treat in treatment.strip(" ").split(" "):
+                        fees=self.getFeesFromEst(key,treat)
+                        print "fee attempt '%s' '%s' '%s'"%(key,treat,fees)
+                        if fees:
+                            feesa+=fees[0]
+                            feesb+=fees[1]
+                    
         if writeNeeded:
             if self.pt.dnt2!=0:
                 dent=self.pt.dnt2
@@ -972,7 +1003,7 @@ class feeClass():
             trtid=localsettings.clinicianNo
 
             daybook.add(self.pt.serialno,self.pt.cset,dent,trtid,
-            daybookdict,fee,ptfee)
+            daybookdict,feesa,feesb)
             
 class forumClass():
     def loadForum(self):
