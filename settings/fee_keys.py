@@ -183,27 +183,28 @@ def getCode(tooth,arg):
     #-- MOD,CO
 
 
-    material=""
-    if re.match("u.[4-8]",tooth):
-        #--upper back tooth
-        material="AM"
-        no_of_surfaces=len(re.findall("M|O|D|B|P",array[0]))
-    elif re.match("l.[4-8]",tooth):
-        #--lower back tooth
-        material="AM"
-        no_of_surfaces=len(re.findall("M|O|D|B|L",array[0]))
-    elif re.match("u.[1-3]",tooth):
-        #-- upper anterior
-        material="CO"
-        no_of_surfaces=len(re.findall("M|I|D|B|P",array[0]))
-    else:
-        #--lower anterior
-        material="CO"
-        no_of_surfaces=len(re.findall("M|I|D|B|L",array[0]))
-
+    #SET DEFAULT MATERIALS
     if len (array)!=1:
         material=array[1]
-
+    else:
+        material=""
+        if re.match("u.[4-8]",tooth):
+            #--upper back tooth
+            material="AM"
+            no_of_surfaces=len(re.findall("M|O|D|B|P",array[0]))
+        elif re.match("l.[4-8]",tooth):
+            #--lower back tooth
+            material="AM"
+            no_of_surfaces=len(re.findall("M|O|D|B|L",array[0]))
+        elif re.match("u.[1-3]",tooth):
+            #-- upper anterior
+            material="CO"
+            no_of_surfaces=len(re.findall("M|I|D|B|P",array[0]))
+        else:
+            #--lower anterior
+            material="CO"
+            no_of_surfaces=len(re.findall("M|I|D|B|L",array[0]))
+    
     if no_of_surfaces==len(array[0]):
         #-- to stop "MOV" being classed as an "MO"
         if no_of_surfaces>3:

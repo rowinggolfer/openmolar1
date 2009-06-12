@@ -6,6 +6,8 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 from __future__ import division
+
+import re
 from PyQt4 import QtGui,QtCore
 
 from openmolar.qt4gui import colours
@@ -483,7 +485,7 @@ class chartWidget(QtGui.QWidget):
                     painter.restore()
                     prop=""
 
-                prop= prop.strip("#")
+                prop= prop.strip("#&")
                 if prop=="pv":
                     prop="pv,pj"
                 if "/"  in prop:
@@ -519,7 +521,7 @@ class chartWidget(QtGui.QWidget):
                             #-- change this to "mod,gi"
                             prop=prop[3:]+",gl"
 
-                if prop[:2] in ("tm","at","rp"):
+                if prop[:2] in ("tm","at"):
                     erase_color=self.palette().background().color()
                     painter.setPen(erase_color)
                     painter.setBrush(erase_color)
@@ -529,7 +531,7 @@ class chartWidget(QtGui.QWidget):
                     prop.upper())
 
                     prop=""
-                if prop[:2] in ("ue","pe","oe"):
+                if prop[:2] in ("ue","pe","oe","rp"):
                     if prop[:2]=="ue":
                         erase_color=self.palette().background().color()
                         painter.setBrush(erase_color)
@@ -545,6 +547,10 @@ class chartWidget(QtGui.QWidget):
                     #--prevent the o's and p's being interpreted as fills
                     prop=""
 
+                if ",pr" in prop:
+                    #TODO - pin??
+                    prop=prop.replace(",pr","")
+                    
                 if "," in prop:
                     #--get materal if present
                     material=prop.split(",")[1]
@@ -665,26 +671,34 @@ class chartWidget(QtGui.QWidget):
                         shapes.append(QtGui.QPolygon(
                         [ex-1,dy,ex+1,dy,ex+1,fy,ex-1,fy]))
                         
-                    #if "modpb" in prop:
-                    #    n=QtGui.QPolygon([ax,ay,ix,ay,ix,iy,ax,iy])
-                    #    shapes.append(n)
-                    #elif "modb" in prop:
-                    #    n=QtGui.QPolygon([ax,ay,ix,ay,ix,iy,gx,dy,dx,dy,ax,iy])
-                    #    shapes.append(n)
-
-                    if "o" in prop:
+                    if re.match("[modbp]{5}",prop):
+                        n=QtGui.QPolygon(
+                        [ax,ay,dx,dy,dx,ay,fx,ay,fx,dy,ix,ay,ix,iy,fx,fy,fx,iy,dx,iy,dx,fy,ax,iy])
+                        shapes.append(n)
+                    elif re.match("[mod]{3}",prop):
+                        n=QtGui.QPolygon(
+                        [ax,ay,dx,dy,fx,dy,ix,ay,ix,iy,fx,fy,dx,fy,ax,iy])
+                        shapes.append(n)
+                    elif re.match("[mo]{2}",prop):
+                        n=QtGui.QPolygon([ex,dy,fx,dy,ix,cy,ix,gy,fx,fy,ex,fy])
+                        shapes.append(n)
+                    elif re.match("[do]{2}",prop):
+                        n=QtGui.QPolygon([ax,cy,cx,dy,fx,dy,fx,fy,dx,fy,ax,gy])
+                        shapes.append(n)
+    
+                    elif "o" in prop:
                         n=QtGui.QPolygon([dx,dy,fx,dy,fx,fy,dx,fy])
                         shapes.append(n)
-                    if "m" in prop:
+                    elif "m" in prop:
                         n=QtGui.QPolygon([gx,dy,ix,by,ix,hy,gx,fy])
                         shapes.append(n)
-                    if "d" in prop:
+                    elif "d" in prop:
                         n=QtGui.QPolygon([ax,by,cx,dy,cx,fy,ax,hy])
                         shapes.append(n)
-                    if "p" in prop:
+                    elif "p" in prop:
                         n=QtGui.QPolygon([bx,iy,dx,gy,fx,gy,hx,iy])
                         shapes.append(n)
-                    if "b" in prop:
+                    elif "b" in prop:
                         n=QtGui.QPolygon([bx,ay,hx,ay,fx,cy,dx,cy])
                         shapes.append(n)
                 else:
@@ -722,10 +736,14 @@ if __name__ == "__main__":
     'll8': 'll8', 'll3': 'll3','ll2': 'll2', 'll1': 'll1', 'll7': 'll7',
     'll6': 'll6', 'll5': 'll5', 'll4': 'll4'}
 
-    for prop in (("ur7","ex "),("ur5","cr,go"),("ul4","do"),("ur3","AT"),
-    ("ur2","d,co b"),("ur1","pv rt"),("ul1","cr,pj"),("ul2","d,co b,co"),
-    ("lr4","b"),("ll4","b,gl"),("ll5","ol"),("ll6","mod,co"),("ll7","pe"),
-    ("lr5","dr"),("lr7","fs"),("lr6","modbl"),("ll8","ue !watch")):
+    for prop in (
+    ("ur7","ex "),("ur5","cr,go"),("ur3","AT"),
+    ("ur2","d,co b"),("ur1","pv rt"),
+    ("ul1","cr,pj"),("ul2","d,co b,co"),
+    ("ul4","do"),("ul6","mo"),
+    ("ll4","b,gl"),("ll5","ol"),("ll6","mod,co"),
+    ("ll7","pe"),("ll8","ue !watch"),
+    ("lr4","b"),("lr5","dr"),("lr7","fs"),("lr6","modbl,pr")):
         form.setToothProps(prop[0],prop[1])
     form.show()
     form.selected=[0,2]

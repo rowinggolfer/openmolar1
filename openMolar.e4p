@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-4.6.dtd">
 <!-- eric4 project file for project openMolar -->
-<!-- Saved: 2009-06-08, 01:12:13 -->
+<!-- Saved: 2009-06-12, 11:09:51 -->
 <!-- Copyright (C) 2009 ,  -->
 <Project version="4.6">
   <Language>en</Language>
@@ -138,6 +138,8 @@
     <Source>tmp/toothprops.py</Source>
     <Source>tmp/calcFees.py</Source>
     <Source>settings/utilities.py</Source>
+    <Source>qt4gui/dialogs/Ui_chooseDocument.py</Source>
+    <Source>dbtools/forum.py</Source>
   </Sources>
   <Forms>
     <Form>qt-designer/toothPerioProps.ui</Form>
@@ -177,6 +179,7 @@
     <Form>qt-designer/toothtreatmentItemWidget.ui</Form>
     <Form>qt-designer/newBPE.ui</Form>
     <Form>qt-designer/bridge_denture.ui</Form>
+    <Form>qt-designer/chooseDocument.ui</Form>
   </Forms>
   <Translations>
   </Translations>
