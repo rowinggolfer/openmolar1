@@ -430,7 +430,7 @@ class chartWidget(QtGui.QWidget):
                 ax=toothRect.topLeft().x()+toothdimen*0.05
                 bx=toothRect.topLeft().x()+toothdimen*0.15
                 cx=toothRect.topLeft().x()+toothdimen*0.2
-                dx=toothRect.topLeft().x()+toothdimen*0.3
+                dx=toothRect.topLeft().x()+toothdimen*0.35
                 ex=toothRect.topLeft().x()+toothdimen*0.5
                 fx=toothRect.topLeft().x()+toothdimen*0.7
                 gx=toothRect.topLeft().x()+toothdimen*0.8
@@ -440,9 +440,9 @@ class chartWidget(QtGui.QWidget):
                 ay=toothRect.topLeft().y()+toothdimen*0.05
                 by=toothRect.topLeft().y()+toothdimen*0.15
                 cy=toothRect.topLeft().y()+toothdimen*0.2
-                dy=toothRect.topLeft().y()+toothdimen*0.3
+                dy=toothRect.topLeft().y()+toothdimen*0.35
                 ey=toothRect.topLeft().y()+toothdimen*0.5
-                fy=toothRect.topLeft().y()+toothdimen*0.7
+                fy=toothRect.topLeft().y()+toothdimen*0.65
                 gy=toothRect.topLeft().y()+toothdimen*0.8
                 hy=toothRect.topLeft().y()+toothdimen*0.85
                 iy=toothRect.topLeft().y()+toothdimen*0.95
@@ -673,17 +673,17 @@ class chartWidget(QtGui.QWidget):
                         
                     if re.match("[modbp]{5}",prop):
                         n=QtGui.QPolygon(
-                        [ax,ay,dx,dy,dx,ay,fx,ay,fx,dy,ix,ay,ix,iy,fx,fy,fx,iy,dx,iy,dx,fy,ax,iy])
+                        [ax,by,dx,dy,dx,by,fx,by,fx,dy,ix,by,ix,hy,fx,fy,fx,hy,dx,hy,dx,fy,ax,hy])
                         shapes.append(n)
                     elif re.match("[mod]{3}",prop):
                         n=QtGui.QPolygon(
-                        [ax,ay,dx,dy,fx,dy,ix,ay,ix,iy,fx,fy,dx,fy,ax,iy])
+                        [ax,by,dx,dy,fx,dy,ix,by,ix,hy,fx,fy,dx,fy,ax,hy])
                         shapes.append(n)
                     elif re.match("[mo]{2}",prop):
-                        n=QtGui.QPolygon([ex,dy,fx,dy,ix,cy,ix,gy,fx,fy,ex,fy])
+                        n=QtGui.QPolygon([dx,dy,gx,dy,ix,cy,ix,gy,gx,fy,dx,fy])
                         shapes.append(n)
                     elif re.match("[do]{2}",prop):
-                        n=QtGui.QPolygon([ax,cy,cx,dy,fx,dy,fx,fy,dx,fy,ax,gy])
+                        n=QtGui.QPolygon([ax,cy,cx,dy,fx,dy,fx,fy,cx,fy,ax,gy])
                         shapes.append(n)
     
                     elif "o" in prop:
@@ -737,7 +737,7 @@ if __name__ == "__main__":
     'll6': 'll6', 'll5': 'll5', 'll4': 'll4'}
 
     for prop in (
-    ("ur7","ex "),("ur5","cr,go"),("ur3","AT"),
+    ("ur7","ex "),("ur6","modbp"),("ur5","cr,go"),("ur3","AT"),
     ("ur2","d,co b"),("ur1","pv rt"),
     ("ul1","cr,pj"),("ul2","d,co b,co"),
     ("ul4","do"),("ul6","mo"),
