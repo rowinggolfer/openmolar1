@@ -17,7 +17,9 @@ class fee():
    the same as double the fee for a single item etc..
     '''
     def __init__(self):
-        '''initiate the class with the default settings for a private fee'''
+        '''
+        initiate the class with the default settings for a private fee
+        '''
         self.description=""
         self.numberPerCourse=0
         self.fees=[]
@@ -184,26 +186,31 @@ def getCode(tooth,arg):
 
 
     #SET DEFAULT MATERIALS
-    if len (array)!=1:
+    if len (array)>1:
         material=array[1]
     else:
         material=""
-        if re.match("u.[4-8]",tooth):
-            #--upper back tooth
+
+    if re.match("u.[4-8]",tooth):
+        #--upper back tooth
+        if material=="":
             material="AM"
-            no_of_surfaces=len(re.findall("M|O|D|B|P",array[0]))
-        elif re.match("l.[4-8]",tooth):
-            #--lower back tooth
+        no_of_surfaces=len(re.findall("M|O|D|B|P",array[0]))
+    elif re.match("l.[4-8]",tooth):
+        #--lower back tooth
+        if material=="":
             material="AM"
-            no_of_surfaces=len(re.findall("M|O|D|B|L",array[0]))
-        elif re.match("u.[1-3]",tooth):
-            #-- upper anterior
+        no_of_surfaces=len(re.findall("M|O|D|B|L",array[0]))
+    elif re.match("u.[1-3]",tooth):
+        #-- upper anterior
+        if material=="":
             material="CO"
-            no_of_surfaces=len(re.findall("M|I|D|B|P",array[0]))
-        else:
-            #--lower anterior
+        no_of_surfaces=len(re.findall("M|I|D|B|P",array[0]))
+    else:
+        #--lower anterior
+        if material=="":
             material="CO"
-            no_of_surfaces=len(re.findall("M|I|D|B|L",array[0]))
+        no_of_surfaces=len(re.findall("M|I|D|B|L",array[0]))
     
     if no_of_surfaces==len(array[0]):
         #-- to stop "MOV" being classed as an "MO"
@@ -297,7 +304,7 @@ if __name__ == "__main__":
     
     
     ###########################this is to test tooth entry stuff
-    while False:
+    while True:
         tooth=raw_input("Enter Tooth :")
         tooth=tooth.lower()
         input=raw_input("Enter Treatment for %s :"%tooth)

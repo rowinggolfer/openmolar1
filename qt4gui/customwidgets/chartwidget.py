@@ -573,7 +573,6 @@ class chartWidget(QtGui.QWidget):
                     material="fs"
                 
                 if prop[:2]=="dr":
-                    prop="o"
                     material="dr"
 
                 #--put an outline around the filling
@@ -665,20 +664,45 @@ class chartWidget(QtGui.QWidget):
                 shapes=[]
                 if backTooth:
                     if "fs" in prop:
-                        ##NEW CODE - make a +
                         shapes.append(QtGui.QPolygon(
                         [dx,ey-1,fx,ey-1,fx+1,ey+1,dx,ey+1]))
                         shapes.append(QtGui.QPolygon(
                         [ex-1,dy,ex+1,dy,ex+1,fy,ex-1,fy]))
-                        
-                    if re.match("[modbp]{5}",prop):
+                    elif "dr" in prop:
+                        n=QtGui.QPolygon(
+                        [cx,dy,dx,by,fx,by,hx,dy,hx,fy,fx,hy,dx,hy,cx,fy])
+                        shapes.append(n)                        
+                    elif re.match("[modbp]{5}",prop):
                         n=QtGui.QPolygon(
                         [ax,by,dx,dy,dx,by,fx,by,fx,dy,ix,by,ix,hy,fx,fy,fx,hy,dx,hy,dx,fy,ax,hy])
+                        shapes.append(n)
+                    elif re.match("[modb]{4}",prop):
+                        n=QtGui.QPolygon(
+                        [ax,by,dx,dy,dx,by,fx,by,fx,dy,ix,by,ix,hy,fx,fy,dx,fy,ax,hy])
+                        shapes.append(n)
+                    elif re.match("[modp]{4}",prop):
+                        n=QtGui.QPolygon(
+                        [ax,by,dx,dy,fx,dy,ix,by,ix,hy,fx,fy,fx,hy,dx,hy,dx,fy,ax,hy])
                         shapes.append(n)
                     elif re.match("[mod]{3}",prop):
                         n=QtGui.QPolygon(
                         [ax,by,dx,dy,fx,dy,ix,by,ix,hy,fx,fy,dx,fy,ax,hy])
                         shapes.append(n)
+                        '''
+                        elif re.match("[mob]{3}",prop):
+                        elif re.match("[mop]{3}",prop):
+                        elif re.match("[dob]{3}",prop):
+                        elif re.match("[dop]{3}",prop):
+                        elif re.match("[mpd]{3}",prop):                        
+                        elif re.match("[mbd]{3}",prop):                        
+                        
+                        elif re.match("[ob]{2}",prop):
+                        elif re.match("[op]{2}",prop):
+                        elif re.match("[mb]{2}",prop):
+                        elif re.match("[mp]{2}",prop):
+                        elif re.match("[db]{2}",prop):
+                        elif re.match("[dp]{2}",prop):
+                        '''
                     elif re.match("[mo]{2}",prop):
                         n=QtGui.QPolygon([dx,dy,gx,dy,ix,cy,ix,gy,gx,fy,dx,fy])
                         shapes.append(n)
@@ -737,10 +761,10 @@ if __name__ == "__main__":
     'll6': 'll6', 'll5': 'll5', 'll4': 'll4'}
 
     for prop in (
-    ("ur7","ex "),("ur6","modbp"),("ur5","cr,go"),("ur3","AT"),
+    ("ur7","ex "),("ur6","gi/modbp"),("ur5","cr,go"),("ur3","AT"),
     ("ur2","d,co b"),("ur1","pv rt"),
     ("ul1","cr,pj"),("ul2","d,co b,co"),
-    ("ul4","do"),("ul6","mo"),
+    ("ul4","do"),("ul6","mo"),("ul7","modb,co"),("ur8","modp,gl"),
     ("ll4","b,gl"),("ll5","ol"),("ll6","mod,co"),
     ("ll7","pe"),("ll8","ue !watch"),
     ("lr4","b"),("lr5","dr"),("lr7","fs"),("lr6","modbl,pr")):
