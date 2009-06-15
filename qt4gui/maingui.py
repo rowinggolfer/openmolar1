@@ -996,7 +996,7 @@ class feeClass():
                             feesb+=fees[1]
                     
         if writeNeeded:
-            if self.pt.dnt2!=0:
+            if self.pt.dnt2!=0 and self.pt.cset!="I":
                 dent=self.pt.dnt2
             else:
                 dent=self.pt.dnt1
@@ -2480,6 +2480,9 @@ class signals():
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                         QtCore.SIGNAL("Changed_Properties"),  self.updateCharts)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
+                        QtCore.SIGNAL("DeletedComments"),  self.deleteComments)
+                
+        QtCore.QObject.connect(self.ui.toothPropsWidget,
                                QtCore.SIGNAL("static"), self.editStatic)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                                QtCore.SIGNAL("plan"), self.editPlan)
@@ -2839,6 +2842,14 @@ class chartsClass():
             row=self.ui.chartsTableWidget.currentRow()
             tString=str(self.ui.chartsTableWidget.item(row,0).text().toAscii())
             self.chartNavigation(tString,userPerformed)
+    
+    def deleteComments(self):
+        tooth=str(self.ui.chartsTableWidget.item(
+                            self.ui.chartsTableWidget.currentRow(),0).text())
+        if tooth in self.ui.staticChartWidget.commentedTeeth:
+            self.ui.staticChartWidget.commentedTeeth.remove(tooth)
+            self.ui.staticChartWidget.update()
+    
     def updateCharts(self,arg):
         '''called by a signal from the toothprops widget -
         args are the new tooth properties eg modbl,co'''
@@ -2890,6 +2901,7 @@ class chartsClass():
     def static_chartNavigation(self,tstring):
         '''called by the static chartwidget'''
         self.selectedChartWidget="st"
+        
         self.chartNavigation(tstring)
     def plan_chartNavigation(self,tstring):
         '''called by the plan chartwidget'''
@@ -2952,6 +2964,7 @@ class chartsClass():
         #--ALLOWS for deciduos teeth
 
         if self.selectedChartWidget=="st":
+            self.ui.toothPropsWidget.isStatic(True)
             self.ui.toothPropsWidget.setExistingProps(
                                                 self.pt.__dict__[tooth+"st"])
             self.ui.staticChartWidget.selected=[x,y]
@@ -2964,6 +2977,7 @@ class chartsClass():
                 self.ui.completedChartWidget.update()
             column=2
         elif self.selectedChartWidget=="pl":
+            self.ui.toothPropsWidget.isStatic(False)
             self.ui.toothPropsWidget.setExistingProps(
                                                 self.pt.__dict__[tooth+"pl"])
             self.ui.planChartWidget.selected=[x,y]
@@ -2976,6 +2990,7 @@ class chartsClass():
                 self.ui.completedChartWidget.update()
             column=3
         elif self.selectedChartWidget=="cmp":
+            self.ui.toothPropsWidget.isStatic(False)
             self.ui.toothPropsWidget.lineEdit.setText(
                                                 self.pt.__dict__[tooth+"cmp"])
             self.ui.completedChartWidget.selected=[x,y]

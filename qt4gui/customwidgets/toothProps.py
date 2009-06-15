@@ -6,6 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
+import re
 from openmolar.qt4gui.customwidgets import Ui_toothProps
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs import Ui_crownChoice
@@ -42,21 +43,65 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         self.porc_pushButton.setPalette(palette)
         self.signals()
         self.originalProps=""
+        self.existingComments=""
 
+    def isStatic(self,arg):
+        '''
+        if the editing is of the static chart, then different buttons are enabled
+        '''
+        self.comments_comboBox.setEnabled(arg)
+        
     def setExistingProps(self,arg):
+        commentSTR=""
         if arg=="":
             self.originalProps=""
             self.lineEdit.setText("")
+            
         else:
             arg=arg.strip()+":"
             arg=arg.replace(" ",":")
+            comments=re.findall("!.[^:]*:",arg)
+            for comment in comments:
+                commentSTR+="%s "%comment.strip(":")
+                arg=arg.replace(comment,"")
             self.originalProps=arg
             self.lineEdit.setText(arg)
+            
+        self.setComments(commentSTR)
+    
+    def setComments(self,arg):
+        '''
+        puts the comment into the combobox
+        '''
+        QtCore.QObject.disconnect(self.comments_comboBox,QtCore.SIGNAL(
+        "currentIndexChanged (const QString&)"), self.comments)
 
+        self.existingComments=str(arg)
+        self.comments_comboBox.setItemText(0,arg)
+        self.comments_comboBox.setCurrentIndex(0)
+        
+        QtCore.QObject.connect(self.comments_comboBox,QtCore.SIGNAL(
+        "currentIndexChanged (const QString&)"), self.comments)
+        
+
+    def comments(self,arg):
+        '''
+        comments combobox has been nav'd
+        '''
+        if str(arg)=="DELETE COMMENTS":
+            self.setComments("")
+            self.emit(QtCore.SIGNAL("DeletedComments"))
+        else:
+            result=QtGui.QMessageBox.question(self,"Confirm",
+            'Add comment "%s"'%arg,
+            QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+            
+            if result == QtGui.QMessageBox.Yes:
+                self.setComments("%s:%s"%(self.existingComments,arg))
+    
     def clear(self):
         t=  str(self.lineEdit.text().toAscii())
         tlist=t.strip(":").split(":")
-        print tlist
         t=""
         for props in tlist[:-1]:
             t+=props+":"
@@ -65,6 +110,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         self.tooth.clear()
         self.tooth.update()
         self.finishedEdit() #doesn';t work!
+    
     def checkEntry(self):
         currentFill=str(self.lineEdit.text().toAscii())
         fillList=currentFill.split(":")
@@ -72,6 +118,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
             if not self.checkProp(f):
                 return False
         return True
+
     def checkProp(self,f):
         result=True
         if f!="":
@@ -187,7 +234,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         self.labMaterial("PI")
 
     def finishedEdit(self):
-        newprops=str(self.lineEdit.text().toAscii())
+        newprops=str(self.lineEdit.text().toAscii())+self.existingComments.replace(" ","_")
         if newprops!=self.originalProps:
             newprops=newprops.replace(":"," ")
             if newprops!="" and newprops[-1]!=" ":
@@ -240,7 +287,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
             self.lineEdit.setText(existing+"CR,PJ")
             Dialog.accept()
         def resin():
-            self.lineEdit.setText(existing+"CR,A1")
+            self.lineEdit.setText(existing+"CR,OT")
             Dialog.accept()
         def lava():
             self.lineEdit.setText(existing+"CR,PJ")
@@ -277,7 +324,6 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         
         if Dialog.exec_():
             self.nextTooth()
-
     def staticButPressed(self):
         self.emit(QtCore.SIGNAL("static"))
     def planButPressed(self):
@@ -306,7 +352,8 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         QtCore.QObject.connect(self.static_pushButton,QtCore.SIGNAL("clicked()"), self.staticButPressed)
         QtCore.QObject.connect(self.plan_pushButton,QtCore.SIGNAL("clicked()"), self.planButPressed)
         QtCore.QObject.connect(self.comp_pushButton,QtCore.SIGNAL("clicked()"), self.compButPressed)
-
+        QtCore.QObject.connect(self.comments_comboBox,QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
+        
         ##fs_comboBox,cr_comboBox,endo_comboBox,ex_comboBox,static_comboBox,comments_comboBox
 
 
@@ -550,7 +597,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     Form = QtGui.QWidget()
     ui = tpWidget(Form)
-    ui.setExistingProps("MOD ")
+    ui.setExistingProps("MOD !WATCH B,GL !COMMENT_TWO")
     #Form.setEnabled(False)
     Form.show()
     sys.exit(app.exec_())

@@ -143,10 +143,25 @@ class chartWidget(QtGui.QWidget):
         else:
             y = 1
         self.setHighlighted(x,y)
-
+        
+        #--show detailed info
+        try:
+            tooth=self.grid[y][x]
+            show=False
+            advisory="<b>   %s   </b><br />"%tooth.upper()
+            for f in self.__dict__[tooth]:
+                advisory+="%s<br />"%f.upper()
+                show=True
+            if show:
+                QtGui.QToolTip.showText(event.globalPos(),advisory)
+            else:
+                QtGui.QToolTip.showText(event.globalPos(),"")
+        except IndexError:
+            print "handled index error"
+            
     def leaveEvent(self,event):
         self.setHighlighted(-1,-1)
-
+        
     def mousePressEvent(self, event):
         '''overrides QWidget's mouse event'''
         ctrlClick=(event.modifiers()==QtCore.Qt.ControlModifier)
