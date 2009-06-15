@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>943</width>
-    <height>588</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -87,243 +87,274 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="margin">
+            <number>6</number>
+           </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QPushButton" name="home_pushButton">
-               <property name="minimumSize">
-                <size>
-                 <width>32</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>32</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Exit the Current Patient Record.</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../resources/resources.qrc">
-                 <normaloff>:/kfm_home.png</normaloff>:/kfm_home.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>24</height>
-                </size>
-               </property>
-               <property name="shortcut">
-                <string>Esc</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="newPatientPushButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>32</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>32</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Add a New Patient to the database.</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../resources/resources.qrc">
-                 <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>16</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="findButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>70</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Click on this Button to search for in patient in your database.</string>
-               </property>
-               <property name="text">
-                <string>Find</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../resources/resources.qrc">
-                 <normaloff>:/search.png</normaloff>:/search.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>24</width>
-                 <height>24</height>
-                </size>
-               </property>
-               <property name="shortcut">
-                <string>Ctrl+F</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QFrame" name="frame_15">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="spacing">
+               <number>3</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="home_pushButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>32</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>32</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Exit the Current Patient Record.</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resources/resources.qrc">
+                  <normaloff>:/kfm_home.png</normaloff>:/kfm_home.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Esc</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="newPatientPushButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>32</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>32</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Add a New Patient to the database.</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resources/resources.qrc">
+                  <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="findButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>80</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Click on this Button to search for in patient in your database.</string>
+                </property>
+                <property name="text">
+                 <string>Find</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resources/resources.qrc">
+                  <normaloff>:/search.png</normaloff>:/search.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Ctrl+F</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QPushButton" name="backButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>24</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>This cycles back through the history of records loaded today.</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../resources/resources.qrc">
-                 <normaloff>:/back.png</normaloff>:/back.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>16</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="reloadButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>24</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Reload the patient from the database.</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../resources/resources.qrc">
-                 <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
-               </property>
-               <property name="shortcut">
-                <string>Ctrl+R</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="nextButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>24</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>This cycles forwards through the history of records loaded today.</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../resources/resources.qrc">
-                 <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>16</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="relatedpts_pushButton">
-               <property name="minimumSize">
-                <size>
-                 <width>60</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Show patients who live at the same address, or who have a similar name.</string>
-               </property>
-               <property name="text">
-                <string>&amp;Related</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../resources/resources.qrc">
-                 <normaloff>:/agt_family.png</normaloff>:/agt_family.png</iconset>
-               </property>
-               <property name="shortcut">
-                <string>Ctrl+G</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QFrame" name="frame_16">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="backButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>24</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>This cycles back through the history of records loaded today.</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resources/resources.qrc">
+                  <normaloff>:/back.png</normaloff>:/back.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="reloadButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>24</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Reload the patient from the database.</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resources/resources.qrc">
+                  <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
+                </property>
+                <property name="shortcut">
+                 <string>Ctrl+R</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="nextButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>24</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>This cycles forwards through the history of records loaded today.</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resources/resources.qrc">
+                  <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="relatedpts_pushButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>60</width>
+                  <height>28</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Show patients who live at the same address, or who have a similar name.</string>
+                </property>
+                <property name="text">
+                 <string>&amp;Related</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resources/resources.qrc">
+                  <normaloff>:/agt_family.png</normaloff>:/agt_family.png</iconset>
+                </property>
+                <property name="shortcut">
+                 <string>Ctrl+G</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </item>
            <item>
             <widget class="QComboBox" name="daylistBox">
@@ -375,91 +406,10 @@
            <number>0</number>
           </property>
           <layout class="QGridLayout" name="gridLayout_18">
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <item row="1" column="0">
-            <widget class="QLabel" name="newNotesLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Today's Notes</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2" rowspan="2">
-            <widget class="QTextEdit" name="notesEnter_textEdit">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>60</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Enter Notes.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3" rowspan="2">
-            <widget class="QPushButton" name="saveButton">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>100</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Save the changes made to this record.</string>
-             </property>
-             <property name="text">
-              <string>Save Changes</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../resources/resources.qrc">
-               <normaloff>:/save_all.png</normaloff>:/save_all.png</iconset>
-             </property>
-             <property name="shortcut">
-              <string>Ctrl+S</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QPushButton" name="phraseBook_pushButton">
-             <property name="text">
-              <string>PhraseBook</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../resources/resources.qrc">
-               <normaloff>:/txt.png</normaloff>:/txt.png</iconset>
-             </property>
-             <property name="shortcut">
-              <string>Ins</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0" colspan="4">
+           <item row="0" column="0" colspan="6">
             <widget class="QTabWidget" name="tabWidget">
              <property name="currentIndex">
-              <number>7</number>
+              <number>2</number>
              </property>
              <widget class="QWidget" name="tab_4">
               <attribute name="title">
@@ -476,7 +426,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>675</width>
+                    <width>657</width>
                     <height>492</height>
                    </rect>
                   </property>
@@ -1630,159 +1580,15 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>675</width>
-                    <height>432</height>
+                    <width>657</width>
+                    <height>484</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_20">
-                   <item row="0" column="0">
-                    <widget class="QGroupBox" name="groupBox_6">
-                     <property name="title">
-                      <string>Letters</string>
-                     </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_6">
-                      <item>
-                       <widget class="QPushButton" name="standardLetterPushButton">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="text">
-                         <string>Standard Blank Letter to the patient</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="printRecall_pushButton">
-                        <property name="text">
-                         <string>Standard Recall to the Patient</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item row="0" column="1" rowspan="2">
-                    <widget class="QGroupBox" name="groupBox_2">
-                     <property name="title">
-                      <string>Duplicate Receipt</string>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_12">
-                      <item row="0" column="0">
-                       <widget class="QLabel" name="label_7">
-                        <property name="text">
-                         <string>Date</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0">
-                       <widget class="QLabel" name="label_11">
-                        <property name="text">
-                         <string>Amount</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="1">
-                       <widget class="QDoubleSpinBox" name="receiptDoubleSpinBox">
-                        <property name="maximumSize">
-                         <size>
-                          <width>81</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="0" colspan="2">
-                       <widget class="QPushButton" name="receiptPrintButton">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>16777215</width>
-                          <height>32</height>
-                         </size>
-                        </property>
-                        <property name="toolTip">
-                         <string>Print a receipt - useful for duplicates.</string>
-                        </property>
-                        <property name="text">
-                         <string>Print</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QLineEdit" name="dupReceiptDate_lineEdit"/>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item row="1" column="0" rowspan="2">
-                    <widget class="QGroupBox" name="groupBox_7">
-                     <property name="title">
-                      <string>Referrals</string>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_13">
-                      <item row="0" column="0" colspan="2">
-                       <widget class="QComboBox" name="referralLettersComboBox">
-                        <property name="minimumSize">
-                         <size>
-                          <width>240</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0">
-                       <spacer name="horizontalSpacer">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>156</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item row="1" column="1">
-                       <widget class="QPushButton" name="referralLettersPrintButton">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>16777215</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="text">
-                         <string>Print</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
                    <item row="2" column="1" rowspan="2">
                     <widget class="QGroupBox" name="groupBox_8">
                      <property name="title">
-                      <string>Print This Record</string>
+                      <string>Export this record card</string>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_7">
                       <item>
@@ -1854,52 +1660,6 @@
                      </layout>
                     </widget>
                    </item>
-                   <item row="3" column="0">
-                    <widget class="QGroupBox" name="groupBox_9">
-                     <property name="title">
-                      <string>Accounts</string>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_22">
-                      <item row="0" column="0">
-                       <widget class="QRadioButton" name="accountA_radioButton">
-                        <property name="text">
-                         <string>&quot;A&quot; letter</string>
-                        </property>
-                        <property name="checked">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QRadioButton" name="accountB_radioButton">
-                        <property name="text">
-                         <string>&quot;B&quot; letter</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="2">
-                       <widget class="QRadioButton" name="accountC_radioButton">
-                        <property name="text">
-                         <string>&quot;C&quot; letter</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0" colspan="3">
-                       <widget class="QPushButton" name="account2_pushButton">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="text">
-                         <string>Print A Statement of Account</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
                    <item row="4" column="0" colspan="2">
                     <widget class="QGroupBox" name="groupBox_3">
                      <property name="title">
@@ -1919,6 +1679,218 @@
                           <string>1</string>
                          </property>
                         </column>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item row="2" column="0" rowspan="2">
+                    <widget class="QGroupBox" name="groupBox_7">
+                     <property name="title">
+                      <string>Referrals (Letters about the patient)</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_13">
+                      <item row="0" column="0" colspan="2">
+                       <widget class="QComboBox" name="referralLettersComboBox">
+                        <property name="minimumSize">
+                         <size>
+                          <width>240</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <spacer name="horizontalSpacer">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>156</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QPushButton" name="referralLettersPrintButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>Print</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item row="0" column="0" rowspan="2" colspan="2">
+                    <widget class="QGroupBox" name="groupBox_6">
+                     <property name="title">
+                      <string>Letters TO the patient</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_35">
+                      <item row="0" column="1">
+                       <widget class="QPushButton" name="standardLetterPushButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string> Custom Letter to the patient</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1" rowspan="2">
+                       <widget class="QGroupBox" name="groupBox_2">
+                        <property name="title">
+                         <string>Duplicate Receipt</string>
+                        </property>
+                        <layout class="QGridLayout" name="gridLayout_12">
+                         <item row="0" column="0">
+                          <widget class="QLabel" name="label_7">
+                           <property name="text">
+                            <string>Date</string>
+                           </property>
+                           <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1" colspan="2">
+                          <widget class="QLineEdit" name="dupReceiptDate_lineEdit"/>
+                         </item>
+                         <item row="1" column="0">
+                          <widget class="QLabel" name="label_11">
+                           <property name="text">
+                            <string>Amount</string>
+                           </property>
+                           <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="1">
+                          <widget class="QDoubleSpinBox" name="receiptDoubleSpinBox">
+                           <property name="maximumSize">
+                            <size>
+                             <width>81</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="2">
+                          <widget class="QPushButton" name="receiptPrintButton">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>16777215</width>
+                             <height>32</height>
+                            </size>
+                           </property>
+                           <property name="toolTip">
+                            <string>Print a receipt - useful for duplicates.</string>
+                           </property>
+                           <property name="text">
+                            <string>Print</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QGroupBox" name="groupBox_9">
+                        <property name="title">
+                         <string>Send an account</string>
+                        </property>
+                        <layout class="QGridLayout" name="gridLayout_22">
+                         <item row="0" column="0">
+                          <widget class="QRadioButton" name="accountA_radioButton">
+                           <property name="text">
+                            <string>&quot;A&quot; letter</string>
+                           </property>
+                           <property name="checked">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QRadioButton" name="accountB_radioButton">
+                           <property name="text">
+                            <string>&quot;B&quot; letter</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="2">
+                          <widget class="QRadioButton" name="accountC_radioButton">
+                           <property name="text">
+                            <string>&quot;C&quot; letter</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="0" colspan="3">
+                          <widget class="QPushButton" name="account2_pushButton">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="text">
+                            <string>Print A Statement of Account</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item row="0" column="0">
+                       <widget class="QGroupBox" name="groupBox_15">
+                        <property name="title">
+                         <string>Recall management</string>
+                        </property>
+                        <layout class="QGridLayout" name="gridLayout_36">
+                         <item row="0" column="1" rowspan="2" colspan="2">
+                          <widget class="QPushButton" name="printRecall_pushButton">
+                           <property name="toolTip">
+                            <string>Print a recall saying the patient is due now.</string>
+                           </property>
+                           <property name="text">
+                            <string>Recall NOW!</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="0">
+                          <widget class="QDateEdit" name="recall_dateEdit">
+                           <property name="toolTip">
+                            <string>Set the date for a recall to be generated automatically</string>
+                           </property>
+                           <property name="calendarPopup">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </widget>
                       </item>
                      </layout>
@@ -1954,7 +1926,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>685</width>
+                    <width>667</width>
                     <height>471</height>
                    </rect>
                   </property>
@@ -2626,8 +2598,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>695</width>
-                    <height>366</height>
+                    <width>677</width>
+                    <height>355</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2800,7 +2772,7 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>423</width>
+                       <width>405</width>
                        <height>198</height>
                       </rect>
                      </property>
@@ -3142,8 +3114,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>695</width>
-                    <height>366</height>
+                    <width>661</width>
+                    <height>360</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_15">
@@ -3191,7 +3163,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>657</width>
+                        <width>623</width>
                         <height>1218</height>
                        </rect>
                       </property>
@@ -3355,6 +3327,84 @@ Note - this will not remove items which are currently there. </string>
              </widget>
             </widget>
            </item>
+           <item row="1" column="0" rowspan="2">
+            <widget class="QPushButton" name="memos_pushButton">
+             <property name="text">
+              <string>Memos</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" rowspan="2">
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_39">
+             <property name="text">
+              <string>Today's Notes</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3" rowspan="2">
+            <widget class="QTextEdit" name="notesEnter_textEdit">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>60</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Enter Notes.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4" rowspan="2">
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5" rowspan="2">
+            <widget class="QPushButton" name="saveButton">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Save the changes made to this record.</string>
+             </property>
+             <property name="text">
+              <string>Save Changes</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/save_all.png</normaloff>:/save_all.png</iconset>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+S</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="phraseBook_pushButton">
+             <property name="text">
+              <string>PhraseBook</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/txt.png</normaloff>:/txt.png</iconset>
+             </property>
+             <property name="shortcut">
+              <string>Ins</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -3371,310 +3421,318 @@ Note - this will not remove items which are currently there. </string>
        <attribute name="toolTip">
         <string>Appointments - Will Load today by default</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0" colspan="3">
-         <widget class="QCalendarWidget" name="appointmentCalendarWidget">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QFrame" name="frame_17">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
           </property>
-          <property name="firstDayOfWeek">
-           <enum>Qt::Monday</enum>
-          </property>
-          <property name="gridVisible">
-           <bool>true</bool>
-          </property>
-          <property name="horizontalHeaderFormat">
-           <enum>QCalendarWidget::SingleLetterDayNames</enum>
-          </property>
-          <property name="verticalHeaderFormat">
-           <enum>QCalendarWidget::NoVerticalHeader</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="QPushButton" name="goTodayPushButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>174</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Go To Today</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QPushButton" name="apptPrevDay_pushButton">
-          <property name="maximumSize">
-           <size>
-            <width>28</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/back.png</normaloff>:/back.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="label_66">
-          <property name="maximumSize">
-           <size>
-            <width>104</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Day</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QPushButton" name="apptNextDay_pushButton">
-          <property name="maximumSize">
-           <size>
-            <width>28</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QPushButton" name="apptPrevWeek_pushButton">
-          <property name="maximumSize">
-           <size>
-            <width>28</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/back.png</normaloff>:/back.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLabel" name="label_65">
-          <property name="maximumSize">
-           <size>
-            <width>104</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Week</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QPushButton" name="apptNextWeek_pushButton">
-          <property name="maximumSize">
-           <size>
-            <width>28</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QPushButton" name="apptPrevMonth_pushButton">
-          <property name="maximumSize">
-           <size>
-            <width>28</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/back.png</normaloff>:/back.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLabel" name="label_64">
-          <property name="maximumSize">
-           <size>
-            <width>104</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Month</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QPushButton" name="apptNextMonth_pushButton">
-          <property name="maximumSize">
-           <size>
-            <width>28</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0" colspan="3">
-         <widget class="QScrollArea" name="aptdentscrollArea">
-          <property name="maximumSize">
-           <size>
-            <width>171</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_2">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>167</width>
-             <height>57</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <widget class="QFrame" name="aptdents_frame">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="0" colspan="4">
+            <widget class="QCalendarWidget" name="appointmentCalendarWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="firstDayOfWeek">
+              <enum>Qt::Monday</enum>
+             </property>
+             <property name="gridVisible">
+              <bool>true</bool>
+             </property>
+             <property name="horizontalHeaderFormat">
+              <enum>QCalendarWidget::SingleLetterDayNames</enum>
+             </property>
+             <property name="verticalHeaderFormat">
+              <enum>QCalendarWidget::NoVerticalHeader</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="4">
+            <widget class="QPushButton" name="goTodayPushButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Go To Today</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QPushButton" name="apptPrevDay_pushButton">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/back.png</normaloff>:/back.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" colspan="2">
+            <widget class="QLabel" name="label_66">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Day</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QPushButton" name="apptNextDay_pushButton">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QPushButton" name="apptPrevWeek_pushButton">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/back.png</normaloff>:/back.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" colspan="2">
+            <widget class="QLabel" name="label_65">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Week</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QPushButton" name="apptNextWeek_pushButton">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QPushButton" name="apptPrevMonth_pushButton">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/back.png</normaloff>:/back.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1" colspan="2">
+            <widget class="QLabel" name="label_64">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Month</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="3">
+            <widget class="QPushButton" name="apptNextMonth_pushButton">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0" colspan="4">
+            <widget class="QScrollArea" name="aptdentscrollArea">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>191</width>
+                <height>57</height>
+               </rect>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <item>
+                <widget class="QFrame" name="aptdents_frame">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
-            </item>
-           </layout>
-          </widget>
+            </widget>
+           </item>
+           <item row="6" column="1" colspan="2">
+            <spacer>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>100</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="7" column="0" colspan="2">
+            <widget class="QLabel" name="label_42">
+             <property name="maximumSize">
+              <size>
+               <width>101</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Font Size</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2">
+            <widget class="QSpinBox" name="fontSize_spinBox">
+             <property name="maximumSize">
+              <size>
+               <width>51</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="minimum">
+              <number>4</number>
+             </property>
+             <property name="maximum">
+              <number>16</number>
+             </property>
+             <property name="value">
+              <number>8</number>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0" colspan="4">
+            <widget class="QPushButton" name="printDaylists_pushButton">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Print Daylists</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item row="6" column="1">
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>100</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="7" column="0" colspan="3">
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QLabel" name="label_42">
-            <property name="maximumSize">
-             <size>
-              <width>101</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Font Size</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="fontSize_spinBox">
-            <property name="maximumSize">
-             <size>
-              <width>51</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="minimum">
-             <number>4</number>
-            </property>
-            <property name="maximum">
-             <number>16</number>
-            </property>
-            <property name="value">
-             <number>7</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="8" column="0" colspan="3">
-         <widget class="QPushButton" name="printDaylists_pushButton">
-          <property name="maximumSize">
-           <size>
-            <width>174</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Print Daylists</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3" rowspan="9">
+        <item>
          <widget class="QFrame" name="frame_3">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -3745,8 +3803,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>141</width>
-                    <height>400</height>
+                    <width>136</width>
+                    <height>407</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout"/>
@@ -3812,8 +3870,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>141</width>
-                    <height>400</height>
+                    <width>135</width>
+                    <height>407</height>
                    </rect>
                   </property>
                  </widget>
@@ -3878,8 +3936,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>141</width>
-                    <height>400</height>
+                    <width>136</width>
+                    <height>407</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout"/>
@@ -3906,8 +3964,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>141</width>
-                    <height>400</height>
+                    <width>135</width>
+                    <height>407</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="_2"/>
@@ -3972,243 +4030,251 @@ Note - this will not remove items which are currently there. </string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="0" colspan="3">
-           <widget class="QLabel" name="aptOVmode_label">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>View Mode</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="3">
-           <widget class="QCalendarWidget" name="apptOV_calendarWidget">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>179</width>
-              <height>179</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>200</height>
-             </size>
-            </property>
-            <property name="firstDayOfWeek">
-             <enum>Qt::Monday</enum>
-            </property>
-            <property name="gridVisible">
-             <bool>true</bool>
-            </property>
-            <property name="horizontalHeaderFormat">
-             <enum>QCalendarWidget::SingleLetterDayNames</enum>
-            </property>
-            <property name="verticalHeaderFormat">
-             <enum>QCalendarWidget::NoVerticalHeader</enum>
-            </property>
-            <property name="dateEditEnabled">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="3">
-           <widget class="QPushButton" name="apptOVtoday_pushButton">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Go To Current Week</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../resources/resources.qrc">
-              <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QPushButton" name="aptOVprevweek">
-            <property name="maximumSize">
-             <size>
-              <width>28</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../resources/resources.qrc">
-              <normaloff>:/back.png</normaloff>:/back.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_62">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Week</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QPushButton" name="aptOVnextweek">
-            <property name="maximumSize">
-             <size>
-              <width>28</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../resources/resources.qrc">
-              <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QPushButton" name="aptOVprevmonth">
-            <property name="maximumSize">
-             <size>
-              <width>28</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../resources/resources.qrc">
-              <normaloff>:/back.png</normaloff>:/back.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="label_63">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Month</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QPushButton" name="aptOVnextmonth">
-            <property name="maximumSize">
-             <size>
-              <width>28</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../resources/resources.qrc">
-              <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="3">
-           <widget class="QCheckBox" name="aptOV_lunchcheckBox">
-            <property name="text">
-             <string>show lunch breaks</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" colspan="3">
-           <widget class="QCheckBox" name="aptOV_apptscheckBox">
-            <property name="text">
-             <string>show appointments</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0" colspan="3">
-           <widget class="QCheckBox" name="aptOV_emergencycheckBox">
-            <property name="text">
-             <string>show emergency spaces</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0" colspan="3">
-           <widget class="QScrollArea" name="aptOVdentscrollArea">
-            <property name="maximumSize">
-             <size>
-              <width>171</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="widgetResizable">
-             <bool>true</bool>
-            </property>
-            <widget class="QWidget" name="scrollAreaWidgetContents">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>167</width>
-               <height>98</height>
-              </rect>
+         <widget class="QFrame" name="frame_18">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_7">
+           <item row="0" column="0" colspan="3">
+            <widget class="QCalendarWidget" name="apptOV_calendarWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <item>
-               <widget class="QFrame" name="aptOVdents_frame">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <property name="minimumSize">
+              <size>
+               <width>179</width>
+               <height>179</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>200</height>
+              </size>
+             </property>
+             <property name="firstDayOfWeek">
+              <enum>Qt::Monday</enum>
+             </property>
+             <property name="gridVisible">
+              <bool>true</bool>
+             </property>
+             <property name="horizontalHeaderFormat">
+              <enum>QCalendarWidget::SingleLetterDayNames</enum>
+             </property>
+             <property name="verticalHeaderFormat">
+              <enum>QCalendarWidget::NoVerticalHeader</enum>
+             </property>
+             <property name="dateEditEnabled">
+              <bool>true</bool>
+             </property>
             </widget>
-           </widget>
-          </item>
-         </layout>
+           </item>
+           <item row="1" column="0" colspan="3">
+            <widget class="QPushButton" name="apptOVtoday_pushButton">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Go To Current Week</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QPushButton" name="aptOVprevweek">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/back.png</normaloff>:/back.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="label_62">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Week</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="aptOVnextweek">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QPushButton" name="aptOVprevmonth">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/back.png</normaloff>:/back.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="label_63">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Month</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="aptOVnextmonth">
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" colspan="2">
+            <widget class="QCheckBox" name="aptOV_lunchcheckBox">
+             <property name="text">
+              <string>show lunch breaks</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0" colspan="2">
+            <widget class="QCheckBox" name="aptOV_apptscheckBox">
+             <property name="text">
+              <string>show appointments</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0" colspan="3">
+            <widget class="QCheckBox" name="aptOV_emergencycheckBox">
+             <property name="text">
+              <string>show emergency spaces</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0" colspan="3">
+            <widget class="QScrollArea" name="aptOVdentscrollArea">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>191</width>
+                <height>85</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <item>
+                <widget class="QFrame" name="aptOVdents_frame">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+           <item row="8" column="0" colspan="3">
+            <widget class="QLabel" name="aptOVmode_label">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>View Mode</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout">
@@ -5480,13 +5546,9 @@ Note - this will not remove items which are currently there. </string>
   </action>
  </widget>
  <tabstops>
-  <tabstop>findButton</tabstop>
-  <tabstop>newPatientPushButton</tabstop>
   <tabstop>saveButton</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>debugBrowser</tabstop>
-  <tabstop>backButton</tabstop>
-  <tabstop>nextButton</tabstop>
   <tabstop>daylistBox</tabstop>
   <tabstop>detailsBrowser</tabstop>
   <tabstop>appointmentCalendarWidget</tabstop>
@@ -5504,10 +5566,6 @@ Note - this will not remove items which are currently there. </string>
   <tabstop>daybookDent1ComboBox</tabstop>
   <tabstop>daybookDent2ComboBox</tabstop>
   <tabstop>daybookTextBrowser</tabstop>
-  <tabstop>home_pushButton</tabstop>
-  <tabstop>reloadButton</tabstop>
-  <tabstop>relatedpts_pushButton</tabstop>
-  <tabstop>phraseBook_pushButton</tabstop>
   <tabstop>scrollArea_2</tabstop>
   <tabstop>adminMemoEdit</tabstop>
   <tabstop>moneytextBrowser</tabstop>
@@ -5543,9 +5601,7 @@ Note - this will not remove items which are currently there. </string>
   <tabstop>apptPrevMonth_pushButton</tabstop>
   <tabstop>apptNextMonth_pushButton</tabstop>
   <tabstop>aptdentscrollArea</tabstop>
-  <tabstop>fontSize_spinBox</tabstop>
   <tabstop>printDaylists_pushButton</tabstop>
-  <tabstop>apptOV_calendarWidget</tabstop>
   <tabstop>apptOVtoday_pushButton</tabstop>
   <tabstop>aptOVprevweek</tabstop>
   <tabstop>aptOVnextweek</tabstop>
@@ -5565,7 +5621,6 @@ Note - this will not remove items which are currently there. </string>
   <tabstop>recalldateEdit</tabstop>
   <tabstop>recallpushButton</tabstop>
   <tabstop>notesBrowser</tabstop>
-  <tabstop>notesEnter_textEdit</tabstop>
   <tabstop>scrollArea_4</tabstop>
   <tabstop>titleEdit</tabstop>
   <tabstop>fnameEdit</tabstop>
@@ -5612,10 +5667,7 @@ Note - this will not remove items which are currently there. </string>
   <tabstop>dnt2comboBox</tabstop>
   <tabstop>closeTx_pushButton</tabstop>
   <tabstop>scrollArea_5</tabstop>
-  <tabstop>standardLetterPushButton</tabstop>
-  <tabstop>printRecall_pushButton</tabstop>
   <tabstop>receiptDoubleSpinBox</tabstop>
-  <tabstop>receiptPrintButton</tabstop>
   <tabstop>dupReceiptDate_lineEdit</tabstop>
   <tabstop>referralLettersComboBox</tabstop>
   <tabstop>referralLettersPrintButton</tabstop>
