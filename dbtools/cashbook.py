@@ -99,7 +99,7 @@ def details(dent,startdate,enddate):
             cashTOT+=amt
             retarg+="<td> </td>"*3
         elif "CHEQUE" in CODE:
-            retarg+='<td align="right">&pound;%.02F</td>'%amt
+            retarg+='<td> </td><td align="right">&pound;%.02F</td>'%amt
             chequeTOT+=amt
             retarg+="<td> </td>"*2
         elif "CARD" in CODE:
