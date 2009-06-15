@@ -618,7 +618,7 @@ class chartWidget(QtGui.QWidget):
                 else:
                     print "unhanded material colour",toothtext,prop,material
 
-                if quadrant[1]=="l":
+                if quadrant[1]=="l" and prop!="dr":
                     #-- left hand side - reverse fills
                     #-- this loods a confusing merry dance...
                     #-- capitalisation used to prevent changes being undone
