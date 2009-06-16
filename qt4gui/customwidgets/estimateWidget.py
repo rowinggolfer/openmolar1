@@ -11,19 +11,36 @@ from __future__ import division
 import re
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.customwidgets import Ui_estimateItemWidget,\
-Ui_estHeaderWidget,Ui_estFooterWidget
+Ui_estHeaderWidget,Ui_estFooterWidget,chainLabel
 
 
 class estItemWidget(Ui_estimateItemWidget.Ui_Form):
     def __init__(self,parent=None):
         self.parent=parent
         self.setupUi(self.parent)
+        self.addchain()
         self.signals()
-        self.validators
+        self.validators()
+        self.feesLinked=True
         
+    def addchain(self):
+        self.chain=chainLabel.chainLabel(self.chain_frame)
+
+        QtCore.QObject.connect(self.chain,
+        QtCore.SIGNAL("chained"), self.linkfees)
+
+    def linkfees(self,arg):
+        '''
+        toggles a boolean which determines if the pt fee and fee are the same
+        '''
+        self.feesLinked=arg
+    def setChain(self,cset):
+        if cset!="P":
+            self.chain.mousePressEvent(None)
     def setItem(self,item):
         self.item=item
         self.code_label.setToolTip(self.toolTip())
+    
     def toolTip(self):
         return '''<center>Type - '%s'<br />ItemCode - '%s'<br />Feescale - %s
         <br />CSEtype - %s<br />Dent - %s</center>DBindex - %s'''%(
@@ -33,8 +50,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.item.csetype,
         self.item.dent,
         self.item.ix)
-        
-        
+                
     def loadValues(self):
         if self.item.number!=None:
             self.setNumber(self.item.number)
@@ -45,6 +61,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.setItemCode(self.item.itemcode)
         self.setCompleted(self.item.completed)
         self.setCset(self.item.csetype)
+        self.setChain(self.item.csetype)
         
     def validators(self):
         self.fee_lineEdit.setValidator(QtGui.\
@@ -87,20 +104,30 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.item.number=newVal
     def update_descr(self,arg):
         self.item.description=str(arg).replace('"', '\"')
-    def update_Fee(self,arg):
+
+    def update_Fee(self,arg,userPerforming=True):
         try:
             newVal=int(float(arg)*100)
+            if self.feesLinked and userPerforming:
+                self.ptFee_lineEdit.setText(arg)
+                self.update_ptFee(arg,False)
         except ValueError:
             newVal=0
         self.item.fee=newVal
-        self.userInput()
-    def update_ptFee(self,arg):
+        if userPerforming:
+            self.userInput()
+    
+    def update_ptFee(self,arg,userPerforming=True):
         try:
             newVal=int(float(arg)*100)
+            if self.feesLinked and userPerforming:
+                self.fee_lineEdit.setText(arg)
+                self.update_Fee(arg,False)
         except ValueError:
             newVal=0
         self.item.ptfee=newVal
-        self.userInput()
+        if userPerforming:
+            self.userInput()
     def setNumber(self,arg):
         self.number_lineEdit.setText(str(arg))
 
@@ -136,7 +163,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
     def completeItem(self,arg):
         '''
         a slot for the checkbox state change
-        should only happen when this is altered by user (not prgramatically)
+        should only happen when this is altered by user (not programatically)
         '''
         result=(arg==2)
         self.delete_pushButton.setEnabled(not result)
@@ -263,7 +290,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
-    pt=patient_class.patient(707)
+    pt=patient_class.patient(11956)
     form=estWidget()
     form.setEstimate(pt.estimates)
     form.show()

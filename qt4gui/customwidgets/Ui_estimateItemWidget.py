@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/estimateItemWidget.ui'
 #
-# Created: Tue Jun 16 11:00:56 2009
+# Created: Tue Jun 16 14:27:39 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -70,10 +70,12 @@ class Ui_Form(object):
         self.fee_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.fee_lineEdit.setObjectName("fee_lineEdit")
         self.horizontalLayout.addWidget(self.fee_lineEdit)
-        self.label = QtGui.QLabel(Form)
-        self.label.setPixmap(QtGui.QPixmap(":/icons/chain.png"))
-        self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
+        self.chain_frame = QtGui.QFrame(Form)
+        self.chain_frame.setMinimumSize(QtCore.QSize(24, 0))
+        self.chain_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.chain_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.chain_frame.setObjectName("chain_frame")
+        self.horizontalLayout.addWidget(self.chain_frame)
         self.ptFee_lineEdit = QtGui.QLineEdit(Form)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)

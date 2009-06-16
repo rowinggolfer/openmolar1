@@ -171,12 +171,18 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string/>
+    <widget class="QFrame" name="chain_frame">
+     <property name="minimumSize">
+      <size>
+       <width>24</width>
+       <height>0</height>
+      </size>
      </property>
-     <property name="pixmap">
-      <pixmap resource="../resources/resources.qrc">:/icons/chain.png</pixmap>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
     </widget>
    </item>
