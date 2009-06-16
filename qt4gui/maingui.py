@@ -951,7 +951,20 @@ class feeClass():
             self.load_newEstPage()
         else:
             self.advise("No treatment items to move!",1)
+    
+    def update_perioDates(self,arg):
+        print "update periodates with '%s'"%arg
+        if "SP" in arg:
+            self.pt.pd10=localsettings.ukToday()
+      
+    def update_xrayDates(self,arg):
+        print "update xrays with '%s'"%arg
+        if "M" in arg or "S" in arg:
+            self.pt.pd9=localsettings.ukToday()
+        if "P" in arg:
+            self.pt.pd8=localsettings.ukToday()
             
+          
     def updateDaybook(self):
         '''
         looks for attributes like *cmp, when record is closed
@@ -967,7 +980,7 @@ class feeClass():
                 existingcmp=self.pt_dbstate.__dict__[att]
                 
                 if newcmp != existingcmp:
-                    treatment=newcmp.replace(existingcmp,"")
+                    treatment=newcmp.replace(existingcmp,"",1)
                     print att,newcmp,existingcmp,treatment
                     writeNeeded=True
                     
@@ -976,10 +989,14 @@ class feeClass():
                     else:
                         key=att.rstrip("cmp")
                     
+                    if key=="perio":
+                        self.update_perioDates(treatment)
                     if key in daybookdict.keys():
                         daybookdict[key]+="%s "%treatment
                     elif key=="xray" or key=="exam":
                         daybookdict["diagn"]+="%s "%treatment
+                        if key=="xray":
+                            self.update_xrayDates(treatment)
                     elif key=="custom":
                         daybookdict["other"]+="%s "%treatment
                     else:
@@ -4520,6 +4537,7 @@ printingClass,cashbooks,contractClass, forumClass):
             "Please set a Valid Course Type for this patient")
             pos=-1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
+        self.ui.contract_tabWidget.setCurrentIndex(pos)
         #--update bpe
         localsettings.defaultNewPatientDetails=(
         self.pt.sname,self.pt.addr1,self.pt.addr2,

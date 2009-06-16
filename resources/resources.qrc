@@ -1,5 +1,7 @@
 <RCC>
   <qresource>
+    <file>icons/chain-broken.png</file>
+    <file>icons/chain.png</file>
     <file>private.png</file>
     <file>hdp.png</file>
     <file>nhs_scot.png</file>

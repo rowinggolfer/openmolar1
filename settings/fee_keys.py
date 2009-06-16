@@ -148,7 +148,7 @@ def getCode(tooth,arg):
     '''
     print "decrypting tooth %s code %s "%(tooth, arg)
 
-    if arg in ("PV","AP","ST","EX","EX/S1","EX/S2",",PR"):
+    if arg in ("PV","AP","ST","EX","EX/S1","EX/S2",",PR","DR"):
         return getKeyCode(arg)
 
     if re.match("CR,..$", arg):

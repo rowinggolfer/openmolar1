@@ -470,9 +470,10 @@ def initiate(debug=False):
         print sqlToday()
         print dentDict
         #print descripŕtions
-        for key in privateFees.keys():
-            print privateFees[key].fees,
-            print nhsFees[key].fees
+        
+        #for key in privateFees.keys():
+        #    print privateFees[key].fees,
+        #    print nhsFees[key].fees
         #print treatmentCodes
         #print fees
 
@@ -482,3 +483,4 @@ if __name__ == "__main__":
     print cflocation
     initiate(True)
     updateLocalSettings("station","surgery3")
+    
