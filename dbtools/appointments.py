@@ -238,7 +238,7 @@ def clearEms(adate):
     cursor=db.cursor()
     number=0
     try:
-        fullquery='delete from aslot WHERE adate="%s" and flag0=-128 and name!="LUNCH"'%adate
+        fullquery='delete from aslot WHERE adate="%s" and flag0=-128 and name=="Emergency"'%adate
         if localsettings.logqueries:
             print fullquery
         number=cursor.execute(fullquery)
@@ -397,11 +397,11 @@ def make_appt(adate,apptix,start,end,name,serialno,code0,code1,code2,note,flag0,
     return result
 
 
-def block_appt(adate,apptix,start,end):
+def block_appt(adate,apptix,start,end,reason):
     db = connect()
     cursor = db.cursor()
     columns='adate,apptix,start,end,name,serialno,code0,code1,code2,note,flag0,flag1,flag2,flag3'
-    values='"%s",%d,%d,%d,"%s",%d,"%s","%s","%s","%s",%d,%d,%d,%d'%(adate,apptix,start,end,"//BLOCKED//",0,
+    values='"%s",%d,%d,%d,"%s",%d,"%s","%s","%s","%s",%d,%d,%d,%d'%(adate,apptix,start,end,reason,0,
     "","","","",-128,0,0,0)
 
     fullquery='INSERT INTO aslot (%s) VALUES (%s)'%(columns,values)

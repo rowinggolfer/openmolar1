@@ -10,6 +10,7 @@ from __future__ import division
 from PyQt4 import QtGui,QtCore
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
+from openmolar.qt4gui.dialogs import Ui_blockSlot
 
 BGCOLOR=colours.APPT_Background
 LINECOLOR=colours.APPT_LINECOLOUR
@@ -225,13 +226,13 @@ class appointmentWidget(QtGui.QWidget):
             int(self.startTime+self.selected[1]*self.slotLength))
 
             if localsettings.apptix.has_key(self.dentist):
-                result=QtGui.QMessageBox.question(self,"Confirm",
-                "Block this slot?",
-                QtGui.QMessageBox.Yes,QtGui.QMessageBox.No) 
-
-                if result == QtGui.QMessageBox.Yes:            
+                Dialog=QtGui.QDialog(self)
+                dl=Ui_blockSlot.Ui_Dialog()
+                dl.setupUi(Dialog)
+                if Dialog.exec_():
+                    reason=str(dl.comboBox.currentText())
                     self.emit(QtCore.SIGNAL("BlockEmptySlot"),
-                    (start,finish,localsettings.apptix[self.dentist]))
+                    (start,finish,localsettings.apptix[self.dentist],reason))
 
     def leaveEvent(self,event):
         self.selected=[-1,-1]

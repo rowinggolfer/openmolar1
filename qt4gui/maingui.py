@@ -1028,10 +1028,10 @@ class forumClass():
         loads the forum (you guessed, huh?)
         '''
         #-- I have 2 forums. one for computer issues, and one for general
-        for topic in ("forum", "OMforum"):
+        for topic in ("forum", "omforum"):
             #-- set the column headers (stored in another module)
             headers=forum.headers
-            if topic=="OMforum":
+            if topic=="omforum":
                 twidg=self.ui.OM_forum_treeWidget
             else:
                 twidg=self.ui.forum_treeWidget
@@ -2238,7 +2238,8 @@ class appointmentClass():
         start=localsettings.humanTimetoWystime(tup[0])
         end=localsettings.humanTimetoWystime(tup[1])
         dent=tup[2]
-        appointments.block_appt(adate,dent,start,end)
+        reason=tup[3]
+        appointments.block_appt(adate,dent,start,end,reason)
         self.layout_appointments()
 
 class signals():
