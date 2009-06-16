@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/blockSlot.ui'
 #
-# Created: Tue Jun 16 16:13:14 2009
+# Created: Tue Jun 16 17:02:45 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,7 +49,7 @@ class Ui_Dialog(object):
         self.label_2.setText(QtGui.QApplication.translate("Dialog", "Text to apply", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.setItemText(0, QtGui.QApplication.translate("Dialog", "//Blocked//", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.setItemText(1, QtGui.QApplication.translate("Dialog", "Emergency", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(2, QtGui.QApplication.translate("Dialog", "Reserved Time", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(3, QtGui.QApplication.translate("Dialog", "Lunch", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(4, QtGui.QApplication.translate("Dialog", "Out of Office", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.setItemText(2, QtGui.QApplication.translate("Dialog", "Reserved Clinical Time", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.setItemText(3, QtGui.QApplication.translate("Dialog", "Out of Office", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.setItemText(4, QtGui.QApplication.translate("Dialog", "Lunch", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -295,6 +295,8 @@ class appointmentWidget(QtGui.QWidget):
                 painter.setBrush(APPTCOLORS[cset])
             elif APPTCOLORS.has_key(name.upper()):
                 painter.setBrush(APPTCOLORS[name.upper()])
+            elif flag==-128:
+                painter.setBrush(APPTCOLORS["BUSY"])
             else:
                 painter.setBrush(APPTCOLORS["default"])
             painter.drawRect(rect)

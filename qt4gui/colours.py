@@ -34,14 +34,13 @@ APPTCOLORS={
     "N":QtGui.QColor("#99ccff"),
     "I":QtGui.QColor("#ccff99"),
     "P":QtGui.QColor("#ffff99"),    
-    "BUSY":QtGui.QColor("#adb3ff"),
+    "BUSY":QtGui.QColor("#eeeeee"),
+    "RESERVED CLINICAL TIME":QtGui.QColor("#ffcc99"),
     "LUNCH":QtGui.QColor("#eeeeee"),
     "FREE":QtCore.Qt.transparent,
     "EMERGENCY":QtGui.QColor("#ff6600"),
     "default":QtGui.QColor("#adb3ff"),
     "//BLOCKED//":QtCore.Qt.transparent,
-    "//Blocked//":QtCore.Qt.transparent,
-    "blocked":QtCore.Qt.transparent,
     "DOUBLE":QtCore.Qt.blue
 }
 

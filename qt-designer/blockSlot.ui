@@ -61,17 +61,17 @@
      </item>
      <item>
       <property name="text">
-       <string>Reserved Time</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Lunch</string>
+       <string>Reserved Clinical Time</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Out of Office</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Lunch</string>
       </property>
      </item>
     </widget>
