@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>770</width>
+    <width>773</width>
     <height>28</height>
    </rect>
   </property>
@@ -171,19 +171,12 @@
     </widget>
    </item>
    <item>
-    <widget class="QToolButton" name="lock_toolButton">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>...</string>
+      <string/>
      </property>
-     <property name="icon">
-      <iconset resource="../resources/resources.qrc">
-       <normaloff>:/icons/chain.png</normaloff>:/icons/chain.png</iconset>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
+     <property name="pixmap">
+      <pixmap resource="../resources/resources.qrc">:/icons/chain.png</pixmap>
      </property>
     </widget>
    </item>

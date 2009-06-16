@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/estimateItemWidget.ui'
 #
-# Created: Tue Jun 16 09:25:49 2009
+# Created: Tue Jun 16 11:00:56 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(770, 28)
+        Form.resize(773, 28)
         self.horizontalLayout = QtGui.QHBoxLayout(Form)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setMargin(0)
@@ -70,16 +70,10 @@ class Ui_Form(object):
         self.fee_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.fee_lineEdit.setObjectName("fee_lineEdit")
         self.horizontalLayout.addWidget(self.fee_lineEdit)
-        self.lock_pushButton = QtGui.QPushButton(Form)
-        self.lock_pushButton.setMaximumSize(QtCore.QSize(20, 16777215))
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/chain.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/icons/chain-broken.png"), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        self.lock_pushButton.setIcon(icon)
-        self.lock_pushButton.setCheckable(True)
-        self.lock_pushButton.setChecked(True)
-        self.lock_pushButton.setObjectName("lock_pushButton")
-        self.horizontalLayout.addWidget(self.lock_pushButton)
+        self.label = QtGui.QLabel(Form)
+        self.label.setPixmap(QtGui.QPixmap(":/icons/chain.png"))
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
         self.ptFee_lineEdit = QtGui.QLineEdit(Form)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -106,9 +100,9 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.delete_pushButton.sizePolicy().hasHeightForWidth())
         self.delete_pushButton.setSizePolicy(sizePolicy)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/eraser.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.delete_pushButton.setIcon(icon1)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/eraser.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.delete_pushButton.setIcon(icon)
         self.delete_pushButton.setObjectName("delete_pushButton")
         self.horizontalLayout.addWidget(self.delete_pushButton)
 
@@ -126,13 +120,3 @@ class Ui_Form(object):
         self.completed_checkBox.setText(QtGui.QApplication.translate("Form", "Completed", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    Form = QtGui.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec_())
-
