@@ -22,7 +22,7 @@ class memo():
 def getMemos(serialno):
     retarg=[]
     db=connect()
-    query="select ix,serialno,author,type,mdate,expiredate,message from ptmemos where serialno=%d and open=1"%serialno
+    query="select ix,serialno,author,type,mdate,message from ptmemos where serialno=%d and open=1 and expiredate>=now()"%serialno
     if localsettings.logqueries:
         print query
     cursor = db.cursor()
@@ -36,8 +36,7 @@ def getMemos(serialno):
         newmemo.author=row[2]
         newmemo.type=row[3]
         newmemo.mdate=row[4]
-        newmemo.expire=row[5]
-        newmemo.message=row[6]
+        newmemo.message=row[5]
         newmemo.open=True
         
         retarg.append(newmemo)

@@ -4662,7 +4662,7 @@ printingClass,cashbooks,contractClass, forumClass):
             
     
     def newCustomMemo(self):
-        Dialog = QtGui.QDialog()
+        Dialog = QtGui.QDialog(self)
         dl = saveMemo.Ui_Dialog(Dialog,self.pt.serialno)
         if not dl.getInput():
             self.advise("memo not saved",1)
