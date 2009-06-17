@@ -10,17 +10,38 @@ from openmolar.connect import connect
 
 
 def details():
+    '''
+    get all patients owing money where the debt has not been written off
+    '''
     db = connect()
     cursor = db.cursor()
-    query='''select dnt1,lpad(serialno, 6, "0") ,cset, fname,sname,DATE_FORMAT(dob,"%s"),memo,DATE_FORMAT(billdate,"%s"),billtype,billct,courseno0,
-    (money0 + money1 + money9 + money10 + money11 - money2 - money3 - money8) as fees
-    from patients where (money0 + money1 + money9 + money10 + money11 - money2 - money3 - money8) > 0
-    order by sname'''%(localsettings.sqlDateFormat,localsettings.sqlDateFormat)
+    query='''select dnt1,serialno ,cset, fname,sname,dob,memo,pd4,billdate,billtype,billct,courseno0,
+    (money0 + money1 + money9 + money10 - money2 - money3 - money8) as fees
+    from patients where (money0 + money1 + money9 + money10 - money2 - money3 - money8) > 0
+    order by sname'''
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
     #db.close()
     return rows
+
+def bad_debts():
+    '''
+    get all patient owing money including money11
+    '''
+    db = connect()
+    cursor = db.cursor()
+    query='''select dnt1,serialno ,cset, fname,sname,dob,"%s",memo,pd4,billdate,billtype,billct,courseno0,
+    (money0 + money1 + money9 + money10 +money11 - money2 - money3 - money8) as fees
+    from patients where (money0 + money1 + money9 + money10 +money11 - money2 - money3 - money8) > 0
+    order by sname'''%localsettings.sqlDateFormat
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    #db.close()
+    return rows
+
+
 
 if __name__ == "__main__":
     localsettings.initiate(False)

@@ -367,7 +367,20 @@ class patient():
     def updateFees(self):
         self.fees=(self.money0 + self.money1 + self.money9 + self.money10 +
         self.money11 - self.money2 - self.money3 - self.money8)
-
+    def resetAllMonies(self):
+        '''
+        zero's everything except money11 (bad debt)
+        '''
+        self.money0=0
+        self.money1=0
+        self.money9=0
+        self.money10=0
+        self.money2=0
+        self.money3=0
+        self.money8=0
+            
+        self.updateFees()
+        
     def removeFromEstimate(self,tooth,item):
         type="%s %s"%(tooth,item)
         print "removing from estimate '%s'"%type

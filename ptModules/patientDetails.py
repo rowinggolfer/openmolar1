@@ -108,7 +108,8 @@ def details(pt,Saved=True):
 
     retarg+='<tr><td>Recall Date</td><td>%s</td></tr>'%pt.recd
     retarg+='</table>'
-
+    if pt.status not in ("Active","",None):
+        retarg+="<h1>%s</h1>"%pt.status
     if not Saved:
         alert="<br />NOT SAVED"
     else:

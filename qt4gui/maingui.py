@@ -995,7 +995,7 @@ class feeClass():
                         daybookdict[key]+="%s "%treatment
                     elif key=="xray" or key=="exam":
                         daybookdict["diagn"]+="%s "%treatment
-                        if key=="xray":
+                        if "xray" in key:
                             self.update_xrayDates(treatment)
                     elif key=="custom":
                         daybookdict["other"]+="%s "%treatment
@@ -1021,7 +1021,71 @@ class feeClass():
 
             daybook.add(self.pt.serialno,self.pt.cset,dent,trtid,
             daybookdict,feesa,feesb)
-            
+    
+    
+    def makeBadDebt(self):
+        '''
+        write off the debt (stops cluttering up the accounts table)
+        '''
+        result=QtGui.QMessageBox.question(self,"Confirm",
+        "Move this patient to Bad Debt Status?",
+        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+
+        if result == QtGui.QMessageBox.Yes:
+            #--what is owed
+            self.pt.money11=self.pt.fees
+            self.pt.resetAllMonies()
+            self.pt.status="BAD DEBT"
+            self.ui.notesEnter_textEdit.setText(
+            "changed patients status to BAD DEBT")
+
+            self.updateStatus()
+            self.updateDetails()
+        
+    def populateAccountsTable(self):
+        rows=accounts.details()
+        self.ui.accounts_tableWidget.clear()
+        self.ui.accounts_tableWidget.setSortingEnabled(False)
+        self.ui.accounts_tableWidget.setRowCount(len(rows))
+        headers=("Dent","Serialno","","First","Last","DOB","Memo","Last Appt","Last Bill",
+        "Type","Number","T/C","Fees","A","B","C")
+
+        self.ui.accounts_tableWidget.setColumnCount(len(headers))
+        self.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
+        self.ui.accounts_tableWidget.verticalHeader().hide()
+        rowno=0
+        total=0
+        for row in rows:
+            for col in range(len(row)):
+                d=row[col]
+                if d!=None:                
+                    item=QtGui.QTableWidgetItem()
+                    if col==0:
+                        item.setText(localsettings.ops.get(d))
+                    elif col in (5,7,8):
+                            item.setData(QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDate(d)))
+                    elif col==12:
+                        total+=d
+                        item.setText(localsettings.formatMoney(d))
+                    elif col==11:
+                        if d>0:
+                            item.setText("N")
+                        else:
+                            item.setText("Y")
+                    else:
+                        item.setText(str(d).title())
+                    self.ui.accounts_tableWidget.setItem(rowno,col,item)
+            for col in range(13,16):
+                item=QtGui.QTableWidgetItem()
+                item.setCheckState(QtCore.Qt.Unchecked)
+                self.ui.accounts_tableWidget.setItem(rowno,col,item)
+            rowno+=1
+        self.ui.accounts_tableWidget.setSortingEnabled(True)
+        #self.ui.accounts_tableWidget.update()
+        for i in range(self.ui.accounts_tableWidget.columnCount()):
+            self.ui.accounts_tableWidget.resizeColumnToContents(i)
+        self.ui.accountsTotal_doubleSpinBox.setValue(total/100)
+        
 class forumClass():
     def loadForum(self):
         '''
@@ -2432,8 +2496,13 @@ class signals():
                         QtCore.SIGNAL("clicked()"), self.populateAccountsTable)
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,
                         QtCore.SIGNAL("clicked()"),self.printSelectedAccounts)
+        QtCore.QObject.connect(self.ui.accounts_tableWidget,
+        QtCore.SIGNAL("cellDoubleClicked (int,int)"),self.accountsTableClicked)
+    
     def signals_contract(self):
         #contract
+        QtCore.QObject.connect(self.ui.badDebt_pushButton,
+                        QtCore.SIGNAL("clicked()"),self.makeBadDebt)
         QtCore.QObject.connect(self.ui.contract_tabWidget,
             QtCore.SIGNAL("currentChanged(int)"),self.handle_ContractTab)
         QtCore.QObject.connect(self.ui.dnt1comboBox,QtCore.
@@ -2450,6 +2519,8 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.editHDPcontract)
         QtCore.QObject.connect(self.ui.editRegDent_pushButton,
                         QtCore.SIGNAL("clicked()"),self.editOtherContract)
+                        
+                        
     def signals_feesTable(self):
 
         #feesTable
@@ -3210,52 +3281,6 @@ class cashbooks():
         "</table></body></html>")
         myclass.printpage()
 
-    def populateAccountsTable(self):
-        rows=accounts.details()
-        self.ui.accounts_tableWidget.clear()
-        self.ui.accounts_tableWidget.setSortingEnabled(False)
-        self.ui.accounts_tableWidget.setRowCount(len(rows))
-        headers=("Dent","Serialno","","First","Last","DOB","Memo","Last Bill",
-        "Type","Number","T/C","Fees","A","B","C")
-
-        widthpercents=(5, 6,2,10,10,8,20,8, 4,6,4,8, 4, 4,4 )
-        totalwidth=0
-        for val in widthpercents:
-            totalwidth+=val
-        totalwidth+=5 #allow padding for scrollbar
-        self.ui.accounts_tableWidget.setColumnCount(len(headers))
-        self.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
-        for col in range(len(headers)):
-            colWidth=self.ui.accounts_tableWidget.width()*\
-            widthpercents[col]/totalwidth
-
-            self.ui.accounts_tableWidget.setColumnWidth(col,colWidth)
-        self.ui.accounts_tableWidget.verticalHeader().hide()
-        rowno=0
-        for row in rows:
-            for col in range(len(row)):
-                if col==0:
-                    item=QtGui.QTableWidgetItem(localsettings.ops[row[col]])
-                elif col==5 or col==7:
-                    item=QtGui.QTableWidgetItem(str(row[col]))
-                elif col==11:
-                    item=QtGui.QTableWidgetItem(
-                                            localsettings.formatMoney(row[col]))
-                elif col==10:
-                    if row[col]>0:
-                        item=QtGui.QTableWidgetItem("N")
-                    else:
-                        item=QtGui.QTableWidgetItem("Y")
-                else:
-                    item=QtGui.QTableWidgetItem(str(row[col]).title())
-                self.ui.accounts_tableWidget.setItem(rowno,col,item)
-            for col in range(12,15):
-                item=QtGui.QTableWidgetItem()
-                item.setCheckState(QtCore.Qt.Unchecked)
-                self.ui.accounts_tableWidget.setItem(rowno,col,item)
-            rowno+=1
-        self.ui.accounts_tableWidget.setSortingEnabled(True)
-        self.ui.accounts_tableWidget.update()
     def printSelectedAccounts(self):
         if self.ui.accounts_tableWidget.rowCount()==0:
             self.advise("Please load the table first",1)
@@ -3864,7 +3889,10 @@ class pageHandlingClass():
 
             self.load_editpage()
             self.editPageVisited=True
-
+        if ci==1:
+            self.updateStatus()
+            self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
+            
         if ci==2:
             self.docsPrinted()
 
@@ -4432,6 +4460,11 @@ printingClass,cashbooks,contractClass, forumClass):
         self.pt.email2=str(self.ui.email2Edit.text().toAscii())
         self.pt.occup=str(self.ui.occupationEdit.text().toAscii()).upper()
 
+    def accountsTableClicked(self,row,column):
+        sno=self.ui.accounts_tableWidget.item(row,1).text()
+        print sno
+        self.getrecord(int(sno))
+    
     def getrecord(self,serialno,checkedNeedToLeaveAlready=False):
         '''
         a record has been called byone of several means
@@ -4561,6 +4594,16 @@ printingClass,cashbooks,contractClass, forumClass):
         else:
             self.ui.medNotes_pushButton.setPalette(self.palette())
         self.enableEdit(True)
+
+    def updateStatus(self):
+        '''
+        updates the status combobox
+        '''
+        self.ui.status_comboBox.setCurrentIndex(0)
+        for i in range(self.ui.status_comboBox.count()):
+            item=self.ui.status_comboBox.itemText(i)
+            if str(item).lower()==self.pt.status.lower():
+                self.ui.status_comboBox.setCurrentIndex(i)
 
     def updateDetails(self):
         '''
