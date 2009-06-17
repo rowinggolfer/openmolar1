@@ -139,6 +139,7 @@ class patient():
         self.dayBookHistory=()
         self.underTreatment=False
         self.estblob=""
+        
 
         if self.serialno!=0:
             #load stuff from the database

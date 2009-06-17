@@ -164,6 +164,9 @@ def sqlToday():
     '''returns today in sql compatible format'''
     t=curTime()
     return "%04d%02d%02d"%(t.year,t.month,t.day)
+def pyDatetoSQL(d):
+    return "%04d%02d%02d"%(d.year,d.month,d.day)
+    
 def formatMoney(m):
     '''takes an integer, returns "7.30"'''
     try:

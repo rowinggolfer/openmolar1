@@ -25,12 +25,12 @@ Ui_confirmDentist,Ui_customTreatment, Ui_chooseDocument
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
 medNotes, saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, \
-addTreat, addToothTreat
+addTreat, addToothTreat, saveMemo
 
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,\
 writeNewPatient,patient_class,search,appointments,accounts,calldurr,feesTable,\
-docsprinted,writeNewCourse, forum
+docsprinted,writeNewCourse, forum, memos
 
 #--modules which act upon the pt class type
 from openmolar.ptModules import patientDetails,notes,plan,referral,\
@@ -2346,6 +2346,9 @@ class signals():
                         QtCore.SIGNAL("clicked()"), self.callXrays)
         QtCore.QObject.connect(self.ui.phraseBook_pushButton,
                         QtCore.SIGNAL("clicked()"), self.phraseBookDialog)
+        QtCore.QObject.connect(self.ui.memos_pushButton,
+                        QtCore.SIGNAL("clicked()"), self.newCustomMemo)
+                        
     def signals_admin(self):
         #admin page
         QtCore.QObject.connect(self.ui.home_pushButton,
@@ -4647,8 +4650,23 @@ printingClass,cashbooks,contractClass, forumClass):
         if self.ui.tabWidget.currentIndex()==4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.medalert()
+        self.getmemos()
 
-
+    def getmemos(self):
+        urgentMemos = memos.getMemos(self.pt.serialno)
+        for umemo in urgentMemos:
+            message="<center>Message from %s <br />"%umemo.author
+            message+="Dated %s<br /><br />"%localsettings.formatDate(umemo.mdate)
+            message+="%s</center>"%umemo.message
+            self.advise(message,1) 
+            
+    
+    def newCustomMemo(self):
+        Dialog = QtGui.QDialog()
+        dl = saveMemo.Ui_Dialog(Dialog,self.pt.serialno)
+        if not dl.getInput():
+            self.advise("memo not saved",1)
+   
     def medalert(self):
         if self.pt.MEDALERT:
             palette = QtGui.QPalette()
@@ -5173,6 +5191,7 @@ printingClass,cashbooks,contractClass, forumClass):
         self.ui.hygWizard_pushButton,
         self.ui.notesEnter_textEdit,
         self.ui.adminMemoEdit,
+        self.ui.memos_pushButton,
         self.ui.printAppt_pushButton):
 
             widg.setEnabled(arg)
