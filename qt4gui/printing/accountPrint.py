@@ -28,15 +28,26 @@ class document():
         self.amount=amount
         self.tone="A"
         self.previousCorrespondenceDate=""
+        self.requireDialog=True
+        self.dialog = QtGui.QPrintDialog(self.printer)
+        
     def setTone(self,arg):
         '''determines how aggressive the letter is'''
         if arg in ("A","B","C"):
             self.tone=arg
     def setPreviousCorrespondenceDate(self,arg):
         self.previousCorrespondenceDate=arg
+    
+    def dialogExec(self):
+        retarg=False
+        if self.requireDialog:
+            retarg=self.dialog.exec_()
+        else:
+            retarg=True
+        return retarg
+    
     def print_(self):
-        dialog = QtGui.QPrintDialog(self.printer)
-        if not dialog.exec_():
+        if not self.dialogExec():
             return False
         self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
         self.pdfprinter.setOutputFileName("temp.pdf")

@@ -3749,8 +3749,8 @@ Note - this will not remove items which are currently there. </string>
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>28</height>
+                <width>191</width>
+                <height>57</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3907,8 +3907,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>96</width>
-                    <height>26</height>
+                    <width>101</width>
+                    <height>405</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout"/>
@@ -3974,8 +3974,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>96</width>
-                    <height>26</height>
+                    <width>100</width>
+                    <height>405</height>
                    </rect>
                   </property>
                  </widget>
@@ -4040,8 +4040,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>96</width>
-                    <height>26</height>
+                    <width>101</width>
+                    <height>405</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout"/>
@@ -4068,8 +4068,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>96</width>
-                    <height>26</height>
+                    <width>100</width>
+                    <height>405</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="_2"/>
@@ -4342,8 +4342,8 @@ Note - this will not remove items which are currently there. </string>
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>96</width>
-                <height>28</height>
+                <width>191</width>
+                <height>83</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4886,7 +4886,7 @@ Note - this will not remove items which are currently there. </string>
         <string>Accounts</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_9">
-        <item row="0" column="0" colspan="5">
+        <item row="0" column="0" colspan="6">
          <widget class="QTableWidget" name="accounts_tableWidget">
           <property name="font">
            <font>
@@ -4907,7 +4907,7 @@ Note - this will not remove items which are currently there. </string>
         <item row="1" column="0">
          <widget class="QPushButton" name="loadAccountsTable_pushButton">
           <property name="text">
-           <string>Load the Table</string>
+           <string>Load Table</string>
           </property>
           <property name="icon">
            <iconset resource="../resources/resources.qrc">
@@ -4915,7 +4915,7 @@ Note - this will not remove items which are currently there. </string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="1" column="2">
          <widget class="QPushButton" name="printSelectedAccounts_pushButton">
           <property name="text">
            <string>Print Selected Letters</string>
@@ -4926,7 +4926,7 @@ Note - this will not remove items which are currently there. </string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="1" column="3">
          <spacer name="horizontalSpacer_4">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -4939,17 +4939,17 @@ Note - this will not remove items which are currently there. </string>
           </property>
          </spacer>
         </item>
-        <item row="1" column="3">
+        <item row="1" column="4">
          <widget class="QLabel" name="label_43">
           <property name="text">
            <string>TOTAL OUTSTANDING</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="4">
+        <item row="1" column="5">
          <widget class="QDoubleSpinBox" name="accountsTotal_doubleSpinBox">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="minimumSize">
            <size>
@@ -4957,14 +4957,35 @@ Note - this will not remove items which are currently there. </string>
             <height>0</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
           </property>
           <property name="prefix">
            <string>£</string>
           </property>
           <property name="maximum">
            <double>1000000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="printAccountsTable_pushButton">
+          <property name="text">
+           <string>Print Table</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources/resources.qrc">
+            <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
           </property>
          </widget>
         </item>

@@ -2496,6 +2496,9 @@ class signals():
                         QtCore.SIGNAL("clicked()"), self.populateAccountsTable)
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,
                         QtCore.SIGNAL("clicked()"),self.printSelectedAccounts)
+        QtCore.QObject.connect(self.ui.printAccountsTable_pushButton,
+                        QtCore.SIGNAL("clicked()"),self.printAccountsTable)
+    
         QtCore.QObject.connect(self.ui.accounts_tableWidget,
         QtCore.SIGNAL("cellDoubleClicked (int,int)"),self.accountsTableClicked)
     
@@ -3232,10 +3235,6 @@ class chartsClass():
         QtGui.QToolTip.showText(arg[1],arg[0]+th)
 
 
-
-
-
-
 class cashbooks():
     def cashbookTab(self):
         dent1=self.ui.cashbookDentComboBox.currentText()
@@ -3244,8 +3243,8 @@ class cashbooks():
         d=self.ui.cashbookEndDateEdit.date()
         edate="%s_%s_%s"%(d.year(),d.month(),d.day())
         html=cashbook.details(dent1,sdate,edate)
-        self.ui.cashbookTextBrowser.setHtml('<html><body><table border="1">'
-        +html+"</table></body></html>")
+        self.ui.cashbookTextBrowser.setHtml('<html><body>'
+        +html+"</body></html>")
 
     def daybookTab(self):
         dent1=str(self.ui.daybookDent1ComboBox.currentText())
@@ -3255,8 +3254,8 @@ class cashbooks():
         d=self.ui.daybookEndDateEdit.date()
         edate="%s_%s_%s"%(d.year(),d.month(),d.day())
         html=daybook.details(dent1,dent2,sdate,edate)
-        self.ui.daybookTextBrowser.setHtml('<html><body><table border="1">'
-        +html+"</table></body></html>")
+        self.ui.daybookTextBrowser.setHtml('<html><body>'
+        +html+"</body></html>")
 
     def daybookPrint(self):
         dent1=str(self.ui.daybookDent1ComboBox.currentText())
@@ -3266,8 +3265,8 @@ class cashbooks():
         d=self.ui.daybookEndDateEdit.date()
         edate="%s_%s_%s"%(d.year(),d.month(),d.day())
         html=daybook.details(dent1,dent2,sdate,edate)
-        myclass=bookprint.printBook('<html><body><table border="1">'+html+\
-        "</table></body></html>")
+        myclass=bookprint.printBook('<html><body>'+html+\
+        "</body></html>")
         myclass.printpage()
 
     def cashbookPrint(self):
@@ -3277,44 +3276,60 @@ class cashbooks():
         d=self.ui.cashbookEndDateEdit.date()
         edate="%s_%s_%s"%(d.year(),d.month(),d.day())
         html=cashbook.details(dent1,sdate,edate)
-        myclass=bookprint.printBook('<html><body><table border="1">'+html+\
-        "</table></body></html>")
+        myclass=bookprint.printBook('<html><body>'+html+\
+        "</body></html>")
         myclass.printpage()
 
     def printSelectedAccounts(self):
         if self.ui.accounts_tableWidget.rowCount()==0:
             self.advise("Please load the table first",1)
             return
+        firstPage=True
+        no_printed=0
         for row in range(self.ui.accounts_tableWidget.rowCount()):
-            for col in range(12,15):
+            for col in range(13,16):
                 item=self.ui.accounts_tableWidget.item(row,col)
                 if item.checkState():
-                    tone=("A","B","C")[col-12]
+                    tone=("A","B","C")[col-13]
                     sno=int(self.ui.accounts_tableWidget.item(row,1).text())
-                    print "%s letter to %s"%(tone,
-                                self.ui.accounts_tableWidget.item(row,5).text())
+                    print "Account tone %s letter to %s"%(tone,sno)
                     printpt=patient_class.patient(sno)
 
-                    doc=accountPrint.document(printself.pt.title,
-                    printself.pt.fname,printself.pt.sname,(printself.pt.addr1,
-                    printself.pt.addr2,printself.pt.addr3,printself.pt.town,
-                    printself.pt.county),printself.pt.pcde,
-                    localsettings.formatMoney(printself.pt.fees))
-
+                    doc=accountPrint.document(printpt.title,
+                    printpt.fname,printpt.sname,(printpt.addr1,
+                    printpt.addr2,printpt.addr3,printpt.town,
+                    printpt.county),printpt.pcde,
+                    localsettings.formatMoney(printpt.fees))
                     doc.setTone(tone)
+                    
+                    if firstPage:
+                        #--raise a print dialog for the first letter of the run
+                        #--only
+                        if not doc.dialogExec():
+                            #-- user has abandoned the print run
+                            return
+                        chosenPrinter=doc.printer
+                        chosenPageSize=doc.printer.pageSize()
+                        firstPage=False
+                    else:
+                        doc.printer=chosenPrinter
+                        doc.printer.setPageSize(chosenPageSize)
+                    doc.requireDialog=False
                     if tone=="B":
-                        doc.setPreviousCorrespondenceDate(printself.pt.billdate)
+                        doc.setPreviousCorrespondenceDate(printpt.billdate)
                     if doc.print_():
-                        printself.pt.updateBilling(tone)
-                        printself.pt.addHiddenNote(
+                        printpt.updateBilling(tone)
+                        printpt.addHiddenNote(
                         "printed","account - tone %s"%tone)
 
                         patient_write_changes.discreet_changes(printpt,(
                         "billct","billdate","billtype"))
                         patient_write_changes.toNotes(
-                                                sno,printself.pt.HIDDENNOTES)
-                        
-
+                                                sno,printpt.HIDDENNOTES)
+                        self.commitPDFtoDB("Account tone%s"%tone,printpt.serialno)
+                        no_printed+=1
+        self.advise("%d letters printed"%no_printed,1)
+                    
     def datemanage(self):
         if self.ui.daybookStartDateEdit.date() > \
         self.ui.daybookEndDateEdit.date():
@@ -3494,14 +3509,17 @@ class newPatientClass():
 
 
 class printingClass():
-    def commitPDFtoDB(self,descr):
+    def commitPDFtoDB(self,descr,serialno=None):
         '''
         grabs "temp.pdf" and puts into the db.
         '''
+        print "comitting pdf to db"
+        if serialno==None:
+            serialno=self.pt.serialno
         try:
             pdfDup=utilities.getPDF()
             #-field is 20 chars max.. hence the [:14]
-            docsprinted.add(self.pt.serialno,descr[:14] + " (pdf)",pdfDup)
+            docsprinted.add(serialno,descr[:14] + " (pdf)",pdfDup)
             #--now refresh the docprinted widget (if visible)
             if self.ui.previousCorrespondence_treeWidget.isVisible():
                 self.docsPrinted()
@@ -3570,7 +3588,54 @@ class printingClass():
             self.pt.addHiddenNote("printed","std letter")
             if self.ui.previousCorrespondence_treeWidget.isVisible():
                 self.docsPrinted()
+    
+    def printAccountsTable(self):
+        '''
+        print the table
+        '''
+        #-- set a pointer for readability
+        table=self.ui.accounts_tableWidget
+        rowno=table.rowCount()
+        colno=table.columnCount()
+        if rowno==0:
+            self.advise("Nothing to print - have you loaded the table?",1)
+            return()
+        total=0.0
+        html='<html><body><table border="1">'
+        html+='''<tr><th>Dent</th><th>SerialNo</th><th>Cset</th><th>FName</th>
+        <th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>
+        <th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>
+        <th>Amount</th></tr>'''
+        for row in range(rowno):
+            if row%2==0:
+                html+='<tr bgcolor="#eeeeee">'
+            else:
+                html+='<tr>'
+            for col in range(13):
+                item=table.item(row,col)
+                if item:
+                    if col ==1:
+                        html+='<td align="right">%s</td>'%item.text()
+                    elif col==12:
+                        html+='<td align="right">&pound;%s</td>'%item.text()
+                        total+=float(item.text())
+                    else:
+                        html+='<td>%s</td>'%item.text()
+                else:
+                    html+='<td> </td>'
+            html+='</tr>\n'
+            
+        html+='''<tr><td colspan="11"></td><td><b>TOTAL</b></td>
+        <td align="right"><b>&pound; %.02f</b></td></tr>
+        </table></body></html>'''%total
         
+        #--test code
+        #f=open("/home/neil/Desktop/accounts.html","w")
+        #f.write(html)
+        #f.close()
+        myclass=letterprint.letter(html)
+        myclass.printpage()
+    
     def customEstimate(self,html="",version=0):
         '''
         prints a custom estimate to the patient
@@ -3583,7 +3648,7 @@ class printingClass():
             pt_total=0
             ehtml="<br />Estimate for your current course of treatment."
             ehtml+="<br />"*4
-            ehtml+='<table border=1 width=400>'
+            ehtml+='<table width=400>'
             for est in self.pt.estimates:
                 pt_total+=est.ptfee
                 number=est.number
