@@ -10,8 +10,10 @@ import MySQLdb,sys,datetime,os
 from xml.dom import minidom
 import _version
 
-__version__= "0.0.9"
-__build__= _version.version_info.get("date")
+__version__= "0.1.0"
+
+#--this is a hack to get the correct bzr number. it will always be one up.
+__build__= int(_version.version_info.get("revno"))+1
 
 print "Version %s\nDate %s"%(__version__,__build__)
 
@@ -37,7 +39,7 @@ successful_login=False
 #-- self-explanatory?
 about='''<p>
 openMolar - open Source dental practice management software.<br />
-Version %s  -  Build Date %s<br />
+Version %s  -  Bazaar Revno %s<br />
 Copyright (C) 2009  Neil A. Wallace B.Ch.D.<br />
 sourcecode available at <a href="http://launchpad.net/openmolar">
 "http://launchpad.net/openmolar"</a>.

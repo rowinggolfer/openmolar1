@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-4.6.dtd">
 <!-- eric4 project file for project openMolar -->
-<!-- Saved: 2009-06-12, 11:09:51 -->
+<!-- Saved: 2009-06-18, 10:31:38 -->
 <!-- Copyright (C) 2009 ,  -->
 <Project version="4.6">
   <Language>en</Language>
@@ -140,6 +140,11 @@
     <Source>settings/utilities.py</Source>
     <Source>qt4gui/dialogs/Ui_chooseDocument.py</Source>
     <Source>dbtools/forum.py</Source>
+    <Source>qt4gui/dialogs/saveMemo.py</Source>
+    <Source>qt4gui/dialogs/Ui_blockSlot.py</Source>
+    <Source>qt4gui/dialogs/Ui_saveMemo.py</Source>
+    <Source>qt4gui/customwidgets/chainLabel.py</Source>
+    <Source>dbtools/memos.py</Source>
   </Sources>
   <Forms>
     <Form>qt-designer/toothPerioProps.ui</Form>
@@ -180,6 +185,8 @@
     <Form>qt-designer/newBPE.ui</Form>
     <Form>qt-designer/bridge_denture.ui</Form>
     <Form>qt-designer/chooseDocument.ui</Form>
+    <Form>qt-designer/blockSlot.ui</Form>
+    <Form>qt-designer/saveMemo.ui</Form>
   </Forms>
   <Translations>
   </Translations>

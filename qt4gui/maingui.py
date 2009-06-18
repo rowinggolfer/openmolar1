@@ -1092,42 +1092,62 @@ class forumClass():
         loads the forum (you guessed, huh?)
         '''
         #-- I have 2 forums. one for computer issues, and one for general
+        twidg=self.ui.forum_treeWidget            
+        twidg.clear()
+            
         for topic in ("forum", "omforum"):
             #-- set the column headers (stored in another module)
             headers=forum.headers
-            if topic=="omforum":
-                twidg=self.ui.OM_forum_treeWidget
-            else:
-                twidg=self.ui.forum_treeWidget
-            twidg.clear()
             twidg.setHeaderLabels(headers)
             #-- get the posts
             posts=forum.getPosts(topic)
-            parents={None:twidg}
+            if topic=="forum":
+                topParent=QtGui.QTreeWidgetItem(twidg,["General Topics"])
+            else:
+                topParent=QtGui.QTreeWidgetItem(twidg,["OpenMolar and Computer Issues"])
+                
+            parents={None:topParent}
             #--set the forum alternating topic colours
-            mcolours={True:QtGui.QColor("blue"),False:QtGui.QColor("red")}
+            mcolours={True:QtCore.Qt.darkGreen,False:QtCore.Qt.darkBlue}
+            #--set a boolean for alternating row colours
             highlighted=True
+            
             for post in posts:
-                parentIndex=post[1]
-                formatList=[]
-                for item in post[2:]:
-                    if item==None:
-                        item=""
-                    formatList.append(str(item))
-                parent=parents[parentIndex]
-                item=QtGui.QTreeWidgetItem(parent,formatList)
-                if parentIndex==None:
+                parent=parents[post.parent_ix]                
+                item=QtGui.QTreeWidgetItem(parent)
+                item.setText(0,post.topic)
+                item.setData(3,QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDateTime(post.date)))
+                item.setText(1,post.inits)
+                item.setText(2,post.briefcomment)
+                item.setText(4,post.comment)
+                if post.parent_ix==None:
                     highlighted=not highlighted
                     colour=mcolours[highlighted]
                 else:
                     colour=item.parent().textColor(2)
+                    bcolour=QtCore.Qt.lightGray                    
                 for i in range(item.columnCount()):
                     item.setTextColor(i, colour)
-                parents[post[0]]=item
+                parents[post.ix]=item
             twidg.expandAll()
+            twidg.setColumnWidth(4,0)
             for i in range(twidg.columnCount()):
                 twidg.resizeColumnToContents(i)
-
+                topParent.setBackgroundColor(i,QtGui.QColor("#eeeeee"))
+                
+    def forumItemSelected(self):
+        '''
+        user has selected an item in the forum
+        '''
+        item=self.ui.forum_treeWidget.currentItem()
+        datetext=item.data(3,QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
+        heading="<b>Subject:\t%s<br />"%item.text(0)
+        heading+="Author:\t%s<br />"%item.text(1)
+        heading+="Date:\t%s</b>"%datetext
+        message=item.text(4)
+        self.ui.forum_label.setText(heading)
+        self.ui.forum_textBrowser.setPlainText(message)
+        
 class contractClass():
     def handle_ContractTab(self,i):
         if i==0:
@@ -2325,6 +2345,7 @@ class signals():
         self.signals_tabs()
         self.signals_appointmentTab()
         self.signals_appointmentOVTab()
+        self.signals_forum()
 
     def signals_miscbuttons(self):
         #misc button
@@ -2474,6 +2495,11 @@ class signals():
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
         QtCore.QObject.connect(self.ui.comp_treeWidget,QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
+        
+    def signals_forum(self):
+        QtCore.QObject.connect(self.ui.forum_treeWidget,QtCore.SIGNAL(
+        "itemSelectionChanged ()"), self.forumItemSelected)
+            
     def signals_daybook(self):
 
         #daybook - cashbook
