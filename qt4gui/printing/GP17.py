@@ -228,7 +228,7 @@ class gp17():
         if self.pt.sex=="M":painter.drawText(self.maleBox,"M",option)
         
         if self.testingMode : painter.drawRect(self.femaleBox)
-        if self.pt.sex=="F":painter.drawText(self.maleBox,"F",option)
+        if self.pt.sex=="F":painter.drawText(self.femaleBox,"F",option)
 
         for rect in self.pidBoxes.values():
            if self.testingMode : painter.drawRect(rect)
