@@ -1113,7 +1113,7 @@ class forumClass():
             highlighted=True
             
             for post in posts:
-                parent=parents[post.parent_ix]                
+                parent=parents.get(post.parent_ix)                
                 item=QtGui.QTreeWidgetItem(parent)
                 item.setText(0,post.topic)
                 item.setData(3,QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDateTime(post.date)))
@@ -1163,8 +1163,9 @@ class forumClass():
         dl = Ui_forumPost.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.comboBox.addItems(["Anon"]+localsettings.allowed_logins)
+        
         if Dialog.exec_():
-            if dl.table_comboBox.currentIndex==0:
+            if dl.table_comboBox.currentIndex()==0:
                 table="forum"
             else:
                 table="omforum"
@@ -1179,7 +1180,20 @@ class forumClass():
         '''
         delete a forum posting
         '''
-        self.advise("can't delete yet",1)
+        item=self.ui.forum_treeWidget.currentItem()
+        heading=item.text(0)
+
+        result=QtGui.QMessageBox.question(self,"Confirm",
+        "Delete selected Post?<br />'%s'"%heading,
+        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+
+        if result == QtGui.QMessageBox.Yes:
+            
+            key=str(item.text(5)).split(":")
+            ix=int(key[0])
+            table=key[1]
+            forum.deletePost(ix,table)
+            self.loadForum()
     
     def forumReply(self):
         '''

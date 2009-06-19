@@ -39,6 +39,29 @@ def commitPost(post,table="forum"):
     cursor.close()
     #db.close()
     
+def deletePost(ix,table="forum"):
+    db=connect()
+    cursor=db.cursor()
+    query="select parent_ix from %s where ix=%d"%(table,ix)
+    if localsettings.logqueries:
+        print query
+    parent=None
+    if cursor.execute(query):
+        parent=cursor.fetchone()[0]
+    print parent
+    if parent==None:parent='Null'
+    
+    query="update %s set open=False where ix=%d"%(table,ix)
+    query2='update %s set parent_ix=%s where parent_ix=%d'%(table,parent,ix)
+    if True or localsettings.logqueries:
+        print query
+        print query2
+    print cursor.execute(query2)
+    print cursor.execute(query)    
+    db.commit()
+    cursor.close()
+    #db.close()
+    
     
 def getPosts(table="forum"):
     '''
@@ -74,5 +97,7 @@ def getPosts(table="forum"):
 if __name__ == "__main__":
     posts = getPosts()
     for post in posts:
-        print post
-    commitPost(posts[0])
+        print post.topic
+    deletePost(20,"omforum")
+    
+    
