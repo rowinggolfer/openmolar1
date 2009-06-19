@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for
 # more details.
 
-import sys
+import sys,datetime
 from openmolar.connect import connect
 from openmolar.settings import localsettings
 
@@ -23,6 +23,23 @@ class post():
         self.briefcomment=""
         self.open=True
 
+def commitPost(post,table="forum"):
+    db=connect()
+    cursor=db.cursor()
+    columns="parent_ix,inits,fdate,topic,comment"
+    
+    values=(post.parent_ix,post.inits,datetime.datetime.now(),post.topic,post.comment)
+
+    query="insert into %s (%s) "%(table,columns)
+    query+="VALUES (%s,%s,%s,%s,%s)"
+    if localsettings.logqueries:
+        print query,values
+    cursor.execute(query,values)
+    db.commit()
+    cursor.close()
+    #db.close()
+    
+    
 def getPosts(table="forum"):
     '''
     gets all active rows from a forum table
@@ -31,7 +48,7 @@ def getPosts(table="forum"):
     db=connect()
     cursor=db.cursor()
     query='''select
-    ix, parent_ix,topic,inits,fdate,comment from %s where open'''%table
+    ix, parent_ix,topic,inits,fdate,comment from %s where open order by ix'''%table
 
     if localsettings.logqueries:
         print query
@@ -58,3 +75,4 @@ if __name__ == "__main__":
     posts = getPosts()
     for post in posts:
         print post
+    commitPost(posts[0])

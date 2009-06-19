@@ -5369,14 +5369,20 @@ Note - this will not remove items which are currently there. </string>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_4">
+             <widget class="QPushButton" name="forumReply_pushButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Reply</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_5">
+             <widget class="QPushButton" name="forumDelete_pushButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Delete</string>
               </property>
@@ -5430,6 +5436,9 @@ Note - this will not remove items which are currently there. </string>
                </item>
                <item row="2" column="1">
                 <widget class="QPushButton" name="feeSearch_pushButton_2">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -5496,6 +5505,9 @@ Note - this will not remove items which are currently there. </string>
                </item>
                <item row="1" column="1">
                 <widget class="QPushButton" name="feeSearch_pushButton_3">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>

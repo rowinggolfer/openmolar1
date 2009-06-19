@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Thu Jun 18 17:29:04 2009
+# Created: Thu Jun 18 22:10:53 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -2180,13 +2180,15 @@ class Ui_MainWindow(object):
         self.forum_textBrowser.setFont(font)
         self.forum_textBrowser.setObjectName("forum_textBrowser")
         self.verticalLayout_11.addWidget(self.forum_textBrowser)
-        self.pushButton_4 = QtGui.QPushButton(self.frame_20)
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.verticalLayout_11.addWidget(self.pushButton_4)
-        self.pushButton_5 = QtGui.QPushButton(self.frame_20)
-        self.pushButton_5.setIcon(icon15)
-        self.pushButton_5.setObjectName("pushButton_5")
-        self.verticalLayout_11.addWidget(self.pushButton_5)
+        self.forumReply_pushButton = QtGui.QPushButton(self.frame_20)
+        self.forumReply_pushButton.setEnabled(False)
+        self.forumReply_pushButton.setObjectName("forumReply_pushButton")
+        self.verticalLayout_11.addWidget(self.forumReply_pushButton)
+        self.forumDelete_pushButton = QtGui.QPushButton(self.frame_20)
+        self.forumDelete_pushButton.setEnabled(False)
+        self.forumDelete_pushButton.setIcon(icon15)
+        self.forumDelete_pushButton.setObjectName("forumDelete_pushButton")
+        self.verticalLayout_11.addWidget(self.forumDelete_pushButton)
         self.forumNewTopic_pushButton = QtGui.QPushButton(self.frame_20)
         self.forumNewTopic_pushButton.setObjectName("forumNewTopic_pushButton")
         self.verticalLayout_11.addWidget(self.forumNewTopic_pushButton)
@@ -2206,6 +2208,7 @@ class Ui_MainWindow(object):
         spacerItem24 = QtGui.QSpacerItem(67, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_30.addItem(spacerItem24, 2, 0, 1, 1)
         self.feeSearch_pushButton_2 = QtGui.QPushButton(self.frame_9)
+        self.feeSearch_pushButton_2.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -2232,6 +2235,7 @@ class Ui_MainWindow(object):
         self.comboBox.setObjectName("comboBox")
         self.gridLayout_31.addWidget(self.comboBox, 1, 0, 1, 1)
         self.feeSearch_pushButton_3 = QtGui.QPushButton(self.frame_10)
+        self.feeSearch_pushButton_3.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -2723,8 +2727,8 @@ class Ui_MainWindow(object):
         self.feesColumn_comboBox.setItemText(2, QtGui.QApplication.translate("MainWindow", "All Columns", None, QtGui.QApplication.UnicodeUTF8))
         self.fees_treeWidget.headerItem().setText(0, QtGui.QApplication.translate("MainWindow", "1", None, QtGui.QApplication.UnicodeUTF8))
         self.main_tabWidget.setTabText(self.main_tabWidget.indexOf(self.tab_22), QtGui.QApplication.translate("MainWindow", "Feescales", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_4.setText(QtGui.QApplication.translate("MainWindow", "Reply", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_5.setText(QtGui.QApplication.translate("MainWindow", "Delete", None, QtGui.QApplication.UnicodeUTF8))
+        self.forumReply_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Reply", None, QtGui.QApplication.UnicodeUTF8))
+        self.forumDelete_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Delete", None, QtGui.QApplication.UnicodeUTF8))
         self.forumNewTopic_pushButton.setText(QtGui.QApplication.translate("MainWindow", "New Topic", None, QtGui.QApplication.UnicodeUTF8))
         self.label_36.setText(QtGui.QApplication.translate("MainWindow", "Search by keyword", None, QtGui.QApplication.UnicodeUTF8))
         self.feeSearch_pushButton_2.setToolTip(QtGui.QApplication.translate("MainWindow", "Click on this Button to search for in patient in your database.", None, QtGui.QApplication.UnicodeUTF8))

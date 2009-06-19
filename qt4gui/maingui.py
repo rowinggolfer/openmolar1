@@ -20,7 +20,7 @@ from openmolar.qt4gui.dialogs import Ui_patient_finder,Ui_select_patient,\
 Ui_enter_letter_text,Ui_phraseBook,Ui_changeDatabase,Ui_related_patients,\
 Ui_raiseCharge,Ui_options,Ui_surgeryNumber,Ui_payments,paymentwidget,\
 Ui_specify_appointment,Ui_appointment_length,Ui_daylist_print,\
-Ui_confirmDentist,Ui_customTreatment, Ui_chooseDocument
+Ui_confirmDentist,Ui_customTreatment, Ui_chooseDocument,Ui_forumPost
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
@@ -1120,6 +1120,7 @@ class forumClass():
                 item.setText(1,post.inits)
                 item.setText(2,post.briefcomment)
                 item.setText(4,post.comment)
+                item.setText(5,"%d:%s"%(post.ix,topic))
                 if post.parent_ix==None:
                     highlighted=not highlighted
                     colour=mcolours[highlighted]
@@ -1131,10 +1132,13 @@ class forumClass():
                 parents[post.ix]=item
             twidg.expandAll()
             twidg.setColumnWidth(4,0)
+            twidg.setColumnWidth(5,0)
             for i in range(twidg.columnCount()):
                 twidg.resizeColumnToContents(i)
                 topParent.setBackgroundColor(i,QtGui.QColor("#eeeeee"))
-                
+            self.ui.forumDelete_pushButton.setEnabled(False)
+            self.ui.forumReply_pushButton.setEnabled(False)
+        
     def forumItemSelected(self):
         '''
         user has selected an item in the forum
@@ -1147,7 +1151,64 @@ class forumClass():
         message=item.text(4)
         self.ui.forum_label.setText(heading)
         self.ui.forum_textBrowser.setPlainText(message)
+        enableButtons = not item.parent()==None
+        self.ui.forumDelete_pushButton.setEnabled(enableButtons)
+        self.ui.forumReply_pushButton.setEnabled(enableButtons)
         
+    def forumNewItem(self):    
+        '''
+        create a new post
+        '''
+        Dialog = QtGui.QDialog(self)
+        dl = Ui_forumPost.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.comboBox.addItems(["Anon"]+localsettings.allowed_logins)
+        if Dialog.exec_():
+            if dl.table_comboBox.currentIndex==0:
+                table="forum"
+            else:
+                table="omforum"
+            post=forum.post()
+            post.topic = dl.topic_lineEdit.text()
+            post.comment = dl.comment_textEdit.toPlainText()
+            post.inits = dl.comboBox.currentText()
+            forum.commitPost(post,table)
+        self.loadForum()
+            
+    def forumDeleteItem(self):
+        '''
+        delete a forum posting
+        '''
+        self.advise("can't delete yet",1)
+    
+    def forumReply(self):
+        '''
+        reply to an item
+        '''
+        item=self.ui.forum_treeWidget.currentItem()
+        heading=item.text(0)
+        if heading[:2]!="re":
+            heading="re. "+heading
+        Dialog = QtGui.QDialog(self)
+        dl = Ui_forumPost.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.topic_lineEdit.setText(heading)
+        dl.table_comboBox.hide()
+        dl.label_4.hide()
+        dl.comboBox.addItems(["Anon"]+localsettings.allowed_logins)
+        if Dialog.exec_():
+            key=str(item.text(5)).split(":")
+            parent=int(key[0])
+            table=key[1]
+            post=forum.post()
+            post.parent_ix=parent
+            post.topic = dl.topic_lineEdit.text()
+            post.comment = dl.comment_textEdit.toPlainText()
+            post.inits = dl.comboBox.currentText()
+            forum.commitPost(post,table)
+        self.loadForum()
+    
+    
 class contractClass():
     def handle_ContractTab(self,i):
         if i==0:
@@ -2499,6 +2560,13 @@ class signals():
     def signals_forum(self):
         QtCore.QObject.connect(self.ui.forum_treeWidget,QtCore.SIGNAL(
         "itemSelectionChanged ()"), self.forumItemSelected)
+        QtCore.QObject.connect(self.ui.forumDelete_pushButton,QtCore.SIGNAL(
+        "clicked()"),self.forumDeleteItem)
+        QtCore.QObject.connect(self.ui.forumReply_pushButton,QtCore.SIGNAL(
+        "clicked()"),self.forumReply)
+        QtCore.QObject.connect(self.ui.forumNewTopic_pushButton,QtCore.SIGNAL(
+        "clicked()"),self.forumNewItem)
+        
             
     def signals_daybook(self):
 
@@ -4685,8 +4753,7 @@ printingClass,cashbooks,contractClass, forumClass):
             message+="Dated %s<br /><br />"%localsettings.formatDate(umemo.mdate)
             message+="%s</center>"%umemo.message
             self.advise(message,1) 
-            
-    
+                
     def newCustomMemo(self):
         Dialog = QtGui.QDialog(self)
         dl = saveMemo.Ui_Dialog(Dialog,self.pt.serialno)
