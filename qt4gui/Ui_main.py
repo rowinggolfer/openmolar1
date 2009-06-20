@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/main.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Sat Jun 20 13:37:12 2009
+# Created: Sat Jun 20 15:19:05 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1024, 593)
+        MainWindow.resize(1000, 556)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -26,9 +26,22 @@ class Ui_MainWindow(object):
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.horizontalLayout_7 = QtGui.QHBoxLayout(self.centralwidget)
+        self.verticalLayout_18 = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_18.setSpacing(0)
+        self.verticalLayout_18.setMargin(0)
+        self.verticalLayout_18.setObjectName("verticalLayout_18")
+        self.scrollArea_7 = QtGui.QScrollArea(self.centralwidget)
+        self.scrollArea_7.setFrameShape(QtGui.QFrame.NoFrame)
+        self.scrollArea_7.setWidgetResizable(True)
+        self.scrollArea_7.setObjectName("scrollArea_7")
+        self.scrollAreaWidgetContents_12 = QtGui.QWidget(self.scrollArea_7)
+        self.scrollAreaWidgetContents_12.setGeometry(QtCore.QRect(0, 0, 984, 535))
+        self.scrollAreaWidgetContents_12.setObjectName("scrollAreaWidgetContents_12")
+        self.horizontalLayout_7 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_12)
+        self.horizontalLayout_7.setSpacing(3)
+        self.horizontalLayout_7.setMargin(3)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.main_tabWidget = QtGui.QTabWidget(self.centralwidget)
+        self.main_tabWidget = QtGui.QTabWidget(self.scrollAreaWidgetContents_12)
         self.main_tabWidget.setTabShape(QtGui.QTabWidget.Rounded)
         self.main_tabWidget.setObjectName("main_tabWidget")
         self.tab_10 = QtGui.QWidget()
@@ -1585,7 +1598,7 @@ class Ui_MainWindow(object):
         self.appt1scrollArea.setWidgetResizable(True)
         self.appt1scrollArea.setObjectName("appt1scrollArea")
         self.appt1scrollAreaWidgetContents = QtGui.QWidget(self.appt1scrollArea)
-        self.appt1scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 156, 405))
+        self.appt1scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 122, 405))
         self.appt1scrollAreaWidgetContents.setObjectName("appt1scrollAreaWidgetContents")
         self.vboxlayout1 = QtGui.QVBoxLayout(self.appt1scrollAreaWidgetContents)
         self.vboxlayout1.setObjectName("vboxlayout1")
@@ -1616,7 +1629,7 @@ class Ui_MainWindow(object):
         self.appt2scrollArea.setWidgetResizable(True)
         self.appt2scrollArea.setObjectName("appt2scrollArea")
         self.appt2scrollAreaWidgetContents = QtGui.QWidget(self.appt2scrollArea)
-        self.appt2scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 156, 405))
+        self.appt2scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 123, 405))
         self.appt2scrollAreaWidgetContents.setObjectName("appt2scrollAreaWidgetContents")
         self.appt2scrollArea.setWidget(self.appt2scrollAreaWidgetContents)
         self.gridLayout_32.addWidget(self.appt2scrollArea, 1, 0, 1, 2)
@@ -1645,7 +1658,7 @@ class Ui_MainWindow(object):
         self.appt3scrollArea.setWidgetResizable(True)
         self.appt3scrollArea.setObjectName("appt3scrollArea")
         self.appt3scrollAreaWidgetContents = QtGui.QWidget(self.appt3scrollArea)
-        self.appt3scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 155, 405))
+        self.appt3scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 122, 405))
         self.appt3scrollAreaWidgetContents.setObjectName("appt3scrollAreaWidgetContents")
         self.vboxlayout2 = QtGui.QVBoxLayout(self.appt3scrollAreaWidgetContents)
         self.vboxlayout2.setObjectName("vboxlayout2")
@@ -1661,7 +1674,7 @@ class Ui_MainWindow(object):
         self.appt4scrollArea.setWidgetResizable(True)
         self.appt4scrollArea.setObjectName("appt4scrollArea")
         self.appt3scrollAreaWidgetContents_2 = QtGui.QWidget(self.appt4scrollArea)
-        self.appt3scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 156, 405))
+        self.appt3scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 122, 405))
         self.appt3scrollAreaWidgetContents_2.setObjectName("appt3scrollAreaWidgetContents_2")
         self._2 = QtGui.QVBoxLayout(self.appt3scrollAreaWidgetContents_2)
         self._2.setObjectName("_2")
@@ -2251,9 +2264,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_20.addWidget(self.splitter_3)
         self.main_tabWidget.addTab(self.tab_23, "")
         self.horizontalLayout_7.addWidget(self.main_tabWidget)
+        self.scrollArea_7.setWidget(self.scrollAreaWidgetContents_12)
+        self.verticalLayout_18.addWidget(self.scrollArea_7)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 23))
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")
@@ -2331,7 +2346,7 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(2)
+        self.main_tabWidget.setCurrentIndex(7)
         self.tabWidget.setCurrentIndex(1)
         self.contract_tabWidget.setCurrentIndex(1)
         self.stackedWidget.setCurrentIndex(1)
