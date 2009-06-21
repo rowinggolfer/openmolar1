@@ -7,6 +7,22 @@ from openmolar.settings.localsettings import cflocation
 
 currentConnection,myHost,myUser,myPassword,myDb,myPort=None,"","","","",""
 
+class omSQLresult():
+    '''
+    a class used in returning the result of sql queries
+    '''
+    def __init__(self):
+        self.message=""
+        self.number=0
+        self.result=False
+    def __nonzero__(self):
+        '''
+        used in case the class is used thus
+        if omSQLresult:
+        '''
+        return self.result
+
+
 def connect():
     global currentConnection, myHost,myUser,myPassword,myDb,myPort
     if currentConnection==None:
@@ -35,7 +51,7 @@ def connect():
 
 if __name__=="__main__":
     import time
-    print localsettings.cflocation
+    print cflocation
     for i in range(1,11):
         try:
             print "connecting....",

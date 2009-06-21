@@ -7,35 +7,63 @@
 
 import datetime
 import MySQLdb
-from openmolar.connect import connect
+from openmolar.connect import connect,omSQLresult
 from openmolar.settings import localsettings
 
 class workingDay():
     def __init__(self):
         self.date=datetime.date.today()
         self.start=830
-        self.finish=1800
+        self.end=1800
         self.apptix=0
         self.flag=1  #a boolean showing if day is in use? (stored as a tiny int though)
         self.memo=""  
 
     def __repr__(self):
         retarg='working day - %s times = %s - %s\n'%(
-        self.date,self.start,self.finish)
+        self.date,self.start,self.end)
         retarg+='dentistNo = %s in office = %s\n'%(self.apptix,self.flag)
         retarg+='memo=%s'%self.memo
         return retarg
     
-def openDay(arg):
+def alterDay(arg):
     '''
     takes a workingDay object tries to change the aday table
     '''
     #-- sql code required is along the lines of...
-        #-- update aday set start=830,end=1600,flag=1
-        #-- where adate=20090620 and apptix=4;
-        #-- OR
-        #-- insert into aday (adate,apptix,start,end,flag,memo)
-        #-- values (20090620,4,830,1600,True,"day opened")
+    #-- update aday set start=830,end=1600,flag=1
+    #-- where adate=20090620 and apptix=4;
+    #-- OR
+    #-- insert into aday (adate,apptix,start,end,flag,memo)
+    #-- values (20090620,4,830,1600,True,"day opened")
+    db = connect()
+    cursor = db.cursor()
+    result=omSQLresult()
+    query='SELECT flag FROM aday WHERE adate="%s" and apptix=%d'%(
+    arg.date,arg.apptix)
+
+    if localsettings.logqueries:
+        print query
+
+    if cursor.execute(query):
+        #-- dentists diary includes this date
+        query="update aday set start=%d,end=%d,flag=%d,memo='%s' where adate=%s and apptix=%d"%(
+        arg.start,arg.end,arg.flag,arg.memo,localsettings.pyDatetoSQL(arg.date),arg.apptix)
+        if localsettings.logqueries:
+            print query
+        result.number=cursor.execute(query)
+        if result.number==1:
+            result.message="Date sucessfully modified"
+        else:
+            result.message="No changes applied - the values you supplied are the same as the existing."            
+        db.commit()
+    else:
+        result.message="The date you have tried to modify is beyond the dates opened for dentist %s"%(
+        localsettings.ops.get(arg.dent),)
+
+    return result
+    
+
 
 
 def minutesPastMidnight(t):

@@ -15,7 +15,7 @@ __version__= "0.1.0"
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
 
-print "Version %s\nDate %s"%(__version__,__build__)
+print "Version %s\nRevision No. %s"%(__version__,__build__)
 
 if "win" in sys.platform:
     #-- sorry about this... but cross platform is a goal :(
@@ -456,7 +456,7 @@ def initiate(debug=False):
     <img src="html/images/newlogo.png" width="150",height="100", align="left" />
 
     <img src="html/images/newlogo.png" width="150",height="100", align="right" />
-    <h1>Welcome to OpenMolar!</h1><ul><li>Version %s</li><li>Build %s</li></ul>
+    <h1>Welcome to OpenMolar!</h1><ul><li>Version %s</li><li>Revision %s</li></ul>
     <p>Your Data is Accessible, and the server reports no issues.</p>
     <p>Have a great day!</p></div></body></html>'''%(stylesheet,__version__,__build__)
 

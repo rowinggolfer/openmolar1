@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/apptOpenDay.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/apptOpenDay.ui'
 #
-# Created: Sat Jun 20 18:16:07 2009
+# Created: Sun Jun 21 21:00:14 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(396, 377)
+        Dialog.resize(540, 377)
         self.gridLayout_2 = QtGui.QGridLayout(Dialog)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_2 = QtGui.QLabel(Dialog)
@@ -42,6 +42,7 @@ class Ui_Dialog(object):
         self.memo_lineEdit.setObjectName("memo_lineEdit")
         self.gridLayout_2.addWidget(self.memo_lineEdit, 2, 2, 1, 2)
         self.frame = QtGui.QFrame(Dialog)
+        self.frame.setMinimumSize(QtCore.QSize(522, 0))
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName("frame")

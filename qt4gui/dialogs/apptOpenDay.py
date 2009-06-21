@@ -160,17 +160,16 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
         day.apptix=self.chosenDent
         day.date=self.dateEdit.date().toPyDate()
         day.start=int(self.dayStart_timeEdit.time().toString("hmm"))
-        day.finish=int(self.dayFinish_timeEdit.time().toString("hmm"))
+        day.end=int(self.dayFinish_timeEdit.time().toString("hmm"))
         day.memo=str(self.memo_lineEdit.text())
         
-        if appointments.openDay(day):
+        result=appointments.alterDay(day)
+        if result:
             return True
         else:
             QtGui.QMessageBox.information(self.dialog,"error",
-            "unable to open %s for %s"%(
-            localsettings.formatDate(day.date),
-            localsettings.ops.get(day.apptix)))
-        
+            result.message)
+                   
     def exec_(self):
         while True:
             if not self.dialog.exec_():

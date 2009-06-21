@@ -7,7 +7,7 @@
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
-from openmolar.qt4gui.dialogs import Ui_apptTools,apptOpenDay
+from openmolar.qt4gui.dialogs import Ui_apptTools,apptOpenDay,permissions
 
 class apptTools(Ui_apptTools.Ui_MainWindow):
     def __init__(self,parent=None):
@@ -17,6 +17,8 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
     
     def openDay(self):
         print "openDay called"
+        if not permissions.granted(self.parent):
+            return
         Dialog=QtGui.QDialog(self.parent)
         dl=apptOpenDay.apptDialog(Dialog)
         if dl.exec_():

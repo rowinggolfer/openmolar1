@@ -2357,7 +2357,8 @@ class appointmentClass():
         self.triangles()
         for book in self.ui.apptBookWidgets:
             book.update()
-            if len(book.appts)==0:
+            if book.dentist==None:
+                #--book has no data
                 book.hide()
             else:
                 book.show()
@@ -4375,7 +4376,7 @@ printingClass,cashbooks,contractClass, forumClass):
         localsettings.license), 1)
 
     def setClinician(self):
-        self.advise("change practitioner?",1)
+        self.advise("To change practitioner, please login again",1)
 
 
     def okToLeaveRecord(self):

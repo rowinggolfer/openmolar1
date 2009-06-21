@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>396</width>
+    <width>540</width>
     <height>377</height>
    </rect>
   </property>
@@ -82,6 +82,12 @@
    </item>
    <item row="3" column="0" colspan="4">
     <widget class="QFrame" name="frame">
+     <property name="minimumSize">
+      <size>
+       <width>522</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
