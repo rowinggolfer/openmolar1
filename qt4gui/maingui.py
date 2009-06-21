@@ -27,6 +27,10 @@ from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
 medNotes, saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, \
 addTreat, addToothTreat, saveMemo
 
+#-- secondary applications 
+from openmolar.qt4gui.dialogs import apptTools
+
+
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,\
 writeNewPatient,patient_class,search,appointments,accounts,calldurr,feesTable,\
@@ -2400,7 +2404,15 @@ class appointmentClass():
         reason=tup[3]
         appointments.block_appt(adate,dent,start,end,reason)
         self.layout_appointments()
-
+    def appointmentTools(self):
+        '''
+        this just invokes a dialog which has a choice of options
+        '''
+        self.appointmentToolsWindow = QtGui.QMainWindow(self)
+        self.ui2 = apptTools.apptTools(self.appointmentToolsWindow)
+        self.appointmentToolsWindow.show()
+        
+        
 class signals():
     def setupSignals(self):
         self.signals_miscbuttons()
@@ -2535,6 +2547,9 @@ class signals():
                         QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
         QtCore.QObject.connect(self.ui.actionLog_queries_in_underlying_terminal,
                     QtCore.SIGNAL("triggered()"), localsettings.setlogqueries)
+        QtCore.QObject.connect(self.ui.actionAppointment_Tools,
+                    QtCore.SIGNAL("triggered()"), self.appointmentTools)
+                    
     def signals_estimates(self):
 
         #Estimates and course ManageMent

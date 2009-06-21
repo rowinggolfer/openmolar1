@@ -534,7 +534,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>752</width>
+                        <width>540</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -1765,7 +1765,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>752</width>
+                        <width>731</width>
                         <height>526</height>
                        </rect>
                       </property>
@@ -2117,7 +2117,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>762</width>
+                        <width>569</width>
                         <height>471</height>
                        </rect>
                       </property>
@@ -2516,7 +2516,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>752</width>
+                        <width>710</width>
                         <height>370</height>
                        </rect>
                       </property>
@@ -2789,8 +2789,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>772</width>
-                        <height>353</height>
+                        <width>314</width>
+                        <height>105</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2966,7 +2966,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>500</width>
+                           <width>96</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -2999,7 +2999,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>220</width>
+                        <width>213</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -3326,7 +3326,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>756</width>
+                        <width>249</width>
                         <height>360</height>
                        </rect>
                       </property>
@@ -3779,8 +3779,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>191</width>
-                    <height>57</height>
+                    <width>96</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3937,8 +3937,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>122</width>
-                        <height>405</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4004,8 +4004,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>123</width>
-                        <height>405</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                      </widget>
@@ -4070,8 +4070,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>122</width>
-                        <height>405</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4098,8 +4098,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>122</width>
-                        <height>405</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="_2"/>
@@ -4372,8 +4372,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>191</width>
-                    <height>83</height>
+                    <width>96</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -5589,8 +5589,6 @@ Note - this will not remove items which are currently there. </string>
          </widget>
         </item>
        </layout>
-       <zorder>main_tabWidget</zorder>
-       <zorder>main_tabWidget</zorder>
       </widget>
      </widget>
     </item>
@@ -5625,7 +5623,6 @@ Note - this will not remove items which are currently there. </string>
     <property name="title">
      <string>&amp;Preferences</string>
     </property>
-    <addaction name="actionChoose_Database"/>
     <addaction name="actionTable_View_For_Charting"/>
     <addaction name="actionClear_Today_s_Emergency_Slots"/>
     <addaction name="actionTest_Print_an_NHS_Form"/>
@@ -5634,8 +5631,16 @@ Note - this will not remove items which are currently there. </string>
     <addaction name="separator"/>
     <addaction name="actionSet_Clinician"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionAppointment_Tools"/>
+    <addaction name="actionChoose_Database"/>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
+   <addaction name="menuTools"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -5657,11 +5662,6 @@ Note - this will not remove items which are currently there. </string>
   <action name="action_About_QT">
    <property name="text">
     <string>&amp;About QT</string>
-   </property>
-  </action>
-  <action name="actionChoose_Database">
-   <property name="text">
-    <string>Choose &amp;Database</string>
    </property>
   </action>
   <action name="action_Quit">
@@ -5706,6 +5706,16 @@ Note - this will not remove items which are currently there. </string>
   <action name="actionSet_Clinician">
    <property name="text">
     <string>Set Clinician</string>
+   </property>
+  </action>
+  <action name="actionAppointment_Tools">
+   <property name="text">
+    <string>Appointment Tools</string>
+   </property>
+  </action>
+  <action name="actionChoose_Database">
+   <property name="text">
+    <string>Choose Database</string>
    </property>
   </action>
  </widget>

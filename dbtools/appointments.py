@@ -5,9 +5,38 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
+import datetime
 import MySQLdb
 from openmolar.connect import connect
 from openmolar.settings import localsettings
+
+class workingDay():
+    def __init__(self):
+        self.date=datetime.date.today()
+        self.start=830
+        self.finish=1800
+        self.apptix=0
+        self.flag=1  #a boolean showing if day is in use? (stored as a tiny int though)
+        self.memo=""  
+
+    def __repr__(self):
+        retarg='working day - %s times = %s - %s\n'%(
+        self.date,self.start,self.finish)
+        retarg+='dentistNo = %s in office = %s\n'%(self.apptix,self.flag)
+        retarg+='memo=%s'%self.memo
+        return retarg
+    
+def openDay(arg):
+    '''
+    takes a workingDay object tries to change the aday table
+    '''
+    #-- sql code required is along the lines of...
+        #-- update aday set start=830,end=1600,flag=1
+        #-- where adate=20090620 and apptix=4;
+        #-- OR
+        #-- insert into aday (adate,apptix,start,end,flag,memo)
+        #-- values (20090620,4,830,1600,True,"day opened")
+
 
 def minutesPastMidnight(t):
     '''converts a time in the format of 0830 or 1420 to minutes past midnight'''
@@ -607,16 +636,18 @@ if __name__ == "__main__":
     adate="2009_02_02"
     edate="2009_02_27"
     localsettings.initiate(False)
-    print printableDaylistData("20090504",6)
-    print todays_patients()
-    print todays_patients(("NW","AH"))
-    dents= getWorkingDents(edate)
-    print dents
-    print allAppointmentData(adate,dents)
-    print add_pt_appt(11956,5,15,"exam")
-    print future_slots(30,adate,edate,(4,13))
-    print slots(830,((830, 845), (900, 915), (1115, 1130), (1300, 1400), (1400, 1420), (1600, 1630)),1800,30)
-    print daysummary(adate,4)
-    print getBlocks(adate,4)
-    print daysSlots("2009_2_02","NW")
+    #print printableDaylistData("20090504",6)
+    #print todays_patients()
+    #print todays_patients(("NW","BW"))
+    #dents= getWorkingDents(edate)
+    #print dents
+    #print allAppointmentData(adate,dents)
+    #print add_pt_appt(11956,5,15,"exam")
+    #print future_slots(30,adate,edate,(4,13))
+    #print slots(830,((830, 845), (900, 915), (1115, 1130), (1300, 1400), (1400, 1420), (1600, 1630)),1800,30)
+    #print daysummary(adate,4)
+    #print getBlocks(adate,4)
+    #print daysSlots("2009_2_02","NW")
     #delete_appt(420,2)
+    print workingDay()
+    

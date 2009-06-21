@@ -8,16 +8,20 @@
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.dialogs import Ui_apptOpenDay
 from openmolar.settings import localsettings
+from openmolar.dbtools import appointments
 
 class apptDialog(Ui_apptOpenDay.Ui_Dialog):
     def __init__(self,dialog,parent=None):
         self.setupUi(dialog)
         self.dialog=dialog
-        self.comboBox.addItems(localsettings.activedents+localsettings.activehygs)
+        self.comboBox.addItems(
+        localsettings.activedents+localsettings.activehygs)
+        
         self.comboBox.setCurrentIndex(-1)
         self.minTime=self.getMinTime()
         self.maxTime=self.getMaxTime()  
-        self.setTimeLimits()      
+        self.setTimeLimits() 
+        self.dateEdit.setDate(QtCore.QDate.currentDate())     
         self.init_es1("11:00","11:40")
         self.init_es2("16:00","16:40")
         self.init_lunch("13:00","14:00")
@@ -53,30 +57,41 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
         if start==None:
             self.dayStart_timeEdit.setTime(self.minTime)
         else:
-            self.dayStart_timeEdit.setTime(QtCore.QTime.fromString(start,"hh:mm"))
+            self.dayStart_timeEdit.setTime(
+            QtCore.QTime.fromString(start,"hh:mm"))
         
         if finish==None:
             self.dayFinish_timeEdit.setTime(self.maxTime)
         else:
-            self.dayFinish_timeEdit.setTime(QtCore.QTime.fromString(finish,"hh:mm"))
+            self.dayFinish_timeEdit.setTime(
+            QtCore.QTime.fromString(finish,"hh:mm"))
             
     def init_es1(self,start,finish):
         self.es1_checkBox.setChecked(True)
-        self.es1Start_timeEdit.setTime(QtCore.QTime.fromString(start,"hh:mm"))
-        self.es1Finish_timeEdit.setTime(QtCore.QTime.fromString(finish,"hh:mm"))
+        self.es1Start_timeEdit.setTime(
+        QtCore.QTime.fromString(start,"hh:mm"))
+
+        self.es1Finish_timeEdit.setTime(
+        QtCore.QTime.fromString(finish,"hh:mm"))
     
     def init_es2(self,start,finish):
         self.es2_checkBox.setChecked(True)
-        self.es2Start_timeEdit.setTime(QtCore.QTime.fromString(start,"hh:mm"))
-        self.es2Finish_timeEdit.setTime(QtCore.QTime.fromString(finish,"hh:mm"))
+        self.es2Start_timeEdit.setTime(
+        QtCore.QTime.fromString(start,"hh:mm"))
+
+        self.es2Finish_timeEdit.setTime(
+        QtCore.QTime.fromString(finish,"hh:mm"))
     
     def init_lunch(self,start,finish):
         self.lunch_checkBox.setChecked(True)
-        self.lunchStart_timeEdit.setTime(QtCore.QTime.fromString(start,"hh:mm"))
-        self.lunchFinish_timeEdit.setTime(QtCore.QTime.fromString(finish,"hh:mm"))
+        self.lunchStart_timeEdit.setTime(
+        QtCore.QTime.fromString(start,"hh:mm"))
+
+        self.lunchFinish_timeEdit.setTime(
+        QtCore.QTime.fromString(finish,"hh:mm"))
         
     def checkDate(self):
-        if self.dateEdit.date()<QtCore.QDate.currentDate():
+        if self.dateEdit.date()>=QtCore.QDate.currentDate():
             return True
         else:
             print 'date chosen is in the past!'
@@ -89,32 +104,50 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
     def checkTimes(self):
         result=True
         #-- does the day end before it starts?
-        result=result and self.dayStart_timeEdit.time()<self.dayFinish_timeEdit.time()
+        result=result and \
+        self.dayStart_timeEdit.time()<self.dayFinish_timeEdit.time()
         
         #-- is es1 ok?
         if self.es1_checkBox.isChecked():
-            result=result and self.dayStart_timeEdit.time()<=self.es1Start_timeEdit.time()
+            result=result and \
+            self.dayStart_timeEdit.time()<=self.es1Start_timeEdit.time()
+
             if self.lunch_checkBox.isChecked():
-                result=result and self.es1Finish_timeEdit.time()<=self.lunchStart_timeEdit.time()
+                result=result and \
+                self.es1Finish_timeEdit.time()<=self.lunchStart_timeEdit.time()
+
             elif self.es2_checkBox.isChecked():
-                result=result and self.es1Finish_timeEdit.time()<=self.es2Start_timeEdit.time()
+                result=result and \
+                self.es1Finish_timeEdit.time()<=self.es2Start_timeEdit.time()
             else:
-                result=result and self.es1Finish_timeEdit.time()<=self.dayFinish_timeEdit.time()
+                result=result and \
+                self.es1Finish_timeEdit.time()<=self.dayFinish_timeEdit.time()
             
         #-- is lunch ok? 
         if self.lunch_checkBox.isChecked():
-            result=result and self.dayStart_timeEdit.time()<=self.lunchStart_timeEdit.time()
-            result=result and self.lunchStart_timeEdit.time()<self.lunchFinish_timeEdit.time()
+            result=result and \
+            self.dayStart_timeEdit.time()<=self.lunchStart_timeEdit.time()
+
+            result=result and \
+            self.lunchStart_timeEdit.time()<self.lunchFinish_timeEdit.time()
+
             if self.es2_checkBox.isChecked():
-                result=result and self.lunchFinish_timeEdit.time()<=self.es2Start_timeEdit.time()
+                result=result and \
+                self.lunchFinish_timeEdit.time()<=self.es2Start_timeEdit.time()
             else:
-                result=result and self.lunchFinish_timeEdit.time()<=self.dayFinish_timeEdit.time()
+                result=result and \
+                self.lunchFinish_timeEdit.time()<=self.dayFinish_timeEdit.time()
             
         #-- is es2 ok?
         if self.es2_checkBox.isChecked():
-            result=result and self.dayStart_timeEdit.time()<=self.es2Start_timeEdit.time()
-            result=result and self.es2Start_timeEdit.time()<self.es2Finish_timeEdit.time()
-            result=result and self.es2Finish_timeEdit.time()<=self.dayFinish_timeEdit.time()
+            result=result and \
+            self.dayStart_timeEdit.time()<=self.es2Start_timeEdit.time()
+
+            result=result and \
+            self.es2Start_timeEdit.time()<self.es2Finish_timeEdit.time()
+
+            result=result and \
+            self.es2Finish_timeEdit.time()<=self.dayFinish_timeEdit.time()
             
         return result
         
@@ -123,13 +156,21 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
         user has entered a good sequence, so write it to the DB now
         '''
         print "writing to DB"
-        apptix=self.chosenDent
-        adate=self.dateEdit.date().toString("yyyyMMdd")
-        start=int(self.dayStart_timeEdit.time().toString("hmm"))
-        finish=int(self.dayFinish_timeEdit.time().toString("hmm"))
-        print adate,start,finish
-        return True    
-    
+        day=appointments.workingDay()
+        day.apptix=self.chosenDent
+        day.date=self.dateEdit.date().toPyDate()
+        day.start=int(self.dayStart_timeEdit.time().toString("hmm"))
+        day.finish=int(self.dayFinish_timeEdit.time().toString("hmm"))
+        day.memo=str(self.memo_lineEdit.text())
+        
+        if appointments.openDay(day):
+            return True
+        else:
+            QtGui.QMessageBox.information(self.dialog,"error",
+            "unable to open %s for %s"%(
+            localsettings.formatDate(day.date),
+            localsettings.ops.get(day.apptix)))
+        
     def exec_(self):
         while True:
             if not self.dialog.exec_():

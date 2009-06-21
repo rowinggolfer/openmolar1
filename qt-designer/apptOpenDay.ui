@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
-    <height>360</height>
+    <width>396</width>
+    <height>377</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Open a Day</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="2">
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="1">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Clinician</string>
@@ -24,23 +24,23 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="3" colspan="2">
+   <item row="0" column="2">
     <widget class="QComboBox" name="comboBox"/>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="0" column="3">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>86</width>
-       <height>25</height>
+       <width>141</width>
+       <height>20</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="1" column="2">
+   <item row="1" column="1">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Date to Open</string>
@@ -50,170 +50,192 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="3" colspan="2">
+   <item row="1" column="2">
     <widget class="QDateEdit" name="dateEdit">
+     <property name="minimumSize">
+      <size>
+       <width>140</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="calendarPopup">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="6">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="label">
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>73</width>
-       <height>25</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="3">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>58</width>
-       <height>47</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="3">
-    <widget class="QLabel" name="label_10">
      <property name="text">
-      <string>Day Start</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <string>Day Memo - optional</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="4">
-    <widget class="QTimeEdit" name="dayStart_timeEdit"/>
-   </item>
-   <item row="4" column="0" rowspan="2" colspan="3">
-    <widget class="QCheckBox" name="es1_checkBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Morning Emergency Slot</string>
+   <item row="2" column="2" colspan="2">
+    <widget class="QLineEdit" name="memo_lineEdit">
+     <property name="maxLength">
+      <number>30</number>
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Start</string>
+   <item row="3" column="0" colspan="4">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Day Start</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QTimeEdit" name="dayStart_timeEdit"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="es1_checkBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Morning Emergency Slot</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Start</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QTimeEdit" name="es1Start_timeEdit"/>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Finish</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QTimeEdit" name="es1Finish_timeEdit"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="lunch_checkBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Lunch</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Start</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QTimeEdit" name="lunchStart_timeEdit"/>
+      </item>
+      <item row="2" column="3">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Finish</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="4">
+       <widget class="QTimeEdit" name="lunchFinish_timeEdit"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="es2_checkBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Afternoon Emergency Slot </string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Start</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QTimeEdit" name="es2Start_timeEdit"/>
+      </item>
+      <item row="3" column="3">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Finish</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="4">
+       <widget class="QTimeEdit" name="es2Finish_timeEdit"/>
+      </item>
+      <item row="4" column="3">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Day Finish</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="4">
+       <widget class="QTimeEdit" name="dayFinish_timeEdit"/>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="4" column="4" rowspan="2">
-    <widget class="QTimeEdit" name="es1Start_timeEdit"/>
-   </item>
-   <item row="4" column="5">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>Finish</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="6" rowspan="2">
-    <widget class="QTimeEdit" name="es1Finish_timeEdit"/>
-   </item>
-   <item row="6" column="3">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Start</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="4">
-    <widget class="QTimeEdit" name="lunchStart_timeEdit"/>
-   </item>
-   <item row="6" column="5">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Finish</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="6">
-    <widget class="QTimeEdit" name="lunchFinish_timeEdit"/>
-   </item>
-   <item row="7" column="0" colspan="3">
-    <widget class="QCheckBox" name="es2_checkBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Afternoon Emergency Slot </string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="3">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Start</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="4">
-    <widget class="QTimeEdit" name="es2Start_timeEdit"/>
-   </item>
-   <item row="7" column="5">
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>Finish</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="6">
-    <widget class="QTimeEdit" name="es2Finish_timeEdit"/>
-   </item>
-   <item row="8" column="5">
-    <widget class="QLabel" name="label_11">
-     <property name="text">
-      <string>Day Finish</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="6">
-    <widget class="QTimeEdit" name="dayFinish_timeEdit"/>
-   </item>
-   <item row="9" column="2">
+   <item row="4" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -226,7 +248,7 @@
      </property>
     </spacer>
    </item>
-   <item row="10" column="0" colspan="7">
+   <item row="5" column="0" colspan="4">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -236,33 +258,9 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QCheckBox" name="lunch_checkBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Lunch</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>comboBox</tabstop>
-  <tabstop>dateEdit</tabstop>
-  <tabstop>dayStart_timeEdit</tabstop>
-  <tabstop>es1_checkBox</tabstop>
-  <tabstop>es1Start_timeEdit</tabstop>
-  <tabstop>es1Finish_timeEdit</tabstop>
-  <tabstop>lunchStart_timeEdit</tabstop>
-  <tabstop>lunchFinish_timeEdit</tabstop>
-  <tabstop>es2_checkBox</tabstop>
-  <tabstop>es2Start_timeEdit</tabstop>
-  <tabstop>es2Finish_timeEdit</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
