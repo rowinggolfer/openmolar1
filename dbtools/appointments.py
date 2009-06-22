@@ -25,7 +25,44 @@ class workingDay():
         retarg+='dentistNo = %s in office = %s\n'%(self.apptix,self.flag)
         retarg+='memo=%s'%self.memo
         return retarg
-    
+ 
+class printableAppt():
+    def __init__(self):
+        self.start=0
+        self.end=0
+        self.name=""
+        self.serialno=0
+        self.treat=""
+        self.note=""
+        self.cset=""
+    def getStart(self):
+        return localsettings.wystimeToHumanTime(self.start)
+    def setName(self,arg1,arg2):
+        name=arg2
+        if name==None:
+            name=arg1
+        if name!=None and self.serialno!=0:
+            name=name.title()
+        if name!=None:
+            self.name=name
+    def setSerialno(self,arg):
+        if arg!=None:
+            self.serialno=arg
+    def setTreat(self,arg):
+        if arg!=None:
+            self.treat=arg.strip()
+    def setCset(self,arg):
+        if arg!=None:
+            self.cset=arg
+        
+    def length(self):
+        t1=localsettings.minutesPastMidnight(self.start)
+        t2=localsettings.minutesPastMidnight(self.end)
+        return t2-t1
+    def __repr__(self):
+        return "%s %s %s %s %s %s %s %s"%(self.start,self.end,self.name,
+        self.serialno,self.treat,self.note,self.cset,self.length())
+        
 def alterDay(arg):
     '''
     takes a workingDay object tries to change the aday table
@@ -130,7 +167,7 @@ def getWorkingDents(adate,dents=()):
 def allAppointmentData(adate,dents=()):
     '''
     this gets appointment data for a specifc date and dents
-    2nd arg will frequently be getWorkingDents(adate)
+    2nd arg will frequently be provided by getWorkingDents(adate)
     '''
     db = connect()
     cursor = db.cursor()
@@ -164,26 +201,27 @@ def convertResults(appointments):
     return tuple(aptlist)
 
 def printableDaylistData(adate,dent):
-    '''gets start,finish and booked appointments for this date'''
+    '''
+    gets start,finish and booked appointments for this date
+    '''
     db = connect()
     cursor = db.cursor()
 
-
-    fullquery='''SELECT start,end,memo FROM aday WHERE adate="%s" and (flag=1 or flag=2) and apptix=%d'''%(adate,dent)
+    fullquery='''SELECT start,end,memo FROM aday WHERE adate="%s" and apptix=%d and (flag=1 or flag=2)'''%(adate,dent)
     if localsettings.logqueries:
         print fullquery
     cursor.execute(fullquery)
-
 
     daydata= cursor.fetchall()
     retlist=[]
 
     if daydata!=():
         #--dentist is working!!
+        #--add any memo
         retlist.append(daydata[0][2])
         #--now get data for those days so that we can find slots within
-        fullquery='SELECT start,end,concat(patients.title," ",patients.fname," ",patients.sname),'
-        fullquery+='patients.serialno,code0,code1,code2,note,name,patients.cset FROM patients right join aslot '
+        fullquery='SELECT start,end,name,concat(patients.title," ",patients.fname," ",patients.sname),'
+        fullquery+='patients.serialno,concat(code0," ",code1," ",code2),note,patients.cset FROM patients right join aslot '
         fullquery+='on patients.serialno=aslot.serialno where'
         fullquery+= ' adate = "%s" and apptix = %d  order by start'%(adate,dent)
         if localsettings.logqueries:
@@ -193,19 +231,27 @@ def printableDaylistData(adate,dent):
         results=cursor.fetchall()
 
         #--yes that was a long query
-        apttime=daydata[0][0]
+        
+        current_apttime=daydata[0][0]
         for row in results:
-            if apttime<row[0]:
+            pa=printableAppt()
+            pa.start=row[0]
+            pa.end=row[1]
+            pa.setSerialno(row[4]) #do this BEFORE setting name
+            pa.setName(row[2],row[3])
+            pa.setTreat(row[5])
+            pa.note=row[6]
+            pa.setCset(row[7])
+            if current_apttime<pa.start:
                 #--either a gap or a double appointment
-                retlist.append((apttime,row[0],None,None,None,None,None,None))
-            if row[2]==None:
-                print "None Found"
-                retlist.append((row[0],row[1],row[-1])+row[3:])
-            else:
-                retlist.append(row)
-            if apttime<row[1]:
-                apttime=row[1]
-
+                extra=printableAppt()
+                extra.start=current_apttime
+                extra.end=pa.start #for length calc
+                retlist.append(extra)
+            retlist.append(pa)
+            if current_apttime<pa.end:
+                current_apttime=pa.end
+            
     cursor.close()
     #db.close()
     return retlist
@@ -662,7 +708,8 @@ if __name__ == "__main__":
     adate="2009_02_02"
     edate="2009_02_27"
     localsettings.initiate(False)
-    #print printableDaylistData("20090504",6)
+    print printableDaylistData("20090622",4)
+    
     #print todays_patients()
     #print todays_patients(("NW","BW"))
     #dents= getWorkingDents(edate)
@@ -675,5 +722,5 @@ if __name__ == "__main__":
     #print getBlocks(adate,4)
     #print daysSlots("2009_2_02","NW")
     #delete_appt(420,2)
-    print workingDay()
+    #print workingDay()
     

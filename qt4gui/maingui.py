@@ -25,7 +25,7 @@ Ui_confirmDentist,Ui_customTreatment, Ui_chooseDocument,Ui_forumPost
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
 medNotes, saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, \
-addTreat, addToothTreat, saveMemo
+addTreat, addToothTreat, saveMemo,permissions
 
 #-- secondary applications 
 from openmolar.qt4gui.dialogs import apptTools
@@ -2274,7 +2274,8 @@ class appointmentClass():
                     ov.eTimes[dent]=appointments.getBlocks(ov.date.toPyDate(),dent)
 
         if self.ui.aptOV_lunchcheckBox.checkState():
-            #--add lunches     ##todo - should really get these via mysql...
+            #--add lunches     
+            ##todo - should really get these via mysql...
             #--but they never change in my practice...
             for ov in self.ui.apptoverviews[0:4]:
                 ov.lunch=(1300,60)
@@ -4769,8 +4770,9 @@ printingClass,cashbooks,contractClass, forumClass):
         self.pt.sname,self.pt.addr1,self.pt.addr2,
         self.pt.addr3,self.pt.town,self.pt.county,self.pt.pcde,self.pt.tel1)
 
-        if not self.pt.serialno in localsettings.recent_snos:
-            localsettings.recent_snos.append(self.pt.serialno)
+        if self.pt.serialno in localsettings.recent_snos:
+            localsettings.recent_snos.remove(self.pt.serialno)
+        localsettings.recent_snos.append(self.pt.serialno)
         if self.ui.tabWidget.currentIndex()==4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.medalert()
@@ -5338,6 +5340,9 @@ printingClass,cashbooks,contractClass, forumClass):
         '''
         a dialog to user a different database (or backup server etc...)
         '''
+        if not permissions.granted():
+            return
+        
         def togglePassword(e):
             if not dl.checkBox.checkState():
                 dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)

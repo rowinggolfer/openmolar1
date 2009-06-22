@@ -19,11 +19,13 @@ class printDaylist():
         self.dentist=[]
         self.dayMemo=[]
         self.apps=[]
+
     def addDaylist(self,date,dentist,daymemo,apps):
         self.dates.append(date.toString())
         self.dentist.append(localsettings.apptix_reverse[dentist])
         self.dayMemo.append(daymemo)
         self.apps.append(apps)
+        print self.apps
 
     def print_(self,expanded=False):
         '''if expanded, the list will fill the page'''
@@ -48,17 +50,10 @@ class printDaylist():
             colwidths={}
             #start,end,name,serialno,code0,code1,code2,note
             for app in self.apps[page]:
-                appLen=localsettings.minutesPastMidnight(app[1])-localsettings.minutesPastMidnight(app[0])
-                trt=""
-                for t in (app[4],app[5],app[6]):
-                    if t!=None:
-                        trt+=" "+t
-                printApp=(app[0],"(%d mins)"%appLen,app[2],app[3],trt.strip(),app[7])
+                printApp=(app.getStart(),"(%d mins)"%app.length(),
+                app.name,app.serialno,app.cset,app.treat,app.note)
                 col=0
                 for att in printApp:
-                    if col==2:
-                        if not att in ("EMERGENCY","BLOCKED","LUNCH"):
-                            att=str(att).title()
                     w=fm.width(str(att))
                     if not colwidths.has_key(col):
                         colwidths[col]=w
@@ -70,7 +65,6 @@ class printDaylist():
                 total+=colwidths[col]
             for col in range(len(colwidths)):
                 colwidths[col]=colwidths[col]*pageWidth/total
-
 
             x,y=LeftMargin,TopMargin
             painter.setPen(QtCore.Qt.black)
@@ -86,7 +80,7 @@ class printDaylist():
             y += rowHeight*1.5
             painter.setBrush(QtGui.QColor("#eeeeee"))
             col=0
-            for column in ("Start","Length","Name","No","Treat","memo"):
+            for column in ("Start","Length","Name","No","","Treat","memo"):
                 rect=QtCore.QRectF(x, y,colwidths[col], rowHeight)
                 painter.drawRect(rect)
                 painter.drawText(rect.adjusted(2,0,-2,0),column,option)
@@ -95,24 +89,13 @@ class printDaylist():
             y+=rowHeight
             painter.setBrush(QtCore.Qt.transparent)
             for app in self.apps[page]:
-                appLen=localsettings.minutesPastMidnight(app[1])-localsettings.minutesPastMidnight(app[0])
-                trt=""
-                for t in (app[4],app[5],app[6]):
-                    if t!=None:
-                        trt+=" "+t
-                trt=trt.strip()
-                printApp=(app[0],"(%d mins)"%appLen,app[2],app[3],trt,app[7])
+                printApp=(app.start,"(%d mins)"%app.length(),
+                app.name,app.serialno,app.cset,app.treat.strip(),app.note)
                 x=LeftMargin
                 col=0
                 for att in printApp:
                     rect=QtCore.QRectF(x, y,colwidths[col], rowHeight)
                     painter.drawRect(rect)
-                    if col==2:
-                        if att:
-                            att=str(att).title()
-                        else:
-                            if len(app)>8:
-                                att=app[8]
                     if att:
                         painter.drawText(rect.adjusted(2,0,-2,0),str(att),option)
                     x+=colwidths[col]
@@ -128,21 +111,15 @@ class printDaylist():
 
 if __name__ == "__main__":
     import sys
+    from openmolar.dbtools import appointments
+    import datetime
     localsettings.initiate(False)
+    localsettings.logqueries=True
     app = QtGui.QApplication(sys.argv)
-    appointments=((830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"))
-
+    d=datetime.date.today()
+    apps=appointments.printableDaylistData(d,4)
+   
     p=printDaylist()
-    p.addDaylist(QtCore.QDate.currentDate(),4,"Memo",appointments)
+    p.addDaylist(QtCore.QDate.currentDate(),4,apps[0],apps[1:])
     p.print_(True)
 
