@@ -20,7 +20,8 @@ from openmolar.qt4gui.dialogs import Ui_patient_finder,Ui_select_patient,\
 Ui_enter_letter_text,Ui_phraseBook,Ui_changeDatabase,Ui_related_patients,\
 Ui_raiseCharge,Ui_options,Ui_surgeryNumber,Ui_payments,paymentwidget,\
 Ui_specify_appointment,Ui_appointment_length,Ui_daylist_print,\
-Ui_confirmDentist,Ui_customTreatment, Ui_chooseDocument,Ui_forumPost
+Ui_confirmDentist,Ui_customTreatment, Ui_chooseDocument,Ui_forumPost,\
+Ui_showMemo
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
@@ -4784,7 +4785,14 @@ printingClass,cashbooks,contractClass, forumClass):
             message="<center>Message from %s <br />"%umemo.author
             message+="Dated %s<br /><br />"%localsettings.formatDate(umemo.mdate)
             message+="%s</center>"%umemo.message
-            self.advise(message,1) 
+            Dialog=QtGui.QDialog(self)
+            dl=Ui_showMemo.Ui_Dialog()
+            dl.setupUi(Dialog)
+            dl.message_label.setText(message)
+            if Dialog.exec_():
+                if dl.checkBox.checkState():
+                    print "deleting Memo %s"%umemo.ix
+                    memos.deleteMemo(umemo.ix)
                 
     def newCustomMemo(self):
         Dialog = QtGui.QDialog(self)

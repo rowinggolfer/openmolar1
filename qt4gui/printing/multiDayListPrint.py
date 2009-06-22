@@ -27,6 +27,7 @@ class printDaylist():
         self.sheets[d][0].append(localsettings.apptix_reverse[dentist]) #dentist
         self.sheets[d][1].append(daymemo)
         self.sheets[d][2].append(apps)
+    
     def print_(self):
 
         '''if expanded, the list will fill the page'''
@@ -47,7 +48,7 @@ class printDaylist():
             pageCols=len(books)
             rowCount=0
             for book in books[2]:
-                if len(book)>2 and len(book[2])>rowCount:                    #book could be ()
+                if len(book[2])>rowCount:                    #book could be ()
                     rowCount=len(book[2])
             rowHeight = fm.height()
             pageHeight=self.printer.pageRect().height()-TopMargin-BottomMargin
@@ -136,27 +137,18 @@ class printDaylist():
             painter.restore()
 
 
-
 if __name__ == "__main__":
     import sys
     localsettings.initiate(False)
     app = QtGui.QApplication(sys.argv)
-
-
-    appointments=((830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"),
-    (830,900,"wallace N",414,"Exam","Sp","XLA","Memo"))
+    from openmolar.dbtools import appointments
+    import datetime
+    app = QtGui.QApplication(sys.argv)
+    d=datetime.date.today()
+    apps=appointments.printableDaylistData(d,4)
 
     p=printDaylist()
     for i in range(0,3):
-        p.addDaylist(QtCore.QDate.currentDate(),4,"Memo",appointments)
+        p.addDaylist(QtCore.QDate.currentDate(),4,apps[0],apps[1:])
     p.print_()
 

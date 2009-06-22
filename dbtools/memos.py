@@ -41,7 +41,15 @@ def getMemos(serialno):
         
         retarg.append(newmemo)
     return retarg
-
+def deleteMemo(ix):
+    query="update ptmemos set open=0 where ix=%d"%ix
+    db=connect()
+    if localsettings.logqueries:
+        print query
+    cursor = db.cursor()
+    cursor.execute(query)
+    cursor.close()
+    db.commit()
 
 def commit(serialno,author,type,expire,message,open):
     

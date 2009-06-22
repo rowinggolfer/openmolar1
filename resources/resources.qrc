@@ -1,5 +1,7 @@
 <RCC>
   <qresource>
+    <file>newlogo_launchpadSize.png</file>
+    <file>newlogo.png</file>
     <file>icons/chain-broken.png</file>
     <file>icons/chain.png</file>
     <file>private.png</file>
