@@ -59,12 +59,10 @@ def alterDay(arg):
         db.commit()
     else:
         result.message="The date you have tried to modify is beyond the dates opened for dentist %s"%(
-        localsettings.ops.get(arg.dent),)
+        localsettings.ops.get(arg.apptix),)
 
     return result
     
-
-
 
 def minutesPastMidnight(t):
     '''converts a time in the format of 0830 or 1420 to minutes past midnight'''
