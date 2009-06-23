@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>611</width>
-    <height>300</height>
+    <height>262</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Memo</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" rowspan="3">
+   <item row="0" column="0" rowspan="2">
     <widget class="QLabel" name="label">
      <property name="text">
       <string/>
@@ -37,9 +37,19 @@
      <property name="text">
       <string>TextLabel</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="checkBox">
+     <property name="text">
+      <string>Delete this memo when I close this</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -49,13 +59,6 @@
      </property>
      <property name="centerButtons">
       <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QCheckBox" name="checkBox">
-     <property name="text">
-      <string>Delete this memo when I close this</string>
      </property>
     </widget>
    </item>

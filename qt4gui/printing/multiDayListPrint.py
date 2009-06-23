@@ -19,24 +19,25 @@ class printDaylist():
         self.dates=[]
         self.sheets={}  #dentist,memo,apps
 
-    def addDaylist(self,date,dentist,daymemo,apps):
+    def addDaylist(self,date,dentist,apps):
         d=date.toString()
         if not d in self.dates:
             self.dates.append(d)
             self.sheets[d]=([],[],[])
         self.sheets[d][0].append(localsettings.apptix_reverse[dentist]) #dentist
-        self.sheets[d][1].append(daymemo)
-        self.sheets[d][2].append(apps)
+        self.sheets[d][1].append(apps[0])
+        self.sheets[d][2].append(apps[1:])
     
     def print_(self):
-
-        '''if expanded, the list will fill the page'''
+        '''
+        print all.
+        '''
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
-        LeftMargin,RightMargin,TopMargin,BottomMargin = 30,30,30,30     #leave space at the bottom for notes?
+        LeftMargin,RightMargin,TopMargin,BottomMargin = 30,30,30,30     
         AbsoluteLeft = LeftMargin
-        sansFont = QtGui.QFont("Helvetica", 7)
+        sansFont = QtGui.QFont("Helvetica", 6)
         fm = QtGui.QFontMetrics(sansFont)
         pageWidth=self.printer.pageRect().width()-LeftMargin-RightMargin
         painter = QtGui.QPainter(self.printer)
@@ -48,8 +49,8 @@ class printDaylist():
             pageCols=len(books)
             rowCount=0
             for book in books[2]:
-                if len(book[2])>rowCount:                    #book could be ()
-                    rowCount=len(book[2])
+                if len(books[2])>rowCount:                    #book could be ()
+                    rowCount=len(books[2])
             rowHeight = fm.height()
             pageHeight=self.printer.pageRect().height()-TopMargin-BottomMargin
             #rowHeight=pageHeight/(rowCount+3)  #+3 allows for headings
@@ -60,17 +61,11 @@ class printDaylist():
                 ###get col widths.
                 colwidths={}
                 for app in book:
-                    appLen=localsettings.minutesPastMidnight(app[1])-localsettings.minutesPastMidnight(app[0])
-                    trt=""
-                    for t in (app[4],app[5],app[6]):
-                        if t!=None:
-                            trt+=" "+t
-                    printApp=(app[0],"(%d)"%appLen,app[2],app[3],trt.strip(),app[7])
+                    #--trial run to get widths
+                    printApp=("12:00","(150)",
+                    app.name,"88888","P",app.treat,app.note)
                     col=0
                     for att in printApp:
-                        if col==2:
-                            if not att in ("EMERGENCY","BLOCKED","LUNCH"):
-                                att=str(att).title()
                         w=fm.width(str(att))
                         if not colwidths.has_key(col):
                             colwidths[col]=w
@@ -97,7 +92,7 @@ class printDaylist():
                 y += rowHeight*1.5
                 painter.setBrush(QtGui.QColor("#eeeeee"))
                 col=0
-                for column in ("Start","Length","Name","No.","Treat","memo"):
+                for column in ("Start","Len","Name","No.","","Treat","memo"):
                     rect=QtCore.QRectF(x, y,colwidths[col], rowHeight)
                     painter.drawRect(rect)
                     painter.drawText(rect.adjusted(2,0,-2,0),column,option)
@@ -106,23 +101,16 @@ class printDaylist():
                 y+=rowHeight
                 painter.setBrush(QtCore.Qt.transparent)
                 for app in book:
-                    appLen=localsettings.minutesPastMidnight(app[1])-localsettings.minutesPastMidnight(app[0])
-                    trt=""
-                    for t in (app[4],app[5],app[6]):
-                        if t!=None:
-                            trt+=" "+t
-                    trt=trt.strip()
-                    printApp=(app[0],"(%d)"%appLen,app[2],app[3],trt,app[7])
+                    #--print each app!
+                    printApp=(app.getStart(),"(%d)"%app.length(),
+                    app.name,app.serialno,app.cset,app.treat.strip(),app.note)
                     x=LeftMargin
                     col=0
                     for att in printApp:
                         rect=QtCore.QRectF(x, y,colwidths[col], rowHeight)
                         painter.drawRect(rect)
                         if att:
-                            if col==2:
-                                if not att in ("EMERGENCY","BLOCKED","LUNCH"):
-                                    att=str(att).title()
-                        painter.drawText(rect.adjusted(2,0,-2,0),str(att),option)
+                            painter.drawText(rect.adjusted(2,0,-2,0),str(att),option)
                         x+=colwidths[col]
                         col+=1
                     y += rowHeight

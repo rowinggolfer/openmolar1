@@ -49,7 +49,7 @@ accountPrint,estimatePrint,GP17,apptcardPrint, bookprint
 #--custom widgets
 from openmolar.qt4gui.customwidgets import chartwidget,appointmentwidget,\
 toothProps, appointment_overviewwidget,toothProps,perioToothProps,\
-perioChartWidget,estimateWidget
+perioChartWidget,estimateWidget,omQMenus
 
 #--the main gui class inherits from a lot of smaller classes to make the \
 #--code more manageable. (supposedly!)
@@ -2060,26 +2060,25 @@ class appointmentClass():
     #--next five procs related to user clicking on the day
     #--buttons on the apptoverviewwidget
     def mondaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.mondayLabel.text(),
+        sd=QtCore.QDate.fromString(self.ui.monday_toolButton.text(),
                                    QtCore.QString("d MMMM yyyy"))
         self.calendar(sd)
     def tuesdaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.tuesdayLabel.text(),
+        sd=QtCore.QDate.fromString(self.ui.tuesday_toolButton.text(),
                                    QtCore.QString("d MMMM yyyy"))
         self.calendar(sd)
     def wednesdaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.wednesdayLabel.text(),
+        sd=QtCore.QDate.fromString(self.ui.wednesday_toolButton.text(),
                                    QtCore.QString("d MMMM yyyy"))
         self.calendar(sd)
     def thursdaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.thursdayLabel.text(),
+        sd=QtCore.QDate.fromString(self.ui.thursday_toolButton.text(),
                                    QtCore.QString("d MMMM yyyy"))
         self.calendar(sd)
     def fridaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.fridayLabel.text(),
+        sd=QtCore.QDate.fromString(self.ui.friday_toolButton.text(),
                                    QtCore.QString("d MMMM yyyy"))
         self.calendar(sd)
-
 
     def gotoToday(self):
         self.ui.appointmentCalendarWidget.setSelectedDate(
@@ -2223,12 +2222,13 @@ class appointmentClass():
         for day in range(1,6):
             weekdates.append(date.addDays(day-dayno))
         i=0
-        for label in (self.ui.mondayLabel,self.ui.tuesdayLabel,
-            self.ui.wednesdayLabel,
-            self.ui.thursdayLabel,self.ui.fridayLabel):
-
-            label.setText(weekdates[i].toString("d MMMM yyyy"))
-            label.setToolTip("Hello!")
+        for label in (self.ui.monday_toolButton,self.ui.tuesday_toolButton,
+            self.ui.wednesday_toolButton,
+            self.ui.thursday_toolButton,self.ui.friday_toolButton):
+            weekday=weekdates[i].toString("d MMMM yyyy")
+            label.setText(weekday)
+            label.setToolTip('''Left Click Here to Open %s<br /><br />
+            Right Click for admin options'''%weekday)
 
             i+=1
         if QtCore.QDate.currentDate() in weekdates:
@@ -2411,9 +2411,10 @@ class appointmentClass():
         '''
         this just invokes a dialog which has a choice of options
         '''
-        self.appointmentToolsWindow = QtGui.QMainWindow(self)
-        self.ui2 = apptTools.apptTools(self.appointmentToolsWindow)
-        self.appointmentToolsWindow.show()
+        if permissions.granted(self):
+            self.appointmentToolsWindow = QtGui.QMainWindow()
+            self.ui2 = apptTools.apptTools(self.appointmentToolsWindow)
+            self.appointmentToolsWindow.show()
         
         
 class signals():
@@ -2809,15 +2810,15 @@ class signals():
                                QtCore.SIGNAL("textChanged()"), self.updateMemo)
         #--memos - we have more than one... and need to keep them synchronised
 
-        self.ui.mondayLabel.connect(self.ui.mondayLabel,
+        self.connect(self.ui.monday_toolButton,
                             QtCore.SIGNAL("clicked()"), self.mondaylabelClicked)
-        self.ui.tuesdayLabel.connect(self.ui.tuesdayLabel,
+        self.connect(self.ui.tuesday_toolButton,
                         QtCore.SIGNAL("clicked()"), self.tuesdaylabelClicked)
-        self.ui.wednesdayLabel.connect(self.ui.wednesdayLabel,
+        self.connect(self.ui.wednesday_toolButton,
                         QtCore.SIGNAL("clicked()"), self.wednesdaylabelClicked)
-        self.ui.thursdayLabel.connect(self.ui.thursdayLabel,
+        self.connect(self.ui.thursday_toolButton,
                         QtCore.SIGNAL("clicked()"), self.thursdaylabelClicked)
-        self.ui.fridayLabel.connect(self.ui.fridayLabel,
+        self.connect(self.ui.friday_toolButton,
                             QtCore.SIGNAL("clicked()"), self.fridaylabelClicked)
 
         #appointment manage
@@ -3012,6 +3013,10 @@ class customWidgets():
         #-- add a header to the estimates page
         self.ui.estWidget=estimateWidget.estWidget()
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
+
+        self.tm=omQMenus.appointmentQMenu()
+        for toolButton in (self.ui.monday_toolButton,):
+            toolButton.setMenu(self.tm)
 
 class chartsClass():
 
@@ -3937,12 +3942,13 @@ class printingClass():
             #note arg[1]=Qdate
             if data!=[]:
                 something_to_print=True
-                dlist.addDaylist(arg[1],arg[0],data[0],data[1:])
+                dlist.addDaylist(arg[1],arg[0],data)
         if something_to_print:
             dlist.print_(expanded)
 
     def printmultiDayList(self,args):
         '''prints the multiday pages'''
+        #-- args= ((dent, date),(dent,date)...)
         dlist=multiDayListPrint.printDaylist()
         something_to_print=False
         for arg in args:
@@ -3950,7 +3956,7 @@ class printingClass():
             #note arg[1]=Qdate
             if data!=[]:
                 something_to_print=True
-                dlist.addDaylist(arg[1],arg[0],data[0],data[1:])
+                dlist.addDaylist(arg[1],arg[0],data)
         if something_to_print:
             dlist.print_()
     def book1print(self):
@@ -4288,6 +4294,7 @@ class pageHandlingClass():
                     "%s is no longer an active dentist in this practice"%\
                     localsettings.ops[self.pt.dnt1],2)
                 else:
+                    print "unknown dentist number",self.pt.dnt1
                     self.advise(
                     "unknown contract dentist - please correct this",2)
         if self.pt.dnt2>0:
@@ -5348,7 +5355,7 @@ printingClass,cashbooks,contractClass, forumClass):
         '''
         a dialog to user a different database (or backup server etc...)
         '''
-        if not permissions.granted():
+        if not permissions.granted(self):
             return
         
         def togglePassword(e):

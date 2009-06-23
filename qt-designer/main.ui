@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>7</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -3779,8 +3779,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>96</width>
-                    <height>28</height>
+                    <width>191</width>
+                    <height>57</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3937,8 +3937,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>149</width>
+                        <height>405</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4004,8 +4004,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>149</width>
+                        <height>405</height>
                        </rect>
                       </property>
                      </widget>
@@ -4070,8 +4070,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>148</width>
+                        <height>405</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4098,8 +4098,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>149</width>
+                        <height>405</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="_2"/>
@@ -4372,8 +4372,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>96</width>
-                    <height>28</height>
+                    <width>191</width>
+                    <height>83</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4492,91 +4492,6 @@ Note - this will not remove items which are currently there. </string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QPushButton" name="mondayLabel">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>PushButton</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../resources/resources.qrc">
-                  <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QPushButton" name="tuesdayLabel">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>PushButton</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../resources/resources.qrc">
-                  <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
-               <widget class="QPushButton" name="wednesdayLabel">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>PushButton</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../resources/resources.qrc">
-                  <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="3">
-               <widget class="QPushButton" name="thursdayLabel">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>PushButton</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../resources/resources.qrc">
-                  <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="4">
-               <widget class="QPushButton" name="fridayLabel">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>PushButton</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../resources/resources.qrc">
-                  <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
-                </property>
-               </widget>
-              </item>
               <item row="2" column="0">
                <widget class="QFrame" name="appt_OV_Frame1">
                 <property name="sizePolicy">
@@ -4654,6 +4569,71 @@ Note - this will not remove items which are currently there. </string>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Sunken</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QToolButton" name="monday_toolButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QToolButton" name="tuesday_toolButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QToolButton" name="wednesday_toolButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QToolButton" name="thursday_toolButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="4">
+               <widget class="QToolButton" name="friday_toolButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>...</string>
                 </property>
                </widget>
               </item>
@@ -5785,11 +5765,6 @@ Note - this will not remove items which are currently there. </string>
   <tabstop>aptOV_apptscheckBox</tabstop>
   <tabstop>aptOV_emergencycheckBox</tabstop>
   <tabstop>aptOVdentscrollArea</tabstop>
-  <tabstop>mondayLabel</tabstop>
-  <tabstop>tuesdayLabel</tabstop>
-  <tabstop>wednesdayLabel</tabstop>
-  <tabstop>thursdayLabel</tabstop>
-  <tabstop>fridayLabel</tabstop>
   <tabstop>accounts_tableWidget</tabstop>
   <tabstop>printSelectedAccounts_pushButton</tabstop>
   <tabstop>recalldateEdit</tabstop>

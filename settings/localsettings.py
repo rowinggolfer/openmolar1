@@ -89,6 +89,7 @@ clinicianInits=""
 
 #-- surgery or reception machine?
 station="surgery"
+stationID=""
 
 #--this dictionary is upated when this file is initiate -
 #--it links dentist keys with practioners
@@ -145,7 +146,7 @@ defaultNewPatientDetails=("",)*8
 privateFees={}
 nhsFees={}
 treatmentCodes={}
-itemCodes=[]
+#itemCodes=[]
 
 #-- 1 less dialog box for these lucky people
 defaultPrinterforGP17=True
@@ -279,46 +280,69 @@ def getLocalSettings():
     and "knows" it's surgery number etc...
     if one doesn't exist... knock one up.
     '''
+    global stationID
     if not os.path.exists(localFileDirectory):
         os.mkdir(localFileDirectory)
 
     localSets=os.path.join(localFileDirectory,"localsettings.conf")
     if os.path.exists(localSets):
+        print "local user level settings file found...."
         dom=minidom.parse(localSets)
-        node=dom.getElementsByTagName("station")
+        print "stationID....",
+        node=dom.getElementsByTagName("stationID")
         if node and node[0].hasChildNodes():
             station=node[0].firstChild.data
             print station
+        else: 
+            print "unknown"
     else:
         #-- no file found..
         #--so create a settings file.
         f=open(localSets,"w")
         f.write('''<?xml version="1.0" ?>
-        <settings><version>1.0</version></settings>''')
+        <settings><version>1.0</version></settings>
+        ''')
         f.close()
 
 def updateLocalSettings(setting,value):
-    localSets=os.path.join(localFileDirectory,"localsettings.conf")
-    if os.path.exists(localSets):
-        dom=minidom.parse(localSets)
-        print dom.toxml()
-        nodeToChange=dom.getElementsByTagName(setting)
-        if len(nodeToChange)==0:
-            print "creating node"
-            nodeToChange=dom.createElement(setting)
-            dom.firstChild.appendChild(nodeToChange)
-        nodeToChange[0].data=value
-        print nodeToChange[0].data
-        
-        
-        f=open(localSets,"w")
-        f.write(dom.toxml())
-        f.close()
-
-
+    '''
+    adds or updates node "setting" with text value "value"
+    '''
+    try:
+        localSets=os.path.join(localFileDirectory,"localsettings.conf")
+        print "updating local settings... %s = %s"%(setting,value)
+        if os.path.exists(localSets):
+            dom=minidom.parse(localSets)
+            print dom.toxml()
+            nodeToChange=dom.getElementsByTagName(setting)
+            if len(nodeToChange)==0:
+                print "no %s node - creating node"%setting
+                nodeToChange=dom.createElement(setting)
+                print "node created",nodeToChange
+                dom.firstChild.appendChild(nodeToChange)
+            #--remove any existing values
+            else:
+                if nodeToChange[0].firstChild.data==value:
+                    print "setting unchanged"
+                    return
+            for children in nodeToChange.childNodes:
+                nodeToChange.removeChild(children)
+            valueNode=dom.createTextNode(value)
+            nodeToChange.appendChild(valueNode)
+            print dom.toxml()
+            f=open(localSets,"w")
+            f.write(dom.toxml())
+            f.close()            
+            return True
+    except Exception,e:
+        print "error updating local settings file"
+        return False
+    
 def initiate(debug=False):
     print "initiating settings"
-    global referralfile,stylesheet,fees,message,dentDict,privateFees,nhsFees,itemCodes
+    global referralfile,stylesheet,fees,message,dentDict,privateFees,\
+    nhsFees,allowed_logins,ops,ops_reverse,activedents,activehygs,apptix,\
+    apptix_reverse #,itemCodes
     from openmolar.connect import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
@@ -327,6 +351,9 @@ def initiate(debug=False):
     #set up four lists with key/value pairs reversedto make for easy referencing
 
     #first"ops" which is all practitioners
+    ops={}
+    ops_reverse={}
+    apptix_reverse={}
     cursor.execute("select id,inits,apptix from practitioners")
     practitioners = cursor.fetchall()
     for practitioner in practitioners:
@@ -347,6 +374,7 @@ def initiate(debug=False):
             print query
         cursor.execute(query)
         practitioners = cursor.fetchall()
+        dentDict={}
         for practitioner in practitioners:
             dentDict[practitioner[0]]=practitioner[1:]
 
@@ -356,13 +384,14 @@ def initiate(debug=False):
             print query
         cursor.execute(query)
         practitioners = cursor.fetchall()
+        apptix={}
         for practitioner in practitioners:
             if practitioner[0] != 0 and practitioner[0] != None: #apptix
                 apptix[practitioner[1]]=practitioner[0]
         cursor.execute(
         "select inits from practitioners where flag3=1 and flag0=1")
         #dentists where appts active
-
+        activedents=[]
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
             activedents.append(practitioner[0])
@@ -370,6 +399,7 @@ def initiate(debug=False):
         "select inits from practitioners where flag3=1 and flag0=0")
         #hygenists where appts active
         practitioners = cursor.fetchall()
+        activehygs=[]
         for practitioner in practitioners:
             activehygs.append(practitioner[0])
     except:
@@ -379,10 +409,11 @@ def initiate(debug=False):
         cursor.execute("select id from opid")
         #grab initials of those currently allowed to log in
         trows = cursor.fetchall()
+        allowed_logins=[]
         for row in trows:
             allowed_logins.append(row[0])
-    except:
-        print "error loading from opid"
+    except Exception,e:
+        print "error loading from opid",e
 
 
     #-- majorly important dictionary being created.
@@ -396,9 +427,10 @@ def initiate(debug=False):
             print query
         cursor.execute(query)
         rows=cursor.fetchall()
+        privateFees={}
         for row in rows:
             code=row[0]
-            itemCodes.append(code)
+            #itemCodes.append(code)
             usercode=row[3]
             if code!="":
                 if privateFees.has_key(code):
@@ -416,7 +448,7 @@ def initiate(debug=False):
                 treatmentCodes[usercode]=code
 
     except Exception,e:
-        print "error loading from newfeetable",e
+        print "error loading privateFees Dict from newfeetable",e
 
 
     try:   #this breaks compatibility with the old database schema
@@ -426,6 +458,7 @@ def initiate(debug=False):
             print query
         cursor.execute(query)
         rows=cursor.fetchall()
+        nhsFees={}
         for row in rows:
             code=row[0]
             usercode=row[3]
@@ -442,14 +475,12 @@ def initiate(debug=False):
                     nhsFees[code]=newFee
 
     except Exception,e:
-        print "error loading from newfeetable",e
-
+        print "error loading nhs Fees Dict from newfeetable",e
 
     getLocalSettings()
 
     wkdir=os.getcwd()
     referralfile=os.path.join (wkdir,"resources","referral_data.xml")
-
 
     message='''<html><head><link rel="stylesheet" href="%s" type="text/css">
     </head><body><div align="center">
@@ -461,7 +492,7 @@ def initiate(debug=False):
     <p>Have a great day!</p></div></body></html>'''%(stylesheet,__version__,__build__)
 
     if debug:
-        print formatMoney(1150)
+        #print formatMoney(1150)
         print "ops = ",ops
         print "ops_reverse = ",ops_reverse
         print "apptix = ",apptix
@@ -471,9 +502,9 @@ def initiate(debug=False):
         print "allowed logins=",allowed_logins
         print stylesheet
         print referralfile
-        print curTime()
-        print sqlToday()
-        print dentDict
+        #print curTime()
+        #print sqlToday()
+        #print dentDict
         #print descripŕtions
         
         #for key in privateFees.keys():
@@ -485,7 +516,7 @@ def initiate(debug=False):
 if __name__ == "__main__":
     '''testing only'''
     sys.path.append("/home/neil/openmolar/openmolar")
-    print cflocation
+    #print cflocation
     initiate(True)
-    updateLocalSettings("station","surgery3")
+    updateLocalSettings("stationID","surgery3")
     

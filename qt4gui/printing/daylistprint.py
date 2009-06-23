@@ -20,12 +20,11 @@ class printDaylist():
         self.dayMemo=[]
         self.apps=[]
 
-    def addDaylist(self,date,dentist,daymemo,apps):
+    def addDaylist(self,date,dentist,apps):
         self.dates.append(date.toString())
         self.dentist.append(localsettings.apptix_reverse[dentist])
-        self.dayMemo.append(daymemo)
-        self.apps.append(apps)
-        print self.apps
+        self.dayMemo.append(apps[0])
+        self.apps.append(apps[1:])
 
     def print_(self,expanded=False):
         '''if expanded, the list will fill the page'''
@@ -50,8 +49,9 @@ class printDaylist():
             colwidths={}
             #start,end,name,serialno,code0,code1,code2,note
             for app in self.apps[page]:
-                printApp=(app.getStart(),"(%d mins)"%app.length(),
-                app.name,app.serialno,app.cset,app.treat,app.note)
+                #--get widths
+                printApp=("12:00","(150 mins)",
+                app.name,"88888","P",app.treat,app.note)
                 col=0
                 for att in printApp:
                     w=fm.width(str(att))
