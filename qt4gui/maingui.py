@@ -26,7 +26,7 @@ Ui_showMemo
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
 medNotes, saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, \
-addTreat, addToothTreat, saveMemo,permissions
+addTreat, addToothTreat, saveMemo,permissions,alterAday
 
 #-- secondary applications 
 from openmolar.qt4gui.dialogs import apptTools
@@ -49,7 +49,7 @@ accountPrint,estimatePrint,GP17,apptcardPrint, bookprint
 #--custom widgets
 from openmolar.qt4gui.customwidgets import chartwidget,appointmentwidget,\
 toothProps, appointment_overviewwidget,toothProps,perioToothProps,\
-perioChartWidget,estimateWidget,omQMenus
+perioChartWidget,estimateWidget,aptOVcontrol
 
 #--the main gui class inherits from a lot of smaller classes to make the \
 #--code more manageable. (supposedly!)
@@ -2059,27 +2059,9 @@ class appointmentClass():
 
     #--next five procs related to user clicking on the day
     #--buttons on the apptoverviewwidget
-    def mondaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.monday_toolButton.text(),
-                                   QtCore.QString("d MMMM yyyy"))
+    def aptOVlabelClicked(self,sd):
         self.calendar(sd)
-    def tuesdaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.tuesday_toolButton.text(),
-                                   QtCore.QString("d MMMM yyyy"))
-        self.calendar(sd)
-    def wednesdaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.wednesday_toolButton.text(),
-                                   QtCore.QString("d MMMM yyyy"))
-        self.calendar(sd)
-    def thursdaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.thursday_toolButton.text(),
-                                   QtCore.QString("d MMMM yyyy"))
-        self.calendar(sd)
-    def fridaylabelClicked(self):
-        sd=QtCore.QDate.fromString(self.ui.friday_toolButton.text(),
-                                   QtCore.QString("d MMMM yyyy"))
-        self.calendar(sd)
-
+    
     def gotoToday(self):
         self.ui.appointmentCalendarWidget.setSelectedDate(
                                                     QtCore.QDate.currentDate())
@@ -2220,17 +2202,10 @@ class appointmentClass():
         #--(monday to friday) #prevMonday=date.addDays(1-dayno),
         #--prevTuesday=date.addDays(2-dayno)
         for day in range(1,6):
-            weekdates.append(date.addDays(day-dayno))
-        i=0
-        for label in (self.ui.monday_toolButton,self.ui.tuesday_toolButton,
-            self.ui.wednesday_toolButton,
-            self.ui.thursday_toolButton,self.ui.friday_toolButton):
-            weekday=weekdates[i].toString("d MMMM yyyy")
-            label.setText(weekday)
-            label.setToolTip('''Left Click Here to Open %s<br /><br />
-            Right Click for admin options'''%weekday)
-
-            i+=1
+            weekday=(date.addDays(day-dayno))
+            weekdates.append(weekday)
+            self.ui.apptoverviewControls[day-1].setDate(weekday)
+       
         if QtCore.QDate.currentDate() in weekdates:
             self.ui.apptOVtoday_pushButton.setEnabled(False)
         else:
@@ -2407,15 +2382,36 @@ class appointmentClass():
         reason=tup[3]
         appointments.block_appt(adate,dent,start,end,reason)
         self.layout_appointments()
+    
+    def aptOVlabelRightClicked(self,d):
+        '''
+        user wants to change appointment overview properties for date d
+        '''
+        if permissions.granted(self):
+            dentData=appointments.getWorkingDents(d.toString("yyyyMMdd"))
+            Dialog=QtGui.QDialog(self)
+            dl=alterAday.alterDay(Dialog)
+            dl.setDate(d)
+            for clinician in localsettings.activedents+localsettings.activehygs:
+                startData=alterAday.aslotData(clinician)
+                for row in dentData:
+                    if row[0]==startData.apptix:
+                        startData.setStart(row[1])
+                        startData.setFinish(row[2])
+                        startData.active=True
+                dl.addClinicianStartData(startData)
+            print dl.getInput()
+    
     def appointmentTools(self):
         '''
+        called from the main menu
         this just invokes a dialog which has a choice of options
         '''
         if permissions.granted(self):
             self.appointmentToolsWindow = QtGui.QMainWindow()
             self.ui2 = apptTools.apptTools(self.appointmentToolsWindow)
             self.appointmentToolsWindow.show()
-        
+    
         
 class signals():
     def setupSignals(self):
@@ -2810,17 +2806,14 @@ class signals():
                                QtCore.SIGNAL("textChanged()"), self.updateMemo)
         #--memos - we have more than one... and need to keep them synchronised
 
-        self.connect(self.ui.monday_toolButton,
-                            QtCore.SIGNAL("clicked()"), self.mondaylabelClicked)
-        self.connect(self.ui.tuesday_toolButton,
-                        QtCore.SIGNAL("clicked()"), self.tuesdaylabelClicked)
-        self.connect(self.ui.wednesday_toolButton,
-                        QtCore.SIGNAL("clicked()"), self.wednesdaylabelClicked)
-        self.connect(self.ui.thursday_toolButton,
-                        QtCore.SIGNAL("clicked()"), self.thursdaylabelClicked)
-        self.connect(self.ui.friday_toolButton,
-                            QtCore.SIGNAL("clicked()"), self.fridaylabelClicked)
-
+        for i in range(5):
+            self.connect(self.ui.apptoverviewControls[i],
+            QtCore.SIGNAL("clicked"), self.aptOVlabelClicked)
+            
+            self.connect(self.ui.apptoverviewControls[i],
+            QtCore.SIGNAL("right-clicked"), self.aptOVlabelRightClicked)
+            
+        
         #appointment manage
         QtCore.QObject.connect(self.ui.printDaylists_pushButton,
                             QtCore.SIGNAL("clicked()"), self.daylistPrintWizard)
@@ -2944,6 +2937,7 @@ class customWidgets():
 
         ##aptOV
         self.ui.apptoverviews=[]
+        
         for day in range(5):
             if day==4: #friday
                 self.ui.apptoverviews.append(appointment_overviewwidget.
@@ -2954,19 +2948,36 @@ class customWidgets():
             else:
                 self.ui.apptoverviews.append(appointment_overviewwidget.\
                 appointmentOverviewWidget(day,"0800","1900",15,2))
+        
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
+        hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[0])
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame2)
+        hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[1])
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame3)
+        hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[2])
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame4)
+        hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[3])
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame5)
+        hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[4])
+        
+        self.ui.apptoverviewControls=[]
+                
+        for widg in (self.ui.day1_frame,self.ui.day2_frame,
+        self.ui.day3_frame,self.ui.day4_frame,self.ui.day5_frame):
+            hlayout=QtGui.QHBoxLayout(widg)
+            hlayout.setMargin(0)
+            control=aptOVcontrol.control()
+            self.ui.apptoverviewControls.append(control)
+            hlayout.addWidget(control)
+            
         self.ui.aptOVdent_checkBoxes={}
         self.ui.aptOVhyg_checkBoxes={}
-
+        
         #vlayout=QtGui.QVBoxLayout(self.ui.aptOVdents_frame)
         glayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
         self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
@@ -3014,10 +3025,7 @@ class customWidgets():
         self.ui.estWidget=estimateWidget.estWidget()
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
-        self.tm=omQMenus.appointmentQMenu()
-        for toolButton in (self.ui.monday_toolButton,):
-            toolButton.setMenu(self.tm)
-
+        
 class chartsClass():
 
     def navigateCharts(self,e):
