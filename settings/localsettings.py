@@ -95,6 +95,10 @@ clinicianInits=""
 station="surgery"
 stationID=""
 
+earliestStart=datetime.time(8,0)
+latestFinish=datetime.time(20,0)
+
+
 #--this dictionary is upated when this file is initiate -
 #--it links dentist keys with practioners
 #--eg ops[1]="JJ"

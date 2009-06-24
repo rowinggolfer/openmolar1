@@ -36,10 +36,13 @@ class card():
         font = QtGui.QFont("Helvetica", 7)
         font.setItalic(True)
         font.setBold(True)
-        font2 = QtGui.QFont("Times", 8)
-        font2.setBold(True)        
         fm=QtGui.QFontMetrics(font)
-        serifLineHeight = fm.height()
+        fontLineHeight = fm.height()
+        
+        font2 = QtGui.QFont("Times", 9)
+        font2.setBold(True)        
+        fm=QtGui.QFontMetrics(font2)
+        font2LineHeight = fm.height()
                 
         painter.setFont(font)
         option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
@@ -54,34 +57,24 @@ class card():
         painter.setFont(font2)
         
         
-        y+=serifLineHeight
+        y+=fontLineHeight
         name= "%s %s %s"%(self.title.title(),self.fname.title(),self.sname.title())
 
-        painter.drawText(QtCore.QRectF(0,y,pageRect.width(),serifLineHeight),name,option)
+        painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),name,option)
         
-        y += serifLineHeight
+        y += font2LineHeight
         ref= "Our Ref - "+str(self.ourref)
         
-        painter.drawText(QtCore.QRectF(0,y,pageRect.width(),serifLineHeight),ref,option)
+        painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),ref,option)
         
-        
-        y += serifLineHeight*1.1
+        y += font2LineHeight*1.5
         
         
         for app in self.appts:
             formatString="%s - %s with %s"%(app[0],app[1],app[2])
-            painter.drawText(QtCore.QRectF(0,y,pageRect.width(),serifLineHeight),formatString,option)            
-            y += serifLineHeight
+            painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),formatString,option)            
+            y += font2LineHeight
             
-            '''
-            apptDate= app[0]
-            apptTime=app[1]
-            apptDent="with "+app[2]
-            painter.drawText(QtCore.QRectF(x,y,x+30,serifLineHeight),QtCore.QString(apptTime))
-            painter.drawText(QtCore.QRectF(x+30,y,x+90,serifLineHeight),QtCore.QString(apptDate))            
-            painter.drawText(QtCore.QRectF(x+90,y,pageRect.width(),serifLineHeight),QtCore.QString(apptDent))            
-            y += serifLineHeight
-            '''
         
         
         y = pageRect.height()-85

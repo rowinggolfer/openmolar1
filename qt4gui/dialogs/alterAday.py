@@ -48,6 +48,12 @@ class adayData():
         self.apptix,self.dent,self.active,self.start,self.finish,self.memo)
 
 class FiveMinuteTimeEdit(QtGui.QTimeEdit):
+    def __init__(self,parent=None):
+        super(FiveMinuteTimeEdit,self).__init__(parent)
+        self.setMinimumTime(localsettings.earliestStart)
+        self.setMaximumTime(localsettings.latestFinish)
+        self.setDisplayFormat("hh:mm")
+        
     def stepBy(self, steps):
         if self.currentSection() == self.MinuteSection:
           QtGui.QTimeEdit.stepBy(self, steps * 5)
@@ -60,10 +66,11 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         self.setupUi(widget)
         QtCore.QObject.connect(self.checkBox,
         QtCore.SIGNAL("stateChanged(int)"),self.toggle)
-
+        self.addTimeEdits()
+        
+    def addTimeEdits(self):
         self.start_timeEdit=FiveMinuteTimeEdit(self.widget)
         self.finish_timeEdit=FiveMinuteTimeEdit(self.widget_2)
-        
         
     def toggle(self,arg):
         self.start_timeEdit.setEnabled(arg)
