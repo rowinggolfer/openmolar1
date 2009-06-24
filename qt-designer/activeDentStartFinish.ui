@@ -50,50 +50,22 @@
     </spacer>
    </item>
    <item>
-    <widget class="QTimeEdit" name="start_timeEdit">
+    <widget class="QWidget" name="widget" native="true">
      <property name="minimumSize">
       <size>
        <width>70</width>
        <height>0</height>
       </size>
-     </property>
-     <property name="maximumTime">
-      <time>
-       <hour>20</hour>
-       <minute>0</minute>
-       <second>59</second>
-      </time>
-     </property>
-     <property name="minimumTime">
-      <time>
-       <hour>8</hour>
-       <minute>0</minute>
-       <second>0</second>
-      </time>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QTimeEdit" name="finish_timeEdit">
+    <widget class="QWidget" name="widget_2" native="true">
      <property name="minimumSize">
       <size>
        <width>70</width>
        <height>0</height>
       </size>
-     </property>
-     <property name="maximumTime">
-      <time>
-       <hour>20</hour>
-       <minute>0</minute>
-       <second>59</second>
-      </time>
-     </property>
-     <property name="minimumTime">
-      <time>
-       <hour>8</hour>
-       <minute>0</minute>
-       <second>0</second>
-      </time>
      </property>
     </widget>
    </item>

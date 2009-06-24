@@ -53,10 +53,18 @@ class card():
         
         painter.setFont(font2)
         
+        
         y+=serifLineHeight
-        painter.drawText(x, y, "%s %s %s"%(self.title.title(),self.fname.title(),self.sname.title()))
+        name= "%s %s %s"%(self.title.title(),self.fname.title(),self.sname.title())
+
+        painter.drawText(QtCore.QRectF(0,y,pageRect.width(),serifLineHeight),name,option)
+        
         y += serifLineHeight
-        painter.drawText(x, y, "Our Ref - "+str(self.ourref))
+        ref= "Our Ref - "+str(self.ourref)
+        
+        painter.drawText(QtCore.QRectF(0,y,pageRect.width(),serifLineHeight),ref,option)
+        
+        
         y += serifLineHeight*1.1
         
         
@@ -76,11 +84,11 @@ class card():
             '''
         
         
-        y = pageRect.height()-70
+        y = pageRect.height()-85
         painter.drawLine(int(x),int(y),int(pageRect.width()),int(y))
         
         painter.setFont(font)
-        painter.drawText(QtCore.QRectF(0, y,pageRect.width(), 70),
+        painter.drawText(QtCore.QRectF(0, y,pageRect.width(), 85),
         "Please try and give at least 24 hours notice if you need to change an appointment.",option)
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/activeDentStartFinish.ui'
 #
-# Created: Wed Jun 24 09:45:28 2009
+# Created: Wed Jun 24 13:45:04 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,18 +23,14 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.checkBox)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.start_timeEdit = QtGui.QTimeEdit(Form)
-        self.start_timeEdit.setMinimumSize(QtCore.QSize(70, 0))
-        self.start_timeEdit.setMaximumTime(QtCore.QTime(20, 0, 59))
-        self.start_timeEdit.setMinimumTime(QtCore.QTime(8, 0, 0))
-        self.start_timeEdit.setObjectName("start_timeEdit")
-        self.horizontalLayout.addWidget(self.start_timeEdit)
-        self.finish_timeEdit = QtGui.QTimeEdit(Form)
-        self.finish_timeEdit.setMinimumSize(QtCore.QSize(70, 0))
-        self.finish_timeEdit.setMaximumTime(QtCore.QTime(20, 0, 59))
-        self.finish_timeEdit.setMinimumTime(QtCore.QTime(8, 0, 0))
-        self.finish_timeEdit.setObjectName("finish_timeEdit")
-        self.horizontalLayout.addWidget(self.finish_timeEdit)
+        self.widget = QtGui.QWidget(Form)
+        self.widget.setMinimumSize(QtCore.QSize(70, 0))
+        self.widget.setObjectName("widget")
+        self.horizontalLayout.addWidget(self.widget)
+        self.widget_2 = QtGui.QWidget(Form)
+        self.widget_2.setMinimumSize(QtCore.QSize(70, 0))
+        self.widget_2.setObjectName("widget_2")
+        self.horizontalLayout.addWidget(self.widget_2)
         self.lineEdit = QtGui.QLineEdit(Form)
         self.lineEdit.setMinimumSize(QtCore.QSize(160, 0))
         self.lineEdit.setMaxLength(30)
