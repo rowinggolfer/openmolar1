@@ -60,15 +60,15 @@ class card():
         y += serifLineHeight*1.1
         
         
-        for ap in self.appts:
+        for app in self.appts:
             formatString="%s - %s with %s"%(app[0],app[1],app[2])
             painter.drawText(QtCore.QRectF(0,y,pageRect.width(),serifLineHeight),formatString,option)            
             y += serifLineHeight
             
             '''
-            apptDate= ap[0]
-            apptTime=ap[1]
-            apptDent="with "+ap[2]
+            apptDate= app[0]
+            apptTime=app[1]
+            apptDent="with "+app[2]
             painter.drawText(QtCore.QRectF(x,y,x+30,serifLineHeight),QtCore.QString(apptTime))
             painter.drawText(QtCore.QRectF(x+30,y,x+90,serifLineHeight),QtCore.QString(apptDate))            
             painter.drawText(QtCore.QRectF(x+90,y,pageRect.width(),serifLineHeight),QtCore.QString(apptDent))            
