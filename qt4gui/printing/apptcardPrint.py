@@ -28,7 +28,7 @@ class card():
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
-        LeftMargin = 0
+        LeftMargin = 10
         painter = QtGui.QPainter(self.printer)
         pageRect = self.printer.pageRect()
         painter.setPen(QtCore.Qt.black)
@@ -47,7 +47,6 @@ class card():
         painter.drawText(QtCore.QRectF(0, 0,pageRect.width(), 50),
         "The Academy Dental Practice\n19 Union Street\nInverness\n01463 232423",option)
         
-        
         x,y = LeftMargin,65
         
         painter.drawLine(int(x),int(y),int(pageRect.width()),int(y))
@@ -62,6 +61,11 @@ class card():
         
         
         for ap in self.appts:
+            formatString="%s - %s with %s"%(app[0],app[1],app[2])
+            painter.drawText(QtCore.QRectF(0,y,pageRect.width(),serifLineHeight),formatString,option)            
+            y += serifLineHeight
+            
+            '''
             apptDate= ap[0]
             apptTime=ap[1]
             apptDent="with "+ap[2]
@@ -69,7 +73,7 @@ class card():
             painter.drawText(QtCore.QRectF(x+30,y,x+90,serifLineHeight),QtCore.QString(apptDate))            
             painter.drawText(QtCore.QRectF(x+90,y,pageRect.width(),serifLineHeight),QtCore.QString(apptDent))            
             y += serifLineHeight
-        
+            '''
         
         
         y = pageRect.height()-70

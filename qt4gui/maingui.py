@@ -3865,7 +3865,7 @@ class printingClass():
             #self.ui.ptAppointment_treeWidget.setItemSelected(iter)
             i=iter.value() #self.ui.ptAppointment_treeWidget.currentItem()
             adate=str(i.text(0))
-            if localsettings.uk_to_sqlDate(adate)>=localsettings.sqlToday():
+            if localsettings.uk_to_sqlDate(adate)>localsettings.sqlToday():
                 futureAppts+=((adate,str(i.text(2)),str(i.text(1))),)
             iter+=1
         card=apptcardPrint.card()

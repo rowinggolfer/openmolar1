@@ -13,6 +13,7 @@ from openmolar.qt4gui.dialogs import Ui_permissions
 def granted(parent=None):
     if localsettings.permissionsRaised==True:
         if localsettings.permissionExpire>datetime.datetime.now():
+            resetExpireTime()
             return True
         else:
             localsettings.permissionsRaised=False
@@ -23,12 +24,15 @@ def granted(parent=None):
     if Dialog.exec_():
         if dl.lineEdit.text()=="bossman":
             localsettings.permissionsRaised=True
-            diff=datetime.timedelta(minutes=5)
-            localsettings.permissionExpire=datetime.datetime.now()+diff
+            resetExpireTime()
             return True
         else:
             QtGui.QMessageBox.information(parent,"whoops","wrong password")
-    
+
+def resetExpireTime():
+    diff=datetime.timedelta(minutes=5)
+    localsettings.permissionExpire=datetime.datetime.now()+diff
+            
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
