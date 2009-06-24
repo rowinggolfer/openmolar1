@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -517,7 +517,7 @@
                <item row="0" column="0" colspan="6">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>4</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -534,7 +534,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>540</width>
+                        <width>710</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -2117,7 +2117,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>569</width>
+                        <width>720</width>
                         <height>471</height>
                        </rect>
                       </property>
@@ -2515,7 +2515,7 @@
                       <property name="geometry">
                        <rect>
                         <x>0</x>
-                        <y>0</y>
+                        <y>-21</y>
                         <width>710</width>
                         <height>370</height>
                        </rect>
@@ -2691,15 +2691,14 @@
                          </item>
                          <item>
                           <widget class="QPushButton" name="medNotes_pushButton">
+                           <property name="minimumSize">
+                            <size>
+                             <width>120</width>
+                             <height>0</height>
+                            </size>
+                           </property>
                            <property name="text">
                             <string>Med Notes</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QPushButton" name="callXrays_pushButton">
-                           <property name="text">
-                            <string>Call-Xrays from Durr</string>
                            </property>
                           </widget>
                          </item>
@@ -2789,8 +2788,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>314</width>
-                        <height>105</height>
+                        <width>730</width>
+                        <height>353</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2966,7 +2965,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>96</width>
+                           <width>458</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -2999,7 +2998,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>213</width>
+                        <width>220</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -3326,7 +3325,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>249</width>
+                        <width>714</width>
                         <height>360</height>
                        </rect>
                       </property>
@@ -3943,7 +3942,7 @@ Note - this will not remove items which are currently there. </string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0" colspan="2">
+                   <item row="2" column="0" colspan="2">
                     <widget class="QScrollArea" name="appt1scrollArea">
                      <property name="widgetResizable">
                       <bool>true</bool>
@@ -3954,11 +3953,21 @@ Note - this will not remove items which are currently there. </string>
                         <x>0</x>
                         <y>0</y>
                         <width>162</width>
-                        <height>426</height>
+                        <height>405</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
                      </widget>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QLabel" name="book1memo_label">
+                     <property name="text">
+                      <string>TextLabel</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
                     </widget>
                    </item>
                   </layout>
@@ -4023,7 +4032,7 @@ Note - this will not remove items which are currently there. </string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0" colspan="2">
+                   <item row="2" column="0" colspan="2">
                     <widget class="QScrollArea" name="appt2scrollArea">
                      <property name="widgetResizable">
                       <bool>true</bool>
@@ -4034,10 +4043,20 @@ Note - this will not remove items which are currently there. </string>
                         <x>0</x>
                         <y>0</y>
                         <width>163</width>
-                        <height>426</height>
+                        <height>405</height>
                        </rect>
                       </property>
                      </widget>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QLabel" name="book2memo_label">
+                     <property name="text">
+                      <string>TextLabel</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
                     </widget>
                    </item>
                   </layout>
@@ -4102,7 +4121,7 @@ Note - this will not remove items which are currently there. </string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0" colspan="2">
+                   <item row="2" column="0" colspan="2">
                     <widget class="QScrollArea" name="appt3scrollArea">
                      <property name="widgetResizable">
                       <bool>true</bool>
@@ -4113,11 +4132,21 @@ Note - this will not remove items which are currently there. </string>
                         <x>0</x>
                         <y>0</y>
                         <width>162</width>
-                        <height>426</height>
+                        <height>405</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
                      </widget>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QLabel" name="book3memo_label">
+                     <property name="text">
+                      <string>TextLabel</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
                     </widget>
                    </item>
                   </layout>
@@ -4136,7 +4165,7 @@ Note - this will not remove items which are currently there. </string>
                    <property name="spacing">
                     <number>3</number>
                    </property>
-                   <item row="1" column="0" colspan="2">
+                   <item row="2" column="0" colspan="2">
                     <widget class="QScrollArea" name="appt4scrollArea">
                      <property name="widgetResizable">
                       <bool>true</bool>
@@ -4147,7 +4176,7 @@ Note - this will not remove items which are currently there. </string>
                         <x>0</x>
                         <y>0</y>
                         <width>162</width>
-                        <height>426</height>
+                        <height>405</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="_2"/>
@@ -4197,6 +4226,16 @@ Note - this will not remove items which are currently there. </string>
                      <property name="icon">
                       <iconset resource="../resources/resources.qrc">
                        <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QLabel" name="book4memo_label">
+                     <property name="text">
+                      <string>TextLabel</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
                      </property>
                     </widget>
                    </item>
@@ -5798,7 +5837,6 @@ Note - this will not remove items which are currently there. </string>
   <tabstop>planSummary_textBrowser</tabstop>
   <tabstop>exampushButton</tabstop>
   <tabstop>medNotes_pushButton</tabstop>
-  <tabstop>callXrays_pushButton</tabstop>
   <tabstop>perioCharts_scrollArea</tabstop>
   <tabstop>newPerioChartPushButton</tabstop>
   <tabstop>bpeDateComboBox</tabstop>

@@ -2275,13 +2275,14 @@ class appointmentClass():
         for book in self.ui.apptBookWidgets:
             book.clearAppts()
             book.setTime="None"
-
+    
         d=self.ui.appointmentCalendarWidget.selectedDate()
         self.getappointmentData(d)
-
         todaysDents=[]
+        todaysMemos=[]
         for dent in self.appointmentData[0]:
             todaysDents.append(dent[0])
+            todaysMemos.append(dent[3])
         if d==(QtCore.QDate.currentDate()):
             self.ui.goTodayPushButton.setEnabled(False)
         else:
@@ -2308,19 +2309,27 @@ class appointmentClass():
         for label in (self.ui.apptFrameLabel1,self.ui.apptFrameLabel2,
         self.ui.apptFrameLabel3, self.ui.apptFrameLabel4):
             label.setText("")
+        for label in (self.ui.book1memo_label,self.ui.book2memo_label,
+        self.ui.book2memo_label,self.ui.book4memo_label):
+            label.setText("")
+                
         if i>0 :
             self.ui.apptFrameLabel1.setText(
                                 localsettings.apptix_reverse[todaysDents[0]])
+            self.ui.book1memo_label.setText(todaysMemos[0])
             if i>1 :
                 self.ui.apptFrameLabel2.setText(
                                 localsettings.apptix_reverse[todaysDents[1]])
+                self.ui.book2memo_label.setText(todaysMemos[1])
             if i>2 :
                 self.ui.apptFrameLabel3.setText(
                                 localsettings.apptix_reverse[todaysDents[2]])
+                self.ui.book3memo_label.setText(todaysMemos[2])
             if i>3 :
                 self.ui.apptFrameLabel4.setText(
                                 localsettings.apptix_reverse[todaysDents[3]])
-
+                self.ui.book4memo_label.setText(todaysMemos[3])
+            
             apps=self.appointmentData[1]
             for app in apps:
                 dent=app[1]
@@ -2443,8 +2452,6 @@ class signals():
                         QtCore.SIGNAL("clicked()"),  self.raiseACharge)
         QtCore.QObject.connect(self.ui.medNotes_pushButton,
                         QtCore.SIGNAL("clicked()"),self.showMedNotes)
-        QtCore.QObject.connect(self.ui.callXrays_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.callXrays)
         QtCore.QObject.connect(self.ui.phraseBook_pushButton,
                         QtCore.SIGNAL("clicked()"), self.phraseBookDialog)
         QtCore.QObject.connect(self.ui.memos_pushButton,
@@ -5328,7 +5335,6 @@ printingClass,cashbooks,contractClass, forumClass):
         self.ui.phraseBook_pushButton,
         self.ui.exampushButton,
         self.ui.medNotes_pushButton,
-        self.ui.callXrays_pushButton,
         self.ui.charge_pushButton,
         self.ui.printGP17_pushButton,
         self.ui.newBPE_pushButton,
