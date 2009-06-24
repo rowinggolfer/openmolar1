@@ -126,15 +126,18 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
     
     def applyChanges(self,changes):
         d=self.date.toPyDate()
+        changed=False
         for change in changes:
+            changed=True
             appointments.updateAday(d,change)
-        
+        return changed
+    
     def getInput(self):
         self.loadData()
         self.showItems()
         if self.dialog.exec_():
             changes=self.checkForChanges()
-            self.applyChanges(changes)
+            return self.applyChanges(changes)
             
 if __name__ == "__main__":
     import sys

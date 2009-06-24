@@ -2392,7 +2392,8 @@ class appointmentClass():
             dl=alterAday.alterDay(Dialog)
             dl.setDate(d)
             
-            print dl.getInput()
+            if dl.getInput():
+                self.layout_apptOV()
     
     def appointmentTools(self):
         '''
