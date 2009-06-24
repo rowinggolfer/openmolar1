@@ -4786,7 +4786,8 @@ printingClass,cashbooks,contractClass, forumClass):
             self.ui.summaryChartWidget.update()
         self.medalert()
         self.getmemos()
-
+        if localsettings.station=="surgery":
+            self.callXrays()
     def getmemos(self):
         urgentMemos = memos.getMemos(self.pt.serialno)
         for umemo in urgentMemos:
@@ -5083,6 +5084,8 @@ printingClass,cashbooks,contractClass, forumClass):
             dl.setupUi(Dialog)
             if Dialog.exec_():
                 localsettings.surgeryno=dl.comboBox.currentIndex()+1
+                localsettings.updateLocalSettings(
+                "surgeryno",str(localsettings.surgeryno))
             else:
                 return
         calldurr.commit(self.pt.serialno,localsettings.surgeryno)

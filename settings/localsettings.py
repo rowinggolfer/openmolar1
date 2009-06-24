@@ -69,7 +69,6 @@ If not, see <a href="http://www.gnu.org/licenses">
 http://www.gnu.org/licenses</a>.</p>'''
 
 
-
 #-- this variable is used when using DATE_FORMAT from the database
 #-- my preference is the UK style dd/mm/YYYY
 sqlDateFormat=r"%d/%m/%Y"
@@ -90,10 +89,6 @@ activedents=[]
 activehygs=[]
 clinicianNo=0
 clinicianInits=""
-
-#-- surgery or reception machine?
-station="surgery"
-stationID=""
 
 earliestStart=datetime.time(8,0)
 latestFinish=datetime.time(20,0)
@@ -132,6 +127,8 @@ appointmentFontSize=8
 message=""
 dentDict={}
 
+#-- surgery or reception machine?
+station="surgery"
 #-- openmolar needs to know where it is when calling x-rays
 surgeryno=-1
 
@@ -288,7 +285,7 @@ def getLocalSettings():
     and "knows" it's surgery number etc...
     if one doesn't exist... knock one up.
     '''
-    global stationID
+    global surgeryno
     if not os.path.exists(localFileDirectory):
         os.mkdir(localFileDirectory)
 
@@ -296,10 +293,9 @@ def getLocalSettings():
     if os.path.exists(localSets):
         print "local user level settings file found...."
         dom=minidom.parse(localSets)
-        print "stationID....",
-        node=dom.getElementsByTagName("stationID")
+        node=dom.getElementsByTagName("surgeryno")
         if node and node[0].hasChildNodes():
-            station=node[0].firstChild.data
+            surgeryno=int(node[0].firstChild.data)
             print station
         else: 
             print "unknown"
@@ -343,7 +339,7 @@ def updateLocalSettings(setting,value):
             f.close()            
             return True
     except Exception,e:
-        print "error updating local settings file"
+        print "error updating local settings file",e
         return False
     
 def initiate(debug=False):
