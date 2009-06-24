@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>305</width>
-    <height>27</height>
+    <width>562</width>
+    <height>34</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,6 +51,12 @@
    </item>
    <item>
     <widget class="QTimeEdit" name="start_timeEdit">
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="maximumTime">
       <time>
        <hour>20</hour>
@@ -69,6 +75,12 @@
    </item>
    <item>
     <widget class="QTimeEdit" name="finish_timeEdit">
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="maximumTime">
       <time>
        <hour>20</hour>
@@ -82,6 +94,19 @@
        <minute>0</minute>
        <second>0</second>
       </time>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="minimumSize">
+      <size>
+       <width>160</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maxLength">
+      <number>30</number>
      </property>
     </widget>
    </item>

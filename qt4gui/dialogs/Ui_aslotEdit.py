@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/aslotEdit.ui'
 #
-# Created: Wed Jun 24 01:02:58 2009
+# Created: Wed Jun 24 09:45:25 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(364, 300)
+        Dialog.resize(568, 300)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.frame = QtGui.QFrame(Dialog)
@@ -22,24 +22,34 @@ class Ui_Dialog(object):
         self.horizontalLayout = QtGui.QHBoxLayout(self.frame)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtGui.QLabel(self.frame)
+        self.label.setMinimumSize(QtCore.QSize(80, 0))
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
         self.label_3 = QtGui.QLabel(self.frame)
+        self.label_3.setMinimumSize(QtCore.QSize(80, 0))
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout.addWidget(self.label_3)
         self.label_4 = QtGui.QLabel(self.frame)
+        self.label_4.setMinimumSize(QtCore.QSize(80, 0))
         self.label_4.setAlignment(QtCore.Qt.AlignCenter)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout.addWidget(self.label_4)
+        self.label_2 = QtGui.QLabel(self.frame)
+        self.label_2.setMinimumSize(QtCore.QSize(160, 0))
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout.addWidget(self.label_2)
         self.verticalLayout.addWidget(self.frame)
         self.scrollArea = QtGui.QScrollArea(Dialog)
         self.scrollArea.setMinimumSize(QtCore.QSize(346, 0))
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 342, 196))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 546, 194))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.scrollArea)
@@ -60,4 +70,5 @@ class Ui_Dialog(object):
         self.label.setText(QtGui.QApplication.translate("Dialog", "Clinician", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "Start", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "Finish", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Dialog", "Memo", None, QtGui.QApplication.UnicodeUTF8))
 

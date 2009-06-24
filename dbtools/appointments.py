@@ -63,16 +63,29 @@ class printableAppt():
         return "%s %s %s %s %s %s %s %s"%(self.start,self.end,self.name,
         self.serialno,self.treat,self.note,self.cset,self.length())
         
+def updateAday(adate,arg):
+    '''
+    takes an arg of type alterAday.adayData
+    '''
+    print "updating ",arg      
+    db = connect()
+    cursor = db.cursor()
+    result=omSQLresult()
+    query='update aday set start=%d,end=%d,flag=%s,memo="%s" where adate=%s and apptix=%d'%(
+    arg.sqlStart(),arg.sqlFinish(),arg.active,arg.memo.replace('"','\"'),
+    localsettings.pyDatetoSQL(adate),arg.apptix)
+    if localsettings.logqueries:
+        print query
+    result.number=cursor.execute(query)
+    if result:
+        db.commit()
+    return result
+        
 def alterDay(arg):
     '''
     takes a workingDay object tries to change the aday table
     '''
-    #-- sql code required is along the lines of...
-    #-- update aday set start=830,end=1600,flag=1
-    #-- where adate=20090620 and apptix=4;
-    #-- OR
-    #-- insert into aday (adate,apptix,start,end,flag,memo)
-    #-- values (20090620,4,830,1600,True,"day opened")
+    #-- this method is called from the apptOpenDay Dialog, which is deprecated!!
     db = connect()
     cursor = db.cursor()
     result=omSQLresult()
@@ -153,8 +166,12 @@ def getWorkingDents(adate,dents=()):
         mystr=mystr[0:mystr.rindex(" OR")]+")"
     else:
         mystr=""
-    fullquery='''SELECT apptix,start,end FROM aday
-    WHERE adate="%s" AND (flag=1 or flag=2) %s'''%(adate,mystr)
+
+    ##this query altered 24_06_2009 to include the memo. doesn't appear to
+    ## break anything -KUO
+        
+    fullquery='''SELECT apptix,start,end,memo FROM aday
+    WHERE adate="%s" AND (flag=1 or flag=2) %s'''%(adate,mystr)  
     if localsettings.logqueries:
         print fullquery
     cursor.execute(fullquery)

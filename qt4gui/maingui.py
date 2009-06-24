@@ -2388,18 +2388,10 @@ class appointmentClass():
         user wants to change appointment overview properties for date d
         '''
         if permissions.granted(self):
-            dentData=appointments.getWorkingDents(d.toString("yyyyMMdd"))
             Dialog=QtGui.QDialog(self)
             dl=alterAday.alterDay(Dialog)
             dl.setDate(d)
-            for clinician in localsettings.activedents+localsettings.activehygs:
-                startData=alterAday.aslotData(clinician)
-                for row in dentData:
-                    if row[0]==startData.apptix:
-                        startData.setStart(row[1])
-                        startData.setFinish(row[2])
-                        startData.active=True
-                dl.addClinicianStartData(startData)
+            
             print dl.getInput()
     
     def appointmentTools(self):

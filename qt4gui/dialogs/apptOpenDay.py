@@ -163,6 +163,11 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
         day.end=int(self.dayFinish_timeEdit.time().toString("hmm"))
         day.memo=str(self.memo_lineEdit.text())
         
+        
+        QtGui.QMessageBox.information(self.dialog,"sorry","this method is deprecated")
+        return
+#########################################################################################        
+        
         result=appointments.alterDay(day)
         if result:
             return True

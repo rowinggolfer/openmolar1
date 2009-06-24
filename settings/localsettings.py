@@ -36,6 +36,10 @@ else:
 #updated if correct password is given
 successful_login=False
 
+#-- these permissions are for certain admin duties.
+permissionsRaised=False
+permissionExpire=datetime.datetime.now()
+
 #-- self-explanatory?
 about='''<p>
 openMolar - open Source dental practice management software.<br />
