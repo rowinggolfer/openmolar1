@@ -7,21 +7,27 @@
 
 from openmolar.dbtools import patient_class
 
-def toHtml(p1,p2,verbose=False):
+def toHtml(p1,p2,tableCalled,verbose=False):
     '''this sub puts all the attributes found for patient 1 and patient 2 (normally a deep copy) into an html table (for comparison)'''
     retarg='<html><body><div align="center">'
     #attribs=p1.__dict__.keys()
     #attribs.sort()
-    attributesDict={
-    "1 Patient Table":patient_class.patientTableAtts,
-    "2 Treatment Items":patient_class.currtrtmtTableAtts,
-    "3 User Defined Data":patient_class.userdataTableAtts,
-    "4 Estimates":("estimates", ),
-    "5 Perio Data":("perioData",)
-    }
-
+    
+    attributesDict={}
     if verbose: #let's see exactly what the class is about:
         attributesDict["all attributes"]=p1.__dict__.keys()
+    else:
+        if tableCalled=="Patient": 
+            attributesDict["Patient Table"]=patient_class.patientTableAtts
+        elif tableCalled=="Treatment": 
+            attributesDict["Treatment Items"]=patient_class.currtrtmtTableAtts
+        elif tableCalled=="User-defined": 
+            attributesDict["User Defined Data"]=patient_class.userdataTableAtts
+        elif tableCalled=="Estimates": 
+            attributesDict["Estimates"]=("estimates", )
+        elif tableCalled=="Perio": 
+            attributesDict["Perio Data"]=("perioData",)
+        
     keys=attributesDict.keys()
     keys.sort()
     for key in keys:
@@ -29,7 +35,6 @@ def toHtml(p1,p2,verbose=False):
         retarg+="<h2>%s</h2>"%key
         retarg+='<table width="100%" border="1">'
         retarg+='<tr><th>Attribute</th><th>orig</th><th>changed</th>'
-
         for att in attribs:
             retarg+= "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"%(
                                         att,p1.__dict__[att],p2.__dict__[att])

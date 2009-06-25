@@ -35,7 +35,7 @@ from openmolar.qt4gui.dialogs import apptTools
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,\
 writeNewPatient,patient_class,search,appointments,accounts,calldurr,feesTable,\
-docsprinted,writeNewCourse, forum, memos
+docsprinted,writeNewCourse, forum, memos,NHSclaims
 
 #--modules which act upon the pt class type
 from openmolar.ptModules import patientDetails,notes,plan,referral,\
@@ -1295,8 +1295,36 @@ class contractClass():
     def editOtherContract(self):
         self.advise("edit other Practitioner",1)
 
+class extrasClass():
+    def addExtrasMenu(self):
+        self.extrasNhsMenu=QtGui.QMenu()
+        self.extrasNhsMenu.addAction("past claims")
+        self.ui.NHS_toolButton.setMenu(self.extrasNhsMenu)
 
+        QtCore.QObject.connect(self.extrasNhsMenu,
+        QtCore.SIGNAL("triggered (QAction *)"),self.showClaims)
+    
+        self.extrasAttsMenu=QtGui.QMenu()
+        self.extrasAttsMenu.addAction("Patient table data")
+        self.extrasAttsMenu.addAction("Treatment table data")
+        self.extrasAttsMenu.addAction("User-defined table data")
+        self.extrasAttsMenu.addAction("Estimates table data")
+        self.extrasAttsMenu.addAction("Perio table data")
+        
+        self.ui.debug_toolButton.setMenu(self.extrasAttsMenu)
 
+        QtCore.QObject.connect(self.extrasAttsMenu,
+        QtCore.SIGNAL("triggered (QAction *)"),self.showPtAttributes)
+    
+    def showClaims(self,arg):
+        html=NHSclaims.details(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)
+
+    def showPtAttributes(self,arg):
+        #--load a table of self.pt.attributes
+        type=str(arg.text()).split(" ")[0]
+        html=debug_html.toHtml(self.pt_dbstate,self.pt,type)
+        self.ui.debugBrowser.setText(html)
 
 class appointmentClass():
 
@@ -3025,6 +3053,9 @@ class customWidgets():
         self.ui.estWidget=estimateWidget.estWidget()
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
+
+        #--extras
+        self.addExtrasMenu()
         
 class chartsClass():
 
@@ -4127,10 +4158,8 @@ class pageHandlingClass():
         #--debug tab
         ##TODO - this is a development tab- remove eventually
         if ci==9:
-            #--load a table of self.pt.attributes
-            self.ui.debugBrowser.setText(
-                                    debug_html.toHtml(self.pt_dbstate,self.pt))
-
+            self.ui.debugBrowser.setText("")
+                                    
     def home(self):
         '''
         User has clicked the homw push_button -
@@ -4322,7 +4351,7 @@ class pageHandlingClass():
 
 class openmolarGui(QtGui.QMainWindow, customWidgets,chartsClass,
 pageHandlingClass, newPatientClass,appointmentClass,signals,feeClass,
-printingClass,cashbooks,contractClass, forumClass):
+printingClass,cashbooks,contractClass, extrasClass, forumClass):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui=Ui_main.Ui_MainWindow()

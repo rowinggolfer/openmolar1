@@ -517,7 +517,7 @@
                <item row="0" column="0" colspan="6">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>4</number>
+                  <number>9</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -1508,7 +1508,7 @@
                    <item row="1" column="1" colspan="5">
                     <widget class="QTabWidget" name="contract_tabWidget">
                      <property name="currentIndex">
-                      <number>1</number>
+                      <number>2</number>
                      </property>
                      <widget class="QWidget" name="tab_18">
                       <attribute name="title">
@@ -2515,7 +2515,7 @@
                       <property name="geometry">
                        <rect>
                         <x>0</x>
-                        <y>-21</y>
+                        <y>0</y>
                         <width>710</width>
                         <height>370</height>
                        </rect>
@@ -3528,10 +3528,49 @@ Note - this will not remove items which are currently there. </string>
                  </widget>
                  <widget class="QWidget" name="tab_9">
                   <attribute name="title">
-                   <string>Debug</string>
+                   <string>Extras</string>
                   </attribute>
-                  <layout class="QVBoxLayout">
-                   <item>
+                  <layout class="QGridLayout" name="gridLayout_23">
+                   <item row="0" column="0">
+                    <widget class="QToolButton" name="debug_toolButton">
+                     <property name="text">
+                      <string>Patient Attributes</string>
+                     </property>
+                     <property name="popupMode">
+                      <enum>QToolButton::InstantPopup</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QToolButton" name="NHS_toolButton">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>NHS_options</string>
+                     </property>
+                     <property name="popupMode">
+                      <enum>QToolButton::InstantPopup</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <spacer name="horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>479</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item row="1" column="0" colspan="3">
                     <widget class="QTextBrowser" name="debugBrowser"/>
                    </item>
                   </layout>

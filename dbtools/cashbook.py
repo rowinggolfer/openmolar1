@@ -14,13 +14,17 @@ cashbookCodesDict={}
 
 db=connect()
 cursor = db.cursor()
-query="select code,descr from cbcodes where flag>1"
-cursor.execute(query)
-rows=cursor.fetchall()
-cursor.close()
-for row in rows:
-    cashbookCodesDict[int(row[0])]=row[1]
-print cashbookCodesDict
+try:
+    query="select code,descr from cbcodes where flag>1"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    for row in rows:
+        cashbookCodesDict[int(row[0])]=row[1]
+    print "cashbook codes loaded sucessfully"
+except:
+    print "error loading cashbook codes"
+finally:
+    cursor.close()
 
 def paymenttaken(sno,name,dent,csetyp,cash,cheque,debit,credit,sundries,hdp,other):
     if sno==0: #won't happ

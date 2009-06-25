@@ -26,10 +26,10 @@ class omSQLresult():
 def connect():
     global currentConnection, myHost,myUser,myPassword,myDb,myPort
     if currentConnection==None:
-        print "need to parse the settings file"
+        print "parsing the global settings file"
         dom=minidom.parse(cflocation)
         sysPassword=dom.getElementsByTagName("system_password")[0].firstChild.data
-        print sysPassword
+        #print sysPassword
         xmlnode=dom.getElementsByTagName("server")[0]
         myHost=xmlnode.getElementsByTagName("location")[0].firstChild.data
         myPort=int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
