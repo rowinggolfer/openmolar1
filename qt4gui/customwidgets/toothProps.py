@@ -97,7 +97,13 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
             QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
             
             if result == QtGui.QMessageBox.Yes:
-                self.setComments("%s:%s"%(self.existingComments,arg))
+                cstring=self.existingComments
+                if cstring!="":
+                    cstring+=":"
+                cstring+=arg
+                #cstring="%s:%s"%(self.existingComments,arg)
+                self.setComments(cstring)
+                self.finishedEdit()
     
     def clear(self):
         t=  str(self.lineEdit.text().toAscii())
@@ -234,7 +240,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         self.labMaterial("PI")
 
     def finishedEdit(self):
-        newprops=str(self.lineEdit.text().toAscii())+self.existingComments.replace(" ","_")
+        newprops=str(self.lineEdit.text().toAscii())+self.existingComments.strip(" ").replace(" ","_")
         if newprops!=self.originalProps:
             newprops=newprops.replace(":"," ")
             if newprops!="" and newprops[-1]!=" ":

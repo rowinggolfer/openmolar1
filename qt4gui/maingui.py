@@ -1312,7 +1312,6 @@ class extrasClass():
         self.extrasAttsMenu.addAction("Perio table data")
         self.extrasAttsMenu.addAction("Verbose (displays everything in memeory)")
         
-        
         self.ui.debug_toolButton.setMenu(self.extrasAttsMenu)
 
         QtCore.QObject.connect(self.extrasAttsMenu,
