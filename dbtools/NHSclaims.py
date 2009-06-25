@@ -19,28 +19,37 @@ def details(sno):
     
     db = connect()
     cursor = db.cursor()
-    cursor.execute('select %s from claims where serialno=%d'%(headers,sno))
+    cursor.execute('select %s from claims where serialno=%d order by proddate DESC'%(headers,sno))
     rows = cursor.fetchall()
     cursor.close()
     
-    retarg="<h3>Claims</h3>"
-    retarg+='<table width="100%" border="1">'
-    retarg+='<tr>'
-    for header in headers.split(","):
-        retarg+="<th>%s</th>"%header
+    claimNo=len(rows)
+    retarg="<h3>Claims - %d found</h3>"%claimNo
+    if claimNo==0:
+        return retarg
+    retarg+='<table border="1">'
+    
+    retarg+='<tr><td>-</td>'
+    for i2 in range(len(rows)):
+        bgcolor=""
+        if i2%2==0:
+            bgcolor=' bgcolor="#eeffff"'
+        retarg+='<td%s>Claim %s</td>'%(bgcolor,i2+1)
     retarg+='</tr>'
-    odd=True
-    for row in rows:
-        if odd:
-            retarg+='<tr bgcolor="#eeeeee">'
-            odd=False
-        else:
-            retarg+='<tr>'
-            odd=True
+    
+    headerArray= headers.split(",")
+    for i in range(len(headerArray)):
+        retarg+="<tr>"
+        retarg+="<th>%s</th>"%headerArray[i]
+        for i2 in range(len(rows)):
+            bgcolor=""
+            if i2%2==0:
+                bgcolor=' bgcolor="#eeffff"'
+            val=rows[i2][i]
+            if not val:
+                val="-"
+            retarg+='<td%s>%s</td>'%(bgcolor,val)
             
-        #-- a row is  (date,sno,dnt,patient,code,amount)
-        for val in row:
-            retarg+='<td>%s</td>'%val
         retarg+='</tr>\n'
 
     retarg+='</table>'

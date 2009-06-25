@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Thu Jun 25 14:34:02 2009
+# Created: Thu Jun 25 16:02:04 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1443,20 +1443,30 @@ class Ui_MainWindow(object):
         self.tab_9.setObjectName("tab_9")
         self.gridLayout_23 = QtGui.QGridLayout(self.tab_9)
         self.gridLayout_23.setObjectName("gridLayout_23")
-        self.debug_toolButton = QtGui.QToolButton(self.tab_9)
-        self.debug_toolButton.setPopupMode(QtGui.QToolButton.InstantPopup)
-        self.debug_toolButton.setObjectName("debug_toolButton")
-        self.gridLayout_23.addWidget(self.debug_toolButton, 0, 0, 1, 1)
         self.NHS_toolButton = QtGui.QToolButton(self.tab_9)
         self.NHS_toolButton.setMinimumSize(QtCore.QSize(0, 0))
         self.NHS_toolButton.setPopupMode(QtGui.QToolButton.InstantPopup)
         self.NHS_toolButton.setObjectName("NHS_toolButton")
-        self.gridLayout_23.addWidget(self.NHS_toolButton, 0, 1, 1, 1)
-        spacerItem17 = QtGui.QSpacerItem(479, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_23.addItem(spacerItem17, 0, 2, 1, 1)
+        self.gridLayout_23.addWidget(self.NHS_toolButton, 0, 5, 1, 1)
+        spacerItem17 = QtGui.QSpacerItem(358, 21, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_23.addItem(spacerItem17, 0, 6, 1, 1)
         self.debugBrowser = QtGui.QTextBrowser(self.tab_9)
         self.debugBrowser.setObjectName("debugBrowser")
-        self.gridLayout_23.addWidget(self.debugBrowser, 1, 0, 1, 3)
+        self.gridLayout_23.addWidget(self.debugBrowser, 1, 0, 1, 7)
+        self.debug_toolButton = QtGui.QToolButton(self.tab_9)
+        self.debug_toolButton.setCheckable(False)
+        self.debug_toolButton.setChecked(False)
+        self.debug_toolButton.setPopupMode(QtGui.QToolButton.InstantPopup)
+        self.debug_toolButton.setObjectName("debug_toolButton")
+        self.gridLayout_23.addWidget(self.debug_toolButton, 0, 1, 1, 1)
+        self.ptAtts_checkBox = QtGui.QCheckBox(self.tab_9)
+        self.ptAtts_checkBox.setObjectName("ptAtts_checkBox")
+        self.gridLayout_23.addWidget(self.ptAtts_checkBox, 0, 3, 1, 1)
+        self.line_3 = QtGui.QFrame(self.tab_9)
+        self.line_3.setFrameShape(QtGui.QFrame.VLine)
+        self.line_3.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_3.setObjectName("line_3")
+        self.gridLayout_23.addWidget(self.line_3, 0, 4, 1, 1)
         self.tabWidget.addTab(self.tab_9, "")
         self.gridLayout_18.addWidget(self.tabWidget, 0, 0, 1, 6)
         self.gridlayout.addWidget(self.frame, 0, 1, 1, 1)
@@ -2695,8 +2705,9 @@ class Ui_MainWindow(object):
         self.newPerioChartPushButton.setText(QtGui.QApplication.translate("MainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_12.setTitle(QtGui.QApplication.translate("MainWindow", "BPE", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_8), QtGui.QApplication.translate("MainWindow", "Perio Charts", None, QtGui.QApplication.UnicodeUTF8))
-        self.debug_toolButton.setText(QtGui.QApplication.translate("MainWindow", "Patient Attributes", None, QtGui.QApplication.UnicodeUTF8))
         self.NHS_toolButton.setText(QtGui.QApplication.translate("MainWindow", "NHS_options", None, QtGui.QApplication.UnicodeUTF8))
+        self.debug_toolButton.setText(QtGui.QApplication.translate("MainWindow", "Patient Attributes", None, QtGui.QApplication.UnicodeUTF8))
+        self.ptAtts_checkBox.setText(QtGui.QApplication.translate("MainWindow", "changesOnly", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_9), QtGui.QApplication.translate("MainWindow", "Extras", None, QtGui.QApplication.UnicodeUTF8))
         self.main_tabWidget.setTabText(self.main_tabWidget.indexOf(self.tab_10), QtGui.QApplication.translate("MainWindow", "Patient Database", None, QtGui.QApplication.UnicodeUTF8))
         self.goTodayPushButton.setText(QtGui.QApplication.translate("MainWindow", "Go To Today", None, QtGui.QApplication.UnicodeUTF8))

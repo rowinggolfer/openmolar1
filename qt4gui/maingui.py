@@ -1307,23 +1307,38 @@ class extrasClass():
         self.extrasAttsMenu=QtGui.QMenu()
         self.extrasAttsMenu.addAction("Patient table data")
         self.extrasAttsMenu.addAction("Treatment table data")
-        self.extrasAttsMenu.addAction("User-defined table data")
+        self.extrasAttsMenu.addAction("User-Defined table data")
         self.extrasAttsMenu.addAction("Estimates table data")
         self.extrasAttsMenu.addAction("Perio table data")
+        self.extrasAttsMenu.addAction("Verbose (displays everything in memeory)")
+        
         
         self.ui.debug_toolButton.setMenu(self.extrasAttsMenu)
 
         QtCore.QObject.connect(self.extrasAttsMenu,
         QtCore.SIGNAL("triggered (QAction *)"),self.showPtAttributes)
+        
+        QtCore.QObject.connect(self.ui.ptAtts_checkBox,
+        QtCore.SIGNAL("stateChanged (int)"),self.updateAttributes)
     
     def showClaims(self,arg):
         html=NHSclaims.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-
-    def showPtAttributes(self,arg):
+    def updateAttributes(self,arg=None):
+        '''
+        refresh the table if the checkbox is toggled
+        '''
+        if debug_html.existing!="":
+            self.showPtAttributes()
+    def showPtAttributes(self,arg=None):
         #--load a table of self.pt.attributes
-        type=str(arg.text()).split(" ")[0]
-        html=debug_html.toHtml(self.pt_dbstate,self.pt,type)
+        if arg!=None:
+            type=str(arg.text()).split(" ")[0]
+        else:
+            type=debug_html.existing.split(" ")[0]
+        
+        changesOnly=self.ui.ptAtts_checkBox.isChecked()
+        html=debug_html.toHtml(self.pt_dbstate,self.pt,type,changesOnly)
         self.ui.debugBrowser.setText(html)
 
 class appointmentClass():
