@@ -15,7 +15,7 @@ class sdcDialog(Ui_saveDiscardCancel.Ui_Dialog):
         self.changes=changelist
         self.loadList()
         self.signals()
-        self.dialog.setFixedSize(347,168)
+        self.dialog.setFixedSize(408,168)
         self.label.setText("You have unsaved changes to the record of<br />%s"%detail)
         self.result=""
     def loadList(self):
@@ -27,10 +27,10 @@ class sdcDialog(Ui_saveDiscardCancel.Ui_Dialog):
         self.discard_pushButton.connect(self.discard_pushButton,QtCore.SIGNAL("clicked()"),self.discardButtonPushed)
     def showDetails(self):
         if self.dialog.height()==168:
-            self.dialog.setFixedSize(347,380)
+            self.dialog.setFixedSize(408,380)
             self.pushButton.setText("Hide")
         else:
-            self.dialog.setFixedSize(347,168)
+            self.dialog.setFixedSize(408,168)
             self.pushButton.setText("What's Changed?")
     def save(self):
         self.result="save"

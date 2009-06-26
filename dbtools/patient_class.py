@@ -12,6 +12,13 @@ from openmolar.connect import connect
 from openmolar.ptModules import perio,dec_perm,estimates
 from openmolar.settings import localsettings
 
+def formatDate(d):
+    ''' takes a date, returns a string'''
+    try:
+        retarg= "%02d/%02d/%d"%(d.day,d.month,d.year)
+    except:
+        retarg="no date"
+    return retarg
 
 dateFields=("dob","pd0","pd1","pd2","pd3","pd4","pd5","pd6","pd7","pd8",
 "pd9","pd10","pd11","pd12","pd13","pd14","cnfd","recd","billdate","enrolled",
@@ -19,7 +26,6 @@ dateFields=("dob","pd0","pd1","pd2","pd3","pd4","pd5","pd6","pd7","pd8",
 "lastclaim","expiry","transfer","chartdate","accd","cmpd","examd","bpedate")
 
 nullDate=""
-#nullDate=datetime.date(1900, 1, 1)
 
 patientTableAtts=(
 'pf0','pf1','pf2','pf3','pf4','pf5','pf6','pf7','pf8','pf9','pf10','pf11',
@@ -43,6 +49,7 @@ patientTableAtts=(
 'enrolled','archived',
 'initaccept','lastreaccept','lastclaim','expiry','cstatus','transfer',
 'pstatus','courseno2')
+
 patientTableVals=(
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,
@@ -84,6 +91,7 @@ perioTableAtts=('chartdate','bpe','chartdata','flag')
 mnhistTableAtts=('chgdate','ix','note')
 
 ##TODO undergoing changes
+##I no longer use this table
 prvfeesTableAtts=()#'courseno','dent','esta','acta','estb','actb','data')
 
 notesTableAtts=('lineno','line')
@@ -97,8 +105,59 @@ decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA',
 '***','***','***','lrE','lrD','lrC','lrB','lrA',
 'llA','llB','llC','llD','llE','***','***','***']
 
-userdataTableAtts=('data',)
+#TODO this table no longer used, data moved elsewhere
+#userdataTableAtts=('data',)
 
+planDBAtts=("serialno", "plantype","band", "grosschg","discount","netchg", 
+"catcode", "planjoin","regno")
+
+
+#################### sub classes ##############################################
+class planData():
+    '''
+    a custom class to hold data about the patient's maintenance plan
+    '''
+    def __init__(self,sno):
+        self.serialno = sno
+        self.plantype = None
+        self.band = None
+        self.grosschg = 0
+        self.discount = 0
+        self.netchg = 0
+        self.catcode = None
+        self.planjoin = None
+        self.regno = None
+        #-- a variable to indicate if getFromDbhas been run 
+        self.retrieved=False 
+    
+    def __repr__(self):
+        return "%d,%s,%s,%s,%s,%s,%s,%s,%s"%(
+        self.serialno, self.plantype, self.band, self.grosschg, self.discount,
+        self.netchg, self.catcode, self.planjoin,self.regno)
+        
+    def getFromDB(self):
+        try:
+            db=connect()
+            cursor=db.cursor()
+            
+            query='SELECT %s,%s,%s,%s,%s,%s,%s,%s from plandata where serialno=%s'%(
+            planDBAtts[1:]+(self.serialno,))
+            if localsettings.logqueries:
+                print query
+            cursor.execute(query)
+            row=cursor.fetchone()
+            cursor.close()
+            i=1
+            if row:
+                for val in row:
+                    if val:
+                        att=planDBAtts[i]
+                        self.__dict__[att]=val
+                    i+=1
+            self.retrieved=True
+        except Exception,e:
+            print "error loading from plandata",e    
+    
 class patient():
     def __init__(self,sno):
         '''
@@ -122,7 +181,7 @@ class patient():
         self.estimates=[]
 
         ##from userdata
-        self.data=()
+        self.plandata=planData(self.serialno)
 
         ##from userdata
 
@@ -140,13 +199,10 @@ class patient():
         self.underTreatment=False
         self.estblob=""
         
-
         if self.serialno!=0:
             #load stuff from the database
             db=connect()
             cursor = db.cursor()
-            ############################experiment
-            #table - patients
 
             fields=patientTableAtts
             query=""
@@ -201,18 +257,17 @@ class patient():
                 if len(allerg)>0 and not "med ok" in allerg.lower():
                     self.MEDALERT=True
 
-            cursor.execute('SELECT data from userdata where serialno=%d'\
-            %self.serialno);
-            self.data=cursor.fetchall()
-
             cursor.execute('''select DATE_FORMAT(date,"%s"), trtid, chart from
             daybook where serialno = %d'''%(
             localsettings.sqlDateFormat,self.serialno))
             self.dayBookHistory=cursor.fetchall()
-
+            
             cursor.close()
             #db.close()
-
+            
+            #-- load from plandata
+            self.plandata.getFromDB()
+            
             self.updateChartgrid()
             self.updateFees()
             #self.setCurrentEstimate()
@@ -261,6 +316,7 @@ class patient():
             cursor.close()
             #db.close()
 
+    
     def blankCurrtrt(self):
         for att in currtrtmtTableAtts:
             if att =='courseno':
@@ -368,6 +424,7 @@ class patient():
     def updateFees(self):
         self.fees=(self.money0 + self.money1 + self.money9 + self.money10 +
         self.money11 - self.money2 - self.money3 - self.money8)
+
     def resetAllMonies(self):
         '''
         zero's everything except money11 (bad debt)
@@ -390,7 +447,6 @@ class patient():
                 print "MATCH!"
                 self.estimates.remove(est)
             
-
     def addToEstimate(self,number,item,descr,fee,ptfee,dent,csetype,
     type="", completed=False, feescale="A",carriedover=False):
         print "adding to estimate ",number,type,item,fee, ptfee
@@ -442,22 +498,13 @@ class patient():
         
         print self.HIDDENNOTES
 
-
     def clearHiddenNotes(self):
         self.HIDDENNOTES=[]
+
     def updateBilling(self,tone):
         self.billdate=localsettings.ukToday()
         self.billct+=1
         self.billtype=tone
-
-def formatDate(d):
-    ''' takes a date, returns a string'''
-    try:
-        retarg= "%02d/%02d/%d"%(d.day,d.month,d.year)
-    except:
-        retarg="no date"
-    return retarg
-
 
 if __name__ =="__main__":
     '''testing stuff'''

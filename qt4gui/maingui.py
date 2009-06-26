@@ -37,9 +37,9 @@ from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,\
 writeNewPatient,patient_class,search,appointments,accounts,calldurr,feesTable,\
 docsprinted,writeNewCourse, forum, memos,NHSclaims
 
-#--modules which act upon the pt class type
+#--modules which act upon the pt class type (and subclasses)
 from openmolar.ptModules import patientDetails,notes,plan,referral,\
-standardletter,debug_html,estimates
+standardletter,debug_html,estimates,planDetails,nhsDetails
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint,notesPrint,chartPrint,\
@@ -1233,9 +1233,13 @@ class contractClass():
         if i==0:
             self.advise("Private contract tab selected")
         if i==1:
-            self.advise("HDP contract tab selected")
+            self.ui.contractHDP_label.setText(
+            planDetails.toHtml(self.pt.plandata))
+
         if i==2:
-            self.advise("NHS contract tab selected")
+            self.ui.contractNHS_label.setText(
+            nhsDetails.toHtml(self.pt))
+            
         if i==3:
             self.advise("Other Dentist tab selected")
 
@@ -1320,7 +1324,11 @@ class extrasClass():
         QtCore.QObject.connect(self.ui.ptAtts_checkBox,
         QtCore.SIGNAL("stateChanged (int)"),self.updateAttributes)
     
-    def showClaims(self,arg):
+    def nhsClaimsShortcut(self):
+        self.ui.tabWidget.setCurrentIndex(9)
+        self.showClaims()
+    
+    def showClaims(self,arg=None):
         html=NHSclaims.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
     def updateAttributes(self,arg=None):
@@ -2686,6 +2694,9 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.editNHScontract)
         QtCore.QObject.connect(self.ui.editNHS_pushButton,
                         QtCore.SIGNAL("clicked()"),self.editPrivateContract)
+        QtCore.QObject.connect(self.ui.nhsclaims_pushButton,
+                        QtCore.SIGNAL("clicked()"),self.nhsClaimsShortcut)        
+        
         QtCore.QObject.connect(self.ui.editHDP_pushButton,
                         QtCore.SIGNAL("clicked()"),self.editHDPcontract)
         QtCore.QObject.connect(self.ui.editRegDent_pushButton,
@@ -2844,9 +2855,6 @@ class signals():
 
         self.connectAptOVdentcbs()
         self.connectAptOVhygcbs()
-        QtCore.QObject.connect(self.ui.memoEdit,
-                               QtCore.SIGNAL("textChanged()"), self.updateMemo)
-        #--memos - we have more than one... and need to keep them synchronised
 
         for i in range(5):
             self.connect(self.ui.apptoverviewControls[i],
@@ -4145,6 +4153,7 @@ class pageHandlingClass():
         if ci==1:
             self.updateStatus()
             self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
+            self.handle_ContractTab(self.ui.contract_tabWidget.currentIndex())
             
         if ci==2:
             self.docsPrinted()
@@ -4201,7 +4210,6 @@ class pageHandlingClass():
             self.ui.underTreatment_label.hide()
             self.ui.underTreatment_label_2.hide()
             self.ui.dobEdit.setDate(QtCore.QDate(1900,1,1))
-            self.ui.adminMemoEdit.setText("")
             self.ui.detailsBrowser.setText("")
             self.ui.notesBrowser.setText("")
             self.ui.notesSummary_textBrowser.setText("")
@@ -4297,10 +4305,6 @@ class pageHandlingClass():
         self.ui.comp_treeWidget.resizeColumnToContents(0)
         if itemToCompress:
             itemToCompress.setExpanded(False)
-        
-    def updateMemo(self):
-        '''this is called when the text in the memo on the admin page changes'''
-        self.ui.adminMemoEdit.setText(self.ui.memoEdit.toPlainText())
 
     def load_editpage(self):
         self.ui.titleEdit.setText(self.pt.title)
@@ -4800,7 +4804,6 @@ printingClass,cashbooks,contractClass, extrasClass, forumClass):
         self.load_dentComboBoxes()
         self.updateDetails()
         self.editPageVisited=False
-        self.ui.adminMemoEdit.setText(self.pt.memo)
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         note=notes.notes(self.pt.notestuple)
         #--notes not verbose
@@ -5269,7 +5272,6 @@ printingClass,cashbooks,contractClass, extrasClass, forumClass):
         '''
         important function, checks for changes since the patient was loaded
         '''
-        self.pt.memo=str(self.ui.adminMemoEdit.toPlainText().toAscii())
         fieldsToExclude=("notestuple","fees")#, "estimates")
         changes=[]
         if self.pt.serialno==self.pt_dbstate.serialno:
@@ -5383,7 +5385,6 @@ printingClass,cashbooks,contractClass, extrasClass, forumClass):
         self.ui.newBPE_pushButton,
         self.ui.hygWizard_pushButton,
         self.ui.notesEnter_textEdit,
-        self.ui.adminMemoEdit,
         self.ui.memos_pushButton,
         self.ui.printAppt_pushButton):
 

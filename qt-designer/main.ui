@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>556</height>
+    <height>551</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -517,7 +517,7 @@
                <item row="0" column="0" colspan="6">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>9</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -534,7 +534,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>710</width>
+                        <width>602</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -1640,7 +1640,7 @@
                        <string>NHS</string>
                       </attribute>
                       <layout class="QGridLayout" name="gridLayout_24">
-                       <item row="0" column="0" rowspan="2">
+                       <item row="0" column="0" rowspan="3">
                         <widget class="QLabel" name="contractNHS_label">
                          <property name="text">
                           <string>This label is for displaying NHS contractual stuff</string>
@@ -1657,8 +1657,8 @@
                         <widget class="QLabel" name="label_8">
                          <property name="maximumSize">
                           <size>
-                           <width>111</width>
-                           <height>129</height>
+                           <width>16777215</width>
+                           <height>16777215</height>
                           </size>
                          </property>
                          <property name="text">
@@ -1672,7 +1672,7 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="1" column="1">
+                       <item row="2" column="1">
                         <spacer name="verticalSpacer_4">
                          <property name="orientation">
                           <enum>Qt::Vertical</enum>
@@ -1685,7 +1685,7 @@
                          </property>
                         </spacer>
                        </item>
-                       <item row="2" column="1">
+                       <item row="3" column="1">
                         <widget class="QPushButton" name="editNHS_pushButton">
                          <property name="maximumSize">
                           <size>
@@ -1695,6 +1695,13 @@
                          </property>
                          <property name="text">
                           <string>Edit</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="1">
+                        <widget class="QPushButton" name="nhsclaims_pushButton">
+                         <property name="text">
+                          <string>View Claims History</string>
                          </property>
                         </widget>
                        </item>
@@ -2118,29 +2125,10 @@
                         <x>0</x>
                         <y>0</y>
                         <width>720</width>
-                        <height>471</height>
+                        <height>497</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_28">
-                       <item row="0" column="0">
-                        <widget class="QTextEdit" name="adminMemoEdit">
-                         <property name="minimumSize">
-                          <size>
-                           <width>209</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>230</width>
-                           <height>61</height>
-                          </size>
-                         </property>
-                         <property name="acceptRichText">
-                          <bool>false</bool>
-                         </property>
-                        </widget>
-                       </item>
                        <item row="0" column="1">
                         <widget class="QLabel" name="underTreatment_label">
                          <property name="font">
@@ -2172,22 +2160,6 @@
                          </property>
                         </spacer>
                        </item>
-                       <item row="0" column="3">
-                        <widget class="QGroupBox" name="NHSadmin_groupBox">
-                         <property name="title">
-                          <string>NHS</string>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_18">
-                          <item>
-                           <widget class="QPushButton" name="printGP17_pushButton">
-                            <property name="text">
-                             <string>Print A GP17</string>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
                        <item row="1" column="0" colspan="4">
                         <widget class="QGroupBox" name="adminAccount_groupBox">
                          <property name="sizePolicy">
@@ -2212,7 +2184,7 @@
                           <string>Account</string>
                          </property>
                          <layout class="QGridLayout" name="gridLayout_3">
-                          <item row="0" column="0" rowspan="4">
+                          <item row="0" column="0" rowspan="5">
                            <widget class="QTextBrowser" name="moneytextBrowser">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -2247,7 +2219,7 @@
                             </property>
                            </spacer>
                           </item>
-                          <item row="1" column="1">
+                          <item row="2" column="1">
                            <widget class="QPushButton" name="printEst_pushButton">
                             <property name="maximumSize">
                              <size>
@@ -2264,7 +2236,7 @@
                             </property>
                            </widget>
                           </item>
-                          <item row="2" column="1">
+                          <item row="3" column="1">
                            <widget class="QPushButton" name="printAccount_pushButton">
                             <property name="maximumSize">
                              <size>
@@ -2281,7 +2253,7 @@
                             </property>
                            </widget>
                           </item>
-                          <item row="3" column="1">
+                          <item row="4" column="1">
                            <widget class="QPushButton" name="takePayment_pushButton">
                             <property name="maximumSize">
                              <size>
@@ -2296,6 +2268,22 @@
                              <iconset resource="../resources/resources.qrc">
                               <normaloff>:/vcard.png</normaloff>:/vcard.png</iconset>
                             </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="1">
+                           <widget class="QGroupBox" name="NHSadmin_groupBox">
+                            <property name="title">
+                             <string>NHS</string>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_18">
+                             <item>
+                              <widget class="QPushButton" name="printGP17_pushButton">
+                               <property name="text">
+                                <string>Print A GP17</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
                            </widget>
                           </item>
                          </layout>
@@ -2516,7 +2504,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>710</width>
+                        <width>607</width>
                         <height>370</height>
                        </rect>
                       </property>
@@ -2788,8 +2776,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
-                        <height>353</height>
+                        <width>622</width>
+                        <height>302</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2965,7 +2953,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>458</width>
+                           <width>350</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -3325,7 +3313,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>714</width>
+                        <width>606</width>
                         <height>360</height>
                        </rect>
                       </property>
@@ -3838,7 +3826,7 @@ Note - this will not remove items which are currently there. </string>
                     <x>0</x>
                     <y>0</y>
                     <width>191</width>
-                    <height>57</height>
+                    <height>42</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -4011,8 +3999,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>162</width>
-                        <height>405</height>
+                        <width>79</width>
+                        <height>224</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4101,8 +4089,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>163</width>
-                        <height>405</height>
+                        <width>78</width>
+                        <height>224</height>
                        </rect>
                       </property>
                      </widget>
@@ -4190,8 +4178,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>162</width>
-                        <height>405</height>
+                        <width>79</width>
+                        <height>224</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4234,8 +4222,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>162</width>
-                        <height>405</height>
+                        <width>78</width>
+                        <height>224</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="_2"/>
@@ -4526,7 +4514,7 @@ Note - this will not remove items which are currently there. </string>
                     <x>0</x>
                     <y>0</y>
                     <width>191</width>
-                    <height>83</height>
+                    <height>38</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -5812,7 +5800,6 @@ Note - this will not remove items which are currently there. </string>
   <tabstop>daybookDent2ComboBox</tabstop>
   <tabstop>daybookTextBrowser</tabstop>
   <tabstop>scrollArea_2</tabstop>
-  <tabstop>adminMemoEdit</tabstop>
   <tabstop>moneytextBrowser</tabstop>
   <tabstop>printAccount_pushButton</tabstop>
   <tabstop>takePayment_pushButton</tabstop>

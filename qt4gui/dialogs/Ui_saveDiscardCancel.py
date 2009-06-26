@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/saveDiscardCancel.ui'
 #
-# Created: Fri Apr 10 11:14:14 2009
-#      by: PyQt4 UI code generator 4.4.3
+# Created: Thu Jun 25 23:27:20 2009
+#      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,25 +12,19 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(347, 380)
-        self.label = QtGui.QLabel(Dialog)
-        self.label.setGeometry(QtCore.QRect(9, 9, 329, 80))
-        self.label.setMinimumSize(QtCore.QSize(0, 80))
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setWordWrap(True)
-        self.label.setObjectName("label")
+        Dialog.resize(408, 380)
         self.pushButton = QtGui.QPushButton(Dialog)
-        self.pushButton.setGeometry(QtCore.QRect(177, 134, 161, 31))
+        self.pushButton.setGeometry(QtCore.QRect(240, 130, 161, 31))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/down.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton.setIcon(icon)
         self.pushButton.setObjectName("pushButton")
         self.scrollArea = QtGui.QScrollArea(Dialog)
-        self.scrollArea.setGeometry(QtCore.QRect(9, 171, 329, 200))
+        self.scrollArea.setGeometry(QtCore.QRect(9, 171, 391, 200))
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 325, 196))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 387, 196))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -38,15 +32,26 @@ class Ui_Dialog(object):
         self.listWidget.setObjectName("listWidget")
         self.verticalLayout.addWidget(self.listWidget)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.save_pushButton = QtGui.QPushButton(Dialog)
-        self.save_pushButton.setGeometry(QtCore.QRect(10, 96, 97, 31))
+        self.widget = QtGui.QWidget(Dialog)
+        self.widget.setGeometry(QtCore.QRect(9, 9, 391, 118))
+        self.widget.setObjectName("widget")
+        self.gridLayout = QtGui.QGridLayout(self.widget)
+        self.gridLayout.setObjectName("gridLayout")
+        self.label = QtGui.QLabel(self.widget)
+        self.label.setMinimumSize(QtCore.QSize(0, 80))
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setWordWrap(True)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 3)
+        self.save_pushButton = QtGui.QPushButton(self.widget)
         self.save_pushButton.setObjectName("save_pushButton")
-        self.discard_pushButton = QtGui.QPushButton(Dialog)
-        self.discard_pushButton.setGeometry(QtCore.QRect(113, 96, 111, 31))
+        self.gridLayout.addWidget(self.save_pushButton, 1, 0, 1, 1)
+        self.discard_pushButton = QtGui.QPushButton(self.widget)
         self.discard_pushButton.setObjectName("discard_pushButton")
-        self.continue_pushButton = QtGui.QPushButton(Dialog)
-        self.continue_pushButton.setGeometry(QtCore.QRect(230, 96, 107, 31))
+        self.gridLayout.addWidget(self.discard_pushButton, 1, 1, 1, 1)
+        self.continue_pushButton = QtGui.QPushButton(self.widget)
         self.continue_pushButton.setObjectName("continue_pushButton")
+        self.gridLayout.addWidget(self.continue_pushButton, 1, 2, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)

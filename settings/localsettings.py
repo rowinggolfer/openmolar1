@@ -10,7 +10,7 @@ import MySQLdb,sys,datetime,os
 from xml.dom import minidom
 import _version
 
-__version__= "0.1.0"
+__version__= "0.1.1"
 
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
