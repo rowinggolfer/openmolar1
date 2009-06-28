@@ -511,15 +511,33 @@ class feeClass():
                 item_description=localsettings.descriptions[item]
             except KeyError:
                 item_description="unknown perio treatment"
-
-            self.pt.addToEstimate(1,item,item_description,fee,
-            ptfee, self.pt.dnt1, self.pt.cset,
-            "perio %s"%dl.trt,True)
+            
+            foundInEsts=False
+            for est in self.pt.estimates:
+                if est.itemcode==item and est.completed==False:
+                    if est.number==1:
+                        est.completed=True
+                        foundInEsts=True
+                        if est.ptfee!=ptfee:
+                            self.advise(
+                            "different fee found in estimate - please check",1)
+                        else:
+                            print "patient fees",est.ptfee,ptfee
+                        break
+                    else:
+                        self.advise("need to split a multi unit perio item",1)
+            if not foundInEsts:
+                self.pt.addToEstimate(1,item,item_description,fee,
+                ptfee, self.pt.dnt1, self.pt.cset,
+                "perio %s"%dl.trt,True)
 
             if ptfee>0:
                 self.applyFeeNow(ptfee)
-
-            self.pt.periocmp+=dl.trt+" "
+            
+            treatmentCode="%s "%dl.trt
+            if treatmentCode in self.pt.periopl:
+                self.pt.periopl=self.pt.periopl.replace(treatmentCode,"",1)
+            self.pt.periocmp+=treatmentCode
             for note in dl.notes:
                newnotes+=note+", "
             self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
@@ -529,7 +547,6 @@ class feeClass():
                 self.load_treatTrees()
         else:
             self.advise("Hyg Treatment not applied",2)
-
 
     def addXrayItems(self):
         if self.noNewCourseNeeded():
@@ -686,7 +703,7 @@ class feeClass():
         if ALL==False:
             dl.itemsPerTooth(tooth, item)
         else:
-            treatmentDict=fee_keys.toothTreatDict(self.pt)
+            treatmentDict=estimates.toothTreatDict(self.pt)
             dl.setItems(treatmentDict["pl"],)
             dl.setItems(treatmentDict["cmp"],)
 
@@ -709,6 +726,17 @@ class feeClass():
                 
                 self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
                                        dent, self.pt.cset, treat[0])
+            self.load_newEstPage()
+            self.load_treatTrees()
+    
+    def NEWrecalculateEstimate(self):
+        '''
+        Adds ALL tooth items to the estimate.
+        prompts the user to confirm tooth treatment fees
+        '''
+        ##TODO - redesign this!!!
+        estimates.abandon_estimate(self.pt)
+        if estimates.calculate_estimate(self.pt):
             self.load_newEstPage()
             self.load_treatTrees()
 
@@ -5290,10 +5318,10 @@ printingClass,cashbooks,contractClass, extrasClass, forumClass):
         result=QtGui.QMessageBox.question(self,"Confirm",message,\
                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
         if result==QtGui.QMessageBox.Yes:
-            self.pt.courseno2=self.pt.courseno1
-            self.pt.courseno1=self.pt.courseno0
+            #self.pt.courseno2=self.pt.courseno1
+            #self.pt.courseno1=self.pt.courseno0
             self.pt.cmpd=localsettings.ukToday()
-            self.pt.courseno0=0
+            self.pt.courseno0=None
             self.pt.addHiddenNote("close_course")
             self.reload_patient()
 

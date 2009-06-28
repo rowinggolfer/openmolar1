@@ -15,6 +15,7 @@ from openmolar.qt4gui.dialogs import Ui_addTreatment,\
 Ui_toothtreatmentItemWidget
 
 from openmolar.settings import localsettings,fee_keys
+from openmolar.ptModules import estimates
 
 class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
     '''
@@ -88,6 +89,7 @@ class treatment(Ui_addTreatment.Ui_Dialog,):
     def showItems(self):
         self.itemWidgets=[]
         vlayout = QtGui.QVBoxLayout(self.frame)
+        vlayout.setSpacing(2)
         for item in self.items:
             #-- item will be ("UL6","CO")
             #-- initiate a QWidget
@@ -133,7 +135,7 @@ if __name__ == "__main__":
     #print "PLAN for ", toothPlan[0],toothPlan[1]
 
     ui = treatment(Dialog,"P")
-    treatmentDict=fee_keys.toothTreatDict(pt)
+    treatmentDict=estimates.toothTreatDict(pt)
     ui.setItems(treatmentDict["pl"],)
     ui.setItems(treatmentDict["cmp"],)
     ui.showItems()

@@ -8,7 +8,6 @@
 
 import sys,re
 from openmolar.settings import localsettings
-from openmolar.dbtools import patient_class
 
 
 treatmentTypeHeaders={
@@ -29,6 +28,9 @@ tup_Atts=('xray','perio','anaes','other','ndu',
 'ndl','odu','odl','custom')
 
 def plannedDict(pt):
+    '''
+    returns a dicitonary for use in the plan treeWidget
+    '''
     items=plannedItems(pt)
     pdict={}
     for header in treatmentTypeHeaders.keys():
@@ -42,7 +44,11 @@ def plannedDict(pt):
                         pdict[header]=[istring]
     return pdict
 
+
 def completedDict(pt):
+    '''
+    returns a dicitonary for use in the completed treeWidget
+    '''
     items=completedItems(pt)
     pdict={}
     for header in treatmentTypeHeaders.keys():
@@ -120,6 +126,8 @@ def summary(pt):
 
 
 if __name__ == "__main__":
+    from openmolar.dbtools import patient_class
+
     localsettings.initiate(False)
     try:
         serialno=int(sys.argv[len(sys.argv)-1])

@@ -295,7 +295,7 @@ class patient():
         #--replaced with
         cursor.execute('''SELECT ix, number, itemcode, description, type,
         fee, ptfee, feescale, csetype, dent, completed, carriedover from
-        estimates where serialno=%d and courseno=%d order by ix'''%(
+        estimates where serialno=%d and courseno=%d order by itemcode desc'''%(
         self.serialno,self.courseno0))
         rows = cursor.fetchall()
         for row in rows:

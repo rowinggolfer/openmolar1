@@ -222,27 +222,6 @@ def getCode(tooth,arg):
         print "returning 4001"
         return "4001"
 
-def toothTreatDict(pt):
-    '''
-    cycles through the patient attriubutes,
-    and brings up planned treatment on teeth only
-    '''
-    treats={"pl":[], "cmp":[]}
-    for quadrant in ("ur","ul", "ll", "lr"):
-        if "r" in quadrant:
-            order=(8, 7, 6, 5, 4, 3, 2, 1)
-        else:
-            order=(1, 2, 3, 4, 5, 6, 7, 8)
-        for tooth in order:
-            for type in ("pl", "cmp"):
-                att="%s%s%s"%(quadrant, tooth,type)
-                if pt.__dict__[att] != "":
-                    items=pt.__dict__[att].strip(" ").split(" ")
-                    for item in items:
-                        treats[type].append(("%s%s"%(quadrant, tooth), item), )
-    print "toothTreatDict"
-    print "returning ",treats
-    return treats
 
 
 def getFee(cset,itemcode, no_items=1, conditions=[]):

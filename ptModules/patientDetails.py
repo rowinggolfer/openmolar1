@@ -61,6 +61,8 @@ def details(pt,Saved=True):
             retarg+=line +'<br />'
     
     retarg+=pt.pcde + '<hr />'
+    if pt.underTreatment:
+        retarg+="<h2>UNDER TREATMENT</h2><hr />"
     if "N" in pt.cset:
         retarg+='<img src="resources/nhs_scot.png" alt="NHS"><br />'
         #retarg+='NHS<br />'
