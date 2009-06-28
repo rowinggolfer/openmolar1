@@ -1069,11 +1069,18 @@ class feeClass():
                     if col==0:
                         item.setText(localsettings.ops.get(d))
                     elif col in (5,7,8):
-                        item.setData(QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDate(d)))
+                        item.setData(QtCore.Qt.DisplayRole,
+                        QtCore.QVariant(QtCore.QDate(d)))
                     elif col==12:
                         total+=d
-                        money=QtCore.QVariant(d/100)
+                        #--jump through hoops to make the string sortable!
+                        money=QtCore.QVariant(QtCore.QString("%L1").\
+                        arg(float(d/100),8,"f",2))
+
                         item.setData(QtCore.Qt.DisplayRole,money)
+                        item.setTextAlignment(
+                        QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
+
                         #item.setText(localsettings.formatMoney(d))
                         
                     elif col==11:
