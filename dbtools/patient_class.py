@@ -152,7 +152,10 @@ class planData():
                 for val in row:
                     if val:
                         att=planDBAtts[i]
-                        self.__dict__[att]=val
+                        if att=="planjoin":
+                            self.planjoin=localsettings.formatDate(val)
+                        else:
+                            self.__dict__[att]=val
                     i+=1
             self.retrieved=True
         except Exception,e:

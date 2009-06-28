@@ -63,7 +63,7 @@
          <x>0</x>
          <y>0</y>
          <width>984</width>
-         <height>535</height>
+         <height>517</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -436,6 +436,12 @@
                <number>0</number>
               </property>
               <layout class="QGridLayout" name="gridLayout_18">
+               <property name="horizontalSpacing">
+                <number>12</number>
+               </property>
+               <property name="margin">
+                <number>0</number>
+               </property>
                <item row="1" column="0" rowspan="2">
                 <widget class="QPushButton" name="memos_pushButton">
                  <property name="text">
@@ -517,7 +523,7 @@
                <item row="0" column="0" colspan="6">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>9</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -534,7 +540,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>602</width>
+                        <width>540</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -2124,7 +2130,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>720</width>
+                        <width>278</width>
                         <height>497</height>
                        </rect>
                       </property>
@@ -2776,8 +2782,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>622</width>
-                        <height>302</height>
+                        <width>314</width>
+                        <height>105</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2953,7 +2959,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>350</width>
+                           <width>96</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -2986,7 +2992,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>220</width>
+                        <width>213</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -3313,7 +3319,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>606</width>
+                        <width>249</width>
                         <height>360</height>
                        </rect>
                       </property>
@@ -3519,42 +3525,10 @@ Note - this will not remove items which are currently there. </string>
                    <string>Extras</string>
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_23">
-                   <item row="0" column="5">
-                    <widget class="QToolButton" name="NHS_toolButton">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>NHS_options</string>
-                     </property>
-                     <property name="popupMode">
-                      <enum>QToolButton::InstantPopup</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="6">
-                    <spacer name="horizontalSpacer">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>358</width>
-                       <height>21</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item row="1" column="0" colspan="7">
-                    <widget class="QTextBrowser" name="debugBrowser"/>
-                   </item>
                    <item row="0" column="1">
                     <widget class="QToolButton" name="debug_toolButton">
                      <property name="text">
-                      <string>Patient Attributes</string>
+                      <string>Show in Memory Details about the patient</string>
                      </property>
                      <property name="checkable">
                       <bool>false</bool>
@@ -3580,6 +3554,38 @@ Note - this will not remove items which are currently there. </string>
                       <enum>Qt::Vertical</enum>
                      </property>
                     </widget>
+                   </item>
+                   <item row="0" column="6">
+                    <widget class="QToolButton" name="pastData_toolButton">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Past Data from the database</string>
+                     </property>
+                     <property name="popupMode">
+                      <enum>QToolButton::InstantPopup</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="8">
+                    <widget class="QTextBrowser" name="debugBrowser"/>
+                   </item>
+                   <item row="0" column="5">
+                    <spacer name="horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>358</width>
+                       <height>21</height>
+                      </size>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -3825,8 +3831,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>191</width>
-                    <height>42</height>
+                    <width>96</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3999,8 +4005,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>79</width>
-                        <height>224</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4089,8 +4095,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>78</width>
-                        <height>224</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                      </widget>
@@ -4178,8 +4184,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>79</width>
-                        <height>224</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4222,8 +4228,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>78</width>
-                        <height>224</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="_2"/>
@@ -4513,8 +4519,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>191</width>
-                    <height>38</height>
+                    <width>96</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">

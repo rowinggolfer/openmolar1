@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'openmolar/openmolar/qt4gui_layouts/changeDatabase.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/changeDatabase.ui'
 #
-# Created: Wed Mar 18 04:17:23 2009
-#      by: PyQt4 UI code generator 4.4.3
+# Created: Sat Jun 27 22:03:58 2009
+#      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -53,6 +53,11 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.setTabOrder(self.host_lineEdit, self.user_lineEdit)
+        Dialog.setTabOrder(self.user_lineEdit, self.password_lineEdit)
+        Dialog.setTabOrder(self.password_lineEdit, self.database_lineEdit)
+        Dialog.setTabOrder(self.database_lineEdit, self.buttonBox)
+        Dialog.setTabOrder(self.buttonBox, self.checkBox)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Change Database", None, QtGui.QApplication.UnicodeUTF8))
@@ -63,6 +68,6 @@ class Ui_Dialog(object):
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "Password", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox.setText(QtGui.QApplication.translate("Dialog", "display password", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "Database", None, QtGui.QApplication.UnicodeUTF8))
-        self.database_lineEdit.setText(QtGui.QApplication.translate("Dialog", "openmolar", None, QtGui.QApplication.UnicodeUTF8))
+        self.database_lineEdit.setText(QtGui.QApplication.translate("Dialog", "openmolar_demo", None, QtGui.QApplication.UnicodeUTF8))
         self.password_lineEdit.setText(QtGui.QApplication.translate("Dialog", "password", None, QtGui.QApplication.UnicodeUTF8))
 

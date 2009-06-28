@@ -35,7 +35,8 @@ from openmolar.qt4gui.dialogs import apptTools
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,\
 writeNewPatient,patient_class,search,appointments,accounts,calldurr,feesTable,\
-docsprinted,writeNewCourse, forum, memos,NHSclaims
+docsprinted,writeNewCourse, forum, memos,NHSclaims,daybookHistory,\
+paymentHistory,courseHistory,estimatesHistory
 
 #--modules which act upon the pt class type (and subclasses)
 from openmolar.ptModules import patientDetails,notes,plan,referral,\
@@ -1068,10 +1069,13 @@ class feeClass():
                     if col==0:
                         item.setText(localsettings.ops.get(d))
                     elif col in (5,7,8):
-                            item.setData(QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDate(d)))
+                        item.setData(QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDate(d)))
                     elif col==12:
                         total+=d
-                        item.setText(localsettings.formatMoney(d))
+                        money=QtCore.QVariant(d/100)
+                        item.setData(QtCore.Qt.DisplayRole,money)
+                        #item.setText(localsettings.formatMoney(d))
+                        
                     elif col==11:
                         if d>0:
                             item.setText("N")
@@ -1301,20 +1305,26 @@ class contractClass():
 
 class extrasClass():
     def addExtrasMenu(self):
-        self.extrasNhsMenu=QtGui.QMenu()
-        self.extrasNhsMenu.addAction("past claims")
-        self.ui.NHS_toolButton.setMenu(self.extrasNhsMenu)
+        self.pastDataMenu=QtGui.QMenu()
+        self.pastDataMenu.addAction("Payments history")
+        self.pastDataMenu.addAction("Completed Treatment history")
+        self.pastDataMenu.addAction("Treatment Courses history")
+        self.pastDataMenu.addAction("Estimates history")
+        self.pastDataMenu.addAction("NHS claims history")
+        
+        
+        self.ui.pastData_toolButton.setMenu(self.pastDataMenu)
 
-        QtCore.QObject.connect(self.extrasNhsMenu,
-        QtCore.SIGNAL("triggered (QAction *)"),self.showClaims)
+        QtCore.QObject.connect(self.pastDataMenu,
+        QtCore.SIGNAL("triggered (QAction *)"),self.pastData)
     
         self.extrasAttsMenu=QtGui.QMenu()
         self.extrasAttsMenu.addAction("Patient table data")
         self.extrasAttsMenu.addAction("Treatment table data")
-        self.extrasAttsMenu.addAction("User-Defined table data")
+        self.extrasAttsMenu.addAction("HDP table data")
         self.extrasAttsMenu.addAction("Estimates table data")
         self.extrasAttsMenu.addAction("Perio table data")
-        self.extrasAttsMenu.addAction("Verbose (displays everything in memeory)")
+        self.extrasAttsMenu.addAction("Verbose (displays everything in memory)")
         
         self.ui.debug_toolButton.setMenu(self.extrasAttsMenu)
 
@@ -1324,19 +1334,56 @@ class extrasClass():
         QtCore.QObject.connect(self.ui.ptAtts_checkBox,
         QtCore.SIGNAL("stateChanged (int)"),self.updateAttributes)
     
-    def nhsClaimsShortcut(self):
-        self.ui.tabWidget.setCurrentIndex(9)
-        self.showClaims()
+    def pastData(self,arg):
+        '''
+        called from pastData toolbutton
+        '''
+        type=str(arg.text()).split(" ")[0]
+        if type=="NHS":
+            self.showPastNHSclaims()
+        elif type=="Payments":
+            self.showPaymentHistory()
+        elif type=="Completed":
+            self.showDaybookHistory()
+        elif type=="Treatment":
+            self.showCoursesHistory()
+        elif type=="Estimates":
+            self.showEstimatesHistory()
+        
+    def showEstimatesHistory(self):
+        html=estimatesHistory.details(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)
+   
+    def showCoursesHistory(self):
+        html=courseHistory.details(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)
+        
+    def showPaymentHistory(self):
+        html=paymentHistory.details(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)
     
-    def showClaims(self,arg=None):
+    def showDaybookHistory(self):
+        html=daybookHistory.details(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)        
+        
+    def nhsClaimsShortcut(self):
+        '''
+        a convenience function called from the contracts page
+        '''
+        self.ui.tabWidget.setCurrentIndex(9)
+        self.showPastNHSclaims()
+    
+    def showPastNHSclaims(self):
         html=NHSclaims.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
+    
     def updateAttributes(self,arg=None):
         '''
         refresh the table if the checkbox is toggled
         '''
         if debug_html.existing!="":
             self.showPtAttributes()
+
     def showPtAttributes(self,arg=None):
         #--load a table of self.pt.attributes
         if arg!=None:
@@ -4832,9 +4879,9 @@ printingClass,cashbooks,contractClass, extrasClass, forumClass):
         self.pt.sname,self.pt.addr1,self.pt.addr2,
         self.pt.addr3,self.pt.town,self.pt.county,self.pt.pcde,self.pt.tel1)
 
-        if self.pt.serialno in localsettings.recent_snos:
-            localsettings.recent_snos.remove(self.pt.serialno)
-        localsettings.recent_snos.append(self.pt.serialno)
+        if not self.pt.serialno in localsettings.recent_snos:
+            #localsettings.recent_snos.remove(self.pt.serialno)
+            localsettings.recent_snos.append(self.pt.serialno)
         if self.ui.tabWidget.currentIndex()==4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.medalert()

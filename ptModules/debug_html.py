@@ -29,8 +29,8 @@ def toHtml(p1,p2,tableCalled,changesOnly=False):
             attributesDict["Patient Table"]=patient_class.patientTableAtts
         elif tableCalled=="Treatment": 
             attributesDict["Treatment Items"]=patient_class.currtrtmtTableAtts
-        elif tableCalled=="User-Defined": 
-            attributesDict["User-Defined Data"]=("plandata",)
+        elif tableCalled=="HDP": 
+            attributesDict["HDP"]=("plandata",)
         elif tableCalled=="Estimates": 
             attributesDict["Estimates"]=("estimates", )
         elif tableCalled=="Perio": 
