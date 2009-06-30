@@ -61,8 +61,6 @@ def details(pt,Saved=True):
             retarg+=line +'<br />'
     
     retarg+=pt.pcde + '<hr />'
-    if pt.underTreatment:
-        retarg+="<h2>UNDER TREATMENT</h2><hr />"
     if "N" in pt.cset:
         retarg+='<img src="resources/nhs_scot.png" alt="NHS"><br />'
         #retarg+='NHS<br />'
@@ -122,7 +120,10 @@ def details(pt,Saved=True):
     if pt.fees<0:
         amount="&pound;%d.%02d"%(-pt.fees//100,-pt.fees%100)
         retarg+='<hr /><h3>%s in credit %s</h3>'%(amount,alert)
-
+    
+    if pt.underTreatment:
+        retarg+='<hr /><h2 class="ut_label">UNDER TREATMENT</h2><hr />'
+    
     return retarg+'</div></body></html>'
 
 if __name__ == '__main__':

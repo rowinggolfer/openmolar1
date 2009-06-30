@@ -20,7 +20,7 @@ def details(sno):
     query+="coursetype,dntid,trtid,"
     query+="concat(diagn,perio,anaes,misc,ndu,ndl,odu,odl),"
     query+="other,chart,feesa,feesb"
-    cursor.execute('select %s from daybook where serialno=%d order by date'%(query,sno))
+    cursor.execute('select %s from daybook where serialno=%d order by date desc'%(query,sno))
     rows = cursor.fetchall()
     cursor.close()
     

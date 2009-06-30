@@ -55,7 +55,6 @@ def details(sno):
         retarg+='</tr>\n'
     
     retarg+='</table>'
-    print retarg
     
     #db.close()
     return retarg

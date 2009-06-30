@@ -18,7 +18,6 @@ def toMoneyString(i):
     return u"£"+"%.02f"%(i/100)
 
 
-
 class estimate():
     def __init__(self,parent=None):
         self.setProps()
@@ -130,7 +129,7 @@ if __name__ == "__main__":
     localsettings.initiate(False)
     from openmolar.dbtools import patient_class
     
-    pt=patient_class.patient(11956)
+    pt=patient_class.patient(31779)
     
     app = QtGui.QApplication(sys.argv)
     
@@ -141,8 +140,7 @@ if __name__ == "__main__":
     myreceipt.sname=pt.sname
     myreceipt.ourref=pt.serialno
     myreceipt.estItems = pt.estimates
+    print pt.estimates
         
-    if myreceipt.print_():
-        print "getting PDF data"
-        print getPDF()
-
+    myreceipt.print_()
+    

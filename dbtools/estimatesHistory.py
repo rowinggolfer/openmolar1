@@ -16,7 +16,7 @@ def getEsts(sno):
 
     cursor.execute('''SELECT ix, courseno,number, itemcode, description, type,
     fee, ptfee, feescale, csetype, dent, completed, carriedover from
-    estimates where serialno=%d order by ix'''%sno)
+    estimates where serialno=%d order by ix desc'''%sno)
     rows = cursor.fetchall()
     estimatesFound=[]
     cursor.close()

@@ -640,37 +640,28 @@ class feeClass():
         #-- user enters UR1 RT P,CO
 
         #-- what is the current item in ur1pl?
-        existing=self.pt.__dict__[tooth+self.selectedChartWidget]
+        existing=self.pt.__dict__[tooth+"pl"]  #self.selectedChartWidget]
 
-        self.pt.__dict__[tooth+self.selectedChartWidget]=properties
+        self.pt.__dict__[tooth+"pl"]=properties
         #--update the patient!!
         self.ui.planChartWidget.setToothProps(tooth,properties)
 
         #-- new items are input - existing.
-        if existing in properties:
-            input=properties.replace(existing,"")
-            oldItems=[]
-        else:
-            input=properties
-            oldItems=fee_keys.itemsPerTooth(tooth, existing)
-            
-        if input=="":
-            return
-        #-- send a note to the console for debugging
-        print "toothTreatAdded '%s','%s'"%(tooth, input)
-    
         #--split our string into a list of treatments.
         #-- so UR1 RT P,CO -> [("UR1","RT"),("UR1","P,CO")]
         #-- this also separates off any postsetc..
         #-- and bridge brackets
-        updatedItems=fee_keys.itemsPerTooth(tooth, input)
 
-        for olditem in oldItems:
-            if olditem in updatedItems:
-                updatedItems.remove(olditem)
+        existingItems=fee_keys.itemsPerTooth(tooth,existing)
+        updatedItems=fee_keys.itemsPerTooth(tooth, properties)
+        
+        #check to see if treatments have been removed
+        for item in existingItems:
+            if item in updatedItems:
+                updatedItems.remove(item)
             else:
-                self.pt.removeFromEstimate(olditem[0],olditem[1])
-            
+                self.pt.removeFromEstimate(item[0],item[1])
+                self.advise("removing %s from estimate"%item[1])
         #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
         for item in updatedItems:
             print "item=",item
@@ -691,6 +682,8 @@ class feeClass():
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
 
     def recalculateEstimate(self, ALL=True):
+        #################################################todo - -move this to the estimates module.....
+        #################################################see NEW function below
         '''
         Adds ALL tooth items to the estimate.
         prompts the user to confirm tooth treatment fees
@@ -929,6 +922,7 @@ class feeClass():
             print "handled this in maingui.completeItem",Exception,e
 
     def planItemClicked(self,arg,arg1):
+        ############################## todo - add functionality here
         '''
         user has double clicked on the treatment plan tree
         arg1 is of no importance as I only have 1 column
@@ -936,6 +930,8 @@ class feeClass():
         self.txOptions(arg,"pl")
 
     def cmpItemClicked(self,arg,arg1):
+        ############################## todo - add functionality here
+        
         '''
         user has double clicked on the treatment competled tree
         '''
@@ -971,6 +967,7 @@ class feeClass():
 
 
     def completeAllTreatments(self):
+        ##############################todo - decide about this
         '''
         old code
         called by a button which allowed any item to be completed
@@ -998,7 +995,6 @@ class feeClass():
         if "P" in arg:
             self.pt.pd8=localsettings.ukToday()
             
-          
     def updateDaybook(self):
         '''
         looks for attributes like *cmp, when record is closed
@@ -1338,8 +1334,8 @@ class contractClass():
     def editOtherContract(self):
         self.advise("edit other Practitioner",1)
 
-class extrasClass():
-    def addExtrasMenu(self):
+class historyClass():
+    def addHistoryMenu(self):
         self.pastDataMenu=QtGui.QMenu()
         self.pastDataMenu.addAction("Payments history")
         self.pastDataMenu.addAction("Completed Treatment history")
@@ -1353,17 +1349,17 @@ class extrasClass():
         QtCore.QObject.connect(self.pastDataMenu,
         QtCore.SIGNAL("triggered (QAction *)"),self.pastData)
     
-        self.extrasAttsMenu=QtGui.QMenu()
-        self.extrasAttsMenu.addAction("Patient table data")
-        self.extrasAttsMenu.addAction("Treatment table data")
-        self.extrasAttsMenu.addAction("HDP table data")
-        self.extrasAttsMenu.addAction("Estimates table data")
-        self.extrasAttsMenu.addAction("Perio table data")
-        self.extrasAttsMenu.addAction("Verbose (displays everything in memory)")
+        self.debugMenu=QtGui.QMenu()
+        self.debugMenu.addAction("Patient table data")
+        self.debugMenu.addAction("Treatment table data")
+        self.debugMenu.addAction("HDP table data")
+        self.debugMenu.addAction("Estimates table data")
+        self.debugMenu.addAction("Perio table data")
+        self.debugMenu.addAction("Verbose (displays everything in memory)")
         
-        self.ui.debug_toolButton.setMenu(self.extrasAttsMenu)
+        self.ui.debug_toolButton.setMenu(self.debugMenu)
 
-        QtCore.QObject.connect(self.extrasAttsMenu,
+        QtCore.QObject.connect(self.debugMenu,
         QtCore.SIGNAL("triggered (QAction *)"),self.showPtAttributes)
         
         QtCore.QObject.connect(self.ui.ptAtts_checkBox,
@@ -2250,7 +2246,35 @@ class appointmentClass():
         if result==QtGui.QMessageBox.Yes:
             self.advise(
             "Cleared %d emergency slots"%appointments.clearEms(
-                                                    localsettings.sqlToday()),1)
+                                                localsettings.sqlToday()),1)
+
+    def apptOVclinicians(self):
+        '''everybody to be viewed'''
+        value=self.ui.aptOV_everybody_checkBox.checkState()
+        #--disconnect signal slots from the chechboxes temporarily
+        self.connectAptOVdentcbs(False)
+        #--change their values
+        for dent in self.ui.aptOVdent_checkBoxes.keys():
+            self.ui.aptOVdent_checkBoxes[dent].setCheckState(value)
+        #--reconnect
+        self.connectAptOVdentcbs()
+        #--refresh Layout
+        self.connectAptOVhygcbs(False)
+        for dent in self.ui.aptOVhyg_checkBoxes.keys():
+            self.ui.aptOVhyg_checkBoxes[dent].setCheckState(value)
+        self.connectAptOVhygcbs()
+
+        self.layout_apptOV()
+
+    def apptOVhygs(self):
+        '''called by checking the all hygenists checkbox on the apptov tab'''
+        #-- coments as for above proc
+        self.connectAptOVhygcbs(False)
+        for dent in self.ui.aptOVhyg_checkBoxes.keys():
+            self.ui.aptOVhyg_checkBoxes[dent].setCheckState(
+            self.ui.aptOV_allhygscheckBox.checkState())
+        self.connectAptOVhygcbs()
+        self.layout_apptOV()
 
     def apptOVdents(self):
         '''called by checking the all dentists checkbox on the apptov tab'''
@@ -2266,15 +2290,6 @@ class appointmentClass():
         #--refresh Layout
         self.layout_apptOV()
 
-    def apptOVhygs(self):
-        '''called by checking the all hygenists checkbox on the apptov tab'''
-        #-- coments as for above proc
-        self.connectAptOVhygcbs(False)
-        for dent in self.ui.aptOVhyg_checkBoxes.keys():
-            self.ui.aptOVhyg_checkBoxes[dent].setCheckState(
-            self.ui.aptOV_allhygscheckBox.checkState())
-        self.connectAptOVhygcbs()
-        self.layout_apptOV()
     def findApptButtonClicked(self):
         selectedAppt=self.ui.ptAppointment_treeWidget.currentItem()
         ##TODO - whoops UK date format
@@ -2305,8 +2320,8 @@ class appointmentClass():
         AllDentsChecked=True
         #--code to uncheck the all dentists checkbox if necessary
         for dent in self.ui.aptOVdent_checkBoxes.values():
-            AllDentsChecked=\
-            AllDentsChecked and dent.checkState()
+            AllDentsChecked=AllDentsChecked and dent.checkState()
+        
         if self.ui.aptOV_alldentscheckBox.checkState() != AllDentsChecked:
             QtCore.QObject.disconnect(self.ui.aptOV_alldentscheckBox,
             QtCore.SIGNAL("stateChanged(int)"),self.apptOVdents)
@@ -2322,11 +2337,24 @@ class appointmentClass():
             AllHygsChecked=AllHygsChecked and hyg.checkState()
         if self.ui.aptOV_allhygscheckBox.checkState() != AllHygsChecked:
             QtCore.QObject.disconnect(self.ui.aptOV_allhygscheckBox,
-            QtCore.SIGNAL("stateChanged(int)"),self.apptOVdents)
+            QtCore.SIGNAL("stateChanged(int)"),self.apptOVhygs)
 
             self.ui.aptOV_allhygscheckBox.setChecked(AllHygsChecked)
             QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox,QtCore.SIGNAL(
-            "stateChanged(int)"),self.apptOVdents)
+            "stateChanged(int)"),self.apptOVhygs)
+
+        if self.ui.aptOV_everybody_checkBox.checkState!= (
+        AllDentsChecked and AllHygsChecked):
+
+            QtCore.QObject.disconnect(self.ui.aptOV_everybody_checkBox,
+            QtCore.SIGNAL("stateChanged(int)"),self.apptOVclinicians)
+
+            self.ui.aptOV_everybody_checkBox.setChecked(
+            AllDentsChecked and AllHygsChecked)
+
+            QtCore.QObject.connect(self.ui.aptOV_everybody_checkBox,
+            QtCore.SIGNAL("stateChanged(int)"),self.apptOVclinicians)
+
 
         date=self.ui.apptOV_calendarWidget.selectedDate()
         dayno=date.dayOfWeek()
@@ -2923,6 +2951,8 @@ class signals():
                         QtCore.SIGNAL("stateChanged(int)"),  self.layout_apptOV)
         QtCore.QObject.connect(self.ui.aptOV_lunchcheckBox,
                     QtCore.SIGNAL("stateChanged(int)"),   self.layout_apptOV)
+        QtCore.QObject.connect(self.ui.aptOV_everybody_checkBox,
+            QtCore.SIGNAL("stateChanged(int)"),self.apptOVclinicians)
         QtCore.QObject.connect(self.ui.aptOV_alldentscheckBox,
                         QtCore.SIGNAL("stateChanged(int)"),  self.apptOVdents)
         QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox,
@@ -3112,11 +3142,24 @@ class customWidgets():
         
         #vlayout=QtGui.QVBoxLayout(self.ui.aptOVdents_frame)
         glayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
-        self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
-                                                QtCore.QString("All Dentists"))
-
-        self.ui.aptOV_alldentscheckBox.setChecked(True)
+        glayout.setSpacing(0)
+        self.ui.aptOV_everybody_checkBox = QtGui.QCheckBox(
+                                            QtCore.QString("All Clinicians"))
+        self.ui.aptOV_everybody_checkBox.setChecked(True)
         row=0
+        glayout.addWidget(self.ui.aptOV_everybody_checkBox,row,0,1,2)
+
+        hl=QtGui.QFrame(self.ui.aptOVdents_frame)
+        #--Draw a line here.... but room doesn;t permit
+        hl.setFrameShape(QtGui.QFrame.HLine)
+        hl.setFrameShadow(QtGui.QFrame.Sunken)
+        row+=1
+        glayout.addWidget(hl,row,0,1,2)
+        
+        self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
+                                            QtCore.QString("All Dentists"))
+        self.ui.aptOV_alldentscheckBox.setChecked(True)
+        row+=1
         glayout.addWidget(self.ui.aptOV_alldentscheckBox,row,0,1,2)
         for dent in localsettings.activedents:
             cb=QtGui.QCheckBox(QtCore.QString(dent))
@@ -3124,14 +3167,9 @@ class customWidgets():
             self.ui.aptOVdent_checkBoxes[localsettings.apptix[dent]]=cb
             row+=1
             glayout.addWidget(cb,row,1,1,1)
-        #hl=QtGui.QFrame(self.ui.aptOVdents_frame)
-        #--I quite like the line here.... but room doesn;t permit
-        #hl.setFrameShape(QtGui.QFrame.HLine)
-        #hl.setFrameShadow(QtGui.QFrame.Sunken)
-        #row+=1
-        #vlayout.addWidget(hl,row,0,1,2)
+        
         self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox(
-                                                QtCore.QString("All Hygenists"))
+                                        QtCore.QString("All Hygenists"))
         self.ui.aptOV_allhygscheckBox.setChecked(True)
         row+=1
         glayout.addWidget(self.ui.aptOV_allhygscheckBox,row,0,1,2)
@@ -3158,8 +3196,8 @@ class customWidgets():
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
 
-        #--extras
-        self.addExtrasMenu()
+        #--history
+        self.addHistoryMenu()
         
 class chartsClass():
 
@@ -4230,8 +4268,8 @@ class pageHandlingClass():
             self.ui.patientEdit_groupBox.setTitle(
             "Edit Patient %d"%self.pt.serialno)
 
-            self.load_editpage()
-            self.editPageVisited=True
+            if self.load_editpage():
+                self.editPageVisited=True
         if ci==1:
             self.updateStatus()
             self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
@@ -4263,7 +4301,8 @@ class pageHandlingClass():
         #--debug tab
         ##TODO - this is a development tab- remove eventually
         if ci==9:
-            self.ui.debugBrowser.setText("")
+            self.ui.pastData_toolButton.showMenu()
+            
                                     
     def home(self):
         '''
@@ -4412,7 +4451,7 @@ class pageHandlingClass():
         self.ui.email1Edit.setText(self.pt.email1)
         self.ui.email2Edit.setText(self.pt.email2)
         self.ui.occupationEdit.setText(self.pt.occup)
-        
+        return True
     def load_dentComboBoxes(self):
         print "loading dnt comboboxes."
         try:
@@ -4451,7 +4490,7 @@ class pageHandlingClass():
 
 class openmolarGui(QtGui.QMainWindow, customWidgets,chartsClass,
 pageHandlingClass, newPatientClass,appointmentClass,signals,feeClass,
-printingClass,cashbooks,contractClass, extrasClass, forumClass):
+printingClass,cashbooks,contractClass, historyClass, forumClass):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui=Ui_main.Ui_MainWindow()
@@ -4876,6 +4915,7 @@ printingClass,cashbooks,contractClass, extrasClass, forumClass):
             return
         print "loading patient"
         self.advise("loading patient")
+        self.editPageVisited=False
         self.ui.main_tabWidget.setCurrentIndex(0)
         if localsettings.station=="surgery":
             self.ui.tabWidget.setCurrentIndex(4)
@@ -4885,7 +4925,6 @@ printingClass,cashbooks,contractClass, extrasClass, forumClass):
         #--populate dnt1 and dnt2 comboboxes
         self.load_dentComboBoxes()
         self.updateDetails()
-        self.editPageVisited=False
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         note=notes.notes(self.pt.notestuple)
         #--notes not verbose
@@ -4919,8 +4958,10 @@ printingClass,cashbooks,contractClass, extrasClass, forumClass):
             localsettings.recent_snos.append(self.pt.serialno)
         if self.ui.tabWidget.currentIndex()==4:  #clinical summary
             self.ui.summaryChartWidget.update()
+        self.ui.debugBrowser.setText("")
         self.medalert()
         self.getmemos()
+
         if localsettings.station=="surgery":
             self.callXrays()
     def getmemos(self):

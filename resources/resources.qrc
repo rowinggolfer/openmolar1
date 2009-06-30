@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>icons/separate.png</file>
     <file>appt_ov.png</file>
     <file>newlogo_launchpadSize.png</file>
     <file>newlogo.png</file>

@@ -447,7 +447,6 @@ class patient():
         print "removing from estimate '%s'"%type
         for est in self.estimates:
             if est.type==type and est.completed==False:
-                print "MATCH!"
                 self.estimates.remove(est)
             
     def addToEstimate(self,number,item,descr,fee,ptfee,dent,csetype,

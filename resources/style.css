@@ -1,22 +1,17 @@
-/*-- style for invernessrowingclub website - written by Neil Wallace October 2007 --*/
+/*-- stylesheet for openmolar - written by Neil Wallace modified 30/6/2009 --*/
 
 body{background-color:#ffffff;}
 
-.ops{font-size:13pt;}
-.notes{font-size:14pt;}
+.ops{font-size:12pt;}
+.notes{font-size:13pt;}
 
 /*-- DIVS --*/
-div.newstext1{color:black;background-color:#cccccc; padding:10px;}
-div.newstext2{color:black;background-color:#eeeeee; padding:10px;}
 div.center{text-align:center;}
-
-/*-- links (see also gallery stuff below)--*/
-a{color: #005151;}
-a:hover{color:#800000;}
 
 h1,h2,h3,h4{margin:3px;color:#4322a8;}
 h1{text-align:center;}
 .debt{color:red;}
+.ut_label{font-style:italic;color:#99ccff;}
 
 /*-- UNORDERED LISTS --*/
 ul{list-style:none;padding-left:0px;}

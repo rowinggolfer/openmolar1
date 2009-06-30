@@ -24,7 +24,7 @@ def details(sno):
     cursor.close()
     
     claimNo=len(rows)
-    retarg="<h3>Claims - %d found</h3>"%claimNo
+    retarg="<h3>NHS Claims - %d found</h3>"%claimNo
     if claimNo==0:
         return retarg
     retarg+='<table border="1">'

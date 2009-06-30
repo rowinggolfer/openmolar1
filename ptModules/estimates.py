@@ -88,6 +88,8 @@ def abandon_estimate(pt):
     pt.ests=()
 
 def recalculate_estimate(pt):
+    #########################needs wordk
+    
     planned=plan.plannedDict(pt)
     completed=plan.completedDict(pt)
     if pt.dnt2!=0:

@@ -19,7 +19,7 @@ def details(sno):
     db=connect()
     cursor=db.cursor()
     query="DATE_FORMAT(cbdate,'%s'),dntid,descr,code,amt"%localsettings.sqlDateFormat
-    cursor.execute('select %s from cashbook where ref=%06d order by cbdate'%(query,sno))
+    cursor.execute('select %s from cashbook where ref=%06d order by cbdate desc'%(query,sno))
     rows = cursor.fetchall()
     cursor.close()
     
@@ -49,6 +49,8 @@ def details(sno):
         retarg+='<td>%s</td>'%localsettings.ops.get(row[1])
         retarg+='<td>%s</td>'%row[2]
         CODE=cashbookCodesDict.get(row[3])
+        if CODE==None:
+            CODE="UNKNOWN"
         retarg+='<td>%s</td>'%CODE                
         amt=row[4]/100
         if "CASH" in CODE:
