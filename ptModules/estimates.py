@@ -62,6 +62,26 @@ class est():
         <th>input</th><th>Description</th><th>fee</th><th>pt fee</th>
         <th>feescale</th><th>cset</th><th>completed</th></tr>'''
     
+def sorted(ests):
+    '''
+    compresses a list of estimates down into number*itemcode
+    '''
+    sortedEsts=[]
+    def estInSortedEsts(est):
+        for se in sortedEsts:
+            if se.itemcode==est.itemcode:
+                if est.number!=None and se.number!=None:
+                    se.number +=est.number
+                se.fee+=est.fee
+                se.ptfee+=est.ptfee
+                return True
+                
+    for est in ests:
+        if not estInSortedEsts(est):
+            sortedEsts.append(est)
+    
+    return sortedEsts
+    
 def toothTreatDict(pt):
     '''
     cycles through the patient attriubutes,
@@ -121,13 +141,14 @@ def toBriefHtml(currEst):
         retarg='<html><body>No current estimate</body></html>'
         return retarg
     '''just the final row - ie... current estimate'''
+    
     retarg='<html><body><table width ="100%" border="1">'
     retarg+='<tr><td colspan="7"><h3>ESTIMATE</h3></td></tr>'
     retarg+='''<tr><th>No.</th><th>Description</th><th>Type</th><th>Course</th>
     <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>'''
     total=0
     pt_total=0
-    for est in currEst:
+    for est in sorted(currEst):
         total+=est.fee
         pt_total+=est.ptfee
         retarg+='<tr><td>%s</td><td>%s</td>'%(est.number,est.description)
@@ -246,7 +267,7 @@ if __name__ == "__main__":
     #print pt.estimates
     #print toHtml(pt.estimates,pt.tsfees)
 
-    #print toBriefHtml(pt.currEstimate)
+    print toBriefHtml(pt.estimates)
     #print
     #est=((1,101,1950),(2,1739,5600),(1,6521,0))
     #blob=encode(est)

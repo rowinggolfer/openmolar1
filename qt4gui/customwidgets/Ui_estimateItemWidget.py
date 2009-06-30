@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/estimateItemWidget.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/estimateItemWidget.ui'
 #
-# Created: Tue Jun 16 14:27:39 2009
+# Created: Tue Jun 30 15:06:56 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,24 +12,17 @@ from PyQt4 import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(773, 28)
+        Form.resize(710, 28)
+        Form.setMinimumSize(QtCore.QSize(710, 0))
         self.horizontalLayout = QtGui.QHBoxLayout(Form)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.number_lineEdit = QtGui.QLineEdit(Form)
-        self.number_lineEdit.setEnabled(False)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.number_lineEdit.sizePolicy().hasHeightForWidth())
-        self.number_lineEdit.setSizePolicy(sizePolicy)
-        self.number_lineEdit.setMinimumSize(QtCore.QSize(0, 23))
-        self.number_lineEdit.setMaximumSize(QtCore.QSize(32, 16777215))
-        self.number_lineEdit.setMaxLength(2)
-        self.number_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.number_lineEdit.setObjectName("number_lineEdit")
-        self.horizontalLayout.addWidget(self.number_lineEdit)
+        self.number_label = QtGui.QLabel(Form)
+        self.number_label.setMinimumSize(QtCore.QSize(32, 0))
+        self.number_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.number_label.setObjectName("number_label")
+        self.horizontalLayout.addWidget(self.number_label)
         self.itemCode_label = QtGui.QLabel(Form)
         self.itemCode_label.setMinimumSize(QtCore.QSize(50, 0))
         self.itemCode_label.setMaximumSize(QtCore.QSize(16777215, 16777215))
@@ -94,6 +87,7 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.completed_checkBox.sizePolicy().hasHeightForWidth())
         self.completed_checkBox.setSizePolicy(sizePolicy)
+        self.completed_checkBox.setTristate(True)
         self.completed_checkBox.setObjectName("completed_checkBox")
         self.horizontalLayout.addWidget(self.completed_checkBox)
         self.delete_pushButton = QtGui.QPushButton(Form)
@@ -113,6 +107,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        self.number_label.setText(QtGui.QApplication.translate("Form", "1", None, QtGui.QApplication.UnicodeUTF8))
         self.itemCode_label.setText(QtGui.QApplication.translate("Form", "code", None, QtGui.QApplication.UnicodeUTF8))
         self.description_lineEdit.setText(QtGui.QApplication.translate("Form", "small xrays", None, QtGui.QApplication.UnicodeUTF8))
         self.code_label.setText(QtGui.QApplication.translate("Form", "code", None, QtGui.QApplication.UnicodeUTF8))

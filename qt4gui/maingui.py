@@ -880,14 +880,14 @@ class feeClass():
             print "UNABLE TO MOVE %s item"%type
 
 
-    def deleteTxItem(self,type):
+    def deleteTxItem(self,est):
         '''
         estWidget has removed an item from the estimates.
         (user clicked on the delete button)
         now try and remove from the plan
         '''
-        print "delete item from treament plan or completed",type
-        tup=type.split(" ")
+        print "delete item from treament plan or completed",est
+        tup=est.type.split(" ")
         try:
             att=tup[0]
             treat=tup[1]+" "
@@ -3872,18 +3872,7 @@ class printingClass():
             else:
                 self.commitPDFtoDB("receipt")
 
-    def printEstimate(self):
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
-            return
-        est=estimatePrint.estimate()
-        est.setProps(self.pt.title,self.pt.fname,self.pt.sname,self.pt.serialno)
-        est.estItems=self.pt.estimates
-
-        if est.print_():
-            self.commitPDFtoDB("auto estimate")
-        self.pt.addHiddenNote("printed","estimate")
-
+    
     def printLetter(self):
         '''prints a letter to the patient'''
         if self.pt.serialno==0:
@@ -3951,6 +3940,19 @@ class printingClass():
         myclass=letterprint.letter(html)
         myclass.printpage()
     
+    def printEstimate(self):
+        if self.pt.serialno==0:
+            self.advise("no patient selected",1)
+            return
+        est=estimatePrint.estimate()
+        est.setProps(self.pt.title,self.pt.fname,self.pt.sname,self.pt.serialno)
+        est.estItems=self.pt.estimates
+
+        if est.print_():
+            self.commitPDFtoDB("auto estimate")
+        self.pt.addHiddenNote("printed","estimate")
+    
+    
     def customEstimate(self,html="",version=0):
         '''
         prints a custom estimate to the patient
@@ -3969,7 +3971,6 @@ class printingClass():
                 number=est.number
                 item=est.description
                 amount=est.ptfee
-
                 mult=""
                 if number>1:
                     mult="s"
@@ -4328,8 +4329,6 @@ class pageHandlingClass():
         Other pages are disabled.
         '''
         if self.pt.serialno!=0:
-            self.ui.underTreatment_label.hide()
-            self.ui.underTreatment_label_2.hide()
             self.ui.dobEdit.setDate(QtCore.QDate(1900,1,1))
             self.ui.detailsBrowser.setText("")
             self.ui.notesBrowser.setText("")
@@ -5018,8 +5017,6 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         if self.pt.underTreatment:
             self.ui.estimate_groupBox.setTitle(curtext+"- started "+
                                                     str(self.pt.accd))
-            self.ui.underTreatment_label.show()
-            self.ui.underTreatment_label_2.show()
             self.ui.newCourse_pushButton.setEnabled(False)
             self.ui.closeTx_pushButton.setEnabled(True)
         else:
@@ -5027,9 +5024,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                                                 curtext+"- No Current Course")
             self.ui.newCourse_pushButton.setEnabled(True)
             self.ui.closeTx_pushButton.setEnabled(False)
-            self.ui.underTreatment_label.hide()
-            self.ui.underTreatment_label_2.hide()
-
+    
 
     def final_choice(self,candidates):
         def DoubleClick():
@@ -5128,8 +5123,6 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         else:
             self.advise("dialog rejected")
     def labels_and_tabs(self):
-        self.ui.underTreatment_label.hide()
-        self.ui.underTreatment_label_2.hide()
         self.ui.main_tabWidget.setCurrentIndex(0)
         if localsettings.station=="surgery":
             self.ui.tabWidget.setCurrentIndex(4)
