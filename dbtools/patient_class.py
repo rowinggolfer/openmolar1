@@ -353,7 +353,7 @@ class patient():
             for field in fields:
                 self.__dict__[field]=value[i]
                 i+=1
-        if self.accd!="" and self.accd!=None:
+        if self.courseno0!=0:
             self.underTreatment=True
         if disconnectNeeded:
             cursor.close()

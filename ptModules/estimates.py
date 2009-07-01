@@ -69,7 +69,8 @@ def sorted(ests):
     sortedEsts=[]
     def estInSortedEsts(est):
         for se in sortedEsts:
-            if se.itemcode==est.itemcode:
+            if se.itemcode==est.itemcode and se.itemcode!="4002":
+                #--don't combine "custom items"
                 if est.number!=None and se.number!=None:
                     se.number +=est.number
                 se.fee+=est.fee
