@@ -203,7 +203,7 @@ def monthName(d):
     expects a datetime object, returns the month
     '''
     try:
-        return("January","February","March","April","May","June","July",
+        return("","January","February","March","April","May","June","July",
         "August","September","October","November","December")[d.month]
     except:
         pass
