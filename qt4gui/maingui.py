@@ -1019,14 +1019,10 @@ class feeClass():
                     else:
                         key=att.rstrip("cmp")
                     
-                    if key=="perio":
-                        self.update_perioDates(treatment)
                     if key in daybookdict.keys():
                         daybookdict[key]+="%s "%treatment
                     elif key=="xray" or key=="exam":
                         daybookdict["diagn"]+="%s "%treatment
-                        if "xray" in key:
-                            self.update_xrayDates(treatment)
                     elif key=="custom":
                         daybookdict["other"]+="%s "%treatment
                     else:
@@ -5397,7 +5393,11 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                 newval=str(self.pt.__dict__[attr])
                 oldval=str(self.pt_dbstate.__dict__[attr])
                 if oldval != newval:
-                    if attr not in fieldsToExclude:
+                    if attr=="xraycmp":
+                        self.update_xrayDates(newval)
+                    elif attr=="periocmp":
+                        self.update_perioDates(newval)
+                    elif attr not in fieldsToExclude:
                         if attr!="memo" or oldval.replace(chr(13),"")!=newval:
                             #--ok - windows line ends from old DB were
                             #-- creating an issue
