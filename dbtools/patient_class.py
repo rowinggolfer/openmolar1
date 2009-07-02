@@ -236,9 +236,9 @@ class patient():
             values = cursor.fetchall()
             for value in values:
                 self.bpe.append(value)
-
-            self.getCurrtrt(cursor)
-            self.getEsts(cursor)
+            if self.courseno0!=0:
+                self.getCurrtrt(cursor)
+                self.getEsts(cursor)
             self.getNotesTuple(cursor)
 
             cursor.execute('''select chartdate,chartdata from perio
