@@ -1174,6 +1174,7 @@ class forumClass():
                 topParent.setBackgroundColor(i,QtGui.QColor("#eeeeee"))
             self.ui.forumDelete_pushButton.setEnabled(False)
             self.ui.forumReply_pushButton.setEnabled(False)
+        self.showForumIcon(False)
         
     def forumItemSelected(self):
         '''
@@ -1211,6 +1212,22 @@ class forumClass():
             post.inits = dl.comboBox.currentText()
             forum.commitPost(post,table)
         self.loadForum()
+        self.showForumIcon(True)
+    
+    def showForumIcon(self,newItems=True):
+        tb=self.ui.main_tabWidget.tabBar()
+        if newItems:
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal, 
+            QtGui.QIcon.Off)
+            tb.setTabIcon(8,icon)
+            tb.setTabText(8,"NEW FORUM POSTS")
+            tb.setTabTextColor(8,QtGui.QColor("red"))
+        else:
+            print "removing icon"
+            tb.setTabIcon(8,QtGui.QIcon())
+            tb.setTabText(8,"FORUM")
+            tb.setTabTextColor(8,QtGui.QColor())
             
     def forumDeleteItem(self):
         '''
@@ -1334,11 +1351,10 @@ class historyClass():
     def addHistoryMenu(self):
         self.pastDataMenu=QtGui.QMenu()
         self.pastDataMenu.addAction("Payments history")
-        self.pastDataMenu.addAction("Completed Treatment history")
-        self.pastDataMenu.addAction("Treatment Courses history")
+        self.pastDataMenu.addAction("Daybook history")
+        self.pastDataMenu.addAction("Courses history")
         self.pastDataMenu.addAction("Estimates history")
         self.pastDataMenu.addAction("NHS claims history")
-        
         
         self.ui.pastData_toolButton.setMenu(self.pastDataMenu)
 
@@ -1370,9 +1386,9 @@ class historyClass():
             self.showPastNHSclaims()
         elif type=="Payments":
             self.showPaymentHistory()
-        elif type=="Completed":
+        elif type=="Daybook":
             self.showDaybookHistory()
-        elif type=="Treatment":
+        elif type=="Courses":
             self.showCoursesHistory()
         elif type=="Estimates":
             self.showEstimatesHistory()
@@ -2591,6 +2607,7 @@ class signals():
         self.signals_appointmentTab()
         self.signals_appointmentOVTab()
         self.signals_forum()
+        self.signals_history()
 
     def signals_miscbuttons(self):
         #misc button
@@ -2752,7 +2769,10 @@ class signals():
         QtCore.QObject.connect(self.ui.forumNewTopic_pushButton,QtCore.SIGNAL(
         "clicked()"),self.forumNewItem)
         
-            
+    def signals_history(self):
+        QtCore.QObject.connect(self.ui.historyPrint_pushButton,QtCore.SIGNAL(
+        "clicked()"), self.historyPrint)
+    
     def signals_daybook(self):
 
         #daybook - cashbook
@@ -3568,6 +3588,11 @@ class cashbooks():
         self.ui.daybookTextBrowser.setHtml('<html><body>'
         +html+"</body></html>")
 
+    def historyPrint(self):
+        html=self.ui.debugBrowser.toHtml()
+        myclass=bookprint.printBook(html)
+        myclass.printpage()
+
     def daybookPrint(self):
         dent1=str(self.ui.daybookDent1ComboBox.currentText())
         dent2=str(self.ui.daybookDent2ComboBox.currentText())
@@ -4298,7 +4323,10 @@ class pageHandlingClass():
         #--debug tab
         ##TODO - this is a development tab- remove eventually
         if ci==9:
-            self.ui.pastData_toolButton.showMenu()
+            pass
+            #-- this was causing issues when user went "home".. it was getting
+            #-- triggered
+            #self.ui.pastData_toolButton.showMenu()
             
                                     
     def home(self):
@@ -5143,6 +5171,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         self.ui.addr1Edit,self.ui.dobEdit,self.ui.pcdeEdit,self.ui.sexEdit):
             widg.setPalette(palette)
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
+        self.showForumIcon()
 
     def save_patient_tofile(self):
         '''
