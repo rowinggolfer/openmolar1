@@ -7,7 +7,7 @@
 # for more details.
 
 from __future__ import division
-import sys
+import sys,copy
 from openmolar.settings import localsettings,fee_keys
 from openmolar.ptModules import plan
 
@@ -75,11 +75,13 @@ def sorted(ests):
                     se.number +=est.number
                 se.fee+=est.fee
                 se.ptfee+=est.ptfee
+                se.type+="|"+est.type
                 return True
                 
     for est in ests:
         if not estInSortedEsts(est):
-            sortedEsts.append(est)
+            ce=copy.copy(est)
+            sortedEsts.append(ce)
     
     return sortedEsts
     
