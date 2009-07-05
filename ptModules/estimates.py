@@ -66,22 +66,26 @@ def sorted(ests):
     '''
     compresses a list of estimates down into number*itemcode
     '''
+    def cmp1(a,b): 
+        'define how ests are sorted'
+        return cmp(a.itemcode,b.itemcode)
+
     sortedEsts=[]
     def estInSortedEsts(est):
         for se in sortedEsts:
-            if se.itemcode==est.itemcode and se.itemcode!="4002":
-                #--don't combine "custom items"
+            if se.itemcode==est.itemcode and se.description==est.description:
+                #--don't combine "custom items (where description has changed)"
                 if est.number!=None and se.number!=None:
                     se.number +=est.number
                 se.fee+=est.fee
                 se.ptfee+=est.ptfee
                 se.type+="|"+est.type
                 return True
-                
     for est in ests:
         if not estInSortedEsts(est):
             ce=copy.copy(est)
             sortedEsts.append(ce)
+    sortedEsts.sort(cmp1)
     
     return sortedEsts
     

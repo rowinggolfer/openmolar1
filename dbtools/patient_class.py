@@ -193,7 +193,6 @@ class patient():
         self.bpe=[]
         self.fees=0
         self.notestuple=()
-        self.currEstimate=((),0)
         self.MH=()
         self.MEDALERT=False
         self.HIDDENNOTES=[]

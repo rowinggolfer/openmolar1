@@ -136,10 +136,12 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         "textEdited (const QString&)"),self.update_ptFee)
 
     def update_cset(self,arg):
-        self.item.csetype=str(arg)
+        for item in self.items:
+            item.csetype=str(arg)
     
     def update_descr(self,arg):
-        self.item.description=str(arg).replace('"', '\"')
+        for item in self.items:
+            item.description=str(arg).replace('"', '\"')
 
     def update_Fee(self,arg,userPerforming=True):
         try:
@@ -413,13 +415,10 @@ class estWidget(QtGui.QFrame):
         self.compFooter.ptfee_lineEdit.setText("%.02f"%(compt_total/100))
 
     def findExistingItemWidget(self,item):
-        if item.itemcode!="4002":
-            #--don't separate custom items
-            for widg in self.estItemWidgets:
-                if widg.itemcode==item.itemcode:
-                #and widg.description == item.description:
-                    widg.addItem(item)
-                    return True
+        for widg in self.estItemWidgets:
+            if widg.itemcode==item.itemcode and widg.items[0].description == item.description:
+                widg.addItem(item)
+                return True
                 
     def setEstimate(self,ests,SPLIT_ALL=False):
         self.ests=ests

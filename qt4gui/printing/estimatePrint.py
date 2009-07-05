@@ -82,6 +82,8 @@ class estimate():
                 
                 amount=est.ptfee
                 
+                #print number,item,amount
+                
                 mult=""
                 if number>1:
                     mult="s"
@@ -90,10 +92,10 @@ class estimate():
                     item=item.replace("^","")
                     
                 
-                painter.drawText(QtCore.QRectF(x,y,40,serifLineHeight),
-                QtCore.QString(number))
+                painter.drawText(QtCore.QRectF(x,y,60,serifLineHeight),
+                str(number))
 
-                painter.drawText(QtCore.QRectF(x+40,y,280,serifLineHeight),
+                painter.drawText(QtCore.QRectF(x+60,y,280,serifLineHeight),
                 QtCore.QString(item))            
 
                 painter.drawText(QtCore.QRectF(x+280, y,100,serifLineHeight),
@@ -128,7 +130,7 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate(False)
     from openmolar.dbtools import patient_class
-    
+    from openmolar.ptModules import estimates
     pt=patient_class.patient(31779)
     
     app = QtGui.QApplication(sys.argv)
@@ -139,7 +141,7 @@ if __name__ == "__main__":
     myreceipt.fname=pt.fname
     myreceipt.sname=pt.sname
     myreceipt.ourref=pt.serialno
-    myreceipt.estItems = pt.estimates
+    myreceipt.estItems = estimates.sorted(pt.estimates)
     print pt.estimates
         
     myreceipt.print_()

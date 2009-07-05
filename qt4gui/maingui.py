@@ -3853,15 +3853,18 @@ class printingClass():
         if serialno==None:
             serialno=self.pt.serialno
         try:
+            ##todo - this try/catch is naff.
             pdfDup=utilities.getPDF()
-            #-field is 20 chars max.. hence the [:14]
-            docsprinted.add(serialno,descr[:14] + " (pdf)",pdfDup)
-            #--now refresh the docprinted widget (if visible)
-            if self.ui.previousCorrespondence_treeWidget.isVisible():
-                self.docsPrinted()
-        except:
-            self.advise("Error saving PDF copy",2)
-
+            if pdfDup==None:
+                self.advise("PDF is NONE - (tell Neil this happened)")
+            else:
+                #-field is 20 chars max.. hence the [:14]
+                docsprinted.add(serialno,descr[:14] + " (pdf)",pdfDup)
+                #--now refresh the docprinted widget (if visible)
+                if self.ui.previousCorrespondence_treeWidget.isVisible():
+                    self.docsPrinted()
+        except Exception,e:
+            self.advise("Error saving PDF copy %s"%e,2)
 
     def printDupReceipt(self):
         dupdate=self.ui.dupReceiptDate_lineEdit.text()
@@ -3967,7 +3970,7 @@ class printingClass():
             return
         est=estimatePrint.estimate()
         est.setProps(self.pt.title,self.pt.fname,self.pt.sname,self.pt.serialno)
-        est.estItems=self.pt.estimates
+        est.estItems=estimates.sorted(self.pt.estimates)
 
         if est.print_():
             self.commitPDFtoDB("auto estimate")
@@ -3987,7 +3990,7 @@ class printingClass():
             ehtml="<br />Estimate for your current course of treatment."
             ehtml+="<br />"*4
             ehtml+='<table width=400>'
-            for est in self.pt.estimates:
+            for est in estimates.sorted(self.pt.estimates):
                 pt_total+=est.ptfee
                 number=est.number
                 item=est.description

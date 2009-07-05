@@ -25,14 +25,13 @@ class txCourse():
             self.__dict__[att]=val
             i+=1
     def toHtml(self):
-        headers=(
-        ("Acceptance Date",self.accd),
+        headers=(("Acceptance Date",self.accd),
         ("Completion Date",self.cmpd),
-        ("Exam","%s dated - %s"%(self.examt,self.examd)),
-        )
-        
+        ("Exam","%s dated - %s"%(self.examt,self.examd)),)
+
         retarg='<table width="100%" border="2">'
-        retarg+='<tr><th colspan="3" bgcolor="yellow">CourseNo %s</th></tr>'%self.courseno
+        retarg+='''<tr><th colspan="3" bgcolor="yellow">
+        CourseNo %s</th></tr>'''%self.courseno
 
         for header in headers:
             retarg+='<tr><th colspan="2">%s</th><td>%s</td></tr>'%header
@@ -40,7 +39,8 @@ class txCourse():
         for planned in ("pl","cmp"):
             if planned=="pl":
                 bgcolor=' bgcolor="#eeeeee"'
-                retarg+='<tr><th rowspan="7"%s>PLANNED / INCOMPLETE</th>'%bgcolor
+                retarg+='''<tr>
+                <th rowspan="7"%s>PLANNED / INCOMPLETE</th>'''%bgcolor
             else:
                 retarg+='<tr><th rowspan="7"%s>COMPLETED</th>'
                 bgcolor=""
@@ -58,23 +58,23 @@ class txCourse():
                 dentureWork="-"
             retarg+="<tr><th%s>Denture Work</th><td%s>%s</td></tr>"%(
             bgcolor,bgcolor,dentureWork)
-            
-            retarg+='<tr><th%s>Chart</th><td><table width="100%s" border="1"><tr>'%(
-            bgcolor,"%")
+
+            retarg+='''<tr><th%s>Chart</th>
+            <td><table width="100%s" border="1"><tr>'''%(bgcolor,"%")
             for att in uppers:
                 retarg+='<td align="center"%s>%s</td>'%(bgcolor,att.upper())
             retarg+="</tr><tr>"
             for att in uppers:
                 retarg+='<td align="center"%s>%s</td>'%(
                 bgcolor,self.__dict__[att+planned])
-                                 
+
             retarg+="</tr><tr>"
             for att in uppers:
                 retarg+='<td align="center"%s>%s</td>'%(bgcolor,att.upper())
             retarg+="</tr><tr>"
             for att in uppers:
                 retarg+='<td align="center"%s>%s</td>'%(
-                bgcolor,self.__dict__[att+planned])                  
+                bgcolor,self.__dict__[att+planned])
             retarg+="</tr></table>"
         retarg+='</tr></table>\n'
         return retarg
@@ -95,8 +95,9 @@ def details(sno):
         else:
             query+=field+","
     query=query.strip(",")
-    cursor.execute('SELECT %s from currtrtmt where serialno=%d'%(query,sno))
-    
+    cursor.execute('''SELECT %s from currtrtmt where serialno=%d
+    order by courseno desc'''%(query,sno))
+
     rows= cursor.fetchall()
     cursor.close()
 
@@ -104,14 +105,14 @@ def details(sno):
     for row in rows:
         course=txCourse(row)
         courses.append(course)
-    
+
     claimNo=len(courses)
     retarg="<h2>Past Courses of Treatment - %d rows found</h2>"%claimNo
-    for course in courses:    
+    for course in courses:
         retarg+=course.toHtml()
-        
+
     retarg+='</table>'
-    
+
     #db.close()
     return retarg
 
