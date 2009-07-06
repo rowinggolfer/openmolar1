@@ -257,7 +257,7 @@ class feeClass():
             else:
                 doc="scotNHSremuneration08.pdf"
             try:
-                proc=subprocess.Popen(["evince",
+                proc=subprocess.Popen(["%s"%localsettings.pdfProg,
                 "resources/%s"%doc])
             except Exception,e:
                 print Exception,e
@@ -4708,7 +4708,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                     f=open("temp.pdf","w")
                     f.write(data)
                     f.close()
-                    subprocess.call(["evince","temp.pdf"])
+                    subprocess.Popen(["%s"%localsettings.pdfProg,"temp.pdf"])
                 except Exception,e:
                     print "view PDF error"
                     print Exception,e

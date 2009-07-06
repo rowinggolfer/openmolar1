@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>683</height>
+    <width>1114</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1000</width>
-         <height>637</height>
+         <width>1098</width>
+         <height>517</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>8</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -2917,7 +2917,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>492</width>
+                           <width>96</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -5410,6 +5410,12 @@ Note - this will not remove items which are currently there. </string>
                 <enum>Qt::Vertical</enum>
                </property>
                <widget class="QTreeWidget" name="forum_treeWidget">
+                <attribute name="headerShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="headerShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
                 <column>
                  <property name="text">
                   <string notr="true">1</string>
@@ -5657,7 +5663,7 @@ Note - this will not remove items which are currently there. </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>1114</width>
      <height>23</height>
     </rect>
    </property>

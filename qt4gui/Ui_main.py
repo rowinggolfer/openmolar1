@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Thu Jul  2 11:29:29 2009
+# Created: Mon Jul  6 11:23:56 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 683)
+        MainWindow.resize(1114, 485)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -35,7 +35,7 @@ class Ui_MainWindow(object):
         self.scrollArea_7.setWidgetResizable(True)
         self.scrollArea_7.setObjectName("scrollArea_7")
         self.scrollAreaWidgetContents_12 = QtGui.QWidget(self.scrollArea_7)
-        self.scrollAreaWidgetContents_12.setGeometry(QtCore.QRect(0, 0, 1000, 637))
+        self.scrollAreaWidgetContents_12.setGeometry(QtCore.QRect(0, 0, 1098, 517))
         self.scrollAreaWidgetContents_12.setObjectName("scrollAreaWidgetContents_12")
         self.horizontalLayout_7 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_12)
         self.horizontalLayout_7.setSpacing(3)
@@ -1169,7 +1169,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName("estimate_scrollArea")
         self.scrollAreaWidgetContents_11 = QtGui.QWidget(self.estimate_scrollArea)
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 492, 198))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 96, 198))
         self.scrollAreaWidgetContents_11.setObjectName("scrollAreaWidgetContents_11")
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
@@ -2304,7 +2304,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_18.addWidget(self.scrollArea_7)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1114, 23))
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")
@@ -2388,7 +2388,7 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(0)
+        self.main_tabWidget.setCurrentIndex(8)
         self.tabWidget.setCurrentIndex(9)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
