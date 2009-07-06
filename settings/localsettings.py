@@ -40,6 +40,12 @@ successful_login=False
 permissionsRaised=False
 permissionExpire=datetime.datetime.now()
 
+#-- set a base time for forum check
+def forumVisited():
+    global lastForumVisit
+    lastForumVisit=datetime.datetime.now()
+forumVisited()
+
 #-- self-explanatory?
 about='''<p>
 openMolar - open Source dental practice management software.<br />

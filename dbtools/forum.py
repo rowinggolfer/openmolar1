@@ -62,7 +62,17 @@ def deletePost(ix,table="forum"):
     cursor.close()
     #db.close()
     
-    
+
+def lastPost(table="forum"):
+    db=connect()
+    cursor=db.cursor()
+    query='''select max(fdate) from %s'''%table
+    cursor.execute(query)
+    row = cursor.fetchone()
+    cursor.close()
+    if row:
+        return row[0]
+
 def getPosts(table="forum"):
     '''
     gets all active rows from a forum table
@@ -98,6 +108,6 @@ if __name__ == "__main__":
     posts = getPosts()
     for post in posts:
         print post.topic
-    deletePost(20,"omforum")
-    
+    #deletePost(20,"omforum")
+    print lastPost()
     

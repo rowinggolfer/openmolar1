@@ -1123,6 +1123,20 @@ class feeClass():
         self.ui.accountsTotal_doubleSpinBox.setValue(total/100)
         
 class forumClass():
+    
+    def checkForNewForumPosts(self):
+        '''checks for new forum posts every 60'''
+        while True:
+            time.sleep(60)
+            print "checking forum"
+            lastEvent=localsettings.lastForumVisit
+            for topic in ("forum","omforum"):
+                newEvent=forum.lastPost(topic)
+                print newEvent,lastEvent,newEvent>lastEvent
+                if newEvent>lastEvent:
+                    self.showForumIcon(True)
+                    break
+    
     def loadForum(self):
         '''
         loads the forum (you guessed, huh?)
@@ -1174,6 +1188,9 @@ class forumClass():
                 topParent.setBackgroundColor(i,QtGui.QColor("#eeeeee"))
             self.ui.forumDelete_pushButton.setEnabled(False)
             self.ui.forumReply_pushButton.setEnabled(False)
+        #-- make a note that the user has visited the forum
+        localsettings.forumVisited()
+        #-- turn the tab red.
         self.showForumIcon(False)
         
     def forumItemSelected(self):
@@ -2150,7 +2167,7 @@ class appointmentClass():
 
     def apptTicker(self):
         ''''
-        this updates the appt books (if changes found) moves a
+        this moves a
         red line down the appointment books -
         note needs to run in a thread!
         '''
@@ -3202,6 +3219,8 @@ class customWidgets():
         t1=threading.Thread(target=self.apptTicker)
         t1.start()
 
+        t2=threading.Thread(target=self.checkForNewForumPosts)
+        t2.start()
         self.enableEdit(False)
         for desc in referral.getDescriptions():
             s=QtCore.QString(desc)
