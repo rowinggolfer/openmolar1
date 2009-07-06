@@ -9,7 +9,7 @@
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-import os,sys,copy,pickle,time,threading,re,subprocess
+import os,sys,copy,pickle,time,threading,re,subprocess,datetime
 
 from openmolar.settings import localsettings,fee_keys,utilities
 
@@ -1166,9 +1166,9 @@ class forumClass():
                 parent=parents.get(post.parent_ix)                
                 item=QtGui.QTreeWidgetItem(parent)
                 item.setText(0,post.topic)
-                item.setData(3,QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDateTime(post.date)))
                 item.setText(1,post.inits)
                 item.setText(2,post.briefcomment)
+                item.setData(3,QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDateTime(post.date)))
                 item.setText(4,post.comment)
                 item.setText(5,"%d:%s"%(post.ix,topic))
                 if post.parent_ix==None:
@@ -1179,6 +1179,10 @@ class forumClass():
                     bcolour=QtCore.Qt.lightGray                    
                 for i in range(item.columnCount()):
                     item.setTextColor(i, colour)
+                    if i==3 and post.date > \
+                    localsettings.curTime()-datetime.timedelta(hours=24):
+                        item.setTextColor(i, QtGui.QColor("orange"))
+
                 parents[post.ix]=item
             twidg.expandAll()
             twidg.setColumnWidth(4,0)
@@ -1218,19 +1222,26 @@ class forumClass():
         dl.setupUi(Dialog)
         dl.comboBox.addItems(["Anon"]+localsettings.allowed_logins)
         
-        if Dialog.exec_():
-            if dl.table_comboBox.currentIndex()==0:
-                table="forum"
+        while True:
+            if Dialog.exec_():
+                if dl.topic_lineEdit.text()=="":
+                    self.advise("Please set a topic",1)
+                else:
+                    break
             else:
-                table="omforum"
-            post=forum.post()
-            post.topic = dl.topic_lineEdit.text()
-            post.comment = dl.comment_textEdit.toPlainText()
-            post.inits = dl.comboBox.currentText()
-            forum.commitPost(post,table)
+                return
+            
+        if dl.table_comboBox.currentIndex()==0:
+            table="forum"
+        else:
+            table="omforum"
+        post=forum.post()
+        post.topic = dl.topic_lineEdit.text()
+        post.comment = dl.comment_textEdit.toPlainText()
+        post.inits = dl.comboBox.currentText()
+        forum.commitPost(post,table)
         self.loadForum()
-        self.showForumIcon(True)
-    
+        
     def showForumIcon(self,newItems=True):
         tb=self.ui.main_tabWidget.tabBar()
         if newItems:
