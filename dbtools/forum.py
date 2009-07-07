@@ -7,7 +7,7 @@
 # more details.
 
 import sys,datetime
-from openmolar.connect import connect
+from openmolar.connect import forumConnect,connect
 from openmolar.settings import localsettings
 
 headers=["topic","user","comment","submitted"]
@@ -24,7 +24,9 @@ class post():
         self.open=True
 
 def commitPost(post,table="forum"):
-    db=connect()
+    #use a different connection for forum, as it runs in a separate thread
+
+    db=connect() 
     cursor=db.cursor()
     columns="parent_ix,inits,fdate,topic,comment"
     
@@ -64,7 +66,8 @@ def deletePost(ix,table="forum"):
     
 
 def lastPost(table="forum"):
-    db=connect()
+    #--use a different connection because this is called in a thread
+    db=forumConnect()
     cursor=db.cursor()
     query='''select max(fdate) from %s'''%table
     cursor.execute(query)

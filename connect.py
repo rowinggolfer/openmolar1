@@ -5,7 +5,21 @@ import MySQLdb
 from xml.dom import minidom
 from openmolar.settings.localsettings import cflocation
 
-currentConnection,myHost,myUser,myPassword,myDb,myPort=None,"","","","",""
+mainconnection,forumconnection=None,None
+
+myHost,myUser,myPassword,myDb,myPort="","","","",""
+
+print "parsing the global settings file"
+dom=minidom.parse(cflocation)
+sysPassword=dom.getElementsByTagName("system_password")[0].firstChild.data
+xmlnode=dom.getElementsByTagName("server")[0]
+myHost=xmlnode.getElementsByTagName("location")[0].firstChild.data
+myPort=int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
+xmlnode=dom.getElementsByTagName("database")[0]
+myUser=xmlnode.getElementsByTagName("user")[0].firstChild.data
+myPassword=xmlnode.getElementsByTagName("password")[0].firstChild.data
+myDb=xmlnode.getElementsByTagName("dbname")[0].firstChild.data
+
 
 class omSQLresult():
     '''
@@ -22,32 +36,34 @@ class omSQLresult():
         '''
         return self.result
 
-
-def connect():
-    global currentConnection, myHost,myUser,myPassword,myDb,myPort
-    if currentConnection==None:
-        print "parsing the global settings file"
-        dom=minidom.parse(cflocation)
-        sysPassword=dom.getElementsByTagName("system_password")[0].firstChild.data
-        #print sysPassword
-        xmlnode=dom.getElementsByTagName("server")[0]
-        myHost=xmlnode.getElementsByTagName("location")[0].firstChild.data
-        myPort=int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
-        xmlnode=dom.getElementsByTagName("database")[0]
-        myUser=xmlnode.getElementsByTagName("user")[0].firstChild.data
-        myPassword=xmlnode.getElementsByTagName("password")[0].firstChild.data
-        myDb=xmlnode.getElementsByTagName("dbname")[0].firstChild.data
-
-    if not (currentConnection and currentConnection.open):
+def forumConnect():
+    global forumconnection
+    
+    if not (forumconnection and forumconnection.open):
         print "New connection needed"
         print "connecting to %s on %s port %s"%(myDb, myHost, myPort)
-        currentConnection=MySQLdb.connect(host=myHost,port=myPort,user=myUser,passwd=myPassword,
+        forumconnection=MySQLdb.connect(host=myHost,port=myPort,user=myUser,passwd=myPassword,
                                           db=myDb)
-        currentConnection.autocommit(True)
-        print currentConnection
+        forumconnection.autocommit(True)
+        print forumconnection
     else:
-        currentConnection.commit()
-    return currentConnection
+        forumconnection.commit()
+    return forumconnection
+
+
+def connect():
+    global mainconnection
+    
+    if not (mainconnection and mainconnection.open):
+        print "New connection needed"
+        print "connecting to %s on %s port %s"%(myDb, myHost, myPort)
+        mainconnection=MySQLdb.connect(host=myHost,port=myPort,user=myUser,passwd=myPassword,
+                                          db=myDb)
+        mainconnection.autocommit(True)
+        print mainconnection
+    else:
+        mainconnection.commit()
+    return mainconnection
 
 if __name__=="__main__":
     import time

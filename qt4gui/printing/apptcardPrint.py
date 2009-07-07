@@ -69,12 +69,13 @@ class card():
                 
         y += font2LineHeight*1.2
         
-        for app in self.appts:
-            formatString="%s - %s with %s"%(app[0],app[1],app[2])
+        for app in self.appts[:5]:
+            formatString="%s - %s with %s"%(
+            app[1],localsettings.longDatefromUKDate(app[0]),app[2])
             painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),formatString,option)            
             y += font2LineHeight
             
-        y = pageRect.height()-2-fontLineHeight*3
+        y = pageRect.height()-2-fontLineHeight*3.5
         
         painter.drawLine(0,int(y),int(pageRect.width()),int(y))
         
@@ -90,6 +91,6 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     mycard=card()
     print mycard.printer.getPageMargins(QtGui.QPrinter.Millimeter)
-    mycard.setProps("Mr","Neil","Wallace",11956,(("29/12/2009","8:30","NW"),("29/12/2009","8:30","NW")))
+    mycard.setProps("Mr","Neil","Wallace",11956,(("7/7/2009","10:30","NW"),("29/12/2009","8:30","NW")))
     mycard.print_()
 

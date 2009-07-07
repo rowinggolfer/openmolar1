@@ -1897,12 +1897,21 @@ class appointmentClass():
         #--clicked the make button
         seldate=self.ui.apptOV_calendarWidget.selectedDate()
         today=QtCore.QDate.currentDate()
+            
         if seldate<today:
             self.advise("can't schedule an appointment in the past",1)
             #-- change the calendar programatically (this will call THIS
             #--procedure again!)
             self.ui.apptOV_calendarWidget.setSelectedDate(today)
             return
+        elif seldate.toPyDate()>localsettings.bookEnd:
+            self.advise('''Reached %s<br />
+            No suitable appointments found<br />
+            Is the appointment very long?<br /> 
+            If so, Perhaps cancel some emergency time?
+            '''%localsettings.longDate(localsettings.bookEnd),1)
+            return
+                
         else:
             #--select mon-saturday of the selected day
             dayno=seldate.dayOfWeek()

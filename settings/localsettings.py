@@ -118,6 +118,11 @@ referralfile=""
 #--this data will eventually be in the mysql?
 stylesheet="resources/style.css"
 
+#-- set a latest possible date for appointments to be made 
+#--(necessary if a very long appointment goes right on through)
+#-- would get maximum recursion, quite quickly!
+##todo - this will need to change!!!!
+bookEnd=datetime.date(2009,12,31)
 
 ##TODO - is this obselete now?
 descriptions={}
@@ -199,7 +204,7 @@ def dayName(d):
     expects a datetime object, returns the day
     '''
     try:
-        return ("Monday","Tuesday","Wednesday","Thursday",
+        return ("","Monday","Tuesday","Wednesday","Thursday",
         "Friday","Saturday","Sunday")[d.isoweekday()]
     except:
         pass
@@ -214,6 +219,13 @@ def monthName(d):
     except:
         pass
 
+def longDatefromUKDate(ukdate):
+    try:
+        d=datetime.datetime.strptime(ukdate,"%d/%m/%Y")
+        return longDate(d)
+    except:
+        pass
+        
 def longDate(d):
     try:
         return "%s, %d %s %d"%(dayName(d),d.day,monthName(d),d.year)
