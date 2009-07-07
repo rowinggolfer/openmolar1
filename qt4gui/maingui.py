@@ -1084,7 +1084,7 @@ class feeClass():
         for row in rows:
             for col in range(len(row)):
                 d=row[col]
-                if d!=None:                
+                if d!=None or col==11:                
                     item=QtGui.QTableWidgetItem()
                     if col==0:
                         item.setText(localsettings.ops.get(d))
@@ -1116,6 +1116,7 @@ class feeClass():
                 item.setCheckState(QtCore.Qt.Unchecked)
                 self.ui.accounts_tableWidget.setItem(rowno,col,item)
             rowno+=1
+        self.ui.accounts_tableWidget.sortItems(7,QtCore.Qt.DescendingOrder)
         self.ui.accounts_tableWidget.setSortingEnabled(True)
         #self.ui.accounts_tableWidget.update()
         for i in range(self.ui.accounts_tableWidget.columnCount()):

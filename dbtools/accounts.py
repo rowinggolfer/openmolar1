@@ -18,7 +18,7 @@ def details():
     query='''select dnt1,serialno ,cset, fname,sname,dob,memo,pd4,billdate,billtype,billct,courseno0,
     (money0 + money1 + money9 + money10 - money2 - money3 - money8) as fees
     from patients where (money0 + money1 + money9 + money10 - money2 - money3 - money8) > 0
-    order by sname'''
+    order by pd4 desc'''
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
@@ -31,10 +31,10 @@ def bad_debts():
     '''
     db = connect()
     cursor = db.cursor()
-    query='''select dnt1,serialno ,cset, fname,sname,dob,"%s",memo,pd4,billdate,billtype,billct,courseno0,
+    query='''select dnt1,serialno ,cset, fname,sname,dob,memo,pd4,billdate,billtype,billct,courseno0,
     (money0 + money1 + money9 + money10 +money11 - money2 - money3 - money8) as fees
     from patients where (money0 + money1 + money9 + money10 +money11 - money2 - money3 - money8) > 0
-    order by sname'''%localsettings.sqlDateFormat
+    order by pd4 desc'''
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()

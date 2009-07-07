@@ -28,7 +28,9 @@ class card():
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
-        LeftMargin = 10
+        self.printer.setPaperSize(QtGui.QPrinter.A8)
+        self.printer.setOrientation(QtGui.QPrinter.Landscape)
+        self.printer.setFullPage(True)
         painter = QtGui.QPainter(self.printer)
         pageRect = self.printer.pageRect()
         painter.setPen(QtCore.Qt.black)
@@ -47,42 +49,40 @@ class card():
         painter.setFont(font)
         option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
         option.setWrapMode(QtGui.QTextOption.WordWrap)
-        painter.drawText(QtCore.QRectF(0, 0,pageRect.width(), 50),
-        "The Academy Dental Practice\n19 Union Street\nInverness\n01463 232423",option)
+
+        y = fontLineHeight*2
         
-        x,y = LeftMargin,65
+        painter.drawText(QtCore.QRectF(0, 0,pageRect.width(), y),
+        "The Academy Dental Practice, 19 Union Street\nInverness. tel 01463 232423",option)
         
-        painter.drawLine(int(x),int(y),int(pageRect.width()),int(y))
+        y+=2
+        
+        painter.drawLine(0,y,int(pageRect.width()),y)
         
         painter.setFont(font2)
         
-        
-        y+=fontLineHeight
-        name= "%s %s %s"%(self.title.title(),self.fname.title(),self.sname.title())
+        y+=2 #fontLineHeight
+        name= "%s %s %s - (%s)"%(
+        self.title.title(),self.fname.title(),self.sname.title(),self.ourref)
 
         painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),name,option)
-        
-        y += font2LineHeight
-        ref= "Our Ref - "+str(self.ourref)
-        
-        painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),ref,option)
-        
-        y += font2LineHeight*1.5
-        
+                
+        y += font2LineHeight*1.2
         
         for app in self.appts:
             formatString="%s - %s with %s"%(app[0],app[1],app[2])
             painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),formatString,option)            
             y += font2LineHeight
             
+        y = pageRect.height()-2-fontLineHeight*3
         
+        painter.drawLine(0,int(y),int(pageRect.width()),int(y))
         
-        y = pageRect.height()-85
-        painter.drawLine(int(x),int(y),int(pageRect.width()),int(y))
+        y+=2
         
         painter.setFont(font)
-        painter.drawText(QtCore.QRectF(0, y,pageRect.width(), 85),
-        "Please try and give at least 24 hours notice if you need to change an appointment.",option)
+        painter.drawText(QtCore.QRectF(0, y,pageRect.width(), fontLineHeight*2),
+        "Please try and give at least 24 hours notice\n if you need to change an appointment.",option)
 
 if __name__ == "__main__":
     import sys
