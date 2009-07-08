@@ -15,9 +15,9 @@ def write(sno,data):
 
     result=True
     
-    query='insert into mednotes (serialno,drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other)'
-    query+=" values %s"%str((int(sno),)+data)
-    if localsettings.logqueries:
+    query='insert into mednotes (serialno,drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other,alert,chkdate)'
+    query+=" values %s"%str((int(sno),)+data[:13]+(localsettings.pyDatetoSQL(data[13]),))
+    if True or localsettings.logqueries:
             print query
     try:
         cursor.execute("delete from mednotes where serialno=%d"%sno)
@@ -47,13 +47,10 @@ def writeHist(sno,data):
 
     return True
 
-
-
-
-
 if __name__ == "__main__":
+    import datetime
     newdata=("doctor","address","curmeds","pastmeds","allergies","heart","lungs","liver","bleeding","Kidneys",
-    "ops","other")
+    "ops","other",True,datetime.date.today())
     write(11956,newdata)
     writeHist(11956,((140,"new doctor"),))
     

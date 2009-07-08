@@ -5617,7 +5617,8 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             connect.myPassword=str(dl.password_lineEdit.text())
             connect.myUser=str(dl.user_lineEdit.text())
             try:
-                connect.currentConnection.close()
+                connect.mainconnection.close()
+                connect.forumconnection.close()
                 self.advise("Applying changes",1)
                 localsettings.initiate()
             except Exception,e:

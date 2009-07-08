@@ -184,8 +184,10 @@ def sqlToday():
     t=curTime()
     return "%04d%02d%02d"%(t.year,t.month,t.day)
 def pyDatetoSQL(d):
-    return "%04d%02d%02d"%(d.year,d.month,d.day)
-    
+    try:
+        return "%04d%02d%02d"%(d.year,d.month,d.day)
+    except:
+        return 'NULL'
 def formatMoney(m):
     '''takes an integer, returns "7.30"'''
     try:

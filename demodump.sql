@@ -486,6 +486,8 @@ CREATE TABLE `mednotes` (
   `anaes` varchar(60) default NULL,
   `other` varchar(60) default NULL,
   `oldmed` varchar(60) default NULL,
+  `alert` tinyint(1) NOT NULL default '0',
+  `chkdate` date default NULL,
   PRIMARY KEY  (`serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
@@ -496,7 +498,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `mednotes` WRITE;
 /*!40000 ALTER TABLE `mednotes` DISABLE KEYS */;
-INSERT INTO `mednotes` VALUES (1,'new doctor again','dunno','non','med ok','heart','lungs','liver','bleeding','kidneys','ops','other','?');
+INSERT INTO `mednotes` VALUES (1,'new doctor again','dunno','non','med ok','heart','lungs','liver','bleeding','kidneys','ops','other','?',0,NULL);
 /*!40000 ALTER TABLE `mednotes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1085,4 +1087,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2009-06-26 12:11:57
+-- Dump completed on 2009-07-08  0:45:37

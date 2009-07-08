@@ -250,14 +250,12 @@ class patient():
                 #--a dictionary (keys=dates) of dictionaries with keys
                 #--like "ur8" and containing 7 tuples of data
             cursor.execute('''select drnm,adrtel,curmed,oldmed,allerg,heart,
-            lungs,liver,kidney,bleed,anaes,other from mednotes where
-            serialno=%d'''%self.serialno)
+            lungs,liver,kidney,bleed,anaes,other,alert,chkdate from mednotes 
+            where serialno=%d'''%self.serialno)
 
-            self.MH=cursor.fetchall()
-            if self.MH!=():
-                allerg=self.MH[0][4]
-                if len(allerg)>0 and not "med ok" in allerg.lower():
-                    self.MEDALERT=True
+            self.MH=cursor.fetchone()
+            if self.MH!=None:
+                self.MEDALERT=self.MH[13]
 
             cursor.execute('''select DATE_FORMAT(date,"%s"), trtid, chart from
             daybook where serialno = %d'''%(

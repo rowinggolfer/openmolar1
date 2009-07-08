@@ -6,16 +6,23 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
-
+import datetime
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs import Ui_medhist
 from openmolar.dbtools import updateMH
 
 def showDialog(Dialog,pt):
+    def updateDate():
+        dl.dateEdit.setDate(datetime.date.today())
+        dl.dateEdit.show()
+        dl.date_label.show()
     dl = Ui_medhist.Ui_Dialog()
     dl.setupUi(Dialog)
+    Dialog.connect(dl.checked_pushButton,QtCore.SIGNAL("clicked()"),updateDate)
     data=pt.MH
-    if data != ():
+    chkdate=None
+    alert=False
+    if data != None:
         item=0
         for lineEdit in (
         dl.doctor_lineEdit,
@@ -31,8 +38,18 @@ def showDialog(Dialog,pt):
         dl.anaesthetic_lineEdit,
         dl.other_lineEdit
         ):
-            lineEdit.setText(data[-1][item])
+            lineEdit.setText(data[item])
             item+=1
+        alert=data[12]
+        chkdate=data[13]
+        
+    if chkdate:
+        dl.dateEdit.setDate(chkdate)
+    else:
+        dl.date_label.hide()
+        dl.dateEdit.hide()
+    dl.checkBox.setChecked(alert)
+    
     if Dialog.exec_():
         newdata=[]
         for lineEdit in (
@@ -50,26 +67,27 @@ def showDialog(Dialog,pt):
         dl.other_lineEdit
         ):
             newdata.append(str(lineEdit.text().toAscii()))
-        
+        newdata.append(dl.checkBox.isChecked())
+        chkdate=dl.dateEdit.date().toPyDate()
+        if chkdate!=datetime.date(1900,1,1):
+            newdata.append(dl.dateEdit.date().toPyDate())
+        else:
+            newdata.append(None)
         result=tuple(newdata)
-        
-        if data==() or data[-1]!=result:
+        print result
+        if data!=result:
             print "MH changed"
             updateMH.write(pt.serialno,result)
-            pt.MH=(result,)
-            #-- this is a hack... mh table should have an "ALERT" field
-            if len(dl.allergies_lineEdit.text())>0:
-                pt.MEDALERT=True
-            else:
-                pt.MEDALERT=False
+            pt.MH=result
+            pt.MEDALERT=result[12]
                 
             pt.addHiddenNote("mednotes")
             
             mnhistChanges=[]
-            if data!=():
+            if data!=None:
                 for a in range(11):
-                    if data[-1][a]!=result[a] and str(data[-1][a])!="":
-                        mnhistChanges.append((a+140,data[-1][a]))
+                    if data[a]!=result[a] and str(data[a])!="":
+                        mnhistChanges.append((a+140,data[a]))
             if mnhistChanges!=[]:
                 updateMH.writeHist(pt.serialno,mnhistChanges)
             
