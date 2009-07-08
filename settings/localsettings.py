@@ -221,10 +221,15 @@ def monthName(d):
     except:
         pass
 
+def pyDatefromUKDate(ukdate):
+    try:
+        return datetime.datetime.strptime(ukdate,"%d/%m/%Y")
+    except:
+        pass
+    
 def longDatefromUKDate(ukdate):
     try:
-        d=datetime.datetime.strptime(ukdate,"%d/%m/%Y")
-        return longDate(d)
+        return longDate(pyDatefromUKDate(ukdate))
     except:
         pass
         

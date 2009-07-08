@@ -5060,6 +5060,16 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             self.ui.medNotes_pushButton.setPalette(palette)
         else:
             self.ui.medNotes_pushButton.setPalette(self.palette())
+        
+        if self.pt.MH!=None:
+            chkdate=self.pt.MH[13]
+            if chkdate==None:
+                chkdate=""
+            else:
+                chkdate=" - %s"%chkdate                
+            self.ui.medNotes_pushButton.setText("MedNotes%s"%chkdate)
+        else:
+            self.ui.medNotes_pushButton.setText("MedNotes")            
         self.enableEdit(True)
 
     def updateStatus(self):
