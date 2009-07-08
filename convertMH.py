@@ -5,15 +5,17 @@ important conditions.
 
 I have added a new field "alert" 
 '''
-
-import connect
-
+import os,sys,datetime
 from PyQt4 import QtGui, QtCore
-import datetime
-from settings import localsettings
-from qt4gui.dialogs import Ui_medhist
-from dbtools import updateMH
-from connect import connect
+
+wkdir=os.path.dirname(os.getcwd())
+sys.path.append(wkdir)
+
+
+from openmolar.settings import localsettings
+from openmolar.qt4gui.dialogs import Ui_medhist
+from openmolar.dbtools import updateMH
+from openmolar.connect import connect
 
 def showDialog(Dialog,serialno,data):
     def clearAllerg():
