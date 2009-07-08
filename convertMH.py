@@ -17,6 +17,8 @@ from openmolar.qt4gui.dialogs import Ui_medhist
 from openmolar.dbtools import updateMH
 from openmolar.connect import connect
 
+progressFile=os.path.join(localsettings.localFileDirectory,"mh_progression.txt")
+
 def showDialog(Dialog,serialno,data):
     def clearAllerg():
         dl.allergies_lineEdit.setText("")
@@ -110,7 +112,7 @@ def main():
     cursor=db.cursor()
 
     try:
-        f=f=open("mh_progression","r")
+        f=open(progressFile,"r")
         start=int(f.read())
         f.close()
         print "starting at patient no %d"%start
@@ -135,7 +137,7 @@ def main():
                 
                 if result==QtGui.QMessageBox.Yes:
                     break
-        f=open("mh_progression","w")
+        f=open(progressFile,"w")
         f.write(str(serialno))
         f.close()
             
