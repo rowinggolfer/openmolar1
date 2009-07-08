@@ -6,14 +6,14 @@ important conditions.
 I have added a new field "alert" 
 '''
 
-from openmolar import connect
+import connect
 
 from PyQt4 import QtGui, QtCore
 import datetime
-from openmolar.settings import localsettings
-from openmolar.qt4gui.dialogs import Ui_medhist
-from openmolar.dbtools import updateMH
-from openmolar.connect import connect
+from settings import localsettings
+from qt4gui.dialogs import Ui_medhist
+from dbtools import updateMH
+from connect import connect
 
 def showDialog(Dialog,serialno,data):
     def clearAllerg():
