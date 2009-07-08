@@ -255,7 +255,7 @@ class patient():
 
             self.MH=cursor.fetchone()
             if self.MH!=None:
-                self.MEDALERT=self.MH[13]
+                self.MEDALERT=self.MH[12]
 
             cursor.execute('''select DATE_FORMAT(date,"%s"), trtid, chart from
             daybook where serialno = %d'''%(

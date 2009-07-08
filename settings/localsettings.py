@@ -187,7 +187,7 @@ def pyDatetoSQL(d):
     try:
         return "%04d%02d%02d"%(d.year,d.month,d.day)
     except:
-        return 'NULL'
+        pass
 def formatMoney(m):
     '''takes an integer, returns "7.30"'''
     try:

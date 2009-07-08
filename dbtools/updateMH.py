@@ -14,14 +14,21 @@ def write(sno,data):
     cursor = db.cursor()
 
     result=True
-    
-    query='insert into mednotes (serialno,drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other,alert,chkdate)'
-    query+=" values %s"%str((int(sno),)+data[:13]+(localsettings.pyDatetoSQL(data[13]),))
+    query='insert into mednotes (serialno,drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other,alert'
+    dateToWrite=localsettings.pyDatetoSQL(data[13])
+    if dateToWrite==None:
+        query+=") values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        values=(int(sno),)+data[:13]
+    else:
+        query+=",chkdate) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        values=(int(sno),)+data[:13]+(dateToWrite,)
+        print values
     if True or localsettings.logqueries:
-            print query
+        print len(query),len(values)
+        print query,values
     try:
         cursor.execute("delete from mednotes where serialno=%d"%sno)
-        cursor.execute(query)
+        cursor.execute(query,values)
     except Exception,e:
         print e
         result=False
