@@ -129,7 +129,7 @@ def main():
         lungs,liver,kidney,bleed,anaes,other,alert,chkdate from mednotes 
         where serialno=%d'''%serialno)
         MH=cursor.fetchone()
-        if MH[4]!="":
+        if MH[4]!="" and MH[4].lower()!="med ok":
             Dialog = QtGui.QDialog()
             if not showDialog(Dialog,serialno,MH):
                 result=QtGui.QMessageBox.question(Dialog,"confirm","Quit now?",
