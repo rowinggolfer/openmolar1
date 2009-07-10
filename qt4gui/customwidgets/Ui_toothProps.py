@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/toothProps.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolarBZR/openmolar/qt-designer/toothProps.ui'
 #
-# Created: Mon Jun 15 00:52:13 2009
+# Created: Thu Jul  9 13:02:21 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -233,7 +233,7 @@ class Ui_Form(object):
         self.gold_pushButton.setText(QtGui.QApplication.translate("Form", "Go", None, QtGui.QApplication.UnicodeUTF8))
         self.leftTooth_pushButton.setToolTip(QtGui.QApplication.translate("Form", "Apply and move Back a tooth", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setToolTip(QtGui.QApplication.translate("Form", "Apply & Add Another Item", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("Form", ":", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton.setText(QtGui.QApplication.translate("Form", "&&", None, QtGui.QApplication.UnicodeUTF8))
         self.rightTooth_pushButton.setToolTip(QtGui.QApplication.translate("Form", "Apply & Move to Next Tooth", None, QtGui.QApplication.UnicodeUTF8))
         self.static_pushButton.setToolTip(QtGui.QApplication.translate("Form", "Toggle between static and plan", None, QtGui.QApplication.UnicodeUTF8))
         self.static_pushButton.setText(QtGui.QApplication.translate("Form", "Static", None, QtGui.QApplication.UnicodeUTF8))

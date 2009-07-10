@@ -603,7 +603,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     Form = QtGui.QWidget()
     ui = tpWidget(Form)
-    ui.setExistingProps("MOD !WATCH B,GL !COMMENT_TWO")
+    ui.setExistingProps("MOD B,GL !COMMENT_TWO")
     #Form.setEnabled(False)
     Form.show()
     sys.exit(app.exec_())

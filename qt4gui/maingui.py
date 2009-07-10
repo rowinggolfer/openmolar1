@@ -3273,6 +3273,7 @@ class chartsClass():
             widg=self.ui.staticChartWidget
             column=2
         [x,y]=widg.selected
+        
         if y==0:
             #--upper teeth
             if e=="up":

@@ -9,14 +9,38 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 
 
-class tooth(QtCore.QRectF):
-    def __init__(self):
-        super(tooth,self).__init__()
-        self.name=""
-        self.setRect(10,10,20,20)
-    def setName(self,arg):
-        self.name=arg
-
+class tooth(QtGui.QWidget):
+    def __init__(self,name="",parent=None):
+        super(tooth,self).__init__(parent)
+        self.name=name
+        self.setRect()
+        self.setDefaultColors()
+        self.setMouseTracking(True)
+    def setRect(self):
+        rect=QtCore.QRectF()
+        rect.setRect(10,10,20,20)
+        self.rect=rect
+    def setDefaultColors(self):
+        self.boundaryColour=QtGui.QColor("blue")
+    def mouseMoveEvent(self,event):
+        self.boundaryColour=QtGui.QColor("red")
+        self.update()
+    def mousePressEvent(self,event):
+        print "clicked %s"%self.name
+    def leaveEvent(self,event):
+        self.setDefaultColors()
+        self.update()
+        
+    def paintEvent(self,event=None):
+        painter = QtGui.QPainter(self)
+        painter.save()
+        painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+        painter.setPen(QtGui.QPen(self.boundaryColour,2))                                                 #red pen
+        sansFont = QtGui.QFont("Sans", 8)
+        painter.setFont(sansFont)
+        painter.drawText(self.rect,QtCore.Qt.AlignCenter,(self.name[2]))
+        painter.drawRect(self.rect)
+        painter.restore()
 
 class labChartWidget(QtGui.QWidget):
     '''a custom widget to show a standard UK dental chart
@@ -50,8 +74,7 @@ class labChartWidget(QtGui.QWidget):
     
     def addTeeth(self):
         for i in self.grid:
-            t=tooth()
-            t.setName(i)
+            t=tooth("ur%s"%i,self)
             self.teeth.append(t)
         self.update()
      
@@ -80,17 +103,8 @@ class labChartWidget(QtGui.QWidget):
         painter.drawText(textRect,QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter,(QtCore.QString("Left")))
         painter.drawText(textRect,QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter,(QtCore.QString("Right")))
         
-        
         for tooth in self.teeth:
-            painter.drawRect(tooth)
-                    
-        
-        
-        
-        
-        
-        
-        
+            tooth.update()
         
         painter.restore()
 
