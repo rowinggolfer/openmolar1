@@ -75,7 +75,8 @@ def lastPost(table="forum"):
     cursor.close()
     if row:
         return row[0]
-
+    db.close()
+    
 def getPosts(table="forum"):
     '''
     gets all active rows from a forum table

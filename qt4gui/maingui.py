@@ -1047,7 +1047,8 @@ class feeClass():
 
             daybook.add(self.pt.serialno,self.pt.cset,dent,trtid,
             daybookdict,feesa,feesb)
-    
+            print "updating pd4"
+            self.pt.pd4=localsettings.ukToday()
     
     def makeBadDebt(self):
         '''
@@ -1126,9 +1127,9 @@ class feeClass():
 class forumClass():
     
     def checkForNewForumPosts(self):
-        '''checks for new forum posts every 60'''
+        '''checks for new forum posts every 5 minutes'''
         while True:
-            time.sleep(60)
+            time.sleep(300)
             print "checking forum"
             lastEvent=localsettings.lastForumVisit
             for topic in ("forum","omforum"):
@@ -5510,11 +5511,13 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             print "saving hiddennotes"
             patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
             self.pt.clearHiddenNotes()
+        
+        self.updateDaybook()
         uc=self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
 
-            self.updateDaybook()
+            
 
             result=patient_write_changes.all_changes(self.pt,uc, 
             self.pt_dbstate.estimates)
