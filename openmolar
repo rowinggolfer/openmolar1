@@ -15,7 +15,9 @@ this module puts the "openmolar" modules onto the python path,
 and starts the gui
 '''
 
-import sys, os, hashlib
+import sys
+import os
+import hashlib
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
 

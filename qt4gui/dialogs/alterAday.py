@@ -3,7 +3,8 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. See the GNU General Public License for
+# more details.
 
 
 from PyQt4 import QtGui, QtCore
@@ -21,7 +22,7 @@ class adayData():
         self.start=QtCore.QTime(8,30)
         self.finish=QtCore.QTime(18,0)
         self.memo=""
-    
+
     def setStart(self,arg):
         '''
         takes a time in form 800 (==8:00)
@@ -38,11 +39,11 @@ class adayData():
         return int(self.start.toString("hmm"))
     def sqlFinish(self):
         return int(self.finish.toString("hmm"))
-    
+
     def setMemo(self,arg):
         if arg!=None:
             self.memo=arg
-            
+
     def __repr__(self):
         return"%s %s %s %s %s %s"%(
         self.apptix,self.dent,self.active,self.start,self.finish,self.memo)
@@ -53,29 +54,29 @@ class FiveMinuteTimeEdit(QtGui.QTimeEdit):
         self.setMinimumTime(localsettings.earliestStart)
         self.setMaximumTime(localsettings.latestFinish)
         self.setDisplayFormat("hh:mm")
-        
+
     def stepBy(self, steps):
         if self.currentSection() == self.MinuteSection:
           QtGui.QTimeEdit.stepBy(self, steps * 5)
         else:
           QtGui.QTimeEdit.stepBy(self, steps)
 
-        
+
 class dentWidget(Ui_activeDentStartFinish.Ui_Form):
     def __init__(self,widget):
         self.setupUi(widget)
         QtCore.QObject.connect(self.checkBox,
         QtCore.SIGNAL("stateChanged(int)"),self.toggle)
         self.addTimeEdits()
-        
+
     def addTimeEdits(self):
         self.start_timeEdit=FiveMinuteTimeEdit(self.widget)
         self.finish_timeEdit=FiveMinuteTimeEdit(self.widget_2)
-        
+
     def toggle(self,arg):
         self.start_timeEdit.setEnabled(arg)
         self.finish_timeEdit.setEnabled(arg)
-    
+
     def setData(self,arg):
         self.checkBox.setText(arg.dent)
         self.checkBox.setChecked(arg.active)
@@ -84,13 +85,13 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         self.start_timeEdit.setTime(arg.start)
         self.finish_timeEdit.setTime(arg.finish)
         self.lineEdit.setText(arg.memo)
-        
+
 class alterDay(Ui_aslotEdit.Ui_Dialog):
     def __init__(self,dialog):
         self.setupUi(dialog)
         self.dialog=dialog
         self.clinicians=[]
-        
+
     def setDate(self,d):
         '''
         d should be a QDate
@@ -119,11 +120,11 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
                     startData.setMemo(row[3])
                     startData.active=True
             self.clinicians.append(startData)
-    
+
     def checkForChanges(self):
         retarg=[]
         i=0
-        #-- iterate through the initial values, and compare with the 
+        #-- iterate through the initial values, and compare with the
         #-- inputted values
         #-- make a list of changes
         for clinician in self.clinicians:
@@ -133,16 +134,16 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
             alteredClinician.start=dw.start_timeEdit.time()
             alteredClinician.finish=dw.finish_timeEdit.time()
             alteredClinician.memo=str(dw.lineEdit.text().toAscii())
-            
+
             if alteredClinician.active!=clinician.active or \
             alteredClinician.start!=clinician.start or \
             alteredClinician.finish!=clinician.finish or\
             alteredClinician.memo!=clinician.memo:
-                
+
                 retarg.append(alteredClinician)
             i+=1
         return retarg
-    
+
     def applyChanges(self,changes):
         d=self.date.toPyDate()
         changed=False
@@ -150,14 +151,14 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
             changed=True
             appointments.updateAday(d,change)
         return changed
-    
+
     def getInput(self):
         self.loadData()
         self.showItems()
         if self.dialog.exec_():
             changes=self.checkForChanges()
             return self.applyChanges(changes)
-            
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
@@ -166,6 +167,6 @@ if __name__ == "__main__":
     dl = alterDay(Dialog)
     date=QtCore.QDate.currentDate()
     dl.setDate(date)
-   
+
     print dl.getInput()
 

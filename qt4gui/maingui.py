@@ -28,14 +28,14 @@ from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
 medNotes, saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, \
 addTreat, addToothTreat, saveMemo,permissions,alterAday
 
-#-- secondary applications 
+#-- secondary applications
 from openmolar.qt4gui.dialogs import apptTools
 
 
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,\
 writeNewPatient,patient_class,search,appointments,accounts,calldurr,feesTable,\
-docsprinted,writeNewCourse, forum, memos,NHSclaims,daybookHistory,\
+docsprinted,writeNewCourse, forum, memos,nhs_claims,daybookHistory,\
 paymentHistory,courseHistory,estimatesHistory
 
 #--modules which act upon the pt class type (and subclasses)
@@ -131,7 +131,7 @@ class feeClass():
                 dent=paymentPt.dnt2
             else:
                 dent=paymentPt.dnt1
-            
+
             if cashbook.paymenttaken(paymentPt.serialno,name,dent,
             paymentPt.cset,cash,cheque,debit,credit,sundries,hdp,other):
 
@@ -206,7 +206,7 @@ class feeClass():
 
     def feeSearch(self):
         '''
-        fee search button clicked... 
+        fee search button clicked...
         user is looking up a fee from the fee table
         the values are already stored.
         '''
@@ -347,8 +347,8 @@ class feeClass():
         print "applying", arg
         if cset==None:
             cset=self.pt.cset
-        
-        if "N" in cset: 
+
+        if "N" in cset:
             self.pt.money0+=arg
         else:
             self.pt.money1+=arg
@@ -511,7 +511,7 @@ class feeClass():
                 item_description=localsettings.descriptions[item]
             except KeyError:
                 item_description="unknown perio treatment"
-            
+
             foundInEsts=False
             for est in self.pt.estimates:
                 if est.itemcode==item and est.completed==False:
@@ -533,7 +533,7 @@ class feeClass():
 
             if ptfee>0:
                 self.applyFeeNow(ptfee)
-            
+
             treatmentCode="%s "%dl.trt
             if treatmentCode in self.pt.periopl:
                 self.pt.periopl=self.pt.periopl.replace(treatmentCode,"",1)
@@ -654,7 +654,7 @@ class feeClass():
 
         existingItems=fee_keys.itemsPerTooth(tooth,existing)
         updatedItems=fee_keys.itemsPerTooth(tooth, properties)
-        
+
         #check to see if treatments have been removed
         for item in existingItems:
             if item in updatedItems:
@@ -716,12 +716,12 @@ class feeClass():
                 #-- treat[2]= description
                 #-- treat[3]= adjusted fee
                 #-- treat[4]=adjusted ptfee
-                
+
                 self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
                                        dent, self.pt.cset, treat[0])
             self.load_newEstPage()
             self.load_treatTrees()
-    
+
     def NEWrecalculateEstimate(self):
         '''
         Adds ALL tooth items to the estimate.
@@ -790,7 +790,7 @@ class feeClass():
                 retarg=(est.fee, est.ptfee)
                 break
         return retarg
-    
+
 
     def checkEstBox(self,tooth,treat):
         '''
@@ -931,7 +931,7 @@ class feeClass():
 
     def cmpItemClicked(self,arg,arg1):
         ############################## todo - add functionality here
-        
+
         '''
         user has double clicked on the treatment competled tree
         '''
@@ -982,19 +982,19 @@ class feeClass():
             self.load_newEstPage()
         else:
             self.advise("No treatment items to move!",1)
-    
+
     def update_perioDates(self,arg):
         print "update periodates with '%s'"%arg
         if "SP" in arg:
             self.pt.pd10=localsettings.ukToday()
-      
+
     def update_xrayDates(self,arg):
         print "update xrays with '%s'"%arg
         if "M" in arg or "S" in arg:
             self.pt.pd9=localsettings.ukToday()
         if "P" in arg:
             self.pt.pd8=localsettings.ukToday()
-            
+
     def updateDaybook(self):
         '''
         looks for attributes like *cmp, when record is closed
@@ -1008,17 +1008,17 @@ class feeClass():
             if att=="examt" or att[-3:]=="cmp": #be wary of "cmpd"
                 newcmp=self.pt.__dict__[att]
                 existingcmp=self.pt_dbstate.__dict__[att]
-                
+
                 if newcmp != existingcmp:
                     treatment=newcmp.replace(existingcmp,"",1)
                     print att,newcmp,existingcmp,treatment
                     writeNeeded=True
-                    
+
                     if att=="examt":
                         key="exam"
                     else:
                         key=att.rstrip("cmp")
-                    
+
                     if key in daybookdict.keys():
                         daybookdict[key]+="%s "%treatment
                     elif key=="xray" or key=="exam":
@@ -1029,15 +1029,15 @@ class feeClass():
                         #--tooth include the key ie ul7 etc...
                         daybookdict["chart"]+="%s %s "%(
                         key.upper(),treatment)
-                    
-                    ##todo - get the real fee if poss! 
+
+                    ##todo - get the real fee if poss!
                     for treat in treatment.strip(" ").split(" "):
                         fees=self.getFeesFromEst(key,treat)
                         print "fee attempt '%s' '%s' '%s'"%(key,treat,fees)
                         if fees:
                             feesa+=fees[0]
                             feesb+=fees[1]
-                    
+
         if writeNeeded:
             if self.pt.dnt2!=0 and self.pt.cset!="I":
                 dent=self.pt.dnt2
@@ -1049,7 +1049,7 @@ class feeClass():
             daybookdict,feesa,feesb)
             print "updating pd4"
             self.pt.pd4=localsettings.ukToday()
-    
+
     def makeBadDebt(self):
         '''
         write off the debt (stops cluttering up the accounts table)
@@ -1068,7 +1068,7 @@ class feeClass():
 
             self.updateStatus()
             self.updateDetails()
-        
+
     def populateAccountsTable(self):
         rows=accounts.details()
         self.ui.accounts_tableWidget.clear()
@@ -1085,7 +1085,7 @@ class feeClass():
         for row in rows:
             for col in range(len(row)):
                 d=row[col]
-                if d!=None or col==11:                
+                if d!=None or col==11:
                     item=QtGui.QTableWidgetItem()
                     if col==0:
                         item.setText(localsettings.ops.get(d))
@@ -1103,7 +1103,7 @@ class feeClass():
                         QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
 
                         #item.setText(localsettings.formatMoney(d))
-                        
+
                     elif col==11:
                         if d>0:
                             item.setText("N")
@@ -1123,9 +1123,9 @@ class feeClass():
         for i in range(self.ui.accounts_tableWidget.columnCount()):
             self.ui.accounts_tableWidget.resizeColumnToContents(i)
         self.ui.accountsTotal_doubleSpinBox.setValue(total/100)
-        
+
 class forumClass():
-    
+
     def checkForNewForumPosts(self):
         '''checks for new forum posts every 5 minutes'''
         while True:
@@ -1138,15 +1138,15 @@ class forumClass():
                 if newEvent>lastEvent:
                     self.showForumIcon(True)
                     break
-    
+
     def loadForum(self):
         '''
         loads the forum (you guessed, huh?)
         '''
         #-- I have 2 forums. one for computer issues, and one for general
-        twidg=self.ui.forum_treeWidget            
+        twidg=self.ui.forum_treeWidget
         twidg.clear()
-            
+
         for topic in ("forum", "omforum"):
             #-- set the column headers (stored in another module)
             headers=forum.headers
@@ -1157,15 +1157,15 @@ class forumClass():
                 topParent=QtGui.QTreeWidgetItem(twidg,["General Topics"])
             else:
                 topParent=QtGui.QTreeWidgetItem(twidg,["OpenMolar and Computer Issues"])
-                
+
             parents={None:topParent}
             #--set the forum alternating topic colours
             mcolours={True:QtCore.Qt.darkGreen,False:QtCore.Qt.darkBlue}
             #--set a boolean for alternating row colours
             highlighted=True
-            
+
             for post in posts:
-                parent=parents.get(post.parent_ix)                
+                parent=parents.get(post.parent_ix)
                 item=QtGui.QTreeWidgetItem(parent)
                 item.setText(0,post.topic)
                 item.setText(1,post.inits)
@@ -1178,7 +1178,7 @@ class forumClass():
                     colour=mcolours[highlighted]
                 else:
                     colour=item.parent().textColor(2)
-                    bcolour=QtCore.Qt.lightGray                    
+                    bcolour=QtCore.Qt.lightGray
                 for i in range(item.columnCount()):
                     item.setTextColor(i, colour)
                     if i==3 and post.date > \
@@ -1198,7 +1198,7 @@ class forumClass():
         localsettings.forumVisited()
         #-- turn the tab red.
         self.showForumIcon(False)
-        
+
     def forumItemSelected(self):
         '''
         user has selected an item in the forum
@@ -1214,8 +1214,8 @@ class forumClass():
         enableButtons = not item.parent()==None
         self.ui.forumDelete_pushButton.setEnabled(enableButtons)
         self.ui.forumReply_pushButton.setEnabled(enableButtons)
-        
-    def forumNewItem(self):    
+
+    def forumNewItem(self):
         '''
         create a new post
         '''
@@ -1223,7 +1223,7 @@ class forumClass():
         dl = Ui_forumPost.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.comboBox.addItems(["Anon"]+localsettings.allowed_logins)
-        
+
         while True:
             if Dialog.exec_():
                 if dl.topic_lineEdit.text()=="":
@@ -1232,7 +1232,7 @@ class forumClass():
                     break
             else:
                 return
-            
+
         if dl.table_comboBox.currentIndex()==0:
             table="forum"
         else:
@@ -1243,12 +1243,12 @@ class forumClass():
         post.inits = dl.comboBox.currentText()
         forum.commitPost(post,table)
         self.loadForum()
-        
+
     def showForumIcon(self,newItems=True):
         tb=self.ui.main_tabWidget.tabBar()
         if newItems:
             icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal, 
+            icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
             tb.setTabIcon(8,icon)
             tb.setTabText(8,"NEW FORUM POSTS")
@@ -1258,7 +1258,7 @@ class forumClass():
             tb.setTabIcon(8,QtGui.QIcon())
             tb.setTabText(8,"FORUM")
             tb.setTabTextColor(8,QtGui.QColor())
-            
+
     def forumDeleteItem(self):
         '''
         delete a forum posting
@@ -1271,13 +1271,13 @@ class forumClass():
         QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
 
         if result == QtGui.QMessageBox.Yes:
-            
+
             key=str(item.text(5)).split(":")
             ix=int(key[0])
             table=key[1]
             forum.deletePost(ix,table)
             self.loadForum()
-    
+
     def forumReply(self):
         '''
         reply to an item
@@ -1304,8 +1304,8 @@ class forumClass():
             post.inits = dl.comboBox.currentText()
             forum.commitPost(post,table)
         self.loadForum()
-    
-    
+
+
 class contractClass():
     def handle_ContractTab(self,i):
         if i==0:
@@ -1317,7 +1317,7 @@ class contractClass():
         if i==2:
             self.ui.contractNHS_label.setText(
             nhsDetails.toHtml(self.pt))
-            
+
         if i==3:
             self.advise("Other Dentist tab selected")
 
@@ -1366,7 +1366,7 @@ class contractClass():
         self.updateDetails()
         i=["P","I","N"].index(self.pt.cset[:1])
         self.ui.contract_tabWidget.setCurrentIndex(i)
-        
+
     def editNHScontract(self):
         self.advise("edit NHS",1)
 
@@ -1385,12 +1385,12 @@ class historyClass():
         self.pastDataMenu.addAction("Courses history")
         self.pastDataMenu.addAction("Estimates history")
         self.pastDataMenu.addAction("NHS claims history")
-        
+
         self.ui.pastData_toolButton.setMenu(self.pastDataMenu)
 
         QtCore.QObject.connect(self.pastDataMenu,
         QtCore.SIGNAL("triggered (QAction *)"),self.pastData)
-    
+
         self.debugMenu=QtGui.QMenu()
         self.debugMenu.addAction("Patient table data")
         self.debugMenu.addAction("Treatment table data")
@@ -1398,15 +1398,15 @@ class historyClass():
         self.debugMenu.addAction("Estimates table data")
         self.debugMenu.addAction("Perio table data")
         self.debugMenu.addAction("Verbose (displays everything in memory)")
-        
+
         self.ui.debug_toolButton.setMenu(self.debugMenu)
 
         QtCore.QObject.connect(self.debugMenu,
         QtCore.SIGNAL("triggered (QAction *)"),self.showPtAttributes)
-        
+
         QtCore.QObject.connect(self.ui.ptAtts_checkBox,
         QtCore.SIGNAL("stateChanged (int)"),self.updateAttributes)
-    
+
     def pastData(self,arg):
         '''
         called from pastData toolbutton
@@ -1422,34 +1422,34 @@ class historyClass():
             self.showCoursesHistory()
         elif type=="Estimates":
             self.showEstimatesHistory()
-        
+
     def showEstimatesHistory(self):
         html=estimatesHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-   
+
     def showCoursesHistory(self):
         html=courseHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-        
+
     def showPaymentHistory(self):
         html=paymentHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-    
+
     def showDaybookHistory(self):
         html=daybookHistory.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)        
-        
+        self.ui.debugBrowser.setText(html)
+
     def nhsClaimsShortcut(self):
         '''
         a convenience function called from the contracts page
         '''
         self.ui.tabWidget.setCurrentIndex(9)
         self.showPastNHSclaims()
-    
+
     def showPastNHSclaims(self):
-        html=NHSclaims.details(self.pt.serialno)
+        html=nhs_claims.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-    
+
     def updateAttributes(self,arg=None):
         '''
         refresh the table if the checkbox is toggled
@@ -1463,7 +1463,7 @@ class historyClass():
             type=str(arg.text()).split(" ")[0]
         else:
             type=debug_html.existing.split(" ")[0]
-        
+
         changesOnly=self.ui.ptAtts_checkBox.isChecked()
         html=debug_html.toHtml(self.pt_dbstate,self.pt,type,changesOnly)
         self.ui.debugBrowser.setText(html)
@@ -1793,14 +1793,12 @@ class appointmentClass():
 
                 aprix=int(selectedAppt.text(9))
                 adate=localsettings.uk_to_sqlDate(dateText)
-                print "modifying appt", adate,aprix,practix,length,code0,\
-                code1,code2,note
 
                 if self.pt.cset=="":
                     cst=32
                 else:
                     cst=ord(self.pt.cset[0])
-                appointments.modify_pt_appt(adate,aprix,self.pt.serialno,
+                appointments.modify_pt_appt(aprix,self.pt.serialno,
                 practix,length,code0,code1,code2,note,"",cst)
                 if dateText=="TBA":
                     if dl.makeNow:
@@ -1820,7 +1818,7 @@ class appointmentClass():
             self.advise("Please select an appointment to schedule",1)
             return
         dateText=selectedAppt.text(0)
-        if str(dateText)!="TBA":
+        if str(dateText) != "TBA":
             self.advise("appointment already scheduled for %s"%dateText,1)
             return
         ##todo implement datespec  -
@@ -1830,18 +1828,15 @@ class appointmentClass():
         self.aptOVviewMode(False)
 
         #--does the patient has a previous appointment booked?
-
-
-##############################################################################
+        ########################################################################
+        ##TODO
         print "NEW CODE NEEDED"
-
         #need new code here!!!
-
+        '''
         previousApptRow=-1#    rowno-1
         if previousApptRow>=0:
             #--get the date of preceeding appointment
             try:
-
                 pdateText=str(self.ui.ptAppointmentTableWidget.item(
                                                 previousApptRow,0).text())
                 qdate=QtCore.QDate.fromString(pdateText,"dd'/'MM'/'yyyy")
@@ -1856,8 +1851,9 @@ class appointmentClass():
                 self.ui.apptOV_calendarWidget.setSelectedDate(
                                                 QtCore.QDate.currentDate())
         else:
-            self.ui.apptOV_calendarWidget.setSelectedDate(
-                                                    QtCore.QDate.currentDate())
+        '''
+        self.ui.apptOV_calendarWidget.setSelectedDate(
+        QtCore.QDate.currentDate())
 
         #--deselect ALL dentists and hygenists so only one "book" is viewable
         self.ui.aptOV_alldentscheckBox.setChecked(False)
@@ -1878,27 +1874,27 @@ class appointmentClass():
 
     def offerAppt(self,firstRun=False):
         '''offer an appointment'''
-        selectedAppt=self.ui.ptAppointment_treeWidget.currentItem()
-        dateText=selectedAppt.text(0)
-        dents=[]
+        selectedAppt = self.ui.ptAppointment_treeWidget.currentItem()
+        dateText = selectedAppt.text(0)
+        dents = []
         for dent in self.ui.aptOVdent_checkBoxes.keys():
             if self.ui.aptOVdent_checkBoxes[dent].checkState():
                 dents.append(dent)
         for hyg in self.ui.aptOVhyg_checkBoxes.keys():
             if self.ui.aptOVhyg_checkBoxes[hyg].checkState():
                 dents.append(hyg)
-        start=selectedAppt.text(2)
-        length=selectedAppt.text(3)
-        trt1=selectedAppt.text(4)
-        trt2=selectedAppt.text(5)
-        trt3=selectedAppt.text(6)
-        memo=selectedAppt.text(7)
+        start = selectedAppt.text(2)
+        length = selectedAppt.text(3)
+        trt1 = selectedAppt.text(4)
+        trt2 = selectedAppt.text(5)
+        trt3 = selectedAppt.text(6)
+        memo = selectedAppt.text(7)
 
         #-- self.ui.apptOV_calendarWidget date originally set when user
         #--clicked the make button
         seldate=self.ui.apptOV_calendarWidget.selectedDate()
         today=QtCore.QDate.currentDate()
-            
+
         if seldate<today:
             self.advise("can't schedule an appointment in the past",1)
             #-- change the calendar programatically (this will call THIS
@@ -1908,27 +1904,26 @@ class appointmentClass():
         elif seldate.toPyDate()>localsettings.bookEnd:
             self.advise('''Reached %s<br />
             No suitable appointments found<br />
-            Is the appointment very long?<br /> 
+            Is the appointment very long?<br />
             If so, Perhaps cancel some emergency time?
             '''%localsettings.longDate(localsettings.bookEnd),1)
             return
-                
+
         else:
             #--select mon-saturday of the selected day
             dayno=seldate.dayOfWeek()
             weekdates=[]
-            for day in range(1,7):
+            for day in range(1,8):
                 weekdates.append(seldate.addDays(day-dayno))
             if  today in weekdates:
                 startday=today
             else:
                 startday=weekdates[0] #--monday
-            saturday=weekdates[5]     #--saturday
-
+            sunday=weekdates[6]     #--sunday
 
             #--check for suitable apts in the selected WEEK!
             possibleAppts=appointments.future_slots(int(length),
-            startday.toPyDate(),saturday.toPyDate(),tuple(dents))
+            startday.toPyDate(),sunday.toPyDate(),tuple(dents))
 
             if possibleAppts!=():
                 #--found some
@@ -2114,7 +2109,7 @@ class appointmentClass():
         for heading in ("Past","Unscheduled","TODAY","Future"):
             parents[heading]=QtGui.QTreeWidgetItem(
             self.ui.ptAppointment_treeWidget, [heading])
-            
+
             parents[heading].setTextColor(0,colours.diary[heading])
 
         rows=appointments.get_pts_appts(self.pt.serialno)
@@ -2240,7 +2235,7 @@ class appointmentClass():
     #--buttons on the apptoverviewwidget
     def aptOVlabelClicked(self,sd):
         self.calendar(sd)
-    
+
     def gotoToday(self):
         self.ui.appointmentCalendarWidget.setSelectedDate(
                                                     QtCore.QDate.currentDate())
@@ -2372,7 +2367,7 @@ class appointmentClass():
         #--code to uncheck the all dentists checkbox if necessary
         for dent in self.ui.aptOVdent_checkBoxes.values():
             AllDentsChecked=AllDentsChecked and dent.checkState()
-        
+
         if self.ui.aptOV_alldentscheckBox.checkState() != AllDentsChecked:
             QtCore.QObject.disconnect(self.ui.aptOV_alldentscheckBox,
             QtCore.SIGNAL("stateChanged(int)"),self.apptOVdents)
@@ -2416,7 +2411,7 @@ class appointmentClass():
             weekday=(date.addDays(day-dayno))
             weekdates.append(weekday)
             self.ui.apptoverviewControls[day-1].setDate(weekday)
-       
+
         if QtCore.QDate.currentDate() in weekdates:
             self.ui.apptOVtoday_pushButton.setEnabled(False)
         else:
@@ -2461,7 +2456,7 @@ class appointmentClass():
                     ov.eTimes[dent]=appointments.getBlocks(ov.date.toPyDate(),dent)
 
         if self.ui.aptOV_lunchcheckBox.checkState():
-            #--add lunches     
+            #--add lunches
             ##todo - should really get these via mysql...
             #--but they never change in my practice...
             for ov in self.ui.apptoverviews[0:4]:
@@ -2486,7 +2481,7 @@ class appointmentClass():
         for book in self.ui.apptBookWidgets:
             book.clearAppts()
             book.setTime="None"
-    
+
         d=self.ui.appointmentCalendarWidget.selectedDate()
         self.getappointmentData(d)
         todaysDents=[]
@@ -2523,7 +2518,7 @@ class appointmentClass():
         for label in (self.ui.book1memo_label,self.ui.book2memo_label,
         self.ui.book2memo_label,self.ui.book4memo_label):
             label.setText("")
-                
+
         if i>0 :
             self.ui.apptFrameLabel1.setText(
                                 localsettings.apptix_reverse[todaysDents[0]])
@@ -2540,7 +2535,7 @@ class appointmentClass():
                 self.ui.apptFrameLabel4.setText(
                                 localsettings.apptix_reverse[todaysDents[3]])
                 self.ui.book4memo_label.setText(todaysMemos[3])
-            
+
             apps=self.appointmentData[1]
             for app in apps:
                 dent=app[1]
@@ -2602,7 +2597,7 @@ class appointmentClass():
         reason=tup[3]
         appointments.block_appt(adate,dent,start,end,reason)
         self.layout_appointments()
-    
+
     def aptOVlabelRightClicked(self,d):
         '''
         user wants to change appointment overview properties for date d
@@ -2611,10 +2606,10 @@ class appointmentClass():
             Dialog=QtGui.QDialog(self)
             dl=alterAday.alterDay(Dialog)
             dl.setDate(d)
-            
+
             if dl.getInput():
                 self.layout_apptOV()
-    
+
     def appointmentTools(self):
         '''
         called from the main menu
@@ -2624,8 +2619,8 @@ class appointmentClass():
             self.appointmentToolsWindow = QtGui.QMainWindow()
             self.ui2 = apptTools.apptTools(self.appointmentToolsWindow)
             self.appointmentToolsWindow.show()
-    
-        
+
+
 class signals():
     def setupSignals(self):
         self.signals_miscbuttons()
@@ -2668,7 +2663,7 @@ class signals():
                         QtCore.SIGNAL("clicked()"), self.phraseBookDialog)
         QtCore.QObject.connect(self.ui.memos_pushButton,
                         QtCore.SIGNAL("clicked()"), self.newCustomMemo)
-                        
+
     def signals_admin(self):
         #admin page
         QtCore.QObject.connect(self.ui.home_pushButton,
@@ -2761,7 +2756,7 @@ class signals():
                     QtCore.SIGNAL("triggered()"), localsettings.setlogqueries)
         QtCore.QObject.connect(self.ui.actionAppointment_Tools,
                     QtCore.SIGNAL("triggered()"), self.appointmentTools)
-                    
+
     def signals_estimates(self):
 
         #Estimates and course ManageMent
@@ -2797,7 +2792,7 @@ class signals():
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
         QtCore.QObject.connect(self.ui.comp_treeWidget,QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
-        
+
     def signals_forum(self):
         QtCore.QObject.connect(self.ui.forum_treeWidget,QtCore.SIGNAL(
         "itemSelectionChanged ()"), self.forumItemSelected)
@@ -2807,11 +2802,11 @@ class signals():
         "clicked()"),self.forumReply)
         QtCore.QObject.connect(self.ui.forumNewTopic_pushButton,QtCore.SIGNAL(
         "clicked()"),self.forumNewItem)
-        
+
     def signals_history(self):
         QtCore.QObject.connect(self.ui.historyPrint_pushButton,QtCore.SIGNAL(
         "clicked()"), self.historyPrint)
-    
+
     def signals_daybook(self):
 
         #daybook - cashbook
@@ -2839,10 +2834,10 @@ class signals():
                         QtCore.SIGNAL("clicked()"),self.printSelectedAccounts)
         QtCore.QObject.connect(self.ui.printAccountsTable_pushButton,
                         QtCore.SIGNAL("clicked()"),self.printAccountsTable)
-    
+
         QtCore.QObject.connect(self.ui.accounts_tableWidget,
         QtCore.SIGNAL("cellDoubleClicked (int,int)"),self.accountsTableClicked)
-    
+
     def signals_contract(self):
         #contract
         QtCore.QObject.connect(self.ui.badDebt_pushButton,
@@ -2860,14 +2855,14 @@ class signals():
         QtCore.QObject.connect(self.ui.editNHS_pushButton,
                         QtCore.SIGNAL("clicked()"),self.editPrivateContract)
         QtCore.QObject.connect(self.ui.nhsclaims_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.nhsClaimsShortcut)        
-        
+                        QtCore.SIGNAL("clicked()"),self.nhsClaimsShortcut)
+
         QtCore.QObject.connect(self.ui.editHDP_pushButton,
                         QtCore.SIGNAL("clicked()"),self.editHDPcontract)
         QtCore.QObject.connect(self.ui.editRegDent_pushButton,
                         QtCore.SIGNAL("clicked()"),self.editOtherContract)
-                        
-                        
+
+
     def signals_feesTable(self):
 
         #feesTable
@@ -2917,7 +2912,7 @@ class signals():
                         QtCore.SIGNAL("Changed_Properties"),  self.updateCharts)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                         QtCore.SIGNAL("DeletedComments"),  self.deleteComments)
-                
+
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                                QtCore.SIGNAL("static"), self.editStatic)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
@@ -3026,11 +3021,11 @@ class signals():
         for i in range(5):
             self.connect(self.ui.apptoverviewControls[i],
             QtCore.SIGNAL("clicked"), self.aptOVlabelClicked)
-            
+
             self.connect(self.ui.apptoverviewControls[i],
             QtCore.SIGNAL("right-clicked"), self.aptOVlabelRightClicked)
-            
-        
+
+
         #appointment manage
         QtCore.QObject.connect(self.ui.printDaylists_pushButton,
                             QtCore.SIGNAL("clicked()"), self.daylistPrintWizard)
@@ -3154,7 +3149,7 @@ class customWidgets():
 
         ##aptOV
         self.ui.apptoverviews=[]
-        
+
         for day in range(5):
             if day==4: #friday
                 self.ui.apptoverviews.append(appointment_overviewwidget.
@@ -3165,7 +3160,7 @@ class customWidgets():
             else:
                 self.ui.apptoverviews.append(appointment_overviewwidget.\
                 appointmentOverviewWidget(day,"0800","1900",15,2))
-        
+
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
         hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[0])
@@ -3181,9 +3176,9 @@ class customWidgets():
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame5)
         hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[4])
-        
+
         self.ui.apptoverviewControls=[]
-                
+
         for widg in (self.ui.day1_frame,self.ui.day2_frame,
         self.ui.day3_frame,self.ui.day4_frame,self.ui.day5_frame):
             hlayout=QtGui.QHBoxLayout(widg)
@@ -3191,10 +3186,10 @@ class customWidgets():
             control=aptOVcontrol.control()
             self.ui.apptoverviewControls.append(control)
             hlayout.addWidget(control)
-            
+
         self.ui.aptOVdent_checkBoxes={}
         self.ui.aptOVhyg_checkBoxes={}
-        
+
         #vlayout=QtGui.QVBoxLayout(self.ui.aptOVdents_frame)
         glayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
         glayout.setSpacing(0)
@@ -3210,7 +3205,7 @@ class customWidgets():
         hl.setFrameShadow(QtGui.QFrame.Sunken)
         row+=1
         glayout.addWidget(hl,row,0,1,2)
-        
+
         self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
                                             QtCore.QString("All Dentists"))
         self.ui.aptOV_alldentscheckBox.setChecked(True)
@@ -3222,7 +3217,7 @@ class customWidgets():
             self.ui.aptOVdent_checkBoxes[localsettings.apptix[dent]]=cb
             row+=1
             glayout.addWidget(cb,row,1,1,1)
-        
+
         self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox(
                                         QtCore.QString("All Hygenists"))
         self.ui.aptOV_allhygscheckBox.setChecked(True)
@@ -3255,7 +3250,7 @@ class customWidgets():
 
         #--history
         self.addHistoryMenu()
-        
+
 class chartsClass():
 
     def navigateCharts(self,e):
@@ -3274,7 +3269,7 @@ class chartsClass():
             widg=self.ui.staticChartWidget
             column=2
         [x,y]=widg.selected
-        
+
         if y==0:
             #--upper teeth
             if e=="up":
@@ -3307,14 +3302,14 @@ class chartsClass():
             row=self.ui.chartsTableWidget.currentRow()
             tString=str(self.ui.chartsTableWidget.item(row,0).text().toAscii())
             self.chartNavigation(tString,userPerformed)
-    
+
     def deleteComments(self):
         tooth=str(self.ui.chartsTableWidget.item(
                             self.ui.chartsTableWidget.currentRow(),0).text())
         if tooth in self.ui.staticChartWidget.commentedTeeth:
             self.ui.staticChartWidget.commentedTeeth.remove(tooth)
             self.ui.staticChartWidget.update()
-    
+
     def updateCharts(self,arg):
         '''called by a signal from the toothprops widget -
         args are the new tooth properties eg modbl,co'''
@@ -3366,7 +3361,7 @@ class chartsClass():
     def static_chartNavigation(self,tstring):
         '''called by the static chartwidget'''
         self.selectedChartWidget="st"
-        
+
         self.chartNavigation(tstring)
     def plan_chartNavigation(self,tstring):
         '''called by the plan chartwidget'''
@@ -3679,7 +3674,7 @@ class cashbooks():
                     printpt.county),printpt.pcde,
                     localsettings.formatMoney(printpt.fees))
                     doc.setTone(tone)
-                    
+
                     if firstPage:
                         #--raise a print dialog for the first letter of the run
                         #--only
@@ -3707,7 +3702,7 @@ class cashbooks():
                         self.commitPDFtoDB("Account tone%s"%tone,printpt.serialno)
                         no_printed+=1
         self.advise("%d letters printed"%no_printed,1)
-                    
+
     def datemanage(self):
         if self.ui.daybookStartDateEdit.date() > \
         self.ui.daybookEndDateEdit.date():
@@ -3938,7 +3933,7 @@ class printingClass():
             else:
                 self.commitPDFtoDB("receipt")
 
-    
+
     def printLetter(self):
         '''prints a letter to the patient'''
         if self.pt.serialno==0:
@@ -3958,7 +3953,7 @@ class printingClass():
             self.pt.addHiddenNote("printed","std letter")
             if self.ui.previousCorrespondence_treeWidget.isVisible():
                 self.docsPrinted()
-    
+
     def printAccountsTable(self):
         '''
         print the table
@@ -3994,18 +3989,18 @@ class printingClass():
                 else:
                     html+='<td> </td>'
             html+='</tr>\n'
-            
+
         html+='''<tr><td colspan="11"></td><td><b>TOTAL</b></td>
         <td align="right"><b>&pound; %.02f</b></td></tr>
         </table></body></html>'''%total
-        
+
         #--test code
         #f=open("/home/neil/Desktop/accounts.html","w")
         #f.write(html)
         #f.close()
         myclass=letterprint.letter(html)
         myclass.printpage()
-    
+
     def printEstimate(self):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -4017,8 +4012,8 @@ class printingClass():
         if est.print_():
             self.commitPDFtoDB("auto estimate")
         self.pt.addHiddenNote("printed","estimate")
-    
-    
+
+
     def customEstimate(self,html="",version=0):
         '''
         prints a custom estimate to the patient
@@ -4092,7 +4087,7 @@ class printingClass():
             self.pt.addHiddenNote("printed","referral")
             if self.ui.previousCorrespondence_treeWidget.isVisible():
                 self.docsPrinted()
-        
+
     def printChart(self):
         if self.pt.serialno==0:
             self.advise("no patient selected",1)
@@ -4138,7 +4133,7 @@ class printingClass():
                 self.pt.addHiddenNote("printed","account - tone %s"%tone)
                 self.addNewNote("Account Printed")
                 self.commitPDFtoDB("Account tone%s"%tone)
-    
+
     def testGP17(self):
         self.printGP17(True)
 
@@ -4341,7 +4336,7 @@ class pageHandlingClass():
             self.updateStatus()
             self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
             self.handle_ContractTab(self.ui.contract_tabWidget.currentIndex())
-            
+
         if ci==2:
             self.docsPrinted()
 
@@ -4372,8 +4367,8 @@ class pageHandlingClass():
             #-- this was causing issues when user went "home".. it was getting
             #-- triggered
             #self.ui.pastData_toolButton.showMenu()
-            
-                                    
+
+
     def home(self):
         '''
         User has clicked the homw push_button -
@@ -4464,7 +4459,7 @@ class pageHandlingClass():
         itemToCompress=None
         for category in pdict.keys():
             items=pdict[category]
-            header=category + '(%d items)'%len(items)                
+            header=category + '(%d items)'%len(items)
             parent = QtGui.QTreeWidgetItem(
                     self.ui.plan_treeWidget,[header])
             if category=="Tooth":
@@ -4909,7 +4904,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         sno=self.ui.accounts_tableWidget.item(row,1).text()
         print sno
         self.getrecord(int(sno))
-    
+
     def getrecord(self,serialno,checkedNeedToLeaveAlready=False):
         '''
         a record has been called byone of several means
@@ -5046,13 +5041,13 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                 if dl.checkBox.checkState():
                     print "deleting Memo %s"%umemo.ix
                     memos.deleteMemo(umemo.ix)
-                
+
     def newCustomMemo(self):
         Dialog = QtGui.QDialog(self)
         dl = saveMemo.Ui_Dialog(Dialog,self.pt.serialno)
         if not dl.getInput():
             self.advise("memo not saved",1)
-   
+
     def medalert(self):
         if self.pt.MEDALERT:
             palette = QtGui.QPalette()
@@ -5062,16 +5057,16 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             self.ui.medNotes_pushButton.setPalette(palette)
         else:
             self.ui.medNotes_pushButton.setPalette(self.palette())
-        
+
         if self.pt.MH!=None:
             chkdate=self.pt.MH[13]
             if chkdate==None:
                 chkdate=""
             else:
-                chkdate=" - %s"%chkdate                
+                chkdate=" - %s"%chkdate
             self.ui.medNotes_pushButton.setText("MedNotes%s"%chkdate)
         else:
-            self.ui.medNotes_pushButton.setText("MedNotes")            
+            self.ui.medNotes_pushButton.setText("MedNotes")
         self.enableEdit(True)
 
     def updateStatus(self):
@@ -5103,7 +5098,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                                                 curtext+"- No Current Course")
             self.ui.newCourse_pushButton.setEnabled(True)
             self.ui.closeTx_pushButton.setEnabled(False)
-    
+
 
     def final_choice(self,candidates):
         def DoubleClick():
@@ -5511,15 +5506,15 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             print "saving hiddennotes"
             patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
             self.pt.clearHiddenNotes()
-        
+
         self.updateDaybook()
         uc=self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
 
-            
 
-            result=patient_write_changes.all_changes(self.pt,uc, 
+
+            result=patient_write_changes.all_changes(self.pt,uc,
             self.pt_dbstate.estimates)
 
             if result: #True if sucessful
@@ -5613,7 +5608,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         if not permissions.granted(self):
             return
-        
+
         def togglePassword(e):
             if not dl.checkBox.checkState():
                 dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)

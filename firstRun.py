@@ -14,12 +14,17 @@
 this module is only called if a settings file isn't found
 '''
 
-import sys, os, hashlib
+import sys
+import os
+import hashlib
+import MySQLdb
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
-import MySQLdb
+
+#-- get "openmolar" on the path before the final imports
 wkdir = os.path.dirname(os.getcwd())
 sys.path.append(wkdir)
+
 from openmolar.qt4gui import Ui_newSetup
 from openmolar.settings import localsettings
 
