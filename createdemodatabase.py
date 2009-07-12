@@ -10,35 +10,48 @@
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
 
-import MySQLdb,os
+'''
+this module takes the demo dump and creates a database from it with the
+correct user permissions.
+'''
 
+import MySQLdb
 
-
-def createDB(myhost,myport,myuser,mypassword,databaseName,rootMySQLpassword):
+def create_database(myhost, myport, myuser, mypassword, databaseName,
+rootMySQLpassword):
     #-- connect as mysqlroot to create the database
 
-    db=MySQLdb.connect(host=myhost,port=myport,user="root",passwd=rootMySQLpassword)   #not using a password for my version
-    cursor=db.cursor()
+    db = MySQLdb.connect(
+    host = myhost, port=myport, user="root", passwd=rootMySQLpassword)
+
+    cursor = db.cursor()
     try:
         cursor.execute("DROP DATABASE IF EXISTS %s"%databaseName)
     except:
         pass
-    cursor.execute("CREATE DATABASE %s"%databaseName)
-    query='GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY "%s"'%(databaseName,myuser,myhost,mypassword)
+    cursor.execute("CREATE DATABASE %s"% databaseName)
+
+    #-- note for production deployments, only grant
+    #-- select,insert,update,delete privileges
+    query = 'GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY "%s"'% (
+    databaseName, myuser, myhost, mypassword)
+
     print query
     cursor.execute(query)
     cursor.close()
     db.commit()
     db.close()
     return True
-    
-def loadTables(myhost,myport,myuser,mypassword,databaseName):
-    f=open("demodump.sql","r")
-    dumpString=f.read()
+
+def loadTables(myhost, myport, myuser, mypassword, databaseName):
+    f = open("demodump.sql","r")
+    dumpString = f.read()
     f.close()
-    
-    db=MySQLdb.connect(host=myhost,port=myport,user=myuser,db=databaseName,passwd=mypassword)   #not using a password for my version
-    cursor=db.cursor()
+
+    db = MySQLdb.connect(host = myhost, port = myport,
+    user = myuser, db = databaseName, passwd = mypassword)
+
+    cursor = db.cursor()
     cursor.execute(dumpString)
     cursor.close()
     db.commit()
@@ -46,12 +59,9 @@ def loadTables(myhost,myport,myuser,mypassword,databaseName):
     return True
 
 if __name__ == "__main__":
-    rootpass=raw_input("please enter your MySQL root users password :")
-    if createDB("localhost",3306,"OMuser","password","openmolar_demo",rootpass):
+    rootpass = raw_input("please enter your MySQL root users password :")
+    if create_database("localhost", 3306, "OMuser", "password",
+    "openmolar_demo", rootpass):
         print "New database created sucessfully"
-    
-    
-    loadTables("localhost",3306,"user","password","openmolar_demo")
 
-
-
+    loadTables("localhost", 3306, "user", "password", "openmolar_demo")
