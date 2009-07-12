@@ -17,7 +17,7 @@ class workingDay():
         self.end=1800
         self.apptix=0
         self.flag=1  #a boolean showing if day is in use? (stored as a tiny int though)
-        self.memo=""  
+        self.memo=""
 
     def __repr__(self):
         retarg='working day - %s times = %s - %s\n'%(
@@ -25,7 +25,7 @@ class workingDay():
         retarg+='dentistNo = %s in office = %s\n'%(self.apptix,self.flag)
         retarg+='memo=%s'%self.memo
         return retarg
- 
+
 class printableAppt():
     def __init__(self):
         self.start=0
@@ -54,7 +54,7 @@ class printableAppt():
     def setCset(self,arg):
         if arg!=None:
             self.cset=arg
-        
+
     def length(self):
         t1=localsettings.minutesPastMidnight(self.start)
         t2=localsettings.minutesPastMidnight(self.end)
@@ -62,12 +62,12 @@ class printableAppt():
     def __repr__(self):
         return "%s %s %s %s %s %s %s %s"%(self.start,self.end,self.name,
         self.serialno,self.treat,self.note,self.cset,self.length())
-        
+
 def updateAday(adate,arg):
     '''
     takes an arg of type alterAday.adayData
     '''
-    print "updating ",arg      
+    print "updating ",arg
     db = connect()
     cursor = db.cursor()
     result=omSQLresult()
@@ -76,11 +76,11 @@ def updateAday(adate,arg):
     localsettings.pyDatetoSQL(adate),arg.apptix)
     if localsettings.logqueries:
         print query
-    result.number=cursor.execute(query)
+    result.setNumber(cursor.execute(query))
     if result:
         db.commit()
     return result
-        
+
 def alterDay(arg):
     '''
     takes a workingDay object tries to change the aday table
@@ -101,18 +101,21 @@ def alterDay(arg):
         arg.start,arg.end,arg.flag,arg.memo,localsettings.pyDatetoSQL(arg.date),arg.apptix)
         if localsettings.logqueries:
             print query
-        result.number=cursor.execute(query)
-        if result.number==1:
-            result.message="Date sucessfully modified"
+        result.setNumber(cursor.execute(query))
+        if result.getNumber()==1:
+            result.setMessage("Date sucessfully modified")
         else:
-            result.message="No changes applied - the values you supplied are the same as the existing."            
+            result.setMessage(
+            "No changes applied - the values you supplied " + \
+            "are the same as the existing.")
+
         db.commit()
     else:
-        result.message="The date you have tried to modify is beyond the dates opened for dentist %s"%(
-        localsettings.ops.get(arg.apptix),)
+        result.setMessage("The date you have tried to modify is " + \
+        "beyond the dates opened for dentist %s"%(
+        localsettings.ops.get(arg.apptix),))
 
     return result
-    
 
 def minutesPastMidnight(t):
     '''converts a time in the format of 0830 or 1420 to minutes past midnight'''
@@ -169,9 +172,9 @@ def getWorkingDents(adate,dents=()):
 
     ##this query altered 24_06_2009 to include the memo. doesn't appear to
     ## break anything -KUO
-        
+
     fullquery='''SELECT apptix,start,end,memo FROM aday
-    WHERE adate="%s" AND (flag=1 or flag=2) %s'''%(adate,mystr)  
+    WHERE adate="%s" AND (flag=1 or flag=2) %s'''%(adate,mystr)
     if localsettings.logqueries:
         print fullquery
     cursor.execute(fullquery)
@@ -248,7 +251,7 @@ def printableDaylistData(adate,dent):
         results=cursor.fetchall()
 
         #--yes that was a long query
-        
+
         current_apttime=daydata[0][0]
         for row in results:
             pa=printableAppt()
@@ -268,7 +271,7 @@ def printableDaylistData(adate,dent):
             retlist.append(pa)
             if current_apttime<pa.end:
                 current_apttime=pa.end
-            
+
     cursor.close()
     #db.close()
     return retlist
@@ -726,7 +729,7 @@ if __name__ == "__main__":
     edate="2009_02_27"
     localsettings.initiate(False)
     print printableDaylistData("20090622",4)
-    
+
     #print todays_patients()
     #print todays_patients(("NW","BW"))
     #dents= getWorkingDents(edate)
@@ -740,4 +743,4 @@ if __name__ == "__main__":
     #print daysSlots("2009_2_02","NW")
     #delete_appt(420,2)
     #print workingDay()
-    
+

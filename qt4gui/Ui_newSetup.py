@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/newSetup.ui'
 #
-# Created: Wed May 13 15:52:02 2009
-#      by: PyQt4 UI code generator 4.4.3
+# Created: Sun Jul 12 16:14:07 2009
+#      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -104,14 +104,11 @@ class Ui_Dialog(object):
         self.port_lineEdit.setMinimumSize(QtCore.QSize(100, 0))
         self.port_lineEdit.setObjectName("port_lineEdit")
         self.gridLayout_3.addWidget(self.port_lineEdit, 2, 2, 1, 1)
-        self.ping_pushButton = QtGui.QPushButton(self.page_6)
-        self.ping_pushButton.setObjectName("ping_pushButton")
-        self.gridLayout_3.addWidget(self.ping_pushButton, 3, 0, 1, 4)
         spacerItem4 = QtGui.QSpacerItem(103, 32, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem4, 4, 0, 1, 4)
+        self.gridLayout_3.addItem(spacerItem4, 3, 0, 1, 4)
         self.pushButton_8 = QtGui.QPushButton(self.page_6)
         self.pushButton_8.setObjectName("pushButton_8")
-        self.gridLayout_3.addWidget(self.pushButton_8, 5, 0, 1, 4)
+        self.gridLayout_3.addWidget(self.pushButton_8, 4, 0, 1, 4)
         self.stackedWidget.addWidget(self.page_6)
         self.page_5 = QtGui.QWidget()
         self.page_5.setObjectName("page_5")
@@ -246,8 +243,7 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.main_password_lineEdit, self.pushButton_2)
         Dialog.setTabOrder(self.pushButton_2, self.host_lineEdit)
         Dialog.setTabOrder(self.host_lineEdit, self.port_lineEdit)
-        Dialog.setTabOrder(self.port_lineEdit, self.ping_pushButton)
-        Dialog.setTabOrder(self.ping_pushButton, self.pushButton_8)
+        Dialog.setTabOrder(self.port_lineEdit, self.pushButton_8)
         Dialog.setTabOrder(self.pushButton_8, self.haveDB_pushButton)
         Dialog.setTabOrder(self.haveDB_pushButton, self.createDB_pushButton)
         Dialog.setTabOrder(self.createDB_pushButton, self.pushButton_9)
@@ -278,7 +274,6 @@ class Ui_Dialog(object):
         self.host_lineEdit.setText(QtGui.QApplication.translate("Dialog", "localhost", None, QtGui.QApplication.UnicodeUTF8))
         self.label_14.setText(QtGui.QApplication.translate("Dialog", "Port", None, QtGui.QApplication.UnicodeUTF8))
         self.port_lineEdit.setText(QtGui.QApplication.translate("Dialog", "3306", None, QtGui.QApplication.UnicodeUTF8))
-        self.ping_pushButton.setText(QtGui.QApplication.translate("Dialog", "Test for Available Server", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_8.setText(QtGui.QApplication.translate("Dialog", "OK, continue", None, QtGui.QApplication.UnicodeUTF8))
         self.createDB_pushButton.setText(QtGui.QApplication.translate("Dialog", "Yes please", None, QtGui.QApplication.UnicodeUTF8))
         self.haveDB_pushButton.setText(QtGui.QApplication.translate("Dialog", "No, I have a database already, continue.", None, QtGui.QApplication.UnicodeUTF8))

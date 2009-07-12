@@ -15,91 +15,111 @@ this module puts the "openmolar" modules onto the python path,
 and starts the gui
 '''
 
-import sys,os,hashlib,time
-from PyQt4 import QtGui,QtCore
+import sys, os, hashlib
+from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
 
-class LoginError(Exception):pass
+class LoginError(Exception):
+    '''
+    a custom exception thrown when the user gets password or username incorrect
+    '''
+    pass
 
-def main(app):
-    wkdir=os.path.dirname(os.getcwd())
+def main():
+    '''
+    main function
+    '''
+    wkdir = os.path.dirname(os.getcwd())
     sys.path.append(wkdir)
     from openmolar.settings import localsettings
     from openmolar.qt4gui import Ui_startscreen
 
-    uninitiated=True
+    uninitiated = True
 
     def autoreception(arg):    #arg is a QString
-        if arg.toLower()=="rec":
+        '''
+        check to see if the user is special user "rec"
+        which implies a reception machine
+        '''
+        if arg.toLower() == "rec":
             dl.reception_radioButton.setChecked(True)
 
-
     if not os.path.exists(localsettings.cflocation):
-        message='''
-<center>This appears to be your first running of openMolar<br />
-Before you run this application ,<br />
-You need to set up a settings file.<br />
-So that openmolar knows where your mysql server resides<br />
-If you do not have a database, you will be prompted to create one<br /><br/>
-Purely because settings are saved in a system directory.<br />
-You may be prompted to raise privileges on some systems<br /><br />
-Are you ready to proceed?</center>'''
+        message = '''<center>
+        This appears to be your first running of openMolar<br />
+        Before you run this application ,<br />
+        You need to set up a settings file.<br />
+        So that openmolar knows where your mysql server resides<br />
+        If you do not have a database, you will be prompted to create one<br />
+        <br/>
+        Purely because settings are saved in a system directory.<br />
+        You may be prompted to raise privileges on some systems<br /><br />
+        Are you ready to proceed?</center>'''
 
-        result=QtGui.QMessageBox.question(None,"First Run",
-        message,
-        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+        result = QtGui.QMessageBox.question(None, "First Run",
+        message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
         if result == QtGui.QMessageBox.Yes:
             try:
                 import subprocess
-                if os.getuid()==0:
+                if os.getuid() == 0:
                     #-- already root!
-                    p=subprocess.Popen(['./firstRun.py'])
+                    process = subprocess.Popen(['./firstRun.py'])
                 else:
                     if os.environ.has_key("GDM_LANG"):
-                        p=subprocess.Popen(['gksu','./firstRun.py'])
+                        process = subprocess.Popen(['gksu', './firstRun.py'])
                     elif os.environ.has_key("KDE_FULL_SESSION"):
                         try:
-                            p=subprocess.Popen(['kdesu','./firstRun.py'])
-                        except:
-                            #-- kubuntu doesn't use kdesu!!! ?????
-                            p=subprocess.Popen(['kdesudo','./firstRun.py'])
+                            process = subprocess.Popen(
+                            ['kdesu','./firstRun.py'])
+                        except OSError:
+                            #-- kubuntu doesn't use kdesu, uses kdesudo
+                            process = subprocess.Popen(
+                            ['kdesudo','./firstRun.py'])
                     else:
                         #-- don't know the desktop variant..
                         #-- and could be windows
                         #-- and not need root anyway?
-                        p=subprocess.Popen(['./firstRun.py'])
-                result=p.wait()
+                        process = subprocess.Popen(['./firstRun.py'])
+                result = process.wait()
             except:
-                QtGui.QMessageBox.information(None,"error",
+                QtGui.QMessageBox.information(None, "error",
                 "Unable to get superuser permisions")
     try:
-        d=minidom.parse(localsettings.cflocation)
-        sysPassword=d.getElementsByTagName("system_password")[0].firstChild.data
-    except:
-        print "still no settings... quitting politely"
-        QtGui.QMessageBox.information(None,"Unable to Run OpenMolar",
+        dom = minidom.parse(localsettings.cflocation)
+        sys_password = dom.getElementsByTagName("system_password")[0].\
+        firstChild.data
+
+    except Exception, e:
+        print "still no settings... %s\nquitting politely"% e
+        QtGui.QMessageBox.information(None, "Unable to Run OpenMolar",
         "Good Bye!")
 
-        app.closeAllWindows()
+        my_app.closeAllWindows()
         sys.exit("unable to run - openMolar needs a settings file")
 
-    Dialog = QtGui.QDialog()
+    my_dialog = QtGui.QDialog()
     dl = Ui_startscreen.Ui_Dialog()
-    dl.setupUi(Dialog)
-    QtCore.QObject.connect(dl.user1_lineEdit,
-                    QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
+    dl.setupUi(my_dialog)
 
+    QtCore.QObject.connect(dl.user1_lineEdit,
+    QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
 
     while True:
-        if Dialog.exec_():
+        if my_dialog.exec_():
             try:
-                pword="diqug_ADD_SALT_3i2some"+str(dl.password_lineEdit.text())
+                #--"salt" the password
+                pword = "diqug_ADD_SALT_3i2some"+str(
+                dl.password_lineEdit.text())
                 #-- hash the salted password (twice!) and compare to the value
                 #-- stored in /etc/openmolar/openmolar.conf (linux)
-                s=hashlib.md5(hashlib.sha1(pword).hexdigest()).hexdigest()
-                if s != sysPassword:##end password check##
+                stored_password = hashlib.md5(
+                hashlib.sha1(pword).hexdigest()).hexdigest()
+
+                if stored_password != sys_password:
+                    #-- end password check
                     raise LoginError
+
                 if uninitiated:
                     #-- user has entered the correct password
                     #-- so now we connect to the mysql database for the 1st time
@@ -108,39 +128,39 @@ Are you ready to proceed?</center>'''
                     #-- this could and should possibly still be improved upon
                     #-- maybe by using an ssl connection to the server.
                     localsettings.initiate()
-                    uninitiated=False
+                    uninitiated = False
 
-                u1=dl.user1_lineEdit.text().toUpper()
-                #toUpper is a method of QString
-                u2=dl.user2_lineEdit.text().toUpper()
+                u1_qstring = dl.user1_lineEdit.text().toUpper()
+                #-- toUpper is a method of QString
+                u2_qstring = dl.user2_lineEdit.text().toUpper()
 
                 #-- localsettings module now has user variables.
                 #-- allowed_logins in a list of practice staff.
-                if not u1 in localsettings.allowed_logins:
+                if not u1_qstring in localsettings.allowed_logins:
                     raise LoginError
-                if u2!="" and not u2 in localsettings.allowed_logins:
+                if u2_qstring !="" and \
+                not u2_qstring in localsettings.allowed_logins:
                     raise LoginError
 
                 #-- set a variable to allow the main program to run
-                localsettings.successful_login=True
+                localsettings.successful_login = True
                 if dl.reception_radioButton.isChecked():
-                    localsettings.station="reception"
+                    localsettings.station = "reception"
 
-                localsettings.setOperator(str(u1), str(u2))
+                localsettings.setOperator(str(u1_qstring), str(u2_qstring))
 
                 from openmolar.qt4gui import maingui
                 sys.exit(maingui.main(sys.argv))
 
             except LoginError:
-                QtGui.QMessageBox.warning(Dialog,
-                "Login Error","Incorrect<br />User/password<br />\
+                QtGui.QMessageBox.warning(my_dialog,
+                "Login Error", "Incorrect<br />User/password<br />\
                 combination!<br />Please Try Again.")
         else:
             break
-    app.closeAllWindows()
+    my_app.closeAllWindows()
 
-if __name__=="__main__":
+if __name__ == "__main__":
     print "starting openMolar"
-    app=QtGui.QApplication(sys.argv)
-
-    main(app)
+    my_app = QtGui.QApplication(sys.argv)
+    main()
