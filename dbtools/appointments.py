@@ -406,7 +406,7 @@ def clearEms(cedate):
     number = 0
     try:
         fullquery = '''delete from aslot WHERE adate="%s"
-        and flag0=-128 and name like "%Emergency%"'''% (cedate,  "%",  "%")
+        and flag0=-128 and name like "%sEmergency%s"'''% (cedate,  "%",  "%")
         if localsettings.logqueries:
             print fullquery
         number = cursor.execute(fullquery)

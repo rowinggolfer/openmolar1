@@ -9,48 +9,54 @@
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-import os,sys,copy,pickle,time,threading,re,subprocess,datetime
+import os
+import sys
+import copy
+import pickle
+import time
+import threading
+import re
+import subprocess
+import datetime
 
-from openmolar.settings import localsettings,fee_keys,utilities
-
-from openmolar.qt4gui import Ui_main,colours
+from openmolar.settings import localsettings, fee_keys,utilities
+from openmolar.qt4gui import Ui_main, colours
 
 #--dialogs made with designer
-from openmolar.qt4gui.dialogs import Ui_patient_finder,Ui_select_patient,\
-Ui_enter_letter_text,Ui_phraseBook,Ui_changeDatabase,Ui_related_patients,\
-Ui_raiseCharge,Ui_options,Ui_surgeryNumber,Ui_payments,paymentwidget,\
-Ui_specify_appointment,Ui_appointment_length,Ui_daylist_print,\
-Ui_confirmDentist,Ui_customTreatment, Ui_chooseDocument,Ui_forumPost,\
+from openmolar.qt4gui.dialogs import Ui_patient_finder, Ui_select_patient, \
+Ui_enter_letter_text, Ui_phraseBook, Ui_changeDatabase, Ui_related_patients, \
+Ui_raiseCharge, Ui_options, Ui_surgeryNumber, Ui_payments, paymentwidget, \
+Ui_specify_appointment, Ui_appointment_length, Ui_daylist_print, \
+Ui_confirmDentist, Ui_customTreatment, Ui_chooseDocument, Ui_forumPost, \
 Ui_showMemo
 
 #--custom dialog modules
-from openmolar.qt4gui.dialogs import finalise_appt_time,recall_app,examWizard,\
-medNotes, saveDiscardCancel,newBPE,newCourse,completeTreat,hygTreatWizard, \
-addTreat, addToothTreat, saveMemo,permissions,alterAday
+from openmolar.qt4gui.dialogs import finalise_appt_time, recall_app, \
+examWizard, medNotes, saveDiscardCancel, newBPE, newCourse, completeTreat, \
+hygTreatWizard, addTreat, addToothTreat, saveMemo, permissions, alterAday
 
 #-- secondary applications
 from openmolar.qt4gui.dialogs import apptTools
 
-
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
-from openmolar.dbtools import daybook,patient_write_changes,recall,cashbook,\
-writeNewPatient,patient_class,search,appointments,accounts,calldurr,feesTable,\
-docsprinted,writeNewCourse, forum, memos,nhs_claims,daybookHistory,\
-paymentHistory,courseHistory,estimatesHistory
+from openmolar.dbtools import daybook, patient_write_changes, recall, \
+cashbook, writeNewPatient, patient_class, search, appointments, accounts, \
+calldurr, feesTable, docsprinted, writeNewCourse, forum, memos, nhs_claims, \
+daybookHistory, paymentHistory, courseHistory, estimatesHistory
 
 #--modules which act upon the pt class type (and subclasses)
-from openmolar.ptModules import patientDetails,notes,plan,referral,\
-standardletter,debug_html,estimates,planDetails,nhsDetails
+from openmolar.ptModules import patientDetails, notes, plan, referral, \
+standardletter, debug_html, estimates, planDetails, nhsDetails
 
 #--modules which use qprinter
-from openmolar.qt4gui.printing import receiptPrint,notesPrint,chartPrint,\
-bookprint,letterprint, recallprint,daylistprint,multiDayListPrint,\
-accountPrint,estimatePrint,GP17,apptcardPrint, bookprint
+from openmolar.qt4gui.printing import receiptPrint, notesPrint, chartPrint, \
+bookprint, letterprint, recallprint, daylistprint, multiDayListPrint, \
+accountPrint, estimatePrint, GP17, apptcardPrint, bookprint
 
 #--custom widgets
-from openmolar.qt4gui.customwidgets import chartwidget,appointmentwidget,\
-toothProps, appointment_overviewwidget,toothProps,perioToothProps,\
-perioChartWidget,estimateWidget,aptOVcontrol
+from openmolar.qt4gui.customwidgets import chartwidget, appointmentwidget, \
+toothProps, appointment_overviewwidget, toothProps, perioToothProps, \
+perioChartWidget, estimateWidget, aptOVcontrol
 
 #--the main gui class inherits from a lot of smaller classes to make the \
 #--code more manageable. (supposedly!)
@@ -62,59 +68,60 @@ class feeClass():
         this is called by the "raise a charge" button on the
         clinical summary page
         '''
-        if self.pt.serialno==0:
-            self.advise("No patient Selected",1)
+        if self.pt.serialno == 0:
+            self.advise("No patient Selected", 1)
             return
         Dialog = QtGui.QDialog(self)
         dl = Ui_raiseCharge.Ui_Dialog()
         dl.setupUi(Dialog)
         if Dialog.exec_():
             fee=dl.doubleSpinBox.value()
-            if self.pt.cset[:1]=="N":
+            if self.pt.cset[:1] == "N":
                 self.pt.money0+=int(fee*100)
             else:
                 self.pt.money1+=int(fee*100)
             self.updateFees()
-            self.pt.addHiddenNote("treatment"," %s"%
+            self.pt.addHiddenNote("treatment", " %s"%
             str(dl.lineEdit.text().toAscii()))
 
-            self.pt.addHiddenNote("fee","%.02f"%fee)
+            self.pt.addHiddenNote("fee", "%.02f"%fee)
 
 ##############################################################################
 #--DISABLED THIS BIT.... CAUSING CONFUSION
-#            patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
+#            patient_write_changes.toNotes(self.pt.serialno,
+#            self.pt.HIDDENNOTES)
 #
 #            if patient_write_changes.discreet_changes(
-#            self.pt,("money0","money1")):
+#            self.pt, ("money0", "money1")):
 #                self.pt_dbstate.money1=self.pt.money1
 #                self.pt_dbstate.money0=self.pt.money0
 #                self.pt.clearHiddenNotes()
 ##############################################################################
 
-    def getItemFees(self,item,no_items=1):
+    def getItemFees(self, item, no_items=1):
         '''
-        pass itemcode eg"0101", get a tuple (fee,ptfee)
+        pass itemcode eg"0101", get a tuple (fee, ptfee)
         currently this gets the csetype from the pt coursetype.
         returns a tuple
         '''
         conditions=[]
-        if self.pt.cset=="N":
-            if self.pt.exmpt!="":
+        if self.pt.cset == "N":
+            if self.pt.exmpt != "":
                 conditions.append("NHS exempt=%s"%self.pt.exmpt)
-        itemfee,ptfee=fee_keys.getFee(self.pt.cset,item,no_items,conditions)
-        return itemfee,ptfee
+        itemfee, ptfee=fee_keys.getFee(self.pt.cset, item, no_items, conditions)
+        return itemfee, ptfee
 
     def takePayment(self):
         '''
         raise a dialog, and take some money
         '''
-        if self.pt.serialno==0:
-            self.advise("No patient Selected <br />Monies will be "+\
-            "allocated to Other Payments, and no receipt offered",1)
+        if self.pt.serialno == 0:
+            self.advise("No patient Selected <br />Monies will be "+ \
+            "allocated to Other Payments, and no receipt offered", 1)
         dl=paymentwidget.paymentWidget(self)
         dl.setDefaultAmount(self.pt.fees)
         if dl.exec_():
-            if self.pt.serialno==0:
+            if self.pt.serialno == 0:
                 paymentPt=patient_class.patient(18222)
             else:
                 paymentPt=self.pt
@@ -127,26 +134,26 @@ class feeClass():
             other=dl.misc_lineEdit.text()
             total=dl.total_doubleSpinBox.value()
             name=paymentPt.sname+" "+paymentPt.fname[:1]
-            if paymentPt.dnt2!=0:
+            if paymentPt.dnt2 != 0:
                 dent=paymentPt.dnt2
             else:
                 dent=paymentPt.dnt1
 
-            if cashbook.paymenttaken(paymentPt.serialno,name,dent,
-            paymentPt.cset,cash,cheque,debit,credit,sundries,hdp,other):
+            if cashbook.paymenttaken(paymentPt.serialno, name, dent,
+            paymentPt.cset, cash, cheque, debit, credit, sundries, hdp, other):
 
                 paymentPt.addHiddenNote(
-                "payment"," treatment %.02f sundries %.02f"%\
-                (dl.paymentsForTreatment,dl.otherPayments))
+                "payment", " treatment %.02f sundries %.02f"%\
+                (dl.paymentsForTreatment, dl.otherPayments))
 
-                if self.pt.serialno!=0:
+                if self.pt.serialno != 0:
                     self.printReceipt({"Professional Services":\
-                    dl.paymentsForTreatment*100,\
+                    dl.paymentsForTreatment*100, \
                     "Other Items":dl.otherPayments*100})
 
                     #-- always refer to money in terms of pence
 
-                    if self.pt.cset[:1]=="N":
+                    if self.pt.cset[:1] == "N":
                         self.pt.money2+=int(dl.paymentsForTreatment*100)
                     else:
                         self.pt.money3+=int(dl.paymentsForTreatment*100)
@@ -156,7 +163,7 @@ class feeClass():
                                               paymentPt.HIDDENNOTES)
 
                 if patient_write_changes.discreet_changes(paymentPt,
-                ("money2","money3")) and self.pt.serialno!=0:
+                ("money2", "money3")) and self.pt.serialno != 0:
 
                     self.pt_dbstate.money2=self.pt.money2
                     self.pt_dbstate.money3=self.pt.money3
@@ -165,7 +172,7 @@ class feeClass():
                 self.updateDetails()
             else:
                 self.advise("error applying payment.... sorry!<br />"\
-                +"Please write this down and tell Neil what happened",2)
+                +"Please write this down and tell Neil what happened", 2)
 
     def loadFeesTable(self):
         '''
@@ -179,8 +186,8 @@ class feeClass():
         fdKeys=feeDict.keys()
         fdKeys.sort()
         print fdKeys
-        headers=("Diagnosis","Preventive","Perio","Conservation","Surgical",
-        "Prosthetics","Orthodontics","Other","Capitation (minors)",
+        headers=("Diagnosis", "Preventive", "Perio", "Conservation", "Surgical",
+        "Prosthetics", "Orthodontics", "Other", "Capitation (minors)",
         "Occasional")
         for fdKey in fdKeys:
             feeLists=feeDict[fdKey]
@@ -195,7 +202,7 @@ class feeClass():
                     else:
                         feeList.append(str(item))
                     col+=1
-                QtGui.QTreeWidgetItem(header,feeList)
+                QtGui.QTreeWidgetItem(header, feeList)
 
         self.chooseFeeColumns(0)
         #-- prevent it getting loaded again
@@ -211,7 +218,7 @@ class feeClass():
         the values are already stored.
         '''
         n=len(self.feesTable_searchList)
-        if n==0:
+        if n == 0:
             self.advise("Not found, or invalid search")
             return
         if self.feesTable_searchpos>=n:
@@ -219,7 +226,8 @@ class feeClass():
         item = self.feesTable_searchList[self.feesTable_searchpos]
 
         self.ui.fees_treeWidget.scrollToItem(item,
-        QtGui.QAbstractItemView.ScrollHint(QtGui.QAbstractItemView.PositionAtCenter))
+        QtGui.QAbstractItemView.ScrollHint(
+        QtGui.QAbstractItemView.PositionAtCenter))
 
         self.ui.fees_treeWidget.setCurrentItem(item)
         self.feesTable_searchpos+=1
@@ -230,14 +238,14 @@ class feeClass():
         feesearchLineEdit - time to refill the searchList
         '''
         searchField=self.ui.feeSearch_lineEdit.text()
-        print "search for",searchField
+        print "search for", searchField
 
         matchflags=QtCore.Qt.MatchFlags(
         QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
 
         #--get a list of items containing that string
         self.feesTable_searchList=self.ui.fees_treeWidget.findItems(
-        searchField,matchflags,4)
+        searchField, matchflags, 4)
 
         self.feesTable_searchpos=0
         self.ui.feeSearch_pushButton.setFocus()
@@ -259,36 +267,36 @@ class feeClass():
             try:
                 proc=subprocess.Popen(["%s"%localsettings.pdfProg,
                 "resources/%s"%doc])
-            except Exception,e:
-                print Exception,e
-                self.advise("Error opening PDF file",2)
-    def chooseFeescale(self,arg):
+            except Exception, e:
+                print Exception, e
+                self.advise("Error opening PDF file", 2)
+    def chooseFeescale(self, arg):
         '''
         recieves signals from the choose feescale combobox
         '''
         print "choose Feescale needs work"
         ##TODO - neds work
 
-        if arg==0:
+        if arg == 0:
             #show all
             pass
-        elif arg==1:
+        elif arg == 1:
             #show private
             pass
-        elif arg==2:
+        elif arg == 2:
             #show NHS
             pass
-    def chooseFeeItemDisplay(self,arg):
+    def chooseFeeItemDisplay(self, arg):
         '''
         recieves signals from the choose feescale Items combobox
         '''
         print "choose Feescale Items needs work"
         ##TODO - neds work
 
-        if arg==0:
+        if arg == 0:
             #show all
             pass
-        elif arg==1:
+        elif arg == 1:
             #show favourites
             pass
     def showHideFees(self):
@@ -300,7 +308,7 @@ class feeClass():
             self.ui.fees_treeWidget.expandAll()
         else:
             self.ui.fees_treeWidget.collapseAll()
-    def chooseFeeColumns(self,arg):
+    def chooseFeeColumns(self, arg):
         '''
         expand columns within the fees table
         '''
@@ -317,10 +325,10 @@ class feeClass():
 
     def feestableProperties(self):
         ##TODO this needs work
-        if self.ui.chooseFeescale_comboBox.currentIndex()==1:
+        if self.ui.chooseFeescale_comboBox.currentIndex() == 1:
             feesTable.private_only=True
             feesTable.nhs_only=False
-        elif self.ui.chooseFeescale_comboBox.currentIndex()==2:
+        elif self.ui.chooseFeescale_comboBox.currentIndex() == 2:
             feesTable.private_only=False
             feesTable.nhs_only=True
         else:
@@ -340,12 +348,12 @@ class feeClass():
             if self.newCourseSetup():
                 return True
             else:
-                self.advise("unable to plan or perform treatment if pt "+\
-                "does not have an active course",1)
+                self.advise("unable to plan or perform treatment if pt "+ \
+                "does not have an active course", 1)
 
-    def applyFeeNow(self, arg ,cset=None):
+    def applyFeeNow(self, arg, cset=None):
         print "applying", arg
-        if cset==None:
+        if cset == None:
             cset=self.pt.cset
 
         if "N" in cset:
@@ -360,21 +368,21 @@ class feeClass():
         recalc money and
         update the details down the left hand side
         '''
-        if self.pt.serialno!=0:
+        if self.pt.serialno != 0:
             self.pt.updateFees()
             self.updateDetails()
             #self.load_newEstPage()
 
     def showExamDialog(self):
         global pt
-        if self.pt.serialno==0:
+        if self.pt.serialno == 0:
             self.advise("no patient selected",1)
             return
         if not self.pt.underTreatment:
             if not self.newCourseSetup():
                 self.advise("unable to perform exam",1)
                 return
-        if self.pt.examt!="":
+        if self.pt.examt != "":
             self.advise("You already have an exam on this course of treatment"+
             "<br />Unable to perform exam",1)
             return
@@ -394,9 +402,9 @@ class feeClass():
                 #--'Palpated for upper canines - NAD'), "000000")]
                 examtype=result[0]
                 examdent=result[1]
-                if examdent ==localsettings.ops[self.pt.dnt1]:
+                if examdent  == localsettings.ops[self.pt.dnt1]:
                     #--normal dentist.
-                    if self.pt.dnt2==0 or self.pt.dnt2==self.pt.dnt1:
+                    if self.pt.dnt2 == 0 or self.pt.dnt2 == self.pt.dnt1:
                         #--no dnt2
                         APPLIED=True
                     else:
@@ -419,7 +427,7 @@ class feeClass():
                 else:
                     message='%s performed this exam<br />'%examdent+\
                     'Is this correct?'
-                    if result[2]!=localsettings.ops[self.pt.dnt2]:
+                    if result[2] != localsettings.ops[self.pt.dnt2]:
                         message +='<br /><i>confirming this will change the '+\
                         'course dentist,but not the registered dentist</i>'
                     else:
@@ -434,32 +442,32 @@ class feeClass():
                         #--dialog rejected
                         self.pt.dnt2=localsettings.ops_reverse[examdent]
                         self.updateDetails()
-                        APPLIED=True
+                        APPLIED = True
 
                 if APPLIED:
-                    self.pt.examt=examtype
-                    examd=result[2].toString("dd/MM/yyyy")
-                    if self.pt.examt=="CE":
-                        self.pt.pd5=examd
-                    if self.pt.examt=="ECE":
-                        self.pt.pd6=examd
-                    if self.pt.examt=="FCA":
-                        self.pt.pd7=examd
-                    self.pt.examd=examd
-                    self.pt.recd=result[2].addMonths(6).toString("dd/MM/yyyy")
-                    newnotes=str(self.ui.notesEnter_textEdit.toPlainText()\
+                    self.pt.examt = examtype
+                    examd = result[2].toString("dd/MM/yyyy")
+                    if self.pt.examt == "CE":
+                        self.pt.pd5 = examd
+                    if self.pt.examt == "ECE":
+                        self.pt.pd6 = examd
+                    if self.pt.examt == "FCA":
+                        self.pt.pd7 = examd
+                    self.pt.examd = examd
+                    self.pt.recd = result[2].addMonths(6).toString("dd/MM/yyyy")
+                    newnotes = str(self.ui.notesEnter_textEdit.toPlainText()\
                                  .toAscii())
                     newnotes+="%s examination performed by %s\n"%(
                     examtype,examdent)
                     self.pt.addHiddenNote("exam","%s"%examtype)
-                    item=fee_keys.getKeyCode(examtype)
+                    item = fee_keys.getKeyCode(examtype)
 
                     #-- get the fee and patien fee
-                    itemfee,ptfee=self.getItemFees(item,1)
+                    itemfee,ptfee = self.getItemFees(item,1)
 
-                    item_description=localsettings.descriptions.get(item)
-                    if item_description==None:
-                        item_description="unknown exam type"
+                    item_description = localsettings.descriptions.get(item)
+                    if item_description == None:
+                        item_description = "unknown exam type"
 
                     self.pt.addToEstimate(1,item,item_description,itemfee,
                     ptfee, localsettings.ops_reverse[examdent], self.pt.cset,
@@ -471,7 +479,7 @@ class feeClass():
                        newnotes+=note+", "
                     self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
 
-                    if self.ui.tabWidget.currentIndex()==7:
+                    if self.ui.tabWidget.currentIndex() == 7:
                         self.load_newEstPage()
                         self.load_treatTrees()
 
@@ -480,7 +488,7 @@ class feeClass():
                 break
 
     def showHygDialog(self):
-        if self.pt.serialno==0:
+        if self.pt.serialno == 0:
             self.advise("no patient selected",1)
             return
         if not self.pt.underTreatment:
@@ -491,34 +499,34 @@ class feeClass():
         Dialog = QtGui.QDialog(self)
         dl = hygTreatWizard.Ui_Dialog(Dialog)
         dl.setPractitioner(localsettings.clinicianNo)
-        item=fee_keys.getKeyCode("SP")
-        fee,ptfee=self.getItemFees(item,1)
-        item2=fee_keys.getKeyCode("SP+")
-        fee2,ptfee2=self.getItemFees(item2,1)
+        item = fee_keys.getKeyCode("SP")
+        fee,ptfee = self.getItemFees(item,1)
+        item2 = fee_keys.getKeyCode("SP+")
+        fee2,ptfee2 = self.getItemFees(item2,1)
         dl.setFees(((fee,ptfee),(fee2,ptfee2)))
-        result=dl.getInput()
+        result = dl.getInput()
 
         if result:
-            newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes+="%s performed by %s\n"%(dl.trt,dl.dent)
             self.pt.addHiddenNote("treatment","Perio %s"%dl.trt)
 
-            fee=dl.fee
-            ptfee=dl.ptFee
+            fee = dl.fee
+            ptfee = dl.ptFee
 
-            item=fee_keys.getKeyCode(dl.trt)
+            item = fee_keys.getKeyCode(dl.trt)
             try:
-                item_description=localsettings.descriptions[item]
+                item_description = localsettings.descriptions[item]
             except KeyError:
-                item_description="unknown perio treatment"
+                item_description = "unknown perio treatment"
 
-            foundInEsts=False
+            foundInEsts = False
             for est in self.pt.estimates:
-                if est.itemcode==item and est.completed==False:
-                    if est.number==1:
-                        est.completed=True
-                        foundInEsts=True
-                        if est.ptfee!=ptfee:
+                if est.itemcode == item and est.completed == False:
+                    if est.number == 1:
+                        est.completed = True
+                        foundInEsts = True
+                        if est.ptfee != ptfee:
                             self.advise(
                             "different fee found in estimate - please check",1)
                         else:
@@ -534,14 +542,14 @@ class feeClass():
             if ptfee>0:
                 self.applyFeeNow(ptfee)
 
-            treatmentCode="%s "%dl.trt
+            treatmentCode = "%s "%dl.trt
             if treatmentCode in self.pt.periopl:
-                self.pt.periopl=self.pt.periopl.replace(treatmentCode,"",1)
+                self.pt.periopl = self.pt.periopl.replace(treatmentCode,"",1)
             self.pt.periocmp+=treatmentCode
             for note in dl.notes:
                newnotes+=note+", "
             self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
-            if self.ui.tabWidget.currentIndex()==7:
+            if self.ui.tabWidget.currentIndex() == 7:
                 #-- it won't be ;)
                 self.load_newEstPage()
                 self.load_treatTrees()
@@ -550,14 +558,14 @@ class feeClass():
 
     def addXrayItems(self):
         if self.noNewCourseNeeded():
-            list=((0,"S"),(0,"M"),(0,"P"))
-            chosenTreatments=self.offerTreatmentItems(list)
+            list = ((0,"S"),(0,"M"),(0,"P"))
+            chosenTreatments = self.offerTreatmentItems(list)
             for treat in chosenTreatments:
                 #(number,usercode,itemcode,description, fee,ptfee)
-                if treat[0]==1:
-                    usercode=treat[1]
+                if treat[0] == 1:
+                    usercode = treat[1]
                 else:
-                    usercode="%s%s"%(treat[0],treat[1])
+                    usercode = "%s%s"%(treat[0],treat[1])
                 self.pt.xraypl+=usercode+" "
                 self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
                 treat[5], self.pt.dnt1, self.pt.cset,"xray %s"%usercode)
@@ -567,15 +575,15 @@ class feeClass():
 
     def addPerioItems(self):
         if self.noNewCourseNeeded():
-            list=((0,"SP"),(0,"SP+"))
-            chosenTreatments=self.offerTreatmentItems(list)
+            list = ((0,"SP"),(0,"SP+"))
+            chosenTreatments = self.offerTreatmentItems(list)
             print chosenTreatments
             for treat in chosenTreatments:
 
-                if treat[0]==1:
-                    usercode=treat[1]
+                if treat[0] == 1:
+                    usercode = treat[1]
                 else:
-                    usercode="%s%s"%(treat[0],treat[1])
+                    usercode = "%s%s"%(treat[0],treat[1])
                 self.pt.periopl+=usercode+" "
                 self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
                 treat[5], self.pt.dnt1, self.pt.cset,"perio %s"%usercode)
@@ -584,13 +592,13 @@ class feeClass():
 
     def addOtherItems(self):
         if self.noNewCourseNeeded():
-            list=()
-            items=localsettings.treatmentCodes.keys()
+            list = ()
+            items = localsettings.treatmentCodes.keys()
             for item in items:
-                code=localsettings.treatmentCodes[item]
+                code = localsettings.treatmentCodes[item]
                 if 3500<int(code)<4002:
                     list+=((0,item,code),)
-            chosenTreatments=self.offerTreatmentItems(list)
+            chosenTreatments = self.offerTreatmentItems(list)
             for treat in chosenTreatments:
                 self.pt.otherpl+="%s%s "%(treat[0],treat[1])
                 self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
@@ -601,19 +609,19 @@ class feeClass():
     def addCustomItem(self):
         if self.noNewCourseNeeded():
             Dialog = QtGui.QDialog(self)
-            dl=Ui_customTreatment.Ui_Dialog()
+            dl = Ui_customTreatment.Ui_Dialog()
             dl.setupUi(Dialog)
             if Dialog.exec_():
-                no=dl.number_spinBox.value()
-                descr=str(dl.description_lineEdit.text())
-                if descr=="":
-                    descr="??"
-                type="%s%s"%(no,descr.replace(" ","_"))
+                no = dl.number_spinBox.value()
+                descr = str(dl.description_lineEdit.text())
+                if descr == "":
+                    descr = "??"
+                type = "%s%s"%(no,descr.replace(" ","_"))
                 if len(type)>5:
                     #-- necessary because the est table type col is char(12)
-                    type=type[:5]
-                fee=int(dl.fee_doubleSpinBox.value()*100)
-                ptfee=int(dl.ptFee_doubleSpinBox.value()*100)
+                    type = type[:5]
+                fee = int(dl.fee_doubleSpinBox.value()*100)
+                ptfee = int(dl.ptFee_doubleSpinBox.value()*100)
 
                 self.pt.custompl+="%s "%type
                 self.pt.addToEstimate(no,"4002",descr, fee,
@@ -624,7 +632,7 @@ class feeClass():
     def offerTreatmentItems(self,arg):
         Dialog = QtGui.QDialog(self)
         dl = addTreat.treatment(Dialog,arg,self.pt)
-        result= dl.getInput()
+        result =  dl.getInput()
         print "offerTreatmentItems returned",result
         return result
 
@@ -640,9 +648,9 @@ class feeClass():
         #-- user enters UR1 RT P,CO
 
         #-- what is the current item in ur1pl?
-        existing=self.pt.__dict__[tooth+"pl"]  #self.selectedChartWidget]
+        existing = self.pt.__dict__[tooth+"pl"]  #self.selectedChartWidget]
 
-        self.pt.__dict__[tooth+"pl"]=properties
+        self.pt.__dict__[tooth+"pl"] = properties
         #--update the patient!!
         self.ui.planChartWidget.setToothProps(tooth,properties)
 
@@ -652,8 +660,8 @@ class feeClass():
         #-- this also separates off any postsetc..
         #-- and bridge brackets
 
-        existingItems=fee_keys.itemsPerTooth(tooth,existing)
-        updatedItems=fee_keys.itemsPerTooth(tooth, properties)
+        existingItems = fee_keys.itemsPerTooth(tooth,existing)
+        updatedItems = fee_keys.itemsPerTooth(tooth, properties)
 
         #check to see if treatments have been removed
         for item in existingItems:
@@ -671,19 +679,19 @@ class feeClass():
             #-- if this is incorrect... est will be crap.
             #-- the function returns "4001" - unknown if it is confused by
             #-- the input.
-            itemcode=fee_keys.getCode(item[0],item[1])
+            itemcode = fee_keys.getCode(item[0],item[1])
             ###############################################
             #--get a description (for the estimate)
-            description=fee_keys.getDescription(itemcode)
+            description = fee_keys.getDescription(itemcode)
             #-- get a fee and pt fee
-            fee,ptfee=self.getItemFees(itemcode)
+            fee,ptfee = self.getItemFees(itemcode)
             #--add to estimate
             self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
                         self.pt.dnt1, self.pt.cset, "%s %s"%(item))
 
     def recalculateEstimate(self, ALL=True):
-        #################################################todo - -move this to the estimates module.....
-        #################################################see NEW function below
+        ####################todo - -move this to the estimates module.....
+        ####################see NEW function below
         '''
         Adds ALL tooth items to the estimate.
         prompts the user to confirm tooth treatment fees
@@ -693,10 +701,10 @@ class feeClass():
 
         Dialog = QtGui.QDialog(self)
         dl = addToothTreat.treatment(Dialog,self.pt.cset)
-        if ALL==False:
+        if ALL == False:
             dl.itemsPerTooth(tooth, item)
         else:
-            treatmentDict=estimates.toothTreatDict(self.pt)
+            treatmentDict = estimates.toothTreatDict(self.pt)
             dl.setItems(treatmentDict["pl"],)
             dl.setItems(treatmentDict["cmp"],)
 
@@ -705,10 +713,10 @@ class feeClass():
         chosen = dl.getInput()
 
         if chosen:
-            if self.pt.dnt2!=0:
-                dent=self.pt.dnt2
+            if self.pt.dnt2 != 0:
+                dent = self.pt.dnt2
             else:
-                dent=self.pt.dnt1
+                dent = self.pt.dnt1
 
             for treat in chosen:
                 #-- treat[0]= the tooth name
@@ -718,7 +726,8 @@ class feeClass():
                 #-- treat[4]=adjusted ptfee
 
                 self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
-                                       dent, self.pt.cset, treat[0])
+                dent, self.pt.cset, treat[0])
+
             self.load_newEstPage()
             self.load_treatTrees()
 
@@ -740,31 +749,31 @@ class feeClass():
         '''
         print "completing Tooth Treatment",arg
         Dialog = QtGui.QDialog(self)
-        if localsettings.clinicianNo!=0:
-            dent=localsettings.clinicianInits
-        elif self.pt.dnt2==None:
-            dent=localsettings.ops.get(self.pt.dnt2)
+        if localsettings.clinicianNo != 0:
+            dent = localsettings.clinicianInits
+        elif self.pt.dnt2 == None:
+            dent = localsettings.ops.get(self.pt.dnt2)
         else:
-            dent=localsettings.ops.get(self.pt.dnt1)
-        if dent==None:
-            dent=""
-        feeTup=self.getFeesFromEst(arg[0][0], arg[0][1])
+            dent = localsettings.ops.get(self.pt.dnt1)
+        if dent == None:
+            dent = ""
+        feeTup = self.getFeesFromEst(arg[0][0], arg[0][1])
         print " line 686", arg, feeTup
         dl = completeTreat.treatment(Dialog,dent,arg,feeTup)
 
-        results=dl.getInput()
+        results = dl.getInput()
         print "results = ",results
         for result in results:
-            planATT=result[0]
-            completedATT=result[0].replace("pl","cmp")
+            planATT = result[0]
+            completedATT = result[0].replace("pl","cmp")
             print "moving '%s' from %s to %s"%(result[1],planATT,completedATT)
             if result[1] in self.pt.__dict__[planATT]:
-                existingplan=self.pt.__dict__[planATT]
-                newplan=existingplan.replace(result[1],"")
-                self.pt.__dict__[planATT]=newplan
-                existingcompleted=self.pt.__dict__[completedATT]
-                newcompleted=result[1]
-                self.pt.__dict__[completedATT]=existingcompleted+newcompleted
+                existingplan = self.pt.__dict__[planATT]
+                newplan = existingplan.replace(result[1],"")
+                self.pt.__dict__[planATT] = newplan
+                existingcompleted = self.pt.__dict__[completedATT]
+                newcompleted = result[1]
+                self.pt.__dict__[completedATT] = existingcompleted+newcompleted
 
                 if planATT[:2] in ("ur","ul","ll","lr"):
                     #--treatment is on a tooth (as opposed to denture etc....)
@@ -780,14 +789,14 @@ class feeClass():
         '''
         iterate through the ests... find this item
         '''
-        tooth=tooth.rstrip("pl")
-        completed="%s %s"%(tooth,treat)
+        tooth = tooth.rstrip("pl")
+        completed = "%s %s"%(tooth,treat)
         print "looking for est item where type= '%s'?"%completed
-        retarg=None
+        retarg = None
         for est in self.pt.estimates:
             print "comparing '%s' and '%s'"%(est.type, completed.strip(" "))
             if est.type == completed.strip(" "):
-                retarg=(est.fee, est.ptfee)
+                retarg = (est.fee, est.ptfee)
                 break
         return retarg
 
@@ -798,7 +807,7 @@ class feeClass():
         this looks through the estimates, applies the fee
         and marks the item as completed.
         '''
-        completed="%s %s"%(tooth,treat)
+        completed = "%s %s"%(tooth,treat)
         print "looking for est item where type= '%s'?"%completed
         found=False
         for est in self.pt.estimates:
@@ -891,16 +900,19 @@ class feeClass():
         try:
             att=tup[0]
             treat=tup[1]+" "
-            #--in teh special case of an exam... it shouldn't need to be removed.
+            #-- in the special case of an exam...
+            #-- it shouldn't need to be removed.
             #-- as you can't "plan" an exam....
             #-- however check anyway, better safe than sorry.
-            if att=="exam" and self.pt.examt=="":
+            if att == "exam" and self.pt.examt == "":
                 self.load_treatTrees()
                 return
             result=QtGui.QMessageBox.question(self,"question",
-            "remove %s %sfrom this course of treatment?"%(att,treat),QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            if result==QtGui.QMessageBox.Yes:
-                if att =="exam":
+            "remove %s %sfrom this course of treatment?"%(att,treat),
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+
+            if result == QtGui.QMessageBox.Yes:
+                if att  == "exam":
                     self.pt.examt=""
                     self.pt.examd=""
                     self.pt.addHiddenNote("exam","%s"%tup[1],True)
@@ -942,13 +954,13 @@ class feeClass():
         user has clicked on a planned item in the treewidget if pl_cmp="pl"
         or a completed one if pl_cmp="cmp"
         '''
-        if pl_cmp=="pl":
+        if pl_cmp == "pl":
             type="Planned Item"
         else:
             type="Completed Item"
 
         #-- check to see if it is end of a branch.
-        if treeWidgetItem.parent()==None:
+        if treeWidgetItem.parent() == None:
             #--header
             message="You've selected %ss <ul>%s"%(
             type,treeWidgetItem.text(0))
@@ -975,9 +987,9 @@ class feeClass():
         '''
         currentPlanItems=[]
         for att in patient_class.currtrtmtTableAtts:
-            if att[-2:]=="pl" and self.pt.__dict__[att]!="":
+            if att[-2:] == "pl" and self.pt.__dict__[att] != "":
                 currentPlanItems.append((att,self.pt.__dict__[att]))
-        if currentPlanItems!=[]:
+        if currentPlanItems != []:
             self.completeTreatments(currentPlanItems)
             self.load_newEstPage()
         else:
@@ -1005,7 +1017,7 @@ class feeClass():
         feesb=0         #ptfee
         writeNeeded=False
         for att in patient_class.currtrtmtTableAtts:
-            if att=="examt" or att[-3:]=="cmp": #be wary of "cmpd"
+            if att == "examt" or att[-3:] == "cmp": #be wary of "cmpd"
                 newcmp=self.pt.__dict__[att]
                 existingcmp=self.pt_dbstate.__dict__[att]
 
@@ -1014,16 +1026,16 @@ class feeClass():
                     print att,newcmp,existingcmp,treatment
                     writeNeeded=True
 
-                    if att=="examt":
+                    if att == "examt":
                         key="exam"
                     else:
                         key=att.rstrip("cmp")
 
                     if key in daybookdict.keys():
                         daybookdict[key]+="%s "%treatment
-                    elif key=="xray" or key=="exam":
+                    elif key == "xray" or key == "exam":
                         daybookdict["diagn"]+="%s "%treatment
-                    elif key=="custom":
+                    elif key == "custom":
                         daybookdict["other"]+="%s "%treatment
                     else:
                         #--tooth include the key ie ul7 etc...
@@ -1039,7 +1051,7 @@ class feeClass():
                             feesb+=fees[1]
 
         if writeNeeded:
-            if self.pt.dnt2!=0 and self.pt.cset!="I":
+            if self.pt.dnt2 != 0 and self.pt.cset != "I":
                 dent=self.pt.dnt2
             else:
                 dent=self.pt.dnt1
@@ -1074,8 +1086,9 @@ class feeClass():
         self.ui.accounts_tableWidget.clear()
         self.ui.accounts_tableWidget.setSortingEnabled(False)
         self.ui.accounts_tableWidget.setRowCount(len(rows))
-        headers=("Dent","Serialno","","First","Last","DOB","Memo","Last Appt","Last Bill",
-        "Type","Number","T/C","Fees","A","B","C")
+        headers=("Dent", "Serialno", "", "First", "Last", "DOB", "Memo",
+        "Last Appt", "Last Bill", "Type", "Number", "T/C", "Fees", "A", "B",
+        "C")
 
         self.ui.accounts_tableWidget.setColumnCount(len(headers))
         self.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
@@ -1085,14 +1098,14 @@ class feeClass():
         for row in rows:
             for col in range(len(row)):
                 d=row[col]
-                if d!=None or col==11:
+                if d != None or col == 11:
                     item=QtGui.QTableWidgetItem()
-                    if col==0:
+                    if col == 0:
                         item.setText(localsettings.ops.get(d))
                     elif col in (5,7,8):
                         item.setData(QtCore.Qt.DisplayRole,
                         QtCore.QVariant(QtCore.QDate(d)))
-                    elif col==12:
+                    elif col == 12:
                         total+=d
                         #--jump through hoops to make the string sortable!
                         money=QtCore.QVariant(QtCore.QString("%L1").\
@@ -1104,7 +1117,7 @@ class feeClass():
 
                         #item.setText(localsettings.formatMoney(d))
 
-                    elif col==11:
+                    elif col == 11:
                         if d>0:
                             item.setText("N")
                         else:
@@ -1134,7 +1147,7 @@ class forumClass():
             lastEvent=localsettings.lastForumVisit
             for topic in ("forum","omforum"):
                 newEvent=forum.lastPost(topic)
-                print newEvent,lastEvent,newEvent>lastEvent
+                print newEvent, lastEvent, newEvent>lastEvent
                 if newEvent>lastEvent:
                     self.showForumIcon(True)
                     break
@@ -1153,27 +1166,30 @@ class forumClass():
             twidg.setHeaderLabels(headers)
             #-- get the posts
             posts=forum.getPosts(topic)
-            if topic=="forum":
-                topParent=QtGui.QTreeWidgetItem(twidg,["General Topics"])
+            if topic == "forum":
+                topParent=QtGui.QTreeWidgetItem(twidg, ["General Topics"])
             else:
-                topParent=QtGui.QTreeWidgetItem(twidg,["OpenMolar and Computer Issues"])
+                topParent=QtGui.QTreeWidgetItem(twidg,
+                ["OpenMolar and Computer Issues"])
 
             parents={None:topParent}
             #--set the forum alternating topic colours
-            mcolours={True:QtCore.Qt.darkGreen,False:QtCore.Qt.darkBlue}
+            mcolours={True:QtCore.Qt.darkGreen, False:QtCore.Qt.darkBlue}
             #--set a boolean for alternating row colours
             highlighted=True
 
             for post in posts:
                 parent=parents.get(post.parent_ix)
                 item=QtGui.QTreeWidgetItem(parent)
-                item.setText(0,post.topic)
-                item.setText(1,post.inits)
-                item.setText(2,post.briefcomment)
-                item.setData(3,QtCore.Qt.DisplayRole,QtCore.QVariant(QtCore.QDateTime(post.date)))
-                item.setText(4,post.comment)
-                item.setText(5,"%d:%s"%(post.ix,topic))
-                if post.parent_ix==None:
+                item.setText(0, post.topic)
+                item.setText(1, post.inits)
+                item.setText(2, post.briefcomment)
+                item.setData(3, QtCore.Qt.DisplayRole,
+                QtCore.QVariant(QtCore.QDateTime(post.date)))
+
+                item.setText(4, post.comment)
+                item.setText(5, "%d:%s"%(post.ix, topic))
+                if post.parent_ix == None:
                     highlighted=not highlighted
                     colour=mcolours[highlighted]
                 else:
@@ -1181,17 +1197,17 @@ class forumClass():
                     bcolour=QtCore.Qt.lightGray
                 for i in range(item.columnCount()):
                     item.setTextColor(i, colour)
-                    if i==3 and post.date > \
+                    if i == 3 and post.date > \
                     localsettings.curTime()-datetime.timedelta(hours=24):
                         item.setTextColor(i, QtGui.QColor("orange"))
 
                 parents[post.ix]=item
             twidg.expandAll()
-            twidg.setColumnWidth(4,0)
-            twidg.setColumnWidth(5,0)
+            twidg.setColumnWidth(4, 0)
+            twidg.setColumnWidth(5, 0)
             for i in range(twidg.columnCount()):
                 twidg.resizeColumnToContents(i)
-                topParent.setBackgroundColor(i,QtGui.QColor("#eeeeee"))
+                topParent.setBackgroundColor(i, QtGui.QColor("#eeeeee"))
             self.ui.forumDelete_pushButton.setEnabled(False)
             self.ui.forumReply_pushButton.setEnabled(False)
         #-- make a note that the user has visited the forum
@@ -1204,14 +1220,16 @@ class forumClass():
         user has selected an item in the forum
         '''
         item=self.ui.forum_treeWidget.currentItem()
-        datetext=item.data(3,QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
+        datetext=item.data(3,
+        QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
+
         heading="<b>Subject:\t%s<br />"%item.text(0)
         heading+="Author:\t%s<br />"%item.text(1)
         heading+="Date:\t%s</b>"%datetext
         message=item.text(4)
         self.ui.forum_label.setText(heading)
         self.ui.forum_textBrowser.setPlainText(message)
-        enableButtons = not item.parent()==None
+        enableButtons = not item.parent() == None
         self.ui.forumDelete_pushButton.setEnabled(enableButtons)
         self.ui.forumReply_pushButton.setEnabled(enableButtons)
 
@@ -1226,14 +1244,14 @@ class forumClass():
 
         while True:
             if Dialog.exec_():
-                if dl.topic_lineEdit.text()=="":
-                    self.advise("Please set a topic",1)
+                if dl.topic_lineEdit.text() == "":
+                    self.advise("Please set a topic", 1)
                 else:
                     break
             else:
                 return
 
-        if dl.table_comboBox.currentIndex()==0:
+        if dl.table_comboBox.currentIndex() == 0:
             table="forum"
         else:
             table="omforum"
@@ -1241,23 +1259,23 @@ class forumClass():
         post.topic = dl.topic_lineEdit.text()
         post.comment = dl.comment_textEdit.toPlainText()
         post.inits = dl.comboBox.currentText()
-        forum.commitPost(post,table)
+        forum.commitPost(post, table)
         self.loadForum()
 
-    def showForumIcon(self,newItems=True):
+    def showForumIcon(self, newItems=True):
         tb=self.ui.main_tabWidget.tabBar()
         if newItems:
             icon = QtGui.QIcon()
             icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-            tb.setTabIcon(8,icon)
-            tb.setTabText(8,"NEW FORUM POSTS")
-            tb.setTabTextColor(8,QtGui.QColor("red"))
+            tb.setTabIcon(8, icon)
+            tb.setTabText(8, "NEW FORUM POSTS")
+            tb.setTabTextColor(8, QtGui.QColor("red"))
         else:
             print "removing icon"
-            tb.setTabIcon(8,QtGui.QIcon())
-            tb.setTabText(8,"FORUM")
-            tb.setTabTextColor(8,QtGui.QColor())
+            tb.setTabIcon(8, QtGui.QIcon())
+            tb.setTabText(8, "FORUM")
+            tb.setTabTextColor(8, QtGui.QColor())
 
     def forumDeleteItem(self):
         '''
@@ -1266,16 +1284,16 @@ class forumClass():
         item=self.ui.forum_treeWidget.currentItem()
         heading=item.text(0)
 
-        result=QtGui.QMessageBox.question(self,"Confirm",
+        result=QtGui.QMessageBox.question(self, "Confirm",
         "Delete selected Post?<br />'%s'"%heading,
-        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
         if result == QtGui.QMessageBox.Yes:
 
             key=str(item.text(5)).split(":")
             ix=int(key[0])
             table=key[1]
-            forum.deletePost(ix,table)
+            forum.deletePost(ix, table)
             self.loadForum()
 
     def forumReply(self):
@@ -1284,7 +1302,7 @@ class forumClass():
         '''
         item=self.ui.forum_treeWidget.currentItem()
         heading=item.text(0)
-        if heading[:2]!="re":
+        if heading[:2] != "re":
             heading="re. "+heading
         Dialog = QtGui.QDialog(self)
         dl = Ui_forumPost.Ui_Dialog()
@@ -1302,80 +1320,80 @@ class forumClass():
             post.topic = dl.topic_lineEdit.text()
             post.comment = dl.comment_textEdit.toPlainText()
             post.inits = dl.comboBox.currentText()
-            forum.commitPost(post,table)
+            forum.commitPost(post, table)
         self.loadForum()
 
 
 class contractClass():
-    def handle_ContractTab(self,i):
-        if i==0:
+    def handle_ContractTab(self, i):
+        if i == 0:
             self.advise("Private contract tab selected")
-        if i==1:
+        if i == 1:
             self.ui.contractHDP_label.setText(
             planDetails.toHtml(self.pt.plandata))
 
-        if i==2:
+        if i == 2:
             self.ui.contractNHS_label.setText(
             nhsDetails.toHtml(self.pt))
 
-        if i==3:
+        if i == 3:
             self.advise("Other Dentist tab selected")
 
-    def changeContractedDentist(self,inits):
+    def changeContractedDentist(self, inits):
         '''
         changes dnt1
         '''
         newdentist=localsettings.ops_reverse[str(inits)]
-        if newdentist==self.pt.dnt1:
+        if newdentist == self.pt.dnt1:
             return
-        if self.pt.cset=="I":
-            self.advise("Let Highland Dental Plan know of this change",1)
-        elif self.pt.cset=="N":
+        if self.pt.cset == "I":
+            self.advise("Let Highland Dental Plan know of this change", 1)
+        elif self.pt.cset == "N":
             self.advise(
-            "Get an NHS form signed to change the patients contract",1)
+            "Get an NHS form signed to change the patients contract", 1)
         else:
-            self.advise("changed dentist to %s"%inits,1)
-        print "changing contracted dentist to ",inits
+            self.advise("changed dentist to %s"%inits, 1)
+        print "changing contracted dentist to ", inits
         self.pt.dnt1=newdentist
         self.updateDetails()
 
-    def changeCourseDentist(self,inits):
+    def changeCourseDentist(self, inits):
         '''
         changes dnt2
         '''
         newdentist=localsettings.ops_reverse[str(inits)]
-        if newdentist==self.pt.dnt2:
+        if newdentist == self.pt.dnt2:
             return
-        if self.pt.dnt2==0 and newdentist==self.pt.dnt1:
+        if self.pt.dnt2 == 0 and newdentist == self.pt.dnt1:
             return
-        if self.pt.cset=="N" and self.pt.underTreatment:
+        if self.pt.cset == "N" and self.pt.underTreatment:
             self.advise(
-            "think about getting some nhs forms signed for both dentists",1)
+            "think about getting some nhs forms signed for both dentists", 1)
         else:
-            self.advise("changed course dentist to %s"%inits,1)
+            self.advise("changed course dentist to %s"%inits, 1)
 
-        print "changing course dentist to ",inits
+        print "changing course dentist to ", inits
         self.pt.dnt2=newdentist
         self.updateDetails()
 
-    def changeCourseType(self,cset):
+    def changeCourseType(self, cset):
         '''
         change cset
         '''
         self.pt.cset=str(cset)
         self.updateDetails()
-        i=["P","I","N"].index(self.pt.cset[:1])
+        i=["P", "I", "N"].index(self.pt.cset[:1])
         self.ui.contract_tabWidget.setCurrentIndex(i)
 
     def editNHScontract(self):
-        self.advise("edit NHS",1)
+        self.advise("edit NHS", 1)
 
     def editPrivateContract(self):
-        self.advise("edit Private",1)
+        self.advise("edit Private", 1)
     def editHDPcontract(self):
-        self.advise("edit HDP",1)
+        self.advise("edit HDP", 1)
     def editOtherContract(self):
-        self.advise("edit other Practitioner",1)
+        self.advise("edit other Practitioner", 1)
 
 class historyClass():
     def addHistoryMenu(self):
@@ -1389,7 +1407,7 @@ class historyClass():
         self.ui.pastData_toolButton.setMenu(self.pastDataMenu)
 
         QtCore.QObject.connect(self.pastDataMenu,
-        QtCore.SIGNAL("triggered (QAction *)"),self.pastData)
+        QtCore.SIGNAL("triggered (QAction *)"), self.pastData)
 
         self.debugMenu=QtGui.QMenu()
         self.debugMenu.addAction("Patient table data")
@@ -1402,25 +1420,25 @@ class historyClass():
         self.ui.debug_toolButton.setMenu(self.debugMenu)
 
         QtCore.QObject.connect(self.debugMenu,
-        QtCore.SIGNAL("triggered (QAction *)"),self.showPtAttributes)
+        QtCore.SIGNAL("triggered (QAction *)"), self.showPtAttributes)
 
         QtCore.QObject.connect(self.ui.ptAtts_checkBox,
-        QtCore.SIGNAL("stateChanged (int)"),self.updateAttributes)
+        QtCore.SIGNAL("stateChanged (int)"), self.updateAttributes)
 
-    def pastData(self,arg):
+    def pastData(self, arg):
         '''
         called from pastData toolbutton
         '''
         type=str(arg.text()).split(" ")[0]
-        if type=="NHS":
+        if type == "NHS":
             self.showPastNHSclaims()
-        elif type=="Payments":
+        elif type == "Payments":
             self.showPaymentHistory()
-        elif type=="Daybook":
+        elif type == "Daybook":
             self.showDaybookHistory()
-        elif type=="Courses":
+        elif type == "Courses":
             self.showCoursesHistory()
-        elif type=="Estimates":
+        elif type == "Estimates":
             self.showEstimatesHistory()
 
     def showEstimatesHistory(self):
@@ -1450,22 +1468,22 @@ class historyClass():
         html=nhs_claims.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
 
-    def updateAttributes(self,arg=None):
+    def updateAttributes(self, arg=None):
         '''
         refresh the table if the checkbox is toggled
         '''
-        if debug_html.existing!="":
+        if debug_html.existing != "":
             self.showPtAttributes()
 
-    def showPtAttributes(self,arg=None):
+    def showPtAttributes(self, arg=None):
         #--load a table of self.pt.attributes
-        if arg!=None:
+        if arg != None:
             type=str(arg.text()).split(" ")[0]
         else:
             type=debug_html.existing.split(" ")[0]
 
         changesOnly=self.ui.ptAtts_checkBox.isChecked()
-        html=debug_html.toHtml(self.pt_dbstate,self.pt,type,changesOnly)
+        html=debug_html.toHtml(self.pt_dbstate, self.pt, type, changesOnly)
         self.ui.debugBrowser.setText(html)
 
 class appointmentClass():
@@ -1481,12 +1499,12 @@ class appointmentClass():
         if Dialog.exec_():
             hours=dl2.hours_spinBox.value()
             mins=dl2.mins_spinBox.value()
-            print hours,"hours",mins,"mins"
-            return (hours,mins)
+            print hours, "hours", mins, "mins"
+            return (hours, mins)
 
-    def addApptLength(self,dl,hourstext,minstext):
-        hours,mins=int(hourstext),int(minstext)
-        if hours==1:
+    def addApptLength(self, dl, hourstext, minstext):
+        hours, mins=int(hourstext), int(minstext)
+        if hours == 1:
             lengthText="1 hour "
         elif hours>1:
             lengthText="%d hours "%hours
@@ -1495,20 +1513,20 @@ class appointmentClass():
             lengthText+="%d minutes"%mins
         lengthText=lengthText.strip(" ")
         try:
-            dl.apptlength_comboBox.insertItem(0,QtCore.QString(lengthText))
+            dl.apptlength_comboBox.insertItem(0, QtCore.QString(lengthText))
             dl.apptlength_comboBox.setCurrentIndex(0)
             return
-        except Exception,e:
+        except Exception, e:
             print e
-            self.advise("unable to set the length of the appointment",1)
+            self.advise("unable to set the length of the appointment", 1)
             return
 
     def newAppt(self):
         '''this shows a dialog to get variables required for an appointment'''
         #--check there is a patient attached to this request!
-        if self.pt.serialno==0:
+        if self.pt.serialno == 0:
             self.advise(
-            "You need to select a patient before performing this action.",1)
+            "You need to select a patient before performing this action.", 1)
             return
 
         #--a sub proc for a subsequent dialog
@@ -1517,14 +1535,14 @@ class appointmentClass():
 
         def oddLength(i):
             #-- last item of the appointment length combobox is "other length"
-            if i==dl.apptlength_comboBox.count()-1:
+            if i == dl.apptlength_comboBox.count()-1:
                 ol=self.oddApptLength()
                 if ol:
                     QtCore.QObject.disconnect(dl.apptlength_comboBox,
-                    QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)
-                    self.addApptLength(dl,ol[0],ol[1])
-                    QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL(
-                    "currentIndexChanged(int)"),oddLength)
+                    QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
+                    self.addApptLength(dl, ol[0], ol[1])
+                    QtCore.QObject.connect(dl.apptlength_comboBox,
+                    QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
         #--initiate a custom dialog
         Dialog = QtGui.QDialog(self)
@@ -1551,7 +1569,7 @@ class appointmentClass():
             s=QtCore.QString(apptType)
             dl.trt1_comboBox.addItem(s)
             #--only offer exam as treatment1
-            if apptType!="EXAM":
+            if apptType != "EXAM":
                 dl.trt2_comboBox.addItem(s)
                 dl.trt3_comboBox.addItem(s)
         #--default appt length is 15 minutes
@@ -1559,7 +1577,7 @@ class appointmentClass():
 
         #--connect the dialogs "make now" buttons to the procs just coded
         QtCore.QObject.connect(dl.apptlength_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)
+        QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
         QtCore.QObject.connect(dl.scheduleNow_pushButton,
         QtCore.SIGNAL("clicked()"), makeNow)
@@ -1572,7 +1590,7 @@ class appointmentClass():
             #--length
             lengthText=str(dl.apptlength_comboBox.currentText())
             if "hour" in lengthText and not "hours " in lengthText:
-                lengthText=lengthText.replace("hour","hours ")
+                lengthText=lengthText.replace("hour", "hours ")
             if "hour" in lengthText:
                 length=60*int(lengthText[:lengthText.index("hour")])
                 lengthText=lengthText[lengthText.index(" ",
@@ -1590,29 +1608,28 @@ class appointmentClass():
 
             #--if the patients course type isn't present,
             #--we will have issues later
-            if self.pt.cset=="":
+            if self.pt.cset == "":
                 cst=32
             else:
                 cst=ord(self.pt.cset[0])
             ##TODO - add datespec and joint appointment options
 
-
             #--attempt WRITE appointement to DATABASE
-            if appointments.add_pt_appt(self.pt.serialno,practix,length,code0,
-            -1,code1,code2,note,"",cst):
+            if appointments.add_pt_appt(self.pt.serialno, practix, length,
+            code0, -1, code1, code2, note, "", cst):
                 self.layout_apptTable()
                 if dl.makeNow:
                     self.makeApptButtonClicked()
             else:
                 #--commit failed
-                self.advise("Error saving appointment",2)
+                self.advise("Error saving appointment", 2)
 
     def clearApptButtonClicked(self):
         '''user is deleting an appointment'''
         #--selected row
         selectedAppt=self.ui.ptAppointment_treeWidget.currentItem()
-        if selectedAppt==None:
-            self.advise("No appointment selected",1)
+        if selectedAppt == None:
+            self.advise("No appointment selected", 1)
             return
 
         #--aprix is a UNIQUE, iterating field in the database starting at 1,
@@ -1620,35 +1637,35 @@ class appointmentClass():
         dateText=str(selectedAppt.text(0))
         checkdate=localsettings.uk_to_sqlDate(dateText)
         atime=selectedAppt.text(2)
-        if atime=="":
+        if atime == "":
             appttime=None
         else:
-            appttime=int(atime.replace(":",""))
+            appttime=int(atime.replace(":", ""))
 
         #--is appointment not is aslot (appt book proper) or in the past??
-        if dateText=="TBA" or QtCore.QDate.fromString(dateText,
+        if dateText == "TBA" or QtCore.QDate.fromString(dateText,
         "dd'/'MM'/'yyyy")<QtCore.QDate.currentDate():
             #--raise a dialog (centred on self)
-            result=QtGui.QMessageBox.question(self,"Confirm",
+            result=QtGui.QMessageBox.question(self, "Confirm",
             "Delete this Unscheduled or Past Appointment?",
-            QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
             if result == QtGui.QMessageBox.No:
                 return
             else:
-                if appointments.delete_appt_from_apr(self.pt.serialno,aprix,
-                checkdate,appttime):
+                if appointments.delete_appt_from_apr(self.pt.serialno, aprix,
+                checkdate, appttime):
                     self.advise("Sucessfully removed appointment")
                     self.layout_apptTable()
                 else:
-                    self.advise("Error removing proposed appointment",2)
+                    self.advise("Error removing proposed appointment", 2)
         else:
             #--get dentists number value
             dent=selectedAppt.text(1)
             #--raise a dialog
-            result=QtGui.QMessageBox.question(self,"Confirm",\
+            result=QtGui.QMessageBox.question(self, "Confirm", \
             "Confirm Delete appointment at %s on %s  with %s"%(
-            atime,dateText,dent),QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            atime, dateText, dent), QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
             if result == QtGui.QMessageBox.Yes:
                 #convert into database varaibles (dentist number)
@@ -1659,7 +1676,7 @@ class appointmentClass():
                 adate=localsettings.uk_to_sqlDate(str(dateText))
 
                 #--delete from the dentists book (aslot)
-                if appointments.delete_appt_from_aslot(dent,start,adate,
+                if appointments.delete_appt_from_aslot(dent, start, adate,
                 self.pt.serialno):
                     ##todo - if we deleted from the appt book,
                     ##we should add to notes
@@ -1669,22 +1686,24 @@ class appointmentClass():
                     result=QtGui.QMessageBox.question(self,
                     "Question",
                     "Removed from appointment book - keep for rescheduling?",
-                    QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+                    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
                     if result == QtGui.QMessageBox.Yes:
                         #appointment "POSTPONED" - not totally cancelled
                         if not appointments.made_appt_to_proposed(
-                        self.pt.serialno,aprix):
-                            self.advise("Error removing Proposed appointment",2)
+                        self.pt.serialno, aprix):
+                            self.advise(
+                            "Error removing Proposed appointment", 2)
                     else:
                         #remove from the patients diary
                         if not appointments.delete_appt_from_apr(
-                        self.pt.serialno,aprix,checkdate,appttime):
-                            self.advise("Error removing proposed appointment",2)
+                        self.pt.serialno, aprix, checkdate, appttime):
+                            self.advise(
+                            "Error removing proposed appointment", 2)
                 else:
                     #--aslot proc has returned False!
                     #let the user know, and go no further
-                    self.advise("Error Removing from Appointment Book",2)
+                    self.advise("Error Removing from Appointment Book", 2)
                     return
                 self.layout_apptTable()
 
@@ -1697,7 +1716,7 @@ class appointmentClass():
         def makeNow():
             ######temporarily disabled this
             self.advise(
-            "this function has been temporarily disabled by Neil,sorry",1)
+            "this function has been temporarily disabled by Neil, sorry", 1)
             return
 
             dl.makeNow=True
@@ -1705,19 +1724,19 @@ class appointmentClass():
 
         def oddLength(i):
             #-- odd appt length selected (see above)
-            if i==dl.apptlength_comboBox.count()-1:
+            if i == dl.apptlength_comboBox.count()-1:
                 ol=self.oddApptLength()
                 if ol:
                     QtCore.QObject.disconnect(dl.apptlength_comboBox,
-                    QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)
+                    QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
-                    self.addApptLength(dl,ol[0],ol[1])
+                    self.addApptLength(dl, ol[0], ol[1])
 
-                    QtCore.QObject.connect(dl.apptlength_comboBox,QtCore.SIGNAL(
-                    "currentIndexChanged(int)"),oddLength)
+                    QtCore.QObject.connect(dl.apptlength_comboBox,
+                    QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
-        if selectedAppt==None:
-            self.advise("No appointment selected",1)
+        if selectedAppt == None:
+            self.advise("No appointment selected", 1)
         else:
             Dialog = QtGui.QDialog(self)
             dl = Ui_specify_appointment.Ui_Dialog()
@@ -1731,17 +1750,17 @@ class appointmentClass():
             for apptType in localsettings.apptTypes:
                 s=QtCore.QString(apptType)
                 dl.trt1_comboBox.addItem(s)
-                if apptType!="EXAM":
+                if apptType != "EXAM":
                     dl.trt2_comboBox.addItem(s)
                     dl.trt3_comboBox.addItem(s)
             length=int(selectedAppt.text(3))
             hours = length//60
             mins = length%60
-            self.addApptLength(dl,hours,mins)
+            self.addApptLength(dl, hours, mins)
             dentist=str(selectedAppt.text(1))
             dateText=str(selectedAppt.text(0))
-            if dateText!="TBA":
-                for widget in (dl.apptlength_comboBox,dl.practix_comboBox,
+            if dateText != "TBA":
+                for widget in (dl.apptlength_comboBox, dl.practix_comboBox,
                 dl.scheduleNow_pushButton):
                     widget.setEnabled(False)
             trt1=selectedAppt.text(4)
@@ -1762,7 +1781,7 @@ class appointmentClass():
             dl.lineEdit.setText(memo)
 
             QtCore.QObject.connect(dl.apptlength_comboBox,
-                    QtCore.SIGNAL("currentIndexChanged(int)"),oddLength)
+                    QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
             QtCore.QObject.connect(dl.scheduleNow_pushButton,
                                    QtCore.SIGNAL("clicked()"), makeNow)
@@ -1774,11 +1793,12 @@ class appointmentClass():
                 practix=localsettings.apptix[practixText]
                 lengthText=str(dl.apptlength_comboBox.currentText())
                 if "hour" in lengthText and not "hours " in lengthText:
-                    lengthText=lengthText.replace("hour","hours ")
+                    lengthText=lengthText.replace("hour", "hours ")
                 if "hour" in lengthText:
                     length=60*int(lengthText[:lengthText.index("hour")])
-                    lengthText=lengthText[lengthText.index(" ",lengthText.\
-                    index("hour")):]
+                    lengthText=lengthText[
+                    lengthText.index(" ", lengthText.index("hour")):]
+
                 else:
                     length=0
                 if "minute" in lengthText:
@@ -1794,19 +1814,19 @@ class appointmentClass():
                 aprix=int(selectedAppt.text(9))
                 adate=localsettings.uk_to_sqlDate(dateText)
 
-                if self.pt.cset=="":
+                if self.pt.cset == "":
                     cst=32
                 else:
                     cst=ord(self.pt.cset[0])
-                appointments.modify_pt_appt(aprix,self.pt.serialno,
-                practix,length,code0,code1,code2,note,"",cst)
-                if dateText=="TBA":
+                appointments.modify_pt_appt(aprix, self.pt.serialno,
+                practix, length, code0, code1, code2, note, "", cst)
+                if dateText == "TBA":
                     if dl.makeNow:
                         self.makeApptButtonClicked()
                 else:
-                    if not appointments.modify_aslot_appt(adate,practix,start,
-                    self.pt.serialno,code0,code1,code2,note,cst,0,0,0):
-                        self.advise("Error putting into dentists book",2)
+                    if not appointments.modify_aslot_appt(adate, practix, start,
+                    self.pt.serialno, code0, code1, code2, note, cst, 0, 0, 0):
+                        self.advise("Error putting into dentists book", 2)
                 self.layout_apptTable()
 
     def makeApptButtonClicked(self):
@@ -1814,15 +1834,15 @@ class appointmentClass():
         make an appointment - switch user to "scheduling mode" and present the
         appointment overview to show possible appointments'''
         selectedAppt=self.ui.ptAppointment_treeWidget.currentItem()
-        if selectedAppt==None:
-            self.advise("Please select an appointment to schedule",1)
+        if selectedAppt == None:
+            self.advise("Please select an appointment to schedule", 1)
             return
         dateText=selectedAppt.text(0)
         if str(dateText) != "TBA":
-            self.advise("appointment already scheduled for %s"%dateText,1)
+            self.advise("appointment already scheduled for %s"%dateText, 1)
             return
         ##todo implement datespec  -
-        ##datespec=self.ui.ptAppointmentTableWidget.item(rowno,8).text()
+        ##datespec=self.ui.ptAppointmentTableWidget.item(rowno, 8).text()
         dent=localsettings.apptix[str(selectedAppt.text(1))]
         #--sets "schedule mode" - user is now adding an appointment
         self.aptOVviewMode(False)
@@ -1833,16 +1853,16 @@ class appointmentClass():
         print "NEW CODE NEEDED"
         #need new code here!!!
         '''
-        previousApptRow=-1#    rowno-1
-        if previousApptRow>=0:
+        previousApptRow = -1#    rowno-1
+        if previousApptRow >= 0:
             #--get the date of preceeding appointment
             try:
-                pdateText=str(self.ui.ptAppointmentTableWidget.item(
-                                                previousApptRow,0).text())
-                qdate=QtCore.QDate.fromString(pdateText,"dd'/'MM'/'yyyy")
+                pdateText = str(self.ui.ptAppointmentTableWidget.item(
+                                                previousApptRow, 0).text())
+                qdate = QtCore.QDate.fromString(pdateText, "dd'/'MM'/'yyyy")
                 #--if the date found is earlier than today... it is irrelevant
-                if qdate<QtCore.QDate.currentDate():
-                    qdate=QtCore.QDate.currentDate()
+                if qdate < QtCore.QDate.currentDate():
+                    qdate = QtCore.QDate.currentDate()
                 self.ui.apptOV_calendarWidget.setSelectedDate(qdate)
 
             except TypeError:
@@ -1872,7 +1892,7 @@ class appointmentClass():
         #--compute first available appointment
         self.offerAppt(True)
 
-    def offerAppt(self,firstRun=False):
+    def offerAppt(self, firstRun=False):
         '''offer an appointment'''
         selectedAppt = self.ui.ptAppointment_treeWidget.currentItem()
         dateText = selectedAppt.text(0)
@@ -1896,7 +1916,7 @@ class appointmentClass():
         today=QtCore.QDate.currentDate()
 
         if seldate<today:
-            self.advise("can't schedule an appointment in the past",1)
+            self.advise("can't schedule an appointment in the past", 1)
             #-- change the calendar programatically (this will call THIS
             #--procedure again!)
             self.ui.apptOV_calendarWidget.setSelectedDate(today)
@@ -1906,14 +1926,14 @@ class appointmentClass():
             No suitable appointments found<br />
             Is the appointment very long?<br />
             If so, Perhaps cancel some emergency time?
-            '''%localsettings.longDate(localsettings.bookEnd),1)
+            '''%localsettings.longDate(localsettings.bookEnd), 1)
             return
 
         else:
             #--select mon-saturday of the selected day
             dayno=seldate.dayOfWeek()
             weekdates=[]
-            for day in range(1,8):
+            for day in range(1, 8):
                 weekdates.append(seldate.addDays(day-dayno))
             if  today in weekdates:
                 startday=today
@@ -1923,13 +1943,13 @@ class appointmentClass():
 
             #--check for suitable apts in the selected WEEK!
             possibleAppts=appointments.future_slots(int(length),
-            startday.toPyDate(),sunday.toPyDate(),tuple(dents))
+            startday.toPyDate(), sunday.toPyDate(), tuple(dents))
 
-            if possibleAppts!=():
+            if possibleAppts != ():
                 #--found some
                 for day in weekdates:
                     for apt in possibleAppts:
-                        if apt[0]==day.toPyDate():
+                        if apt[0] == day.toPyDate():
                             self.ui.apptoverviews[weekdates.index(day)].\
                             freeslots[apt[1]]= apt[2]
 
@@ -1943,17 +1963,17 @@ class appointmentClass():
                     self.aptOV_weekForward()
                     self.offerAppt(True)
 
-    def makeAppt(self,arg):
+    def makeAppt(self, arg):
         '''
         called by a click on my custom overview slot -
         user has selected an offered appointment
         '''
-        #--the pysig arg is in the format (1,(910,20),4)
+        #--the pysig arg is in the format (1, (910, 20), 4)
         #-- where 1=monday, 910 = start, 20=length, dentist=4'''
-        day=("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")\
-        [arg[0]]
+        day=("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+        "Saturday")[arg[0]]
 
-        self.advise("offer appointment for %s %s"%(day,str(arg[1])))
+        self.advise("offer appointment for %s %s"%(day, str(arg[1])))
 
         selectedAppt=self.ui.ptAppointment_treeWidget.currentItem()
         dentist=str(selectedAppt.text(1))
@@ -1972,13 +1992,13 @@ class appointmentClass():
         selectedtime=arg[1][0]
         slotlength=arg[1][1]
         selectedDent=localsettings.apptix_reverse[arg[2]]
-        if selectedDent!=dentist:
+        if selectedDent != dentist:
             #--the user has selected a slot with a different dentist
             #--raise a dialog to check this was intentional!!
-            message='You have chosen an appointment with %s<br />'\
-            %selectedDent+'Is this correct?'
-            result=QtGui.QMessageBox.question(self,"Confirm",message,
-            QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
+            message='''You have chosen an appointment with %s<br />
+            Is this correct?'''% selectedDent
+            result=QtGui.QMessageBox.question(self, "Confirm", message,
+            QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
 
             if result == QtGui.QMessageBox.Cancel:
                 #dialog rejected
@@ -1988,8 +2008,8 @@ class appointmentClass():
             #--the slot selected is bigger than the appointment length so
             #--fire up a dialog to allow for fine tuning
             Dialog = QtGui.QDialog(self)
-            dl = finalise_appt_time.ftDialog(Dialog,selectedtime,
-                                             slotlength,length)
+            dl = finalise_appt_time.ftDialog(Dialog, selectedtime,
+                                             slotlength, length)
 
             if Dialog.exec_():
                 #--dialog accepted
@@ -1998,15 +2018,15 @@ class appointmentClass():
             else:
                 #--dialog cancelled
                 return
-        if slotlength==length:
+        if slotlength == length:
             #--ok... suitable appointment found
             message="Confirm Make appointment at %s on %s with %s"%(
-            localsettings.wystimeToHumanTime(selectedtime),localsettings.\
-            formatDate(selecteddate.toPyDate()),selectedDent)
+            localsettings.wystimeToHumanTime(selectedtime), localsettings.\
+            formatDate(selecteddate.toPyDate()), selectedDent)
 
             #--get final confirmation
-            result=QtGui.QMessageBox.question(self,"Confirm",message,
-            QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
+            result=QtGui.QMessageBox.question(self, "Confirm", message,
+            QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
             if result == QtGui.QMessageBox.Cancel:
                 #dialog rejected
                 return
@@ -2020,34 +2040,34 @@ class appointmentClass():
             #--on this field.
             name=name[:30]
             #--don't throw an exception with ord("")
-            if self.pt.cset=="":
+            if self.pt.cset == "":
                 cst=32
             else:
                 cst=ord(self.pt.cset[0])
 
             #-- make appointment
             if appointments.make_appt(
-                selecteddate.toPyDate(),localsettings.apptix[selectedDent],\
-                selectedtime,endtime,name,self.pt.serialno,trt1,trt2,trt3,\
-                memo,1,cst,0,0):
+                selecteddate.toPyDate(), localsettings.apptix[selectedDent],
+                selectedtime, endtime, name, self.pt.serialno, trt1, trt2,
+                trt3, memo, 1, cst, 0, 0):
 
                 ##TODO use these flags for family and double appointments
 
-                if appointments.pt_appt_made(self.pt.serialno,aprix,
-                selecteddate.toPyDate(),selectedtime,
+                if appointments.pt_appt_made(self.pt.serialno, aprix,
+                selecteddate.toPyDate(), selectedtime,
                 localsettings.apptix[selectedDent]):
                     #-- proc returned True so....update the patient apr table
                     self.layout_apptTable()
                     #== and offer an appointment card
-                    result=QtGui.QMessageBox.question(self,"Confirm",
-                    "Print Appointment Card?",QtGui.QMessageBox.Ok,
+                    result=QtGui.QMessageBox.question(self, "Confirm",
+                    "Print Appointment Card?", QtGui.QMessageBox.Ok,
                     QtGui.QMessageBox.Cancel)
 
                     if result == QtGui.QMessageBox.Ok:
                         self.printApptCard()
                 else:
                     self.advise("Error putting appointment back onto patient "+
-                    "record - it may be in the appointment book though?",2)
+                    "record - it may be in the appointment book though?", 2)
 
                 #--#cancel scheduling mode
                 self.aptOVviewMode(True)
@@ -2055,19 +2075,19 @@ class appointmentClass():
                 self.ui.main_tabWidget.setCurrentIndex(0)
 
             else:
-                self.advise("Error making appointment - sorry!",2)
+                self.advise("Error making appointment - sorry!", 2)
         else:
             #Hopefully this should never happen!!!!
             self.advise(
             "error - the appointment doesn't fit there.. slotlength "+
-            "is %d and we need %d"%(slotlength,length),2)
+            "is %d and we need %d"%(slotlength, length), 2)
 
-    def apptOVheaderclick(self,arg):
+    def apptOVheaderclick(self, arg):
         '''a click on the dentist portion of the appointment overview widget'''
 
         ##TODO doing this should offer the user better options than just this..
-        result=QtGui.QMessageBox.question(self,"Confirm",
-        "Confirm Print Daybook",QtGui.QMessageBox.Ok,QtGui.QMessageBox.Cancel)
+        result=QtGui.QMessageBox.question(self, "Confirm",
+        "Confirm Print Daybook", QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
 
         if result == QtGui.QMessageBox.Ok:
             self.printBook(arg)
@@ -2076,14 +2096,14 @@ class appointmentClass():
         '''called by signals from the patient's appointment table'''
 
         selected=self.ui.ptAppointment_treeWidget.currentItem()
-        if selected is None or selected.childCount()!=0:
+        if selected is None or selected.childCount() != 0:
             self.ui.makeAppt_pushButton.setEnabled(False)
             self.ui.modifyAppt_pushButton.setEnabled(False)
             self.ui.clearAppt_pushButton.setEnabled(False)
             self.ui.findAppt_pushButton.setEnabled(False)
             #self.ui.printAppt_pushButton.setEnabled(False)
             return
-        if selected.text(0)=="TBA":
+        if selected.text(0) == "TBA":
             self.ui.makeAppt_pushButton.setEnabled(True)
             self.ui.modifyAppt_pushButton.setEnabled(True)
             self.ui.clearAppt_pushButton.setEnabled(True)
@@ -2100,17 +2120,17 @@ class appointmentClass():
         '''populates the patients appointment table'''
 
         ##new
-        headers=["Date","Pract..","Time","Length","Trt1","Trt2","Trt3",
-        "MEMO","date spec","orderAdded"]
+        headers=["Date", "Pract..", "Time", "Length", "Trt1", "Trt2", "Trt3",
+        "MEMO", "date spec", "orderAdded"]
         self.ui.ptAppointment_treeWidget.clear()
         self.ui.ptAppointment_treeWidget.setHeaderLabels(headers)
         parents={}
         #hflag=QtCore.Qt.QItemFlags(QtCore.Qt.ItemIsSelectable)
-        for heading in ("Past","Unscheduled","TODAY","Future"):
+        for heading in ("Past", "Unscheduled", "TODAY", "Future"):
             parents[heading]=QtGui.QTreeWidgetItem(
             self.ui.ptAppointment_treeWidget, [heading])
 
-            parents[heading].setTextColor(0,colours.diary[heading])
+            parents[heading].setTextColor(0, colours.diary[heading])
 
         rows=appointments.get_pts_appts(self.pt.serialno)
         #--which will give us stuff like...
@@ -2120,19 +2140,19 @@ class appointmentClass():
         today=localsettings.ukToday()
         for row in rows:
             date=row[7]
-            if date==None:
+            if date == None:
                 #--appointment not yet scheduled
                 date ="TBA"
             #convert dentist from int to initials
             dent=localsettings.apptix_reverse.get(row[2])
-            if dent==None:
-                self.advise("removing appointment dentist",1)
+            if dent == None:
+                self.advise("removing appointment dentist", 1)
                 dent=""
             length=str(row[9])
-            trt1,trt2,trt3=tuple(row[3:6])
+            trt1, trt2, trt3=tuple(row[3:6])
             memo=str(row[6])
             datespec=row[15]
-            if row[8]==None:
+            if row[8] == None:
                 start=""
             else:
                 start=localsettings.wystimeToHumanTime(int(row[8]))
@@ -2148,35 +2168,35 @@ class appointmentClass():
             appointmentList.append(datespec)
             appointmentList.append(str(row[1]))
 
-            if date=="TBA":
+            if date == "TBA":
                 parent=parents["Unscheduled"]
-            elif date==today:
+            elif date == today:
                 parent=parents["TODAY"]
             elif localsettings.uk_to_sqlDate(date)<localsettings.sqlToday():
                 parent=parents["Past"]
             else:
                 parent=parents["Future"]
 
-            w=QtGui.QTreeWidgetItem(parent,appointmentList)
+            w=QtGui.QTreeWidgetItem(parent, appointmentList)
             for i in range (w.columnCount()):
-                w.setTextColor(i,parent.textColor(0))
+                w.setTextColor(i, parent.textColor(0))
         self.ui.ptAppointment_treeWidget.expandAll()
 
 
         for i in range(self.ui.ptAppointment_treeWidget.columnCount()):
             self.ui.ptAppointment_treeWidget.resizeColumnToContents(i)
 
-        if parents["Past"].childCount()!=0:
+        if parents["Past"].childCount() != 0:
             parents["Past"].setExpanded(False)
 
 
         for parent in parents.values():
-            if parent.childCount()==0:
-                self.ui.ptAppointment_treeWidget.removeItemWidget(parent,0)
+            if parent.childCount() == 0:
+                self.ui.ptAppointment_treeWidget.removeItemWidget(parent, 0)
             else:
                 parent.setFlags(QtCore.Qt.ItemIsEnabled)
 
-        #self.ui.ptAppointment_treeWidget.setColumnWidth(9,0)
+        #self.ui.ptAppointment_treeWidget.setColumnWidth(9, 0)
 
 
         #--programmatically ensure the correct buttons are enabled
@@ -2191,7 +2211,7 @@ class appointmentClass():
 
         while True:
             time.sleep(30)
-            if self.ui.main_tabWidget.currentIndex()==1:
+            if self.ui.main_tabWidget.currentIndex() == 1:
                 self.triangles
 
     def triangles(self):
@@ -2199,32 +2219,34 @@ class appointmentClass():
         set the time on the appointment widgets...
         so they can display traingle pointers
         '''
-        currenttime="%02d%02d"%(time.localtime()[3],time.localtime()[4])
+        currenttime="%02d%02d"%(time.localtime()[3], time.localtime()[4])
         d=self.ui.appointmentCalendarWidget.selectedDate()
-        if d==QtCore.QDate.currentDate():
+        if d == QtCore.QDate.currentDate():
             for book in self.ui.apptBookWidgets:
                 book.setCurrentTime(currenttime)
 
-    def getappointmentData(self,d, dents=()):
+    def getappointmentData(self, d, dents=()):
         '''
         gets appointment data for date d.
         '''
         ad=copy.deepcopy(self.appointmentData)
-        adate="%d%02d%02d"%(d.year(),d.month(),d.day())
+        adate="%d%02d%02d"%(d.year(), d.month(), d.day())
         workingdents=appointments.getWorkingDents(adate, dents)
-        self.appointmentData= appointments.allAppointmentData(adate,workingdents)
-        if self.appointmentData!=ad:
+        self.appointmentData= appointments.allAppointmentData(
+        adate, workingdents)
+
+        if self.appointmentData != ad:
             self.advise('appointment data modified on %s'%adate)
             return True
         else:
             self.advise('apointments on %s are unchanged'%adate)
 
-    def calendar(self,sd):
+    def calendar(self, sd):
         '''comes from click proceedures'''
         self.ui.main_tabWidget.setCurrentIndex(1)
         self.ui.appointmentCalendarWidget.setSelectedDate(sd)
 
-    def aptFontSize(self,e):
+    def aptFontSize(self, e):
         '''user selecting a different appointment book slot'''
         localsettings.appointmentFontSize=e
         for book in self.ui.apptBookWidgets:
@@ -2233,7 +2255,7 @@ class appointmentClass():
 
     #--next five procs related to user clicking on the day
     #--buttons on the apptoverviewwidget
-    def aptOVlabelClicked(self,sd):
+    def aptOVlabelClicked(self, sd):
         self.calendar(sd)
 
     def gotoToday(self):
@@ -2242,13 +2264,13 @@ class appointmentClass():
     def gotoCurWeek(self):
         self.ui.apptOV_calendarWidget.setSelectedDate(
                                                     QtCore.QDate.currentDate())
-    def aptOVviewMode(self,Viewmode=True):
+    def aptOVviewMode(self, Viewmode=True):
         if Viewmode:
             self.ui.aptOVmode_label.setText("View Mode")
             self.ui.main_tabWidget.setCurrentIndex(0)
         else:
             self.ui.aptOVmode_label.setText("Scheduling Mode")
-        for cb in (self.ui.aptOV_apptscheckBox,self.ui.aptOV_emergencycheckBox,
+        for cb in (self.ui.aptOV_apptscheckBox, self.ui.aptOV_emergencycheckBox,
         self.ui.aptOV_lunchcheckBox):
             cb.setChecked(Viewmode)
     def aptOV_weekBack(self):
@@ -2285,14 +2307,13 @@ class appointmentClass():
     def clearTodaysEmergencyTime(self):
         '''clears emergency slots for today'''
         #-- raise a dialog to check
-        result=QtGui.QMessageBox.question(self,"Confirm",
+        result=QtGui.QMessageBox.question(self, "Confirm",
         "Clear today's emergency slots?",
-        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
-        if result==QtGui.QMessageBox.Yes:
-            self.advise(
-            "Cleared %d emergency slots"%appointments.clearEms(
-                                                localsettings.sqlToday()),1)
+        if result == QtGui.QMessageBox.Yes:
+            self.advise("Cleared %d emergency slots"%
+            appointments.clearEms(localsettings.sqlToday()), 1)
 
     def apptOVclinicians(self):
         '''everybody to be viewed'''
@@ -2339,16 +2360,16 @@ class appointmentClass():
     def findApptButtonClicked(self):
         selectedAppt=self.ui.ptAppointment_treeWidget.currentItem()
         ##TODO - whoops UK date format
-        d=QtCore.QDate.fromString(selectedAppt.text(0),"dd'/'MM'/'yyyy")
+        d=QtCore.QDate.fromString(selectedAppt.text(0), "dd'/'MM'/'yyyy")
 
         QtCore.QObject.disconnect(self.ui.main_tabWidget,
-        QtCore.SIGNAL("currentChanged(int)"),self.handle_mainTab)
+        QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
 
         self.ui.appointmentCalendarWidget.setSelectedDate(d)
         self.ui.main_tabWidget.setCurrentIndex(1)
 
         QtCore.QObject.connect(self.ui.main_tabWidget,
-        QtCore.SIGNAL("currentChanged(int)"),self.handle_mainTab)
+        QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
 
 
     def layout_apptOV(self):
@@ -2357,7 +2378,7 @@ class appointmentClass():
         or by changeing the date on the appt OV calendar
         '''
 
-        if self.ui.main_tabWidget.currentIndex()!=2:
+        if self.ui.main_tabWidget.currentIndex() != 2:
             #--this is needed incase I programmatically
             #--change the checkboxes or diary date...
             #--I don't want a redraw every time
@@ -2370,11 +2391,11 @@ class appointmentClass():
 
         if self.ui.aptOV_alldentscheckBox.checkState() != AllDentsChecked:
             QtCore.QObject.disconnect(self.ui.aptOV_alldentscheckBox,
-            QtCore.SIGNAL("stateChanged(int)"),self.apptOVdents)
+            QtCore.SIGNAL("stateChanged(int)"), self.apptOVdents)
 
             self.ui.aptOV_alldentscheckBox.setChecked(AllDentsChecked)
-            QtCore.QObject.connect(self.ui.aptOV_alldentscheckBox,QtCore.SIGNAL(
-            "stateChanged(int)"),self.apptOVdents)
+            QtCore.QObject.connect(self.ui.aptOV_alldentscheckBox, QtCore.SIGNAL(
+            "stateChanged(int)"), self.apptOVdents)
 
         AllHygsChecked=True
         #--same for the hygenists
@@ -2383,23 +2404,23 @@ class appointmentClass():
             AllHygsChecked=AllHygsChecked and hyg.checkState()
         if self.ui.aptOV_allhygscheckBox.checkState() != AllHygsChecked:
             QtCore.QObject.disconnect(self.ui.aptOV_allhygscheckBox,
-            QtCore.SIGNAL("stateChanged(int)"),self.apptOVhygs)
+            QtCore.SIGNAL("stateChanged(int)"), self.apptOVhygs)
 
             self.ui.aptOV_allhygscheckBox.setChecked(AllHygsChecked)
-            QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox,QtCore.SIGNAL(
-            "stateChanged(int)"),self.apptOVhygs)
+            QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox, QtCore.SIGNAL(
+            "stateChanged(int)"), self.apptOVhygs)
 
-        if self.ui.aptOV_everybody_checkBox.checkState!= (
+        if self.ui.aptOV_everybody_checkBox.checkState != (
         AllDentsChecked and AllHygsChecked):
 
             QtCore.QObject.disconnect(self.ui.aptOV_everybody_checkBox,
-            QtCore.SIGNAL("stateChanged(int)"),self.apptOVclinicians)
+            QtCore.SIGNAL("stateChanged(int)"), self.apptOVclinicians)
 
             self.ui.aptOV_everybody_checkBox.setChecked(
             AllDentsChecked and AllHygsChecked)
 
             QtCore.QObject.connect(self.ui.aptOV_everybody_checkBox,
-            QtCore.SIGNAL("stateChanged(int)"),self.apptOVclinicians)
+            QtCore.SIGNAL("stateChanged(int)"), self.apptOVclinicians)
 
 
         date=self.ui.apptOV_calendarWidget.selectedDate()
@@ -2407,7 +2428,7 @@ class appointmentClass():
         weekdates=[]
         #--(monday to friday) #prevMonday=date.addDays(1-dayno),
         #--prevTuesday=date.addDays(2-dayno)
-        for day in range(1,6):
+        for day in range(1, 6):
             weekday=(date.addDays(day-dayno))
             weekdates.append(weekday)
             self.ui.apptoverviewControls[day-1].setDate(weekday)
@@ -2428,16 +2449,16 @@ class appointmentClass():
         for ov in self.ui.apptoverviews:
             #--reset
             ov.date=weekdates[self.ui.apptoverviews.index(ov)]
-            if userCheckedDents!=[]:
+            if userCheckedDents != []:
                 workingdents=appointments.getWorkingDents(ov.date.toPyDate(),
                 tuple(userCheckedDents))
-                #--tuple like ((4,840,1900),(5,830,1400))
+                #--tuple like ((4, 840, 1900), (5, 830, 1400))
 
                 dlist=[]
                 for dent in workingdents:
                     dlist.append(dent[0])
-                    ov.setStartTime(dent[0],dent[1])
-                    ov.setEndTime(dent[0],dent[2])
+                    ov.setStartTime(dent[0], dent[1])
+                    ov.setEndTime(dent[0], dent[2])
                 ov.dents=tuple(dlist)
             else:
                 ov.dents=()
@@ -2447,23 +2468,23 @@ class appointmentClass():
             #--add appts
             for ov in self.ui.apptoverviews:
                 for dent in ov.dents:
-                    ov.appts[dent]=appointments.daysummary(ov.date.toPyDate(),dent)
+                    ov.appts[dent]=appointments.daysummary(ov.date.toPyDate(), dent)
 
         if self.ui.aptOV_emergencycheckBox.checkState():
             #--add emergencies
             for ov in self.ui.apptoverviews:
                 for dent in ov.dents:
-                    ov.eTimes[dent]=appointments.getBlocks(ov.date.toPyDate(),dent)
+                    ov.eTimes[dent]=appointments.getBlocks(ov.date.toPyDate(), dent)
 
         if self.ui.aptOV_lunchcheckBox.checkState():
             #--add lunches
             ##todo - should really get these via mysql...
             #--but they never change in my practice...
             for ov in self.ui.apptoverviews[0:4]:
-                ov.lunch=(1300,60)
-            self.ui.apptoverviews[4].lunch=(1230,30)
+                ov.lunch=(1300, 60)
+            self.ui.apptoverviews[4].lunch=(1230, 30)
 
-        if str(self.ui.aptOVmode_label.text())=="Scheduling Mode":
+        if str(self.ui.aptOVmode_label.text()) == "Scheduling Mode":
             #--user is scheduling an appointment so show 'slots'
             #--which match the apptointment being arranged
             self.offerAppt()
@@ -2489,7 +2510,7 @@ class appointmentClass():
         for dent in self.appointmentData[0]:
             todaysDents.append(dent[0])
             todaysMemos.append(dent[3])
-        if d==(QtCore.QDate.currentDate()):
+        if d == (QtCore.QDate.currentDate()):
             self.ui.goTodayPushButton.setEnabled(False)
         else:
             self.ui.goTodayPushButton.setEnabled(True)
@@ -2506,17 +2527,17 @@ class appointmentClass():
                 todaysDents.index(dent)][1])
                 self.ui.apptBookWidgets[i].setEndTime(self.appointmentData[0][
                 todaysDents.index(dent)][2])
-            except IndexError,e:
+            except IndexError, e:
                 self.advise(
                 "Damn! too many dentists today!! only 3 widgets available - "+
-                "file a bug!<br /><br />%s"%str(e),2)
+                "file a bug!<br /><br />%s"%str(e), 2)
                 ####TODO - sort this out... no of widgets shouldn't be fixed.
             i+=1
-        for label in (self.ui.apptFrameLabel1,self.ui.apptFrameLabel2,
+        for label in (self.ui.apptFrameLabel1, self.ui.apptFrameLabel2,
         self.ui.apptFrameLabel3, self.ui.apptFrameLabel4):
             label.setText("")
-        for label in (self.ui.book1memo_label,self.ui.book2memo_label,
-        self.ui.book2memo_label,self.ui.book4memo_label):
+        for label in (self.ui.book1memo_label, self.ui.book2memo_label,
+        self.ui.book2memo_label, self.ui.book4memo_label):
             label.setText("")
 
         if i>0 :
@@ -2542,21 +2563,21 @@ class appointmentClass():
                 #--his will be a number
                 book=self.ui.apptBookWidgets[todaysDents.index(dent)]
 
-                book.setAppointment(str(app[2]),str(app[3]),app[4],app[5],
-                app[6],app[7],app[8],app[9],app[10],chr(app[11]))
+                book.setAppointment(str(app[2]), str(app[3]), app[4], app[5],
+                app[6], app[7], app[8], app[9], app[10], chr(app[11]))
         else:
             self.advise("all off today")
         self.triangles()
         for book in self.ui.apptBookWidgets:
             book.update()
-            if book.dentist==None:
+            if book.dentist == None:
                 #--book has no data
                 book.hide()
             else:
                 book.show()
 
-    def appointment_clicked(self,list_of_snos):
-        if len(list_of_snos)==1:
+    def appointment_clicked(self, list_of_snos):
+        if len(list_of_snos) == 1:
 
             sno=list_of_snos[0]
             self.advise("getting record %s"%sno)
@@ -2564,9 +2585,9 @@ class appointmentClass():
         else:
             sno=self.final_choice(
                             search.getcandidates_from_serialnos(list_of_snos))
-            if sno!=None:
+            if sno != None:
                 self.getrecord(int(sno))
-    def clearEmergencySlot(self,arg):
+    def clearEmergencySlot(self, arg):
         '''
         this function is the slot for a signal invoked when the user clicks
         on a "blocked" slot.
@@ -2575,30 +2596,30 @@ class appointmentClass():
         '''
         adate=self.ui.appointmentCalendarWidget.selectedDate().toPyDate()
         message="Do you want to unblock the selected slot?<br />"
-        message+="%s - %s <br />"%(arg[0],arg[1])
+        message+="%s - %s <br />"%(arg[0], arg[1])
         message+="%s<br />"%localsettings.longDate(adate)
         message+="with %s?"%localsettings.ops.get(arg[2])
-        result=QtGui.QMessageBox.question(self,"Confirm",
+        result=QtGui.QMessageBox.question(self, "Confirm",
         message,
-        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
-        if result==QtGui.QMessageBox.Yes:
+        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        if result == QtGui.QMessageBox.Yes:
             print "ok. unblocking"
             start=localsettings.humanTimetoWystime(arg[0])
-            appointments.delete_appt_from_aslot(arg[2],start,adate,0)
+            appointments.delete_appt_from_aslot(arg[2], start, adate, 0)
             self.layout_appointments()
 
 
-    def blockEmptySlot(self,tup):
-        print "block ",tup
+    def blockEmptySlot(self, tup):
+        print "block ", tup
         adate=self.ui.appointmentCalendarWidget.selectedDate().toPyDate()
         start=localsettings.humanTimetoWystime(tup[0])
         end=localsettings.humanTimetoWystime(tup[1])
         dent=tup[2]
         reason=tup[3]
-        appointments.block_appt(adate,dent,start,end,reason)
+        appointments.block_appt(adate, dent, start, end, reason)
         self.layout_appointments()
 
-    def aptOVlabelRightClicked(self,d):
+    def aptOVlabelRightClicked(self, d):
         '''
         user wants to change appointment overview properties for date d
         '''
@@ -2654,11 +2675,11 @@ class signals():
         QtCore.QObject.connect(self.ui.hygWizard_pushButton,
                         QtCore.SIGNAL("clicked()"), self.showHygDialog)
         QtCore.QObject.connect(self.ui.newBPE_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.newBPE_Dialog)
+                        QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
         QtCore.QObject.connect(self.ui.charge_pushButton,
-                        QtCore.SIGNAL("clicked()"),  self.raiseACharge)
+                        QtCore.SIGNAL("clicked()"), self.raiseACharge)
         QtCore.QObject.connect(self.ui.medNotes_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.showMedNotes)
+                        QtCore.SIGNAL("clicked()"), self.showMedNotes)
         QtCore.QObject.connect(self.ui.phraseBook_pushButton,
                         QtCore.SIGNAL("clicked()"), self.phraseBookDialog)
         QtCore.QObject.connect(self.ui.memos_pushButton,
@@ -2669,7 +2690,7 @@ class signals():
         QtCore.QObject.connect(self.ui.home_pushButton,
                         QtCore.SIGNAL("clicked()"), self.home)
         QtCore.QObject.connect(self.ui.newPatientPushButton,
-                        QtCore.SIGNAL("clicked()"),self.enterNewPatient)
+                        QtCore.SIGNAL("clicked()"), self.enterNewPatient)
         QtCore.QObject.connect(self.ui.findButton,
                         QtCore.SIGNAL("clicked()"), self.find_patient)
         QtCore.QObject.connect(self.ui.reloadButton,
@@ -2685,11 +2706,11 @@ class signals():
         QtCore.QObject.connect(self.ui.ptAppointment_treeWidget,
                 QtCore.SIGNAL("itemSelectionChanged()"), self.ptApptTableNav)
         QtCore.QObject.connect(self.ui.printAccount_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.printaccount)
+                        QtCore.SIGNAL("clicked()"), self.printaccount)
         QtCore.QObject.connect(self.ui.printEst_pushButton,
                         QtCore.SIGNAL("clicked()"), self.printEstimate)
         QtCore.QObject.connect(self.ui.printRecall_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.printrecall)
+                        QtCore.SIGNAL("clicked()"), self.printrecall)
         QtCore.QObject.connect(self.ui.takePayment_pushButton,
                         QtCore.SIGNAL("clicked()"), self.takePayment)
     def signals_reception(self):
@@ -2711,23 +2732,23 @@ class signals():
     def signals_printing(self):
         #printing buttons
         QtCore.QObject.connect(self.ui.receiptPrintButton,
-                        QtCore.SIGNAL("clicked()"),self.printDupReceipt)
+                        QtCore.SIGNAL("clicked()"), self.printDupReceipt)
         QtCore.QObject.connect(self.ui.exportChartPrintButton,
                                QtCore.SIGNAL("clicked()"), self.printChart)
         QtCore.QObject.connect(self.ui.simpleNotesPrintButton,
-                               QtCore.SIGNAL("clicked()"),self.printNotes)
+                               QtCore.SIGNAL("clicked()"), self.printNotes)
         QtCore.QObject.connect(self.ui.detailedNotesPrintButton,
-                               QtCore.SIGNAL("clicked()"),self.printNotesV)
+                               QtCore.SIGNAL("clicked()"), self.printNotesV)
         QtCore.QObject.connect(self.ui.referralLettersPrintButton,
-                               QtCore.SIGNAL("clicked()"),self.printReferral)
+                               QtCore.SIGNAL("clicked()"), self.printReferral)
         QtCore.QObject.connect(self.ui.standardLetterPushButton,
-                               QtCore.SIGNAL("clicked()"),self.printLetter)
+                               QtCore.SIGNAL("clicked()"), self.printLetter)
         QtCore.QObject.connect(self.ui.recallpushButton,
-                               QtCore.SIGNAL("clicked()"),self.exportRecalls)
+                               QtCore.SIGNAL("clicked()"), self.exportRecalls)
         QtCore.QObject.connect(self.ui.account2_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.accountButton2Clicked)
+                        QtCore.SIGNAL("clicked()"), self.accountButton2Clicked)
         QtCore.QObject.connect(self.ui.previousCorrespondence_treeWidget,
-        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),self.showDoc)
+        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"), self.showDoc)
     def signals_menu(self):
         #menu
         QtCore.QObject.connect(self.ui.action_save_patient,
@@ -2765,9 +2786,9 @@ class signals():
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
                                QtCore.SIGNAL("clicked()"), self.closeCourse)
         QtCore.QObject.connect(self.ui.estLetter_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.customEstimate)
+                        QtCore.SIGNAL("clicked()"), self.customEstimate)
         QtCore.QObject.connect(self.ui.recalcEst_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.recalculateEstimate)
+                        QtCore.SIGNAL("clicked()"), self.recalculateEstimate)
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
                                QtCore.SIGNAL("clicked()"), self.addXrayItems)
         QtCore.QObject.connect(self.ui.perioTxpushButton,
@@ -2788,23 +2809,23 @@ class signals():
         QtCore.QObject.connect(self.ui.estWidget,
                               QtCore.SIGNAL("deleteItem"), self.deleteTxItem)
 
-        QtCore.QObject.connect(self.ui.plan_treeWidget,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.plan_treeWidget, QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
-        QtCore.QObject.connect(self.ui.comp_treeWidget,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.comp_treeWidget, QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
 
     def signals_forum(self):
-        QtCore.QObject.connect(self.ui.forum_treeWidget,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.forum_treeWidget, QtCore.SIGNAL(
         "itemSelectionChanged ()"), self.forumItemSelected)
-        QtCore.QObject.connect(self.ui.forumDelete_pushButton,QtCore.SIGNAL(
-        "clicked()"),self.forumDeleteItem)
-        QtCore.QObject.connect(self.ui.forumReply_pushButton,QtCore.SIGNAL(
-        "clicked()"),self.forumReply)
-        QtCore.QObject.connect(self.ui.forumNewTopic_pushButton,QtCore.SIGNAL(
-        "clicked()"),self.forumNewItem)
+        QtCore.QObject.connect(self.ui.forumDelete_pushButton, QtCore.SIGNAL(
+        "clicked()"), self.forumDeleteItem)
+        QtCore.QObject.connect(self.ui.forumReply_pushButton, QtCore.SIGNAL(
+        "clicked()"), self.forumReply)
+        QtCore.QObject.connect(self.ui.forumNewTopic_pushButton, QtCore.SIGNAL(
+        "clicked()"), self.forumNewItem)
 
     def signals_history(self):
-        QtCore.QObject.connect(self.ui.historyPrint_pushButton,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.historyPrint_pushButton, QtCore.SIGNAL(
         "clicked()"), self.historyPrint)
 
     def signals_daybook(self):
@@ -2814,53 +2835,53 @@ class signals():
                                QtCore.SIGNAL("clicked()"), self.daybookTab)
         QtCore.QObject.connect(self.ui.cashbookGoPushButton,
                                QtCore.SIGNAL("clicked()"), self.cashbookTab)
-        QtCore.QObject.connect(self.ui.daybookEndDateEdit,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.daybookEndDateEdit, QtCore.SIGNAL(
         "dateChanged ( const QDate & )"), self.datemanage)
-        QtCore.QObject.connect(self.ui.daybookStartDateEdit,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.daybookStartDateEdit, QtCore.SIGNAL(
         "dateChanged ( const QDate & )"), self.datemanage)
-        QtCore.QObject.connect(self.ui.cashbookEndDateEdit,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.cashbookEndDateEdit, QtCore.SIGNAL(
         "dateChanged ( const QDate & )"), self.datemanage)
-        QtCore.QObject.connect(self.ui.cashbookStartDateEdit,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.cashbookStartDateEdit, QtCore.SIGNAL(
         "dateChanged ( const QDate & )"), self.datemanage)
-        QtCore.QObject.connect(self.ui.cashbookPrintButton,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.cashbookPrintButton, QtCore.SIGNAL(
         "clicked()"), self.cashbookPrint)
-        QtCore.QObject.connect(self.ui.daybookPrintButton,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.daybookPrintButton, QtCore.SIGNAL(
         "clicked()"), self.daybookPrint)
     def signals_accounts(self):
         #accounts
         QtCore.QObject.connect(self.ui.loadAccountsTable_pushButton,
                         QtCore.SIGNAL("clicked()"), self.populateAccountsTable)
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.printSelectedAccounts)
+                        QtCore.SIGNAL("clicked()"), self.printSelectedAccounts)
         QtCore.QObject.connect(self.ui.printAccountsTable_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.printAccountsTable)
+                        QtCore.SIGNAL("clicked()"), self.printAccountsTable)
 
         QtCore.QObject.connect(self.ui.accounts_tableWidget,
-        QtCore.SIGNAL("cellDoubleClicked (int,int)"),self.accountsTableClicked)
+        QtCore.SIGNAL("cellDoubleClicked (int,int)"), self.accountsTableClicked)
 
     def signals_contract(self):
         #contract
         QtCore.QObject.connect(self.ui.badDebt_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.makeBadDebt)
+                        QtCore.SIGNAL("clicked()"), self.makeBadDebt)
         QtCore.QObject.connect(self.ui.contract_tabWidget,
-            QtCore.SIGNAL("currentChanged(int)"),self.handle_ContractTab)
-        QtCore.QObject.connect(self.ui.dnt1comboBox,QtCore.
-            SIGNAL("activated(const QString&)"),self.changeContractedDentist)
-        QtCore.QObject.connect(self.ui.dnt2comboBox,QtCore.
+            QtCore.SIGNAL("currentChanged(int)"), self.handle_ContractTab)
+        QtCore.QObject.connect(self.ui.dnt1comboBox, QtCore.
+            SIGNAL("activated(const QString&)"), self.changeContractedDentist)
+        QtCore.QObject.connect(self.ui.dnt2comboBox, QtCore.
                 SIGNAL("activated(const QString&)"), self.changeCourseDentist)
         QtCore.QObject.connect(self.ui.cseType_comboBox,
             QtCore.SIGNAL("activated(const QString&)"), self.changeCourseType)
         QtCore.QObject.connect(self.ui.editNHS_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.editNHScontract)
+                        QtCore.SIGNAL("clicked()"), self.editNHScontract)
         QtCore.QObject.connect(self.ui.editNHS_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.editPrivateContract)
+                        QtCore.SIGNAL("clicked()"), self.editPrivateContract)
         QtCore.QObject.connect(self.ui.nhsclaims_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.nhsClaimsShortcut)
+                        QtCore.SIGNAL("clicked()"), self.nhsClaimsShortcut)
 
         QtCore.QObject.connect(self.ui.editHDP_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.editHDPcontract)
+                        QtCore.SIGNAL("clicked()"), self.editHDPcontract)
         QtCore.QObject.connect(self.ui.editRegDent_pushButton,
-                        QtCore.SIGNAL("clicked()"),self.editOtherContract)
+                        QtCore.SIGNAL("clicked()"), self.editOtherContract)
 
 
     def signals_feesTable(self):
@@ -2883,7 +2904,7 @@ class signals():
         QtCore.QObject.connect(self.ui.nhsRegs_pushButton,
                         QtCore.SIGNAL("clicked()"), self.nhsRegsPDF)
         QtCore.QObject.connect(self.ui.feeSearch_lineEdit,
-        QtCore.SIGNAL("editingFinished ()"),self.newFeeSearch)
+        QtCore.SIGNAL("editingFinished ()"), self.newFeeSearch)
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
                         QtCore.SIGNAL("clicked()"), self.feeSearch)
 
@@ -2892,7 +2913,7 @@ class signals():
 
         #charts (including underlying table)
         QtCore.QObject.connect(self.ui.chartsview_pushButton,
-                            QtCore.SIGNAL("clicked()"),  self.showChartCharts)
+                            QtCore.SIGNAL("clicked()"), self.showChartCharts)
         QtCore.QObject.connect(self.ui.summaryChartWidget,
                                QtCore.SIGNAL("showHistory"), self.toothHistory)
         QtCore.QObject.connect(self.ui.staticChartWidget,
@@ -2900,18 +2921,18 @@ class signals():
         QtCore.QObject.connect(self.ui.staticChartWidget,
                     QtCore.SIGNAL("toothSelected"), self.static_chartNavigation)
         QtCore.QObject.connect(self.ui.planChartWidget,
-                    QtCore.SIGNAL("toothSelected"),  self.plan_chartNavigation)
+                    QtCore.SIGNAL("toothSelected"), self.plan_chartNavigation)
         QtCore.QObject.connect(self.ui.completedChartWidget,
                     QtCore.SIGNAL("toothSelected"), self.comp_chartNavigation)
         QtCore.QObject.connect(self.ui.planChartWidget,
             QtCore.SIGNAL("completeTreatment"), self.completeTreatments)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
-                               QtCore.SIGNAL("NextTooth"),  self.navigateCharts)
+                               QtCore.SIGNAL("NextTooth"), self.navigateCharts)
         #--fillings have changed!!
         QtCore.QObject.connect(self.ui.toothPropsWidget,
-                        QtCore.SIGNAL("Changed_Properties"),  self.updateCharts)
+                        QtCore.SIGNAL("Changed_Properties"), self.updateCharts)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
-                        QtCore.SIGNAL("DeletedComments"),  self.deleteComments)
+                        QtCore.SIGNAL("DeletedComments"), self.deleteComments)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                                QtCore.SIGNAL("static"), self.editStatic)
@@ -2941,26 +2962,26 @@ class signals():
         #### defunct  QtCore.QObject.connect(self.ui.perioChartWidget,
         ####QtCore.SIGNAL("toothSelected"), self.periocharts)
 
-        QtCore.QObject.connect(self.ui.perioChartDateComboBox,QtCore.
+        QtCore.QObject.connect(self.ui.perioChartDateComboBox, QtCore.
                     SIGNAL("currentIndexChanged(int)"), self.layoutPerioCharts)
-        QtCore.QObject.connect(self.ui.bpeDateComboBox,QtCore.SIGNAL
+        QtCore.QObject.connect(self.ui.bpeDateComboBox, QtCore.SIGNAL
                                ("currentIndexChanged(int)"), self.bpe_table)
     def signals_tabs(self):
         #tab widget
         QtCore.QObject.connect(self.ui.main_tabWidget,
-                QtCore.SIGNAL("currentChanged(int)"),self.handle_mainTab)
+                QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
         QtCore.QObject.connect(self.ui.tabWidget,
-                QtCore.SIGNAL("currentChanged(int)"),self.handle_patientTab)
+                QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
     def signals_appointmentTab(self):
         #main appointment tab
-        QtCore.QObject.connect(self.ui.appointmentCalendarWidget,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.ui.appointmentCalendarWidget, QtCore.SIGNAL(
         "selectionChanged()"), self.layout_appointments)
         QtCore.QObject.connect(self.ui.goTodayPushButton,
                                QtCore.SIGNAL("clicked()"), self.gotoToday)
         QtCore.QObject.connect(self.ui.printBook1_pushButton,
                                QtCore.SIGNAL("clicked()"), self.book1print)
         QtCore.QObject.connect(self.ui.printBook2_pushButton,
-                               QtCore.SIGNAL("clicked()"),self.book2print)
+                               QtCore.SIGNAL("clicked()"), self.book2print)
         QtCore.QObject.connect(self.ui.printBook3_pushButton,
                                QtCore.SIGNAL("clicked()"), self.book3print)
         QtCore.QObject.connect(self.ui.apptPrevDay_pushButton,
@@ -2976,43 +2997,43 @@ class signals():
         QtCore.QObject.connect(self.ui.apptNextMonth_pushButton,
                                QtCore.SIGNAL("clicked()"), self.apt_monthForward)
         QtCore.QObject.connect(self.ui.fontSize_spinBox,
-                        QtCore.SIGNAL("valueChanged (int)"),  self.aptFontSize)
+                        QtCore.SIGNAL("valueChanged (int)"), self.aptFontSize)
         for book in self.ui.apptBookWidgets:
-            book.connect(book,QtCore.SIGNAL("PySig"), self.appointment_clicked)
-            book.connect(book,QtCore.SIGNAL("ClearEmergencySlot"),
+            book.connect(book, QtCore.SIGNAL("PySig"), self.appointment_clicked)
+            book.connect(book, QtCore.SIGNAL("ClearEmergencySlot"),
                          self.clearEmergencySlot)
-            book.connect(book,QtCore.SIGNAL("BlockEmptySlot"),
+            book.connect(book, QtCore.SIGNAL("BlockEmptySlot"),
                          self.blockEmptySlot)
     def signals_appointmentOVTab(self):
         #appointment overview tab
         QtCore.QObject.connect(self.ui.apptOV_calendarWidget,
-                    QtCore.SIGNAL("selectionChanged()"),  self.layout_apptOV)
+                    QtCore.SIGNAL("selectionChanged()"), self.layout_apptOV)
         QtCore.QObject.connect(self.ui.aptOVprevweek,
                                QtCore.SIGNAL("clicked()"), self.aptOV_weekBack)
         QtCore.QObject.connect(self.ui.aptOVnextweek,
-                        QtCore.SIGNAL("clicked()"),   self.aptOV_weekForward)
+                        QtCore.SIGNAL("clicked()"), self.aptOV_weekForward)
         QtCore.QObject.connect(self.ui.aptOVprevmonth,
-                            QtCore.SIGNAL("clicked()"),  self.aptOV_monthBack)
+                            QtCore.SIGNAL("clicked()"), self.aptOV_monthBack)
         QtCore.QObject.connect(self.ui.aptOVnextmonth,
-                        QtCore.SIGNAL("clicked()"),  self.aptOV_monthForward)
+                        QtCore.SIGNAL("clicked()"), self.aptOV_monthForward)
         QtCore.QObject.connect(self.ui.aptOV_apptscheckBox,
-                        QtCore.SIGNAL("stateChanged(int)"),  self.layout_apptOV)
+                        QtCore.SIGNAL("stateChanged(int)"), self.layout_apptOV)
         QtCore.QObject.connect(self.ui.aptOV_emergencycheckBox,
-                        QtCore.SIGNAL("stateChanged(int)"),  self.layout_apptOV)
+                        QtCore.SIGNAL("stateChanged(int)"), self.layout_apptOV)
         QtCore.QObject.connect(self.ui.aptOV_lunchcheckBox,
-                    QtCore.SIGNAL("stateChanged(int)"),   self.layout_apptOV)
+                    QtCore.SIGNAL("stateChanged(int)"), self.layout_apptOV)
         QtCore.QObject.connect(self.ui.aptOV_everybody_checkBox,
-            QtCore.SIGNAL("stateChanged(int)"),self.apptOVclinicians)
+            QtCore.SIGNAL("stateChanged(int)"), self.apptOVclinicians)
         QtCore.QObject.connect(self.ui.aptOV_alldentscheckBox,
-                        QtCore.SIGNAL("stateChanged(int)"),  self.apptOVdents)
+                        QtCore.SIGNAL("stateChanged(int)"), self.apptOVdents)
         QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox,
-                        QtCore.SIGNAL("stateChanged(int)"),  self.apptOVhygs)
+                        QtCore.SIGNAL("stateChanged(int)"), self.apptOVhygs)
         QtCore.QObject.connect(self.ui.apptOVtoday_pushButton,
-                               QtCore.SIGNAL("clicked()"),   self.gotoCurWeek)
+                               QtCore.SIGNAL("clicked()"), self.gotoCurWeek)
 
         for widg in self.ui.apptoverviews:
-            widg.connect(widg,QtCore.SIGNAL("PySig"), self.makeAppt)
-            widg.connect(widg,QtCore.SIGNAL("DentistHeading"),
+            widg.connect(widg, QtCore.SIGNAL("PySig"), self.makeAppt)
+            widg.connect(widg, QtCore.SIGNAL("DentistHeading"),
                          self.apptOVheaderclick)
 
         self.connectAptOVdentcbs()
@@ -3031,25 +3052,25 @@ class signals():
                             QtCore.SIGNAL("clicked()"), self.daylistPrintWizard)
 
 
-    def connectAptOVdentcbs(self,con=True):
+    def connectAptOVdentcbs(self, con=True):
         for cb in self.ui.aptOVdent_checkBoxes.values():
             #--aptOVdent_checkBoxes is a dictionary of
             #-- (keys=dents,values=checkboxes)
             if con:
-                QtCore.QObject.connect(cb,QtCore.SIGNAL("stateChanged(int)"),
+                QtCore.QObject.connect(cb, QtCore.SIGNAL("stateChanged(int)"),
                                                             self.layout_apptOV)
             else:
-                QtCore.QObject.disconnect(cb,QtCore.SIGNAL("stateChanged(int)"),
+                QtCore.QObject.disconnect(cb, QtCore.SIGNAL("stateChanged(int)"),
                                                             self.layout_apptOV)
-    def connectAptOVhygcbs(self,con=True):
+    def connectAptOVhygcbs(self, con=True):
         for cb in self.ui.aptOVhyg_checkBoxes.values():
             #--aptOVhyg_checkBoxes is a dictionary of
             #--(keys=dents,values=checkboxes)
             if con:
-                QtCore.QObject.connect(cb,QtCore.SIGNAL("stateChanged(int)"),
+                QtCore.QObject.connect(cb, QtCore.SIGNAL("stateChanged(int)"),
                                                         self.layout_apptOV)
             else:
-                QtCore.QObject.disconnect(cb,QtCore.SIGNAL("stateChanged(int)"),
+                QtCore.QObject.disconnect(cb, QtCore.SIGNAL("stateChanged(int)"),
                                                             self.layout_apptOV)
 
 class customWidgets():
@@ -3057,8 +3078,8 @@ class customWidgets():
         print "adding custom widgets"
         ##statusbar
 
-        if localsettings.clinicianNo==0:
-            if localsettings.station=="surgery":
+        if localsettings.clinicianNo == 0:
+            if localsettings.station == "surgery":
                 op_text = " <b>NO CLINICIAN SET</b> - "
             else:
                 op_text = ""
@@ -3114,12 +3135,12 @@ class customWidgets():
         hlayout=QtGui.QVBoxLayout(self.ui.perioChartData_frame)
         hlayout.setMargin(2)
         for i in range(8):
-            gbtitle=("Recession","Pocketing","Plaque","Bleeding","Other",
-            "Suppuration","Furcation","Mobility")[i]
+            gbtitle=("Recession", "Pocketing", "Plaque", "Bleeding", "Other",
+            "Suppuration", "Furcation", "Mobility")[i]
             periogb=QtGui.QGroupBox(gbtitle)
             periogb.setCheckable(True)
             periogb.setChecked(True)
-            #periogb.setMinimumSize(0,120)
+            #periogb.setMinimumSize(0, 120)
             pchart=perioChartWidget.chartWidget()
             pchart.type=gbtitle
             gblayout=QtGui.QVBoxLayout(periogb)
@@ -3134,32 +3155,32 @@ class customWidgets():
         ##appt books
         self.ui.apptBookWidgets=[]
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800","1900",5,3))
+                                       appointmentWidget("0800", "1900", 5, 3))
         self.ui.appt1scrollArea.setWidget(self.ui.apptBookWidgets[0])
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800","1900",5,3))
+                                       appointmentWidget("0800", "1900", 5, 3))
         self.ui.appt2scrollArea.setWidget(self.ui.apptBookWidgets[1])
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800","1900",5,3))
+                                       appointmentWidget("0800", "1900", 5, 3))
         self.ui.appt3scrollArea.setWidget(self.ui.apptBookWidgets[2])
 
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800","1900",5,3))
+                                       appointmentWidget("0800", "1900", 5, 3))
         self.ui.appt4scrollArea.setWidget(self.ui.apptBookWidgets[3])
 
         ##aptOV
         self.ui.apptoverviews=[]
 
         for day in range(5):
-            if day==4: #friday
+            if day == 4: #friday
                 self.ui.apptoverviews.append(appointment_overviewwidget.
-                            appointmentOverviewWidget(day,"0800","1900",15,2))
-            elif day==1: #Tuesday:
+                            appointmentOverviewWidget(day, "0800", "1900", 15, 2))
+            elif day == 1: #Tuesday:
                 self.ui.apptoverviews.append(appointment_overviewwidget.
-                            appointmentOverviewWidget(day,"0800","1900",15,2))
+                            appointmentOverviewWidget(day, "0800", "1900", 15, 2))
             else:
                 self.ui.apptoverviews.append(appointment_overviewwidget.\
-                appointmentOverviewWidget(day,"0800","1900",15,2))
+                appointmentOverviewWidget(day, "0800", "1900", 15, 2))
 
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
         hlayout.setMargin(2)
@@ -3179,8 +3200,8 @@ class customWidgets():
 
         self.ui.apptoverviewControls=[]
 
-        for widg in (self.ui.day1_frame,self.ui.day2_frame,
-        self.ui.day3_frame,self.ui.day4_frame,self.ui.day5_frame):
+        for widg in (self.ui.day1_frame, self.ui.day2_frame,
+        self.ui.day3_frame, self.ui.day4_frame, self.ui.day5_frame):
             hlayout=QtGui.QHBoxLayout(widg)
             hlayout.setMargin(0)
             control=aptOVcontrol.control()
@@ -3197,38 +3218,38 @@ class customWidgets():
                                             QtCore.QString("All Clinicians"))
         self.ui.aptOV_everybody_checkBox.setChecked(True)
         row=0
-        glayout.addWidget(self.ui.aptOV_everybody_checkBox,row,0,1,2)
+        glayout.addWidget(self.ui.aptOV_everybody_checkBox, row, 0, 1, 2)
 
         hl=QtGui.QFrame(self.ui.aptOVdents_frame)
         #--Draw a line here.... but room doesn;t permit
         hl.setFrameShape(QtGui.QFrame.HLine)
         hl.setFrameShadow(QtGui.QFrame.Sunken)
         row+=1
-        glayout.addWidget(hl,row,0,1,2)
+        glayout.addWidget(hl, row, 0, 1, 2)
 
         self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
                                             QtCore.QString("All Dentists"))
         self.ui.aptOV_alldentscheckBox.setChecked(True)
         row+=1
-        glayout.addWidget(self.ui.aptOV_alldentscheckBox,row,0,1,2)
+        glayout.addWidget(self.ui.aptOV_alldentscheckBox, row, 0, 1, 2)
         for dent in localsettings.activedents:
             cb=QtGui.QCheckBox(QtCore.QString(dent))
             cb.setChecked(True)
             self.ui.aptOVdent_checkBoxes[localsettings.apptix[dent]]=cb
             row+=1
-            glayout.addWidget(cb,row,1,1,1)
+            glayout.addWidget(cb, row, 1, 1, 1)
 
         self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox(
                                         QtCore.QString("All Hygenists"))
         self.ui.aptOV_allhygscheckBox.setChecked(True)
         row+=1
-        glayout.addWidget(self.ui.aptOV_allhygscheckBox,row,0,1,2)
+        glayout.addWidget(self.ui.aptOV_allhygscheckBox, row, 0, 1, 2)
         for hyg in localsettings.activehygs:
             cb=QtGui.QCheckBox(QtCore.QString(hyg))
             cb.setChecked(True)
             self.ui.aptOVhyg_checkBoxes[localsettings.apptix[hyg]]=cb
             row+=1
-            glayout.addWidget(cb,row,1,1,1)
+            glayout.addWidget(cb, row, 1, 1, 1)
 
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
@@ -3253,44 +3274,44 @@ class customWidgets():
 
 class chartsClass():
 
-    def navigateCharts(self,e):
+    def navigateCharts(self, e):
         '''
         called by a keypress in the tooth prop LineEdit or a click on one of
         the tooth prop buttons.
         '''
 
-        if self.selectedChartWidget=="cmp":
+        if self.selectedChartWidget == "cmp":
             widg=self.ui.completedChartWidget
             column=4
-        elif self.selectedChartWidget=="pl":
+        elif self.selectedChartWidget == "pl":
             widg=self.ui.planChartWidget
             column=3
         else:
             widg=self.ui.staticChartWidget
             column=2
-        [x,y]=widg.selected
+        [x, y]=widg.selected
 
-        if y==0:
+        if y == 0:
             #--upper teeth
-            if e=="up":
+            if e == "up":
                 if x != 0:
                     x -= 1
             else:
                 if x == 15:
-                    x,y=15,1
+                    x, y=15, 1
                 else:
                     x += 1
         else:
             #--lower teeth
-            if e=="up":
+            if e == "up":
                 if x == 15:
-                    x,y=15,0
+                    x, y=15, 0
                 else:
                     x += 1
             else:
                 if x != 0:
                     x -= 1
-        widg.setSelected(x,y)
+        widg.setSelected(x, y)
     def chart_navigate(self):
         print "chart_navigate",
         '''this is called when the charts TABLE is navigated'''
@@ -3300,57 +3321,57 @@ class chartsClass():
         else:
             print "performed programatically"
             row=self.ui.chartsTableWidget.currentRow()
-            tString=str(self.ui.chartsTableWidget.item(row,0).text().toAscii())
-            self.chartNavigation(tString,userPerformed)
+            tString=str(self.ui.chartsTableWidget.item(row, 0).text().toAscii())
+            self.chartNavigation(tString, userPerformed)
 
     def deleteComments(self):
         tooth=str(self.ui.chartsTableWidget.item(
-                            self.ui.chartsTableWidget.currentRow(),0).text())
+                            self.ui.chartsTableWidget.currentRow(), 0).text())
         if tooth in self.ui.staticChartWidget.commentedTeeth:
             self.ui.staticChartWidget.commentedTeeth.remove(tooth)
             self.ui.staticChartWidget.update()
 
-    def updateCharts(self,arg):
+    def updateCharts(self, arg):
         '''called by a signal from the toothprops widget -
         args are the new tooth properties eg modbl,co'''
-        print "update charts arg =",arg
+        print "update charts arg =", arg
         tooth=str(self.ui.chartsTableWidget.item(
-                            self.ui.chartsTableWidget.currentRow(),0).text())
-        if self.selectedChartWidget=="st":
+                            self.ui.chartsTableWidget.currentRow(), 0).text())
+        if self.selectedChartWidget == "st":
             self.pt.__dict__[tooth+self.selectedChartWidget]=arg
             #--update the patient!!
-            self.ui.staticChartWidget.setToothProps(tooth,arg)
+            self.ui.staticChartWidget.setToothProps(tooth, arg)
             self.ui.staticChartWidget.update()
-        elif self.selectedChartWidget=="pl":
+        elif self.selectedChartWidget == "pl":
             if not self.noNewCourseNeeded():
                 return
             self.toothTreatAdd(tooth, arg)
-        elif self.selectedChartWidget=="cmp":
+        elif self.selectedChartWidget == "cmp":
             self.advise(
             "for the moment, please enter treatment into plan first, "+
-            "then complete it.",1)
+            "then complete it.", 1)
         else:
-            self.advise("unable to update chart - this shouldn't happen!!!",2)
+            self.advise("unable to update chart - this shouldn't happen!!!", 2)
             #--should never happen
 
-    def updateChartsAfterTreatment(self,tooth,newplan,newcompleted):
-        self.ui.planChartWidget.setToothProps(tooth,newplan)
+    def updateChartsAfterTreatment(self, tooth, newplan, newcompleted):
+        self.ui.planChartWidget.setToothProps(tooth, newplan)
         self.ui.planChartWidget.update()
-        self.ui.completedChartWidget.setToothProps(tooth,newcompleted)
+        self.ui.completedChartWidget.setToothProps(tooth, newcompleted)
         self.ui.completedChartWidget.update()
 
 
     def flipDeciduous(self):
-        if self.selectedChartWidget=="st":
+        if self.selectedChartWidget == "st":
             selectedCells=self.ui.chartsTableWidget.selectedIndexes()
             for cell in selectedCells:  #=self.ui.chartsTableWidget.currentRow()
                 row=cell.row()
                 selectedTooth=str(
-                            self.ui.chartsTableWidget.item(row,0).text().toAscii())
-                print "flipping tooth ",selectedTooth
+                            self.ui.chartsTableWidget.item(row, 0).text().toAscii())
+                print "flipping tooth ", selectedTooth
                 self.pt.flipDec_Perm(selectedTooth)
-            for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,
-            self.ui.completedChartWidget,self.ui.perioChartWidget,
+            for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
+            self.ui.completedChartWidget, self.ui.perioChartWidget,
             self.ui.summaryChartWidget):
                 chart.chartgrid=self.pt.chartgrid
                 #--necessary to restore the chart to full dentition
@@ -3358,16 +3379,16 @@ class chartsClass():
         else:
             self.advise(
             "you need to be in the static chart to change tooth state", 1)
-    def static_chartNavigation(self,tstring):
+    def static_chartNavigation(self, tstring):
         '''called by the static chartwidget'''
         self.selectedChartWidget="st"
 
         self.chartNavigation(tstring)
-    def plan_chartNavigation(self,tstring):
+    def plan_chartNavigation(self, tstring):
         '''called by the plan chartwidget'''
         self.selectedChartWidget="pl"
         self.chartNavigation(tstring)
-    def comp_chartNavigation(self,tstring):
+    def comp_chartNavigation(self, tstring):
         '''called by the completed chartwidget'''
         self.selectedChartWidget="cmp"
         self.chartNavigation(tstring)
@@ -3384,7 +3405,7 @@ class chartsClass():
         self.selectedChartWidget="cmp"
         self.chart_navigate()
 
-    def chartNavigation(self,tstring,callerIsTable=False):
+    def chartNavigation(self, tstring, callerIsTable=False):
         '''
         one way or another, a tooth has been selected...
         this updates all relevant widgets
@@ -3393,10 +3414,10 @@ class chartsClass():
         #--convert from QString
         tooth=str(tstring)
 
-        grid = (["ur8","ur7","ur6","ur5",'ur4','ur3','ur2','ur1',
-        'ul1','ul2','ul3','ul4','ul5','ul6','ul7','ul8'],
-        ["lr8","lr7","lr6","lr5",'lr4','lr3','lr2','lr1',
-        'll1','ll2','ll3','ll4','ll5','ll6','ll7','ll8'])
+        grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
+        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
+        ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
+        'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
 
         if tooth in grid[0]:
             y=0
@@ -3406,79 +3427,79 @@ class chartsClass():
             self.ui.toothPropsWidget.tooth.setBacktooth(True)
         else:
             self.ui.toothPropsWidget.tooth.setBacktooth(False)
-        if tooth[1]=="r":
+        if tooth[1] == "r":
             self.ui.toothPropsWidget.tooth.setRightSide(True)
         else:
             self.ui.toothPropsWidget.tooth.setRightSide(False)
-        if tooth[0]=="u":
+        if tooth[0] == "u":
             self.ui.toothPropsWidget.tooth.setUpper(True)
         else:
             self.ui.toothPropsWidget.tooth.setUpper(False)
         self.ui.toothPropsWidget.tooth.clear()
         self.ui.toothPropsWidget.tooth.update()
 
-        #--calculate x,y co-ordinates for the chartwisdgets
+        #--calculate x, y co-ordinates for the chartwisdgets
         x=grid[y].index(tooth)
         self.ui.toothPropsWidget.tooth_label.setText(
                                             self.pt.chartgrid[tooth].upper())
         #--ALLOWS for deciduos teeth
 
-        if self.selectedChartWidget=="st":
+        if self.selectedChartWidget == "st":
             self.ui.toothPropsWidget.isStatic(True)
             self.ui.toothPropsWidget.setExistingProps(
                                                 self.pt.__dict__[tooth+"st"])
-            self.ui.staticChartWidget.selected=[x,y]
+            self.ui.staticChartWidget.selected=[x, y]
             self.ui.staticChartWidget.update()
-            if self.ui.planChartWidget.selected!=[-1,-1]:
-                self.ui.planChartWidget.setSelected(-1,-1)
+            if self.ui.planChartWidget.selected != [-1, -1]:
+                self.ui.planChartWidget.setSelected(-1, -1)
                 self.ui.planChartWidget.update()
-            if self.ui.completedChartWidget.selected!=[-1,-1]:
-                self.ui.completedChartWidget.setSelected(-1,-1)
+            if self.ui.completedChartWidget.selected != [-1, -1]:
+                self.ui.completedChartWidget.setSelected(-1, -1)
                 self.ui.completedChartWidget.update()
             column=2
-        elif self.selectedChartWidget=="pl":
+        elif self.selectedChartWidget == "pl":
             self.ui.toothPropsWidget.isStatic(False)
             self.ui.toothPropsWidget.setExistingProps(
                                                 self.pt.__dict__[tooth+"pl"])
-            self.ui.planChartWidget.selected=[x,y]
+            self.ui.planChartWidget.selected=[x, y]
             self.ui.planChartWidget.update()
-            if self.ui.staticChartWidget.selected!=[-1,-1]:
-                self.ui.staticChartWidget.setSelected(-1,-1)
+            if self.ui.staticChartWidget.selected != [-1, -1]:
+                self.ui.staticChartWidget.setSelected(-1, -1)
                 self.ui.staticChartWidget.update()
-            if self.ui.completedChartWidget.selected!=[-1,-1]:
-                self.ui.completedChartWidget.setSelected(-1,-1)
+            if self.ui.completedChartWidget.selected != [-1, -1]:
+                self.ui.completedChartWidget.setSelected(-1, -1)
                 self.ui.completedChartWidget.update()
             column=3
-        elif self.selectedChartWidget=="cmp":
+        elif self.selectedChartWidget == "cmp":
             self.ui.toothPropsWidget.isStatic(False)
             self.ui.toothPropsWidget.lineEdit.setText(
                                                 self.pt.__dict__[tooth+"cmp"])
-            self.ui.completedChartWidget.selected=[x,y]
+            self.ui.completedChartWidget.selected=[x, y]
             self.ui.completedChartWidget.update()
-            if self.ui.staticChartWidget.selected!=[-1,-1]:
-                self.ui.staticChartWidget.setSelected(-1,-1)
+            if self.ui.staticChartWidget.selected != [-1, -1]:
+                self.ui.staticChartWidget.setSelected(-1, -1)
                 self.ui.staticChartWidget.update()
-            if self.ui.planChartWidget.selected!=[-1,-1]:
-                self.ui.planChartWidget.setSelected(-1,-1)
+            if self.ui.planChartWidget.selected != [-1, -1]:
+                self.ui.planChartWidget.setSelected(-1, -1)
                 self.ui.planChartWidget.update()
             column=4
 
         else:
             #--shouldn't happen??
-            self.advise ("ERROR IN chartNavigation- please report",2)
+            self.advise ("ERROR IN chartNavigation- please report", 2)
             column=0
             #-- set this otherwise this variable will
             #-- create an error in 2 lines time!
         if not callerIsTable:
             #-- keep the table correct
             print "updating charts table"
-            self.ui.chartsTableWidget.setCurrentCell(x+y*16,column)
+            self.ui.chartsTableWidget.setCurrentCell(x+y*16, column)
 
     def bpe_dates(self):
         #--bpe = "basic periodontal exam"
         self.ui.bpeDateComboBox.clear()
         self.ui.bpe_textBrowser.setPlainText("")
-        if self.pt.bpe==[]:
+        if self.pt.bpe == []:
             self.ui.bpeDateComboBox.addItem(QtCore.QString("NO BPE"))
         else:
             l=copy.deepcopy(self.pt.bpe)
@@ -3486,20 +3507,20 @@ class chartsClass():
             for sets in l:
                 self.ui.bpeDateComboBox.addItem(QtCore.QString((sets[0])))
 
-    def bpe_table(self,arg):
+    def bpe_table(self, arg):
         '''updates the BPE chart on the clinical summary page'''
-        if self.pt.bpe!=[]:
+        if self.pt.bpe != []:
             self.ui.bpe_groupBox.setTitle("BPE "+self.pt.bpe[-1][0])
             l=copy.deepcopy(self.pt.bpe)
             l.reverse()
             bpestring=l[arg][1]
             bpe_html='<table width="100%s" border="1"><tr>'%'%'
             for i in range(len(bpestring)):
-                if i==3:
+                if i == 3:
                     bpe_html+="</tr><tr>"
                 bpe_html+='<td align="center">%s</td>'%bpestring[i]
-            for i in range(i+1,6):
-                if i==3:
+            for i in range(i+1, 6):
+                if i == 3:
                     bpe_html+="</tr><tr>"
                 bpe_html+='<td align="center">_</td>'
             bpe_html+='</tr></table>'
@@ -3517,7 +3538,7 @@ class chartsClass():
         self.ui.perioChartDateComboBox.clear()
         for date in self.pt.perioData.keys():
             self.ui.perioChartDateComboBox.addItem(QtCore.QString(date))
-        if self.pt.perioData=={}:
+        if self.pt.perioData == {}:
             self.ui.perioChartDateComboBox.addItem(QtCore.QString("NO CHARTS"))
 
     def layoutPerioCharts(self):
@@ -3526,13 +3547,13 @@ class chartsClass():
         selected_date=str(self.ui.perioChartDateComboBox.currentText())
         if self.pt.perioData.has_key(selected_date):
             perioD=self.pt.perioData[selected_date]
-            #--headers=("Recession","Pocketing","Plaque","Bleeding","Other",
-            #--"Suppuration","Furcation","Mobility")
+            #--headers=("Recession", "Pocketing", "Plaque", "Bleeding", "Other",
+            #--"Suppuration", "Furcation", "Mobility")
             for key in perioD.keys():
                 for i in range(8):
-                    self.ui.perioChartWidgets[i].setProps(key,perioD[key][i])
+                    self.ui.perioChartWidgets[i].setProps(key, perioD[key][i])
         else:
-            self.advise("no perio data found for",selected_date)
+            self.advise("no perio data found for", selected_date)
             for i in range(8):
                 self.ui.perioChartWidgets[i].props={}
         for chart in self.ui.perioChartWidgets:
@@ -3543,20 +3564,20 @@ class chartsClass():
         self.ui.chartsTableWidget.clear()
         self.ui.chartsTableWidget.setSortingEnabled(False)
         self.ui.chartsTableWidget.setRowCount(32)
-        headers=["Tooth","Deciduous","Static","Plan","Completed"]
+        headers=["Tooth", "Deciduous", "Static", "Plan", "Completed"]
         self.ui.chartsTableWidget.setColumnCount(5)
         self.ui.chartsTableWidget.setHorizontalHeaderLabels(headers)
         w=self.ui.chartsTableWidget.width()-40
         #-- set column widths but allow for scrollbar
-        self.ui.chartsTableWidget.setColumnWidth(0,.1*w)
-        self.ui.chartsTableWidget.setColumnWidth(1,.1*w)
-        self.ui.chartsTableWidget.setColumnWidth(2,.4*w)
-        self.ui.chartsTableWidget.setColumnWidth(3,.2*w)
-        self.ui.chartsTableWidget.setColumnWidth(4,.2*w)
+        self.ui.chartsTableWidget.setColumnWidth(0, .1*w)
+        self.ui.chartsTableWidget.setColumnWidth(1, .1*w)
+        self.ui.chartsTableWidget.setColumnWidth(2, .4*w)
+        self.ui.chartsTableWidget.setColumnWidth(3, .2*w)
+        self.ui.chartsTableWidget.setColumnWidth(4, .2*w)
         self.ui.chartsTableWidget.verticalHeader().hide()
 
-        for chart in (self.ui.summaryChartWidget,self.ui.staticChartWidget,
-        self.ui.planChartWidget,self.ui.completedChartWidget,
+        for chart in (self.ui.summaryChartWidget, self.ui.staticChartWidget,
+        self.ui.planChartWidget, self.ui.completedChartWidget,
         self.ui.perioChartWidget):
             chart.chartgrid=self.pt.chartgrid
             #--sets the tooth numbering
@@ -3569,48 +3590,48 @@ class chartsClass():
             static_text=self.pt.__dict__[tooth+"st"]
             staticitem=QtGui.QTableWidgetItem(static_text)
             decidousitem=QtGui.QTableWidgetItem(self.pt.chartgrid[tooth])
-            self.ui.chartsTableWidget.setRowHeight(row,15)
-            self.ui.chartsTableWidget.setItem(row,0,item1)
-            self.ui.chartsTableWidget.setItem(row,1,decidousitem)
-            self.ui.chartsTableWidget.setItem(row,2,staticitem)
+            self.ui.chartsTableWidget.setRowHeight(row, 15)
+            self.ui.chartsTableWidget.setItem(row, 0, item1)
+            self.ui.chartsTableWidget.setItem(row, 1, decidousitem)
+            self.ui.chartsTableWidget.setItem(row, 2, staticitem)
             row+=1
             stl=static_text.lower()
-            self.ui.summaryChartWidget.setToothProps(tooth,stl)
-            self.ui.staticChartWidget.setToothProps(tooth,stl)
+            self.ui.summaryChartWidget.setToothProps(tooth, stl)
+            self.ui.staticChartWidget.setToothProps(tooth, stl)
             pItem=self.pt.__dict__[tooth+"pl"]
             cItem=self.pt.__dict__[tooth+"cmp"]
             planitem=QtGui.QTableWidgetItem(pItem)
             cmpitem=QtGui.QTableWidgetItem(cItem)
-            self.ui.chartsTableWidget.setItem(row,3,planitem)
-            self.ui.chartsTableWidget.setItem(row,4,cmpitem)
-            self.ui.planChartWidget.setToothProps(tooth,pItem.lower())
-            self.ui.completedChartWidget.setToothProps(tooth,cItem.lower())
+            self.ui.chartsTableWidget.setItem(row, 3, planitem)
+            self.ui.chartsTableWidget.setItem(row, 4, cmpitem)
+            self.ui.planChartWidget.setToothProps(tooth, pItem.lower())
+            self.ui.completedChartWidget.setToothProps(tooth, cItem.lower())
 
-            if stl[:2] in ("at","tm","ue"):
-                self.ui.perioChartWidget.setToothProps(tooth,stl)
-            self.ui.chartsTableWidget.setCurrentCell(0,0)
+            if stl[:2] in ("at", "tm", "ue"):
+                self.ui.perioChartWidget.setToothProps(tooth, stl)
+            self.ui.chartsTableWidget.setCurrentCell(0, 0)
 
-    def toothHistory(self,arg):
-        '''show history of %s at position %s"%(arg[0],arg[1])'''
+    def toothHistory(self, arg):
+        '''show history of %s at position %s"%(arg[0], arg[1])'''
         th="<br />"
         for item in self.pt.dayBookHistory:
             if arg[0].upper() in item[2].strip():
                 th+="%s - %s - %s<br />"%(
-                item[0],localsettings.ops[int(item[1])],item[2].strip())
-        if th=="<br />":
+                item[0], localsettings.ops[int(item[1])], item[2].strip())
+        if th == "<br />":
             th+="No History"
         th=th.rstrip("<br />")
-        QtGui.QToolTip.showText(arg[1],arg[0]+th)
+        QtGui.QToolTip.showText(arg[1], arg[0]+th)
 
 
 class cashbooks():
     def cashbookTab(self):
         dent1=self.ui.cashbookDentComboBox.currentText()
         d=self.ui.cashbookStartDateEdit.date()
-        sdate="%s_%s_%s"%(d.year(),d.month(),d.day())
+        sdate="%s_%s_%s"%(d.year(), d.month(), d.day())
         d=self.ui.cashbookEndDateEdit.date()
-        edate="%s_%s_%s"%(d.year(),d.month(),d.day())
-        html=cashbook.details(dent1,sdate,edate)
+        edate="%s_%s_%s"%(d.year(), d.month(), d.day())
+        html=cashbook.details(dent1, sdate, edate)
         self.ui.cashbookTextBrowser.setHtml('<html><body>'
         +html+"</body></html>")
 
@@ -3618,10 +3639,10 @@ class cashbooks():
         dent1=str(self.ui.daybookDent1ComboBox.currentText())
         dent2=str(self.ui.daybookDent2ComboBox.currentText())
         d=self.ui.daybookStartDateEdit.date()
-        sdate="%s_%s_%s"%(d.year(),d.month(),d.day())
+        sdate="%s_%s_%s"%(d.year(), d.month(), d.day())
         d=self.ui.daybookEndDateEdit.date()
-        edate="%s_%s_%s"%(d.year(),d.month(),d.day())
-        html=daybook.details(dent1,dent2,sdate,edate)
+        edate="%s_%s_%s"%(d.year(), d.month(), d.day())
+        html=daybook.details(dent1, dent2, sdate, edate)
         self.ui.daybookTextBrowser.setHtml('<html><body>'
         +html+"</body></html>")
 
@@ -3634,10 +3655,10 @@ class cashbooks():
         dent1=str(self.ui.daybookDent1ComboBox.currentText())
         dent2=str(self.ui.daybookDent2ComboBox.currentText())
         d=self.ui.daybookStartDateEdit.date()
-        sdate="%s_%s_%s"%(d.year(),d.month(),d.day())
+        sdate="%s_%s_%s"%(d.year(), d.month(), d.day())
         d=self.ui.daybookEndDateEdit.date()
-        edate="%s_%s_%s"%(d.year(),d.month(),d.day())
-        html=daybook.details(dent1,dent2,sdate,edate)
+        edate="%s_%s_%s"%(d.year(), d.month(), d.day())
+        html=daybook.details(dent1, dent2, sdate, edate)
         myclass=bookprint.printBook('<html><body>'+html+\
         "</body></html>")
         myclass.printpage()
@@ -3645,33 +3666,33 @@ class cashbooks():
     def cashbookPrint(self):
         dent1=self.ui.cashbookDentComboBox.currentText()
         d=self.ui.cashbookStartDateEdit.date()
-        sdate="%s_%s_%s"%(d.year(),d.month(),d.day())
+        sdate="%s_%s_%s"%(d.year(), d.month(), d.day())
         d=self.ui.cashbookEndDateEdit.date()
-        edate="%s_%s_%s"%(d.year(),d.month(),d.day())
-        html=cashbook.details(dent1,sdate,edate)
+        edate="%s_%s_%s"%(d.year(), d.month(), d.day())
+        html=cashbook.details(dent1, sdate, edate)
         myclass=bookprint.printBook('<html><body>'+html+\
         "</body></html>")
         myclass.printpage()
 
     def printSelectedAccounts(self):
-        if self.ui.accounts_tableWidget.rowCount()==0:
-            self.advise("Please load the table first",1)
+        if self.ui.accounts_tableWidget.rowCount() == 0:
+            self.advise("Please load the table first", 1)
             return
         firstPage=True
         no_printed=0
         for row in range(self.ui.accounts_tableWidget.rowCount()):
-            for col in range(13,16):
-                item=self.ui.accounts_tableWidget.item(row,col)
+            for col in range(13, 16):
+                item=self.ui.accounts_tableWidget.item(row, col)
                 if item.checkState():
-                    tone=("A","B","C")[col-13]
-                    sno=int(self.ui.accounts_tableWidget.item(row,1).text())
-                    print "Account tone %s letter to %s"%(tone,sno)
+                    tone=("A", "B", "C")[col-13]
+                    sno=int(self.ui.accounts_tableWidget.item(row, 1).text())
+                    print "Account tone %s letter to %s"%(tone, sno)
                     printpt=patient_class.patient(sno)
 
                     doc=accountPrint.document(printpt.title,
-                    printpt.fname,printpt.sname,(printpt.addr1,
-                    printpt.addr2,printpt.addr3,printpt.town,
-                    printpt.county),printpt.pcde,
+                    printpt.fname, printpt.sname, (printpt.addr1,
+                    printpt.addr2, printpt.addr3, printpt.town,
+                    printpt.county), printpt.pcde,
                     localsettings.formatMoney(printpt.fees))
                     doc.setTone(tone)
 
@@ -3688,20 +3709,20 @@ class cashbooks():
                         doc.printer=chosenPrinter
                         doc.printer.setPageSize(chosenPageSize)
                     doc.requireDialog=False
-                    if tone=="B":
+                    if tone == "B":
                         doc.setPreviousCorrespondenceDate(printpt.billdate)
                     if doc.print_():
                         printpt.updateBilling(tone)
                         printpt.addHiddenNote(
-                        "printed","account - tone %s"%tone)
+                        "printed", "account - tone %s"%tone)
 
-                        patient_write_changes.discreet_changes(printpt,(
-                        "billct","billdate","billtype"))
+                        patient_write_changes.discreet_changes(printpt, (
+                        "billct", "billdate", "billtype"))
                         patient_write_changes.toNotes(
-                                                sno,printpt.HIDDENNOTES)
-                        self.commitPDFtoDB("Account tone%s"%tone,printpt.serialno)
+                                                sno, printpt.HIDDENNOTES)
+                        self.commitPDFtoDB("Account tone%s"%tone, printpt.serialno)
                         no_printed+=1
-        self.advise("%d letters printed"%no_printed,1)
+        self.advise("%d letters printed"%no_printed, 1)
 
     def datemanage(self):
         if self.ui.daybookStartDateEdit.date() > \
@@ -3729,8 +3750,8 @@ class newPatientClass():
         self.ui.newPatientPushButton.setEnabled(False)
 
         #--disable the tabs which are normalyy enabled by default
-        self.ui.tabWidget.setTabEnabled(4,False)
-        self.ui.tabWidget.setTabEnabled(3,False)
+        self.ui.tabWidget.setTabEnabled(4, False)
+        self.ui.tabWidget.setTabEnabled(3, False)
 
         #--clear any current record
         self.clearRecord()
@@ -3739,10 +3760,10 @@ class newPatientClass():
         self.enableEdit(False)
 
         #--change the function of the save button
-        QtCore.QObject.disconnect(self.ui.saveButton,QtCore.\
-                                  SIGNAL("clicked()"),self.save_changes)
-        QtCore.QObject.connect(self.ui.saveButton,QtCore.\
-                               SIGNAL("clicked()"),self.checkNewPatient)
+        QtCore.QObject.disconnect(self.ui.saveButton, QtCore.\
+                                  SIGNAL("clicked()"), self.save_changes)
+        QtCore.QObject.connect(self.ui.saveButton, QtCore.\
+                               SIGNAL("clicked()"), self.checkNewPatient)
         self.ui.saveButton.setEnabled(True)
         self.ui.saveButton.setText("SAVE NEW PATIENT")
 
@@ -3786,9 +3807,9 @@ class newPatientClass():
         allfields_entered=True
 
         #-- check these widgets for entered text.
-        for widg in (self.ui.snameEdit,self.ui.titleEdit,self.ui.fnameEdit,
-        self.ui.addr1Edit,self.ui.pcdeEdit):
-            if len(widg.text())==0:
+        for widg in (self.ui.snameEdit, self.ui.titleEdit, self.ui.fnameEdit,
+        self.ui.addr1Edit, self.ui.pcdeEdit):
+            if len(widg.text()) == 0:
                 allfields_entered=False
 
         if allfields_entered:
@@ -3803,11 +3824,11 @@ class newPatientClass():
                 #--reload the patient from the db.
                 self.reload_patient()
             else:
-                self.advise("Error saving new patient, sorry!",2)
+                self.advise("Error saving new patient, sorry!", 2)
         else:
             #-- prompt user for more info
             self.advise("insufficient data to create a new record... "+
-            "please fill in all highlighted fields",2)
+            "please fill in all highlighted fields", 2)
 
     def saveNewPatient(self):
         '''User has entered a new patient'''
@@ -3815,8 +3836,8 @@ class newPatientClass():
         #--write to the database
         #--the next available serialno is returned or -1 if problems
         sno=writeNewPatient.commit(self.pt)
-        if sno==-1:
-            self.advise("Error saving patient",2)
+        if sno == -1:
+            self.advise("Error saving patient", 2)
             return False
         else:
             #--set that serialno
@@ -3834,17 +3855,17 @@ class newPatientClass():
         self.ui.newPatientPushButton.setEnabled(True)
 
         #--enable the default tabs, and go to the appropriate one
-        self.ui.tabWidget.setTabEnabled(4,True)
-        self.ui.tabWidget.setTabEnabled(3,True)
+        self.ui.tabWidget.setTabEnabled(4, True)
+        self.ui.tabWidget.setTabEnabled(3, True)
         self.gotoDefaultTab()
 
         #--disable the edit tab
-        self.ui.tabWidget.setTabEnabled(0,False)
+        self.ui.tabWidget.setTabEnabled(0, False)
 
         #--restore default functionality to the save button
-        QtCore.QObject.disconnect(self.ui.saveButton,QtCore.SIGNAL("clicked()"),
+        QtCore.QObject.disconnect(self.ui.saveButton, QtCore.SIGNAL("clicked()"),
                                                         self.checkNewPatient)
-        QtCore.QObject.connect(self.ui.saveButton,QtCore.SIGNAL("clicked()"),
+        QtCore.QObject.connect(self.ui.saveButton, QtCore.SIGNAL("clicked()"),
                                                             self.save_changes)
         self.ui.saveButton.setText("SAVE CHANGES")
 
@@ -3855,9 +3876,9 @@ class newPatientClass():
         self.ui.main_tabWidget.setCurrentIndex(0)
 
         #--ask the question (centred over self)
-        result=QtGui.QMessageBox.question(self,"Confirm",
+        result=QtGui.QMessageBox.question(self, "Confirm",
         "New Patient not saved. Abandon Changes?",
-        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
         #--act on the answer
         if result == QtGui.QMessageBox.No:
@@ -3882,50 +3903,50 @@ class newPatientClass():
 
 
 class printingClass():
-    def commitPDFtoDB(self,descr,serialno=None):
+    def commitPDFtoDB(self, descr, serialno=None):
         '''
         grabs "temp.pdf" and puts into the db.
         '''
         print "comitting pdf to db"
-        if serialno==None:
+        if serialno == None:
             serialno=self.pt.serialno
         try:
             ##todo - this try/catch is naff.
             pdfDup=utilities.getPDF()
-            if pdfDup==None:
+            if pdfDup == None:
                 self.advise("PDF is NONE - (tell Neil this happened)")
             else:
                 #-field is 20 chars max.. hence the [:14]
-                docsprinted.add(serialno,descr[:14] + " (pdf)",pdfDup)
+                docsprinted.add(serialno, descr[:14] + " (pdf)", pdfDup)
                 #--now refresh the docprinted widget (if visible)
                 if self.ui.previousCorrespondence_treeWidget.isVisible():
                     self.docsPrinted()
-        except Exception,e:
-            self.advise("Error saving PDF copy %s"%e,2)
+        except Exception, e:
+            self.advise("Error saving PDF copy %s"% e, 2)
 
     def printDupReceipt(self):
         dupdate=self.ui.dupReceiptDate_lineEdit.text()
         amount=self.ui.receiptDoubleSpinBox.value()*100
-        self.printReceipt({"Professional Services":amount},True,dupdate)
-        self.pt.addHiddenNote("printed","duplicate receipt for %.02f"%amount)
+        self.printReceipt({"Professional Services":amount}, True, dupdate)
+        self.pt.addHiddenNote("printed", "duplicate receipt for %.02f"%amount)
 
-    def printReceipt(self,valDict,duplicate=False,dupdate=""):
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+    def printReceipt(self, valDict, duplicate=False, dupdate=""):
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         myreceipt=receiptPrint.receipt()
 
-        myreceipt.setProps(self.pt.title,self.pt.fname,self.pt.sname,
-        self.pt.addr1,self.pt.addr2,self.pt.addr3,self.pt.town,
-        self.pt.county,self.pt.pcde)
+        myreceipt.setProps(self.pt.title, self.pt.fname, self.pt.sname,
+        self.pt.addr1, self.pt.addr2, self.pt.addr3, self.pt.town,
+        self.pt.county, self.pt.pcde)
 
         myreceipt.receivedDict=valDict
         if duplicate:
             myreceipt.isDuplicate=duplicate
             myreceipt.dupdate=dupdate
-            self.pt.addHiddenNote("printed","dup receipt")
+            self.pt.addHiddenNote("printed", "dup receipt")
         else:
-            self.pt.addHiddenNote("printed","receipt")
+            self.pt.addHiddenNote("printed", "receipt")
 
         if myreceipt.print_():
             if duplicate:
@@ -3936,8 +3957,8 @@ class printingClass():
 
     def printLetter(self):
         '''prints a letter to the patient'''
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         html=standardletter.getHtml(self.pt)
         Dialog = QtGui.QDialog(self)
@@ -3949,8 +3970,8 @@ class printingClass():
             myclass=letterprint.letter(html)
             myclass.printpage()
             html=str(html.toAscii())
-            docsprinted.add(self.pt.serialno,"std letter (html)",html)
-            self.pt.addHiddenNote("printed","std letter")
+            docsprinted.add(self.pt.serialno, "std letter (html)", html)
+            self.pt.addHiddenNote("printed", "std letter")
             if self.ui.previousCorrespondence_treeWidget.isVisible():
                 self.docsPrinted()
 
@@ -3962,8 +3983,8 @@ class printingClass():
         table=self.ui.accounts_tableWidget
         rowno=table.rowCount()
         colno=table.columnCount()
-        if rowno==0:
-            self.advise("Nothing to print - have you loaded the table?",1)
+        if rowno == 0:
+            self.advise("Nothing to print - have you loaded the table?", 1)
             return()
         total=0.0
         html='<html><body><table border="1">'
@@ -3972,16 +3993,16 @@ class printingClass():
         <th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>
         <th>Amount</th></tr>'''
         for row in range(rowno):
-            if row%2==0:
+            if row%2 == 0:
                 html+='<tr bgcolor="#eeeeee">'
             else:
                 html+='<tr>'
             for col in range(13):
-                item=table.item(row,col)
+                item=table.item(row, col)
                 if item:
-                    if col ==1:
+                    if col == 1:
                         html+='<td align="right">%s</td>'%item.text()
-                    elif col==12:
+                    elif col == 12:
                         html+='<td align="right">&pound;%s</td>'%item.text()
                         total+=float(item.text())
                     else:
@@ -3995,33 +4016,33 @@ class printingClass():
         </table></body></html>'''%total
 
         #--test code
-        #f=open("/home/neil/Desktop/accounts.html","w")
+        #f=open("/home/neil/Desktop/accounts.html", "w")
         #f.write(html)
         #f.close()
         myclass=letterprint.letter(html)
         myclass.printpage()
 
     def printEstimate(self):
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         est=estimatePrint.estimate()
-        est.setProps(self.pt.title,self.pt.fname,self.pt.sname,self.pt.serialno)
+        est.setProps(self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
         est.estItems=estimates.sorted(self.pt.estimates)
 
         if est.print_():
             self.commitPDFtoDB("auto estimate")
-        self.pt.addHiddenNote("printed","estimate")
+        self.pt.addHiddenNote("printed", "estimate")
 
 
-    def customEstimate(self,html="",version=0):
+    def customEstimate(self, html="", version=0):
         '''
         prints a custom estimate to the patient
         '''
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
-        if html=="":
+        if html == "":
             html=standardletter.getHtml(self.pt)
             pt_total=0
             ehtml="<br />Estimate for your current course of treatment."
@@ -4035,22 +4056,22 @@ class printingClass():
                 mult=""
                 if number>1:
                     mult="s"
-                item=item.replace("*",mult)
+                item=item.replace("*", mult)
                 if "^" in item:
-                    item=item.replace("^","")
+                    item=item.replace("^", "")
 
                 ehtml+='<tr><td>%s</td><td>%s</td><td align="right">\xa3%s</td></tr>'%(
-                number,item,localsettings.formatMoney(amount))
+                number, item, localsettings.formatMoney(amount))
             ehtml+='<tr><td></td><td><b>TOTAL</b></td>'
             ehtml+='<td align="right">\xa3%s</td></tr>'%(
             localsettings.formatMoney(pt_total))
             ehtml+="</table>"
             ehtml+="<br />"*4
-            html=html.replace("<br />"*(12),ehtml)
+            html=html.replace("<br />"*(12), ehtml)
             html+="<i>Please note, this estimate may be subject to change if "
             html+="clinical circumstances dictate.</i>"
         else:
-            print "html",html
+            print "html", html
         Dialog = QtGui.QDialog(self)
         dl = Ui_enter_letter_text.Ui_Dialog()
         dl.setupUi(Dialog)
@@ -4063,18 +4084,18 @@ class printingClass():
             html=str(dl.textEdit.toHtml().toAscii())
 
             docsprinted.add(self.pt.serialno,
-            "cust estimate (html)",html,version+1)
+            "cust estimate (html)", html, version+1)
 
-            self.pt.addHiddenNote("printed","cust estimate")
+            self.pt.addHiddenNote("printed", "cust estimate")
 
     def printReferral(self):
         '''prints a referal letter controlled by referal.xml file'''
         ####TODO this file should really be in the sql database
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         desc=self.ui.referralLettersComboBox.currentText()
-        html=referral.getHtml(desc,self.pt)
+        html=referral.getHtml(desc, self.pt)
         Dialog = QtGui.QDialog(self)
         dl = Ui_enter_letter_text.Ui_Dialog()
         dl.setupUi(Dialog)
@@ -4083,20 +4104,20 @@ class printingClass():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
             myclass.printpage()
-            docsprinted.add(self.pt.serialno,"referral (html)",html)
-            self.pt.addHiddenNote("printed","referral")
+            docsprinted.add(self.pt.serialno, "referral (html)", html)
+            self.pt.addHiddenNote("printed", "referral")
             if self.ui.previousCorrespondence_treeWidget.isVisible():
                 self.docsPrinted()
 
     def printChart(self):
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         chartimage=QtGui.QPixmap
         staticimage=chartimage.grabWidget(self.ui.summaryChartWidget)
-        myclass=chartPrint.printChart(self.pt,staticimage)
+        myclass=chartPrint.printChart(self.pt, staticimage)
         myclass.printpage()
-        self.pt.addHiddenNote("printed","static chart")
+        self.pt.addHiddenNote("printed", "static chart")
 
     def printApptCard(self):
         iter=QtGui.QTreeWidgetItemIterator(self.ui.ptAppointment_treeWidget,
@@ -4108,29 +4129,29 @@ class printingClass():
             i=iter.value() #self.ui.ptAppointment_treeWidget.currentItem()
             adate=str(i.text(0))
             if localsettings.uk_to_sqlDate(adate)>localsettings.sqlToday():
-                futureAppts+=((adate,str(i.text(2)),str(i.text(1))),)
+                futureAppts+=((adate, str(i.text(2)), str(i.text(1))), )
             iter+=1
         card=apptcardPrint.card()
-        card.setProps(self.pt.title,self.pt.fname,self.pt.sname,
-                      self.pt.serialno,futureAppts)
+        card.setProps(self.pt.title, self.pt.fname, self.pt.sname,
+                      self.pt.serialno, futureAppts)
         card.print_()
-        self.pt.addHiddenNote("printed","appt card")
+        self.pt.addHiddenNote("printed", "appt card")
 
-    def printaccount(self,tone="A"):
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+    def printaccount(self, tone="A"):
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
         else:
-            doc=accountPrint.document(self.pt.title,self.pt.fname,self.pt.sname,
-            (self.pt.addr1,self.pt.addr2,self.pt.addr3,self.pt.town,self.\
-            pt.county),self.pt.pcde,localsettings.formatMoney(self.pt.fees))
+            doc=accountPrint.document(self.pt.title, self.pt.fname, self.pt.sname,
+            (self.pt.addr1, self.pt.addr2, self.pt.addr3, self.pt.town, self.\
+            pt.county), self.pt.pcde, localsettings.formatMoney(self.pt.fees))
             doc.setTone(tone)
-            if tone=="B":
+            if tone == "B":
                 doc.setPreviousCorrespondenceDate(self.pt.billdate)
                 ####TODO unsure if this is correct date! - p
                 ####lease print one and try it!
             if doc.print_():
                 self.pt.updateBilling(tone)
-                self.pt.addHiddenNote("printed","account - tone %s"%tone)
+                self.pt.addHiddenNote("printed", "account - tone %s"%tone)
                 self.addNewNote("Account Printed")
                 self.commitPDFtoDB("Account tone%s"%tone)
 
@@ -4138,11 +4159,11 @@ class printingClass():
         self.printGP17(True)
 
 
-    def printGP17(self,test=False):
+    def printGP17(self, test=False):
         #-- if test is true.... you also get boxes
 
         #--check that the form is goin gto have the correct dentist
-        if self.pt.dnt2 !=0:
+        if self.pt.dnt2 != 0:
             dent=self.pt.dnt2
         else:
             dent=self.pt.dnt1
@@ -4161,10 +4182,10 @@ class printingClass():
             #-- see if user has overridden the dentist
             chosenDent=str(dl.dents_comboBox.currentText())
             dent=localsettings.ops_reverse[chosenDent]
-            form=GP17.gp17(self.pt,dent,test)
+            form=GP17.gp17(self.pt, dent, test)
             form.print_()
             if not test:
-                self.pt.addHiddenNote("printed","GP17 %s"%chosenDent)
+                self.pt.addHiddenNote("printed", "GP17 %s"%chosenDent)
 
     def accountButton2Clicked(self):
         if self.ui.accountB_radioButton.isChecked():
@@ -4175,58 +4196,58 @@ class printingClass():
         else:
             self.printaccount()
 
-    def printdaylists(self,args,expanded=False):
-        #-args is a tuple (dent,date)
+    def printdaylists(self, args, expanded=False):
+        #-args is a tuple (dent, date)
         '''prints the single book pages'''
         dlist=daylistprint.printDaylist()
         something_to_print=False
         for arg in args:
-            data=appointments.printableDaylistData(arg[1].toPyDate(),arg[0])
+            data=appointments.printableDaylistData(arg[1].toPyDate(), arg[0])
             #note arg[1]=Qdate
-            if data!=[]:
+            if data != []:
                 something_to_print=True
-                dlist.addDaylist(arg[1],arg[0],data)
+                dlist.addDaylist(arg[1], arg[0], data)
         if something_to_print:
             dlist.print_(expanded)
 
-    def printmultiDayList(self,args):
+    def printmultiDayList(self, args):
         '''prints the multiday pages'''
-        #-- args= ((dent, date),(dent,date)...)
+        #-- args= ((dent, date), (dent, date)...)
         dlist=multiDayListPrint.printDaylist()
         something_to_print=False
         for arg in args:
-            data=appointments.printableDaylistData(arg[1].toPyDate(),arg[0])
+            data=appointments.printableDaylistData(arg[1].toPyDate(), arg[0])
             #note arg[1]=Qdate
-            if data!=[]:
+            if data != []:
                 something_to_print=True
-                dlist.addDaylist(arg[1],arg[0],data)
+                dlist.addDaylist(arg[1], arg[0], data)
         if something_to_print:
             dlist.print_()
     def book1print(self):
         try:
             dent=localsettings.apptix[self.ui.apptBookWidgets[0].dentist]
             date=self.ui.appointmentCalendarWidget.selectedDate()
-            books=((dent,date),)
+            books=((dent, date), )
             self.printdaylists(books)
         except KeyError:
-            self.advise("error printing book",1)
+            self.advise("error printing book", 1)
     def book2print(self):
         try:
             dent=localsettings.apptix[self.ui.apptBookWidgets[1].dentist]
             date=self.ui.appointmentCalendarWidget.selectedDate()
-            books=((dent,date),)
+            books=((dent, date), )
             self.printdaylists(books)
         except KeyError:
-                self.advise("error printing book",1)
+                self.advise("error printing book", 1)
 
     def book3print(self):
         try:
             dent=localsettings.apptix[self.ui.apptBookWidgets[2].dentist]
             date=self.ui.appointmentCalendarWidget.selectedDate()
-            books=((dent,date),)
+            books=((dent, date), )
             self.printdaylists(books)
         except KeyError:
-                self.advise("error printing book",1)
+                self.advise("error printing book", 1)
 
     def daylistPrintWizard(self):
         def checkAll(arg):
@@ -4239,16 +4260,16 @@ class printingClass():
         dl.alldentscheckBox = QtGui.QCheckBox(QtCore.QString("All Books"))
         dl.alldentscheckBox.setChecked(True)
         dl.alldentscheckBox.connect(dl.alldentscheckBox,
-                                    QtCore.SIGNAL("stateChanged(int)"),checkAll)
+                                    QtCore.SIGNAL("stateChanged(int)"), checkAll)
         row=0
-        vlayout.addWidget(dl.alldentscheckBox,row,0,1,2)
+        vlayout.addWidget(dl.alldentscheckBox, row, 0, 1, 2)
         checkBoxes={}
         for dent in localsettings.activedents+localsettings.activehygs:
             cb=QtGui.QCheckBox(QtCore.QString(dent))
             cb.setChecked(True)
             checkBoxes[localsettings.apptix[dent]]=cb
             row+=1
-            vlayout.addWidget(cb,row,1,1,1)
+            vlayout.addWidget(cb, row, 1, 1, 1)
         dl.start_dateEdit.setDate(QtCore.QDate.currentDate())
         dl.end_dateEdit.setDate(QtCore.QDate.currentDate())
         if Dialog.exec_():
@@ -4258,37 +4279,37 @@ class printingClass():
             while sday<=eday:
                 for dent in localsettings.activedents+localsettings.activehygs:
                     if checkBoxes[localsettings.apptix[dent]].checkState():
-                        books.append((localsettings.apptix[dent],sday))
+                        books.append((localsettings.apptix[dent], sday))
                 sday=sday.addDays(1)
             if dl.allOnePage_radioButton.isChecked():
                 self.printmultiDayList(books)
             else:
-                self.printdaylists(books,dl.onePageFull_radioButton.isChecked())
+                self.printdaylists(books, dl.onePageFull_radioButton.isChecked())
 
     def printrecall(self):
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
         else:
-            args=((self.pt.title,self.pt.fname,self.pt.sname,self.pt.dnt1,
-            self.pt.serialno,self.pt.addr1,self.pt.addr2,self.pt.addr3,\
-            self.pt.town,self.pt.county,self.pt.pcde),)
+            args=((self.pt.title, self.pt.fname, self.pt.sname, self.pt.dnt1,
+            self.pt.serialno, self.pt.addr1, self.pt.addr2, self.pt.addr3, \
+            self.pt.town, self.pt.county, self.pt.pcde), )
 
             recallprint.printRecall(args)
-            self.pt.addHiddenNote("printed","recall - non batch")
+            self.pt.addHiddenNote("printed", "recall - non batch")
 
     def printNotesV(self):
         '''verbose notes print'''
         self.printNotes(1)
 
-    def printNotes(self,detailed=False):
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+    def printNotes(self, detailed=False):
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
-        note=notes.notes(self.pt.notestuple,detailed)
+        note=notes.notes(self.pt.notestuple, detailed)
         #--not verbose...
         myclass=notesPrint.printNotes(note)
         myclass.printpage()
-        self.pt.addHiddenNote("printed","notes")
+        self.pt.addHiddenNote("printed", "notes")
 
 
 class pageHandlingClass():
@@ -4296,14 +4317,14 @@ class pageHandlingClass():
     def handle_mainTab(self):
         '''procedure called when user navigates the top tab'''
         ci=self.ui.main_tabWidget.currentIndex()
-        if ci!=2 and self.ui.aptOVmode_label.text()=="Scheduling Mode":
-            self.advise("Appointment not made",1)
+        if ci != 2 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
+            self.advise("Appointment not made", 1)
             self.aptOVviewMode(True)
 
         #--user is viewing appointment book
-        if ci==1:
+        if ci == 1:
             today=QtCore.QDate.currentDate()
-            if self.ui.appointmentCalendarWidget.selectedDate()!=today:
+            if self.ui.appointmentCalendarWidget.selectedDate() != today:
                 self.ui.appointmentCalendarWidget.setSelectedDate(today)
             else:
                 self.layout_appointments()
@@ -4312,13 +4333,13 @@ class pageHandlingClass():
                 book.update()
 
         #--user is viewing apointment overview
-        if ci==2:
+        if ci == 2:
             self.layout_apptOV()
 
-        if ci==7:
+        if ci == 7:
             if not self.feestableLoaded:
                 self.loadFeesTable()
-        if ci==8:
+        if ci == 8:
             self.loadForum()
 
     def handle_patientTab(self):
@@ -4326,43 +4347,43 @@ class pageHandlingClass():
         ci=self.ui.tabWidget.currentIndex()
         #--admin tab selected
 
-        if ci==0:
+        if ci == 0:
             self.ui.patientEdit_groupBox.setTitle(
             "Edit Patient %d"%self.pt.serialno)
 
             if self.load_editpage():
                 self.editPageVisited=True
-        if ci==1:
+        if ci == 1:
             self.updateStatus()
             self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
             self.handle_ContractTab(self.ui.contract_tabWidget.currentIndex())
 
-        if ci==2:
+        if ci == 2:
             self.docsPrinted()
 
-        if ci==3:
+        if ci == 3:
             self.load_receptionSummaryPage()
-        if ci==4:
+        if ci == 4:
             self.load_clinicalSummaryPage()
 
-        if ci==5:
+        if ci == 5:
             self.updateNotesPage()
 
         #--perio tab
-        if ci==8:
+        if ci == 8:
             self.periochart_dates()
             #load the periocharts (if the patient has data)
             self.layoutPerioCharts()
             #--select the UR8 on the perioChartWidget
-            self.ui.perioChartWidget.selected=[0,0]
+            self.ui.perioChartWidget.selected=[0, 0]
 
-        if ci==7:
+        if ci == 7:
             #-- estimate/plan page.
             self.load_newEstPage()
             self.load_treatTrees()
         #--debug tab
         ##TODO - this is a development tab- remove eventually
-        if ci==9:
+        if ci == 9:
             pass
             #-- this was causing issues when user went "home".. it was getting
             #-- triggered
@@ -4392,8 +4413,8 @@ class pageHandlingClass():
         ensures that tab pages for reception and clinical summary are cleared.
         Other pages are disabled.
         '''
-        if self.pt.serialno!=0:
-            self.ui.dobEdit.setDate(QtCore.QDate(1900,1,1))
+        if self.pt.serialno != 0:
+            self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
             self.ui.notesBrowser.setText("")
             self.ui.notesSummary_textBrowser.setText("")
@@ -4403,8 +4424,8 @@ class pageHandlingClass():
 
             #--restore the charts to full dentition
             ##TODO - perhaps handle this with the tabwidget calls?
-            for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,
-            self.ui.completedChartWidget,self.ui.perioChartWidget,
+            for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
+            self.ui.completedChartWidget, self.ui.perioChartWidget,
             self.ui.summaryChartWidget):
                 chart.clear()
                 chart.update()
@@ -4425,7 +4446,7 @@ class pageHandlingClass():
         '''
         go to either "reception" or "clinical summary"
         '''
-        if localsettings.station=="surgery":
+        if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
@@ -4461,8 +4482,8 @@ class pageHandlingClass():
             items=pdict[category]
             header=category + '(%d items)'%len(items)
             parent = QtGui.QTreeWidgetItem(
-                    self.ui.plan_treeWidget,[header])
-            if category=="Tooth":
+                    self.ui.plan_treeWidget, [header])
+            if category == "Tooth":
                 itemToCompress=parent
             for item in items:
                 child = QtGui.QTreeWidgetItem(parent, [item])
@@ -4480,8 +4501,8 @@ class pageHandlingClass():
             items=pdict[category]
             header=category + '(%d items)'%len(items)
             parent = QtGui.QTreeWidgetItem(
-                    self.ui.comp_treeWidget,[header])
-            if category=="Tooth":
+                    self.ui.comp_treeWidget, [header])
+            if category == "Tooth":
                 itemToCompress=parent
             for item in items:
                 child = QtGui.QTreeWidgetItem(parent, [item])
@@ -4495,13 +4516,13 @@ class pageHandlingClass():
         self.ui.fnameEdit.setText(self.pt.fname)
         self.ui.snameEdit.setText(self.pt.sname)
         self.ui.dobEdit.setDate(QtCore.
-                                QDate.fromString(self.pt.dob,"dd'/'MM'/'yyyy"))
+                                QDate.fromString(self.pt.dob, "dd'/'MM'/'yyyy"))
         self.ui.addr1Edit.setText(self.pt.addr1)
         self.ui.addr2Edit.setText(self.pt.addr2)
         self.ui.addr3Edit.setText(self.pt.addr3)
         self.ui.townEdit.setText(self.pt.town)
         self.ui.countyEdit.setText(self.pt.county)
-        if self.pt.sex=="M":
+        if self.pt.sex == "M":
             self.ui.sexEdit.setCurrentIndex(0)
         else:
             self.ui.sexEdit.setCurrentIndex(1)
@@ -4524,36 +4545,36 @@ class pageHandlingClass():
             self.ui.dnt2comboBox.setCurrentIndex(
             localsettings.activedents.index(localsettings.ops[self.pt.dnt1]))
 
-        except Exception,e:
+        except Exception, e:
             self.ui.dnt1comboBox.setCurrentIndex(-1)
-            if self.pt.dnt1!=0:
+            if self.pt.dnt1 != 0:
                 print "self.pt.dnt1 error - record %d"%self.pt.serialno
                 if localsettings.ops.has_key(self.pt.dnt1):
                     self.advise(
                     "%s is no longer an active dentist in this practice"%\
-                    localsettings.ops[self.pt.dnt1],2)
+                    localsettings.ops[self.pt.dnt1], 2)
                 else:
-                    print "unknown dentist number",self.pt.dnt1
+                    print "unknown dentist number", self.pt.dnt1
                     self.advise(
-                    "unknown contract dentist - please correct this",2)
+                    "unknown contract dentist - please correct this", 2)
         if self.pt.dnt2>0:
             try:
                 self.ui.dnt2comboBox.setCurrentIndex(localsettings.activedents.\
                                         index(localsettings.ops[self.pt.dnt2]))
-            except KeyError,e:
+            except KeyError, e:
                 print "self.pt.dnt2 error - record %d"
                 self.ui.dnt2comboBox.setCurrentIndex(-1)
                 if localsettings.ops.has_key(self.pt.dnt1):
                     self.advise("%s (dentist 2) "%localsettings.\
                     ops[self.pt.dnt2]+"is no longer an active dentist i"
-                    +"n this practice",1)
+                    +"n this practice", 1)
                 else:
                     self.advise(
-                    "unknown course dentist - please correct this",2)
+                    "unknown course dentist - please correct this", 2)
 
-class openmolarGui(QtGui.QMainWindow, customWidgets,chartsClass,
-pageHandlingClass, newPatientClass,appointmentClass,signals,feeClass,
-printingClass,cashbooks,contractClass, historyClass, forumClass):
+class openmolarGui(QtGui.QMainWindow, customWidgets, chartsClass,
+pageHandlingClass, newPatientClass, appointmentClass, signals, feeClass,
+printingClass, cashbooks, contractClass, historyClass, forumClass):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui=Ui_main.Ui_MainWindow()
@@ -4565,9 +4586,9 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         #--make a deep copy to check for changes
         self.pt=copy.deepcopy(self.pt_dbstate)
         self.selectedChartWidget="st" #other values are "pl" or "cmp"
-        self.grid = ("ur8","ur7","ur6","ur5",'ur4','ur3','ur2','ur1','ul1',
-        'ul2','ul3','ul4','ul5','ul6','ul7','ul8',"lr8","lr7","lr6","lr5",
-        'lr4','lr3','lr2','lr1','ll1','ll2','ll3','ll4','ll5','ll6','ll7','ll8')
+        self.grid = ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
+        'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', "lr8", "lr7", "lr6", "lr5",
+        'lr4', 'lr3', 'lr2', 'lr1', 'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
         self.labels_and_tabs()
         self.addCustomWidgets()
         self.setValidators()
@@ -4580,22 +4601,22 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         self.appointmentData=()
         self.editPageVisited=False
 
-    def advise(self,arg,warning_level=0):
+    def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
         warning level0 = status bar only.
         warning level 1 advisory
         warning level 2 critical (and logged)
         '''
-        if warning_level==0:
-            self.ui.statusbar.showMessage(arg,5000) #5000 milliseconds=5secs
-        elif warning_level==1:
-            QtGui.QMessageBox.information(self,"Advisory",arg)
-        elif warning_level==2:
+        if warning_level == 0:
+            self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
+        elif warning_level == 1:
+            QtGui.QMessageBox.information(self, "Advisory", arg)
+        elif warning_level == 2:
             now=QtCore.QTime.currentTime()
-            QtGui.QMessageBox.warning(self,"Error",arg)
+            QtGui.QMessageBox.warning(self, "Error", arg)
             #--for logging purposes
-            print "%d:%02d ERROR MESSAGE"%(now.hour(),now.minute()),arg
+            print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
 
     def quit(self):
         '''
@@ -4624,14 +4645,14 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         localsettings.license), 1)
 
     def setClinician(self):
-        self.advise("To change practitioner, please login again",1)
+        self.advise("To change practitioner, please login again", 1)
 
 
     def okToLeaveRecord(self):
         '''
         leaving a pt record - has state changed?
         '''
-        if self.pt.serialno==0:
+        if self.pt.serialno == 0:
             return True
         #--a debug print statement
         print "leaving record checking to see if save is required...",
@@ -4647,13 +4668,13 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             #--raise a custom dialog to get user input
             #--(centred over self)
             Dialog = QtGui.QDialog(self)
-            dl = saveDiscardCancel.sdcDialog(Dialog,self.pt.fname+" "+\
-                        self.pt.sname+" (%s)"%self.pt.serialno,uc)
+            dl = saveDiscardCancel.sdcDialog(Dialog, self.pt.fname+" "+\
+                        self.pt.sname+" (%s)"%self.pt.serialno, uc)
             if Dialog.exec_():
                 if dl.result == "discard":
                     print "user discarding changes"
                     return True
-                elif dl.result=="save":
+                elif dl.result == "save":
                     print "user is saving"
                     self.save_changes()
                     return True
@@ -4669,7 +4690,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         more Fields Button has been pressed
         '''
-        self.advise("not yet available",1)
+        self.advise("not yet available", 1)
         #TODO - add more code here!!
 
     def docsPrinted(self):
@@ -4677,19 +4698,19 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         load the docsprinted listWidget
         '''
         self.ui.previousCorrespondence_treeWidget.clear()
-        self.ui.previousCorrespondence_treeWidget.setHeaderLabels(["Date","Type","Version","Index"])
+        self.ui.previousCorrespondence_treeWidget.setHeaderLabels(["Date", "Type", "Version", "Index"])
         docs=docsprinted.previousDocs(self.pt.serialno)
         for d in docs:
-            doc=[str(d[0]),str(d[1]),str(d[2]),str(d[3])]
+            doc=[str(d[0]), str(d[1]), str(d[2]), str(d[3])]
             i=QtGui.QTreeWidgetItem(
-            self.ui.previousCorrespondence_treeWidget,doc)
+            self.ui.previousCorrespondence_treeWidget, doc)
         self.ui.previousCorrespondence_treeWidget.expandAll()
         for i in range(self.ui.previousCorrespondence_treeWidget.columnCount()):
             self.ui.previousCorrespondence_treeWidget.resizeColumnToContents(i)
         #-- hide the index column
-        self.ui.previousCorrespondence_treeWidget.setColumnWidth(3,0)
+        self.ui.previousCorrespondence_treeWidget.setColumnWidth(3, 0)
 
-    def showDoc(self,item,index):
+    def showDoc(self, item, index):
         '''
         called by a double click on the documents listview
         '''
@@ -4698,36 +4719,36 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         ix=int(item.text(3))
         if "html" in item.text(1):
             print "html file found!"
-            result=QtGui.QMessageBox.question(self,"Re-open",
+            result=QtGui.QMessageBox.question(self, "Re-open",
             "Do you want to review and/or reprint this item?",
                     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            if result==QtGui.QMessageBox.Yes:
-                html,version=docsprinted.getData(ix)
-                self.customEstimate(html,version)
+            if result == QtGui.QMessageBox.Yes:
+                html, version=docsprinted.getData(ix)
+                self.customEstimate(html, version)
 
         elif "pdf" in item.text(1):
-            result=QtGui.QMessageBox.question(self,"Re-open",
+            result=QtGui.QMessageBox.question(self, "Re-open",
             "Do you want to review and/or reprint this item?",
                     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            if result==QtGui.QMessageBox.Yes:
+            if result == QtGui.QMessageBox.Yes:
                 try:
-                    data,version=docsprinted.getData(ix)
-                    f=open("temp.pdf","w")
+                    data, version=docsprinted.getData(ix)
+                    f=open("temp.pdf", "w")
                     f.write(data)
                     f.close()
-                    subprocess.Popen(["%s"%localsettings.pdfProg,"temp.pdf"])
-                except Exception,e:
+                    subprocess.Popen(["%s"%localsettings.pdfProg, "temp.pdf"])
+                except Exception, e:
                     print "view PDF error"
-                    print Exception,e
+                    print Exception, e
                     self.advise("error reviewing PDF file<br />"
                     +"tried to open with evince on Linux"
-                    +" or default PDF reader on windows",1)
+                    +" or default PDF reader on windows", 1)
         else: #unknown data type... probably plain text.
             print "other type of doc"
             data=docsprinted.getData(ix)[0]
-            if data==None:
+            if data == None:
                 data="No information available about this document, sorry"
-            self.advise(data,1)
+            self.advise(data, 1)
 
     def load_todays_patients_combobox(self):
         '''
@@ -4735,11 +4756,11 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         patients - if a list(tuple) of dentists is passed eg ,(("NW"))
         then only pt's of that dentist show up
         '''
-        if localsettings.clinicianNo !=0:
-            dents=(localsettings.clinicianInits,)
+        if localsettings.clinicianNo != 0:
+            dents=(localsettings.clinicianInits, )
             visibleItem="Today's Patients (%s)"%dents
         else:
-            dents=("*",)
+            dents=("*", )
             visibleItem="Today's Patients (ALL)"
         self.advise("loading today's patients")
         self.ui.daylistBox.addItem(visibleItem)
@@ -4774,22 +4795,22 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         looks for patients with similar name, family or address
         to the current pt
         '''
-        if self.pt.serialno==0:
-            self.advise("No patient to compare to",2)
+        if self.pt.serialno == 0:
+            self.advise("No patient to compare to", 2)
             return
         def family_navigated():
             dl.selected = dl.family_tableWidget.item(dl.family_tableWidget.\
-                                                     currentRow(),0).text()
+                                                     currentRow(), 0).text()
         def address_navigated():
             dl.selected = dl.address_tableWidget.item(dl.address_tableWidget.\
-                                                      currentRow(),0).text()
+                                                      currentRow(), 0).text()
         def soundex_navigated():
             dl.selected = dl.soundex_tableWidget.item(dl.soundex_tableWidget.\
-                                                      currentRow(),0).text()
+                                                      currentRow(), 0).text()
 
-        candidates=search.getsimilar(self.pt.serialno,self.pt.addr1,self.\
-                                     pt.sname,self.pt.familyno)
-        if candidates!=():
+        candidates=search.getsimilar(self.pt.serialno, self.pt.addr1, self.\
+                                     pt.sname, self.pt.familyno)
+        if candidates != ():
             Dialog = QtGui.QDialog(self)
             dl = Ui_related_patients.Ui_Dialog()
             dl.setupUi(Dialog)
@@ -4797,13 +4818,13 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
 
             dl.thisPatient_label.setText(
             "Possible Matches for patient - %d - %s %s - %s"%(
-            self.pt.serialno,self.pt.fname, self.pt.sname, self.pt.addr1))
+            self.pt.serialno, self.pt.fname, self.pt.sname, self.pt.addr1))
 
-            Dialog.setFixedSize(self.width()-50,self.height()-50)
-            headers=['Serialno','Surname','Forename','dob','Address1',\
-            'Address2','POSTCODE']
+            Dialog.setFixedSize(self.width()-50, self.height()-50)
+            headers=['Serialno', 'Surname', 'Forename', 'dob', 'Address1',\
+            'Address2', 'POSTCODE']
             tableNo=0
-            for table in (dl.family_tableWidget,dl.address_tableWidget,
+            for table in (dl.family_tableWidget, dl.address_tableWidget,
             dl.soundex_tableWidget):
                 table.clear()
                 table.setSortingEnabled(False)
@@ -4817,19 +4838,19 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                     col=0
                     for attr in candidate:
                         item=QtGui.QTableWidgetItem(str(attr))
-                        table.setItem(row,col,item)
+                        table.setItem(row, col, item)
                         col+=1
                     row+=1
                 table.resizeColumnsToContents()
                 table.setSortingEnabled(True)
                 #--allow user to sort pt attributes
                 tableNo+=1
-            QtCore.QObject.connect(dl.family_tableWidget,QtCore.SIGNAL(
+            QtCore.QObject.connect(dl.family_tableWidget, QtCore.SIGNAL(
             "itemSelectionChanged()"), family_navigated)
-            QtCore.QObject.connect(dl.address_tableWidget,QtCore.SIGNAL(
-            "itemSelectionChanged()"),address_navigated)
-            QtCore.QObject.connect(dl.soundex_tableWidget,QtCore.SIGNAL(
-            "itemSelectionChanged()"),  soundex_navigated)
+            QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
+            "itemSelectionChanged()"), address_navigated)
+            QtCore.QObject.connect(dl.soundex_tableWidget, QtCore.SIGNAL(
+            "itemSelectionChanged()"), soundex_navigated)
 
             if Dialog.exec_():
                 self.getrecord(int(dl.selected))
@@ -4847,8 +4868,8 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             self.getrecord(last_serialno)
         except ValueError:
             self.advise("Reached End of  List")
-        except Exception,e:
-            print "Exception in maingui.next_patient",e
+        except Exception, e:
+            print "Exception in maingui.next_patient", e
 
     def last_patient(self):
         '''
@@ -4856,7 +4877,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         cp= self.pt.serialno
         recent=localsettings.recent_snos
-        if cp==0 and len(recent)>0:
+        if cp == 0 and len(recent)>0:
             last_serialno=recent[-1]
             self.getrecord(last_serialno)
         else:
@@ -4865,14 +4886,14 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                 self.getrecord(last_serialno)
             except ValueError:
                 self.advise("Reached start of  List")
-            except Exception,e:
-                print "Exception in maingui.next_patient",e
+            except Exception, e:
+                print "Exception in maingui.next_patient", e
 
     def apply_editpage_changes(self):
         '''
         apply any changes made on the edit patient page
         '''
-        if self.pt.serialno==0 and self.ui.newPatientPushButton.isEnabled():
+        if self.pt.serialno == 0 and self.ui.newPatientPushButton.isEnabled():
             ###firstly.. don't apply edit page changes if there
             ####is no patient loaded,
             ###and no new patient to apply
@@ -4900,12 +4921,12 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         self.pt.email2=str(self.ui.email2Edit.text().toAscii())
         self.pt.occup=str(self.ui.occupationEdit.text().toAscii()).upper()
 
-    def accountsTableClicked(self,row,column):
-        sno=self.ui.accounts_tableWidget.item(row,1).text()
+    def accountsTableClicked(self, row, column):
+        sno=self.ui.accounts_tableWidget.item(row, 1).text()
         print sno
         self.getrecord(int(sno))
 
-    def getrecord(self,serialno,checkedNeedToLeaveAlready=False):
+    def getrecord(self, serialno, checkedNeedToLeaveAlready=False):
         '''
         a record has been called byone of several means
         '''
@@ -4916,7 +4937,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             print "not loading"
             self.advise("Not loading patient")
             return
-        if serialno!=0:
+        if serialno != 0:
             self.advise("connecting to database to get patient details..")
 
             try:
@@ -4930,8 +4951,8 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                 self.pt_dbstate.fees=self.pt.fees
                 try:
                     self.loadpatient()
-                except Exception,e:
-                    self.advise("Error populating interface\n%s\n%s"%(Exception,e),2)
+                except Exception, e:
+                    self.advise("Error populating interface\n%s\n%s"%(Exception, e), 2)
                 finally:
                     self.pt_dbstate=copy.deepcopy(self.pt)
 
@@ -4939,16 +4960,16 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
                 self.advise ("error getting serialno %d"%serialno+
-                              "- please check this number is correct?",1)
+                              "- please check this number is correct?", 1)
                 return
-                #except Exception,e:
+                #except Exception, e:
                 print "#"*20
                 print "SERIOUS ERROR???"
                 print str(Exception)
                 print e
                 print "maingself.ui.getrecord - serialno%d"%serialno
                 print "#"*20
-                self.advise ("Serious Error - Tell Neil<br />%s"%e,2)
+                self.advise ("Serious Error - Tell Neil<br />%s"%e, 2)
 
         else:
             self.advise("get record called with serialno 0")
@@ -4961,10 +4982,10 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
 
     def updateNotesPage(self):
         if self.ui.notesMaximumVerbosity_radioButton.isChecked():
-            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notestuple,2))
+            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notestuple, 2))
             #--2=verbose
         elif self.ui.notesMediumVerbosity_radioButton.isChecked():
-            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notestuple,1))
+            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notestuple, 1))
         else: #self.ui.notesMinimumVerbosity_radioButton.isChecked():
             self.ui.notesBrowser.setHtml(notes.notes(self.pt.notestuple))
         self.ui.notesBrowser.scrollToAnchor('anchor')
@@ -4980,7 +5001,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         self.advise("loading patient")
         self.editPageVisited=False
         self.ui.main_tabWidget.setCurrentIndex(0)
-        if localsettings.station=="surgery":
+        if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
@@ -4995,37 +5016,37 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         self.ui.notesSummary_textBrowser.scrollToAnchor('anchor')
         self.ui.notesBrowser.setHtml("")
         self.ui.notesEnter_textEdit.setText("")
-        for chart in (self.ui.staticChartWidget,self.ui.planChartWidget,
-        self.ui.completedChartWidget,self.ui.perioChartWidget,
+        for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
+        self.ui.completedChartWidget, self.ui.perioChartWidget,
         self.ui.summaryChartWidget):
             chart.clear()
             #--necessary to restore the chart to full dentition
-        self.ui.staticChartWidget.setSelected(0,0)  #select the UR8
+        self.ui.staticChartWidget.setSelected(0, 0)  #select the UR8
         self.chartsTable()
         self.bpe_dates()
         try:
             pos=localsettings.csetypes.index(self.pt.cset)
         except ValueError:
-            QtGui.QMessageBox.information(self,"Advisory",
+            QtGui.QMessageBox.information(self, "Advisory",
             "Please set a Valid Course Type for this patient")
             pos=-1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         self.ui.contract_tabWidget.setCurrentIndex(pos)
         #--update bpe
         localsettings.defaultNewPatientDetails=(
-        self.pt.sname,self.pt.addr1,self.pt.addr2,
-        self.pt.addr3,self.pt.town,self.pt.county,self.pt.pcde,self.pt.tel1)
+        self.pt.sname, self.pt.addr1, self.pt.addr2,
+        self.pt.addr3, self.pt.town, self.pt.county, self.pt.pcde, self.pt.tel1)
 
         if not self.pt.serialno in localsettings.recent_snos:
             #localsettings.recent_snos.remove(self.pt.serialno)
             localsettings.recent_snos.append(self.pt.serialno)
-        if self.ui.tabWidget.currentIndex()==4:  #clinical summary
+        if self.ui.tabWidget.currentIndex() == 4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.ui.debugBrowser.setText("")
         self.medalert()
         self.getmemos()
 
-        if localsettings.station=="surgery":
+        if localsettings.station == "surgery":
             self.callXrays()
     def getmemos(self):
         urgentMemos = memos.getMemos(self.pt.serialno)
@@ -5044,9 +5065,9 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
 
     def newCustomMemo(self):
         Dialog = QtGui.QDialog(self)
-        dl = saveMemo.Ui_Dialog(Dialog,self.pt.serialno)
+        dl = saveMemo.Ui_Dialog(Dialog, self.pt.serialno)
         if not dl.getInput():
-            self.advise("memo not saved",1)
+            self.advise("memo not saved", 1)
 
     def medalert(self):
         if self.pt.MEDALERT:
@@ -5058,9 +5079,9 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         else:
             self.ui.medNotes_pushButton.setPalette(self.palette())
 
-        if self.pt.MH!=None:
+        if self.pt.MH != None:
             chkdate=self.pt.MH[13]
-            if chkdate==None:
+            if chkdate == None:
                 chkdate=""
             else:
                 chkdate=" - %s"%chkdate
@@ -5076,15 +5097,15 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         self.ui.status_comboBox.setCurrentIndex(0)
         for i in range(self.ui.status_comboBox.count()):
             item=self.ui.status_comboBox.itemText(i)
-            if str(item).lower()==self.pt.status.lower():
+            if str(item).lower() == self.pt.status.lower():
                 self.ui.status_comboBox.setCurrentIndex(i)
 
     def updateDetails(self):
         '''
         sets the patient information into the left column
         '''
-        Saved= (self.pt_dbstate.fees==self.pt.fees)
-        details=patientDetails.details(self.pt,Saved)
+        Saved= (self.pt_dbstate.fees == self.pt.fees)
+        details=patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setText(details)
         self.ui.detailsBrowser.update()
         curtext="Current Treatment "
@@ -5100,7 +5121,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             self.ui.closeTx_pushButton.setEnabled(False)
 
 
-    def final_choice(self,candidates):
+    def final_choice(self, candidates):
         def DoubleClick():
             '''user double clicked on an item... accept the dialog'''
             Dialog.accept()
@@ -5111,17 +5132,17 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         dl.tableWidget.setSortingEnabled(False)
         #--good practice to disable this while loading
         dl.tableWidget.setRowCount(len(candidates))
-        headers=('Serialno','Surname','Forename','dob','Address1',
-        'Address2','POSTCODE')
+        headers=('Serialno', 'Surname', 'Forename', 'dob', 'Address1',
+        'Address2', 'POSTCODE')
 
-        widthFraction=(10,20,20,10,30,30,10)
+        widthFraction=(10, 20, 20, 10, 30, 30, 10)
         dl.tableWidget.setColumnCount(len(headers))
         dl.tableWidget.setHorizontalHeaderLabels(headers)
         dl.tableWidget.verticalHeader().hide()
         row=0
         Dialog.setFixedWidth(self.width()-100)
         for col in range(len(headers)):
-            dl.tableWidget.setColumnWidth(col,widthFraction[col]*\
+            dl.tableWidget.setColumnWidth(col, widthFraction[col]*\
                                           (Dialog.width()-100)/130)
             #grrr - this is a hack. the tablewidget width should be used..
             #but it isn't available yet.
@@ -5129,17 +5150,17 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             col=0
             for attr in candidate:
                 item=QtGui.QTableWidgetItem(str(attr))
-                dl.tableWidget.setItem(row,col,item)
+                dl.tableWidget.setItem(row, col, item)
                 col+=1
             row+=1
-        dl.tableWidget.setCurrentCell(0,1)
-        QtCore.QObject.connect(dl.tableWidget,QtCore.SIGNAL(
-        "itemDoubleClicked (QTableWidgetItem *)"),DoubleClick)
+        dl.tableWidget.setCurrentCell(0, 1)
+        QtCore.QObject.connect(dl.tableWidget, QtCore.SIGNAL(
+        "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
         #dl.tableWidget.setSortingEnabled(True)
         #allow user to sort pt attributes - buggers things up!!
         if Dialog.exec_():
             row=dl.tableWidget.currentRow()
-            result=dl.tableWidget.item(row,0).text()
+            result=dl.tableWidget.item(row, 0).text()
             return int(result)
 
     def find_patient(self):
@@ -5161,8 +5182,8 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         dl.setupUi(Dialog)
         dl.dob.setText("00/00/0000")
         dl.dob.setInputMask("00/00/0000")
-        QtCore.QObject.connect(dl.repeat_pushButton,QtCore.\
-                               SIGNAL("clicked()"),repeat_last_search)
+        QtCore.QObject.connect(dl.repeat_pushButton, QtCore.\
+                               SIGNAL("clicked()"), repeat_last_search)
         dl.sname.setFocus()
         if Dialog.exec_():
             dob=str(dl.dob.text())
@@ -5171,7 +5192,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             sname=str(dl.sname.text().toAscii())
             fname=str(dl.fname.text().toAscii())
             pcde=str(dl.pcde.text().toAscii())
-            localsettings.lastsearch=(sname,fname,dob,tel,addr,pcde)
+            localsettings.lastsearch=(sname, fname, dob, tel, addr, pcde)
             dob=localsettings.uk_to_sqlDate(dl.dob.text())
 
             try:
@@ -5179,26 +5200,26 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             except:
                 serialno=0
             if serialno>0:
-                self.getrecord(serialno,True)
+                self.getrecord(serialno, True)
             else:
-                candidates=search.getcandidates(dob,addr,tel,sname,
-                dl.snameSoundex_checkBox.checkState(),fname,
-                dl.fnameSoundex_checkBox.checkState(),pcde)
+                candidates=search.getcandidates(dob, addr, tel, sname,
+                dl.snameSoundex_checkBox.checkState(), fname,
+                dl.fnameSoundex_checkBox.checkState(), pcde)
 
-                if candidates==():
-                    self.advise("no match found",1)
+                if candidates == ():
+                    self.advise("no match found", 1)
                 else:
                     if len(candidates)>1:
                         sno=self.final_choice(candidates)
-                        if sno!=None:
-                            self.getrecord(int(sno),True)
+                        if sno != None:
+                            self.getrecord(int(sno), True)
                     else:
-                        self.getrecord(int(candidates[0][0]),True)
+                        self.getrecord(int(candidates[0][0]), True)
         else:
             self.advise("dialog rejected")
     def labels_and_tabs(self):
         self.ui.main_tabWidget.setCurrentIndex(0)
-        if localsettings.station=="surgery":
+        if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
@@ -5216,9 +5237,9 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         "dd'/'MM'/'yyyy"))
         brush = QtGui.QBrush(colours.LINEEDIT)
         palette = QtGui.QPalette()
-        palette.setBrush(QtGui.QPalette.Base,  brush)
-        for widg in (self.ui.snameEdit,self.ui.titleEdit,self.ui.fnameEdit,
-        self.ui.addr1Edit,self.ui.dobEdit,self.ui.pcdeEdit,self.ui.sexEdit):
+        palette.setBrush(QtGui.QPalette.Base, brush)
+        for widg in (self.ui.snameEdit, self.ui.titleEdit, self.ui.fnameEdit,
+        self.ui.addr1Edit, self.ui.dobEdit, self.ui.pcdeEdit, self.ui.sexEdit):
             widg.setPalette(palette)
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
         self.showForumIcon()
@@ -5231,13 +5252,13 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         try:
             filepath = QtGui.QFileDialog.getSaveFileName()
-            if filepath!='':
-                f=open(filepath,"w")
+            if filepath != '':
+                f=open(filepath, "w")
                 f.write(pickle.dumps(self.pt))
                 f.close()
-                self.advise("Patient File Saved",1)
-        except Exception,e:
-            self.advise("Patient File not saved - %s"%e,2)
+                self.advise("Patient File Saved", 1)
+        except Exception, e:
+            self.advise("Patient File not saved - %s"%e, 2)
 
     def open_patient_fromfile(self):
         '''
@@ -5252,20 +5273,20 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             return
         self.advise("opening patient file")
         filename = QtGui.QFileDialog.getOpenFileName()
-        if filename!='':
+        if filename != '':
             self.advise("opening patient file")
             try:
-                f=open(filename,"r")
+                f=open(filename, "r")
                 loadedpt=pickle.loads(f.read())
-                if loadedpt.serialno!=self.pt.serialno:
+                if loadedpt.serialno != self.pt.serialno:
                     self.pt_dbstate=patient_class.patient(0)
                     self.pt_dbstate.serialno=loadedpt.serialno
                 self.pt=loadedpt
                 f.close()
-            except Exception,e:
-                self.advise("error loading patient file - %s"%e,2)
+            except Exception, e:
+                self.advise("error loading patient file - %s"%e, 2)
         else:
-            self.advise("no file chosen",1)
+            self.advise("no file chosen", 1)
         self.loadpatient()
 
     def exportRecalls(self):
@@ -5275,8 +5296,8 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         month=self.ui.recalldateEdit.date().month()
         year=self.ui.recalldateEdit.date().year()
-        print "exporting recalls for %s,%s"%(month,year)
-        pts=recall.getpatients(month,year)
+        print "exporting recalls for %s,%s"%(month, year)
+        pts=recall.getpatients(month, year)
         dialog=recall_app.Form(pts)
         dialog.exec_()
 
@@ -5296,22 +5317,22 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         show the phraseBook
         '''
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         Dialog = QtGui.QDialog(self.ui.notesEnter_textEdit)
         dl = Ui_phraseBook.Ui_Dialog()
         dl.setupUi(Dialog)
         if Dialog.exec_():
             newNotes=""
-            for cb in (dl.checkBox,dl.checkBox_2,dl.checkBox_3,dl.checkBox_4,
-            dl.checkBox_5,dl.checkBox_6,dl.checkBox_7,dl.checkBox_8):
+            for cb in (dl.checkBox, dl.checkBox_2, dl.checkBox_3, dl.checkBox_4,
+            dl.checkBox_5, dl.checkBox_6, dl.checkBox_7, dl.checkBox_8):
                 if cb.checkState():
                     newNotes+=cb.text()+"\n"
-            if newNotes!="":
+            if newNotes != "":
                 self.addNewNote(newNotes)
 
-    def addNewNote(self,arg):
+    def addNewNote(self, arg):
         '''
         used when I programatically add text to the user textEdit
         '''
@@ -5322,49 +5343,49 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         this updates a database with the record in use
         '''
-        if localsettings.surgeryno==-1:
+        if localsettings.surgeryno == -1:
             Dialog=QtGui.QDialog(self)
             dl=Ui_surgeryNumber.Ui_Dialog()
             dl.setupUi(Dialog)
             if Dialog.exec_():
                 localsettings.surgeryno=dl.comboBox.currentIndex()+1
                 localsettings.updateLocalSettings(
-                "surgeryno",str(localsettings.surgeryno))
+                "surgeryno", str(localsettings.surgeryno))
             else:
                 return
-        calldurr.commit(self.pt.serialno,localsettings.surgeryno)
+        calldurr.commit(self.pt.serialno, localsettings.surgeryno)
 
     def showMedNotes(self):
         '''
         user has called for medical notes to be shown
         '''
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         Dialog = QtGui.QDialog(self)
-        if medNotes.showDialog(Dialog,self.pt):
-            self.advise("Updated Medical Notes",1)
+        if medNotes.showDialog(Dialog, self.pt):
+            self.advise("Updated Medical Notes", 1)
             self.medalert()
 
     def newBPE_Dialog(self):
         '''
         enter a new BPE
         '''
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         Dialog = QtGui.QDialog(self)
         dl = newBPE.Ui_Dialog(Dialog)
         result=dl.getInput()
         if result[0]:
-            self.pt.bpe.append((localsettings.ukToday(),result[1]),)
+            self.pt.bpe.append((localsettings.ukToday(), result[1]), )
             #--add a bpe
             newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes+=" bpe of %s recorded \n"%result[1]
             self.ui.notesEnter_textEdit.setText(newnotes)
             self.ui.bpe_textBrowser
         else:
-            self.advise("BPE not applied",2)
+            self.advise("BPE not applied", 2)
         self.bpe_dates()
         self.bpe_table(0)
 
@@ -5374,16 +5395,16 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         Dialog = QtGui.QDialog(self)
 
-        if localsettings.clinicianNo!=0 and \
+        if localsettings.clinicianNo != 0 and \
         localsettings.clinicianInits in localsettings.activedents:
             #-- clinician could be a hygenist!
             cdnt=localsettings.clinicianNo
-        elif self.pt.dnt2==0:
+        elif self.pt.dnt2 == 0:
             cdnt=self.pt.dnt1
         else:
             cdnt=self.pt.dnt2
-        dl = newCourse.course(Dialog,localsettings.ops[self.pt.dnt1],\
-                              localsettings.ops[cdnt],self.pt.cset)
+        dl = newCourse.course(Dialog, localsettings.ops[self.pt.dnt1], \
+                              localsettings.ops[cdnt], self.pt.cset)
         result=dl.getInput()
 
         #-- (True, ['BW', 'AH', '', PyQt4.QtCore.QDate(2009, 5, 3)])
@@ -5391,18 +5412,18 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         if result[0]:
             atts=result[1]
             dnt1=localsettings.ops_reverse[atts[0]]
-            if dnt1!=self.pt.dnt1:
+            if dnt1 != self.pt.dnt1:
                 self.changeContractedDentist(atts[0])
             dnt2=localsettings.ops_reverse[atts[1]]
-            if dnt2!=self.pt.dnt2:
+            if dnt2 != self.pt.dnt2:
                 self.changeCourseDentist(atts[1])
-            if atts[2]!=self.pt.cset:
+            if atts[2] != self.pt.cset:
                 self.changeCourseType(atts[2])
 
             accd=atts[3].toPyDate()
 
             course=writeNewCourse.write(self.pt.serialno,
-            localsettings.ops_reverse[atts[1]],str(accd))
+            localsettings.ops_reverse[atts[1]], str(accd))
 
             if course[0]:
                 self.pt.courseno=course[1]
@@ -5417,16 +5438,16 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                 self.pt.addHiddenNote("open_course")
                 return True
             else:
-                self.advise("ERROR STARTING NEW COURSE, sorry",2)
+                self.advise("ERROR STARTING NEW COURSE, sorry", 2)
 
     def closeCourse(self):
         '''
         close a treatment course
         '''
         message="Close current course of treatment?"
-        result=QtGui.QMessageBox.question(self,"Confirm",message,\
+        result=QtGui.QMessageBox.question(self, "Confirm", message, \
                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-        if result==QtGui.QMessageBox.Yes:
+        if result == QtGui.QMessageBox.Yes:
             #self.pt.courseno2=self.pt.courseno1
             #self.pt.courseno1=self.pt.courseno0
             self.pt.cmpd=localsettings.ukToday()
@@ -5463,21 +5484,21 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         '''
         important function, checks for changes since the patient was loaded
         '''
-        fieldsToExclude=("notestuple","fees")#, "estimates")
+        fieldsToExclude=("notestuple", "fees")#, "estimates")
         changes=[]
-        if self.pt.serialno==self.pt_dbstate.serialno:
-            if len(self.ui.notesEnter_textEdit.toPlainText())!=0:
+        if self.pt.serialno == self.pt_dbstate.serialno:
+            if len(self.ui.notesEnter_textEdit.toPlainText()) != 0:
                 changes.append("New Notes")
             for attr in self.pt.__dict__:
                 newval=str(self.pt.__dict__[attr])
                 oldval=str(self.pt_dbstate.__dict__[attr])
                 if oldval != newval:
-                    if attr=="xraycmp":
+                    if attr == "xraycmp":
                         self.update_xrayDates(newval)
-                    elif attr=="periocmp":
+                    elif attr == "periocmp":
                         self.update_perioDates(newval)
                     elif attr not in fieldsToExclude:
-                        if attr!="memo" or oldval.replace(chr(13),"")!=newval:
+                        if attr != "memo" or oldval.replace(chr(13), "") != newval:
                             #--ok - windows line ends from old DB were
                             #-- creating an issue
                             #-- memo was reporting that update had occurred.
@@ -5487,24 +5508,24 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         else: #this should NEVER happen!!!
             self.advise( "POTENTIALLY SERIOUS CONFUSION PROBLEM"+
                         " WITH PT RECORDS %d and %d"%\
-                        (self.pt.serialno,self.pt_dbstate.serialno),2)
+                        (self.pt.serialno, self.pt_dbstate.serialno), 2)
             return changes
 
     def save_changes(self):
         '''
         updates the database when the save is requested
         '''
-        if self.pt.serialno==0:
-            self.advise("no patient selected",1)
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
             return
         if self.editPageVisited:
             #-- only make changes if user has visited this tab
             self.apply_editpage_changes()
-        if self.pt.HIDDENNOTES!=[]:
+        if self.pt.HIDDENNOTES != []:
             #-- hidden notes is
             #-- treatment codes... money, printing etc..
             print "saving hiddennotes"
-            patient_write_changes.toNotes(self.pt.serialno,self.pt.HIDDENNOTES)
+            patient_write_changes.toNotes(self.pt.serialno, self.pt.HIDDENNOTES)
             self.pt.clearHiddenNotes()
 
         self.updateDaybook()
@@ -5514,7 +5535,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
 
 
 
-            result=patient_write_changes.all_changes(self.pt,uc,
+            result=patient_write_changes.all_changes(self.pt, uc,
             self.pt_dbstate.estimates)
 
             if result: #True if sucessful
@@ -5522,16 +5543,16 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                 message="Sucessfully altered the following items<ul>"
                 for item in uc:
                     message+="<li>%s</li>"%str(item)
-                self.advise(message+"</ul>",1)
+                self.advise(message+"</ul>", 1)
             else:
-                self.advise("Error applying changes... please retry",2)
+                self.advise("Error applying changes... please retry", 2)
                 print "error saving changes to record %s"%self.pt.serialno,
-                print result,str(uc)
+                print result, str(uc)
 
         #--convert to python datatype
         newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
         if len(newnote)>0:
-            newnote=newnote.replace('"',"'")
+            newnote=newnote.replace('"', "'")
             #--because " knackers my sql queries!!
             notelines=[]
             #-- silly database stores note lines as strings of max 80chrs
@@ -5548,9 +5569,9 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                 newnote=newnote[pos+1:]
             notelines.append(newnote)
             print "NOTES UPDATE\n%s"%notelines
-            result= patient_write_changes.toNotes(self.pt.serialno,notelines)
+            result= patient_write_changes.toNotes(self.pt.serialno, notelines)
             #--sucessful write to db?
-            if result !=-1:
+            if result != -1:
                 #--result will be a "line number" or -1 if unsucessful write
                 self.ui.notesEnter_textEdit.setText("")
                 self.pt.getNotesTuple()
@@ -5558,15 +5579,15 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
                 self.ui.notesSummary_textBrowser.setHtml(notes.notes(
                                                             self.pt.notestuple))
                 self.ui.notesSummary_textBrowser.scrollToAnchor("anchor")
-                if self.ui.tabWidget.currentIndex()==5:
+                if self.ui.tabWidget.currentIndex() == 5:
                     self.updateNotesPage()
             else:
                 #--exception writing to db
-                self.advise("error writing notes to database... sorry!",2)
+                self.advise("error writing notes to database... sorry!", 2)
         self.updateDetails()
 
 
-    def enableEdit(self,arg=True):
+    def enableEdit(self, arg=True):
         '''
         disable/enable widgets "en mass" when no patient loaded
         '''
@@ -5587,10 +5608,10 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
 
             widg.setEnabled(arg)
 
-        for i in (0,1,2,5,6,7,8,9):
-            if self.ui.tabWidget.isTabEnabled(i)!=arg:
-                self.ui.tabWidget.setTabEnabled(i,arg)
-        if arg==True and "N" in self.pt.cset:
+        for i in (0, 1, 2, 5, 6, 7, 8, 9):
+            if self.ui.tabWidget.isTabEnabled(i) != arg:
+                self.ui.tabWidget.setTabEnabled(i, arg)
+        if arg == True and "N" in self.pt.cset:
             #-- show NHS form printing button
             self.ui.NHSadmin_groupBox.show()
         else:
@@ -5617,7 +5638,7 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
         Dialog = QtGui.QDialog(self)
         dl = Ui_changeDatabase.Ui_Dialog()
         dl.setupUi(Dialog)
-        QtCore.QObject.connect(dl.checkBox,QtCore.SIGNAL("stateChanged(int)"),
+        QtCore.QObject.connect(dl.checkBox, QtCore.SIGNAL("stateChanged(int)"),
                                                                 togglePassword)
         if Dialog.exec_():
             from openmolar import connect
@@ -5628,9 +5649,9 @@ printingClass,cashbooks,contractClass, historyClass, forumClass):
             try:
                 connect.mainconnection.close()
                 connect.forumconnection.close()
-                self.advise("Applying changes",1)
+                self.advise("Applying changes", 1)
                 localsettings.initiate()
-            except Exception,e:
+            except Exception, e:
                 print "unable to close existing connection!"
                 print e
 
