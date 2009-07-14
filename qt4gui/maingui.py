@@ -4684,7 +4684,7 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
                     return True
                 elif dl.result == "save":
                     print "user is saving"
-                    self.save_changes()
+                    self.save_changes(True)
                     return True
                 #--cancelled action
                 else:
@@ -5461,6 +5461,7 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
             self.pt.cmpd=localsettings.ukToday()
             self.pt.courseno0=None
             self.pt.addHiddenNote("close_course")
+            self.save_changes(True)
             self.reload_patient()
 
             ##-- I removed these lines because I think it is safer to
@@ -5519,7 +5520,7 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
                         (self.pt.serialno, self.pt_dbstate.serialno), 2)
             return changes
 
-    def save_changes(self):
+    def save_changes(self, leavingRecord=False):
         '''
         updates the database when the save is requested
         '''
@@ -5545,7 +5546,7 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
             self.pt_dbstate.estimates)
 
             if result: #True if sucessful
-                if "estimates" in uc:
+                if not leavingRecord and "estimates" in uc:
                     #-- necessary to get index numbers for estimate data types
                     self.pt.getEsts()
                     if self.ui.tabWidget.currentIndex() == 7:
