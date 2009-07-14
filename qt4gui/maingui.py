@@ -781,9 +781,15 @@ class feeClass():
                                                     newplan,newcompleted)
 
                     self.checkEstBox(planATT[:3],newcompleted)
-
-                self.pt.addHiddenNote("treatment",planATT[:-2].upper()+
-                " "+newcompleted)
+                    
+                    #--tooth may be deciduous
+                    tooth=self.pt.chartgrid.get(planATT[:3])
+                    self.pt.addHiddenNote("treatment",
+                    "%s %s"% (tooth.upper(), newcompleted))
+                    
+                else:    
+                    self.pt.addHiddenNote("treatment",
+                    "%s %s"% (planATT[:-2].upper(), newcompleted))
 
     def getFeesFromEst(self, tooth, treat):
         '''
@@ -2740,23 +2746,37 @@ class signals():
     def signals_printing(self):
         #printing buttons
         QtCore.QObject.connect(self.ui.receiptPrintButton,
-                        QtCore.SIGNAL("clicked()"), self.printDupReceipt)
+        QtCore.SIGNAL("clicked()"), self.printDupReceipt)
+        
         QtCore.QObject.connect(self.ui.exportChartPrintButton,
-                               QtCore.SIGNAL("clicked()"), self.printChart)
+        QtCore.SIGNAL("clicked()"), self.printChart)
+
         QtCore.QObject.connect(self.ui.simpleNotesPrintButton,
-                               QtCore.SIGNAL("clicked()"), self.printNotes)
+        QtCore.SIGNAL("clicked()"), self.printNotes)
+
         QtCore.QObject.connect(self.ui.detailedNotesPrintButton,
-                               QtCore.SIGNAL("clicked()"), self.printNotesV)
+        QtCore.SIGNAL("clicked()"), self.printNotesV)
+
         QtCore.QObject.connect(self.ui.referralLettersPrintButton,
-                               QtCore.SIGNAL("clicked()"), self.printReferral)
+        QtCore.SIGNAL("clicked()"), self.printReferral)
+
         QtCore.QObject.connect(self.ui.standardLetterPushButton,
-                               QtCore.SIGNAL("clicked()"), self.printLetter)
+        QtCore.SIGNAL("clicked()"), self.printLetter)
+
         QtCore.QObject.connect(self.ui.recallpushButton,
-                               QtCore.SIGNAL("clicked()"), self.exportRecalls)
+        QtCore.SIGNAL("clicked()"), self.exportRecalls)
+
         QtCore.QObject.connect(self.ui.account2_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.accountButton2Clicked)
+        QtCore.SIGNAL("clicked()"), self.accountButton2Clicked)
+
         QtCore.QObject.connect(self.ui.previousCorrespondence_treeWidget,
-        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"), self.showDoc)
+        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"), 
+        self.showDoc)
+
+        QtCore.QObject.connect(self.ui.recall_dateEdit,
+        QtCore.SIGNAL("dateChanged (const QDate&)"), self.recallDate)
+        
+        
     def signals_menu(self):
         #menu
         QtCore.QObject.connect(self.ui.action_save_patient,
@@ -5032,6 +5052,10 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
         self.ui.staticChartWidget.setSelected(0, 0)  #select the UR8
         self.chartsTable()
         self.bpe_dates()
+
+        self.ui.recall_dateEdit.setDate(
+        localsettings.pyDatefromUKDate(self.pt.recd))
+
         try:
             pos=localsettings.csetypes.index(self.pt.cset)
         except ValueError:
@@ -5296,6 +5320,17 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
         else:
             self.advise("no file chosen", 1)
         self.loadpatient()
+
+    def recallDate(self, arg):
+        '''
+        receives a signal when the date changes in the recall date edit
+        on the correspondence page
+        '''
+        newdate = localsettings.formatDate(arg.toPyDate())
+        if self.pt.recd != newdate:
+            self.pt.recd = newdate
+            self.updateDetails() 
+        
 
     def exportRecalls(self):
         '''
