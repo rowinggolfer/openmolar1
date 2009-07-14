@@ -296,6 +296,7 @@ class patient():
         estimates where serialno=%d and courseno=%d order by itemcode desc'''%(
         self.serialno,self.courseno0))
         rows = cursor.fetchall()
+        self.estimates=[]
         for row in rows:
             #initiate a custom data class
             est=estimates.est()

@@ -3942,7 +3942,7 @@ class printingClass():
         if self.pt.serialno == 0:
             self.advise("no patient selected", 1)
             return
-        myreceipt=receiptPrint.receipt()
+        myreceipt=receiptPrint.receipt(self)
 
         myreceipt.setProps(self.pt.title, self.pt.fname, self.pt.sname,
         self.pt.addr1, self.pt.addr2, self.pt.addr3, self.pt.town,
@@ -5541,12 +5541,16 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
         if uc != []:
             print "changes made to patient atttributes..... updating database"
 
-
-
             result=patient_write_changes.all_changes(self.pt, uc,
             self.pt_dbstate.estimates)
 
             if result: #True if sucessful
+                if "estimates" in uc:
+                    #-- necessary to get index numbers for estimate data types
+                    self.pt.getEsts()
+                    if self.ui.tabWidget.currentIndex() == 7:
+                        self.load_newEstPage()
+            
                 self.pt_dbstate=copy.deepcopy(self.pt)
                 message="Sucessfully altered the following items<ul>"
                 for item in uc:
