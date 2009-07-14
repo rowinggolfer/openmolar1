@@ -889,39 +889,46 @@ class feeClass():
             print "UNABLE TO MOVE %s item"%type
 
 
-    def deleteTxItem(self,est):
+    def deleteTxItem(self,pl_cmp,type):
         '''
         estWidget has removed an item from the estimates.
         (user clicked on the delete button)
         now try and remove from the plan
         '''
-        print "delete item from treament plan or completed",est
-        tup=est.type.split(" ")
+        
+        print "pl_cmp='%s',treat='%s'"% (pl_cmp, type)
+        #return
+        #self.advise("remove from the plan manually if necessary",1)
+        ##TODO - I reversed this.
+        
+        
+        #print "delete item from treament plan or completed",est
+        tup = type.split(" - ")
         try:
             att=tup[0]
             treat=tup[1]+" "
-            #-- in the special case of an exam...
-            #-- it shouldn't need to be removed.
-            #-- as you can't "plan" an exam....
-            #-- however check anyway, better safe than sorry.
-            if att == "exam" and self.pt.examt == "":
-                self.load_treatTrees()
-                return
+            
             result=QtGui.QMessageBox.question(self,"question",
             "remove %s %sfrom this course of treatment?"%(att,treat),
             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
             if result == QtGui.QMessageBox.Yes:
-                if att  == "exam":
+                if att  == "Exam":
                     self.pt.examt=""
                     self.pt.examd=""
                     self.pt.addHiddenNote("exam","%s"%tup[1],True)
                 else:
-                    plan=self.pt.__dict__[att+"pl"].replace(treat,"")
-                    self.pt.__dict__[att+"pl"]=plan
-                    completed=self.pt.__dict__[att+"cmp"].replace(treat,"")
-                    self.pt.__dict__[att+"cmp"]=completed
-
+                    if pl_cmp=="pl":
+                        plan=self.pt.__dict__[att+"pl"].replace(treat,"")
+                        self.pt.__dict__[att+"pl"]=plan
+                        completed=self.pt.__dict__[att+"cmp"]
+                        #self.pt.__dict__[att+"cmp"]=completed
+                    else:
+                        plan=self.pt.__dict__[att+"pl"]
+                        #self.pt.__dict__[att+"pl"]=plan
+                        completed=self.pt.__dict__[att+"cmp"].replace(treat,"")
+                        self.pt.__dict__[att+"cmp"]=completed
+                    
                     #-- now update the charts
                     if re.findall("[ul][lr][1-8]",att):
                         self.updateChartsAfterTreatment(att,plan,completed)
@@ -968,15 +975,16 @@ class feeClass():
             for i in range(treeWidgetItem.childCount()):
                 message+="<li>%s</li>"%treeWidgetItem.child(i).text(0)
             message+="</ul>"
+            self.advise(message,1)
         else:
             #--item
-            message="You've selected %ss<br /> %s"%(
-            type,treeWidgetItem.parent().text(0))
-
-            message+="<br />%s"%treeWidgetItem.text(0)
-
-        self.advise(message,1)
-
+            message = "You've selected %ss<br /> %s"% (
+            type, treeWidgetItem.parent().text(0))
+            trtmtType = str(treeWidgetItem.text(0))
+            message += "<br />%s"% trtmtType
+            #self.advise(message,1)
+        
+            self.deleteTxItem(pl_cmp, trtmtType)
 
     def completeAllTreatments(self):
         ##############################todo - decide about this
@@ -2806,8 +2814,8 @@ class signals():
         QtCore.QObject.connect(self.ui.estWidget,
                         QtCore.SIGNAL("unCompletedItem"), self.unCompleteItem)
 
-        QtCore.QObject.connect(self.ui.estWidget,
-                              QtCore.SIGNAL("deleteItem"), self.deleteTxItem)
+        #QtCore.QObject.connect(self.ui.estWidget,
+        #                      QtCore.SIGNAL("deleteItem"), self.deleteTxItem)
 
         QtCore.QObject.connect(self.ui.plan_treeWidget, QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
@@ -4131,7 +4139,7 @@ class printingClass():
             if localsettings.uk_to_sqlDate(adate)>localsettings.sqlToday():
                 futureAppts+=((adate, str(i.text(2)), str(i.text(1))), )
             iter+=1
-        card=apptcardPrint.card()
+        card=apptcardPrint.card(self.ui)
         card.setProps(self.pt.title, self.pt.fname, self.pt.sname,
                       self.pt.serialno, futureAppts)
         card.print_()

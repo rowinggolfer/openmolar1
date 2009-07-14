@@ -8,14 +8,14 @@
 
 '''
 this module provides two classes.
-a parent "estimate widget", and a custom item widget for displaying 
+a parent "estimate widget", and a custom item widget for displaying
 and editing treatment costs
 '''
 
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.customwidgets import Ui_estimateItemWidget,\
+from openmolar.qt4gui.customwidgets import Ui_estimateItemWidget, \
 Ui_estHeaderWidget, Ui_estFooterWidget, chainLabel
 
 from openmolar.qt4gui.dialogs import Ui_estSplitItemsDialog
@@ -24,7 +24,8 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
     '''
     a class to show one specific item of treatment
     '''
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
+        #super(estItemWidget, self).__init__(parent)
         self.parent = parent
         self.setupUi(self.parent)
         self.addchain()
@@ -32,15 +33,17 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.feesLinked = True
         self.items = []
         self.itemCode = ""
+        self.allCompleted = True
+        self.allPlanned = True
         self.signals()
-        
+
     def addchain(self):
         '''
-        called at init - adds a chain icon showing if the fee/pt fee 
+        called at init - adds a chain icon showing if the fee/pt fee
         are identical
         '''
         self.chain = chainLabel.chainLabel(self.chain_frame)
-        QtCore.QObject.connect(self.chain, 
+        QtCore.QObject.connect(self.chain,
         QtCore.SIGNAL("chained"), self.linkfees)
 
     def linkfees(self, arg):
@@ -48,7 +51,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         toggles a boolean which determines if the pt fee and fee are the same
         '''
         self.feesLinked = arg
-        
+
     def setChain(self, cset):
         '''
         break the chain if the course type is not P
@@ -59,34 +62,34 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
     def setItem(self, item):
         '''
         sets the item being displayed
-        ''' 
+        '''
         self.items.append(item)
         self.code_label.setToolTip(self.toolTip())
         self.loadValues()
-        
+
     def separateIcon(self, separate=True):
         '''
         this is our little chain icon
         '''
         icon = QtGui.QIcon()
         if separate:
-            icon.addPixmap(QtGui.QPixmap(":icons/separate.png"),  
+            icon.addPixmap(QtGui.QPixmap(":icons/separate.png"),
             QtGui.QIcon.Normal, QtGui.QIcon.Off)
         else:
-            icon.addPixmap(QtGui.QPixmap(":/eraser.png"), 
+            icon.addPixmap(QtGui.QPixmap(":/eraser.png"),
             QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            
+
         self.delete_pushButton.setIcon(icon)
-        
+
     def addItem(self, item):
-        ''' 
-        when we have 2 of the same item... 
+        '''
+        when we have 2 of the same item...
         we add it using this procedure, rather than creating a new widget
         '''
         self.items.append(item)
         self.code_label.setToolTip(self.toolTip())
-        self.multiValues()
-        
+        self.loadValues()
+
     def toolTip(self):
         '''
         calculates a string to be added as a tool tip for the widget
@@ -94,44 +97,52 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         retarg = '<center>'
         for item in self.items:
             retarg += '''Type - '%s'<br />ItemCode - '%s'<br />Feescale - %s
-            <br />CSEtype - %s<br />Dent - %s<br />DBindex - %s<hr />'''%(
+            <br />CSEtype - %s<br />Dent - %s<br />DBindex - %s<hr />'''% (
             item.type,
             item.itemcode,
             item.feescale,
             item.csetype,
             item.dent,
             item.ix)
-        return retarg+"</center>"
-    
+        return retarg + "</center>"
+
     def loadValues(self):
         '''
         loads the values stored in self.items into the graphical widgets
         '''
-        item = self.items[0]        
-        if item.number != None:
-            self.setNumber(item.number)
-        self.setFee(item.fee)
-        self.setPtFee(item.ptfee)
-        self.setDescription(item.description)
-        self.setType(item.type)
-        self.setItemCode(item.itemcode)
-        self.setCompleted(item.completed)
-        self.setCset(item.csetype)
-        self.setChain(item.csetype)
-
-    def multiValues(self):
-        '''
-        procedure called when we have 2 items of the same type and description
-        '''
         fee, ptfee, number = 0, 0, 0
+        treatmentPlanned = True
+        treatmentCompleted = True
         for item in self.items:
             if item.number:
                 number += item.number
             fee += item.fee
             ptfee += item.ptfee
+            self.setDescription(item.description)
+            self.setType(item.type)
+            self.setItemCode(item.itemcode)
+            self.setCompleted(item.completed)
+            self.setCset(item.csetype)
+            self.setChain(item.csetype)
+            if item.completed:
+                treatmentPlanned=False
+            else:
+                treatmentCompleted=False
+
+        #-- set partially checked if any doubt
+        if treatmentPlanned:
+            self.completed_checkBox.setChecked(False)
+        elif treatmentCompleted:
+            self.completed_checkBox.setCheckState(
+            QtCore.Qt.CheckState(QtCore.Qt.Checked))
+        else:
+            self.completed_checkBox.setCheckState(
+            QtCore.Qt.CheckState(QtCore.Qt.PartiallyChecked))
+
         self.setNumber(number)
         self.setFee(fee)
         self.setPtFee(ptfee)
+
         if len(self.items)>1:
             self.separateIcon()
             self.code_label.setText("multi")
@@ -139,19 +150,19 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             self.separateIcon(False)
             self.setType(self.items[0].type)
 
-            
     def validators(self):
         '''
         set validators to prevent junk data being entered by user
         '''
-        self.fee_lineEdit.setValidator(QtGui.\
-        QDoubleValidator(0.0, 3000.0, 2, self.fee_lineEdit) )
-        self.ptFee_lineEdit.setValidator(QtGui.\
-        QDoubleValidator(0.0, 3000.0, 2, self.ptFee_lineEdit) )
+        self.fee_lineEdit.setValidator(QtGui.QDoubleValidator(
+        0.0, 3000.0, 2, self.fee_lineEdit) )
+
+        self.ptFee_lineEdit.setValidator(QtGui.QDoubleValidator(
+        0.0, 3000.0, 2, self.ptFee_lineEdit) )
 
         #self.fee_lineEdit.setInputMask('000.00')
         #self.ptFee_lineEdit.setInputMask("000.00")
-           
+
     def signals(self):
         '''
         connects signals
@@ -161,11 +172,11 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
 
         QtCore.QObject.connect(self.completed_checkBox,
         QtCore.SIGNAL("clicked()"), self.completeItem)
-        
+
         self.cset_lineEdit.connect(self.cset_lineEdit, QtCore.SIGNAL(
         "textEdited (const QString&)"), self.update_cset)
 
-        self.description_lineEdit.connect(self.description_lineEdit, 
+        self.description_lineEdit.connect(self.description_lineEdit,
         QtCore.SIGNAL("textEdited (const QString&)"), self.update_descr)
 
         self.fee_lineEdit.connect(self.fee_lineEdit, QtCore.SIGNAL(
@@ -176,26 +187,26 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
 
     def update_cset(self, arg):
         '''
-        csetype has been altered, alter ALL underying data 
+        csetype has been altered, alter ALL underying data
         (for multiple items)
         '''
         for item in self.items:
             item.csetype = str(arg)
-    
+
     def update_descr(self, arg):
         '''
-        description has been altered, alter ALL underying data 
+        description has been altered, alter ALL underying data
         (for multiple items)
-        '''        
+        '''
         for item in self.items:
             item.description = str(arg).replace('"', '\"')
 
     def update_Fee(self, arg, userPerforming=True):
         '''
-        fee has been altered, alter ALL underying data 
+        fee has been altered, alter ALL underying data
         for multiple items - the new fee is what has been inputted / number
         of items.
-        '''                
+        '''
         try:
             newVal = int(float(arg)*100)
             if self.feesLinked and userPerforming:
@@ -207,10 +218,10 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             item.fee = newVal / len(self.items)
         if userPerforming:
             self.userInput()
-    
+
     def update_ptFee(self, arg, userPerforming=True):
         '''
-        ptfee has been altered, alter ALL underying data 
+        ptfee has been altered, alter ALL underying data
         for multiple items - the new fee is what has been inputted / number
         of items.
         '''
@@ -225,7 +236,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             item.ptfee = newVal / len(self.items)
         if userPerforming:
             self.userInput()
-    
+
     def setNumber(self, arg):
         '''
         update number label
@@ -235,13 +246,13 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
     def setDescription(self, arg):
         '''
         update description label
-        '''        
+        '''
         self.description_lineEdit.setText(arg)
 
     def setType(self, arg):
         '''
         update the important type label
-        '''                
+        '''
         if arg in (None, ""):
             self.code_label.setText("?")
         elif arg[:2] in ("ur", "ul", "ll", "lr"):
@@ -249,36 +260,36 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             self.code_label.setText(arg)
         else:
             self.code_label.setText(arg.split(" ")[0])
-    
+
     def setItemCode(self, arg):
         '''
         update the item code
         '''
-        self.itemcode = arg
+        self.itemCode = arg
         if arg in (None, ""):
             arg = "-"
         self.itemCode_label.setText(arg)
-        
+
     def setCset(self, arg):
         '''
         update the course type
         '''
         if arg in (None, ""):
-            arg = "-"        
+            arg = "-"
         self.cset_lineEdit.setText(str(arg))
-    
+
     def setFee(self, arg):
         '''
         update the fee lineedit
         '''
         self.fee_lineEdit.setText("%.02f"%(arg/100))
-    
+
     def setPtFee(self, arg):
         '''
         update the fee lineedit
         '''
         self.ptFee_lineEdit.setText("%.02f"%(arg/100))
-    
+
     def setCompleted(self, arg):
         '''
         function so that external calls can alter this widget
@@ -303,7 +314,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.fee_lineEdit.setEnabled(state)
         self.ptFee_lineEdit.setEnabled(state)
         self.chain.setEnabled(state)
-        
+
     def completeItem(self):
         '''
         a slot for the checkbox state change
@@ -312,18 +323,19 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         number = len(self.items)
         arg = self.completed_checkBox.checkState()
         print arg
-        if arg == 1:
-            #-- it is _partially_ checked... so perform logic.
-            action = "complete"
-            complete = True
-        elif arg == 0:
+        if arg == 0:
             action = "reverse"
             complete = False
+        elif arg == 1:
+            #-- it is _partially_ checked... so perform logic.
+            #-- the user is "completing"
+            action = "complete"
+            complete = True
         else:
             self.splitMultiItemDialog()
             return
-        
-        if number>1:
+
+        if number > 1:
             number_of_relevant_items = 0
             for item in self.items:
                 if item.completed != complete:
@@ -336,9 +348,9 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             "Multiple items",
             '''There are %d items associated with this Widget.<br />
             of these, %d would be affected<br />
-            %s %s?'''%(number, number_of_relevant_items, action, mystr),
+            %s %s?'''% (number, number_of_relevant_items, action, mystr),
             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            if result == QtGui.QMessageBox.Yes:                
+            if result == QtGui.QMessageBox.Yes:
                 self.completed_checkBox.setChecked(complete)
                 self.checked()
                 for item in self.items:
@@ -353,13 +365,13 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             self.items[0].completed = complete
             finalState = complete
             self.parent.emit(QtCore.SIGNAL("completedItem"), (self.items[0]))
-        
+
         if finalState:
             self.completed_checkBox.setCheckState(
             QtCore.Qt.CheckState(QtCore.Qt.Checked))
         else:
             self.completed_checkBox.setChecked(finalState)
-        self.checked() #changes the enabled state of buttons etc...            
+        self.checked() #changes the enabled state of buttons etc...
         self.userInput()
 
     def userInput(self):
@@ -380,12 +392,19 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         ew = estWidget()
         ew.setEstimate(self.items, True)
         dl.scrollArea.setWidget(ew)
-        
-        #-- this miniDialog emits signals that go uncaught 
-        ew.connect(ew, QtCore.SIGNAL("applyFeeNow"), self.passOnApplyFeeNowSignal)
-        ew.connect(ew, QtCore.SIGNAL("completedItem"), self.passOnCompletedSignal)
-        ew.connect(ew, QtCore.SIGNAL("unCompletedItem"), self.passOnUncompletedSignal)
-        ew.connect(ew, QtCore.SIGNAL("deleteItem"), self.passOnDeleteItemSignal)
+
+        #-- this miniDialog emits signals that go uncaught
+        ew.connect(ew, QtCore.SIGNAL("applyFeeNow"),
+        self.passOnApplyFeeNowSignal)
+
+        ew.connect(ew, QtCore.SIGNAL("completedItem"),
+        self.passOnCompletedSignal)
+
+        ew.connect(ew, QtCore.SIGNAL("unCompletedItem"),
+        self.passOnUncompletedSignal)
+
+        ew.connect(ew, QtCore.SIGNAL("deleteItem"),
+        self.passOnDeleteItemSignal)
 
         Dialog.exec_()
         if ew.allPlanned:
@@ -396,16 +415,16 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         else:
             self.completed_checkBox.setCheckState(
             QtCore.Qt.CheckState(QtCore.Qt.PartiallyChecked))
-            
-        self.multiValues()
+
+        self.loadValues()
         self.userInput()
-        
+
     def passOnCompletedSignal(self, arg):
         '''
         the child dialog has emitted a signal... pass it on
         '''
         self.parent.parent().emit(QtCore.SIGNAL("completedItem"), arg)
-    
+
     def passOnUncompletedSignal(self, arg):
         '''
         the child dialog has emitted a signal... pass it on
@@ -425,14 +444,14 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         print "passing on delete message"
         self.parent.parent().ests.remove(arg)
         self.parent.parent().emit(QtCore.SIGNAL("deleteItem"), arg)
-    
+
 class estWidget(QtGui.QFrame):
     '''
     provides a custom widget to view/edit the patient's estimate
     currently 4 view choices.
     0 = standard
     1 = expanded
-    2 = seperate plan/completed 
+    2 = seperate plan/completed
     3 = seperate plan/completed expanded
     '''
     def __init__(self, parent=None):
@@ -453,7 +472,7 @@ class estWidget(QtGui.QFrame):
         self.planFooter.setupUi(footer)
         self.planFooter.label.setText("Planned Items Total")
         self.estimate_layout.addWidget(footer)
-        
+
         footer = QtGui.QWidget()
         self.compFooter = Ui_estFooterWidget.Ui_Form()
         self.compFooter.setupUi(footer)
@@ -473,13 +492,13 @@ class estWidget(QtGui.QFrame):
         self.allCompleted = True
         self.allPlanned = True
 
-        self.bareMinimumHeight = header.height()+footer.height()
+        self.bareMinimumHeight = header.height() + footer.height()
 
         self.setMinimumSize(self.minimumSizeHint())
 
     def minimumSizeHint(self):
         height = self.bareMinimumHeight
-        height += len(self.estItemWidgets)*28
+        height += len(self.estItemWidgets) * 28
         return QtCore.QSize(720, height)
 
     def updateTotals(self):
@@ -488,15 +507,15 @@ class estWidget(QtGui.QFrame):
         plan_total = 0
         planpt_total = 0
         comp_total = 0
-        compt_total = 0            
-        
+        compt_total = 0
+
         self.allCompleted = True
         self.allPlanned = True
         for est in self.ests:
             if est.completed:
                 self.allPlanned = False
                 comp_total += est.fee
-                compt_total += est.ptfee            
+                compt_total += est.ptfee
             else:
                 self.allCompleted = False
                 plan_total += est.fee
@@ -504,19 +523,20 @@ class estWidget(QtGui.QFrame):
             self.total += est.fee
             self.ptTotal += est.ptfee
 
-        self.estFooter.fee_lineEdit.setText("%.02f"%(self.total/100))
-        self.estFooter.ptfee_lineEdit.setText("%.02f"%(self.ptTotal/100))
-        self.planFooter.fee_lineEdit.setText("%.02f"%(plan_total/100))
-        self.planFooter.ptfee_lineEdit.setText("%.02f"%(planpt_total/100))
-        self.compFooter.fee_lineEdit.setText("%.02f"%(comp_total/100))
-        self.compFooter.ptfee_lineEdit.setText("%.02f"%(compt_total/100))
+        self.estFooter.fee_lineEdit.setText("%.02f"% (self.total/100))
+        self.estFooter.ptfee_lineEdit.setText("%.02f"% (self.ptTotal/100))
+        self.planFooter.fee_lineEdit.setText("%.02f"% (plan_total/100))
+        self.planFooter.ptfee_lineEdit.setText("%.02f"% (planpt_total/100))
+        self.compFooter.fee_lineEdit.setText("%.02f"% (comp_total/100))
+        self.compFooter.ptfee_lineEdit.setText("%.02f"% (compt_total/100))
 
     def findExistingItemWidget(self, item):
         for widg in self.estItemWidgets:
-            if widg.itemcode == item.itemcode and widg.items[0].description == item.description:
+            if widg.itemCode == item.itemcode and \
+            widg.items[0].description == item.description:
                 widg.addItem(item)
                 return True
-                
+
     def setEstimate(self, ests, SPLIT_ALL=False):
         self.ests = ests
         self.clear()
@@ -525,7 +545,7 @@ class estWidget(QtGui.QFrame):
                 #-- try and match with existing items
                 print "added est to an existing widget item"
             else:
-                #--creats a widget
+                #--creates a widget
                 iw = QtGui.QWidget(self)
                 i = estItemWidget(iw)
                 i.setItem(item)
@@ -547,11 +567,11 @@ class estWidget(QtGui.QFrame):
             amountToRaise = item.ptfee
             self.emit(QtCore.SIGNAL("completedItem"), item.type)
         else:
-            amountToRaise = item.ptfee*-1
+            amountToRaise = item.ptfee * -1
             self.emit(QtCore.SIGNAL("unCompletedItem"), item.type)
 
         self.emit(QtCore.SIGNAL("applyFeeNow"), (amountToRaise))
-        
+
     def clear(self):
         '''
         clears all est widget in anticipation of a new estimate
@@ -577,33 +597,34 @@ class estWidget(QtGui.QFrame):
             est = arg.items[0]
             self.ests.remove(est)
             self.emit(QtCore.SIGNAL("deleteItem"), est)
-                
+
             self.estimate_layout.removeWidget(arg.parent)
             arg.parent.setParent(None)
             #for est in self.ests:
             #    if est.ix == arg.items[0].ix and est.type == arg.items[0].type:
             #        self.ests.remove(est)
             #        self.emit(QtCore.SIGNAL("deleteItem"), est)
-                
-            self.updateTotals()
 
+            self.updateTotals()
 
 if __name__ == "__main__":
     def CatchAllSignals(arg=None):
-        print"signal caught argument=", arg
+        '''test procedure'''
+        print "signal caught argument=", arg
+        print "estimates",  form.ests
     import sys
 
     app = QtGui.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
-    pt = patient_class.patient(11956)
+    pt = patient_class.patient(3)
     form = estWidget()
     form.setEstimate(pt.estimates)
     form.connect(form, QtCore.SIGNAL("completedItem"), CatchAllSignals)
     form.connect(form, QtCore.SIGNAL("unCompletedItem"), CatchAllSignals)
     form.connect(form, QtCore.SIGNAL("applyFeeNow"), CatchAllSignals)
     form.connect(form, QtCore.SIGNAL("deleteItem"), CatchAllSignals)
-    
+
     form.show()
 
     sys.exit(app.exec_())

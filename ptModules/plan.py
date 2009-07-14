@@ -70,13 +70,13 @@ def plannedItems(pt):
             items=tx.strip(" ").split(" ")
             for item in items:
                 #-- look for things like 2S - I want these as separate items
-                numbered=re.findall("^\d",item)
-                if numbered!=[]:
-                    number=numbered[0]
-                    for i in range(int(number)):
-                        plannedList.append((attrib, item.replace(number,"")),)
-                else:    
-                    plannedList.append((attrib, item), )
+                #numbered=re.findall("^\d",item)
+                #if numbered!=[]:
+                #    number=numbered[0]
+                #    for i in range(int(number)):
+                #        plannedList.append((attrib, item.replace(number,"")),)
+                #else:    
+                plannedList.append((attrib, item), )
     return plannedList
 
 def completedItems(pt):
@@ -89,13 +89,13 @@ def completedItems(pt):
             items=tx.strip(" ").split(" ")
             for item in items:
                 #-- look for things like 2S - I want these as separate items
-                numbered=re.findall("^\d",item)
-                if numbered!=[]:
-                    number=numbered[0]
-                    for i in range(int(number)):
-                        compList.append((attrib, item.replace(number,"")),)
-                else:    
-                    compList.append((attrib, item), )
+                #numbered=re.findall("^\d",item)
+                #if numbered!=[]:
+                #    number=numbered[0]
+                #    for i in range(int(number)):
+                #        compList.append((attrib, item.replace(number,"")),)
+                #else:    
+                compList.append((attrib, item), )
     return compList
 
 def summary(pt):
