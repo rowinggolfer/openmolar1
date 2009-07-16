@@ -454,7 +454,7 @@ class feeClass():
                     if self.pt.examt == "FCA":
                         self.pt.pd7 = examd
                     self.pt.examd = examd
-                    self.pt.recd = result[2].addMonths(6).toString("dd/MM/yyyy")
+                    self.pt.recd = str(result[2].addMonths(6).toString("dd/MM/yyyy"))
                     newnotes = str(self.ui.notesEnter_textEdit.toPlainText()\
                                  .toAscii())
                     newnotes+="%s examination performed by %s\n"%(

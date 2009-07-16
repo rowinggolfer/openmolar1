@@ -81,6 +81,7 @@ def details(pt, Saved=True):
             #retarg += "PRIVATE<br />"
         else:
             retarg += 'UNKNOWN COURSETYPE = %s <br />'% str(pt.cset)
+        #-- removed this next code as feescale is always the same
         #if pt.pf11!=0:
         #    retarg += '(feescale %s)<br />'%chr(pt.pf11)
         try:
@@ -110,7 +111,7 @@ def details(pt, Saved=True):
             localsettings.uk_to_sqlDate(lastexam):
                 lastexam = str(date)
                 letype = ("(CE)", "(ECE)", "(FCA)")[i]
-                i += 1
+            i += 1
 
         if letype != "":
             retarg += '<tr><td>Last Exam %s</td><td>%s</td></tr>'% (
