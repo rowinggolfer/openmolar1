@@ -59,7 +59,7 @@ def details(sno):
                 retarg+="</table>"
                 firstRow=False
             retarg+='''</table><h3>Estimate for course number %d</h3>
-            <table width="100%s" border="1">'''%(est.courseno,"%")
+            <table width="100%%" border="1">'''% est.courseno
             retarg+=est.htmlHeader()
             courseno=est.courseno
         retarg+=est.toHtmlRow()

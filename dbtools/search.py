@@ -64,9 +64,10 @@ def getsimilar(serialno,addr,sname,family):
         families=()
 
     if addr!='':
-        query='(ADDR1 like "%s" or '%(r'%'+addr+r'%')
-        query+='ADDR2 like "%s")'%(r'%'+addr+r'%')
-        query="select %s from patients where serialno != %d and %s order by fname,sname"%(fields,serialno,query)
+        query='(ADDR1 like "%%%s%%" or ADDR2 like "%%%s%%")'% (addr,addr)
+        query='''select %s from patients where serialno != %d 
+        and %s order by fname,sname'''% (fields,serialno,query)
+        
         if localsettings.logqueries:
             print query
         

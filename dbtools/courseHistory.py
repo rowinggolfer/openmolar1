@@ -75,7 +75,7 @@ class txCourse():
             bgcolor, bgcolor, dentureWork)
 
             retarg += '''<tr><th%s>Chart</th>
-            <td><table width = "100%s" border = "1"><tr>'''% (bgcolor, "%")
+            <td><table width = "100%%" border = "1"><tr>'''% bgcolor
 
             for att in uppers:
                 retarg += '<td align = "center"%s>%s</td>'% (

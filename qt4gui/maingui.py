@@ -3542,7 +3542,7 @@ class chartsClass():
             l=copy.deepcopy(self.pt.bpe)
             l.reverse()
             bpestring=l[arg][1]
-            bpe_html='<table width="100%s" border="1"><tr>'%'%'
+            bpe_html='<table width="100%" border="1"><tr>'
             for i in range(len(bpestring)):
                 if i == 3:
                     bpe_html+="</tr><tr>"
@@ -5052,9 +5052,9 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
         self.ui.staticChartWidget.setSelected(0, 0)  #select the UR8
         self.chartsTable()
         self.bpe_dates()
-
-        self.ui.recall_dateEdit.setDate(
-        localsettings.pyDatefromUKDate(self.pt.recd))
+        if self.pt.recd:
+            self.ui.recall_dateEdit.setDate(
+            localsettings.pyDatefromUKDate(self.pt.recd))
 
         try:
             pos=localsettings.csetypes.index(self.pt.cset)
