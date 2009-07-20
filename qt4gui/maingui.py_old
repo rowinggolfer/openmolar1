@@ -6,10 +6,6 @@
 # (at your option) any later version.
 # See the GNU General Public License for more details.
 
-'''
-provides the main class which is my gui
-'''
-
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
@@ -19,36 +15,33 @@ import copy
 import pickle
 import time
 import threading
+import re
 import subprocess
 import datetime
 
-from openmolar.settings import localsettings, utilities
+from openmolar.settings import localsettings, fee_keys,utilities
 from openmolar.qt4gui import Ui_main, colours
-
-#-- fee modules which interact with the gui
-from openmolar.qt4gui.fees import fees_module, course_module, examdialog, \
-perio_tx_dialog, add_tx_to_plan, complete_tx, manipulate_tx_plan, \
-daybook_module
 
 #--dialogs made with designer
 from openmolar.qt4gui.dialogs import Ui_patient_finder, Ui_select_patient, \
 Ui_enter_letter_text, Ui_phraseBook, Ui_changeDatabase, Ui_related_patients, \
-Ui_options, Ui_surgeryNumber, \
+Ui_raiseCharge, Ui_options, Ui_surgeryNumber, Ui_payments, paymentwidget, \
 Ui_specify_appointment, Ui_appointment_length, Ui_daylist_print, \
-Ui_confirmDentist, Ui_forumPost, Ui_showMemo
+Ui_confirmDentist, Ui_customTreatment, Ui_chooseDocument, Ui_forumPost, \
+Ui_showMemo
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time, recall_app, \
-medNotes, saveDiscardCancel, newBPE, \
-addTreat, addToothTreat, saveMemo, permissions, alterAday
+examWizard, medNotes, saveDiscardCancel, newBPE, newCourse, completeTreat, \
+hygTreatWizard, addTreat, addToothTreat, saveMemo, permissions, alterAday
 
 #-- secondary applications
 from openmolar.qt4gui.dialogs import apptTools
 
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook, patient_write_changes, recall, \
-cashbook, writeNewPatient, patient_class, search, appointments, \
-calldurr, docsprinted, forum, memos, nhs_claims, \
+cashbook, writeNewPatient, patient_class, search, appointments, accounts, \
+calldurr, feesTable, docsprinted, writeNewCourse, forum, memos, nhs_claims, \
 daybookHistory, paymentHistory, courseHistory, estimatesHistory
 
 #--modules which act upon the pt class type (and subclasses)
@@ -69,6 +62,1082 @@ perioChartWidget, estimateWidget, aptOVcontrol
 #--code more manageable. (supposedly!)
 #--watch out for namespace clashes!!!!!
 
+class feeClass():
+    def raiseACharge(self):
+        '''
+        this is called by the "raise a charge" button on the
+        clinical summary page
+        '''
+        if self.pt.serialno == 0:
+            self.advise("No patient Selected", 1)
+            return
+        Dialog = QtGui.QDialog(self)
+        dl = Ui_raiseCharge.Ui_Dialog()
+        dl.setupUi(Dialog)
+        if Dialog.exec_():
+            fee=dl.doubleSpinBox.value()
+            if self.pt.cset[:1] == "N":
+                self.pt.money0+=int(fee*100)
+            else:
+                self.pt.money1+=int(fee*100)
+            self.updateFees()
+            self.pt.addHiddenNote("treatment", " %s"%
+            str(dl.lineEdit.text().toAscii()))
+
+            self.pt.addHiddenNote("fee", "%.02f"%fee)
+
+    def getItemFees(self, item, no_items=1):
+        '''
+        pass itemcode eg"0101", get a tuple (fee, ptfee)
+        currently this gets the csetype from the pt coursetype.
+        returns a tuple
+        '''
+        conditions=[]
+        if self.pt.cset == "N":
+            if self.pt.exmpt != "":
+                conditions.append("NHS exempt=%s"%self.pt.exmpt)
+        itemfee, ptfee=fee_keys.getFee(self.pt.cset, item, no_items, conditions)
+        return itemfee, ptfee
+
+    def takePayment(self):
+        '''
+        raise a dialog, and take some money
+        '''
+        if self.pt.serialno == 0:
+            self.advise("No patient Selected <br />Monies will be "+ \
+            "allocated to Other Payments, and no receipt offered", 1)
+        dl=paymentwidget.paymentWidget(self)
+        dl.setDefaultAmount(self.pt.fees)
+        if dl.exec_():
+            if self.pt.serialno == 0:
+                paymentPt=patient_class.patient(18222)
+            else:
+                paymentPt=self.pt
+            cash=dl.cash_lineEdit.text()
+            cheque=dl.cheque_lineEdit.text()
+            debit=dl.debitCard_lineEdit.text()
+            credit=dl.creditCard_lineEdit.text()
+            sundries=dl.sundries_lineEdit.text()
+            hdp=dl.annualHDP_lineEdit.text()
+            other=dl.misc_lineEdit.text()
+            total=dl.total_doubleSpinBox.value()
+            name=paymentPt.sname+" "+paymentPt.fname[:1]
+            if paymentPt.dnt2 != 0:
+                dent=paymentPt.dnt2
+            else:
+                dent=paymentPt.dnt1
+
+            if cashbook.paymenttaken(paymentPt.serialno, name, dent,
+            paymentPt.cset, cash, cheque, debit, credit, sundries, hdp, other):
+
+                paymentPt.addHiddenNote(
+                "payment", " treatment %.02f sundries %.02f"%\
+                (dl.paymentsForTreatment, dl.otherPayments))
+
+                if self.pt.serialno != 0:
+                    self.printReceipt({"Professional Services":\
+                    dl.paymentsForTreatment*100, \
+                    "Other Items":dl.otherPayments*100})
+
+                    #-- always refer to money in terms of pence
+
+                    if self.pt.cset[:1] == "N":
+                        self.pt.money2+=int(dl.paymentsForTreatment*100)
+                    else:
+                        self.pt.money3+=int(dl.paymentsForTreatment*100)
+                    self.pt.updateFees()
+
+                patient_write_changes.toNotes(paymentPt.serialno,
+                                              paymentPt.HIDDENNOTES)
+
+                if patient_write_changes.discreet_changes(paymentPt,
+                ("money2", "money3")) and self.pt.serialno != 0:
+
+                    self.pt_dbstate.money2=self.pt.money2
+                    self.pt_dbstate.money3=self.pt.money3
+
+                paymentPt.clearHiddenNotes()
+                self.updateDetails()
+            else:
+                self.advise("error applying payment.... sorry!<br />"\
+                +"Please write this down and tell Neil what happened", 2)
+
+    def loadFeesTable(self):
+        '''
+        loads the fee table (you guessed, huh?)
+        '''
+        headers=feesTable.getFeeHeaders()
+        #self.ui.fees_treeWidget.setColumnCount(9)
+
+        self.ui.fees_treeWidget.setHeaderLabels(headers)
+        feeDict=feesTable.getFeeDict()
+        fdKeys=feeDict.keys()
+        fdKeys.sort()
+        print fdKeys
+        headers=("Diagnosis", "Preventive", "Perio", "Conservation", "Surgical",
+        "Prosthetics", "Orthodontics", "Other", "Capitation (minors)",
+        "Occasional")
+        for fdKey in fdKeys:
+            feeLists=feeDict[fdKey]
+            headerText=headers[fdKeys.index(fdKey)]
+            header=QtGui.QTreeWidgetItem(self.ui.fees_treeWidget, [headerText])
+            for feeTup in feeLists:
+                feeList=[]
+                col=0
+                for item in feeTup:
+                    if col>5:
+                        feeList.append(localsettings.formatMoney(item))
+                    else:
+                        feeList.append(str(item))
+                    col+=1
+                QtGui.QTreeWidgetItem(header, feeList)
+
+        self.chooseFeeColumns(0)
+        #-- prevent it getting loaded again
+        #--(and undoing any user changes to col widths, expanded items etc...
+        self.feestableLoaded=True
+        self.feesTable_searchList=[]
+        self.feesTable_searchpos=0
+
+    def feeSearch(self):
+        '''
+        fee search button clicked...
+        user is looking up a fee from the fee table
+        the values are already stored.
+        '''
+        n=len(self.feesTable_searchList)
+        if n == 0:
+            self.advise("Not found, or invalid search")
+            return
+        if self.feesTable_searchpos>=n:
+            self.feesTable_searchpos=0
+        item = self.feesTable_searchList[self.feesTable_searchpos]
+
+        self.ui.fees_treeWidget.scrollToItem(item,
+        QtGui.QAbstractItemView.ScrollHint(
+        QtGui.QAbstractItemView.PositionAtCenter))
+
+        self.ui.fees_treeWidget.setCurrentItem(item)
+        self.feesTable_searchpos+=1
+
+    def newFeeSearch(self):
+        '''
+        user has finished editing the
+        feesearchLineEdit - time to refill the searchList
+        '''
+        searchField=self.ui.feeSearch_lineEdit.text()
+        print "search for", searchField
+
+        matchflags=QtCore.Qt.MatchFlags(
+        QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
+
+        #--get a list of items containing that string
+        self.feesTable_searchList=self.ui.fees_treeWidget.findItems(
+        searchField, matchflags, 4)
+
+        self.feesTable_searchpos=0
+        self.ui.feeSearch_pushButton.setFocus()
+        self.feeSearch()
+
+    def nhsRegsPDF(self):
+        '''
+        I have some stored PDF documents
+        the user wants to see these
+        '''
+        Dialog=QtGui.QDialog(self)
+        dl=Ui_chooseDocument.Ui_Dialog()
+        dl.setupUi(Dialog)
+        if Dialog.exec_():
+            if dl.info_radioButton.isChecked():
+                doc="Dental_Information_Guide_2008_v4.pdf"
+            else:
+                doc="scotNHSremuneration08.pdf"
+            try:
+                proc=subprocess.Popen(["%s"%localsettings.pdfProg,
+                "resources/%s"%doc])
+            except Exception, e:
+                print Exception, e
+                self.advise("Error opening PDF file", 2)
+    def chooseFeescale(self, arg):
+        '''
+        recieves signals from the choose feescale combobox
+        '''
+        print "choose Feescale needs work"
+        ##TODO - neds work
+
+        if arg == 0:
+            #show all
+            pass
+        elif arg == 1:
+            #show private
+            pass
+        elif arg == 2:
+            #show NHS
+            pass
+    def chooseFeeItemDisplay(self, arg):
+        '''
+        recieves signals from the choose feescale Items combobox
+        '''
+        print "choose Feescale Items needs work"
+        ##TODO - neds work
+
+        if arg == 0:
+            #show all
+            pass
+        elif arg == 1:
+            #show favourites
+            pass
+    def showHideFees(self):
+        '''
+        the expand or collapse radio buttons on the fees page
+        have been clicked.
+        '''
+        if self.ui.feeExpand_radioButton.isChecked():
+            self.ui.fees_treeWidget.expandAll()
+        else:
+            self.ui.fees_treeWidget.collapseAll()
+    def chooseFeeColumns(self, arg):
+        '''
+        expand columns within the fees table
+        '''
+        self.ui.fees_treeWidget.expandAll()
+        for i in range(self.ui.fees_treeWidget.columnCount()):
+            self.ui.fees_treeWidget.resizeColumnToContents(i)
+        if arg<1:
+            #-- hide the geeky column
+            self.ui.fees_treeWidget.setColumnWidth(3, 0)
+        if arg<2:
+            #-- hide the extra description column
+            self.ui.fees_treeWidget.setColumnWidth(4, 0)
+        self.showHideFees()
+
+    def feestableProperties(self):
+        ##TODO this needs work
+        if self.ui.chooseFeescale_comboBox.currentIndex() == 1:
+            feesTable.private_only=True
+            feesTable.nhs_only=False
+        elif self.ui.chooseFeescale_comboBox.currentIndex() == 2:
+            feesTable.private_only=False
+            feesTable.nhs_only=True
+        else:
+            feesTable.private_only=False
+            feesTable.nhs_only=False
+
+        self.loadFeesTable()
+
+    def noNewCourseNeeded(self):
+        '''
+        checks to see if the patient is under treatment.
+        if not, start a course
+        '''
+        if self.pt.underTreatment:
+            return True
+        else:
+            if self.newCourseSetup():
+                return True
+            else:
+                self.advise("unable to plan or perform treatment if pt "+ \
+                "does not have an active course", 1)
+
+    def applyFeeNow(self, arg, cset=None):
+        print "applying", arg
+        if cset == None:
+            cset=self.pt.cset
+
+        if "N" in cset:
+            self.pt.money0+=arg
+        else:
+            self.pt.money1+=arg
+
+        self.updateFees()
+
+    def updateFees(self):
+        '''
+        recalc money and
+        update the details down the left hand side
+        '''
+        if self.pt.serialno != 0:
+            self.pt.updateFees()
+            self.updateDetails()
+            #self.load_newEstPage()
+
+    def showExamDialog(self):
+        global pt
+        if self.pt.serialno == 0:
+            self.advise("no patient selected",1)
+            return
+        if not self.pt.underTreatment:
+            if not self.newCourseSetup():
+                self.advise("unable to perform exam",1)
+                return
+        if self.pt.examt != "":
+            self.advise("You already have an exam on this course of treatment"+
+            "<br />Unable to perform exam",1)
+            return
+
+        Dialog = QtGui.QDialog(self)
+        dl = examWizard.Ui_Dialog(Dialog,localsettings.clinicianNo)
+
+        ####TODO - set dentist correctly in this dialog
+        APPLIED=False
+        while not APPLIED:
+            result=dl.getInput()
+            if result:
+                #-- result is like this....
+                #--['CE', '', PyQt4.QtCore.QDate(2009, 3, 14),
+                #--('pt c/o nil', 'Soft Tissues Checked - NAD',
+                #-- 'OHI instruction given',
+                #--'Palpated for upper canines - NAD'), "000000")]
+                examtype=result[0]
+                examdent=result[1]
+                if examdent  == localsettings.ops[self.pt.dnt1]:
+                    #--normal dentist.
+                    if self.pt.dnt2 == 0 or self.pt.dnt2 == self.pt.dnt1:
+                        #--no dnt2
+                        APPLIED=True
+                    else:
+                        message='%s is now'%examdent\
+                        +'both the registered and course dentist.<br />'\
+                        +'Is this correct?<br /><i>confirming this will '\
+                        +'remove reference to %s</i>'%\
+                        localsettings.ops[self.pt.dnt2]
+
+                        confirm=QtGui.QMessageBox.question(self,
+                        "Confirm",message,
+                        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                        #--check this was intentional!!
+
+                        if confirm == QtGui.QMessageBox.Yes:
+                            #--dialog rejected
+                            self.pt.dnt2=0
+                            self.updateDetails()
+                            APPLIED=True
+                else:
+                    message='%s performed this exam<br />'%examdent+\
+                    'Is this correct?'
+                    if result[2] != localsettings.ops[self.pt.dnt2]:
+                        message +='<br /><i>confirming this will change the '+\
+                        'course dentist,but not the registered dentist</i>'
+                    else:
+                        message+='<i>consider making %s the'%result[1]\
+                        + 'registered dentist</i>'
+                    confirm=QtGui.QMessageBox.question(self,
+                    "Confirm",
+                    message,QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                    #--check this was intentional!!
+
+                    if confirm == QtGui.QMessageBox.Yes:
+                        #--dialog rejected
+                        self.pt.dnt2=localsettings.ops_reverse[examdent]
+                        self.updateDetails()
+                        APPLIED = True
+
+                if APPLIED:
+                    self.pt.examt = examtype
+                    examd = result[2].toString("dd/MM/yyyy")
+                    if self.pt.examt == "CE":
+                        self.pt.pd5 = examd
+                    if self.pt.examt == "ECE":
+                        self.pt.pd6 = examd
+                    if self.pt.examt == "FCA":
+                        self.pt.pd7 = examd
+                    self.pt.examd = examd
+                    self.pt.recd = str(result[2].addMonths(6).toString("dd/MM/yyyy"))
+                    newnotes = str(self.ui.notesEnter_textEdit.toPlainText()\
+                                 .toAscii())
+                    newnotes+="%s examination performed by %s\n"%(
+                    examtype,examdent)
+                    self.pt.addHiddenNote("exam","%s"%examtype)
+                    item = fee_keys.getKeyCode(examtype)
+
+                    #-- get the fee and patien fee
+                    itemfee,ptfee = self.getItemFees(item,1)
+
+                    item_description = localsettings.descriptions.get(item)
+                    if item_description == None:
+                        item_description = "unknown exam type"
+
+                    self.pt.addToEstimate(1,item,item_description,itemfee,
+                    ptfee, localsettings.ops_reverse[examdent], self.pt.cset,
+                    "exam %s"%examtype,True)
+
+                    self.applyFeeNow(ptfee)
+
+                    for note in result[3]:
+                       newnotes+=note+", "
+                    self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+
+                    if self.ui.tabWidget.currentIndex() == 7:
+                        self.load_newEstPage()
+                        self.load_treatTrees()
+
+            else:
+                self.advise("Examination not applied",2)
+                break
+
+    def showHygDialog(self):
+        if self.pt.serialno == 0:
+            self.advise("no patient selected",1)
+            return
+        if not self.pt.underTreatment:
+            if not self.newCourseSetup():
+                self.advise("unable to perform treatment if pt does not "+
+                            "have an active course",1)
+                return
+        Dialog = QtGui.QDialog(self)
+        dl = hygTreatWizard.Ui_Dialog(Dialog)
+        dl.setPractitioner(localsettings.clinicianNo)
+        item = fee_keys.getKeyCode("SP")
+        fee,ptfee = self.getItemFees(item,1)
+        item2 = fee_keys.getKeyCode("SP+")
+        fee2,ptfee2 = self.getItemFees(item2,1)
+        dl.setFees(((fee,ptfee),(fee2,ptfee2)))
+        result = dl.getInput()
+
+        if result:
+            newnotes = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes+="%s performed by %s\n"%(dl.trt,dl.dent)
+            self.pt.addHiddenNote("treatment","Perio %s"%dl.trt)
+
+            fee = dl.fee
+            ptfee = dl.ptFee
+
+            item = fee_keys.getKeyCode(dl.trt)
+            try:
+                item_description = localsettings.descriptions[item]
+            except KeyError:
+                item_description = "unknown perio treatment"
+
+            foundInEsts = False
+            for est in self.pt.estimates:
+                if est.itemcode == item and est.completed == False:
+                    if est.number == 1:
+                        est.completed = True
+                        foundInEsts = True
+                        if est.ptfee != ptfee:
+                            self.advise(
+                            "different fee found in estimate - please check",1)
+                        else:
+                            print "patient fees",est.ptfee,ptfee
+                        break
+                    else:
+                        self.advise("need to split a multi unit perio item",1)
+            if not foundInEsts:
+                self.pt.addToEstimate(1,item,item_description,fee,
+                ptfee, self.pt.dnt1, self.pt.cset,
+                "perio %s"%dl.trt,True)
+
+            if ptfee>0:
+                self.applyFeeNow(ptfee)
+
+            treatmentCode = "%s "%dl.trt
+            if treatmentCode in self.pt.periopl:
+                self.pt.periopl = self.pt.periopl.replace(treatmentCode,"",1)
+            self.pt.periocmp+=treatmentCode
+            for note in dl.notes:
+               newnotes+=note+", "
+            self.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+            if self.ui.tabWidget.currentIndex() == 7:
+                #-- it won't be ;)
+                self.load_newEstPage()
+                self.load_treatTrees()
+        else:
+            self.advise("Hyg Treatment not applied",2)
+
+    def addXrayItems(self):
+        if self.noNewCourseNeeded():
+            list = ((0,"S"),(0,"M"),(0,"P"))
+            chosenTreatments = self.offerTreatmentItems(list)
+            for treat in chosenTreatments:
+                #(number,usercode,itemcode,description, fee,ptfee)
+                if treat[0] == 1:
+                    usercode = treat[1]
+                else:
+                    usercode = "%s%s"%(treat[0],treat[1])
+                self.pt.xraypl+=usercode+" "
+                self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
+                treat[5], self.pt.dnt1, self.pt.cset,"xray %s"%usercode)
+            self.load_treatTrees()
+            self.load_newEstPage()
+
+
+    def addPerioItems(self):
+        if self.noNewCourseNeeded():
+            list = ((0,"SP"),(0,"SP+"))
+            chosenTreatments = self.offerTreatmentItems(list)
+            print chosenTreatments
+            for treat in chosenTreatments:
+
+                if treat[0] == 1:
+                    usercode = treat[1]
+                else:
+                    usercode = "%s%s"%(treat[0],treat[1])
+                self.pt.periopl+=usercode+" "
+                self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
+                treat[5], self.pt.dnt1, self.pt.cset,"perio %s"%usercode)
+            self.load_treatTrees()
+            self.load_newEstPage()
+
+    def addOtherItems(self):
+        if self.noNewCourseNeeded():
+            list = ()
+            items = localsettings.treatmentCodes.keys()
+            for item in items:
+                code = localsettings.treatmentCodes[item]
+                if 3500<int(code)<4002:
+                    list+=((0,item,code),)
+            chosenTreatments = self.offerTreatmentItems(list)
+            for treat in chosenTreatments:
+                self.pt.otherpl+="%s%s "%(treat[0],treat[1])
+                self.pt.addToEstimate(treat[0],treat[2],treat[3], treat[4],
+                treat[5], self.pt.dnt1, self.pt.cset,"other OT")
+            self.load_newEstPage()
+            self.load_treatTrees()
+
+    def addCustomItem(self):
+        if self.noNewCourseNeeded():
+            Dialog = QtGui.QDialog(self)
+            dl = Ui_customTreatment.Ui_Dialog()
+            dl.setupUi(Dialog)
+            if Dialog.exec_():
+                no = dl.number_spinBox.value()
+                descr = str(dl.description_lineEdit.text())
+                if descr == "":
+                    descr = "??"
+                type = "%s%s"%(no,descr.replace(" ","_"))
+                if len(type)>5:
+                    #-- necessary because the est table type col is char(12)
+                    type = type[:5]
+                fee = int(dl.fee_doubleSpinBox.value()*100)
+                ptfee = int(dl.ptFee_doubleSpinBox.value()*100)
+
+                self.pt.custompl+="%s "%type
+                self.pt.addToEstimate(no,"4002",descr, fee,
+                ptfee,self.pt.dnt1, "P","custom %s"%type)
+                self.load_newEstPage()
+                self.load_treatTrees()
+
+    def offerTreatmentItems(self,arg):
+        Dialog = QtGui.QDialog(self)
+        dl = addTreat.treatment(Dialog,arg,self.pt)
+        result =  dl.getInput()
+        print "offerTreatmentItems returned",result
+        return result
+
+
+    def toothTreatAdd(self, tooth, properties):
+        '''
+        properties for tooth has changed.
+        '''
+
+        #-- important stuff. user has added treatment to a tooth
+        #-- let's cite this eample to show how this funtion works
+        #-- assume the UR1 has a root treatment and a palatal fill.
+        #-- user enters UR1 RT P,CO
+
+        #-- what is the current item in ur1pl?
+        existing = self.pt.__dict__[tooth+"pl"]  #self.selectedChartWidget]
+
+        self.pt.__dict__[tooth+"pl"] = properties
+        #--update the patient!!
+        self.ui.planChartWidget.setToothProps(tooth,properties)
+
+        #-- new items are input - existing.
+        #--split our string into a list of treatments.
+        #-- so UR1 RT P,CO -> [("UR1","RT"),("UR1","P,CO")]
+        #-- this also separates off any postsetc..
+        #-- and bridge brackets
+
+        existingItems = fee_keys.itemsPerTooth(tooth,existing)
+        updatedItems = fee_keys.itemsPerTooth(tooth, properties)
+
+        #check to see if treatments have been removed
+        for item in existingItems:
+            if item in updatedItems:
+                updatedItems.remove(item)
+            else:
+                self.pt.removeFromEstimate(item[0],item[1])
+                self.advise("removing %s from estimate"%item[1])
+        #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
+        for item in updatedItems:
+            print "item=",item
+            #--ok, so now lookup the four digit itemcode
+            ###############################################
+            #-- this is critical bit"!!!!!
+            #-- if this is incorrect... est will be crap.
+            #-- the function returns "4001" - unknown if it is confused by
+            #-- the input.
+            itemcode = fee_keys.getCode(item[0],item[1])
+            ###############################################
+            #--get a description (for the estimate)
+            description = fee_keys.getDescription(itemcode)
+            #-- get a fee and pt fee
+            fee,ptfee = self.getItemFees(itemcode)
+            #--add to estimate
+            self.pt.addToEstimate(1, itemcode, description, fee, ptfee,
+                        self.pt.dnt1, self.pt.cset, "%s %s"%(item))
+
+    def recalculateEstimate(self, ALL=True):
+        ####################todo - -move this to the estimates module.....
+        ####################see NEW function below
+        '''
+        Adds ALL tooth items to the estimate.
+        prompts the user to confirm tooth treatment fees
+        '''
+        ##TODO - redesign this!!!
+        self.ui.planChartWidget.update()
+
+        Dialog = QtGui.QDialog(self)
+        dl = addToothTreat.treatment(Dialog,self.pt.cset)
+        if ALL == False:
+            dl.itemsPerTooth(tooth, item)
+        else:
+            treatmentDict = estimates.toothTreatDict(self.pt)
+            dl.setItems(treatmentDict["pl"],)
+            dl.setItems(treatmentDict["cmp"],)
+
+        dl.showItems()
+
+        chosen = dl.getInput()
+
+        if chosen:
+            if self.pt.dnt2 != 0:
+                dent = self.pt.dnt2
+            else:
+                dent = self.pt.dnt1
+
+            for treat in chosen:
+                #-- treat[0]= the tooth name
+                #-- treat[1] = item code
+                #-- treat[2]= description
+                #-- treat[3]= adjusted fee
+                #-- treat[4]=adjusted ptfee
+
+                self.pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
+                dent, self.pt.cset, treat[0])
+
+            self.load_newEstPage()
+            self.load_treatTrees()
+
+    def NEWrecalculateEstimate(self):
+        '''
+        Adds ALL tooth items to the estimate.
+        prompts the user to confirm tooth treatment fees
+        '''
+        ##TODO - redesign this!!!
+        estimates.abandon_estimate(self.pt)
+        if estimates.calculate_estimate(self.pt):
+            self.load_newEstPage()
+            self.load_treatTrees()
+
+
+    def completeTreatments(self,arg):
+        '''
+        called when double clicking on a tooth
+        '''
+        print "completing Tooth Treatment",arg
+        Dialog = QtGui.QDialog(self)
+        if localsettings.clinicianNo != 0:
+            dent = localsettings.clinicianInits
+        elif self.pt.dnt2 == None:
+            dent = localsettings.ops.get(self.pt.dnt2)
+        else:
+            dent = localsettings.ops.get(self.pt.dnt1)
+        if dent == None:
+            dent = ""
+        feeTup = self.getFeesFromEst(arg[0][0], arg[0][1])
+        print " line 686", arg, feeTup
+        dl = completeTreat.treatment(Dialog,dent,arg,feeTup)
+
+        results = dl.getInput()
+        print "results = ",results
+        for result in results:
+            planATT = result[0]
+            completedATT = result[0].replace("pl","cmp")
+            print "moving '%s' from %s to %s"%(result[1],planATT,completedATT)
+            if result[1] in self.pt.__dict__[planATT]:
+                existingplan = self.pt.__dict__[planATT]
+                newplan = existingplan.replace(result[1],"")
+                self.pt.__dict__[planATT] = newplan
+                existingcompleted = self.pt.__dict__[completedATT]
+                newcompleted = result[1]
+                self.pt.__dict__[completedATT] = existingcompleted+newcompleted
+
+                if planATT[:2] in ("ur","ul","ll","lr"):
+                    #--treatment is on a tooth (as opposed to denture etc....)
+                    self.updateChartsAfterTreatment(planATT[:3],
+                                                    newplan,newcompleted)
+
+                    self.checkEstBox(planATT[:3],newcompleted)
+                    
+                    #--tooth may be deciduous
+                    tooth=self.pt.chartgrid.get(planATT[:3])
+                    self.pt.addHiddenNote("treatment",
+                    "%s %s"% (tooth.upper(), newcompleted))
+                    
+                else:    
+                    self.pt.addHiddenNote("treatment",
+                    "%s %s"% (planATT[:-2].upper(), newcompleted))
+
+    def getFeesFromEst(self, tooth, treat):
+        '''
+        iterate through the ests... find this item
+        '''
+        tooth = tooth.rstrip("pl")
+        completed = "%s %s"%(tooth,treat)
+        print "looking for est item where type= '%s'?"%completed
+        retarg = None
+        for est in self.pt.estimates:
+            print "comparing '%s' and '%s'"%(est.type, completed.strip(" "))
+            if est.type == completed.strip(" "):
+                retarg = (est.fee, est.ptfee)
+                break
+        return retarg
+
+
+    def checkEstBox(self,tooth,treat):
+        '''
+        when a "tooth" item is completed
+        this looks through the estimates, applies the fee
+        and marks the item as completed.
+        '''
+        completed = "%s %s"%(tooth,treat)
+        print "looking for est item where type= '%s'?"%completed
+        found=False
+        for est in self.pt.estimates:
+            if est.type == completed.strip(" "):
+                est.completed=True
+                self.applyFeeNow(est.ptfee)
+                found=True
+                break
+        if not found:
+            self.advise("couldn't locate "+
+            "%s in estimate<br /> Please complete manually"%completed,1)
+
+    def completeItem(self,type):
+        '''
+        the oposite of checkEstBox function
+        when treatment is completed by user input on the estimate itself
+        ie. checking the checkbox
+        '''
+        print "completed item ",type
+        try:
+            tup=type.split(" ")
+            att=tup[0]
+            treat=tup[1]+" "
+            if att =="exam":
+                self.pt.examt=tup[1]
+                self.pt.examd=localsettings.ukToday()
+                self.pt.addHiddenNote("exam","%s"%tup[1])
+
+            else:
+                plan=self.pt.__dict__[att+"pl"].replace(treat,"")
+                self.pt.__dict__[att+"pl"]=plan
+                completed= self.pt.__dict__[att+"cmp"]+treat
+                self.pt.__dict__[att+"cmp"]=completed
+
+                #-- now update the charts
+                if re.findall("[ul][lr][1-8]",att):
+                    self.updateChartsAfterTreatment(att,plan,completed)
+                self.pt.addHiddenNote("treatment","%s %s"%(att.upper(),treat))
+
+            self.load_treatTrees()
+
+        except Exception,e:
+            self.advise("Error moving %s from plan to completed<br />"%type+
+            "Please complete manually",1)
+            print "UNABLE TO MOVE %s item"%type
+
+    def unCompleteItem(self,type):
+        '''
+        as completeItem, but
+        unchecking the checkbox
+        '''
+        print "reversing previously completed item ",type
+        try:
+            tup=type.split(" ")
+            att=tup[0]
+            treat=tup[1]+" "
+            if att =="exam":
+                self.pt.examt=""
+                self.pt.examd=""
+                self.pt.addHiddenNote("exam","%s"%tup[1],True)
+
+            else:
+                plan=self.pt.__dict__[att+"pl"]+treat
+                self.pt.__dict__[att+"pl"]=plan
+                completed= self.pt.__dict__[att+"cmp"].replace(treat,"")
+                self.pt.__dict__[att+"cmp"]=completed
+
+                #-- now update the charts
+                if re.findall("[ul][lr][1-8]",att):
+                    self.updateChartsAfterTreatment(att,plan,completed)
+                    self.pt.addHiddenNote("treatment","%s %s"%(
+                    att.upper(),treat),True)
+
+            self.load_treatTrees()
+
+        except Exception,e:
+            self.advise("Error moving %s from completed to plan<br />"%type+
+            "Please complete manually",1)
+            print "UNABLE TO MOVE %s item"%type
+
+
+    def deleteTxItem(self,pl_cmp,type):
+        '''
+        estWidget has removed an item from the estimates.
+        (user clicked on the delete button)
+        now try and remove from the plan
+        '''
+        
+        print "pl_cmp='%s',treat='%s'"% (pl_cmp, type)
+        #return
+        #self.advise("remove from the plan manually if necessary",1)
+        ##TODO - I reversed this.
+        
+        
+        #print "delete item from treament plan or completed",est
+        tup = type.split(" - ")
+        try:
+            att=tup[0]
+            treat=tup[1]+" "
+            
+            result=QtGui.QMessageBox.question(self,"question",
+            "remove %s %sfrom this course of treatment?"%(att,treat),
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+
+            if result == QtGui.QMessageBox.Yes:
+                if att  == "Exam":
+                    self.pt.examt=""
+                    self.pt.examd=""
+                    self.pt.addHiddenNote("exam","%s"%tup[1],True)
+                else:
+                    if pl_cmp=="pl":
+                        plan=self.pt.__dict__[att+"pl"].replace(treat,"")
+                        self.pt.__dict__[att+"pl"]=plan
+                        completed=self.pt.__dict__[att+"cmp"]
+                        #self.pt.__dict__[att+"cmp"]=completed
+                    else:
+                        plan=self.pt.__dict__[att+"pl"]
+                        #self.pt.__dict__[att+"pl"]=plan
+                        completed=self.pt.__dict__[att+"cmp"].replace(treat,"")
+                        self.pt.__dict__[att+"cmp"]=completed
+                    
+                    #-- now update the charts
+                    if re.findall("[ul][lr][1-8]",att):
+                        self.updateChartsAfterTreatment(att,plan,completed)
+
+                self.load_treatTrees()
+
+        except Exception,e:
+            self.advise("Error deleting %s from plan<br />"%type+
+            "Please remove manually",1)
+            print "handled this in maingui.completeItem",Exception,e
+
+    def planItemClicked(self,arg,arg1):
+        ############################## todo - add functionality here
+        '''
+        user has double clicked on the treatment plan tree
+        arg1 is of no importance as I only have 1 column
+        '''
+        self.txOptions(arg,"pl")
+
+    def cmpItemClicked(self,arg,arg1):
+        ############################## todo - add functionality here
+
+        '''
+        user has double clicked on the treatment competled tree
+        '''
+        self.txOptions(arg,"cmp")
+
+    def txOptions(self,treeWidgetItem,pl_cmp):
+        '''
+        user has clicked on a planned item in the treewidget if pl_cmp="pl"
+        or a completed one if pl_cmp="cmp"
+        '''
+        if pl_cmp == "pl":
+            type="Planned Item"
+        else:
+            type="Completed Item"
+
+        #-- check to see if it is end of a branch.
+        if treeWidgetItem.parent() == None:
+            #--header
+            message="You've selected %ss <ul>%s"%(
+            type,treeWidgetItem.text(0))
+
+            for i in range(treeWidgetItem.childCount()):
+                message+="<li>%s</li>"%treeWidgetItem.child(i).text(0)
+            message+="</ul>"
+            self.advise(message,1)
+        else:
+            #--item
+            message = "You've selected %ss<br /> %s"% (
+            type, treeWidgetItem.parent().text(0))
+            trtmtType = str(treeWidgetItem.text(0))
+            message += "<br />%s"% trtmtType
+            #self.advise(message,1)
+        
+            self.deleteTxItem(pl_cmp, trtmtType)
+
+    def completeAllTreatments(self):
+        ##############################todo - decide about this
+        '''
+        old code
+        called by a button which allowed any item to be completed
+        may be re-instated soon?
+        '''
+        currentPlanItems=[]
+        for att in patient_class.currtrtmtTableAtts:
+            if att[-2:] == "pl" and self.pt.__dict__[att] != "":
+                currentPlanItems.append((att,self.pt.__dict__[att]))
+        if currentPlanItems != []:
+            self.completeTreatments(currentPlanItems)
+            self.load_newEstPage()
+        else:
+            self.advise("No treatment items to move!",1)
+
+    def update_perioDates(self,arg):
+        print "update periodates with '%s'"%arg
+        if "SP" in arg:
+            self.pt.pd10=localsettings.ukToday()
+
+    def update_xrayDates(self,arg):
+        print "update xrays with '%s'"%arg
+        if "M" in arg or "S" in arg:
+            self.pt.pd9=localsettings.ukToday()
+        if "P" in arg:
+            self.pt.pd8=localsettings.ukToday()
+
+    def updateDaybook(self):
+        '''
+        looks for attributes like *cmp, when record is closed
+        '''
+        daybookdict={"diagn":"","perio":"","anaes":"","misc":"",
+        "ndu":"","ndl":"","odu":"","odl":"","other":"","chart":""}
+        feesa=0         #fee
+        feesb=0         #ptfee
+        writeNeeded=False
+        for att in patient_class.currtrtmtTableAtts:
+            if att == "examt" or att[-3:] == "cmp": #be wary of "cmpd"
+                newcmp=self.pt.__dict__[att]
+                existingcmp=self.pt_dbstate.__dict__[att]
+
+                if newcmp != existingcmp:
+                    treatment=newcmp.replace(existingcmp,"",1)
+                    print att,newcmp,existingcmp,treatment
+                    writeNeeded=True
+
+                    if att == "examt":
+                        key="exam"
+                    else:
+                        key=att.rstrip("cmp")
+
+                    if key in daybookdict.keys():
+                        daybookdict[key]+="%s "%treatment
+                    elif key == "xray" or key == "exam":
+                        daybookdict["diagn"]+="%s "%treatment
+                    elif key == "custom":
+                        daybookdict["other"]+="%s "%treatment
+                    else:
+                        #--tooth include the key ie ul7 etc...
+                        daybookdict["chart"]+="%s %s "%(
+                        key.upper(),treatment)
+
+                    ##todo - get the real fee if poss!
+                    for treat in treatment.strip(" ").split(" "):
+                        fees=self.getFeesFromEst(key,treat)
+                        print "fee attempt '%s' '%s' '%s'"%(key,treat,fees)
+                        if fees:
+                            feesa+=fees[0]
+                            feesb+=fees[1]
+
+        if writeNeeded:
+            if self.pt.dnt2 != 0 and self.pt.cset != "I":
+                dent=self.pt.dnt2
+            else:
+                dent=self.pt.dnt1
+            trtid=localsettings.clinicianNo
+
+            daybook.add(self.pt.serialno,self.pt.cset,dent,trtid,
+            daybookdict,feesa,feesb)
+            print "updating pd4"
+            self.pt.pd4=localsettings.ukToday()
+
+    def makeBadDebt(self):
+        '''
+        write off the debt (stops cluttering up the accounts table)
+        '''
+        result=QtGui.QMessageBox.question(self,"Confirm",
+        "Move this patient to Bad Debt Status?",
+        QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+
+        if result == QtGui.QMessageBox.Yes:
+            #--what is owed
+            self.pt.money11=self.pt.fees
+            self.pt.resetAllMonies()
+            self.pt.status="BAD DEBT"
+            self.ui.notesEnter_textEdit.setText(
+            "changed patients status to BAD DEBT")
+
+            self.updateStatus()
+            self.updateDetails()
+
+    def populateAccountsTable(self):
+        rows=accounts.details()
+        self.ui.accounts_tableWidget.clear()
+        self.ui.accounts_tableWidget.setSortingEnabled(False)
+        self.ui.accounts_tableWidget.setRowCount(len(rows))
+        headers=("Dent", "Serialno", "", "First", "Last", "DOB", "Memo",
+        "Last Appt", "Last Bill", "Type", "Number", "T/C", "Fees", "A", "B",
+        "C")
+
+        self.ui.accounts_tableWidget.setColumnCount(len(headers))
+        self.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
+        self.ui.accounts_tableWidget.verticalHeader().hide()
+        rowno=0
+        total=0
+        for row in rows:
+            for col in range(len(row)):
+                d=row[col]
+                if d != None or col == 11:
+                    item=QtGui.QTableWidgetItem()
+                    if col == 0:
+                        item.setText(localsettings.ops.get(d))
+                    elif col in (5,7,8):
+                        item.setData(QtCore.Qt.DisplayRole,
+                        QtCore.QVariant(QtCore.QDate(d)))
+                    elif col == 12:
+                        total+=d
+                        #--jump through hoops to make the string sortable!
+                        money=QtCore.QVariant(QtCore.QString("%L1").\
+                        arg(float(d/100),8,"f",2))
+
+                        item.setData(QtCore.Qt.DisplayRole,money)
+                        item.setTextAlignment(
+                        QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
+
+                        #item.setText(localsettings.formatMoney(d))
+
+                    elif col == 11:
+                        if d>0:
+                            item.setText("N")
+                        else:
+                            item.setText("Y")
+                    else:
+                        item.setText(str(d).title())
+                    self.ui.accounts_tableWidget.setItem(rowno,col,item)
+            for col in range(13,16):
+                item=QtGui.QTableWidgetItem()
+                item.setCheckState(QtCore.Qt.Unchecked)
+                self.ui.accounts_tableWidget.setItem(rowno,col,item)
+            rowno+=1
+        self.ui.accounts_tableWidget.sortItems(7,QtCore.Qt.DescendingOrder)
+        self.ui.accounts_tableWidget.setSortingEnabled(True)
+        #self.ui.accounts_tableWidget.update()
+        for i in range(self.ui.accounts_tableWidget.columnCount()):
+            self.ui.accounts_tableWidget.resizeColumnToContents(i)
+        self.ui.accountsTotal_doubleSpinBox.setValue(total/100)
 
 class forumClass():
 
@@ -362,16 +1431,16 @@ class historyClass():
         '''
         called from pastData toolbutton
         '''
-        txtype=str(arg.text()).split(" ")[0]
-        if txtype == "NHS":
+        type=str(arg.text()).split(" ")[0]
+        if type == "NHS":
             self.showPastNHSclaims()
-        elif txtype == "Payments":
+        elif type == "Payments":
             self.showPaymentHistory()
-        elif txtype == "Daybook":
+        elif type == "Daybook":
             self.showDaybookHistory()
-        elif txtype == "Courses":
+        elif type == "Courses":
             self.showCoursesHistory()
-        elif txtype == "Estimates":
+        elif type == "Estimates":
             self.showEstimatesHistory()
 
     def showEstimatesHistory(self):
@@ -411,12 +1480,12 @@ class historyClass():
     def showPtAttributes(self, arg=None):
         #--load a table of self.pt.attributes
         if arg != None:
-            txtype=str(arg.text()).split(" ")[0]
+            type=str(arg.text()).split(" ")[0]
         else:
-            txtype=debug_html.existing.split(" ")[0]
+            type=debug_html.existing.split(" ")[0]
 
         changesOnly=self.ui.ptAtts_checkBox.isChecked()
-        html=debug_html.toHtml(self.pt_dbstate, self.pt, txtype, changesOnly)
+        html=debug_html.toHtml(self.pt_dbstate, self.pt, type, changesOnly)
         self.ui.debugBrowser.setText(html)
 
 class appointmentClass():
@@ -1598,23 +2667,19 @@ class signals():
         self.signals_history()
 
     def signals_miscbuttons(self):
-        
-        QtCore.QObject.connect(self.ui.charge_pushButton,
-        QtCore.SIGNAL("clicked()"), self.charge_pushButtonClicked)
-        
-        
+        #misc button
         QtCore.QObject.connect(self.ui.saveButton,
                         QtCore.SIGNAL("clicked()"), self.okToLeaveRecord)
-        
         QtCore.QObject.connect(self.ui.exampushButton,
-        QtCore.SIGNAL("clicked()"), self.showExamDialog)
+                        QtCore.SIGNAL("clicked()"), self.showExamDialog)
         QtCore.QObject.connect(self.ui.examTxpushButton,
-        QtCore.SIGNAL("clicked()"), self.showExamDialog)
-
+                        QtCore.SIGNAL("clicked()"), self.showExamDialog)
         QtCore.QObject.connect(self.ui.hygWizard_pushButton,
                         QtCore.SIGNAL("clicked()"), self.showHygDialog)
         QtCore.QObject.connect(self.ui.newBPE_pushButton,
                         QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
+        QtCore.QObject.connect(self.ui.charge_pushButton,
+                        QtCore.SIGNAL("clicked()"), self.raiseACharge)
         QtCore.QObject.connect(self.ui.medNotes_pushButton,
                         QtCore.SIGNAL("clicked()"), self.showMedNotes)
         QtCore.QObject.connect(self.ui.phraseBook_pushButton,
@@ -1649,7 +2714,7 @@ class signals():
         QtCore.QObject.connect(self.ui.printRecall_pushButton,
                         QtCore.SIGNAL("clicked()"), self.printrecall)
         QtCore.QObject.connect(self.ui.takePayment_pushButton,
-        QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
+                        QtCore.SIGNAL("clicked()"), self.takePayment)
     def signals_reception(self):
         #admin summary widgets
         QtCore.QObject.connect(self.ui.newAppt_pushButton,
@@ -1733,9 +2798,9 @@ class signals():
 
         #Estimates and course ManageMent
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
-        QtCore.SIGNAL("clicked()"), self.newCourse_pushButton_clicked)
+                            QtCore.SIGNAL("clicked()"), self.newCourseSetup)
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
-        QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.closeCourse)
         QtCore.QObject.connect(self.ui.estLetter_pushButton,
                         QtCore.SIGNAL("clicked()"), self.customEstimate)
         QtCore.QObject.connect(self.ui.recalcEst_pushButton,
@@ -1750,13 +2815,15 @@ class signals():
                                QtCore.SIGNAL("clicked()"), self.addCustomItem)
 
         QtCore.QObject.connect(self.ui.estWidget,
-        QtCore.SIGNAL("applyFeeNow"), self.estWidget_applyFeeNowCalled)
+                               QtCore.SIGNAL("applyFeeNow"), self.applyFeeNow)
+
         QtCore.QObject.connect(self.ui.estWidget,
-        QtCore.SIGNAL("completedItem"), self.estwidget_completeItem)
+                        QtCore.SIGNAL("completedItem"), self.completeItem)
         QtCore.QObject.connect(self.ui.estWidget,
-        QtCore.SIGNAL("unCompletedItem"), self.estwidget_unCompleteItem)
-        QtCore.QObject.connect(self.ui.estWidget,
-        QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
+                        QtCore.SIGNAL("unCompletedItem"), self.unCompleteItem)
+
+        #QtCore.QObject.connect(self.ui.estWidget,
+        #                      QtCore.SIGNAL("deleteItem"), self.deleteTxItem)
 
         QtCore.QObject.connect(self.ui.plan_treeWidget, QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
@@ -1799,7 +2866,7 @@ class signals():
     def signals_accounts(self):
         #accounts
         QtCore.QObject.connect(self.ui.loadAccountsTable_pushButton,
-        QtCore.SIGNAL("clicked()"), self.loadAccountsTable_clicked)
+                        QtCore.SIGNAL("clicked()"), self.populateAccountsTable)
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,
                         QtCore.SIGNAL("clicked()"), self.printSelectedAccounts)
         QtCore.QObject.connect(self.ui.printAccountsTable_pushButton,
@@ -1811,7 +2878,7 @@ class signals():
     def signals_contract(self):
         #contract
         QtCore.QObject.connect(self.ui.badDebt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.makeBadDebt_clicked)
+                        QtCore.SIGNAL("clicked()"), self.makeBadDebt)
         QtCore.QObject.connect(self.ui.contract_tabWidget,
             QtCore.SIGNAL("currentChanged(int)"), self.handle_ContractTab)
         QtCore.QObject.connect(self.ui.dnt1comboBox, QtCore.
@@ -1840,29 +2907,22 @@ class signals():
         #QtCore.QObject.connect(self.ui.printFeescale_pushButton,
         #QtCore.SIGNAL("clicked()"), self.printFeesTable)
         QtCore.QObject.connect(self.ui.chooseFeescale_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"), 
-        self.chooseFeescale_comboBox_changed)
-
+        QtCore.SIGNAL("currentIndexChanged(int)"), self.chooseFeescale)
         QtCore.QObject.connect(self.ui.feeItems_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"), 
-        self.feeItems_comboBox_changed)
-
+        QtCore.SIGNAL("currentIndexChanged(int)"), self.chooseFeeItemDisplay)
         QtCore.QObject.connect(self.ui.feesColumn_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"), 
-        self.feesColumn_comboBox_changed)
+        QtCore.SIGNAL("currentIndexChanged(int)"), self.chooseFeeColumns)
 
         QtCore.QObject.connect(self.ui.feeExpand_radioButton,
-        QtCore.SIGNAL("clicked()"), self.feeExpand_radiobuttons_clicked)
-                        
+                        QtCore.SIGNAL("clicked()"), self.showHideFees)
         QtCore.QObject.connect(self.ui.feeCompress_radioButton,
-        QtCore.SIGNAL("clicked()"), self.feeExpand_radiobuttons_clicked)
-        
+                        QtCore.SIGNAL("clicked()"), self.showHideFees)
         QtCore.QObject.connect(self.ui.nhsRegs_pushButton,
-        QtCore.SIGNAL("clicked()"), self.nhsRegs_pushButton_clicked)
+                        QtCore.SIGNAL("clicked()"), self.nhsRegsPDF)
         QtCore.QObject.connect(self.ui.feeSearch_lineEdit,
-        QtCore.SIGNAL("editingFinished ()"), self.feeSearch_lineEdit_edited)
+        QtCore.SIGNAL("editingFinished ()"), self.newFeeSearch)
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
-        QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
+                        QtCore.SIGNAL("clicked()"), self.feeSearch)
 
     def signals_charts(self):
 
@@ -1880,10 +2940,8 @@ class signals():
                     QtCore.SIGNAL("toothSelected"), self.plan_chartNavigation)
         QtCore.QObject.connect(self.ui.completedChartWidget,
                     QtCore.SIGNAL("toothSelected"), self.comp_chartNavigation)
-
         QtCore.QObject.connect(self.ui.planChartWidget,
-        QtCore.SIGNAL("completeTreatment"), self.planChartWidget_completed)
-        
+            QtCore.SIGNAL("completeTreatment"), self.completeTreatments)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                                QtCore.SIGNAL("NextTooth"), self.navigateCharts)
         #--fillings have changed!!
@@ -2301,7 +3359,7 @@ class chartsClass():
             self.ui.staticChartWidget.setToothProps(tooth, arg)
             self.ui.staticChartWidget.update()
         elif self.selectedChartWidget == "pl":
-            if course_module.newCourseNeeded(self):
+            if not self.noNewCourseNeeded():
                 return
             self.toothTreatAdd(tooth, arg)
         elif self.selectedChartWidget == "cmp":
@@ -3296,7 +4354,7 @@ class pageHandlingClass():
 
         if ci == 7:
             if not self.feestableLoaded:
-                fees_module.loadFeesTable(self)
+                self.loadFeesTable()
         if ci == 8:
             self.loadForum()
 
@@ -3531,7 +4589,7 @@ class pageHandlingClass():
                     "unknown course dentist - please correct this", 2)
 
 class openmolarGui(QtGui.QMainWindow, customWidgets, chartsClass,
-pageHandlingClass, newPatientClass, appointmentClass, signals, 
+pageHandlingClass, newPatientClass, appointmentClass, signals, feeClass,
 printingClass, cashbooks, contractClass, historyClass, forumClass):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -4362,6 +5420,83 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
         self.bpe_dates()
         self.bpe_table(0)
 
+    def newCourseSetup(self):
+        '''
+        set up a new course of treament
+        '''
+        Dialog = QtGui.QDialog(self)
+
+        if localsettings.clinicianNo != 0 and \
+        localsettings.clinicianInits in localsettings.activedents:
+            #-- clinician could be a hygenist!
+            cdnt=localsettings.clinicianNo
+        elif self.pt.dnt2 == 0:
+            cdnt=self.pt.dnt1
+        else:
+            cdnt=self.pt.dnt2
+        dl = newCourse.course(Dialog, localsettings.ops[self.pt.dnt1], \
+                              localsettings.ops[cdnt], self.pt.cset)
+        result=dl.getInput()
+
+        #-- (True, ['BW', 'AH', '', PyQt4.QtCore.QDate(2009, 5, 3)])
+
+        if result[0]:
+            atts=result[1]
+            dnt1=localsettings.ops_reverse[atts[0]]
+            if dnt1 != self.pt.dnt1:
+                self.changeContractedDentist(atts[0])
+            dnt2=localsettings.ops_reverse[atts[1]]
+            if dnt2 != self.pt.dnt2:
+                self.changeCourseDentist(atts[1])
+            if atts[2] != self.pt.cset:
+                self.changeCourseType(atts[2])
+
+            accd=atts[3].toPyDate()
+
+            course=writeNewCourse.write(self.pt.serialno,
+            localsettings.ops_reverse[atts[1]], str(accd))
+
+            if course[0]:
+                self.pt.courseno=course[1]
+                self.pt.courseno0=course[1]
+                self.pt.accd=localsettings.formatDate(accd)
+                self.advise("Sucessfully started new course of treatment")
+                self.pt.blankCurrtrt()
+                self.pt.estimates=[]
+                self.pt.underTreatment=True
+                #self.load_newEstPage()
+                self.updateDetails()
+                self.pt.addHiddenNote("open_course")
+                return True
+            else:
+                self.advise("ERROR STARTING NEW COURSE, sorry", 2)
+
+    def closeCourse(self):
+        '''
+        close a treatment course
+        '''
+        message="Close current course of treatment?"
+        result=QtGui.QMessageBox.question(self, "Confirm", message, \
+                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        if result == QtGui.QMessageBox.Yes:
+            #self.pt.courseno2=self.pt.courseno1
+            #self.pt.courseno1=self.pt.courseno0
+            self.pt.cmpd=localsettings.ukToday()
+            self.pt.courseno0=None
+            self.pt.addHiddenNote("close_course")
+            self.save_changes(True)
+            self.reload_patient()
+
+            ##-- I removed these lines because I think it is safer to
+            ##-- reload the patient
+            #blank things off
+            #self.pt.estimates=[]
+            #self.pt.blankCurrtrt()
+            #self.load_newEstPage()
+            #self.pt.underTreatment=False
+            #self.updateDetails()
+            return True
+
     def userOptionsDialog(self):
         '''
         not too many user options available yet
@@ -4391,9 +5526,9 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
                 oldval=str(self.pt_dbstate.__dict__[attr])
                 if oldval != newval:
                     if attr == "xraycmp":
-                        daybook_module.xrayDates(self, newval)
+                        self.update_xrayDates(newval)
                     elif attr == "periocmp":
-                        daybook_module.perioDates(self, newval)
+                        self.update_perioDates(newval)
                     elif attr not in fieldsToExclude:
                         if attr != "memo" or oldval.replace(chr(13), "") != newval:
                             #--ok - windows line ends from old DB were
@@ -4425,7 +5560,7 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
             patient_write_changes.toNotes(self.pt.serialno, self.pt.HIDDENNOTES)
             self.pt.clearHiddenNotes()
 
-        daybook_module.updateDaybook(self)
+        self.updateDaybook()
         uc=self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
@@ -4555,266 +5690,6 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
             except Exception, e:
                 print "unable to close existing connection!"
                 print e
-
-
-################################ FEES #########################################
-    def charge_pushButtonClicked(self):
-        '''
-        user is raising a charge using the button on the clinical summary page
-        '''
-        fees_module.raiseACharge(self)
-        
-    def takePayment_pushButton_clicked(self):
-        '''
-        user has clicked to take a payment
-        '''
-        fees_module.takePayment(self)
-    
-    def feeSearch_lineEdit_edited(self):
-        '''
-        user has entered a field to search for in the fees table
-        '''
-        fees_module.newFeeSearch(self)
-        
-    def feeSearch_pushButton_clicked(self):
-        '''
-        user is searching fees
-        '''
-        fees_module.feeSearch(self)
-
-    def nhsRegs_pushButton_clicked(self):
-        '''
-        user should be offered a PDF of the current regulations
-        '''
-        fees_module.nhsRegsPDF(self)
-        
-    def chooseFeescale_comboBox_changed(self, arg):
-        '''
-        receives signals from the choose feescale combobox
-        '''
-        fees_module.chooseFeescale(self,arg)
-
-    def feeItems_comboBox_changed(self, arg):
-        '''
-        receives signals from the choose feescale Items combobox
-        '''
-        fees_module.chooseFeeItemDisplay(self, arg)
-    
-    def feeExpand_radiobuttons_clicked(self):
-        '''
-        the expand or collapse radio buttons on the fees page
-        have been clicked.
-        '''
-        fees_module.expandFees(self)
-    
-    def feesColumn_comboBox_changed(self, arg):
-        '''
-        expand columns within the fees table
-        '''
-        fees_module.expandFeeColumns(self,arg)
-    
-    def newCourse_pushButton_clicked(self):
-        '''
-        user has clicked on the new course button
-        '''
-        course_module.newCourseNeeded(self)
-    
-    def closeTx_pushButton_clicked(self):
-        '''
-        user has clicked on close course button
-        '''
-        course_module.closeCourse(self)
-
-    def estWidget_applyFeeNowCalled(self,amount,coursetype=None):
-        '''
-        est Widget has emitted a signal to apply a fee.
-        '''
-        fees_module.applyFeeNow(self,amount,coursetype)
-
-    def showExamDialog(self):
-        '''
-        call a smart dialog which will perform an exam on the current patient
-        '''
-        examdialog.perform(self)
-    
-    def showHygDialog(self):
-        '''
-        call a smart dialog which will perform hygenist treatment 
-        on the current patient
-        '''
-        perio_tx_dialog.perform(self)
-
-    def addXrayItems(self):
-        '''
-        add Xray items to the treatment plan
-        '''
-        add_tx_to_plan.xrayAdd(self)
-
-    def addPerioItems(self):
-        '''
-        add Perio items to the treatment plan
-        '''
-        add_tx_to_plan.perioAdd(self)
-
-    def addOtherItems(self):
-        '''
-        add 'Other' items to the treatment plan
-        '''
-        add_tx_to_plan.otherAdd(self)
-        
-    def addCustomItem(self):
-        '''
-        add custom items to the treatment plan
-        '''
-        add_tx_to_plan.customAdd(self)
-
-    def offerTreatmentItems(self,arg):
-        '''
-        offers treatment items passed by argument
-        '''
-        Dialog = QtGui.QDialog(self)
-        dl = addTreat.treatment(Dialog,arg,self.pt)
-        result =  dl.getInput()
-        return result
-
-    def toothTreatAdd(self, tooth, properties):
-        '''
-        properties for tooth has changed.
-        '''
-        add_tx_to_plan.chartAdd(self, tooth, properties)
-
-    def planChartWidget_completed(self,arg):
-        '''
-        called when double clicking on a tooth in the plan chart
-        '''
-        complete_tx.chartComplete(self,arg)
-        
-    def estwidget_completeItem(self, txtype):
-        '''
-        estwidget has sent a signal that an item is marked as completed.
-        '''
-        complete_tx.estwidg_complete(self, txtype)
-        
-    def estwidget_unCompleteItem(self,txtype):
-        '''
-        estwidget has sent a signal that a previous completed item needs 
-        reversing
-        '''
-        complete_tx.estwidg_unComplete(self, txtype)
-        
-    def estwidget_deleteTxItem(self,pl_cmp,txtype):
-        '''
-        estWidget has removed an item from the estimates.
-        (user clicked on the delete button)
-        '''
-        ##TODO - I have removed this functionality due to estimate errors.
-        print "DO YOU WANT TO ADD FUNCTIONALITY TO estwidget_deleteTxItem??"
-        return
-        
-    def planItemClicked(self,item,col):
-        '''
-        user has double clicked on the treatment plan tree
-        col is of no importance as I only have 1 column
-        '''
-        manipulate_tx_plan.itemChosen(self, item, "pl")
-
-    def cmpItemClicked(self,item,col):
-        '''
-        user has double clicked on the treatment competled tree
-        col is of no importance - tree widget has only 1 column.
-        '''
-        manipulate_tx_plan.itemChosen(self, item, "cmp")
-
-    def makeBadDebt_clicked(self):
-        '''
-        user has decided to reclassify a patient as a "bad debt" patient
-        '''
-        fees_module.makeBadDebt(self)
-    
-    def loadAccountsTable_clicked(self):
-        '''
-        button has been pressed to laod the accounts table
-        '''
-        fees_module.loadFeesTable(self)
-
-################################## END OF FEES #################################
-
-
-###############################################################################
-########          ATTENTION NEEDED HERE         ###############################
-         
-    def recalculateEstimate(self, ALL=True):
-        ####################todo - -move this to the estimates module.....
-        ####################see NEW function below
-        '''
-        Adds ALL tooth items to the estimate.
-        prompts the user to confirm tooth treatment fees
-        '''
-        ##TODO - redesign this!!!
-        self.ui.planChartWidget.update()
-
-        Dialog = QtGui.QDialog(self)
-        dl = addToothTreat.treatment(Dialog,self.pt.cset)
-        if ALL == False:
-            dl.itemsPerTooth(tooth, item)
-        else:
-            treatmentDict = estimates.toothTreatDict(self.pt)
-            dl.setItems(treatmentDict["pl"],)
-            dl.setItems(treatmentDict["cmp"],)
-
-        dl.showItems()
-
-        chosen = dl.getInput()
-
-        if chosen:
-            if self.pt.dnt2 != 0:
-                dent = self.pt.dnt2
-            else:
-                dent = self.pt.dnt1
-
-            for treat in chosen:
-                #-- treat[0]= the tooth name
-                #-- treat[1] = item code
-                #-- treat[2]= description
-                #-- treat[3]= adjusted fee
-                #-- treat[4]=adjusted ptfee
-
-                self.pt.addToEstimate(1, treat[1], treat[2], treat[3],
-                treat[4], dent, self.pt.cset, treat[0])
-
-            self.load_newEstPage()
-            self.load_treatTrees()
-
-    def NEWrecalculateEstimate(self):
-        '''
-        Adds ALL tooth items to the estimate.
-        prompts the user to confirm tooth treatment fees
-        '''
-        ##TODO - redesign this!!!
-        estimates.abandon_estimate(self.pt)
-        if estimates.calculate_estimate(self.pt):
-            self.load_newEstPage()
-            self.load_treatTrees()
-
-################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 def main(arg):
     #-- app required for polite shutdown

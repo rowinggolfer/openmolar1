@@ -570,6 +570,7 @@ class estWidget(QtGui.QFrame):
             amountToRaise = item.ptfee * -1
             self.emit(QtCore.SIGNAL("unCompletedItem"), item.type)
 
+        ##TODO this signal should include the coursetype!!
         self.emit(QtCore.SIGNAL("applyFeeNow"), (amountToRaise))
 
     def clear(self):
