@@ -20,8 +20,9 @@ import pickle
 import time
 import threading
 import subprocess
-import datetime
 
+####temp
+import contract_gui_module
 
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import Ui_main, colours
@@ -38,7 +39,7 @@ from openmolar.qt4gui.dialogs import Ui_patient_finder, Ui_select_patient, \
 Ui_enter_letter_text, Ui_phraseBook, Ui_changeDatabase, Ui_related_patients, \
 Ui_options, Ui_surgeryNumber, \
 Ui_specify_appointment, Ui_appointment_length, Ui_daylist_print, \
-Ui_confirmDentist, Ui_forumPost, Ui_showMemo
+Ui_confirmDentist, Ui_showMemo
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import finalise_appt_time, recall_app, \
@@ -51,12 +52,12 @@ from openmolar.qt4gui.dialogs import apptTools
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook, patient_write_changes, recall, \
 cashbook, writeNewPatient, patient_class, search, appointments, \
-calldurr, docsprinted, forum, memos, nhs_claims, \
+calldurr, docsprinted, memos, nhs_claims, \
 daybookHistory, paymentHistory, courseHistory, estimatesHistory
 
 #--modules which act upon the pt class type (and subclasses)
 from openmolar.ptModules import patientDetails, notes, plan, referral, \
-standardletter, debug_html, estimates, planDetails, nhsDetails
+standardletter, debug_html, estimates
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint, notesPrint, chartPrint, \
@@ -72,78 +73,6 @@ perioChartWidget, estimateWidget, aptOVcontrol
 #--code more manageable. (supposedly!)
 #--watch out for namespace clashes!!!!!
 
-
-   
-class contractClass():
-    def handle_ContractTab(self, i):
-        if i == 0:
-            self.advise("Private contract tab selected")
-        if i == 1:
-            self.ui.contractHDP_label.setText(
-            planDetails.toHtml(self.pt.plandata))
-
-        if i == 2:
-            self.ui.contractNHS_label.setText(
-            nhsDetails.toHtml(self.pt))
-
-        if i == 3:
-            self.advise("Other Dentist tab selected")
-
-    def changeContractedDentist(self, inits):
-        '''
-        changes dnt1
-        '''
-        newdentist=localsettings.ops_reverse[str(inits)]
-        if newdentist == self.pt.dnt1:
-            return
-        if self.pt.cset == "I":
-            self.advise("Let Highland Dental Plan know of this change", 1)
-        elif self.pt.cset == "N":
-            self.advise(
-            "Get an NHS form signed to change the patients contract", 1)
-        else:
-            self.advise("changed dentist to %s"%inits, 1)
-        print "changing contracted dentist to ", inits
-        self.pt.dnt1=newdentist
-        self.updateDetails()
-
-    def changeCourseDentist(self, inits):
-        '''
-        changes dnt2
-        '''
-        newdentist=localsettings.ops_reverse[str(inits)]
-        if newdentist == self.pt.dnt2:
-            return
-        if self.pt.dnt2 == 0 and newdentist == self.pt.dnt1:
-            return
-        if self.pt.cset == "N" and self.pt.underTreatment:
-            self.advise(
-            "think about getting some nhs forms signed for both dentists", 1)
-        else:
-            self.advise("changed course dentist to %s"%inits, 1)
-
-        print "changing course dentist to ", inits
-        self.pt.dnt2=newdentist
-        self.updateDetails()
-
-    def changeCourseType(self, cset):
-        '''
-        change cset
-        '''
-        self.pt.cset=str(cset)
-        self.updateDetails()
-        i=["P", "I", "N"].index(self.pt.cset[:1])
-        self.ui.contract_tabWidget.setCurrentIndex(i)
-
-    def editNHScontract(self):
-        self.advise("edit NHS", 1)
-
-    def editPrivateContract(self):
-        self.advise("edit Private", 1)
-    def editHDPcontract(self):
-        self.advise("edit HDP", 1)
-    def editOtherContract(self):
-        self.advise("edit other Practitioner", 1)
 
 class historyClass():
     def addHistoryMenu(self):
@@ -1630,24 +1559,32 @@ class signals():
         QtCore.QObject.connect(self.ui.badDebt_pushButton,
         QtCore.SIGNAL("clicked()"), self.makeBadDebt_clicked)
         QtCore.QObject.connect(self.ui.contract_tabWidget,
-            QtCore.SIGNAL("currentChanged(int)"), self.handle_ContractTab)
+        QtCore.SIGNAL("currentChanged(int)"), self.contractTab_navigated)
+
         QtCore.QObject.connect(self.ui.dnt1comboBox, QtCore.
-            SIGNAL("activated(const QString&)"), self.changeContractedDentist)
+        SIGNAL("activated(const QString&)"), self.dnt1comboBox_clicked)
+        
         QtCore.QObject.connect(self.ui.dnt2comboBox, QtCore.
-                SIGNAL("activated(const QString&)"), self.changeCourseDentist)
+        SIGNAL("activated(const QString&)"), self.dnt2comboBox_clicked)
+        
         QtCore.QObject.connect(self.ui.cseType_comboBox,
-            QtCore.SIGNAL("activated(const QString&)"), self.changeCourseType)
+        QtCore.SIGNAL("activated(const QString&)"), 
+        self.cseType_comboBox_clicked)
+        
         QtCore.QObject.connect(self.ui.editNHS_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.editNHScontract)
-        QtCore.QObject.connect(self.ui.editNHS_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.editPrivateContract)
+        QtCore.SIGNAL("clicked()"), self.editNHS_pushButton_clicked)
+        
+        QtCore.QObject.connect(self.ui.editPriv_pushButton,
+        QtCore.SIGNAL("clicked()"), self.editPriv_pushButton_clicked)
+
         QtCore.QObject.connect(self.ui.nhsclaims_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.nhsClaimsShortcut)
+        QtCore.SIGNAL("clicked()"), self.nhsclaims_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.editHDP_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.editHDPcontract)
+        QtCore.SIGNAL("clicked()"), self.editHDP_pushButton_clicked)
+
         QtCore.QObject.connect(self.ui.editRegDent_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.editOtherContract)
+        QtCore.SIGNAL("clicked()"), self.editRegDent_pushButton_clicked)
 
 
     def signals_feesTable(self):
@@ -3132,8 +3069,8 @@ class pageHandlingClass():
         if ci == 1:
             self.updateStatus()
             self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
-            self.handle_ContractTab(self.ui.contract_tabWidget.currentIndex())
-
+            contract_gui_module.handle_ContractTab(self)
+            
         if ci == 2:
             self.docsPrinted()
 
@@ -3350,7 +3287,7 @@ class pageHandlingClass():
 
 class openmolarGui(QtGui.QMainWindow, customWidgets, chartsClass,
 pageHandlingClass, newPatientClass, appointmentClass, signals, 
-printingClass, cashbooks, contractClass, historyClass):
+printingClass, cashbooks, historyClass):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui=Ui_main.Ui_MainWindow()
@@ -4601,9 +4538,61 @@ printingClass, cashbooks, contractClass, historyClass):
         '''
         forum_gui_module.checkForNewForumPosts(self)
 
-################################## END OF FEES #################################
+    def contractTab_navigated(self,i): 
+        '''
+        the contract tab is changing
+        '''
+        contract_gui_module.handle_ContractTab(self)
 
+    def dnt1comboBox_clicked(self, qstring):
+        '''
+        user is changing dnt1
+        '''
+        contract_gui_module.changeContractedDentist(self,qstring)
 
+    def dnt2comboBox_clicked(self, qstring):
+        '''
+        user is changing dnt1
+        '''
+        contract_gui_module.changeCourseDentist(self,qstring)
+    
+    def cseType_comboBox_clicked(self, qstring):
+        '''
+        user is changing the course type
+        '''
+        contract_gui_module.changeCourseType(self,qstring)
+
+    def editNHS_pushButton_clicked(self):
+        '''
+        edit the NHS contract
+        '''
+        contract_gui_module.editNHScontract(self)
+
+    def editPriv_pushButton_clicked(self):
+        '''
+        edit Private contract
+        '''
+        contract_gui_module.editPrivateContract(self)
+
+    def nhsclaims_pushButton_clicked(self):
+        '''
+        edit Private contract
+        '''
+        self.nhsClaimsShortcut()
+    
+    def editHDP_pushButton_clicked(self):
+        '''
+        edit the HDP contract
+        '''
+        contract_gui_module.editHDPcontract(self)
+    
+    def editRegDent_pushButton_clicked(self):
+        '''
+        edit the "other Dentist" contract
+        '''
+        contract_gui_module.editOtherContract(self)
+    
+    
 ###############################################################################
 ########          ATTENTION NEEDED HERE         ###############################
          
