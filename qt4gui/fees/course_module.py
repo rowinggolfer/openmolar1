@@ -12,8 +12,9 @@ functions to open a course, close a course, or check if one is needed.
 from PyQt4 import QtGui
 
 from openmolar.settings import localsettings
-from openmolar.qt4gui.dialogs import newCourse
 from openmolar.dbtools import writeNewCourse
+from openmolar.qt4gui.dialogs import newCourse
+from openmolar.qt4gui import contract_gui_module
 
 def newCourseNeeded(parent):
     '''
@@ -55,7 +56,7 @@ def setupNewCourse(parent):
             parent.changeContractedDentist(atts[0])
         dnt2 = localsettings.ops_reverse[atts[1]]
         if dnt2 != parent.pt.dnt2:
-            parent.changeCourseDentist(atts[1])
+            contract_gui_module.changeCourseDentist(parent, atts[1])
         if atts[2] != parent.pt.cset:
             parent.changeCourseType(atts[2])
 
