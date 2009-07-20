@@ -22,6 +22,7 @@ import threading
 import subprocess
 import datetime
 
+
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import Ui_main, colours
 
@@ -29,6 +30,8 @@ from openmolar.qt4gui import Ui_main, colours
 from openmolar.qt4gui.fees import fees_module, course_module, examdialog, \
 perio_tx_dialog, add_tx_to_plan, complete_tx, manipulate_tx_plan, \
 daybook_module
+
+from openmolar.qt4gui import forum_gui_module
 
 #--dialogs made with designer
 from openmolar.qt4gui.dialogs import Ui_patient_finder, Ui_select_patient, \
@@ -70,193 +73,7 @@ perioChartWidget, estimateWidget, aptOVcontrol
 #--watch out for namespace clashes!!!!!
 
 
-class forumClass():
-
-    def checkForNewForumPosts(self):
-        '''checks for new forum posts every 5 minutes'''
-        while True:
-            time.sleep(300)
-            print "checking forum"
-            lastEvent=localsettings.lastForumVisit
-            for topic in ("forum","omforum"):
-                newEvent=forum.lastPost(topic)
-                print newEvent, lastEvent, newEvent>lastEvent
-                if newEvent>lastEvent:
-                    self.showForumIcon(True)
-                    break
-
-    def loadForum(self):
-        '''
-        loads the forum (you guessed, huh?)
-        '''
-        #-- I have 2 forums. one for computer issues, and one for general
-        twidg=self.ui.forum_treeWidget
-        twidg.clear()
-
-        for topic in ("forum", "omforum"):
-            #-- set the column headers (stored in another module)
-            headers=forum.headers
-            twidg.setHeaderLabels(headers)
-            #-- get the posts
-            posts=forum.getPosts(topic)
-            if topic == "forum":
-                topParent=QtGui.QTreeWidgetItem(twidg, ["General Topics"])
-            else:
-                topParent=QtGui.QTreeWidgetItem(twidg,
-                ["OpenMolar and Computer Issues"])
-
-            parents={None:topParent}
-            #--set the forum alternating topic colours
-            mcolours={True:QtCore.Qt.darkGreen, False:QtCore.Qt.darkBlue}
-            #--set a boolean for alternating row colours
-            highlighted=True
-
-            for post in posts:
-                parent=parents.get(post.parent_ix)
-                item=QtGui.QTreeWidgetItem(parent)
-                item.setText(0, post.topic)
-                item.setText(1, post.inits)
-                item.setText(2, post.briefcomment)
-                item.setData(3, QtCore.Qt.DisplayRole,
-                QtCore.QVariant(QtCore.QDateTime(post.date)))
-
-                item.setText(4, post.comment)
-                item.setText(5, "%d:%s"%(post.ix, topic))
-                if post.parent_ix == None:
-                    highlighted=not highlighted
-                    colour=mcolours[highlighted]
-                else:
-                    colour=item.parent().textColor(2)
-                    bcolour=QtCore.Qt.lightGray
-                for i in range(item.columnCount()):
-                    item.setTextColor(i, colour)
-                    if i == 3 and post.date > \
-                    localsettings.curTime()-datetime.timedelta(hours=24):
-                        item.setTextColor(i, QtGui.QColor("orange"))
-
-                parents[post.ix]=item
-            twidg.expandAll()
-            twidg.setColumnWidth(4, 0)
-            twidg.setColumnWidth(5, 0)
-            for i in range(twidg.columnCount()):
-                twidg.resizeColumnToContents(i)
-                topParent.setBackgroundColor(i, QtGui.QColor("#eeeeee"))
-            self.ui.forumDelete_pushButton.setEnabled(False)
-            self.ui.forumReply_pushButton.setEnabled(False)
-        #-- make a note that the user has visited the forum
-        localsettings.forumVisited()
-        #-- turn the tab red.
-        self.showForumIcon(False)
-
-    def forumItemSelected(self):
-        '''
-        user has selected an item in the forum
-        '''
-        item=self.ui.forum_treeWidget.currentItem()
-        datetext=item.data(3,
-        QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
-
-        heading="<b>Subject:\t%s<br />"%item.text(0)
-        heading+="Author:\t%s<br />"%item.text(1)
-        heading+="Date:\t%s</b>"%datetext
-        message=item.text(4)
-        self.ui.forum_label.setText(heading)
-        self.ui.forum_textBrowser.setPlainText(message)
-        enableButtons = not item.parent() == None
-        self.ui.forumDelete_pushButton.setEnabled(enableButtons)
-        self.ui.forumReply_pushButton.setEnabled(enableButtons)
-
-    def forumNewItem(self):
-        '''
-        create a new post
-        '''
-        Dialog = QtGui.QDialog(self)
-        dl = Ui_forumPost.Ui_Dialog()
-        dl.setupUi(Dialog)
-        dl.comboBox.addItems(["Anon"]+localsettings.allowed_logins)
-
-        while True:
-            if Dialog.exec_():
-                if dl.topic_lineEdit.text() == "":
-                    self.advise("Please set a topic", 1)
-                else:
-                    break
-            else:
-                return
-
-        if dl.table_comboBox.currentIndex() == 0:
-            table="forum"
-        else:
-            table="omforum"
-        post=forum.post()
-        post.topic = dl.topic_lineEdit.text()
-        post.comment = dl.comment_textEdit.toPlainText()
-        post.inits = dl.comboBox.currentText()
-        forum.commitPost(post, table)
-        self.loadForum()
-
-    def showForumIcon(self, newItems=True):
-        tb=self.ui.main_tabWidget.tabBar()
-        if newItems:
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-            tb.setTabIcon(8, icon)
-            tb.setTabText(8, "NEW FORUM POSTS")
-            tb.setTabTextColor(8, QtGui.QColor("red"))
-        else:
-            print "removing icon"
-            tb.setTabIcon(8, QtGui.QIcon())
-            tb.setTabText(8, "FORUM")
-            tb.setTabTextColor(8, QtGui.QColor())
-
-    def forumDeleteItem(self):
-        '''
-        delete a forum posting
-        '''
-        item=self.ui.forum_treeWidget.currentItem()
-        heading=item.text(0)
-
-        result=QtGui.QMessageBox.question(self, "Confirm",
-        "Delete selected Post?<br />'%s'"%heading,
-        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
-        if result == QtGui.QMessageBox.Yes:
-
-            key=str(item.text(5)).split(":")
-            ix=int(key[0])
-            table=key[1]
-            forum.deletePost(ix, table)
-            self.loadForum()
-
-    def forumReply(self):
-        '''
-        reply to an item
-        '''
-        item=self.ui.forum_treeWidget.currentItem()
-        heading=item.text(0)
-        if heading[:2] != "re":
-            heading="re. "+heading
-        Dialog = QtGui.QDialog(self)
-        dl = Ui_forumPost.Ui_Dialog()
-        dl.setupUi(Dialog)
-        dl.topic_lineEdit.setText(heading)
-        dl.table_comboBox.hide()
-        dl.label_4.hide()
-        dl.comboBox.addItems(["Anon"]+localsettings.allowed_logins)
-        if Dialog.exec_():
-            key=str(item.text(5)).split(":")
-            parent=int(key[0])
-            table=key[1]
-            post=forum.post()
-            post.parent_ix=parent
-            post.topic = dl.topic_lineEdit.text()
-            post.comment = dl.comment_textEdit.toPlainText()
-            post.inits = dl.comboBox.currentText()
-            forum.commitPost(post, table)
-        self.loadForum()
-
-
+   
 class contractClass():
     def handle_ContractTab(self, i):
         if i == 0:
@@ -1765,13 +1582,13 @@ class signals():
 
     def signals_forum(self):
         QtCore.QObject.connect(self.ui.forum_treeWidget, QtCore.SIGNAL(
-        "itemSelectionChanged ()"), self.forumItemSelected)
+        "itemSelectionChanged ()"), self.forum_treeWidget_selectionChanged)
         QtCore.QObject.connect(self.ui.forumDelete_pushButton, QtCore.SIGNAL(
-        "clicked()"), self.forumDeleteItem)
+        "clicked()"), self.forumDeleteItem_clicked)
         QtCore.QObject.connect(self.ui.forumReply_pushButton, QtCore.SIGNAL(
-        "clicked()"), self.forumReply)
+        "clicked()"), self.forumReply_clicked)
         QtCore.QObject.connect(self.ui.forumNewTopic_pushButton, QtCore.SIGNAL(
-        "clicked()"), self.forumNewItem)
+        "clicked()"), self.forumNewTopic_clicked)
 
     def signals_history(self):
         QtCore.QObject.connect(self.ui.historyPrint_pushButton, QtCore.SIGNAL(
@@ -2212,11 +2029,12 @@ class customWidgets():
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
         #--start a thread for the triangle on the appointment book
-        t1=threading.Thread(target=self.apptTicker)
-        t1.start()
+        self.thread1=threading.Thread(target=self.apptTicker)
+        self.thread1.start()
 
-        t2=threading.Thread(target=self.checkForNewForumPosts)
-        t2.start()
+        self.thread2=threading.Thread(target = self.checkForNewForumPosts)
+        self.thread2.start()
+
         self.enableEdit(False)
         for desc in referral.getDescriptions():
             s=QtCore.QString(desc)
@@ -3298,7 +3116,7 @@ class pageHandlingClass():
             if not self.feestableLoaded:
                 fees_module.loadFeesTable(self)
         if ci == 8:
-            self.loadForum()
+            forum_gui_module.loadForum(self)
 
     def handle_patientTab(self):
         '''handles navigation of patient record'''
@@ -3532,7 +3350,7 @@ class pageHandlingClass():
 
 class openmolarGui(QtGui.QMainWindow, customWidgets, chartsClass,
 pageHandlingClass, newPatientClass, appointmentClass, signals, 
-printingClass, cashbooks, contractClass, historyClass, forumClass):
+printingClass, cashbooks, contractClass, historyClass):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui=Ui_main.Ui_MainWindow()
@@ -4206,6 +4024,22 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
         self.showForumIcon()
 
+    def showForumIcon(self, newItems=True):
+        tb=self.ui.main_tabWidget.tabBar()
+        if newItems:
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+            tb.setTabIcon(8, icon)
+            tb.setTabText(8, "NEW FORUM POSTS")
+            tb.setTabTextColor(8, QtGui.QColor("red"))
+        else:
+            print "removing icon"
+            tb.setTabIcon(8, QtGui.QIcon())
+            tb.setTabText(8, "FORUM")
+            tb.setTabTextColor(8, QtGui.QColor())
+
+
     def save_patient_tofile(self):
         '''
         our "patient" is a python object,
@@ -4733,9 +4567,39 @@ printingClass, cashbooks, contractClass, historyClass, forumClass):
     
     def loadAccountsTable_clicked(self):
         '''
-        button has been pressed to laod the accounts table
+        button has been pressed to load the accounts table
         '''
-        fees_module.loadFeesTable(self)
+        fees_module.populateAccountsTable(self)
+
+    def forum_treeWidget_selectionChanged(self):
+        '''
+        user has selected an item in the forum
+        '''
+        forum_gui_module.forumItemSelected(self) 
+    
+    def forumNewTopic_clicked(self):
+        '''
+        user has called for a new topic in the forum
+        '''
+        forum_gui_module.forumNewTopic(self)
+    
+    def forumDeleteItem_clicked(self):
+        '''
+        user is deleting an item from the forum
+        '''
+        forum_gui_module.forumDeleteItem(self)
+        
+    def forumReply_clicked(self):
+        '''
+        user is replying to an existing topic
+        '''
+        forum_gui_module.forumReply(self)
+    
+    def checkForNewForumPosts(self):
+        '''
+        ran in a thread - checks for messages
+        '''
+        forum_gui_module.checkForNewForumPosts(self)
 
 ################################## END OF FEES #################################
 

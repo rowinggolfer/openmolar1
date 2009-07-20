@@ -183,7 +183,6 @@ def loadFeesTable(parent):
                 col += 1
             QtGui.QTreeWidgetItem(header, feeList)
 
-    parent.chooseFeeColumns(0)
     #-- prevent it getting loaded again
     #--(and undoing any user changes to col widths, expanded items etc...
     parent.feestableLoaded = True
