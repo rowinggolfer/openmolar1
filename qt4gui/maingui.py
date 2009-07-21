@@ -22,7 +22,7 @@ import threading
 import subprocess
 
 ####temp
-import contract_gui_module
+
 
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import Ui_main, colours
@@ -32,7 +32,7 @@ from openmolar.qt4gui.fees import fees_module, course_module, examdialog, \
 perio_tx_dialog, add_tx_to_plan, complete_tx, manipulate_tx_plan, \
 daybook_module
 
-from openmolar.qt4gui import forum_gui_module
+from openmolar.qt4gui import forum_gui_module, contract_gui_module
 
 #--dialogs made with designer
 from openmolar.qt4gui.dialogs import Ui_patient_finder, Ui_select_patient, \
@@ -3959,7 +3959,8 @@ printingClass, cashbooks, historyClass):
         self.ui.addr1Edit, self.ui.dobEdit, self.ui.pcdeEdit, self.ui.sexEdit):
             widg.setPalette(palette)
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
-        self.showForumIcon()
+        #-- don't do this at startup... wait for the thread which checks
+        #self.showForumIcon()
 
     def showForumIcon(self, newItems=True):
         tb=self.ui.main_tabWidget.tabBar()

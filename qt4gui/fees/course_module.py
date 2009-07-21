@@ -53,12 +53,12 @@ def setupNewCourse(parent):
         atts = result[1]
         dnt1 = localsettings.ops_reverse[atts[0]]
         if dnt1 != parent.pt.dnt1:
-            parent.changeContractedDentist(atts[0])
+            contract_gui_module.changeContractedDentist(parent, atts[0])
         dnt2 = localsettings.ops_reverse[atts[1]]
         if dnt2 != parent.pt.dnt2:
             contract_gui_module.changeCourseDentist(parent, atts[1])
         if atts[2] != parent.pt.cset:
-            parent.changeCourseType(atts[2])
+            contract_gui_module.changeCourseType(atts[2])
 
         accd = atts[3].toPyDate()
 
