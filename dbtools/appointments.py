@@ -606,8 +606,8 @@ def block_appt(bldate, apptix, start, end, reason):
         db.commit()
         result = True
     else:
-        print "couldn't insert into aslot %s %s %s serialno %d"% (
-        bldate,apptix,start,serialno)
+        print "couldn't insert into aslot %s %s %s"% (
+        bldate,apptix,start)
         result = False
     cursor.close()
     #db.close()
@@ -625,7 +625,7 @@ note, flag0, flag1, flag2, flag3):
     code0,code1,code2,note,flag0,flag1,flag2,flag3)
 
     fullquery = '''update aslot set %s where adate="%s" and apptix=%d
-    and start=%d and serialno=%d'''% (changes, adate, apptix, start, serialno)
+    and start=%d and serialno=%d'''% (changes, moddate, apptix, start, serialno)
     if localsettings.logqueries:
         print fullquery
     try:
@@ -635,7 +635,7 @@ note, flag0, flag1, flag2, flag3):
     except Exception, ex:
         print "exception in appointments.modify_aslot_appt ", ex
         print "couldn't modify aslot %s %s %s serialno %d"% (
-        adate, apptix, start, serialno)
+        moddate, apptix, start, serialno)
 
         result = False
     cursor.close()
@@ -667,10 +667,10 @@ def delete_appt_from_apr(serialno, aprix, aprdate, atime):
     except Exception, ex:
         print "exception in appointments.delete_appt_from_apr ", ex
         result = False
-
-    return result
     cursor.close()
 
+    return result
+    
 def delete_appt_from_aslot(dent, start, adate, serialno):
     #--delete from the appointment book proper
     result = True
