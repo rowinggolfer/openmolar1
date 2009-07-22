@@ -56,7 +56,7 @@ standardletter, debug_html, estimates
 #--modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint, notesPrint, chartPrint, \
 bookprint, letterprint, recallprint, daylistprint, multiDayListPrint, \
-accountPrint, estimatePrint, GP17, apptcardPrint, bookprint
+accountPrint, estimatePrint, GP17, bookprint
 
 #--custom widgets
 from openmolar.qt4gui.customwidgets import chartwidget, appointmentwidget, \
@@ -1115,24 +1115,7 @@ class printingClass():
         myclass.printpage()
         self.pt.addHiddenNote("printed", "static chart")
 
-    def printApptCard(self):
-        iter=QtGui.QTreeWidgetItemIterator(self.ui.ptAppointment_treeWidget,
-        QtGui.QTreeWidgetItemIterator.Selectable)
-
-        futureAppts=()
-        while iter.value():
-            #self.ui.ptAppointment_treeWidget.setItemSelected(iter)
-            i=iter.value() #self.ui.ptAppointment_treeWidget.currentItem()
-            adate=str(i.text(0))
-            if localsettings.uk_to_sqlDate(adate)>localsettings.sqlToday():
-                futureAppts+=((adate, str(i.text(2)), str(i.text(1))), )
-            iter+=1
-        card=apptcardPrint.card(self.ui)
-        card.setProps(self.pt.title, self.pt.fname, self.pt.sname,
-                      self.pt.serialno, futureAppts)
-        card.print_()
-        self.pt.addHiddenNote("printed", "appt card")
-
+    
     def printaccount(self, tone="A"):
         if self.pt.serialno == 0:
             self.advise("no patient selected", 1)

@@ -14,8 +14,11 @@ from PyQt4 import QtCore, QtGui
 from openmolar.dbtools import appointments
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
-from openmolar.qt4gui.dialogs import alterAday, finalise_appt_time,\
-permissions, Ui_appointment_length, Ui_specify_appointment
+from openmolar.qt4gui.dialogs import alterAday, \
+finalise_appt_time,permissions, Ui_appointment_length, \
+Ui_specify_appointment
+
+from openmolar.qt4gui.printing import apptcardPrint
 
 #-- secondary applications
 from openmolar.qt4gui.dialogs import apptTools
@@ -1175,6 +1178,25 @@ def aptOVlabelRightClicked(parent, d):
 
         if dl.getInput():
             layout_apptOV(parent)
+
+def printApptCard(parent):
+        iter=QtGui.QTreeWidgetItemIterator(parent.ui.ptAppointment_treeWidget,
+        QtGui.QTreeWidgetItemIterator.Selectable)
+
+        futureAppts=()
+        while iter.value():
+            #parent.ui.ptAppointment_treeWidget.setItemSelected(iter)
+            i=iter.value() #parent.ui.ptAppointment_treeWidget.currentItem()
+            adate=str(i.text(0))
+            if localsettings.uk_to_sqlDate(adate)>localsettings.sqlToday():
+                futureAppts+=((adate, str(i.text(2)), str(i.text(1))), )
+            iter+=1
+        card=apptcardPrint.card(parent.ui)
+        card.setProps(parent.pt.title, parent.pt.fname, parent.pt.sname,
+                      parent.pt.serialno, futureAppts)
+        card.print_()
+        parent.pt.addHiddenNote("printed", "appt card")
+
 
 def appointmentTools(parent):
     '''
