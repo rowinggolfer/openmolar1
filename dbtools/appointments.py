@@ -614,7 +614,7 @@ def block_appt(bldate, apptix, start, end, reason):
     return result
 
 def modify_aslot_appt(moddate, apptix, start, serialno, code0, code1, code2,
-note, flag0, flag1, flag2, flag3):
+note, flag1, flag0, flag2, flag3):
     '''
     this modifies an appointment in the aslot table
     '''
