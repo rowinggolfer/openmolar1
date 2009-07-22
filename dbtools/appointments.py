@@ -477,7 +477,7 @@ def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
         cursor.execute(query, values)
 
         db.commit()
-        result = True
+        result = aprix
     except Exception, ex:
         print "exception in appointments.add_pt_appt ", ex
         result = False

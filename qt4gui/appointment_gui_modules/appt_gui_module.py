@@ -128,9 +128,7 @@ def newAppt(parent):
 
     QtCore.QObject.connect(dl.scheduleNow_pushButton,
     QtCore.SIGNAL("clicked()"), makeNow)
-    ##TODO - fix this
-
-    dl.scheduleNow_pushButton.setEnabled(False)
+    
     if Dialog.exec_():
         #--practitioner
         py_inits = str(dl.practix_comboBox.currentText())
@@ -163,15 +161,33 @@ def newAppt(parent):
         ##TODO - add datespec and joint appointment options
 
         #--attempt WRITE appointement to DATABASE
-        if appointments.add_pt_appt(parent.pt.serialno, practix, length,
-        code0, -1, code1, code2, note, "", cst):
+        apr_ix = appointments.add_pt_appt(parent.pt.serialno, practix, length,
+        code0, -1, code1, code2, note, "", cst)
+        if apr_ix:
             layout_apptTable(parent)
+            select_apr_ix(parent, apr_ix)
             if dl.makeNow:
                 begin_makeAppt(parent)
         else:
             #--commit failed
             parent.advise("Error saving appointment", 2)
 
+def select_apr_ix(parent, apr_ix):
+    '''
+    select the row of the patient's diary where apr_ix is as specified
+    '''
+    print "select row where index = ", apr_ix
+    iterator = QtGui.QTreeWidgetItemIterator(
+    parent.ui.ptAppointment_treeWidget,
+    QtGui.QTreeWidgetItemIterator.Selectable)
+
+    while iterator.value():
+        row = iterator.value() 
+        if apr_ix == int(row.text(9)):
+            parent.ui.ptAppointment_treeWidget.setCurrentItem(row,0)
+            break
+        iterator += 1
+    
 def clearApptButtonClicked(parent):
     '''user is deleting an appointment'''
     selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
@@ -264,10 +280,6 @@ def modifyAppt(parent):
     selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
 
     def makeNow():
-        ######temporarily disabled this
-        parent.advise(
-        "this function has been temporarily disabled by Neil, sorry", 1)
-        return
         dl.makeNow = True
 
     def oddLength(i):
@@ -336,8 +348,6 @@ def modifyAppt(parent):
 
         QtCore.QObject.connect(dl.scheduleNow_pushButton,
                                QtCore.SIGNAL("clicked()"), makeNow)
-        ##TODO fix this!!
-        dl.scheduleNow_pushButton.setEnabled(False)
 
         if Dialog.exec_():
             practixText = str(dl.practix_comboBox.currentText())
@@ -373,12 +383,14 @@ def modifyAppt(parent):
             practix, length, code0, code1, code2, note, "", cst)
             if dateText == "TBA":
                 if dl.makeNow:
+                    layout_apptTable(parent)
+                    select_apr_ix(parent, aprix)
                     begin_makeAppt(parent)
             else:
                 if not appointments.modify_aslot_appt(adate, practix, start,
                 parent.pt.serialno, code0, code1, code2, note, cst, 0, 0, 0):
                     parent.advise("Error putting into dentists book", 2)
-            layout_apptTable(parent)
+                layout_apptTable(parent)
 
 def begin_makeAppt(parent):
     '''
