@@ -7,7 +7,7 @@
 # See the GNU General Public License for more details.
 
 '''
-one function - perform
+one function - performExam
 which performs an examination
 '''
 
@@ -21,7 +21,7 @@ from openmolar.qt4gui.dialogs import examWizard
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module, fees_module
 
-def perform(parent):
+def performExam(parent):
     '''
     perform an exam
     '''

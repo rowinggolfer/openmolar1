@@ -7,7 +7,7 @@
 # See the GNU General Public License for more details.
 
 '''
-one function - perform
+one function - performPerio
 which provides options for, and performs perio items
 '''
 
@@ -21,7 +21,7 @@ from openmolar.qt4gui.dialogs import hygTreatWizard
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module, fees_module
 
-def perform(parent):
+def performPerio(parent):
     if parent.pt.serialno == 0:
         parent.advise("no patient selected", 1)
         return

@@ -22,11 +22,13 @@ def getCode(arg):
     return itemcode
 
 def getItemFees(cset, item,no_items=1, exmpt=""):
-    print cset, item
+    print "using addTreat.getItemFees",cset, item
     itemfee,ptfee=0,0
     if "P" in cset:
         itemfee=localsettings.privateFees[item].getFee(no_items)
         ptfee=itemfee
+    elif "I" in cset:
+        itemfee=localsettings.privateFees[item].getFee(no_items)        
     elif "N" in cset:
         itemfee=localsettings.nhsFees[item].getFee(no_items)
         if exmpt=="":
