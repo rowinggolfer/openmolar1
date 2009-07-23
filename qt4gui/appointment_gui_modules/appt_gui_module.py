@@ -1041,13 +1041,13 @@ def layout_apptOV(parent):
 
         QtCore.QObject.disconnect(parent.ui.aptOV_allhygscheckBox,
         QtCore.SIGNAL("stateChanged(int)"), 
-        parent.apptOV_all_hygenists_checkbox_change)
+        parent.apptOV_all_hygenists_checkbox_changed)
 
         parent.ui.aptOV_allhygscheckBox.setChecked(AllHygsChecked)
         
         QtCore.QObject.connect(parent.ui.aptOV_allhygscheckBox, 
         QtCore.SIGNAL("stateChanged(int)"), 
-        parent.apptOV_all_hygenists_checkbox_change)
+        parent.apptOV_all_hygenists_checkbox_changed)
 
     if parent.ui.aptOV_everybody_checkBox.checkState != (
     AllDentsChecked and AllHygsChecked):
