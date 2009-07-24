@@ -72,21 +72,8 @@ class customWidgets():
     def addCustomWidgets(self):
         print "adding custom widgets"
         ##statusbar
-
-        if localsettings.clinicianNo == 0:
-            if localsettings.station == "surgery":
-                op_text = " <b>NO CLINICIAN SET</b> - "
-            else:
-                op_text = ""
-        else:
-            op_text = " <b>CLINICIAN (%s)</b> - "%localsettings.clinicianInits
-        if "/" in localsettings.operator:
-            op_text += " team "
-        op_text += " %s using %s mode. "%(localsettings.operator,
-        localsettings.station)
-
+        
         self.ui.operatorLabel = QtGui.QLabel()
-        self.ui.operatorLabel.setText(op_text)
         self.ui.statusbar.addPermanentWidget(self.ui.operatorLabel)
 
         ##summary chart
@@ -1577,8 +1564,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.grid = ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
         'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', "lr8", "lr7", "lr6", "lr5",
         'lr4', 'lr3', 'lr2', 'lr1', 'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
-        self.labels_and_tabs()
         self.addCustomWidgets()
+        self.labels_and_tabs()
         self.setValidators()
         self.setupSignals()
         self.loadDentistComboboxes()
@@ -2210,6 +2197,19 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.advise("dialog rejected")
     def labels_and_tabs(self):
         self.ui.main_tabWidget.setCurrentIndex(0)
+        if localsettings.clinicianNo == 0:
+            if localsettings.station == "surgery":
+                op_text = " <b>NO CLINICIAN SET</b> - "
+            else:
+                op_text = ""
+        else:
+            op_text = " <b>CLINICIAN (%s)</b> - "% \
+            localsettings.clinicianInits
+        if "/" in localsettings.operator:
+            op_text += " team "
+        op_text += " %s using %s mode. "%(localsettings.operator,
+        localsettings.station)
+        self.ui.operatorLabel.setText(op_text)
         if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)
         else:
