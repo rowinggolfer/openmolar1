@@ -41,9 +41,9 @@ class txCourse():
         ("Exam", "%s dated - %s"% (self.examt, self.examd)), 
         )
 
-        retarg = '''<table width = "100%" border = "2">
+        retarg = '''<table width = "100%%" border = "2">
         <tr><th colspan = "3" bgcolor = "yellow">CourseNo %s</th>
-        </tr>'''% self.courseno
+        <//tr>'''% self.courseno
 
         for header in headers:
             retarg += '<tr><th colspan = "2">%s</th><td>%s</td></tr>'% header
@@ -52,9 +52,9 @@ class txCourse():
             if planned == "pl":
                 bgcolor = ' bgcolor = "#eeeeee"'
                 retarg += '''<tr>
-                <th rowspan = "7"% s>PLANNED / INCOMPLETE</th>'''% bgcolor
+                <th rowspan = "7" %s>PLANNED / INCOMPLETE</th>'''% bgcolor
             else:
-                retarg += '<tr><th rowspan = "7"% s>COMPLETED</th>'
+                retarg += '<tr><th rowspan = "7">COMPLETED</th>'
                 bgcolor = ""
             
             for att in ("perio", 'xray', 'anaes', 'other', "custom"):
