@@ -6,20 +6,26 @@
 # (at your option) any later version. See the GNU General Public License 
 # for more details.
 
+'''
+contains one class - the appointment widget
+'''
+
 from __future__ import division
-from PyQt4 import QtGui,QtCore
+from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs import Ui_blockSlot
 
-BGCOLOR=colours.APPT_Background
-LINECOLOR=colours.APPT_LINECOLOUR
-APPTCOLORS=colours.APPTCOLORS
-TRANSPARENT=colours.TRANSPARENT
+BGCOLOR = colours.APPT_Background
+LINECOLOR = colours.APPT_LINECOLOUR
+APPTCOLORS = colours.APPTCOLORS
+TRANSPARENT = colours.TRANSPARENT
 
 class appointmentWidget(QtGui.QWidget):
-    '''a custom widget to for a dental appointment book'''
-    def __init__(self,sTime,fTime,slotLength,textDetail,parent=None):
+    '''
+    a custom widget to for a dental appointment book
+    '''
+    def __init__(self, sTime, fTime, slotLength, textDetail, parent=None):
         ''' 
         useage is (startTime,finishTime,slotLength, textDetail, parentWidget)
         startTime,finishTime in format HHMM or HMM or HH:MM or H:MM
@@ -27,50 +33,72 @@ class appointmentWidget(QtGui.QWidget):
         textDetail is the number of slots to draw before writing the time text
         parentWidget =optional
         '''
-        super(appointmentWidget,self).__init__(parent)
+        super(appointmentWidget, self).__init__(parent)
         self.setSizePolicy(QtGui.QSizePolicy(
-        QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding))
+        QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
 
         self.setMinimumSize(self.minimumSizeHint())
-        self.slotLength=slotLength                                                                  
+        self.slotLength = slotLength                                                                  
         #slotlength is 5 minutes for my purposes
 
         self.setStartTime(sTime)
         self.setEndTime(fTime)
-        self.textDetail=textDetail                                                                  
+        self.textDetail = textDetail                                                                  
         #--textDetail determines how many slots before a time 
         #--is printed, I like 15minute
         #--slots, so textDetail = 3
-        self.appts=[]
-        self.rows={}
-        self.setTime="None"
+        self.appts = []
+        self.rows = {}
+        self.setTime = "None"
         self.clearAppts()
-        self.dentist="DENTIST"
-        self.selected=(0,0)  #hmmmm
+        self.dentist = "DENTIST"
+        self.selected = (0,0)
         self.setMouseTracking(True)
-        self.duplicateNo=-1 #use this for serialnos =0
+        self.duplicateNo = -1 #use this for serialnos =0
+
     def sizeHint(self):
+        '''
+        set an (arbitrary) size for the widget
+        '''
         return QtCore.QSize(180, 800)
+
     def minimumSizeHint(self):
+        '''
+        set an (arbitrary) minimum size for the widget
+        '''
         return QtCore.QSize(150, 200)
     
-    def setStartTime(self,sTime):
-        self.startTime=self.minutesPastMidnight(sTime)                                              
-        #convert times to "minutes past midnight"
-    def setEndTime(self,fTime):
-        self.endTime=self.minutesPastMidnight(fTime)
-        self.calcSlotNo()
-    def calcSlotNo(self):
-        self.slotNo=(self.endTime-self.startTime)//self.slotLength
-    def clearAppts(self):
-        '''resets - the widget values - DOES NOT REDRAW THE WIDGET
+    def setStartTime(self, sTime):
         '''
-        self.appts=[]
-        self.doubleAppts=[]
-        self.rows={}
+        a public method to set the earliest time available
+        '''
+        self.startTime = self.minutesPastMidnight(sTime)                                              
+        #convert times to "minutes past midnight"
 
-    def setAppointment(self,start,finish,name,sno=0,
-    trt1="",trt2="",trt3="",memo="",flag=0,cset=0):
+    def setEndTime(self, fTime):
+        '''
+        a public method to set the end of the working day
+        '''
+        self.endTime = self.minutesPastMidnight(fTime)
+        self.calcSlotNo()
+        
+    def calcSlotNo(self):
+        '''
+        work out how many 'slots' there are given the lenght of day
+        and length of slots
+        '''
+        self.slotNo = (self.endTime - self.startTime) // self.slotLength
+
+    def clearAppts(self):
+        '''
+        resets - the widget values - DOES NOT REDRAW THE WIDGET
+        '''
+        self.appts = []
+        self.doubleAppts = []
+        self.rows = {}
+
+    def setAppointment(self, start, finish, name, sno=0, trt1="", trt2="",
+        trt3="", memo="", flag=0, cset=0):
         '''
         adds an appointment to the widget dictionary of appointments
         typical useage is instance.setAppointment
@@ -82,72 +110,85 @@ class appointmentWidget(QtGui.QWidget):
         ('17/04/2009', 4, 830, 845, 'HAAS D', 10203L, 
         'EXAM', '', '', '', 1, 80, 0, 0)
         '''
-        startcell=self.getCell_from_time(start)
-        endcell=self.getCell_from_time(finish)
-        if endcell==startcell:              #double and family appointments!!
-            endcell+=1
+        startcell = self.getCell_from_time(start)
+        endcell = self.getCell_from_time(finish)
+        if endcell == startcell: #double and family appointments!!
+            endcell += 1
 
-            self.doubleAppts.append((startcell,endcell,start,finish,
-            name,sno,trt1,trt2,trt3,memo,flag,cset))
-
+            self.doubleAppts.append((startcell, endcell, start, finish,
+            name, sno, trt1, trt2, trt3, memo, flag, cset))
         else:
-            self.appts.append((startcell,endcell,start,finish,
-            name,sno,trt1,trt2,trt3,memo,flag,cset))
+            self.appts.append((startcell, endcell, start, finish,
+            name, sno, trt1, trt2, trt3, memo, flag, cset))
 
-        if sno==0:
-            sno=self.duplicateNo
-            self.duplicateNo-=1
-        for row in range(startcell,endcell):
+        if sno == 0:
+            sno = self.duplicateNo
+            self.duplicateNo -= 1
+        for row in range(startcell, endcell):
             if self.rows.has_key(row):
                 self.rows[row].append(sno)
             else:
-                self.rows[row]=[sno]
-    def setCurrentTime(self,t):
+                self.rows[row] = [sno]
+    def setCurrentTime(self, t):
         '''
         send it a value like "HHMM" or "HH:MM" to draw a marker at that time
         '''
-        self.setTime=t
-    def minutesPastMidnight(self,t):
+        self.setTime = t
+        
+    def minutesPastMidnight(self, t):
         '''
         converts a time in the format of 
         'HHMM' or 'H:MM' (both strings) to minutes
         past midnight
         '''
         #t=t.replace(":","")
-        hour,min=int(t)//100,int(t)%100
-        return hour*60+min
-    def humanTime(self,t):
+        hour, minute = int(t) // 100, int(t) % 100
+        return hour * 60 + minute
+    
+    def humanTime(self, t):
         '''
         converts minutes past midnight(int) to format "HH:MM"
         '''
-        hour,min=t//60,int(t)%60
-        return "%s:%02d"%(hour,min)
-    def getCell_from_time(self,t):
+        hour, minute = t // 60, int(t) % 60
+        return "%s:%02d"% (hour, minute)
+
+    def getCell_from_time(self, t):
         '''
         send a time - return the row number of that time
         '''
         return \
-        int((self.minutesPastMidnight(t)-self.startTime)/self.slotLength)
+        int((self.minutesPastMidnight(t) - self.startTime) / self.slotLength)
     
-    def getPrev(self,arg):
-        lower=arg
-        while lower>=1:
+    def getPrev(self, arg):
+        '''
+        what slot is the previous appt?
+        '''
+        lower = arg
+        while lower >= 1:
             if self.rows.has_key(lower):
-                lower+=1
+                lower += 1
                 break
-            lower-=1
+            lower -= 1
         return lower
-    def getNext(self,arg):
-        upper=arg
-        while upper<self.slotNo:
+    
+    def getNext(self, arg):
+        '''
+        what slot is the next appt?
+        '''
+        upper = arg
+        while upper < self.slotNo:
             if self.rows.has_key(upper):
                 break
-            upper+=1
+            upper += 1
         return upper
-    def getApptBounds(self,arg):
-        upper=0
-        lower=self.slotNo
-        sortedkeys=self.rows.keys()
+    
+    def getApptBounds(self, arg):
+        '''
+        get the start and finish of an appt
+        '''
+        upper = 0
+        lower = self.slotNo
+        sortedkeys = self.rows.keys()
         sortedkeys.sort()
         for key in sortedkeys:
             if self.rows[key]==arg:
