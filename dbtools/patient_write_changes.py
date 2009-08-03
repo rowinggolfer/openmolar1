@@ -11,7 +11,7 @@ from openmolar.connect import connect
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 
-def all_changes(pt,changes, existingEstimates):
+def all_changes(pt, changes, existingEstimates):
     print "write_changes"
     if changes==[]:
         print "write changes called, but no changes for patient %d"%pt.serialno

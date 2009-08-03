@@ -846,10 +846,12 @@ class newPatientClass():
         self.ui.tabWidget.setTabEnabled(0, False)
 
         #--restore default functionality to the save button
-        QtCore.QObject.disconnect(self.ui.saveButton, QtCore.SIGNAL("clicked()"),
-                                                        self.checkNewPatient)
-        QtCore.QObject.connect(self.ui.saveButton, QtCore.SIGNAL("clicked()"),
-                                                            self.save_changes)
+        QtCore.QObject.disconnect(self.ui.saveButton, 
+        QtCore.SIGNAL("clicked()"), self.checkNewPatient)
+
+        QtCore.QObject.connect(self.ui.saveButton, 
+        QtCore.SIGNAL("clicked()"), self.save_changes)
+        
         self.ui.saveButton.setText("SAVE CHANGES")
 
     def abortNewPatientEntry(self):
@@ -1637,20 +1639,21 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
         #--check pt against the original loaded state
         #--this returns a LIST of changes ie [] if none.
-        uc=self.unsavedChanges()
+        uc = self.unsavedChanges()
         if uc != []:
             #--raise a custom dialog to get user input
             #--(centred over self)
             Dialog = QtGui.QDialog(self)
-            dl = saveDiscardCancel.sdcDialog(Dialog, self.pt.fname+" "+\
-                        self.pt.sname+" (%s)"%self.pt.serialno, uc)
+            dl = saveDiscardCancel.sdcDialog(Dialog, 
+            "%s %s (%s)"% (self.pt.fname, self.pt.sname, self.pt.serialno),
+            uc)
             if Dialog.exec_():
                 if dl.result == "discard":
                     print "user discarding changes"
                     return True
                 elif dl.result == "save":
                     print "user is saving"
-                    self.save_changes(True)
+                    self.save_changes(False)
                     return True
                 #--cancelled action
                 else:
@@ -2480,7 +2483,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                         (self.pt.serialno, self.pt_dbstate.serialno), 2)
             return changes
 
-    def save_changes(self, leavingRecord=False):
+    def save_changes(self, leavingRecord=True):
         '''
         updates the database when the save is requested
         '''
@@ -2498,11 +2501,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.pt.clearHiddenNotes()
 
         daybook_module.updateDaybook(self)
-        uc=self.unsavedChanges()
+        uc = self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
 
-            result=patient_write_changes.all_changes(self.pt, uc,
+            result = patient_write_changes.all_changes(self.pt, uc,
             self.pt_dbstate.estimates)
 
             if result: #True if sucessful
@@ -2511,7 +2514,14 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                     self.pt.getEsts()
                     if self.ui.tabWidget.currentIndex() == 7:
                         self.load_newEstPage()
-            
+                    else:
+                        print "tab widget page=",self.ui.tabWidget.currentIndex()
+                else:
+                    print "not updating ests because...."
+                    print "     leaving record=",leavingRecord
+                    print "     'estimates' in uc = ","estimates" in uc
+                    
+                     
                 self.pt_dbstate=copy.deepcopy(self.pt)
                 message="Sucessfully altered the following items<ul>"
                 for item in uc:
@@ -3021,13 +3031,14 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         complete_tx.estwidg_unComplete(self, txtype)
         
-    def estwidget_deleteTxItem(self,pl_cmp,txtype):
+    def estwidget_deleteTxItem(self, argument):
         '''
         estWidget has removed an item from the estimates.
         (user clicked on the delete button)
         '''
         ##TODO - I have removed this functionality due to estimate errors.
         print "DO YOU WANT TO ADD FUNCTIONALITY TO estwidget_deleteTxItem??"
+        print "FUNCTION WAS CALLED WITH argument - ", argument
         return
         
     def planItemClicked(self,item,col):

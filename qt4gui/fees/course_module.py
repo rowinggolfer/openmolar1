@@ -94,7 +94,7 @@ def closeCourse(parent):
         parent.pt.cmpd = localsettings.ukToday()
         parent.pt.courseno0 = None
         parent.pt.addHiddenNote("close_course")
-        parent.save_changes(True)
+        parent.save_changes()
         parent.reload_patient()
 
         ##-- I removed these lines because I think it is safer to

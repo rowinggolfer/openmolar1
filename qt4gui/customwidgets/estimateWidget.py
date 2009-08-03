@@ -441,7 +441,6 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         '''
         the child dialog has emitted a signal... pass it on
         '''
-        print "passing on delete message"
         self.parent.parent().ests.remove(arg)
         self.parent.parent().emit(QtCore.SIGNAL("deleteItem"), arg)
 
@@ -618,7 +617,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
-    pt = patient_class.patient(3)
+    pt = patient_class.patient(11956)
     form = estWidget()
     form.setEstimate(pt.estimates)
     form.connect(form, QtCore.SIGNAL("completedItem"), CatchAllSignals)

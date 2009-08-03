@@ -7,27 +7,32 @@
 # for more details.
 
 
-import sys,datetime,time,pickle
+import sys
+import datetime
+import time
+import pickle
 from openmolar.connect import connect
 from openmolar.ptModules import perio,dec_perm,estimates
 from openmolar.settings import localsettings
 
 def formatDate(d):
-    ''' takes a date, returns a string'''
+    ''' 
+    takes a python date type, returns a string
+    '''
     try:
-        retarg= "%02d/%02d/%d"%(d.day,d.month,d.year)
+        retarg = "%02d/%02d/%d"%(d.day,d.month,d.year)
     except:
-        retarg="no date"
+        retarg = "no date"
     return retarg
 
-dateFields=("dob","pd0","pd1","pd2","pd3","pd4","pd5","pd6","pd7","pd8",
-"pd9","pd10","pd11","pd12","pd13","pd14","cnfd","recd","billdate","enrolled",
-"initaccept","lastreaccept",
-"lastclaim","expiry","transfer","chartdate","accd","cmpd","examd","bpedate")
+dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6", 
+"pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
+"recd", "billdate", "enrolled", "initaccept", "lastreaccept", "lastclaim",
+"expiry", "transfer", "chartdate", "accd", "cmpd", "examd", "bpedate")
 
-nullDate=""
+nullDate = ""
 
-patientTableAtts=(
+patientTableAtts = (
 'pf0','pf1','pf2','pf3','pf4','pf5','pf6','pf7','pf8','pf9','pf10','pf11',
 'pf12','pf14','pf15','pf16','pf17','pf18','pf19',
 'money0','money1','money2','money3','money4','money5','money6','money7',
@@ -273,13 +278,13 @@ class patient():
             self.updateFees()
             #self.setCurrentEstimate()
 
-    def getEsts(self,cursor=None):
-        disconnectNeeded=False
+    def getEsts(self, cursor=None):
+        disconnectNeeded = False
 
-        if cursor==None:
-            disconnectNeeded=True
-            db=connect()
-            cursor=db.cursor()
+        if cursor == None:
+            disconnectNeeded = True
+            db = connect()
+            cursor = db.cursor()
 
         #--old code for old (non om schema) database
         #cursor.execute('''SELECT serialno,courseno,dent,esta,acta, estb,actb ,
@@ -294,41 +299,40 @@ class patient():
         cursor.execute('''SELECT ix, number, itemcode, description, type,
         fee, ptfee, feescale, csetype, dent, completed, carriedover from
         estimates where serialno=%d and courseno=%d order by itemcode desc'''%(
-        self.serialno,self.courseno0))
+        self.serialno, self.courseno0))
         rows = cursor.fetchall()
-        self.estimates=[]
+        self.estimates = []
         for row in rows:
             #initiate a custom data class
-            est=estimates.est()
-            est.ix=row[0]
-            est.number=row[1]
-            est.itemcode=row[2]
-            est.description=row[3]
-            est.type=row[4]
-            est.fee=row[5]
-            est.ptfee=row[6]
-            est.feescale=row[7]
-            est.csetype=row[8]
-            est.dent=row[9]
-            est.completed=bool(row[10])
-            est.carriedover=bool(row[11])
+            est = estimates.est()
+            est.ix = row[0]
+            est.number = row[1]
+            est.itemcode = row[2]
+            est.description = row[3]
+            est.type = row[4]
+            est.fee = row[5]
+            est.ptfee = row[6]
+            est.feescale = row[7]
+            est.csetype = row[8]
+            est.dent = row[9]
+            est.completed = bool(row[10])
+            est.carriedover = bool(row[11])
             self.estimates.append(est)
 
         if disconnectNeeded:
             cursor.close()
             #db.close()
 
-    
     def blankCurrtrt(self):
         for att in currtrtmtTableAtts:
             if att =='courseno':
                 pass
-            elif att in ('examd','accd','cmpd'):
-                self.__dict__[att]=nullDate
+            elif att in ('examd', 'accd', 'cmpd'):
+                self.__dict__[att] = nullDate
             else:
-                self.__dict__[att]=""
+                self.__dict__[att] = ""
 
-    def getCurrtrt(self,cursor=None):
+    def getCurrtrt(self, cursor=None):
         disconnectNeeded=False
         if cursor==None:
             disconnectNeeded=True
