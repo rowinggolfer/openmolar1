@@ -767,7 +767,7 @@ def future_slots(length, startdate, enddate, dents, override_emergencies=False):
     else:
         mystr = ""
     fullquery = '''SELECT adate,apptix,start,end FROM aday
-    WHERE adate>="%s"AND adate<="%s" AND (flag=1 OR flag= 2) %s
+    WHERE adate>="%s" AND adate<="%s" AND (flag=1 OR flag= 2) %s
     ORDER BY adate'''% (startdate, enddate, mystr)
 
     if localsettings.logqueries:
@@ -803,10 +803,11 @@ def future_slots(length, startdate, enddate, dents, override_emergencies=False):
 
 if __name__ == "__main__":
     '''test procedures......'''
-    testdate = "2009_02_02"
-    testdate1 = "2009_02_27"
+    testdate = "2009_08_30"
+    testdate1 = "2009_12_31"
     localsettings.initiate(False)
-    print printableDaylistData("20090622", 4)
+    localsettings.logqueries = True
+    #print printableDaylistData("20090622", 4)
 
     #print todays_patients()
     #print todays_patients(("NW","BW"))
@@ -814,7 +815,8 @@ if __name__ == "__main__":
     #print dents
     #print allAppointmentData(testdate,dents)
     #print add_pt_appt(11956,5,15,"exam")
-    #print future_slots(30,testdate,testdate2,(4,13))
+    print future_slots(5,testdate,testdate1,(7,))
+    #print future_slots(30,testdate,testdate1,(4,13))
     #print slots(830,((830, 845), (900, 915), (1115, 1130),
     #                  (1300, 1400), (1400, 1420), (1600, 1630)),1800,30)
     #print daysummary(testdate,4)

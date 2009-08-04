@@ -85,7 +85,7 @@ def getPosts(table="forum"):
     db=connect()
     cursor=db.cursor()
     query='''select ix, parent_ix,topic,inits,fdate,comment 
-    from %s where open order by parent_ix'''%table
+    from %s where open order by parent_ix,ix'''%table
 
     if localsettings.logqueries:
         print query
