@@ -41,7 +41,7 @@ Ui_showMemo
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import recall_app, medNotes, \
-saveDiscardCancel, newBPE, addTreat, addToothTreat, saveMemo, permissions
+saveDiscardCancel, newBPE, addToothTreat, saveMemo, permissions
 
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook, patient_write_changes, recall, \
@@ -1323,13 +1323,15 @@ class pageHandlingClass():
         '''handles navigation of patient record'''
         ci=self.ui.tabWidget.currentIndex()
         #--admin tab selected
+        if self.editPageVisited:
+            self.apply_editpage_changes()
 
         if ci == 0:
             self.ui.patientEdit_groupBox.setTitle(
-            "Edit Patient %d"%self.pt.serialno)
-
+            "Edit Patient %d"% self.pt.serialno)
             if self.load_editpage():
-                self.editPageVisited=True
+                self.editPageVisited = True
+        
         if ci == 1:
             self.updateStatus()
             self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
@@ -1391,6 +1393,7 @@ class pageHandlingClass():
         Other pages are disabled.
         '''
         if self.pt.serialno != 0:
+            print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
             self.ui.notesBrowser.setText("")
@@ -1417,8 +1420,10 @@ class pageHandlingClass():
             #--and have the comparison copy identical (to check for changes)
             self.pt=copy.deepcopy(self.pt_dbstate)
             if self.editPageVisited:
-                self.load_editpage()####################is this wise???????
-
+                print "blanking edit page fields"
+                self.load_editpage()
+                self.editPageVisited = False
+                
     def gotoDefaultTab(self):
         '''
         go to either "reception" or "clinical summary"
@@ -1513,6 +1518,7 @@ class pageHandlingClass():
         self.ui.email2Edit.setText(self.pt.email2)
         self.ui.occupationEdit.setText(self.pt.occup)
         return True
+    
     def load_dentComboBoxes(self):
         print "loading dnt comboboxes."
         try:
@@ -1870,37 +1876,43 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         apply any changes made on the edit patient page
         '''
-        if self.pt.serialno == 0 and self.ui.newPatientPushButton.isEnabled():
+        if self.pt.serialno == 0 and \
+        self.ui.newPatientPushButton.isEnabled():
             ###firstly.. don't apply edit page changes if there
             ####is no patient loaded,
             ###and no new patient to apply
             return
 
-        self.pt.title=str(self.ui.titleEdit.text().toAscii()).upper()
+        self.pt.title = str(self.ui.titleEdit.text().toAscii()).upper()
         #--NB - these are QSTRINGs... hence toUpper() not PYTHON equiv upper()
-        self.pt.fname=str(self.ui.fnameEdit.text().toAscii()).upper()
-        self.pt.sname=str(self.ui.snameEdit.text().toAscii()).upper()
-        self.pt.dob=localsettings.formatDate(self.ui.dobEdit.date().toPyDate())
-        self.pt.addr1=str(self.ui.addr1Edit.text().toAscii()).upper()
-        self.pt.addr2=str(self.ui.addr2Edit.text().toAscii()).upper()
-        self.pt.addr3=str(self.ui.addr3Edit.text().toAscii()).upper()
-        self.pt.town=str(self.ui.townEdit.text().toAscii()).upper()
-        self.pt.county=str(self.ui.countyEdit.text().toAscii()).upper()
-        self.pt.sex=str(self.ui.sexEdit.currentText().toAscii()).upper()
-        self.pt.pcde=str(self.ui.pcdeEdit.text().toAscii()).upper()
-        self.pt.memo=str(self.ui.memoEdit.toPlainText().toAscii())
-        self.pt.tel1=str(self.ui.tel1Edit.text().toAscii()).upper()
-        self.pt.tel2=str(self.ui.tel2Edit.text().toAscii()).upper()
-        self.pt.mobile=str(self.ui.mobileEdit.text().toAscii()).upper()
-        self.pt.fax=str(self.ui.faxEdit.text().toAscii()).upper()
-        self.pt.email1=str(self.ui.email1Edit.text().toAscii())
+        self.pt.fname = str(self.ui.fnameEdit.text().toAscii()).upper()
+        self.pt.sname = str(self.ui.snameEdit.text().toAscii()).upper()
+        self.pt.dob = localsettings.formatDate(
+        self.ui.dobEdit.date().toPyDate())
+        self.pt.addr1 = str(self.ui.addr1Edit.text().toAscii()).upper()
+        self.pt.addr2 = str(self.ui.addr2Edit.text().toAscii()).upper()
+        self.pt.addr3 = str(self.ui.addr3Edit.text().toAscii()).upper()
+        self.pt.town = str(self.ui.townEdit.text().toAscii()).upper()
+        self.pt.county = str(self.ui.countyEdit.text().toAscii()).upper()
+        self.pt.sex = str(self.ui.sexEdit.currentText().toAscii()).upper()
+        self.pt.pcde = str(self.ui.pcdeEdit.text().toAscii()).upper()
+        self.pt.memo = str(self.ui.memoEdit.toPlainText().toAscii())
+        self.pt.tel1 = str(self.ui.tel1Edit.text().toAscii()).upper()
+        self.pt.tel2 = str(self.ui.tel2Edit.text().toAscii()).upper()
+        self.pt.mobile = str(self.ui.mobileEdit.text().toAscii()).upper()
+        self.pt.fax = str(self.ui.faxEdit.text().toAscii()).upper()
+        self.pt.email1 = str(self.ui.email1Edit.text().toAscii())
         #--leave as user entered case
-        self.pt.email2=str(self.ui.email2Edit.text().toAscii())
-        self.pt.occup=str(self.ui.occupationEdit.text().toAscii()).upper()
-
+        self.pt.email2 = str(self.ui.email2Edit.text().toAscii())
+        self.pt.occup = str(self.ui.occupationEdit.text().toAscii()).upper()
+        self.updateDetails()
+        self.editPageVisited = False
+        
     def accountsTableClicked(self, row, column):
-        sno=self.ui.accounts_tableWidget.item(row, 1).text()
-        print sno
+        '''
+        user has clicked on the accounts table - load the patient record
+        '''
+        sno = self.ui.accounts_tableWidget.item(row, 1).text()
         self.getrecord(int(sno))
 
     def getrecord(self, serialno, checkedNeedToLeaveAlready=False):
@@ -2996,15 +3008,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         add custom items to the treatment plan
         '''
         add_tx_to_plan.customAdd(self)
-
-    def offerTreatmentItems(self,arg):
-        '''
-        offers treatment items passed by argument
-        '''
-        Dialog = QtGui.QDialog(self)
-        dl = addTreat.treatment(Dialog,arg,self.pt)
-        result =  dl.getInput()
-        return result
 
     def toothTreatAdd(self, tooth, properties):
         '''

@@ -252,8 +252,8 @@ def uk_to_sqlDate(d):
     try:
         ds=d.split("/")
         retarg="%04d%02d%02d"%(int(ds[2]),int(ds[1]),int(ds[0]))
-    except Exception,e:
-        print "incorrect uk date, %s returning None"%d,e
+    except IndexError,e:
+        #print "incorrect uk date format, '%s' returning None"% d
         retarg=None
     return retarg
 

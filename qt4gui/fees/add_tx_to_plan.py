@@ -17,18 +17,26 @@ import re
 from PyQt4 import QtGui
 
 from openmolar.settings import localsettings, fee_keys
-from openmolar.qt4gui.dialogs import Ui_customTreatment
+from openmolar.qt4gui.dialogs import Ui_customTreatment, addTreat
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module, fees_module
 
+def offerTreatmentItems(parent, arg):
+    '''
+    offers treatment items passed by argument
+    '''
+    Dialog = QtGui.QDialog(parent)
+    dl = addTreat.treatment(Dialog, arg, parent.pt)
+    result =  dl.getInput()
+    return result
 
 def xrayAdd(parent):
     '''
     add xray items
     '''
     if not course_module.newCourseNeeded(parent):
-        list = ((0, "S"), (0, "M"), (0, "P"))
-        chosenTreatments = parent.offerTreatmentItems(list)
+        mylist = ((0, "S"), (0, "M"), (0, "P"))
+        chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
             #(number,usercode,itemcode,description, fee,ptfee)
             if treat[0] == 1:
@@ -46,8 +54,8 @@ def perioAdd(parent):
     add perio items
     '''
     if not course_module.newCourseNeeded(parent):
-        list = ((0, "SP"), (0, "SP+"))
-        chosenTreatments = parent.offerTreatmentItems(list)
+        mylist = ((0, "SP"), (0, "SP+"))
+        chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
             if treat[0] == 1:
                 usercode = treat[1]
@@ -64,13 +72,13 @@ def otherAdd(parent):
     add 'other' items
     '''
     if not course_module.newCourseNeeded(parent):
-        list = ()
+        mylist = ()
         items = localsettings.treatmentCodes.keys()
         for item in items:
             code = localsettings.treatmentCodes[item]
             if 3500 < int(code) < 4002:
-                list += ((0, item, code), )
-        chosenTreatments = parent.offerTreatmentItems(list)
+                mylist += ((0, item, code), )
+        chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
             parent.pt.otherpl += "%s%s "% (treat[0], treat[1])
             parent.pt.addToEstimate(treat[0], treat[2], treat[3], treat[4],
@@ -193,6 +201,22 @@ def deleteTxItem(parent, pl_cmp, txtype):
             parent.load_treatTrees()
 
     except Exception, e:
-        parent.advise("Error deleting %s from plan<br />"% type+
+        parent.advise("Error deleting %s from plan<br />"% type +
         "Please remove manually", 1)
         print "handled this in add_tx_to_plan.deleteTxItem", Exception, e
+
+if __name__ == "__main__":
+    #-- test code
+    localsettings.initiate()
+    from openmolar.qt4gui import maingui
+    from openmolar.dbtools import patient_class
+    app = QtGui.QApplication([])
+    mw = maingui.openmolarGui()
+    mw.getrecord(11956)
+    #disable the functions called
+    mw.load_treatTrees = lambda : None
+    mw.load_newEstPage = lambda : None
+            
+    #mw.show()
+    xrayAdd(mw)
+    
