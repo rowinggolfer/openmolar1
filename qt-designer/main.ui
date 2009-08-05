@@ -540,7 +540,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>540</width>
+                        <width>822</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -1778,7 +1778,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>731</width>
+                        <width>822</width>
                         <height>526</height>
                        </rect>
                       </property>
@@ -2130,7 +2130,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>286</width>
+                        <width>832</width>
                         <height>500</height>
                        </rect>
                       </property>
@@ -2486,7 +2486,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>469</width>
+                        <width>822</width>
                         <height>370</height>
                        </rect>
                       </property>
@@ -2740,8 +2740,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>314</width>
-                        <height>105</height>
+                        <width>842</width>
+                        <height>353</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2991,10 +2991,10 @@
                           <item row="2" column="0" colspan="2">
                            <widget class="QPushButton" name="closeTx_pushButton">
                             <property name="enabled">
-                             <bool>false</bool>
+                             <bool>true</bool>
                             </property>
                             <property name="text">
-                             <string>Set Completion Date</string>
+                             <string>Close Course</string>
                             </property>
                            </widget>
                           </item>
@@ -3301,7 +3301,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>249</width>
+                        <width>826</width>
                         <height>360</height>
                        </rect>
                       </property>
@@ -3824,8 +3824,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>96</width>
-                    <height>28</height>
+                    <width>193</width>
+                    <height>57</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3998,8 +3998,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>190</width>
+                        <height>387</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4088,8 +4088,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>191</width>
+                        <height>387</height>
                        </rect>
                       </property>
                      </widget>
@@ -4177,8 +4177,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>190</width>
+                        <height>387</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout"/>
@@ -4221,8 +4221,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>190</width>
+                        <height>387</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="_2"/>
@@ -4512,8 +4512,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>96</width>
-                    <height>28</height>
+                    <width>193</width>
+                    <height>65</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">

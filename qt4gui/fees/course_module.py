@@ -82,7 +82,7 @@ def setupNewCourse(parent):
         else:
             parent.advise("ERROR STARTING NEW COURSE, sorry", 2)
 
-def completionDate(parent):
+def closeCourse(parent):
     '''
     allow the user to add a completion Date to a course of treatment
     '''
@@ -99,30 +99,20 @@ def completionDate(parent):
         parent.pt.setCmpd(cmpd)
         parent.pt.underTreatment = False
         parent.updateDetails()
-            
-def closeCourse(parent):
+        parent.pt.addHiddenNote("close_course")
+        return True
+    
+def resumeCourse(parent):
     '''
-    close a treatment course
+    resume the previous treatment course
     '''
-    message = "Close current course of treatment?"
+    message = "Resume the previous course of treatment?"
     result = QtGui.QMessageBox.question(parent, "Confirm", message,
     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
     
     if result == QtGui.QMessageBox.Yes:
-        #parent.pt.courseno2=parent.pt.courseno1
-        #parent.pt.courseno1=parent.pt.courseno0
-        parent.pt.cmpd = localsettings.ukToday()
-        parent.pt.courseno0 = None
-        parent.pt.addHiddenNote("close_course")
-        parent.save_changes()
-        parent.reload_patient()
-
-        ##-- I removed these lines because I think it is safer to
-        ##-- reload the patient
-        #blank things off
-        #parent.pt.estimates=[]
-        #parent.pt.blankCurrtrt()
-        #parent.load_newEstPage()
-        #parent.pt.underTreatment=False
-        #parent.updateDetails()
+        parent.pt.cmpd = None
+        parent.pt.underTreatment = True
+        parent.updateDetails()
+        parent.pt.addHiddenNote("resume_course")
         return True

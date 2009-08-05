@@ -26,13 +26,15 @@ def all_changes(pt, pt_dbstate, changes):
             elif change in ("money0, money1"):
                 value=pt.__dict__[change]-pt_dbstate.__dict__[change]
                 print "money has changed"
-                patchanges+='%s=%s+%s ,'%(change,change,value)
+                patchanges += '%s=%s+%s ,'% (change,change,value)
             elif change in patient_class.patientTableAtts:
                 value=pt.__dict__[change]
                 if change in patient_class.dateFields:
                     if value!=None and value!="":
                         patchanges+='%s="%s" ,'%(
                                     change,localsettings.uk_to_sqlDate(value))
+                    else:
+                        patchanges+='%s=NULL ,'% change
                 elif value==None:
                     patchanges+='%s=NULL ,'%(change)
                 elif (type(value) is types.IntType) or (type(value) is types.LongType):
@@ -131,6 +133,9 @@ def all_changes(pt, pt_dbstate, changes):
                     if value!=None and value!="":
                         trtchanges+='%s="%s" ,'%(
                                     change,localsettings.uk_to_sqlDate(value))
+                    else:
+                        trtchanges+='%s=NULL ,'% change
+                
                 elif value==None:
                     trtchanges+='%s=NULL ,'%(change)
                 elif (type(value) is types.IntType) or (

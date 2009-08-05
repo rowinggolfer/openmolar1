@@ -2101,6 +2101,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         details = patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setText(details)
         self.ui.detailsBrowser.update()
+        self.ui.closeTx_pushButton.setText("Close Course")
         if self.pt.underTreatment:
             self.ui.estimate_groupBox.setTitle(
             "Current Course- started %s"% self.pt.accd)
@@ -2120,7 +2121,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.ui.planDetails_groupBox.setEnabled(False)            
             
             self.ui.newCourse_pushButton.setEnabled(True)
-            self.ui.closeTx_pushButton.setEnabled(False)
+            if not self.pt.cmpd in ("", None):
+                self.ui.closeTx_pushButton.setText("Resume Existing Course")
+            else:
+                self.ui.closeTx_pushButton.setEnabled(False)
 
     def final_choice(self, candidates):
         def DoubleClick():
@@ -2972,9 +2976,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         user has clicked on close course button
         '''
-        #course_module.closeCourse(self)
-        course_module.completionDate(self)
-
+        if self.pt.underTreatment:
+            course_module.closeCourse(self)
+        else:
+            course_module.resumeCourse(self)
+                
     def estWidget_applyFeeNowCalled(self,amount,coursetype=None):
         '''
         est Widget has emitted a signal to apply a fee.
