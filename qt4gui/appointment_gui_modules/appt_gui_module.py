@@ -1232,15 +1232,20 @@ def layout_appointments(parent):
 def appointment_clicked(parent, list_of_snos):
     if len(list_of_snos) == 1:
         sno = list_of_snos[0]
-        parent.advise("getting record %s"% sno)
-        parent.getrecord(sno)
     else:
         sno = parent.final_choice(
         search.getcandidates_from_serialnos(list_of_snos))
         
-        if sno != None:
-            parent.getrecord(int(sno))
-
+    if sno != None:
+        serialno = int(sno)
+        if serialno == parent.pt.serialno:
+            #-- pt is already loaded.. just revert to the correct view
+            parent.advise("patient already loaded")            
+            parent.ui.main_tabWidget.setCurrentIndex(0)
+        else:
+            parent.advise("getting record %s"% sno)
+            parent.getrecord(serialno)
+        
 def clearEmergencySlot(parent, arg):
     '''
     this function is the slot for a signal invoked when the user clicks

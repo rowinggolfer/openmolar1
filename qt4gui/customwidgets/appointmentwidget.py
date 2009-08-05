@@ -248,7 +248,8 @@ class appointmentWidget(QtGui.QWidget):
             selectedPatients=self.rows[row]
             #ignore lunch and emergencies - serialno number is positive
             if selectedPatients[0]>0:  
-                self.emit(QtCore.SIGNAL("PySig"),tuple(selectedPatients))
+                self.emit(QtCore.SIGNAL("AppointmentClicked"), 
+                tuple(selectedPatients))
             else:
                 start=self.humanTime(
                 int(self.startTime+self.selected[0]*self.slotLength))
@@ -412,7 +413,8 @@ if __name__ == "__main__":
     "","","",0,"P")
     form.setAppointment("1300","1400","LUNCH",0)
     
-    QtCore.QObject.connect(form,QtCore.SIGNAL("PySig"),clicktest)
+    QtCore.QObject.connect(form,
+    QtCore.SIGNAL("AppointmentClicked"), clicktest)
 
     form.setEndTime(1700)
     form.update()

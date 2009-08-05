@@ -346,7 +346,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         QtCore.QObject.connect(self.tooth,QtCore.SIGNAL("toothSurface"), self.updateSurfaces) #user has clicked a surface
         QtCore.QObject.connect(self.clear_pushButton,QtCore.SIGNAL("clicked()"), self.clear)
         QtCore.QObject.connect(self.pushButton,QtCore.SIGNAL("clicked()"), self.additional)
-        QtCore.QObject.connect(self.lineEdit,QtCore.SIGNAL("PySig"),self.keyNav)
+        QtCore.QObject.connect(self.lineEdit,QtCore.SIGNAL("ArrowKeyPressed"),self.keyNav)
         QtCore.QObject.connect(self.rightTooth_pushButton,QtCore.SIGNAL("clicked()"), self.rightTooth)
         QtCore.QObject.connect(self.leftTooth_pushButton,QtCore.SIGNAL("clicked()"), self.leftTooth)
         QtCore.QObject.connect(self.dec_pushButton,QtCore.SIGNAL("clicked()"), self.dec_perm)
@@ -590,11 +590,11 @@ class chartLineEdit(QtGui.QLineEdit):
     def keyPressEvent(self, event):
         '''overrudes QWidget's keypressEvent'''
         if event.key() == QtCore.Qt.Key_Up:
-            self.emit(QtCore.SIGNAL("PySig"),("up"))
+            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("up"))
         elif event.key() == QtCore.Qt.Key_Return:
-            self.emit(QtCore.SIGNAL("PySig"),("down"))
+            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("down"))
         elif event.key() == QtCore.Qt.Key_Down:
-            self.emit(QtCore.SIGNAL("PySig"),("down"))
+            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("down"))
         else:
             QtGui.QLineEdit.keyPressEvent(self,event)
 

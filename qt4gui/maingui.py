@@ -3652,7 +3652,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #############################
         
         for book in self.ui.apptBookWidgets:
-            book.connect(book, QtCore.SIGNAL("PySig"), 
+            book.connect(book, QtCore.SIGNAL("AppointmentClicked"), 
             self.apptBook_appointmentClickedSignal)
             
             book.connect(book, QtCore.SIGNAL("ClearEmergencySlot"),
@@ -3705,7 +3705,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.apptOV_all_hygenists_checkbox_changed)
         
         for widg in self.ui.apptoverviews:
-            widg.connect(widg, QtCore.SIGNAL("PySig"), 
+            widg.connect(widg, QtCore.SIGNAL("AppointmentClicked"), 
             self.aptOVwidget_userHasChosen_appointment)
             
             widg.connect(widg, QtCore.SIGNAL("DentistHeading"),

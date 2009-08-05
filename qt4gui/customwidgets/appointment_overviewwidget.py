@@ -189,7 +189,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                     columnWidth, (length / self.slotLength) * self.slotHeight)
 
                     if rect.contains(event.pos()):
-                        self.emit(QtCore.SIGNAL("PySig"),
+                        self.emit(QtCore.SIGNAL("AppointmentClicked"),
                         (self.day, slot, dent))
 
                         break
@@ -406,7 +406,7 @@ if __name__ == "__main__":
     form.lunch=(1300,60)
     print form.freeslots    
     form.show()
-    QtCore.QObject.connect(form,QtCore.SIGNAL("PySig"),clicktest)
+    QtCore.QObject.connect(form,QtCore.SIGNAL("AppointmentClicked"),clicktest)
     QtCore.QObject.connect(form,QtCore.SIGNAL("DentistHeading"),headerclicktest)
 
     sys.exit(app.exec_())
