@@ -2486,7 +2486,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>822</width>
+                        <width>469</width>
                         <height>370</height>
                        </rect>
                       </property>
@@ -2994,7 +2994,7 @@
                              <bool>false</bool>
                             </property>
                             <property name="text">
-                             <string>Save Changes &amp;&amp; Close Course</string>
+                             <string>Set Completion Date</string>
                             </property>
                            </widget>
                           </item>
@@ -3222,7 +3222,7 @@ Note - this will not remove items which are currently there. </string>
                     </widget>
                    </item>
                    <item row="1" column="0">
-                    <widget class="QGroupBox" name="groupBox_10">
+                    <widget class="QGroupBox" name="planDetails_groupBox">
                      <property name="title">
                       <string>Details</string>
                      </property>

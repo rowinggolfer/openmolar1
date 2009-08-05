@@ -224,7 +224,9 @@ def monthName(d):
 def pyDatefromUKDate(ukdate):
     try:
         return datetime.datetime.strptime(ukdate,"%d/%m/%Y")
-    except:
+    except Exception,e:
+        print e
+        print "error getting a valid pydate from '%s'"%ukdate
         pass
     
 def longDatefromUKDate(ukdate):

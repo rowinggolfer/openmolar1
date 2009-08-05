@@ -9,11 +9,11 @@
 '''
 functions to open a course, close a course, or check if one is needed.
 '''
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import writeNewCourse
-from openmolar.qt4gui.dialogs import newCourse
+from openmolar.qt4gui.dialogs import newCourse, Ui_completionDate
 from openmolar.qt4gui import contract_gui_module
 
 def newCourseNeeded(parent):
@@ -28,7 +28,9 @@ def newCourseNeeded(parent):
             parent.advise("unable to plan or perform treatment if pt " + \
             "does not have an active course", 1)
             return True
-
+        else:
+            print "new course started with accd of '%s'"% parent.pt.accd
+            
 def setupNewCourse(parent):
     '''
     set up a new course of treament
@@ -64,13 +66,13 @@ def setupNewCourse(parent):
 
         course = writeNewCourse.write(parent.pt.serialno,
         localsettings.ops_reverse[atts[1]], str(accd))
-
+        
         if course[0]:
+            parent.pt.blankCurrtrt()
             parent.pt.courseno = course[1]
             parent.pt.courseno0 = course[1]
-            parent.pt.accd = localsettings.formatDate(accd)
+            parent.pt.setAccd(accd)
             parent.advise("Sucessfully started new course of treatment")
-            parent.pt.blankCurrtrt()
             parent.pt.estimates = []
             parent.pt.underTreatment = True
             #parent.load_newEstPage()
@@ -80,6 +82,24 @@ def setupNewCourse(parent):
         else:
             parent.advise("ERROR STARTING NEW COURSE, sorry", 2)
 
+def completionDate(parent):
+    '''
+    allow the user to add a completion Date to a course of treatment
+    '''
+    Dialog = QtGui.QDialog(parent)
+    my_dialog = Ui_completionDate.Ui_Dialog()
+    my_dialog.setupUi(Dialog)
+    earliestDate = localsettings.pyDatefromUKDate(parent.pt.accd)
+    my_dialog.dateEdit.setMinimumDate(earliestDate)
+    my_dialog.dateEdit.setMaximumDate(QtCore.QDate().currentDate())
+    my_dialog.dateEdit.setDate(QtCore.QDate().currentDate())
+    
+    if Dialog.exec_():
+        cmpd = my_dialog.dateEdit.date().toPyDate()
+        parent.pt.setCmpd(cmpd)
+        parent.pt.underTreatment = False
+        parent.updateDetails()
+            
 def closeCourse(parent):
     '''
     close a treatment course

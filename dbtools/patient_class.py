@@ -325,9 +325,9 @@ class patient():
 
     def blankCurrtrt(self):
         for att in currtrtmtTableAtts:
-            if att =='courseno':
+            if att == 'courseno':
                 pass
-            elif att in ('examd', 'accd', 'cmpd'):
+            elif att in ('examd', 'cmpd', 'accd'):
                 self.__dict__[att] = nullDate
             else:
                 self.__dict__[att] = ""
@@ -356,8 +356,10 @@ class patient():
             for field in fields:
                 self.__dict__[field]=value[i]
                 i+=1
-        if self.courseno0!=0:
-            self.underTreatment=True
+        #if self.courseno0!=0:
+        if not self.accd in ("", None) and self.cmpd in ("", None):
+            self.underTreatment = True
+                
         if disconnectNeeded:
             cursor.close()
             #db.close()
@@ -431,6 +433,21 @@ class patient():
         self.fees=(self.money0 + self.money1 + self.money9 + self.money10 +
         self.money11 - self.money2 - self.money3 - self.money8)
 
+    def setAccd(self, accd):
+        '''
+        set the acceptance date (with a pydate)
+        '''
+        print "setAccd called with date", accd
+        self.accd = localsettings.formatDate(accd)
+    
+    def setCmpd(self, cmpd):
+        '''
+        set the completion date (with a pydate)
+        '''
+        print "setAccd called with date", cmpd
+        self.cmpd = localsettings.formatDate(cmpd)
+    
+    
     def resetAllMonies(self):
         '''
         zero's everything except money11 (bad debt)

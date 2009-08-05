@@ -2097,22 +2097,30 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         sets the patient information into the left column
         '''
-        Saved= (self.pt_dbstate.fees == self.pt.fees)
-        details=patientDetails.details(self.pt, Saved)
+        Saved = (self.pt_dbstate.fees == self.pt.fees)
+        details = patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setText(details)
         self.ui.detailsBrowser.update()
-        curtext="Current Treatment "
         if self.pt.underTreatment:
-            self.ui.estimate_groupBox.setTitle(curtext+"- started "+
-                                                    str(self.pt.accd))
+            self.ui.estimate_groupBox.setTitle(
+            "Current Course- started %s"% self.pt.accd)
+            self.ui.estimate_groupBox.setEnabled(True)
+            self.ui.plan_groupBox.setEnabled(True)
+            self.ui.completed_groupBox.setEnabled(True)
+            self.ui.planDetails_groupBox.setEnabled(True)            
             self.ui.newCourse_pushButton.setEnabled(False)
             self.ui.closeTx_pushButton.setEnabled(True)
         else:
             self.ui.estimate_groupBox.setTitle(
-                                                curtext+"- No Current Course")
+            "Previous Course - started %s and completed %s"% (
+            self.pt.accd, self.pt.cmpd))
+            self.ui.estimate_groupBox.setEnabled(False)
+            #self.ui.plan_groupBox.setEnabled(False)
+            self.ui.completed_groupBox.setEnabled(False)
+            self.ui.planDetails_groupBox.setEnabled(False)            
+            
             self.ui.newCourse_pushButton.setEnabled(True)
             self.ui.closeTx_pushButton.setEnabled(False)
-
 
     def final_choice(self, candidates):
         def DoubleClick():
@@ -2964,7 +2972,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         user has clicked on close course button
         '''
-        course_module.closeCourse(self)
+        #course_module.closeCourse(self)
+        course_module.completionDate(self)
 
     def estWidget_applyFeeNowCalled(self,amount,coursetype=None):
         '''
@@ -3019,7 +3028,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         called when double clicking on a tooth in the plan chart
         '''
-        complete_tx.chartComplete(self,arg)
+        if not self.pt.underTreatment:
+            self.advise("course has been closed",1)
+        else:
+            complete_tx.chartComplete(self,arg)
         
     def estwidget_completeItem(self, txtype):
         '''

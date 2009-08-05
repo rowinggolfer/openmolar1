@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/main.ui'
 #
-# Created: Tue Jul 14 18:37:16 2009
+# Created: Wed Aug  5 16:16:11 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -975,7 +975,7 @@ class Ui_MainWindow(object):
         self.scrollArea_6.setWidgetResizable(True)
         self.scrollArea_6.setObjectName("scrollArea_6")
         self.scrollAreaWidgetContents_9 = QtGui.QWidget(self.scrollArea_6)
-        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 822, 370))
+        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 469, 370))
         self.scrollAreaWidgetContents_9.setObjectName("scrollAreaWidgetContents_9")
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents_9)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -1300,11 +1300,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.addWidget(self.groupBox_4)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_4)
         self.gridLayout_21.addWidget(self.scrollArea, 0, 1, 2, 1)
-        self.groupBox_10 = QtGui.QGroupBox(self.tab_5)
-        self.groupBox_10.setObjectName("groupBox_10")
-        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.groupBox_10)
+        self.planDetails_groupBox = QtGui.QGroupBox(self.tab_5)
+        self.planDetails_groupBox.setObjectName("planDetails_groupBox")
+        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.planDetails_groupBox)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.plan_treeWidget = QtGui.QTreeWidget(self.groupBox_10)
+        self.plan_treeWidget = QtGui.QTreeWidget(self.planDetails_groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1315,7 +1315,7 @@ class Ui_MainWindow(object):
         self.plan_treeWidget.setHeaderHidden(False)
         self.plan_treeWidget.setObjectName("plan_treeWidget")
         self.horizontalLayout_5.addWidget(self.plan_treeWidget)
-        self.comp_treeWidget = QtGui.QTreeWidget(self.groupBox_10)
+        self.comp_treeWidget = QtGui.QTreeWidget(self.planDetails_groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1325,7 +1325,7 @@ class Ui_MainWindow(object):
         self.comp_treeWidget.setAnimated(True)
         self.comp_treeWidget.setObjectName("comp_treeWidget")
         self.horizontalLayout_5.addWidget(self.comp_treeWidget)
-        self.gridLayout_21.addWidget(self.groupBox_10, 1, 0, 1, 1)
+        self.gridLayout_21.addWidget(self.planDetails_groupBox, 1, 0, 1, 1)
         self.tabWidget.addTab(self.tab_5, "")
         self.tab_8 = QtGui.QWidget()
         self.tab_8.setObjectName("tab_8")
@@ -2669,7 +2669,7 @@ class Ui_MainWindow(object):
         self.groupBox_5.setTitle(QtGui.QApplication.translate("MainWindow", "Course Management", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("MainWindow", "Course Dentist", None, QtGui.QApplication.UnicodeUTF8))
         self.newCourse_pushButton.setText(QtGui.QApplication.translate("MainWindow", "New Course Of Treatment", None, QtGui.QApplication.UnicodeUTF8))
-        self.closeTx_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Save Changes && Close Course", None, QtGui.QApplication.UnicodeUTF8))
+        self.closeTx_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Set Completion Date", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_16.setTitle(QtGui.QApplication.translate("MainWindow", "Estimate Management", None, QtGui.QApplication.UnicodeUTF8))
         self.estLetter_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Custom Estimate Letter", None, QtGui.QApplication.UnicodeUTF8))
         self.recalcEst_pushButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Use this feature to re-price all items in the \"tooth\" category of treatments. i.e all those which appear on the charts.\n"
@@ -2688,7 +2688,7 @@ class Ui_MainWindow(object):
         self.OrthoTxpushButton.setText(QtGui.QApplication.translate("MainWindow", "Ortho", None, QtGui.QApplication.UnicodeUTF8))
         self.otherTxpushButton.setText(QtGui.QApplication.translate("MainWindow", "Other Tx", None, QtGui.QApplication.UnicodeUTF8))
         self.customTx_pushButton.setText(QtGui.QApplication.translate("MainWindow", "Add Custom Item", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_10.setTitle(QtGui.QApplication.translate("MainWindow", "Details", None, QtGui.QApplication.UnicodeUTF8))
+        self.planDetails_groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Details", None, QtGui.QApplication.UnicodeUTF8))
         self.plan_treeWidget.setSortingEnabled(True)
         self.plan_treeWidget.headerItem().setText(0, QtGui.QApplication.translate("MainWindow", "Plan", None, QtGui.QApplication.UnicodeUTF8))
         self.comp_treeWidget.setSortingEnabled(True)
