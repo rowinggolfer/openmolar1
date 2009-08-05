@@ -381,6 +381,7 @@ def modifyAppt(parent):
                 cst = ord(parent.pt.cset[0])
             appointments.modify_pt_appt(aprix, parent.pt.serialno,
             practix, length, code0, code1, code2, note, "", cst)
+            layout_apptTable(parent)
             if dateText == "TBA":
                 if dl.makeNow:
                     layout_apptTable(parent)
@@ -390,8 +391,7 @@ def modifyAppt(parent):
                 if not appointments.modify_aslot_appt(adate, practix, start,
                 parent.pt.serialno, code0, code1, code2, note, cst, 0, 0, 0):
                     parent.advise("Error putting into dentists book", 2)
-                layout_apptTable(parent)
-
+            
 def begin_makeAppt(parent):
     '''
     make an appointment - switch user to "scheduling mode" and present the
