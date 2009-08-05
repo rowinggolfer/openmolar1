@@ -2517,8 +2517,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         if uc != []:
             print "changes made to patient atttributes..... updating database"
 
-            result = patient_write_changes.all_changes(self.pt, uc,
-            self.pt_dbstate.estimates)
+            result = patient_write_changes.all_changes(
+            self.pt, self.pt_dbstate, uc)
 
             if result: #True if sucessful
                 if not leavingRecord and "estimates" in uc:
