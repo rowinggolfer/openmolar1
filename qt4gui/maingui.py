@@ -43,6 +43,8 @@ Ui_showMemo
 from openmolar.qt4gui.dialogs import recall_app, medNotes, \
 saveDiscardCancel, newBPE, addToothTreat, saveMemo, permissions
 
+from openmolar.qt4gui.tools import fee_adjuster
+
 #--database modules (do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import daybook, patient_write_changes, recall, \
 cashbook, writeNewPatient, patient_class, search, appointments, \
@@ -2715,13 +2717,18 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         print a GP17
         '''
         self.printGP17()
+        
+    def feeScale_Adjuster_action(self):
+        '''
+        launch a 2nd application to organise and extend the practice diary
+        '''
+        fee_adjuster.main(self)
     
     def clearTodaysEmergencyTime_action(self):
         '''
         convenience function to auto clear all the reserved time for today
         '''
         appt_gui_module.clearTodaysEmergencyTime(self)
-    
     
     def appointmentTools_action(self):
         '''
@@ -3390,10 +3397,13 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                     QtCore.SIGNAL("triggered()"), self.setClinician)
         QtCore.QObject.connect(self.ui.actionChoose_Database,
                                QtCore.SIGNAL("triggered()"), self.changeDB)
+
         QtCore.QObject.connect(self.ui.action_About,
-                               QtCore.SIGNAL("triggered()"), self.aboutOM)
+        QtCore.SIGNAL("triggered()"), self.aboutOM)
+
         QtCore.QObject.connect(self.ui.action_About_QT,
-            QtCore.SIGNAL("triggered()"), QtGui.qApp, QtCore.SLOT("aboutQt()"))
+        QtCore.SIGNAL("triggered()"), QtGui.qApp, QtCore.SLOT("aboutQt()"))
+        
         QtCore.QObject.connect(self.ui.action_Quit,
                                QtCore.SIGNAL("triggered()"), self.quit)
         QtCore.QObject.connect(self.ui.actionTable_View_For_Charting,
@@ -3406,8 +3416,13 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                         QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
         QtCore.QObject.connect(self.ui.actionLog_queries_in_underlying_terminal,
                     QtCore.SIGNAL("triggered()"), localsettings.setlogqueries)
+        
         QtCore.QObject.connect(self.ui.actionAppointment_Tools,
         QtCore.SIGNAL("triggered()"), self.appointmentTools_action)
+
+        QtCore.QObject.connect(self.ui.actionFeeScale_Adjuster,
+        QtCore.SIGNAL("triggered()"), self.feeScale_Adjuster_action)
+
 
     def signals_estimates(self):
 

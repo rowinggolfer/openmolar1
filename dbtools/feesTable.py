@@ -12,11 +12,12 @@ from openmolar.settings import localsettings
 private_only = False
 nhs_only = False
 
-newfeetable_Headers="section,code,oldcode,USERCODE,regulation,"+\
+newfeetable_Headers = "section,code,oldcode,USERCODE,regulation," + \
 "description,description1,NF08,NF08_pt,PFA"
 
 def getFeeHeaders():
     return newfeetable_Headers.split(",")[1:]
+
 def getFeeDict():
     '''
     returns a dictionary of lists of tuples (!)
@@ -45,6 +46,46 @@ def getFeeDict():
         sections[row[0]].append(row[1:])
     return sections
 
+def getFeeDictForModification():
+    '''
+    a comprehensive dictionary formed from the entire table in the database
+    '''
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute('select ix,%s from newfeetable'% newfeetable_Headers)
+    rows = cursor.fetchall()
+    cursor.close()
+    #db.close()
+
+    feeDict = {}
+
+    for row in rows:
+        feeDict[row[0]] = row
+        
+    return feeDict
+
+def updateFeeTable(feeDict):
+    '''
+    pass a feeDict, and update the existing table with it.
+    '''
+    db = connect()
+    cursor = db.cursor()
+    columnNo = len(feeDict[feeDict.keys()[0]])
+    valuesString = "%s," * columnNo
+    valuesString = valuesString.strip(",")
+    query = "insert into newfeetable (ix,%s) values (%s)"% (
+    newfeetable_Headers, valuesString) 
+        
+    for key in feeDict.keys():
+        delquery = "delete from newfeetable where ix = %s"% key
+        cursor.execute(delquery)
+        cursor.execute(query, feeDict[key])
+
+    cursor.close()
+    
+    db.commit()
+    
+
 def decode(blob):
     '''
     decode in blocks of 4 bytes - this is a relic from the old database
@@ -63,4 +104,7 @@ def feesHtml():
 if __name__ == "__main__":
     #localsettings.initiate(False)
     #print localsettings.privateFees
-    print getFeeDict()
+    #print getFeeDict()
+    fd = getFeeDictForModification()
+    fd[1] = (1,1, '0101', '1a', 'CE', '', 'Clinical Examination^', 'clinical exam', 800, 0, 1950)
+    updateFeeTable(fd)
