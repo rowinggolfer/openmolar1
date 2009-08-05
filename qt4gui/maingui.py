@@ -2722,7 +2722,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         launch a 2nd application to organise and extend the practice diary
         '''
-        fee_adjuster.main(self)
+        if permissions.granted():
+            fee_adjuster.main(self)
     
     def clearTodaysEmergencyTime_action(self):
         '''
