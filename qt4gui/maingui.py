@@ -3852,20 +3852,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def main(arg):
     #-- app required for polite shutdown
     if not localsettings.successful_login and not "neil" in os.getcwd():

@@ -27,13 +27,6 @@
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Apply Changes (will take effect when all openmolar clients on this network restart</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -47,12 +40,42 @@
    </property>
    <widget class="QMenu" name="menu_Quit">
     <property name="title">
-     <string>&amp;Quit</string>
+     <string>&amp;File</string>
     </property>
+    <addaction name="action_Save_Changes"/>
+    <addaction name="action_Quit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;About</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="actionVersion"/>
    </widget>
    <addaction name="menu_Quit"/>
+   <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_Save_Changes">
+   <property name="text">
+    <string>&amp;Save Changes</string>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionVersion">
+   <property name="text">
+    <string>&amp;Version</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

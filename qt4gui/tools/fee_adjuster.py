@@ -10,13 +10,49 @@ from PyQt4 import QtGui, QtCore
 from openmolar.dbtools import feesTable
 from openmolar.qt4gui.tools import Ui_fee_adjuster
 
+__version__ = "0.1"
+
 class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
     def __init__(self,parent=None):
-        self.parent=parent
+        self.parent = parent
+        self.parent.closeEvent = self.closeEvent
         self.setupUi(parent)
         self.feeDict = feesTable.getFeeDictForModification()
         self.loadTable()
         self.signals()
+
+    def closeEvent(self, event=None):
+        '''
+        overrule QMaindow's close event
+        check for unsaved changes then politely close the app if appropriate
+        '''
+        print "quit called"
+        self.applyTable()
+        self.parent.close()
+
+    def quit(self):
+        '''
+        function called by the quit button in the menu
+        '''
+        self.closeEvent()        
+    
+    def help(self):
+        '''
+        show a help dialog
+        '''
+        QtGui.QMessageBox.information(self.parent, "Advisory", 
+        '''<p>This application adjusts the fees 
+        and the way they are applied</p>
+        <p>Alter the fields with care!</p>
+        <p>On Quitting the application you will be asked whether to apply
+        your changes.</p>''')
+        
+    def version(self):
+        '''
+        show a dialog with the versioning number
+        '''
+        QtGui.QMessageBox.information(self.parent, "Advisory", 
+        'Fee Adjuster - version %s'% __version__)
         
     def loadTable(self):
         headers = ["ix", "section"] + feesTable.getFeeHeaders()
@@ -37,6 +73,7 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
         self.tableWidget.resizeColumnsToContents()
 
     def updateDict(self, item):
+        print item.text()
         row = item.row()
         column = item.column()
         ix = int(self.tableWidget.item(row,0).text())
@@ -44,26 +81,35 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
         new = existing[:column] + (item.text(),) + existing[column+1:]
         self.feeDict[ix] = new
         
-    def apply(self):
+    def applyTable(self):
         if QtGui.QMessageBox.question(self.parent, "Confirm",
         "Apply Changes?", QtGui.QMessageBox.Yes, 
         QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
             
             feesTable.updateFeeTable(self.feeDict)
-            QtGui.QMessageBox.information(self.parent,"Sucess","Applied Sucessfully")
+            QtGui.QMessageBox.information(self.parent,"Sucess",
+            "Your changes will take effect when openmolar is restarted")
         
     def signals(self):
-        print "signals"
+        QtCore.QObject.connect(self.action_Quit,
+        QtCore.SIGNAL("triggered()"), self.quit)
+        
+        QtCore.QObject.connect(self.actionHelp,
+        QtCore.SIGNAL("triggered()"), self.help)
+        
+        QtCore.QObject.connect(self.actionVersion,
+        QtCore.SIGNAL("triggered()"), self.version)
+        
         QtCore.QObject.connect(self.tableWidget, 
         QtCore.SIGNAL("itemChanged (QTableWidgetItem *)"), self.updateDict)
         
-        QtCore.QObject.connect(self.pushButton,
-        QtCore.SIGNAL("clicked()"), self.apply)
+        QtCore.QObject.connect(self.action_Save_Changes,
+        QtCore.SIGNAL("triggered()"), self.applyTable)
     
 def main(parent=None):
-    MainWindow = QtGui.QMainWindow(parent)
-    ui = feeAdjust(MainWindow)
-    MainWindow.show()    
+    parent.newAppWidget = QtGui.QMainWindow(parent)
+    parent.feeAjustApp = feeAdjust(parent.newAppWidget)
+    parent.newAppWidget.show()
     
 if __name__ == "__main__":
     import sys
