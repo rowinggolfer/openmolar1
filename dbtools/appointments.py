@@ -588,6 +588,19 @@ code2, note, flag0, flag1, flag2, flag3):
     return result
 
 def block_appt(bldate, apptix, start, end, reason):
+    '''
+    put a block in the book, with text set as reason
+    '''
+    #- 1st check the block is free
+    slots = future_slots(apptix, bldate, bldate, (apptix,))
+    
+    block_length = localsettings.minutesPastMidnight(end) - \
+    localsettings.minutesPastMidnight(start)
+
+    if not (slots and (start, block_length) in slots[0][2]):
+        #-- block no longer available!! 
+        return False
+            
     db = connect()
     cursor = db.cursor()
     query = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
@@ -803,8 +816,8 @@ def future_slots(length, startdate, enddate, dents, override_emergencies=False):
 
 if __name__ == "__main__":
     '''test procedures......'''
-    testdate = "2009_08_30"
-    testdate1 = "2009_12_31"
+    testdate = "2009_08_10"
+    testdate1 = "2009_08_10"
     localsettings.initiate(False)
     localsettings.logqueries = True
     #print printableDaylistData("20090622", 4)
@@ -815,7 +828,7 @@ if __name__ == "__main__":
     #print dents
     #print allAppointmentData(testdate,dents)
     #print add_pt_appt(11956,5,15,"exam")
-    print future_slots(5,testdate,testdate1,(7,))
+    print future_slots(5,testdate,testdate1,(4,))
     #print future_slots(30,testdate,testdate1,(4,13))
     #print slots(830,((830, 845), (900, 915), (1115, 1130),
     #                  (1300, 1400), (1400, 1420), (1600, 1630)),1800,30)

@@ -936,9 +936,11 @@ def clearTodaysEmergencyTime(parent):
     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
     if result == QtGui.QMessageBox.Yes:
-        parent.advise("Cleared %d emergency slots"%
-        appointments.clearEms(localsettings.sqlToday()), 1)
-
+        number_cleared = appointments.clearEms(localsettings.sqlToday())
+        parent.advise("Cleared %d emergency slots"% number_cleared, 1)
+        if number_cleared > 0 and parent.ui.main_tabWidget.currentIndex() == 1:
+            layout_appointments(parent)
+            
 def apptOVclinicians(parent):
     '''
     everybody's book to be viewed
@@ -1278,7 +1280,9 @@ def blockEmptySlot(parent, tup):
     end = localsettings.humanTimetoWystime(tup[1])
     dent = tup[2]
     reason = tup[3]
-    appointments.block_appt(adate, dent, start, end, reason)
+    if not appointments.block_appt(adate, dent, start, end, reason):
+        parent.advise("unable to block - has the book been altered elsewhere?",
+        1)
     layout_appointments(parent)
 
 def aptOVlabelRightClicked(parent, d):
