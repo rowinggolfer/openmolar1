@@ -1163,15 +1163,34 @@ def layout_appointments(parent):
     #-- clean past links to dentists
     for book in parent.ui.apptBookWidgets:
         book.dentist = None
+    abs_start=2359
+    abs_end=0
+    #-- cycle through todays dents, get the extreme hours for the practice
+    for dent in todaysDents:        
+        try:
+            bookstart = appointmentData[0][todaysDents.index(dent)][1] 
+            if  bookstart < abs_start:
+                abs_start = bookstart
+            bookend = appointmentData[0][todaysDents.index(dent)][2]
+            if  bookend > abs_end:
+                abs_end = bookend
+        except IndexError, e:
+            #-- deal with this later
+            pass
+            
     for dent in todaysDents:
         try:
             parent.ui.apptBookWidgets[i].dentist = \
             localsettings.apptix_reverse[dent]
-
-            parent.ui.apptBookWidgets[i].setStartTime(appointmentData[0][
-            todaysDents.index(dent)][1])
-            parent.ui.apptBookWidgets[i].setEndTime(appointmentData[0][
-            todaysDents.index(dent)][2])
+            parent.ui.apptBookWidgets[i].setDayStartTime(abs_start)        
+            parent.ui.apptBookWidgets[i].setDayEndTime(abs_end)                    
+            
+            bookstart = appointmentData[0][todaysDents.index(dent)][1] 
+            parent.ui.apptBookWidgets[i].setStartTime(bookstart)
+            
+            bookend = appointmentData[0][todaysDents.index(dent)][2]        
+            parent.ui.apptBookWidgets[i].setEndTime(bookend)
+            
         except IndexError, e:
             parent.advise(
             "Damn! too many dentists today!! only 3 widgets available - " +

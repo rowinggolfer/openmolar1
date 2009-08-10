@@ -97,25 +97,28 @@ misccbs2Top = offsetTop + 290
 misccbs3Top = offsetTop + 316
 
 class gp17():
-    def __init__(self,pt,dentist,testtingMode=False,parent=None):
+    def __init__(self, pt, dentist, testtingMode=False, parent=None):
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A4)
         self.printer.setPaperSource(QtGui.QPrinter.Middle)  #set bin 2
-        self.pt=pt
-        self.dentist=dentist
+        self.pt  =pt
+        self.dentist = dentist
         self.setStampText()
         self.sizes()
-        self.testingMode=testtingMode
+        self.detailed = False
+        #-- if detailed, openmolar includes dates and treatment details, 
+        #-- otherwise just the pt's address and the dentists details.
+        self.testingMode = testtingMode
     ###sizes
     def sizes(self):
         paperRect = self.printer.paperRect()  #get the paper size (in pixels)
-        self.absWidth=paperRect.width()
-        self.absHeight=paperRect.height()
+        self.absWidth = paperRect.width()
+        self.absHeight = paperRect.height()
         #print "paperRect width %d height %d"%(self.absWidth,self.absHeight)
         
-        self.surnameBoxes={}
+        self.surnameBoxes = {}
         for i in range(14):
-            self.surnameBoxes[i]=QtCore.QRectF(snameboxLeft+i*(textBoxWidth+snameboxPad),snameboxTop,textBoxWidth,textBoxHeight)
+            self.surnameBoxes[i] = QtCore.QRectF(snameboxLeft+i*(textBoxWidth+snameboxPad),snameboxTop,textBoxWidth,textBoxHeight)
             
         self.forenameBoxes={}
         for i in range(14):
@@ -283,18 +286,20 @@ class gp17():
             if len(pcde)>i:
                 painter.drawText(rect,pcde[i],option)
             i+=1
-        i=0
-        gpdate=localsettings.GP17formatDate(self.pt.accd)
-        for rect in self.accdBoxes.values():
-            if self.testingMode : painter.drawRect(rect)
-            painter.drawText(rect,gpdate[i],option)
-            i+=1
-        i=0
-        gpdate=localsettings.GP17formatDate(self.pt.cmpd)
-        for rect in self.cmpdBoxes.values():
-            if self.testingMode : painter.drawRect(rect)
-            painter.drawText(rect,gpdate[i],option)
-            i+=1
+        if self.detailed:
+            ##TODO - add all the other fields here, not just accd and cmpd
+            i=0
+            gpdate=localsettings.GP17formatDate(self.pt.accd)
+            for rect in self.accdBoxes.values():
+                if self.testingMode : painter.drawRect(rect)
+                painter.drawText(rect,gpdate[i],option)
+                i+=1
+            i=0
+            gpdate=localsettings.GP17formatDate(self.pt.cmpd)
+            for rect in self.cmpdBoxes.values():
+                if self.testingMode : painter.drawRect(rect)
+                painter.drawText(rect,gpdate[i],option)
+                i+=1
         for rect in self.miscCBS.values():
             if self.testingMode : painter.drawRect(rect)
         print "treatment on referral,special needs, cancel registration not implemented"

@@ -139,17 +139,17 @@ class customWidgets():
         ##appt books
         self.ui.apptBookWidgets=[]
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900", 5, 3))
+                                       appointmentWidget("0800", "1900"))
         self.ui.appt1scrollArea.setWidget(self.ui.apptBookWidgets[0])
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900", 5, 3))
+                                       appointmentWidget("0800", "1900"))
         self.ui.appt2scrollArea.setWidget(self.ui.apptBookWidgets[1])
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900", 5, 3))
+                                       appointmentWidget("0800", "1900"))
         self.ui.appt3scrollArea.setWidget(self.ui.apptBookWidgets[2])
 
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900", 5, 3))
+                                       appointmentWidget("0800", "1900"))
         self.ui.appt4scrollArea.setWidget(self.ui.apptBookWidgets[3])
 
         ##aptOV
@@ -1142,6 +1142,8 @@ class printingClass():
         dl = Ui_confirmDentist.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.dents_comboBox.addItems(localsettings.activedents)
+        prevDetails = "Previous Course (%s - %s)"% (self.pt.accd,self.pt.cmpd)
+        dl.previousCourse_radioButton.setText(prevDetails)
         if localsettings.apptix_reverse[dent] in localsettings.activedents:
             pos=localsettings.activedents.index(localsettings.apptix_reverse[dent])
             dl.dents_comboBox.setCurrentIndex(pos)
@@ -1150,12 +1152,14 @@ class printingClass():
 
         if Dialog.exec_():
             #-- see if user has overridden the dentist
-            chosenDent=str(dl.dents_comboBox.currentText())
-            dent=localsettings.ops_reverse[chosenDent]
-            form=GP17.gp17(self.pt, dent, test)
+            chosenDent = str(dl.dents_comboBox.currentText())
+            dent = localsettings.ops_reverse[chosenDent]
+            form = GP17.gp17(self.pt, dent, test)
+            if dl.previousCourse_radioButton.isChecked():
+                form.detailed = True
             form.print_()
             if not test:
-                self.pt.addHiddenNote("printed", "GP17 %s"%chosenDent)
+                self.pt.addHiddenNote("printed", "GP17 %s"% chosenDent)
 
     def accountButton2Clicked(self):
         if self.ui.accountB_radioButton.isChecked():

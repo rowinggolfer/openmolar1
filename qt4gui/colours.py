@@ -28,8 +28,6 @@ diary={
 }
 
 
-
-
 APPTCOLORS={
     "N":QtGui.QColor("#99ccff"),
     "I":QtGui.QColor("#ccff99"),
