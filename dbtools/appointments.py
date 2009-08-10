@@ -592,11 +592,11 @@ def block_appt(bldate, apptix, start, end, reason):
     put a block in the book, with text set as reason
     '''
     #- 1st check the block is free
-    slots = future_slots(apptix, bldate, bldate, (apptix,))
-    
     block_length = localsettings.minutesPastMidnight(end) - \
     localsettings.minutesPastMidnight(start)
-
+    
+    slots = future_slots(block_length, bldate, bldate, (apptix,))
+    
     if not (slots and (start, block_length) in slots[0][2]):
         #-- block no longer available!! 
         return False
