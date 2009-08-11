@@ -2267,8 +2267,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             widg.setPalette(palette)
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
         self.addHistoryMenu()
-        #-- don't do this at startup... wait for the thread which checks
-        #self.showForumIcon()
 
     def addHistoryMenu(self):
         '''
@@ -2685,6 +2683,13 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         user has asked for a new appointment
         '''
         appt_gui_module.newAppt(self)
+        
+    def apptWizard_pushButton_clicked(self):
+        '''
+        user has asked for the appointment wizard, which provides quick access
+        to standard groups of appointments
+        '''
+        appt_gui_module.newApptWizard(self)
     
     def makeApptButton_clicked(self):
         '''
@@ -3343,6 +3348,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
     def signals_reception(self):
         #admin summary widgets
+        QtCore.QObject.connect(self.ui.apptWizard_pushButton,
+        QtCore.SIGNAL("clicked()"), self.apptWizard_pushButton_clicked)        
         QtCore.QObject.connect(self.ui.newAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.newAppt_pushButton_clicked)
         QtCore.QObject.connect(self.ui.makeAppt_pushButton,

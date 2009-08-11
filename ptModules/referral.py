@@ -11,7 +11,6 @@ from openmolar.settings import localsettings
 
 def getDescriptions():
     try:
-        print localsettings.referralfile
         d=minidom.parse(localsettings.referralfile)
         descriptions=d.getElementsByTagName("description")
         desclist=[]

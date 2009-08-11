@@ -16,11 +16,11 @@ import copy
 from PyQt4 import QtCore, QtGui
 
 from openmolar.dbtools import appointments, search
-from openmolar.settings import localsettings
+from openmolar.settings import localsettings, appointment_shortcuts
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs import alterAday, \
 finalise_appt_time,permissions, Ui_appointment_length, \
-Ui_specify_appointment
+Ui_specify_appointment, appt_wizard_dialog
 
 from openmolar.qt4gui.printing import apptcardPrint
 
@@ -64,7 +64,28 @@ def addApptLength(parent, dl, hourstext, minstext):
         print "exception in addApptLengthFunction", e
         parent.advise("unable to set the length of the appointment", 1)
         return
+    
+def newApptWizard(parent):
+    '''
+    this shows a dialog to providing shortcuts to common groups of 
+    appointments - eg imps,bite,try,fit
+    '''
+    print appointment_shortcuts.getShortCuts()
+    #--check there is a patient attached to this request!
+    if parent.pt.serialno == 0:
+        parent.advise(
+        "You need to select a patient before performing this action.", 1)
+        return
 
+    #--initiate a custom dialog
+    Dialog = QtGui.QDialog(parent)
+    dl = appt_wizard_dialog.apptWizard(Dialog, parent)
+    
+    if Dialog.exec_():
+        print "apptWizard accepted"
+    else:
+        print "apptWizard rejected"
+        
 def newAppt(parent):
     '''
     this shows a dialog to get variables required for an appointment

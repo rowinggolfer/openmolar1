@@ -113,9 +113,12 @@ apptix={}
 #--eg app[13]="jj"
 
 apptix_reverse={}
-referralfile=""
+
 #contains a link to the xml document with the referral info in it -
 #--this data will eventually be in the mysql?
+referralfile=""
+appt_shortcut_file = ""
+
 stylesheet="resources/style.css"
 
 #-- set a latest possible date for appointments to be made 
@@ -373,7 +376,7 @@ def initiate(debug=False):
     print "initiating settings"
     global referralfile,stylesheet,fees,message,dentDict,privateFees,\
     nhsFees,allowed_logins,ops,ops_reverse,activedents,activehygs,apptix,\
-    apptix_reverse #,itemCodes
+    apptix_reverse, appt_shortcut_file #,itemCodes
     from openmolar.connect import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
@@ -511,8 +514,10 @@ def initiate(debug=False):
     getLocalSettings()
 
     wkdir=os.getcwd()
-    referralfile=os.path.join (wkdir,"resources","referral_data.xml")
-
+    referralfile = os.path.join (wkdir,"resources","referral_data.xml")
+    appt_shortcut_file = os.path.join (wkdir,"resources",
+    "appointment_shortcuts.xml")
+    
     message='''<html><head><link rel="stylesheet" href="%s" type="text/css">
     </head><body><div align="center">
     <img src="html/images/newlogo.png" width="150",height="100", align="left" />
