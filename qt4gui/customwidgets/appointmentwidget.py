@@ -102,13 +102,14 @@ class appointmentWidget(QtGui.QWidget):
         a public method to set the earliest appointment available
         '''
         self.startTime = self.minutesPastMidnight(sTime)                                              
-        #convert times to "minutes past midnight"
-
+        self.firstSlot = self.getCell_from_time(sTime)+1
+        
     def setEndTime(self, fTime):
         '''
         a public method to set the end of the working day
         '''
         self.endTime = self.minutesPastMidnight(fTime)
+        self.lastSlot = self.getCell_from_time(fTime)
         
     def calcSlotNo(self):
         '''
@@ -116,7 +117,7 @@ class appointmentWidget(QtGui.QWidget):
         and length of slots
         '''
         self.slotNo = (self.dayEndTime - self.dayStartTime) // self.slotLength
-
+        
     def clearAppts(self):
         '''
         resets - the widget values - DOES NOT REDRAW THE WIDGET
@@ -157,6 +158,7 @@ class appointmentWidget(QtGui.QWidget):
                 self.rows[row].append(sno)
             else:
                 self.rows[row] = [sno]
+    
     def setCurrentTime(self, t):
         '''
         send it a value like "HHMM" or "HH:MM" to draw a marker at that time
@@ -192,7 +194,7 @@ class appointmentWidget(QtGui.QWidget):
         what slot is the previous appt?
         '''
         lower = arg
-        while lower >= 1:
+        while lower >= self.firstSlot:
             if self.rows.has_key(lower):
                 lower += 1
                 break
@@ -204,7 +206,7 @@ class appointmentWidget(QtGui.QWidget):
         what slot is the next appt?
         '''
         upper = arg
-        while upper < self.slotNo:
+        while upper < self.lastSlot:
             if self.rows.has_key(upper):
                 break
             upper += 1
@@ -230,6 +232,11 @@ class appointmentWidget(QtGui.QWidget):
         y = event.y()
         yOffset = self.height() / self.slotNo
         row = y//yOffset
+        if not self.firstSlot < row < self.lastSlot:
+            self.selected = (0, 0)
+            self.update()
+            QtGui.QToolTip.showText(event.globalPos(), "")
+            return 
         if self.rows.has_key(row):
             selectedPatients = self.rows[row]
             self.selected = self.getApptBounds(selectedPatients)
@@ -253,7 +260,7 @@ class appointmentWidget(QtGui.QWidget):
             else:
                 QtGui.QToolTip.showText(event.globalPos(), "")
         else:
-            newSelection = (self.getPrev(row),self.getNext(row))
+            newSelection = (self.getPrev(row), self.getNext(row))
             if self.selected != newSelection:
                 self.selected = newSelection
                 self.update()
@@ -261,14 +268,8 @@ class appointmentWidget(QtGui.QWidget):
                 start = int(self.dayStartTime + self.selected[0] * self.slotLength)
                 finish = int(self.dayStartTime + self.selected[1] * self.slotLength)
                 
-                if start >= self.startTime and finish <= self.endTime: 
-                    QtGui.QToolTip.showText(event.globalPos(),
-                    "SLOT %s minutes"%(finish-start))                
-                        
-                else:
-                    self.selected = (0, 0)
-                    self.update()
-                    QtGui.QToolTip.showText(event.globalPos(), "")
+                QtGui.QToolTip.showText(event.globalPos(),
+                "SLOT %s minutes"% (finish - start))                
                         
     def mousePressEvent(self, event):
         '''
@@ -278,7 +279,7 @@ class appointmentWidget(QtGui.QWidget):
         in case there are overlapping appointments or doubles etc...
         '''
         yOffset = self.height() / self.slotNo
-        row=event.y()//yOffset
+        row=event.y()//yOffset        
         if self.rows.has_key(row):
             selectedPatients=self.rows[row]
             #ignore lunch and emergencies - serialno number is positive
@@ -295,14 +296,14 @@ class appointmentWidget(QtGui.QWidget):
                 self.emit(QtCore.SIGNAL("ClearEmergencySlot"),
                 (start,finish,localsettings.apptix.get(self.dentist)))
         else:
-            #-- no-one in the book... right click
-            start=self.humanTime(
-            int(self.dayStartTime+self.selected[0]*self.slotLength))
+            #-- no-one in the book... 
+            if self.firstSlot < row < self.lastSlot:
+                start=self.humanTime(
+                int(self.dayStartTime+self.selected[0]*self.slotLength))
 
-            finish=self.humanTime(
-            int(self.dayStartTime+self.selected[1]*self.slotLength))
+                finish=self.humanTime(
+                int(self.dayStartTime+self.selected[1]*self.slotLength))
 
-            if localsettings.apptix.has_key(self.dentist):
                 Dialog=QtGui.QDialog(self)
                 dl=Ui_blockSlot.Ui_Dialog()
                 dl.setupUi(Dialog)
@@ -444,7 +445,7 @@ if __name__ == "__main__":
     #--five minute slots, text every 3 slots
     form = appointmentWidget("0800","1700")
     form.setStartTime("0830")
-    form.setEndTime("1600")
+    form.setEndTime("1630")
          
     print '''
     created a calendar with start %d minutes past midnight
@@ -456,13 +457,13 @@ if __name__ == "__main__":
     form.setCurrentTime("945")
     form.clearAppts()
     
-    form.setAppointment("0820","0820","WALLACE N",3266,
+    form.setAppointment("0845","0845","WALLACE N",3266,
     "DOUBLE","","","Good Patient",0,"P")
-    form.setAppointment("0820","0900","WALLACE I",36,"FILL","SP",
+    form.setAppointment("0845","0930","WALLACE I",36,"FILL","SP",
     "","Good Patient",0,"N")
-    form.setAppointment("0915","0930","JOHNSTONE J",3673,
+    form.setAppointment("0930","0945","JOHNSTONE J",3673,
     "EXAM","","","",0,"P")
-    form.setAppointment("1000","1005","turell J",3674,"EXAM",
+    form.setAppointment("1000","1015","turell J",3674,"EXAM",
     "","","",0,"I")
     form.setAppointment("1430","1500","JOHN J",3675,"EXAM",
     "","","",0,"P")
@@ -477,7 +478,6 @@ if __name__ == "__main__":
     QtCore.SIGNAL("ClearEmergencySlot"), clicktest_b)
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("BlockEmptySlot"), clicktest_c)
-    
     
     form.show()
 
