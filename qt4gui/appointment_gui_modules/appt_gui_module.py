@@ -658,7 +658,7 @@ def makeAppt(parent, arg):
                 "Print Appointment Card?", 
                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
-                if result == QtGui.QMessageBox.No:
+                if result == QtGui.QMessageBox.Yes:
                     printApptCard(parent)
             else:
                 parent.advise("Error putting appointment back onto patient " +
