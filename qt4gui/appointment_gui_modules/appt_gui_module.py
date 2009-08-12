@@ -70,7 +70,20 @@ def newApptWizard(parent):
     this shows a dialog to providing shortcuts to common groups of 
     appointments - eg imps,bite,try,fit
     '''
-    print appointment_shortcuts.getShortCuts()
+    def applyApptWizard(arg):
+        i=0
+        for appt in arg:
+            apr_ix = appointments.add_pt_appt(parent.pt.serialno, 
+            appt.get("clinician"), appt.get("length"), appt.get("trt1"),
+            -1, appt.get("trt2"), appt.get("trt3"), appt.get("memo"),
+            appt.get("datespec"), parent.pt.cset)
+            
+            if i == 0:
+                i = apr_ix
+        if i:
+            layout_apptTable(parent)
+            select_apr_ix(parent, i)
+
     #--check there is a patient attached to this request!
     if parent.pt.serialno == 0:
         parent.advise(
@@ -81,10 +94,9 @@ def newApptWizard(parent):
     Dialog = QtGui.QDialog(parent)
     dl = appt_wizard_dialog.apptWizard(Dialog, parent)
     
-    if Dialog.exec_():
-        print "apptWizard accepted"
-    else:
-        print "apptWizard rejected"
+    Dialog.connect(Dialog, QtCore.SIGNAL("AddAppointments"), applyApptWizard)
+    
+    Dialog.exec_()
         
 def newAppt(parent):
     '''
@@ -173,17 +185,11 @@ def newAppt(parent):
         #--memo
         note = str(dl.lineEdit.text().toAscii())
 
-        #--if the patients course type isn't present,
-        #--we will have issues later
-        if parent.pt.cset == "":
-            cst = 32
-        else:
-            cst = ord(parent.pt.cset[0])
         ##TODO - add datespec and joint appointment options
 
         #--attempt WRITE appointement to DATABASE
         apr_ix = appointments.add_pt_appt(parent.pt.serialno, practix, length,
-        code0, -1, code1, code2, note, "", cst)
+        code0, -1, code1, code2, note, "", parent.pt.cset)
         if apr_ix:
             layout_apptTable(parent)
             select_apr_ix(parent, apr_ix)
@@ -732,7 +738,8 @@ def layout_apptTable(parent):
         length = str(row[9])
         trt1, trt2, trt3 = tuple(row[3:6])
         memo = str(row[6])
-        datespec = row[15]
+        datespec = str(row[15])
+        
         if row[8] == None:
             start = ""
         else:

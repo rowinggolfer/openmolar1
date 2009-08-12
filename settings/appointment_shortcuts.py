@@ -45,7 +45,7 @@ def getShortCuts():
                         apptDict["length"] = a_length
                 datespec = appointment.getElementsByTagName("datespec")
                 if datespec:
-                        d_spec=int(length[0].firstChild.data)
+                        d_spec=datespec[0].firstChild.data
                         apptDict["datespec"] = d_spec
                 memo = appointment.getElementsByTagName("memo")
                 if memo:

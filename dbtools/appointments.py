@@ -430,7 +430,7 @@ def get_pts_appts(sno):
 
     fullquery = '''SELECT serialno,aprix,practix,code0,code1,code2,note,
     DATE_FORMAT(adate,"%s"),atime,length,flag0,flag1,flag2,flag3,flag4,datespec
-    FROM apr WHERE serialno=%d ORDER BY adate'''% (
+    FROM apr WHERE serialno=%d ORDER BY adate, aprix'''% (
     localsettings.sqlDateFormat, sno)
 
     if localsettings.logqueries:
@@ -444,10 +444,27 @@ def get_pts_appts(sno):
     return data
 
 def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
-    note="", datespec="", flag1=80, flag0=1, flag2=0, flag3=0, flag4=0):
+    note="", datespec="", ctype="P", flag0=1, flag2=0, flag3=0, flag4=0):
     '''
     modifies the apr table (patients diary) by adding an appt
     '''
+    #--if the patients course type isn't present,
+    #--we will have issues later
+    if ctype == "" or ctype == None:
+        flag1 = 32
+    else:
+        flag1 = ord(ctype[0])
+    if code0 == None:
+        code0 = ""
+    if code1 == None:
+        code1 = ""
+    if code2 == None:
+        code2 = ""
+    if note == None:
+        note = ""
+    if datespec == None:
+        datespec = ""
+    
     db = connect()
     cursor = db.cursor()
     try:

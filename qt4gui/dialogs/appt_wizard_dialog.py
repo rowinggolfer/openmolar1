@@ -53,6 +53,7 @@ class apptWidget(Ui_apptWizardItem.Ui_Form):
         '''
         self.parent.dialog.emit(QtCore.SIGNAL("AddAppointments"), 
         (self.appointments))
+        self.parent.dialog.accept()
 
 class apptWizard(Ui_apptWizard.Ui_Dialog):
     def __init__(self, dialog, parent=None):
