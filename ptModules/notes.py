@@ -118,22 +118,28 @@ def decipher_noteline(noteline):
         #try:
         if len(noteline)==0:  #sometimes a line is blank
            return retarg
-        if noteline[0]==chr(1):                                                                     #important - this line give us operator and date.
-            retarg[0]= "opened"
-            operator=""
-            i=1
-            while noteline[i]>="A" or noteline[i]=="/":
-                operator+=noteline[i]
-                i+=1
-            #workingdate=str(char(noteline[i]))+"_"+str(char(noteline[i+1]))+"_"+str(1900+char(noteline[i+2]))
-            workingdate=str(1900+char(noteline[i+2]))+"_%02d_%02d"%(char(noteline[i+1]),\
-            char(noteline[i]))                                                                      ## arghh!!! 2 character year field!!!!!!
+        if noteline[0] == chr(1):                                                                     #important - this line give us operator and date.
+            retarg[0] = "opened"
+            operator = ""
+            i = 1
+            while noteline[i] >= "A" or noteline[i] == "/":
+                operator += noteline[i]
+                i += 1
+
+            ## arghh!!! 2 character year field!!!!!!
+            workingdate = "%s_%02d_%02d"% (
+            1900+char(noteline[i+2]),char(noteline[i+1]),char(noteline[i]))                                                                      
+
             retarg[2]=operator
             retarg[3]=workingdate
-            systemdate=str(char(noteline[i+3]))+"/"+str(char(noteline[i+4]))+"/"+\
-            str(1900+char(noteline[i+5]))
-            systemdate+=" %02d:%02d"%(char(noteline[i+6]),char(noteline[i+7]))                      #systemdate includes time
-            retarg[1]+="System date - %s"%systemdate
+            try:
+                systemdate=str(char(noteline[i+3]))+"/"+str(char(noteline[i+4]))+"/"+\
+                str(1900+char(noteline[i+5]))
+                systemdate+=" %02d:%02d"%(char(noteline[i+6]),char(noteline[i+7]))                      #systemdate includes time
+                retarg[1]+="System date - %s"% systemdate
+            except IndexError, e:
+                print "error getting system date for patient notes - %s",e
+                
         elif noteline[0]=="\x02":   #
             retarg[0]= "closed"
             operator=""
@@ -295,7 +301,7 @@ if __name__ == "__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=712
+        serialno=502
     if "-v" in sys.argv:
         verbose=True
     else:

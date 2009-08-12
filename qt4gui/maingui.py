@@ -1936,14 +1936,13 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.advise("connecting to database to get patient details..")
 
             try:
-                loadPt=patient_class.patient(serialno)
                 #--work on a copy only, so that changes can be tested for later
                 #--has to be a deep copy, as opposed to shallow
                 #--otherwise changes to attributes which are lists aren't
                 #--spotted new "instance" of patient
-                self.pt=loadPt
+                self.pt=patient_class.patient(serialno)
                 #-- this next line is to prevent a "not saved warning"
-                self.pt_dbstate.fees=self.pt.fees
+                self.pt_dbstate.fees = self.pt.fees
                 try:
                     self.loadpatient()
                 except Exception, e:
@@ -2047,6 +2046,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
         if localsettings.station == "surgery":
             self.callXrays()
+    
     def getmemos(self):
         urgentMemos = memos.getMemos(self.pt.serialno)
         for umemo in urgentMemos:
