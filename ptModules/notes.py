@@ -15,20 +15,22 @@ def notes(ptNotesTuple,verbosity=0):
     notes_dict={}
     date=""
     for line in ptNotesTuple:
-        if len(line)>0:
-            notelist=decipher_noteline(line[1])                                                         #decipher noteline returns a list.  ["type","note","operator","date"]
-            if notelist[3]!="":
-                date=notelist[3]
+        if len(line) > 0:
+            #decipher noteline returns a list.  ["type","note","operator","date"]
+            notelist = decipher_noteline(line[1])
+            if notelist[3] != "":
+                date = notelist[3]
             if notes_dict.has_key(date):
                 notes_dict[date].append(notelist[0:3])
             else:
-                notes_dict[date]=[notelist[0:3]]
-    dates=notes_dict.keys()
+                notes_dict[date] = [notelist[0:3]]
+    dates = notes_dict.keys()
     dates.sort()
-    retarg+='<table width="100%">'
-    retarg+='''<tr><th class="date">Date</th><th class="ops">ops</th><th class="tx">Tx</th>
-    <th class="notes">Notes</th>'''
-    if verbosity>0:
+    retarg += '''<table width="100%">
+    <tr><th class="date">Date</th><th class="ops">ops</th>
+    <th class="tx">Tx</th><th class="notes">Notes</th>'''
+    
+    if verbosity > 0:
         retarg+='''<th class="reception">reception</th>'''
     if verbosity==2:                                                                                #this is for development/debugging purposes
         retarg+='<th class="verbose">Detailed</th>'
@@ -62,9 +64,12 @@ def notes(ptNotesTuple,verbosity=0):
     return retarg+"</body></html>"
 
 def get_date_from_date(key):
-    k=key.split('_')
-    return k[2]+"/"+k[1]+"/"+k[0]
-
+    try:
+        k=key.split('_')
+        return k[2]+"/"+k[1]+"/"+k[0]
+    except IndexError:
+        return "ERROR"
+    
 def get_op_for_date(line):
     op=""
     for l in line:
@@ -92,6 +97,7 @@ def get_notes_for_date(line):
         if "NOTE" in l[0]:
             note+=l[1].replace("<","&lt;")+" "
     return note
+
 def get_reception_for_date(line):
     recep=""
     for l in line:
@@ -115,10 +121,12 @@ def get_estimate_for_date(line):
 
 def decipher_noteline(noteline):
         retarg=["","","",""]
-        #try:
+        
         if len(noteline)==0:  #sometimes a line is blank
            return retarg
-        if noteline[0] == chr(1):                                                                     #important - this line give us operator and date.
+    
+        #important - this line give us operator and date.
+        if noteline[0] == chr(1):
             retarg[0] = "opened"
             operator = ""
             i = 1
@@ -130,28 +138,40 @@ def decipher_noteline(noteline):
             workingdate = "%s_%02d_%02d"% (
             1900+char(noteline[i+2]),char(noteline[i+1]),char(noteline[i]))                                                                      
 
-            retarg[2]=operator
-            retarg[3]=workingdate
+            retarg[2] = operator
+            retarg[3] = workingdate
             try:
-                systemdate=str(char(noteline[i+3]))+"/"+str(char(noteline[i+4]))+"/"+\
-                str(1900+char(noteline[i+5]))
-                systemdate+=" %02d:%02d"%(char(noteline[i+6]),char(noteline[i+7]))                      #systemdate includes time
-                retarg[1]+="System date - %s"% systemdate
+                systemdate = "%s/%s/%s"% (
+                char(noteline[i+3]), char(noteline[i+4]), 
+                1900 + char(noteline[i+5]))
+
+                #systemdate includes time
+                systemdate += " %02d:%02d"% (
+                char(noteline[i+6]), char(noteline[i+7])) 
+
+                retarg[1] += "System date - %s"% systemdate
+
             except IndexError, e:
-                print "error getting system date for patient notes - %s",e
+                print "error getting system date for patient notes - %s", e
+                retarg[1] += "System date - ERROR!!!!!"
                 
-        elif noteline[0]=="\x02":   #
-            retarg[0]= "closed"
-            operator=""
-            i=1
-            while noteline[i]>="A" or noteline[i]=="/":
-                operator+=noteline[i]
-                i+=1
-            systemdate=str(char(noteline[i]))+"/"+str(char(noteline[i+1]))+"/"+str(1900+char(noteline[i+2]))
-            systemdate+=" %02d:%02d"%(char(noteline[i+3]),char(noteline[i+4]))
-            retarg[1]+="%s %s"%(operator,systemdate)
-        elif noteline[0]==chr(3):   #
+        elif noteline[0] == "\x02":   #
+            retarg[0] = "closed"
+            operator = ""
+            i = 1
+            while noteline[i] >= "A" or noteline[i] == "/":
+                operator += noteline[i]
+                i += 1
+            systemdate = "%s/%s/%s"%(
+            char(noteline[i]), char(noteline[i+1]), 
+            1900+char(noteline[i+2]))
+
+            systemdate+=" %02d:%02d"%( 
+            char(noteline[i+3]),char(noteline[i+4]))
+
+            retarg[1] += "%s %s"% (operator, systemdate)
         
+        elif noteline[0] == chr(3):        
             #-- hidden nodes start with chr(3) then another character
             if noteline[1]==chr(97):
                 retarg[0]="COURSE CLOSED"
@@ -251,10 +271,7 @@ def decipher_noteline(noteline):
             retarg[0]="newNOTE"                                                                     #new note lines don't have the tab
             retarg[1]+="%s"%noteline
         return retarg
-        #except Exception, e:
-        #retarg[0]="NOTE"
-        #retarg[1]='<br /><font color="red"><b>ERROR - %s</b></font><br />'%str(e)
-        #return retarg
+       
 def char(c):
     i=0
     while i < 256:
