@@ -186,8 +186,8 @@ class appointmentWidget(QtGui.QWidget):
         '''
         send a time - return the row number of that time
         '''
-        return \
-        int((self.minutesPastMidnight(t) - self.dayStartTime) / self.slotLength)
+        return int((self.minutesPastMidnight(t) - self.dayStartTime) 
+        / self.slotLength)
     
     def getPrev(self, arg):
         '''

@@ -136,7 +136,7 @@ def forumNewTopic(parent):
         table = "omforum"
     post = forum.post()
     post.topic = dl.topic_lineEdit.text()
-    post.comment = dl.comment_textEdit.toPlainText()
+    post.comment = dl.comment_textEdit.toPlainText()[:200]
     post.inits = dl.comboBox.currentText()
     forum.commitPost(post, table)
     loadForum(parent)

@@ -1,6 +1,28 @@
 <?xml version="1.0"?>
 <shortcuts>
 	<shortcut>
+		<description>20 minute Filling</description>
+		<appointment>
+			<trt1>FILL</trt1>
+			<length>20</length>
+		</appointment>
+	</shortcut>
+	<shortcut>
+		<description>30 minute Filling</description>
+		<appointment>
+			<trt1>FILL</trt1>
+			<length>30</length>
+		</appointment>
+	</shortcut>
+	<shortcut>
+		<description>30 minute Filling/SP</description>
+		<appointment>
+			<trt1>FILL</trt1>
+			<trt2>SP</trt2>
+			<length>30</length>
+		</appointment>
+	</shortcut>
+	<shortcut>
 		<description>Exam &amp; Hygenist</description>
 		<appointment>
 			<trt1>EXAM</trt1>
