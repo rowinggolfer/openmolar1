@@ -152,6 +152,8 @@ csetypes=["P","I","N","N OR","N O"]
 
 #--for debugging purposes... set this to true.- not yet implemented throughout.
 logqueries=False
+#-- if you want an additional box showing saved changes when a record is saved
+showSaveChanges = False
 #-- self evident
 practiceAddress=("The Academy Dental Practice","19 Union Street",
 "Inverness","IV1 1PP")

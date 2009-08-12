@@ -2551,10 +2551,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                     
                      
                 self.pt_dbstate=copy.deepcopy(self.pt)
-                message="Sucessfully altered the following items<ul>"
-                for item in uc:
-                    message+="<li>%s</li>"%str(item)
-                self.advise(message+"</ul>", 1)
+                if localsettings.showSaveChanges:
+                    message="Sucessfully altered the following items<ul>"
+                    for item in uc:
+                        message+="<li>%s</li>"%str(item)
+                    self.advise(message+"</ul>", 1)
             else:
                 self.advise("Error applying changes... please retry", 2)
                 print "error saving changes to record %s"%self.pt.serialno,
