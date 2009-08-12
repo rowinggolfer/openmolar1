@@ -89,7 +89,11 @@ def newApptWizard(parent):
         parent.advise(
         "You need to select a patient before performing this action.", 1)
         return
-
+    if parent.pt.dnt1 in (0, None):
+        parent.advise('''Patient doesn't have a dentist set,<br /> 
+        please correct this before using these shortcuts''', 1)
+        return
+        
     #--initiate a custom dialog
     Dialog = QtGui.QDialog(parent)
     dl = appt_wizard_dialog.apptWizard(Dialog, parent)
@@ -615,8 +619,8 @@ def makeAppt(parent, arg):
 
         #--get final confirmation
         result = QtGui.QMessageBox.question(parent, "Confirm", message,
-        QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
-        if result == QtGui.QMessageBox.Cancel:
+        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        if result == QtGui.QMessageBox.No:
             #dialog rejected
             return
 
@@ -652,9 +656,9 @@ def makeAppt(parent, arg):
                 result = QtGui.QMessageBox.question(parent, 
                 "Confirm",
                 "Print Appointment Card?", 
-                QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
+                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
-                if result == QtGui.QMessageBox.Ok:
+                if result == QtGui.QMessageBox.No:
                     printApptCard(parent)
             else:
                 parent.advise("Error putting appointment back onto patient " +

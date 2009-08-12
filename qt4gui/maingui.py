@@ -326,6 +326,7 @@ class chartsClass():
             self.pt.__dict__[tooth+self.selectedChartWidget]=arg
             #--update the patient!!
             self.ui.staticChartWidget.setToothProps(tooth, arg)
+            self.ui.summaryChartWidget.setToothProps(tooth, arg)
             self.ui.staticChartWidget.update()
         elif self.selectedChartWidget == "pl":
             if course_module.newCourseNeeded(self):
@@ -344,7 +345,6 @@ class chartsClass():
         self.ui.planChartWidget.update()
         self.ui.completedChartWidget.setToothProps(tooth, newcompleted)
         self.ui.completedChartWidget.update()
-
 
     def flipDeciduous(self):
         if self.selectedChartWidget == "st":

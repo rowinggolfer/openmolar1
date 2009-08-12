@@ -430,7 +430,7 @@ def get_pts_appts(sno):
 
     fullquery = '''SELECT serialno,aprix,practix,code0,code1,code2,note,
     DATE_FORMAT(adate,"%s"),atime,length,flag0,flag1,flag2,flag3,flag4,datespec
-    FROM apr WHERE serialno=%d ORDER BY adate, aprix'''% (
+    FROM apr WHERE serialno=%d ORDER BY aprix, adate'''% (
     localsettings.sqlDateFormat, sno)
 
     if localsettings.logqueries:

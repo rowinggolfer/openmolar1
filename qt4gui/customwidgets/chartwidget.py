@@ -294,7 +294,10 @@ class chartWidget(QtGui.QWidget):
         #-- cell height
         yOffset = self.height() / 2
         #--red pen
-        painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
+        if self.isEnabled():
+            painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
+        else:
+            painter.setPen(QtGui.QPen(QtCore.Qt.gray, 2))            
         sansFont = QtGui.QFont("Helvetica", 8)
         painter.setFont(sansFont)
         fm = QtGui.QFontMetrics(sansFont)
@@ -334,8 +337,12 @@ class chartWidget(QtGui.QWidget):
                         painter.setPen(QtGui.QPen(QtCore.Qt.blue, 2))
                     painter.setBrush(colours.TRANSPARENT)
                     painter.drawRect(rect.adjusted(1, 1, -1, -1))
-
-        painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
+        
+        if self.isEnabled():
+            painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
+        else:
+            painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))            
+        
         textRect = QtCore.QRectF(0, 0, self.width(), self.height())
 
         if self.showLeftRight:
@@ -398,7 +405,10 @@ class chartWidget(QtGui.QWidget):
             #################BABY TOOTH###########################
             #-- paint deciduous notation in RED
             painter.save()
-            painter.setPen(QtGui.QPen(QtCore.Qt.red, 1))
+            if self.isEnabled():
+                painter.setPen(QtGui.QPen(QtCore.Qt.red, 1))
+            else:
+                painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))                        
             painter.drawText(textRect, QtCore.Qt.AlignCenter, (toothtext))
 
             #-- and "shrink" the tooth
@@ -411,7 +421,10 @@ class chartWidget(QtGui.QWidget):
         else:
             #--adult tooth
             painter.save()
-            painter.setPen(QtGui.QPen(colours.CHARTTEXT, 1))
+            if self.isEnabled():
+                painter.setPen(QtGui.QPen(colours.CHARTTEXT, 1))
+            else:
+                painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))                        
             painter.drawText(textRect, QtCore.Qt.AlignCenter, toothtext)
             painter.restore()
 
