@@ -3,11 +3,11 @@
 	<shortcut>
 		<description>Exam &amp; Hygenist</description>
 		<appointment>
-			<trt1>Exam</trt1>
+			<trt1>EXAM</trt1>
 			<length>15</length>
 		</appointment>
 		<appointment>
-			<trt1>Hyg</trt1>
+			<trt1>HYG</trt1>
 			<clinician>14</clinician>
 			<length>20</length>
 		</appointment>
@@ -15,21 +15,21 @@
 	<shortcut>
 		<description>Denture Appointments</description>
 		<appointment>
-			<trt1>Imps</trt1>
+			<trt1>IMPS</trt1>
 			<length>15</length>
 		</appointment>
 		<appointment>
-			<trt1>Bite</trt1>
+			<trt1>BITE</trt1>
 			<length>20</length>
 			<datespec>+14</datespec>
 		</appointment>
 		<appointment>
-			<trt1>Try</trt1>
+			<trt1>TRY</trt1>
 			<length>15</length>
 			<datespec>+14</datespec>
 		</appointment>
 		<appointment>
-			<trt1>Fit</trt1>
+			<trt1>FIT</trt1>
 			<length>15</length>
 			<datespec>+14</datespec>
 		</appointment>
@@ -37,11 +37,11 @@
 	<shortcut>
 		<description>Prep &amp; Fit</description>
 		<appointment>
-			<trt1>Prep</trt1>
+			<trt1>PREP</trt1>
 			<length>60</length>
 		</appointment>
 		<appointment>
-			<trt1>Fit</trt1>
+			<trt1>FIT</trt1>
 			<length>15</length>
 			<datespec>+14</datespec>
 		</appointment>
