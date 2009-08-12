@@ -182,7 +182,7 @@ def forumReply(parent):
         post = forum.post()
         post.parent_ix = parentix
         post.topic = dl.topic_lineEdit.text()
-        post.comment = dl.comment_textEdit.toPlainText()
+        post.comment = dl.comment_textEdit.toPlainText()[:200]
         post.inits = dl.comboBox.currentText()
         forum.commitPost(post, table)
     loadForum(parent)
