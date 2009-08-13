@@ -38,7 +38,7 @@ class printChart():
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     chart = QPixmap("images/testchart.png")
-    form = printNotes(chart)
+    form = printChart(chart)
     form.myprint(True)  #show a dialog for testing purposes
     app.exec_()
 

@@ -118,7 +118,7 @@ def newsetup():
         try:
             from openmolar import createdemodatabase
             applystage5()
-            if createdemodatabase.createDB(myHost, myPort,
+            if createdemodatabase.create_database(myHost, myPort,
             myMysqlUser, myMysqlPassword, myDB, rootpass):
                 print '''New database created sucessfully...
                 attempting to loadtables'''
