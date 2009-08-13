@@ -1620,6 +1620,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         print "quit called"
         if self.okToLeaveRecord():
             #TODO - save some settings here????
+            utilities.deletePDF()
             pass
         else:
             print "user overuled"

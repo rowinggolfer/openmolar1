@@ -25,7 +25,7 @@ def deletePDF():
     '''
     delete's any temprorary pdf file
     '''
-    if os.exists("temp.pdf"):
+    if os.path.exists("temp.pdf"):
         os.remove("temp.pdf")
     
 if __name__ == "__main__":
