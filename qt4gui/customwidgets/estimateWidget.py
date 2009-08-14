@@ -97,12 +97,14 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         retarg = '<center>'
         for item in self.items:
             retarg += '''Type - '%s'<br />ItemCode - '%s'<br />Feescale - %s
-            <br />CSEtype - %s<br />Dent - %s<br />DBindex - %s<hr />'''% (
+            <br />CSEtype - %s<br />Dent - %s<br />linked -%s<br /
+            >DBindex - %s<hr />'''% (
             item.type,
             item.itemcode,
             item.feescale,
             item.csetype,
             item.dent,
+            item.linked,
             item.ix)
         return retarg + "</center>"
 
@@ -532,7 +534,7 @@ class estWidget(QtGui.QFrame):
     def findExistingItemWidget(self, item):
         for widg in self.estItemWidgets:
             if widg.itemCode == item.itemcode and \
-            widg.items[0].description == item.description:
+            widg.items[0].filteredDescription() == item.filteredDescription():
                 widg.addItem(item)
                 return True
 

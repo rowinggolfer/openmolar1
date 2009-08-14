@@ -66,20 +66,20 @@ def all_changes(pt, pt_dbstate, changes):
                         serialno=%d, courseno=%d, type="%s", number=%d,
                         itemcode="%s",description="%s", fee=%d , ptfee=%d,
                         feescale="%s",csetype="%s",dent=%d,completed=%s,
-                        carriedover=%s'''%(pt.serialno, pt.courseno,
+                        carriedover=%s, linked=%s'''%(pt.serialno, pt.courseno,
                         est.type,
                         est.number, est.itemcode, est.description, est.fee,
                         est.ptfee, est.feescale, est.csetype, est.dent,
-                        est.completed, est.carriedover)
+                        est.completed, est.carriedover,est. linked)
 
                         sqlcommands["estimates"].append(query)
                     elif est.ix in oldEstDict.keys():
                         oldEst = oldEstDict[est.ix]
 
                         if str(oldEst) !=  str(est):
-                            print "est (index %s) changed"% est.ix
-                            print "old %s"%oldEst
-                            print "new %s"%est
+                            #print "est (index %s) changed"% est.ix
+                            #print "old %s"%oldEst
+                            #print "new %s"%est
                             #-- have to use the str because est class does not
                             #-- have a _eq_ property ??
                             query='update estimates set '
@@ -105,6 +105,9 @@ def all_changes(pt, pt_dbstate, changes):
                                 query+='completed=%s,'%est.completed
                             if oldEst.carriedover!=est.carriedover:
                                 query+='carriedover=%s,'%est.carriedover
+                            if oldEst.linked!=est.linked:
+                                query+='linked=%s,'%est.linked
+                                
                             query=query.strip(",")+" where ix = %d"%est.ix
 
                             sqlcommands["estimates"].append(query)

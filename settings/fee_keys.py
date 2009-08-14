@@ -13,8 +13,8 @@ class fee():
     '''
     this class handles the calculation of fees
     part of the challenge is recognising the fact that
-     2x an item is not necessarily
-   the same as double the fee for a single item etc..
+    2x an item is not necessarily
+    the same as double the fee for a single item etc..
     '''
     def __init__(self):
         '''
@@ -25,12 +25,14 @@ class fee():
         self.fees=[]
         self.ptFees=[]
         self.regulations=""
+
     def addFee(self, arg):
         '''
         add a fee to the list of fees contained by this class
         frequently this list will have only one item
         '''
         self.fees.append(int(arg))
+        
     def addPtFee(self,arg):
         self.ptFees.append(int(arg))
 
@@ -54,7 +56,9 @@ class fee():
             feeList=self.ptFees
         else:
             feeList=self.fees
-        print "feelist=", feeList
+            
+        #print "feelist=", feeList
+
         if self.regulations=="":
             return feeList[0]*no_items
         else:
@@ -71,14 +75,14 @@ class fee():
             #--check for a greater than
             greaterThan=re.findall("n>\d", self.regulations)
             if greaterThan:
-                print "greater than found ", greaterThan
+                #print "greater than found ", greaterThan
                 limit=int(greaterThan[0][2:])
-                print "limit", limit
+                #print "limit", limit
                 if no_items>limit:
                     formula=re.findall("n>\d:.*,", self.regulations)[0]
                     formula=formula.strip(greaterThan[0]+":")
                     formula=formula.strip(",")
-                    print "formula", formula
+                    #print "formula", formula
                     #--get the base fee
                     column=formula[0]
                     fee=feeList[ord(column)-65]
@@ -90,7 +94,7 @@ class fee():
 
             #-- if fee is still zero
             if fee==0:
-                print "returning linear fee (n* singleItem Fee)"
+                #print "returning linear fee (n* singleItem Fee)"
                 fee=feeList[0]*no_items
 
             #check for a max amount
@@ -115,12 +119,12 @@ def itemsPerTooth(tooth,props):
     for item in items:
         #--look for pins and posts
         if re.match(".*,PR.*",item):
-            print "removing .pr"
+            #print "removing .pr"
             treats.append((tooth,",PR"),)
             item=item.replace(",PR","")
         if re.match("CR.*,C[1-4].*",item):
             posts=re.findall(",C[1-4]",item)
-            print "making Post a separate item"
+            #print "making Post a separate item"
             for post in posts:
                 treats.append((tooth,"CR%s"%post),)
             item=item.replace(post,"")
@@ -146,7 +150,7 @@ def getCode(tooth,arg):
     eg "MOD" -> "1404" (both are strings)
     arg will be something like "CR,GO" or "MOD,CO"
     '''
-    print "decrypting tooth %s code %s "%(tooth, arg)
+    #print "decrypting tooth %s code %s "%(tooth, arg)
 
     if arg in ("PV","AP","ST","EX","EX/S1","EX/S2",",PR","DR"):
         return getKeyCode(arg)
@@ -218,10 +222,23 @@ def getCode(tooth,arg):
             no_of_surfaces=3
         return getKeyCode("%s-%ssurf"%(material,no_of_surfaces))
     else:
-        print "no match in getKeyCodeToothUserCode for ",tooth,arg
+        print "no match in getKeyCodeToothUserCode for ",tooth,arg,
         print "returning 4001"
         return "4001"
 
+
+def getItemFees(pt, itemcode, no_items=1):
+    '''
+    pass itemcode eg"0101", get a tuple (fee, ptfee)
+    currently this gets the csetype from the pt coursetype.
+    returns a tuple
+    '''
+    conditions = []
+    if pt.cset == "N":
+        if pt.exmpt != "":
+            conditions.append("NHS exempt=%s"% pt.exmpt)
+    itemfee, ptfee = getFee(pt.cset, itemcode, no_items, conditions)
+    return itemfee, ptfee
 
 
 def getFee(cset,itemcode, no_items=1, conditions=[]):
@@ -235,19 +252,19 @@ def getFee(cset,itemcode, no_items=1, conditions=[]):
     for condition in conditions:
         if "NHS exempt=" in condition:
             nhsExempt=True
-            print "Exemption - ",condition[condition.index("=")+1:]
-            print "Exmeption found warning - partial exemptions not handled"
+            #print "Exemption - ",condition[condition.index("=")+1:]
+            #print "Exmeption found warning - partial exemptions not handled"
             
     if "N" in cset:
-        fee= localsettings.nhsFees[itemcode].getFee()
+        fee = localsettings.nhsFees[itemcode].getFee()
         if not nhsExempt:
             ptfee= localsettings.nhsFees[itemcode].getPtFee(no_items, conditions)
     elif "I" in cset:
-        fee= localsettings.privateFees[itemcode].getFee(no_items, conditions)
-        ptfee= 0
+        fee = localsettings.privateFees[itemcode].getFee(no_items, conditions)
+        ptfee = 0
     else:
-        fee= localsettings.privateFees[itemcode].getFee(no_items, conditions)
-        ptfee= fee
+        fee = localsettings.privateFees[itemcode].getFee(no_items, conditions)
+        ptfee = fee
         
     return (fee, ptfee)
 
@@ -261,7 +278,7 @@ def getDescription(arg):
     try:
         description=localsettings.descriptions.get(arg)
     except:
-        print "no description found for item %s"%arg
+        print "no description found for item %s"% arg
     return description
 
 

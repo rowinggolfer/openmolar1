@@ -117,7 +117,7 @@ def performExam(parent):
                 item = fee_keys.getKeyCode(examtype)
 
                 #-- get the fee and patien fee
-                itemfee, ptfee = fees_module.getItemFees(parent, item, 1)
+                itemfee, ptfee = fee_keys.getItemFees(parent.pt, item, 1)
 
                 item_description = localsettings.descriptions.get(item)
                 if item_description == None:

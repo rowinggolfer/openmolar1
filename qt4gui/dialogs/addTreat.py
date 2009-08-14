@@ -10,6 +10,7 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.dialogs import Ui_addTreatment, Ui_treatmentItemWidget
 from openmolar.qt4gui.customwidgets import chainLabel
+from openmolar.qt4gui.fees import fees_module
 from openmolar.settings import localsettings,fee_keys
 
 def getCode(arg):
@@ -24,8 +25,13 @@ def getCode(arg):
         " - will revert to OTHER TREATMENT"
     return itemcode
 
-def getItemFees(cset, item, no_items=1, exmpt=""):
-    print "using addTreat.getItemFees CSETYPE=%s ITEMCODE=%s"% (cset, item)
+def getItemFees_(cset, item, no_items=1, exmpt=""):
+    #-- delete this code ASAP
+    print "DEPRECATED!!!!!!!"
+    print '''using addTreat.getItemFees 
+    CSETYPE=%s ITEMCODE=%s No_items=%d exmpt=%s'''% (
+    cset, item, no_items, exmpt)
+
     itemfee, ptfee = 0, 0
     if "P" in cset:
         itemfee = localsettings.privateFees[item].getFee(no_items)
@@ -54,6 +60,8 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.feesLinked = True
         self.setChain(parent.pt.cset)
         self.signals()
+        self.feelist=[]
+        self.ptfeelist=[]
         
     def signals(self, connect=True):
         '''
@@ -110,15 +118,47 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         if cset != "P":
             self.chain.mousePressEvent(None)
 
-    def feeCalc(self, arg):
+    def feeCalc(self, n_items):
         '''
         calculate the fee and pt fee from the feescale
+        called when the number of items has changed
         '''
-        fee, ptfee = getItemFees(self.parent.pt.cset, self.itemcode, arg,
-        self.parent.pt.exmpt)
+        print "feeCalc called ",
+        existing_no = 0
+        existing_fee = 0
+        existing_ptFee = 0
+        for est in self.parent.pt.estimates:
+            if est.itemcode == self.itemcode:
+                existing_no += 1
+        if existing_no >0:
+            print "%d existing %s items"% (existing_no, self.itemcode)
+            warning = "(will be added to existing items)"
+            ex_text = self.label.text()
+            if not warning in ex_text:
+                self.label.setText(ex_text + warning)
+            
+        self.feelist = []
+        self.ptfeelist = []
+        feeSum, pt_feeSum = 0, 0
+        for i in range(n_items):
+            existing_fee, existing_ptFee = fee_keys.getItemFees(
+            self.parent.pt, self.itemcode, existing_no+i)
+            
+            fee, ptfee = fee_keys.getItemFees(self.parent.pt, self.itemcode, 
+            i+existing_no+1)
+
+            fee = fee - existing_fee
+            ptfee = ptfee - existing_ptFee
+            
+            self.feelist.append(fee)
+            self.ptfeelist.append(ptfee)
+            
+            feeSum += fee
+            pt_feeSum += ptfee
+            
         self.signals(False)
-        self.doubleSpinBox.setValue(fee / 100)
-        self.pt_doubleSpinBox.setValue(ptfee / 100)
+        self.doubleSpinBox.setValue(feeSum / 100)
+        self.pt_doubleSpinBox.setValue(pt_feeSum / 100)
         self.signals(True)
         self.parent.updateTotal()
     
@@ -126,7 +166,6 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         '''
         user has adjusted the fee
         '''
-        print "fee adjusted"
         if self.feesLinked:
             self.pt_doubleSpinBox.setValue(arg)
         self.parent.updateTotal()
@@ -135,7 +174,6 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         '''
         user has adjusted the patient fee
         '''
-        print "pt fee adjusted"
         if self.feesLinked:
             self.doubleSpinBox.setValue(arg)
         self.parent.updateTotal()
@@ -179,11 +217,17 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             retarg = ()
             for i in self.itemWidgets:
                 number = i.spinBox.value()
-                fee = int(i.doubleSpinBox.value()*100)
-                ptfee = int(i.pt_doubleSpinBox.value()*100)
-                if number > 0:
-                    retarg += ((number, i.usercode, i.itemcode,
-                    i.description, fee, ptfee), )
+                #fee = int(i.doubleSpinBox.value()*100)
+                #ptfee = int(i.pt_doubleSpinBox.value()*100)
+                ##TODO - this needs to be modded
+                #should be along the lines of
+                for n in range(number):
+                    retarg += ((i.usercode, i.itemcode,
+                    i.description, i.feelist[n], i.ptfeelist[n]), )
+                #if number > 0:
+                #    retarg += ((number, i.usercode, i.itemcode,
+                #    i.description, fee, ptfee), )
+            print "addTreat.getInput returning",retarg
             return retarg
         else:
             return()

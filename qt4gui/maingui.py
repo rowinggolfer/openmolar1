@@ -1443,7 +1443,7 @@ class pageHandlingClass():
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
 
     def load_receptionSummaryPage(self):
-        estimateHtml=estimates.toBriefHtml(self.pt.estimates)
+        estimateHtml=estimates.toBriefHtml(self.pt)
         self.ui.moneytextBrowser.setText(estimateHtml)
         appt_gui_module.layout_apptTable(self)
 

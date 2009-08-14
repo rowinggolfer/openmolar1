@@ -34,9 +34,9 @@ def performPerio(parent):
     dl = hygTreatWizard.Ui_Dialog(Dialog)
     dl.setPractitioner(localsettings.clinicianNo)
     item = fee_keys.getKeyCode("SP")
-    fee, ptfee = fees_module.getItemFees(parent, item, 1)
+    fee, ptfee = fee_keys.getItemFees(parent.pt, item, 1)
     item2 = fee_keys.getKeyCode("SP+")
-    fee2, ptfee2 = fees_module.getItemFees(parent, item2, 1)
+    fee2, ptfee2 = fee_keys.getItemFees(parent.pt, item2, 1)
     dl.setFees(((fee, ptfee), (fee2, ptfee2)))
     result = dl.getInput()
 

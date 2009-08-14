@@ -46,18 +46,6 @@ def raiseACharge(parent):
 
         parent.pt.addHiddenNote("fee", "%.02f"% fee)
             
-def getItemFees(parent, item, no_items=1):
-    '''
-    pass itemcode eg"0101", get a tuple (fee, ptfee)
-    currently this gets the csetype from the pt coursetype.
-    returns a tuple
-    '''
-    conditions = []
-    if parent.pt.cset == "N":
-        if parent.pt.exmpt != "":
-            conditions.append("NHS exempt=%s"% parent.pt.exmpt)
-    itemfee, ptfee = fee_keys.getFee(parent.pt.cset, item, no_items, conditions)
-    return itemfee, ptfee
 
 def applyFeeNow(parent, arg, cset=None):
     '''

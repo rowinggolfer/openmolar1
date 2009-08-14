@@ -399,6 +399,7 @@ CREATE TABLE `estimates` (
   `dent` tinyint(1) default NULL,
   `completed` tinyint(1) default NULL,
   `carriedover` tinyint(1) default NULL,
+  `linked` tinyint(1) default NULL,
   PRIMARY KEY  (`ix`)
 ) ENGINE=MyISAM AUTO_INCREMENT=41 DEFAULT CHARSET=latin1 COMMENT='new table to store better estimates';
 SET character_set_client = @saved_cs_client;
@@ -409,7 +410,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `estimates` WRITE;
 /*!40000 ALTER TABLE `estimates` DISABLE KEYS */;
-INSERT INTO `estimates` VALUES (31,1,147678,'ul5',1,'1404','mod amalgam filling*',5500,5500,'A','P',4,0,0),(32,1,147678,'ul7',1,'1706','full gold crown*',33000,33000,'A','P',4,0,0),(30,1,147678,'exam CE',1,'0101','clinical examination^',1950,1950,'A','P',4,0,0),(33,2,147669,'exam CE',1,'0101','clinical examination^',1950,1950,'A','P',4,1,0),(35,3,147679,'exam CE',1,'0101','clinical examination^',1950,1950,'A','P',5,1,0),(6,1,147660,'exam CE',1,'0101','clinical examination^',1950,1950,'A','P',4,1,NULL),(34,2,147669,'ul3',1,'1416','2-sfce composite filling*',6050,6050,'A','P',4,0,0),(26,1,147660,'xray S',2,'0201','small xray*',1300,1300,'A','P',4,0,0),(25,1,147660,'perio SP',1,'1001','scale and polish^',2850,2850,'A','P',4,0,0),(24,1,147660,'UL6 MO',1,'1403','mo/do amalgam filling*',5500,5500,'A','P',4,0,0),(23,1,147660,'UL2 MI',1,'1416','2-sfce composite filling*',6050,6050,'A','P',4,0,0),(22,1,147660,'UR2 P',1,'1415','1-sfce composite filling*',5200,5200,'A','P',4,0,0),(21,1,147660,'UR7 CR,GO',1,'1706','full gold crown*',33000,33000,'A','P',4,0,0),(36,3,147679,'ul6 CR,GO',1,'1706','full gold crown*',33000,33000,'A','P',5,1,0),(37,3,147679,'ul3 MI',1,'1416','2-sfce composite filling*',6050,6050,'A','P',5,1,0),(38,3,147680,'ul2 MI',1,'1416','2-sfce composite filling*',6050,6050,'A','P',5,1,0),(39,3,147680,'ul5 MO',1,'1403','mo/do amalgam filling*',5500,5500,'A','P',5,0,0),(40,3,147680,'ur1 P',1,'1415','1-sfce composite filling*',5200,5200,'A','P',5,1,0);
+INSERT INTO `estimates` VALUES (31,1,147678,'ul5',1,'1404','mod amalgam filling*',5500,5500,'A','P',4,0,0,NULL),(32,1,147678,'ul7',1,'1706','full gold crown*',33000,33000,'A','P',4,0,0,NULL),(30,1,147678,'exam CE',1,'0101','clinical examination^',1950,1950,'A','P',4,0,0,NULL),(33,2,147669,'exam CE',1,'0101','clinical examination^',1950,1950,'A','P',4,1,0,NULL),(35,3,147679,'exam CE',1,'0101','clinical examination^',1950,1950,'A','P',5,1,0,NULL),(6,1,147660,'exam CE',1,'0101','clinical examination^',1950,1950,'A','P',4,1,NULL,NULL),(34,2,147669,'ul3',1,'1416','2-sfce composite filling*',6050,6050,'A','P',4,0,0,NULL),(26,1,147660,'xray S',2,'0201','small xray*',1300,1300,'A','P',4,0,0,NULL),(25,1,147660,'perio SP',1,'1001','scale and polish^',2850,2850,'A','P',4,0,0,NULL),(24,1,147660,'UL6 MO',1,'1403','mo/do amalgam filling*',5500,5500,'A','P',4,0,0,NULL),(23,1,147660,'UL2 MI',1,'1416','2-sfce composite filling*',6050,6050,'A','P',4,0,0,NULL),(22,1,147660,'UR2 P',1,'1415','1-sfce composite filling*',5200,5200,'A','P',4,0,0,NULL),(21,1,147660,'UR7 CR,GO',1,'1706','full gold crown*',33000,33000,'A','P',4,0,0,NULL),(36,3,147679,'ul6 CR,GO',1,'1706','full gold crown*',33000,33000,'A','P',5,1,0,NULL),(37,3,147679,'ul3 MI',1,'1416','2-sfce composite filling*',6050,6050,'A','P',5,1,0,NULL),(38,3,147680,'ul2 MI',1,'1416','2-sfce composite filling*',6050,6050,'A','P',5,1,0,NULL),(39,3,147680,'ul5 MO',1,'1403','mo/do amalgam filling*',5500,5500,'A','P',5,0,0,NULL),(40,3,147680,'ur1 P',1,'1415','1-sfce composite filling*',5200,5200,'A','P',5,1,0,NULL);
 /*!40000 ALTER TABLE `estimates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1087,4 +1088,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2009-07-08  0:45:37
+-- Dump completed on 2009-08-14 21:44:34

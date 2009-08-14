@@ -38,14 +38,13 @@ def xrayAdd(parent):
         mylist = ((0, "S"), (0, "M"), (0, "P"))
         chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
-            #(number,usercode,itemcode,description, fee,ptfee)
-            if treat[0] == 1:
-                usercode = treat[1]
-            else:
-                usercode = "%s%s"% (treat[0], treat[1])
+            #(usercode,itemcode,description, fee,ptfee)
+            print "treat =", treat
+            usercode = treat[0]
             parent.pt.xraypl += usercode + " "
-            parent.pt.addToEstimate(treat[0], treat[2], treat[3], treat[4],
-            treat[5], parent.pt.dnt1, parent.pt.cset, "xray %s"% usercode)
+            parent.pt.addToEstimate(1, treat[1], treat[2], 
+            treat[3], treat[4], parent.pt.dnt1, 
+            parent.pt.cset, "xray %s"% usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
 
@@ -57,13 +56,10 @@ def perioAdd(parent):
         mylist = ((0, "SP"), (0, "SP+"))
         chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
-            if treat[0] == 1:
-                usercode = treat[1]
-            else:
-                usercode = "%s%s"% (treat[0], treat[1])
+            usercode = treat[1]
             parent.pt.periopl += usercode + " "
-            parent.pt.addToEstimate(treat[0], treat[2], treat[3], treat[4],
-            treat[5], parent.pt.dnt1, parent.pt.cset, "perio %s"% usercode)
+            parent.pt.addToEstimate(1,treat[1], treat[2], treat[3],
+            treat[4], parent.pt.dnt1, parent.pt.cset, "perio %s"% usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
 
@@ -80,9 +76,9 @@ def otherAdd(parent):
                 mylist += ((0, item, code), )
         chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
-            parent.pt.otherpl += "%s%s "% (treat[0], treat[1])
-            parent.pt.addToEstimate(treat[0], treat[2], treat[3], treat[4],
-            treat[5], parent.pt.dnt1, parent.pt.cset, "other OT")
+            parent.pt.otherpl += "%s "% treat[1]
+            parent.pt.addToEstimate(1,treat[1], treat[2], treat[3],
+            treat[4], parent.pt.dnt1, parent.pt.cset, "other OT")
         parent.load_newEstPage()
         parent.load_treatTrees()
 
@@ -157,7 +153,7 @@ def chartAdd(parent, tooth, properties):
         #--get a description (for the estimate)
         description = fee_keys.getDescription(itemcode)
         #-- get a fee and pt fee
-        fee, ptfee = fees_module.getItemFees(parent, itemcode)
+        fee, ptfee = fee_keys.getItemFees(parent.pt, itemcode)
         #--add to estimate
         parent.pt.addToEstimate(1, itemcode, description, fee, ptfee,
         parent.pt.dnt1, parent.pt.cset, "%s %s"% (item))
