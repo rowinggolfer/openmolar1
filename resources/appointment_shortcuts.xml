@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <shortcuts>
 	<shortcut>
+		<description>Hygenist</description>
+		<appointment>
+			<trt1>HYG</trt1>
+			<clinician>14</clinician>
+			<length>20</length>
+		</appointment>
+	</shortcut>
+	<shortcut>
 		<description>20 minute Filling</description>
 		<appointment>
 			<trt1>FILL</trt1>
