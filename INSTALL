@@ -1,0 +1,17 @@
+It's strongly recommended to install Openmolar using your OS's package
+system rather than using setup.py yourself.
+
+If you don't have this option, please make sure you satisfy the dependencies 
+for openmolar
+
+ * Python 2.5+  (not 3.0+)
+ * Python-qt4
+ * Python mySQLdb 
+
+Also, you need to have a running mysql server, locally or on your network.
+
+To install properly, run:
+
+    ./setup.py install
+
+

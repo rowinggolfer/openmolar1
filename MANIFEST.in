@@ -1,0 +1,6 @@
+include *.txt *.py *.sql
+recursive-include dbtools *.py
+recursive-include ptModules *.py
+recursive-include qt4gui *.py
+recursive-include resources *.xml *.png *.pdf *.css
+recursive-include settings *.py
