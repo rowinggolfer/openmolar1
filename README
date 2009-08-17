@@ -1,4 +1,5 @@
-To get openMolar running, you need to do the following.
+To get openMolar running from the source code distribution, you need to do the following.
+
 
 I will give instructions tested on ubuntu8.10 and 9.04
 
@@ -22,11 +23,10 @@ MAKE A CAREFUL NOTE OF THE PASSWORD YOU SET UP FOR THE ROOT MYSQL-USER. YOU CANN
 ----------------------------------------------------------------------------------------------------------------
 
 
-You are ready to try openmolar.
+You are ready to try openmolar (you can do this without installing ANYTHING)
 
-cd into the openmolar directory and type
-./openmolar
-
+cd into the src directory and type
+./main.py
 
 on first run of openMolar, you set a password for the app, you are given an opportunity to install a test database. 
 
@@ -39,6 +39,11 @@ the test database has one operator - "user". So when prompted, enter the system 
 
 
 if you wish to re-initiate your settings at any point, delete the file /etc/openmolar/openmolar.conf, or edit this file (with care)
+
+
+when you are ready to install, type
+
+python setup.py install
 
 
 Any problems, get back to me on rowinggolfer@googlemail.com

@@ -1,6 +1,8 @@
-include *.txt *.py *.sql
-recursive-include dbtools *.py
-recursive-include ptModules *.py
-recursive-include qt4gui *.py
-recursive-include resources *.xml *.png *.pdf *.css
-recursive-include settings *.py
+include COPYING MANIFEST MANIFEST.in README openmolar
+recursive-include src/openmolar/dbtools *.py
+recursive-include src/openmolar/ptModules *.py
+recursive-include src/openmolar/qt4gui *.py
+recursive-include src/openmolar/resources *.xml *.png *.pdf *.css *sql
+recursive-include src/openmolar/settings *.py
+
+

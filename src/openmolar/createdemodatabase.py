@@ -16,6 +16,7 @@ correct user permissions.
 '''
 
 import MySQLdb
+import os
 
 def create_database(myhost, myport, myuser, mypassword, databaseName,
 rootMySQLpassword):
@@ -44,7 +45,7 @@ rootMySQLpassword):
     return True
 
 def loadTables(myhost, myport, myuser, mypassword, databaseName):
-    f = open("demodump.sql","r")
+    f = open(os.path.join("resources","demodump.sql"),"r")
     dumpString = f.read()
     f.close()
 

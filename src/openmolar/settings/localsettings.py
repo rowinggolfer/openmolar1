@@ -18,8 +18,21 @@ __MAJOR_VERSION__= "0.1.2" #- updated 14th August 2009.
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
 
-print "Version %s\nRevision No. %s"%(__MAJOR_VERSION__,__build__)
+print "Version %s\n Bzr Revision No. %s"%(__MAJOR_VERSION__,__build__)
 
+def determine_path ():
+    """Borrowed from wxglade.py"""
+    try:
+        root = __file__
+        if os.path.islink (root):
+            root = os.path.realpath (root)
+        retarg = os.path.dirname(os.path.dirname (os.path.abspath (root)))
+        print retarg
+        return retarg
+    except:
+        #-- this shouldn't happen!
+        return os.path.dirname(os.getcwd())
+        
 if "win" in sys.platform:
     #-- sorry about this... but cross platform is a goal :(
     cflocation='C:\\Program Files\\openmolar\\openmolar.conf'
@@ -257,6 +270,7 @@ def formatDate(d):
         print "uable convert date to uk format - will return ",e
         retarg="no date"
     return retarg
+
 def uk_to_sqlDate(d):
     '''reverses the above'''
     try:
@@ -274,18 +288,21 @@ def wystimeToHumanTime(t):
         return "%d:%02d"%(hour,min)
     except:
         return None
+
 def humanTimetoWystime(t):
     try:
         t=t.replace(":","")
         return int(t)
     except:
         return None
+
 def minutesPastMidnighttoWystime(t):
     '''
     converts minutes past midnight(int) to format HHMM  (integer)
     '''
     hour,min=t//60,int(t)%60
     return hour*100+min
+
 def minutesPastMidnight(t):
     '''
     converts a time in the format of 0830 or 1420
@@ -293,6 +310,7 @@ def minutesPastMidnight(t):
     '''
     hour,min=int(t)//100,int(t)%100
     return hour*60+min
+
 def humanTime(t):
     '''converts minutes past midnight(int) to format 'HH:MM' (string)'''
     hour,min=t//60,int(t)%60
@@ -348,7 +366,7 @@ def updateLocalSettings(setting,value):
     adds or updates node "setting" with text value "value"
     '''
     try:
-        localSets=os.path.join(localFileDirectory,"localsettings.conf")
+        localSets=os.path.join(localFileDirectory, "localsettings.conf")
         print "updating local settings... %s = %s"%(setting,value)
         if os.path.exists(localSets):
             dom=minidom.parse(localSets)
@@ -518,19 +536,22 @@ def initiate(debug=False):
 
     getLocalSettings()
 
-    wkdir=os.getcwd()
-    referralfile = os.path.join (wkdir,"resources","referral_data.xml")
-    appt_shortcut_file = os.path.join (wkdir,"resources",
-    "appointment_shortcuts.xml")
+    #wkdir=os.getcwd()
+    wkdir = determine_path()
+    referralfile = os.path.join(wkdir,"resources","referral_data.xml")
+    appt_shortcut_file = os.path.join(wkdir,
+                                    "resources","appointment_shortcuts.xml")
     
-    message='''<html><head><link rel="stylesheet" href="%s" type="text/css">
-    </head><body><div align="center">
-    <img src="html/images/newlogo.png" width="150",height="100", align="left" />
+    message='''<html><head>
+<link rel="stylesheet" href="%s" type="text/css">
+</head><body><div align="center">
+<img src="html/images/newlogo.png" width="150", height="100", align="left" />
 
-    <img src="html/images/newlogo.png" width="150",height="100", align="right" />
-    <h1>Welcome to OpenMolar!</h1><ul><li>Version %s</li><li>Revision %s</li></ul>
-    <p>Your Data is Accessible, and the server reports no issues.</p>
-    <p>Have a great day!</p></div></body></html>'''%(stylesheet,__MAJOR_VERSION__,__build__)
+<img src="html/images/newlogo.png" width="150",height="100", align="right" />
+<h1>Welcome to OpenMolar!</h1><ul><li>Version %s</li><li>Revision %s</li></ul>
+<p>Your Data is Accessible, and the server reports no issues.</p>
+<p>Have a great day!</p></div></body></html>'''%(
+    stylesheet, __MAJOR_VERSION__, __build__ )
 
     if debug:
         #print formatMoney(1150)
@@ -556,8 +577,9 @@ def initiate(debug=False):
 
 if __name__ == "__main__":
     '''testing only'''
-    sys.path.append("/home/neil/openmolar/openmolar")
-    #print cflocation
+    wkdir = determine_path()
+    sys.path.append(wkdir)
     initiate(True)
-    updateLocalSettings("stationID","surgery3")
+    #print cflocation
+    #updateLocalSettings("stationID","surgery3")
     
