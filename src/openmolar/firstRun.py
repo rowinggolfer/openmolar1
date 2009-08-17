@@ -47,7 +47,7 @@ myPassword = ""
 myHost, myPort = "", 0
 myDB, myMysqlPassword, myMysqlUser = "", "", ""
 
-def newsetup():
+def newsetup(parent = None):
     '''
     a new setup - creates and saves a config file
     creates a database if required
@@ -278,39 +278,64 @@ def newsetup():
             xmlnode.getElementsByTagName(
             "dbname")[0].firstChild.replaceWholeText(myDB)
 
-            settingsDir = os.path.dirname(localsettings.cflocation)
+            settingsDir = os.path.dirname(localsettings.global_cflocation)
 
             try:
                 if not os.path.exists(settingsDir):
+                    print 'putting a global settings file in', settingsDir,
                     os.mkdir(settingsDir)
-                f = open(localsettings.cflocation,"w")
+                    print '...ok'
+                print 'writing settings to', localsettings.global_cflocation,
+                f = open(localsettings.global_cflocation,"w")
                 f.write(dom.toxml())
                 f.close()
+                print '...ok'
+                localsettings.cflocation = localsettings.global_cflocation
                 Dialog.accept()
-
+            
             except IOError:
-                QtGui.QMessageBox.warning(None,
+                ##TODO - elevate privileges here....
+                ## and write the file again               
+                print 'unable to write - we need root privileges for that' 
+                QtGui.QMessageBox.warning(parent,
                 "IO ERROR",
-                "unable to save to %s - please re-run 'firstRun.py' as root"%
-                localsettings.cflocation)
+                '''<p>unable to save to a global user file%s </p>
+                <p>Will resort to local file</p>'''%
+                localsettings.local_cflocation)
 
-                Dialog.reject()
+            print "will resort to put settings into a local folder",
+            print localsettings.local_cflocation
+
+            settingsDir = os.path.dirname(localsettings.local_cflocation)
+
+            if not os.path.exists(settingsDir):
+                print 'putting a local settings file in', settingsDir,
+                os.mkdir(settingsDir)
+            
+            f = open(localsettings.local_cflocation,"w")
+            f.write(dom.toxml())
+            f.close()
+            print '...ok'
+            localsettings.cflocation = localsettings.local_cflocation
+                
+            Dialog.accept()
 
         except Exception, e:
             print "error saving settings",  e
-            QtGui.QMessageBox.warning(None, "FAILURE", str(e))
+            QtGui.QMessageBox.warning(parent, "FAILURE", str(e))
             Dialog.reject()
-
-    Dialog = QtGui.QDialog()
+            
+    Dialog = QtGui.QDialog(parent)
     dl = Ui_newSetup.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.stackedWidget.setCurrentIndex(0)
     result = True
     QtCore.QObject.connect(dl.pushButton, QtCore.SIGNAL("clicked()"), stage1)
+    
     if not Dialog.exec_():
         result = False
     return result
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtGui.QApplication(sys.argv)
     newsetup()

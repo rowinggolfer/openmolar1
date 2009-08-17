@@ -35,21 +35,24 @@ def determine_path ():
         
 if "win" in sys.platform:
     #-- sorry about this... but cross platform is a goal :(
-    cflocation='C:\\Program Files\\openmolar\\openmolar.conf'
+    global_cflocation='C:\\Program Files\\openmolar\\openmolar.conf'
     localFileDirectory=os.path.join(os.environ.get("HOMEPATH"),".openmolar")
     pdfProg="C:\\ProgramFiles\\SumatraPDF\\SumatraPDF.exe"
 elif "linux" in sys.platform:
     #-- linux hurrah!!
-    cflocation='/etc/openmolar/openmolar.conf'
+    global_cflocation='/etc/openmolar/openmolar.conf'
     localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
     pdfProg="evince"
 else:
     print "unknown system platform - defaulting to settings in /etc/openmolar"
-    cflocation='/etc/openmolar/openmolar.conf'
+    global_cflocation='/etc/openmolar/openmolar.conf'
     localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
     pdfProg="evince"
 
-#updated if correct password is given
+local_cflocation=os.path.join(localFileDirectory,"openmolar.conf")    
+
+#these are updated if correct password is given
+cflocation = None
 successful_login=False
 
 #-- these permissions are for certain admin duties.
@@ -580,6 +583,6 @@ if __name__ == "__main__":
     wkdir = determine_path()
     sys.path.append(wkdir)
     initiate(True)
-    #print cflocation
+    #print global_cflocation, local_cfloaction
     #updateLocalSettings("stationID","surgery3")
     

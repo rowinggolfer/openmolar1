@@ -45,7 +45,12 @@ def main():
         if arg.toLower() == "rec":
             dl.reception_radioButton.setChecked(True)
 
-    if not os.path.exists(localsettings.cflocation):
+    if os.path.exists(localsettings.global_cflocation):
+        localsettings.cflocation = localsettings.global_cflocation
+    elif os.path.exists(localsettings.local_cflocation):
+        localsettings.cflocation = localsettings.local_cflocation
+        
+    if not localsettings.cflocation:
         message = '''<center>
         This appears to be your first running of openMolar<br />
         Before you run this application ,<br />
@@ -61,31 +66,8 @@ def main():
         message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
         if result == QtGui.QMessageBox.Yes:
-            try:
-                import subprocess
-                if os.getuid() == 0:
-                    #-- already root!
-                    process = subprocess.Popen(['./firstRun.py'])
-                else:
-                    if os.environ.has_key("GDM_LANG"):
-                        process = subprocess.Popen(['gksu', './firstRun.py'])
-                    elif os.environ.has_key("KDE_FULL_SESSION"):
-                        try:
-                            process = subprocess.Popen(
-                            ['kdesu','./firstRun.py'])
-                        except OSError:
-                            #-- kubuntu doesn't use kdesu, uses kdesudo
-                            process = subprocess.Popen(
-                            ['kdesudo','./firstRun.py'])
-                    else:
-                        #-- don't know the desktop variant..
-                        #-- and could be windows
-                        #-- and not need root anyway?
-                        process = subprocess.Popen(['./firstRun.py'])
-                result = process.wait()
-            except:
-                QtGui.QMessageBox.information(None, "error",
-                "Unable to get superuser permisions")
+            import firstRun
+            firstRun.newsetup(None)
     try:
         dom = minidom.parse(localsettings.cflocation)
         sys_password = dom.getElementsByTagName("system_password")[0].\
