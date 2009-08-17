@@ -27,22 +27,26 @@ def determine_path ():
         if os.path.islink (root):
             root = os.path.realpath (root)
         retarg = os.path.dirname(os.path.dirname (os.path.abspath (root)))
-        print retarg
         return retarg
     except:
         #-- this shouldn't happen!
+        print "no __file__ found !!!!"
         return os.path.dirname(os.getcwd())
-        
+
+wkdir = determine_path()
+
 if "win" in sys.platform:
     #-- sorry about this... but cross platform is a goal :(
     global_cflocation='C:\\Program Files\\openmolar\\openmolar.conf'
     localFileDirectory=os.path.join(os.environ.get("HOMEPATH"),".openmolar")
     pdfProg="C:\\ProgramFiles\\SumatraPDF\\SumatraPDF.exe"
+
 elif "linux" in sys.platform:
     #-- linux hurrah!!
     global_cflocation='/etc/openmolar/openmolar.conf'
     localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
     pdfProg="evince"
+
 else:
     print "unknown system platform - defaulting to settings in /etc/openmolar"
     global_cflocation='/etc/openmolar/openmolar.conf'
@@ -53,20 +57,20 @@ local_cflocation=os.path.join(localFileDirectory,"openmolar.conf")
 
 #these are updated if correct password is given
 cflocation = None
-successful_login=False
+successful_login = False
 
 #-- these permissions are for certain admin duties.
-permissionsRaised=False
-permissionExpire=datetime.datetime.now()
+permissionsRaised = False
+permissionExpire = datetime.datetime.now()
 
 #-- set a base time for forum check
 def forumVisited():
     global lastForumVisit
-    lastForumVisit=datetime.datetime.now()
+    lastForumVisit = datetime.datetime.now()
 forumVisited()
 
 #-- self-explanatory?
-about='''<p>
+about = '''<p>
 openMolar - open Source dental practice management software.<br />
 Version %s  -  Bazaar Revno %s<br />
 Copyright (C) 2009  Neil A. Wallace B.Ch.D.<br />
@@ -76,7 +80,7 @@ sourcecode available at <a href="http://launchpad.net/openmolar">
 Thanks to <a href="http://rfquerin.org">Richard Querin</a>
 for the wonderful icon and Logo.'''%(__MAJOR_VERSION__,__build__)
 
-license='''<hr />
+license = '''<hr />
 <p>
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -96,101 +100,99 @@ http://www.gnu.org/licenses</a>.</p>'''
 
 #-- this variable is used when using DATE_FORMAT from the database
 #-- my preference is the UK style dd/mm/YYYY
-sqlDateFormat=r"%d/%m/%Y"
+sqlDateFormat = r"%d/%m/%Y"
 
 #-- undated at login
-operator="unknown"
-allowed_logins=[]
+operator = "unknown"
+allowed_logins = []
 
 #-- this list is used for navigating back and forth through the list
-recent_snos=[]
+recent_snos = []
 
 #-- update whenever a manual search is made
 #-- sname,fname dob... etc
-lastsearch=("","","","","","")
+lastsearch = ("","","","","","")
 
 #-- used to load combobboxes etc....
-activedents=[]
-activehygs=[]
-clinicianNo=0
-clinicianInits=""
+activedents = []
+activehygs = []
+clinicianNo = 0
+clinicianInits = ""
 
-earliestStart=datetime.time(8,0)
-latestFinish=datetime.time(20,0)
-
+earliestStart = datetime.time(8,0)
+latestFinish = datetime.time(20,0)
 
 #--this dictionary is upated when this file is initiate -
 #--it links dentist keys with practioners
 #--eg ops[1]="JJ"
-ops={}
+ops = {}
 
 #--keys/dents the other way round.
-ops_reverse={}
-apptix={}
+ops_reverse = {}
+apptix = {}
 #--this dictionary is upated when this file is initiate -
 #--it links appointment keys with practioners
 #--eg app[13]="jj"
 
-apptix_reverse={}
+apptix_reverse = {}
 
 #contains a link to the xml document with the referral info in it -
 #--this data will eventually be in the mysql?
-referralfile=""
+referralfile = ""
 appt_shortcut_file = ""
-
-stylesheet="resources/style.css"
+stylesheet = " resources/style.css"
+resources_path = ""
 
 #-- set a latest possible date for appointments to be made 
 #--(necessary if a very long appointment goes right on through)
 #-- would get maximum recursion, quite quickly!
 ##todo - this will need to change!!!!
-bookEnd=datetime.date(2009,12,31)
+bookEnd = datetime.date(2009,12,31)
 
 ##TODO - is this obselete now?
-descriptions={}
+descriptions = {}
 #--treatment codes..
 
-apptTypes=("EXAM","BITE","BT","DOUBLE",
+apptTypes = ("EXAM","BITE","BT","DOUBLE",
 "FAMILY","FILL","FIT","HYG","IMPS","LF","ORTHO",
 "PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")
 
 #-- default appt font size
-appointmentFontSize=8
+appointmentFontSize = 8
 
-message=""
-dentDict={}
+message = ""
+dentDict = {}
 
 #-- surgery or reception machine?
-station="surgery"
+station = "surgery"
 #-- openmolar needs to know where it is when calling x-rays
-surgeryno=-1
+surgeryno = -1
 
 #-- pt's are "private, independent, NHS etc...."
-csetypes=["P","I","N","N OR","N O"]
+csetypes = ["P","I","N","N OR","N O"]
 
 
 #--for debugging purposes... set this to true.- not yet implemented throughout.
-logqueries=False
+logqueries = False
 #-- if you want an additional box showing saved changes when a record is saved
 showSaveChanges = False
 #-- self evident
-practiceAddress=("The Academy Dental Practice","19 Union Street",
+practiceAddress = ("The Academy Dental Practice","19 Union Street",
 "Inverness","IV1 1PP")
 
 #--localsettings.defaultNewPatientDetails=(pt.sname,
 #--pt.addr1,pt.addr2,pt.addr3,pt.town,
 #--pt.county,pt.pcde,pt.tel1)
-defaultNewPatientDetails=("",)*8
+defaultNewPatientDetails = ("",)*8
 
 #-- these gets initiated
-privateFees={}
-nhsFees={}
-treatmentCodes={}
+privateFees = {}
+nhsFees = {}
+treatmentCodes = {}
 #itemCodes=[]
 
 #-- 1 less dialog box for these lucky people
-defaultPrinterforGP17=True
-
+defaultPrinterforGP17 = True
 
 #-- my own class of excpetion, for when a serialno is called
 #--from the database and no match is found
@@ -201,29 +203,32 @@ def curTime():        #self.estimates = cursor.fetchall()
     return datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
 
 def ukToday():
-    d=datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
-    return "%02d/%02d/%04d"%(d.day,d.month,d.year)
+    d = datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
+    return "%02d/%02d/%04d"% (d.day, d.month, d.year)
+
 def sqlToday():
     '''returns today in sql compatible format'''
-    t=curTime()
-    return "%04d%02d%02d"%(t.year,t.month,t.day)
+    t = curTime()
+    return "%04d%02d%02d"% (t.year, t.month, t.day)
+
 def pyDatetoSQL(d):
     try:
-        return "%04d%02d%02d"%(d.year,d.month,d.day)
+        return "%04d%02d%02d"% (d.year, d.month, d.day)
     except:
         pass
+        
 def formatMoney(m):
     '''takes an integer, returns "7.30"'''
     try:
-        return "%d.%02d"%(m/100,m%100)
+        return "%d.%02d"% (m/100, m%100)
     except:
         return "???"
 
 def GP17formatDate(d):
-    if d=="" or d==None:
-        return" "*8
+    if d == "" or d == None:
+        return " " * 8
     else:
-        return d.replace("/","") #"%02d%02d%04d"%(d.day,d.month,d.year)
+        return d.replace("/", "") #"%02d%02d%04d"%(d.day,d.month,d.year)
 
 def dayName(d):
     '''
@@ -247,12 +252,11 @@ def monthName(d):
 
 def pyDatefromUKDate(ukdate):
     try:
-        return datetime.datetime.strptime(ukdate,"%d/%m/%Y")
-    except Exception,e:
+        return datetime.datetime.strptime(ukdate, "%d/%m/%Y")
+    except Exception, e:
         print e
-        print "error getting a valid pydate from '%s'"%ukdate
-        pass
-    
+        print "error getting a valid pydate from '%s'"% ukdate
+        
 def longDatefromUKDate(ukdate):
     try:
         return longDate(pyDatefromUKDate(ukdate))
@@ -261,40 +265,40 @@ def longDatefromUKDate(ukdate):
         
 def longDate(d):
     try:
-        return "%s, %d %s %d"%(dayName(d),d.day,monthName(d),d.year)
+        return "%s, %d %s %d"% (dayName(d), d.day, monthName(d), d.year)
     except:
         pass
 
 def formatDate(d):
     '''takes a date, returns a uk type date string'''
     try:
-        retarg= "%02d/%02d/%d"%(d.day,d.month,d.year)
-    except Exception,e:
-        print "uable convert date to uk format - will return ",e
-        retarg="no date"
+        retarg = "%02d/%02d/%d"% (d.day, d.month, d.year)
+    except Exception, e:
+        print "uable convert date to uk format - will return ", e
+        retarg = "no date"
     return retarg
 
 def uk_to_sqlDate(d):
     '''reverses the above'''
     try:
-        ds=d.split("/")
-        retarg="%04d%02d%02d"%(int(ds[2]),int(ds[1]),int(ds[0]))
-    except IndexError,e:
+        ds = d.split("/")
+        retarg = "%04d%02d%02d"% (int(ds[2]), int(ds[1]), int(ds[0]))
+    except IndexError, e:
         #print "incorrect uk date format, '%s' returning None"% d
-        retarg=None
+        retarg = None
     return retarg
 
 def wystimeToHumanTime(t):
     '''converts a time in the format of 0830 or 1420 to "HH:MM" (string)'''
     try:
-        hour,min=int(t)//100,int(t)%100
-        return "%d:%02d"%(hour,min)
+        hour, min = int(t)//100, int(t)%100
+        return "%d:%02d"% (hour, min)
     except:
         return None
 
 def humanTimetoWystime(t):
     try:
-        t=t.replace(":","")
+        t = t.replace(":", "")
         return int(t)
     except:
         return None
@@ -303,7 +307,7 @@ def minutesPastMidnighttoWystime(t):
     '''
     converts minutes past midnight(int) to format HHMM  (integer)
     '''
-    hour,min=t//60,int(t)%60
+    hour, min = t//60, int(t)%60
     return hour*100+min
 
 def minutesPastMidnight(t):
@@ -311,25 +315,25 @@ def minutesPastMidnight(t):
     converts a time in the format of 0830 or 1420
     to minutes past midnight (integer)
     '''
-    hour,min=int(t)//100,int(t)%100
+    hour, min = int(t)//100, int(t)%100
     return hour*60+min
 
 def humanTime(t):
     '''converts minutes past midnight(int) to format 'HH:MM' (string)'''
-    hour,min=t//60,int(t)%60
-    return "%s:%02d"%(hour,min)
+    hour, min = t//60, int(t)%60
+    return "%s:%02d"% (hour, min)
 
 def setlogqueries():
     global logqueries
-    logqueries=True
+    logqueries = True
 
 def setOperator(u1, u2):
     global operator, clinicianNo, clinicianInits
     if u2 == "":
         operator = u1
     else:
-        operator = "%s/%s"%(u1, u2)
-    if u1 in activedents+activehygs:
+        operator = "%s/%s"% (u1, u2)
+    if u1 in activedents + activehygs:
         clinicianNo = ops_reverse.get(u1)
         clinicianInits = u1
     else:
@@ -345,113 +349,112 @@ def getLocalSettings():
     if not os.path.exists(localFileDirectory):
         os.mkdir(localFileDirectory)
 
-    localSets=os.path.join(localFileDirectory,"localsettings.conf")
+    localSets = os.path.join(localFileDirectory, "localsettings.conf")
     if os.path.exists(localSets):
         print "local user level settings file found...."
-        dom=minidom.parse(localSets)
-        node=dom.getElementsByTagName("surgeryno")
+        dom = minidom.parse(localSets)
+        node = dom.getElementsByTagName("surgeryno")
         if node and node[0].hasChildNodes():
-            surgeryno=int(node[0].firstChild.data)
+            surgeryno = int(node[0].firstChild.data)
             print station
         else: 
             print "unknown"
     else:
         #-- no file found..
         #--so create a settings file.
-        f=open(localSets,"w")
+        f = open(localSets, "w")
         f.write('''<?xml version="1.0" ?>
         <settings><version>1.0</version></settings>
         ''')
         f.close()
 
-def updateLocalSettings(setting,value):
+def updateLocalSettings(setting, value):
     '''
     adds or updates node "setting" with text value "value"
     '''
     try:
-        localSets=os.path.join(localFileDirectory, "localsettings.conf")
-        print "updating local settings... %s = %s"%(setting,value)
+        localSets = os.path.join(localFileDirectory, "localsettings.conf")
+        print "updating local settings... %s = %s"% (setting, value)
         if os.path.exists(localSets):
-            dom=minidom.parse(localSets)
+            dom = minidom.parse(localSets)
             print dom.toxml()
-            nodeToChange=dom.getElementsByTagName(setting)
-            if len(nodeToChange)==0:
-                print "no %s node - creating node"%setting
-                nodeToChange=dom.createElement(setting)
-                print "node created",nodeToChange
+            nodeToChange = dom.getElementsByTagName(setting)
+            if len(nodeToChange) == 0:
+                nodeToChange = dom.createElement(setting)
                 dom.firstChild.appendChild(nodeToChange)
             #--remove any existing values
             else:
-                if nodeToChange[0].firstChild.data==value:
-                    print "setting unchanged"
+                if nodeToChange[0].firstChild.data == value:
+                    #-- setting unchanged
                     return
             for children in nodeToChange.childNodes:
                 nodeToChange.removeChild(children)
-            valueNode=dom.createTextNode(value)
+            valueNode = dom.createTextNode(value)
             nodeToChange.appendChild(valueNode)
-            print dom.toxml()
-            f=open(localSets,"w")
+            #print dom.toxml()
+            f = open(localSets,"w")
             f.write(dom.toxml())
             f.close()            
             return True
-    except Exception,e:
-        print "error updating local settings file",e
+        
+    except Exception, e:
+        print "error updating local settings file", e
         return False
     
-def initiate(debug=False):
+def initiate(debug = False):
     print "initiating settings"
-    global referralfile,stylesheet,fees,message,dentDict,privateFees,\
-    nhsFees,allowed_logins,ops,ops_reverse,activedents,activehygs,apptix,\
-    apptix_reverse, appt_shortcut_file #,itemCodes
+    global referralfile, stylesheet, fees, message, dentDict, privateFees,\
+    nhsFees, allowed_logins, ops, ops_reverse, activedents, activehygs, \
+    apptix, apptix_reverse, appt_shortcut_file, resources_path #,itemCodes
     from openmolar.connect import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
-    db=connect()
+    db = connect()
     cursor = db.cursor()
     #set up four lists with key/value pairs reversedto make for easy referencing
 
     #first"ops" which is all practitioners
-    ops={}
-    ops_reverse={}
-    apptix_reverse={}
-    cursor.execute("select id,inits,apptix from practitioners")
+    ops = {}
+    ops_reverse = {}
+    apptix_reverse = {}
+    cursor.execute("select id, inits, apptix from practitioners")
     practitioners = cursor.fetchall()
     for practitioner in practitioners:
-        if practitioner[1]!=None:
-            ops[practitioner[0]]=practitioner[1]
-            ops_reverse[practitioner[1]]=practitioner[0]
-            if practitioner[2]!=0:
-                apptix_reverse[practitioner[2]]=practitioner[1]
+        if practitioner[1] != None:
+            ops[practitioner[0]] = practitioner[1]
+            ops_reverse[practitioner[1]] = practitioner[0]
+            if practitioner[2] != 0:
+                apptix_reverse[practitioner[2]] = practitioner[1]
         else:
-            ops[0]="NONE"
-            ops_reverse["NONE"]=0
+            ops[0] = "NONE"
+            ops_reverse["NONE"] = 0
 
     try:
         ##correspondence details for NHS forms
-        query="select id,inits,name,formalname,fpcno,quals "
-        query+="from practitioners where flag0=1"
+        query = "select id,inits,name,formalname,fpcno,quals "
+        query += "from practitioners where flag0=1"
         if logqueries:
             print query
         cursor.execute(query)
         practitioners = cursor.fetchall()
-        dentDict={}
+        dentDict = {}
         for practitioner in practitioners:
-            dentDict[practitioner[0]]=practitioner[1:]
+            dentDict[practitioner[0]] = practitioner[1:]
 
         #now get only practitioners who have an active daybook
-        query="select apptix,inits from practitioners where flag3=1"
+        query = "select apptix,inits from practitioners where flag3=1"
         if logqueries:
             print query
         cursor.execute(query)
         practitioners = cursor.fetchall()
-        apptix={}
+        apptix = {}
         for practitioner in practitioners:
             if practitioner[0] != 0 and practitioner[0] != None: #apptix
-                apptix[practitioner[1]]=practitioner[0]
+                apptix[practitioner[1]] = practitioner[0]
         cursor.execute(
         "select inits from practitioners where flag3=1 and flag0=1")
         #dentists where appts active
-        activedents=[]
+        activedents = []
         practitioners = cursor.fetchall()
         for practitioner in practitioners:
             activedents.append(practitioner[0])
@@ -459,7 +462,7 @@ def initiate(debug=False):
         "select inits from practitioners where flag3=1 and flag0=0")
         #hygenists where appts active
         practitioners = cursor.fetchall()
-        activehygs=[]
+        activehygs = []
         for practitioner in practitioners:
             activehygs.append(practitioner[0])
     except:
@@ -469,11 +472,11 @@ def initiate(debug=False):
         cursor.execute("select id from opid")
         #grab initials of those currently allowed to log in
         trows = cursor.fetchall()
-        allowed_logins=[]
+        allowed_logins = []
         for row in trows:
             allowed_logins.append(row[0])
-    except Exception,e:
-        print "error loading from opid",e
+    except Exception, e:
+        print "error loading from opid", e
 
 
     #-- majorly important dictionary being created.
@@ -481,90 +484,90 @@ def initiate(debug=False):
     #-- the values are a custom data class in the fee_keys module
 
     try:   #this breaks compatibility with the old database schema
-        query="select code, description, pfa, USERCODE,"
-        query+="description1, regulation from newfeetable"
+        query = "select code, description, pfa, USERCODE,"
+        query += "description1, regulation from newfeetable"
         if logqueries:
             print query
         cursor.execute(query)
-        rows=cursor.fetchall()
-        privateFees={}
+        rows = cursor.fetchall()
+        privateFees = {}
         for row in rows:
-            code=row[0]
+            code = row[0]
             #itemCodes.append(code)
-            usercode=row[3]
-            if code!="":
+            usercode = row[3]
+            if code != "":
                 if privateFees.has_key(code):
                     privateFees[code].addFee(row[2])
                 else:
-                    newFee=fee_keys.fee()
-                    newFee.description=row[4]
+                    newFee = fee_keys.fee()
+                    newFee.description = row[4]
                     newFee.setRegulations(row[5])
                     newFee.addFee(row[2])
-                    privateFees[code]=newFee
+                    privateFees[code] = newFee
 
-                    descriptions[code]=row[1]
+                    descriptions[code] = row[1]
 
-            if usercode!="" and usercode!=None:
-                treatmentCodes[usercode]=code
+            if usercode != "" and usercode != None:
+                treatmentCodes[usercode] = code
 
-    except Exception,e:
-        print "error loading privateFees Dict from newfeetable",e
+    except Exception, e:
+        print "error loading privateFees Dict from newfeetable", e
 
 
     try:   #this breaks compatibility with the old database schema
-        query="select code, description, NF08, USERCODE,"
-        query+="description1, regulation, NF08_pt from newfeetable"
+        query = "select code, description, NF08, USERCODE,"
+        query += "description1, regulation, NF08_pt from newfeetable"
         if logqueries:
             print query
         cursor.execute(query)
-        rows=cursor.fetchall()
-        nhsFees={}
+        rows = cursor.fetchall()
+        nhsFees = {}
         for row in rows:
-            code=row[0]
-            usercode=row[3]
-            if code!="":
+            code = row[0]
+            usercode = row[3]
+            if code != "":
                 if nhsFees.has_key(code):
                     nhsFees[code].addFee(row[2])
                     nhsFees[code].addPtFee(row[6])
                 else:
-                    newFee=fee_keys.fee()
-                    newFee.description=row[4]
+                    newFee = fee_keys.fee()
+                    newFee.description = row[4]
                     newFee.setRegulations(row[5])
                     newFee.addFee(row[2])
                     newFee.addPtFee(row[6])
-                    nhsFees[code]=newFee
+                    nhsFees[code] = newFee
 
-    except Exception,e:
+    except Exception, e:
         print "error loading nhs Fees Dict from newfeetable",e
 
     getLocalSettings()
 
-    #wkdir=os.getcwd()
-    wkdir = determine_path()
-    referralfile = os.path.join(wkdir,"resources","referral_data.xml")
-    appt_shortcut_file = os.path.join(wkdir,
-                                    "resources","appointment_shortcuts.xml")
+    referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
+    appt_shortcut_file = os.path.join(wkdir, "resources", 
+    "appointment_shortcuts.xml")
+    stylesheet = os.path.join(wkdir, "resources", "style.css")
+    resources_path = os.path.join(wkdir, "resources")
     
     message='''<html><head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head><body><div align="center">
-<img src="html/images/newlogo.png" width="150", height="100", align="left" />
+<img src="%s/html/images/newlogo.png" width="150", height="100", align="left" />
 
-<img src="html/images/newlogo.png" width="150",height="100", align="right" />
+<img src="%s/html/images/newlogo.png" width="150",height="100", align="right" />
 <h1>Welcome to OpenMolar!</h1><ul><li>Version %s</li><li>Revision %s</li></ul>
 <p>Your Data is Accessible, and the server reports no issues.</p>
 <p>Have a great day!</p></div></body></html>'''%(
-    stylesheet, __MAJOR_VERSION__, __build__ )
+    stylesheet, wkdir, wkdir, __MAJOR_VERSION__, __build__ )
 
     if debug:
         #print formatMoney(1150)
-        print "ops = ",ops
-        print "ops_reverse = ",ops_reverse
-        print "apptix = ",apptix
-        print "apptix_reverse = ",apptix_reverse
-        print "activedents =",activedents
-        print "activehygs=",activehygs
-        print "allowed logins=",allowed_logins
+        print "ops = ", ops
+        print "ops_reverse = ", ops_reverse
+        print "apptix = ", apptix
+        print "apptix_reverse = ", apptix_reverse
+        print "activedents =", activedents
+        print "activehygs=", activehygs
+        print "allowed logins=", allowed_logins
         print stylesheet
         print referralfile
         #print curTime()
@@ -579,10 +582,19 @@ def initiate(debug=False):
         #print fees
 
 if __name__ == "__main__":
-    '''testing only'''
+    #-- testing only
+    
     wkdir = determine_path()
-    sys.path.append(wkdir)
-    initiate(True)
+    sys.path.append(os.path.dirname(wkdir))
+    if os.path.exists(global_cflocation):
+        print "using global", global_cflocation
+        cflocation = global_cflocation
+    else:
+        print "using local", local_cflocation        
+        cflocation = local_cflocation   
+    print cflocation
+    print stylesheet
+    #initiate(True)
     #print global_cflocation, local_cfloaction
     #updateLocalSettings("stationID","surgery3")
     

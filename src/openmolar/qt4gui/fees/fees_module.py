@@ -14,6 +14,7 @@ script, concerning fees, accounts and graphical feescale display.
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
+import os
 import subprocess
 
 from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
@@ -228,12 +229,14 @@ def nhsRegsPDF(parent):
     dl.setupUi(Dialog)
     if Dialog.exec_():
         if dl.info_radioButton.isChecked():
-            doc = "Dental_Information_Guide_2008_v4.pdf"
+            doc = os.path.join(localsettings.wkdir, 'resources', 
+            "Dental_Information_Guide_2008_v4.pdf")
         else:
-            doc = "scotNHSremuneration08.pdf"
+            doc = os.path.join(localsettings.wkdir, 'resources', 
+            "scotNHSremuneration08.pdf")
         try:
-            subprocess.Popen(["%s"% localsettings.pdfProg, 
-            "resources/%s"% doc])
+            print "opening %s with %s"% (doc, localsettings.pdfProg)
+            subprocess.Popen(["%s"% localsettings.pdfProg, doc])
         except Exception, e:
             print Exception, e
             parent.advise("Error opening PDF file", 2)

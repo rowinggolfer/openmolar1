@@ -73,19 +73,22 @@ def details(pt, Saved=True):
             retarg +=  "%s <hr />"% pt.pcde
 
         if "N" in pt.cset:
-            retarg += '<img src="resources/nhs_scot.png" alt="NHS"><br />'
-            #retarg += 'NHS<br />'
+            retarg += '''<img src="%s/nhs_scot.png" alt="NHS">
+            <br />'''% localsettings.resources_path
+
             if pt.exmpt != "":
                 retarg += " exemption=%s"% str(pt.exmpt)
             else:
                 retarg += "NOT EXEMPT"
             retarg += "<br />"
         elif "I" in pt.cset:
-            retarg += '<img src="resources/hdp_small.png" alt="HDP"><br />'
-            #retarg += 'HDP<br />'
+            retarg += '''<img src="%s/hdp_small.png" alt="HDP">
+            <br />'''% localsettings.resources_path
+
         elif "P" in pt.cset:
-             retarg += '<img src="resources/private.png" alt="PRIVATE"><br />'
-            #retarg += "PRIVATE<br />"
+            retarg += '''<img src="%s/private.png" alt="PRIVATE">
+            <br />'''% localsettings.resources_path
+
         else:
             retarg += 'UNKNOWN COURSETYPE = %s <br />'% str(pt.cset)
         #-- removed this next code as feescale is always the same

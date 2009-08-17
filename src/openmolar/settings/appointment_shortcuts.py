@@ -64,6 +64,4 @@ def getShortCuts():
         
 if __name__ == "__main__":
     localsettings.initiate()
-    localsettings.appt_shortcut_file = \
-    "/home/neil/openmolar/openmolar/resources/appointment_shortcuts.xml"
     print getShortCuts()

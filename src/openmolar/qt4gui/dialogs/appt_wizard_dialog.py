@@ -84,16 +84,16 @@ class apptWizard(Ui_apptWizard.Ui_Dialog):
         
             
 if __name__ == "__main__":
+    import sys
     from openmolar.dbtools import patient_class
+    
     class testGui():
         def __init__(self):
             self.pt = patient_class.patient(3)
     def test(a):
         print "signal caught",a
-    import sys
+    
     localsettings.initiate()
-    localsettings.appt_shortcut_file = \
-    "/home/neil/openmolar/openmolar/resources/appointment_shortcuts.xml"
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
     mainGui = testGui()
