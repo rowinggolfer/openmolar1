@@ -287,9 +287,8 @@ def newsetup(parent = None):
                 f.close()
                 print '...ok'
                 localsettings.cflocation = localsettings.global_cflocation
-                Dialog.accept()
             
-            except IOError:
+            except OSError, IOError:
                 ##TODO - elevate privileges here....
                 ## and write the file again               
                 print 'unable to write to %s...'%settingsDir,
@@ -298,17 +297,18 @@ def newsetup(parent = None):
                 print "will resort to putting settings into a local file",
                 print localsettings.local_cflocation
 
-            settingsDir = os.path.dirname(localsettings.local_cflocation)
+                settingsDir = os.path.dirname(localsettings.local_cflocation)
 
-            if not os.path.exists(settingsDir):
+                if not os.path.exists(settingsDir):
+                    os.mkdir(settingsDir)
+                
                 print 'putting a local settings file in', settingsDir,
-                os.mkdir(settingsDir)
-            
-            f = open(localsettings.local_cflocation,"w")
-            f.write(dom.toxml())
-            f.close()
-            print '...ok'
-            localsettings.cflocation = localsettings.local_cflocation
+                                    
+                f = open(localsettings.local_cflocation,"w")
+                f.write(dom.toxml())
+                f.close()
+                print '...ok'
+                localsettings.cflocation = localsettings.local_cflocation
                 
             Dialog.accept()
 
