@@ -1,5 +1,5 @@
-openmolar (0.1.2-2ubuntu1) intrepid; urgency=low
+openmolar (0.1.2-7ubuntu1) intrepid; urgency=low
 
-  * Initial release (LP: #368222)  <nnnn is the bug number of your ITP>
+  * Initial release (LP: #368222) 
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Sat, 15 Aug 2009 22:37:30 +0100

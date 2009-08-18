@@ -28,8 +28,8 @@ setup(
                                     'html/*.*',
                                     'html/images/*.*',
                                     'html/firstrun/*.*'] },
-    data_files=[('bin', ['share/openmolar/icon.png']),
-                ('bin', ['share/applications/openmolar.desktop'])],
+    data_files=[('share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
+                ('share/applications', ['bin/openmolar.desktop'])],
     scripts = ['openmolar'],
     )
 

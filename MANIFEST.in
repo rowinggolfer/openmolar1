@@ -1,4 +1,5 @@
 include COPYING MANIFEST MANIFEST.in README openmolar
+recursive-include bin *.svg *.desktop
 recursive-include src/openmolar/dbtools *.py
 recursive-include src/openmolar/ptModules *.py
 recursive-include src/openmolar/qt4gui *.py
