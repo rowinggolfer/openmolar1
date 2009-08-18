@@ -6,7 +6,6 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg2"
@@ -62,24 +61,8 @@
      inkscape:cx="165"
      inkscape:cy="165"
      inkscape:window-x="0"
-     inkscape:window-y="25"
+     inkscape:window-y="55"
      inkscape:current-layer="svg2" />
-  <image
-     xlink:href="newlogo.png"
-     sodipodi:absref="/home/neil/openmolar/openmolar/bin/newlogo.png"
-     width="330"
-     height="330"
-     id="image11"
-     x="0"
-     y="0" />
-  <image
-     y="-5.6843419e-14"
-     x="0"
-     id="image2450"
-     height="330"
-     width="330"
-     sodipodi:absref="/home/neil/openmolar/openmolar/bin/newlogo.png"
-     xlink:href="newlogo.png" />
   <g
      id="g2454">
     <path
