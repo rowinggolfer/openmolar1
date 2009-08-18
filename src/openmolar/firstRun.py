@@ -21,10 +21,6 @@ import MySQLdb
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
 
-#-- get "openmolar" on the path before the final imports
-wkdir = os.path.dirname(os.getcwd())
-sys.path.append(wkdir)
-
 from openmolar.qt4gui import Ui_newSetup
 from openmolar.settings import localsettings
 
@@ -84,7 +80,7 @@ def newsetup(parent = None):
             db.close()
 
         except Exception,e:
-            print e
+            print "exception during testConnection", e
 
         if result:
             if myDB == "":
@@ -120,14 +116,14 @@ def newsetup(parent = None):
             applystage5()
             if createdemodatabase.create_database(myHost, myPort,
             myMysqlUser, myMysqlPassword, myDB, rootpass):
-                print '''New database created sucessfully...
-                attempting to loadtables'''
+                print 'New database created sucessfully.'
+                print 'attempting to loadtables....',
                 if createdemodatabase.loadTables(myHost, myPort,
                 myMysqlUser, myMysqlPassword, myDB):
                     print "successfully loaded tables"
 
         except Exception, e:
-            print "error creating database",  e
+            print "error in actuallyCreateDB",  e
             QtGui.QMessageBox.warning(Dialog, "Error Creating Database", str(e))
             Dialog.reject()
         stage6()
@@ -167,9 +163,12 @@ def newsetup(parent = None):
         QtCore.SIGNAL("returnPressed()"), stage2)
 
     def stage2():
+        '''
+        user has entered the main password once
+        get it re-entered
+        '''
+
         global myPassword
-        '''user has entered the main password once
-        get it re-entered'''
         dl.main_password_lineEdit.setFocus()
         QtCore.QObject.disconnect(dl.pushButton_2,
         QtCore.SIGNAL("clicked()"), stage2)
@@ -192,7 +191,6 @@ def newsetup(parent = None):
         '''
         check the passwords match
         '''
-        print "stage3"
         QtCore.QObject.disconnect(dl.pushButton_2,
         QtCore.SIGNAL("clicked()"), stage3)
 
@@ -200,7 +198,7 @@ def newsetup(parent = None):
         QtCore.SIGNAL("returnPressed()"), stage3)
 
         if dl.main_password_lineEdit.text() != myPassword:
-            print "passwords do not match"
+            print "the two passwords did not match"
             QtGui.QMessageBox.information(None, "Advisory",
             "Passwords did not match, please try again")
             dl.mainPassword_label.setText("Please enter a password to" + \
@@ -209,7 +207,7 @@ def newsetup(parent = None):
             dl.main_password_lineEdit.setText("")
             stage1()
         else:
-            print "pwords match...."
+            print "user has sucessfully entered the same password twice...."
 
             QtCore.QObject.connect(dl.pushButton_8,
             QtCore.SIGNAL("clicked()"), stage4)
@@ -217,7 +215,6 @@ def newsetup(parent = None):
             dl.stackedWidget.setCurrentIndex(2)
 
     def stage4():
-        print 'stage4'
         applystage3()
         dl.stackedWidget.setCurrentIndex(3)
         QtCore.QObject.connect(dl.createDB_pushButton,
@@ -227,7 +224,6 @@ def newsetup(parent = None):
         QtCore.SIGNAL("clicked()"), stage5)
 
     def stage5():
-        print 'stage5'
         dl.stackedWidget.setCurrentIndex(4)
         QtCore.QObject.connect(dl.testDB_pushButton,
         QtCore.SIGNAL("clicked()"), testDB)
@@ -296,15 +292,11 @@ def newsetup(parent = None):
             except IOError:
                 ##TODO - elevate privileges here....
                 ## and write the file again               
-                print 'unable to write - we need root privileges for that' 
-                QtGui.QMessageBox.warning(parent,
-                "IO ERROR",
-                '''<p>unable to save to a global user file%s </p>
-                <p>Will resort to local file</p>'''%
-                localsettings.local_cflocation)
-
-            print "will resort to put settings into a local folder",
-            print localsettings.local_cflocation
+                print 'unable to write to %s...'%settingsDir,
+                print ' we need root privileges for that' 
+                
+                print "will resort to putting settings into a local file",
+                print localsettings.local_cflocation
 
             settingsDir = os.path.dirname(localsettings.local_cflocation)
 

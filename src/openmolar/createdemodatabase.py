@@ -17,6 +17,7 @@ correct user permissions.
 
 import MySQLdb
 import os
+from openmolar.settings import localsettings 
 
 def create_database(myhost, myport, myuser, mypassword, databaseName,
 rootMySQLpassword):
@@ -27,7 +28,7 @@ rootMySQLpassword):
 
     cursor = db.cursor()
     try:
-        cursor.execute("DROP DATABASE IF EXISTS %s"%databaseName)
+        cursor.execute("DROP DATABASE IF EXISTS %s"% databaseName)
     except:
         pass
     cursor.execute("CREATE DATABASE %s"% databaseName)
@@ -37,7 +38,7 @@ rootMySQLpassword):
     query = 'GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY "%s"'% (
     databaseName, myuser, myhost, mypassword)
 
-    print query
+    #print query
     cursor.execute(query)
     cursor.close()
     db.commit()
@@ -45,7 +46,8 @@ rootMySQLpassword):
     return True
 
 def loadTables(myhost, myport, myuser, mypassword, databaseName):
-    f = open(os.path.join("resources","demodump.sql"),"r")
+    wkdir = localsettings.determine_path()
+    f = open(os.path.join(wkdir,"resources","demodump.sql"),"r")
     dumpString = f.read()
     f.close()
 
