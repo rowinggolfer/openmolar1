@@ -28,6 +28,9 @@ setup(
                                     'html/*.*',
                                     'html/images/*.*',
                                     'html/firstrun/*.*'] },
+    data_files=[('bin', ['share/openmolar/icon.pin']),
+                ('bin', ['share/applications/openmolar.desktop'])]
+
     scripts = ['openmolar'],
     )
 

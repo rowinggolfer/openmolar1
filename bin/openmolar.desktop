@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=OpenMolar
+GenericName=OpenMolar
+Comment=Dental Practice Management Software
+Exec=openmolar
+Icon=openmolarlogo
+Terminal=false
+Type=Application
+MimeType=application/x-openmolar;
+Categories=Application;Office;
+Name[en_GB]=openmolar.desktop.in
