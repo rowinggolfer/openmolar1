@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/main.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Tue Aug 11 11:03:24 2009
+# Created: Tue Aug 18 16:44:10 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1114, 485)
+        MainWindow.resize(1114, 552)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMaximumSize(QtCore.QSize(16777215, 16777215))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/openmolar.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setDockNestingEnabled(False)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
@@ -836,7 +836,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, -141, 832, 500))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 832, 500))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.gridLayout_28 = QtGui.QGridLayout(self.scrollAreaWidgetContents_5)
         self.gridLayout_28.setObjectName("gridLayout_28")

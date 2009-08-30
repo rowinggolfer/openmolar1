@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>openmolar.svg</file>
     <file>icons/separate.png</file>
     <file>appt_ov.png</file>
     <file>newlogo_launchpadSize.png</file>

@@ -8,5 +8,5 @@ Icon=openmolar
 Terminal=false
 Type=Application
 MimeType=application/x-openmolar;
-Categories=Application;Office;
+Categories=Office;
 Name[en_GB]=OpenMolar

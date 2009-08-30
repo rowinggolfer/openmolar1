@@ -3,7 +3,7 @@ recursive-include bin *.svg *.desktop
 recursive-include src/openmolar/dbtools *.py
 recursive-include src/openmolar/ptModules *.py
 recursive-include src/openmolar/qt4gui *.py
-recursive-include src/openmolar/resources *.xml *.png *.pdf *.css *sql
+recursive-include src/openmolar/resources *.xml *.png *.pdf *.css *.sql *.svg
 recursive-include src/openmolar/settings *.py
 
 

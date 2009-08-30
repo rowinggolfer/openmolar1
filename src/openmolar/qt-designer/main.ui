@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1114</width>
-    <height>485</height>
+    <height>552</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,7 +30,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
-    <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
+    <normaloff>:/openmolar.svg</normaloff>:/openmolar.svg</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -2129,7 +2129,7 @@
                       <property name="geometry">
                        <rect>
                         <x>0</x>
-                        <y>-141</y>
+                        <y>0</y>
                         <width>832</width>
                         <height>500</height>
                        </rect>

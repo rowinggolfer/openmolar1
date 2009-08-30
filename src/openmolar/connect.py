@@ -13,12 +13,28 @@ sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
 xmlnode = dom.getElementsByTagName("server")[0]
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
 myPort = int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
+#-- don't do this yet... because the is a bug with mysql and ssl
+#--see launchpad bug 359309
+use_ssl = bool(xmlnode.getElementsByTagName("ssl"))
 
 xmlnode = dom.getElementsByTagName("database")[0]
 myUser = xmlnode.getElementsByTagName("user")[0].firstChild.data
 myPassword = xmlnode.getElementsByTagName("password")[0].firstChild.data
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
+if use_ssl:
+    print "using ssl"
+    #-- note, dictionary could have up to 5 params.
+    #--ca, cert, key, capath and cipher
+    #-- however, IIUC, just using ca will encrypt the data
+    ssl_settings = {'ca': '/home/neil/certs/ca_cert.pem',
+    'cert': '/home/neil/certs/client_cert.pem',
+    'key': '/home/neil/certs/client_key.pem'}
+else:
+    print "not using ssl (you really should!)"
+    ssl_settings = {}
+
+dom.unlink()
 
 class omSQLresult():
     '''
@@ -83,14 +99,15 @@ def connect():
         print "New connection needed"
         print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
         mainconnection = MySQLdb.connect(host = myHost, port = myPort,
-        user = myUser, passwd = myPassword, db = myDb)
+        user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
         mainconnection.autocommit(True)
-        print mainconnection
+        print mainconnection.stat()
     else:
         mainconnection.commit()
     return mainconnection
 
 if __name__ == "__main__":
+    localsettings.initiate()
     import time
     print cflocation
     for i in range(1, 11):
