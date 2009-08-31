@@ -53,10 +53,9 @@ else:
     localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
     pdfProg="evince"
 
-local_cflocation=os.path.join(localFileDirectory,"openmolar.conf")    
+cflocation=os.path.join(localFileDirectory,"openmolar.conf")    
 
 #these are updated if correct password is given
-cflocation = None
 successful_login = False
 
 #-- these permissions are for certain admin duties.

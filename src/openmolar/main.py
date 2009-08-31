@@ -45,12 +45,15 @@ def main():
         if arg.toLower() == "rec":
             dl.reception_radioButton.setChecked(True)
 
+    cf_Found = True
     if os.path.exists(localsettings.global_cflocation):
         localsettings.cflocation = localsettings.global_cflocation
-    elif os.path.exists(localsettings.local_cflocation):
-        localsettings.cflocation = localsettings.local_cflocation
+    elif os.path.exists(localsettings.cflocation):
+        pass
+    else:
+        cf_Found = False
         
-    if not localsettings.cflocation:
+    if not cf_Found:
         message = '''<center>
         This appears to be your first running of openMolar<br />
         Before you run this application ,<br />

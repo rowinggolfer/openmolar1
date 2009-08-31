@@ -1014,12 +1014,15 @@ class printingClass():
             self.advise("no patient selected", 1)
             return
         est=estimatePrint.estimate()
-        est.setProps(self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
-        est.estItems=estimates.sorted(self.pt.estimates)
+
+        est.setProps(self.pt.title, self.pt.fname, self.pt.sname, 
+        self.pt.serialno)
+
+        est.setEsts(estimates.sorted(self.pt.estimates))
 
         if est.print_():
             self.commitPDFtoDB("auto estimate")
-        self.pt.addHiddenNote("printed", "estimate")
+            self.pt.addHiddenNote("printed", "estimate")
 
 
     def customEstimate(self, html="", version=0):

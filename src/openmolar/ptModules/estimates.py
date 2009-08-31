@@ -75,29 +75,41 @@ class est():
             retarg = retarg.replace(gunk, "") 
         return retarg
     
+
+def strip_curlies(description):
+    '''
+    comments such as {2 of 2} are present in the estimates...
+    this removes such stuff
+    '''
+    if re.search("{.*}", description):
+        return description[:description.index("{")]
+    else:
+        return description
     
 def sorted(ests):
     '''
     compresses a list of estimates down into number*itemcode
     '''
-    def cmp1(a,b): 
+    def cmp1(a, b): 
         'define how ests are sorted'
-        return cmp(a.itemcode,b.itemcode)
+        return cmp(a.itemcode, b.itemcode)
 
     sortedEsts=[]
-    def estInSortedEsts(est):
+    def combineEsts(est):
         for se in sortedEsts:
-            if se.itemcode==est.itemcode and se.description==est.description:
-                #--don't combine "custom items (where description has changed)"
-                if est.number!=None and se.number!=None:
-                    se.number +=est.number
-                se.fee+=est.fee
-                se.ptfee+=est.ptfee
-                se.type+="|"+est.type
-                return True
+            if se.itemcode == est.itemcode:
+                if se.description == strip_curlies(est.description):
+                    #--don't combine items where description has changed
+                    if est.number != None and se.number != None:
+                        se.number += est.number
+                    se.fee += est.fee
+                    se.ptfee += est.ptfee
+                    se.type += "|" + est.type
+                    return True
     for est in ests:
-        if not estInSortedEsts(est):
-            ce=copy.copy(est)
+        if not combineEsts(est):
+            ce = copy.copy(est)
+            ce.description = strip_curlies(ce.description)
             sortedEsts.append(ce)
     sortedEsts.sort(cmp1)
     
@@ -111,9 +123,9 @@ def toothTreatDict(pt):
     treats={"pl":[], "cmp":[]}
     for quadrant in ("ur","ul", "ll", "lr"):
         if "r" in quadrant:
-            order=(8, 7, 6, 5, 4, 3, 2, 1)
+            order = (8, 7, 6, 5, 4, 3, 2, 1)
         else:
-            order=(1, 2, 3, 4, 5, 6, 7, 8)
+            order = (1, 2, 3, 4, 5, 6, 7, 8)
         for tooth in order:
             for type in ("pl", "cmp"):
                 att="%s%s%s"%(quadrant, tooth,type)
@@ -126,17 +138,17 @@ def toothTreatDict(pt):
     return treats
 
 def abandon_estimate(pt):
-    pt.ests=()
+    pt.ests = ()
 
 def recalculate_estimate(pt):
     #########################needs wordk
     
-    planned=plan.plannedDict(pt)
-    completed=plan.completedDict(pt)
-    if pt.dnt2!=0:
-        dent=pt.dnt2
+    planned = plan.plannedDict(pt)
+    completed = plan.completedDict(pt)
+    if pt.dnt2 != 0:
+        dent = pt.dnt2
     else:
-        dent=pt.dnt1
+        dent = pt.dnt1
     for key in planned.keys():
         print key,planned[key]
     for key in completed.keys():
@@ -205,11 +217,11 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     localsettings.initiate(False)
     try:
-        serialno=int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=29833
+        serialno = 23664
 
-    pt=patient_class.patient(serialno)
+    pt = patient_class.patient(serialno)
     #print pt.estimates
     #print toHtml(pt.estimates,pt.tsfees)
 

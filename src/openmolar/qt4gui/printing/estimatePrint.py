@@ -17,11 +17,10 @@ DATE_FORMAT = "d, MMMM, yyyy"
 def toMoneyString(i):
     return u"£"+"%.02f"%(i/100)
 
-
 class estimate():
-    def __init__(self,parent=None):
+    def __init__(self, parent=None):
         self.setProps()
-        self.estItems=[]
+        self.estItems = []
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A5)
         
@@ -33,6 +32,9 @@ class estimate():
         self.fname=fn
         self.sname=sn
         self.ourref=serialno
+    
+    def setEsts(self, ests):
+        self.estItems = ests
         
     def print_(self):
         dialog = QtGui.QPrintDialog(self.printer)
@@ -62,87 +64,90 @@ class estimate():
             painter.drawText(x, y, "Our Ref - "+str(self.ourref))
 
             y += serifLineHeight*1.5
-            mystr='Estimate Printed on  '
-            w=fm.width(mystr)
+            mystr = 'Estimate Printed on  '
+            w = fm.width(mystr)
             painter.drawText(x, y, mystr)
-            
             
             painter.drawText(x+w, y,
             QtCore.QDate.currentDate().toString(DATE_FORMAT))
         
-            x=LeftMargin+10
-            y+=serifLineHeight*2
+            x = LeftMargin + 10
+            y += serifLineHeight * 2
 
-            pt_total=0
+            pt_total = 0
+            
+            
             for est in self.estItems:
-                pt_total+=est.ptfee
+                pt_total += est.ptfee
                 
-                number=est.number
-                item=est.description
+                number = est.number
+                item = est.description
                 
-                amount=est.ptfee
+                amount = est.ptfee
                 
                 #print number,item,amount
                 
-                mult=""
+                mult = ""
                 if number>1:
-                    mult="s"
-                item=item.replace("*",mult)
+                    mult = "s"
+                item = item.replace("*",mult)
                 if "^" in item:
-                    item=item.replace("^","")
+                    item = item.replace("^","")
                     
                 
-                painter.drawText(QtCore.QRectF(x,y,60,serifLineHeight),
+                painter.drawText(QtCore.QRectF(x, y, 60, serifLineHeight),
                 str(number))
 
-                painter.drawText(QtCore.QRectF(x+60,y,280,serifLineHeight),
+                painter.drawText(QtCore.QRectF(x+60, y, 280, serifLineHeight),
                 QtCore.QString(item))            
 
-                painter.drawText(QtCore.QRectF(x+280, y,100,serifLineHeight),
-                QtCore.QString(toMoneyString(amount)),alignRight)
+                painter.drawText(QtCore.QRectF(x+280, y, 100, 
+                serifLineHeight), QtCore.QString(toMoneyString(amount)), 
+                alignRight)
 
                 y += serifLineHeight
             
             y += serifLineHeight
-            painter.drawLine(int(x),int(y),int(x)+380,int(y))#130+150=280
+            #-- 280+100=280
+            painter.drawLine(int(x), int(y), int(x)+380, int(y))
             y += serifLineHeight*1.5
 
-            painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),
+            painter.drawText(QtCore.QRectF(x, y, 180, serifLineHeight),
             QtCore.QString("TOTAL"))
 
-            painter.drawText(QtCore.QRectF(x+280, y,100,serifLineHeight),
-            QtCore.QString(toMoneyString(pt_total)),alignRight)
+            painter.drawText(QtCore.QRectF(x+280, y, 100,serifLineHeight),
+            QtCore.QString(toMoneyString(pt_total)), alignRight)
 
-            y += serifLineHeight*4
+            y += serifLineHeight * 4
 
             font = QtGui.QFont("Helvetica", 7)
             font.setItalic(True)
             painter.setFont(font)
             option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
-            painter.drawText(QtCore.QRectF(0, y,pageRect.width(), 31),
+            painter.drawText(QtCore.QRectF(0, y, pageRect.width(), 31),
             "Please note, this estimate may be subject to change if "+\
-            "clinical circumstances dictate.",option)
+            "clinical circumstances dictate.", option)
         return True
     
-        
+
+
 if __name__ == "__main__":
+    
     import sys
     localsettings.initiate(False)
     from openmolar.dbtools import patient_class
     from openmolar.ptModules import estimates
-    pt=patient_class.patient(31779)
+    pt=patient_class.patient(23664)
     
     app = QtGui.QApplication(sys.argv)
     
-    myreceipt=estimate()
+    myreceipt = estimate()
     
-    myreceipt.title=pt.title
-    myreceipt.fname=pt.fname
-    myreceipt.sname=pt.sname
-    myreceipt.ourref=pt.serialno
+    myreceipt.title = pt.title
+    myreceipt.fname = pt.fname
+    myreceipt.sname = pt.sname
+    myreceipt.ourref = pt.serialno
     myreceipt.estItems = estimates.sorted(pt.estimates)
-    print pt.estimates
         
     myreceipt.print_()
-    
