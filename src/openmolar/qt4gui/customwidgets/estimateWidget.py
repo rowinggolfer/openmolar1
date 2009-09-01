@@ -600,7 +600,6 @@ class estWidget(QtGui.QFrame):
         '''
         deletes a widget when delete button pressed.
         '''
-        print arg.items
         message = "Delete %s %s from estimate?"%(
         arg.number_label.text(), arg.description_lineEdit.text())
         input = QtGui.QMessageBox.question(self, "confirm",

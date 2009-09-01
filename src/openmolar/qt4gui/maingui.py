@@ -3161,10 +3161,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         estWidget has removed an item from the estimates.
         (user clicked on the delete button)
         '''
-        ##TODO - I have removed this functionality due to estimate errors.
-        print "DO YOU WANT TO ADD FUNCTIONALITY TO estwidget_deleteTxItem??"
-        print "FUNCTION WAS CALLED WITH argument - ", argument
-        return
+        add_tx_to_plan.pass_on_estimate_delete(self, argument)
         
     def planItemClicked(self,item,col):
         '''

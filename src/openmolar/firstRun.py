@@ -295,20 +295,20 @@ def newsetup(parent = None):
                 print ' we need root privileges for that' 
                 
                 print "will resort to putting settings into a local file",
-                print localsettings.local_cflocation
+                print localsettings.cflocation
 
-                settingsDir = os.path.dirname(localsettings.local_cflocation)
+                settingsDir = os.path.dirname(localsettings.cflocation)
 
                 if not os.path.exists(settingsDir):
                     os.mkdir(settingsDir)
                 
                 print 'putting a local settings file in', settingsDir,
                                     
-                f = open(localsettings.local_cflocation,"w")
+                f = open(localsettings.cflocation,"w")
                 f.write(dom.toxml())
                 f.close()
                 print '...ok'
-                localsettings.cflocation = localsettings.local_cflocation
+                localsettings.cflocation = localsettings.cflocation
                 
             Dialog.accept()
 

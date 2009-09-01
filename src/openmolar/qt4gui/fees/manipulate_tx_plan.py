@@ -43,5 +43,5 @@ def itemChosen(parent, treeWidgetItem, pl_cmp):
         trtmtType = str(treeWidgetItem.text(0))
         #message += "<br />%s"% trtmtType
         #parent.advise(message,1)
-    
+        print "deleting ",trtmtType
         add_tx_to_plan.deleteTxItem(parent, pl_cmp, trtmtType)

@@ -164,6 +164,26 @@ def chartAdd(parent, tooth, properties):
         parent.pt.addToEstimate(1, itemcode, description, fee, ptfee,
         parent.pt.dnt1, parent.pt.cset, "%s %s"% (toothname, item[1]))
 
+def pass_on_estimate_delete(parent, est):
+    '''
+    the est has been deleted...
+    remove from the plan or completed also?
+    '''
+    if est.completed == False:
+        pl_cmp = "pl"
+    else:
+        pl_cmp = "cmp"
+    
+    try:
+        spacepos = est.type.index(" ")
+        txtype = "%s -%s"% (est.type[:spacepos],est.type[spacepos:])
+        print "deleting ", txtype   
+
+        deleteTxItem(parent, pl_cmp, txtype) 
+    except ValueError:
+        parent.advise ("couldn't pass on delete message - " +
+        'badly formed est.type??? %s'% est.type)
+
 def deleteTxItem(parent, pl_cmp, txtype):
     '''
     delete an item
@@ -203,7 +223,7 @@ def deleteTxItem(parent, pl_cmp, txtype):
             parent.load_treatTrees()
 
     except Exception, e:
-        parent.advise("Error deleting %s from plan<br />"% type +
+        parent.advise("Error deleting %s from plan<br>"% txtype +
         "Please remove manually", 1)
         print "handled this in add_tx_to_plan.deleteTxItem", Exception, e
 
