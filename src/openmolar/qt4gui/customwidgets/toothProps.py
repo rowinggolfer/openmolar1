@@ -52,38 +52,38 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         self.comments_comboBox.setEnabled(arg)
         
     def setExistingProps(self,arg):
-        commentSTR=""
-        if arg=="":
-            self.originalProps=""
+        
+        commentSTR = ""
+        if arg == "":
+            self.originalProps = ""
             self.lineEdit.setText("")
             
         else:
-            arg=arg.strip()+":"
-            arg=arg.replace(" ",":")
-            comments=re.findall("!.[^:]*:",arg)
+            arg = arg.strip() + ":"
+            arg = arg.replace(" ",":")
+            comments = re.findall("!.[^:]*:",arg)
             for comment in comments:
-                commentSTR+="%s "%comment.strip(":")
-                arg=arg.replace(comment,"")
-            self.originalProps=arg
+                commentSTR += "%s "% comment.strip(":")
+                arg = arg.replace(comment, "")
+            self.originalProps = arg
             self.lineEdit.setText(arg)
             
         self.setComments(commentSTR)
     
-    def setComments(self,arg):
+    def setComments(self, arg):
         '''
         puts the comment into the combobox
         '''
-        QtCore.QObject.disconnect(self.comments_comboBox,QtCore.SIGNAL(
+        QtCore.QObject.disconnect(self.comments_comboBox, QtCore.SIGNAL(
         "currentIndexChanged (const QString&)"), self.comments)
 
-        self.existingComments=str(arg)
+        self.existingComments = str(arg)
         self.comments_comboBox.setItemText(0,arg)
         self.comments_comboBox.setCurrentIndex(0)
         
-        QtCore.QObject.connect(self.comments_comboBox,QtCore.SIGNAL(
+        QtCore.QObject.connect(self.comments_comboBox, QtCore.SIGNAL(
         "currentIndexChanged (const QString&)"), self.comments)
         
-
     def comments(self,arg):
         '''
         comments combobox has been nav'd
@@ -92,66 +92,72 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
             self.setComments("")
             self.emit(QtCore.SIGNAL("DeletedComments"))
         else:
-            result=QtGui.QMessageBox.question(self,"Confirm",
+            result=QtGui.QMessageBox.question(self, "Confirm",
             'Add comment "%s"'%arg,
-            QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             
             if result == QtGui.QMessageBox.Yes:
-                cstring=self.existingComments
-                if cstring!="":
-                    cstring+=":"
-                cstring+=arg
+                cstring = self.existingComments
+                if cstring != "":
+                    cstring += ":"
+                cstring += arg
                 #cstring="%s:%s"%(self.existingComments,arg)
                 self.setComments(cstring)
                 self.finishedEdit()
     
     def clear(self):
-        t=  str(self.lineEdit.text().toAscii())
-        tlist=t.strip(":").split(":")
-        t=""
+        t =  str(self.lineEdit.text().toAscii())
+        tlist = t.strip(":").split(":")
+        t = ""
         for props in tlist[:-1]:
-            t+=props+":"
-        print t
+            t += "%s:"% props
         self.lineEdit.setText(t)
         self.tooth.clear()
         self.tooth.update()
-        self.finishedEdit() #doesn';t work!
+        self.finishedEdit() #doesn't work!
     
     def checkEntry(self):
-        currentFill=str(self.lineEdit.text().toAscii())
-        fillList=currentFill.split(":")
+        currentFill = str(self.lineEdit.text().toAscii())
+        fillList = currentFill.split(":")
         for f in fillList:
             if not self.checkProp(f):
                 return False
         return True
 
-    def checkProp(self,f):
-        result=True
-        if f!="":
+    def checkProp(self, f):
+        '''
+        check to see if the user has entered garbage
+        '''
+        allowedCode = True
+        if f!= "":
             if self.tooth.isBacktooth and not (f in allowed.backToothCodes):
-                result=False
-            if not self.tooth.isBacktooth and not (f in allowed.frontToothCodes):
-                result=False
+                allowedCode = False
+            if not self.tooth.isBacktooth and \
+            not (f in allowed.frontToothCodes):
+                allowedCode = False
             if f in allowed.treatment_only:
-                result=True
-        if not result:
-            message="'%s' is not recognised - do you want to accept anyway?"%f
-            input=QtGui.QMessageBox.question(self,"Confirm",message,QtGui.QMessageBox.No,QtGui.QMessageBox.Yes) 
-            if input==QtGui.QMessageBox.Yes:
-                result=True
+                allowedCode = True
+        if not allowedCode:
+            message = '''"%s" is not recognised <br />
+            do you want to accept anyway?'''% f
+            input = QtGui.QMessageBox.question(self, "Confirm", message, 
+            QtGui.QMessageBox.No,QtGui.QMessageBox.Yes) 
+
+            if input == QtGui.QMessageBox.Yes:
+                allowedCode = True
             else:
-                result=False
-        return result
+                allowedCode = False
+        return allowedCode
         
     def additional(self):
-        existing=str(self.lineEdit.text().toAscii())
+        existing = str(self.lineEdit.text().toAscii())
         if ":" in existing:
-            colonPos=existing.rindex(":")
-            keep=existing[:colonPos]
-            currentFill=existing[colonPos+1:]
+            colonPos =existing.rindex(":")
+            keep = existing[:colonPos]
+            currentFill = existing[colonPos+1:]
         else:
-            currentFill=existing
-        if currentFill=="":
+            currentFill = existing
+        if currentFill == "":
             return
         if self.checkProp(currentFill):
             self.lineEdit.setText(existing+":")
@@ -160,28 +166,30 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
             #self.finishedEdit()
             
     def updateSurfaces(self):
-        existing=str(self.lineEdit.text().toAscii())
+        existing = str(self.lineEdit.text().toAscii())
         if ":" in existing:                             #we have an existing filling/property in the tooth
-            colonPos=existing.rindex(":")
-            keep=existing[:colonPos+1]
-            currentFill=existing[colonPos:]
+            colonPos = existing.rindex(":")
+            keep = existing[:colonPos+1]
+            currentFill = existing[colonPos:]
         else:                                           #we don't
-            keep=""
-            currentFill=existing
+            keep = ""
+            currentFill = existing
         if "," in currentFill:                          #we have a material
-            split=currentFill.split(",")
-            mat=","+split[1]
-            currentFill=self.tooth.filledSurfaces+mat
+            split = currentFill.split(",")
+            mat = "," + split[1]
+            currentFill = self.tooth.filledSurfaces+mat
         elif "/" in currentFill:                        #we have a lab item
-            split=currentFill.split("/")
-            mat=split[0]+"/"
-            currentFill=mat+self.tooth.filledSurfaces
+            split = currentFill.split("/")
+            mat = split[0]+"/"
+            currentFill = mat+self.tooth.filledSurfaces
         else:                                           #virgin tooth
-            currentFill=self.tooth.filledSurfaces
+            currentFill = self.tooth.filledSurfaces
         self.lineEdit.setText(keep+currentFill)
+    
     def changeFillColour(self,arg):
         self.tooth.fillcolour=arg
         self.tooth.update()
+
     def plasticMaterial(self,arg):
         existing=str(self.lineEdit.text().toAscii())
         if ":" in existing:
@@ -202,6 +210,7 @@ class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
         else:
             currentFill+=","+arg
         self.lineEdit.setText(keep+currentFill)
+        
     def labMaterial(self,arg):
         existing=str(self.lineEdit.text().toAscii())
         if ":" in existing:

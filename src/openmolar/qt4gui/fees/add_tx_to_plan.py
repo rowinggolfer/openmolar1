@@ -118,14 +118,14 @@ def chartAdd(parent, tooth, properties):
     #-- user enters UR1 RT P,CO
 
     #-- what is the current item in ur1pl?
-    existing = parent.pt.__dict__[tooth + "pl"]  #parent.selectedChartWidget]
+    existing = parent.pt.__dict__[tooth + "pl"]
 
     parent.pt.__dict__[tooth + "pl"] = properties
     #--update the patient!!
     parent.ui.planChartWidget.setToothProps(tooth, properties)
 
     #-- new items are input - existing.
-    #--split our string into a list of treatments.
+    #-- split our string into a list of treatments.
     #-- so UR1 RT P,CO -> [("UR1","RT"),("UR1","P,CO")]
     #-- this also separates off any postsetc..
     #-- and bridge brackets

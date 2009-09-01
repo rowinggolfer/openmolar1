@@ -3379,29 +3379,36 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.signals_history()
 
     def signals_miscbuttons(self):
-        
+        '''
+        connect the signals from various buttons which do not 
+        belong to any other function
+        '''
         QtCore.QObject.connect(self.ui.charge_pushButton,
         QtCore.SIGNAL("clicked()"), self.charge_pushButtonClicked)
         
-        
         QtCore.QObject.connect(self.ui.saveButton,
-                        QtCore.SIGNAL("clicked()"), self.okToLeaveRecord)
+        QtCore.SIGNAL("clicked()"), self.okToLeaveRecord)
         
         QtCore.QObject.connect(self.ui.exampushButton,
         QtCore.SIGNAL("clicked()"), self.showExamDialog)
+        
         QtCore.QObject.connect(self.ui.examTxpushButton,
         QtCore.SIGNAL("clicked()"), self.showExamDialog)
 
         QtCore.QObject.connect(self.ui.hygWizard_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.showHygDialog)
+        QtCore.SIGNAL("clicked()"), self.showHygDialog)
+        
         QtCore.QObject.connect(self.ui.newBPE_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
+        QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
+        
         QtCore.QObject.connect(self.ui.medNotes_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.showMedNotes)
+        QtCore.SIGNAL("clicked()"), self.showMedNotes)
+
         QtCore.QObject.connect(self.ui.phraseBook_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.phraseBookDialog)
+        QtCore.SIGNAL("clicked()"), self.phraseBookDialog)
+
         QtCore.QObject.connect(self.ui.memos_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.newCustomMemo)
+        QtCore.SIGNAL("clicked()"), self.newCustomMemo)
 
     def signals_admin(self):
         #admin page
@@ -3433,27 +3440,39 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                         QtCore.SIGNAL("clicked()"), self.printrecall)
         QtCore.QObject.connect(self.ui.takePayment_pushButton,
         QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
+    
     def signals_reception(self):
-        #admin summary widgets
+        '''
+        a function to connect all the receptionists buttons
+        '''
         QtCore.QObject.connect(self.ui.apptWizard_pushButton,
         QtCore.SIGNAL("clicked()"), self.apptWizard_pushButton_clicked)        
+
         QtCore.QObject.connect(self.ui.newAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.newAppt_pushButton_clicked)
+
         QtCore.QObject.connect(self.ui.makeAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.makeApptButton_clicked)
+        
         QtCore.QObject.connect(self.ui.clearAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.clearApptButton_clicked)
+
         QtCore.QObject.connect(self.ui.modifyAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.modifyAppt_clicked)
+
         QtCore.QObject.connect(self.ui.findAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.findApptButton_clicked)
+
         QtCore.QObject.connect(self.ui.printAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.printApptCard_clicked)
+
         QtCore.QObject.connect(self.ui.printGP17_pushButton,
         QtCore.SIGNAL("clicked()"), self.printGP17_clicked)
     
     def signals_printing(self):
-        #printing buttons
+        '''
+        connect buttons which print stuff
+        '''
         QtCore.QObject.connect(self.ui.receiptPrintButton,
         QtCore.SIGNAL("clicked()"), self.printDupReceipt)
         
@@ -3710,6 +3729,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                                QtCore.SIGNAL("completed"), self.editCompleted)
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                         QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
+                        
     def signals_editPatient(self):
         #edit page
         QtCore.QObject.connect(self.ui.editMore_pushButton,

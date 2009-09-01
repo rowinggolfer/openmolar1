@@ -166,6 +166,8 @@ def getCode(tooth,arg):
             return getKeyCode("Rt_lpm")
         if re.match("..[123]",tooth):
             return getKeyCode("Rt_inc_can")
+        if re.match("..[ABCDE]",tooth):
+            return getKeyCode("dec_rct")            
         else:
             return getKeyCode("Rt_molar")
 
@@ -177,6 +179,9 @@ def getCode(tooth,arg):
 
     if re.match("BR/CR,..$",arg):
         return getKeyCode(arg)
+
+    if re.match("..[ABCDE]", tooth):
+        return getKeyCode("dec_fill")            
 
     if re.match(".*GL.*",arg):
         return getKeyCode("Glfill")
