@@ -26,237 +26,105 @@ from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import Ui_main, colours
 
 #-- fee modules which interact with the gui
-from openmolar.qt4gui.fees import fees_module, course_module, examdialog, \
-perio_tx_dialog, add_tx_to_plan, complete_tx, manipulate_tx_plan, \
-daybook_module
+from openmolar.qt4gui.fees import fees_module
+from openmolar.qt4gui.fees import course_module
+from openmolar.qt4gui.fees import examdialog
+from openmolar.qt4gui.fees import perio_tx_dialog
+from openmolar.qt4gui.fees import add_tx_to_plan
+from openmolar.qt4gui.fees import complete_tx
+from openmolar.qt4gui.fees import manipulate_tx_plan
+from openmolar.qt4gui.fees import daybook_module
 
-from openmolar.qt4gui import forum_gui_module, contract_gui_module
+from openmolar.qt4gui import forum_gui_module
+from openmolar.qt4gui import contract_gui_module
+
 from openmolar.qt4gui.appointment_gui_modules import appt_gui_module
 
 #--dialogs made with designer
-from openmolar.qt4gui.dialogs import Ui_patient_finder, Ui_select_patient, \
-Ui_enter_letter_text, Ui_phraseBook, Ui_changeDatabase, Ui_related_patients, \
-Ui_options, Ui_surgeryNumber, Ui_daylist_print, Ui_confirmDentist, \
-Ui_showMemo
+from openmolar.qt4gui.dialogs import Ui_patient_finder
+from openmolar.qt4gui.dialogs import Ui_select_patient
+from openmolar.qt4gui.dialogs import Ui_enter_letter_text
+from openmolar.qt4gui.dialogs import Ui_phraseBook
+from openmolar.qt4gui.dialogs import Ui_changeDatabase
+from openmolar.qt4gui.dialogs import Ui_related_patients
+from openmolar.qt4gui.dialogs import Ui_options
+from openmolar.qt4gui.dialogs import Ui_surgeryNumber
+from openmolar.qt4gui.dialogs import Ui_daylist_print
+from openmolar.qt4gui.dialogs import Ui_confirmDentist
+from openmolar.qt4gui.dialogs import Ui_showMemo
 
 #--custom dialog modules
-from openmolar.qt4gui.dialogs import recall_app, medNotes, \
-saveDiscardCancel, newBPE, addToothTreat, saveMemo, permissions
+from openmolar.qt4gui.dialogs import recall_app
+from openmolar.qt4gui.dialogs import medNotes
+from openmolar.qt4gui.dialogs import saveDiscardCancel
+from openmolar.qt4gui.dialogs import newBPE
+from openmolar.qt4gui.dialogs import addToothTreat
+from openmolar.qt4gui.dialogs import saveMemo
+from openmolar.qt4gui.dialogs import permissions
 
+#secondary applications
 from openmolar.qt4gui.tools import fee_adjuster
 
-#--database modules (do not even think of making db queries from ANYWHERE ELSE)
-from openmolar.dbtools import daybook, patient_write_changes, recall, \
-cashbook, writeNewPatient, patient_class, search, appointments, \
-calldurr, docsprinted, memos, nhs_claims, \
-daybookHistory, paymentHistory, courseHistory, estimatesHistory
+#--database modules 
+#--(do not even think of making db queries from ANYWHERE ELSE)
+from openmolar.dbtools import daybook
+from openmolar.dbtools import patient_write_changes
+from openmolar.dbtools import recall
+from openmolar.dbtools import cashbook
+from openmolar.dbtools import writeNewPatient
+from openmolar.dbtools import patient_class
+from openmolar.dbtools import search
+from openmolar.dbtools import appointments
+from openmolar.dbtools import calldurr
+from openmolar.dbtools import docsprinted
+from openmolar.dbtools import memos
+from openmolar.dbtools import nhs_claims
+from openmolar.dbtools import daybookHistory
+from openmolar.dbtools import paymentHistory
+from openmolar.dbtools import courseHistory
+from openmolar.dbtools import estimatesHistory
 
 #--modules which act upon the pt class type (and subclasses)
-from openmolar.ptModules import patientDetails, notes, plan, referral, \
-standardletter, debug_html, estimates
+from openmolar.ptModules import patientDetails
+from openmolar.ptModules import notes
+from openmolar.ptModules import plan
+from openmolar.ptModules import referral
+from openmolar.ptModules import standardletter
+from openmolar.ptModules import debug_html
+from openmolar.ptModules import estimates
 
 #--modules which use qprinter
-from openmolar.qt4gui.printing import receiptPrint, notesPrint, chartPrint, \
-bookprint, letterprint, recallprint, daylistprint, multiDayListPrint, \
-accountPrint, estimatePrint, GP17, bookprint
+from openmolar.qt4gui.printing import receiptPrint
+from openmolar.qt4gui.printing import notesPrint
+from openmolar.qt4gui.printing import chartPrint
+from openmolar.qt4gui.printing import bookprint
+from openmolar.qt4gui.printing import letterprint
+from openmolar.qt4gui.printing import recallprint
+from openmolar.qt4gui.printing import daylistprint
+from openmolar.qt4gui.printing import multiDayListPrint
+from openmolar.qt4gui.printing import accountPrint
+from openmolar.qt4gui.printing import estimatePrint
+from openmolar.qt4gui.printing import GP17
+from openmolar.qt4gui.printing import  bookprint
 
 #--custom widgets
-from openmolar.qt4gui.customwidgets import chartwidget, appointmentwidget, \
-toothProps, appointment_overviewwidget, toothProps, perioToothProps, \
-perioChartWidget, estimateWidget, aptOVcontrol
+from openmolar.qt4gui.customwidgets import chartwidget
+from openmolar.qt4gui.customwidgets import appointmentwidget
+from openmolar.qt4gui.customwidgets import toothProps
+from openmolar.qt4gui.customwidgets import appointment_overviewwidget
+from openmolar.qt4gui.customwidgets import toothProps
+from openmolar.qt4gui.customwidgets import perioToothProps
+from openmolar.qt4gui.customwidgets import perioChartWidget
+from openmolar.qt4gui.customwidgets import estimateWidget
+from openmolar.qt4gui.customwidgets import aptOVcontrol
 
+
+###### TODO - refactor all this into one big class....
 #--the main gui class inherits from a lot of smaller classes to make the \
 #--code more manageable. (supposedly!)
 #--watch out for namespace clashes!!!!!
 
     
-class customWidgets():
-    def addCustomWidgets(self):
-        print "adding custom widgets"
-        ##statusbar
-        
-        self.ui.operatorLabel = QtGui.QLabel()
-        self.ui.statusbar.addPermanentWidget(self.ui.operatorLabel)
-
-        ##summary chart
-        self.ui.summaryChartWidget=chartwidget.chartWidget()
-        self.ui.summaryChartWidget.setShowSelected(False)
-        hlayout=QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
-        hlayout.addWidget(self.ui.summaryChartWidget)
-        ##perio chart
-        self.ui.perioChartWidget=chartwidget.chartWidget()
-        hlayout=QtGui.QHBoxLayout(self.ui.perioChart_frame)
-        hlayout.addWidget(self.ui.perioChartWidget)
-
-        ##static
-        self.ui.staticChartWidget=chartwidget.chartWidget()
-        hlayout=QtGui.QHBoxLayout(self.ui.static_groupBox)
-        hlayout.addWidget(self.ui.staticChartWidget)
-        ##plan
-        self.ui.planChartWidget=chartwidget.chartWidget()
-        self.ui.planChartWidget.isStaticChart=False
-        self.ui.planChartWidget.isPlanChart=True
-        hlayout=QtGui.QHBoxLayout(self.ui.plan_groupBox)
-        hlayout.addWidget(self.ui.planChartWidget)
-        ##completed
-        self.ui.completedChartWidget=chartwidget.chartWidget()
-        self.ui.completedChartWidget.isStaticChart=False
-        hlayout=QtGui.QHBoxLayout(self.ui.completed_groupBox)
-        hlayout.addWidget(self.ui.completedChartWidget)
-
-        ##TOOTHPROPS
-        self.ui.toothPropsWidget=toothProps.tpWidget()
-        hlayout=QtGui.QHBoxLayout(self.ui.toothProps_frame)
-        hlayout.setMargin(0)
-        hlayout.addWidget(self.ui.toothPropsWidget)
-        ##PERIOPROPS
-        self.ui.perioToothPropsWidget=perioToothProps.tpWidget()
-        hlayout=QtGui.QHBoxLayout(self.ui.perioToothProps_frame)
-        hlayout.addWidget(self.ui.perioToothPropsWidget)
-
-        self.ui.perioChartWidgets=[]
-        self.ui.perioGroupBoxes=[]
-        hlayout=QtGui.QVBoxLayout(self.ui.perioChartData_frame)
-        hlayout.setMargin(2)
-        for i in range(8):
-            gbtitle=("Recession", "Pocketing", "Plaque", "Bleeding", "Other",
-            "Suppuration", "Furcation", "Mobility")[i]
-            periogb=QtGui.QGroupBox(gbtitle)
-            periogb.setCheckable(True)
-            periogb.setChecked(True)
-            #periogb.setMinimumSize(0, 120)
-            pchart=perioChartWidget.chartWidget()
-            pchart.type=gbtitle
-            gblayout=QtGui.QVBoxLayout(periogb)
-            gblayout.setMargin(2)
-            gblayout.addWidget(pchart)
-            hlayout.addWidget(periogb)
-
-            #make these widgets accessible
-            self.ui.perioGroupBoxes.append(periogb)
-            self.ui.perioChartWidgets.append(pchart)
-        ##############################add more here!!!!#####
-        ##appt books
-        self.ui.apptBookWidgets=[]
-        self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900"))
-        self.ui.appt1scrollArea.setWidget(self.ui.apptBookWidgets[0])
-        self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900"))
-        self.ui.appt2scrollArea.setWidget(self.ui.apptBookWidgets[1])
-        self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900"))
-        self.ui.appt3scrollArea.setWidget(self.ui.apptBookWidgets[2])
-
-        self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900"))
-        self.ui.appt4scrollArea.setWidget(self.ui.apptBookWidgets[3])
-
-        ##aptOV
-        self.ui.apptoverviews=[]
-
-        for day in range(5):
-            if day == 4: #friday
-                self.ui.apptoverviews.append(appointment_overviewwidget.
-                            appointmentOverviewWidget(day, "0800", "1900", 15, 2))
-            elif day == 1: #Tuesday:
-                self.ui.apptoverviews.append(appointment_overviewwidget.
-                            appointmentOverviewWidget(day, "0800", "1900", 15, 2))
-            else:
-                self.ui.apptoverviews.append(appointment_overviewwidget.\
-                appointmentOverviewWidget(day, "0800", "1900", 15, 2))
-
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[0])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame2)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[1])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame3)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[2])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame4)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[3])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame5)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[4])
-
-        self.ui.apptoverviewControls=[]
-
-        for widg in (self.ui.day1_frame, self.ui.day2_frame,
-        self.ui.day3_frame, self.ui.day4_frame, self.ui.day5_frame):
-            hlayout=QtGui.QHBoxLayout(widg)
-            hlayout.setMargin(0)
-            control=aptOVcontrol.control()
-            self.ui.apptoverviewControls.append(control)
-            hlayout.addWidget(control)
-
-        self.ui.aptOVdent_checkBoxes={}
-        self.ui.aptOVhyg_checkBoxes={}
-
-        #vlayout=QtGui.QVBoxLayout(self.ui.aptOVdents_frame)
-        glayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
-        glayout.setSpacing(0)
-        self.ui.aptOV_everybody_checkBox = QtGui.QCheckBox(
-                                            QtCore.QString("All Clinicians"))
-        self.ui.aptOV_everybody_checkBox.setChecked(True)
-        row=0
-        glayout.addWidget(self.ui.aptOV_everybody_checkBox, row, 0, 1, 2)
-
-        hl=QtGui.QFrame(self.ui.aptOVdents_frame)
-        #--Draw a line here.... but room doesn;t permit
-        hl.setFrameShape(QtGui.QFrame.HLine)
-        hl.setFrameShadow(QtGui.QFrame.Sunken)
-        row+=1
-        glayout.addWidget(hl, row, 0, 1, 2)
-
-        self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
-                                            QtCore.QString("All Dentists"))
-        self.ui.aptOV_alldentscheckBox.setChecked(True)
-        row+=1
-        glayout.addWidget(self.ui.aptOV_alldentscheckBox, row, 0, 1, 2)
-        for dent in localsettings.activedents:
-            cb=QtGui.QCheckBox(QtCore.QString(dent))
-            cb.setChecked(True)
-            self.ui.aptOVdent_checkBoxes[localsettings.apptix[dent]]=cb
-            row+=1
-            glayout.addWidget(cb, row, 1, 1, 1)
-
-        self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox(
-                                        QtCore.QString("All Hygenists"))
-        self.ui.aptOV_allhygscheckBox.setChecked(True)
-        row+=1
-        glayout.addWidget(self.ui.aptOV_allhygscheckBox, row, 0, 1, 2)
-        for hyg in localsettings.activehygs:
-            cb=QtGui.QCheckBox(QtCore.QString(hyg))
-            cb.setChecked(True)
-            self.ui.aptOVhyg_checkBoxes[localsettings.apptix[hyg]]=cb
-            row+=1
-            glayout.addWidget(cb, row, 1, 1, 1)
-
-        #--updates the current time in appointment books
-        self.ui.referralLettersComboBox.clear()
-        #--start a thread for the triangle on the appointment book
-        self.thread1=threading.Thread(target=self.apptTicker)
-        self.thread1.start()
-
-        self.thread2=threading.Thread(target = self.checkForNewForumPosts)
-        self.thread2.start()
-
-        self.enableEdit(False)
-        for desc in referral.getDescriptions():
-            s=QtCore.QString(desc)
-            self.ui.referralLettersComboBox.addItem(s)
-
-        #-- add a header to the estimates page
-        self.ui.estWidget=estimateWidget.estWidget()
-        self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
-
-
-        #--history
-        self.addHistoryMenu()
-
 class chartsClass():
 
     def navigateCharts(self, e):
@@ -297,8 +165,9 @@ class chartsClass():
                 if x != 0:
                     x -= 1
         widg.setSelected(x, y)
+    
     def chart_navigate(self):
-        print "chart_navigate",
+        print "chart_navigate (user using the TABLE!!)",
         '''this is called when the charts TABLE is navigated'''
         userPerformed=self.ui.chartsTableWidget.isVisible()
         if userPerformed:
@@ -317,13 +186,15 @@ class chartsClass():
             self.ui.staticChartWidget.update()
 
     def updateCharts(self, arg):
-        '''called by a signal from the toothprops widget -
-        args are the new tooth properties eg modbl,co'''
-        print "update charts arg =", arg
-        tooth=str(self.ui.chartsTableWidget.item(
-                            self.ui.chartsTableWidget.currentRow(), 0).text())
+        '''
+        called by a signal from the toothprops widget -
+        args are the new tooth properties eg modbl,co
+        '''
+        tooth = str(self.ui.chartsTableWidget.item(
+        self.ui.chartsTableWidget.currentRow(), 0).text())
+        
         if self.selectedChartWidget == "st":
-            self.pt.__dict__[tooth+self.selectedChartWidget]=arg
+            self.pt.__dict__[tooth + self.selectedChartWidget] = arg
             #--update the patient!!
             self.ui.staticChartWidget.setToothProps(tooth, arg)
             self.ui.summaryChartWidget.setToothProps(tooth, arg)
@@ -334,11 +205,11 @@ class chartsClass():
             self.toothTreatAdd(tooth, arg)
         elif self.selectedChartWidget == "cmp":
             self.advise(
-            "for the moment, please enter treatment into plan first, "+
+            "for the moment, please enter treatment into plan first, " +
             "then complete it.", 1)
         else:
-            self.advise("unable to update chart - this shouldn't happen!!!", 2)
-            #--should never happen
+            self.advise("unable to update chart - this shouldn't happen!!!",
+            2) #--should NEVER happen
 
     def updateChartsAfterTreatment(self, tooth, newplan, newcompleted):
         self.ui.planChartWidget.setToothProps(tooth, newplan)
@@ -349,7 +220,7 @@ class chartsClass():
     def flipDeciduous(self):
         if self.selectedChartWidget == "st":
             selectedCells=self.ui.chartsTableWidget.selectedIndexes()
-            for cell in selectedCells:  #=self.ui.chartsTableWidget.currentRow()
+            for cell in selectedCells:
                 row=cell.row()
                 selectedTooth=str(
                             self.ui.chartsTableWidget.item(row, 0).text().toAscii())
@@ -364,29 +235,46 @@ class chartsClass():
         else:
             self.advise(
             "you need to be in the static chart to change tooth state", 1)
+    
     def static_chartNavigation(self, tstring):
-        '''called by the static chartwidget'''
+        '''
+        called by the static chartwidget
+        '''
         self.selectedChartWidget="st"
-
         self.chartNavigation(tstring)
+        
     def plan_chartNavigation(self, tstring):
-        '''called by the plan chartwidget'''
+        '''
+        called by the plan chartwidget
+        '''
         self.selectedChartWidget="pl"
         self.chartNavigation(tstring)
+
     def comp_chartNavigation(self, tstring):
-        '''called by the completed chartwidget'''
+        '''
+        called by the completed chartwidget
+        '''
         self.selectedChartWidget="cmp"
         self.chartNavigation(tstring)
+
     def editStatic(self):
-        '''called by the static button on the toothprops widget'''
+        '''
+        called by the static button on the toothprops widget
+        '''
         self.selectedChartWidget="st"
         self.chart_navigate()
+
     def editPlan(self):
-        '''called by the plan button on the toothprops widget'''
+        '''
+        called by the plan button on the toothprops widget
+        '''
         self.selectedChartWidget="pl"
         self.chart_navigate()
+
     def editCompleted(self):
-        '''called by the cmp button on the toothprops widget'''
+        '''
+        called by the cmp button on the toothprops widget
+        '''
         self.selectedChartWidget="cmp"
         self.chart_navigate()
 
@@ -1564,7 +1452,7 @@ class pageHandlingClass():
                     self.advise(
                     "unknown course dentist - please correct this", 2)
 
-class openmolarGui(QtGui.QMainWindow, customWidgets, chartsClass,
+class openmolarGui(QtGui.QMainWindow, chartsClass,
 pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
     def __init__(self):
@@ -1635,6 +1523,199 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         self.advise('''<p>%s</p><p>%s</p>'''%(localsettings.about,
         localsettings.license), 1)
+
+    def addCustomWidgets(self):
+        '''
+        add custum widgets to the gui
+        '''
+        #-statusbar
+        self.ui.operatorLabel = QtGui.QLabel()
+        self.ui.statusbar.addPermanentWidget(self.ui.operatorLabel)
+
+        #-summary chart
+        self.ui.summaryChartWidget=chartwidget.chartWidget()
+        self.ui.summaryChartWidget.setShowSelected(False)
+        hlayout=QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
+        hlayout.addWidget(self.ui.summaryChartWidget)
+        
+        #-perio chart
+        self.ui.perioChartWidget=chartwidget.chartWidget()
+        hlayout=QtGui.QHBoxLayout(self.ui.perioChart_frame)
+        hlayout.addWidget(self.ui.perioChartWidget)
+
+        #-static chart
+        self.ui.staticChartWidget=chartwidget.chartWidget()
+        hlayout=QtGui.QHBoxLayout(self.ui.static_groupBox)
+        hlayout.addWidget(self.ui.staticChartWidget)
+        
+        #-plan chart
+        self.ui.planChartWidget=chartwidget.chartWidget()
+        self.ui.planChartWidget.isStaticChart=False
+        self.ui.planChartWidget.isPlanChart=True
+        hlayout=QtGui.QHBoxLayout(self.ui.plan_groupBox)
+        hlayout.addWidget(self.ui.planChartWidget)
+
+        #-completed chart
+        self.ui.completedChartWidget=chartwidget.chartWidget()
+        self.ui.completedChartWidget.isStaticChart=False
+        hlayout=QtGui.QHBoxLayout(self.ui.completed_groupBox)
+        hlayout.addWidget(self.ui.completedChartWidget)
+
+        #-TOOTHPROPS (right hand side on the charts page)
+        self.ui.toothPropsWidget=toothProps.tpWidget()
+        hlayout=QtGui.QHBoxLayout(self.ui.toothProps_frame)
+        hlayout.setMargin(0)
+        hlayout.addWidget(self.ui.toothPropsWidget)
+        
+        #-PERIOPROPS
+        self.ui.perioToothPropsWidget=perioToothProps.tpWidget()
+        hlayout=QtGui.QHBoxLayout(self.ui.perioToothProps_frame)
+        hlayout.addWidget(self.ui.perioToothPropsWidget)
+
+        self.ui.perioChartWidgets=[]
+        self.ui.perioGroupBoxes=[]
+        hlayout=QtGui.QVBoxLayout(self.ui.perioChartData_frame)
+        hlayout.setMargin(2)
+        for i in range(8):
+            gbtitle=("Recession", "Pocketing", "Plaque", "Bleeding", 
+            "Other", "Suppuration", "Furcation", "Mobility")[i]
+            periogb=QtGui.QGroupBox(gbtitle)
+            periogb.setCheckable(True)
+            periogb.setChecked(True)
+            #periogb.setMinimumSize(0, 120)
+            pchart=perioChartWidget.chartWidget()
+            pchart.type=gbtitle
+            gblayout=QtGui.QVBoxLayout(periogb)
+            gblayout.setMargin(2)
+            gblayout.addWidget(pchart)
+            hlayout.addWidget(periogb)
+
+            #make these widgets accessible
+            self.ui.perioGroupBoxes.append(periogb)
+            self.ui.perioChartWidgets.append(pchart)
+        
+        ##appt books
+        ##TODO - This should be done during runtime... only making the
+        ##widgets when necessary??
+        ##frequently don't need 4.
+        self.ui.apptBookWidgets=[]
+        self.ui.apptBookWidgets.append(appointmentwidget.
+                                       appointmentWidget("0800", "1900"))
+        self.ui.appt1scrollArea.setWidget(self.ui.apptBookWidgets[0])
+        self.ui.apptBookWidgets.append(appointmentwidget.
+                                       appointmentWidget("0800", "1900"))
+        self.ui.appt2scrollArea.setWidget(self.ui.apptBookWidgets[1])
+        self.ui.apptBookWidgets.append(appointmentwidget.
+                                       appointmentWidget("0800", "1900"))
+        self.ui.appt3scrollArea.setWidget(self.ui.apptBookWidgets[2])
+        self.ui.apptBookWidgets.append(appointmentwidget.
+                                       appointmentWidget("0800", "1900"))
+        self.ui.appt4scrollArea.setWidget(self.ui.apptBookWidgets[3])
+
+        #-appointment OVerview widget
+        self.ui.apptoverviews=[]
+
+        for day in range(5):
+            if day == 4: #friday
+                self.ui.apptoverviews.append(appointment_overviewwidget.
+                            appointmentOverviewWidget(day, "0800", "1900", 15, 2))
+            elif day == 1: #Tuesday:
+                self.ui.apptoverviews.append(appointment_overviewwidget.
+                            appointmentOverviewWidget(day, "0800", "1900", 15, 2))
+            else:
+                self.ui.apptoverviews.append(appointment_overviewwidget.\
+                appointmentOverviewWidget(day, "0800", "1900", 15, 2))
+
+        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
+        hlayout.setMargin(2)
+        hlayout.addWidget(self.ui.apptoverviews[0])
+        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame2)
+        hlayout.setMargin(2)
+        hlayout.addWidget(self.ui.apptoverviews[1])
+        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame3)
+        hlayout.setMargin(2)
+        hlayout.addWidget(self.ui.apptoverviews[2])
+        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame4)
+        hlayout.setMargin(2)
+        hlayout.addWidget(self.ui.apptoverviews[3])
+        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame5)
+        hlayout.setMargin(2)
+        hlayout.addWidget(self.ui.apptoverviews[4])
+
+        self.ui.apptoverviewControls=[]
+
+        for widg in (self.ui.day1_frame, self.ui.day2_frame,
+        self.ui.day3_frame, self.ui.day4_frame, self.ui.day5_frame):
+            hlayout=QtGui.QHBoxLayout(widg)
+            hlayout.setMargin(0)
+            control=aptOVcontrol.control()
+            self.ui.apptoverviewControls.append(control)
+            hlayout.addWidget(control)
+
+        self.ui.aptOVdent_checkBoxes={}
+        self.ui.aptOVhyg_checkBoxes={}
+
+        #vlayout=QtGui.QVBoxLayout(self.ui.aptOVdents_frame)
+        glayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
+        glayout.setSpacing(0)
+        self.ui.aptOV_everybody_checkBox = QtGui.QCheckBox(
+                                            QtCore.QString("All Clinicians"))
+        self.ui.aptOV_everybody_checkBox.setChecked(True)
+        row=0
+        glayout.addWidget(self.ui.aptOV_everybody_checkBox, row, 0, 1, 2)
+
+        hl=QtGui.QFrame(self.ui.aptOVdents_frame)
+        #--Draw a line here.... but room doesn;t permit
+        hl.setFrameShape(QtGui.QFrame.HLine)
+        hl.setFrameShadow(QtGui.QFrame.Sunken)
+        row+=1
+        glayout.addWidget(hl, row, 0, 1, 2)
+
+        self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
+                                            QtCore.QString("All Dentists"))
+        self.ui.aptOV_alldentscheckBox.setChecked(True)
+        row+=1
+        glayout.addWidget(self.ui.aptOV_alldentscheckBox, row, 0, 1, 2)
+        for dent in localsettings.activedents:
+            cb=QtGui.QCheckBox(QtCore.QString(dent))
+            cb.setChecked(True)
+            self.ui.aptOVdent_checkBoxes[localsettings.apptix[dent]]=cb
+            row+=1
+            glayout.addWidget(cb, row, 1, 1, 1)
+
+        self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox(
+                                        QtCore.QString("All Hygenists"))
+        self.ui.aptOV_allhygscheckBox.setChecked(True)
+        row+=1
+        glayout.addWidget(self.ui.aptOV_allhygscheckBox, row, 0, 1, 2)
+        for hyg in localsettings.activehygs:
+            cb=QtGui.QCheckBox(QtCore.QString(hyg))
+            cb.setChecked(True)
+            self.ui.aptOVhyg_checkBoxes[localsettings.apptix[hyg]]=cb
+            row+=1
+            glayout.addWidget(cb, row, 1, 1, 1)
+
+        #--updates the current time in appointment books
+        self.ui.referralLettersComboBox.clear()
+        #--start a thread for the triangle on the appointment book
+        self.thread1=threading.Thread(target=self.apptTicker)
+        self.thread1.start()
+
+        self.thread2=threading.Thread(target = self.checkForNewForumPosts)
+        self.thread2.start()
+
+        self.enableEdit(False)
+        for desc in referral.getDescriptions():
+            s=QtCore.QString(desc)
+            self.ui.referralLettersComboBox.addItem(s)
+
+        #-- add a header to the estimates page
+        self.ui.estWidget=estimateWidget.estWidget()
+        self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
+
+
+        #--history
+        self.addHistoryMenu()
 
     def setClinician(self):
         self.advise("To change practitioner, please login again", 1)
@@ -3055,6 +3136,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
     def planChartWidget_completed(self,arg):
         '''
         called when double clicking on a tooth in the plan chart
+        the arg is a list - ["ul5","MOD","RT",]
         '''
         if not self.pt.underTreatment:
             self.advise("course has been closed",1)

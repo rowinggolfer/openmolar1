@@ -35,27 +35,36 @@ def determine_path ():
 
 wkdir = determine_path()
 
+referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
+appt_shortcut_file = os.path.join(wkdir, "resources", 
+"appointment_shortcuts.xml")
+stylesheet = os.path.join(wkdir, "resources", "style.css")
+resources_path = os.path.join(wkdir, "resources")
+   
 if "win" in sys.platform:
+    print "windows settings"
     #-- sorry about this... but cross platform is a goal :(
     global_cflocation='C:\\Program Files\\openmolar\\openmolar.conf'
     localFileDirectory=os.path.join(os.environ.get("HOMEPATH"),".openmolar")
     pdfProg="C:\\ProgramFiles\\SumatraPDF\\SumatraPDF.exe"
-
-elif "linux" in sys.platform:
-    #-- linux hurrah!!
-    global_cflocation='/etc/openmolar/openmolar.conf'
-    localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
-    pdfProg="evince"
-
+    #-- this next line is necessary because I have to resort to relative
+    #-- imports for the css stuff eg... ../resources/style.css
+    #-- on linux, the root is always /  on windows... ??
+    os.chdir(wkdir)
+    stylesheet = ("resources/style.css")
+    
 else:
-    print "unknown system platform - defaulting to settings in /etc/openmolar"
+    if "linux" in sys.platform:
+        print "linux settings"
+    else:
+        print "unknown system platform (mac?) - defaulting to linux settings"
     global_cflocation='/etc/openmolar/openmolar.conf'
     localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
     pdfProg="evince"
 
 cflocation=os.path.join(localFileDirectory,"openmolar.conf")    
 
-#these are updated if correct password is given
+#this is updated if correct password is given
 successful_login = False
 
 #-- these permissions are for certain admin duties.
@@ -118,6 +127,7 @@ activehygs = []
 clinicianNo = 0
 clinicianInits = ""
 
+#these times are for the boundaries of the widgets...
 earliestStart = datetime.time(8,0)
 latestFinish = datetime.time(20,0)
 
@@ -134,13 +144,6 @@ apptix = {}
 #--eg app[13]="jj"
 
 apptix_reverse = {}
-
-#contains a link to the xml document with the referral info in it -
-#--this data will eventually be in the mysql?
-referralfile = ""
-appt_shortcut_file = ""
-stylesheet = " resources/style.css"
-resources_path = ""
 
 #-- set a latest possible date for appointments to be made 
 #--(necessary if a very long appointment goes right on through)
@@ -402,9 +405,9 @@ def updateLocalSettings(setting, value):
     
 def initiate(debug = False):
     print "initiating settings"
-    global referralfile, stylesheet, fees, message, dentDict, privateFees,\
+    global fees, message, dentDict, privateFees,\
     nhsFees, allowed_logins, ops, ops_reverse, activedents, activehygs, \
-    apptix, apptix_reverse, appt_shortcut_file, resources_path #,itemCodes
+    apptix, apptix_reverse 
     from openmolar.connect import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
@@ -541,12 +544,6 @@ def initiate(debug = False):
 
     getLocalSettings()
 
-    referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
-    appt_shortcut_file = os.path.join(wkdir, "resources", 
-    "appointment_shortcuts.xml")
-    stylesheet = os.path.join(wkdir, "resources", "style.css")
-    resources_path = os.path.join(wkdir, "resources")
-    
     message='''<html><head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head><body><div align="center">

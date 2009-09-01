@@ -138,7 +138,9 @@ def chartAdd(parent, tooth, properties):
         if item in updatedItems:
             updatedItems.remove(item)
         else:
-            parent.pt.removeFromEstimate(item[0], item[1])
+            #--tooth may be deciduous
+            toothname = parent.pt.chartgrid.get(item[0])
+            parent.pt.removeFromEstimate(toothname, item[1])
             parent.advise("removing %s from estimate"% item[1])
     #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
     for item in updatedItems:
@@ -148,7 +150,11 @@ def chartAdd(parent, tooth, properties):
         #-- if this is incorrect... est will be crap.
         #-- the function returns "4001" - unknown if it is confused by
         #-- the input.
-        itemcode = fee_keys.getCode(item[0], item[1])
+        
+        #--tooth may be deciduous
+        toothname = parent.pt.chartgrid.get(item[0])
+            
+        itemcode = fee_keys.getCode(toothname, item[1])
         ###############################################
         #--get a description (for the estimate)
         description = fee_keys.getDescription(itemcode)
@@ -156,7 +162,7 @@ def chartAdd(parent, tooth, properties):
         fee, ptfee = fee_keys.getItemFees(parent.pt, itemcode)
         #--add to estimate
         parent.pt.addToEstimate(1, itemcode, description, fee, ptfee,
-        parent.pt.dnt1, parent.pt.cset, "%s %s"% (item))
+        parent.pt.dnt1, parent.pt.cset, "%s %s"% (toothname, item[1]))
 
 def deleteTxItem(parent, pl_cmp, txtype):
     '''
@@ -191,7 +197,7 @@ def deleteTxItem(parent, pl_cmp, txtype):
                     parent.pt.__dict__[att + "cmp"] = completed
                 
                 #-- now update the charts
-                if re.findall("[ul][lr][1-8]", att):
+                if re.search("[ul][lr][1-8]", att):
                     parent.updateChartsAfterTreatment(att, plan, completed)
 
             parent.load_treatTrees()

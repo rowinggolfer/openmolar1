@@ -13,12 +13,12 @@ from openmolar.qt4gui.dialogs import Ui_completeTreatment
 from openmolar.settings import localsettings
 
 class treatment(Ui_completeTreatment.Ui_Dialog):
-    def __init__(self,dialog,dnt,items,amount,parent=None):
+    def __init__(self, dialog, dnt, items, amount, parent=None):
         self.setupUi(dialog)
-        self.dialog=dialog
-        practlist=localsettings.activedents+localsettings.activehygs
+        self.dialog = dialog
+        practlist = localsettings.activedents+localsettings.activehygs
         self.dnt_comboBox.addItems(practlist)
-        pos=practlist.index(dnt)
+        pos = practlist.index(dnt)
         self.dnt_comboBox.setCurrentIndex(pos)
         if amount:
             self.fee_doubleSpinBox.setValue(amount[0]/100)
@@ -27,15 +27,16 @@ class treatment(Ui_completeTreatment.Ui_Dialog):
             quote='''Fees Not found in estimate <br />
             raise a charge if appropriate'''
             QtGui.QMessageBox.information(self.dialog,"Advisory",quote)
-        self.items=items
+        #-- items is a list - ["ul5","MOD","RT",]
+        self.tooth = items[0].upper()
+        self.items = items[1:]
         self.showItems()
+    
     def showItems(self):
         self.checkBoxes=[]
         vlayout = QtGui.QVBoxLayout(self.frame)
-        for item in self.items:
-            type=item[0].replace("pl","")
-            treat=item[1]
-            readableItem="%s - %s"%(type.upper(),treat)
+        for treat in self.items:
+            readableItem="%s - %s"%(self.tooth, treat)
             cb=QtGui.QCheckBox(QtCore.QString(readableItem))
             cb.setChecked(True)
             self.checkBoxes.append(cb)

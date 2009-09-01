@@ -460,13 +460,18 @@ class estWidget(QtGui.QFrame):
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
 
+        self.expandAll = False
+
         self.estimate_layout = QtGui.QVBoxLayout(self)
         self.estimate_layout.setSpacing(0)
 
         header = QtGui.QWidget()
-        estHeader = Ui_estHeaderWidget.Ui_Form()
-        estHeader.setupUi(header)
+        self.estHeader = Ui_estHeaderWidget.Ui_Form()
+        self.estHeader.setupUi(header)
         self.estimate_layout.addWidget(header)
+
+        QtCore.QObject.connect(self.estHeader.expand_pushButton,
+        QtCore.SIGNAL("clicked()"), self.expandItems)
 
         footer = QtGui.QWidget()
         self.planFooter = Ui_estFooterWidget.Ui_Form()
@@ -539,10 +544,16 @@ class estWidget(QtGui.QFrame):
                 return True
 
     def setEstimate(self, ests, SPLIT_ALL=False):
+        self.expandAll = SPLIT_ALL
         self.ests = ests
         self.clear()
+        if self.expandAll:
+            self.estHeader.expand_pushButton.setText("Compress All")
+        else:
+            self.estHeader.expand_pushButton.setText("Expand All")
+        
         for item in self.ests:
-            if not SPLIT_ALL and self.findExistingItemWidget(item):
+            if not self.expandAll and self.findExistingItemWidget(item):
                 #-- try and match with existing items
                 print "added est to an existing widget item"
             else:
@@ -608,6 +619,12 @@ class estWidget(QtGui.QFrame):
             #        self.emit(QtCore.SIGNAL("deleteItem"), est)
 
             self.updateTotals()
+
+    def expandItems(self):
+        '''
+        user has clicked the expand button in the header
+        '''
+        self.setEstimate(self.ests, not self.expandAll)
 
 if __name__ == "__main__":
     def CatchAllSignals(arg=None):

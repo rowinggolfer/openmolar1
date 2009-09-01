@@ -153,6 +153,8 @@ def run():
 
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....
+    print "starting openMolar.... using main.py as __main__"
+    
     def determine_path ():
         """Borrowed from wxglade.py"""
         try:
@@ -166,7 +168,6 @@ if __name__ == "__main__":
             print "There is no __file__ variable. Please contact the author."
             sys.exit ()
             
-    print "starting openMolar"
     wkdir = determine_path()
     sys.path.append(os.path.dirname(wkdir))
     run()

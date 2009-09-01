@@ -42,7 +42,8 @@ def checkEstBox(parent, tooth, treat):
 
 def chartComplete(parent, arg):   
     '''
-    complete tooth treatment
+    complete tooth treatment 
+    the arg is a list - ["ul5","MOD","RT",]
     '''
     Dialog = QtGui.QDialog(parent)
     if localsettings.clinicianNo != 0:
@@ -53,49 +54,59 @@ def chartComplete(parent, arg):
         dent = localsettings.ops.get(parent.pt.dnt1)
     if dent == None:
         dent = ""
-    feeTup = fees_module.getFeesFromEst(parent, arg[0][0], arg[0][1])
-    dl = completeTreat.treatment(Dialog, dent, arg, feeTup)
+    #--tooth may be deciduous
+    adultTooth = arg[0]
+    toothName = parent.pt.chartgrid.get(arg[0])
+    arg[0] = toothName # change the list
 
-    results = dl.getInput()
-    #print "results = ", results
-    for result in results:
-        planATT = result[0]
-        completedATT = result[0].replace("pl", "cmp")
+    fee, ptfee = 0, 0
+    for treatItem in arg[1:]:
+        feeTup = fees_module.getFeesFromEst(parent, toothName, treatItem)
+        fee += feeTup[0]
+        ptfee += feeTup[1]
+    
+    #here's why we changed the list.... ( 6 lines ago)
+    dl = completeTreat.treatment(Dialog, dent, arg, (fee, ptfee))
+
+    treatmentItems = dl.getInput()
+    #-- results will be a tuple of treatments which have been selected
+    #-- eg, ("MOD","RT")
+    for treatmentItem in treatmentItems:
+        planATT = "%spl"% adultTooth
+        completedATT = "%scmp"% adultTooth
         #print "moving '%s' from %s to %s"% (result[1], planATT, completedATT)
-        if result[1] in parent.pt.__dict__[planATT]:
+        if treatmentItem in parent.pt.__dict__[planATT]:
             existingplan = parent.pt.__dict__[planATT]
-            newplan = existingplan.replace(result[1], "")
+            newplan = existingplan.replace(treatmentItem, "")
             parent.pt.__dict__[planATT] = newplan
             existingcompleted = parent.pt.__dict__[completedATT]
-            newcompleted = result[1]
+            newcompleted = treatmentItem
             parent.pt.__dict__[completedATT] = existingcompleted + newcompleted
 
-            if planATT[:2] in ("ur", "ul", "ll", "lr"):
-                #--treatment is on a tooth (as opposed to denture etc....)
-                parent.updateChartsAfterTreatment(planATT[:3],
-                newplan, newcompleted)
+            parent.updateChartsAfterTreatment(adultTooth, newplan, 
+            newcompleted)
 
-                checkEstBox(parent, planATT[:3], newcompleted)
+            checkEstBox(parent, toothName, newcompleted)
+            
+            parent.pt.addHiddenNote("treatment",
+            "%s %s"% (toothName, newcompleted))
                 
-                #--tooth may be deciduous
-                tooth = parent.pt.chartgrid.get(planATT[:3])
-                
-                parent.pt.addHiddenNote("treatment",
-                "%s %s"% (tooth.upper(), newcompleted))
-                
-            else:    
-                parent.pt.addHiddenNote("treatment",
-                "%s %s"% (planATT[:-2].upper(), newcompleted))
-
 def estwidg_complete(parent, txtype):
     try:
         tup = txtype.split(" ")
         att = tup[0]
         treat = tup[1] + " "
+        
+        toothname = att
+        if re.match("[ul][lr][A-E]", att): #deciduous tooth
+            number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
+            att = "%s%d"% (att[:2], number)
+            
         if att == "exam":
             parent.pt.examt = tup[1]
             parent.pt.examd = localsettings.ukToday()
             parent.pt.addHiddenNote("exam", "%s"% tup[1])
+        
         else:
             plan = parent.pt.__dict__[att + "pl"].replace(treat, "")
             parent.pt.__dict__[att + "pl"] = plan
@@ -105,8 +116,9 @@ def estwidg_complete(parent, txtype):
             #-- now update the charts
             if re.findall("[ul][lr][1-8]", att):
                 parent.updateChartsAfterTreatment(att, plan, completed)
-            parent.pt.addHiddenNote(
-            "treatment", "%s %s"% (att.upper(), treat))
+
+                parent.pt.addHiddenNote(
+                "treatment", "%s %s"% (toothname.upper(), treat))
 
         parent.load_treatTrees()
 
@@ -121,6 +133,12 @@ def estwidg_unComplete(parent, txtype):
         tup = txtype.split(" ")
         att = tup[0]
         treat = tup[1] + " "
+
+        toothname = att
+        if re.match("[ul][lr][A-E]", att): #deciduous tooth
+            number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
+            att = "%s%d"% (att[:2], number)
+                    
         if att =="exam":
             parent.pt.examt = ""
             parent.pt.examd = ""
@@ -135,7 +153,7 @@ def estwidg_unComplete(parent, txtype):
             if re.findall("[ul][lr][1-8]", att):
                 parent.updateChartsAfterTreatment(att, plan, completed)
                 parent.pt.addHiddenNote("treatment", "%s %s"% (
-                att.upper(), treat), True)
+                toothname.upper(), treat), True)
 
         parent.load_treatTrees()
 

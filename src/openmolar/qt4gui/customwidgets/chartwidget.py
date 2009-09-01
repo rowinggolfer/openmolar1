@@ -246,10 +246,10 @@ class chartWidget(QtGui.QWidget):
         else:
             y = 1
         tooth = self.grid[y][x]
-        plannedTreatment = []
+        plannedTreatment = [tooth,]
         for item in self.__dict__[tooth]:
-            plannedTreatment.append((tooth + "pl", item.upper()))
-        if plannedTreatment != []:
+            plannedTreatment.append(item.upper())
+        if plannedTreatment != [tooth]:
             self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
 
     def keyPressEvent(self, event):

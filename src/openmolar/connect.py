@@ -13,16 +13,15 @@ sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
 xmlnode = dom.getElementsByTagName("server")[0]
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
 myPort = int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
-
-#-- to enable this... add <ssl>True</ssl> to the conf file
-use_ssl = bool(xmlnode.getElementsByTagName("ssl"))
+sslnode = xmlnode.getElementsByTagName("ssl")
 
 xmlnode = dom.getElementsByTagName("database")[0]
 myUser = xmlnode.getElementsByTagName("user")[0].firstChild.data
 myPassword = xmlnode.getElementsByTagName("password")[0].firstChild.data
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
-if use_ssl:
+if sslnode and sslnode[0].firstChild.data=="True":
+    #-- to enable ssl... add <ssl>True</ssl> to the conf file
     print "using ssl"
     #-- note, dictionary could have up to 5 params.
     #--ca, cert, key, capath and cipher
@@ -81,7 +80,6 @@ def forumConnect():
         forumconnection = MySQLdb.connect(host = myHost, port = myPort,
         user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
         forumconnection.autocommit(True)
-        print forumconnection
     else:
         forumconnection.commit()
     return forumconnection
@@ -99,7 +97,6 @@ def connect():
         mainconnection = MySQLdb.connect(host = myHost, port = myPort,
         user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
         mainconnection.autocommit(True)
-        print mainconnection.stat()
     else:
         mainconnection.commit()
     return mainconnection
