@@ -51,6 +51,7 @@ if "win" in sys.platform:
     #-- imports for the css stuff eg... ../resources/style.css
     #-- on linux, the root is always /  on windows... ??
     os.chdir(wkdir)
+    resourcespath=("resources")
     stylesheet = ("resources/style.css")
     
 else:
