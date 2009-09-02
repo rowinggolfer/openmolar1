@@ -545,6 +545,13 @@ class patient():
         self.billdate=localsettings.ukToday()
         self.billct+=1
         self.billtype=tone
+        
+    def treatmentOutstanding(self):
+        for att in currtrtmtTableAtts:
+            if att[-2:] == "pl":
+                if self.__dict__[att] != "":
+                    return True
+                
 
 if __name__ =="__main__":
     '''testing stuff'''
@@ -567,7 +574,7 @@ if __name__ =="__main__":
     pt=patient(serialno)
     if False:
       for att in pt.__dict__.keys():
-        if pt.__dict__[att]=="":
+        if pt.__dict__[att] == "":
             print att, "e"
         else:
             print att,pt.__dict__[att]

@@ -1733,6 +1733,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #--apply changes to patient details
         if self.editPageVisited:
             self.apply_editpage_changes()
+        
+        course_module.prompt_close_course(self)
 
         #--check pt against the original loaded state
         #--this returns a LIST of changes ie [] if none.

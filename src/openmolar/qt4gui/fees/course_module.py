@@ -82,6 +82,16 @@ def setupNewCourse(parent):
         else:
             parent.advise("ERROR STARTING NEW COURSE, sorry", 2)
 
+def prompt_close_course(parent):
+    '''
+    pt is marked as under treatment.....
+    let's see if there is anything outstanding
+    '''
+    if "surgery" in localsettings.station and parent.pt.underTreatment:
+        if not parent.pt.treatmentOutstanding():
+            closeCourse(parent)
+    
+
 def closeCourse(parent):
     '''
     allow the user to add a completion Date to a course of treatment
