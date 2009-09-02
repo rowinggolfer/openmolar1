@@ -13,7 +13,7 @@ import _version
 #-- the version file imported is created by bzr.
 #-- the Major version below is more arbitrary.
 
-__MAJOR_VERSION__= "0.1.2" #- updated 14th August 2009.
+__MAJOR_VERSION__= "0.1.3" #- updated 2th September 2009.
 
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
