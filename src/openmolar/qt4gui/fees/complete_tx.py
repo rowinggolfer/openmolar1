@@ -119,7 +119,9 @@ def estwidg_complete(parent, txtype):
 
                 parent.pt.addHiddenNote(
                 "treatment", "%s %s"% (toothname.upper(), treat))
-
+            else:
+                parent.pt.addHiddenNote("treatment", "%s"% tup[1])
+                
         parent.load_treatTrees()
 
     except Exception,e:
@@ -154,7 +156,8 @@ def estwidg_unComplete(parent, txtype):
                 parent.updateChartsAfterTreatment(att, plan, completed)
                 parent.pt.addHiddenNote("treatment", "%s %s"% (
                 toothname.upper(), treat), True)
-
+            else:
+                parent.pt.addHiddenNote("treatment", "%s"% tup[1], True)
         parent.load_treatTrees()
 
     except Exception, e:

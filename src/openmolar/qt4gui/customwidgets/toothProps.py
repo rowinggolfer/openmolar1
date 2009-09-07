@@ -13,9 +13,9 @@ from openmolar.qt4gui.dialogs import Ui_crownChoice
 from openmolar.settings import allowed
 
     
-class tpWidget(Ui_toothProps.Ui_Form,QtGui.QWidget):
-    def __init__(self,parent=None):
-        super(tpWidget,self).__init__(parent)
+class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
+    def __init__(self, parent=None):
+        super(tpWidget, self).__init__(parent)
         self.setupUi(self)
         hlayout=QtGui.QHBoxLayout(self.editframe)
         hlayout.setContentsMargins(0,0,0,0)
