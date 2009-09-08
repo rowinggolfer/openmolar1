@@ -605,6 +605,11 @@ class chartLineEdit(QtGui.QLineEdit):
         elif event.key() == QtCore.Qt.Key_Down:
             self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("down"))
         else:
+            if "a"<= event.text() <="z":
+                #-- catch and overwrite any lower case
+                event = QtGui.QKeyEvent(event.type(), event.key(), 
+                        event.modifiers(), event.text().toUpper())
+            
             QtGui.QLineEdit.keyPressEvent(self,event)
 
 if __name__ == "__main__":
