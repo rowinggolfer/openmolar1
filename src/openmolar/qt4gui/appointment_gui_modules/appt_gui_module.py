@@ -1097,7 +1097,13 @@ def layout_apptOV(parent):
         QtCore.SIGNAL("stateChanged(int)"), 
         parent.apptOV_all_clinicians_checkbox_changed)
 
-    date = parent.ui.apptOV_calendarWidget.selectedDate()
+    cal = parent.ui.apptOV_calendarWidget
+    date = cal.selectedDate()
+    ###################################TODO - this works... just need to find "X"
+    #table_view = cal.children()[2] 
+    #X=2 #the selected row!
+    #table_view.selectRow(X)
+    
     dayno = date.dayOfWeek()
     weekdates = []
     #--(monday to friday) #prevMonday = date.addDays(1-dayno),

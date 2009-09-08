@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -540,7 +540,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>822</width>
+                        <width>540</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -1778,7 +1778,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>822</width>
+                        <width>731</width>
                         <height>526</height>
                        </rect>
                       </property>
@@ -2499,7 +2499,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>822</width>
+                        <width>469</width>
                         <height>370</height>
                        </rect>
                       </property>
@@ -2753,8 +2753,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>842</width>
-                        <height>353</height>
+                        <width>314</width>
+                        <height>105</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2930,7 +2930,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>556</width>
+                           <width>96</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -3314,7 +3314,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>826</width>
+                        <width>249</width>
                         <height>360</height>
                        </rect>
                       </property>
@@ -4325,43 +4325,6 @@ Note - this will not remove items which are currently there. </string>
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QGridLayout" name="gridLayout_7">
-               <item row="0" column="0" colspan="3">
-                <widget class="QCalendarWidget" name="apptOV_calendarWidget">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>179</width>
-                   <height>179</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>200</height>
-                  </size>
-                 </property>
-                 <property name="firstDayOfWeek">
-                  <enum>Qt::Monday</enum>
-                 </property>
-                 <property name="gridVisible">
-                  <bool>true</bool>
-                 </property>
-                 <property name="horizontalHeaderFormat">
-                  <enum>QCalendarWidget::SingleLetterDayNames</enum>
-                 </property>
-                 <property name="verticalHeaderFormat">
-                  <enum>QCalendarWidget::NoVerticalHeader</enum>
-                 </property>
-                 <property name="dateEditEnabled">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="0" colspan="3">
                 <widget class="QPushButton" name="apptOVtoday_pushButton">
                  <property name="maximumSize">
@@ -4526,7 +4489,7 @@ Note - this will not remove items which are currently there. </string>
                     <x>0</x>
                     <y>0</y>
                     <width>193</width>
-                    <height>65</height>
+                    <height>80</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4557,6 +4520,28 @@ Note - this will not remove items which are currently there. </string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" colspan="3">
+                <widget class="QWidget" name="apptOVcalendar_placeholder" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>197</width>
+                   <height>164</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>200</height>
+                  </size>
                  </property>
                 </widget>
                </item>

@@ -117,7 +117,7 @@ from openmolar.qt4gui.customwidgets import perioToothProps
 from openmolar.qt4gui.customwidgets import perioChartWidget
 from openmolar.qt4gui.customwidgets import estimateWidget
 from openmolar.qt4gui.customwidgets import aptOVcontrol
-
+from openmolar.qt4gui.customwidgets import calendars
 
 ###### TODO - refactor all this into one big class....
 #--the main gui class inherits from a lot of smaller classes to make the \
@@ -1526,7 +1526,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
     def addCustomWidgets(self):
         '''
-        add custum widgets to the gui
+        add custom widgets to the gui, and customise a few that are there
+        already
         '''
         #-statusbar
         self.ui.operatorLabel = QtGui.QLabel()
@@ -1695,6 +1696,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             row+=1
             glayout.addWidget(cb, row, 1, 1, 1)
 
+        #--customise the appointment widget calendar
+        self.ui.apptOV_calendarWidget = calendars.weekCalendar()
+        hlayout=QtGui.QHBoxLayout(self.ui.apptOVcalendar_placeholder)
+        hlayout.setMargin(0)
+        hlayout.addWidget(self.ui.apptOV_calendarWidget)
+        
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
         #--start a thread for the triangle on the appointment book
@@ -1716,6 +1723,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
         #--history
         self.addHistoryMenu()
+
+
+
 
     def setClinician(self):
         self.advise("To change practitioner, please login again", 1)
@@ -2315,7 +2325,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                         self.getrecord(int(candidates[0][0]), True)
         else:
             self.advise("dialog rejected")
+            
     def labels_and_tabs(self):
+        '''
+        initialise a few labels
+        '''
         self.ui.main_tabWidget.setCurrentIndex(0)
         if localsettings.clinicianNo == 0:
             if localsettings.station == "surgery":
