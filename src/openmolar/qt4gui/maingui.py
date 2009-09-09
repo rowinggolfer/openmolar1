@@ -3992,16 +3992,18 @@ def main(arg):
     app = QtGui.QApplication(arg)
     #-- user could easily play with this code and avoid login...
     #--the app would however, not have initialised.
-    mainWindow=openmolarGui()
-    mainWindow.app=app
+    
+    mainWindow = openmolarGui()
+    mainWindow.app = app
     mainWindow.show()
 
     if __name__ != "__main__":
         #--don't maximise the window for dev purposes - I like to see
         #--all the error messages in a terminal ;).
         mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
-    sys.exit(app.exec_())
 
+    sys.exit(app.exec_())
+    
 if __name__ == "__main__":
     print "dev mode"
     localsettings.initiate()

@@ -20,6 +20,7 @@ import os
 import hashlib
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
+from openmolar.connect import omDBerror
 
 class LoginError(Exception):
     '''
@@ -136,12 +137,21 @@ def main():
                 localsettings.setOperator(str(u1_qstring), str(u2_qstring))
 
                 from openmolar.qt4gui import maingui
+                
                 sys.exit(maingui.main(sys.argv))
 
             except LoginError:
                 QtGui.QMessageBox.warning(my_dialog,
                 "Login Error", "Incorrect<br />User/password<br />\
                 combination!<br />Please Try Again.")
+            except omDBerror, e:
+                message = '''<p>DATABASE ERROR </p>
+                <p>application cannot run</p>
+                Error %s''' % e
+            
+                QtGui.QMessageBox.warning(my_dialog,
+                "Login Error", message)
+                break
         else:
             break
     my_app.closeAllWindows()

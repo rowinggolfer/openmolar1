@@ -2,6 +2,7 @@
 using 3rd party MySQLdb module'''
 
 import MySQLdb
+import sys
 from xml.dom import minidom
 from openmolar.settings.localsettings import cflocation
 
@@ -32,6 +33,12 @@ else:
     ssl_settings = {}
 
 dom.unlink()
+
+class omDBerror(Exception):
+    '''
+    a custom Exception
+    '''
+    pass
 
 class omSQLresult():
     '''
@@ -73,35 +80,44 @@ def forumConnect():
     this returns a connection for use by the forum thread
     '''
     global forumconnection
-
-    if not (forumconnection and forumconnection.open):
-        print "New connection needed"
-        print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
-        forumconnection = MySQLdb.connect(host = myHost, port = myPort,
-        user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
-        forumconnection.autocommit(True)
-    else:
-        forumconnection.commit()
-    return forumconnection
-
+    try:
+        if not (forumconnection and forumconnection.open):
+            print "New connection needed"
+            print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
+            forumconnection = MySQLdb.connect(host = myHost, port = myPort,
+            user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
+            forumconnection.autocommit(True)
+        else:
+            forumconnection.commit()
+        return forumconnection
+    except MySQLdb.Error, e:
+        print "Error %d: %s" % (e.args[0], e.args[1])
+        raise omDBerror(e)
+    
 def connect():
     '''
     returns a MySQLdb object, connected to the database specified in the
     settings file
     '''
     global mainconnection
+    try:
+        if not (mainconnection and mainconnection.open):
+            print "New connection needed"
+            print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
+            mainconnection = MySQLdb.connect(host = myHost, port = myPort,
+            user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
+            mainconnection.autocommit(True)
+        else:
+            mainconnection.commit()
 
-    if not (mainconnection and mainconnection.open):
-        print "New connection needed"
-        print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
-        mainconnection = MySQLdb.connect(host = myHost, port = myPort,
-        user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
-        mainconnection.autocommit(True)
-    else:
-        mainconnection.commit()
-    return mainconnection
+        return mainconnection
+    except MySQLdb.Error, e:
+        print "Error %d: %s" % (e.args[0], e.args[1])
+        raise omDBerror(e)
+    
 
 if __name__ == "__main__":
+    from openmolar.settings import localsettings
     localsettings.initiate()
     import time
     print cflocation
@@ -111,17 +127,18 @@ if __name__ == "__main__":
             dbc = connect()
             print dbc.info()
             print 'ok... we can make Mysql connections!!'
+            print "loop no ", i
+            if i == 2:
+                #close the db... let's check it reconnects
+                dbc.close()
+            if i == 4:
+                #make a slightly bad query... let's check we get a warning
+                c = dbc.cursor()
+                c.execute('update patients set dob="196912091" where serialno=4')
+                c.close()
         except Exception,e:
-            print "error", e
-        print "loop no ", i
-        if i == 2:
-            #close the db... let's check it reconnects
-            dbc.close()
-        if i == 4:
-            #make a slightly bad query... let's check we get a warning
-            c = dbc.cursor()
-            c.execute('update patients set dob="19691209" where serialno=11956')
-            c.close()
+            print "error", Exception, e
+        
         time.sleep(5)
 
     dbc.close()
