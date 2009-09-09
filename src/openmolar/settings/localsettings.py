@@ -202,6 +202,14 @@ defaultPrinterforGP17 = True
 class PatientNotFoundError(Exception):
     pass
 
+class omDBerror(Exception):
+    '''
+    a custom Exception which is raised when the database squeals or
+    isn't present
+    '''
+    pass
+
+
 def curTime():        #self.estimates = cursor.fetchall()
     return datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
 

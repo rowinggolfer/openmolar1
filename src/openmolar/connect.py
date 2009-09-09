@@ -34,11 +34,6 @@ else:
 
 dom.unlink()
 
-class omDBerror(Exception):
-    '''
-    a custom Exception
-    '''
-    pass
 
 class omSQLresult():
     '''
@@ -92,7 +87,7 @@ def forumConnect():
         return forumconnection
     except MySQLdb.Error, e:
         print "Error %d: %s" % (e.args[0], e.args[1])
-        raise omDBerror(e)
+        raise localsettings.omDBerror(e)
     
 def connect():
     '''
@@ -113,7 +108,7 @@ def connect():
         return mainconnection
     except MySQLdb.Error, e:
         print "Error %d: %s" % (e.args[0], e.args[1])
-        raise omDBerror(e)
+        raise localsettings.omDBerror(e)
     
 
 if __name__ == "__main__":
