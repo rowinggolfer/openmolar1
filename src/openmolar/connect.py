@@ -4,12 +4,12 @@ using 3rd party MySQLdb module'''
 import MySQLdb
 import sys
 from xml.dom import minidom
-from openmolar.settings.localsettings import cflocation
+from openmolar.settings import localsettings 
 
 mainconnection, forumconnection = None, None
 
 print "parsing the global settings file"
-dom = minidom.parse(cflocation)
+dom = minidom.parse(localsettings.cflocation)
 sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
 xmlnode = dom.getElementsByTagName("server")[0]
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
@@ -115,7 +115,7 @@ if __name__ == "__main__":
     from openmolar.settings import localsettings
     localsettings.initiate()
     import time
-    print cflocation
+    print localsettings.cflocation
     for i in range(1, 11):
         try:
             print "connecting....",

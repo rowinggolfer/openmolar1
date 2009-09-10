@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import sys
+import copy
 from PyQt4 import QtGui, QtCore
 
 class weekCalendar(QtGui.QCalendarWidget):
@@ -13,7 +14,7 @@ class weekCalendar(QtGui.QCalendarWidget):
         self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(True)
 
-        self.color = self.palette().color(QtGui.QPalette.Highlight)
+        self.color = copy.copy(self.palette().color(QtGui.QPalette.Highlight))
         self.color.setAlpha(64)
         self.connect(self, QtCore.SIGNAL("selectionChanged ()"), 
                 self.updateCells)
@@ -31,11 +32,11 @@ class monthViewCalendar(QtGui.QCalendarWidget):
         QtGui.QCalendarWidget.__init__(self, *args)
         self.setFirstDayOfWeek(QtCore.Qt.Monday)
         self.setGridVisible(True)
-        #self.setHorizontalHeaderFormat(QtGui.QCalendarWidget.NoHorizontalHeader)
+        self.setHorizontalHeaderFormat(QtGui.QCalendarWidget.LongDayNames)
         self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(False)
 
-        self.color = self.palette().color(QtGui.QPalette.Highlight)
+        self.color = copy.copy(self.palette().color(QtGui.QPalette.Highlight))
         self.color.setAlpha(64)
         self.connect(self, QtCore.SIGNAL("selectionChanged ()"), 
                 self.updateCells)
