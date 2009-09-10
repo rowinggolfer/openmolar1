@@ -1120,10 +1120,6 @@ def layout_apptOV(parent):
 
     cal = parent.ui.apptOV_calendarWidget
     date = cal.selectedDate()
-    ###################################TODO - this works... just need to find "X"
-    #table_view = cal.children()[2] 
-    #X=2 #the selected row!
-    #table_view.selectRow(X)
     
     dayno = date.dayOfWeek()
     weekdates = []
@@ -1153,13 +1149,14 @@ def layout_apptOV(parent):
         if userCheckedDents != []:
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
             tuple(userCheckedDents))
-            #--tuple like ((4, 840, 1900), (5, 830, 1400))
+            #--tuple like ((4, 840, 1900,"memo"), (5, 830, 1400, "memo"))
 
             dlist = []
             for dent in workingdents:
                 dlist.append(dent[0])
                 ov.setStartTime(dent[0], dent[1])
                 ov.setEndTime(dent[0], dent[2])
+                ov.setMemo(dent[0], dent[3])
             ov.dents = tuple(dlist)
         else:
             ov.dents = ()

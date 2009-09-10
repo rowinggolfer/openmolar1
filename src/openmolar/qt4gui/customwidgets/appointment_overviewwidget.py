@@ -56,6 +56,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
         self.dents = ()
         self.daystart = {}
         self.dayend = {}
+        self.memoDict={}
         self.highlightedRect = None
         self.setMouseTracking(True)
         self.clear()
@@ -75,6 +76,9 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
     def setEndTime(self, dent, t):
         self.dayend[dent] = localsettings.minutesPastMidnight(t)
+
+    def setMemo(self, dent, memo):
+        self.memoDict[dent] = memo
 
     def sizeHint(self):
         return QtCore.QSize(80, 600)
@@ -96,6 +100,8 @@ class appointmentOverviewWidget(QtGui.QWidget):
             rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
             if rect.contains(event.pos()):
                 self.highlightedRect = rect
+                QtGui.QToolTip.showText(event.globalPos(),
+                    QtCore.QString(self.memoDict[dent]))
 
             for slot in self.freeslots[dent]:
                 (slotstart,length) = slot
@@ -330,7 +336,10 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 painter.setBrush(BGCOLOR)
                 rect=QtCore.QRect(leftx,0,columnWidth,self.headingHeight)
                 painter.drawRect(rect)
-                painter.drawText(rect,QtCore.Qt.AlignHCenter,QtCore.QString(localsettings.apptix_reverse[dent]))
+                initials = localsettings.apptix_reverse.get(dent)
+                if self.memoDict[dent] != "":
+                    initials = "*%s*"% initials
+                painter.drawText(rect,QtCore.Qt.AlignHCenter, initials)
                 ##dentist start/finish
                 painter.setBrush(APPTCOLORS["FREE"])
                 startcell=(self.daystart[dent]-self.startTime)/self.slotLength
