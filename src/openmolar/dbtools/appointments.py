@@ -235,8 +235,8 @@ def allAppointmentData(adate, dents=()):
         mystr = mystr[0:mystr.rindex(" or")]+")"
     else:
         mystr = ""
-    fields = '''DATE_FORMAT(adate,'%s'),apptix,start,end,name,serialno,code0,
-    code1,code2,note,flag0,flag1,flag2,flag3'''% localsettings.sqlDateFormat
+    fields = '''adate,apptix,start,end,name,serialno,code0,
+    code1,code2,note,flag0,flag1,flag2,flag3'''
 
     fullquery = '''select %s from aslot where adate="%s" %s
     order by apptix,start'''% (fields, adate, mystr)
@@ -429,9 +429,8 @@ def get_pts_appts(sno):
     cursor = db.cursor()
 
     fullquery = '''SELECT serialno,aprix,practix,code0,code1,code2,note,
-    DATE_FORMAT(adate,"%s"),atime,length,flag0,flag1,flag2,flag3,flag4,datespec
-    FROM apr WHERE serialno=%d ORDER BY aprix, adate'''% (
-    localsettings.sqlDateFormat, sno)
+    adate,atime,length,flag0,flag1,flag2,flag3,flag4,datespec
+    FROM apr WHERE serialno=%d ORDER BY aprix, adate'''% sno
 
     if localsettings.logqueries:
         print fullquery
@@ -655,7 +654,9 @@ note, flag1, flag0, flag2, flag3):
     code0,code1,code2,note,flag0,flag1,flag2,flag3)
 
     fullquery = '''update aslot set %s where adate="%s" and apptix=%d
-    and start=%d and serialno=%d'''% (changes, moddate, apptix, start, serialno)
+    and start=%d and serialno=%d'''% (changes, 
+    localsettings.pyDatetoSQL(moddate), apptix, start, serialno)
+
     if localsettings.logqueries:
         print fullquery
     try:
@@ -672,17 +673,17 @@ note, flag1, flag0, flag2, flag3):
     #db.close()
     return result
 
-def delete_appt_from_apr(serialno, aprix, aprdate, atime):
+def delete_appt_from_apr(serialno, aprix, adate, atime):
     '''this deletes an appointment from the apr table'''
     db = connect()
     cursor = db.cursor()
     try:
         fullquery = 'DELETE FROM apr WHERE serialno=%d AND aprix=%d'% (
         serialno, aprix)
-        if aprdate == None:
+        if adate == None:
             fullquery += ' and adate is NULL'
         else:
-            fullquery += ' and adate =%s'% aprdate
+            fullquery += ' and adate ="%s"'% adate
         if atime == None:
             fullquery += ' and atime is NULL'
         else:

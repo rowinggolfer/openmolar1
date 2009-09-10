@@ -16,7 +16,7 @@ def commit(pt):
     for attr in patient_class.patientTableAtts:
         if attr in patient_class.dateFields:
             if pt.__dict__[attr]!="" and pt.__dict__[attr]!=None:
-                sqlcond+='%s="%s",'%(attr,localsettings.uk_to_sqlDate(pt.__dict__[attr]))
+                sqlcond+='%s="%s",'%(attr,pt.__dict__[attr])
         elif type(pt.__dict__[attr])==type(""):
             sqlcond+='%s="%s",'%(attr,pt.__dict__[attr])
         elif pt.__dict__[attr]==None:

@@ -6,22 +6,36 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 
-import MySQLdb,sys,datetime,os
+from __future__ import division
+
+import MySQLdb
+import sys
+import datetime
+import os
+
 from xml.dom import minidom
-import _version
+import _version  #--in the same directory - created by bzr
 
-#-- the version file imported is created by bzr.
-#-- the Major version below is more arbitrary.
-
-__MAJOR_VERSION__= "0.1.3" #- updated 2th September 2009.
+#- updated 2th September 2009.
+__MAJOR_VERSION__= "0.1.3" 
 
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
 
 print "Version %s\n Bzr Revision No. %s"%(__MAJOR_VERSION__,__build__)
 
+APPOINTMENT_CARD_HEADER =\
+"The Academy Dental Practice, 19 Union Street\nInverness. tel 01463 232423"
+
+APPOINTMENT_CARD_FOOTER =\
+"Please try and give at least 24 hours notice\n if you need to change an appointment."
+
 def determine_path ():
-    """Borrowed from wxglade.py"""
+    '''
+    returns the true working directory, regardless of any symlinks.
+    Very useful.
+    Borrowed from wxglade.py
+    '''
     try:
         root = __file__
         if os.path.islink (root):
@@ -33,8 +47,8 @@ def determine_path ():
         print "no __file__ found !!!!"
         return os.path.dirname(os.getcwd())
 
-wkdir = determine_path()
 
+wkdir = determine_path()
 referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
 appt_shortcut_file = os.path.join(wkdir, "resources", 
 "appointment_shortcuts.xml")
@@ -44,14 +58,14 @@ resources_path = os.path.join(wkdir, "resources")
 if "win" in sys.platform:
     print "windows settings"
     #-- sorry about this... but cross platform is a goal :(
-    global_cflocation='C:\\Program Files\\openmolar\\openmolar.conf'
-    localFileDirectory=os.path.join(os.environ.get("HOMEPATH"),".openmolar")
-    pdfProg="C:\\ProgramFiles\\SumatraPDF\\SumatraPDF.exe"
+    global_cflocation = 'C:\\Program Files\\openmolar\\openmolar.conf'
+    localFileDirectory = os.path.join(os.environ.get("HOMEPATH"),".openmolar")
+    pdfProg = "C:\\ProgramFiles\\SumatraPDF\\SumatraPDF.exe"
     #-- this next line is necessary because I have to resort to relative
     #-- imports for the css stuff eg... ../resources/style.css
     #-- on linux, the root is always /  on windows... ??
     os.chdir(wkdir)
-    resources_path=("resources")
+    resources_path = ("resources")
     stylesheet = ("resources/style.css")
     
 else:
@@ -59,11 +73,11 @@ else:
         print "linux settings"
     else:
         print "unknown system platform (mac?) - defaulting to linux settings"
-    global_cflocation='/etc/openmolar/openmolar.conf'
-    localFileDirectory=os.path.join(os.environ.get("HOME"),".openmolar")
-    pdfProg="evince"
+    global_cflocation = '/etc/openmolar/openmolar.conf'
+    localFileDirectory = os.path.join(os.environ.get("HOME"),".openmolar")
+    pdfProg = "evince"
 
-cflocation=os.path.join(localFileDirectory,"openmolar.conf")    
+cflocation = os.path.join(localFileDirectory,"openmolar.conf")    
 
 #this is updated if correct password is given
 successful_login = False
@@ -78,7 +92,7 @@ def forumVisited():
     lastForumVisit = datetime.datetime.now()
 forumVisited()
 
-#-- self-explanatory?
+#################  MESSAGES ####################################################
 about = '''<p>
 openMolar - open Source dental practice management software.<br />
 Version %s  -  Bazaar Revno %s<br />
@@ -103,13 +117,19 @@ GNU General Public License for more details.
 <br />
 You should have received a copy of the GNU General Public License
 along with this program.
-If not, see <a href="http://www.gnu.org/licenses">
+If not, see <a href = "http://www.gnu.org/licenses">
 http://www.gnu.org/licenses</a>.</p>'''
 
 
 #-- this variable is used when using DATE_FORMAT from the database
+#-- this is done by cashbook and daybook etc...
 #-- my preference is the UK style dd/mm/YYYY
+#-- feel free to change this!!!
 sqlDateFormat = r"%d/%m/%Y"
+
+#-- ditto the qt one
+DATE_FORMAT = "d, MMMM, yyyy"
+
 
 #-- undated at login
 operator = "unknown"
@@ -134,7 +154,7 @@ latestFinish = datetime.time(20,0)
 
 #--this dictionary is upated when this file is initiate -
 #--it links dentist keys with practioners
-#--eg ops[1]="JJ"
+#--eg ops[1] = "JJ"
 ops = {}
 
 #--keys/dents the other way round.
@@ -209,37 +229,59 @@ class omDBerror(Exception):
     '''
     pass
 
+def currentTime():
+    '''
+    returns a datetime.datetime.today object
+    eg. 7th March 2009 18:56:37 is
+    (2009, 3, 7, 18, 56, 37, 582484)
+    has attributes day, month, year etc...
+    '''
+    return datetime.datetime.today()   
 
-def curTime():        #self.estimates = cursor.fetchall()
-    return datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
-
-def ukToday():
-    d = datetime.datetime.today()   #(2009, 3, 7, 18, 56, 37, 582484)
-    return "%02d/%02d/%04d"% (d.day, d.month, d.year)
+def currentDay():
+    '''
+    return a python date object for the current day
+    '''
+    d = datetime.date.today()
+    return d
 
 def sqlToday():
-    '''returns today in sql compatible format'''
-    t = curTime()
+    '''
+    returns today's date in sql compatible format
+    eg 20091231
+    '''
+    t = currentTime()
     return "%04d%02d%02d"% (t.year, t.month, t.day)
 
 def pyDatetoSQL(d):
+    '''
+    takes a python date type... returns a sql compatible format
+    eg 20091231
+    if fails... returns None
+    '''
     try:
         return "%04d%02d%02d"% (d.year, d.month, d.day)
     except:
         pass
         
 def formatMoney(m):
-    '''takes an integer, returns "7.30"'''
+    '''
+    takes an integer, returns a string
+    "7.30"
+    '''
     try:
-        return "%d.%02d"% (m/100, m%100)
+        return "%.02f"% (m/100)
     except:
         return "???"
 
 def GP17formatDate(d):
-    if d == "" or d == None:
-        return " " * 8
-    else:
-        return d.replace("/", "") #"%02d%02d%04d"%(d.day,d.month,d.year)
+    '''
+    takes a python date type... formats for use on a NHS form
+    '''
+    try:
+        return "%02d%02d%04d"% (d.day,d.month,d.year)
+    except AttributeError:
+        return " "*8
 
 def dayName(d):
     '''
@@ -284,13 +326,15 @@ def formatDate(d):
     '''takes a date, returns a uk type date string'''
     try:
         retarg = "%02d/%02d/%d"% (d.day, d.month, d.year)
-    except Exception, e:
-        print "uable convert date to uk format - will return ", e
-        retarg = "no date"
+    except AttributeError:
+        retarg = ""
     return retarg
 
 def uk_to_sqlDate(d):
-    '''reverses the above'''
+    '''
+    takes a date in format "dd/mm/yyyy"
+    converts to "yyyymmdd"
+    '''
     try:
         ds = d.split("/")
         retarg = "%04d%02d%02d"% (int(ds[2]), int(ds[1]), int(ds[0]))
@@ -489,9 +533,8 @@ def initiate(debug = False):
     except Exception, e:
         print "error loading from opid", e
 
-
     #-- majorly important dictionary being created.
-    #-- the keys are treatment codes form NHS scotland
+    #-- the keys are treatment codes for NHS scotland
     #-- the values are a custom data class in the fee_keys module
 
     try:   #this breaks compatibility with the old database schema
@@ -524,7 +567,6 @@ def initiate(debug = False):
     except Exception, e:
         print "error loading privateFees Dict from newfeetable", e
 
-
     try:   #this breaks compatibility with the old database schema
         query = "select code, description, NF08, USERCODE,"
         query += "description1, regulation, NF08_pt from newfeetable"
@@ -553,7 +595,7 @@ def initiate(debug = False):
 
     getLocalSettings()
 
-    message='''<html><head>
+    message = '''<html><head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head><body><div align="center">
 <img src="%s/html/images/newlogo.png" width="150", height="100", align="left" />
@@ -565,26 +607,21 @@ def initiate(debug = False):
     stylesheet, wkdir, wkdir, __MAJOR_VERSION__, __build__ )
 
     if debug:
-        #print formatMoney(1150)
+        print "LOCALSETTINGS CALLED WITH DEBUG = TRUE" 
         print "ops = ", ops
         print "ops_reverse = ", ops_reverse
         print "apptix = ", apptix
         print "apptix_reverse = ", apptix_reverse
         print "activedents =", activedents
-        print "activehygs=", activehygs
-        print "allowed logins=", allowed_logins
-        print stylesheet
-        print referralfile
-        #print curTime()
-        #print sqlToday()
-        #print dentDict
-        #print descripŕtions
-        
-        #for key in privateFees.keys():
-        #    print privateFees[key].fees,
-        #    print nhsFees[key].fees
-        #print treatmentCodes
-        #print fees
+        print "activehygs =", activehygs
+        print "allowed logins =", allowed_logins
+        print "stylesheet =",stylesheet
+        print "referralfile = ",referralfile
+        for key in privateFees.keys():
+            print privateFees[key].fees,
+            print nhsFees[key].fees
+        print "treatmentCode =",treatmentCodes
+        print "fees = ",fees
 
 if __name__ == "__main__":
     #-- testing only

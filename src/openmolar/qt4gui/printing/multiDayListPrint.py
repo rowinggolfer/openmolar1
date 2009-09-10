@@ -9,7 +9,6 @@ from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
 
 import datetime
-DATE_FORMAT = "dddd, MMMM yyyy"
 
 class printDaylist():
     def __init__(self,parent=None):

@@ -96,7 +96,7 @@ def performExam(parent):
 
             if APPLIED:
                 parent.pt.examt = examtype
-                examd = result[2].toString("dd/MM/yyyy")
+                examd = result[2].toPyDate()
                 if parent.pt.examt == "CE":
                     parent.pt.pd5 = examd
                 if parent.pt.examt == "ECE":
@@ -104,8 +104,7 @@ def performExam(parent):
                 if parent.pt.examt == "FCA":
                     parent.pt.pd7 = examd
                 parent.pt.examd = examd
-                parent.pt.recd = \
-                str(result[2].addMonths(6).toString("dd/MM/yyyy"))
+                parent.pt.recd = result[2].addMonths(6).toPyDate()
 
                 newnotes = \
                 str(parent.ui.notesEnter_textEdit.toPlainText().toAscii())

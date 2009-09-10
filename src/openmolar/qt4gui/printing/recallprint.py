@@ -9,6 +9,7 @@ from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
 
 import datetime
+
 DATE_FORMAT = "MMMM, yyyy"
 
 class printRecall():
@@ -38,7 +39,8 @@ class printRecall():
             painter.save()
             painter.setPen(QtCore.Qt.black)
             painter.setFont(sansFont)
-            painter.drawText(LeftMargin, TopMargin, "%s %d"%(localsettings.ops[recall[3]],recall[4]))                                   #put dent serialno in topleft corner
+            #put dent serialno in topleft corner
+            painter.drawText(LeftMargin, TopMargin, "%s %d"%(localsettings.ops[recall[3]],recall[4]))                                   
             x,y = AddressMargin,TopMargin+50
             painter.drawText(x, y, "%s %s %s"%(recall[0].title(),recall[1].title(),recall[2].title()))
             y += sansLineHeight

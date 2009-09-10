@@ -32,7 +32,7 @@ def all_changes(pt, pt_dbstate, changes):
                 if change in patient_class.dateFields:
                     if value!=None and value!="":
                         patchanges+='%s="%s" ,'%(
-                                    change,localsettings.uk_to_sqlDate(value))
+                                    change,value)
                     else:
                         patchanges+='%s=NULL ,'% change
                 elif value==None:
@@ -43,10 +43,10 @@ def all_changes(pt, pt_dbstate, changes):
                     patchanges+='%s="%s" ,'%(change,value)
             elif change == "bpe":
                 sqlcommands['bpe']='insert into bpe set serialno=%d,bpedate="%s",bpe="%s"'%(
-                pt.serialno,localsettings.uk_to_sqlDate(pt.bpe[-1][0]),pt.bpe[-1][1])
+                pt.serialno, pt.bpe[-1][0] ,pt.bpe[-1][1])
 
                 alternate_bpe_command='update bpe set bpe="%s" where serialno=%d and bpedate="%s"'%(
-                pt.bpe[-1][1], pt.serialno,localsettings.uk_to_sqlDate(pt.bpe[-1][0]))
+                pt.bpe[-1][1], pt.serialno, pt.bpe[-1][0])
 
             elif change == "estimates":
                 sqlcommands["estimates"]=[]
@@ -134,8 +134,7 @@ def all_changes(pt, pt_dbstate, changes):
                 value=pt.__dict__[change]
                 if change in patient_class.dateFields:
                     if value!=None and value!="":
-                        trtchanges+='%s="%s" ,'%(
-                                    change,localsettings.uk_to_sqlDate(value))
+                        trtchanges+='%s="%s" ,'%(change, value)
                     else:
                         trtchanges+='%s=NULL ,'% change
                 
@@ -213,7 +212,7 @@ def toNotes(serialno,newnotes):
         lineNo=0
     try:
         n=1
-        t=localsettings.curTime()
+        t=localsettings.currentTime()
         year,month,day,hour,min=t.year-1900,t.month,t.day,t.hour,t.minute
 
         #-- grrr - crap date implementation coming up......
@@ -256,7 +255,7 @@ def discreet_changes(pt_changed,changes):
         print change,type(value)
         if change in patient_class.dateFields:
             if value!="" and value!=None:
-                sqlcond+='%s="%s" ,'%(change,localsettings.uk_to_sqlDate(value))
+                sqlcond+='%s="%s" ,'%(change, value)
         elif value==None:
             sqlcond+='%s=NULL ,'%(change)
         elif (type(value) is types.IntType) or  (type(value) is types.LongType) :

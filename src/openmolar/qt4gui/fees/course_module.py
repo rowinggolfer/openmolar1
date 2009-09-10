@@ -89,16 +89,20 @@ def prompt_close_course(parent):
     '''
     if "surgery" in localsettings.station and parent.pt.underTreatment:
         if not parent.pt.treatmentOutstanding():
-            closeCourse(parent)
+            closeCourse(parent, True)
     
-
-def closeCourse(parent):
+def closeCourse(parent, leaving=False):
     '''
     allow the user to add a completion Date to a course of treatment
     '''
     Dialog = QtGui.QDialog(parent)
     my_dialog = Ui_completionDate.Ui_Dialog()
     my_dialog.setupUi(Dialog)
+    my_dialog.pt_label.setText("%s %s - (%s)"% (parent.pt.sname, 
+    parent.pt.sname, parent.pt.serialno))
+
+    if not leaving:
+        my_dialog.autoComplete_label.hide()
     earliestDate = localsettings.pyDatefromUKDate(parent.pt.accd)
     my_dialog.dateEdit.setMinimumDate(earliestDate)
     my_dialog.dateEdit.setMaximumDate(QtCore.QDate().currentDate())

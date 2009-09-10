@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/qt-designer/completionDate.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/src/openmolar/qt-designer/completionDate.ui'
 #
-# Created: Wed Aug  5 13:08:40 2009
+# Created: Thu Sep 10 12:43:23 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,29 +12,44 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(272, 171)
-        self.gridLayout = QtGui.QGridLayout(Dialog)
-        self.gridLayout.setObjectName("gridLayout")
-        spacerItem = QtGui.QSpacerItem(188, 89, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 2, 0, 1, 3)
+        Dialog.resize(432, 227)
+        self.verticalLayout = QtGui.QVBoxLayout(Dialog)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.pt_label = QtGui.QLabel(Dialog)
+        self.pt_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.pt_label.setObjectName("pt_label")
+        self.verticalLayout.addWidget(self.pt_label)
+        self.autoComplete_label = QtGui.QLabel(Dialog)
+        self.autoComplete_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.autoComplete_label.setWordWrap(True)
+        self.autoComplete_label.setObjectName("autoComplete_label")
+        self.verticalLayout.addWidget(self.autoComplete_label)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label_4 = QtGui.QLabel(Dialog)
+        self.label_4.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout.addWidget(self.label_4)
+        self.dateEdit = QtGui.QDateEdit(Dialog)
+        self.dateEdit.setCalendarPopup(True)
+        self.dateEdit.setObjectName("dateEdit")
+        self.horizontalLayout.addWidget(self.dateEdit)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         self.label = QtGui.QLabel(Dialog)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 3)
-        self.label_4 = QtGui.QLabel(Dialog)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 1, 0, 1, 1)
+        self.verticalLayout.addWidget(self.label)
+        spacerItem1 = QtGui.QSpacerItem(20, 14, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.No|QtGui.QDialogButtonBox.Yes)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName("buttonBox")
-        self.gridLayout.addWidget(self.buttonBox, 3, 0, 1, 3)
-        self.dateEdit = QtGui.QDateEdit(Dialog)
-        self.dateEdit.setCalendarPopup(True)
-        self.dateEdit.setObjectName("dateEdit")
-        self.gridLayout.addWidget(self.dateEdit, 1, 1, 1, 2)
+        self.verticalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
@@ -43,6 +58,12 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Completion Date", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Dialog", "Apply a Completion Date into this Course of Treatment?", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("Dialog", "Date to Apply", None, QtGui.QApplication.UnicodeUTF8))
+        self.pt_label.setText(QtGui.QApplication.translate("Dialog", "UNNAMED PT - (000000)", None, QtGui.QApplication.UnicodeUTF8))
+        self.autoComplete_label.setText(QtGui.QApplication.translate("Dialog", "You have no further treatment proposed for this patient, yet they are deemed to be \"under treatment\".", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("Dialog", "Suggested completion Date", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Sans Serif\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Apply this Date Now?<br />(course can be re-opened later if necessary)</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
 

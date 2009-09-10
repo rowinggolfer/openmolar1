@@ -56,10 +56,9 @@ def details(regdent, trtdent, startdate, enddate):
         return '''<html>
         <body>Error - unrecognised practioner- sorry</body></html>'''
     
-    fields = '''DATE_FORMAT(date,"%s"),
-    serialno,coursetype,dntid,trtid,diagn,perio,anaes,misc,
-    ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc,id'''% \
-    localsettings.sqlDateFormat 
+    fields = '''DATE_FORMAT(date,'%s'), serialno, coursetype, dntid, trtid, 
+    diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart, feesa, 
+    feesb, feesc, id'''% localsettings.sqlDateFormat
 
     db = connect()
     cursor = db.cursor()

@@ -129,6 +129,7 @@ class Form(QDialog):
             if page <= len(self.recalls):
                 self.printer.newPage()
             painter.restore()
+        return True
 
 if __name__ == "__main__":
     from openmolar.dbtools import recall

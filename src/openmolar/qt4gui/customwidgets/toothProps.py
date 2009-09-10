@@ -281,6 +281,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             self.emit(QtCore.SIGNAL("NextTooth"),("down"))
     def dec_perm(self):
         self.emit(QtCore.SIGNAL("FlipDeciduousState"))
+        self.nextTooth()
     def at(self):
         self.lineEdit.setText("AT")
         self.nextTooth()

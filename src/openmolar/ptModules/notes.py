@@ -283,7 +283,7 @@ def char(c):
 def updateLocalNotes(orig,notelines,lineNo):
     '''update the local notes with a list of stuff sucessfully written to the database - save reloading the whole lot!'''
     lineNo+=1
-    t=localsettings.curTime()
+    t=localsettings.currentTime()
     year,month,day,hour,min=t.year-1900,t.month,t.day,t.hour,t.minute                           #grrr - crap date implementation
     newnotes=[(lineNo,"\x01%s"%localsettings.operator+chr(day)+chr(month)+chr(year)+chr(day)+chr(month)+chr(year)+chr(hour)+chr(min))]
     for line in notelines:

@@ -44,7 +44,7 @@ def showDialog(Dialog,pt):
         chkdate=data[13]
         
     if chkdate:
-        dl.dateEdit.setDate(localsettings.pyDatefromUKDate(chkdate))
+        dl.dateEdit.setDate(chkdate)
     else:
         dl.date_label.hide()
         dl.dateEdit.hide()
@@ -68,13 +68,12 @@ def showDialog(Dialog,pt):
         ):
             newdata.append(str(lineEdit.text().toAscii()))
         newdata.append(dl.checkBox.isChecked())
-        chkdate=localsettings.formatDate(dl.dateEdit.date().toPyDate())
-        if chkdate!="01/01/1900":
+        chkdate=dl.dateEdit.date().toPyDate()
+        if chkdate != datetime.date(1900,1,1):
             newdata.append(chkdate)
         else:
             newdata.append(None)
         result=tuple(newdata)
-        print result
         if data!=result:
             print "MH changed"
             updateMH.write(pt.serialno,result)

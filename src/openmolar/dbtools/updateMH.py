@@ -15,7 +15,7 @@ def write(sno,data):
 
     result=True
     query='insert into mednotes (serialno,drnm,adrtel,curmed,oldmed,allerg,heart,lungs,liver,kidney,bleed,anaes,other,alert'
-    dateToWrite=localsettings.uk_to_sqlDate(data[13])
+    dateToWrite = data[13]
     if dateToWrite==None:
         query+=") values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         values=(int(sno),)+data[:13]

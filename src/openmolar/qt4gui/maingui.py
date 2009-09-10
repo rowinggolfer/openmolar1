@@ -375,15 +375,17 @@ class chartsClass():
         if self.pt.bpe == []:
             self.ui.bpeDateComboBox.addItem(QtCore.QString("NO BPE"))
         else:
-            l=copy.deepcopy(self.pt.bpe)
+            l = copy.deepcopy(self.pt.bpe)
             l.reverse() #show newest first
             for sets in l:
-                self.ui.bpeDateComboBox.addItem(QtCore.QString((sets[0])))
+                bpedate = localsettings.formatDate(sets[0])
+                self.ui.bpeDateComboBox.addItem(bpedate)
 
     def bpe_table(self, arg):
         '''updates the BPE chart on the clinical summary page'''
         if self.pt.bpe != []:
-            self.ui.bpe_groupBox.setTitle("BPE "+self.pt.bpe[-1][0])
+            last_bpe_date = localsettings.formatDate(self.pt.bpe[-1][0])
+            self.ui.bpe_groupBox.setTitle("BPE "+ last_bpe_date)
             l=copy.deepcopy(self.pt.bpe)
             l.reverse()
             bpestring=l[arg][1]
@@ -1394,8 +1396,7 @@ class pageHandlingClass():
         self.ui.titleEdit.setText(self.pt.title)
         self.ui.fnameEdit.setText(self.pt.fname)
         self.ui.snameEdit.setText(self.pt.sname)
-        self.ui.dobEdit.setDate(QtCore.
-                                QDate.fromString(self.pt.dob, "dd'/'MM'/'yyyy"))
+        self.ui.dobEdit.setDate(self.pt.dob)
         self.ui.addr1Edit.setText(self.pt.addr1)
         self.ui.addr2Edit.setText(self.pt.addr2)
         self.ui.addr3Edit.setText(self.pt.addr3)
@@ -1701,6 +1702,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         hlayout=QtGui.QHBoxLayout(self.ui.apptOVcalendar_placeholder)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.apptOV_calendarWidget)
+        #--add a month view
+        self.ui.monthView = calendars.monthViewCalendar()
+        hlayout=QtGui.QHBoxLayout(self.ui.monthView_placeholder)
+        hlayout.setMargin(0)
+        hlayout.addWidget(self.ui.monthView)
+        
         
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
@@ -1990,8 +1997,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #--NB - these are QSTRINGs... hence toUpper() not PYTHON equiv upper()
         self.pt.fname = str(self.ui.fnameEdit.text().toAscii()).upper()
         self.pt.sname = str(self.ui.snameEdit.text().toAscii()).upper()
-        self.pt.dob = localsettings.formatDate(
-        self.ui.dobEdit.date().toPyDate())
+        self.pt.dob = self.ui.dobEdit.date().toPyDate()
         self.pt.addr1 = str(self.ui.addr1Edit.text().toAscii()).upper()
         self.pt.addr2 = str(self.ui.addr2Edit.text().toAscii()).upper()
         self.pt.addr3 = str(self.ui.addr3Edit.text().toAscii()).upper()
@@ -2116,9 +2122,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.chartsTable()
         self.bpe_dates()
         if self.pt.recd:
-            self.ui.recall_dateEdit.setDate(
-            localsettings.pyDatefromUKDate(self.pt.recd))
-
+            self.ui.recall_dateEdit.setDate(self.pt.recd)
         try:
             pos=localsettings.csetypes.index(self.pt.cset)
         except ValueError:
@@ -2176,14 +2180,13 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.ui.medNotes_pushButton.setPalette(self.palette())
 
         if self.pt.MH != None:
-            chkdate=self.pt.MH[13]
-            if chkdate == None:
-                chkdate=""
+            mhdate=self.pt.MH[13]
+            if mhdate == None:
+                chkdate = ""
             else:
-                chkdate=" - %s"%chkdate
-            self.ui.medNotes_pushButton.setText("MedNotes%s"%chkdate)
-        else:
-            self.ui.medNotes_pushButton.setText("MedNotes")
+                chkdate = " - %s"% localsettings.formatDate(mhdate)
+            self.ui.medNotes_pushButton.setText("MedNotes%s"% chkdate)
+            
         self.enableEdit(True)
 
     def updateStatus(self):
@@ -2227,7 +2230,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             if not self.pt.cmpd in ("", None):
                 self.ui.closeTx_pushButton.setText("Resume Existing Course")
             else:
-                self.ui.closeTx_pushButton.setEnabled(False)
+                pass
+                #self.ui.closeTx_pushButton.setEnabled(False)
 
     def final_choice(self, candidates):
         def DoubleClick():
@@ -2460,7 +2464,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         receives a signal when the date changes in the recall date edit
         on the correspondence page
         '''
-        newdate = localsettings.formatDate(arg.toPyDate())
+        newdate = arg.toPyDate()
         if self.pt.recd != newdate:
             self.pt.recd = newdate
             self.updateDetails() 
@@ -2476,7 +2480,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         print "exporting recalls for %s,%s"%(month, year)
         pts=recall.getpatients(month, year)
         dialog=recall_app.Form(pts)
-        dialog.exec_()
+        if dialog.exec_():
+            ##TODO add a note like (recall printed) to all relevant pt notes.
+            pass
 
     def showChartTable(self):
         '''
@@ -2555,7 +2561,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         dl = newBPE.Ui_Dialog(Dialog)
         result=dl.getInput()
         if result[0]:
-            self.pt.bpe.append((localsettings.ukToday(), result[1]), )
+            self.pt.bpe.append((localsettings.currentDay(), result[1]), )
             #--add a bpe
             newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes+=" bpe of %s recorded \n"%result[1]
@@ -2729,6 +2735,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.ui.NHSadmin_groupBox.show()
         else:
             self.ui.NHSadmin_groupBox.hide()
+            
+        if not arg:
+            self.ui.medNotes_pushButton.setText("MedNotes")
 
     def setValidators(self):
         '''
@@ -2932,7 +2941,14 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         the calendar on the appointments overview page has changed.
         time to re-layout the appointment overview
         '''
-        appt_gui_module.layout_apptOV(self)
+        appt_gui_module.OV_calendar_signals(self)
+    
+    def monthViewSelection_changed(self):
+        '''
+        the calendar on the appointments overview page has changed.
+        time to re-layout the appointment overview
+        '''
+        appt_gui_module.OV_calendar_signals(self, True)
     
     def apptOVtoday_pushButton_clicked(self):
         '''
@@ -3831,6 +3847,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         QtCore.QObject.connect(self.ui.apptOV_calendarWidget,
         QtCore.SIGNAL("selectionChanged()"), 
         self.apptOV_calendarWidget_changed)
+
+        QtCore.QObject.connect(self.ui.monthView,
+        QtCore.SIGNAL("selectionChanged()"), 
+        self.monthViewSelection_changed)
         
         QtCore.QObject.connect(self.ui.apptOVtoday_pushButton,
         QtCore.SIGNAL("clicked()"), self.apptOVtoday_pushButton_clicked)

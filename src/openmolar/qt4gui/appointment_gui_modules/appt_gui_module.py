@@ -220,7 +220,9 @@ def select_apr_ix(parent, apr_ix):
         iterator += 1
     
 def clearApptButtonClicked(parent):
-    '''user is deleting an appointment'''
+    '''
+    user is deleting an appointment
+    '''
     selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
     if selectedAppt == None:
         parent.advise("No appointment selected", 1)
@@ -229,7 +231,10 @@ def clearApptButtonClicked(parent):
     #--aprix is a UNIQUE, iterating field in the database starting at 1,
     aprix = int(selectedAppt.text(9))
     dateText = str(selectedAppt.text(0))
-    checkdate = localsettings.uk_to_sqlDate(dateText)
+    if dateText != "TBA":
+        adate =  selectedAppt.data(0,0).toDate().toPyDate()
+    else:
+        adate = None
     atime = selectedAppt.text(2)
     if atime == "":
         appttime = None
@@ -237,9 +242,7 @@ def clearApptButtonClicked(parent):
         appttime = int(atime.replace(":", ""))
 
     #--is appointment not is aslot (appt book proper) or in the past??
-    if dateText == "TBA" or \
-    QtCore.QDate.fromString(dateText,"dd'/'MM'/'yyyy") < \
-    QtCore.QDate.currentDate():
+    if adate == None or adate < QtCore.QDate.currentDate().toPyDate():
         result = QtGui.QMessageBox.question(parent, 
         "Confirm",
         "Delete this Unscheduled or Past Appointment?",
@@ -249,7 +252,7 @@ def clearApptButtonClicked(parent):
             return
         else:
             if appointments.delete_appt_from_apr(
-            parent.pt.serialno, aprix, checkdate, appttime):
+            parent.pt.serialno, aprix, adate, appttime):
                 parent.advise("Sucessfully removed appointment")
                 layout_apptTable(parent)
             else:
@@ -258,20 +261,16 @@ def clearApptButtonClicked(parent):
         #--get dentists number value
         dent = selectedAppt.text(1)
         #--raise a dialog
-        result = QtGui.QMessageBox.question(parent, 
-        "Confirm", 
+        result = QtGui.QMessageBox.question(parent, "Confirm", 
         "Confirm Delete appointment at %s on %s  with %s"% (
-        atime, dateText, dent), 
-        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        atime, dateText, dent), QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
         if result == QtGui.QMessageBox.Yes:
             #convert into database varaibles (dentist number)
             dent = localsettings.apptix[str(dent)]
             # time in 830 format (integer)
             start = localsettings.humanTimetoWystime(str(atime))
-            #date in sqlformat
-            adate = localsettings.uk_to_sqlDate(str(dateText))
-
+            
             #--delete from the dentists book (aslot)
             if appointments.delete_appt_from_aslot(dent, start, adate,
             parent.pt.serialno):
@@ -280,8 +279,7 @@ def clearApptButtonClicked(parent):
                 print "future appointment deleted - add to notes!!"
 
                 #--keep in apr? the patient's diary
-                result = QtGui.QMessageBox.question(parent,
-                "Question",
+                result = QtGui.QMessageBox.question(parent, "Question",
                 "Removed from appointment book - keep for rescheduling?",
                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
@@ -289,14 +287,12 @@ def clearApptButtonClicked(parent):
                     #appointment "POSTPONED" - not totally cancelled
                     if not appointments.made_appt_to_proposed(
                     parent.pt.serialno, aprix):
-                        parent.advise("Error removing Proposed appointment", 
-                        2)
+                        parent.advise("Error removing Proposed appointment", 2)
                 else:
                     #remove from the patients diary
                     if not appointments.delete_appt_from_apr(
-                    parent.pt.serialno, aprix, checkdate, appttime):
-                        parent.advise("Error removing proposed appointment", 
-                        2)
+                    parent.pt.serialno, aprix, adate, appttime):
+                        parent.advise("Error removing proposed appointment", 2)
             else:
                 #--aslot proc has returned False!
                 #let the user know, and go no further
@@ -305,9 +301,10 @@ def clearApptButtonClicked(parent):
             layout_apptTable(parent)
 
 def modifyAppt(parent):
-    '''user is changing an appointment'''
-
-    #--much of this code is a duplicate of make new appt
+    '''
+    user is changing an appointment
+    much of this code is a duplicate of make new appt
+    '''
     selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
 
     def makeNow():
@@ -350,7 +347,9 @@ def modifyAppt(parent):
         addApptLength(parent, dl, hours, mins)
         dentist = str(selectedAppt.text(1))
         dateText = str(selectedAppt.text(0))
+        adate = None
         if dateText != "TBA":
+            adate = selectedAppt.data(0,0).toDate().toPyDate()
             for widget in (dl.apptlength_comboBox, dl.practix_comboBox,
             dl.scheduleNow_pushButton):
                 widget.setEnabled(False)
@@ -404,8 +403,7 @@ def modifyAppt(parent):
             selectedAppt.text(2)))
 
             aprix = int(selectedAppt.text(9))
-            adate = localsettings.uk_to_sqlDate(dateText)
-
+            
             if parent.pt.cset == "":
                 cst = 32
             else:
@@ -728,13 +726,9 @@ def layout_apptTable(parent):
     #--which will give us stuff like...
     #--(4820L, 7, 4, 'RCT', '', '', 'OR PREP', datetime.date(2008, 12, 15),
     #-- 1200, 60, 0, 73, 0, 0, 0, '')
-    today = localsettings.ukToday()
+    today = localsettings.currentDay()
     for row in rows:
-        date = row[7]
-        if date == None:
-            #--appointment not yet scheduled
-            date = "TBA"
-        #convert dentist from int to initials
+         #convert dentist from int to initials
         dent = localsettings.apptix_reverse.get(row[2])
         if dent == None:
             parent.advise("removing appointment dentist", 1)
@@ -748,8 +742,8 @@ def layout_apptTable(parent):
             start = ""
         else:
             start = localsettings.wystimeToHumanTime(int(row[8]))
-        appointmentList = []
-        appointmentList.append(date)
+        
+        appointmentList = ["TBA"]
         appointmentList.append(dent)
         appointmentList.append(start)
         appointmentList.append(length)
@@ -760,17 +754,24 @@ def layout_apptTable(parent):
         appointmentList.append(datespec)
         appointmentList.append(str(row[1]))
 
-        if date == "TBA":
+        date = row[7]
+        
+        if date == None:
             parentItem = parentItems["Unscheduled"]
         elif date == today:
             parentItem = parentItems["TODAY"]
-        elif localsettings.uk_to_sqlDate(date) < localsettings.sqlToday():
+        elif date < localsettings.currentDay():
             parentItem = parentItems["Past"]
         else:
             parentItem = parentItems["Future"]
             
         widItem = QtGui.QTreeWidgetItem(parentItem, appointmentList)
-
+        
+        if date != None:
+            #-- use QVariant to display the date.
+            qv = QtCore.QVariant(date)
+            widItem.setData(0, 0, qv)
+        
         for i in range (widItem.columnCount()):
             widItem.setTextColor(i, parentItem.textColor(0))
     parent.ui.ptAppointment_treeWidget.expandAll()
@@ -1025,8 +1026,7 @@ def findApptButtonClicked(parent):
     search for an appointment
     '''
     selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
-    ##TODO - whoops UK date format
-    d = QtCore.QDate.fromString(selectedAppt.text(0), "dd'/'MM'/'yyyy")
+    d = selectedAppt.data(0,0).toDate()
 
     QtCore.QObject.disconnect(parent.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
@@ -1038,12 +1038,33 @@ def findApptButtonClicked(parent):
     QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
 
 
+def OV_calendar_signals(parent, senderIsBigCalendar=False):
+    #-- sync the month view calendar.
+    if senderIsBigCalendar:
+        sender = parent.ui.monthView
+        recipient = parent.ui.apptOV_calendarWidget
+        slot = parent.apptOV_calendarWidget_changed
+    else:
+        recipient = parent.ui.monthView
+        sender = parent.ui.apptOV_calendarWidget
+        slot = parent.monthViewSelection_changed
+        
+    QtCore.QObject.disconnect(recipient, QtCore.SIGNAL("selectionChanged()"), 
+    slot)
+
+    recipient.setSelectedDate(sender.selectedDate())
+    
+    QtCore.QObject.connect(recipient, QtCore.SIGNAL("selectionChanged()"), 
+    slot)
+    
+    layout_apptOV(parent)
+
 def layout_apptOV(parent):
     '''
     called by checking a dentist checkbox on apptov tab
     or by changeing the date on the appt OV calendar
     '''
-
+    
     if parent.ui.main_tabWidget.currentIndex() != 2:
         #--this is needed incase I programmatically
         #--change the checkboxes or diary date...
@@ -1366,9 +1387,10 @@ def printApptCard(parent):
     while iterator.value():
         #parent.ui.ptAppointment_treeWidget.setItemSelected(iter)
         i = iterator.value() #parent.ui.ptAppointment_treeWidget.currentItem()
-        adate = str(i.text(0))
-        if localsettings.uk_to_sqlDate(adate)>localsettings.sqlToday():
-            futureAppts += ((adate, str(i.text(2)), str(i.text(1))), )
+        adate = i.data(0,0).toDate().toPyDate()
+        if adate > localsettings.currentDay():
+            futureAppts += ((localsettings.longDate(adate), 
+            str(i.text(2)), str(i.text(1))), )
         iterator += 1
     card = apptcardPrint.card(parent.ui)
     card.setProps(parent.pt.title, parent.pt.fname, parent.pt.sname,

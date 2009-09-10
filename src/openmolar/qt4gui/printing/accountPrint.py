@@ -9,7 +9,6 @@ from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
 
 import datetime
-DATE_FORMAT = "dd MMMM, yyyy"
 
 class document():
     ''' this class provides a letter asking for settlement of an account'''
@@ -82,7 +81,8 @@ class document():
             
             painter.setFont(serifFont)
             x,y=LeftMargin,(pageRect.height()*0.35)
-            painter.drawText(x+250, y, QtCore.QDate.currentDate().toString(DATE_FORMAT))
+            painter.drawText(x+250, y, 
+            QtCore.QDate.currentDate().toString(localsettings.DATE_FORMAT))
             y += sansLineHeight
             y += serifLineHeight
             painter.drawText(x, y, "Dear %s %s," %(self.title.title(),self.sname.title()))

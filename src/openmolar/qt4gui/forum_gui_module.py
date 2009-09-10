@@ -77,7 +77,7 @@ def loadForum(parent):
             for i in range(item.columnCount()):
                 item.setTextColor(i, colour)
                 if i == 3 and post.date > \
-                localsettings.curTime() - datetime.timedelta(hours = 24):
+                localsettings.currentTime() - datetime.timedelta(hours = 24):
                     item.setTextColor(i, QtGui.QColor("orange"))
 
             parentItems[post.ix] = item

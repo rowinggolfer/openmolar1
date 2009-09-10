@@ -23,15 +23,15 @@ def toHtml(pt):
     retarg+="<tr><td>PREVIOUS SURNAME</td><td>%s</td></tr>"%pt.psn
     retarg+="<tr><td>NHS NUMBER</td><td>%s</td></tr>"%pt.nhsno
     
-    retarg+="<tr><td>LAST CLAIM</td><td>%s</td></tr>"%pt.pd3
-    retarg+="<tr><td>INITIAL ACCEPTANCE</td><td>%s</td></tr>"%pt.pd12
-    retarg+="<tr><td>LAST REACCEPTANCE</td><td>%s</td></tr>"%pt.pd14
-    retarg+="<tr><td>EXPIRY</td><td>%s</td></tr>"%pt.expiry
-    retarg+="<tr><td>CSTATUS</td><td>%s</td></tr>"%pt.cstatus
-    retarg+="<tr><td>TRANSFER</td><td>%s</td></tr>"%pt.transfer
+    retarg+="<tr><td>LAST CLAIM</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd3)
+    retarg+="<tr><td>INITIAL ACCEPTANCE</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd12)
+    retarg+="<tr><td>LAST REACCEPTANCE</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd14)
+    retarg+="<tr><td>EXPIRY</td><td>%s</td></tr>"% localsettings.formatDate(pt.expiry)
+    retarg+="<tr><td>CSTATUS</td><td>%s</td></tr>"% localsettings.formatDate(pt.cstatus)
+    retarg+="<tr><td>TRANSFER</td><td>%s</td></tr>"% localsettings.formatDate(pt.transfer)
     
     if pt.sex=="F":
-        retarg+="<tr><td>CONFINEMENT DATE</td><td>%s</td></tr>"%pt.cnfd
+        retarg+="<tr><td>CONFINEMENT DATE</td><td>%s</td></tr>"% localsettings.formatDate(pt.cnfd)
     
     retarg+='</table></body></html>'
 

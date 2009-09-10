@@ -9,7 +9,6 @@ from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
 
 import datetime
-DATE_FORMAT = "d, MMMM, yyyy"
 
 class card():
     def __init__(self,parent=None):
@@ -53,7 +52,7 @@ class card():
         y = fontLineHeight*2
         
         painter.drawText(QtCore.QRectF(0, 0,pageRect.width(), y),
-        "The Academy Dental Practice, 19 Union Street\nInverness. tel 01463 232423",option)
+        localsettings.APPOINTMENT_CARD_HEADER,option)
         
         y+=2
         
@@ -65,14 +64,17 @@ class card():
         name= "%s %s %s - (%s)"%(
         self.title.title(),self.fname.title(),self.sname.title(),self.ourref)
 
-        painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),name,option)
+        painter.drawText(QtCore.QRectF(
+        0,y,pageRect.width(),font2LineHeight),name,option)
                 
         y += font2LineHeight*1.2
         
         for app in self.appts[:5]:
-            formatString="%s - %s with %s"%(
-            app[1],localsettings.longDatefromUKDate(app[0]),app[2])
-            painter.drawText(QtCore.QRectF(0,y,pageRect.width(),font2LineHeight),formatString,option)            
+            formatString="%s - %s with %s"%(app[1], app[0], app[2])
+
+            painter.drawText(QtCore.QRectF(
+            0,y,pageRect.width(),font2LineHeight),formatString,option)            
+
             y += font2LineHeight
             
         y = pageRect.height()-2-fontLineHeight*3.5
@@ -83,7 +85,7 @@ class card():
         
         painter.setFont(font)
         painter.drawText(QtCore.QRectF(0, y,pageRect.width(), fontLineHeight*2),
-        "Please try and give at least 24 hours notice\n if you need to change an appointment.",option)
+        localsettings.APPOINTMENT_CARD_FOOTER, option)
 
 if __name__ == "__main__":
     import sys

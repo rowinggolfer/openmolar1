@@ -11,8 +11,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 #import qrc_resources
 
-DATE_FORMAT="dd mm yyyy"
-
 class printChart():
     '''initiates with an image (chart) as the argument'''
     def __init__(self,pt,chartimage):

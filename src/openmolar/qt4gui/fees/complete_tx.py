@@ -104,7 +104,7 @@ def estwidg_complete(parent, txtype):
             
         if att == "exam":
             parent.pt.examt = tup[1]
-            parent.pt.examd = localsettings.ukToday()
+            parent.pt.examd = localsettings.currentDay()
             parent.pt.addHiddenNote("exam", "%s"% tup[1])
         
         else:

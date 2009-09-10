@@ -12,7 +12,6 @@ from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
 
 import datetime
-DATE_FORMAT = "d, MMMM, yyyy"
 
 def toMoneyString(i):
     return u"£"+"%.02f"%(i/100)
@@ -69,7 +68,7 @@ class estimate():
             painter.drawText(x, y, mystr)
             
             painter.drawText(x+w, y,
-            QtCore.QDate.currentDate().toString(DATE_FORMAT))
+            QtCore.QDate.currentDate().toString(localsettings.DATE_FORMAT))
         
             x = LeftMargin + 10
             y += serifLineHeight * 2

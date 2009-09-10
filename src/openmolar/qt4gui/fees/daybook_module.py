@@ -23,16 +23,16 @@ def perioDates(parent, arg):
     update the patient's "last scale/polish" date
     '''
     if "SP" in arg:
-        parent.pt.pd10 = localsettings.ukToday()
+        parent.pt.pd10 = localsettings.currentDay()
 
 def xrayDates(parent, arg):
     '''
     update the patient's "last xray" dates
     '''    
     if "M" in arg or "S" in arg:
-        parent.pt.pd9 = localsettings.ukToday()
+        parent.pt.pd9 = localsettings.currentDay()
     if "P" in arg:
-        parent.pt.pd8 = localsettings.ukToday()
+        parent.pt.pd8 = localsettings.currentDay()
 
 def updateDaybook(parent):
     '''
@@ -96,4 +96,4 @@ def updateDaybook(parent):
         daybook.add(parent.pt.serialno, parent.pt.cset, dent, trtid,
         daybookdict, feesa, feesb)
         print "updating pd4"
-        parent.pt.pd4 = localsettings.ukToday()
+        parent.pt.pd4 = localsettings.currentDay()

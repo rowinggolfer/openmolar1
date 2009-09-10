@@ -9,7 +9,6 @@ from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
 
 import datetime
-DATE_FORMAT = "d, MMMM, yyyy"
 
 def toMoneyString(i):
     return u"£"+"%d.%02d"%(i/100,i%100)
@@ -81,7 +80,8 @@ class receipt():
             w=fm.width(mystr)
             painter.drawText(x, y, mystr)
             if not self.isDuplicate:
-                painter.drawText(x+w, y, QtCore.QDate.currentDate().toString(DATE_FORMAT))
+                painter.drawText(x+w, y, 
+                QtCore.QDate.currentDate().toString(localsettings.DATE_FORMAT))
             else:
                 painter.drawText(x+w, y, self.dupdate)
 

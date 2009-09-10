@@ -23,18 +23,14 @@ def getAge(dob):
     '''
     try:
         today = datetime.date.today()
-        dobsplit = dob.split("/")
-        dobday = int(dobsplit[0])
-        dobmonth = int(dobsplit[1])
-        dobyear = int(dobsplit[2])
-        nextbirthday = datetime.date(today.year, dobmonth, dobday)
-        age = today.year - dobyear
+        nextbirthday = datetime.date(today.year, dob.month, dob.day)
+        age = today.year - dob.year
         if nextbirthday > today:
             age -= 1
-            m = (12 - dobmonth) + today.month
+            m = (12 - dob.month) + today.month
         else:
-            m = today.month - dobmonth
-        if dobday > today.day:
+            m = today.month - dob.month
+        if dob.day > today.day:
             m -= 1
         if nextbirthday == today:
             return "<h5> %s TODAY!</h5>"% age
@@ -63,7 +59,7 @@ def details(pt, Saved=True):
         localsettings.stylesheet, pt.serialno, pt.title.title(),
         pt.fname.title(), pt.sname.title())
 
-        retarg += '%s %s'% (pt.dob, getAge(pt.dob))
+        retarg += '%s %s'% (localsettings.formatDate(pt.dob), getAge(pt.dob))
         for line in (pt.addr1, pt.addr2, pt.addr3, pt.town, pt.county):
             if str(line) != '':
                 retarg += "%s <br />"% line
@@ -107,24 +103,25 @@ def details(pt, Saved=True):
         <tr><td>Last IO Xrays</td><td>%s</td></tr>
         <tr><td>Last OPG</td><td>%s</td></tr>
         <tr><td>Last Sp</td><td>%s</td></tr>
-        '''% (pt.pd9, pt.pd8, pt.pd10)
+        '''% (localsettings.formatDate(pt.pd9), 
+        localsettings.formatDate(pt.pd8), localsettings.formatDate(pt.pd10))
 
         letype = ""
-        lastexam = ""
+        lastexam = datetime.date(1,1,1)
         i = 0
         for date in (pt.pd5, pt.pd6, pt.pd7):
-            if date and localsettings.uk_to_sqlDate(date) > \
-            localsettings.uk_to_sqlDate(lastexam):
-                lastexam = str(date)
+            if date and date > lastexam:
+                lastexam = date
                 letype = ("(CE)", "(ECE)", "(FCA)")[i]
             i += 1
-
+        if lastexam == datetime.date(1,1,1):
+            lastexam = None
         if letype != "":
             retarg += '<tr><td>Last Exam %s</td><td>%s</td></tr>'% (
-            letype, lastexam)
+            letype, localsettings.formatDate(lastexam))
 
         retarg += '''<tr><td>Recall Date</td><td>%s</td></tr>
-        </table>''' % pt.recd
+        </table>''' % localsettings.formatDate(pt.recd)
 
         if not pt.status in ("Active", "", None):
             retarg += "<h1>%s</h1>"% pt.status
