@@ -65,7 +65,7 @@ def setupNewCourse(parent):
         accd = atts[3].toPyDate()
 
         course = writeNewCourse.write(parent.pt.serialno,
-        localsettings.ops_reverse[atts[1]], str(accd))
+        localsettings.ops_reverse[atts[1]], accd)
         
         if course[0]:
             parent.pt.blankCurrtrt()

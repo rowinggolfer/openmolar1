@@ -335,11 +335,7 @@ class patient():
         fields=currtrtmtTableAtts
         query=""
         for field in fields:
-            if field in dateFields:
-                query+='DATE_FORMAT(%s,"%s"),'%(
-                field,localsettings.sqlDateFormat)
-            else:
-                query+=field+","
+            query += field+","
         query=query.strip(",")
         cursor.execute('''SELECT %s from currtrtmt where serialno=%d
         and courseno=%d'''%(query,self.serialno,self.courseno0))
