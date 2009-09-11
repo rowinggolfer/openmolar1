@@ -103,8 +103,7 @@ def closeCourse(parent, leaving=False):
 
     if not leaving:
         my_dialog.autoComplete_label.hide()
-    earliestDate = localsettings.pyDatefromUKDate(parent.pt.accd)
-    my_dialog.dateEdit.setMinimumDate(earliestDate)
+    my_dialog.dateEdit.setMinimumDate(parent.pt.accd)
     my_dialog.dateEdit.setMaximumDate(QtCore.QDate().currentDate())
     my_dialog.dateEdit.setDate(QtCore.QDate().currentDate())
     

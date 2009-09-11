@@ -302,20 +302,7 @@ def monthName(d):
         "August","September","October","November","December")[d.month]
     except:
         pass
-
-def pyDatefromUKDate(ukdate):
-    try:
-        return datetime.datetime.strptime(ukdate, "%d/%m/%Y")
-    except Exception, e:
-        print e
-        print "error getting a valid pydate from '%s'"% ukdate
-        
-def longDatefromUKDate(ukdate):
-    try:
-        return longDate(pyDatefromUKDate(ukdate))
-    except:
-        pass
-        
+     
 def longDate(d):
     try:
         return "%s, %d %s %d"% (dayName(d), d.day, monthName(d), d.year)
