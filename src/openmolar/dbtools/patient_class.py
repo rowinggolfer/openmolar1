@@ -432,14 +432,14 @@ class patient():
         set the acceptance date (with a pydate)
         '''
         print "setAccd called with date", accd
-        self.accd = localsettings.formatDate(accd)
+        self.accd = accd
     
     def setCmpd(self, cmpd):
         '''
         set the completion date (with a pydate)
         '''
         print "setAccd called with date", cmpd
-        self.cmpd = localsettings.formatDate(cmpd)
+        self.cmpd = cmpd
     
     
     def resetAllMonies(self):
