@@ -1035,7 +1035,10 @@ class printingClass():
         dl = Ui_confirmDentist.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.dents_comboBox.addItems(localsettings.activedents)
-        prevDetails = "Previous Course (%s - %s)"% (self.pt.accd,self.pt.cmpd)
+        prevDetails = "Previous Course (%s - %s)"% (
+        localsettings.formatDate(self.pt.accd),
+        localsettings.formatDate(self.pt.cmpd))
+
         dl.previousCourse_radioButton.setText(prevDetails)
         if localsettings.apptix_reverse[dent] in localsettings.activedents:
             pos=localsettings.activedents.index(localsettings.apptix_reverse[dent])

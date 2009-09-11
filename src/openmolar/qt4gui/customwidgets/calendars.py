@@ -36,16 +36,16 @@ class monthViewCalendar(QtGui.QCalendarWidget):
         self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(False)
 
-        self.color = copy.copy(self.palette().color(QtGui.QPalette.Highlight))
-        self.color.setAlpha(64)
-        self.connect(self, QtCore.SIGNAL("selectionChanged ()"), 
-                self.updateCells)
+        #self.color = copy.copy(self.palette().color(QtGui.QPalette.Highlight))
+        #self.color.setAlpha(64)
+        #self.connect(self, QtCore.SIGNAL("selectionChanged ()"), 
+        #        self.updateCells)
         
     def paintCell(self, painter, rect, date):    
         QtGui.QCalendarWidget.paintCell(self, painter, rect, date)
         
-        if date.weekNumber()[0] == self.selectedDate().weekNumber()[0]:
-            painter.fillRect(rect, self.color)
+        #if date.weekNumber()[0] == self.selectedDate().weekNumber()[0]:
+        #    painter.fillRect(rect, self.color)
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
