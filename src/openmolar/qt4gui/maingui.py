@@ -2227,11 +2227,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.ui.planDetails_groupBox.setEnabled(False)            
             
             self.ui.newCourse_pushButton.setEnabled(True)
-            if not self.pt.cmpd in ("", None):
+            if not self.pt.accd in ("", None):
                 self.ui.closeTx_pushButton.setText("Resume Existing Course")
             else:
-                pass
-                #self.ui.closeTx_pushButton.setEnabled(False)
+                self.ui.closeTx_pushButton.setEnabled(False)
 
     def final_choice(self, candidates):
         def DoubleClick():

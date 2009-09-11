@@ -98,7 +98,7 @@ def closeCourse(parent, leaving=False):
     Dialog = QtGui.QDialog(parent)
     my_dialog = Ui_completionDate.Ui_Dialog()
     my_dialog.setupUi(Dialog)
-    my_dialog.pt_label.setText("%s %s - (%s)"% (parent.pt.sname, 
+    my_dialog.pt_label.setText("%s %s - (%s)"% (parent.pt.fname, 
     parent.pt.sname, parent.pt.serialno))
 
     if not leaving:

@@ -87,12 +87,12 @@ class txCourse():
                 bgcolor, self.__dict__[att+planned])
 
             retarg += "</tr><tr>"
-            for att in uppers:
+            for att in lowers:
                 retarg += '<td align = "center"%s>%s</td>'% (
                 bgcolor, att.upper())
 
             retarg += "</tr><tr>"
-            for att in uppers:
+            for att in lowers:
                 retarg += '<td align = "center"%s>%s</td>'% (
                 bgcolor, self.__dict__[att+planned])
 
