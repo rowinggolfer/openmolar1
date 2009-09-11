@@ -1384,10 +1384,11 @@ def printApptCard(parent):
     while iterator.value():
         #parent.ui.ptAppointment_treeWidget.setItemSelected(iter)
         i = iterator.value() #parent.ui.ptAppointment_treeWidget.currentItem()
-        adate = i.data(0,0).toDate().toPyDate()
-        if adate > localsettings.currentDay():
-            futureAppts += ((localsettings.longDate(adate), 
-            str(i.text(2)), str(i.text(1))), )
+        if i.data(0,0).toString() != "TBA":
+            adate = i.data(0,0).toDate().toPyDate()
+            if adate > localsettings.currentDay():
+                futureAppts += ((localsettings.longDate(adate), 
+                str(i.text(2)), str(i.text(1))), )
         iterator += 1
     card = apptcardPrint.card(parent.ui)
     card.setProps(parent.pt.title, parent.pt.fname, parent.pt.sname,
