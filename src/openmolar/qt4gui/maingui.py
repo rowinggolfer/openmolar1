@@ -1096,7 +1096,7 @@ class printingClass():
     def book1print(self):
         try:
             dent=localsettings.apptix[self.ui.apptBookWidgets[0].dentist]
-            date=self.ui.appointmentCalendarWidget.selectedDate()
+            date=self.ui.calendarWidget.selectedDate()
             books=((dent, date), )
             self.printdaylists(books)
         except KeyError:
@@ -1104,7 +1104,7 @@ class printingClass():
     def book2print(self):
         try:
             dent=localsettings.apptix[self.ui.apptBookWidgets[1].dentist]
-            date=self.ui.appointmentCalendarWidget.selectedDate()
+            date=self.ui.calendarWidget.selectedDate()
             books=((dent, date), )
             self.printdaylists(books)
         except KeyError:
@@ -1113,7 +1113,7 @@ class printingClass():
     def book3print(self):
         try:
             dent=localsettings.apptix[self.ui.apptBookWidgets[2].dentist]
-            date=self.ui.appointmentCalendarWidget.selectedDate()
+            date=self.ui.calendarWidget.selectedDate()
             books=((dent, date), )
             self.printdaylists(books)
         except KeyError:
@@ -1122,7 +1122,7 @@ class printingClass():
     def book4print(self):
         try:
             dent=localsettings.apptix[self.ui.apptBookWidgets[3].dentist]
-            date=self.ui.appointmentCalendarWidget.selectedDate()
+            date=self.ui.calendarWidget.selectedDate()
             books=((dent, date), )
             self.printdaylists(books)
         except KeyError:
@@ -1196,29 +1196,27 @@ class pageHandlingClass():
     def handle_mainTab(self):
         '''procedure called when user navigates the top tab'''
         ci=self.ui.main_tabWidget.currentIndex()
-        if ci != 2 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
+        if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
             self.advise("Appointment not made", 1)
             appt_gui_module.aptOVviewMode(self, True)
 
         #--user is viewing appointment book
         if ci == 1:
             today=QtCore.QDate.currentDate()
-            if self.ui.appointmentCalendarWidget.selectedDate() != today:
-                self.ui.appointmentCalendarWidget.setSelectedDate(today)
+            if self.ui.calendarWidget.selectedDate() != today:
+                self.ui.calendarWidget.setSelectedDate(today)
             else:
                 appt_gui_module.layout_appointments(self)
             appt_gui_module.triangles(self)
             for book in self.ui.apptBookWidgets:
                 book.update()
 
-        #--user is viewing apointment overview
-        if ci == 2:
             appt_gui_module.layout_apptOV(self)
 
-        if ci == 7:
+        if ci == 6:
             if not self.feestableLoaded:
                 fees_module.loadFeesTable(self)
-        if ci == 8:
+        if ci == 7:
             forum_gui_module.loadForum(self)
 
     def handle_patientTab(self):
@@ -1701,10 +1699,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             glayout.addWidget(cb, row, 1, 1, 1)
 
         #--customise the appointment widget calendar
-        self.ui.apptOV_calendarWidget = calendars.weekCalendar()
+        self.ui.calendarWidget = calendars.weekCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.apptOVcalendar_placeholder)
         hlayout.setMargin(0)
-        hlayout.addWidget(self.ui.apptOV_calendarWidget)
+        hlayout.addWidget(self.ui.calendarWidget)
         #--add a month view
         self.ui.monthView = calendars.monthViewCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.monthView_placeholder)
@@ -2859,13 +2857,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         appt_gui_module.appointmentTools(self)
     
-    def apptCalWidget_changed(self):
-        '''
-        the calendar on the appointments page has changed.
-        time to re-layout the appointments
-        '''
-        appt_gui_module.layout_appointments(self)
-    
     def gotoToday_clicked(self):
         '''
         handles button pressed asking for today to be loaded on the 
@@ -2884,31 +2875,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         handles a request to move forward a day in the appointments page
         '''
         appt_gui_module.apt_dayForward(self)
-    
-    def apt_weekBack_clicked(self):
-        '''
-        handles a request to move back a week in the appointments page
-        '''
-        appt_gui_module.apt_weekBack(self)
-    
-    def apt_weekForward_clicked(self):
-        '''
-        handles a request to move forward a week in the appointments page
-        '''
-        appt_gui_module.apt_weekForward(self)
-        
-    def apt_monthBack_clicked(self):
-        '''
-        handles a request to move back a month in the appointments page
-        '''
-        appt_gui_module.apt_monthBack(self)
-    
-    def apt_monthForward_clicked(self):
-        '''
-        handles a request to move forward a month in the appointments page
-        '''
-        appt_gui_module.apt_monthForward(self)
-        
     
     def fontSize_spinBox_changed(self,i):
         '''
@@ -2938,11 +2904,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         appt_gui_module.blockEmptySlot(self, arg)
         
-    def apptOV_calendarWidget_changed(self):
+    def calendarWidget_changed(self):
         '''
         the calendar on the appointments overview page has changed.
         time to re-layout the appointment overview
         '''
+        appt_gui_module.layout_appointments(self)
         appt_gui_module.OV_calendar_signals(self)
     
     def monthViewSelection_changed(self):
@@ -2952,13 +2919,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         appt_gui_module.OV_calendar_signals(self, True)
     
-    def apptOVtoday_pushButton_clicked(self):
-        '''
-        handles button pressed asking for today to be loaded on the 
-        appointments overview page
-        '''
-        appt_gui_module.gotoCurWeek(self)
-
     def aptOV_weekBack_clicked(self):
         '''
         handles a request to move back a week in the appointment overview page
@@ -3794,10 +3754,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
     
     def signals_appointmentTab(self):
         #signals raised on the main appointment tab
-        QtCore.QObject.connect(self.ui.appointmentCalendarWidget, 
-        QtCore.SIGNAL("selectionChanged()"), 
-        self.apptCalWidget_changed)
-
         QtCore.QObject.connect(self.ui.goTodayPushButton,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
 
@@ -3806,18 +3762,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
         QtCore.QObject.connect(self.ui.apptNextDay_pushButton,
         QtCore.SIGNAL("clicked()"), self.apt_dayForward_clicked)
-
-        QtCore.QObject.connect(self.ui.apptPrevWeek_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apt_weekBack_clicked)
-
-        QtCore.QObject.connect(self.ui.apptNextWeek_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apt_weekForward_clicked)
-
-        QtCore.QObject.connect(self.ui.apptPrevMonth_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apt_monthBack_clicked)
-
-        QtCore.QObject.connect(self.ui.apptNextMonth_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apt_monthForward_clicked)
 
         QtCore.QObject.connect(self.ui.fontSize_spinBox,
         QtCore.SIGNAL("valueChanged (int)"), self.fontSize_spinBox_changed)
@@ -3846,17 +3790,14 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
     def signals_appointmentOVTab(self):
         #appointment overview tab
-        QtCore.QObject.connect(self.ui.apptOV_calendarWidget,
+        QtCore.QObject.connect(self.ui.calendarWidget,
         QtCore.SIGNAL("selectionChanged()"), 
-        self.apptOV_calendarWidget_changed)
+        self.calendarWidget_changed)
 
         QtCore.QObject.connect(self.ui.monthView,
         QtCore.SIGNAL("selectionChanged()"), 
         self.monthViewSelection_changed)
         
-        QtCore.QObject.connect(self.ui.apptOVtoday_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apptOVtoday_pushButton_clicked)
-
         QtCore.QObject.connect(self.ui.aptOVprevweek,
         QtCore.SIGNAL("clicked()"), self.aptOV_weekBack_clicked)
         

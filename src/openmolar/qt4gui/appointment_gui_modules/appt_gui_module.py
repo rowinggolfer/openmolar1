@@ -454,16 +454,16 @@ def begin_makeAppt(parent):
             #--if the date found is earlier than today... it is irrelevant
             if qdate < QtCore.QDate.currentDate():
                 qdate = QtCore.QDate.currentDate()
-            parent.ui.apptOV_calendarWidget.setSelectedDate(qdate)
+            parent.ui.calendarWidget.setSelectedDate(qdate)
 
         except TypeError:
             #--previous row had TBA as a date and the fromString
             #--raised a TypeError exception? so use today
-            parent.ui.apptOV_calendarWidget.setSelectedDate(
+            parent.ui.calendarWidget.setSelectedDate(
                                             QtCore.QDate.currentDate())
     else:
     '''
-    parent.ui.apptOV_calendarWidget.setSelectedDate(
+    parent.ui.calendarWidget.setSelectedDate(
     QtCore.QDate.currentDate())
 
     #--deselect ALL dentists and hygenists so only one "book" is viewable
@@ -501,16 +501,16 @@ def offerAppt(parent, firstRun=False):
     trt3 = selectedAppt.text(6)
     memo = selectedAppt.text(7)
 
-    #-- parent.ui.apptOV_calendarWidget date originally set when user
+    #-- parent.ui.calendarWidget date originally set when user
     #--clicked the make button
-    seldate = parent.ui.apptOV_calendarWidget.selectedDate()
+    seldate = parent.ui.calendarWidget.selectedDate()
     today = QtCore.QDate.currentDate()
 
     if seldate < today:
         parent.advise("can't schedule an appointment in the past", 1)
         #-- change the calendar programatically (this will call THIS
         #--procedure again!)
-        parent.ui.apptOV_calendarWidget.setSelectedDate(today)
+        parent.ui.calendarWidget.setSelectedDate(today)
         return
     elif seldate.toPyDate() > localsettings.bookEnd:
         parent.advise('''Reached %s<br />
@@ -545,7 +545,8 @@ def offerAppt(parent, firstRun=False):
                         freeslots[apt[1]] = apt[2]
 
                         #--show the appointment overview tab
-                        parent.ui.main_tabWidget.setCurrentIndex(2)
+                        parent.ui.main_tabWidget.setCurrentIndex(1)
+                        parent.ui.ApptOV_tabWidget.setCurrentIndex(1)
         else:
             parent.advise("no slots available for selected week")
             if firstRun:
@@ -576,7 +577,7 @@ def makeAppt(parent, arg):
     memo = str(selectedAppt.text(7).toAscii())
     #--aprix is a UNIQUE field in the database starting at 1,
     aprix = int(selectedAppt.text(9))
-    caldate = parent.ui.apptOV_calendarWidget.selectedDate()
+    caldate = parent.ui.calendarWidget.selectedDate()
     appointment_made = False
     dayno = caldate.dayOfWeek()
     selecteddate = caldate.addDays(1 -dayno + arg[0])
@@ -810,7 +811,7 @@ def triangles(parent):
     so they can display traingle pointers
     '''
     currenttime = "%02d%02d"%(time.localtime()[3], time.localtime()[4])
-    d = parent.ui.appointmentCalendarWidget.selectedDate()
+    d = parent.ui.calendarWidget.selectedDate()
     if d == QtCore.QDate.currentDate():
         for book in parent.ui.apptBookWidgets:
             book.setCurrentTime(currenttime)
@@ -833,7 +834,7 @@ def getappointmentData(d, dents=()):
 def calendar(parent, sd):
     '''comes from click proceedures'''
     parent.ui.main_tabWidget.setCurrentIndex(1)
-    parent.ui.appointmentCalendarWidget.setSelectedDate(sd)
+    parent.ui.calendarWidget.setSelectedDate(sd)
 
 def aptFontSize(parent, e):
     '''
@@ -867,7 +868,7 @@ def gotoCurWeek(parent):
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    parent.ui.apptOV_calendarWidget.setSelectedDate(
+    parent.ui.calendarWidget.setSelectedDate(
     QtCore.QDate.currentDate())
 
         
@@ -876,39 +877,39 @@ def aptOV_weekBack(parent):
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    date = parent.ui.apptOV_calendarWidget.selectedDate()
-    parent.ui.apptOV_calendarWidget.setSelectedDate(date.addDays(-7))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addDays(-7))
 
 def aptOV_weekForward(parent):
     '''
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    date = parent.ui.apptOV_calendarWidget.selectedDate()
-    parent.ui.apptOV_calendarWidget.setSelectedDate(date.addDays(7))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addDays(7))
 
 def aptOV_monthBack(parent):
     '''
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    date = parent.ui.apptOV_calendarWidget.selectedDate()
-    parent.ui.apptOV_calendarWidget.setSelectedDate(date.addMonths(-1))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addMonths(-1))
 
 def aptOV_monthForward(parent):
     '''
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    date = parent.ui.apptOV_calendarWidget.selectedDate()
-    parent.ui.apptOV_calendarWidget.setSelectedDate(date.addMonths(1))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addMonths(1))
 
 def gotoToday(parent):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    parent.ui.appointmentCalendarWidget.setSelectedDate(
+    parent.ui.calendarWidget.setSelectedDate(
     QtCore.QDate.currentDate())
 
 def apt_dayBack(parent):
@@ -916,48 +917,48 @@ def apt_dayBack(parent):
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.appointmentCalendarWidget.selectedDate()
-    parent.ui.appointmentCalendarWidget.setSelectedDate(date.addDays(-1))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addDays(-1))
 
 def apt_dayForward(parent):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.appointmentCalendarWidget.selectedDate()
-    parent.ui.appointmentCalendarWidget.setSelectedDate(date.addDays(1))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addDays(1))
 
 def apt_weekBack(parent):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.appointmentCalendarWidget.selectedDate()
-    parent.ui.appointmentCalendarWidget.setSelectedDate(date.addDays(-7))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addDays(-7))
 
 def apt_weekForward(parent):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.appointmentCalendarWidget.selectedDate()
-    parent.ui.appointmentCalendarWidget.setSelectedDate(date.addDays(7))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addDays(7))
 
 def apt_monthBack(parent):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.appointmentCalendarWidget.selectedDate()
-    parent.ui.appointmentCalendarWidget.setSelectedDate(date.addMonths(-1))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addMonths(-1))
 
 def apt_monthForward(parent):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.appointmentCalendarWidget.selectedDate()
-    parent.ui.appointmentCalendarWidget.setSelectedDate(date.addMonths(1))
+    date = parent.ui.calendarWidget.selectedDate()
+    parent.ui.calendarWidget.setSelectedDate(date.addMonths(1))
 
 def clearTodaysEmergencyTime(parent):
     '''
@@ -1031,7 +1032,7 @@ def findApptButtonClicked(parent):
     QtCore.QObject.disconnect(parent.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
 
-    parent.ui.appointmentCalendarWidget.setSelectedDate(d)
+    parent.ui.calendarWidget.setSelectedDate(d)
     parent.ui.main_tabWidget.setCurrentIndex(1)
 
     QtCore.QObject.connect(parent.ui.main_tabWidget,
@@ -1042,11 +1043,11 @@ def OV_calendar_signals(parent, senderIsBigCalendar=False):
     #-- sync the month view calendar.
     if senderIsBigCalendar:
         sender = parent.ui.monthView
-        recipient = parent.ui.apptOV_calendarWidget
-        slot = parent.apptOV_calendarWidget_changed
+        recipient = parent.ui.calendarWidget
+        slot = parent.calendarWidget_changed
     else:
         recipient = parent.ui.monthView
-        sender = parent.ui.apptOV_calendarWidget
+        sender = parent.ui.calendarWidget
         slot = parent.monthViewSelection_changed
         
     QtCore.QObject.disconnect(recipient, QtCore.SIGNAL("selectionChanged()"), 
@@ -1065,7 +1066,7 @@ def layout_apptOV(parent):
     or by changeing the date on the appt OV calendar
     '''
     
-    if parent.ui.main_tabWidget.currentIndex() != 2:
+    if parent.ui.main_tabWidget.currentIndex() != 1:
         #--this is needed incase I programmatically
         #--change the checkboxes or diary date...
         #--I don't want a redraw every time
@@ -1118,7 +1119,7 @@ def layout_apptOV(parent):
         QtCore.SIGNAL("stateChanged(int)"), 
         parent.apptOV_all_clinicians_checkbox_changed)
 
-    cal = parent.ui.apptOV_calendarWidget
+    cal = parent.ui.calendarWidget
     date = cal.selectedDate()
     
     dayno = date.dayOfWeek()
@@ -1131,9 +1132,9 @@ def layout_apptOV(parent):
         parent.ui.apptoverviewControls[day-1].setDate(weekday)
 
     if QtCore.QDate.currentDate() in weekdates:
-        parent.ui.apptOVtoday_pushButton.setEnabled(False)
+        parent.ui.goTodayPushButton.setEnabled(False)
     else:
-        parent.ui.apptOVtoday_pushButton.setEnabled(True)
+        parent.ui.goTodayPushButton.setEnabled(True)
 
     userCheckedDents = []
     for dent in parent.ui.aptOVdent_checkBoxes.keys():
@@ -1204,7 +1205,7 @@ def layout_appointments(parent):
         book.clearAppts()
         book.setTime = "None"
 
-    d = parent.ui.appointmentCalendarWidget.selectedDate()
+    d = parent.ui.calendarWidget.selectedDate()
     getappointmentData(d)
     todaysDents = []
     todaysMemos = []
@@ -1330,7 +1331,7 @@ def clearEmergencySlot(parent, arg):
     only question is... do they want to free it?
     it expects an arg like ('8:50', '11:00', 4)
     '''
-    adate = parent.ui.appointmentCalendarWidget.selectedDate().toPyDate()
+    adate = parent.ui.calendarWidget.selectedDate().toPyDate()
     message = "Do you want to unblock the selected slot?<br />"
     message += "%s - %s <br />"% (arg[0], arg[1])
     message += "%s<br />"% localsettings.longDate(adate)
@@ -1350,7 +1351,7 @@ def blockEmptySlot(parent, tup):
     '''
     block the empty slot
     '''
-    adate = parent.ui.appointmentCalendarWidget.selectedDate().toPyDate()
+    adate = parent.ui.calendarWidget.selectedDate().toPyDate()
     start = localsettings.humanTimetoWystime(tup[0])
     end = localsettings.humanTimetoWystime(tup[1])
     dent = tup[2]
