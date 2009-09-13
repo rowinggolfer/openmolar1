@@ -843,7 +843,8 @@ def aptFontSize(parent, e):
     localsettings.appointmentFontSize = e
     for book in parent.ui.apptBookWidgets:
         book.update()
-
+    parent.ui.yearView.update()
+    
 def aptOVviewMode(parent, Viewmode=True):
     '''
     toggle between "scheduling" and "viewing modes"

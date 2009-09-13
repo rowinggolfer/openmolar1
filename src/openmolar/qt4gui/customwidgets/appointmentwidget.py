@@ -320,7 +320,9 @@ class appointmentWidget(QtGui.QWidget):
         '''draws the widget - recalled at any point by instance.update()'''
         painter = QtGui.QPainter(self)
         currentSlot = 0
-        myfont = QtGui.QFont("Serif", localsettings.appointmentFontSize)
+        myfont = QtGui.QFont(self.fontInfo().family(),
+        localsettings.appointmentFontSize)
+        
         fm = QtGui.QFontMetrics(myfont)
         timeWidth = fm.width(" 88:88 ")
         painter.setFont(myfont)
@@ -409,9 +411,9 @@ class appointmentWidget(QtGui.QWidget):
             painter.save()
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 3))
             painter.setBrush(TRANSPARENT)
-            rect=rect=QtCore.QRect(timeWidth,startcell*slotHeight,
+            rect=QtCore.QRectF(timeWidth,startcell*slotHeight,
             self.width()-timeWidth,(endcell-startcell)*slotHeight)
-            painter.drawRect(rect.adjusted(0,0,0,0))
+            painter.drawRect(rect.adjusted(0,0,-2,0))
             painter.restore()
         ##highlight current time
         if self.setTime!="None":

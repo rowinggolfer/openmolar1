@@ -1717,8 +1717,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.monthView)
         #--add a month view
-        self.ui.yearView = yearcalendar.yearCalendar(
-        localsettings.currentDay().year)
+        self.ui.yearView = yearcalendar.yearCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.yearView_placeholder)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.yearView)
@@ -2933,6 +2932,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         appt_gui_module.OV_calendar_signals(self, True)
     
+    def yearView_changed(self,d):
+        '''
+        the custom year view calendar has emitted a date signal
+        '''
+        self.ui.calendarWidget.setSelectedDate(d)
+    
     def aptOV_weekBack_clicked(self):
         '''
         handles a request to move back a week in the appointment overview page
@@ -3810,6 +3815,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         QtCore.QObject.connect(self.ui.calendarWidget,
         QtCore.SIGNAL("selectionChanged()"), 
         self.calendarWidget_changed)
+        
+        QtCore.QObject.connect(self.ui.yearView,
+        QtCore.SIGNAL("selectedDate"), 
+        self.yearView_changed)        
 
         QtCore.QObject.connect(self.ui.monthView,
         QtCore.SIGNAL("selectionChanged()"), 
