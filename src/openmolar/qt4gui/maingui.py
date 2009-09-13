@@ -118,6 +118,7 @@ from openmolar.qt4gui.customwidgets import perioChartWidget
 from openmolar.qt4gui.customwidgets import estimateWidget
 from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import calendars
+from openmolar.qt4gui.customwidgets import yearcalendar
 
 ###### TODO - refactor all this into one big class....
 #--the main gui class inherits from a lot of smaller classes to make the \
@@ -1268,6 +1269,13 @@ class pageHandlingClass():
             #-- triggered
             #self.ui.pastData_toolButton.showMenu()
 
+    def ApptOV_tabWidget_nav(self, i):
+        '''
+        catches a signal that the diary tab widget has been moved
+        '''
+        #-- enable week view in on tab number 1
+        self.ui.calendarWidget.setHighlightWeek(i==1)
+
 
     def home(self):
         '''
@@ -1708,6 +1716,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         hlayout=QtGui.QHBoxLayout(self.ui.monthView_placeholder)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.monthView)
+        #--add a month view
+        self.ui.yearView = yearcalendar.yearCalendar(
+        localsettings.currentDay().year)
+        hlayout=QtGui.QHBoxLayout(self.ui.yearView_placeholder)
+        hlayout.setMargin(0)
+        hlayout.addWidget(self.ui.yearView)
         
         
         #--updates the current time in appointment books
@@ -3756,6 +3770,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #signals raised on the main appointment tab
         QtCore.QObject.connect(self.ui.goTodayPushButton,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
+
+        QtCore.QObject.connect(self.ui.ApptOV_tabWidget,
+        QtCore.SIGNAL("currentChanged(int)"), self.ApptOV_tabWidget_nav)
 
         QtCore.QObject.connect(self.ui.apptPrevDay_pushButton,
         QtCore.SIGNAL("clicked()"), self.apt_dayBack_clicked)

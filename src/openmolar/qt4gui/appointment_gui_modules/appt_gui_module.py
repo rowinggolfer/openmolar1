@@ -1057,7 +1057,8 @@ def OV_calendar_signals(parent, senderIsBigCalendar=False):
     
     QtCore.QObject.connect(recipient, QtCore.SIGNAL("selectionChanged()"), 
     slot)
-    
+    parent.ui.yearView.setSelectedDate(
+    parent.ui.calendarWidget.selectedDate().toPyDate())
     layout_apptOV(parent)
 
 def layout_apptOV(parent):
