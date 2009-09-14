@@ -540,7 +540,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>602</width>
+                        <width>540</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -2499,7 +2499,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>602</width>
+                        <width>469</width>
                         <height>370</height>
                        </rect>
                       </property>
@@ -2753,8 +2753,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>622</width>
-                        <height>302</height>
+                        <width>314</width>
+                        <height>105</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2930,7 +2930,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>350</width>
+                           <width>96</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -3314,7 +3314,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>606</width>
+                        <width>249</width>
                         <height>360</height>
                        </rect>
                       </property>
@@ -4553,29 +4553,23 @@ Note - this will not remove items which are currently there. </string>
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QTextBrowser" name="monthView_textBrowser">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>200</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </widget>
               <widget class="QWidget" name="tab_13">
                <attribute name="title">
                 <string>Year View</string>
                </attribute>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <layout class="QVBoxLayout" name="verticalLayout_19">
+                <item>
+                 <widget class="QTextBrowser" name="textBrowser">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>200</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
                 <item>
                  <widget class="QWidget" name="yearView_placeholder" native="true">
                   <property name="sizePolicy">

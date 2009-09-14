@@ -9,6 +9,7 @@
 '''
 contains one class - the appointment widget
 '''
+import calendar
 import datetime
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
@@ -47,20 +48,22 @@ class yearCalendar(QtGui.QWidget):
         '''
         work out how many columns are required
         the minimum is 31 (when all months start on the same day)
-        the maximum is 6*7??
         '''
         startday = 6 #assume sunnday
-        endday = 0
+        self.columnNo = 31
         for month in range(1,13):
             c_date = datetime.date(self.year, month, 1)
             firstDayOfMonth = c_date.weekday()
             self.monthStarts[month] = firstDayOfMonth
             if c_date.weekday() < startday:
                 startday = firstDayOfMonth
-            if c_date.weekday() > endday:
-                endday = firstDayOfMonth
+            colsRequired = firstDayOfMonth + \
+            calendar.monthrange(self.year, month)[1]
+
+            if colsRequired > self.columnNo:
+                self.columnNo = colsRequired
+        
         self.startDOW = startday
-        self.columnNo = endday + 31
         
     def getDateFromPosition(self, xpos, ypos): 
         rowheight = self.height() / 13

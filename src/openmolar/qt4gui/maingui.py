@@ -119,6 +119,8 @@ from openmolar.qt4gui.customwidgets import estimateWidget
 from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import calendars
 from openmolar.qt4gui.customwidgets import yearcalendar
+from openmolar.qt4gui.customwidgets import monthcalendar
+
 
 ###### TODO - refactor all this into one big class....
 #--the main gui class inherits from a lot of smaller classes to make the \
@@ -1712,7 +1714,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.calendarWidget)
         #--add a month view
-        self.ui.monthView = calendars.monthViewCalendar()
+        self.ui.monthView = monthcalendar.monthCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.monthView_placeholder)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.monthView)
@@ -2922,17 +2924,15 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         the calendar on the appointments overview page has changed.
         time to re-layout the appointment overview
         '''
-        appt_gui_module.layout_appointments(self)
         appt_gui_module.OV_calendar_signals(self)
     
-    def monthViewSelection_changed(self):
+    def monthViewSelection_changed(self, d):
         '''
-        the calendar on the appointments overview page has changed.
-        time to re-layout the appointment overview
+        the custom year view calendar has emitted a date signal
         '''
-        appt_gui_module.OV_calendar_signals(self, True)
+        self.ui.calendarWidget.setSelectedDate(d)
     
-    def yearView_changed(self,d):
+    def yearView_changed(self, d):
         '''
         the custom year view calendar has emitted a date signal
         '''

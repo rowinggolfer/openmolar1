@@ -1040,26 +1040,13 @@ def findApptButtonClicked(parent):
     QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
 
 
-def OV_calendar_signals(parent, senderIsBigCalendar=False):
-    #-- sync the month view calendar.
-    if senderIsBigCalendar:
-        sender = parent.ui.monthView
-        recipient = parent.ui.calendarWidget
-        slot = parent.calendarWidget_changed
-    else:
-        recipient = parent.ui.monthView
-        sender = parent.ui.calendarWidget
-        slot = parent.monthViewSelection_changed
+def OV_calendar_signals(parent):
         
-    QtCore.QObject.disconnect(recipient, QtCore.SIGNAL("selectionChanged()"), 
-    slot)
-
-    recipient.setSelectedDate(sender.selectedDate())
+    d = parent.ui.calendarWidget.selectedDate().toPyDate()
+    parent.ui.monthView.setSelectedDate(d)    
+    parent.ui.yearView.setSelectedDate(d)
     
-    QtCore.QObject.connect(recipient, QtCore.SIGNAL("selectionChanged()"), 
-    slot)
-    parent.ui.yearView.setSelectedDate(
-    parent.ui.calendarWidget.selectedDate().toPyDate())
+    layout_appointments(parent)
     layout_apptOV(parent)
 
 def layout_apptOV(parent):
