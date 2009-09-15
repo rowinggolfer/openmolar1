@@ -27,7 +27,7 @@ class monthCalendar(QtGui.QWidget):
         self.monthStarts = {}
         self.font = None
         self.setSelectedDate(datetime.date.today())
-        #self.setMouseTracking(True)
+        self.setMouseTracking(True)
         self.highlightedDate = None
         self.data = {}
         
@@ -35,13 +35,13 @@ class monthCalendar(QtGui.QWidget):
         '''
         set an (arbitrary) size for the widget
         '''
-        return QtCore.QSize(800, 400)
+        return QtCore.QSize(400, 400)
 
     def minimumSizeHint(self):
         '''
         set an (arbitrary) minimum size for the widget
         '''
-        return QtCore.QSize(800, 400)
+        return QtCore.QSize(400, 400)
     
     def setRowNo(self):
         '''
@@ -102,7 +102,7 @@ class monthCalendar(QtGui.QWidget):
         if self.font != font:
             self.font = font
             fm = QtGui.QFontMetrics(font)
-            self.vheaderwidth = fm.width("Wednesday, 31 September, 2009")
+            self.vheaderwidth = fm.width("Wednesday 28 ")
         
     def paintEvent(self, event=None):
         '''
@@ -115,27 +115,47 @@ class monthCalendar(QtGui.QWidget):
         rowHeight = self.height() / self.rowNo
         
         for day in range(self.rowNo):
-            painter.setBrush(self.palette().alternateBase())        
         
-            rect = QtCore.QRect(0, day*rowHeight, self.vheaderwidth, rowHeight)               
-            painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
-            
-            painter.drawRect(rect)
-            
-                    
             if day == 0:
-                painter.setPen(QtCore.Qt.red)
+                painter.setBrush(self.palette().highlight())        
+            
+                rect = QtCore.QRect(0, day*rowHeight, self.width(), rowHeight)               
+                
+                painter.drawRect(rect)
+                
+                painter.setPen(self.palette().color(
+                self.palette().HighlightedText))
+                
                 c_date = datetime.date(self.year, self.month, 1)
                 my_text = "%s %s"% (localsettings.monthName(c_date),self.year)
                 painter.drawText(rect,QtCore.Qt.AlignCenter, my_text)
             
-            else:            
-                #- header column    
-                painter.setPen(self.palette().color(
-                self.palette().WindowText))
-            
+            else: 
+                
+                
+                rect = QtCore.QRect(0, day*rowHeight, self.vheaderwidth, rowHeight)               
+                painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
+                
+                #- header column                    
+                
                 c_date = datetime.date(self.year, self.month, day)
-                my_text = "%s "% localsettings.longDate(c_date)
+    
+                if c_date == self.selectedDate:
+                    painter.setBrush(self.palette().highlight())                            
+                else:
+                    painter.setBrush(self.palette().alternateBase())        
+                painter.drawRect(rect)
+    
+                my_text = "%s %02s "% (localsettings.dayName(c_date), day)
+                
+                if c_date == self.selectedDate:
+                    painter.setPen(self.palette().color(
+                    self.palette().HighlightedText))
+                elif c_date.isoweekday()<6:
+                    painter.setPen(self.palette().color(
+                    self.palette().WindowText))
+                else:
+                    painter.setPen(QtCore.Qt.red)
                 painter.drawText(rect,QtCore.Qt.AlignRight, my_text)
             
                 #- text column

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1158</width>
-    <height>631</height>
+    <width>1005</width>
+    <height>552</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -61,9 +61,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>1158</width>
-         <height>585</height>
+         <y>-54</y>
+         <width>989</width>
+         <height>560</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -523,7 +523,7 @@
                <item row="0" column="0" colspan="6">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>2</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -1778,7 +1778,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>731</width>
+                        <width>882</width>
                         <height>526</height>
                        </rect>
                       </property>
@@ -3864,7 +3864,7 @@ Note - this will not remove items which are currently there. </string>
                     <x>0</x>
                     <y>0</y>
                     <width>199</width>
-                    <height>84</height>
+                    <height>59</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4050,8 +4050,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>206</width>
-                         <height>439</height>
+                         <width>164</width>
+                         <height>414</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4140,8 +4140,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>206</width>
-                         <height>439</height>
+                         <width>163</width>
+                         <height>414</height>
                         </rect>
                        </property>
                       </widget>
@@ -4229,8 +4229,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>205</width>
-                         <height>439</height>
+                         <width>164</width>
+                         <height>414</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4273,8 +4273,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>206</width>
-                         <height>439</height>
+                         <width>163</width>
+                         <height>414</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>
@@ -4571,24 +4571,18 @@ Note - this will not remove items which are currently there. </string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QWidget" name="yearView_placeholder" native="true">
+                 <widget class="QFrame" name="yearView_frame">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
                   </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
-                   </size>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
                   </property>
                  </widget>
                 </item>
@@ -5544,7 +5538,7 @@ Note - this will not remove items which are currently there. </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1158</width>
+     <width>1005</width>
      <height>23</height>
     </rect>
    </property>

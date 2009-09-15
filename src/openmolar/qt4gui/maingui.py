@@ -1720,7 +1720,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         hlayout.addWidget(self.ui.monthView)
         #--add a month view
         self.ui.yearView = yearcalendar.yearCalendar()
-        hlayout=QtGui.QHBoxLayout(self.ui.yearView_placeholder)
+        hlayout=QtGui.QHBoxLayout(self.ui.yearView_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.yearView)
         
@@ -1747,12 +1747,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #--history
         self.addHistoryMenu()
 
-
-
-
     def setClinician(self):
         self.advise("To change practitioner, please login again", 1)
-
 
     def okToLeaveRecord(self):
         '''
@@ -2926,15 +2922,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         appt_gui_module.OV_calendar_signals(self)
     
-    def monthViewSelection_changed(self, d):
+    def customDateSignal(self, d):
         '''
-        the custom year view calendar has emitted a date signal
-        '''
-        self.ui.calendarWidget.setSelectedDate(d)
-    
-    def yearView_changed(self, d):
-        '''
-        the custom year view calendar has emitted a date signal
+        either the custom year or month view calendar has emitted a date signal
         '''
         self.ui.calendarWidget.setSelectedDate(d)
     
@@ -3818,12 +3808,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         
         QtCore.QObject.connect(self.ui.yearView,
         QtCore.SIGNAL("selectedDate"), 
-        self.yearView_changed)        
-
+        self.customDateSignal) 
+               
         QtCore.QObject.connect(self.ui.monthView,
-        QtCore.SIGNAL("selectionChanged()"), 
-        self.monthViewSelection_changed)
-        
+        QtCore.SIGNAL("selectedDate"), 
+        self.customDateSignal) 
+
         QtCore.QObject.connect(self.ui.aptOVprevweek,
         QtCore.SIGNAL("clicked()"), self.aptOV_weekBack_clicked)
         

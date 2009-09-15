@@ -7,7 +7,7 @@
 # for more details.
 
 '''
-contains one class - the appointment widget
+contains one class - the yearCalendar
 '''
 import calendar
 import datetime
@@ -15,6 +15,9 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
 class yearCalendar(QtGui.QWidget):
+    '''
+    a pyqt4 custom widget to show a year calendar
+    ''' 
     def __init__(self, parent=None):
         '''
         initiate the widget
@@ -28,6 +31,9 @@ class yearCalendar(QtGui.QWidget):
         self.vheaderwidth = self.width()*0.1
         self.setSelectedDate(datetime.date.today())
         self.setMouseTracking(True)
+        self.mouseBrush = QtGui.QColor(self.palette().color(
+        QtGui.QPalette.Highlight))
+        self.mouseBrush.setAlpha(64)
         self.highlightedDate = None
         self.data = {}
         self.startDOW = 0
@@ -36,13 +42,13 @@ class yearCalendar(QtGui.QWidget):
         '''
         set an (arbitrary) size for the widget
         '''
-        return QtCore.QSize(800, 400)
+        return QtCore.QSize(700, 400)
 
     def minimumSizeHint(self):
         '''
         set an (arbitrary) minimum size for the widget
         '''
-        return QtCore.QSize(800, 400)
+        return QtCore.QSize(700, 400)
     
     def setColumnNo(self):
         '''
@@ -130,57 +136,74 @@ class yearCalendar(QtGui.QWidget):
         for month in range(13):
             painter.setBrush(self.palette().alternateBase())        
         
-            rect = QtCore.QRect(0, month*rowHeight, self.vheaderwidth, rowHeight)               
+            rect = QtCore.QRect(0, month*rowHeight, self.vheaderwidth, 
+            rowHeight)               
+
             painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
-            
-            painter.drawRect(rect)
                     
-            if month == 0:
-                painter.setPen(QtCore.Qt.red)
-                painter.drawText(rect,QtCore.Qt.AlignCenter, str(self.year))
-                painter.setBrush(self.palette().alternateBase())        
-            
-            else:
-                painter.setPen(self.palette().color(
-                self.palette().WindowText))
-            
-                painter.setBrush(self.palette().base())
-
-                c_date = datetime.date(self.year, month, 1)
-                my_text = str(localsettings.monthName(c_date))
-                painter.drawText(rect,QtCore.Qt.AlignCenter, my_text)
-            
-                startday = c_date.weekday()
-            
-            for col in range (self.columnNo):
-                painter.save()
-
-                rect = QtCore.QRectF(self.vheaderwidth+col*self.columnWidth, 
-                month * rowHeight, self.columnWidth, rowHeight)
-                
-                painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
-                
-                #draw the squares
+            if month == 0: 
+                painter.setBrush(self.palette().highlight())        
                 painter.drawRect(rect)
                 
                 painter.setPen(self.palette().color(
-                self.palette().WindowText))
+                self.palette().HighlightedText))            
+                painter.drawText(rect,QtCore.Qt.AlignCenter, str(self.year))
                 
-                if month == 0:
-                    dayno = col%7
+                for col in range (self.columnNo):
+                    rect = QtCore.QRectF(
+                    self.vheaderwidth+col*self.columnWidth, 
+                    month * rowHeight, self.columnWidth, rowHeight)
+                    
+                    painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
+                    painter.drawRect(rect)
+                
+                    dayno = col % 7
                     my_text = ("M","Tu","W","Th","F","Sa","Su")[dayno]
 
                     if dayno > 4: #weekend
                         painter.setPen(QtCore.Qt.red)
-                                
+                    else:
+                        painter.setPen(self.palette().color(
+                        self.palette().HighlightedText))
+            
                     painter.drawText(rect,QtCore.Qt.AlignCenter, my_text)
-                        
+                      
+            else:                
+                if month%2==0:
+                    painter.setBrush(self.palette().base())                            
                 else:
+                    painter.setBrush(self.palette().alternateBase()) 
+                
+                painter.drawRect(rect)
+
+                painter.setPen(self.palette().color(
+                self.palette().HighlightedText))            
+                
+                c_date = datetime.date(self.year, month, 1)
+                my_text = str(localsettings.monthName(c_date))
+                painter.drawText(rect, QtCore.Qt.AlignCenter, my_text)
+                startday = c_date.weekday()
+            
+                for col in range (self.columnNo):
+                    
+                    rect = QtCore.QRectF(self.vheaderwidth+col*self.columnWidth, 
+                    month * rowHeight, self.columnWidth, rowHeight)
+                                            
+                    painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
+                                                
+                    painter.drawRect(rect)
+                
+                    painter.setPen(self.palette().color(
+                    self.palette().WindowText))
+                
                     if col >= startday:
                         try:
                             c_date = datetime.date(self.year, month, 
                             col-startday+1)
+                            my_text = str(c_date.day)
+
                             if c_date == self.selectedDate:
+                                painter.save()
                                 painter.setBrush(self.palette().color(
                                 self.palette().Highlight))
 
@@ -188,31 +211,42 @@ class yearCalendar(QtGui.QWidget):
                                 self.palette().HighlightedText))
                                 
                                 painter.drawRect(rect)
+                                painter.drawText(rect, 
+                                QtCore.Qt.AlignCenter, my_text)
+
+                                painter.restore()
                                 
-                            elif c_date.weekday() > 4: 
+                            elif c_date == self.highlightedDate:
+                                #--mouseOver
+                                painter.save()
+                                painter.setBrush(self.mouseBrush)
+
+                                painter.setPen(self.palette().color(
+                                self.palette().HighlightedText))
+                                
+                                painter.drawRect(rect)
+                                painter.drawText(rect, 
+                                QtCore.Qt.AlignCenter, my_text)
+
+                                painter.restore()
+                                
+                            elif c_date.isoweekday() > 5: 
                                 #weekend
                                 painter.setPen(QtCore.Qt.red)
-        
+                                painter.drawText(rect, 
+                                QtCore.Qt.AlignCenter, my_text)
+
                             else:
                                 painter.setPen(self.palette().color(
                                 self.palette().WindowText))
+                                painter.drawText(rect, 
+                                QtCore.Qt.AlignCenter, my_text)
 
-                            my_text = str(c_date.day)
-
-                            painter.drawText(rect, 
-                            QtCore.Qt.AlignCenter, my_text)
-
-                            if c_date == self.highlightedDate:
-                                #--mouseOver
-                                painter.setPen(QtGui.QPen(QtCore.Qt.red, 3))
-                                painter.setBrush(QtCore.Qt.transparent)
-                                painter.drawRect(rect.adjusted(0,0,-2,0))
-
+                            
                         except ValueError: 
                             # month doesn't have this day eg feb 30th
                             pass
-                painter.restore()
-
+            
 
 if __name__ == "__main__":
     def catchSignal(d):
@@ -220,9 +254,6 @@ if __name__ == "__main__":
         
     import sys
     app = QtGui.QApplication(sys.argv)
-    
-    #--initiate a book starttime 08:00 endtime 10:00 
-    #--five minute slots, text every 3 slots
     form = yearCalendar()
     form.setSelectedDate(datetime.date.today())
     form.connect(form, QtCore.SIGNAL("selectedDate"), catchSignal)
