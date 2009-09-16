@@ -1403,7 +1403,10 @@ class pageHandlingClass():
         self.ui.titleEdit.setText(self.pt.title)
         self.ui.fnameEdit.setText(self.pt.fname)
         self.ui.snameEdit.setText(self.pt.sname)
-        self.ui.dobEdit.setDate(self.pt.dob)
+        if self.pt.dob:
+            self.ui.dobEdit.setDate(self.pt.dob)
+        else:
+            self.ui.dobEdit.setDate(datetime.date(1,1,1))            
         self.ui.addr1Edit.setText(self.pt.addr1)
         self.ui.addr2Edit.setText(self.pt.addr2)
         self.ui.addr3Edit.setText(self.pt.addr3)
