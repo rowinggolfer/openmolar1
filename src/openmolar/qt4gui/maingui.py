@@ -20,8 +20,6 @@ import pickle
 import threading
 import subprocess
 
-####temp
-
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import Ui_main, colours
 
@@ -1205,17 +1203,8 @@ class pageHandlingClass():
 
         #--user is viewing appointment book
         if ci == 1:
-            today=QtCore.QDate.currentDate()
-            if self.ui.calendarWidget.selectedDate() != today:
-                self.ui.calendarWidget.setSelectedDate(today)
-            else:
-                appt_gui_module.layout_appointments(self)
-            appt_gui_module.triangles(self)
-            for book in self.ui.apptBookWidgets:
-                book.update()
-
-            appt_gui_module.layout_apptOV(self)
-
+            appt_gui_module.makeDiaryVisible(self)
+            
         if ci == 6:
             if not self.feestableLoaded:
                 fees_module.loadFeesTable(self)
@@ -1225,6 +1214,10 @@ class pageHandlingClass():
     def handle_patientTab(self):
         '''handles navigation of patient record'''
         ci=self.ui.tabWidget.currentIndex()
+        if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
+            self.advise("Appointment not made", 1)
+            appt_gui_module.aptOVviewMode(self, True)
+
         #--admin tab selected
         if self.editPageVisited:
             self.apply_editpage_changes()
@@ -1271,14 +1264,17 @@ class pageHandlingClass():
             #-- triggered
             #self.ui.pastData_toolButton.showMenu()
 
-    def ApptOV_tabWidget_nav(self, i):
+    def diary_tabWidget_nav(self, i):
         '''
         catches a signal that the diary tab widget has been moved
         '''
+        print "diary_tabWidget_nav"
         #-- enable week view in on tab number 1
         self.ui.calendarWidget.setHighlightWeek(i==1)
-
-
+        self.ui.calendarWidget.setHighlightMonth(i==2)
+        if self.ui.diary_tabWidget.isVisible():
+            appt_gui_module.OV_calendar_signals(self)
+        
     def home(self):
         '''
         User has clicked the homw push_button -
@@ -2146,7 +2142,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #--update bpe
         localsettings.defaultNewPatientDetails=(
         self.pt.sname, self.pt.addr1, self.pt.addr2,
-        self.pt.addr3, self.pt.town, self.pt.county, self.pt.pcde, self.pt.tel1)
+        self.pt.addr3, self.pt.town, self.pt.county, 
+        self.pt.pcde, self.pt.tel1)
 
         if not self.pt.serialno in localsettings.recent_snos:
             #localsettings.recent_snos.remove(self.pt.serialno)
@@ -2958,7 +2955,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         handles the signals from the options checkboxes on the appt OV page
         '''
-        appt_gui_module.layout_apptOV(self)
+        appt_gui_module.layout_weekView(self)
     
     def apptOV_all_clinicians_checkbox_changed(self):
         '''
@@ -3754,21 +3751,34 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                     SIGNAL("currentIndexChanged(int)"), self.layoutPerioCharts)
         QtCore.QObject.connect(self.ui.bpeDateComboBox, QtCore.SIGNAL
                                ("currentIndexChanged(int)"), self.bpe_table)
-    def signals_tabs(self):
-        #tab widget
-        QtCore.QObject.connect(self.ui.main_tabWidget,
-                QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
-        QtCore.QObject.connect(self.ui.tabWidget,
-                QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
     
+    def signals_tabs(self, connect=True):
+        #tab widgets
+        if connect:
+            QtCore.QObject.connect(self.ui.main_tabWidget,
+            QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
+            
+            QtCore.QObject.connect(self.ui.tabWidget,
+            QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
+            
+            QtCore.QObject.connect(self.ui.diary_tabWidget,
+            QtCore.SIGNAL("currentChanged(int)"), self.diary_tabWidget_nav)
+        else:
+            QtCore.QObject.disconnect(self.ui.main_tabWidget,
+            QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
+            
+            QtCore.QObject.disconnect(self.ui.tabWidget,
+            QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
+            
+            QtCore.QObject.disconnect(self.ui.diary_tabWidget,
+            QtCore.SIGNAL("currentChanged(int)"), self.diary_tabWidget_nav)
+
     def signals_appointmentTab(self):
         #signals raised on the main appointment tab
         QtCore.QObject.connect(self.ui.goTodayPushButton,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
 
-        QtCore.QObject.connect(self.ui.ApptOV_tabWidget,
-        QtCore.SIGNAL("currentChanged(int)"), self.ApptOV_tabWidget_nav)
-
+        
         QtCore.QObject.connect(self.ui.apptPrevDay_pushButton,
         QtCore.SIGNAL("clicked()"), self.apt_dayBack_clicked)
 

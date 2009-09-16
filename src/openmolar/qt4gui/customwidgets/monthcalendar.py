@@ -28,6 +28,9 @@ class monthCalendar(QtGui.QWidget):
         self.font = None
         self.setSelectedDate(datetime.date.today())
         self.setMouseTracking(True)
+        self.mouseBrush = QtGui.QColor(self.palette().color(
+        QtGui.QPalette.Highlight))
+        self.mouseBrush.setAlpha(64)
         self.highlightedDate = None
         self.data = {}
         
@@ -142,16 +145,18 @@ class monthCalendar(QtGui.QWidget):
     
                 if c_date == self.selectedDate:
                     painter.setBrush(self.palette().highlight())                            
+                elif c_date == self.highlightedDate:
+                    painter.setBrush(self.mouseBrush)
                 else:
                     painter.setBrush(self.palette().alternateBase())        
                 painter.drawRect(rect)
     
                 my_text = "%s %02s "% (localsettings.dayName(c_date), day)
                 
-                if c_date == self.selectedDate:
+                if c_date in (self.selectedDate, self.highlightedDate):
                     painter.setPen(self.palette().color(
                     self.palette().HighlightedText))
-                elif c_date.isoweekday()<6:
+                elif c_date.isoweekday() < 6:
                     painter.setPen(self.palette().color(
                     self.palette().WindowText))
                 else:
@@ -166,12 +171,13 @@ class monthCalendar(QtGui.QWidget):
                 painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
                 
                 painter.drawRect(rect)
+
+                if self.data.has_key(day):
+                    painter.setPen(self.palette().color(
+                    self.palette().WindowText))
                 
-                painter.setPen(self.palette().color(
-                self.palette().WindowText))
-            
-                my_text = " memo"
-                painter.drawText(rect,QtCore.Qt.AlignLeft, my_text)
+                    my_text = self.data[day]
+                    painter.drawText(rect,QtCore.Qt.AlignLeft, my_text)
             
             
 if __name__ == "__main__":

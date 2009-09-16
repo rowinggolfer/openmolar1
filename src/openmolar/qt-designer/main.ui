@@ -61,7 +61,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-54</y>
+         <y>0</y>
          <width>989</width>
          <height>560</height>
         </rect>
@@ -1778,7 +1778,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>882</width>
+                        <width>731</width>
                         <height>526</height>
                        </rect>
                       </property>
@@ -2130,7 +2130,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>892</width>
+                        <width>286</width>
                         <height>500</height>
                        </rect>
                       </property>
@@ -3960,7 +3960,7 @@ Note - this will not remove items which are currently there. </string>
              </widget>
             </item>
             <item>
-             <widget class="QTabWidget" name="ApptOV_tabWidget">
+             <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
                <number>0</number>
               </property>
@@ -3989,10 +3989,10 @@ Note - this will not remove items which are currently there. </string>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_11">
                     <property name="margin">
-                     <number>3</number>
+                     <number>0</number>
                     </property>
                     <property name="spacing">
-                     <number>3</number>
+                     <number>0</number>
                     </property>
                     <item row="0" column="0">
                      <widget class="QLabel" name="apptFrameLabel1">
@@ -4042,6 +4042,12 @@ Note - this will not remove items which are currently there. </string>
                     </item>
                     <item row="2" column="0" colspan="2">
                      <widget class="QScrollArea" name="appt1scrollArea">
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Plain</enum>
+                      </property>
                       <property name="widgetResizable">
                        <bool>true</bool>
                       </property>
@@ -4050,8 +4056,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>164</width>
-                         <height>414</height>
+                         <width>163</width>
+                         <height>430</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4140,7 +4146,7 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>163</width>
+                         <width>167</width>
                          <height>414</height>
                         </rect>
                        </property>
@@ -4229,7 +4235,7 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>164</width>
+                         <width>167</width>
                          <height>414</height>
                         </rect>
                        </property>
@@ -4273,7 +4279,7 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>163</width>
+                         <width>167</width>
                          <height>414</height>
                         </rect>
                        </property>

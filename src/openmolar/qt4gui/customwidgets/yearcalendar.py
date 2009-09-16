@@ -9,6 +9,7 @@
 '''
 contains one class - the yearCalendar
 '''
+from __future__ import division
 import calendar
 import datetime
 from PyQt4 import QtGui, QtCore
@@ -28,7 +29,6 @@ class yearCalendar(QtGui.QWidget):
         
         self.setMinimumSize(self.minimumSizeHint())
         self.monthStarts = {}
-        self.vheaderwidth = self.width()*0.1
         self.setSelectedDate(datetime.date.today())
         self.setMouseTracking(True)
         self.mouseBrush = QtGui.QColor(self.palette().color(
@@ -49,7 +49,20 @@ class yearCalendar(QtGui.QWidget):
         set an (arbitrary) minimum size for the widget
         '''
         return QtCore.QSize(700, 400)
-    
+
+    def setFont(self):
+        font = QtGui.QFont(self.fontInfo().family(), 
+        localsettings.appointmentFontSize)
+        if self.font != font:
+            self.font = font
+            fm = QtGui.QFontMetrics(font)
+            self.vheaderwidth = fm.width("-September-")
+
+    def addData(self, date, info):
+        #if date.year == self.year: (messed up anniversaries)
+        datekey = "%02d%d"%(date.month, date.day)
+        self.data[datekey] = info
+
     def setColumnNo(self):
         '''
         work out how many columns are required
@@ -73,13 +86,12 @@ class yearCalendar(QtGui.QWidget):
         
     def getDateFromPosition(self, xpos, ypos): 
         rowheight = self.height() / 13
-        month = ypos//rowheight
+        month = int(ypos//rowheight)
         if 0 < month <13:
             day = (xpos - self.vheaderwidth) // self.columnWidth
-            day = int(day) - self.monthStarts[month] +1
-            
+            day = day - self.monthStarts[month] +1
             try:
-                d = datetime.date(self.year, month, day)
+                d = datetime.date(self.year, month, int(day))
                 return d
             except ValueError:
                 # date threw an error.
@@ -94,7 +106,18 @@ class yearCalendar(QtGui.QWidget):
         if d != self.highlightedDate:
             self.highlightedDate = d
             self.update()
-        
+        show = False
+        if d:
+            datekey = "%02d%d"% (d.month, d.day)
+            if self.data.has_key(datekey):
+                show = True
+                advisory = self.data[datekey]
+                
+        if show:
+            QtGui.QToolTip.showText(event.globalPos(), advisory)
+        else:
+            QtGui.QToolTip.showText(event.globalPos(), "")
+            
     def mousePressEvent(self, event):
         '''
         catch the mouse press event - 
@@ -108,10 +131,10 @@ class yearCalendar(QtGui.QWidget):
         '''
         clear any false stuff from the mouse
         '''
-        self.highlightedDate = None
-        self.update()
-
-    
+        if self.highlightedDate != None:
+            self.highlightedDate = None
+            self.update()
+        
     def setSelectedDate(self, d):
         '''
         d is a pydate
@@ -125,23 +148,22 @@ class yearCalendar(QtGui.QWidget):
         '''
         draws the widget - recalled at any point by instance.update()
         '''
+        self.setFont()
         painter = QtGui.QPainter(self)
-        myfont = QtGui.QFont(self.fontInfo().family(), localsettings.appointmentFontSize)
-        painter.setFont(myfont)
+        painter.setFont(self.font)
         
         rowHeight = self.height() / 13
         
         self.columnWidth = (self.width() - self.vheaderwidth) / self.columnNo
         
         for month in range(13):
-            painter.setBrush(self.palette().alternateBase())        
-        
-            rect = QtCore.QRect(0, month*rowHeight, self.vheaderwidth, 
+            rect = QtCore.QRectF(0, month*rowHeight, self.vheaderwidth, 
             rowHeight)               
 
             painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
                     
-            if month == 0: 
+            if month == 0:
+                #-- draw the year
                 painter.setBrush(self.palette().highlight())        
                 painter.drawRect(rect)
                 
@@ -149,6 +171,9 @@ class yearCalendar(QtGui.QWidget):
                 self.palette().HighlightedText))            
                 painter.drawText(rect,QtCore.Qt.AlignCenter, str(self.year))
                 
+                #rectLeft = rect.adjusted(0,0,-rect.width()/4,0)
+                #painter.drawPixmap(rectLeft,QtGui.QPixmap(":/back.png"))
+                #return
                 for col in range (self.columnNo):
                     rect = QtCore.QRectF(
                     self.vheaderwidth+col*self.columnWidth, 
@@ -160,11 +185,8 @@ class yearCalendar(QtGui.QWidget):
                     dayno = col % 7
                     my_text = ("M","Tu","W","Th","F","Sa","Su")[dayno]
 
-                    if dayno > 4: #weekend
-                        painter.setPen(QtCore.Qt.red)
-                    else:
-                        painter.setPen(self.palette().color(
-                        self.palette().HighlightedText))
+                    painter.setPen(self.palette().color(
+                    self.palette().HighlightedText))
             
                     painter.drawText(rect,QtCore.Qt.AlignCenter, my_text)
                       
@@ -242,7 +264,20 @@ class yearCalendar(QtGui.QWidget):
                                 painter.drawText(rect, 
                                 QtCore.Qt.AlignCenter, my_text)
 
-                            
+                            datekey = "%02d%d"%(month, c_date.day)
+                            if self.data.has_key(datekey):
+                                #-- draw a blue triangle!
+                                painter.save()
+                                painter.setBrush(QtCore.Qt.blue)
+                                painter.setPen(QtCore.Qt.blue)
+                                topleftX = rect.topLeft().x() + rect.width()/2
+                                topY = rect.topLeft().y()+2
+                                rightX = rect.topRight().x()
+                                bottomrightY = rect.topRight().y() + rect.width()/2+2
+                                shape = QtGui.QPolygon([topleftX, topY, rightX, topY, rightX, bottomrightY ])
+                                painter.drawPolygon(shape)
+                                painter.restore()
+            
                         except ValueError: 
                             # month doesn't have this day eg feb 30th
                             pass
@@ -257,7 +292,9 @@ if __name__ == "__main__":
     form = yearCalendar()
     form.setSelectedDate(datetime.date.today())
     form.connect(form, QtCore.SIGNAL("selectedDate"), catchSignal)
-
+    form.addData(datetime.date(2009,12,9), "Neil's Birthday")
+    form.addData(datetime.date(2009,10,17), "artvee's Birthday")
+    
     form.show()
 
     sys.exit(app.exec_())

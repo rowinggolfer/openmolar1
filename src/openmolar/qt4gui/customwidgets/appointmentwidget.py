@@ -351,7 +351,7 @@ class appointmentWidget(QtGui.QWidget):
                 painter.setPen(QtGui.QPen(LINECOLOR, 1))
                 painter.drawRect(rect)
             else:
-                painter.setBrush(colours.APPTCOLORS.get("LUNCH"))
+                painter.setBrush(colours.BACKGROUND)
                 painter.setPen(QtGui.QPen(BGCOLOR,1))
                 painter.drawRect(rect)
                 

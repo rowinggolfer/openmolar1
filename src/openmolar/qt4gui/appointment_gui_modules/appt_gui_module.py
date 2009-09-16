@@ -18,9 +18,11 @@ from PyQt4 import QtCore, QtGui
 from openmolar.dbtools import appointments, search
 from openmolar.settings import localsettings, appointment_shortcuts
 from openmolar.qt4gui import colours
-from openmolar.qt4gui.dialogs import alterAday, \
-finalise_appt_time,permissions, Ui_appointment_length, \
-Ui_specify_appointment, appt_wizard_dialog
+from openmolar.qt4gui.dialogs import alterAday
+from openmolar.qt4gui.dialogs import finalise_appt_time,permissions
+from openmolar.qt4gui.dialogs import Ui_appointment_length
+from openmolar.qt4gui.dialogs import Ui_specify_appointment
+from openmolar.qt4gui.dialogs import appt_wizard_dialog
 
 from openmolar.qt4gui.printing import apptcardPrint
 
@@ -463,9 +465,7 @@ def begin_makeAppt(parent):
                                             QtCore.QDate.currentDate())
     else:
     '''
-    parent.ui.calendarWidget.setSelectedDate(
-    QtCore.QDate.currentDate())
-
+    
     #--deselect ALL dentists and hygenists so only one "book" is viewable
     parent.ui.aptOV_alldentscheckBox.setChecked(False)
     parent.ui.aptOV_allhygscheckBox.setChecked(False)
@@ -481,6 +481,15 @@ def begin_makeAppt(parent):
         parent.ui.aptOVhyg_checkBoxes[dent].setChecked(True)
 
     #--compute first available appointment
+    parent.ui.calendarWidget.setSelectedDate(
+    QtCore.QDate.currentDate())
+    #--show the appointment overview tab
+    parent.signals_tabs(False) #disconnect slots
+    parent.ui.main_tabWidget.setCurrentIndex(1)
+    parent.signals_tabs() #reconnect
+    
+    parent.ui.diary_tabWidget.setCurrentIndex(1)
+    
     offerAppt(parent, True)
 
 def offerAppt(parent, firstRun=False):
@@ -526,7 +535,7 @@ def offerAppt(parent, firstRun=False):
         weekdates = []
         for day in range(1, 8):
             weekdates.append(seldate.addDays(day-dayno))
-        if  today in weekdates:
+        if today in weekdates:
             startday = today
         else:
             startday = weekdates[0] #--monday
@@ -544,9 +553,7 @@ def offerAppt(parent, firstRun=False):
                         parent.ui.apptoverviews[weekdates.index(day)].\
                         freeslots[apt[1]] = apt[2]
 
-                        #--show the appointment overview tab
-                        parent.ui.main_tabWidget.setCurrentIndex(1)
-                        parent.ui.ApptOV_tabWidget.setCurrentIndex(1)
+                        
         else:
             parent.advise("no slots available for selected week")
             if firstRun:
@@ -665,9 +672,7 @@ def makeAppt(parent, arg):
 
             #--#cancel scheduling mode
             aptOVviewMode(parent, True)
-            #take user back to main page
-            parent.ui.main_tabWidget.setCurrentIndex(0)
-
+            
         else:
             parent.advise("Error making appointment - sorry!", 2)
     else:
@@ -833,7 +838,7 @@ def getappointmentData(d, dents=()):
     
 def calendar(parent, sd):
     '''comes from click proceedures'''
-    parent.ui.main_tabWidget.setCurrentIndex(1)
+    #parent.ui.main_tabWidget.setCurrentIndex(1)
     parent.ui.calendarWidget.setSelectedDate(sd)
 
 def aptFontSize(parent, e):
@@ -856,7 +861,8 @@ def aptOVviewMode(parent, Viewmode=True):
         parent.ui.aptOVmode_label.setText("Scheduling Mode")
     for cb in (parent.ui.aptOV_apptscheckBox, parent.ui.aptOV_emergencycheckBox,
     parent.ui.aptOV_lunchcheckBox):
-        cb.setChecked(Viewmode)
+        if cb.checkState() != Viewmode:
+            cb.setChecked(Viewmode)
 
 def aptOVlabelClicked(parent, sd):
     '''
@@ -974,7 +980,7 @@ def clearTodaysEmergencyTime(parent):
         number_cleared = appointments.clearEms(localsettings.sqlToday())
         parent.advise("Cleared %d emergency slots"% number_cleared, 1)
         if number_cleared > 0 and parent.ui.main_tabWidget.currentIndex() == 1:
-            layout_appointments(parent)
+            layout_dayView(parent)
             
 def apptOVclinicians(parent):
     '''
@@ -994,7 +1000,8 @@ def apptOVclinicians(parent):
         parent.ui.aptOVhyg_checkBoxes[dent].setCheckState(value)
     parent.connectAptOVhygcbs()
 
-    layout_apptOV(parent)
+    if parent.ui.aptOV_everybody_checkBox.isVisible():
+        layout_weekView(parent)
 
 def apptOVhygs(parent):
     '''
@@ -1006,7 +1013,9 @@ def apptOVhygs(parent):
         parent.ui.aptOVhyg_checkBoxes[dent].setCheckState(
         parent.ui.aptOV_allhygscheckBox.checkState())
     parent.connectAptOVhygcbs()
-    layout_apptOV(parent)
+    
+    if parent.ui.aptOV_allhygscheckBox.isVisible():
+        layout_weekView(parent)
 
 def apptOVdents(parent):
     '''
@@ -1021,7 +1030,8 @@ def apptOVdents(parent):
     #--reconnect
     parent.connectAptOVdentcbs()
     #--refresh Layout
-    layout_apptOV(parent)
+    if parent.ui.aptOV_alldentscheckBox.isVisible():
+        layout_weekView(parent)
 
 def findApptButtonClicked(parent):
     '''
@@ -1034,33 +1044,68 @@ def findApptButtonClicked(parent):
     QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
 
     parent.ui.calendarWidget.setSelectedDate(d)
+    parent.ui.diary_tabWidget.setCurrentIndex(0)
     parent.ui.main_tabWidget.setCurrentIndex(1)
 
     QtCore.QObject.connect(parent.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
 
 
+def makeDiaryVisible(parent):
+    '''
+    user has navigated the main tab to show the appointments/diary
+    '''
+    print "appt_gui_module.book makeDiaryVisible() called"
+    today=QtCore.QDate.currentDate()
+    parent.ui.diary_tabWidget.setCurrentIndex(0)
+    if parent.ui.calendarWidget.selectedDate() != today:
+        parent.ui.calendarWidget.setSelectedDate(today)
+    else:
+        OV_calendar_signals(parent)
+    triangles(parent)
+    for book in parent.ui.apptBookWidgets:
+        book.update()
+
 def OV_calendar_signals(parent):
-        
+    '''
+    slot to catch a date change from the custom mont/year widgets emitting
+    a date signal 
+    OR the diary tab shifting
+    '''
+    print "OV_calendar_signals "
     d = parent.ui.calendarWidget.selectedDate().toPyDate()
     parent.ui.monthView.setSelectedDate(d)    
     parent.ui.yearView.setSelectedDate(d)
     
-    layout_appointments(parent)
-    layout_apptOV(parent)
+    if parent.ui.main_tabWidget.currentIndex() == 1:
+        i = parent.ui.diary_tabWidget.currentIndex()
 
-def layout_apptOV(parent):
+        if i==0:
+            layout_dayView(parent)
+        elif i==1:
+            layout_weekView(parent)
+        elif i==2:
+            layout_month(parent)
+        elif i==3:
+            layout_year(parent)
+    else:
+        print "date changed, but diary invisible... skipping"
+
+def layout_month(parent):
+    print "layout month - does nothing as yet"
+    
+def layout_year(parent):
+    print "layout year - does nothing as yet"
+        
+def layout_weekView(parent):
     '''
     called by checking a dentist checkbox on apptov tab
     or by changeing the date on the appt OV calendar
     '''
-    
-    if parent.ui.main_tabWidget.currentIndex() != 1:
-        #--this is needed incase I programmatically
-        #--change the checkboxes or diary date...
-        #--I don't want a redraw every time
+    if parent.ui.main_tabWidget.currentIndex() !=1 and \
+    parent.ui.diary_tabWidget.currentIndex() != 1:
         return
-
+    print "laying out week view - computationally expensive!"
     AllDentsChecked = True
     #--code to uncheck the all dentists checkbox if necessary
     for dent in parent.ui.aptOVdent_checkBoxes.values():
@@ -1183,13 +1228,15 @@ def layout_apptOV(parent):
         #--repaint widgets
         ov.update()
 
-def layout_appointments(parent):
+def layout_dayView(parent):
     '''
     this populates the appointment book widgets (on maintab, pageindex 1)
     '''
-
-    parent.advise("Refreshing appointments")
-
+    if parent.ui.main_tabWidget.currentIndex() !=1 and \
+    parent.ui.diary_tabWidget.currentIndex() != 0:
+        return
+    print "laying out dayview - computationally expensive"
+    
     for book in parent.ui.apptBookWidgets:
         book.clearAppts()
         book.setTime = "None"
@@ -1334,7 +1381,7 @@ def clearEmergencySlot(parent, arg):
     if result == QtGui.QMessageBox.Yes:
         start = localsettings.humanTimetoWystime(arg[0])
         appointments.delete_appt_from_aslot(arg[2], start, adate, 0)
-        layout_appointments(parent)
+        layout_dayView(parent)
 
 def blockEmptySlot(parent, tup):
     '''
@@ -1348,7 +1395,7 @@ def blockEmptySlot(parent, tup):
     if not appointments.block_appt(adate, dent, start, end, reason):
         parent.advise("unable to block - has the book been altered elsewhere?",
         1)
-    layout_appointments(parent)
+    layout_dayView(parent)
 
 def aptOVlabelRightClicked(parent, d):
     '''
@@ -1360,7 +1407,7 @@ def aptOVlabelRightClicked(parent, d):
         dl.setDate(d)
 
         if dl.getInput():
-            layout_apptOV(parent)
+            layout_weekView(parent)
 
 def printApptCard(parent):
     '''
