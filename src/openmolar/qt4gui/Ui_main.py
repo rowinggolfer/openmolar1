@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Wed Sep 16 13:03:37 2009
+# Created: Wed Sep 16 17:52:42 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -674,7 +674,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollArea_5.setObjectName("scrollArea_5")
         self.scrollAreaWidgetContents_8 = QtGui.QWidget(self.scrollArea_5)
-        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 731, 526))
+        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 733, 526))
         self.scrollAreaWidgetContents_8.setObjectName("scrollAreaWidgetContents_8")
         self.gridLayout_20 = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
         self.gridLayout_20.setObjectName("gridLayout_20")
@@ -1663,8 +1663,8 @@ class Ui_MainWindow(object):
         self.frame_13.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_13.setObjectName("frame_13")
         self.gridLayout_32 = QtGui.QGridLayout(self.frame_13)
-        self.gridLayout_32.setMargin(3)
-        self.gridLayout_32.setSpacing(3)
+        self.gridLayout_32.setMargin(0)
+        self.gridLayout_32.setSpacing(0)
         self.gridLayout_32.setObjectName("gridLayout_32")
         self.apptFrameLabel2 = QtGui.QLabel(self.frame_13)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -1690,7 +1690,7 @@ class Ui_MainWindow(object):
         self.appt2scrollArea.setWidgetResizable(True)
         self.appt2scrollArea.setObjectName("appt2scrollArea")
         self.appt2scrollAreaWidgetContents = QtGui.QWidget(self.appt2scrollArea)
-        self.appt2scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 167, 414))
+        self.appt2scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 173, 426))
         self.appt2scrollAreaWidgetContents.setObjectName("appt2scrollAreaWidgetContents")
         self.appt2scrollArea.setWidget(self.appt2scrollAreaWidgetContents)
         self.gridLayout_32.addWidget(self.appt2scrollArea, 2, 0, 1, 2)
@@ -1703,8 +1703,8 @@ class Ui_MainWindow(object):
         self.frame_12.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_12.setObjectName("frame_12")
         self.gridLayout_33 = QtGui.QGridLayout(self.frame_12)
-        self.gridLayout_33.setMargin(3)
-        self.gridLayout_33.setSpacing(3)
+        self.gridLayout_33.setMargin(0)
+        self.gridLayout_33.setSpacing(0)
         self.gridLayout_33.setObjectName("gridLayout_33")
         self.apptFrameLabel3 = QtGui.QLabel(self.frame_12)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -1730,7 +1730,7 @@ class Ui_MainWindow(object):
         self.appt3scrollArea.setWidgetResizable(True)
         self.appt3scrollArea.setObjectName("appt3scrollArea")
         self.appt3scrollAreaWidgetContents = QtGui.QWidget(self.appt3scrollArea)
-        self.appt3scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 167, 414))
+        self.appt3scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 173, 426))
         self.appt3scrollAreaWidgetContents.setObjectName("appt3scrollAreaWidgetContents")
         self._3 = QtGui.QVBoxLayout(self.appt3scrollAreaWidgetContents)
         self._3.setObjectName("_3")
@@ -1745,14 +1745,14 @@ class Ui_MainWindow(object):
         self.frame_11.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_11.setObjectName("frame_11")
         self.gridLayout_34 = QtGui.QGridLayout(self.frame_11)
-        self.gridLayout_34.setMargin(3)
-        self.gridLayout_34.setSpacing(3)
+        self.gridLayout_34.setMargin(0)
+        self.gridLayout_34.setSpacing(0)
         self.gridLayout_34.setObjectName("gridLayout_34")
         self.appt4scrollArea = QtGui.QScrollArea(self.frame_11)
         self.appt4scrollArea.setWidgetResizable(True)
         self.appt4scrollArea.setObjectName("appt4scrollArea")
         self.appt3scrollAreaWidgetContents_2 = QtGui.QWidget(self.appt4scrollArea)
-        self.appt3scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 167, 414))
+        self.appt3scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 173, 426))
         self.appt3scrollAreaWidgetContents_2.setObjectName("appt3scrollAreaWidgetContents_2")
         self._4 = QtGui.QVBoxLayout(self.appt3scrollAreaWidgetContents_2)
         self._4.setObjectName("_4")
