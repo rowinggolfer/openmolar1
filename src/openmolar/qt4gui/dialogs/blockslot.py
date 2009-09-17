@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2009 Neil Wallace. All rights reserved.
+# This program or module is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version. See the GNU General Public License for
+# more details.
 
-# Form implementation generated from reading ui file 'openmolar/openmolar/src/openmolar/qt-designer/blockSlot.ui'
-#
-# Created: Thu Sep 17 00:09:13 2009
-#      by: PyQt4 UI code generator 4.4.4
-#
-# WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
+from openmolar.qt4gui.customwidgets import fiveminutetimeedit
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
+class blockDialog(object):
+    def __init__(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(332, 199)
         self.gridLayout = QtGui.QGridLayout(Dialog)
@@ -22,14 +23,14 @@ class Ui_Dialog(object):
         self.label_3 = QtGui.QLabel(Dialog)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 1, 0, 1, 3)
-        self.start_timeEdit = QtGui.QTimeEdit(Dialog)
+        self.start_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit(Dialog)
         self.start_timeEdit.setMaximumSize(QtCore.QSize(100, 16777215))
         self.start_timeEdit.setObjectName("start_timeEdit")
         self.gridLayout.addWidget(self.start_timeEdit, 1, 3, 1, 1)
         self.label_4 = QtGui.QLabel(Dialog)
         self.label_4.setObjectName("label_4")
         self.gridLayout.addWidget(self.label_4, 2, 0, 1, 3)
-        self.finish_timeEdit = QtGui.QTimeEdit(Dialog)
+        self.finish_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit(Dialog)
         self.finish_timeEdit.setMaximumSize(QtCore.QSize(100, 16777215))
         self.finish_timeEdit.setObjectName("finish_timeEdit")
         self.gridLayout.addWidget(self.finish_timeEdit, 2, 3, 1, 1)

@@ -3,6 +3,7 @@ using 3rd party MySQLdb module'''
 
 import MySQLdb
 import sys
+import base64
 from xml.dom import minidom
 from openmolar.settings import localsettings 
 
@@ -10,6 +11,9 @@ mainconnection, forumconnection = None, None
 
 print "parsing the global settings file"
 dom = minidom.parse(localsettings.cflocation)
+
+settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
+    
 sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
 xmlnode = dom.getElementsByTagName("server")[0]
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
@@ -19,6 +23,9 @@ sslnode = xmlnode.getElementsByTagName("ssl")
 xmlnode = dom.getElementsByTagName("database")[0]
 myUser = xmlnode.getElementsByTagName("user")[0].firstChild.data
 myPassword = xmlnode.getElementsByTagName("password")[0].firstChild.data
+if settingsversion == "1.1":
+    myPassword = base64.b64decode(myPassword)
+
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
 if sslnode and sslnode[0].firstChild.data=="True":

@@ -8,9 +8,9 @@
 
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.dialogs import Ui_activeDentStartFinish,\
-Ui_aslotEdit
-
+from openmolar.qt4gui.dialogs import Ui_activeDentStartFinish
+from openmolar.qt4gui.dialogs import Ui_aslotEdit
+from openmolar.qt4gui.customwidgets import fiveminutetimeedit
 from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
 
@@ -48,18 +48,6 @@ class adayData():
         return"%s %s %s %s %s %s"%(
         self.apptix,self.dent,self.active,self.start,self.finish,self.memo)
 
-class FiveMinuteTimeEdit(QtGui.QTimeEdit):
-    def __init__(self,parent=None):
-        super(FiveMinuteTimeEdit,self).__init__(parent)
-        self.setMinimumTime(localsettings.earliestStart)
-        self.setMaximumTime(localsettings.latestFinish)
-        self.setDisplayFormat("hh:mm")
-
-    def stepBy(self, steps):
-        if self.currentSection() == self.MinuteSection:
-          QtGui.QTimeEdit.stepBy(self, steps * 5)
-        else:
-          QtGui.QTimeEdit.stepBy(self, steps)
 
 
 class dentWidget(Ui_activeDentStartFinish.Ui_Form):
@@ -70,9 +58,11 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         self.addTimeEdits()
 
     def addTimeEdits(self):
-        self.start_timeEdit=FiveMinuteTimeEdit(self.widget)
-        self.finish_timeEdit=FiveMinuteTimeEdit(self.widget_2)
-
+        self.start_timeEdit=fiveminutetimeedit.FiveMinuteTimeEdit(self.widget)
+        self.finish_timeEdit=fiveminutetimeedit.FiveMinuteTimeEdit(self.widget_2)
+        self.start_timeEdit.setMinimumTime(localsettings.earliestStart)
+        self.finish_timeEdit.setMaximumTime(localsettings.latestFinish)
+        
     def toggle(self,arg):
         self.start_timeEdit.setEnabled(arg)
         self.finish_timeEdit.setEnabled(arg)

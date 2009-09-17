@@ -1273,7 +1273,7 @@ class pageHandlingClass():
         self.ui.calendarWidget.setHighlightWeek(i==1)
         self.ui.calendarWidget.setHighlightMonth(i==2)
         if self.ui.diary_tabWidget.isVisible():
-            appt_gui_module.OV_calendar_signals(self)
+            appt_gui_module.handle_calendar_signal(self)
         
     def home(self):
         '''
@@ -2920,7 +2920,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         the calendar on the appointments overview page has changed.
         time to re-layout the appointment overview
         '''
-        appt_gui_module.OV_calendar_signals(self)
+        appt_gui_module.handle_calendar_signal(self)
     
     def customDateSignal(self, d):
         '''
@@ -3006,16 +3006,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         user has right clicked on the label situated above the aptOV widgets
         '''
         appt_gui_module.aptOVlabelRightClicked(self, arg)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     def charge_pushButtonClicked(self):
         '''
@@ -3537,6 +3527,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         
         QtCore.QObject.connect(self.ui.actionAppointment_Tools,
         QtCore.SIGNAL("triggered()"), self.appointmentTools_action)
+        
+        QtCore.QObject.connect(self.ui.actionSelect_Print_Daylists,
+        QtCore.SIGNAL("triggered()"), self.daylistPrintWizard)
 
         QtCore.QObject.connect(self.ui.actionFeeScale_Adjuster,
         QtCore.SIGNAL("triggered()"), self.feeScale_Adjuster_action)
@@ -3878,10 +3871,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.connect(self.ui.apptoverviewControls[i],
             QtCore.SIGNAL("right-clicked"), self.aptOVlabel_rightClicked)
 
-        #appointment manage
-        QtCore.QObject.connect(self.ui.printDaylists_pushButton,
-                            QtCore.SIGNAL("clicked()"), self.daylistPrintWizard)
-
+        
     def connectAptOVdentcbs(self, con=True):
         for cb in self.ui.aptOVdent_checkBoxes.values():
             #-- aptOVdent_checkBoxes is a dictionary of

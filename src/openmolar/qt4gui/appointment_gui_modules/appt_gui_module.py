@@ -869,6 +869,7 @@ def aptOVlabelClicked(parent, sd):
     go to the appointment book for the date on the label
     '''
     calendar(parent, sd)
+    parent.ui.diary_tabWidget.setCurrentIndex(0)
 
 def gotoCurWeek(parent):
     '''
@@ -877,7 +878,6 @@ def gotoCurWeek(parent):
     '''    
     parent.ui.calendarWidget.setSelectedDate(
     QtCore.QDate.currentDate())
-
         
 def aptOV_weekBack(parent):
     '''
@@ -1061,21 +1061,25 @@ def makeDiaryVisible(parent):
     if parent.ui.calendarWidget.selectedDate() != today:
         parent.ui.calendarWidget.setSelectedDate(today)
     else:
-        OV_calendar_signals(parent)
+        handle_calendar_signal(parent)
     triangles(parent)
     for book in parent.ui.apptBookWidgets:
         book.update()
 
-def OV_calendar_signals(parent):
+def handle_calendar_signal(parent):
     '''
     slot to catch a date change from the custom mont/year widgets emitting
     a date signal 
     OR the diary tab shifting
     '''
-    print "OV_calendar_signals "
+    print "handle_calendar_signal "
     d = parent.ui.calendarWidget.selectedDate().toPyDate()
     parent.ui.monthView.setSelectedDate(d)    
     parent.ui.yearView.setSelectedDate(d)
+    parent.ui.goTodayPushButton.setEnabled(
+    parent.ui.calendarWidget.selectedDate() != \
+    QtCore.QDate.currentDate())
+    
     
     if parent.ui.main_tabWidget.currentIndex() == 1:
         i = parent.ui.diary_tabWidget.currentIndex()
@@ -1388,11 +1392,15 @@ def blockEmptySlot(parent, tup):
     block the empty slot
     '''
     adate = parent.ui.calendarWidget.selectedDate().toPyDate()
-    start = localsettings.humanTimetoWystime(tup[0])
-    end = localsettings.humanTimetoWystime(tup[1])
-    dent = tup[2]
-    reason = tup[3]
-    if not appointments.block_appt(adate, dent, start, end, reason):
+    start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
+    end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
+    adjstart = localsettings.humanTimetoWystime(tup[2].toString("h:mm"))
+    adjend = localsettings.humanTimetoWystime(tup[3].toString("h:mm"))
+    
+    dent = tup[4]
+    reason = tup[5]
+    if not appointments.block_appt(adate, dent, start, end, 
+    adjstart, adjend, reason):
         parent.advise("unable to block - has the book been altered elsewhere?",
         1)
     layout_dayView(parent)

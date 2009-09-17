@@ -603,7 +603,7 @@ code2, note, flag0, flag1, flag2, flag3):
     #db.close()
     return result
 
-def block_appt(bldate, apptix, start, end, reason):
+def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     '''
     put a block in the book, with text set as reason
     '''
@@ -623,7 +623,7 @@ def block_appt(bldate, apptix, start, end, reason):
     code0,code1,code2,note,flag0,flag1,flag2,flag3)
     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
-    values = (bldate, apptix, start, end, reason, 0, "", "", "", "",
+    values = (bldate, apptix, bl_start, bl_end, reason, 0, "", "", "", "",
     -128, 0, 0, 0)
 
     if localsettings.logqueries:

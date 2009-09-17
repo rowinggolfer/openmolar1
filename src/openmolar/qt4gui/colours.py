@@ -16,7 +16,7 @@ GUTTA_PERCHA=QtGui.QColor("#bb0000")
 FILL_OUTLINE=QtGui.QColor("#333333")                                                                #used to be blue
 TRANSPARENT=QtCore.Qt.transparent
 med_warning=QtGui.QColor("red")
-BACKGROUND = QtGui.QPalette().background()
+BACKGROUND = QtGui.QPalette().window()
 APPT_Background=QtCore.Qt.white
 APPT_LINECOLOUR=QtGui.QColor("#dddddd")
 
@@ -34,7 +34,7 @@ APPTCOLORS={
     "P":QtGui.QColor("#ffff99"),    
     "BUSY":QtGui.QColor("#eeeeee"),
     "RESERVED CLINICAL TIME":QtGui.QColor("#ffcc99"),
-    "LUNCH":QtGui.QColor("#eeee00"),
+    "LUNCH":QtGui.QColor("#eeeeee"),
     "FREE":QtCore.Qt.transparent,
     "EMERGENCY":QtGui.QColor("#ff6600"),
     "default":QtGui.QColor("#adb3ff"),
@@ -43,5 +43,5 @@ APPTCOLORS={
 }
 
 if __name__ == "__main__":
-    print QtGui.QPalette().background()
+    print BACKGROUND
 

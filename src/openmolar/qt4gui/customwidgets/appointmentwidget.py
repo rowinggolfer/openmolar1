@@ -14,7 +14,7 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
-from openmolar.qt4gui.dialogs import Ui_blockSlot
+from openmolar.qt4gui.dialogs import blockslot
 
 BGCOLOR = QtCore.Qt.transparent
 FREECOLOR = colours.APPT_Background
@@ -182,6 +182,13 @@ class appointmentWidget(QtGui.QWidget):
         hour, minute = t // 60, int(t) % 60
         return "%s:%02d"% (hour, minute)
 
+    def qTime(self, t):
+        '''
+        converts minutes past midnight(int) to a QTime
+        '''
+        hour, minute = t // 60, int(t) % 60
+        return QtCore.QTime(hour, minute)
+
     def getCell_from_time(self, t):
         '''
         send a time - return the row number of that time
@@ -298,20 +305,34 @@ class appointmentWidget(QtGui.QWidget):
         else:
             #-- no-one in the book... 
             if self.firstSlot < row < self.lastSlot:
-                start=self.humanTime(
+                start=self.qTime(
                 int(self.dayStartTime+self.selected[0]*self.slotLength))
 
-                finish=self.humanTime(
+                finish=self.qTime(
                 int(self.dayStartTime+self.selected[1]*self.slotLength))
 
                 Dialog=QtGui.QDialog(self)
-                dl=Ui_blockSlot.Ui_Dialog()
-                dl.setupUi(Dialog)
+                dl=blockslot.blockDialog(Dialog)
+                
+                dl.start_timeEdit.setMinimumTime(start)                
+                dl.start_timeEdit.setMaximumTime(finish)                                
+                dl.start_timeEdit.setTime(start)
+                dl.finish_timeEdit.setMinimumTime(start)                
+                dl.finish_timeEdit.setMaximumTime(finish)                
+                dl.finish_timeEdit.setTime(finish)
+                
                 if Dialog.exec_():
                     reason=str(dl.comboBox.currentText())
-                    self.emit(QtCore.SIGNAL("BlockEmptySlot"),
-                    (start,finish,localsettings.apptix.get(self.dentist),reason))
-
+                    adjstart = dl.start_timeEdit.time()
+                    adjfinish = dl.finish_timeEdit.time()
+                    if finish>start:                   
+                        self.emit(QtCore.SIGNAL("BlockEmptySlot"),
+                        (start, finish, adjstart, adjfinish ,
+                        localsettings.apptix.get(self.dentist),reason))
+                    else:
+                        QtGui.QMessageBox.information(self, 
+                        "Whoops!","Bad Time Sequence!")
+                        
     def leaveEvent(self,event):
         self.selected=[-1,-1]
         self.update()
@@ -382,7 +403,9 @@ class appointmentWidget(QtGui.QWidget):
             rect=QtCore.QRect(timeWidth,startcell*slotHeight,
             self.width()-timeWidth, (endcell-startcell)*slotHeight)
             
-            if APPTCOLORS.has_key(cset):
+            if self.selected == (startcell, endcell):
+                painter.setBrush(colours.APPT_Background)
+            elif APPTCOLORS.has_key(cset):
                 painter.setBrush(APPTCOLORS[cset])
             elif APPTCOLORS.has_key(name.upper()):
                 painter.setBrush(APPTCOLORS[name.upper()])
@@ -390,6 +413,7 @@ class appointmentWidget(QtGui.QWidget):
                 painter.setBrush(APPTCOLORS["BUSY"])
             else:
                 painter.setBrush(APPTCOLORS["default"])
+        
             painter.drawRect(rect)
             painter.drawText(QtCore.QRectF(rect),
             name.title()+" "+trt1+" "+trt2+" "+trt3+" "+memo,option)
@@ -405,16 +429,7 @@ class appointmentWidget(QtGui.QWidget):
             painter.drawRect(rect)
       
         painter.restore()
-        ###selected appointment
-        if self.selected != (0,0):
-            startcell,endcell=self.selected
-            painter.save()
-            painter.setPen(QtGui.QPen(QtCore.Qt.red, 3))
-            painter.setBrush(TRANSPARENT)
-            rect=QtCore.QRectF(timeWidth,startcell*slotHeight,
-            self.width()-timeWidth,(endcell-startcell)*slotHeight)
-            painter.drawRect(rect.adjusted(0,0,-2,0))
-            painter.restore()
+        
         ##highlight current time
         if self.setTime!="None":
             cellno=self.getCell_from_time(self.setTime)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'openmolar/openmolar/qt-designer/newSetup.ui'
+# Form implementation generated from reading ui file 'openmolar/openmolar/src/openmolar/qt-designer/newSetup.ui'
 #
-# Created: Sun Jul 12 16:14:07 2009
+# Created: Wed Sep 16 23:07:31 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -237,7 +237,7 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.stackedWidget)
 
         self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.pushButton, self.main_password_lineEdit)
         Dialog.setTabOrder(self.main_password_lineEdit, self.pushButton_2)
@@ -282,7 +282,7 @@ class Ui_Dialog(object):
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "Database Name", None, QtGui.QApplication.UnicodeUTF8))
         self.database_lineEdit.setText(QtGui.QApplication.translate("Dialog", "openmolar_demo", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Dialog", "User", None, QtGui.QApplication.UnicodeUTF8))
-        self.user_lineEdit.setText(QtGui.QApplication.translate("Dialog", "user", None, QtGui.QApplication.UnicodeUTF8))
+        self.user_lineEdit.setText(QtGui.QApplication.translate("Dialog", "OMuser", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "(mysql)Password", None, QtGui.QApplication.UnicodeUTF8))
         self.password_lineEdit.setText(QtGui.QApplication.translate("Dialog", "password", None, QtGui.QApplication.UnicodeUTF8))
         self.dbpassword_checkBox.setText(QtGui.QApplication.translate("Dialog", "display password", None, QtGui.QApplication.UnicodeUTF8))

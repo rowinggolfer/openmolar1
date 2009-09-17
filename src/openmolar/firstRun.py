@@ -17,6 +17,7 @@ this module is only called if a settings file isn't found
 import sys
 import os
 import hashlib
+import base64
 import MySQLdb
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
@@ -24,9 +25,11 @@ from xml.dom import minidom
 from openmolar.qt4gui import Ui_newSetup
 from openmolar.settings import localsettings
 
-blankXML = '''<?xml version="1.0" ?>
+blankXML = '''<?xml version="1.1" ?>
 <settings>
-    <version>1.0</version>
+<system_password> </system_password>
+<connection name="existing_database">
+    <version>1.1</version>
     <server>
         <location> </location>
         <port> </port>
@@ -36,7 +39,7 @@ blankXML = '''<?xml version="1.0" ?>
         <user> </user>
     <password> </password>
     </database>
-    <system_password> </system_password>
+</connection>
 </settings>'''
 
 myPassword = ""
@@ -101,6 +104,8 @@ def newsetup(parent = None):
         return result
 
     def createDB():
+        global blankXML
+        blankXML = blankXML.replace("existing_database","openmolar_demo")
         dl.stackedWidget.setCurrentIndex(6)
         dl.rootPassword_lineEdit.setFocus()
         QtCore.QObject.connect(dl.rootPassword_checkBox, QtCore.SIGNAL(
@@ -269,13 +274,15 @@ def newsetup(parent = None):
             "user")[0].firstChild.replaceWholeText(myMysqlUser)
 
             xmlnode.getElementsByTagName(
-            "password")[0].firstChild.replaceWholeText(myMysqlPassword)
+            "password")[0].firstChild.replaceWholeText(
+            base64.b64encode(myMysqlPassword))
 
             xmlnode.getElementsByTagName(
             "dbname")[0].firstChild.replaceWholeText(myDB)
 
             settingsDir = os.path.dirname(localsettings.global_cflocation)
-
+            
+            sucessful_save = False
             try:
                 if not os.path.exists(settingsDir):
                     print 'putting a global settings file in', settingsDir,
@@ -287,10 +294,13 @@ def newsetup(parent = None):
                 f.close()
                 print '...ok'
                 localsettings.cflocation = localsettings.global_cflocation
-            
-            except OSError, IOError:
-                ##TODO - elevate privileges here....
-                ## and write the file again               
+                sucessful_save = True
+            except OSError:
+                pass
+            except IOError:
+                pass
+                
+            if not sucessful_save:
                 print 'unable to write to %s...'%settingsDir,
                 print ' we need root privileges for that' 
                 

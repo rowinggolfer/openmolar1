@@ -28,21 +28,24 @@ rootMySQLpassword):
 
     cursor = db.cursor()
     try:
-        cursor.execute("DROP DATABASE IF EXISTS %s"% databaseName)
+        print "deleting any existing openmolar_demo database....",
+        print cursor.execute("DROP DATABASE IF EXISTS %s"% databaseName)
     except:
+        print "non found... skipping"
         pass
-    cursor.execute("CREATE DATABASE %s"% databaseName)
-
+    print "creating database...",
+    print cursor.execute("CREATE DATABASE %s"% databaseName)
+    
     #-- note for production deployments, only grant
     #-- select,insert,update,delete privileges
     query = 'GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY "%s"'% (
     databaseName, myuser, myhost, mypassword)
-
-    #print query
+    print "setting privileges for '%s'"% myuser
     cursor.execute(query)
     cursor.close()
     db.commit()
     db.close()
+    print "db created sucessfully"
     return True
 
 def loadTables(myhost, myport, myuser, mypassword, databaseName):
@@ -50,7 +53,7 @@ def loadTables(myhost, myport, myuser, mypassword, databaseName):
     f = open(os.path.join(wkdir,"resources","demodump.sql"),"r")
     dumpString = f.read()
     f.close()
-
+    print myhost, myport, myuser, databaseName, mypassword
     db = MySQLdb.connect(host = myhost, port = myport,
     user = myuser, db = databaseName, passwd = mypassword)
 

@@ -63,7 +63,7 @@
          <x>0</x>
          <y>0</y>
          <width>989</width>
-         <height>560</height>
+         <height>526</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -1778,7 +1778,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>733</width>
+                        <width>731</width>
                         <height>526</height>
                        </rect>
                       </property>
@@ -3924,23 +3924,6 @@ Note - this will not remove items which are currently there. </string>
                 </widget>
                </item>
                <item row="7" column="0" colspan="4">
-                <widget class="QPushButton" name="printDaylists_pushButton">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Print Daylists</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../resources/resources.qrc">
-                   <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0" colspan="4">
                 <widget class="QLabel" name="aptOVmode_label">
                  <property name="font">
                   <font>
@@ -4046,7 +4029,7 @@ Note - this will not remove items which are currently there. </string>
                        <enum>QFrame::NoFrame</enum>
                       </property>
                       <property name="frameShadow">
-                       <enum>QFrame::Plain</enum>
+                       <enum>QFrame::Sunken</enum>
                       </property>
                       <property name="widgetResizable">
                        <bool>true</bool>
@@ -4056,8 +4039,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>163</width>
-                         <height>430</height>
+                         <width>174</width>
+                         <height>396</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4138,6 +4121,9 @@ Note - this will not remove items which are currently there. </string>
                     </item>
                     <item row="2" column="0" colspan="2">
                      <widget class="QScrollArea" name="appt2scrollArea">
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
                       <property name="widgetResizable">
                        <bool>true</bool>
                       </property>
@@ -4147,7 +4133,7 @@ Note - this will not remove items which are currently there. </string>
                          <x>0</x>
                          <y>0</y>
                          <width>173</width>
-                         <height>426</height>
+                         <height>398</height>
                         </rect>
                        </property>
                       </widget>
@@ -4156,7 +4142,7 @@ Note - this will not remove items which are currently there. </string>
                     <item row="1" column="0" colspan="2">
                      <widget class="QLabel" name="book2memo_label">
                       <property name="text">
-                       <string>Memo</string>
+                       <string/>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
@@ -4227,6 +4213,9 @@ Note - this will not remove items which are currently there. </string>
                     </item>
                     <item row="2" column="0" colspan="2">
                      <widget class="QScrollArea" name="appt3scrollArea">
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
                       <property name="widgetResizable">
                        <bool>true</bool>
                       </property>
@@ -4235,8 +4224,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>173</width>
-                         <height>426</height>
+                         <width>174</width>
+                         <height>398</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4246,7 +4235,7 @@ Note - this will not remove items which are currently there. </string>
                     <item row="1" column="0" colspan="2">
                      <widget class="QLabel" name="book3memo_label">
                       <property name="text">
-                       <string>Memo</string>
+                       <string/>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
@@ -4271,6 +4260,9 @@ Note - this will not remove items which are currently there. </string>
                     </property>
                     <item row="2" column="0" colspan="2">
                      <widget class="QScrollArea" name="appt4scrollArea">
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
                       <property name="widgetResizable">
                        <bool>true</bool>
                       </property>
@@ -4280,7 +4272,7 @@ Note - this will not remove items which are currently there. </string>
                          <x>0</x>
                          <y>0</y>
                          <width>173</width>
-                         <height>426</height>
+                         <height>398</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>
@@ -4336,7 +4328,7 @@ Note - this will not remove items which are currently there. </string>
                     <item row="1" column="0" colspan="2">
                      <widget class="QLabel" name="book4memo_label">
                       <property name="text">
-                       <string>Memo</string>
+                       <string/>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
@@ -4596,8 +4588,21 @@ Note - this will not remove items which are currently there. </string>
               </widget>
               <widget class="QWidget" name="tab_27">
                <attribute name="title">
-                <string>Anniversaries, Memos and Tasks</string>
+                <string>Memos and Tasks</string>
                </attribute>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QTextBrowser" name="textBrowser_2">
+                  <property name="html">
+                   <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;No tasks found.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </widget>
             </item>
@@ -5583,6 +5588,7 @@ Note - this will not remove items which are currently there. </string>
     <addaction name="actionAppointment_Tools"/>
     <addaction name="actionChoose_Database"/>
     <addaction name="actionFeeScale_Adjuster"/>
+    <addaction name="actionSelect_Print_Daylists"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -5667,6 +5673,11 @@ Note - this will not remove items which are currently there. </string>
   <action name="actionFeeScale_Adjuster">
    <property name="text">
     <string>FeeScale Adjuster</string>
+   </property>
+  </action>
+  <action name="actionSelect_Print_Daylists">
+   <property name="text">
+    <string>Select &amp;&amp; Print Daylists</string>
    </property>
   </action>
  </widget>
