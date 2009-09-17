@@ -239,7 +239,7 @@ def getDayMemos(startdate, enddate, dents=()):
     else:
         mystr = ""
 
-    fullquery = '''SELECT adate, memo, apptix FROM aday WHERE memo!="" AND 
+    fullquery = '''SELECT adate, apptix, memo FROM aday WHERE memo!="" AND 
     adate>=%s AND adate<%s %s'''% (localsettings.pyDatetoSQL(startdate), 
     localsettings.pyDatetoSQL(enddate), mystr)
     
@@ -252,13 +252,24 @@ def getDayMemos(startdate, enddate, dents=()):
     data = {}
     for row in rows:
         key = "%d%02d"% (row[0].month, row[0].day)
-        value = "%s - %s"% (localsettings.apptix_reverse.get(row[2]), row[1])
+        value = (row[1], row[2])
         if data.has_key(key):
-            data[key] = "%s | %s"% (data[key], value)
+            data[key].append(value)
         else:
-            data[key] = value
+            data[key] = [value]
     #db.close()
     return data
+    
+def setMemos(adate, memos):
+    db = connect()
+    cursor = db.cursor()
+    for memo in memos:
+        query = 'update aday set memo="%s" where adate=%s and apptix=%d'% (
+        memo[1], localsettings.pyDatetoSQL(adate), memo[0])
+        if localsettings.logqueries:
+            print query
+        cursor.execute(query)
+    cursor.close()
     
 def allAppointmentData(adate, dents=()):
     '''
@@ -434,6 +445,26 @@ def getBlocks(gbdate, dent):
     else:
         #--day not used!
         return()
+
+def getLunch(gbdate, dent):
+    '''
+    get lunchtime for date,dent
+    '''
+    db = connect()
+    cursor = db.cursor()
+    
+    query = ""
+    query = ' adate = "%s" and apptix = %d '% (gbdate, dent)
+    fullquery = '''SELECT start,end FROM aslot
+    WHERE %s AND name="LUNCH" '''% query
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
+
+    results = cursor.fetchall()
+    cursor.close()
+    #db.close()
+    return convertResults(results)
 
 def clearEms(cedate):
     '''

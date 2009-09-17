@@ -14,6 +14,10 @@ import datetime
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
+from openmolar.qt4gui.dialogs import Ui_memoitem
+from openmolar.qt4gui.dialogs import Ui_editmemos
+
+
 class monthCalendar(QtGui.QWidget):
     def __init__(self, parent=None):
         '''
@@ -22,7 +26,7 @@ class monthCalendar(QtGui.QWidget):
         super(monthCalendar, self).__init__(parent)
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
-        
+        self.paren = parent
         self.setMinimumSize(self.minimumSizeHint())
         self.monthStarts = {}
         self.font = None
@@ -33,6 +37,7 @@ class monthCalendar(QtGui.QWidget):
         self.mouseBrush.setAlpha(64)
         self.highlightedDate = None
         self.data = {}
+        self.dents = ()
         
     def sizeHint(self):
         '''
@@ -45,6 +50,14 @@ class monthCalendar(QtGui.QWidget):
         set an (arbitrary) minimum size for the widget
         '''
         return QtCore.QSize(400, 400)
+    
+    def setDents(self,dents):
+        '''
+        make the widget aware who's data it's showing
+        dents is a tuple like (4,5)
+        '''
+        self.dents = dents
+        
     
     def setData(self,data):
         '''
@@ -78,6 +91,41 @@ class monthCalendar(QtGui.QWidget):
         if d != self.highlightedDate:
             self.highlightedDate = d
             self.update()
+            
+    def raisememoDialog(self):
+        '''
+        allow user to input a memo
+        '''
+        Dialog = QtGui.QDialog(self)
+        dl = Ui_editmemos.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.estimate_layout = QtGui.QVBoxLayout(dl.scrollArea)
+        dl.estimate_layout.setSpacing(0)
+        key = "%d%02d"% (self.month, self.selectedDate.day)
+        existingDayMemos = {}
+        if self.data.has_key(key):
+            data = self.data[key]
+            for memo in data:
+                existingDayMemos[memo[0]] = memo[1]
+        memowidget_dict = {}
+        for dent in self.dents:
+            widg = QtGui.QWidget()
+            memoitem = Ui_memoitem.Ui_Form()
+            memoitem.setupUi(widg)
+            memoitem.label.setText("%s"% localsettings.apptix_reverse.get(dent))
+            if existingDayMemos.has_key(dent):
+                memoitem.lineEdit.setText(existingDayMemos[dent])
+            dl.estimate_layout.addWidget(widg) 
+            memowidget_dict[dent] = memoitem.lineEdit
+            
+        if Dialog.exec_():
+            retarg = []
+            for dent in self.dents:
+                memo = str(memowidget_dict[dent].text().toAscii())
+                if memo !="":
+                    retarg.append((dent, memo),)
+                
+            self.emit(QtCore.SIGNAL("add_memo"), tuple(retarg))
         
     def mousePressEvent(self, event):
         '''
@@ -87,6 +135,8 @@ class monthCalendar(QtGui.QWidget):
         if d and d != self.selectedDate:
             self.setSelectedDate(d)
             self.emit(QtCore.SIGNAL("selectedDate"), d)
+        if event.x() > self.vheaderwidth:
+            self.raisememoDialog()
             
     def leaveEvent(self,event):
         '''
@@ -182,8 +232,12 @@ class monthCalendar(QtGui.QWidget):
                 if self.data.has_key(key):
                     painter.setPen(self.palette().color(
                     self.palette().WindowText))
-                
-                    my_text = self.data[key]
+                    my_text = ""
+                    for dent, memo in self.data[key]:
+                        my_text += "%s - %s | "% (
+                        localsettings.apptix_reverse.get(dent), memo)
+
+                    my_text = my_text.strip(" | ")
                     painter.drawText(rect,QtCore.Qt.AlignLeft, my_text)
             
             
@@ -192,6 +246,7 @@ if __name__ == "__main__":
         print d
         
     import sys
+    localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     
     #--initiate a book starttime 08:00 endtime 10:00 
@@ -199,7 +254,8 @@ if __name__ == "__main__":
     form = monthCalendar()
     form.setSelectedDate(datetime.date.today())
     form.connect(form, QtCore.SIGNAL("selectedDate"), catchSignal)
-
+    form.dents=(4,5,)
+    form.data["%d%02d"% (form.month, 23)] = ((5,"test"),)
     form.show()
 
     sys.exit(app.exec_())

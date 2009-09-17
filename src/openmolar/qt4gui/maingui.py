@@ -2928,6 +2928,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         self.ui.calendarWidget.setSelectedDate(d)
     
+    def monthView_addmemo(self, memos):
+        '''
+        a memo needs to be added to a day
+        '''
+        appt_gui_module.updateDayMemos(self, memos)
+        
     def aptOV_weekBack_clicked(self):
         '''
         handles a request to move back a week in the appointment overview page
@@ -3809,16 +3815,16 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
     def signals_appointmentOVTab(self):
         #appointment overview tab
         QtCore.QObject.connect(self.ui.calendarWidget,
-        QtCore.SIGNAL("selectionChanged()"), 
-        self.calendarWidget_changed)
+        QtCore.SIGNAL("selectionChanged()"), self.calendarWidget_changed)
         
         QtCore.QObject.connect(self.ui.yearView,
-        QtCore.SIGNAL("selectedDate"), 
-        self.customDateSignal) 
+        QtCore.SIGNAL("selectedDate"), self.customDateSignal) 
                
         QtCore.QObject.connect(self.ui.monthView,
-        QtCore.SIGNAL("selectedDate"), 
-        self.customDateSignal) 
+        QtCore.SIGNAL("selectedDate"), self.customDateSignal) 
+        
+        QtCore.QObject.connect(self.ui.monthView,
+        QtCore.SIGNAL("add_memo"), self.monthView_addmemo) 
 
         QtCore.QObject.connect(self.ui.aptOVprevweek,
         QtCore.SIGNAL("clicked()"), self.aptOV_weekBack_clicked)

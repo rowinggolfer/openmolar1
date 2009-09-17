@@ -1096,6 +1096,14 @@ def handle_calendar_signal(parent):
     else:
         print "date changed, but diary invisible... skipping"
 
+def updateDayMemos(parent, memos):
+    '''
+    user has added some memos
+    '''
+    appointments.setMemos(parent.ui.calendarWidget.selectedDate().toPyDate(), 
+    memos)
+    layout_month(parent)
+        
 def layout_month(parent):
     '''
     grab month memos
@@ -1108,6 +1116,8 @@ def layout_month(parent):
         year += 1
     month += 1
     enddate = datetime.date(year, month, 1)
+    dents = getUserCheckedClinicians(parent)
+    parent.ui.monthView.setDents(dents)
     rows = appointments.getDayMemos(startdate, enddate)
     parent.ui.monthView.setData(rows)
     parent.ui.monthView.update()
@@ -1122,16 +1132,12 @@ def layout_year(parent):
     data = appointments.getDayMemos(startdate, enddate)
     parent.ui.yearView.setData(data)
     parent.ui.yearView.update()
-        
-def layout_weekView(parent):
+
+def diaryTab_practitioner_checkbox_handling(parent):
     '''
-    called by checking a dentist checkbox on apptov tab
-    or by changeing the date on the appt OV calendar
+    this procedure updates the 3 parent checkboxes
+    Alldents, all clinicians, all hygs..
     '''
-    if parent.ui.main_tabWidget.currentIndex() !=1 and \
-    parent.ui.diary_tabWidget.currentIndex() != 1:
-        return
-    print "laying out week view - computationally expensive!"
     AllDentsChecked = True
     #--code to uncheck the all dentists checkbox if necessary
     for dent in parent.ui.aptOVdent_checkBoxes.values():
@@ -1179,6 +1185,29 @@ def layout_weekView(parent):
         QtCore.SIGNAL("stateChanged(int)"), 
         parent.apptOV_all_clinicians_checkbox_changed)
 
+def getUserCheckedClinicians(parent):
+    retarg=[]
+    for dent in parent.ui.aptOVdent_checkBoxes.keys():
+        if parent.ui.aptOVdent_checkBoxes[dent].checkState():
+            retarg.append(dent)
+    for dent in parent.ui.aptOVhyg_checkBoxes.keys():
+        if parent.ui.aptOVhyg_checkBoxes[dent].checkState():
+            retarg.append(dent)
+
+    return retarg
+        
+def layout_weekView(parent):
+    '''
+    called by checking a dentist checkbox on apptov tab
+    or by changeing the date on the appt OV calendar
+    '''
+    if parent.ui.main_tabWidget.currentIndex() !=1 and \
+    parent.ui.diary_tabWidget.currentIndex() != 1:
+        return
+    print "laying out week view - computationally expensive!"
+
+    diaryTab_practitioner_checkbox_handling(parent)
+    
     cal = parent.ui.calendarWidget
     date = cal.selectedDate()
     
@@ -1196,20 +1225,14 @@ def layout_weekView(parent):
     else:
         parent.ui.goTodayPushButton.setEnabled(True)
 
-    userCheckedDents = []
-    for dent in parent.ui.aptOVdent_checkBoxes.keys():
-        if parent.ui.aptOVdent_checkBoxes[dent].checkState():
-            userCheckedDents.append(dent)
-    for dent in parent.ui.aptOVhyg_checkBoxes.keys():
-        if parent.ui.aptOVhyg_checkBoxes[dent].checkState():
-            userCheckedDents.append(dent)
-
+    userCheckedClinicians = getUserCheckedClinicians(parent)
+    
     for ov in parent.ui.apptoverviews:
         #--reset
         ov.date = weekdates[parent.ui.apptoverviews.index(ov)]
-        if userCheckedDents != []:
+        if userCheckedClinicians != []:
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
-            tuple(userCheckedDents))
+            tuple(userCheckedClinicians))
             #--tuple like ((4, 840, 1900,"memo"), (5, 830, 1400, "memo"))
 
             dlist = []
@@ -1239,12 +1262,11 @@ def layout_weekView(parent):
 
     if parent.ui.aptOV_lunchcheckBox.checkState():
         #--add lunches
-        ##todo - should really get these via mysql...
-        #--but they never change in my practice...
-        for ov in parent.ui.apptoverviews[0:4]:
-            ov.lunch = (1300, 60)
-        parent.ui.apptoverviews[4].lunch = (1230, 30)
-
+        for ov in parent.ui.apptoverviews:
+            for dent in ov.dents:
+                ov.lunches[dent] = appointments.getLunch(
+                ov.date.toPyDate(), dent)
+        
     if str(parent.ui.aptOVmode_label.text()) == "Scheduling Mode":
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged

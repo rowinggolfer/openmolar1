@@ -105,17 +105,15 @@ class yearCalendar(QtGui.QWidget):
         if d != self.highlightedDate:
             self.highlightedDate = d
             self.update()
-        show = False
+        advisory = ""
         if d:
             datekey = "%d%02d"% (d.month, d.day)
             if self.data.has_key(datekey):
-                show = True
-                advisory = self.data[datekey]
+                for dent, memo in self.data[datekey]:
+                    advisory += "%s - %s <br />"% (
+                    localsettings.apptix_reverse.get(dent),memo)
                 
-        if show:
-            QtGui.QToolTip.showText(event.globalPos(), advisory)
-        else:
-            QtGui.QToolTip.showText(event.globalPos(), "")
+        QtGui.QToolTip.showText(event.globalPos(), advisory.strip(" <br />"))
             
     def mousePressEvent(self, event):
         '''

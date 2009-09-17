@@ -65,11 +65,12 @@ class appointmentOverviewWidget(QtGui.QWidget):
         self.appts = {}
         self.eTimes = {}
         self.freeslots = {}
+        self.lunches = {}
         for dent in self.dents:
             self.freeslots[dent] = ()
             self.appts[dent] = ()
             self.eTimes[dent] = ()
-        self.lunch = ()
+            self.lunches[dent] = ()
         
     def setStartTime(self, dent, t):
         self.daystart[dent] = localsettings.minutesPastMidnight(t)
@@ -148,19 +149,19 @@ class appointmentOverviewWidget(QtGui.QWidget):
                     self.highlightedRect = rect
                     break
 
-            if self.lunch != ():
-                (slotstart, length) = self.lunch
+            for lunch in self.lunches[dent]:
+                (slotstart, length) = lunch
                 startcell = (localsettings.minutesPastMidnight(slotstart) - \
                 self.startTime) / self.slotLength
 
-                rect = QtCore.QRect(self.timeOffset,
+                rect = QtCore.QRect(leftx,
                 startcell * self.slotHeight + self.headingHeight,
-                self.width() - self.timeOffset,
-                (length / self.slotLength) * self.slotHeight)
-                
+                columnWidth, (length / self.slotLength) * self.slotHeight)
+
                 if rect.contains(event.pos()):
                     self.highlightedRect = rect
                     break
+
             col+=1
         self.update()
 
@@ -242,8 +243,8 @@ class appointmentOverviewWidget(QtGui.QWidget):
                         "You've right clicked on an appt<br />%s"% feedback)
                         return
 
-                if self.lunch != ():
-                    (slotstart, length) = self.lunch
+                for lunch in self.lunches[dent]:
+                    (slotstart, length) = lunch
                     startcell = (localsettings.minutesPastMidnight(
                     slotstart) - self.startTime) / self.slotLength
 
@@ -374,27 +375,31 @@ class appointmentOverviewWidget(QtGui.QWidget):
                     rect=QtCore.QRect(leftx,startcell*self.slotHeight+self.headingHeight,columnWidth,(length/self.slotLength)*self.slotHeight)
                     painter.drawRect(rect)
                     painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
-                    painter.drawText(rect,QtCore.Qt.AlignCenter,QtCore.QString("Emer..."))
+                    painter.drawText(rect,QtCore.Qt.AlignCenter,QtCore.QString("Bloc..."))
                     painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
+                
+                for lunch in self.lunches[dent]:
+                    (slotstart,length)=lunch
+                    startcell=(localsettings.minutesPastMidnight(slotstart)-self.startTime)/self.slotLength
+                    rect=QtCore.QRect(leftx,startcell*self.slotHeight+self.headingHeight,columnWidth,(length/self.slotLength)*self.slotHeight)
+                    painter.setBrush(APPTCOLORS["LUNCH"])
+                    painter.drawRect(rect)
+                    painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
+                    painter.drawText(rect,QtCore.Qt.AlignCenter,QtCore.QString("Lunch"))
+
 
                 painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
                 if col>0: painter.drawLine(leftx,0,leftx,self.height())
                 col+=1
 
-            if self.lunch!=():
-                (slotstart,length)=self.lunch
-                startcell=(localsettings.minutesPastMidnight(slotstart)-self.startTime)/self.slotLength
-                rect=QtCore.QRect(self.timeOffset,startcell*self.slotHeight+self.headingHeight,self.width()-self.timeOffset,(length/self.slotLength)*self.slotHeight)
-                painter.setBrush(APPTCOLORS["LUNCH"])
-                painter.drawRect(rect)
-                painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
-                painter.drawText(rect,QtCore.Qt.AlignCenter,QtCore.QString("Lunch"))
             if self.highlightedRect!=None:
                 painter.setPen(QtGui.QPen(QtCore.Qt.red,2))
                 painter.setBrush(TRANSPARENT)
                 painter.drawRect(self.highlightedRect)
-        except Exception:
-            print "error painting widget",Exception
+        
+        except Exception, e:
+            print "error painting appointment overviewwidget", e
+
 if __name__ == "__main__":
     def clicktest(a):
         print a
@@ -412,7 +417,7 @@ if __name__ == "__main__":
         form.freeslots[dent]=((1015, 30), (1735, 20))
         form.appts[dent]=((900,40),(1000,15))
         form.eTimes[dent]=((1115, 15), (1300, 60), (1600, 30))
-    form.lunch=(1300,60)
+        form.lunches[dent]=((1300,60),)
     print form.freeslots    
     form.show()
     QtCore.QObject.connect(form,QtCore.SIGNAL("AppointmentClicked"),clicktest)
