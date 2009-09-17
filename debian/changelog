@@ -1,5 +1,5 @@
-openmolar (0.1.2-7ubuntu1) intrepid; urgency=low
+openmolar (0.1.4-0ubuntu1) intrepid; urgency=low
 
-  * Initial release (LP: #368222) 
+  * redesign of the appointment pages 
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Sat, 15 Aug 2009 22:37:30 +0100
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Thur, 17 Sep 2009 02:40:30 +0100
