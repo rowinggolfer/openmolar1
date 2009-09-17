@@ -46,6 +46,12 @@ class monthCalendar(QtGui.QWidget):
         '''
         return QtCore.QSize(400, 400)
     
+    def setData(self,data):
+        '''
+        pass a dictionary like {"1209","Neil's Birthday"}
+        '''
+        self.data = data
+    
     def setRowNo(self):
         '''
         work out how many rows are required
@@ -172,11 +178,12 @@ class monthCalendar(QtGui.QWidget):
                 
                 painter.drawRect(rect)
 
-                if self.data.has_key(day):
+                key = "%d%02d"%(self.month, day)
+                if self.data.has_key(key):
                     painter.setPen(self.palette().color(
                     self.palette().WindowText))
                 
-                    my_text = self.data[day]
+                    my_text = self.data[key]
                     painter.drawText(rect,QtCore.Qt.AlignLeft, my_text)
             
             

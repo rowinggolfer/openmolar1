@@ -58,10 +58,9 @@ class yearCalendar(QtGui.QWidget):
             fm = QtGui.QFontMetrics(font)
             self.vheaderwidth = fm.width("-September-")
 
-    def addData(self, date, info):
+    def setData(self, data):
         #if date.year == self.year: (messed up anniversaries)
-        datekey = "%02d%d"%(date.month, date.day)
-        self.data[datekey] = info
+        self.data = data
 
     def setColumnNo(self):
         '''
@@ -108,7 +107,7 @@ class yearCalendar(QtGui.QWidget):
             self.update()
         show = False
         if d:
-            datekey = "%02d%d"% (d.month, d.day)
+            datekey = "%d%02d"% (d.month, d.day)
             if self.data.has_key(datekey):
                 show = True
                 advisory = self.data[datekey]
@@ -264,7 +263,7 @@ class yearCalendar(QtGui.QWidget):
                                 painter.drawText(rect, 
                                 QtCore.Qt.AlignCenter, my_text)
 
-                            datekey = "%02d%d"%(month, c_date.day)
+                            datekey = "%d%02d"%(month, c_date.day)
                             if self.data.has_key(datekey):
                                 #-- draw a blue triangle!
                                 painter.save()

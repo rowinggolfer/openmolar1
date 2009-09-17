@@ -221,6 +221,45 @@ def getWorkingDents(gwdate, dents=()):
     #db.close()
     return rows
 
+def getDayMemos(startdate, enddate, dents=()):
+    '''
+    get any day memo's for a range of dents and tuple of dentists
+    if month = 0, return all memos for the given year
+    useage is getDayMemos(pydate,pydate,(1,4))
+    start date is inclusive, enddate not so 
+    '''
+    db = connect()
+    cursor = db.cursor()
+    if dents != ():
+        #-- dents are numbers here..... I need to get consistent :(
+        mystr = " AND ("
+        for dent in dents:
+            mystr += "apptix=%d OR "% dent
+        mystr = mystr[0:mystr.rindex(" OR")] + ")"
+    else:
+        mystr = ""
+
+    fullquery = '''SELECT adate, memo, apptix FROM aday WHERE memo!="" AND 
+    adate>=%s AND adate<%s %s'''% (localsettings.pyDatetoSQL(startdate), 
+    localsettings.pyDatetoSQL(enddate), mystr)
+    
+    if localsettings.logqueries:
+        print fullquery
+    cursor.execute(fullquery)
+
+    rows = cursor.fetchall()
+    cursor.close()
+    data = {}
+    for row in rows:
+        key = "%d%02d"% (row[0].month, row[0].day)
+        value = "%s - %s"% (localsettings.apptix_reverse.get(row[2]), row[1])
+        if data.has_key(key):
+            data[key] = "%s | %s"% (data[key], value)
+        else:
+            data[key] = value
+    #db.close()
+    return data
+    
 def allAppointmentData(adate, dents=()):
     '''
     this gets appointment data for a specifc date and dents

@@ -10,8 +10,9 @@
 a module housing all appointment functions that act on the gui
 '''
 
-import time
 import copy
+import datetime
+import time
 
 from PyQt4 import QtCore, QtGui
 
@@ -1096,10 +1097,31 @@ def handle_calendar_signal(parent):
         print "date changed, but diary invisible... skipping"
 
 def layout_month(parent):
-    print "layout month - does nothing as yet"
+    '''
+    grab month memos
+    '''
+    year = parent.ui.calendarWidget.selectedDate().year()
+    month = parent.ui.calendarWidget.selectedDate().month()
+    startdate = datetime.date(year, month, 1)
+    if month == 12:
+        month = 0
+        year += 1
+    month += 1
+    enddate = datetime.date(year, month, 1)
+    rows = appointments.getDayMemos(startdate, enddate)
+    parent.ui.monthView.setData(rows)
+    parent.ui.monthView.update()
     
 def layout_year(parent):
-    print "layout year - does nothing as yet"
+    '''
+    grab year memos
+    '''
+    year = parent.ui.calendarWidget.selectedDate().year()
+    startdate = datetime.date(year, 1, 1)
+    enddate = datetime.date(year+1, 1, 1)
+    data = appointments.getDayMemos(startdate, enddate)
+    parent.ui.yearView.setData(data)
+    parent.ui.yearView.update()
         
 def layout_weekView(parent):
     '''
