@@ -325,7 +325,8 @@ class appointmentWidget(QtGui.QWidget):
                     reason=str(dl.comboBox.currentText())
                     adjstart = dl.start_timeEdit.time()
                     adjfinish = dl.finish_timeEdit.time()
-                    if finish>start:                   
+                    if finish > start and \
+                    adjstart.minute()%5 == 0 and adjfinish.minute()%5 == 0:                   
                         self.emit(QtCore.SIGNAL("BlockEmptySlot"),
                         (start, finish, adjstart, adjfinish ,
                         localsettings.apptix.get(self.dentist),reason))

@@ -19,3 +19,11 @@ class FiveMinuteTimeEdit(QtGui.QTimeEdit):
           QtGui.QTimeEdit.stepBy(self, steps * 5)
         else:
           QtGui.QTimeEdit.stepBy(self, steps)
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtGui.QApplication([])
+    te = FiveMinuteTimeEdit()
+    te.show()
+    sys.exit(app.exec_())

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Thu Sep 17 01:06:45 2009
+# Created: Thu Sep 17 02:29:51 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1610,6 +1610,7 @@ class Ui_MainWindow(object):
         self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
         self.splitter_2.setObjectName("splitter_2")
         self.frame_14 = QtGui.QFrame(self.splitter_2)
+        self.frame_14.setMinimumSize(QtCore.QSize(100, 0))
         self.frame_14.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_14.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_14.setObjectName("frame_14")
@@ -1654,6 +1655,7 @@ class Ui_MainWindow(object):
         self.book1memo_label.setObjectName("book1memo_label")
         self.gridLayout_11.addWidget(self.book1memo_label, 1, 0, 1, 2)
         self.frame_13 = QtGui.QFrame(self.splitter_2)
+        self.frame_13.setMinimumSize(QtCore.QSize(100, 0))
         self.frame_13.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_13.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_13.setObjectName("frame_13")
@@ -1695,6 +1697,7 @@ class Ui_MainWindow(object):
         self.book2memo_label.setObjectName("book2memo_label")
         self.gridLayout_32.addWidget(self.book2memo_label, 1, 0, 1, 2)
         self.frame_12 = QtGui.QFrame(self.splitter_2)
+        self.frame_12.setMinimumSize(QtCore.QSize(100, 0))
         self.frame_12.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_12.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_12.setObjectName("frame_12")
@@ -1738,6 +1741,7 @@ class Ui_MainWindow(object):
         self.book3memo_label.setObjectName("book3memo_label")
         self.gridLayout_33.addWidget(self.book3memo_label, 1, 0, 1, 2)
         self.frame_11 = QtGui.QFrame(self.splitter_2)
+        self.frame_11.setMinimumSize(QtCore.QSize(100, 0))
         self.frame_11.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_11.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_11.setObjectName("frame_11")

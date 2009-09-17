@@ -3964,6 +3964,12 @@ Note - this will not remove items which are currently there. </string>
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <widget class="QFrame" name="frame_14">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -4060,6 +4066,12 @@ Note - this will not remove items which are currently there. </string>
                    </layout>
                   </widget>
                   <widget class="QFrame" name="frame_13">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -4152,6 +4164,12 @@ Note - this will not remove items which are currently there. </string>
                    </layout>
                   </widget>
                   <widget class="QFrame" name="frame_12">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -4245,6 +4263,12 @@ Note - this will not remove items which are currently there. </string>
                    </layout>
                   </widget>
                   <widget class="QFrame" name="frame_11">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
