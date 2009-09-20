@@ -2479,20 +2479,28 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         if self.pt.recd != newdate:
             self.pt.recd = newdate
             self.updateDetails() 
-        
-
+    
+    def recallDate_shortcuts(self, arg):
+        '''
+        receives a signal when the date shortcut combobox is triggered
+        '''
+        if arg > 0: #ignore the header (item 0) of the comboxbox
+            monthjump = int(self.ui.recallDate_comboBox.currentText()[0])
+            today = QtCore.QDate.currentDate()
+            self.ui.recall_dateEdit.setDate(today.addMonths(monthjump))
+            
     def exportRecalls(self):
         '''
         gets patients who have the recall date stipulated
         by the ui.recallDateEdit value
         '''
-        month=self.ui.recalldateEdit.date().month()
-        year=self.ui.recalldateEdit.date().year()
-        print "exporting recalls for %s,%s"%(month, year)
-        pts=recall.getpatients(month, year)
-        dialog=recall_app.Form(pts)
+        month = self.ui.recalldateEdit.date().month()
+        year = self.ui.recalldateEdit.date().year()
+        pts = recall.getpatients(month, year)
+        dialog = recall_app.Form(pts)
         if dialog.exec_():
             ##TODO add a note like (recall printed) to all relevant pt notes.
+            ##or insert into new docs printed??
             pass
 
     def showChartTable(self):
@@ -3499,6 +3507,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
         QtCore.QObject.connect(self.ui.recall_dateEdit,
         QtCore.SIGNAL("dateChanged (const QDate&)"), self.recallDate)
+        
+        QtCore.QObject.connect(self.ui.recallDate_comboBox,
+        QtCore.SIGNAL("currentIndexChanged(int)"), 
+        self.recallDate_shortcuts)
         
         
     def signals_menu(self):

@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -540,7 +540,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>540</width>
+                        <width>733</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -1778,7 +1778,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>731</width>
+                        <width>733</width>
                         <height>526</height>
                        </rect>
                       </property>
@@ -1819,12 +1819,41 @@
                               </widget>
                              </item>
                              <item>
+                              <widget class="QComboBox" name="recallDate_comboBox">
+                               <item>
+                                <property name="text">
+                                 <string>Date Shortcuts</string>
+                                </property>
+                               </item>
+                               <item>
+                                <property name="text">
+                                 <string>1 Month hence</string>
+                                </property>
+                               </item>
+                               <item>
+                                <property name="text">
+                                 <string>3 Months hence</string>
+                                </property>
+                               </item>
+                               <item>
+                                <property name="text">
+                                 <string>6 Months hence</string>
+                                </property>
+                               </item>
+                               <item>
+                                <property name="text">
+                                 <string>12 Months hence</string>
+                                </property>
+                               </item>
+                              </widget>
+                             </item>
+                             <item>
                               <widget class="QPushButton" name="printRecall_pushButton">
                                <property name="toolTip">
                                 <string>Print a recall saying the patient is due now.</string>
                                </property>
                                <property name="text">
-                                <string>Recall NOW!</string>
+                                <string>Print letter Now</string>
                                </property>
                               </widget>
                              </item>
@@ -2130,7 +2159,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>286</width>
+                        <width>743</width>
                         <height>500</height>
                        </rect>
                       </property>
@@ -2499,7 +2528,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>469</width>
+                        <width>733</width>
                         <height>370</height>
                        </rect>
                       </property>
@@ -2753,8 +2782,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>314</width>
-                        <height>105</height>
+                        <width>753</width>
+                        <height>362</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2930,7 +2959,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>96</width>
+                           <width>481</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -3314,8 +3343,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>249</width>
-                        <height>360</height>
+                        <width>753</width>
+                        <height>362</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">

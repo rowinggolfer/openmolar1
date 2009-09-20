@@ -35,6 +35,7 @@ class yearCalendar(QtGui.QWidget):
         QtGui.QPalette.Highlight))
         self.mouseBrush.setAlpha(64)
         self.highlightedDate = None
+        self.headingdata={}
         self.data = {}
         self.startDOW = 0
         
@@ -51,6 +52,9 @@ class yearCalendar(QtGui.QWidget):
         return QtCore.QSize(700, 400)
 
     def setFont(self):
+        '''
+        set the font (and by association, the width of the month column
+        '''
         font = QtGui.QFont(self.fontInfo().family(), 
         localsettings.appointmentFontSize)
         if self.font != font:
@@ -58,8 +62,19 @@ class yearCalendar(QtGui.QWidget):
             fm = QtGui.QFontMetrics(font)
             self.vheaderwidth = fm.width("-September-")
 
+    def setHeadingData(self, data):
+        '''
+        sets attributes for any given day
+        data is a dictionary {"mdd":"New Year's Day" , ...}
+        '''
+        self.headingdata = data
+
     def setData(self, data):
-        #if date.year == self.year: (messed up anniversaries)
+        '''
+        sets attributes for any given day
+        and any given book owner
+        data is a dictionary {"mdd":((4,"Memo"),(2,"note"),) , ...}
+        '''
         self.data = data
 
     def setColumnNo(self):
@@ -111,13 +126,16 @@ class yearCalendar(QtGui.QWidget):
             if self.data.has_key(datekey):
                 for dent, memo in self.data[datekey]:
                     advisory += "%s - %s <br />"% (
-                    localsettings.apptix_reverse.get(dent),memo)
-                
-        QtGui.QToolTip.showText(event.globalPos(), advisory.strip(" <br />"))
+                    localsettings.apptix_reverse.get(dent), memo)
+            advisory = advisory.strip(" <br />")
+            if self.headingdata.has_key(datekey):
+                advisory += "<p><b>%s</b></p>"% self.headingdata[datekey]
+        
+        QtGui.QToolTip.showText(event.globalPos(), advisory)
             
     def mousePressEvent(self, event):
         '''
-        catch the mouse press event - 
+        catch the mouse press event
         '''
         d = self.getDateFromPosition(event.x(), event.y())
         if d and d != self.selectedDate:
@@ -262,6 +280,16 @@ class yearCalendar(QtGui.QWidget):
                                 QtCore.Qt.AlignCenter, my_text)
 
                             datekey = "%d%02d"%(month, c_date.day)
+                            
+                            if self.headingdata.has_key(datekey):
+                                #-- draw a blue triangle!
+                                painter.save()
+                                painter.setBrush(QtCore.Qt.lightGray)
+                                painter.setPen(QtCore.Qt.lightGray)
+                                rheight = rect.height()*0.8
+                                painter.drawRect(rect.adjusted(1,rheight,-1,0))
+                                painter.restore()
+            
                             if self.data.has_key(datekey):
                                 #-- draw a blue triangle!
                                 painter.save()
@@ -270,7 +298,7 @@ class yearCalendar(QtGui.QWidget):
                                 topleftX = rect.topLeft().x() + rect.width()/2
                                 topY = rect.topLeft().y()+2
                                 rightX = rect.topRight().x()
-                                bottomrightY = rect.topRight().y() + rect.width()/2+2
+                                bottomrightY = rect.topRight().y() + rect.width()/2
                                 shape = QtGui.QPolygon([topleftX, topY, rightX, topY, rightX, bottomrightY ])
                                 painter.drawPolygon(shape)
                                 painter.restore()
@@ -289,8 +317,10 @@ if __name__ == "__main__":
     form = yearCalendar()
     form.setSelectedDate(datetime.date.today())
     form.connect(form, QtCore.SIGNAL("selectedDate"), catchSignal)
-    form.addData(datetime.date(2009,12,9), "Neil's Birthday")
-    form.addData(datetime.date(2009,10,17), "artvee's Birthday")
+    form.setHeadingData({"1225":"Christmas","1209": "Neil's Birthday"})
+    
+    form.setData({"1209": ((4,"Neil's Birthday"),),
+    "119": ((4,"Judith's Birthday"),)})
     
     form.show()
 

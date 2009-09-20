@@ -41,6 +41,7 @@ else:
 
 dom.unlink()
 
+ProgrammingError = MySQLdb.ProgrammingError
 
 class omSQLresult():
     '''

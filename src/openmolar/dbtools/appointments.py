@@ -7,7 +7,7 @@
 # more details.
 
 import datetime
-from openmolar.connect import connect, omSQLresult
+from openmolar.connect import connect, omSQLresult, ProgrammingError
 from openmolar.settings import localsettings
 
 class workingDay():
@@ -259,6 +259,35 @@ def getDayMemos(startdate, enddate, dents=()):
             data[key] = [value]
     #db.close()
     return data
+
+def getBankHols(startdate, enddate):
+    '''
+    useage is getDayMemos(pydate,pydate)
+    start date is inclusive, enddate not so 
+    '''
+    db = connect()
+    cursor = db.cursor()
+    
+    fullquery = '''SELECT adate, memo FROM calendar WHERE memo!="" AND 
+    adate>=%s AND adate<%s'''% (localsettings.pyDatetoSQL(startdate), 
+    localsettings.pyDatetoSQL(enddate))
+    
+    data = {}
+    try:
+        if localsettings.logqueries:
+            print fullquery
+        cursor.execute(fullquery)
+
+        rows = cursor.fetchall()
+        cursor.close()
+        
+        for row in rows:
+            key = "%d%02d"% (row[0].month, row[0].day)
+            data[key] = row[1]
+    except ProgrammingError, e:
+        print "couldn't get Bank Holiday details"
+    return data
+    
     
 def setMemos(adate, memos):
     db = connect()

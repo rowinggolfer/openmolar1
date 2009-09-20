@@ -1,5 +1,5 @@
-openmolar (0.1.4-0ubuntu1) intrepid; urgency=low
+openmolar (0.1.4-1ubuntu1) intrepid; urgency=low
 
-  * redesign of the appointment pages 
+  * day memo functionality
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Thur, 17 Sep 2009 02:40:30 +0100
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 18 Sep 2009 00:12:30 +0100

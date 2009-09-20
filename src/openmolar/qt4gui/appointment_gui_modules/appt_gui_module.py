@@ -1131,6 +1131,8 @@ def layout_year(parent):
     enddate = datetime.date(year+1, 1, 1)
     data = appointments.getDayMemos(startdate, enddate)
     parent.ui.yearView.setData(data)
+    data = appointments.getBankHols(startdate, enddate)
+    parent.ui.yearView.setHeadingData(data)    
     parent.ui.yearView.update()
 
 def diaryTab_practitioner_checkbox_handling(parent):
