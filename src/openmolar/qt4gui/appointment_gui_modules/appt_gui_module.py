@@ -991,18 +991,21 @@ def apptOVclinicians(parent):
     #--disconnect signal slots from the chechboxes temporarily
     parent.connectAptOVdentcbs(False)
     #--change their values
-    for dent in parent.ui.aptOVdent_checkBoxes.keys():
-        parent.ui.aptOVdent_checkBoxes[dent].setCheckState(value)
+    #for dent in parent.ui.aptOVdent_checkBoxes.keys():
+    #    parent.ui.aptOVdent_checkBoxes[dent].setCheckState(value)
+    parent.ui.aptOV_alldentscheckBox.setChecked(value)
     #--reconnect
     parent.connectAptOVdentcbs()
     #--refresh Layout
     parent.connectAptOVhygcbs(False)
-    for dent in parent.ui.aptOVhyg_checkBoxes.keys():
-        parent.ui.aptOVhyg_checkBoxes[dent].setCheckState(value)
+    #for dent in parent.ui.aptOVhyg_checkBoxes.keys():
+    #    parent.ui.aptOVhyg_checkBoxes[dent].setCheckState(value)
+    parent.ui.aptOV_allhygscheckBox.setChecked(value)
+        
     parent.connectAptOVhygcbs()
 
     if parent.ui.aptOV_everybody_checkBox.isVisible():
-        layout_weekView(parent)
+        handle_calendar_signal(parent)
 
 def apptOVhygs(parent):
     '''
@@ -1016,7 +1019,7 @@ def apptOVhygs(parent):
     parent.connectAptOVhygcbs()
     
     if parent.ui.aptOV_allhygscheckBox.isVisible():
-        layout_weekView(parent)
+        handle_calendar_signal(parent)
 
 def apptOVdents(parent):
     '''
@@ -1032,7 +1035,7 @@ def apptOVdents(parent):
     parent.connectAptOVdentcbs()
     #--refresh Layout
     if parent.ui.aptOV_alldentscheckBox.isVisible():
-        layout_weekView(parent)
+        handle_calendar_signal(parent)
 
 def findApptButtonClicked(parent):
     '''
@@ -1072,6 +1075,7 @@ def handle_calendar_signal(parent):
     slot to catch a date change from the custom mont/year widgets emitting
     a date signal 
     OR the diary tab shifting
+    OR the checkboxes have been tweaked
     '''
     print "handle_calendar_signal "
     d = parent.ui.calendarWidget.selectedDate().toPyDate()
@@ -1118,7 +1122,7 @@ def layout_month(parent):
     enddate = datetime.date(year, month, 1)
     dents = getUserCheckedClinicians(parent)
     parent.ui.monthView.setDents(dents)
-    rows = appointments.getDayMemos(startdate, enddate)
+    rows = appointments.getDayMemos(startdate, enddate, dents)
     parent.ui.monthView.setData(rows)
     parent.ui.monthView.update()
     
@@ -1129,7 +1133,8 @@ def layout_year(parent):
     year = parent.ui.calendarWidget.selectedDate().year()
     startdate = datetime.date(year, 1, 1)
     enddate = datetime.date(year+1, 1, 1)
-    data = appointments.getDayMemos(startdate, enddate)
+    dents = getUserCheckedClinicians(parent)
+    data = appointments.getDayMemos(startdate, enddate, dents)
     parent.ui.yearView.setData(data)
     data = appointments.getBankHols(startdate, enddate)
     parent.ui.yearView.setHeadingData(data)    

@@ -214,7 +214,7 @@ class yearCalendar(QtGui.QWidget):
                 painter.drawRect(rect)
 
                 painter.setPen(self.palette().color(
-                self.palette().HighlightedText))            
+                self.palette().WindowText))            
                 
                 c_date = datetime.date(self.year, month, 1)
                 my_text = str(localsettings.monthName(c_date))

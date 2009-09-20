@@ -2972,7 +2972,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         handles the signals from the options checkboxes on the appt OV page
         '''
-        appt_gui_module.layout_weekView(self)
+        appt_gui_module.handle_calendar_signal(self)
     
     def apptOV_all_clinicians_checkbox_changed(self):
         '''
