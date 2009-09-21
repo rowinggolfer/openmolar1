@@ -66,17 +66,15 @@ def plannedItems(pt):
     plannedList=[]
     for attrib in tup_Atts+tup_toothAtts:
         tx=pt.__dict__[attrib+"pl"]
-        if not tx in ("",None):
+        if not tx in ("", None):
             items=tx.strip(" ").split(" ")
             for item in items:
-                #-- look for things like 2S - I want these as separate items
-                #numbered=re.findall("^\d",item)
-                #if numbered!=[]:
-                #    number=numbered[0]
-                #    for i in range(int(number)):
-                #        plannedList.append((attrib, item.replace(number,"")),)
-                #else:    
-                plannedList.append((attrib, item), )
+                if re.match("[ul][lr][0-8]",attrib):
+                    #check for deciduous
+                    toothName = str(pt.chartgrid.get(attrib)).upper()
+                    plannedList.append((toothName, item),)
+                else:    
+                    plannedList.append((attrib, item), )
     return plannedList
 
 def completedItems(pt):
@@ -88,14 +86,12 @@ def completedItems(pt):
         if not tx in ("",None):
             items=tx.strip(" ").split(" ")
             for item in items:
-                #-- look for things like 2S - I want these as separate items
-                #numbered=re.findall("^\d",item)
-                #if numbered!=[]:
-                #    number=numbered[0]
-                #    for i in range(int(number)):
-                #        compList.append((attrib, item.replace(number,"")),)
-                #else:    
-                compList.append((attrib, item), )
+                if re.match("[ul][lr][0-8]",attrib):
+                    #check for deciduous
+                    toothName = str(pt.chartgrid.get(attrib)).upper()
+                    compList.append((toothName, item),)
+                else:    
+                    compList.append((attrib, item), )
     return compList
 
 def summary(pt):

@@ -89,7 +89,7 @@ def chartComplete(parent, arg):
             checkEstBox(parent, toothName, newcompleted)
             
             parent.pt.addHiddenNote("treatment",
-            "%s %s"% (toothName, newcompleted))
+            "%s %s"% (toothName.upper(), newcompleted))
                 
 def estwidg_complete(parent, txtype):
     try:

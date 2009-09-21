@@ -20,17 +20,18 @@ from openmolar.qt4gui.dialogs import Ui_forumPost
 
 def checkForNewForumPosts(parent):
     '''checks for new forum posts every 5 minutes'''
-    print "checking forum in 5 minutes"
-    while True:
-        time.sleep(300)
-        print "checking forum"
-        lastEvent = localsettings.lastForumVisit
-        for topic in ("forum", "omforum"):
-            newEvent = forum.lastPost(topic)
-            if newEvent > lastEvent:
-                parent.showForumIcon(True)
-                break
-
+    print "checking forum...",
+    lastEvent = localsettings.lastForumVisit
+    greatestForumIx = forum.lastPost("forum")
+    greatestOMForumIx = forum.lastPost("omforum")
+    if greatestForumIx > lastEvent[0] or\
+    greatestOMForumIx > lastEvent[1]:
+        print "new posts found"
+        parent.showForumIcon(True)
+    else:
+        print
+    localsettings.lastForumVisit = (greatestForumIx, greatestOMForumIx)
+            
 def loadForum(parent):
     '''
     loads the forum

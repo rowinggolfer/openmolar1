@@ -803,27 +803,20 @@ def layout_apptTable(parent):
     #--programmatically ensure the correct buttons are enabled
     ptApptTableNav(parent)
 
-def apptTicker(parent):
+def triangles(parent):
     ''''
     this moves a
     red line down the appointment books -
     note needs to run in a thread!
     '''
-    while True:
-        time.sleep(30)
-        if parent.ui.main_tabWidget.currentIndex() == 1:
-            triangles(parent)
-
-def triangles(parent):
-    '''
-    set the time on the appointment widgets...
-    so they can display traingle pointers
-    '''
-    currenttime = "%02d%02d"%(time.localtime()[3], time.localtime()[4])
-    d = parent.ui.calendarWidget.selectedDate()
-    if d == QtCore.QDate.currentDate():
-        for book in parent.ui.apptBookWidgets:
-            book.setCurrentTime(currenttime)
+    if parent.ui.main_tabWidget.currentIndex() == 1 and \
+    parent.ui.diary_tabWidget.currentIndex()==0:
+        currenttime = "%02d%02d"%(time.localtime()[3], time.localtime()[4])
+        d = parent.ui.calendarWidget.selectedDate()
+        if d == QtCore.QDate.currentDate():
+            for book in parent.ui.apptBookWidgets:
+                if book.setCurrentTime(currenttime):
+                    book.update()
 
 def getappointmentData(d, dents=()):
     '''
@@ -1056,7 +1049,7 @@ def findApptButtonClicked(parent):
 
     QtCore.QObject.connect(parent.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
-
+    layout_dayView(parent)
 
 def makeDiaryVisible(parent):
     '''

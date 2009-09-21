@@ -357,6 +357,7 @@ def printableDaylistData(adate, dent):
         #--dentist is working!!
         #--add any memo
         retlist.append(daydata[0][2])
+        dayend=daydata[0][1]
         #--now get data for those days so that we can find slots within
         fullquery = '''SELECT start,end,name,
         concat(patients.title," ",patients.fname," ",patients.sname),
@@ -368,27 +369,33 @@ def printableDaylistData(adate, dent):
         cursor.execute(fullquery)
 
         results = cursor.fetchall()
-
+        
         current_apttime = daydata[0][0]
-        for row in results:
-            pa = printableAppt()
-            pa.start = row[0]
-            pa.end = row[1]
-            pa.setSerialno(row[4]) #--do this BEFORE setting name
-            pa.setName(row[2], row[3])
-            pa.setTreat(row[5])
-            pa.note = row[6]
-            pa.setCset(row[7])
-            if current_apttime < pa.start:
-                #--either a gap or a double appointment
-                extra = printableAppt()
-                extra.start = current_apttime
-                extra.end = pa.start #for length calc
-                retlist.append(extra)
-            retlist.append(pa)
-            if current_apttime < pa.end:
-                current_apttime = pa.end
-
+        if results:
+            for row in results:
+                pa = printableAppt()
+                pa.start = row[0]
+                pa.end = row[1]
+                pa.setSerialno(row[4]) #--do this BEFORE setting name
+                pa.setName(row[2], row[3])
+                pa.setTreat(row[5])
+                pa.note = row[6]
+                pa.setCset(row[7])
+                if current_apttime < pa.start:
+                    #--either a gap or a double appointment
+                    extra = printableAppt()
+                    extra.start = current_apttime
+                    extra.end = pa.start #for length calc
+                    retlist.append(extra)
+                retlist.append(pa)
+                if current_apttime < pa.end:
+                    current_apttime = pa.end
+            if pa.end < dayend:
+                last_pa = printableAppt()
+                last_pa.start = pa.end
+                last_pa.end = dayend
+                retlist.append(last_pa)
+    
     cursor.close()
     #db.close()
     return retlist
@@ -936,7 +943,7 @@ if __name__ == "__main__":
     testdate1 = "2009_08_10"
     localsettings.initiate(False)
     localsettings.logqueries = True
-    #print printableDaylistData("20090622", 4)
+    print printableDaylistData("20090921", 4)
 
     #print todays_patients()
     #print todays_patients(("NW","BW"))
@@ -944,7 +951,7 @@ if __name__ == "__main__":
     #print dents
     #print allAppointmentData(testdate,dents)
     #print add_pt_appt(11956,5,15,"exam")
-    print future_slots(5,testdate,testdate1,(4,))
+    #print future_slots(5,testdate,testdate1,(4,))
     #print future_slots(30,testdate,testdate1,(4,13))
     #print slots(830,((830, 845), (900, 915), (1115, 1130),
     #                  (1300, 1400), (1400, 1420), (1600, 1630)),1800,30)

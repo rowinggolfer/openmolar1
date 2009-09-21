@@ -89,7 +89,7 @@ permissionExpire = datetime.datetime.now()
 #-- set a base time for forum check
 def forumVisited():
     global lastForumVisit
-    lastForumVisit = datetime.datetime.now()
+    lastForumVisit = (0,0) #datetime.datetime.now()
 forumVisited()
 
 #################  MESSAGES ####################################################
@@ -387,7 +387,7 @@ def getLocalSettings():
     and "knows" it's surgery number etc...
     if one doesn't exist... knock one up.
     '''
-    global surgeryno
+    global surgeryno, lastForumVisit
     if not os.path.exists(localFileDirectory):
         os.mkdir(localFileDirectory)
 
@@ -398,9 +398,10 @@ def getLocalSettings():
         node = dom.getElementsByTagName("surgeryno")
         if node and node[0].hasChildNodes():
             surgeryno = int(node[0].firstChild.data)
-            print station
+            print "%s location"% station
         else: 
-            print "unknown"
+            print "unknown location"
+            
     else:
         #-- no file found..
         #--so create a settings file.

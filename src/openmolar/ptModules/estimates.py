@@ -172,7 +172,7 @@ def toBriefHtml(pt):
     '''
     retarg = '<html><body>'
     if pt.underTreatment:
-        retarg += "<h1>Current Estimate</h1>"
+        retarg += "<h1>Under Treatment - Current Estimate</h1>"
     else:
         retarg += "<h1>Estimate from previous course</h1>"
         

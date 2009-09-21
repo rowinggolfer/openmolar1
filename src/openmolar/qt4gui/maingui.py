@@ -17,7 +17,6 @@ import os
 import sys
 import copy
 import pickle
-import threading
 import subprocess
 
 from openmolar.settings import localsettings, utilities
@@ -124,7 +123,6 @@ from openmolar.qt4gui.customwidgets import monthcalendar
 #--the main gui class inherits from a lot of smaller classes to make the \
 #--code more manageable. (supposedly!)
 #--watch out for namespace clashes!!!!!
-
     
 class chartsClass():
 
@@ -1726,12 +1724,23 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
+        
+        self.timer1 = QtCore.QTimer()
+        self.timer1.start(60000) #fire every 60 seconds
+        QtCore.QObject.connect(self.timer1, QtCore.SIGNAL("timeout()"), 
+        self.apptTicker)
+        
         #--start a thread for the triangle on the appointment book
-        self.thread1=threading.Thread(target=self.apptTicker)
-        self.thread1.start()
+        #self.thread1=threading.Thread(target=self.apptTicker)
+        #self.thread1.start()
 
-        self.thread2=threading.Thread(target = self.checkForNewForumPosts)
-        self.thread2.start()
+        self.timer2 = QtCore.QTimer()
+        self.timer2.start(180000) #fire every 3 minutes
+        QtCore.QObject.connect(self.timer2, QtCore.SIGNAL("timeout()"), 
+        self.checkForNewForumPosts)
+        
+        #self.thread2=threading.Thread(target = self.checkForNewForumPosts)
+        #self.thread2.start()
 
         self.enableEdit(False)
         for desc in referral.getDescriptions():
@@ -2415,15 +2424,14 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             icon = QtGui.QIcon()
             icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-            tb.setTabIcon(8, icon)
-            tb.setTabText(8, "NEW FORUM POSTS")
-            tb.setTabTextColor(8, QtGui.QColor("red"))
+            tb.setTabIcon(7, icon)
+            tb.setTabText(7, "NEW FORUM POSTS")
+            tb.setTabTextColor(7, QtGui.QColor("red"))
         else:
             print "removing icon"
-            tb.setTabIcon(8, QtGui.QIcon())
-            tb.setTabText(8, "FORUM")
-            tb.setTabTextColor(8, QtGui.QColor())
-
+            tb.setTabIcon(7, QtGui.QIcon())
+            tb.setTabText(7, "FORUM")
+            tb.setTabTextColor(7, QtGui.QColor())
 
     def save_patient_tofile(self):
         '''
@@ -2800,7 +2808,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         ran in a thread, moves signals down the appointment books
         '''
-        appt_gui_module.apptTicker(self)
+        appt_gui_module.triangles(self)
     
     def ptApptTreeWidget_selectionChanged(self):
         '''

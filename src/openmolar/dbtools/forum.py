@@ -69,7 +69,7 @@ def lastPost(table="forum"):
     #--use a different connection because this is called in a thread
     db=forumConnect()
     cursor=db.cursor()
-    query='''select max(fdate) from %s'''%table
+    query='''select max(ix) from %s'''%table
     cursor.execute(query)
     row = cursor.fetchone()
     cursor.close()

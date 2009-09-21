@@ -164,6 +164,8 @@ class appointmentWidget(QtGui.QWidget):
         send it a value like "HHMM" or "HH:MM" to draw a marker at that time
         '''
         self.setTime = t
+        if self.startTime < int(t) < self.endTime:
+            return True
         
     def minutesPastMidnight(self, t):
         '''
