@@ -1086,7 +1086,8 @@ def handle_calendar_signal(parent):
     QtCore.QDate.currentDate())
     
     
-    if parent.ui.main_tabWidget.currentIndex() == 1:
+    #if parent.ui.main_tabWidget.currentIndex() == 1:
+    if True:
         i = parent.ui.diary_tabWidget.currentIndex()
 
         if i==0:
@@ -1097,8 +1098,8 @@ def handle_calendar_signal(parent):
             layout_month(parent)
         elif i==3:
             layout_year(parent)
-    else:
-        print "date changed, but diary invisible... skipping"
+    #else:
+    #    print "date changed, but diary invisible... skipping"
 
 def updateDayMemos(parent, memos):
     '''

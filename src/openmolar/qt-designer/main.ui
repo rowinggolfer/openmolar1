@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -540,7 +540,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>733</width>
+                        <width>540</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -2159,7 +2159,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>743</width>
+                        <width>286</width>
                         <height>500</height>
                        </rect>
                       </property>
@@ -2528,7 +2528,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>733</width>
+                        <width>469</width>
                         <height>370</height>
                        </rect>
                       </property>
@@ -2782,8 +2782,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>753</width>
-                        <height>362</height>
+                        <width>314</width>
+                        <height>105</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2959,7 +2959,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>481</width>
+                           <width>96</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -3343,8 +3343,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>753</width>
-                        <height>362</height>
+                        <width>249</width>
+                        <height>360</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
