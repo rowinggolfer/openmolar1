@@ -489,8 +489,11 @@ def begin_makeAppt(parent):
     parent.ui.main_tabWidget.setCurrentIndex(1)
     parent.signals_tabs() #reconnect
     
-    parent.ui.diary_tabWidget.setCurrentIndex(1)
-    
+    ci = parent.ui.diary_tabWidget.currentIndex()
+    if ci != 1:
+        parent.ui.diary_tabWidget.setCurrentIndex(1)
+    else:
+        layout_weekView(parent)
     offerAppt(parent, True)
 
 def offerAppt(parent, firstRun=False):
@@ -1086,8 +1089,7 @@ def handle_calendar_signal(parent):
     QtCore.QDate.currentDate())
     
     
-    #if parent.ui.main_tabWidget.currentIndex() == 1:
-    if True:
+    if parent.ui.main_tabWidget.currentIndex() == 1:
         i = parent.ui.diary_tabWidget.currentIndex()
 
         if i==0:
@@ -1098,8 +1100,8 @@ def handle_calendar_signal(parent):
             layout_month(parent)
         elif i==3:
             layout_year(parent)
-    #else:
-    #    print "date changed, but diary invisible... skipping"
+    else:
+        print "date changed, but diary invisible... not laying out"
 
 def updateDayMemos(parent, memos):
     '''
@@ -1146,6 +1148,7 @@ def diaryTab_practitioner_checkbox_handling(parent):
     this procedure updates the 3 parent checkboxes
     Alldents, all clinicians, all hygs..
     '''
+    print "diaryTab_practitioner_checkbox_handling"
     AllDentsChecked = True
     #--code to uncheck the all dentists checkbox if necessary
     for dent in parent.ui.aptOVdent_checkBoxes.values():
@@ -1212,8 +1215,8 @@ def layout_weekView(parent):
     if parent.ui.main_tabWidget.currentIndex() !=1 and \
     parent.ui.diary_tabWidget.currentIndex() != 1:
         return
-    print "laying out week view - computationally expensive!"
-
+    print "laying out week view for ", parent.ui.calendarWidget.selectedDate()
+    
     diaryTab_practitioner_checkbox_handling(parent)
     
     cal = parent.ui.calendarWidget

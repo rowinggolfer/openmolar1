@@ -174,6 +174,9 @@ class appointmentOverviewWidget(QtGui.QWidget):
         '''
 
         columnCount = len(self.dents)
+        if columnCount == 0: 
+            return #nothing to do... and division by zero errors!
+
         columnWidth = (self.width() - self.timeOffset) / columnCount
 
         col = 0
