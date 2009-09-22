@@ -87,10 +87,10 @@ permissionsRaised = False
 permissionExpire = datetime.datetime.now()
 
 #-- set a base time for forum check
-def forumVisited():
-    global lastForumVisit
-    lastForumVisit = (0,0) #datetime.datetime.now()
-forumVisited()
+def forumChecked(a,b):
+    global last_forumCheck
+    last_forumCheck = (a,b) #datetime.datetime.now()
+forumChecked(0,0)
 
 #################  MESSAGES ####################################################
 about = '''<p>
@@ -387,7 +387,7 @@ def getLocalSettings():
     and "knows" it's surgery number etc...
     if one doesn't exist... knock one up.
     '''
-    global surgeryno, lastForumVisit
+    global surgeryno, last_forumCheck
     if not os.path.exists(localFileDirectory):
         os.mkdir(localFileDirectory)
 

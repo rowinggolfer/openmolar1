@@ -21,7 +21,7 @@ from openmolar.qt4gui.dialogs import Ui_forumPost
 def checkForNewForumPosts(parent):
     '''checks for new forum posts every 5 minutes'''
     print "checking forum...",
-    lastEvent = localsettings.lastForumVisit
+    lastEvent = localsettings.last_forumCheck
     greatestForumIx = forum.lastPost("forum")
     greatestOMForumIx = forum.lastPost("omforum")
     if greatestForumIx > lastEvent[0] or\
@@ -30,7 +30,7 @@ def checkForNewForumPosts(parent):
         parent.showForumIcon(True)
     else:
         print
-    localsettings.lastForumVisit = (greatestForumIx, greatestOMForumIx)
+    localsettings.forumChecked(greatestForumIx, greatestOMForumIx)
             
 def loadForum(parent):
     '''
@@ -90,8 +90,6 @@ def loadForum(parent):
             topparentItem.setBackgroundColor(i, QtGui.QColor("#eeeeee"))
         parent.ui.forumDelete_pushButton.setEnabled(False)
         parent.ui.forumReply_pushButton.setEnabled(False)
-    #-- make a note that the user has visited the forum
-    localsettings.forumVisited()
     #-- turn the tab red.
     parent.showForumIcon(False)
 
