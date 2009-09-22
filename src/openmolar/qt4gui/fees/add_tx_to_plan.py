@@ -192,13 +192,16 @@ def deleteTxItem(parent, pl_cmp, txtype):
     try:
         att = tup[0]
         treat = tup[1] + " "
-        
         result = QtGui.QMessageBox.question(parent, "question",
         "remove %s %sfrom this course of treatment?"% (att, treat),
         QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+        
         if result == QtGui.QMessageBox.Yes:
-            if att == "Exam":
+            att = att.lower()
+            if re.match("[ul][lr][a-e]", att):
+                att = "%s%s"% (att[:2],"abcde".index(att[2])+1)
+
+            if att == "exam":
                 parent.pt.examt = ""
                 parent.pt.examd = ""
                 parent.pt.addHiddenNote("exam", "%s"% tup[1], True)
