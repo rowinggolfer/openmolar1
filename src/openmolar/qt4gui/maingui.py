@@ -1355,6 +1355,7 @@ class pageHandlingClass():
         self.ui.estWidget.setEstimate(self.pt.estimates)
 
     def load_treatTrees(self):
+    
         self.ui.plan_treeWidget.clear()
         pdict=plan.plannedDict(self.pt)
         #-- pdict is a dictionary in the format
@@ -1362,7 +1363,6 @@ class pageHandlingClass():
         #-- so the keys are treatment categories... and they contain a list
         #-- of treatments within that category
         #-- display as a tree view
-
         #-- PLANNED ITEMS
         itemToCompress=None
         for category in pdict.keys():

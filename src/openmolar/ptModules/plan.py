@@ -13,7 +13,7 @@ from openmolar.settings import localsettings
 treatmentTypeHeaders={
     "Diagnosis":("Exam","xray", ),
     "Perio":("perio", ),
-    "Tooth":("ul", "ll", "ur", "lr", ),
+    "Tooth":("UL", "LL", "UR", "LR", ),
     "Prosthetics":("ndu", "nld", "odu", "odl", ),
     "Other":("other",),
     "Custom":("custom",)}
