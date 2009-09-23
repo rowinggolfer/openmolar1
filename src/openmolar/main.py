@@ -45,6 +45,14 @@ def main():
         if arg.toLower() == "rec":
             dl.reception_radioButton.setChecked(True)
 
+    def showServers():
+        '''
+        hide the options pushbutton, show the servers combobox instead
+        (called by the options pushbutton)
+        '''
+        dl.options_pushButton.hide()
+        dl.options_frame.show()
+
     cf_Found = True
     if os.path.exists(localsettings.global_cflocation):
         localsettings.cflocation = localsettings.global_cflocation
@@ -75,8 +83,13 @@ def main():
         dom = minidom.parse(localsettings.cflocation)
         sys_password = dom.getElementsByTagName("system_password")[0].\
         firstChild.data
-
-    except Exception, e:
+        servernames = dom.getElementsByTagName("connection")
+        for server in servernames:
+            nameDict = server.attributes
+            if nameDict.has_key("name"):
+                localsettings.server_names.append(nameDict["name"].value)
+        
+    except IOError, e:
         print "still no settings... %s\nquitting politely"% e
         QtGui.QMessageBox.information(None, "Unable to Run OpenMolar",
         "Good Bye!")
@@ -87,12 +100,19 @@ def main():
     my_dialog = QtGui.QDialog()
     dl = Ui_startscreen.Ui_Dialog()
     dl.setupUi(my_dialog)
-
+    dl.options_frame.hide()
+    if len(localsettings.server_names) > 1:
+        dl.server_comboBox.addItems(localsettings.server_names)
+        QtCore.QObject.connect(dl.options_pushButton, 
+        QtCore.SIGNAL("clicked()"), showServers)
+    else:
+        dl.options_pushButton.hide()
     QtCore.QObject.connect(dl.user1_lineEdit,
     QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
 
     while True:
         if my_dialog.exec_():
+            localsettings.chosenserver = dl.server_comboBox.currentIndex()
             try:
                 #--"salt" the password
                 pword = "diqug_ADD_SALT_3i2some"+str(

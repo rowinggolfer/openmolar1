@@ -36,6 +36,7 @@ class monthCalendar(QtGui.QWidget):
         QtGui.QPalette.Highlight))
         self.mouseBrush.setAlpha(64)
         self.highlightedDate = None
+        self.headingdata = {}
         self.data = {}
         self.dents = ()
         
@@ -57,7 +58,24 @@ class monthCalendar(QtGui.QWidget):
         dents is a tuple like (4,5)
         '''
         self.dents = dents
+    
+    def setHeadingData(self, data):
+        '''
+        sets attributes for any given day useful for Bank Hols etc...
+        data is a dictionary {"mdd":"New Year's Day" , ...}
+        '''
+        self.headingdata = data  
+        self.setBankHolColWidth
         
+    def setBankHolColWidth(self):
+        '''
+        determine the width needed to display the public hols
+        '''
+        self.bankHolColwidth = 20
+        for value in self.headingdata.values():
+            width = self.fm.width("%s  "% value)
+            if width > self.bankHolColwidth:
+                self.bankHolColwidth = width
     
     def setData(self,data):
         '''
@@ -135,7 +153,7 @@ class monthCalendar(QtGui.QWidget):
         if d and d != self.selectedDate:
             self.setSelectedDate(d)
             self.emit(QtCore.SIGNAL("selectedDate"), d)
-        if event.x() > self.vheaderwidth:
+        if event.x() > self.vheaderwidth + self.bankHolColwidth:
             self.raisememoDialog()
             
     def leaveEvent(self,event):
@@ -156,13 +174,18 @@ class monthCalendar(QtGui.QWidget):
         self.update()
         
     def setFont(self):
+        '''
+        set the Font, and adjust the header column widths
+        '''
         font = QtGui.QFont(self.fontInfo().family(), 
         localsettings.appointmentFontSize)
         if self.font != font:
             self.font = font
-            fm = QtGui.QFontMetrics(font)
-            self.vheaderwidth = fm.width("Wednesday 28 ")
+            self.fm = QtGui.QFontMetrics(font)
+            self.vheaderwidth = self.fm.width("Wednesday 28 ")
         
+        self.setBankHolColWidth()
+            
     def paintEvent(self, event=None):
         '''
         draws the widget - recalled at any point by instance.update()
@@ -184,15 +207,20 @@ class monthCalendar(QtGui.QWidget):
                 
                 painter.setPen(self.palette().color(
                 self.palette().HighlightedText))
-                
+                self.font.setBold(True)
+                painter.setFont(self.font)
                 c_date = datetime.date(self.year, self.month, 1)
                 my_text = "%s %s"% (localsettings.monthName(c_date),self.year)
                 painter.drawText(rect,QtCore.Qt.AlignCenter, my_text)
-            
+                self.font.setBold(False)
+                painter.setFont(self.font)
+                
             else: 
                 
                 
-                rect = QtCore.QRect(0, day*rowHeight, self.vheaderwidth, rowHeight)               
+                rect = QtCore.QRect(0, day*rowHeight, 
+                self.vheaderwidth, rowHeight)               
+
                 painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
                 
                 #- header column                    
@@ -219,16 +247,37 @@ class monthCalendar(QtGui.QWidget):
                     painter.setPen(QtCore.Qt.red)
                 painter.drawText(rect,QtCore.Qt.AlignRight, my_text)
             
-                #- text column
                 rect = rect.adjusted(self.vheaderwidth, 0, 
-                self.width()- self.vheaderwidth,0)               
+                self.bankHolColwidth,0)               
+
+
+                #headings
+                painter.setBrush(self.palette().alternateBase())        
+                
+                painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
+                
+                painter.drawRect(rect)
+
+                key = "%d%02d"%(self.month, day)
+                if self.headingdata.has_key(key):
+                    painter.setPen(self.palette().color(
+                    self.palette().WindowText))
+                    my_text = str(self.headingdata.get(key))
+                    self.font.setItalic(True)
+                    painter.setFont(self.font)
+                    painter.drawText(rect,QtCore.Qt.AlignLeft, my_text)
+                    self.font.setItalic(False)
+                    painter.setFont(self.font)
+                    
+                #- text column
+                rect = rect.adjusted(self.bankHolColwidth, 0, 
+                self.width()- self.vheaderwidth - self.bankHolColwidth,0)               
             
                 painter.setBrush(self.palette().base())
                 painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))                
                 
                 painter.drawRect(rect)
 
-                key = "%d%02d"%(self.month, day)
                 if self.data.has_key(key):
                     painter.setPen(self.palette().color(
                     self.palette().WindowText))
@@ -255,6 +304,7 @@ if __name__ == "__main__":
     form.setSelectedDate(datetime.date.today())
     form.connect(form, QtCore.SIGNAL("selectedDate"), catchSignal)
     form.dents=(4,5,)
+    form.headingdata["%d%02d"% (form.month, 1)] = "Bank Holiday"    
     form.data["%d%02d"% (form.month, 23)] = ((5,"test"),)
     form.show()
 

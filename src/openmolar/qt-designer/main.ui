@@ -63,7 +63,7 @@
          <x>0</x>
          <y>0</y>
          <width>989</width>
-         <height>526</height>
+         <height>542</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -523,7 +523,7 @@
                <item row="0" column="0" colspan="6">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>2</number>
+                  <number>4</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -540,7 +540,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>540</width>
+                        <width>733</width>
                         <height>492</height>
                        </rect>
                       </property>
@@ -2159,7 +2159,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>286</width>
+                        <width>743</width>
                         <height>500</height>
                        </rect>
                       </property>
@@ -2528,8 +2528,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>469</width>
-                        <height>370</height>
+                        <width>733</width>
+                        <height>400</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_4">
@@ -2563,10 +2563,10 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="1" column="0" rowspan="2">
+                       <item row="2" column="0" rowspan="2">
                         <widget class="QTextBrowser" name="notesSummary_textBrowser"/>
                        </item>
-                       <item row="1" column="1">
+                       <item row="2" column="1">
                         <widget class="QGroupBox" name="bpe_groupBox">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -2625,7 +2625,7 @@
                          </layout>
                         </widget>
                        </item>
-                       <item row="2" column="1">
+                       <item row="3" column="1">
                         <widget class="QTextBrowser" name="planSummary_textBrowser">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -2641,7 +2641,7 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="3" column="0" colspan="2">
+                       <item row="4" column="0" colspan="2">
                         <layout class="QHBoxLayout" name="horizontalLayout_13">
                          <item>
                           <widget class="QPushButton" name="exampushButton">
@@ -2697,6 +2697,18 @@
                           </widget>
                          </item>
                         </layout>
+                       </item>
+                       <item row="1" column="0" colspan="2">
+                        <widget class="QLineEdit" name="synopsis_lineEdit">
+                         <property name="font">
+                          <font>
+                           <italic>true</italic>
+                          </font>
+                         </property>
+                         <property name="maxLength">
+                          <number>140</number>
+                         </property>
+                        </widget>
                        </item>
                       </layout>
                      </widget>
@@ -2782,8 +2794,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>314</width>
-                        <height>105</height>
+                        <width>753</width>
+                        <height>378</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2959,7 +2971,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>96</width>
+                           <width>481</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -3343,8 +3355,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>249</width>
-                        <height>360</height>
+                        <width>753</width>
+                        <height>378</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -3652,7 +3664,7 @@ Note - this will not remove items which are currently there. </string>
                <item row="0" column="0" colspan="4">
                 <widget class="QWidget" name="apptOVcalendar_placeholder" native="true">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -3660,13 +3672,13 @@ Note - this will not remove items which are currently there. </string>
                  <property name="minimumSize">
                   <size>
                    <width>200</width>
-                   <height>164</height>
+                   <height>180</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
-                   <height>164</height>
+                   <height>200</height>
                   </size>
                  </property>
                 </widget>
@@ -4075,7 +4087,7 @@ Note - this will not remove items which are currently there. </string>
                          <x>0</x>
                          <y>0</y>
                          <width>174</width>
-                         <height>396</height>
+                         <height>412</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4174,7 +4186,7 @@ Note - this will not remove items which are currently there. </string>
                          <x>0</x>
                          <y>0</y>
                          <width>173</width>
-                         <height>398</height>
+                         <height>414</height>
                         </rect>
                        </property>
                       </widget>
@@ -4272,7 +4284,7 @@ Note - this will not remove items which are currently there. </string>
                          <x>0</x>
                          <y>0</y>
                          <width>174</width>
-                         <height>398</height>
+                         <height>414</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4325,7 +4337,7 @@ Note - this will not remove items which are currently there. </string>
                          <x>0</x>
                          <y>0</y>
                          <width>173</width>
-                         <height>398</height>
+                         <height>414</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>

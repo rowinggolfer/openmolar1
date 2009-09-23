@@ -1120,6 +1120,8 @@ def layout_month(parent):
     parent.ui.monthView.setDents(dents)
     rows = appointments.getDayMemos(startdate, enddate, dents)
     parent.ui.monthView.setData(rows)
+    data = appointments.getBankHols(startdate, enddate)
+    parent.ui.monthView.setHeadingData(data)        
     parent.ui.monthView.update()
     
 def layout_year(parent):

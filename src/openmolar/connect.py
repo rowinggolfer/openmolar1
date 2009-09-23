@@ -12,19 +12,21 @@ mainconnection, forumconnection = None, None
 print "parsing the global settings file"
 dom = minidom.parse(localsettings.cflocation)
 
+
 settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
-    
 sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
-xmlnode = dom.getElementsByTagName("server")[0]
+
+xmlnode = dom.getElementsByTagName("server")[localsettings.chosenserver]
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
 myPort = int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
 sslnode = xmlnode.getElementsByTagName("ssl")
 
-xmlnode = dom.getElementsByTagName("database")[0]
+xmlnode = dom.getElementsByTagName("database")[localsettings.chosenserver]
 myUser = xmlnode.getElementsByTagName("user")[0].firstChild.data
 myPassword = xmlnode.getElementsByTagName("password")[0].firstChild.data
 if settingsversion == "1.1":
     myPassword = base64.b64decode(myPassword)
+    print "password = ",myPassword
 
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 

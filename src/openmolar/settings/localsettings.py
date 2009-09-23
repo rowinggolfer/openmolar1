@@ -48,6 +48,9 @@ def determine_path ():
         return os.path.dirname(os.getcwd())
 
 
+server_names = []
+chosenserver = 0
+
 wkdir = determine_path()
 referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
 appt_shortcut_file = os.path.join(wkdir, "resources", 
