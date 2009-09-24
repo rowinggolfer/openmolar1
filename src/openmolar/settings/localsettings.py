@@ -618,8 +618,7 @@ def initiate(debug = False):
             print privateFees[key].fees,
             print nhsFees[key].fees
         print "treatmentCode =",treatmentCodes
-        print "fees = ",fees
-
+    
 if __name__ == "__main__":
     #-- testing only
     
@@ -633,7 +632,8 @@ if __name__ == "__main__":
         cflocation = local_cflocation   
     print cflocation
     print stylesheet
-    #initiate(True)
+    initiate(False)
+    print treatmentCodes
     #print global_cflocation, local_cfloaction
     #updateLocalSettings("stationID","surgery3")
     

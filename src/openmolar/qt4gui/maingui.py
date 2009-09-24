@@ -3072,6 +3072,14 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         fees_module.nhsRegsPDF(self)
         
+    def fees_treeWidgetItem_clicked(self,item):
+        '''
+        user has double clicked on an item in the fees_table
+        '''
+        ##TODO - add to treatment plan
+        if self.pt.serialno != 0:
+            add_tx_to_plan.fromFeeTable(self, item)
+        
     def chooseFeescale_comboBox_changed(self, arg):
         '''
         receives signals from the choose feescale combobox
@@ -3725,6 +3733,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         QtCore.SIGNAL("editingFinished ()"), self.feeSearch_lineEdit_edited)
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
+        
+        QtCore.QObject.connect(self.ui.fees_treeWidget,
+        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"), 
+        self.fees_treeWidgetItem_clicked)
+        
 
     def signals_charts(self):
 

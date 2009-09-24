@@ -23,10 +23,20 @@ from openmolar.qt4gui.fees import course_module, fees_module
 
 def offerTreatmentItems(parent, arg):
     '''
-    offers treatment items passed by argument
+    offers treatment items passed by argument like ((1,"SP"),)
     '''
     Dialog = QtGui.QDialog(parent)
     dl = addTreat.treatment(Dialog, arg, parent.pt)
+    result =  dl.getInput()
+    return result
+
+def offerSpecificTreatmentItems(parent, arg):
+    '''
+    offers treatment items passed by argument like
+    ((1,"SP,"Scale and Polish", 2600, 2400),)
+    '''
+    Dialog = QtGui.QDialog(parent)
+    dl = addTreat.customTreatment(Dialog, arg, parent.pt)
     result =  dl.getInput()
     return result
 
@@ -56,8 +66,8 @@ def perioAdd(parent):
         mylist = ((0, "SP"), (0, "SP+"))
         chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
-            usercode = treat[1]
-            parent.pt.periopl += usercode + " "
+            usercode = treat[0]
+            parent.pt.periopl += "%s "% usercode
             parent.pt.addToEstimate(1,treat[1], treat[2], treat[3],
             treat[4], parent.pt.dnt1, parent.pt.cset, "perio %s"% usercode)
         parent.load_treatTrees()
@@ -70,15 +80,23 @@ def otherAdd(parent):
     if not course_module.newCourseNeeded(parent):
         mylist = ()
         items = localsettings.treatmentCodes.keys()
+        itemDict = {}
         for item in items:
             code = localsettings.treatmentCodes[item]
             if 3500 < int(code) < 4002:
-                mylist += ((0, item, code), )
+                itemDict[code] = item
+        items = itemDict.keys()
+        items.sort()
+
+        for item in items:
+            code = itemDict[item]
+            mylist += ((0, code), )
         chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
-            parent.pt.otherpl += "%s "% treat[1]
+            usercode = treat[0]
+            parent.pt.otherpl += "%s "% usercode
             parent.pt.addToEstimate(1,treat[1], treat[2], treat[3],
-            treat[4], parent.pt.dnt1, parent.pt.cset, "other OT")
+            treat[4], parent.pt.dnt1, parent.pt.cset, "other %s"% usercode)
         parent.load_newEstPage()
         parent.load_treatTrees()
 
@@ -108,6 +126,49 @@ def customAdd(parent):
             parent.load_newEstPage()
             parent.load_treatTrees()
 
+def fromFeeTable(parent, item):
+    '''
+    add an item which has been selected from the fee table itself
+    '''
+    ##TODO - get this working (should be fun!)
+    for i in range(item.columnCount()):
+        print item.text(i),
+    if not course_module.newCourseNeeded(parent):
+        Dialog = QtGui.QDialog(parent)
+        dl = Ui_customTreatment.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.number_spinBox.setValue(1)
+        dl.description_lineEdit.setText(item.text(4))
+        if "n" in parent.pt.cset:
+            fee = int(item.text(5).replace(".","")) / 100
+            ptfee = int(item.text(6).replace(".","")) / 100
+        else:
+            fee = int(item.text(7).replace(".","")) / 100
+            ptfee = fee    
+        dl.fee_doubleSpinBox.setValue(fee)
+        dl.ptFee_doubleSpinBox.setValue(ptfee)
+        
+        if Dialog.exec_():
+            no = dl.number_spinBox.value()
+            descr = str(dl.description_lineEdit.text())
+            if descr == "":
+                descr = "??"
+            code = str(item.text(0))
+            type = str(item.text(2))
+            if type == "":
+                type = "??"
+            fee = int(dl.fee_doubleSpinBox.value() * 100)
+            ptfee = int(dl.ptFee_doubleSpinBox.value() * 100)
+
+            parent.pt.custompl += "%s "% type
+            parent.pt.addToEstimate(no, code, descr, fee,
+            ptfee, parent.pt.dnt1, "P", "from fee %s"% type)
+            parent.load_newEstPage()
+            parent.load_treatTrees()
+
+
+
+    
 def chartAdd(parent, tooth, properties):
     '''
     add treatment to a tooth
@@ -243,5 +304,5 @@ if __name__ == "__main__":
     mw.load_newEstPage = lambda : None
             
     #mw.show()
-    xrayAdd(mw)
+    otherAdd(mw)
     

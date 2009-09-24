@@ -232,6 +232,9 @@ class treatment(Ui_addTreatment.Ui_Dialog):
         else:
             return()
 
+
+
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
