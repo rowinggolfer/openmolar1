@@ -1194,24 +1194,35 @@ class printingClass():
 class pageHandlingClass():
 
     def handle_mainTab(self):
-        '''procedure called when user navigates the top tab'''
+        '''
+        procedure called when user navigates the top tab
+        '''
+        if localsettings.DEBUGMODE:
+            print "handling mainTab"
+            
         ci=self.ui.main_tabWidget.currentIndex()
+
         if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
+            #--making an appointment has been abandoned
             self.advise("Appointment not made", 1)
             appt_gui_module.aptOVviewMode(self, True)
-
-        #--user is viewing appointment book
-        if ci == 1:
+        if ci == 1: 
+            #--user is viewing appointment book
             appt_gui_module.makeDiaryVisible(self)
-            
         if ci == 6:
+            #--user is viewing the feetable
             if not self.feestableLoaded:
                 fees_module.loadFeesTable(self)
         if ci == 7:
+            #--forum
             forum_gui_module.loadForum(self)
 
     def handle_patientTab(self):
-        '''handles navigation of patient record'''
+        '''
+        handles navigation of patient record
+        '''
+        if localsettings.DEBUGMODE:
+            print "handling patientTab"
         ci=self.ui.tabWidget.currentIndex()
         if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
             self.advise("Appointment not made", 1)
@@ -1267,7 +1278,8 @@ class pageHandlingClass():
         '''
         catches a signal that the diary tab widget has been moved
         '''
-        print "diary_tabWidget_nav"
+        if localsettings.DEBUGMODE:
+            print "diary_tabWidget_nav"
         #-- enable week view in on tab number 1
         self.ui.calendarWidget.setHighlightWeek(i==1)
         self.ui.calendarWidget.setHighlightMonth(i==2)
@@ -1405,7 +1417,7 @@ class pageHandlingClass():
         if self.pt.dob:
             self.ui.dobEdit.setDate(self.pt.dob)
         else:
-            self.ui.dobEdit.setDate(datetime.date(1,1,1))            
+            self.ui.dobEdit.setDate(datetime.date(2000,1,1))            
         self.ui.addr1Edit.setText(self.pt.addr1)
         self.ui.addr2Edit.setText(self.pt.addr2)
         self.ui.addr3Edit.setText(self.pt.addr3)

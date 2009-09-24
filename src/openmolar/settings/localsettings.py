@@ -19,6 +19,8 @@ import _version  #--in the same directory - created by bzr
 #- updated 17th September 2009.
 __MAJOR_VERSION__= "0.1.4" 
 
+DEBUGMODE = False
+
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
 
@@ -452,10 +454,14 @@ def initiate(debug = False):
     global fees, message, dentDict, privateFees,\
     nhsFees, allowed_logins, ops, ops_reverse, activedents, activehygs, \
     apptix, apptix_reverse 
-    from openmolar.connect import connect
+    from openmolar import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
-    db = connect()
+    if connect.mainconnection != None:
+        print "closing connection"
+        connect.mainconnection.close()
+        reload(connect)
+    db = connect.connect()
     cursor = db.cursor()
     #set up four lists with key/value pairs reversedto make for easy referencing
 

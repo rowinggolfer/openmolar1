@@ -211,7 +211,9 @@ def getWorkingDents(gwdate, dents=()):
         mystr = ""
 
     fullquery = '''SELECT apptix,start,end,memo FROM aday
-    WHERE adate="%s" AND (flag=1 or flag=2) %s'''% (gwdate, mystr)
+    WHERE adate="%s" AND (flag=1 or flag=2) %s'''% (
+    localsettings.pyDatetoSQL(gwdate), mystr)
+
     if localsettings.logqueries:
         print fullquery
     cursor.execute(fullquery)
@@ -228,12 +230,12 @@ def getDayMemos(startdate, enddate, dents=[]):
     useage is getDayMemos(pydate,pydate,(1,4))
     start date is inclusive, enddate not so 
     '''
-    if dents ==[]:
-        return {}
+    
     db = connect()
     cursor = db.cursor()
     #-- dents are numbers here..... I need to get consistent :(
     mystr = ""
+    dents = [0,] + dents
     for dent in dents:
         mystr += "apptix=%d OR "% dent
     mystr = mystr[0:mystr.rindex(" OR")] + ")"
@@ -289,6 +291,7 @@ def getBankHols(startdate, enddate):
     
     
 def setMemos(adate, memos):
+    print "setting memos", memos
     db = connect()
     cursor = db.cursor()
     for memo in memos:
@@ -296,7 +299,13 @@ def setMemos(adate, memos):
         memo[1], localsettings.pyDatetoSQL(adate), memo[0])
         if localsettings.logqueries:
             print query
-        cursor.execute(query)
+        if cursor.execute(query) == 0:
+            query = 'insert into aday (adate, apptix, memo) values (%s,%s,%s)'
+            values = (localsettings.pyDatetoSQL(adate), memo[0], memo[1])
+            if localsettings.logqueries:
+                print query, values
+            cursor.execute(query, values)
+            
     cursor.close()
     
 def allAppointmentData(adate, dents=()):

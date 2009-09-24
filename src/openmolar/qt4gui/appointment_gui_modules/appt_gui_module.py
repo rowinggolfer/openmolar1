@@ -30,8 +30,6 @@ from openmolar.qt4gui.printing import apptcardPrint
 #-- secondary applications
 from openmolar.qt4gui.dialogs import apptTools
 
-appointmentData = ()
-
 def oddApptLength(parent):
     '''
     this is called from within the a dialog when the appointment lengths
@@ -803,7 +801,7 @@ def layout_apptTable(parent):
     #--programmatically ensure the correct buttons are enabled
     ptApptTableNav(parent)
 
-def triangles(parent):
+def triangles(parent, call_update=True):
     ''''
     this moves a
     red line down the appointment books -
@@ -815,23 +813,18 @@ def triangles(parent):
         d = parent.ui.calendarWidget.selectedDate()
         if d == QtCore.QDate.currentDate():
             for book in parent.ui.apptBookWidgets:
-                if book.setCurrentTime(currenttime):
+                if book.setCurrentTime(currenttime) and call_update:
                     book.update()
 
-def getappointmentData(d, dents=()):
+def getAppointmentData(d, dents=()):
     '''
     gets appointment data for date d.
     '''
-    global appointmentData
-    ad = copy.deepcopy(appointmentData)
-    adate = "%d%02d%02d"% (d.year(), d.month(), d.day())
-    workingdents = appointments.getWorkingDents(adate, dents)
+    print "getappointmentData"
     
-    appointmentData = appointments.allAppointmentData(
-    adate, workingdents)
+    workingdents = appointments.getWorkingDents(d, dents)
 
-    if appointmentData != ad:
-        return True
+    return appointments.allAppointmentData(d, workingdents)
     
 def calendar(parent, sd):
     '''comes from click proceedures'''
@@ -1057,14 +1050,12 @@ def makeDiaryVisible(parent):
     '''
     print "appt_gui_module.book makeDiaryVisible() called"
     today=QtCore.QDate.currentDate()
-    parent.ui.diary_tabWidget.setCurrentIndex(0)
+    if parent.ui.diary_tabWidget.currentIndex() != 0:
+        parent.ui.diary_tabWidget.setCurrentIndex(0)
     if parent.ui.calendarWidget.selectedDate() != today:
         parent.ui.calendarWidget.setSelectedDate(today)
     else:
         handle_calendar_signal(parent)
-    triangles(parent)
-    for book in parent.ui.apptBookWidgets:
-        book.update()
 
 def handle_calendar_signal(parent):
     '''
@@ -1073,14 +1064,13 @@ def handle_calendar_signal(parent):
     OR the diary tab shifting
     OR the checkboxes have been tweaked
     '''
-    print "handle_calendar_signal "
+
     d = parent.ui.calendarWidget.selectedDate().toPyDate()
     parent.ui.monthView.setSelectedDate(d)    
     parent.ui.yearView.setSelectedDate(d)
     parent.ui.goTodayPushButton.setEnabled(
     parent.ui.calendarWidget.selectedDate() != \
     QtCore.QDate.currentDate())
-    
     
     if parent.ui.main_tabWidget.currentIndex() == 1:
         i = parent.ui.diary_tabWidget.currentIndex()
@@ -1294,18 +1284,14 @@ def layout_dayView(parent):
     for book in parent.ui.apptBookWidgets:
         book.clearAppts()
         book.setTime = "None"
-
-    d = parent.ui.calendarWidget.selectedDate()
-    getappointmentData(d)
+    
+    d = parent.ui.calendarWidget.selectedDate().toPyDate()
+    parent.appointmentData = getAppointmentData(d)
     todaysDents = []
     todaysMemos = []
-    for dent in appointmentData[0]:
+    for dent in parent.appointmentData[0]:
         todaysDents.append(dent[0])
         todaysMemos.append(dent[3])
-    if d == (QtCore.QDate.currentDate()):
-        parent.ui.goTodayPushButton.setEnabled(False)
-    else:
-        parent.ui.goTodayPushButton.setEnabled(True)
     i = 0
     #-- clean past links to dentists
     for book in parent.ui.apptBookWidgets:
@@ -1315,16 +1301,16 @@ def layout_dayView(parent):
     #-- cycle through todays dents, get the extreme hours for the practice
     for dent in todaysDents:        
         try:
-            bookstart = appointmentData[0][todaysDents.index(dent)][1] 
+            bookstart = parent.appointmentData[0][todaysDents.index(dent)][1] 
             if  bookstart < abs_start:
                 abs_start = bookstart
-            bookend = appointmentData[0][todaysDents.index(dent)][2]
+            bookend = parent.appointmentData[0][todaysDents.index(dent)][2]
             if  bookend > abs_end:
                 abs_end = bookend
         except IndexError, e:
             #-- deal with this later
             pass
-            
+    
     for dent in todaysDents:
         try:
             parent.ui.apptBookWidgets[i].dentist = \
@@ -1332,25 +1318,26 @@ def layout_dayView(parent):
             parent.ui.apptBookWidgets[i].setDayStartTime(abs_start)        
             parent.ui.apptBookWidgets[i].setDayEndTime(abs_end)                    
             
-            bookstart = appointmentData[0][todaysDents.index(dent)][1] 
+            bookstart = parent.appointmentData[0][todaysDents.index(dent)][1] 
             parent.ui.apptBookWidgets[i].setStartTime(bookstart)
             
-            bookend = appointmentData[0][todaysDents.index(dent)][2]        
+            bookend = parent.appointmentData[0][todaysDents.index(dent)][2]        
             parent.ui.apptBookWidgets[i].setEndTime(bookend)
             
         except IndexError, e:
             parent.advise(
-            "Damn! too many dentists today!! only 3 widgets available - " +
+            "Damn! too many dentists today!! only 4 widgets available - " +
             "file a bug!<br /><br />%s"% e, 2)
             ####TODO - sort this out... no of widgets shouldn't be fixed.
         i += 1
+    
     for label in (parent.ui.apptFrameLabel1, parent.ui.apptFrameLabel2,
     parent.ui.apptFrameLabel3, parent.ui.apptFrameLabel4):
         label.setText("")
     for label in (parent.ui.book1memo_label, parent.ui.book2memo_label,
     parent.ui.book2memo_label, parent.ui.book4memo_label):
         label.setText("")
-
+    
     if i > 0 :
         parent.ui.apptFrameLabel1.setText(
         localsettings.apptix_reverse[todaysDents[0]])
@@ -1375,7 +1362,7 @@ def layout_dayView(parent):
 
             parent.ui.book4memo_label.setText(todaysMemos[3])
 
-        apps = appointmentData[1]
+        apps = parent.appointmentData[1]
 
         for app in apps:
             dent = app[1]
@@ -1386,17 +1373,18 @@ def layout_dayView(parent):
             app[6], app[7], app[8], app[9], app[10], chr(app[11]))
     else:
         parent.advise("all off today")
-
-    triangles(parent)
+    
+    triangles(parent, False)
 
     for book in parent.ui.apptBookWidgets:
-        book.update()
         if book.dentist == None:
             #--book has no data
             book.hide()
         else:
             book.show()
-
+            book.update()
+    print "sucessfully laid out books for", d
+        
 def appointment_clicked(parent, list_of_snos):
     if len(list_of_snos) == 1:
         sno = list_of_snos[0]

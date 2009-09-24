@@ -100,7 +100,7 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
             vlayout.addWidget(iw)
 
     def loadData(self):
-        dentData=appointments.getWorkingDents(self.date.toString("yyyyMMdd"))
+        dentData=appointments.getWorkingDents(self.date.toPyDate())
         for clinician in localsettings.activedents+localsettings.activehygs:
             startData=adayData(clinician)
             for row in dentData:

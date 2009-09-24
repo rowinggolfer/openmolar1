@@ -123,13 +123,18 @@ class yearCalendar(QtGui.QWidget):
         advisory = ""
         if d:
             datekey = "%d%02d"% (d.month, d.day)
+            if self.headingdata.has_key(datekey):
+                advisory += "<h3>%s</h3><hr />"% self.headingdata[datekey]
             if self.data.has_key(datekey):
                 for dent, memo in self.data[datekey]:
-                    advisory += "%s - %s <br />"% (
-                    localsettings.apptix_reverse.get(dent), memo)
-            advisory = advisory.strip(" <br />")
-            if self.headingdata.has_key(datekey):
-                advisory += "<p><b>%s</b></p>"% self.headingdata[datekey]
+                    if dent == 0:
+                        advisory += "<h3>%s</h3>"% memo
+                    else:
+                        advisory += "%s - %s <br />"% (
+                        localsettings.apptix_reverse.get(dent), memo)
+            if advisory.endswith(" <br />"):
+                advisory = advisory.rstrip(" <br />")
+            
         
         QtGui.QToolTip.showText(event.globalPos(), advisory)
             

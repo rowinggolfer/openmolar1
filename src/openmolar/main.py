@@ -112,7 +112,12 @@ def main():
 
     while True:
         if my_dialog.exec_():
-            localsettings.chosenserver = dl.server_comboBox.currentIndex()
+            changedServer = False
+            if localsettings.chosenserver != \
+            dl.server_comboBox.currentIndex():
+                localsettings.chosenserver = dl.server_comboBox.currentIndex()
+                changedServer=True
+            
             try:
                 #--"salt" the password
                 pword = "diqug_ADD_SALT_3i2some"+str(
@@ -126,7 +131,7 @@ def main():
                     #-- end password check
                     raise LoginError
 
-                if uninitiated:
+                if uninitiated or changedServer:
                     #-- user has entered the correct password
                     #-- so now we connect to the mysql database for the 1st time
                     #-- I do it this way so that anyone sniffing the network
@@ -135,11 +140,10 @@ def main():
                     #-- maybe by using an ssl connection to the server.
                     localsettings.initiate()
                     uninitiated = False
-
+                    
                 u1_qstring = dl.user1_lineEdit.text().toUpper()
                 #-- toUpper is a method of QString
                 u2_qstring = dl.user2_lineEdit.text().toUpper()
-
                 #-- localsettings module now has user variables.
                 #-- allowed_logins in a list of practice staff.
                 if not u1_qstring in localsettings.allowed_logins:

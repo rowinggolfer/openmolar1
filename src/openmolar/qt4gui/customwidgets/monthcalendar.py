@@ -125,6 +125,9 @@ class monthCalendar(QtGui.QWidget):
             data = self.data[key]
             for memo in data:
                 existingDayMemos[memo[0]] = memo[1]
+        if existingDayMemos.has_key(0):
+            dl.lineEdit.setText(existingDayMemos[0])
+            
         memowidget_dict = {}
         for dent in self.dents:
             widg = QtGui.QWidget()
@@ -137,12 +140,24 @@ class monthCalendar(QtGui.QWidget):
             memowidget_dict[dent] = memoitem.lineEdit
             
         if Dialog.exec_():
+            print "existing = ",existingDayMemos
+            
             retarg = []
+            memo = str(dl.lineEdit.text().toAscii())             
+            existing = existingDayMemos.get(0)        
+            if existing == None:
+                existing = ""
+            if memo != existing:
+                retarg.append((0, memo),)
+            
             for dent in self.dents:
                 memo = str(memowidget_dict[dent].text().toAscii())
-                if memo !="":
+                existing = existingDayMemos.get(dent)
+                if existing == None:
+                    existing = ""
+                if memo != existing:
                     retarg.append((dent, memo),)
-                
+            print retarg
             self.emit(QtCore.SIGNAL("add_memo"), tuple(retarg))
         
     def mousePressEvent(self, event):
@@ -216,8 +231,6 @@ class monthCalendar(QtGui.QWidget):
                 painter.setFont(self.font)
                 
             else: 
-                
-                
                 rect = QtCore.QRect(0, day*rowHeight, 
                 self.vheaderwidth, rowHeight)               
 
@@ -283,8 +296,11 @@ class monthCalendar(QtGui.QWidget):
                     self.palette().WindowText))
                     my_text = ""
                     for dent, memo in self.data[key]:
-                        my_text += "%s - %s | "% (
-                        localsettings.apptix_reverse.get(dent), memo)
+                        if dent == 0:
+                            my_text += "%s "% memo.upper()
+                        else:
+                            my_text += "%s - %s | "% (
+                            localsettings.apptix_reverse.get(dent), memo)
 
                     my_text = my_text.strip(" | ")
                     painter.drawText(rect,QtCore.Qt.AlignLeft, my_text)

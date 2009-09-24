@@ -12,7 +12,6 @@ mainconnection, forumconnection = None, None
 print "parsing the global settings file"
 dom = minidom.parse(localsettings.cflocation)
 
-
 settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
 sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
 
