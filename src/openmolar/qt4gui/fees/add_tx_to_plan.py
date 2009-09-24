@@ -139,11 +139,13 @@ def fromFeeTable(parent, item):
         dl.setupUi(Dialog)
         dl.number_spinBox.setValue(1)
         dl.description_lineEdit.setText(item.text(4))
-        if "n" in parent.pt.cset:
-            fee = int(item.text(5).replace(".","")) / 100
-            ptfee = int(item.text(6).replace(".","")) / 100
+        if "N" in parent.pt.cset:
+            print "using NHS cols"
+            fee = int(item.text(6).replace(".","")) / 100
+            ptfee = int(item.text(7).replace(".","")) / 100
         else:
-            fee = int(item.text(7).replace(".","")) / 100
+            print "using private cols"
+            fee = int(item.text(8).replace(".","")) / 100
             ptfee = fee    
         dl.fee_doubleSpinBox.setValue(fee)
         dl.ptFee_doubleSpinBox.setValue(ptfee)
