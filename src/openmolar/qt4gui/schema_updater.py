@@ -72,12 +72,18 @@ def main(arg):
                 pb.setValue(100)
                 pb.update()
                 time.sleep(2)
-                proceed()
                 pb.hide()
-            else:
+                proceed()
+            else:                
                 print "conversion to 1.1 failed"
+                QtGui.QMessageBox.warning(None, "Update Schema",
+                '''Conversion to 1.1 failed<br />
+                Please File A bug by visiting<br>
+                http://''')
+                       
+        
     else:
-        QtGui.QMessageBox.Warning(None, "Update Schema",
+        QtGui.QMessageBox.warning(None, "Update Schema",
         "Please upgrade as soon as possible")        
         proceed()
     

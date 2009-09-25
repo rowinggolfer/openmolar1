@@ -38,6 +38,7 @@ def proceed():
         from openmolar.qt4gui import schema_updater
         sys.exit(schema_updater.main(sys.argv))
     else:
+        print "schema is up to date"
         from openmolar.qt4gui import maingui                
         sys.exit(maingui.main(sys.argv))
 
