@@ -15,7 +15,8 @@ Incidentally - this script introduces the "settings table" in which the schema
 variable is stored.
 '''
 
-NEW_TABLE_SQLSTRINGS = ['''CREATE TABLE IF NOT EXISTS newestimates (
+NEW_TABLE_SQLSTRINGS = ['''
+CREATE TABLE IF NOT EXISTS newestimates (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `serialno` int(11) NOT NULL ,
 `courseno` int(10) unsigned ,
@@ -34,9 +35,13 @@ NEW_TABLE_SQLSTRINGS = ['''CREATE TABLE IF NOT EXISTS newestimates (
 `linked` tinyint(1),
 `modified_by` varchar(20) NOT NULL,
 `time_stamp` DATETIME NOT NULL,
-PRIMARY KEY (ix));
+PRIMARY KEY (ix),
+KEY (serialno),
+KEY (courseno));
 ''',
-'''CREATE TABLE IF NOT EXISTS settings (
+'''
+CREATE TABLE IF NOT EXISTS settings (
+`ix` int(10) unsigned NOT NULL auto_increment ,
 `value` varchar(128), 
 `data` text,
 `hostname` varchar(128),
@@ -44,11 +49,17 @@ PRIMARY KEY (ix));
 `user` char(20),
 `modified_by` varchar(20) NOT NULL,
 `time_stamp` DATETIME NOT NULL,
-KEY (value))''',
-'''CREATE TABLE IF NOT EXISTS calendar (
+PRIMARY KEY (ix),
+KEY (value));
+''',
+'''
+CREATE TABLE IF NOT EXISTS calendar (
+`ix` int(10) unsigned NOT NULL auto_increment ,
 `adate` DATE NOT NULL, 
 `memo` char(30),
-KEY (adate))'''
+PRIMARY KEY (ix),
+KEY (adate));
+'''
 ]
 
 

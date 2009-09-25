@@ -81,8 +81,6 @@ def main(arg):
         "Please upgrade as soon as possible")        
         proceed()
     
-    my_app.closeAllWindows()
-
 
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....

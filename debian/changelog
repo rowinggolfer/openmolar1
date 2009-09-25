@@ -1,5 +1,5 @@
-openmolar (0.1.4-1ubuntu1) intrepid; urgency=low
+openmolar (0.1.4-5ubuntu1) intrepid; urgency=low
 
-  * day memo functionality
+  * db updating
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 18 Sep 2009 00:12:30 +0100
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 25 Sep 2009 01:36:30 +0100
