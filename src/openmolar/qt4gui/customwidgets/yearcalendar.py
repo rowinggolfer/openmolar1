@@ -14,6 +14,10 @@ import calendar
 import datetime
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
+from openmolar.qt4gui.customwidgets import monthcalendar
+
+from openmolar.qt4gui.dialogs import Ui_memoitem
+from openmolar.qt4gui.dialogs import Ui_editmemos
 
 class yearCalendar(QtGui.QWidget):
     '''
@@ -37,6 +41,7 @@ class yearCalendar(QtGui.QWidget):
         self.highlightedDate = None
         self.headingdata={}
         self.data = {}
+        self.dents = ()
         self.startDOW = 0
         
     def sizeHint(self):
@@ -76,6 +81,13 @@ class yearCalendar(QtGui.QWidget):
         data is a dictionary {"mdd":((4,"Memo"),(2,"note"),) , ...}
         '''
         self.data = data
+    
+    def setDents(self,dents):
+        '''
+        make the widget aware who's data it's showing
+        dents is a tuple like (4,5)
+        '''
+        self.dents = dents
 
     def setColumnNo(self):
         '''
@@ -146,6 +158,19 @@ class yearCalendar(QtGui.QWidget):
         if d and d != self.selectedDate:
             self.setSelectedDate(d)
             self.emit(QtCore.SIGNAL("selectedDate"), d)
+    
+    
+    def mouseDoubleClickEvent(self, event):
+        '''
+        catch the double click
+        '''
+        d = self.getDateFromPosition(event.x(), event.y())
+        if d and d != self.selectedDate:
+            self.setSelectedDate(d)
+            self.emit(QtCore.SIGNAL("selectedDate"), d)
+        if d:
+            self.raisememoDialog()
+        
             
     def leaveEvent(self,event):
         '''
@@ -154,7 +179,57 @@ class yearCalendar(QtGui.QWidget):
         if self.highlightedDate != None:
             self.highlightedDate = None
             self.update()
-        
+
+    def raisememoDialog(self):
+        '''
+        allow user to input a memo
+        '''
+        Dialog = QtGui.QDialog(self)
+        dl = Ui_editmemos.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.estimate_layout = QtGui.QVBoxLayout(dl.scrollArea)
+        dl.estimate_layout.setSpacing(0)
+        key = "%d%02d"% (self.selectedDate.month, self.selectedDate.day)
+        existingDayMemos = {}
+        if self.data.has_key(key):
+            data = self.data[key]
+            for memo in data:
+                existingDayMemos[memo[0]] = memo[1]
+        if existingDayMemos.has_key(0):
+            dl.lineEdit.setText(existingDayMemos[0])
+            
+        memowidget_dict = {}
+        for dent in self.dents:
+            widg = QtGui.QWidget()
+            memoitem = Ui_memoitem.Ui_Form()
+            memoitem.setupUi(widg)
+            memoitem.label.setText("%s"% localsettings.apptix_reverse.get(dent))
+            if existingDayMemos.has_key(dent):
+                memoitem.lineEdit.setText(existingDayMemos[dent])
+            dl.estimate_layout.addWidget(widg) 
+            memowidget_dict[dent] = memoitem.lineEdit
+            
+        if Dialog.exec_():
+            print "existing = ",existingDayMemos
+            
+            retarg = []
+            memo = str(dl.lineEdit.text().toAscii())             
+            existing = existingDayMemos.get(0)        
+            if existing == None:
+                existing = ""
+            if memo != existing:
+                retarg.append((0, memo),)
+            
+            for dent in self.dents:
+                memo = str(memowidget_dict[dent].text().toAscii())
+                existing = existingDayMemos.get(dent)
+                if existing == None:
+                    existing = ""
+                if memo != existing:
+                    retarg.append((dent, memo),)
+            print retarg
+            self.emit(QtCore.SIGNAL("add_memo"), tuple(retarg))
+    
     def setSelectedDate(self, d):
         '''
         d is a pydate

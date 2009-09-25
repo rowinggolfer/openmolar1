@@ -66,8 +66,7 @@ def main():
         hide the options pushbutton, show the servers combobox instead
         (called by the options pushbutton)
         '''
-        dl.options_pushButton.hide()
-        dl.options_frame.show()
+        dl.stackedWidget.setCurrentIndex(1)
 
     cf_Found = True
     if os.path.exists(localsettings.global_cflocation):
@@ -116,7 +115,6 @@ def main():
     my_dialog = QtGui.QDialog()
     dl = Ui_startscreen.Ui_Dialog()
     dl.setupUi(my_dialog)
-    dl.options_frame.hide()
     if len(localsettings.server_names) > 1:
         dl.server_comboBox.addItems(localsettings.server_names)
         QtCore.QObject.connect(dl.options_pushButton, 
@@ -136,7 +134,7 @@ def main():
             
             try:
                 #--"salt" the password
-                pword = "diqug_ADD_SALT_3i2some"+str(
+                pword = "diqug_ADD_SALT_3i2some" + str(
                 dl.password_lineEdit.text())
                 #-- hash the salted password (twice!) and compare to the value
                 #-- stored in /etc/openmolar/openmolar.conf (linux)

@@ -2956,8 +2956,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         either the custom year or month view calendar has emitted a date signal
         '''
         self.ui.calendarWidget.setSelectedDate(d)
-    
-    def monthView_addmemo(self, memos):
+        
+    def addCalendarMemo(self, memos):
         '''
         a memo needs to be added to a day
         '''
@@ -3865,12 +3865,15 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         
         QtCore.QObject.connect(self.ui.yearView,
         QtCore.SIGNAL("selectedDate"), self.customDateSignal) 
-               
+        
         QtCore.QObject.connect(self.ui.monthView,
         QtCore.SIGNAL("selectedDate"), self.customDateSignal) 
         
         QtCore.QObject.connect(self.ui.monthView,
-        QtCore.SIGNAL("add_memo"), self.monthView_addmemo) 
+        QtCore.SIGNAL("add_memo"), self.addCalendarMemo) 
+        
+        QtCore.QObject.connect(self.ui.yearView,
+        QtCore.SIGNAL("add_memo"), self.addCalendarMemo) 
 
         QtCore.QObject.connect(self.ui.aptOVprevweek,
         QtCore.SIGNAL("clicked()"), self.aptOV_weekBack_clicked)

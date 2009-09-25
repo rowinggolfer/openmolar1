@@ -36,9 +36,23 @@ def main(arg):
     '''
     main function
     '''
-    def updateProgress():
-        pb.setValue(pb.value()+10)
-        pb.update()
+    app = QtGui.QApplication(arg)
+    
+    def updateProgress(arg, message):
+        print message
+        pb.setLabelText(message)
+        pb.setValue(arg)
+        app.processEvents()
+        
+    def completed(sucess, message):
+        pb.hide()
+        if sucess:
+            QtGui.QMessageBox.information(pb, "Sucess", message)            
+        else:
+            QtGui.QMessageBox.warning(pb, "Failure",
+            message +'''<br><br>
+            Please File A bug by visiting<br>
+            https://bugs.launchpad.net/openmolar''')
         
     required = localsettings.SCHEMA_VERSION
     current = schema_version.getVersion()
@@ -53,41 +67,29 @@ def main(arg):
     if result == QtGui.QMessageBox.Yes:
         pb = QtGui.QProgressDialog()
         pb.setWindowTitle("openMolar")
-        pb.setValue(10)
-        pb.setMaximum(90)
         pb.show()
-        timer1 = QtCore.QTimer()
-        timer1.start(1000) #fire every second
-        QtCore.QObject.connect(timer1, QtCore.SIGNAL("timeout()"), 
-        updateProgress)
         
         if current < "1.1":
-            print "upgrading to schema version 1.1"
-            pb.setLabelText("upgrading to schema version 1.1")
-            pb.update()
+            updateProgress(1,"upgrading to schema version 1.1")        
             from openmolar.schema_upgrades import schema1_0to1_1
-            if schema1_0to1_1.run():
-                print "ALL DONE, conversion sucessful"
-                pb.setMaximum(100)
-                pb.setValue(100)
-                pb.update()
-                time.sleep(2)
+            dbu = schema1_0to1_1.dbUpdater(pb)
+        
+            QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
+            updateProgress)
+
+            QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
+            completed)
+        
+            if dbu.run():
                 pb.hide()
                 proceed()
             else:                
-                print "conversion to 1.1 failed"
-                QtGui.QMessageBox.warning(None, "Update Schema",
-                '''Conversion to 1.1 failed<br />
-                Please File A bug by visiting<br>
-                http://''')
-                       
-        
+                completed(False, 'Conversion to 1.1 failed')
     else:
         QtGui.QMessageBox.warning(None, "Update Schema",
         "Please upgrade as soon as possible")        
         proceed()
     
-
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....
     print "starting schema_updater"

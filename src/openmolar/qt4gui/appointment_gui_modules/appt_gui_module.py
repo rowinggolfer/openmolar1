@@ -1063,6 +1063,7 @@ def handle_calendar_signal(parent):
     a date signal 
     OR the diary tab shifting
     OR the checkboxes have been tweaked
+    OR a memo has been added
     '''
 
     d = parent.ui.calendarWidget.selectedDate().toPyDate()
@@ -1092,7 +1093,7 @@ def updateDayMemos(parent, memos):
     '''
     appointments.setMemos(parent.ui.calendarWidget.selectedDate().toPyDate(), 
     memos)
-    layout_month(parent)
+    handle_calendar_signal(parent)
         
 def layout_month(parent):
     '''
@@ -1122,6 +1123,7 @@ def layout_year(parent):
     startdate = datetime.date(year, 1, 1)
     enddate = datetime.date(year+1, 1, 1)
     dents = getUserCheckedClinicians(parent)
+    parent.ui.yearView.setDents(dents)    
     data = appointments.getDayMemos(startdate, enddate, dents)
     parent.ui.yearView.setData(data)
     data = appointments.getBankHols(startdate, enddate)

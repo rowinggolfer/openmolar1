@@ -14,6 +14,7 @@ The NewTable schema is contained in module variable NEW_TABLE_SQLSTRINGS
 Incidentally - this script introduces the "settings table" in which the schema
 variable is stored.
 '''
+from PyQt4 import QtGui, QtCore
 
 NEW_TABLE_SQLSTRINGS = ['''
 CREATE TABLE IF NOT EXISTS newestimates (
@@ -150,26 +151,50 @@ def insertRowsIntoNew(rows):
     db.close()
 
 
+class dbUpdater(QtCore.QThread):
+    def __init__(self, lock, parent=None):
+        super(dbUpdater, self).__init__(parent)
+        self.lock = lock
+        self.stopped = False
+        self.path = None
+        self.completed = False
 
-def run():
-    print "running script to convert from schema 1.0 to 1.1"
-    try:
-        if createNewTables():
-            oldrows = getRowsFromOld()
-            print 'rows extracted'
-            newRows = convertData(oldrows)
-            print 'data converted'
-            print 'now exporting, this can take some time'
-            insertRowsIntoNew(newRows)
-            print "updating stored schema version"
-            schema_version.update("1.1", "1_0 to 1_1 script")
-            return True
-    except Exception, e:
-        print "Exception caught",e
-        return False
+    def progressSig(self, val, message):
+        '''
+        emits a signal showhing how we are proceeding.
+        val is a number between 0 and 100
+        '''
+        self.emit(QtCore.SIGNAL("progress"), val, message)
+
+    def completeSig(self, arg):
+        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
+                
+    def run(self):
+        print "running script to convert from schema 1.0 to 1.1"
+        try:
+            if createNewTables():
+                oldrows = getRowsFromOld()
+                self.progressSig(20, 'rows extracted from old estimates')
+                newRows = convertData(oldrows)
+                self.progressSig(40, 'data converted to new schema')
+                print 'now exporting, this can take some time'
+                insertRowsIntoNew(newRows)
+                self.progressSig(80, 'inserted into newestimate')
+                schema_version.update("1.1", "1_0 to 1_1 script")
+                
+                self.progressSig(100, "updating stored schema version")
+                self.completed = True
+                self.completeSig("ALL DONE - sucessfully moved db to 1,1")
+            
+        except Exception, e:
+            print "Exception caught",e
+            self.completeSig(e)
+
+        return self.completed
 
 if __name__ == "__main__":
-    if run():
+    dbu = dbUpdater()
+    if dbu.run():
         print "ALL DONE, conversion sucessful"
     else:
         print "conversion failed"

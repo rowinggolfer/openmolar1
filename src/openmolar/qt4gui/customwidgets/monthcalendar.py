@@ -26,7 +26,7 @@ class monthCalendar(QtGui.QWidget):
         super(monthCalendar, self).__init__(parent)
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
-        self.paren = parent
+        self.parent = parent
         self.setMinimumSize(self.minimumSizeHint())
         self.monthStarts = {}
         self.font = None
@@ -168,7 +168,16 @@ class monthCalendar(QtGui.QWidget):
         if d and d != self.selectedDate:
             self.setSelectedDate(d)
             self.emit(QtCore.SIGNAL("selectedDate"), d)
-        if event.x() > self.vheaderwidth + self.bankHolColwidth:
+    
+    def mouseDoubleClickEvent(self, event):
+        '''
+        catch the double click
+        '''
+        d = self.getDateFromPosition(event.x(), event.y())
+        if d and d != self.selectedDate:
+            self.setSelectedDate(d)
+            self.emit(QtCore.SIGNAL("selectedDate"), d)
+        if d:
             self.raisememoDialog()
             
     def leaveEvent(self,event):

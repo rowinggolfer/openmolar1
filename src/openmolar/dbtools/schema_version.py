@@ -16,8 +16,9 @@ def getVersion():
         cursor.execute(query)
         rows = cursor.fetchall()
     except connect.ProgrammingError, ex:
-        print ex
-        return ""
+        print "no schema_verion found - ",ex
+        print "schema assumed to be 1.0"
+        return "1.0"
     
     version = ""
     for row in rows:
@@ -40,6 +41,7 @@ def update(arg, user):
     values = ("Schema_Version", arg, user, timestamp)
     cursor.execute(query, values)
     db.commit()
+    localsettings.SCHEMA_VERSION = arg
     return True
 
 if __name__ == "__main__":
