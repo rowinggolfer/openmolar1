@@ -1253,7 +1253,7 @@ class pageHandlingClass():
 
         if ci == 5:
             self.updateNotesPage()
-
+        
         #--perio tab
         if ci == 8:
             self.periochart_dates()

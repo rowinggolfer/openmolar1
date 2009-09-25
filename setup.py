@@ -13,6 +13,7 @@ setup(
     package_dir = {'openmolar' : 'src/openmolar'},
     packages = ['openmolar',
                 'openmolar.dbtools',
+                'openmolar.schema_upgrades',
                 'openmolar.qt4gui',
                 'openmolar.qt4gui.dialogs',
                 'openmolar.qt4gui.appointment_gui_modules',

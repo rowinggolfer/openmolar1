@@ -156,7 +156,7 @@ def fromFeeTable(parent, item):
             if descr == "":
                 descr = "??"
             code = str(item.text(0))
-            type = str(item.text(2))
+            type = str(item.text(2)).replace(" ", "_")
             if type == "":
                 type = "??"
             fee = int(dl.fee_doubleSpinBox.value() * 100)
@@ -164,9 +164,14 @@ def fromFeeTable(parent, item):
 
             parent.pt.custompl += "%s "% type
             parent.pt.addToEstimate(no, code, descr, fee,
-            ptfee, parent.pt.dnt1, "P", "from fee %s"% type)
-            parent.load_newEstPage()
-            parent.load_treatTrees()
+            ptfee, parent.pt.dnt1, parent.pt.cset, "custom %s"% type)
+            
+            
+            if parent.ui.tabWidget.currentIndex() != 7:
+                parent.ui.tabWidget.setCurrentIndex(7)
+            else:
+                parent.load_newEstPage()
+                parent.load_treatTrees()
 
 
 

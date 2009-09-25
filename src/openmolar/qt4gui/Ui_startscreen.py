@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/src/openmolar/qt-designer/startscreen.ui'
 #
-# Created: Wed Sep 23 16:25:54 2009
+# Created: Thu Sep 24 21:16:21 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,8 +13,8 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.setWindowModality(QtCore.Qt.WindowModal)
-        Dialog.resize(300, 340)
-        Dialog.setMinimumSize(QtCore.QSize(300, 340))
+        Dialog.resize(232, 320)
+        Dialog.setMinimumSize(QtCore.QSize(200, 320))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/openmolar.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
@@ -22,6 +22,7 @@ class Ui_Dialog(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_3 = QtGui.QLabel(Dialog)
         self.label_3.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setWordWrap(True)
         self.label_3.setObjectName("label_3")
         self.gridLayout_2.addWidget(self.label_3, 0, 0, 1, 1)

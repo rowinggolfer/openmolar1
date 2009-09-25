@@ -26,12 +26,27 @@ class LoginError(Exception):
     a custom exception thrown when the user gets password or username incorrect
     '''
     pass
+    
+def proceed():
+    '''
+    check db schema, and proceed if all is well
+    '''
+    print "checking schema version...",
+    from openmolar.dbtools import schema_version
+    if localsettings.SCHEMA_VERSION > schema_version.getVersion():
+        print "schema is out of date"
+        from openmolar.qt4gui import schema_updater
+        sys.exit(schema_updater.main(sys.argv))
+    else:
+        from openmolar.qt4gui import maingui                
+        sys.exit(maingui.main(sys.argv))
+
 
 def main():
     '''
     main function
     '''
-    
+    global localsettings
     from openmolar.settings import localsettings
     from openmolar.qt4gui import Ui_startscreen
     
@@ -159,10 +174,8 @@ def main():
 
                 localsettings.setOperator(str(u1_qstring), str(u2_qstring))
 
-                from openmolar.qt4gui import maingui
+                proceed()
                 
-                sys.exit(maingui.main(sys.argv))
-
             except LoginError:
                 QtGui.QMessageBox.warning(my_dialog,
                 "Login Error", "Incorrect<br />User/password<br />\

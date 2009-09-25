@@ -19,6 +19,8 @@ import _version  #--in the same directory - created by bzr
 #- updated 17th September 2009.
 __MAJOR_VERSION__= "0.1.4" 
 
+SCHEMA_VERSION = "1.1"
+
 DEBUGMODE = False
 
 #--this is a hack to get the correct bzr number. it will always be one up.
@@ -135,6 +137,11 @@ sqlDateFormat = r"%d/%m/%Y"
 #-- ditto the qt one
 DATE_FORMAT = "d, MMMM, yyyy"
 
+def timestamp():
+    d = datetime.datetime.now()
+
+    return "%04d%02d%02d%02d%02d%02d"% (
+    d.year,d.month,d.day,d.hour,d.minute,d.second)
 
 #-- undated at login
 operator = "unknown"
