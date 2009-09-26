@@ -116,8 +116,6 @@ from openmolar.qt4gui.customwidgets import perioChartWidget
 from openmolar.qt4gui.customwidgets import estimateWidget
 from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import calendars
-from openmolar.qt4gui.customwidgets import yearcalendar
-from openmolar.qt4gui.customwidgets import monthcalendar
 
 
 ###### TODO - refactor all this into one big class....
@@ -1719,17 +1717,17 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             glayout.addWidget(cb, row, 1, 1, 1)
 
         #--customise the appointment widget calendar
-        self.ui.calendarWidget = calendars.weekCalendar()
+        self.ui.calendarWidget = calendars.controlCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.apptOVcalendar_placeholder)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.calendarWidget)
         #--add a month view
-        self.ui.monthView = monthcalendar.monthCalendar()
+        self.ui.monthView = calendars.monthCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.monthView_placeholder)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.monthView)
         #--add a month view
-        self.ui.yearView = yearcalendar.yearCalendar()
+        self.ui.yearView = calendars.yearCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.yearView_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.yearView)
