@@ -62,17 +62,20 @@ def all_changes(pt, pt_dbstate, changes):
                 for est in pt.estimates:
                     if est.ix==None: #--new item
                         print "new estimate item"
-                        query='''insert into estimates set
-                        serialno=%d, courseno=%d, type="%s", number=%d,
-                        itemcode="%s",description="%s", fee=%d , ptfee=%d,
-                        feescale="%s",csetype="%s",dent=%d,completed=%s,
-                        carriedover=%s, linked=%s'''%(pt.serialno, pt.courseno,
-                        est.type,
-                        est.number, est.itemcode, est.description, est.fee,
-                        est.ptfee, est.feescale, est.csetype, est.dent,
-                        est.completed, est.carriedover,est. linked)
-
-                        sqlcommands["estimates"].append(query)
+                        query='''insert into newestimates (serialno, courseno, 
+                        category, type, number, itemcode, description, fee, 
+                        ptfee, feescale, csetype, dent, completed, carriedover, 
+                        linked, modified_by, time_stamp) values 
+                        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                        %s, %s, %s, %s, %s, %s, %s)'''
+                        values = (pt.serialno, pt.courseno, est.category, 
+                        est.type, est.number, est.itemcode, est.description, 
+                        est.fee, est.ptfee, est.feescale, est.csetype, 
+                        est.dent, est.completed, est.carriedover, 
+                        est. linked, localsettings.operator, 
+                        localsettings.timestamp())
+                        
+                        sqlcommands["estimates"].append((query,values),)
                     elif est.ix in oldEstDict.keys():
                         oldEst = oldEstDict[est.ix]
 
@@ -82,7 +85,7 @@ def all_changes(pt, pt_dbstate, changes):
                             #print "new %s"%est
                             #-- have to use the str because est class does not
                             #-- have a _eq_ property ??
-                            query='update estimates set '
+                            query='update newestimates set '
                             if oldEst.type!=est.type:
                                 query+="type=%s,"%est.type
                             if oldEst.number!=est.number:
@@ -107,6 +110,8 @@ def all_changes(pt, pt_dbstate, changes):
                                 query+='carriedover=%s,'%est.carriedover
                             if oldEst.linked!=est.linked:
                                 query+='linked=%s,'%est.linked
+                            query+="modified_by =%s"%localsettings.operator
+                            query+="time_stamp=%s"%localsettings.timestamp()
                                 
                             query=query.strip(",")+" where ix = %d"%est.ix
 
@@ -119,7 +124,7 @@ def all_changes(pt, pt_dbstate, changes):
                 for ix in oldEstDict.keys():
                     #--removed
                     print "deleting est index",ix
-                    query="delete from estimates where ix=%d"%ix
+                    query="delete from newestimates where ix=%d"%ix
                     sqlcommands["estimates"].append(query)
 
                 #--old code from old schema
@@ -178,7 +183,10 @@ def all_changes(pt, pt_dbstate, changes):
             for query in sqlcommands["estimates"]:
                 if localsettings.logqueries:
                     print query
-                cursor.execute(query)
+                if type(query) == types.TupleType:
+                    cursor.execute(query[0],query[1])
+                else:
+                    cursor.execute(query)
         if tables:
             #-- if the keys were bpe and or estimates alone...
             #--tables would be a None type at this point

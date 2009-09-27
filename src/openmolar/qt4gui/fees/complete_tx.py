@@ -27,18 +27,18 @@ def checkEstBox(parent, tooth, treat):
     this looks through the estimates, applies the fee
     and marks the item as completed.
     '''
-    completed = "%s %s"% (tooth, treat)
     # "looking for est item where type= '%s'?"%completed
     found = False
     for est in parent.pt.estimates:
-        if est.type == completed.strip(" "):
+        if est.category == tooth and est.type == treat.strip(" "):
             est.completed = True
             fees_module.applyFeeNow(parent, est.ptfee)
             found = True
             break
     if not found:
-        parent.advise("couldn't locate " +
-        "%s in estimate<br /> Please complete manually"% completed, 1)
+        completed = "%s %s"% (tooth, treat)
+        parent.advise('''<p>couldn't locate '%s' in estimate</p>
+        Please complete manually'''% completed, 1)
 
 def chartComplete(parent, arg):   
     '''
@@ -91,21 +91,24 @@ def chartComplete(parent, arg):
             parent.pt.addHiddenNote("treatment",
             "%s %s"% (toothName.upper(), newcompleted))
                 
-def estwidg_complete(parent, txtype):
+def estwidg_complete(parent, item):
+    '''
+    reponds to a signal when the user completes an item of treatment by
+    checking a checkbox on the estwidget
+    '''
+    print "estwidg_complete called with arg", item
     try:
-        tup = txtype.split(" ")
-        att = tup[0]
-        treat = tup[1] + " "
-        
-        toothname = att
+        treat = item.type + " "
+        toothname = item.type
+        att = item.category
         if re.match("[ul][lr][A-E]", att): #deciduous tooth
             number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
             att = "%s%d"% (att[:2], number)
             
-        if att == "exam":
-            parent.pt.examt = tup[1]
+        if item.category == "exam":
+            parent.pt.examt = item.type
             parent.pt.examd = localsettings.currentDay()
-            parent.pt.addHiddenNote("exam", "%s"% tup[1])
+            parent.pt.addHiddenNote("exam", item.type)
         
         else:
             plan = parent.pt.__dict__[att + "pl"].replace(treat, "")
@@ -120,23 +123,30 @@ def estwidg_complete(parent, txtype):
                 parent.pt.addHiddenNote(
                 "treatment", "%s %s"% (toothname.upper(), treat))
             else:
-                parent.pt.addHiddenNote("treatment", "%s"% tup[1])
+                parent.pt.addHiddenNote("treatment", item.type)
                 
+        fees_module.applyFeeNow(parent, item.ptfee, item.csetype)
+
         parent.load_treatTrees()
 
     except Exception,e:
-        parent.advise("Error moving %s from plan to completed<br />"% type +
-        "Please complete manually", 1)
-        print "UNABLE TO MOVE %s item"% txtype
+        completed = "%s - %s"% (item.category, item.type)
+        parent.advise('''<p>Error moving %s from plan to completed
+        </p>Please complete manually'''% completed, 1)
+        print "UNABLE TO COMPLETE %s"% item
         print e
 
-def estwidg_unComplete(parent, txtype):
+def estwidg_unComplete(parent, item):
+    '''
+    reponds to a signal when the user "uncompletes" an item of treatment by
+    unchecking a checkbox on the estwidget
+    '''
+    print "estwidg_unComplete called with arg", item
+        
     try:
-        tup = txtype.split(" ")
-        att = tup[0]
-        treat = tup[1] + " "
-
-        toothname = att
+        treat = item.type + " "
+        toothname = item.type
+        att = item.category
         if re.match("[ul][lr][A-E]", att): #deciduous tooth
             number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
             att = "%s%d"% (att[:2], number)
@@ -144,7 +154,7 @@ def estwidg_unComplete(parent, txtype):
         if att =="exam":
             parent.pt.examt = ""
             parent.pt.examd = ""
-            parent.pt.addHiddenNote("exam", "%s"% tup[1], True)
+            parent.pt.addHiddenNote("exam", item.type, True)
         else:
             plan = parent.pt.__dict__[att + "pl"] + treat
             parent.pt.__dict__[att + "pl"] = plan
@@ -157,11 +167,14 @@ def estwidg_unComplete(parent, txtype):
                 parent.pt.addHiddenNote("treatment", "%s %s"% (
                 toothname.upper(), treat), True)
             else:
-                parent.pt.addHiddenNote("treatment", "%s"% tup[1], True)
+                parent.pt.addHiddenNote("treatment", item.type, True)
+                
+        fees_module.applyFeeNow(parent, -1 * item.ptfee, item.csetype)
         parent.load_treatTrees()
 
     except Exception, e:
-        parent.advise("Error moving %s from completed to plan<br />"% type +
-        "Please complete manually", 1)
-        print "UNABLE TO MOVE %s item"% txtype
+        completed = "%s - %s"% (item.category, item.type)        
+        parent.advise('''<p>Error moving %s from completed to plan
+        </p>Please complete manually'''% completed, 1)
+        print "UNABLE TO UNCOMPLETE %s"% item
         print e

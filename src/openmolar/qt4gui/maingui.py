@@ -3118,12 +3118,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         else:
             course_module.resumeCourse(self)
                 
-    def estWidget_applyFeeNowCalled(self,amount,coursetype=None):
-        '''
-        est Widget has emitted a signal to apply a fee.
-        '''
-        fees_module.applyFeeNow(self,amount,coursetype)
-
     def showExamDialog(self):
         '''
         call a smart dialog which will perform an exam on the current patient
@@ -3601,11 +3595,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                                QtCore.SIGNAL("clicked()"), self.addCustomItem)
 
         QtCore.QObject.connect(self.ui.estWidget,
-        QtCore.SIGNAL("applyFeeNow"), self.estWidget_applyFeeNowCalled)
-        QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("completedItem"), self.estwidget_completeItem)
+        
         QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("unCompletedItem"), self.estwidget_unCompleteItem)
+        
         QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
 

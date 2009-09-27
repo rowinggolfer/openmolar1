@@ -21,21 +21,22 @@ class est():
     this class has attributes suitable for storing in the estimates table
     '''
     def __init__(self):
-        self.ix=None
-        self.serialno=None
-        self.courseno=None
-        self.type=""
-        self.number=None
-        self.itemcode="4001"
-        self.description=None
-        self.fee=None
-        self.ptfee=None
-        self.feescale=None
-        self.csetype=None
-        self.dent=None
-        self.completed=None
-        self.carriedover=None
-        self.linked=False
+        self.ix = None
+        self.serialno = None
+        self.courseno = None
+        self.category = ""
+        self.type = ""
+        self.number = None
+        self.itemcode = "4001"
+        self.description = None
+        self.fee = None
+        self.ptfee = None
+        self.feescale = None
+        self.csetype = None
+        self.dent = None
+        self.completed = None
+        self.carriedover = None
+        self.linked = False
     
     def __repr__(self):
         retarg="("
@@ -182,7 +183,8 @@ def toBriefHtml(pt):
     
     retarg +='''<table width ="100%" border="1">
     <tr><td colspan="7"><h3>ESTIMATE</h3></td></tr>
-    <tr><th>No.</th><th>Description</th><th>Type</th><th>Course</th>
+    <tr><th>No.</th><th>Description</th><th>Category</th>
+    <th>Type</th><th>Course</th>
     <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>'''
     total=0
     pt_total=0
@@ -190,6 +192,7 @@ def toBriefHtml(pt):
         total+=est.fee
         pt_total+=est.ptfee
         retarg+='<tr><td>%s</td><td>%s</td>'%(est.number,est.description)
+        retarg+='<td align="center">%s</td>'%est.category        
         retarg+='<td align="center">%s</td>'%est.type
         if est.csetype==None:
             retarg+='<td align="center">?</td>'

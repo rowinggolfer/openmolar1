@@ -87,8 +87,9 @@ def main(arg):
                 completed(False, 'Conversion to 1.1 failed')
     else:
         QtGui.QMessageBox.warning(None, "Update Schema",
-        "Please upgrade as soon as possible")        
-        proceed()
+        '''<p>Sorry, you cannot run this version of the openmolar client 
+        without updating your database schema.</p>''')        
+    app.closeAllWindows()
     
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....

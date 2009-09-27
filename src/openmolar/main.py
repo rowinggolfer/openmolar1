@@ -33,15 +33,24 @@ def proceed():
     '''
     print "checking schema version...",
     from openmolar.dbtools import schema_version
-    if localsettings.SCHEMA_VERSION > schema_version.getVersion():
+    sv = schema_version.getVersion()
+    if localsettings.SCHEMA_VERSION > sv:
         print "schema is out of date"
         from openmolar.qt4gui import schema_updater
         sys.exit(schema_updater.main(sys.argv))
+    elif localsettings.SCHEMA_VERSION < sv:
+        print "client is out of date"
+        QtGui.QMessageBox.warning(None, "Update Client",
+        '''<p>Sorry, you cannot run this version of the openMolar client 
+        because your database schema is more advanced.</p><p>this client 
+        requires schema version %s, but your database is at %s</p>
+        <p>Please Update openMolar now</p>'''% (
+        localsettings.SCHEMA_VERSION, sv)) 
     else:
-        print "schema is up to date"
+        print "schema/client versions are correct"
         from openmolar.qt4gui import maingui                
         sys.exit(maingui.main(sys.argv))
-
+    sys.exit()
 
 def main():
     '''

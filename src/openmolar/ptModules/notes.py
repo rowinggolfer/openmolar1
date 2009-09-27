@@ -9,9 +9,14 @@ import sys
 from openmolar.settings import localsettings
 
 def notes(ptNotesTuple,verbosity=0):
-    '''returns an html string of notes... if verbose=1 you get reception stuff too. if verbose =2 you get full notes'''
-    retarg='''<html><body><head><link rel="stylesheet"
-    href="%s" type="text/css"></head>'''%localsettings.stylesheet
+    '''
+    returns an html string of notes...
+    if verbose=1 you get reception stuff too. 
+    if verbose =2 you get full notes
+    '''
+
+    retarg='''<html><head><link rel="stylesheet"
+    href="%s" type="text/css"></head><body>'''%localsettings.stylesheet
     notes_dict={}
     date=""
     for line in ptNotesTuple:

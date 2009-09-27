@@ -396,9 +396,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         dl.scrollArea.setWidget(ew)
 
         #-- this miniDialog emits signals that go uncaught
-        ew.connect(ew, QtCore.SIGNAL("applyFeeNow"),
-        self.passOnApplyFeeNowSignal)
-
+    
         ew.connect(ew, QtCore.SIGNAL("completedItem"),
         self.passOnCompletedSignal)
 
@@ -432,12 +430,6 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         the child dialog has emitted a signal... pass it on
         '''
         self.parent.parent().emit(QtCore.SIGNAL("unCompletedItem"), arg)
-
-    def passOnApplyFeeNowSignal(self, arg):
-        '''
-        the child dialog has emitted a signal... pass it on
-        '''
-        self.parent.parent().emit(QtCore.SIGNAL("applyFeeNow"), arg)
 
     def passOnDeleteItemSignal(self, arg):
         '''
@@ -544,6 +536,9 @@ class estWidget(QtGui.QFrame):
                 return True
 
     def setEstimate(self, ests, SPLIT_ALL=False):
+        '''
+        adds all estimate items to the gui
+        '''
         self.expandAll = SPLIT_ALL
         self.ests = ests
         self.clear()
@@ -577,13 +572,10 @@ class estWidget(QtGui.QFrame):
     def itemCompletionState(self, item):
         if item.completed:
             amountToRaise = item.ptfee
-            self.emit(QtCore.SIGNAL("completedItem"), item.type)
+            self.emit(QtCore.SIGNAL("completedItem"), item)
         else:
             amountToRaise = item.ptfee * -1
-            self.emit(QtCore.SIGNAL("unCompletedItem"), item.type)
-
-        ##TODO this signal should include the coursetype!!
-        self.emit(QtCore.SIGNAL("applyFeeNow"), (amountToRaise))
+            self.emit(QtCore.SIGNAL("unCompletedItem"), item)
 
     def clear(self):
         '''
@@ -629,18 +621,18 @@ if __name__ == "__main__":
     def CatchAllSignals(arg=None):
         '''test procedure'''
         print "signal caught argument=", arg
-        print "estimates",  form.ests
+        
     import sys
 
     app = QtGui.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(11956)
+
     form = estWidget()
     form.setEstimate(pt.estimates)
     form.connect(form, QtCore.SIGNAL("completedItem"), CatchAllSignals)
     form.connect(form, QtCore.SIGNAL("unCompletedItem"), CatchAllSignals)
-    form.connect(form, QtCore.SIGNAL("applyFeeNow"), CatchAllSignals)
     form.connect(form, QtCore.SIGNAL("deleteItem"), CatchAllSignals)
 
     form.show()

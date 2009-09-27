@@ -54,7 +54,7 @@ def xrayAdd(parent):
             parent.pt.xraypl += usercode + " "
             parent.pt.addToEstimate(1, treat[1], treat[2], 
             treat[3], treat[4], parent.pt.dnt1, 
-            parent.pt.cset, "xray %s"% usercode)
+            parent.pt.cset, "xray", usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
 
@@ -69,7 +69,7 @@ def perioAdd(parent):
             usercode = treat[0]
             parent.pt.periopl += "%s "% usercode
             parent.pt.addToEstimate(1,treat[1], treat[2], treat[3],
-            treat[4], parent.pt.dnt1, parent.pt.cset, "perio %s"% usercode)
+            treat[4], parent.pt.dnt1, parent.pt.cset, "perio", usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
 
@@ -96,7 +96,7 @@ def otherAdd(parent):
             usercode = treat[0]
             parent.pt.otherpl += "%s "% usercode
             parent.pt.addToEstimate(1,treat[1], treat[2], treat[3],
-            treat[4], parent.pt.dnt1, parent.pt.cset, "other %s"% usercode)
+            treat[4], parent.pt.dnt1, parent.pt.cset, "other", usercode)
         parent.load_newEstPage()
         parent.load_treatTrees()
 
@@ -122,7 +122,7 @@ def customAdd(parent):
 
             parent.pt.custompl += "%s "% type
             parent.pt.addToEstimate(no, "4002", descr, fee,
-            ptfee, parent.pt.dnt1, "P", "custom %s"% type)
+            ptfee, parent.pt.dnt1, "P", "custom", type)
             parent.load_newEstPage()
             parent.load_treatTrees()
 
@@ -164,7 +164,7 @@ def fromFeeTable(parent, item):
 
             parent.pt.custompl += "%s "% type
             parent.pt.addToEstimate(no, code, descr, fee,
-            ptfee, parent.pt.dnt1, parent.pt.cset, "custom %s"% type)
+            ptfee, parent.pt.dnt1, parent.pt.cset, "custom", type)
             
             
             if parent.ui.tabWidget.currentIndex() != 7:
@@ -230,7 +230,7 @@ def chartAdd(parent, tooth, properties):
         fee, ptfee = fee_keys.getItemFees(parent.pt, itemcode)
         #--add to estimate
         parent.pt.addToEstimate(1, itemcode, description, fee, ptfee,
-        parent.pt.dnt1, parent.pt.cset, "%s %s"% (toothname, item[1]))
+        parent.pt.dnt1, parent.pt.cset, toothname, item[1])
 
 def pass_on_estimate_delete(parent, est):
     '''

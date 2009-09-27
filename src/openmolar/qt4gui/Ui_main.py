@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Thu Sep 24 14:06:11 2009
+# Created: Sat Sep 26 21:56:46 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -991,7 +991,7 @@ class Ui_MainWindow(object):
         self.scrollArea_6.setWidgetResizable(True)
         self.scrollArea_6.setObjectName("scrollArea_6")
         self.scrollAreaWidgetContents_9 = QtGui.QWidget(self.scrollArea_6)
-        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 733, 400))
+        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 469, 400))
         self.scrollAreaWidgetContents_9.setObjectName("scrollAreaWidgetContents_9")
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents_9)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -1659,7 +1659,7 @@ class Ui_MainWindow(object):
         self.appt1scrollArea.setWidgetResizable(True)
         self.appt1scrollArea.setObjectName("appt1scrollArea")
         self.appt1scrollAreaWidgetContents = QtGui.QWidget(self.appt1scrollArea)
-        self.appt1scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 174, 412))
+        self.appt1scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.appt1scrollAreaWidgetContents.setObjectName("appt1scrollAreaWidgetContents")
         self._2 = QtGui.QVBoxLayout(self.appt1scrollAreaWidgetContents)
         self._2.setObjectName("_2")
@@ -1703,7 +1703,7 @@ class Ui_MainWindow(object):
         self.appt2scrollArea.setWidgetResizable(True)
         self.appt2scrollArea.setObjectName("appt2scrollArea")
         self.appt2scrollAreaWidgetContents = QtGui.QWidget(self.appt2scrollArea)
-        self.appt2scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 173, 414))
+        self.appt2scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.appt2scrollAreaWidgetContents.setObjectName("appt2scrollAreaWidgetContents")
         self.appt2scrollArea.setWidget(self.appt2scrollAreaWidgetContents)
         self.gridLayout_32.addWidget(self.appt2scrollArea, 2, 0, 1, 2)
@@ -1745,7 +1745,7 @@ class Ui_MainWindow(object):
         self.appt3scrollArea.setWidgetResizable(True)
         self.appt3scrollArea.setObjectName("appt3scrollArea")
         self.appt3scrollAreaWidgetContents = QtGui.QWidget(self.appt3scrollArea)
-        self.appt3scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 174, 414))
+        self.appt3scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.appt3scrollAreaWidgetContents.setObjectName("appt3scrollAreaWidgetContents")
         self._3 = QtGui.QVBoxLayout(self.appt3scrollAreaWidgetContents)
         self._3.setObjectName("_3")
@@ -1769,7 +1769,7 @@ class Ui_MainWindow(object):
         self.appt4scrollArea.setWidgetResizable(True)
         self.appt4scrollArea.setObjectName("appt4scrollArea")
         self.appt3scrollAreaWidgetContents_2 = QtGui.QWidget(self.appt4scrollArea)
-        self.appt3scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 173, 414))
+        self.appt3scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.appt3scrollAreaWidgetContents_2.setObjectName("appt3scrollAreaWidgetContents_2")
         self._4 = QtGui.QVBoxLayout(self.appt3scrollAreaWidgetContents_2)
         self._4.setObjectName("_4")
@@ -1912,10 +1912,10 @@ class Ui_MainWindow(object):
         self.tab_13.setObjectName("tab_13")
         self.verticalLayout_19 = QtGui.QVBoxLayout(self.tab_13)
         self.verticalLayout_19.setObjectName("verticalLayout_19")
-        self.textBrowser = QtGui.QTextBrowser(self.tab_13)
-        self.textBrowser.setMaximumSize(QtCore.QSize(16777215, 200))
-        self.textBrowser.setObjectName("textBrowser")
-        self.verticalLayout_19.addWidget(self.textBrowser)
+        self.year_textBrowser = QtGui.QTextBrowser(self.tab_13)
+        self.year_textBrowser.setMaximumSize(QtCore.QSize(16777215, 200))
+        self.year_textBrowser.setObjectName("year_textBrowser")
+        self.verticalLayout_19.addWidget(self.year_textBrowser)
         self.yearView_frame = QtGui.QFrame(self.tab_13)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -2398,7 +2398,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(4)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
-        self.diary_tabWidget.setCurrentIndex(1)
+        self.diary_tabWidget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.saveButton, self.tabWidget)
         MainWindow.setTabOrder(self.tabWidget, self.debugBrowser)

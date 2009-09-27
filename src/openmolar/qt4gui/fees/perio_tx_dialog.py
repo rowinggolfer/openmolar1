@@ -71,7 +71,7 @@ def performPerio(parent):
         if not foundInEsts:
             parent.pt.addToEstimate(1, item, item_description, fee,
             ptfee, parent.pt.dnt1, parent.pt.cset,
-            "perio %s"% dl.trt, True)
+            "perio", dl.trt, True)
 
         if ptfee > 0:
             fees_module.applyFeeNow(parent, ptfee)

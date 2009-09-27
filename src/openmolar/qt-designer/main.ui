@@ -2528,7 +2528,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>733</width>
+                        <width>469</width>
                         <height>400</height>
                        </rect>
                       </property>
@@ -3986,7 +3986,7 @@ Note - this will not remove items which are currently there. </string>
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>1</number>
+               <number>3</number>
               </property>
               <widget class="QWidget" name="tab_26">
                <attribute name="title">
@@ -4086,8 +4086,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>174</width>
-                         <height>412</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4185,8 +4185,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>173</width>
-                         <height>414</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                       </widget>
@@ -4283,8 +4283,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>174</width>
-                         <height>414</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4336,8 +4336,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>173</width>
-                         <height>414</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>
@@ -4624,7 +4624,7 @@ Note - this will not remove items which are currently there. </string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_19">
                 <item>
-                 <widget class="QTextBrowser" name="textBrowser">
+                 <widget class="QTextBrowser" name="year_textBrowser">
                   <property name="maximumSize">
                    <size>
                     <width>16777215</width>

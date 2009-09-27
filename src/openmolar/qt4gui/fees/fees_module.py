@@ -74,10 +74,9 @@ def getFeesFromEst(parent, tooth, treat):
     iterate through the ests... find this item
     '''
     tooth = tooth.rstrip("pl")
-    completed = "%s %s"% (tooth, treat)
-    retarg = None
+    retarg = (0,0)
     for est in parent.pt.estimates:
-        if est.type == completed.strip(" "):
+        if est.type == treat.strip(" "):
             retarg = (est.fee, est.ptfee)
             break
     return retarg

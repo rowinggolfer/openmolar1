@@ -1084,6 +1084,7 @@ def handle_calendar_signal(parent):
             layout_month(parent)
         elif i==3:
             layout_year(parent)
+            layout_yearHeader(parent)
     else:
         print "date changed, but diary invisible... not laying out"
 
@@ -1129,6 +1130,34 @@ def layout_year(parent):
     data = appointments.getBankHols(startdate, enddate)
     parent.ui.yearView.setHeadingData(data)    
     parent.ui.yearView.update()
+
+def layout_yearHeader(parent):
+    '''
+    put dayname, bank hol info, and any memos into the year header textBrowser
+    '''
+    dayData = parent.ui.yearView.getDayData()
+    print dayData.dayName, dayData.publicHoliday, dayData.memos
+    headerText = '''<html><head><link rel="stylesheet"
+    href="%s" type="text/css"></head><body><div class="center">
+    <table width="100%%">
+    <tr><td colspan="2" class="yearheader">%s</td></tr>'''% (
+    localsettings.stylesheet, dayData.dayName)
+    
+    if dayData.publicHoliday != "":
+        headerText += '''<tr><td colspan="2" class="bankholiday">%s</td>
+        </tr>'''% dayData.publicHoliday
+
+    for dent, memo in dayData.memos:
+        if dent==0:
+            headerText += '''<tr><td class="yearops">ALL</td>
+            <td class="yearmemo">%s</td></tr>''' % memo   
+        else:
+            headerText += '''<tr><td class="yearops">%s</td>
+            <td class="yearmemo">%s</td></tr>''' %(
+            localsettings.apptix_reverse.get(dent), memo)
+    headerText += "</table></body></html>"
+    
+    parent.ui.year_textBrowser.setText(headerText)
 
 def diaryTab_practitioner_checkbox_handling(parent):
     '''

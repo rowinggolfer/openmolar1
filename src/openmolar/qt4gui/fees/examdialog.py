@@ -124,7 +124,7 @@ def performExam(parent):
 
                 parent.pt.addToEstimate(1, item, item_description, itemfee,
                 ptfee, localsettings.ops_reverse[examdent], parent.pt.cset,
-                "exam %s"% examtype, True)
+                "exam", examtype, True)
 
                 fees_module.applyFeeNow(parent, ptfee)
 

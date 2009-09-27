@@ -20,12 +20,19 @@ li{list-style:none;color:blue;padding-left:0px}
 
 /*-- th and td --*/
 table{width:100%;}
+
 .date{background-color:#ffeedd}
 .ops{background-color:#dddddd;}
 .tx{background-color:#aaaaaa}
 .notes{background-color:#dddddd;}
 .reception{background-color:#eeeeee;}
 .verbose{background-color:#ddeeff}
-    
+
+table.yeartable{width:600pt;}
+.yearheader{font-size:16pt;background-color:#eeeeee;font-style:bold;text-align:center;}
+.bankholiday{font-size:14pt;background-color:#eeeeee;font-style:bold;font-style:italic;text-align:center;}
+.yearops{background-color:#eeeeff;font-size:13pt;text-align:center;}
+.yearmemo{background-color:#eeeeff;font-style:italic;font-size:13pt;}
+
 th{border-style:solid;background-color:#eeeeee;}
 
