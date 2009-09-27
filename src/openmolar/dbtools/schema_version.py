@@ -27,6 +27,20 @@ def getVersion():
             version = data
     return version
     
+def clientCompatibility(client_schema):
+    rows = ()
+    try:
+        db = connect.connect()
+        cursor = db.cursor()
+        query = 'select data from settings where value = "compatible_clients"' 
+        cursor.execute(query)
+        rows = cursor.fetchall()
+    except connect.ProgrammingError, ex:
+        print "client_schema not found"
+    for row in rows:
+        if row[0] == client_schema:
+            return True
+            
 
 def update(arg, user):
     '''

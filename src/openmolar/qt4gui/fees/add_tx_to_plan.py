@@ -209,7 +209,7 @@ def chartAdd(parent, tooth, properties):
             #--tooth may be deciduous
             toothname = parent.pt.chartgrid.get(item[0])
             parent.pt.removeFromEstimate(toothname, item[1])
-            parent.advise("removing %s from estimate"% item[1])
+            parent.advise("removing %s from estimate"% item[1], 1)
     #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
     for item in updatedItems:
         #--ok, so now lookup the four digit itemcode
@@ -243,18 +243,51 @@ def pass_on_estimate_delete(parent, est):
         pl_cmp = "cmp"
     
     try:
-        spacepos = est.type.index(" ")
-        txtype = "%s -%s"% (est.type[:spacepos],est.type[spacepos:])
-        print "deleting ", txtype   
+        #-- format the treatment into the notation used in the 
+        #-- plan tree widget
+        txtype = "%s - %s"% (est.category,est.type)
+        deleteTxItem(parent, pl_cmp, txtype, passedOn=True) 
 
-        deleteTxItem(parent, pl_cmp, txtype) 
+        if est.completed and est.ptfee != 0:
+            result = QtGui.QMessageBox.question(parent, "question",
+            '''<p>Credit Patient &pound;%s for undoing this item?</p>
+            '''% localsettings.formatMoney(est.ptfee) ,
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if result == QtGui.QMessageBox.Yes:
+                fees_module.applyFeeNow(parent, -1 * est.ptfee, est.csetype)
+        
     except ValueError:
         parent.advise ("couldn't pass on delete message - " +
-        'badly formed est.type??? %s'% est.type)
+        'badly formed est.type??? %s'% est.type, 1)
 
-def deleteTxItem(parent, pl_cmp, txtype):
+def estimate_item_delete(parent, pl_cmp, category, type):
     '''
-    delete an item
+    delete an estimate item when user has removed an item of treatment
+    from the plan or completed
+    '''
+
+    result = QtGui.QMessageBox.question(parent, "question",
+    "remove %s %s from the estimate?"% (category, type),
+    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+    
+    if result == QtGui.QMessageBox.Yes:
+        removed = False
+        for est in parent.pt.estimates:
+            if est.category.lower() == category.lower() and \
+            est.type == type and est.completed == ("cmp" == pl_cmp):
+                if parent.pt.removeKnownEstimate(est):
+                    removed = True
+                    break
+        if not removed:
+            parent.advise("Unable to remove %s %s from estimate, sorry"%(
+            category, type), 1)
+        else:
+            parent.load_newEstPage()
+           
+def deleteTxItem(parent, pl_cmp, txtype, passedOn=False):
+    '''
+    delete an item of treatment (called by clicking on the treewidget)
+    or passed on from the est widget.
     '''
     tup = txtype.split(" - ")
     try:
@@ -275,15 +308,15 @@ def deleteTxItem(parent, pl_cmp, txtype):
                 parent.pt.addHiddenNote("exam", "%s"% tup[1], True)
             else:
                 if pl_cmp == "pl":
-                    plan = parent.pt.__dict__[att + "pl"].replace(treat, "")
+                    plan = parent.pt.__dict__[att + "pl"].replace(
+                    treat, "", 1)#-- only remove 1 occurrence
                     parent.pt.__dict__[att + "pl"] = plan
                     completed = parent.pt.__dict__[att + "cmp"]
-                    #parent.pt.__dict__[att+"cmp"]=completed
                 else:
                     plan = parent.pt.__dict__[att + "pl"]
                     #parent.pt.__dict__[att+"pl"]=plan
                     completed = parent.pt.__dict__[att + "cmp"].replace(
-                    treat, "")
+                    treat, "", 1) #-- only remove 1 occurrence
                     
                     parent.pt.__dict__[att + "cmp"] = completed
                 
@@ -292,6 +325,8 @@ def deleteTxItem(parent, pl_cmp, txtype):
                     parent.updateChartsAfterTreatment(att, plan, completed)
 
             parent.load_treatTrees()
+            if not passedOn:
+                estimate_item_delete(parent, pl_cmp, tup[0], tup[1])
 
     except Exception, e:
         parent.advise("Error deleting %s from plan<br>"% txtype +

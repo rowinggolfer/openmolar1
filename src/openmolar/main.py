@@ -34,18 +34,37 @@ def proceed():
     print "checking schema version...",
     from openmolar.dbtools import schema_version
     sv = schema_version.getVersion()
+    
     if localsettings.SCHEMA_VERSION > sv:
         print "schema is out of date"
         from openmolar.qt4gui import schema_updater
         sys.exit(schema_updater.main(sys.argv))
     elif localsettings.SCHEMA_VERSION < sv:
-        print "client is out of date"
-        QtGui.QMessageBox.warning(None, "Update Client",
-        '''<p>Sorry, you cannot run this version of the openMolar client 
-        because your database schema is more advanced.</p><p>this client 
-        requires schema version %s, but your database is at %s</p>
-        <p>Please Update openMolar now</p>'''% (
-        localsettings.SCHEMA_VERSION, sv)) 
+        print "client is out of date....."
+        compatible  = schema_version.clientCompatibility(
+        localsettings.SCHEMA_VERSION)
+        if not compatible:
+            QtGui.QMessageBox.warning(None, "Update Client",
+            '''<p>Sorry, you cannot run this version of the openMolar client 
+            because your database schema is more advanced.</p><p>this client 
+            requires schema version %s, but your database is at %s</p>
+            <p>Please Update openMolar now</p>'''% (
+            localsettings.SCHEMA_VERSION, sv)) 
+        else:
+            result = QtGui.QMessageBox.question(None, "Update Client",
+            '''<p>This openMolar client has fallen behind your database 
+            database schema version<br />this client was written for 
+            schema version %s, but your database is now at %s<br />
+            However, the differences are not critical, 
+            and you can continue if you wish</p>
+            <p><i>It would still be wise to update openMolar ASAP</i></p><hr />
+            <p>Do you wish to continue?</p>'''% (
+            localsettings.SCHEMA_VERSION, sv),
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+
+            if result == QtGui.QMessageBox.Yes:
+                from openmolar.qt4gui import maingui                
+                sys.exit(maingui.main(sys.argv))
     else:
         print "schema/client versions are correct"
         from openmolar.qt4gui import maingui                

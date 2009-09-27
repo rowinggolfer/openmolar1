@@ -41,26 +41,21 @@ class est():
     def __repr__(self):
         retarg="("
         for att in self.__dict__:
-            retarg+="%s ,"%self.__dict__[att]
-        return retarg+")"
+            retarg+="%s '%s',"% (att,self.__dict__[att])
+        return retarg.rstrip(",")+")"
 
     def __str__(self):
-        retarg="("
-        for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
-            retarg+='%s ,'%self.__dict__[att]
-        for att in ("type","itemcode","description","csetype","feescale"):
-            retarg+='"%s" ,'%self.__dict__[att]
-        for att in ("completed","carriedover"):
-            retarg+="%s ,"%self.__dict__[att]
-        return "%s)"%retarg.strip(",")
-
+        return self.__repr__()
+    
     def toHtmlRow(self):
-        return '''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
+        return '''<tr><td>%s</td><td>%s</td><td>%s</td>td>%s</td><td>%s</td>
         <td>%s</td><td>&pound;%.02f</td><td>&pound;%.02f</td>
         <td>%s</td><td>%s</td><td>%s</td></tr>'''%(
-        localsettings.ops.get(self.dent),self.number,self.itemcode,self.type,
+        localsettings.ops.get(self.dent),self.number,self.itemcode,
+        self.category, self.type,
         self.description,self.fee/100,self.ptfee/100,self.feescale,
         self.csetype,self.completed)
+
     def htmlHeader(self):
         return '''<tr><th>Dentist</th><th>number</th><th>code</th>
         <th>input</th><th>Description</th><th>fee</th><th>pt fee</th>

@@ -96,15 +96,16 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         '''
         retarg = '<center>'
         for item in self.items:
-            retarg += '''Type - '%s'<br />ItemCode - '%s'<br />Feescale - %s
-            <br />CSEtype - %s<br />Dent - %s<br />linked -%s<br /
-            >DBindex - %s<hr />'''% (
+            retarg += '''Category - '%s'<br /> Type - '%s'<br />
+            ItemCode - '%s'<br />Feescale - %s
+            <br />CSEtype - %s<br />Dent - %s<br />
+            DBindex - %s<hr />'''% (
+            item.category,
             item.type,
             item.itemcode,
             item.feescale,
             item.csetype,
             item.dent,
-            item.linked,
             item.ix)
         return retarg + "</center>"
 
@@ -121,7 +122,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             fee += item.fee
             ptfee += item.ptfee
             self.setDescription(item.description)
-            self.setType(item.type)
+            self.setType(item.category)
             self.setItemCode(item.itemcode)
             self.setCompleted(item.completed)
             self.setCset(item.csetype)
@@ -257,11 +258,8 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         '''
         if arg in (None, ""):
             self.code_label.setText("?")
-        elif arg[:2] in ("ur", "ul", "ll", "lr"):
-            arg = "(%s)"%arg.split(" ")[0].upper()
-            self.code_label.setText(arg)
         else:
-            self.code_label.setText(arg.split(" ")[0])
+            self.code_label.setText(arg)
 
     def setItemCode(self, arg):
         '''
@@ -627,7 +625,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
-    pt = patient_class.patient(11956)
+    pt = patient_class.patient(16588)
 
     form = estWidget()
     form.setEstimate(pt.estimates)

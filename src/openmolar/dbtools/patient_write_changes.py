@@ -30,7 +30,7 @@ def all_changes(pt, pt_dbstate, changes):
             elif change in patient_class.patientTableAtts:
                 value=pt.__dict__[change]
                 if change in patient_class.dateFields:
-                    if value!=None and value!="":
+                    if value != None and value != "":
                         patchanges+='%s="%s" ,'%(
                                     change,value)
                     else:
@@ -85,35 +85,35 @@ def all_changes(pt, pt_dbstate, changes):
                             #print "new %s"%est
                             #-- have to use the str because est class does not
                             #-- have a _eq_ property ??
-                            query='update newestimates set '
-                            if oldEst.type!=est.type:
-                                query+="type=%s,"%est.type
-                            if oldEst.number!=est.number:
-                                query+="number=%d,"%est.number
-                            if oldEst.itemcode!=est.itemcode:
-                                query+='itemcode="%s",'%est.itemcode
-                            if oldEst.description!=est.description:
-                                query+= 'description="%s",'%est.description
-                            if oldEst.fee!=est.fee:
-                                query+='fee=%d,'%est.fee
-                            if oldEst.ptfee!=est.ptfee:
-                                query+="ptfee=%d,"%est.ptfee
-                            if oldEst.feescale!=est.feescale:
-                                query+='feescale="%s",'%pt.feescale
-                            if oldEst.csetype!=est.csetype:
-                                query+='csetype="%s",'%est.csetype
-                            if oldEst.dent!=est.dent:
-                                query+='dent=%d,'%est.dent
-                            if oldEst.completed!=est.completed:
-                                query+='completed=%s,'%est.completed
-                            if oldEst.carriedover!=est.carriedover:
-                                query+='carriedover=%s,'%est.carriedover
-                            if oldEst.linked!=est.linked:
-                                query+='linked=%s,'%est.linked
-                            query+="modified_by =%s"%localsettings.operator
-                            query+="time_stamp=%s"%localsettings.timestamp()
+                            query = 'update newestimates set '
+                            if oldEst.type != est.type:
+                                query += "type=%s,"% est.type
+                            if oldEst.number != est.number:
+                                query += "number=%d,"% est.number
+                            if oldEst.itemcode != est.itemcode:
+                                query += 'itemcode="%s",'% est.itemcode
+                            if oldEst.description != est.description:
+                                query +=  'description="%s",'% est.description
+                            if oldEst.fee != est.fee:
+                                query += 'fee=%d,'% est.fee
+                            if oldEst.ptfee != est.ptfee:
+                                query += "ptfee=%d,"% est.ptfee
+                            if oldEst.feescale != est.feescale:
+                                query += 'feescale="%s",'% pt.feescale
+                            if oldEst.csetype != est.csetype:
+                                query += 'csetype="%s",'% est.csetype
+                            if oldEst.dent != est.dent:
+                                query += 'dent=%d,'% est.dent
+                            if oldEst.completed != est.completed:
+                                query += 'completed=%s,'% est.completed
+                            if oldEst.carriedover != est.carriedover:
+                                query += 'carriedover=%s,'% est.carriedover
+                            if oldEst.linked != est.linked:
+                                query += 'linked=%s,'% est.linked
+                            query += 'modified_by = "%s", '% localsettings.operator
+                            query += 'time_stamp = "%s"'% localsettings.timestamp()
                                 
-                            query=query.strip(",")+" where ix = %d"%est.ix
+                            query += " where ix = %d"% est.ix
 
                             sqlcommands["estimates"].append(query)
 
@@ -138,7 +138,7 @@ def all_changes(pt, pt_dbstate, changes):
             elif change in patient_class.currtrtmtTableAtts:
                 value=pt.__dict__[change]
                 if change in patient_class.dateFields:
-                    if value!=None and value!="":
+                    if value != None and value != "":
                         trtchanges+='%s="%s" ,'%(change, value)
                     else:
                         trtchanges+='%s=NULL ,'% change
@@ -160,7 +160,7 @@ def all_changes(pt, pt_dbstate, changes):
         '''update currtrtmt SET %s where serialno=%d and courseno=%d'''%(
                                 trtchanges.strip(","),pt.serialno,pt.courseno)
 
-    if sqlcommands!={}:
+    if sqlcommands != {}:
         db=connect()
         cursor = db.cursor()
         tables=sqlcommands.keys()
@@ -214,7 +214,7 @@ def toNotes(serialno,newnotes):
     cursor = db.cursor()
     cursor.execute(query)
     rows=cursor.fetchall()
-    if rows!=((None,),):
+    if rows != ((None,),):
         lineNo=rows[0][0]
     else:
         lineNo=0
@@ -262,7 +262,7 @@ def discreet_changes(pt_changed,changes):
         value=pt_changed.__dict__[change]
         print change,type(value)
         if change in patient_class.dateFields:
-            if value!="" and value!=None:
+            if value != "" and value != None:
                 sqlcond+='%s="%s" ,'%(change, value)
         elif value==None:
             sqlcond+='%s=NULL ,'%(change)
@@ -274,7 +274,7 @@ def discreet_changes(pt_changed,changes):
     print "update patients SET %s where serialno=%s"%(sqlcond.strip(","),
                                                       pt_changed.serialno)
     result=True
-    if sqlcond!="":
+    if sqlcond != "":
         db=connect()
         cursor = db.cursor()
         #print cursor.execute(sqlcommand)
