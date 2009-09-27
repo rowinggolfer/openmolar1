@@ -16,8 +16,8 @@ import os
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 17th September 2009.
-__MAJOR_VERSION__= "0.1.4" 
+#- updated 27th September 2009.
+__MAJOR_VERSION__= "0.1.5" 
 
 SCHEMA_VERSION = "1.1"
 
