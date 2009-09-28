@@ -17,11 +17,6 @@ class Ui_Dialog(Ui_saveMemo.Ui_Dialog):
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         self.author_comboBox.addItems(localsettings.allowed_logins)
         self.serialno=sno
-        #if localsettings.apptix_reverse.has_key(performingDent):
-        #    if localsettings.apptix_reverse[performingDent] in localsettings.activedents:
-        #        pos=localsettings.activedents.index(localsettings.apptix_reverse[performingDent])                                      
-        #        self.dents_comboBox.setCurrentIndex(pos)
-        #else:
         self.author_comboBox.setCurrentIndex(-1)
     
     def getInput(self):
@@ -41,9 +36,14 @@ class Ui_Dialog(Ui_saveMemo.Ui_Dialog):
         
         message=str(self.textEdit.toPlainText().toAscii())
         
-        type="all"
+        if self.viewSurgery_radioButton.isChecked():
+            type = "surg"
+        elif self.viewReception_radioButton.isChecked():
+            type = "rec"
+        else:
+            type = "all"
         
-        return memos.commit(self.serialno,author,type,exdate,message,open) 
+        return memos.saveMemo(self.serialno,author,type,exdate,message,open) 
     
     
 if __name__ == "__main__":

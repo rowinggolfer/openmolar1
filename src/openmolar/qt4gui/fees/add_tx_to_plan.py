@@ -202,14 +202,16 @@ def chartAdd(parent, tooth, properties):
     updatedItems = fee_keys.itemsPerTooth(tooth, properties)
 
     #check to see if treatments have been removed
+    
     for item in existingItems:
         if item in updatedItems:
             updatedItems.remove(item)
         else:
-            #--tooth may be deciduous
-            toothname = parent.pt.chartgrid.get(item[0])
-            parent.pt.removeFromEstimate(toothname, item[1])
-            parent.advise("removing %s from estimate"% item[1], 1)
+            if item[1] != "":
+                #--tooth may be deciduous
+                toothname = parent.pt.chartgrid.get(item[0])
+                parent.pt.removeFromEstimate(toothname, item[1])
+                parent.advise("removed %s from estimate"% item[1], 1)
     #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
     for item in updatedItems:
         #--ok, so now lookup the four digit itemcode

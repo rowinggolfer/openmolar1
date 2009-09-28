@@ -22,7 +22,15 @@ class memo():
 def getMemos(serialno):
     retarg=[]
     db=connect()
-    query="select ix,serialno,author,type,mdate,message from ptmemos where serialno=%d and open=1 and expiredate>=curdate()"%serialno
+
+    query = '''select ix,serialno,author,type,mdate,message from ptmemos 
+    where serialno=%d and open=1 and expiredate>=curdate()''' %serialno
+    
+    if localsettings.station == "surgery":
+        query += ' and (type ="surg" or type = "all")'
+    elif localsettings.station == "reception":
+        query += ' and (type ="rec" or type = "all")'
+        
     if localsettings.logqueries:
         print query
     cursor = db.cursor()
@@ -41,6 +49,7 @@ def getMemos(serialno):
         
         retarg.append(newmemo)
     return retarg
+
 def deleteMemo(ix):
     query="update ptmemos set open=0 where ix=%d"%ix
     db=connect()
@@ -51,19 +60,22 @@ def deleteMemo(ix):
     cursor.close()
     db.commit()
 
-def commit(serialno,author,type,expire,message,open):
-    
+def saveMemo(serialno, author, type, expire, message, open):
+    '''
+    put a memo into the database
+    '''
     db=connect()
     
-    columns="serialno,author,type,mdate,expiredate,message,open"
-    
-    values='%d,"%s","%s",%s,%s,"%s",%s'%(
-    serialno,author,type,localsettings.sqlToday(),expire,message.replace('"','\"'),open)
+    values = (serialno, author, type, localsettings.sqlToday(), 
+    expire, message, open)
 
-    query="insert into ptmemos (%s) VALUES (%s)"%(columns,values)
-    print query
+    query = '''insert into ptmemos 
+    (serialno,author,type,mdate,expiredate,message,open) 
+    VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+    if localsettings.logqueries:
+        print query, values
     cursor = db.cursor()
-    result=cursor.execute(query)
+    result=cursor.execute(query, values)
     db.commit()
     cursor.close()
     #db.close()
