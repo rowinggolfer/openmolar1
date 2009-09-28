@@ -39,14 +39,19 @@ class est():
         self.linked = False
     
     def __repr__(self):
-        retarg="("
-        for att in self.__dict__:
-            retarg+="%s '%s',"% (att,self.__dict__[att])
-        return retarg.rstrip(",")+")"
-
-    def __str__(self):
-        return self.__repr__()
+        return self.__str__()
     
+    def __str__(self):
+        retarg="("
+        for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
+            retarg+='%s ,'%self.__dict__[att]
+        for att in ("category","type","itemcode","description","csetype",
+        "feescale"):
+            retarg+='"%s" ,'%self.__dict__[att]
+        for att in ("completed","carriedover"):
+            retarg+="%s ,"%self.__dict__[att]
+        return "%s)"% retarg.strip(",")
+
     def toHtmlRow(self):
         return '''<tr><td>%s</td><td>%s</td><td>%s</td>td>%s</td><td>%s</td>
         <td>%s</td><td>&pound;%.02f</td><td>&pound;%.02f</td>
@@ -220,9 +225,9 @@ if __name__ == "__main__":
         serialno = 23664
 
     pt = patient_class.patient(serialno)
-    #print pt.estimates
+    print str(pt.estimates)
     #print toHtml(pt.estimates,pt.tsfees)
 
-    print toBriefHtml(pt.estimates)
+    #print toBriefHtml(pt.estimates)
     
-    recalculate_estimate(pt)
+    #recalculate_estimate(pt)

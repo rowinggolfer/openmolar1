@@ -1,5 +1,5 @@
-openmolar (0.1.4-5ubuntu1) intrepid; urgency=low
+openmolar (0.1.5-0ubuntu1) intrepid; urgency=low
 
-  * db updating
+  * a move to a minor database schema change, with code put in place to restrict running with incorrect schemas. 
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 25 Sep 2009 01:36:30 +0100
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Sun, 27 Sep 2009 23:30:00 +0100

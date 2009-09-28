@@ -2640,8 +2640,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                 if oldval != newval:
                     if attr == "xraycmp":
                         daybook_module.xrayDates(self, newval)
+                        changes.append(attr)
                     elif attr == "periocmp":
                         daybook_module.perioDates(self, newval)
+                        changes.append(attr)
                     elif attr not in fieldsToExclude:
                         if attr != "memo" or oldval.replace(chr(13), "") != newval:
                             #--ok - windows line ends from old DB were

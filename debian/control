@@ -11,7 +11,7 @@ Package: openmolar
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}, python-qt4, python-mysqldb, evince
 XB-Python-Version: ${python:Versions}
-Description: OpenMolar is Dental Practice Management Software
+Description: Dental Practice Management Software
  see https://launchpad.net/openmolar for project description and 
  http://www.academydental.com/openmolar for screenshots
  .
