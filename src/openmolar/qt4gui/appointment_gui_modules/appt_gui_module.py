@@ -1085,6 +1085,8 @@ def handle_calendar_signal(parent):
         elif i==3:
             layout_year(parent)
             layout_yearHeader(parent)
+        elif i==4:
+            parent.taskView.layoutTasks()
     else:
         print "date changed, but diary invisible... not laying out"
 

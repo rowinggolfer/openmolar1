@@ -37,6 +37,7 @@ from openmolar.qt4gui import forum_gui_module
 from openmolar.qt4gui import contract_gui_module
 
 from openmolar.qt4gui.appointment_gui_modules import appt_gui_module
+from openmolar.qt4gui.appointment_gui_modules import taskgui
 
 #--dialogs made with designer
 from openmolar.qt4gui.dialogs import Ui_patient_finder
@@ -1334,6 +1335,8 @@ class pageHandlingClass():
             self.pt_dbstate=patient_class.patient(0)
             #--and have the comparison copy identical (to check for changes)
             self.pt=copy.deepcopy(self.pt_dbstate)
+            self.loadedPatient_label.setText("No Patient Loaded")
+        
             if self.editPageVisited:
                 print "blanking edit page fields"
                 self.load_editpage()
@@ -1550,9 +1553,21 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         already
         '''
         #-statusbar
-        self.ui.operatorLabel = QtGui.QLabel()
-        self.ui.statusbar.addPermanentWidget(self.ui.operatorLabel)
-
+        self.statusbar_frame = QtGui.QFrame()
+        self.operator_label = QtGui.QLabel()        
+        self.loadedPatient_label = QtGui.QLabel()
+        self.loadedPatient_label.setMinimumWidth(450)
+        #self.loadedPatient_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.sepline = QtGui.QFrame(self.statusbar_frame)
+        self.sepline.setFrameShape(QtGui.QFrame.VLine)
+        self.sepline.setFrameShadow(QtGui.QFrame.Sunken)
+        hlayout = QtGui.QHBoxLayout(self.statusbar_frame)
+        hlayout.addWidget(self.loadedPatient_label)
+        hlayout.addWidget(self.sepline)
+        hlayout.addWidget(self.operator_label)        
+        hlayout.setMargin(0)
+        self.ui.statusbar.addPermanentWidget(self.statusbar_frame)
+        
         #-summary chart
         self.ui.summaryChartWidget=chartwidget.chartWidget()
         self.ui.summaryChartWidget.setShowSelected(False)
@@ -1761,6 +1776,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #-- add a header to the estimates page
         self.ui.estWidget=estimateWidget.estWidget()
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
+
+        self.taskView = taskgui.taskViewer()
+        self.ui.tasks_scrollArea.setWidget(self.taskView)
 
 
         #--history
@@ -2167,7 +2185,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.pt.sname, self.pt.addr1, self.pt.addr2,
         self.pt.addr3, self.pt.town, self.pt.county, 
         self.pt.pcde, self.pt.tel1)
-
+        labeltext = "currently editing  %s %s %s - (%s)"% (self.pt.title, self.pt.fname, 
+        self.pt.sname, self.pt.serialno)
+        self.loadedPatient_label.setText(labeltext)
+        
         if not self.pt.serialno in localsettings.recent_snos:
             #localsettings.recent_snos.remove(self.pt.serialno)
             localsettings.recent_snos.append(self.pt.serialno)
@@ -2176,7 +2197,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.ui.debugBrowser.setText("")
         self.medalert()
         self.getmemos()
-
+        
         if localsettings.station == "surgery":
             self.callXrays()
     
@@ -2378,7 +2399,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             op_text += " team "
         op_text += " %s using %s mode. "%(localsettings.operator,
         localsettings.station)
-        self.ui.operatorLabel.setText(op_text)
+        self.operator_label.setText(op_text)
         if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)
         else:

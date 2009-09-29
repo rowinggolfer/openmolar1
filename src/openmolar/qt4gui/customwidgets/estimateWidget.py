@@ -250,6 +250,9 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         '''
         update description label
         '''
+        if len(self.items) > 1:
+            arg += " etc"
+        
         self.description_lineEdit.setText(arg)
 
     def setType(self, arg):
@@ -528,8 +531,7 @@ class estWidget(QtGui.QFrame):
 
     def findExistingItemWidget(self, item):
         for widg in self.estItemWidgets:
-            if widg.itemCode == item.itemcode and \
-            widg.items[0].filteredDescription() == item.filteredDescription():
+            if widg.itemCode == item.itemcode :
                 widg.addItem(item)
                 return True
 
