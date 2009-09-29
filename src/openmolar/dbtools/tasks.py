@@ -5,7 +5,7 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
-from openmolar.connect import connect
+from openmolar import connect
 from openmolar.settings import localsettings
 
 class task():
@@ -28,15 +28,23 @@ def getTasks():
     poll the database for tasks
     '''
     retarg = []
-    db=connect()
+    db = connect.connect()
     query = '''select ix, op, author, type, mdate, due, message,
     completed, visible from tasks'''
     
     if localsettings.logqueries:
         print query
     cursor = db.cursor()
-    cursor.execute(query)
-    rows=cursor.fetchall()
+    try:
+        cursor.execute(query)
+        rows=cursor.fetchall()
+    except connect.ProgrammingError, ex:
+        print "tasks table not found?", ex
+        #- test row
+        rows = (
+        (1,"NW","NW","","","","X-ray Door",False,True),
+        (1,"NW","NW","","","","Referal to Buchanan",False,True),
+        (1,"NW","NW","","","","Surgery Door",False,True),)
     cursor.close()
     for row in rows:
         newtask=task()
@@ -56,7 +64,7 @@ def updateTask(task):
     '''
     update a task which is already in the database
     '''
-    db=connect()
+    db = connect.connect()
     
     values = (task.op, task.author, task.type, task.mdate, task.due, 
     task.message, task.completed, task.visible)
@@ -77,7 +85,7 @@ def savetask(task):
     '''
     put a task into the database
     '''
-    db=connect()
+    db = connect.connect()
     
     values = (task.op, task.author, task.type, task.mdate, task.due, 
     task.message, task.completed, task.visible)

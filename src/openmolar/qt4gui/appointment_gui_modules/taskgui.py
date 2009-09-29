@@ -15,6 +15,7 @@ import datetime
 from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
+from openmolar.dbtools import tasks
 from openmolar.qt4gui.customwidgets import ui_taskwidget
 
 class taskViewer(QtGui.QFrame):
@@ -43,17 +44,16 @@ class taskViewer(QtGui.QFrame):
         #self.clear()
         rightCol = False
         row = 0
+        currentTasks = tasks.getTasks()
         for op in self.ops:
             #--creates a widget
             iw = QtGui.QWidget(self)
             tw = ui_taskwidget.Ui_Form()
             tw.setupUi(iw)
             tw.label.setText(op)
-            if op == "AH":
-                tw.listWidget.addItems(["Sign your forms"])
-            if op == "NW":
-                tw.listWidget.addItems(["Fix the door handle X-ray room",
-                "Refer to Buchanan", "order precision attachment"])
+            for eachTask in currentTasks:
+                if eachTask.op == op:
+                    tw.listWidget.addItems([eachTask.message])
                 
             self.taskWidgets.append(tw)
             if not rightCol:
