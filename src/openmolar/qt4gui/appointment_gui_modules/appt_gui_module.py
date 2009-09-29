@@ -974,57 +974,78 @@ def clearTodaysEmergencyTime(parent):
             
 def apptOVclinicians(parent):
     '''
+    user has checked/unchecked the button to toggle ALL clinicians
     everybody's book to be viewed
     '''
-    value = parent.ui.aptOV_everybody_checkBox.checkState()
-    #--disconnect signal slots from the chechboxes temporarily
+    print "all clinicians"
+    state = parent.ui.aptOV_everybody_checkBox.checkState()
+    
     parent.connectAptOVdentcbs(False)
-    #--change their values
-    #for dent in parent.ui.aptOVdent_checkBoxes.keys():
-    #    parent.ui.aptOVdent_checkBoxes[dent].setCheckState(value)
-    parent.ui.aptOV_alldentscheckBox.setChecked(value)
-    #--reconnect
+    parent.ui.aptOV_alldentscheckBox.setChecked(state)
     parent.connectAptOVdentcbs()
-    #--refresh Layout
+
     parent.connectAptOVhygcbs(False)
-    #for dent in parent.ui.aptOVhyg_checkBoxes.keys():
-    #    parent.ui.aptOVhyg_checkBoxes[dent].setCheckState(value)
-    parent.ui.aptOV_allhygscheckBox.setChecked(value)
-        
+    parent.ui.aptOV_allhygscheckBox.setChecked(state)
     parent.connectAptOVhygcbs()
 
-    if parent.ui.aptOV_everybody_checkBox.isVisible():
-        handle_calendar_signal(parent)
+    handle_calendar_signal(parent, newDate=False)
 
 def apptOVhygs(parent):
     '''
     called by checking the all hygenists checkbox on the apptov tab
     '''
+    print "all hygs"
     #-- coments as for above proc
     parent.connectAptOVhygcbs(False)
-    for dent in parent.ui.aptOVhyg_checkBoxes.keys():
-        parent.ui.aptOVhyg_checkBoxes[dent].setCheckState(
-        parent.ui.aptOV_allhygscheckBox.checkState())
+    state = parent.ui.aptOV_allhygscheckBox.checkState()
+    for cb in parent.ui.aptOVhyg_checkBoxes.values():
+        cb.setCheckState(state)
     parent.connectAptOVhygcbs()
     
-    if parent.ui.aptOV_allhygscheckBox.isVisible():
-        handle_calendar_signal(parent)
+    handle_calendar_signal(parent, newDate=False)
 
 def apptOVdents(parent):
     '''
     called by checking the all dentists checkbox on the apptov tab
+    this diconnects the dentist checkboxes from their slots,
+    alters their state, then reconnects
     '''
-    #--disconnect signal slots from the chechboxes temporarily
+    
+    print "all dentists"
+
     parent.connectAptOVdentcbs(False)
-    #--change their values
-    for dent in parent.ui.aptOVdent_checkBoxes.keys():
-        parent.ui.aptOVdent_checkBoxes[dent].setCheckState(
-        parent.ui.aptOV_alldentscheckBox.checkState())
-    #--reconnect
+
+    state = parent.ui.aptOV_alldentscheckBox.checkState() 
+    for cb in parent.ui.aptOVdent_checkBoxes.values():
+        cb.setCheckState(state)
+
     parent.connectAptOVdentcbs()
-    #--refresh Layout
-    if parent.ui.aptOV_alldentscheckBox.isVisible():
-        handle_calendar_signal(parent)
+
+    handle_calendar_signal(parent, newDate=False)
+
+def dentToggled(parent):
+    '''
+    a dentist checkbox has been toggled
+    '''
+    print "dentist checkbox"
+    handle_calendar_signal(parent, newDate=False)
+    
+def hygToggled(parent):
+    '''
+    a hygenist checkbox has been toggled
+    '''
+    print "hygenist checkbox"
+    handle_calendar_signal(parent, newDate=False)
+
+
+def handle_aptOV_checkboxes(parent):
+    '''
+    user has altered one of the checkboxes on the appointment options
+    emergency, lunch etc..
+    '''
+    print "checkbox"
+    
+    handle_calendar_signal(parent, newDate=False)
 
 def findApptButtonClicked(parent):
     '''
@@ -1055,9 +1076,9 @@ def makeDiaryVisible(parent):
     if parent.ui.calendarWidget.selectedDate() != today:
         parent.ui.calendarWidget.setSelectedDate(today)
     else:
-        handle_calendar_signal(parent)
+        handle_calendar_signal(parent, newDate=False)    
 
-def handle_calendar_signal(parent):
+def handle_calendar_signal(parent, newDate=True):
     '''
     slot to catch a date change from the custom mont/year widgets emitting
     a date signal 
@@ -1065,7 +1086,6 @@ def handle_calendar_signal(parent):
     OR the checkboxes have been tweaked
     OR a memo has been added
     '''
-
     d = parent.ui.calendarWidget.selectedDate().toPyDate()
     parent.ui.monthView.setSelectedDate(d)    
     parent.ui.yearView.setSelectedDate(d)
@@ -1076,7 +1096,7 @@ def handle_calendar_signal(parent):
     if parent.ui.main_tabWidget.currentIndex() == 1:
         i = parent.ui.diary_tabWidget.currentIndex()
 
-        if i==0:
+        if i==0 and newDate:
             layout_dayView(parent)
         elif i==1:
             layout_weekView(parent)
@@ -1087,9 +1107,7 @@ def handle_calendar_signal(parent):
             layout_yearHeader(parent)
         elif i==4:
             parent.taskView.layoutTasks()
-    else:
-        print "date changed, but diary invisible... not laying out"
-
+    
 def updateDayMemos(parent, memos):
     '''
     user has added some memos

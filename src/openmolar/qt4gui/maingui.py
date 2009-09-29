@@ -1691,46 +1691,54 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.ui.aptOVdent_checkBoxes={}
         self.ui.aptOVhyg_checkBoxes={}
 
-        #vlayout=QtGui.QVBoxLayout(self.ui.aptOVdents_frame)
         glayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
         glayout.setSpacing(0)
-        self.ui.aptOV_everybody_checkBox = QtGui.QCheckBox(
-                                            QtCore.QString("All Clinicians"))
+        self.ui.aptOV_everybody_checkBox = QtGui.QCheckBox("All Clinicians")
         self.ui.aptOV_everybody_checkBox.setChecked(True)
         row=0
-        glayout.addWidget(self.ui.aptOV_everybody_checkBox, row, 0, 1, 2)
+        glayout.addWidget(self.ui.aptOV_everybody_checkBox, row, 0, 1, -1)
 
         hl=QtGui.QFrame(self.ui.aptOVdents_frame)
-        #--Draw a line here.... but room doesn;t permit
         hl.setFrameShape(QtGui.QFrame.HLine)
         hl.setFrameShadow(QtGui.QFrame.Sunken)
         row+=1
-        glayout.addWidget(hl, row, 0, 1, 2)
+        glayout.addWidget(hl, row, 0, 1, -1)
 
-        self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox(
-                                            QtCore.QString("All Dentists"))
+        self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox("All Dentists")
         self.ui.aptOV_alldentscheckBox.setChecked(True)
-        row+=1
-        glayout.addWidget(self.ui.aptOV_alldentscheckBox, row, 0, 1, 2)
+        row += 1
+        glayout.addWidget(self.ui.aptOV_alldentscheckBox, row, 0, 1, -1)
+        row += 1
+        column = 1
         for dent in localsettings.activedents:
             cb=QtGui.QCheckBox(QtCore.QString(dent))
             cb.setChecked(True)
             self.ui.aptOVdent_checkBoxes[localsettings.apptix[dent]]=cb
-            row+=1
-            glayout.addWidget(cb, row, 1, 1, 1)
-
-        self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox(
-                                        QtCore.QString("All Hygenists"))
+            glayout.addWidget(cb, row, column)
+            if column == 1:
+                column = 2
+            else:
+                column = 1
+                row += 1
+        if column == 1:
+            row += 1        
+        self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox("All Hygenists")
         self.ui.aptOV_allhygscheckBox.setChecked(True)
-        row+=1
-        glayout.addWidget(self.ui.aptOV_allhygscheckBox, row, 0, 1, 2)
+        
+        glayout.addWidget(self.ui.aptOV_allhygscheckBox, row, 0, 1, -1)                
+        row += 1
+        column = 1
         for hyg in localsettings.activehygs:
             cb=QtGui.QCheckBox(QtCore.QString(hyg))
             cb.setChecked(True)
             self.ui.aptOVhyg_checkBoxes[localsettings.apptix[hyg]]=cb
-            row+=1
-            glayout.addWidget(cb, row, 1, 1, 1)
-
+            glayout.addWidget(cb, row, column)
+            if column == 1:
+                column = 2
+            else:
+                column = 1
+                row+=1
+            
         #--customise the appointment widget calendar
         self.ui.calendarWidget = calendars.controlCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.apptOVcalendar_placeholder)
@@ -3013,8 +3021,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
     def aptOV_checkboxes_changed(self):
         '''
         handles the signals from the options checkboxes on the appt OV page
+        Lunch, emergencies  etc..
         '''
-        appt_gui_module.handle_calendar_signal(self)
+        appt_gui_module.handle_aptOV_checkboxes(self)
     
     def apptOV_all_clinicians_checkbox_changed(self):
         '''
@@ -3029,6 +3038,20 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         changed state
         '''
         appt_gui_module.apptOVdents(self)
+    
+    def dent_appt_checkbox_changed(self):
+        '''
+        checkbox toggleing who's book to show on the appointment overpage has
+        changed state
+        '''
+        appt_gui_module.dentToggled(self)
+
+    def hyg_appt_checkbox_changed(self):
+        '''
+        checkbox toggleing who's book to show on the appointment overpage has
+        changed state
+        '''
+        appt_gui_module.hygToggled(self)        
         
     def apptOV_all_hygenists_checkbox_changed(self):
         '''
@@ -3951,11 +3974,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             if con:
                 QtCore.QObject.connect(cb, 
                 QtCore.SIGNAL("stateChanged(int)"),
-                self.aptOV_checkboxes_changed)
+                self.dent_appt_checkbox_changed)
             else:
                 QtCore.QObject.disconnect(cb, 
                 QtCore.SIGNAL("stateChanged(int)"),
-                self.aptOV_checkboxes_changed)
+                self.dent_appt_checkbox_changed)
     
     def connectAptOVhygcbs(self, con=True):
         for cb in self.ui.aptOVhyg_checkBoxes.values():
@@ -3966,12 +3989,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             if con:
                 QtCore.QObject.connect(cb, 
                 QtCore.SIGNAL("stateChanged(int)"),
-                self.aptOV_checkboxes_changed)
+                self.hyg_appt_checkbox_changed)
             else:
                 QtCore.QObject.disconnect(cb, 
                 QtCore.SIGNAL("stateChanged(int)"),
-                self.aptOV_checkboxes_changed)
-    
+                self.hyg_appt_checkbox_changed)
     
 ###############################################################################
 ########          ATTENTION NEEDED HERE         ###############################
