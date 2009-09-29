@@ -28,7 +28,7 @@ class controlCalendar(QtGui.QCalendarWidget):
         QtGui.QCalendarWidget.__init__(self, *args)
         self.setFirstDayOfWeek(QtCore.Qt.Monday)
         self.setGridVisible(True)
-        self.setHorizontalHeaderFormat(QtGui.QCalendarWidget.SingleLetterDayNames)
+        #self.setHorizontalHeaderFormat(QtGui.QCalendarWidget.SingleLetterDayNames)
         self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(True)
         self.highlightWeek = False

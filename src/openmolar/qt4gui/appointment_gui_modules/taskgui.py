@@ -24,24 +24,25 @@ class taskViewer(QtGui.QFrame):
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
 
-        self.layout = QtGui.QVBoxLayout(self)
+        self.layout = QtGui.QGridLayout(self)
 
         self.ops = localsettings.allowed_logins
         self.ops.sort()
         self.taskWidgets = []
         
-        self.setMinimumSize(self.minimumSizeHint())
+        self.layoutWidgets()
 
     def minimumSizeHint(self):
-        height = len(self.taskWidgets) * 120
+        height = len(self.taskWidgets)/2 * 100
         return QtCore.QSize(720, height)
         
-    def layoutTasks(self):
+    def layoutWidgets(self):
         '''
         lay out some task widgets
         '''
-        self.clear()
-        alternateBase = False
+        #self.clear()
+        rightCol = False
+        row = 0
         for op in self.ops:
             #--creates a widget
             iw = QtGui.QWidget(self)
@@ -55,22 +56,27 @@ class taskViewer(QtGui.QFrame):
                 "Refer to Buchanan", "order precision attachment"])
                 
             self.taskWidgets.append(tw)
-            if alternateBase:
+            if not rightCol:
                 iw.setBackgroundRole(iw.palette().AlternateBase)
+                self.layout.addWidget(iw, row, 0)
+                rightCol = True
             else:
-                alternateBase = True
-            self.layout.insertWidget(-1, iw)
-        
+                self.layout.addWidget(iw,row,1)
+                rightCol = False
+                row+=1
+            
         self.setMinimumSize(self.minimumSizeHint())
         
-
+    def layoutTasks(self):
+        print "laying out tasks"
+    
     def clear(self):
         '''
         clears all taskWidgets
         '''
         while self.taskWidgets != []:
             widg = self.taskWidgets.pop()
-            self.estimate_layout.removeWidget(widg.parent)
+            self.layout.removeWidget(widg.parent)
             widg.parent.setParent(None)
 
 
