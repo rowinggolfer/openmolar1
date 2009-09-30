@@ -25,8 +25,7 @@ myUser = xmlnode.getElementsByTagName("user")[0].firstChild.data
 myPassword = xmlnode.getElementsByTagName("password")[0].firstChild.data
 if settingsversion == "1.1":
     myPassword = base64.b64decode(myPassword)
-    print "password = ",myPassword
-
+    
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
 if sslnode and sslnode[0].firstChild.data=="True":

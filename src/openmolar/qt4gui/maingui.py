@@ -1755,7 +1755,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.yearView)
         
-        
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
         
@@ -1787,7 +1786,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
         self.taskView = taskgui.taskViewer()
         self.ui.tasks_scrollArea.setWidget(self.taskView)
-
 
         #--history
         self.addHistoryMenu()
@@ -3935,17 +3933,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         QtCore.QObject.connect(self.ui.aptOV_lunchcheckBox,
         QtCore.SIGNAL("stateChanged(int)"), self.aptOV_checkboxes_changed)
         
-        QtCore.QObject.connect(self.ui.aptOV_everybody_checkBox,
-        QtCore.SIGNAL("stateChanged(int)"), 
-        self.apptOV_all_clinicians_checkbox_changed)
-        
-        QtCore.QObject.connect(self.ui.aptOV_alldentscheckBox,
-        QtCore.SIGNAL("stateChanged(int)"), 
-        self.apptOV_all_dentists_checkbox_changed)
-        
-        QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox,
-        QtCore.SIGNAL("stateChanged(int)"), 
-        self.apptOV_all_hygenists_checkbox_changed)
         
         for widg in self.ui.apptoverviews:
             widg.connect(widg, QtCore.SIGNAL("AppointmentClicked"), 
@@ -3954,6 +3941,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             widg.connect(widg, QtCore.SIGNAL("DentistHeading"),
             self.apptOVwidget_header_clicked)
 
+
+        self.connectAllClinicians()
+        self.connectAllDents()
+        self.connectAllHygs()
         self.connectAptOVdentcbs()
         self.connectAptOVhygcbs()
 
@@ -3964,13 +3955,53 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.connect(self.ui.apptoverviewControls[i],
             QtCore.SIGNAL("right-clicked"), self.aptOVlabel_rightClicked)
 
-        
+    ##TODO - create a class for this widget and it's bloated functionality!!
+
+    def connectAllClinicians(self, con=True):
+        '''
+        connect the allClinicians checkbox to it's slot
+        '''
+        if con:        
+            QtCore.QObject.connect(self.ui.aptOV_everybody_checkBox,
+            QtCore.SIGNAL("stateChanged(int)"), 
+            self.apptOV_all_clinicians_checkbox_changed)
+        else:
+            QtCore.QObject.disconnect(self.ui.aptOV_everybody_checkBox,
+            QtCore.SIGNAL("stateChanged(int)"), 
+            self.apptOV_all_clinicians_checkbox_changed)
+            
+    def connectAllDents(self, con=True):
+        '''
+        connect the allDents checkbox to it's slot
+        '''
+        if con:
+            QtCore.QObject.connect(self.ui.aptOV_alldentscheckBox,
+            QtCore.SIGNAL("stateChanged(int)"), 
+            self.apptOV_all_dentists_checkbox_changed)
+        else:
+            QtCore.QObject.disconnect(self.ui.aptOV_alldentscheckBox,
+            QtCore.SIGNAL("stateChanged(int)"), 
+            self.apptOV_all_dentists_checkbox_changed)
+            
+    def connectAllHygs(self, con=True):
+        '''
+        connect the allDents checkbox to it's slot
+        '''        
+        if con:
+            QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox,
+            QtCore.SIGNAL("stateChanged(int)"), 
+            self.apptOV_all_hygenists_checkbox_changed)
+        else:
+            QtCore.QObject.disconnect(self.ui.aptOV_allhygscheckBox,
+            QtCore.SIGNAL("stateChanged(int)"), 
+            self.apptOV_all_hygenists_checkbox_changed)
+            
     def connectAptOVdentcbs(self, con=True):
+        '''
+        iterate through the collection of aptOVdent_checkBoxes
+        and connect or disconnect their signals
+        '''
         for cb in self.ui.aptOVdent_checkBoxes.values():
-            #-- aptOVdent_checkBoxes is a dictionary of
-            #-- (keys=dents,values=checkboxes)
-            #-- I have to remove these signal/slots 
-            #-- when changing values programatically
             if con:
                 QtCore.QObject.connect(cb, 
                 QtCore.SIGNAL("stateChanged(int)"),
@@ -3981,11 +4012,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                 self.dent_appt_checkbox_changed)
     
     def connectAptOVhygcbs(self, con=True):
+        '''
+        iterate through the collection of aptOVhyg_checkBoxes
+        and connect or disconnect their signals
+        '''
         for cb in self.ui.aptOVhyg_checkBoxes.values():
-            #--aptOVhyg_checkBoxes is a dictionary of
-            #-- (keys=dents,values=checkboxes)
-            #-- I have to remove these signal/slots 
-            #-- when changing values programatically
             if con:
                 QtCore.QObject.connect(cb, 
                 QtCore.SIGNAL("stateChanged(int)"),

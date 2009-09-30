@@ -971,79 +971,125 @@ def clearTodaysEmergencyTime(parent):
         parent.advise("Cleared %d emergency slots"% number_cleared, 1)
         if number_cleared > 0 and parent.ui.main_tabWidget.currentIndex() == 1:
             layout_dayView(parent)
+
+def change_allclinicianscb(parent):
+    '''
+    check (and change if necessary) the all clnicians checkbox 
+    '''
+
+    state = parent.ui.aptOV_alldentscheckBox.checkState() and \
+    parent.ui.aptOV_allhygscheckBox.checkState()
+    
+    if parent.ui.aptOV_everybody_checkBox.checkState != (state):
+        parent.connectAllClinicians(False)
+        parent.ui.aptOV_everybody_checkBox.setChecked(state)
+        parent.connectAllClinicians()
             
+def change_alldentscb(parent, state):
+    '''
+    change the all dentists checkbox without firing the signals
+    '''
+    #print "checking all dentscb...",
+    if parent.ui.aptOV_alldentscheckBox.checkState() != state: 
+        #print "changing state"
+        parent.connectAllDents(False)
+        parent.ui.aptOV_alldentscheckBox.setChecked(state)
+        parent.connectAllDents()
+        change_allclinicianscb(parent)
+        
+def change_allhygscb(parent, state):
+    '''
+    change the all hygenists checkbox without firing the signals
+    '''
+    #print "checking all hygscb...",
+    if parent.ui.aptOV_allhygscheckBox.checkState() != state: 
+        #print "changing state"
+        parent.connectAllHygs(False)
+        parent.ui.aptOV_allhygscheckBox.setChecked(state)
+        parent.connectAllHygs()
+        
+        change_allclinicianscb(parent)
+    
 def apptOVclinicians(parent):
     '''
     user has checked/unchecked the button to toggle ALL clinicians
     everybody's book to be viewed
     '''
-    print "all clinicians"
+    #print "all clinicians toggled by user"
     state = parent.ui.aptOV_everybody_checkBox.checkState()
     
-    parent.connectAptOVdentcbs(False)
-    parent.ui.aptOV_alldentscheckBox.setChecked(state)
-    parent.connectAptOVdentcbs()
-
-    parent.connectAptOVhygcbs(False)
-    parent.ui.aptOV_allhygscheckBox.setChecked(state)
-    parent.connectAptOVhygcbs()
-
+    change_alldentscb(parent, state)
+    change_allhygscb(parent, state)
+    
+    apptOVdents(parent, False)        
+    apptOVhygs(parent, False)
+    
     handle_calendar_signal(parent, newDate=False)
 
-def apptOVhygs(parent):
+def apptOVhygs(parent, byUser=True):
     '''
     called by checking the all hygenists checkbox on the apptov tab
+    this diconnects the hygenist checkboxes from their slots,
+    alters their state, then reconnects
+    (if byUser = False, the allclinicians box started this)
     '''
-    print "all hygs"
-    #-- coments as for above proc
     parent.connectAptOVhygcbs(False)
     state = parent.ui.aptOV_allhygscheckBox.checkState()
     for cb in parent.ui.aptOVhyg_checkBoxes.values():
-        cb.setCheckState(state)
+        if cb.checkState() != state:
+            cb.setCheckState(state)
     parent.connectAptOVhygcbs()
     
-    handle_calendar_signal(parent, newDate=False)
-
-def apptOVdents(parent):
+    if byUser:
+        change_allclinicianscb(parent)
+        handle_calendar_signal(parent, newDate=False)
+        
+def apptOVdents(parent, byUser=True):
     '''
     called by checking the all dentists checkbox on the apptov tab
     this diconnects the dentist checkboxes from their slots,
     alters their state, then reconnects
+    (if byUser = False, the allclinicians box started this)
     '''
-    
-    print "all dentists"
-
     parent.connectAptOVdentcbs(False)
 
     state = parent.ui.aptOV_alldentscheckBox.checkState() 
     for cb in parent.ui.aptOVdent_checkBoxes.values():
-        cb.setCheckState(state)
-
+        if cb.checkState() != state:
+            cb.setCheckState(state)
     parent.connectAptOVdentcbs()
-
-    handle_calendar_signal(parent, newDate=False)
+    
+    if byUser:
+        change_allclinicianscb(parent)
+        handle_calendar_signal(parent, newDate=False)
 
 def dentToggled(parent):
     '''
-    a dentist checkbox has been toggled
+    a dentist checkbox has been toggled by user action 
     '''
-    print "dentist checkbox"
+    dentstate = True
+    for cb in parent.ui.aptOVdent_checkBoxes.values():
+        dentstate = dentstate and cb.checkState()
+    change_alldentscb(parent, dentstate)
     handle_calendar_signal(parent, newDate=False)
     
 def hygToggled(parent):
     '''
-    a hygenist checkbox has been toggled
+    a hygenist checkbox has been toggled by user action
     '''
-    print "hygenist checkbox"
-    handle_calendar_signal(parent, newDate=False)
+    hygstate = True
+    for cb in parent.ui.aptOVhyg_checkBoxes.values():
+        hygstate = hygstate and cb.checkState()
+    change_allhygscb(parent, hygstate)
 
+    handle_calendar_signal(parent, newDate=False)
 
 def handle_aptOV_checkboxes(parent):
     '''
     user has altered one of the checkboxes on the appointment options
     emergency, lunch etc..
     '''
-    print "checkbox"
+    #print "checkbox"
     
     handle_calendar_signal(parent, newDate=False)
 
@@ -1069,7 +1115,7 @@ def makeDiaryVisible(parent):
     '''
     user has navigated the main tab to show the appointments/diary
     '''
-    print "appt_gui_module.book makeDiaryVisible() called"
+    #print "appt_gui_module.book makeDiaryVisible() called"
     today=QtCore.QDate.currentDate()
     if parent.ui.diary_tabWidget.currentIndex() != 0:
         parent.ui.diary_tabWidget.setCurrentIndex(0)
@@ -1156,7 +1202,7 @@ def layout_yearHeader(parent):
     put dayname, bank hol info, and any memos into the year header textBrowser
     '''
     dayData = parent.ui.yearView.getDayData()
-    print dayData.dayName, dayData.publicHoliday, dayData.memos
+    #print dayData.dayName, dayData.publicHoliday, dayData.memos
     headerText = '''<html><head><link rel="stylesheet"
     href="%s" type="text/css"></head><body><div class="center">
     <table width="100%%">
@@ -1179,60 +1225,10 @@ def layout_yearHeader(parent):
     
     parent.ui.year_textBrowser.setText(headerText)
 
-def diaryTab_practitioner_checkbox_handling(parent):
-    '''
-    this procedure updates the 3 parent checkboxes
-    Alldents, all clinicians, all hygs..
-    '''
-    print "diaryTab_practitioner_checkbox_handling"
-    AllDentsChecked = True
-    #--code to uncheck the all dentists checkbox if necessary
-    for dent in parent.ui.aptOVdent_checkBoxes.values():
-        AllDentsChecked = AllDentsChecked and dent.checkState()
-
-    if parent.ui.aptOV_alldentscheckBox.checkState() != AllDentsChecked:
-        
-        QtCore.QObject.disconnect(parent.ui.aptOV_alldentscheckBox,
-        QtCore.SIGNAL("stateChanged(int)"), 
-        parent.apptOV_all_dentists_checkbox_changed)
-
-        parent.ui.aptOV_alldentscheckBox.setChecked(AllDentsChecked)
-        QtCore.QObject.connect(parent.ui.aptOV_alldentscheckBox, QtCore.SIGNAL(
-        "stateChanged(int)"), 
-        parent.apptOV_all_dentists_checkbox_changed)
-
-    AllHygsChecked = True
-    #--same for the hygenists
-
-    for hyg in parent.ui.aptOVhyg_checkBoxes.values():
-        AllHygsChecked = AllHygsChecked and hyg.checkState()
-    if parent.ui.aptOV_allhygscheckBox.checkState() != AllHygsChecked:
-
-        QtCore.QObject.disconnect(parent.ui.aptOV_allhygscheckBox,
-        QtCore.SIGNAL("stateChanged(int)"), 
-        parent.apptOV_all_hygenists_checkbox_changed)
-
-        parent.ui.aptOV_allhygscheckBox.setChecked(AllHygsChecked)
-        
-        QtCore.QObject.connect(parent.ui.aptOV_allhygscheckBox, 
-        QtCore.SIGNAL("stateChanged(int)"), 
-        parent.apptOV_all_hygenists_checkbox_changed)
-
-    if parent.ui.aptOV_everybody_checkBox.checkState != (
-    AllDentsChecked and AllHygsChecked):
-
-        QtCore.QObject.disconnect(parent.ui.aptOV_everybody_checkBox,
-        QtCore.SIGNAL("stateChanged(int)"), 
-        parent.apptOV_all_clinicians_checkbox_changed)
-
-        parent.ui.aptOV_everybody_checkBox.setChecked(
-        AllDentsChecked and AllHygsChecked)
-
-        QtCore.QObject.connect(parent.ui.aptOV_everybody_checkBox,
-        QtCore.SIGNAL("stateChanged(int)"), 
-        parent.apptOV_all_clinicians_checkbox_changed)
-
 def getUserCheckedClinicians(parent):
+    '''
+    checks the gui to see which dentists, hygenists are checked.
+    '''
     retarg=[]
     for dent in parent.ui.aptOVdent_checkBoxes.keys():
         if parent.ui.aptOVdent_checkBoxes[dent].checkState():
@@ -1240,7 +1236,6 @@ def getUserCheckedClinicians(parent):
     for dent in parent.ui.aptOVhyg_checkBoxes.keys():
         if parent.ui.aptOVhyg_checkBoxes[dent].checkState():
             retarg.append(dent)
-
     return retarg
         
 def layout_weekView(parent):
@@ -1251,9 +1246,6 @@ def layout_weekView(parent):
     if parent.ui.main_tabWidget.currentIndex() !=1 and \
     parent.ui.diary_tabWidget.currentIndex() != 1:
         return
-    print "laying out week view for ", parent.ui.calendarWidget.selectedDate()
-    
-    diaryTab_practitioner_checkbox_handling(parent)
     
     cal = parent.ui.calendarWidget
     date = cal.selectedDate()
@@ -1330,7 +1322,6 @@ def layout_dayView(parent):
     if parent.ui.main_tabWidget.currentIndex() !=1 and \
     parent.ui.diary_tabWidget.currentIndex() != 0:
         return
-    print "laying out dayview - computationally expensive"
     
     for book in parent.ui.apptBookWidgets:
         book.clearAppts()
@@ -1434,7 +1425,7 @@ def layout_dayView(parent):
         else:
             book.show()
             book.update()
-    print "sucessfully laid out books for", d
+    #print "sucessfully laid out books for", d
         
 def appointment_clicked(parent, list_of_snos):
     if len(list_of_snos) == 1:
