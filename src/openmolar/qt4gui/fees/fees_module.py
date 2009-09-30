@@ -227,12 +227,20 @@ def nhsRegsPDF(parent):
     dl = Ui_chooseDocument.Ui_Dialog()
     dl.setupUi(Dialog)
     if Dialog.exec_():
-        if dl.info_radioButton.isChecked():
-            doc = os.path.join(localsettings.wkdir, 'resources', 
-            "Dental_Information_Guide_2008_v4.pdf")
+        if dl.tabWidget.currentIndex()==0:
+            if dl.info_radioButton.isChecked():
+                doc = os.path.join(localsettings.wkdir, 'resources', 
+                "Dental_Information_Guide_2008_v4.pdf")
+            else:
+                doc = os.path.join(localsettings.wkdir, 'resources', 
+                "scotNHSremuneration08.pdf")
         else:
-            doc = os.path.join(localsettings.wkdir, 'resources', 
-            "scotNHSremuneration08.pdf")
+            if dl.info2009_radioButton.isChecked():
+                doc = os.path.join(localsettings.wkdir, 'resources', 
+                "Dental_Information_Guide_2009.pdf")
+            else:
+                doc = os.path.join(localsettings.wkdir, 'resources', 
+                "scotNHSremuneration09.pdf")            
         try:
             print "opening %s with %s"% (doc, localsettings.pdfProg)
             subprocess.Popen(["%s"% localsettings.pdfProg, doc])
