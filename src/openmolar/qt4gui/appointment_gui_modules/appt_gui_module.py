@@ -1122,7 +1122,7 @@ def makeDiaryVisible(parent):
     if parent.ui.calendarWidget.selectedDate() != today:
         parent.ui.calendarWidget.setSelectedDate(today)
     else:
-        handle_calendar_signal(parent, newDate=False)    
+        handle_calendar_signal(parent)    
 
 def handle_calendar_signal(parent, newDate=True):
     '''

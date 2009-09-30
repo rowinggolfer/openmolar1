@@ -67,7 +67,7 @@ if "win" in sys.platform:
     #-- sorry about this... but cross platform is a goal :(
     global_cflocation = 'C:\\Program Files\\openmolar\\openmolar.conf'
     localFileDirectory = os.path.join(os.environ.get("HOMEPATH"),".openmolar")
-    pdfProg = "C:\\Program Files\\SumatraPDF\\SumatraPDF.exe"
+    pdfProg = "C:\\Program Files\\Adobe\\Reader 9.0\\Reader.exe"
     #-- this next line is necessary because I have to resort to relative
     #-- imports for the css stuff eg... ../resources/style.css
     #-- on linux, the root is always /  on windows... ??
