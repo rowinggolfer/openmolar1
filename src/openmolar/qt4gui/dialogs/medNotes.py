@@ -8,7 +8,7 @@
 from PyQt4 import QtGui, QtCore
 import datetime
 from openmolar.settings import localsettings
-from openmolar.qt4gui.dialogs import Ui_medhist
+from openmolar.qt4gui.compiled_uis import Ui_medhist
 from openmolar.dbtools import updateMH
 
 def showDialog(Dialog,pt):

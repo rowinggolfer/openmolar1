@@ -6,10 +6,10 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 from __future__ import division
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.dialogs import Ui_hygenistWizard
+from openmolar.qt4gui.compiled_uis import Ui_hygenist_wizard
 from openmolar.settings import localsettings
 
-class Ui_Dialog(Ui_hygenistWizard.Ui_Dialog):
+class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
     def __init__(self,dialog,parent=None):
         self.setupUi(dialog)
         self.dialog=dialog

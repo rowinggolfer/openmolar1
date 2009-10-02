@@ -7,7 +7,8 @@
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
-from openmolar.qt4gui.dialogs import Ui_apptTools,apptOpenDay
+from openmolar.qt4gui.compiled_uis import Ui_apptTools
+from openmolar.qt4gui.dialogs import apptOpenDay
 
 class apptTools(Ui_apptTools.Ui_MainWindow):
     def __init__(self,parent=None):

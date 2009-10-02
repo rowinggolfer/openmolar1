@@ -22,7 +22,7 @@ import MySQLdb
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
 
-from openmolar.qt4gui import Ui_newSetup
+from openmolar.qt4gui.compiled_uis import Ui_newSetup
 from openmolar.settings import localsettings
 
 blankXML = '''<?xml version="1.1" ?>

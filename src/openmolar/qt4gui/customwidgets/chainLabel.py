@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui,QtCore
-from openmolar.qt4gui import resources_rc
+from openmolar.qt4gui.compiled_uis import resources_rc
 
 class chainLabel(QtGui.QLabel):
     '''

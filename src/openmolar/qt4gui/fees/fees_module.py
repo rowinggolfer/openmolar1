@@ -21,8 +21,9 @@ from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
 patient_write_changes
 from openmolar.settings import localsettings, fee_keys
 
-from openmolar.qt4gui.dialogs import paymentwidget, Ui_chooseDocument, \
-Ui_raiseCharge
+from openmolar.qt4gui.dialogs import paymentwidget
+from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
+from openmolar.qt4gui.compiled_uis import Ui_raiseCharge
 
 def raiseACharge(parent):
     '''

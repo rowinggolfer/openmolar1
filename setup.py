@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name = 'openmolar',
-    version = '0.1.2',
+    version = '0.1.5',
     description = 'Open Source Dental Practice Management Software',
     author = 'Neil Wallace',
     author_email = 'rowinggolfer@googlemail.com',
@@ -17,6 +17,7 @@ setup(
                 'openmolar.qt4gui',
                 'openmolar.qt4gui.dialogs',
                 'openmolar.qt4gui.appointment_gui_modules',
+                'openmolar.qt4gui.compiled_uis',
                 'openmolar.qt4gui.customwidgets',
                 'openmolar.qt4gui.dialogs',
                 'openmolar.qt4gui.fees',

@@ -8,8 +8,8 @@
 
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.dialogs import Ui_activeDentStartFinish
-from openmolar.qt4gui.dialogs import Ui_aslotEdit
+from openmolar.qt4gui.compiled_uis import Ui_activeDentStartFinish
+from openmolar.qt4gui.compiled_uis import Ui_aslotEdit
 from openmolar.qt4gui.customwidgets import fiveminutetimeedit
 from openmolar.settings import localsettings
 from openmolar.dbtools import appointments

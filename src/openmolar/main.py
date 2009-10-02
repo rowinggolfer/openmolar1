@@ -80,7 +80,7 @@ def main():
     '''
     global localsettings
     from openmolar.settings import localsettings
-    from openmolar.qt4gui import Ui_startscreen
+    from openmolar.qt4gui.compiled_uis import Ui_startscreen
     
     uninitiated = True
 

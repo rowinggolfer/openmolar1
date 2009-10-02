@@ -11,8 +11,8 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 import re
 
-from openmolar.qt4gui.dialogs import Ui_addTreatment,\
-Ui_toothtreatmentItemWidget
+from openmolar.qt4gui.compiled_uis import Ui_addTreatment
+from openmolar.qt4gui.compiled_uis import Ui_toothtreatmentItemWidget
 
 from openmolar.settings import localsettings,fee_keys
 from openmolar.ptModules import estimates

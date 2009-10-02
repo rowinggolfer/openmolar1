@@ -16,7 +16,7 @@ from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import forum
-from openmolar.qt4gui.dialogs import Ui_forumPost
+from openmolar.qt4gui.compiled_uis import Ui_forumPost
 
 def checkForNewForumPosts(parent):
     '''checks for new forum posts every 5 minutes'''

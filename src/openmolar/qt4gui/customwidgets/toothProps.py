@@ -7,9 +7,9 @@
 
 from PyQt4 import QtGui, QtCore
 import re
-from openmolar.qt4gui.customwidgets import Ui_toothProps
+from openmolar.qt4gui.compiled_uis import Ui_toothProps
 from openmolar.qt4gui import colours
-from openmolar.qt4gui.dialogs import Ui_crownChoice
+from openmolar.qt4gui.compiled_uis import Ui_crownChoice
 from openmolar.settings import allowed
 
     

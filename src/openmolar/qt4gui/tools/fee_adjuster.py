@@ -8,7 +8,7 @@
 from PyQt4 import QtGui, QtCore
 
 from openmolar.dbtools import feesTable
-from openmolar.qt4gui.tools import Ui_fee_adjuster
+from openmolar.qt4gui.compiled_uis import Ui_fee_adjuster
 
 __version__ = "0.1"
 

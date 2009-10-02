@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.dialogs import Ui_saveMemo
+from openmolar.qt4gui.compiled_uis import Ui_saveMemo
 from openmolar.settings import localsettings
 from openmolar.dbtools import memos
 

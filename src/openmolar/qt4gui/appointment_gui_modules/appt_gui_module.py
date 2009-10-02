@@ -21,8 +21,8 @@ from openmolar.settings import localsettings, appointment_shortcuts
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs import alterAday
 from openmolar.qt4gui.dialogs import finalise_appt_time,permissions
-from openmolar.qt4gui.dialogs import Ui_appointment_length
-from openmolar.qt4gui.dialogs import Ui_specify_appointment
+from openmolar.qt4gui.compiled_uis import Ui_appointment_length
+from openmolar.qt4gui.compiled_uis import Ui_specify_appointment
 from openmolar.qt4gui.dialogs import appt_wizard_dialog
 
 from openmolar.qt4gui.printing import apptcardPrint

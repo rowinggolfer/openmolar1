@@ -16,7 +16,7 @@ from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import tasks
-from openmolar.qt4gui.customwidgets import ui_taskwidget
+from openmolar.qt4gui.compiled_uis import Ui_task_widget
 
 class taskViewer(QtGui.QFrame):
     def __init__(self, parent=None):
@@ -48,7 +48,7 @@ class taskViewer(QtGui.QFrame):
         for op in self.ops:
             #--creates a widget
             iw = QtGui.QWidget(self)
-            tw = ui_taskwidget.Ui_Form()
+            tw = Ui_task_widget.Ui_Form()
             tw.setupUi(iw)
             tw.label.setText(op)
             for eachTask in currentTasks:

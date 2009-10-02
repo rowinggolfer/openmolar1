@@ -13,7 +13,8 @@ from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import writeNewCourse
-from openmolar.qt4gui.dialogs import newCourse, Ui_completionDate
+from openmolar.qt4gui.dialogs import newCourse
+from openmolar.qt4gui.compiled_uis import Ui_completionDate
 from openmolar.qt4gui import contract_gui_module
 
 def newCourseNeeded(parent):

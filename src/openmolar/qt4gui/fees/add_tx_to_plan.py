@@ -17,7 +17,8 @@ import re
 from PyQt4 import QtGui
 
 from openmolar.settings import localsettings, fee_keys
-from openmolar.qt4gui.dialogs import Ui_customTreatment, addTreat
+from openmolar.qt4gui.compiled_uis import Ui_customTreatment
+from openmolar.qt4gui.dialogs import addTreat
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module, fees_module
 
@@ -130,9 +131,21 @@ def fromFeeTable(parent, item):
     '''
     add an item which has been selected from the fee table itself
     '''
+    print "adding an item from the fee table!!"
     ##TODO - get this working (should be fun!)
-    for i in range(item.columnCount()):
-        print item.text(i),
+    
+    headerItem = item.parent()
+    if headerItem == None: # userhas clicked a heading - no use.
+        return
+    
+    category = str(headerItem.text(0))
+    
+    if False: #debug stuff
+        for i in range(item.columnCount()):
+            print item.text(i),
+            
+        print "category",category
+        
     if not course_module.newCourseNeeded(parent):
         Dialog = QtGui.QDialog(parent)
         dl = Ui_customTreatment.Ui_Dialog()
@@ -158,13 +171,13 @@ def fromFeeTable(parent, item):
             code = str(item.text(0))
             type = str(item.text(2)).replace(" ", "_")
             if type == "":
-                type = "??"
+                type = descr.replace(" ", "_")[:12]
             fee = int(dl.fee_doubleSpinBox.value() * 100)
             ptfee = int(dl.ptFee_doubleSpinBox.value() * 100)
 
             parent.pt.custompl += "%s "% type
             parent.pt.addToEstimate(no, code, descr, fee,
-            ptfee, parent.pt.dnt1, parent.pt.cset, "custom", type)
+            ptfee, parent.pt.dnt1, parent.pt.cset, category, type)
             
             
             if parent.ui.tabWidget.currentIndex() != 7:

@@ -9,7 +9,7 @@
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.dialogs import Ui_completeTreatment
+from openmolar.qt4gui.compiled_uis import Ui_completeTreatment
 from openmolar.settings import localsettings
 
 class treatment(Ui_completeTreatment.Ui_Dialog):

@@ -8,8 +8,8 @@ import sys
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
-from openmolar.qt4gui.dialogs import Ui_memoitem
-from openmolar.qt4gui.dialogs import Ui_editmemos
+from openmolar.qt4gui.compiled_uis import Ui_memoitem
+from openmolar.qt4gui.compiled_uis import Ui_editmemos
 
 class dayData(object):
     '''

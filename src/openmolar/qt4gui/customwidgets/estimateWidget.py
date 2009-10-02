@@ -15,10 +15,11 @@ and editing treatment costs
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.customwidgets import Ui_estimateItemWidget, \
-Ui_estHeaderWidget, Ui_estFooterWidget, chainLabel
-
-from openmolar.qt4gui.dialogs import Ui_estSplitItemsDialog
+from openmolar.qt4gui.customwidgets import chainLabel
+from openmolar.qt4gui.compiled_uis import Ui_estimateItemWidget
+from openmolar.qt4gui.compiled_uis import  Ui_estHeaderWidget
+from openmolar.qt4gui.compiled_uis import  Ui_estFooterWidget
+from openmolar.qt4gui.compiled_uis import Ui_estSplitItemsDialog
 
 class estItemWidget(Ui_estimateItemWidget.Ui_Form):
     '''

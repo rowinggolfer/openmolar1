@@ -9,13 +9,14 @@
 import sys,re
 from openmolar.settings import localsettings
 
-
 treatmentTypeHeaders={
-    "Diagnosis":("Exam","xray", ),
+    "Diagnosis":("Exam","xray", "Diagnosis", "Preventive"),
     "Perio":("perio", ),
-    "Tooth":("UL", "LL", "UR", "LR", ),
-    "Prosthetics":("ndu", "nld", "odu", "odl", ),
-    "Other":("other",),
+    "Tooth":("UL", "LL", "UR", "LR", "Conservation" ),
+    "Prosthetics":("ndu", "nld", "odu", "odl", "Prosthetics" ),
+    "Other":("other", "Surgical", "Occasional",),
+    "Orthodontics":("Orthodontics",),
+    "Child Specific":("Capitation",),
     "Custom":("custom",)}
 
 templist=[]

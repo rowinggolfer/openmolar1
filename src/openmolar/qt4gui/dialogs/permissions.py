@@ -8,7 +8,7 @@
 from PyQt4 import QtGui, QtCore
 import datetime
 from openmolar.settings import localsettings
-from openmolar.qt4gui.dialogs import Ui_permissions
+from openmolar.qt4gui.compiled_uis import Ui_permissions
 
 def granted(parent=None):
     if localsettings.permissionsRaised==True:

@@ -22,7 +22,7 @@ import subprocess
 from gettext import gettext as _
 
 from openmolar.settings import localsettings, utilities
-from openmolar.qt4gui import Ui_main, colours
+from openmolar.qt4gui import colours
 
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import fees_module
@@ -41,17 +41,18 @@ from openmolar.qt4gui.appointment_gui_modules import appt_gui_module
 from openmolar.qt4gui.appointment_gui_modules import taskgui
 
 #--dialogs made with designer
-from openmolar.qt4gui.dialogs import Ui_patient_finder
-from openmolar.qt4gui.dialogs import Ui_select_patient
-from openmolar.qt4gui.dialogs import Ui_enter_letter_text
-from openmolar.qt4gui.dialogs import Ui_phraseBook
-from openmolar.qt4gui.dialogs import Ui_changeDatabase
-from openmolar.qt4gui.dialogs import Ui_related_patients
-from openmolar.qt4gui.dialogs import Ui_options
-from openmolar.qt4gui.dialogs import Ui_surgeryNumber
-from openmolar.qt4gui.dialogs import Ui_daylist_print
-from openmolar.qt4gui.dialogs import Ui_confirmDentist
-from openmolar.qt4gui.dialogs import Ui_showMemo
+from openmolar.qt4gui.compiled_uis import Ui_main
+from openmolar.qt4gui.compiled_uis import Ui_patient_finder
+from openmolar.qt4gui.compiled_uis import Ui_select_patient
+from openmolar.qt4gui.compiled_uis import Ui_enter_letter_text
+from openmolar.qt4gui.compiled_uis import Ui_phraseBook
+from openmolar.qt4gui.compiled_uis import Ui_changeDatabase
+from openmolar.qt4gui.compiled_uis import Ui_related_patients
+from openmolar.qt4gui.compiled_uis import Ui_options
+from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
+from openmolar.qt4gui.compiled_uis import Ui_daylist_print
+from openmolar.qt4gui.compiled_uis import Ui_confirmDentist
+from openmolar.qt4gui.compiled_uis import Ui_showMemo
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import recall_app
@@ -1371,7 +1372,7 @@ class pageHandlingClass():
     def load_treatTrees(self):
     
         self.ui.plan_treeWidget.clear()
-        pdict=plan.plannedDict(self.pt)
+        pdict = plan.plannedDict(self.pt)
         #-- pdict is a dictionary in the format
         #-- {'Perio': ['perio - SP'], Diagnosis': ['xray - 2S', 'xray - M']}
         #-- so the keys are treatment categories... and they contain a list
@@ -3119,7 +3120,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         user has double clicked on an item in the fees_table
         '''
-        ##TODO - add to treatment plan
         if self.pt.serialno != 0:
             add_tx_to_plan.fromFeeTable(self, item)
         
@@ -3774,7 +3774,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         QtCore.QObject.connect(self.ui.fees_treeWidget,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"), 
         self.fees_treeWidgetItem_clicked)
-        
 
     def signals_charts(self):
 

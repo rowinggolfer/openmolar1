@@ -7,8 +7,8 @@
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings, appointment_shortcuts
-from openmolar.qt4gui.dialogs import Ui_apptWizard
-from openmolar.qt4gui.customwidgets import Ui_apptWizardItem
+from openmolar.qt4gui.compiled_uis import Ui_apptWizard
+from openmolar.qt4gui.compiled_uis import Ui_apptWizardItem
 
 class apptWidget(Ui_apptWizardItem.Ui_Form):
     def __init__(self, parent, widget):
