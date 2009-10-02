@@ -19,6 +19,7 @@ import copy
 import datetime
 import pickle
 import subprocess
+from gettext import gettext as _
 
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import Ui_main, colours

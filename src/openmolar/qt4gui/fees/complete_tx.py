@@ -87,7 +87,7 @@ def chartComplete(parent, arg):
             newcompleted)
 
             checkEstBox(parent, toothName, newcompleted)
-            
+            print "CHART COMPLETE adding hidden note - %s %s"% (toothName.upper(), newcompleted)
             parent.pt.addHiddenNote("treatment",
             "%s %s"% (toothName.upper(), newcompleted))
                 
@@ -99,7 +99,7 @@ def estwidg_complete(parent, item):
     print "estwidg_complete called with arg", item
     try:
         treat = item.type + " "
-        toothname = item.type
+        
         att = item.category
         if re.match("[ul][lr][A-E]", att): #deciduous tooth
             number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
@@ -119,9 +119,10 @@ def estwidg_complete(parent, item):
             #-- now update the charts
             if re.findall("[ul][lr][1-8]", att):
                 parent.updateChartsAfterTreatment(att, plan, completed)
-
+                toothName = parent.pt.chartgrid.get(att)
+    
                 parent.pt.addHiddenNote(
-                "treatment", "%s %s"% (toothname.upper(), treat))
+                "treatment", "%s %s"% (toothName.upper(), treat))
             else:
                 parent.pt.addHiddenNote("treatment", item.type)
                 
