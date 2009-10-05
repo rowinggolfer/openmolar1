@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'raiseCharge.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -52,10 +51,10 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Raise A Charge"))
-        self.label.setText(_( "Raise A charge for today\'s treatment"))
-        self.label_2.setText(_( "Description (eg \"CE\" or \"MOD\" or \"Bleach\"... )"))
-        self.label_3.setText(_( "Amount"))
-        self.doubleSpinBox.setPrefix(_( "£"))
-        self.label_4.setText(_( "Repeat as many times as necessary - amounts will accumulate"))
+        Dialog.setWindowTitle(_( u"Raise A Charge"))
+        self.label.setText(_( u"Raise A charge for today\'s treatment"))
+        self.label_2.setText(_( u"Description (eg \"CE\" or \"MOD\" or \"Bleach\"... )"))
+        self.label_3.setText(_( u"Amount"))
+        self.doubleSpinBox.setPrefix(_( u"£"))
+        self.label_4.setText(_( u"Repeat as many times as necessary - amounts will accumulate"))
 

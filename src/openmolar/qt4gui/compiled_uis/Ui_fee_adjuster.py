@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'fee_adjuster.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -58,11 +57,11 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_( "FeeAdjuster"))
-        self.menu_Quit.setTitle(_( "&File"))
-        self.menu_Help.setTitle(_( "&About"))
-        self.action_Save_Changes.setText(_( "&Save Changes"))
-        self.action_Quit.setText(_( "&Quit"))
-        self.actionHelp.setText(_( "Help"))
-        self.actionVersion.setText(_( "&Version"))
+        MainWindow.setWindowTitle(_( u"FeeAdjuster"))
+        self.menu_Quit.setTitle(_( u"&File"))
+        self.menu_Help.setTitle(_( u"&About"))
+        self.action_Save_Changes.setText(_( u"&Save Changes"))
+        self.action_Quit.setText(_( u"&Quit"))
+        self.actionHelp.setText(_( u"Help"))
+        self.actionVersion.setText(_( u"&Version"))
 

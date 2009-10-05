@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'apptTools.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -55,11 +54,11 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_( "Appointment Tools"))
-        self.pushButton.setText(_( "Extend Books"))
-        self.pushButton_2.setText(_( "Remove old weeks"))
-        self.pushButton_3.setText(_( "Edit Standard Working Weeks for Clinicians"))
-        self.openDay_pushButton.setText(_( "Open A Day"))
-        self.menu_Quit.setTitle(_( "&Quit"))
+        MainWindow.setWindowTitle(_( u"Appointment Tools"))
+        self.pushButton.setText(_( u"Extend Books"))
+        self.pushButton_2.setText(_( u"Remove old weeks"))
+        self.pushButton_3.setText(_( u"Edit Standard Working Weeks for Clinicians"))
+        self.openDay_pushButton.setText(_( u"Open A Day"))
+        self.menu_Quit.setTitle(_( u"&Quit"))
 
 import resources_rc

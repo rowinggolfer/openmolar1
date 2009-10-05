@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'bridge_denture.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -109,22 +108,22 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Bridge - Denture Entry"))
-        self.radioButton.setText(_( "Porcelain / Precious Metal"))
-        self.radioButton_2.setText(_( "Lava (or all ceramic)"))
-        self.radioButton_3.setText(_( "Resin Retained"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _( "Bridge"))
-        self.label_2.setText(_( "Upper"))
-        self.radioButton_4.setText(_( "Full (acrylic)"))
-        self.radioButton_8.setText(_( "Full (co-chrome)"))
-        self.radioButton_5.setText(_( "Partial (acrylic)"))
-        self.radioButton_6.setText(_( "Partial (co-chrome)"))
-        self.radioButton_7.setText(_( "Other"))
-        self.label.setText(_( "Lower"))
-        self.radioButton_9.setText(_( "Full (acrylic)"))
-        self.radioButton_13.setText(_( "Full (co-chrome)"))
-        self.radioButton_10.setText(_( "Partial (acrylic)"))
-        self.radioButton_11.setText(_( "Partial (co-chrome)"))
-        self.radioButton_12.setText(_( "Other"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _( "Denture"))
+        Dialog.setWindowTitle(_( u"Bridge - Denture Entry"))
+        self.radioButton.setText(_( u"Porcelain / Precious Metal"))
+        self.radioButton_2.setText(_( u"Lava (or all ceramic)"))
+        self.radioButton_3.setText(_( u"Resin Retained"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _( u"Bridge"))
+        self.label_2.setText(_( u"Upper"))
+        self.radioButton_4.setText(_( u"Full (acrylic)"))
+        self.radioButton_8.setText(_( u"Full (co-chrome)"))
+        self.radioButton_5.setText(_( u"Partial (acrylic)"))
+        self.radioButton_6.setText(_( u"Partial (co-chrome)"))
+        self.radioButton_7.setText(_( u"Other"))
+        self.label.setText(_( u"Lower"))
+        self.radioButton_9.setText(_( u"Full (acrylic)"))
+        self.radioButton_13.setText(_( u"Full (co-chrome)"))
+        self.radioButton_10.setText(_( u"Partial (acrylic)"))
+        self.radioButton_11.setText(_( u"Partial (co-chrome)"))
+        self.radioButton_12.setText(_( u"Other"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _( u"Denture"))
 

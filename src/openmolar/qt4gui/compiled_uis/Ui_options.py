@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'options.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -43,8 +42,8 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Dialog"))
-        self.label.setText(_( "NHS Form Printer Settings"))
-        self.label_2.setText(_( "Left Margin Width"))
-        self.label_3.setText(_( "Top Margin Width"))
+        Dialog.setWindowTitle(_( u"Dialog"))
+        self.label.setText(_( u"NHS Form Printer Settings"))
+        self.label_2.setText(_( u"Left Margin Width"))
+        self.label_3.setText(_( u"Top Margin Width"))
 

@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'addTreatment.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -70,9 +69,9 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Plan Treatment"))
-        self.label.setText(_( "Add the following Treatment Items to the Current Treatment Plan"))
-        self.label_4.setText(_( "Total Fee for these Items"))
-        self.fee_doubleSpinBox.setPrefix(_( "£"))
-        self.pt_fee_doubleSpinBox.setPrefix(_( "£"))
+        Dialog.setWindowTitle(_( u"Plan Treatment"))
+        self.label.setText(_( u"Add the following Treatment Items to the Current Treatment Plan"))
+        self.label_4.setText(_( u"Total Fee for these Items"))
+        self.fee_doubleSpinBox.setPrefix(_( u"£"))
+        self.pt_fee_doubleSpinBox.setPrefix(_( u"£"))
 

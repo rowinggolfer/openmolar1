@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'changeDatabase.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -61,14 +60,14 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.buttonBox, self.checkBox)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Change Database"))
-        self.label.setText(_( "Host"))
-        self.host_lineEdit.setText(_( "localhost"))
-        self.label_2.setText(_( "User"))
-        self.user_lineEdit.setText(_( "user"))
-        self.label_3.setText(_( "Password"))
-        self.checkBox.setText(_( "display password"))
-        self.label_4.setText(_( "Database"))
-        self.database_lineEdit.setText(_( "openmolar_demo"))
-        self.password_lineEdit.setText(_( "password"))
+        Dialog.setWindowTitle(_( u"Change Database"))
+        self.label.setText(_( u"Host"))
+        self.host_lineEdit.setText(_( u"localhost"))
+        self.label_2.setText(_( u"User"))
+        self.user_lineEdit.setText(_( u"user"))
+        self.label_3.setText(_( u"Password"))
+        self.checkBox.setText(_( u"display password"))
+        self.label_4.setText(_( u"Database"))
+        self.database_lineEdit.setText(_( u"openmolar_demo"))
+        self.password_lineEdit.setText(_( u"password"))
 

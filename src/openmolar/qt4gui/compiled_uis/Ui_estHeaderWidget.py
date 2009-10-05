@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'estHeaderWidget.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -120,13 +119,13 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_( "Form"))
-        self.label.setText(_( "No."))
-        self.label_7.setText(_( "Code"))
-        self.label_2.setText(_( "Description"))
-        self.label_3.setText(_( "Type"))
-        self.label_4.setText(_( "cset"))
-        self.label_5.setText(_( "Fee"))
-        self.label_6.setText(_( "Pt Fee"))
-        self.expand_pushButton.setText(_( "Expand All"))
+        Form.setWindowTitle(_( u"Form"))
+        self.label.setText(_( u"No."))
+        self.label_7.setText(_( u"Code"))
+        self.label_2.setText(_( u"Description"))
+        self.label_3.setText(_( u"Type"))
+        self.label_4.setText(_( u"cset"))
+        self.label_5.setText(_( u"Fee"))
+        self.label_6.setText(_( u"Pt Fee"))
+        self.expand_pushButton.setText(_( u"Expand All"))
 

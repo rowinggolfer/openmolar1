@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'newBPE.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -103,41 +102,41 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.bpe5_comboBox, self.bpe4_comboBox)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "New CPITN score"))
-        self.bpe_comboBox.setItemText(0, _( "0"))
-        self.bpe_comboBox.setItemText(1, _( "1"))
-        self.bpe_comboBox.setItemText(2, _( "2"))
-        self.bpe_comboBox.setItemText(3, _( "3"))
-        self.bpe_comboBox.setItemText(4, _( "4"))
-        self.bpe_comboBox.setItemText(5, _( "*"))
-        self.bpe2_comboBox.setItemText(0, _( "0"))
-        self.bpe2_comboBox.setItemText(1, _( "1"))
-        self.bpe2_comboBox.setItemText(2, _( "2"))
-        self.bpe2_comboBox.setItemText(3, _( "3"))
-        self.bpe2_comboBox.setItemText(4, _( "4"))
-        self.bpe2_comboBox.setItemText(5, _( "*"))
-        self.bpe3_comboBox.setItemText(0, _( "0"))
-        self.bpe3_comboBox.setItemText(1, _( "1"))
-        self.bpe3_comboBox.setItemText(2, _( "2"))
-        self.bpe3_comboBox.setItemText(3, _( "3"))
-        self.bpe3_comboBox.setItemText(4, _( "4"))
-        self.bpe3_comboBox.setItemText(5, _( "*"))
-        self.bpe4_comboBox.setItemText(0, _( "0"))
-        self.bpe4_comboBox.setItemText(1, _( "1"))
-        self.bpe4_comboBox.setItemText(2, _( "2"))
-        self.bpe4_comboBox.setItemText(3, _( "3"))
-        self.bpe4_comboBox.setItemText(4, _( "4"))
-        self.bpe4_comboBox.setItemText(5, _( "*"))
-        self.bpe5_comboBox.setItemText(0, _( "0"))
-        self.bpe5_comboBox.setItemText(1, _( "1"))
-        self.bpe5_comboBox.setItemText(2, _( "2"))
-        self.bpe5_comboBox.setItemText(3, _( "3"))
-        self.bpe5_comboBox.setItemText(4, _( "4"))
-        self.bpe5_comboBox.setItemText(5, _( "*"))
-        self.bpe6_comboBox.setItemText(0, _( "0"))
-        self.bpe6_comboBox.setItemText(1, _( "1"))
-        self.bpe6_comboBox.setItemText(2, _( "2"))
-        self.bpe6_comboBox.setItemText(3, _( "3"))
-        self.bpe6_comboBox.setItemText(4, _( "4"))
-        self.bpe6_comboBox.setItemText(5, _( "*"))
+        Dialog.setWindowTitle(_( u"New CPITN score"))
+        self.bpe_comboBox.setItemText(0, _( u"0"))
+        self.bpe_comboBox.setItemText(1, _( u"1"))
+        self.bpe_comboBox.setItemText(2, _( u"2"))
+        self.bpe_comboBox.setItemText(3, _( u"3"))
+        self.bpe_comboBox.setItemText(4, _( u"4"))
+        self.bpe_comboBox.setItemText(5, _( u"*"))
+        self.bpe2_comboBox.setItemText(0, _( u"0"))
+        self.bpe2_comboBox.setItemText(1, _( u"1"))
+        self.bpe2_comboBox.setItemText(2, _( u"2"))
+        self.bpe2_comboBox.setItemText(3, _( u"3"))
+        self.bpe2_comboBox.setItemText(4, _( u"4"))
+        self.bpe2_comboBox.setItemText(5, _( u"*"))
+        self.bpe3_comboBox.setItemText(0, _( u"0"))
+        self.bpe3_comboBox.setItemText(1, _( u"1"))
+        self.bpe3_comboBox.setItemText(2, _( u"2"))
+        self.bpe3_comboBox.setItemText(3, _( u"3"))
+        self.bpe3_comboBox.setItemText(4, _( u"4"))
+        self.bpe3_comboBox.setItemText(5, _( u"*"))
+        self.bpe4_comboBox.setItemText(0, _( u"0"))
+        self.bpe4_comboBox.setItemText(1, _( u"1"))
+        self.bpe4_comboBox.setItemText(2, _( u"2"))
+        self.bpe4_comboBox.setItemText(3, _( u"3"))
+        self.bpe4_comboBox.setItemText(4, _( u"4"))
+        self.bpe4_comboBox.setItemText(5, _( u"*"))
+        self.bpe5_comboBox.setItemText(0, _( u"0"))
+        self.bpe5_comboBox.setItemText(1, _( u"1"))
+        self.bpe5_comboBox.setItemText(2, _( u"2"))
+        self.bpe5_comboBox.setItemText(3, _( u"3"))
+        self.bpe5_comboBox.setItemText(4, _( u"4"))
+        self.bpe5_comboBox.setItemText(5, _( u"*"))
+        self.bpe6_comboBox.setItemText(0, _( u"0"))
+        self.bpe6_comboBox.setItemText(1, _( u"1"))
+        self.bpe6_comboBox.setItemText(2, _( u"2"))
+        self.bpe6_comboBox.setItemText(3, _( u"3"))
+        self.bpe6_comboBox.setItemText(4, _( u"4"))
+        self.bpe6_comboBox.setItemText(5, _( u"*"))
 

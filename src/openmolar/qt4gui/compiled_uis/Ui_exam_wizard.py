@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'exam_wizard.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -117,21 +116,21 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Exam Wizard"))
-        self.label.setText(_( "Type"))
-        self.examA_radioButton.setText(_( "Standard"))
-        self.examB_radioButton.setText(_( "Extensive"))
-        self.examC_radioButton.setText(_( "Full Case Assessment"))
-        self.label_3.setText(_( "Exam Date"))
-        self.label_2.setText(_( "Dentist"))
-        self.label_5.setText(_( "Notes"))
-        self.checkBox.setText(_( "Pt c/o"))
-        self.co_comboBox.setItemText(0, _( "nil"))
-        self.co_comboBox.setItemText(1, _( "Broken Tooth"))
-        self.co_comboBox.setItemText(2, _( "Pain"))
-        self.co_comboBox.setItemText(3, _( "Denture Problems"))
-        self.co_comboBox.setItemText(4, _( "Sensitive Teeth"))
-        self.softTissues_checkBox.setText(_( "Soft Tissues Checked"))
-        self.oh_checkBox.setText(_( "OHI given"))
-        self.canines_checkBox.setText(_( "Palpated for upper canines - NAD"))
+        Dialog.setWindowTitle(_( u"Exam Wizard"))
+        self.label.setText(_( u"Type"))
+        self.examA_radioButton.setText(_( u"Standard"))
+        self.examB_radioButton.setText(_( u"Extensive"))
+        self.examC_radioButton.setText(_( u"Full Case Assessment"))
+        self.label_3.setText(_( u"Exam Date"))
+        self.label_2.setText(_( u"Dentist"))
+        self.label_5.setText(_( u"Notes"))
+        self.checkBox.setText(_( u"Pt c/o"))
+        self.co_comboBox.setItemText(0, _( u"nil"))
+        self.co_comboBox.setItemText(1, _( u"Broken Tooth"))
+        self.co_comboBox.setItemText(2, _( u"Pain"))
+        self.co_comboBox.setItemText(3, _( u"Denture Problems"))
+        self.co_comboBox.setItemText(4, _( u"Sensitive Teeth"))
+        self.softTissues_checkBox.setText(_( u"Soft Tissues Checked"))
+        self.oh_checkBox.setText(_( u"OHI given"))
+        self.canines_checkBox.setText(_( u"Palpated for upper canines - NAD"))
 

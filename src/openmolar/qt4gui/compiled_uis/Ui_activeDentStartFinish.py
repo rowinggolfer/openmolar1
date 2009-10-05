@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'activeDentStartFinish.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -42,6 +41,6 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_( "Form"))
-        self.checkBox.setText(_( "CheckBox"))
+        Form.setWindowTitle(_( u"Form"))
+        self.checkBox.setText(_( u"CheckBox"))
 

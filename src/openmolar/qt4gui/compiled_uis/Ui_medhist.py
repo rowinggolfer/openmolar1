@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'medhist.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -155,22 +154,22 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Medical Notes"))
-        self.groupBox_2.setTitle(_( "Doctor\'s details"))
-        self.label.setText(_( "Doctor\'s Name"))
-        self.label_2.setText(_( "Address / Tel No"))
-        self.groupBox.setTitle(_( "Known Conditions"))
-        self.label_3.setText(_( "Current Medication"))
-        self.label_4.setText(_( "Past Medication"))
-        self.label_5.setText(_( "Allergies"))
-        self.label_6.setText(_( "Heart"))
-        self.label_7.setText(_( "Lungs"))
-        self.label_8.setText(_( "Liver"))
-        self.label_11.setText(_( "Bleeding"))
-        self.label_9.setText(_( "Kidneys"))
-        self.label_10.setText(_( "Anaesthetic / operations"))
-        self.label_12.setText(_( "Other"))
-        self.checked_pushButton.setText(_( "Mark as Checked  Today"))
-        self.date_label.setText(_( "Checked"))
-        self.checkBox.setText(_( "Mark Patient as Med Alert"))
+        Dialog.setWindowTitle(_( u"Medical Notes"))
+        self.groupBox_2.setTitle(_( u"Doctor\'s details"))
+        self.label.setText(_( u"Doctor\'s Name"))
+        self.label_2.setText(_( u"Address / Tel No"))
+        self.groupBox.setTitle(_( u"Known Conditions"))
+        self.label_3.setText(_( u"Current Medication"))
+        self.label_4.setText(_( u"Past Medication"))
+        self.label_5.setText(_( u"Allergies"))
+        self.label_6.setText(_( u"Heart"))
+        self.label_7.setText(_( u"Lungs"))
+        self.label_8.setText(_( u"Liver"))
+        self.label_11.setText(_( u"Bleeding"))
+        self.label_9.setText(_( u"Kidneys"))
+        self.label_10.setText(_( u"Anaesthetic / operations"))
+        self.label_12.setText(_( u"Other"))
+        self.checked_pushButton.setText(_( u"Mark as Checked  Today"))
+        self.date_label.setText(_( u"Checked"))
+        self.checkBox.setText(_( u"Mark Patient as Med Alert"))
 

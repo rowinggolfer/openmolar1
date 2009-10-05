@@ -25,11 +25,8 @@ def compile_ui(ui_fname, outdir=""):
     data = f.read()
     f.close()
 
-    data = data.replace("from PyQt4 import QtCore, QtGui",
-    '''from PyQt4 import QtCore, QtGui
-from gettext import gettext as _''')
     data = data.replace(", None, QtGui.QApplication.UnicodeUTF8", "")
-    data= re.sub('QtGui.QApplication.translate\(".*",', "_(", data)
+    data= re.sub('QtGui.QApplication.translate\(".*", ', "_( u", data)
 
     f = open(pyfile,"w")
     f.write(data)

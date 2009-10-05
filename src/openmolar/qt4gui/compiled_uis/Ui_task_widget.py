@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'taskWidget.ui'
+# Form implementation generated from reading ui file 'task_widget.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -48,9 +47,9 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_( "Form"))
-        self.label.setText(_( "Neil\'s Tasks"))
-        self.pushButton_4.setText(_( "Edit Selected Task"))
-        self.pushButton.setText(_( "Add a New Task"))
+        Form.setWindowTitle(_( u"Form"))
+        self.label.setText(_( u"Neil\'s Tasks"))
+        self.pushButton_4.setText(_( u"Edit Selected Task"))
+        self.pushButton.setText(_( u"Add a New Task"))
 
 import resources_rc

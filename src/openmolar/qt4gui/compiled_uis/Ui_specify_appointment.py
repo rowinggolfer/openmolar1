@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'specify_appointment.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -147,29 +146,29 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Enter an appointment"))
-        self.label.setText(_( "Appointment with"))
-        self.label_2.setText(_( "Length"))
-        self.apptlength_comboBox.setItemText(0, _( "5 minutes"))
-        self.apptlength_comboBox.setItemText(1, _( "10 minutes"))
-        self.apptlength_comboBox.setItemText(2, _( "15 minutes"))
-        self.apptlength_comboBox.setItemText(3, _( "20 minutes"))
-        self.apptlength_comboBox.setItemText(4, _( "30 minutes"))
-        self.apptlength_comboBox.setItemText(5, _( "40 minutes"))
-        self.apptlength_comboBox.setItemText(6, _( "45 minutes"))
-        self.apptlength_comboBox.setItemText(7, _( "1 hour"))
-        self.apptlength_comboBox.setItemText(8, _( "1 hour 15 minutes"))
-        self.apptlength_comboBox.setItemText(9, _( "1 hour 20 minutes"))
-        self.apptlength_comboBox.setItemText(10, _( "1 hour 30 minutes"))
-        self.apptlength_comboBox.setItemText(11, _( "1 hour 45 minutes"))
-        self.apptlength_comboBox.setItemText(12, _( "2 hours"))
-        self.apptlength_comboBox.setItemText(13, _( "2 hours 30 minutes"))
-        self.apptlength_comboBox.setItemText(14, _( "3 hours"))
-        self.apptlength_comboBox.setItemText(15, _( "other"))
-        self.combinedApptcheckBox.setText(_( "Combined Appointment With Hygenist?"))
-        self.label_3.setText(_( "Reason 1"))
-        self.label_5.setText(_( "Reason 3"))
-        self.label_4.setText(_( "Reason 2"))
-        self.label_6.setText(_( "Brief Note for Clinician (optional)"))
-        self.scheduleNow_pushButton.setText(_( "Schedule Appointment Now"))
+        Dialog.setWindowTitle(_( u"Enter an appointment"))
+        self.label.setText(_( u"Appointment with"))
+        self.label_2.setText(_( u"Length"))
+        self.apptlength_comboBox.setItemText(0, _( u"5 minutes"))
+        self.apptlength_comboBox.setItemText(1, _( u"10 minutes"))
+        self.apptlength_comboBox.setItemText(2, _( u"15 minutes"))
+        self.apptlength_comboBox.setItemText(3, _( u"20 minutes"))
+        self.apptlength_comboBox.setItemText(4, _( u"30 minutes"))
+        self.apptlength_comboBox.setItemText(5, _( u"40 minutes"))
+        self.apptlength_comboBox.setItemText(6, _( u"45 minutes"))
+        self.apptlength_comboBox.setItemText(7, _( u"1 hour"))
+        self.apptlength_comboBox.setItemText(8, _( u"1 hour 15 minutes"))
+        self.apptlength_comboBox.setItemText(9, _( u"1 hour 20 minutes"))
+        self.apptlength_comboBox.setItemText(10, _( u"1 hour 30 minutes"))
+        self.apptlength_comboBox.setItemText(11, _( u"1 hour 45 minutes"))
+        self.apptlength_comboBox.setItemText(12, _( u"2 hours"))
+        self.apptlength_comboBox.setItemText(13, _( u"2 hours 30 minutes"))
+        self.apptlength_comboBox.setItemText(14, _( u"3 hours"))
+        self.apptlength_comboBox.setItemText(15, _( u"other"))
+        self.combinedApptcheckBox.setText(_( u"Combined Appointment With Hygenist?"))
+        self.label_3.setText(_( u"Reason 1"))
+        self.label_5.setText(_( u"Reason 3"))
+        self.label_4.setText(_( u"Reason 2"))
+        self.label_6.setText(_( u"Brief Note for Clinician (optional)"))
+        self.scheduleNow_pushButton.setText(_( u"Schedule Appointment Now"))
 

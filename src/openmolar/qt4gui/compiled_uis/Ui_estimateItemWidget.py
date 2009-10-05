@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'estimateItemWidget.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -107,14 +106,14 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_( "Form"))
-        self.number_label.setText(_( "1"))
-        self.itemCode_label.setText(_( "code"))
-        self.description_lineEdit.setText(_( "small xrays"))
-        self.code_label.setText(_( "code"))
-        self.cset_lineEdit.setText(_( "P"))
-        self.fee_lineEdit.setText(_( "1000.00"))
-        self.ptFee_lineEdit.setText(_( "1000.00"))
-        self.completed_checkBox.setText(_( "Completed"))
+        Form.setWindowTitle(_( u"Form"))
+        self.number_label.setText(_( u"1"))
+        self.itemCode_label.setText(_( u"code"))
+        self.description_lineEdit.setText(_( u"small xrays"))
+        self.code_label.setText(_( u"code"))
+        self.cset_lineEdit.setText(_( u"P"))
+        self.fee_lineEdit.setText(_( u"1000.00"))
+        self.ptFee_lineEdit.setText(_( u"1000.00"))
+        self.completed_checkBox.setText(_( u"Completed"))
 
 import resources_rc

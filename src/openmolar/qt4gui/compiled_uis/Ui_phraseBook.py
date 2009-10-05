@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'phraseBook.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -52,13 +51,13 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Dialog"))
-        self.checkBox.setText(_( "Anaesthetic Used - Scandonest Plain"))
-        self.checkBox_2.setText(_( "Anaesthetic Used - Citanest"))
-        self.checkBox_3.setText(_( "Anaesthetic Used - Septonest + 1:100,000 Adrenaline (Gold)"))
-        self.checkBox_4.setText(_( "Anaesthetic Used - Septonest + 1:200,000 Adrenaline (Green)"))
-        self.checkBox_5.setText(_( "Anaesthetic Used - Lignocaine + 1:80,000 Adrenaline"))
-        self.checkBox_6.setText(_( "Etch, Bond, Restored Using 3M Filtek Family of Composites"))
-        self.checkBox_7.setText(_( "Restored Using Fuji IX"))
-        self.checkBox_8.setText(_( "Crown Preparation, Pentamix Impression, Alginate of opposing arch. Temporised with Quick Temp and tempbond. Shade - ????"))
+        Dialog.setWindowTitle(_( u"Dialog"))
+        self.checkBox.setText(_( u"Anaesthetic Used - Scandonest Plain"))
+        self.checkBox_2.setText(_( u"Anaesthetic Used - Citanest"))
+        self.checkBox_3.setText(_( u"Anaesthetic Used - Septonest + 1:100,000 Adrenaline (Gold)"))
+        self.checkBox_4.setText(_( u"Anaesthetic Used - Septonest + 1:200,000 Adrenaline (Green)"))
+        self.checkBox_5.setText(_( u"Anaesthetic Used - Lignocaine + 1:80,000 Adrenaline"))
+        self.checkBox_6.setText(_( u"Etch, Bond, Restored Using 3M Filtek Family of Composites"))
+        self.checkBox_7.setText(_( u"Restored Using Fuji IX"))
+        self.checkBox_8.setText(_( u"Crown Preparation, Pentamix Impression, Alginate of opposing arch. Temporised with Quick Temp and tempbond. Shade - ????"))
 

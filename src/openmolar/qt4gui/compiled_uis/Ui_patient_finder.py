@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'patient_finder.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -124,30 +123,30 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.snameSoundex_checkBox, self.fnameSoundex_checkBox)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Patient Finder"))
-        self.label_3.setText(_( "Fill in a few of the following fields to get a list of possible patients"))
-        self.repeat_pushButton.setText(_( "Repeat Last Search"))
-        self.label_5.setText(_( "SNO or Surname"))
-        self.sname.setToolTip(_( "Enter either the full name or the first few letters of the name.\n"
+        Dialog.setWindowTitle(_( u"Patient Finder"))
+        self.label_3.setText(_( u"Fill in a few of the following fields to get a list of possible patients"))
+        self.repeat_pushButton.setText(_( u"Repeat Last Search"))
+        self.label_5.setText(_( u"SNO or Surname"))
+        self.sname.setToolTip(_( u"Enter either the full name or the first few letters of the name.\n"
 "\n"
 "If you are unsure of the spelling, type in the COMPLETE name,\n"
 "and check the adjacent \"sounds like\" box."))
-        self.snameSoundex_checkBox.setToolTip(_( "check to search for a similar sounding name"))
-        self.label_6.setText(_( "First Name"))
-        self.fname.setToolTip(_( "Enter either the full name or the first few letters of the name.\n"
+        self.snameSoundex_checkBox.setToolTip(_( u"check to search for a similar sounding name"))
+        self.label_6.setText(_( u"First Name"))
+        self.fname.setToolTip(_( u"Enter either the full name or the first few letters of the name.\n"
 "\n"
 "If you are unsure of the spelling, type in the COMPLETE name,\n"
 "and check the adjacent \"sounds like\" box.\n"
 "Be wary of middle names. \n"
 "eg. \"Neil\" does NOT sound like \"Neil Alexander\"!"))
-        self.fnameSoundex_checkBox.setToolTip(_( "check to search for a similar sounding name"))
-        self.label_2.setText(_( "Date of Birth"))
-        self.dob.setToolTip(_( "Date of birth in format dd/mm/yyyy"))
-        self.label_7.setText(_( "Address includes"))
-        self.addr1.setToolTip(_( "openMolar will search line1 and line2 of the address for this text"))
-        self.label_8.setText(_( "Telephone"))
-        self.tel.setToolTip(_( "open molar will search tel1, tel2 and mobile for numbers present here."))
-        self.label_9.setText(_( "Postcode"))
-        self.pcde.setToolTip(_( "search for a postcode"))
+        self.fnameSoundex_checkBox.setToolTip(_( u"check to search for a similar sounding name"))
+        self.label_2.setText(_( u"Date of Birth"))
+        self.dob.setToolTip(_( u"Date of birth in format dd/mm/yyyy"))
+        self.label_7.setText(_( u"Address includes"))
+        self.addr1.setToolTip(_( u"openMolar will search line1 and line2 of the address for this text"))
+        self.label_8.setText(_( u"Telephone"))
+        self.tel.setToolTip(_( u"open molar will search tel1, tel2 and mobile for numbers present here."))
+        self.label_9.setText(_( u"Postcode"))
+        self.pcde.setToolTip(_( u"search for a postcode"))
 
 import resources_rc

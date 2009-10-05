@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'saveMemo.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -73,14 +72,14 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Post a memo about this Patient"))
-        self.groupBox_2.setTitle(_( "Expiry Policy"))
-        self.noExpire_radioButton.setText(_( "Do Not Expire"))
-        self.dateExpire_radioButton.setText(_( "Expire on this date"))
-        self.groupBox_3.setTitle(_( "Viewable by"))
-        self.viewAll_radioButton.setText(_( "All"))
-        self.viewSurgery_radioButton.setText(_( "Surgery Machines"))
-        self.viewReception_radioButton.setText(_( "Reception Machines"))
-        self.groupBox.setTitle(_( "Author"))
-        self.phraseBook_pushButton.setText(_( "PhraseBook"))
+        Dialog.setWindowTitle(_( u"Post a memo about this Patient"))
+        self.groupBox_2.setTitle(_( u"Expiry Policy"))
+        self.noExpire_radioButton.setText(_( u"Do Not Expire"))
+        self.dateExpire_radioButton.setText(_( u"Expire on this date"))
+        self.groupBox_3.setTitle(_( u"Viewable by"))
+        self.viewAll_radioButton.setText(_( u"All"))
+        self.viewSurgery_radioButton.setText(_( u"Surgery Machines"))
+        self.viewReception_radioButton.setText(_( u"Reception Machines"))
+        self.groupBox.setTitle(_( u"Author"))
+        self.phraseBook_pushButton.setText(_( u"PhraseBook"))
 

@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'newSetup.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -257,39 +256,39 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.rootPassword_lineEdit, self.createDB_pushButton_2)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "First Run"))
-        self.label_7.setText(_( "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        Dialog.setWindowTitle(_( u"First Run"))
+        self.label_7.setText(_( u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans Serif\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Welcome to the openMolar settings wizard.</p>\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This will set your system password, configure your mysql server, and install a small demo database if required.</p></body></html>"))
-        self.pushButton.setText(_( "OK, continue"))
-        self.label_5.setText(_( "Password"))
-        self.mainpassword_checkBox.setText(_( "show password"))
-        self.pushButton_2.setText(_( "OK, continue"))
-        self.mainPassword_label.setText(_( "Please enter a password to prevent unauthorised running of this application."))
-        self.label_13.setText(_( "Where is your mysql server located?"))
-        self.label_12.setText(_( "Host"))
-        self.host_lineEdit.setText(_( "localhost"))
-        self.label_14.setText(_( "Port"))
-        self.port_lineEdit.setText(_( "3306"))
-        self.pushButton_8.setText(_( "OK, continue"))
-        self.createDB_pushButton.setText(_( "Yes please"))
-        self.haveDB_pushButton.setText(_( "No, I have a database already, continue."))
-        self.label_11.setText(_( "Would you like to create a demo openmolar database now?"))
-        self.label_9.setText(_( "Please enter a mysql user who has privileges for the openmolar database."))
-        self.label_4.setText(_( "Database Name"))
-        self.database_lineEdit.setText(_( "openmolar_demo"))
-        self.label_2.setText(_( "User"))
-        self.user_lineEdit.setText(_( "OMuser"))
-        self.label_3.setText(_( "(mysql)Password"))
-        self.password_lineEdit.setText(_( "password"))
-        self.dbpassword_checkBox.setText(_( "display password"))
-        self.testDB_pushButton.setText(_( "Test this connection to this database"))
-        self.pushButton_9.setText(_( "OK, continue"))
-        self.label.setText(_( "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.pushButton.setText(_( u"OK, continue"))
+        self.label_5.setText(_( u"Password"))
+        self.mainpassword_checkBox.setText(_( u"show password"))
+        self.pushButton_2.setText(_( u"OK, continue"))
+        self.mainPassword_label.setText(_( u"Please enter a password to prevent unauthorised running of this application."))
+        self.label_13.setText(_( u"Where is your mysql server located?"))
+        self.label_12.setText(_( u"Host"))
+        self.host_lineEdit.setText(_( u"localhost"))
+        self.label_14.setText(_( u"Port"))
+        self.port_lineEdit.setText(_( u"3306"))
+        self.pushButton_8.setText(_( u"OK, continue"))
+        self.createDB_pushButton.setText(_( u"Yes please"))
+        self.haveDB_pushButton.setText(_( u"No, I have a database already, continue."))
+        self.label_11.setText(_( u"Would you like to create a demo openmolar database now?"))
+        self.label_9.setText(_( u"Please enter a mysql user who has privileges for the openmolar database."))
+        self.label_4.setText(_( u"Database Name"))
+        self.database_lineEdit.setText(_( u"openmolar_demo"))
+        self.label_2.setText(_( u"User"))
+        self.user_lineEdit.setText(_( u"OMuser"))
+        self.label_3.setText(_( u"(mysql)Password"))
+        self.password_lineEdit.setText(_( u"password"))
+        self.dbpassword_checkBox.setText(_( u"display password"))
+        self.testDB_pushButton.setText(_( u"Test this connection to this database"))
+        self.pushButton_9.setText(_( u"OK, continue"))
+        self.label.setText(_( u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans Serif\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
@@ -299,9 +298,9 @@ class Ui_Dialog(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">If you created a demo database... </p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">enter <span style=\" font-weight:600; text-decoration: underline;\">user</span> into the user1 field of the login screen.</p></body></html>"))
-        self.saveQuit_pushButton.setText(_( "Save settings and launch openmolar"))
-        self.mainPassword_label_2.setText(_( "To create a database, please enter the password of your ROOT mysql user."))
-        self.label_6.setText(_( "Password"))
-        self.rootPassword_checkBox.setText(_( "show password"))
-        self.createDB_pushButton_2.setText(_( "Create openmolar_demo database, and continue"))
+        self.saveQuit_pushButton.setText(_( u"Save settings and launch openmolar"))
+        self.mainPassword_label_2.setText(_( u"To create a database, please enter the password of your ROOT mysql user."))
+        self.label_6.setText(_( u"Password"))
+        self.rootPassword_checkBox.setText(_( u"show password"))
+        self.createDB_pushButton_2.setText(_( u"Create openmolar_demo database, and continue"))
 

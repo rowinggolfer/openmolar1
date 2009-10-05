@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'appointment_length.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -54,8 +53,8 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Select Appointment Length"))
-        self.label.setText(_( "Hours"))
-        self.label_2.setText(_( "Minutes"))
+        Dialog.setWindowTitle(_( u"Select Appointment Length"))
+        self.label.setText(_( u"Hours"))
+        self.label_2.setText(_( u"Minutes"))
 
 import resources_rc

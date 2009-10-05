@@ -61,7 +61,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-36</y>
          <width>989</width>
          <height>542</height>
         </rect>
@@ -2983,7 +2983,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>96</width>
+                           <width>499</width>
                            <height>198</height>
                           </rect>
                          </property>
@@ -4081,7 +4081,7 @@ Note - this will not remove items which are currently there. </string>
                      <widget class="QPushButton" name="printBook1_pushButton">
                       <property name="maximumSize">
                        <size>
-                        <width>60</width>
+                        <width>16777215</width>
                         <height>24</height>
                        </size>
                       </property>
@@ -4183,7 +4183,7 @@ Note - this will not remove items which are currently there. </string>
                      <widget class="QPushButton" name="printBook2_pushButton">
                       <property name="maximumSize">
                        <size>
-                        <width>60</width>
+                        <width>16777215</width>
                         <height>24</height>
                        </size>
                       </property>
@@ -4281,7 +4281,7 @@ Note - this will not remove items which are currently there. </string>
                      <widget class="QPushButton" name="printBook3_pushButton">
                       <property name="maximumSize">
                        <size>
-                        <width>60</width>
+                        <width>16777215</width>
                         <height>24</height>
                        </size>
                       </property>
@@ -4401,7 +4401,7 @@ Note - this will not remove items which are currently there. </string>
                      <widget class="QPushButton" name="printBook4_pushButton">
                       <property name="maximumSize">
                        <size>
-                        <width>60</width>
+                        <width>16777215</width>
                         <height>24</height>
                        </size>
                       </property>
@@ -4677,7 +4677,7 @@ Note - this will not remove items which are currently there. </string>
               </widget>
               <widget class="QWidget" name="tab_27">
                <attribute name="title">
-                <string>Memos and Tasks</string>
+                <string>Tasks</string>
                </attribute>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <item>
@@ -5668,6 +5668,7 @@ Note - this will not remove items which are currently there. </string>
     <property name="title">
      <string>&amp;Preferences</string>
     </property>
+    <addaction name="actionChange_Language"/>
     <addaction name="actionTable_View_For_Charting"/>
     <addaction name="actionClear_Today_s_Emergency_Slots"/>
     <addaction name="actionTest_Print_an_NHS_Form"/>
@@ -5773,6 +5774,11 @@ Note - this will not remove items which are currently there. </string>
   <action name="actionSelect_Print_Daylists">
    <property name="text">
     <string>Select &amp;&amp; Print Daylists</string>
+   </property>
+  </action>
+  <action name="actionChange_Language">
+   <property name="text">
+    <string>Change Language</string>
    </property>
   </action>
  </widget>

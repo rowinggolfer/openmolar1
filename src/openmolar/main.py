@@ -20,8 +20,17 @@ import os
 import hashlib
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
-from gettext import gettext as _
 
+import gettext
+lang = os.environ.get("LANG")
+try:
+    print "installing language", lang
+    lang1 = gettext.translation('openmolar', languages=[lang,])
+    lang1.install()
+except IOError:    
+    print "%s not found, using default"% lang
+    gettext.install('openmolar', unicode=True)
+    
 class LoginError(Exception):
     '''
     a custom exception thrown when the user gets password or username incorrect
@@ -45,23 +54,19 @@ def proceed():
         compatible  = schema_version.clientCompatibility(
         localsettings.SCHEMA_VERSION)
         if not compatible:
-            QtGui.QMessageBox.warning(None, "Update Client",
+            QtGui.QMessageBox.warning(None, _("Update Client"),
             _('''<p>Sorry, you cannot run this version of the openMolar client 
-            because your database schema is more advanced.</p>
-            <p>this client requires schema version %s, 
-            but your database is at %s</p>
-            <p>Please Update openMolar now</p>''')% (
-            localsettings.SCHEMA_VERSION, sv)) 
+because your database schema is more advanced.</p>
+<p>this client requires schema version %s, but your database is at %s</p>
+<p>Please Update openMolar now</p>''')% (localsettings.SCHEMA_VERSION, sv)) 
         else:
-            result = QtGui.QMessageBox.question(None, "Update Client",
+            result = QtGui.QMessageBox.question(None, _("Update Client"),
             _('''<p>This openMolar client has fallen behind your database 
-            database schema version<br />this client was written for 
-            schema version %s, but your database is now at %s<br />
-            However, the differences are not critical, 
-            and you can continue if you wish</p>
-            <p><i>It would still be wise to update openMolar ASAP</i></p>
-            <hr />
-            <p>Do you wish to continue?</p>''')% (
+schema version<br />this client was written for schema version %s, 
+but your database is now at %s<br />However, the differences are not critical, 
+and you can continue if you wish</p>
+<p><i>It would still be wise to update openMolar ASAP</i></p>
+<hr /><p>Do you wish to continue?</p>''')% (
             localsettings.SCHEMA_VERSION, sv),
             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
@@ -109,14 +114,14 @@ def main():
         
     if not cf_Found:
         message = _('''<center><p>
-        This appears to be your first running of openMolar<br />
-        Before you run this application ,<br />
-        We need to generate a settings file.<br />
-        So that openmolar knows where your mysql server resides<br />
-        If you do not have a database, you will be prompted to create one<</p>
-        Are you ready to proceed?</center>''')
+This appears to be your first running of openMolar<br />
+Before you run this application ,<br />
+We need to generate a settings file.<br />
+So that openmolar knows where your mysql server resides<br />
+If you do not have a database, you will be prompted to create one<</p>
+Are you ready to proceed?</center>''')
 
-        result = QtGui.QMessageBox.question(None, "First Run",
+        result = QtGui.QMessageBox.question(None, _("First Run"),
         message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
         if result == QtGui.QMessageBox.Yes:
@@ -205,15 +210,15 @@ def main():
                 
             except LoginError:
                 QtGui.QMessageBox.warning(my_dialog,
-                _("Login Error"), _("Incorrect<br />User/password<br />\
-                combination!<br />Please Try Again."))
+                _("Login Error"), 
+                _('''Incorrect<br />User/password<br />
+combination!<br />Please Try Again.'''))
             except localsettings.omDBerror, e:
                 message = _('''<p>DATABASE ERROR </p>
-                <p>application cannot run</p>
-                Error %s''')% e
+<p>application cannot run</p>Error %s''')% e
             
                 QtGui.QMessageBox.warning(my_dialog,
-                "Login Error", message)
+                _("Login Error"), message)
                 break
         else:
             break

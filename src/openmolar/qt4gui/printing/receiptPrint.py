@@ -4,6 +4,7 @@
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or 
 # (at your option) any later version. See the GNU General Public License for more details.
+from __future__ import division
 
 from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
@@ -11,7 +12,7 @@ from openmolar.settings import localsettings
 import datetime
 
 def toMoneyString(i):
-    return u"£"+"%d.%02d"%(i/100,i%100)
+    return u"£%.02f"%(i/100)
 
 class receipt():
     def __init__(self,parent=None):

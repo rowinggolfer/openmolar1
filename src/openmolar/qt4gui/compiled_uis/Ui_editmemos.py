@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'editmemos.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -56,9 +55,9 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Edit Memos"))
-        self.label.setText(_( "<p align=\"center\">Friday, 25th December 2009</p>\n"
+        Dialog.setWindowTitle(_( u"Edit Memos"))
+        self.label.setText(_( u"<p align=\"center\">Friday, 25th December 2009</p>\n"
 "<p align=\"center\">Christmas Day</p>"))
-        self.label_2.setText(_( "Global Memo"))
-        self.label_3.setText(_( "Clinician Memos"))
+        self.label_2.setText(_( u"Global Memo"))
+        self.label_3.setText(_( u"Clinician Memos"))
 

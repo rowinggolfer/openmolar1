@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'toothPerioProps.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -118,25 +117,25 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_( "Form"))
-        self.tooth_label.setText(_( "ToothId"))
-        self.comboBox.setItemText(0, _( "Pocketing"))
-        self.comboBox.setItemText(1, _( "Bleeding"))
-        self.comboBox.setItemText(2, _( "Plaque"))
-        self.comboBox.setItemText(3, _( "Recession"))
-        self.comboBox.setItemText(4, _( "Furcation"))
-        self.comboBox.setItemText(5, _( "Suppuration"))
-        self.comboBox.setItemText(6, _( "Mobility"))
-        self.comboBox.setItemText(7, _( "Other"))
-        self.copy_pushButton.setText(_( "Copy &All"))
-        self.cp_pushButton.setToolTip(_( "delete tooth data"))
-        self.cp_pushButton.setText(_( "Cp"))
-        self.clear_pushButton.setToolTip(_( "delete tooth data"))
-        self.leftTooth_pushButton.setToolTip(_( "Apply and move Back a tooth"))
-        self.rightTooth_pushButton.setToolTip(_( "Apply & Move to Next Tooth"))
-        self.mobilitycomboBox.setItemText(0, _( "-"))
-        self.mobilitycomboBox.setItemText(1, _( "I"))
-        self.mobilitycomboBox.setItemText(2, _( "II"))
-        self.mobilitycomboBox.setItemText(3, _( "III"))
+        Form.setWindowTitle(_( u"Form"))
+        self.tooth_label.setText(_( u"ToothId"))
+        self.comboBox.setItemText(0, _( u"Pocketing"))
+        self.comboBox.setItemText(1, _( u"Bleeding"))
+        self.comboBox.setItemText(2, _( u"Plaque"))
+        self.comboBox.setItemText(3, _( u"Recession"))
+        self.comboBox.setItemText(4, _( u"Furcation"))
+        self.comboBox.setItemText(5, _( u"Suppuration"))
+        self.comboBox.setItemText(6, _( u"Mobility"))
+        self.comboBox.setItemText(7, _( u"Other"))
+        self.copy_pushButton.setText(_( u"Copy &All"))
+        self.cp_pushButton.setToolTip(_( u"delete tooth data"))
+        self.cp_pushButton.setText(_( u"Cp"))
+        self.clear_pushButton.setToolTip(_( u"delete tooth data"))
+        self.leftTooth_pushButton.setToolTip(_( u"Apply and move Back a tooth"))
+        self.rightTooth_pushButton.setToolTip(_( u"Apply & Move to Next Tooth"))
+        self.mobilitycomboBox.setItemText(0, _( u"-"))
+        self.mobilitycomboBox.setItemText(1, _( u"I"))
+        self.mobilitycomboBox.setItemText(2, _( u"II"))
+        self.mobilitycomboBox.setItemText(3, _( u"III"))
 
 import resources_rc

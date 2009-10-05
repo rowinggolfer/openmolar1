@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'toothtreatmentItemWidget.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -42,9 +41,9 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_( "Form"))
-        self.tooth_label.setText(_( "TextLabel"))
-        self.description_label.setText(_( "TextLabel"))
-        self.doubleSpinBox.setPrefix(_( "£"))
-        self.pt_doubleSpinBox.setPrefix(_( "£"))
+        Form.setWindowTitle(_( u"Form"))
+        self.tooth_label.setText(_( u"TextLabel"))
+        self.description_label.setText(_( u"TextLabel"))
+        self.doubleSpinBox.setPrefix(_( u"£"))
+        self.pt_doubleSpinBox.setPrefix(_( u"£"))
 

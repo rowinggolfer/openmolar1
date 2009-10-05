@@ -19,7 +19,6 @@ import copy
 import datetime
 import pickle
 import subprocess
-from gettext import gettext as _
 
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import colours
@@ -62,6 +61,7 @@ from openmolar.qt4gui.dialogs import newBPE
 from openmolar.qt4gui.dialogs import addToothTreat
 from openmolar.qt4gui.dialogs import saveMemo
 from openmolar.qt4gui.dialogs import permissions
+from openmolar.qt4gui.dialogs import select_language
 
 #secondary applications
 from openmolar.qt4gui.tools import fee_adjuster
@@ -1515,10 +1515,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         if warning_level == 0:
             self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
         elif warning_level == 1:
-            QtGui.QMessageBox.information(self, "Advisory", arg)
+            QtGui.QMessageBox.information(self, _("Advisory"), arg)
         elif warning_level == 2:
             now=QtCore.QTime.currentTime()
-            QtGui.QMessageBox.warning(self, "Error", arg)
+            QtGui.QMessageBox.warning(self, _("Error"), arg)
             #--for logging purposes
             print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
 
@@ -1722,7 +1722,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             else:
                 column = 1
                 row += 1
-        if column == 1:
+        if column == 2:
             row += 1        
         self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox("All Hygenists")
         self.ui.aptOV_allhygscheckBox.setChecked(True)
@@ -2814,6 +2814,13 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         self.ui.dupReceiptDate_lineEdit.setInputMask("00/00/0000")
 
+    def changeLanguage(self):
+        '''
+        user has clicked on the Change Language Menu Item
+        '''
+        if select_language.run(self):
+            self.ui.retranslateUi(self)
+
     def changeDB(self):
         '''
         a dialog to user a different database (or backup server etc...)
@@ -3587,6 +3594,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                     QtCore.SIGNAL("triggered()"), self.open_patient_fromfile)
         QtCore.QObject.connect(self.ui.actionSet_Clinician,
                     QtCore.SIGNAL("triggered()"), self.setClinician)
+        
+        QtCore.QObject.connect(self.ui.actionChange_Language,
+        QtCore.SIGNAL("triggered()"), self.changeLanguage)
+            
         QtCore.QObject.connect(self.ui.actionChoose_Database,
                                QtCore.SIGNAL("triggered()"), self.changeDB)
 
@@ -4111,6 +4122,9 @@ def main(arg):
     
 if __name__ == "__main__":
     print "dev mode"
+    import gettext
+    os.environ.setdefault('LANG', 'en')
+    gettext.install('openmolar')
     localsettings.initiate()
 
     print "Qt Version: ", QtCore.QT_VERSION_STR

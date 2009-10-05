@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'surgeryNumber.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -46,10 +45,10 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Question"))
-        self.label.setText(_( "Please set the Surgery Number"))
-        self.comboBox.setItemText(0, _( "Surgery One"))
-        self.comboBox.setItemText(1, _( "Surgery Two"))
-        self.comboBox.setItemText(2, _( "Surgery Three"))
+        Dialog.setWindowTitle(_( u"Question"))
+        self.label.setText(_( u"Please set the Surgery Number"))
+        self.comboBox.setItemText(0, _( u"Surgery One"))
+        self.comboBox.setItemText(1, _( u"Surgery Two"))
+        self.comboBox.setItemText(2, _( u"Surgery Three"))
 
 import resources_rc

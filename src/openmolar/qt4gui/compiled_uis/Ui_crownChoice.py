@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'crownChoice.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -59,16 +58,16 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Choose"))
-        self.gold.setText(_( "Gold"))
-        self.resin.setText(_( "Resin"))
-        self.pjc.setText(_( "PJC"))
-        self.temp.setText(_( "Temporary"))
-        self.lava.setText(_( "Lava"))
-        self.fortress.setText(_( "Fortress"))
-        self.bonded.setText(_( "Bonded"))
-        self.other.setText(_( "Other"))
-        self.recement.setText(_( "Recement"))
-        self.cancel_pushButton.setText(_( "Cancel"))
+        Dialog.setWindowTitle(_( u"Choose"))
+        self.gold.setText(_( u"Gold"))
+        self.resin.setText(_( u"Resin"))
+        self.pjc.setText(_( u"PJC"))
+        self.temp.setText(_( u"Temporary"))
+        self.lava.setText(_( u"Lava"))
+        self.fortress.setText(_( u"Fortress"))
+        self.bonded.setText(_( u"Bonded"))
+        self.other.setText(_( u"Other"))
+        self.recement.setText(_( u"Recement"))
+        self.cancel_pushButton.setText(_( u"Cancel"))
 
 import resources_rc

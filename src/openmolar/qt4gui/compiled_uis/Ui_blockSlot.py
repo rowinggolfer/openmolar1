@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'blockSlot.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -61,14 +60,14 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Confirm"))
-        self.label.setText(_( "Block this Slot?"))
-        self.label_3.setText(_( "Block Start"))
-        self.label_4.setText(_( "Bock End"))
-        self.label_2.setText(_( "Text to apply"))
-        self.comboBox.setItemText(0, _( "//Blocked//"))
-        self.comboBox.setItemText(1, _( "Emergency"))
-        self.comboBox.setItemText(2, _( "Reserved Clinical Time"))
-        self.comboBox.setItemText(3, _( "Out of Office"))
-        self.comboBox.setItemText(4, _( "Lunch"))
+        Dialog.setWindowTitle(_( u"Confirm"))
+        self.label.setText(_( u"Block this Slot?"))
+        self.label_3.setText(_( u"Block Start"))
+        self.label_4.setText(_( u"Bock End"))
+        self.label_2.setText(_( u"Text to apply"))
+        self.comboBox.setItemText(0, _( u"//Blocked//"))
+        self.comboBox.setItemText(1, _( u"Emergency"))
+        self.comboBox.setItemText(2, _( u"Reserved Clinical Time"))
+        self.comboBox.setItemText(3, _( u"Out of Office"))
+        self.comboBox.setItemText(4, _( u"Lunch"))
 

@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'newCourse.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -61,10 +60,10 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "New Course"))
-        self.label.setText(_( "Start a new Course of Treatment with the following Criteria?"))
-        self.label_2.setText(_( "Contracted Dentist"))
-        self.label_3.setText(_( "Course Dentist"))
-        self.label_5.setText(_( "Course Type"))
-        self.label_4.setText(_( "Acceptance Date"))
+        Dialog.setWindowTitle(_( u"New Course"))
+        self.label.setText(_( u"Start a new Course of Treatment with the following Criteria?"))
+        self.label_2.setText(_( u"Contracted Dentist"))
+        self.label_3.setText(_( u"Course Dentist"))
+        self.label_5.setText(_( u"Course Type"))
+        self.label_4.setText(_( u"Acceptance Date"))
 

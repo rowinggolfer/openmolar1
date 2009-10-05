@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'chooseDocument.ui'
 #
-# Created: Sat Oct  3 00:10:09 2009
+# Created: Sun Oct  4 20:51:34 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -63,12 +62,12 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Choose a Document"))
-        self.label.setText(_( "Choose a document to view"))
-        self.remuneration_radioButton.setText(_( "NHS Schedule of Remuneration April 2008"))
-        self.info_radioButton.setText(_( "NHS \"Information Guide\" 2008"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _( "2008"))
-        self.remuneration2009_radioButton.setText(_( "NHS Schedule of Remuneration"))
-        self.info2009_radioButton.setText(_( "NHS \"Information Guide\""))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _( "2009"))
+        Dialog.setWindowTitle(_( u"Choose a Document"))
+        self.label.setText(_( u"Choose a document to view"))
+        self.remuneration_radioButton.setText(_( u"NHS Schedule of Remuneration April 2008"))
+        self.info_radioButton.setText(_( u"NHS \"Information Guide\" 2008"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _( u"2008"))
+        self.remuneration2009_radioButton.setText(_( u"NHS Schedule of Remuneration"))
+        self.info2009_radioButton.setText(_( u"NHS \"Information Guide\""))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _( u"2009"))
 

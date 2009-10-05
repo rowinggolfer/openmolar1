@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'completeTreatment.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -93,11 +92,11 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Complete Treatment"))
-        self.label.setText(_( "Complete this Treatment with the following Criteria?"))
-        self.label_3.setText(_( "Treating Dentist/Hygenist"))
-        self.label_4.setText(_( "Gross Fee"))
-        self.fee_doubleSpinBox.setPrefix(_( "£"))
-        self.label_5.setText(_( "Patient Charge"))
-        self.ptfee_doubleSpinBox.setPrefix(_( "£"))
+        Dialog.setWindowTitle(_( u"Complete Treatment"))
+        self.label.setText(_( u"Complete this Treatment with the following Criteria?"))
+        self.label_3.setText(_( u"Treating Dentist/Hygenist"))
+        self.label_4.setText(_( u"Gross Fee"))
+        self.fee_doubleSpinBox.setPrefix(_( u"£"))
+        self.label_5.setText(_( u"Patient Charge"))
+        self.ptfee_doubleSpinBox.setPrefix(_( u"£"))
 

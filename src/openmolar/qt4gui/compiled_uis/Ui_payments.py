@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'payments.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -169,19 +168,19 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.debit_pushButton, self.cash_pushButton)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Payments"))
-        self.groupBox_2.setTitle(_( "Payments for treatment"))
-        self.label.setText(_( "Cash"))
-        self.cash_pushButton.setText(_( "-"))
-        self.label_2.setText(_( "Cheque"))
-        self.cheque_pushButton.setText(_( "-"))
-        self.label_3.setText(_( "Debit Card"))
-        self.debit_pushButton.setText(_( "-"))
-        self.label_4.setText(_( "Credit Card"))
-        self.credit_pushButton.setText(_( "-"))
-        self.groupBox.setTitle(_( "Other Payments"))
-        self.label_8.setText(_( "Sundries"))
-        self.label_7.setText(_( "Annual HDP"))
-        self.label_9.setText(_( "Miscellaneous"))
-        self.label_6.setText(_( "Amount which will appear on receipt  (read only)"))
+        Dialog.setWindowTitle(_( u"Payments"))
+        self.groupBox_2.setTitle(_( u"Payments for treatment"))
+        self.label.setText(_( u"Cash"))
+        self.cash_pushButton.setText(_( u"-"))
+        self.label_2.setText(_( u"Cheque"))
+        self.cheque_pushButton.setText(_( u"-"))
+        self.label_3.setText(_( u"Debit Card"))
+        self.debit_pushButton.setText(_( u"-"))
+        self.label_4.setText(_( u"Credit Card"))
+        self.credit_pushButton.setText(_( u"-"))
+        self.groupBox.setTitle(_( u"Other Payments"))
+        self.label_8.setText(_( u"Sundries"))
+        self.label_7.setText(_( u"Annual HDP"))
+        self.label_9.setText(_( u"Miscellaneous"))
+        self.label_6.setText(_( u"Amount which will appear on receipt  (read only)"))
 

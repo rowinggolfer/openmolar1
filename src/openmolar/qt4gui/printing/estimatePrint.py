@@ -14,7 +14,7 @@ from openmolar.settings import localsettings
 import datetime
 
 def toMoneyString(i):
-    return u"£"+"%.02f"%(i/100)
+    return u"£%.02f"%(i/100)
 
 class estimate():
     def __init__(self, parent=None):

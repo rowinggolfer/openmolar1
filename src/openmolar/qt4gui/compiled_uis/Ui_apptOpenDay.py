@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'apptOpenDay.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -144,19 +143,19 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Open a Day"))
-        self.label_2.setText(_( "Clinician"))
-        self.label_3.setText(_( "Date to Open"))
-        self.label.setText(_( "Day Memo - optional"))
-        self.label_10.setText(_( "Day Start"))
-        self.es1_checkBox.setText(_( "Morning Emergency Slot"))
-        self.label_4.setText(_( "Start"))
-        self.label_7.setText(_( "Finish"))
-        self.lunch_checkBox.setText(_( "Lunch"))
-        self.label_5.setText(_( "Start"))
-        self.label_8.setText(_( "Finish"))
-        self.es2_checkBox.setText(_( "Afternoon Emergency Slot "))
-        self.label_6.setText(_( "Start"))
-        self.label_9.setText(_( "Finish"))
-        self.label_11.setText(_( "Day Finish"))
+        Dialog.setWindowTitle(_( u"Open a Day"))
+        self.label_2.setText(_( u"Clinician"))
+        self.label_3.setText(_( u"Date to Open"))
+        self.label.setText(_( u"Day Memo - optional"))
+        self.label_10.setText(_( u"Day Start"))
+        self.es1_checkBox.setText(_( u"Morning Emergency Slot"))
+        self.label_4.setText(_( u"Start"))
+        self.label_7.setText(_( u"Finish"))
+        self.lunch_checkBox.setText(_( u"Lunch"))
+        self.label_5.setText(_( u"Start"))
+        self.label_8.setText(_( u"Finish"))
+        self.es2_checkBox.setText(_( u"Afternoon Emergency Slot "))
+        self.label_6.setText(_( u"Start"))
+        self.label_9.setText(_( u"Finish"))
+        self.label_11.setText(_( u"Day Finish"))
 

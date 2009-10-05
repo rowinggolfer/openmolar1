@@ -94,11 +94,11 @@ def newsetup(parent = None):
                 additional = "from user %s"% myMysqlUser
 
             QtGui.QMessageBox.information(None,
-            "Success!",
-            "The %s accepted the connection %s."%(message, additional))
+            _("Success!"),
+            _("The %s accepted the connection %s.")% (message, additional))
 
         else:
-            QtGui.QMessageBox.warning(None, "FAILURE", str(e))
+            QtGui.QMessageBox.warning(None, _("FAILURE"), str(e))
             print "Connection failed!"
 
         return result
@@ -129,7 +129,8 @@ def newsetup(parent = None):
 
         except Exception, e:
             print "error in actuallyCreateDB",  e
-            QtGui.QMessageBox.warning(Dialog, "Error Creating Database", str(e))
+            QtGui.QMessageBox.warning(Dialog, _("Error Creating Database"),
+            str(e))
             Dialog.reject()
         stage6()
 
@@ -183,7 +184,7 @@ def newsetup(parent = None):
 
         myPassword = dl.main_password_lineEdit.text()
 
-        dl.mainPassword_label.setText("Please re-enter this password")
+        dl.mainPassword_label.setText(_("Please re-enter this password"))
         dl.main_password_lineEdit.setText("")
 
         QtCore.QObject.connect(dl.pushButton_2,
@@ -204,10 +205,10 @@ def newsetup(parent = None):
 
         if dl.main_password_lineEdit.text() != myPassword:
             print "the two passwords did not match"
-            QtGui.QMessageBox.information(None, "Advisory",
-            "Passwords did not match, please try again")
-            dl.mainPassword_label.setText("Please enter a password to" + \
-            "prevent unauthorised running of this application.")
+            QtGui.QMessageBox.information(None, _("Advisory"),
+            _("Passwords did not match, please try again"))
+            dl.mainPassword_label.setText(_('''Please enter a password to
+prevent unauthorised running of this application.'''))
 
             dl.main_password_lineEdit.setText("")
             stage1()
@@ -324,7 +325,7 @@ def newsetup(parent = None):
 
         except Exception, e:
             print "error saving settings",  e
-            QtGui.QMessageBox.warning(parent, "FAILURE", str(e))
+            QtGui.QMessageBox.warning(parent, _("FAILURE"), str(e))
             Dialog.reject()
             
     Dialog = QtGui.QDialog(parent)

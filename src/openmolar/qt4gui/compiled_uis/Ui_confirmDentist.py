@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'confirmDentist.ui'
 #
-# Created: Sat Oct  3 00:10:08 2009
+# Created: Sun Oct  4 20:51:33 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from gettext import gettext as _
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -43,8 +42,8 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( "Which Dentist"))
-        self.label.setText(_( "Print a GP17 form using this dentist\'s contract no? "))
-        self.previousCourse_radioButton.setText(_( "Previous Course (00/00/0000 - 00/00/0000)"))
-        self.newCourse_radioButton.setText(_( "New Course ( no dates)"))
+        Dialog.setWindowTitle(_( u"Which Dentist"))
+        self.label.setText(_( u"Print a GP17 form using this dentist\'s contract no? "))
+        self.previousCourse_radioButton.setText(_( u"Previous Course (00/00/0000 - 00/00/0000)"))
+        self.newCourse_radioButton.setText(_( u"New Course ( no dates)"))
 
