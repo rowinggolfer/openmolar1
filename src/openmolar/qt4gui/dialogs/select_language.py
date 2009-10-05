@@ -32,8 +32,13 @@ def setLanguage(lang):
     '''
     lang = lang.split(" - ")[1]
     lang1 = gettext.translation('openmolar', languages=[lang,])
-    lang1.install(unicode=True)
-
+    try:
+        print "trying install your environment language", lang1
+        lang1 = gettext.translation('openmolar', languages=[lang,])
+        lang1.install(unicode=True)
+    except IOError:    
+        print "%s not found, sorry"% lang1
+        gettext.install('openmolar', unicode=True)
 
 class language_dialog(Ui_choose_language.Ui_Dialog):
     def __init__(self,dialog,parent=None):

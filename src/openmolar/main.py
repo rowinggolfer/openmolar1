@@ -27,7 +27,7 @@ if lang:
     try:
         print "trying install your environment language", lang
         lang1 = gettext.translation('openmolar', languages=[lang,])
-        lang1.install()
+        lang1.install(unicode=True)
     except IOError:    
         print "%s not found, using default"% lang
         gettext.install('openmolar', unicode=True)
