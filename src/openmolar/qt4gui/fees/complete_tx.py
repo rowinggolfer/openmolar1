@@ -146,7 +146,6 @@ def estwidg_unComplete(parent, item):
         
     try:
         treat = item.type + " "
-        toothname = item.type
         att = item.category
         if re.match("[ul][lr][A-E]", att): #deciduous tooth
             number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
@@ -162,11 +161,12 @@ def estwidg_unComplete(parent, item):
             completed = parent.pt.__dict__[att + "cmp"].replace(treat, "")
             parent.pt.__dict__[att + "cmp"] = completed
 
-            #-- now update the charts
             if re.findall("[ul][lr][1-8]", att):
                 parent.updateChartsAfterTreatment(att, plan, completed)
-                parent.pt.addHiddenNote("treatment", "%s %s"% (
-                toothname.upper(), treat), True)
+                toothName = parent.pt.chartgrid.get(att)
+    
+                parent.pt.addHiddenNote(
+                "treatment", "%s %s"% (toothName.upper(), treat), True)
             else:
                 parent.pt.addHiddenNote("treatment", item.type, True)
                 
@@ -174,6 +174,7 @@ def estwidg_unComplete(parent, item):
         parent.load_treatTrees()
 
     except Exception, e:
+        print e
         completed = "%s - %s"% (item.category, item.type)        
         parent.advise('''<p>Error moving %s from completed to plan
         </p>Please complete manually'''% completed, 1)
