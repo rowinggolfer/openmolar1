@@ -16,7 +16,7 @@ def getCurrentLanguage():
     get the current language in use
     '''
     cl = os.environ.get('LANG')
-    if "." in cl:
+    if cl and "." in cl:
         cl = cl[:cl.index(".")]
     return cl
 
@@ -69,6 +69,7 @@ class language_dialog(Ui_choose_language.Ui_Dialog):
                 message = _("no translation file found for %s")% lang 
                 QtGui.QMessageBox.information(self.dialog,
                 _("Advisory"), message)
+                
 def run(parent=None):
     '''
     fire up a dialog to offer a selection of languages
