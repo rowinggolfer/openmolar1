@@ -25,7 +25,7 @@ import gettext
 lang = os.environ.get("LANG")
 if lang:
     try:
-        print "trying install your environment language", lang
+        print "trying to install your environment language", lang
         lang1 = gettext.translation('openmolar', languages=[lang,])
         lang1.install(unicode=True)
     except IOError:    
@@ -33,7 +33,7 @@ if lang:
         gettext.install('openmolar', unicode=True)
 else:
     #-- on windows.. os.environ.get("LANG") is None 
-    "no language environment found"
+    print "no language environment found"
     gettext.install('openmolar', unicode=True)
     
 class LoginError(Exception):

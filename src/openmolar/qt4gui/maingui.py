@@ -1313,6 +1313,7 @@ class pageHandlingClass():
         if self.pt.serialno != 0:
             print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
+            self.ui.recallDate_comboBox.setCurrentIndex(0)
             self.ui.detailsBrowser.setText("")
             self.ui.notesBrowser.setText("")
             self.ui.notesSummary_textBrowser.setText("")
@@ -1907,25 +1908,32 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         then only pt's of that dentist show up
         '''
         if localsettings.clinicianNo != 0:
-            dents=(localsettings.clinicianInits, )
-            visibleItem="Today's Patients (%s)"%dents
+            dents = (localsettings.clinicianInits, )
+            visibleItem = _("Today's Patients (%s)")% dents
         else:
-            dents=("*", )
-            visibleItem="Today's Patients (ALL)"
-        self.advise("loading today's patients")
+            dents = ("*", )
+            visibleItem  =_("Today's Patients (ALL)")
+        
+        ptList = appointments.todays_patients(dents)
+        if len(ptList) ==0:
+            self.ui.daylistBox.hide()
+            return
+        
+        self.advise(_("loading today's patients"))
+            
         self.ui.daylistBox.addItem(visibleItem)
-
-        for pt in appointments.todays_patients(dents):
-            val=pt[1]+" -- " + str(pt[0])
+            
+        for pt in ptList:
+            val = "%s -- %s"%(pt[1],pt[0])
             #--be wary of changing this -- is used as a marker some
             #--pt's have hyphonated names!
-            self.ui.daylistBox.addItem(QtCore.QString(val))
-
+            self.ui.daylistBox.addItem(val)
+        
     def todays_pts(self):
-        arg=str(self.ui.daylistBox.currentText())
-        if arg[0:7] !="Today's":
+        arg = str(self.ui.daylistBox.currentText())
+        if "--" in arg:
             self.ui.daylistBox.setCurrentIndex(0)
-            serialno=int(arg[arg.index("--")+2:])
+            serialno = int(arg[arg.index("--")+2:])
             #--see above comment
             self.getrecord(serialno)
 
@@ -2162,6 +2170,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.load_receptionSummaryPage()
         #--populate dnt1 and dnt2 comboboxes
         self.load_dentComboBoxes()
+        self.ui.recallDate_comboBox.setCurrentIndex(0)
         self.updateDetails()
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         note=notes.notes(self.pt.notestuple)
@@ -2533,7 +2542,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         receives a signal when the date shortcut combobox is triggered
         '''
         if arg > 0: #ignore the header (item 0) of the comboxbox
-            monthjump = int(self.ui.recallDate_comboBox.currentText()[0])
+            dstr = str(self.ui.recallDate_comboBox.currentText())
+            monthjump = int(dstr[:dstr.index(" ")])
             today = QtCore.QDate.currentDate()
             self.ui.recall_dateEdit.setDate(today.addMonths(monthjump))
             
