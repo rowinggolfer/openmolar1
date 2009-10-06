@@ -52,12 +52,16 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.comments_comboBox.setEnabled(arg)
         
     def setExistingProps(self,arg):
-        
+        '''
+        put the existing tooth props into the lineEdit
+        '''
         commentSTR = ""
+        self.originalProps = arg
+        
         if arg == "":
             self.originalProps = ""
             self.lineEdit.setText("")
-            
+        
         else:
             arg = arg.strip() + ":"
             arg = arg.replace(" ",":")
@@ -65,7 +69,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             for comment in comments:
                 commentSTR += "%s "% comment.strip(":")
                 arg = arg.replace(comment, "")
-            self.originalProps = arg
             self.lineEdit.setText(arg)
             
         self.setComments(commentSTR)
@@ -83,6 +86,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         
         QtCore.QObject.connect(self.comments_comboBox, QtCore.SIGNAL(
         "currentIndexChanged (const QString&)"), self.comments)
+
         
     def comments(self,arg):
         '''
@@ -104,7 +108,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
                 #cstring="%s:%s"%(self.existingComments,arg)
                 self.setComments(cstring)
                 self.finishedEdit()
-    
+        
     def clear(self):
         t =  str(self.lineEdit.text().toAscii())
         tlist = t.strip(":").split(":")
@@ -114,7 +118,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.lineEdit.setText(t)
         self.tooth.clear()
         self.tooth.update()
-        self.finishedEdit() #doesn't work!
+        #self.finishedEdit() #doesn't work!
     
     def checkEntry(self):
         currentFill = str(self.lineEdit.text().toAscii())
@@ -128,6 +132,11 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         '''
         check to see if the user has entered garbage
         '''
+        print "checking Prop '%s' origs ='%s'"% (f, self.originalProps.split(" "))
+        if f in self.originalProps.split(" "):
+            print "already present, ignoring"
+            return True
+        
         allowedCode = True
         if f!= "":
             if self.tooth.isBacktooth and not (f in allowed.backToothCodes):
@@ -163,7 +172,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             self.lineEdit.setText(existing+":")
             self.tooth.clear()
             self.tooth.update()
-            #self.finishedEdit()
+            self.finishedEdit()
             
     def updateSurfaces(self):
         existing = str(self.lineEdit.text().toAscii())
@@ -235,66 +244,85 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def am(self):
         self.changeFillColour(colours.AMALGAM)
         self.plasticMaterial("AM")
+
     def co(self):
         self.changeFillColour(colours.COMP)
         self.plasticMaterial("CO")
+
     def gl(self):
         self.changeFillColour(colours.GI)
         self.plasticMaterial("GL")
+
     def go(self):
         self.changeFillColour(colours.GOLD)
         self.labMaterial("GI")
+
     def pi(self):
         self.changeFillColour(colours.PORC)
         self.labMaterial("PI")
 
     def finishedEdit(self):
-        newprops=str(self.lineEdit.text().toAscii())+self.existingComments.strip(" ").replace(" ","_")
-        if newprops!=self.originalProps:
-            newprops=newprops.replace(":"," ")
-            if newprops!="" and newprops[-1]!=" ":
-                newprops+=" "
-            self.emit(QtCore.SIGNAL("Changed_Properties"),newprops)
-        
-    def keyNav(self,arg):
-        if arg=="up":
+        print "finishedEdit"
+        print
+        comments = self.existingComments.strip(" ").replace(" ","_")
+        newprops = "%s%s"% (self.lineEdit.text().toAscii(), comments)
+        if newprops != self.originalProps:
+            newprops = newprops.replace(":"," ")
+            if newprops != "" and newprops[-1]!=" ":
+                newprops += " "
+            self.emit(QtCore.SIGNAL("Changed_Properties"), newprops)
+            
+    def keyNav(self, arg):
+        if arg == "up":
             self.prevTooth()
-        elif arg=="down":
+        elif arg == "down":
             self.nextTooth()
+    
     def leftTooth(self):
         if self.tooth.isUpper:
             self.prevTooth()
         else:
             self.nextTooth()
+
     def rightTooth(self):
         if not self.tooth.isUpper:
             self.prevTooth()
         else:
             self.nextTooth()
+
     def prevTooth(self):
+        print "prevTooth"
         if self.checkEntry():
             self.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("up"))
+
     def nextTooth(self):
+        print "nextTooth"
         if self.checkEntry():
             self.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("down"))
+
     def dec_perm(self):
         self.emit(QtCore.SIGNAL("FlipDeciduousState"))
         self.nextTooth()
+
     def at(self):
         self.lineEdit.setText("AT")
         self.nextTooth()
+
     def tm(self):
         self.lineEdit.setText("TM")
         self.nextTooth()
+
     def ex(self):
         self.lineEdit.setText("EX")
         self.nextTooth()
+
     def rt(self):
         existing=str(self.lineEdit.text().toAscii()) 
         self.lineEdit.setText(existing+"RT")
         self.additional()
+
     def crown(self):
         def gold():
             self.lineEdit.setText(existing+"CR,GO")

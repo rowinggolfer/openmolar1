@@ -148,7 +148,6 @@ class chartWidget(QtGui.QWidget):
                     
         if x != -1:
             tooth = self.grid[y][x]
-            print "emitting signal", tooth
             self.emit(QtCore.SIGNAL("toothSelected"), tooth)
 
     def setToothProps(self, tooth, props):
@@ -251,14 +250,13 @@ class chartWidget(QtGui.QWidget):
             plannedTreatment.append(item.upper())
         if plannedTreatment != [tooth]:
             self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
-
+    
     def keyPressEvent(self, event):
         '''
         overrides QWidget's keypressEvent
         '''
         #-- this code is largely irrelevant. the widget doesn't take focus
         #-- in the current implementation
-        print "chartWidget key press", event.key()
         if event.key() == QtCore.Qt.Key_Left:
             if self.selected[0] == 0:
                 self.selected[0] = 15

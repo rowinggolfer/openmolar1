@@ -132,8 +132,8 @@ class chartsClass():
         '''
         called by a keypress in the tooth prop LineEdit or a click on one of
         the tooth prop buttons.
+        entry will have been checked.
         '''
-
         if self.selectedChartWidget == "cmp":
             widg=self.ui.completedChartWidget
             column=4
@@ -165,8 +165,9 @@ class chartsClass():
             else:
                 if x != 0:
                     x -= 1
+        
         widg.setSelected(x, y)
-    
+        
     def chart_navigate(self):
         print "chart_navigate (user using the TABLE!!)",
         '''this is called when the charts TABLE is navigated'''
@@ -204,6 +205,8 @@ class chartsClass():
             if course_module.newCourseNeeded(self):
                 return
             self.toothTreatAdd(tooth, arg)
+            self.ui.planChartWidget.update()
+            
         elif self.selectedChartWidget == "cmp":
             self.advise(
             "for the moment, please enter treatment into plan first, " +
@@ -245,11 +248,14 @@ class chartsClass():
         #-- previous tooth
         if self.ui.toothPropsWidget.checkEntry():
             self.ui.toothPropsWidget.finishedEdit()
-    
+            self.ui.toothPropsWidget.additional()
+            return True
+            
     def static_chartNavigation(self, tstring):
         '''
         called by the static chartwidget
         '''
+        print "static_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="st"
         self.chartNavigation(tstring)
@@ -258,6 +264,7 @@ class chartsClass():
         '''
         called by the plan chartwidget
         '''
+        print "static_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="pl"
         self.chartNavigation(tstring)
@@ -266,6 +273,7 @@ class chartsClass():
         '''
         called by the completed chartwidget
         '''
+        print "static_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="cmp"
         self.chartNavigation(tstring)
@@ -1237,12 +1245,17 @@ class pageHandlingClass():
         '''
         if localsettings.DEBUGMODE:
             print "handling patientTab"
+                    
         ci=self.ui.tabWidget.currentIndex()
+
         if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
             self.advise("Appointment not made", 1)
             appt_gui_module.aptOVviewMode(self, True)
-
-        #--admin tab selected
+            
+        if ci != 6:
+            if not self.checkPreviousEntry():
+                self.ui.tabWidget.setCurrentIndex(6)
+                
         if self.editPageVisited:
             self.apply_editpage_changes()
 
