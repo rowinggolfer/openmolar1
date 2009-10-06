@@ -135,6 +135,8 @@ def performExam(parent):
                 if parent.ui.tabWidget.currentIndex() == 7:
                     parent.load_newEstPage()
                     parent.load_treatTrees()
+                else:
+                    parent.load_clinicalSummaryPage()
 
         else:
             parent.advise("Examination not applied", 2)

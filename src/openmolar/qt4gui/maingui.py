@@ -237,10 +237,20 @@ class chartsClass():
             self.advise(
             "you need to be in the static chart to change tooth state", 1)
     
+    def checkPreviousEntry(self):
+        '''
+        check to see if the toothProps widget has unfinished business
+        '''
+        #-- before continuing, see if user has changes to apply on the
+        #-- previous tooth
+        if self.ui.toothPropsWidget.checkEntry():
+            self.ui.toothPropsWidget.finishedEdit()
+    
     def static_chartNavigation(self, tstring):
         '''
         called by the static chartwidget
         '''
+        self.checkPreviousEntry()
         self.selectedChartWidget="st"
         self.chartNavigation(tstring)
         
@@ -248,6 +258,7 @@ class chartsClass():
         '''
         called by the plan chartwidget
         '''
+        self.checkPreviousEntry()
         self.selectedChartWidget="pl"
         self.chartNavigation(tstring)
 
@@ -255,6 +266,7 @@ class chartsClass():
         '''
         called by the completed chartwidget
         '''
+        self.checkPreviousEntry()
         self.selectedChartWidget="cmp"
         self.chartNavigation(tstring)
 
@@ -286,6 +298,7 @@ class chartsClass():
         '''
         #--called by a navigating a chart or the underlying table
         #--convert from QString
+        
         tooth=str(tstring)
 
         grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
@@ -4104,9 +4117,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             self.load_treatTrees()
 
 ################################################################################
-
-
-
 
 
 def main(arg):

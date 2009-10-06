@@ -87,5 +87,7 @@ def performPerio(parent):
             #-- it won't be ;)
             parent.load_newEstPage()
             parent.load_treatTrees()
+        else:
+            parent.load_clinicalSummaryPage()
     else:
         parent.advise("Hyg Treatment not applied", 2)

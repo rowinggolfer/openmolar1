@@ -61,7 +61,7 @@ def setupNewCourse(parent):
         if dnt2 != parent.pt.dnt2:
             contract_gui_module.changeCourseDentist(parent, atts[1])
         if atts[2] != parent.pt.cset:
-            contract_gui_module.changeCourseType(atts[2])
+            contract_gui_module.changeCourseType(parent, atts[2])
 
         accd = atts[3].toPyDate()
 
