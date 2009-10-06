@@ -61,9 +61,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-36</y>
-         <width>989</width>
-         <height>542</height>
+         <y>0</y>
+         <width>984</width>
+         <height>558</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -540,8 +540,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>540</width>
-                        <height>492</height>
+                        <width>725</width>
+                        <height>473</height>
                        </rect>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -1778,8 +1778,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>731</width>
-                        <height>526</height>
+                        <width>725</width>
+                        <height>494</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_20">
@@ -2159,8 +2159,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>286</width>
-                        <height>500</height>
+                        <width>733</width>
+                        <height>485</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_28">
@@ -2528,8 +2528,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>469</width>
-                        <height>400</height>
+                        <width>725</width>
+                        <height>426</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_4">
@@ -2794,8 +2794,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>314</width>
-                        <height>105</height>
+                        <width>748</width>
+                        <height>389</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2860,6 +2860,9 @@
                           <layout class="QGridLayout" name="gridLayout_14">
                            <item row="0" column="0">
                             <widget class="QGroupBox" name="static_groupBox">
+                             <property name="focusPolicy">
+                              <enum>Qt::ClickFocus</enum>
+                             </property>
                              <property name="title">
                               <string>Static</string>
                              </property>
@@ -2983,8 +2986,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>499</width>
-                           <height>198</height>
+                           <width>492</width>
+                           <height>200</height>
                           </rect>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3016,8 +3019,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>250</width>
-                        <height>517</height>
+                        <width>217</width>
+                        <height>511</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3325,6 +3328,12 @@ Note - this will not remove items which are currently there. </string>
                         <property name="headerHidden">
                          <bool>false</bool>
                         </property>
+                        <attribute name="headerShowSortIndicator" stdset="0">
+                         <bool>false</bool>
+                        </attribute>
+                        <attribute name="headerShowSortIndicator" stdset="0">
+                         <bool>false</bool>
+                        </attribute>
                         <column>
                          <property name="text">
                           <string>Plan</string>
@@ -3349,6 +3358,12 @@ Note - this will not remove items which are currently there. </string>
                         <property name="animated">
                          <bool>true</bool>
                         </property>
+                        <attribute name="headerShowSortIndicator" stdset="0">
+                         <bool>false</bool>
+                        </attribute>
+                        <attribute name="headerShowSortIndicator" stdset="0">
+                         <bool>false</bool>
+                        </attribute>
                         <column>
                          <property name="text">
                           <string>Completed</string>
@@ -3379,8 +3394,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>249</width>
-                        <height>360</height>
+                        <width>727</width>
+                        <height>392</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -3928,8 +3943,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>199</width>
-                    <height>59</height>
+                    <width>198</width>
+                    <height>89</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4111,7 +4126,7 @@ Note - this will not remove items which are currently there. </string>
                          <x>0</x>
                          <y>0</y>
                          <width>174</width>
-                         <height>412</height>
+                         <height>428</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4209,8 +4224,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>173</width>
-                         <height>414</height>
+                         <width>174</width>
+                         <height>429</height>
                         </rect>
                        </property>
                       </widget>
@@ -4308,7 +4323,7 @@ Note - this will not remove items which are currently there. </string>
                          <x>0</x>
                          <y>0</y>
                          <width>174</width>
-                         <height>414</height>
+                         <height>429</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4360,8 +4375,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>173</width>
-                         <height>414</height>
+                         <width>174</width>
+                         <height>429</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>
@@ -4690,8 +4705,8 @@ Note - this will not remove items which are currently there. </string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>704</width>
-                     <height>440</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -5645,7 +5660,7 @@ Note - this will not remove items which are currently there. </string>
      <x>0</x>
      <y>0</y>
      <width>1005</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

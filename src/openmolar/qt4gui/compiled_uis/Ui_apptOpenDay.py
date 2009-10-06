@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'apptOpenDay.ui'
 #
-# Created: Sun Oct  4 20:51:33 2009
-#      by: PyQt4 UI code generator 4.4.4
+# Created: Tue Oct  6 21:47:27 2009
+#      by: PyQt4 UI code generator 4.5.4
 #
 # WARNING! All changes made in this file will be lost!
 

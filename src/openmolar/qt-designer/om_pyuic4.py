@@ -28,6 +28,8 @@ def compile_ui(ui_fname, outdir=""):
     data = data.replace(", None, QtGui.QApplication.UnicodeUTF8", "")
     data= re.sub('QtGui.QApplication.translate\(".*", ', "_( u", data)
 
+    data = data.replace('setShowSortIndicator',"setSortIndicatorShown")
+
     f = open(pyfile,"w")
     f.write(data)
     f.close()

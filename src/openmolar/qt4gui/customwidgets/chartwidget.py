@@ -258,6 +258,7 @@ class chartWidget(QtGui.QWidget):
         '''
         #-- this code is largely irrelevant. the widget doesn't take focus
         #-- in the current implementation
+        print "chartWidget key press", event.key()
         if event.key() == QtCore.Qt.Key_Left:
             if self.selected[0] == 0:
                 self.selected[0] = 15
@@ -278,6 +279,7 @@ class chartWidget(QtGui.QWidget):
                 self.selected[1] = 0
             else:
                 self.selected[1] += 1
+        
         event.handled = True
         self.update()
 
