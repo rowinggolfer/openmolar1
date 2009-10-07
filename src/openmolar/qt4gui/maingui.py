@@ -248,7 +248,7 @@ class chartsClass():
         #-- previous tooth
         if self.ui.toothPropsWidget.checkEntry():
             self.ui.toothPropsWidget.finishedEdit()
-            self.ui.toothPropsWidget.additional()
+            self.ui.toothPropsWidget.additional(checkedAlready=True)
             return True
             
     def static_chartNavigation(self, tstring):
@@ -387,7 +387,7 @@ class chartsClass():
             #-- create an error in 2 lines time!
         if not callerIsTable:
             #-- keep the table correct
-            print "updating charts table"
+            #print "updating charts table"
             self.ui.chartsTableWidget.setCurrentCell(x+y*16, column)
 
     def bpe_dates(self):

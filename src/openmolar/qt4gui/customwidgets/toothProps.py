@@ -44,11 +44,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.signals()
         self.originalProps=""
         self.existingComments=""
-
+        self.is_Static = False
+        
     def isStatic(self,arg):
         '''
         if the editing is of the static chart, then different buttons are enabled
         '''
+        self.is_Static = arg
         self.comments_comboBox.setEnabled(arg)
         
     def setExistingProps(self,arg):
@@ -113,9 +115,10 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         t =  str(self.lineEdit.text().toAscii())
         tlist = t.strip(":").split(":")
         t = ""
-        for props in tlist[:-1]:
-            t += "%s:"% props
+        #for props in tlist[:-1]:
+        #    t += "%s:"% props
         self.lineEdit.setText(t)
+        
         self.tooth.clear()
         self.tooth.update()
         #self.finishedEdit() #doesn't work!
@@ -126,14 +129,16 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         for f in fillList:
             if not self.checkProp(f):
                 return False
+        self.originalProps = self.newProps()
         return True
 
     def checkProp(self, f):
         '''
         check to see if the user has entered garbage
         '''
-        print "checking Prop '%s' origs ='%s'"% (f, self.originalProps.split(" "))
-        if f in self.originalProps.split(" "):
+        plist = self.originalProps.replace(":"," ").split(" ")
+        print "checking Prop '%s' origs ='%s'"% (f, plist)
+        if f in plist:
             print "already present, ignoring"
             return True
         
@@ -144,7 +149,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             if not self.tooth.isBacktooth and \
             not (f in allowed.frontToothCodes):
                 allowedCode = False
-            if f in allowed.treatment_only:
+            if (not self.is_Static) and (f in allowed.treatment_only):
                 allowedCode = True
         if not allowedCode:
             message = '''"%s" is not recognised <br />
@@ -158,7 +163,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
                 allowedCode = False
         return allowedCode
         
-    def additional(self):
+    def additional(self, checkedAlready = False):
         existing = str(self.lineEdit.text().toAscii())
         if ":" in existing:
             colonPos =existing.rindex(":")
@@ -168,7 +173,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             currentFill = existing
         if currentFill == "":
             return
-        if self.checkProp(currentFill):
+        if checkedAlready or self.checkProp(currentFill):
             self.lineEdit.setText(existing+":")
             self.tooth.clear()
             self.tooth.update()
@@ -261,11 +266,12 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.changeFillColour(colours.PORC)
         self.labMaterial("PI")
 
-    def finishedEdit(self):
-        print "finishedEdit"
-        print
+    def newProps(self):
         comments = self.existingComments.strip(" ").replace(" ","_")
-        newprops = "%s%s"% (self.lineEdit.text().toAscii(), comments)
+        return "%s%s"% (self.lineEdit.text().toAscii(), comments)
+
+    def finishedEdit(self):
+        newprops = self.newProps()
         if newprops != self.originalProps:
             newprops = newprops.replace(":"," ")
             if newprops != "" and newprops[-1]!=" ":
