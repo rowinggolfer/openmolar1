@@ -129,15 +129,22 @@ def get_codes_for_date(line):
     else:
         return code
 def get_notes_for_date(line):
+    '''
+    this is the actual user entered stuff!
+    '''
     note=""
     for l in line:
         if "NOTE" in l[0]:
-            
-            note+=l[1].replace("<","&lt;")+"<br />"
-    return note
+            mytext = l[1].replace("<","&lt;")
+            mytext = mytext.replace(">","&gt;")
+            note += "%s<br />"% mytext
+    return note.strip("<br />")
 
 def get_reception_for_date(line):
-    recep=""
+    '''
+    was anything printed etc....
+    '''
+    recep = ""
     for l in line:
         if ("PRINT" in l[0]) or ("RECEIVED" in l[0]) or \
         ("FINAL" in l[0]) or ("UNKNOWN" in l[0]) or \
@@ -151,7 +158,7 @@ def get_estimate_for_date(line):
     est=""
     for l in line:
         if "ESTIMATE" in l[0]:
-            est+=l[0]+l[1]+"<br />"
+            est +="%s%s<br />"% (l[0],l[1])
     if est=="":
         return "-"
     else:
@@ -163,7 +170,7 @@ def decipher_noteline(noteline):
     '''        
     retarg=["","","",""]
     
-    if len(noteline)==0:  #sometimes a line is blank
+    if len(noteline) == 0:  #sometimes a line is blank
        return retarg
 
     #important - this line give us operator and date.
