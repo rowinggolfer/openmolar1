@@ -115,13 +115,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         t =  str(self.lineEdit.text().toAscii())
         tlist = t.strip(":").split(":")
         t = ""
-        #for props in tlist[:-1]:
-        #    t += "%s:"% props
+        for props in tlist[:-1]:
+            t += "%s:"% props
         self.lineEdit.setText(t)
         
         self.tooth.clear()
         self.tooth.update()
-        #self.finishedEdit() #doesn't work!
+        self.finishedEdit() #doesn't work!
     
     def checkEntry(self):
         currentFill = str(self.lineEdit.text().toAscii())
