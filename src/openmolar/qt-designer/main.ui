@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -540,7 +540,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>725</width>
+                        <width>496</width>
                         <height>473</height>
                        </rect>
                       </property>
@@ -1778,7 +1778,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>725</width>
+                        <width>672</width>
                         <height>494</height>
                        </rect>
                       </property>
@@ -2159,7 +2159,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>733</width>
+                        <width>334</width>
                         <height>485</height>
                        </rect>
                       </property>
@@ -2528,7 +2528,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>725</width>
+                        <width>499</width>
                         <height>426</height>
                        </rect>
                       </property>
@@ -2986,7 +2986,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>492</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3019,7 +3019,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>210</width>
                         <height>511</height>
                        </rect>
                       </property>
@@ -3331,9 +3331,6 @@ Note - this will not remove items which are currently there. </string>
                         <attribute name="headerShowSortIndicator" stdset="0">
                          <bool>false</bool>
                         </attribute>
-                        <attribute name="headerShowSortIndicator" stdset="0">
-                         <bool>false</bool>
-                        </attribute>
                         <column>
                          <property name="text">
                           <string>Plan</string>
@@ -3358,9 +3355,6 @@ Note - this will not remove items which are currently there. </string>
                         <property name="animated">
                          <bool>true</bool>
                         </property>
-                        <attribute name="headerShowSortIndicator" stdset="0">
-                         <bool>false</bool>
-                        </attribute>
                         <attribute name="headerShowSortIndicator" stdset="0">
                          <bool>false</bool>
                         </attribute>
@@ -3394,7 +3388,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>727</width>
+                        <width>267</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -3943,8 +3937,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>198</width>
-                    <height>89</height>
+                    <width>98</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4125,8 +4119,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>174</width>
-                         <height>428</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4224,8 +4218,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>174</width>
-                         <height>429</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                       </widget>
@@ -4322,8 +4316,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>174</width>
-                         <height>429</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4375,8 +4369,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>174</width>
-                         <height>429</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>
@@ -4818,6 +4812,12 @@ Note - this will not remove items which are currently there. </string>
             </item>
             <item row="1" column="0">
              <widget class="QDateEdit" name="cashbookStartDateEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -4825,6 +4825,12 @@ Note - this will not remove items which are currently there. </string>
             </item>
             <item row="1" column="1">
              <widget class="QDateEdit" name="cashbookEndDateEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -4945,6 +4951,12 @@ Note - this will not remove items which are currently there. </string>
             </item>
             <item row="1" column="0">
              <widget class="QDateEdit" name="daybookStartDateEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -4952,6 +4964,12 @@ Note - this will not remove items which are currently there. </string>
             </item>
             <item row="1" column="1">
              <widget class="QDateEdit" name="daybookEndDateEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="calendarPopup">
                <bool>true</bool>
               </property>

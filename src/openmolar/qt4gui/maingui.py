@@ -1134,6 +1134,15 @@ to change if clinical circumstances dictate.</i></p>''')
         else:
             dl.dents_comboBox.setCurrentIndex(-1)
 
+        if known_course:
+            result = QtGui.QMessageBox.question(self, 
+            _("Question"),
+            _("Print an NHS form now?"),
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+
+            if result == QtGui.QMessageBox.No:
+                return
+            
         if known_course or Dialog.exec_():
             #-- see if user has overridden the dentist
             chosenDent = str(dl.dents_comboBox.currentText())
