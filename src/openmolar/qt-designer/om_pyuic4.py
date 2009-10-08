@@ -16,6 +16,10 @@ def compile_ui(ui_fname, outdir=""):
     name = os.path.split(ui_fname)[1]
     outname = "Ui_%s.py"% name.rstrip(".ui")
     pyfile = os.path.join(outdir, outname)
+    
+    if os.path.exists(pyfile) and \
+    (os.stat(pyfile).st_mtime > os.stat(ui_fname).st_mtime):
+        return
 
     f = open(pyfile,"w")
     uic.compileUi(ui_fname, f)
@@ -33,6 +37,7 @@ def compile_ui(ui_fname, outdir=""):
     f = open(pyfile,"w")
     f.write(data)
     f.close()
+    return True
    
         
 if __name__ == "__main__":
@@ -40,8 +45,10 @@ if __name__ == "__main__":
         print ui_file,"....",
         if re.match(".*.ui$", ui_file):
             print "compiling into python code...",
-            compile_ui(ui_file, "../qt4gui/compiled_uis") 
-            print "done"
+            if compile_ui(ui_file, "../qt4gui/compiled_uis"):
+                print "done"
+            else:
+                print "no changes"
         else:
             print "not a ui file... SKIPPING" 
         

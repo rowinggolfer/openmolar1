@@ -45,7 +45,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
+       <width>32</width>
        <height>16777215</height>
       </size>
      </property>
@@ -63,6 +63,12 @@
       <size>
        <width>50</width>
        <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
       </size>
      </property>
      <property name="text">
@@ -83,7 +89,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>250</width>
+       <width>100</width>
        <height>0</height>
       </size>
      </property>
@@ -102,6 +108,28 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="label_8">
+     <property name="minimumSize">
+      <size>
+       <width>60</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Cat</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label_3">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -111,13 +139,13 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>50</width>
+       <width>80</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
+       <width>80</width>
        <height>16777215</height>
       </size>
      </property>
@@ -179,7 +207,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
+       <width>70</width>
        <height>16777215</height>
       </size>
      </property>
@@ -197,6 +225,12 @@
       <size>
        <width>24</width>
        <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>24</width>
+       <height>16777215</height>
       </size>
      </property>
     </widget>
@@ -217,7 +251,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
+       <width>70</width>
        <height>16777215</height>
       </size>
      </property>
@@ -241,6 +275,12 @@
       <size>
        <width>124</width>
        <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>124</width>
+       <height>16777215</height>
       </size>
      </property>
      <property name="layoutDirection">

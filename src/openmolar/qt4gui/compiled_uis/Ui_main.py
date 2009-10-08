@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Tue Oct  6 21:47:28 2009
+# Created: Thu Oct  8 01:47:59 2009
 #      by: PyQt4 UI code generator 4.5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -2409,7 +2409,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.main_tabWidget.setCurrentIndex(0)
-        self.tabWidget.setCurrentIndex(7)
+        self.tabWidget.setCurrentIndex(6)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
         self.diary_tabWidget.setCurrentIndex(0)

@@ -34,6 +34,9 @@ APPOINTMENT_CARD_HEADER =\
 APPOINTMENT_CARD_FOOTER =\
 "Please try and give at least 24 hours notice\n if you need to change an appointment."
 
+GP17_LEFT = 0
+GP17_TOP = 0
+
 def determine_path ():
     '''
     returns the true working directory, regardless of any symlinks.
@@ -74,6 +77,9 @@ if "win" in sys.platform:
     os.chdir(wkdir)
     resources_path = ("resources")
     stylesheet = ("resources/style.css")
+    GP17_LEFT = 15
+    GP17_RIGHT = 15
+
     
 else:
     if "linux" in sys.platform:

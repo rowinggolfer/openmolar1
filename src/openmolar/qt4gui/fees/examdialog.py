@@ -33,8 +33,8 @@ def performExam(parent):
             parent.advise("unable to perform exam", 1)
             return
     if parent.pt.examt != "":
-        parent.advise("You already have an exam on this course of treatment"+
-        "<br />Unable to perform exam", 1)
+        parent.advise(_('''<p>You already have an exam on this 
+course of treatment</p>Unable to perform exam'''), 1)
         return
 
     Dialog = QtGui.QDialog(parent)
@@ -52,17 +52,16 @@ def performExam(parent):
             #--'Palpated for upper canines - NAD'), "000000")]
             examtype = result[0]
             examdent = result[1]
-            if examdent  == localsettings.ops[parent.pt.dnt1]:
+            if examdent  == localsettings.ops.get(parent.pt.dnt1):
                 #--normal dentist.
                 if parent.pt.dnt2 == 0 or parent.pt.dnt2 == parent.pt.dnt1:
                     #--no dnt2
                     APPLIED = True
                 else:
-                    message = '''
-                    %s is now both the registered and course dentist.<br />
-                    Is this correct?<br />
-                    <i>confirming this will remove reference to %s</i>
-                    '''% (examdent, localsettings.ops[parent.pt.dnt2])
+                    message = _('''<p>%s is now both the registered and 
+course dentist.<br />Is this correct?<br />
+<i>confirming this will remove reference to %s</i></p>''')% (
+                    examdent, localsettings.ops.get(parent.pt.dnt2))
 
                     confirm = QtGui.QMessageBox.question(parent,
                     "Confirm", message,
@@ -77,14 +76,14 @@ def performExam(parent):
             else:
                 message = '''%s performed this exam<br />
                 Is this correct?'''% examdent
-                if result[2] != localsettings.ops[parent.pt.dnt2]:
-                    message += '<br /><i>confirming this will change the '+\
-                    'course dentist, but not the registered dentist</i>'
+                if result[2] != localsettings.ops.get(parent.pt.dnt2):
+                    message += _('''<<br /><i>confirming this will change the 
+course dentist, but not the registered dentist</i>''')
                 else:
-                    message += '<i>consider making %s the'% result[1]\
-                    + 'registered dentist</i>'
+                    message += _(
+'''<i>consider making %s the registered dentist</i>''')% result[1]
                 confirm = QtGui.QMessageBox.question(parent,
-                "Confirm",
+                _("Confirm"),
                 message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
                 #--check this was intentional!!
 
@@ -109,7 +108,7 @@ def performExam(parent):
                 newnotes = \
                 str(parent.ui.notesEnter_textEdit.toPlainText().toAscii())
                 
-                newnotes += "%s examination performed by %s\n"% (
+                newnotes += _("%s examination performed by %s\n")% (
                 examtype, examdent)
 
                 parent.pt.addHiddenNote("exam", "%s"% examtype)
@@ -120,7 +119,7 @@ def performExam(parent):
 
                 item_description = localsettings.descriptions.get(item)
                 if item_description == None:
-                    item_description = "unknown exam type"
+                    item_description = _("unknown exam type")
 
                 parent.pt.addToEstimate(1, item, item_description, itemfee,
                 ptfee, localsettings.ops_reverse[examdent], parent.pt.cset,
@@ -139,5 +138,5 @@ def performExam(parent):
                     parent.load_clinicalSummaryPage()
 
         else:
-            parent.advise("Examination not applied", 2)
+            parent.advise(_("Examination not applied"), 2)
             break

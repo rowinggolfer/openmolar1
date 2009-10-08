@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'estFooterWidget.ui'
 #
-# Created: Tue Oct  6 21:47:29 2009
+# Created: Thu Oct  8 04:08:57 2009
 #      by: PyQt4 UI code generator 4.5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,8 +12,8 @@ from PyQt4 import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(704, 28)
-        Form.setMinimumSize(QtCore.QSize(0, 0))
+        Form.resize(710, 24)
+        Form.setMinimumSize(QtCore.QSize(710, 0))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -152,8 +152,8 @@ class Ui_Form(object):
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
         Form.setPalette(palette)
         self.horizontalLayout = QtGui.QHBoxLayout(Form)
-        self.horizontalLayout.setSpacing(2)
-        self.horizontalLayout.setMargin(2)
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtGui.QLabel(Form)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
@@ -164,12 +164,26 @@ class Ui_Form(object):
         self.label.setMinimumSize(QtCore.QSize(50, 0))
         self.label.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.label.setSizeIncrement(QtCore.QSize(0, 0))
+        font = QtGui.QFont()
+        font.setWeight(75)
+        font.setBold(True)
+        self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label.setMargin(3)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
         self.fee_lineEdit = QtGui.QLineEdit(Form)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.fee_lineEdit.sizePolicy().hasHeightForWidth())
+        self.fee_lineEdit.setSizePolicy(sizePolicy)
         self.fee_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.fee_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
+        font = QtGui.QFont()
+        font.setWeight(75)
+        font.setBold(True)
+        self.fee_lineEdit.setFont(font)
         self.fee_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.fee_lineEdit.setReadOnly(True)
         self.fee_lineEdit.setObjectName("fee_lineEdit")
@@ -179,14 +193,23 @@ class Ui_Form(object):
         self.widget_2.setObjectName("widget_2")
         self.horizontalLayout.addWidget(self.widget_2)
         self.ptfee_lineEdit = QtGui.QLineEdit(Form)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ptfee_lineEdit.sizePolicy().hasHeightForWidth())
+        self.ptfee_lineEdit.setSizePolicy(sizePolicy)
         self.ptfee_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.ptfee_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
+        font = QtGui.QFont()
+        font.setWeight(75)
+        font.setBold(True)
+        self.ptfee_lineEdit.setFont(font)
         self.ptfee_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.ptfee_lineEdit.setReadOnly(True)
         self.ptfee_lineEdit.setObjectName("ptfee_lineEdit")
         self.horizontalLayout.addWidget(self.ptfee_lineEdit)
         self.widget = QtGui.QWidget(Form)
-        self.widget.setMinimumSize(QtCore.QSize(118, 0))
+        self.widget.setMinimumSize(QtCore.QSize(124, 0))
         self.widget.setObjectName("widget")
         self.horizontalLayout.addWidget(self.widget)
 
@@ -195,5 +218,5 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_( u"Form"))
-        self.label.setText(_( u"TOTAL"))
+        self.label.setText(_( u" TOTAL "))
 

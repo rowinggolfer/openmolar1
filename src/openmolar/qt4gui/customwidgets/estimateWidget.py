@@ -123,7 +123,8 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             fee += item.fee
             ptfee += item.ptfee
             self.setDescription(item.description)
-            self.setType(item.category)
+            self.setType(item.type)
+            self.setCat(item.category)
             self.setItemCode(item.itemcode)
             self.setCompleted(item.completed)
             self.setCset(item.csetype)
@@ -264,6 +265,16 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             self.code_label.setText("?")
         else:
             self.code_label.setText(arg)
+
+    def setCat(self, arg):
+        '''
+        update the category label
+        '''
+        if arg in (None, ""):
+            self.cat_label.setText("?")
+        else:
+            self.cat_label.setText(arg)
+
 
     def setItemCode(self, arg):
         '''
@@ -531,10 +542,18 @@ class estWidget(QtGui.QFrame):
         self.compFooter.ptfee_lineEdit.setText("%.02f"% (compt_total/100))
 
     def findExistingItemWidget(self, item):
+            
+        otherTypes =  item.itemcode in ("4001","4002")
         for widg in self.estItemWidgets:
             if widg.itemCode == item.itemcode :
-                widg.addItem(item)
-                return True
+                if otherTypes:
+                    for exist_item in widg.items:
+                        if item.description == exist_item.description:                
+                            widg.addItem(item)
+                            return True
+                else:
+                    widg.addItem(item)
+                    return True
 
     def setEstimate(self, ests, SPLIT_ALL=False):
         '''
@@ -549,10 +568,10 @@ class estWidget(QtGui.QFrame):
             self.estHeader.expand_pushButton.setText("Expand All")
         
         for item in self.ests:
-            if not self.expandAll and self.findExistingItemWidget(item):
-                #-- try and match with existing items
-                print "added est to an existing widget item"
-            else:
+            #- check to see if similar items exist already, if not, add a
+            #- widget
+            
+            if self.expandAll or not self.findExistingItemWidget(item):
                 #--creates a widget
                 iw = QtGui.QWidget(self)
                 i = estItemWidget(iw)
@@ -628,7 +647,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
-    pt = patient_class.patient(16588)
+    pt = patient_class.patient(3)
 
     form = estWidget()
     form.setEstimate(pt.estimates)

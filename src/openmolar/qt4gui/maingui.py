@@ -169,20 +169,30 @@ class chartsClass():
         widg.setSelected(x, y)
         
     def chart_navigate(self):
+        '''
+        this is called when the charts TABLE is navigated
+        '''
         print "chart_navigate (user using the TABLE!!)",
-        '''this is called when the charts TABLE is navigated'''
-        userPerformed=self.ui.chartsTableWidget.isVisible()
+                
+        userPerformed = self.ui.chartsTableWidget.isVisible()
         if userPerformed:
             print "performed by user"
         else:
             print "performed programatically"
+
             row=self.ui.chartsTableWidget.currentRow()
-            tString=str(self.ui.chartsTableWidget.item(row, 0).text().toAscii())
+            tString=str(self.ui.chartsTableWidget.item(
+            row, 0).text().toAscii())
+
             self.chartNavigation(tString, userPerformed)
 
     def deleteComments(self):
-        tooth=str(self.ui.chartsTableWidget.item(
-                            self.ui.chartsTableWidget.currentRow(), 0).text())
+        '''
+        called when user has trigger deleted comments in the toothProp
+        '''
+        tooth = str(self.ui.chartsTableWidget.item(
+        self.ui.chartsTableWidget.currentRow(), 0).text())
+        
         if tooth in self.ui.staticChartWidget.commentedTeeth:
             self.ui.staticChartWidget.commentedTeeth.remove(tooth)
             self.ui.staticChartWidget.update()
@@ -208,27 +218,34 @@ class chartsClass():
             self.ui.planChartWidget.update()
             
         elif self.selectedChartWidget == "cmp":
-            self.advise(
-            "for the moment, please enter treatment into plan first, " +
-            "then complete it.", 1)
+            self.advise(_('''<p>for the moment, please enter treatment 
+into the plan first then complete it.'''), 1)
         else:
-            self.advise("unable to update chart - this shouldn't happen!!!",
+            self.advise(_("unable to update chart - this shouldn't happen!!"),
             2) #--should NEVER happen
 
     def updateChartsAfterTreatment(self, tooth, newplan, newcompleted):
+        '''
+        update the charts when a planned item has moved to completed
+        '''
         self.ui.planChartWidget.setToothProps(tooth, newplan)
         self.ui.planChartWidget.update()
         self.ui.completedChartWidget.setToothProps(tooth, newcompleted)
         self.ui.completedChartWidget.update()
 
     def flipDeciduous(self):
+        '''
+        change a tooth state from deciduous to permanent
+        or back again
+        ''' 
         if self.selectedChartWidget == "st":
             selectedCells=self.ui.chartsTableWidget.selectedIndexes()
             for cell in selectedCells:
                 row=cell.row()
                 selectedTooth=str(
-                            self.ui.chartsTableWidget.item(row, 0).text().toAscii())
-                print "flipping tooth ", selectedTooth
+                self.ui.chartsTableWidget.item(row, 0).text().toAscii())
+                
+                #print "flipping tooth ", selectedTooth
                 self.pt.flipDec_Perm(selectedTooth)
             for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
             self.ui.completedChartWidget, self.ui.perioChartWidget,
@@ -238,7 +255,7 @@ class chartsClass():
                 chart.update()
         else:
             self.advise(
-            "you need to be in the static chart to change tooth state", 1)
+            _("you need to be in the static chart to change tooth state"), 1)
     
     def checkPreviousEntry(self):
         '''
@@ -306,7 +323,6 @@ class chartsClass():
         '''
         #--called by a navigating a chart or the underlying table
         #--convert from QString
-        
         tooth=str(tstring)
 
         grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
@@ -381,8 +397,8 @@ class chartsClass():
 
         else:
             #--shouldn't happen??
-            self.advise ("ERROR IN chartNavigation- please report", 2)
-            column=0
+            self.advise(_("ERROR IN chartNavigation- please report"), 2)
+            column = 0
             #-- set this otherwise this variable will
             #-- create an error in 2 lines time!
         if not callerIsTable:
@@ -391,6 +407,9 @@ class chartsClass():
             self.ui.chartsTableWidget.setCurrentCell(x+y*16, column)
 
     def bpe_dates(self):
+        '''
+        updates the date in the bpe date groupbox
+        '''
         #--bpe = "basic periodontal exam"
         self.ui.bpeDateComboBox.clear()
         self.ui.bpe_textBrowser.setPlainText("")
@@ -404,10 +423,12 @@ class chartsClass():
                 self.ui.bpeDateComboBox.addItem(bpedate)
 
     def bpe_table(self, arg):
-        '''updates the BPE chart on the clinical summary page'''
+        '''
+        updates the BPE chart on the clinical summary page
+        '''
         if self.pt.bpe != []:
             last_bpe_date = localsettings.formatDate(self.pt.bpe[-1][0])
-            self.ui.bpe_groupBox.setTitle("BPE "+ last_bpe_date)
+            self.ui.bpe_groupBox.setTitle("BPE " + last_bpe_date)
             l=copy.deepcopy(self.pt.bpe)
             l.reverse()
             bpestring=l[arg][1]
@@ -424,7 +445,7 @@ class chartsClass():
             self.ui.bpe_textBrowser.setHtml(bpe_html)
         else:
             #--necessary in case of the "NO DATA FOUND" option
-            self.ui.bpe_groupBox.setTitle("BPE")
+            self.ui.bpe_groupBox.setTitle(_("BPE"))
             self.ui.bpe_textBrowser.setHtml("")
 
     def periochart_dates(self):
@@ -436,14 +457,16 @@ class chartsClass():
         for date in self.pt.perioData.keys():
             self.ui.perioChartDateComboBox.addItem(QtCore.QString(date))
         if self.pt.perioData == {}:
-            self.ui.perioChartDateComboBox.addItem(QtCore.QString("NO CHARTS"))
+            self.ui.perioChartDateComboBox.addItem(_("NO CHARTS"))
 
     def layoutPerioCharts(self):
-        '''layout the perio charts'''
+        '''
+        layout the perio charts
+        '''
         #--convert from QString
         selected_date=str(self.ui.perioChartDateComboBox.currentText())
         if self.pt.perioData.has_key(selected_date):
-            perioD=self.pt.perioData[selected_date]
+            perioD = self.pt.perioData[selected_date]
             #--headers=("Recession", "Pocketing", "Plaque", "Bleeding", "Other",
             #--"Suppuration", "Furcation", "Mobility")
             for key in perioD.keys():
@@ -452,11 +475,14 @@ class chartsClass():
         else:
             self.advise("no perio data found for", selected_date)
             for i in range(8):
-                self.ui.perioChartWidgets[i].props={}
+                self.ui.perioChartWidgets[i].props = {}
         for chart in self.ui.perioChartWidgets:
             chart.update()
 
     def chartsTable(self):
+        '''
+        update the charts table
+        '''
         self.advise("filling charts table")
         self.ui.chartsTableWidget.clear()
         self.ui.chartsTableWidget.setSortingEnabled(False)
@@ -473,8 +499,10 @@ class chartsClass():
         self.ui.chartsTableWidget.setColumnWidth(4, .2*w)
         self.ui.chartsTableWidget.verticalHeader().hide()
 
-        for chart in (self.ui.summaryChartWidget, self.ui.staticChartWidget,
-        self.ui.planChartWidget, self.ui.completedChartWidget,
+        for chart in (self.ui.summaryChartWidget, 
+        self.ui.staticChartWidget,
+        self.ui.planChartWidget, 
+        self.ui.completedChartWidget,
         self.ui.perioChartWidget):
             chart.chartgrid=self.pt.chartgrid
             #--sets the tooth numbering
@@ -482,8 +510,6 @@ class chartsClass():
 
         for tooth in self.grid:
             item1=QtGui.QTableWidgetItem(tooth)
-            #-- I use this a lot. Every class has a  hidden __dict__ attribute
-            #-- to access attributes programatically self.pt.ur8st etc..
             static_text=self.pt.__dict__[tooth+"st"]
             staticitem=QtGui.QTableWidgetItem(static_text)
             decidousitem=QtGui.QTableWidgetItem(self.pt.chartgrid[tooth])
@@ -491,14 +517,14 @@ class chartsClass():
             self.ui.chartsTableWidget.setItem(row, 0, item1)
             self.ui.chartsTableWidget.setItem(row, 1, decidousitem)
             self.ui.chartsTableWidget.setItem(row, 2, staticitem)
-            row+=1
-            stl=static_text.lower()
+            row += 1
+            stl = static_text.lower()
             self.ui.summaryChartWidget.setToothProps(tooth, stl)
             self.ui.staticChartWidget.setToothProps(tooth, stl)
-            pItem=self.pt.__dict__[tooth+"pl"]
-            cItem=self.pt.__dict__[tooth+"cmp"]
-            planitem=QtGui.QTableWidgetItem(pItem)
-            cmpitem=QtGui.QTableWidgetItem(cItem)
+            pItem = self.pt.__dict__[tooth+"pl"]
+            cItem = self.pt.__dict__[tooth+"cmp"]
+            planitem = QtGui.QTableWidgetItem(pItem)
+            cmpitem = QtGui.QTableWidgetItem(cItem)
             self.ui.chartsTableWidget.setItem(row, 3, planitem)
             self.ui.chartsTableWidget.setItem(row, 4, cmpitem)
             self.ui.planChartWidget.setToothProps(tooth, pItem.lower())
@@ -509,15 +535,17 @@ class chartsClass():
             self.ui.chartsTableWidget.setCurrentCell(0, 0)
 
     def toothHistory(self, arg):
-        '''show history of %s at position %s"%(arg[0], arg[1])'''
-        th="<br />"
+        '''
+        show history of %s at position %s"%(arg[0], arg[1])
+        '''
+        th = "<br />"
         for item in self.pt.dayBookHistory:
             if arg[0].upper() in item[2].strip():
-                th+="%s - %s - %s<br />"%(
+                th += "%s - %s - %s<br />"%(
                 item[0], localsettings.ops[int(item[1])], item[2].strip())
         if th == "<br />":
-            th+="No History"
-        th=th.rstrip("<br />")
+            th += "No History"
+        th = th.rstrip("<br />")
         QtGui.QToolTip.showText(arg[1], arg[0]+th)
 
 
@@ -615,26 +643,32 @@ class cashbooks():
 
                         patient_write_changes.discreet_changes(printpt, (
                         "billct", "billdate", "billtype"))
-                        patient_write_changes.toNotes(
-                                                sno, printpt.HIDDENNOTES)
-                        self.commitPDFtoDB("Account tone%s"%tone, printpt.serialno)
+
+                        patient_write_changes.toNotes(sno, 
+                        printpt.HIDDENNOTES)
+
+                        self.commitPDFtoDB(
+                        "Account tone%s"%tone, printpt.serialno)
+
                         no_printed+=1
         self.advise("%d letters printed"%no_printed, 1)
 
     def datemanage(self):
         if self.ui.daybookStartDateEdit.date() > \
         self.ui.daybookEndDateEdit.date():
-            self.ui.daybookStartDateEdit.setDate(self.\
-                                                 ui.daybookEndDateEdit.date())
+            self.ui.daybookStartDateEdit.setDate(
+            self.ui.daybookEndDateEdit.date())
 
         if self.ui.cashbookStartDateEdit.date() > \
         self.ui.cashbookEndDateEdit.date():
-            self.ui.cashbookStartDateEdit.setDate(self.\
-                                                  ui.cashbookEndDateEdit.date())
+            self.ui.cashbookStartDateEdit.setDate(
+            self.ui.cashbookEndDateEdit.date())
 
 class newPatientClass():
     def enterNewPatient(self):
-        '''called by the user clicking the new patient button'''
+        '''
+        called by the user clicking the new patient button
+        '''
 
         #--check for unsaved changes
         if not self.okToLeaveRecord():
@@ -657,10 +691,12 @@ class newPatientClass():
         self.enableEdit(False)
 
         #--change the function of the save button
-        QtCore.QObject.disconnect(self.ui.saveButton, QtCore.\
-                                  SIGNAL("clicked()"), self.save_changes)
-        QtCore.QObject.connect(self.ui.saveButton, QtCore.\
-                               SIGNAL("clicked()"), self.checkNewPatient)
+        QtCore.QObject.disconnect(self.ui.saveButton, 
+        QtCore.SIGNAL("clicked()"), self.save_changes)
+
+        QtCore.QObject.connect(self.ui.saveButton, 
+        QtCore.SIGNAL("clicked()"), self.checkNewPatient)
+
         self.ui.saveButton.setEnabled(True)
         self.ui.saveButton.setText("SAVE NEW PATIENT")
 
@@ -672,13 +708,15 @@ class newPatientClass():
         self.ui.sexEdit.setCurrentIndex(0)
 
         #--give some help
-        self.ui.detailsBrowser.setHtml('<div align="center">'
-        +'<h3>Enter New Patient</h3>Please enter at least the required fields, '
-        +'then use the Save Changes button to commit '
-        +'this patient to the database.</div>')
+        self.ui.detailsBrowser.setHtml(_('''<div align="center">
+<h3>Enter New Patient</h3>Please enter at least the required fields, 
+then use the Save Changes button to commit this patient to the database.
+</div>'''))
 
     def enteringNewPatient(self):
-        '''determines if the patient is entering a new patient'''
+        '''
+        determines if the user is entering a new patient
+        '''
 
         #--is user entering a new patient? the state of this button will tell
         if self.ui.newPatientPushButton.isEnabled():
@@ -721,20 +759,22 @@ class newPatientClass():
                 #--reload the patient from the db.
                 self.reload_patient()
             else:
-                self.advise("Error saving new patient, sorry!", 2)
+                self.advise(_("Error saving new patient, sorry!"), 2)
         else:
             #-- prompt user for more info
-            self.advise("insufficient data to create a new record... "+
-            "please fill in all highlighted fields", 2)
+            self.advise(_('''insufficient data to create a new record... 
+please fill in all highlighted fields'''), 2)
 
     def saveNewPatient(self):
-        '''User has entered a new patient'''
+        '''
+        User has entered a new patient
+        '''
 
         #--write to the database
         #--the next available serialno is returned or -1 if problems
         sno=writeNewPatient.commit(self.pt)
         if sno == -1:
-            self.advise("Error saving patient", 2)
+            self.advise(_("Error saving patient"), 2)
             return False
         else:
             #--set that serialno
@@ -745,7 +785,9 @@ class newPatientClass():
             return True
 
     def finishedNewPatientInput(self):
-        '''restore GUI to normal mode after a new patient has been entered'''
+        '''
+        restore GUI to normal mode after a new patient has been entered
+        '''
         #--remove my help prompt
         self.ui.detailsBrowser.setText("")
         #--reset the state of the newPatient button
@@ -766,17 +808,19 @@ class newPatientClass():
         QtCore.QObject.connect(self.ui.saveButton, 
         QtCore.SIGNAL("clicked()"), self.save_changes)
         
-        self.ui.saveButton.setText("SAVE CHANGES")
+        self.ui.saveButton.setText(_("SAVE CHANGES"))
 
     def abortNewPatientEntry(self):
-        '''get user response 'abort new patient entry?' '''
+        '''
+        get user response 'abort new patient entry?' 
+        '''
 
         #--let user see what they were up to
         self.ui.main_tabWidget.setCurrentIndex(0)
 
         #--ask the question (centred over self)
         result=QtGui.QMessageBox.question(self, "Confirm",
-        "New Patient not saved. Abandon Changes?",
+        _("New Patient not saved. Abandon Changes?"),
         QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
         #--act on the answer
@@ -787,8 +831,10 @@ class newPatientClass():
             return True
 
     def defaultNP(self):
-        '''default NP has been pressed - so apply the address and surname
-        from the previous patient'''
+        '''
+        default NP has been pressed - so apply the address and surname
+        from the previous patient
+        '''
 
         dup_tup=localsettings.defaultNewPatientDetails
         self.ui.snameEdit.setText(dup_tup[0])
@@ -808,12 +854,12 @@ class printingClass():
         '''
         print "comitting pdf to db"
         if serialno == None:
-            serialno=self.pt.serialno
+            serialno = self.pt.serialno
         try:
             ##todo - this try/catch is naff.
-            pdfDup=utilities.getPDF()
+            pdfDup = utilities.getPDF()
             if pdfDup == None:
-                self.advise("PDF is NONE - (tell Neil this happened)")
+                self.advise(_("PDF is NONE - (tell devs this happened)"))
             else:
                 #-field is 20 chars max.. hence the [:14]
                 docsprinted.add(serialno, descr[:14] + " (pdf)", pdfDup)
@@ -821,17 +867,24 @@ class printingClass():
                 if self.ui.previousCorrespondence_treeWidget.isVisible():
                     self.docsPrinted()
         except Exception, e:
-            self.advise("Error saving PDF copy %s"% e, 2)
+            self.advise(_("Error saving PDF copy %s")% e, 2)
 
     def printDupReceipt(self):
+        '''
+        print a duplicate receipt
+        '''
         dupdate=self.ui.dupReceiptDate_lineEdit.text()
         amount=self.ui.receiptDoubleSpinBox.value()*100
-        self.printReceipt({"Professional Services":amount}, True, dupdate)
-        self.pt.addHiddenNote("printed", "duplicate receipt for %.02f"%amount)
+        self.printReceipt({_("Professional Services"):amount}, True, dupdate)
+        self.pt.addHiddenNote("printed", 
+        _("duplicate receipt for %.02f")% amount)
 
     def printReceipt(self, valDict, duplicate=False, dupdate=""):
+        '''
+        print a receipt
+        '''
         if self.pt.serialno == 0:
-            self.advise("no patient selected", 1)
+            self.advise(_("no patient selected"), 1)
             return
         myreceipt=receiptPrint.receipt(self)
 
@@ -855,9 +908,11 @@ class printingClass():
 
 
     def printLetter(self):
-        '''prints a letter to the patient'''
+        '''
+        prints a letter to the patient
+        '''
         if self.pt.serialno == 0:
-            self.advise("no patient selected", 1)
+            self.advise(_("no patient selected"), 1)
             return
         html=standardletter.getHtml(self.pt)
         Dialog = QtGui.QDialog(self)
@@ -883,14 +938,14 @@ class printingClass():
         rowno=table.rowCount()
         colno=table.columnCount()
         if rowno == 0:
-            self.advise("Nothing to print - have you loaded the table?", 1)
+            self.advise(_("Nothing to print - have you loaded the table?"), 1)
             return()
         total=0.0
         html='<html><body><table border="1">'
-        html+='''<tr><th>Dent</th><th>SerialNo</th><th>Cset</th><th>FName</th>
-        <th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>
-        <th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>
-        <th>Amount</th></tr>'''
+        html+=_('''<tr><th>Dent</th><th>SerialNo</th><th>Cset</th>
+<th>FName</th><th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>
+<th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>
+<th>Amount</th></tr>''')
         for row in range(rowno):
             if row%2 == 0:
                 html+='<tr bgcolor="#eeeeee">'
@@ -910,9 +965,9 @@ class printingClass():
                     html+='<td> </td>'
             html+='</tr>\n'
 
-        html+='''<tr><td colspan="11"></td><td><b>TOTAL</b></td>
-        <td align="right"><b>&pound; %.02f</b></td></tr>
-        </table></body></html>'''%total
+        html += _('''<tr><td colspan="11"></td><td><b>TOTAL</b></td>
+<td align="right"><b>&pound; %.02f</b></td></tr>
+</table></body></html>''')%total
 
         #--test code
         #f=open("/home/neil/Desktop/accounts.html", "w")
@@ -923,7 +978,7 @@ class printingClass():
 
     def printEstimate(self):
         if self.pt.serialno == 0:
-            self.advise("no patient selected", 1)
+            self.advise(_("no patient selected"), 1)
             return
         est=estimatePrint.estimate()
 
@@ -942,12 +997,13 @@ class printingClass():
         prints a custom estimate to the patient
         '''
         if self.pt.serialno == 0:
-            self.advise("no patient selected", 1)
+            self.advise(_("no patient selected"), 1)
             return
         if html == "":
             html=standardletter.getHtml(self.pt)
             pt_total=0
-            ehtml="<br />Estimate for your current course of treatment."
+            ehtml = "<br />%s"% _(
+            "Estimate for your current course of treatment.")
             ehtml+="<br />"*4
             ehtml+='<table width=400>'
             for est in estimates.sorted(self.pt.estimates):
@@ -962,16 +1018,18 @@ class printingClass():
                 if "^" in item:
                     item=item.replace("^", "")
 
-                ehtml+='<tr><td>%s</td><td>%s</td><td align="right">\xa3%s</td></tr>'%(
+                ehtml+='''<tr><td>%s</td><td>%s</td>
+<td align="right">\xa3%s</td></tr>'''%(
                 number, item, localsettings.formatMoney(amount))
+                
             ehtml+='<tr><td></td><td><b>TOTAL</b></td>'
             ehtml+='<td align="right">\xa3%s</td></tr>'%(
             localsettings.formatMoney(pt_total))
             ehtml+="</table>"
             ehtml+="<br />"*4
             html=html.replace("<br />"*(12), ehtml)
-            html+="<i>Please note, this estimate may be subject to change if "
-            html+="clinical circumstances dictate.</i>"
+            html+=_('''<p><i>Please note, this estimate may be subject 
+to change if clinical circumstances dictate.</i></p>''')
         else:
             print "html", html
         Dialog = QtGui.QDialog(self)
@@ -1044,7 +1102,10 @@ class printingClass():
         self.printGP17(True)
 
 
-    def printGP17(self, test=False):
+    def printGP17(self, test=False, known_course=False):
+        '''
+        a GP17 is a scottish NHS form
+        '''
         #-- if test is true.... you also get boxes
 
         #--check that the form is goin gto have the correct dentist
@@ -1057,21 +1118,26 @@ class printingClass():
         dl = Ui_confirmDentist.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.dents_comboBox.addItems(localsettings.activedents)
-        prevDetails = "Previous Course (%s - %s)"% (
+        prevDetails = _("Previous Course (%s - %s)")% (
         localsettings.formatDate(self.pt.accd),
         localsettings.formatDate(self.pt.cmpd))
 
+        dl.previousCourse_radioButton.setChecked(known_course)
         dl.previousCourse_radioButton.setText(prevDetails)
-        if localsettings.apptix_reverse[dent] in localsettings.activedents:
-            pos=localsettings.activedents.index(localsettings.apptix_reverse[dent])
+        if localsettings.apptix_reverse.get(dent) in \
+        localsettings.activedents:
+
+            pos=localsettings.activedents.index(
+            localsettings.apptix_reverse.get(dent))
+
             dl.dents_comboBox.setCurrentIndex(pos)
         else:
             dl.dents_comboBox.setCurrentIndex(-1)
 
-        if Dialog.exec_():
+        if known_course or Dialog.exec_():
             #-- see if user has overridden the dentist
             chosenDent = str(dl.dents_comboBox.currentText())
-            dent = localsettings.ops_reverse[chosenDent]
+            dent = localsettings.ops_reverse.get(chosenDent)
             form = GP17.gp17(self.pt, dent, test)
             if dl.previousCourse_radioButton.isChecked():
                 form.detailed = True
@@ -2322,7 +2388,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.closeTx_pushButton.setText("Close Course")
         if self.pt.underTreatment:
             self.ui.estimate_groupBox.setTitle(
-            "Current Course- started %s"% self.pt.accd)
+            "Current Course- started %s"% (
+            localsettings.formatDate(self.pt.accd)))
+            
             self.ui.estimate_groupBox.setEnabled(True)
             self.ui.plan_groupBox.setEnabled(True)
             self.ui.completed_groupBox.setEnabled(True)
@@ -2332,7 +2400,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         else:
             self.ui.estimate_groupBox.setTitle(
             "Previous Course - started %s and completed %s"% (
-            self.pt.accd, self.pt.cmpd))
+            localsettings.formatDate(self.pt.accd),
+            localsettings.formatDate(self.pt.cmpd)))
+            
             self.ui.estimate_groupBox.setEnabled(False)
             #self.ui.plan_groupBox.setEnabled(False)
             self.ui.completed_groupBox.setEnabled(False)
@@ -2703,8 +2773,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         dl.topMargin_spinBox.setValue(GP17.offsetTop)
 
         if Dialog.exec_():
-            GP17.offsetLeft=dl.leftMargin_spinBox.value()
-            GP17.offsetTop=dl.topMargin_spinBox.value()
+            localsettings.GP17_LEFT=dl.leftMargin_spinBox.value()
+            localsettings.GP17_TOP=dl.topMargin_spinBox.value()
 
     def unsavedChanges(self):
         '''
@@ -2734,9 +2804,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
             return changes
         else: #this should NEVER happen!!!
-            self.advise( "POTENTIALLY SERIOUS CONFUSION PROBLEM"+
-                        " WITH PT RECORDS %d and %d"%\
-                        (self.pt.serialno, self.pt_dbstate.serialno), 2)
+            self.advise( _('''POTENTIALLY SERIOUS CONFUSION PROBLEM
+WITH PT RECORDS %d and %d''')% (
+            self.pt.serialno, self.pt_dbstate.serialno), 2)
             return changes
 
     def save_changes(self, leavingRecord=True):
@@ -2744,7 +2814,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         updates the database when the save is requested
         '''
         if self.pt.serialno == 0:
-            self.advise("no patient selected", 1)
+            self.advise(_("no patient selected"), 1)
             return
         if self.editPageVisited:
             #-- only make changes if user has visited this tab
@@ -2780,9 +2850,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                      
                 self.pt_dbstate=copy.deepcopy(self.pt)
                 if localsettings.showSaveChanges:
-                    message="Sucessfully altered the following items<ul>"
+                    message = _("Sucessfully altered the following items")
+                    message += "<ul>"
                     for item in uc:
-                        message+="<li>%s</li>"%str(item)
+                        message += "<li>%s</li>"%str(item)
                     self.advise(message+"</ul>", 1)
             else:
                 self.advise("Error applying changes... please retry", 2)

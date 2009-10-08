@@ -46,18 +46,19 @@ def setupNewCourse(parent):
         cdnt = parent.pt.dnt1
     else:
         cdnt = parent.pt.dnt2
-    dl = newCourse.course(Dialog, localsettings.ops[parent.pt.dnt1], \
-                          localsettings.ops[cdnt], parent.pt.cset)
+    dl = newCourse.course(Dialog, localsettings.ops.get(parent.pt.dnt1),
+    localsettings.ops.get(cdnt), parent.pt.cset)
+    
     result = dl.getInput()
 
     #-- (True, ['BW', 'AH', '', PyQt4.QtCore.QDate(2009, 5, 3)])
 
     if result[0]:
         atts = result[1]
-        dnt1 = localsettings.ops_reverse[atts[0]]
+        dnt1 = localsettings.ops_reverse.get(atts[0])
         if dnt1 != parent.pt.dnt1:
             contract_gui_module.changeContractedDentist(parent, atts[0])
-        dnt2 = localsettings.ops_reverse[atts[1]]
+        dnt2 = localsettings.ops_reverse.get(atts[1])
         if dnt2 != parent.pt.dnt2:
             contract_gui_module.changeCourseDentist(parent, atts[1])
         if atts[2] != parent.pt.cset:
@@ -66,22 +67,22 @@ def setupNewCourse(parent):
         accd = atts[3].toPyDate()
 
         course = writeNewCourse.write(parent.pt.serialno,
-        localsettings.ops_reverse[atts[1]], accd)
+        localsettings.ops_reverse.get(atts[1]), accd)
         
         if course[0]:
             parent.pt.blankCurrtrt()
             parent.pt.courseno = course[1]
             parent.pt.courseno0 = course[1]
             parent.pt.setAccd(accd)
-            parent.advise("Sucessfully started new course of treatment")
+            parent.advise(_("Sucessfully started new course of treatment"))
             parent.pt.estimates = []
             parent.pt.underTreatment = True
             #parent.load_newEstPage()
             parent.updateDetails()
-            parent.pt.addHiddenNote("open_course")
+            parent.pt.addHiddenNote(_("open_course"))
             return True
         else:
-            parent.advise("ERROR STARTING NEW COURSE, sorry", 2)
+            parent.advise(_("ERROR STARTING NEW COURSE, sorry"), 2)
 
 def prompt_close_course(parent):
     '''
@@ -114,7 +115,16 @@ def closeCourse(parent, leaving=False):
         parent.pt.underTreatment = False
         parent.updateDetails()
         parent.pt.addHiddenNote("close_course")
+        offerFinalPaperWork(parent)
         return True
+    
+def offerFinalPaperWork(parent):
+    '''
+    a course has been closed ( in surgery )
+    time to print a claim form?
+    '''
+    if "N" in parent.pt.cset:
+        parent.printGP17(known_course=True)
     
 def resumeCourse(parent):
     '''
