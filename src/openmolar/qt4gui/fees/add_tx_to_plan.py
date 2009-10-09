@@ -111,19 +111,22 @@ def customAdd(parent):
         dl.setupUi(Dialog)
         if Dialog.exec_():
             no = dl.number_spinBox.value()
-            descr = str(dl.description_lineEdit.text())
+            descr = unicode(dl.description_lineEdit.text(),"ascii","ignore")
+            
             if descr == "":
                 descr = "??"
-            type = "%s%s"% (no, descr.replace(" ", "_"))
-            if len(type) > 5:
+            ttype = str (descr.replace(" ", "_"))
+            #ttype = ttype.encode("ascii","ignore")
+
+            if len(ttype) > 12:
                 #-- necessary because the est table type col is char(12)
-                type = type[:5]
+                ttype = ttype[:12]
             fee = int(dl.fee_doubleSpinBox.value() * 100)
             ptfee = int(dl.ptFee_doubleSpinBox.value() * 100)
 
-            parent.pt.custompl += "%s "% type
+            parent.pt.custompl += "%s "% ttype
             parent.pt.addToEstimate(no, "4002", descr, fee,
-            ptfee, parent.pt.dnt1, "P", "custom", type)
+            ptfee, parent.pt.dnt1, "P", "custom", ttype)
             parent.load_newEstPage()
             parent.load_treatTrees()
 
@@ -169,15 +172,15 @@ def fromFeeTable(parent, item):
             if descr == "":
                 descr = "??"
             code = str(item.text(0))
-            type = str(item.text(2)).replace(" ", "_")
-            if type == "":
-                type = descr.replace(" ", "_")[:12]
+            ttype = str(item.text(2)).replace(" ", "_")
+            if ttype == "":
+                ttype = descr.replace(" ", "_")[:12]
             fee = int(dl.fee_doubleSpinBox.value() * 100)
             ptfee = int(dl.ptFee_doubleSpinBox.value() * 100)
 
-            parent.pt.custompl += "%s "% type
+            parent.pt.custompl += "%s "% ttype
             parent.pt.addToEstimate(no, code, descr, fee,
-            ptfee, parent.pt.dnt1, parent.pt.cset, category, type)
+            ptfee, parent.pt.dnt1, parent.pt.cset, category, ttype)
             
             
             if parent.ui.tabWidget.currentIndex() != 7:
@@ -275,27 +278,27 @@ def pass_on_estimate_delete(parent, est):
         parent.advise ("couldn't pass on delete message - " +
         'badly formed est.type??? %s'% est.type, 1)
 
-def estimate_item_delete(parent, pl_cmp, category, type):
+def estimate_item_delete(parent, pl_cmp, category, ttype):
     '''
     delete an estimate item when user has removed an item of treatment
     from the plan or completed
     '''
 
     result = QtGui.QMessageBox.question(parent, "question",
-    "remove %s %s from the estimate?"% (category, type),
+    "remove %s %s from the estimate?"% (category, ttype),
     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
     
     if result == QtGui.QMessageBox.Yes:
         removed = False
         for est in parent.pt.estimates:
             if est.category.lower() == category.lower() and \
-            est.type == type and est.completed == ("cmp" == pl_cmp):
+            est.type == ttype and est.completed == ("cmp" == pl_cmp):
                 if parent.pt.removeKnownEstimate(est):
                     removed = True
                     break
         if not removed:
             parent.advise("Unable to remove %s %s from estimate, sorry"%(
-            category, type), 1)
+            category, ttype), 1)
         else:
             parent.load_newEstPage()
            

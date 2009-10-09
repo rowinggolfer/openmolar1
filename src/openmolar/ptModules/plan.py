@@ -103,7 +103,12 @@ def summary(pt):
     retarg='''<html><body><head>
     <link rel="stylesheet" href="%s" type="text/css">
     </head>\n'''%localsettings.stylesheet
-
+    if not pt.underTreatment:
+        retarg += _("<H4>Previous Course</H4>")
+    if pt.accd != None:
+        retarg += _('Start %s<br />')% localsettings.formatDate(pt.accd)
+    if pt.cmpd != None:
+        retarg += _('End %s<br />')% localsettings.formatDate(pt.cmpd)
     plan=""
     for item in plannedItems(pt):
         plan+='%s - %s<br />'%(item)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1005</width>
-    <height>552</height>
+    <height>565</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -61,7 +61,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-37</y>
          <width>984</width>
          <height>558</height>
         </rect>
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -435,95 +435,17 @@
               <property name="lineWidth">
                <number>0</number>
               </property>
-              <layout class="QGridLayout" name="gridLayout_18">
-               <property name="horizontalSpacing">
-                <number>12</number>
-               </property>
+              <layout class="QGridLayout" name="gridLayout_7">
                <property name="margin">
-                <number>0</number>
+                <number>2</number>
                </property>
-               <item row="1" column="0" rowspan="2">
-                <widget class="QPushButton" name="memos_pushButton">
-                 <property name="text">
-                  <string>Memos</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1" rowspan="2">
-                <widget class="Line" name="line">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QLabel" name="label_39">
-                 <property name="text">
-                  <string>Today's Notes</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="3" rowspan="2">
-                <widget class="QTextEdit" name="notesEnter_textEdit">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>60</height>
-                  </size>
-                 </property>
-                 <property name="toolTip">
-                  <string>Enter Notes.</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="4" rowspan="2">
-                <widget class="Line" name="line_2">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="5" rowspan="2">
-                <widget class="QPushButton" name="saveButton">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>100</height>
-                  </size>
-                 </property>
-                 <property name="toolTip">
-                  <string>Save the changes made to this record.</string>
-                 </property>
-                 <property name="text">
-                  <string>Save Changes</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../resources/resources.qrc">
-                   <normaloff>:/save_all.png</normaloff>:/save_all.png</iconset>
-                 </property>
-                 <property name="shortcut">
-                  <string>Ctrl+S</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QPushButton" name="phraseBook_pushButton">
-                 <property name="text">
-                  <string>PhraseBook</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../resources/resources.qrc">
-                   <normaloff>:/txt.png</normaloff>:/txt.png</iconset>
-                 </property>
-                 <property name="shortcut">
-                  <string>Ins</string>
-                 </property>
-                </widget>
-               </item>
+               <property name="spacing">
+                <number>4</number>
+               </property>
                <item row="0" column="0" colspan="6">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>6</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -540,7 +462,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>496</width>
+                        <width>721</width>
                         <height>473</height>
                        </rect>
                       </property>
@@ -1778,7 +1700,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>672</width>
+                        <width>721</width>
                         <height>494</height>
                        </rect>
                       </property>
@@ -2159,7 +2081,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>334</width>
+                        <width>729</width>
                         <height>485</height>
                        </rect>
                       </property>
@@ -2528,7 +2450,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>499</width>
+                        <width>721</width>
                         <height>426</height>
                        </rect>
                       </property>
@@ -2794,8 +2716,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>748</width>
-                        <height>389</height>
+                        <width>744</width>
+                        <height>387</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2986,7 +2908,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>488</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3019,7 +2941,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>210</width>
+                        <width>217</width>
                         <height>511</height>
                        </rect>
                       </property>
@@ -3388,7 +3310,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
+                        <width>723</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -3671,6 +3593,99 @@ Note - this will not remove items which are currently there. </string>
                  </widget>
                 </widget>
                </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="memos_pushButton">
+                 <property name="text">
+                  <string>Memos</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../resources/resources.qrc">
+                   <normaloff>:/icons/memos.png</normaloff>:/icons/memos.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1" rowspan="2">
+                <widget class="Line" name="line">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QLabel" name="label_39">
+                 <property name="text">
+                  <string>Today's Notes</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3" rowspan="2">
+                <widget class="QTextEdit" name="notesEnter_textEdit">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Enter Notes.</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="4" rowspan="2">
+                <widget class="Line" name="line_2">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="5" rowspan="2">
+                <widget class="QPushButton" name="saveButton">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>100</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Save the changes made to this record.</string>
+                 </property>
+                 <property name="text">
+                  <string>Save Changes</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../resources/resources.qrc">
+                   <normaloff>:/save_all.png</normaloff>:/save_all.png</iconset>
+                 </property>
+                 <property name="shortcut">
+                  <string>Ctrl+S</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QPushButton" name="tasks_pushButton">
+                 <property name="text">
+                  <string>Tasks</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../resources/resources.qrc">
+                   <normaloff>:/icons/action.png</normaloff>:/icons/action.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QPushButton" name="phraseBook_pushButton">
+                 <property name="text">
+                  <string>PhraseBook</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../resources/resources.qrc">
+                   <normaloff>:/txt.png</normaloff>:/txt.png</iconset>
+                 </property>
+                 <property name="shortcut">
+                  <string>Ins</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
@@ -3937,8 +3952,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>98</width>
-                    <height>28</height>
+                    <width>198</width>
+                    <height>89</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4119,8 +4134,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>174</width>
+                         <height>428</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4218,8 +4233,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>174</width>
+                         <height>429</height>
                         </rect>
                        </property>
                       </widget>
@@ -4316,8 +4331,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>174</width>
+                         <height>429</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4369,8 +4384,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>174</width>
+                         <height>429</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>
@@ -4699,8 +4714,8 @@ Note - this will not remove items which are currently there. </string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>620</width>
+                     <height>300</height>
                     </rect>
                    </property>
                   </widget>

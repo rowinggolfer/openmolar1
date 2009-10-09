@@ -18,6 +18,12 @@ class memo():
         self.expire=None
         self.message=None
         self.open=False
+    def setMessage(self, arg):
+        try:
+            self.message = unicode(arg,encoding=localsettings.ENCODING,
+            errors="replace")
+        except:
+            print "unicode error with ",arg
 
 def getMemos(serialno):
     retarg=[]
@@ -35,17 +41,17 @@ def getMemos(serialno):
         print query
     cursor = db.cursor()
     cursor.execute(query)
-    rows=cursor.fetchall()
+    rows = cursor.fetchall()
     cursor.close()
     for row in rows:
-        newmemo=memo()
-        newmemo.ix=row[0]
-        newmemo.serialno=row[1]
-        newmemo.author=row[2]
-        newmemo.type=row[3]
-        newmemo.mdate=row[4]
-        newmemo.message=row[5]
-        newmemo.open=True
+        newmemo = memo()
+        newmemo.ix = row[0]
+        newmemo.serialno = row[1]
+        newmemo.author = row[2]
+        newmemo.type = row[3]
+        newmemo.mdate = row[4]
+        newmemo.setMessage(row[5])
+        newmemo.open = True
         
         retarg.append(newmemo)
     return retarg

@@ -26,8 +26,8 @@ def newCourseNeeded(parent):
         return False
     else:
         if not setupNewCourse(parent):
-            parent.advise("unable to plan or perform treatment if pt " + \
-            "does not have an active course", 1)
+            parent.advise(_('''<p>unable to plan or perform treatment if pt 
+does not have an active course</p>'''), 1)
             return True
         else:
             print "new course started with accd of '%s'"% parent.pt.accd
@@ -77,9 +77,11 @@ def setupNewCourse(parent):
             parent.advise(_("Sucessfully started new course of treatment"))
             parent.pt.estimates = []
             parent.pt.underTreatment = True
-            #parent.load_newEstPage()
+            parent.load_newEstPage()
+            parent.ui.planChartWidget.clear()
+            parent.ui.completedChartWidget.clear()
             parent.updateDetails()
-            parent.pt.addHiddenNote(_("open_course"))
+            parent.pt.addHiddenNote("open_course")
             return True
         else:
             parent.advise(_("ERROR STARTING NEW COURSE, sorry"), 2)

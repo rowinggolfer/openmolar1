@@ -14,6 +14,7 @@ from __future__ import division
 
 from PyQt4 import QtGui, QtCore
 import os
+import re
 import sys
 import copy
 import datetime
@@ -60,6 +61,7 @@ from openmolar.qt4gui.dialogs import saveDiscardCancel
 from openmolar.qt4gui.dialogs import newBPE
 from openmolar.qt4gui.dialogs import addToothTreat
 from openmolar.qt4gui.dialogs import saveMemo
+from openmolar.qt4gui.dialogs import save_pttask
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
 
@@ -196,7 +198,9 @@ class chartsClass():
         if tooth in self.ui.staticChartWidget.commentedTeeth:
             self.ui.staticChartWidget.commentedTeeth.remove(tooth)
             self.ui.staticChartWidget.update()
-
+        existing = self.pt.__dict__[tooth+"st"]
+        self.pt.__dict__[tooth+"st"] = re.sub("![^ ]* ","",existing)
+        
     def updateCharts(self, arg):
         '''
         called by a signal from the toothprops widget -
@@ -2323,32 +2327,43 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         get valid memos for the patient
         '''
-        urgentMemos = memos.getMemos(self.pt.serialno)
-        for umemo in urgentMemos:
-            mtext = umemo.message
-            base = ""
-            split = False
-            while len(mtext) > 50:
-                split = True
-                i = mtext.index(" ",50)
-                base += "%s<br />"% mtext[:i]
-                mtext = mtext[i:]
-                if not " " in mtext:
-                    break
-            if split:
-                mtext = "%s%s"% (base, mtext)
-            message = _('''<center>Message from %s <br />
+        try:
+            urgentMemos = memos.getMemos(self.pt.serialno)
+            for umemo in urgentMemos:
+                
+                mtext = umemo.message
+                base = ""
+                split = False
+                while len(mtext) > 50:
+                    split = True
+                    i = mtext.index(" ",50)
+                    base += "%s<br />"% mtext[:i]
+                    mtext = mtext[i:]
+                    if not " " in mtext:
+                        break
+                if split:
+                    mtext = "%s%s"% (base, mtext)
+                message = _('''<center>Message from %s <br />
 Dated %s<br /><br />%s</center>''')% (umemo.author, 
-            localsettings.formatDate(umemo.mdate), mtext)
-            
-            Dialog=QtGui.QDialog(self)
-            dl=Ui_showMemo.Ui_Dialog()
-            dl.setupUi(Dialog)
-            dl.message_label.setText(message)
-            if Dialog.exec_():
-                if dl.checkBox.checkState():
-                    print "deleting Memo %s"%umemo.ix
-                    memos.deleteMemo(umemo.ix)
+                localsettings.formatDate(umemo.mdate), mtext)
+                
+                Dialog=QtGui.QDialog(self)
+                dl=Ui_showMemo.Ui_Dialog()
+                dl.setupUi(Dialog)
+                dl.message_label.setText(message)
+                if Dialog.exec_():
+                    if dl.checkBox.checkState():
+                        print "deleting Memo %s"% umemo.ix
+                        memos.deleteMemo(umemo.ix)
+        except Exception, e:
+            self.advise(_("problem getting a memo %s")%e,2)
+            pass
+    
+    def newPtTask(self):
+        Dialog = QtGui.QDialog(self)
+        dl = save_pttask.Ui_Dialog(Dialog, self.pt.serialno)
+        if not dl.getInput():
+            self.advise("task not saved", 1)
 
     def newCustomMemo(self):
         Dialog = QtGui.QDialog(self)
@@ -2795,8 +2810,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             if len(self.ui.notesEnter_textEdit.toPlainText()) != 0:
                 changes.append("New Notes")
             for attr in self.pt.__dict__:
-                newval=str(self.pt.__dict__[attr])
-                oldval=str(self.pt_dbstate.__dict__[attr])
+                try:
+                    newval=str(self.pt.__dict__[attr])
+                    oldval=str(self.pt_dbstate.__dict__[attr])
+                except UnicodeEncodeError:
+                    print attr, self.pt.__dict__[attr]
                 if oldval != newval:
                     if attr == "xraycmp":
                         daybook_module.xrayDates(self, newval)
@@ -3618,6 +3636,9 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.memos_pushButton,
         QtCore.SIGNAL("clicked()"), self.newCustomMemo)
+
+        QtCore.QObject.connect(self.ui.tasks_pushButton,
+        QtCore.SIGNAL("clicked()"), self.newPtTask)
 
     def signals_admin(self):
         #admin page

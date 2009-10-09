@@ -23,6 +23,8 @@ SCHEMA_VERSION = "1.1"
 
 DEBUGMODE = False
 
+ENCODING = "latin-1" #necessary for the uk £ symbol
+
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
 
