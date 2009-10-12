@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'toothProps.ui'
 #
-# Created: Tue Oct  6 21:47:28 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Sat Oct 10 22:10:33 2009
+#      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -23,7 +23,7 @@ class Ui_Form(object):
         self.tooth_label.setFont(font)
         self.tooth_label.setAlignment(QtCore.Qt.AlignCenter)
         self.tooth_label.setObjectName("tooth_label")
-        self.gridLayout.addWidget(self.tooth_label, 0, 0, 1, 3)
+        self.gridLayout.addWidget(self.tooth_label, 0, 1, 1, 2)
         self.clear_pushButton = QtGui.QPushButton(Form)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -35,6 +35,7 @@ class Ui_Form(object):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/eraser.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.clear_pushButton.setIcon(icon)
+        self.clear_pushButton.setFlat(True)
         self.clear_pushButton.setObjectName("clear_pushButton")
         self.gridLayout.addWidget(self.clear_pushButton, 0, 4, 1, 1)
         self.editframe = QtGui.QFrame(Form)
@@ -110,12 +111,14 @@ class Ui_Form(object):
         icon1.addPixmap(QtGui.QPixmap(":/back.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.leftTooth_pushButton.setIcon(icon1)
         self.leftTooth_pushButton.setIconSize(QtCore.QSize(24, 18))
+        self.leftTooth_pushButton.setFlat(True)
         self.leftTooth_pushButton.setObjectName("leftTooth_pushButton")
         self.gridLayout.addWidget(self.leftTooth_pushButton, 8, 0, 1, 1)
         self.pushButton = QtGui.QPushButton(Form)
         self.pushButton.setMinimumSize(QtCore.QSize(32, 24))
         self.pushButton.setMaximumSize(QtCore.QSize(40, 40))
         self.pushButton.setIconSize(QtCore.QSize(18, 24))
+        self.pushButton.setFlat(False)
         self.pushButton.setObjectName("pushButton")
         self.gridLayout.addWidget(self.pushButton, 8, 1, 1, 1)
         self.rightTooth_pushButton = QtGui.QPushButton(Form)
@@ -125,6 +128,7 @@ class Ui_Form(object):
         icon2.addPixmap(QtGui.QPixmap(":/forward.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.rightTooth_pushButton.setIcon(icon2)
         self.rightTooth_pushButton.setIconSize(QtCore.QSize(24, 18))
+        self.rightTooth_pushButton.setFlat(True)
         self.rightTooth_pushButton.setObjectName("rightTooth_pushButton")
         self.gridLayout.addWidget(self.rightTooth_pushButton, 8, 2, 1, 1)
         self.static_pushButton = QtGui.QPushButton(Form)
@@ -212,6 +216,15 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.static_comboBox, 15, 0, 1, 5)
         spacerItem = QtGui.QSpacerItem(20, 18, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 16, 2, 1, 1)
+        self.edit_pushButton = QtGui.QPushButton(Form)
+        self.edit_pushButton.setMinimumSize(QtCore.QSize(0, 20))
+        self.edit_pushButton.setMaximumSize(QtCore.QSize(16777215, 28))
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/pencil.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.edit_pushButton.setIcon(icon3)
+        self.edit_pushButton.setFlat(True)
+        self.edit_pushButton.setObjectName("edit_pushButton")
+        self.gridLayout.addWidget(self.edit_pushButton, 0, 0, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)

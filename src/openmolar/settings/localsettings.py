@@ -17,7 +17,11 @@ from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
 #- updated 27th September 2009.
-__MAJOR_VERSION__= "0.1.5" 
+__MAJOR_VERSION__= "0.1.5"
+
+SUPERVISOR = "boss"
+
+DBNAME = "default"
 
 SCHEMA_VERSION = "1.1"
 
@@ -60,13 +64,19 @@ def determine_path ():
 server_names = []
 chosenserver = 0
 
+def setChosenServer(i):
+    global DBNAME, chosenserver
+    chosenserver = i
+    DBNAME = server_names[i]
+    print "DBNAME=", DBNAME
+
 wkdir = determine_path()
 referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
-appt_shortcut_file = os.path.join(wkdir, "resources", 
+appt_shortcut_file = os.path.join(wkdir, "resources",
 "appointment_shortcuts.xml")
 stylesheet = os.path.join(wkdir, "resources", "style.css")
 resources_path = os.path.join(wkdir, "resources")
-   
+
 if "win" in sys.platform:
     print "windows settings"
     #-- sorry about this... but cross platform is a goal :(
@@ -82,7 +92,7 @@ if "win" in sys.platform:
     GP17_LEFT = 15
     GP17_RIGHT = 15
 
-    
+
 else:
     if "linux" in sys.platform:
         print "linux settings"
@@ -92,7 +102,7 @@ else:
     localFileDirectory = os.path.join(os.environ.get("HOME"),".openmolar")
     pdfProg = "evince"
 
-cflocation = os.path.join(localFileDirectory,"openmolar.conf")    
+cflocation = os.path.join(localFileDirectory,"openmolar.conf")
 
 #this is updated if correct password is given
 successful_login = False
@@ -186,7 +196,7 @@ apptix = {}
 
 apptix_reverse = {}
 
-#-- set a latest possible date for appointments to be made 
+#-- set a latest possible date for appointments to be made
 #--(necessary if a very long appointment goes right on through)
 #-- would get maximum recursion, quite quickly!
 ##todo - this will need to change!!!!
@@ -256,7 +266,7 @@ def currentTime():
     (2009, 3, 7, 18, 56, 37, 582484)
     has attributes day, month, year etc...
     '''
-    return datetime.datetime.today()   
+    return datetime.datetime.today()
 
 def currentDay():
     '''
@@ -283,7 +293,7 @@ def pyDatetoSQL(d):
         return "%04d%02d%02d"% (d.year, d.month, d.day)
     except:
         pass
-        
+
 def formatMoney(m):
     '''
     takes an integer, returns a string
@@ -322,7 +332,7 @@ def monthName(d):
         "August","September","October","November","December")[d.month]
     except:
         pass
-     
+
 def longDate(d):
     try:
         return "%s, %d %s %d"% (dayName(d), d.day, monthName(d), d.year)
@@ -419,9 +429,9 @@ def getLocalSettings():
         if node and node[0].hasChildNodes():
             surgeryno = int(node[0].firstChild.data)
             print "%s location"% station
-        else: 
+        else:
             print "unknown location"
-            
+
     else:
         #-- no file found..
         #--so create a settings file.
@@ -457,18 +467,18 @@ def updateLocalSettings(setting, value):
             #print dom.toxml()
             f = open(localSets,"w")
             f.write(dom.toxml())
-            f.close()            
+            f.close()
             return True
-        
+
     except Exception, e:
         print "error updating local settings file", e
         return False
-    
+
 def initiate(debug = False):
     print "initiating settings"
     global fees, message, dentDict, privateFees,\
     nhsFees, allowed_logins, ops, ops_reverse, activedents, activehygs, \
-    apptix, apptix_reverse 
+    apptix, apptix_reverse
     from openmolar import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
@@ -619,7 +629,7 @@ def initiate(debug = False):
     stylesheet, wkdir, wkdir, __MAJOR_VERSION__, __build__ )
 
     if debug:
-        print "LOCALSETTINGS CALLED WITH DEBUG = TRUE" 
+        print "LOCALSETTINGS CALLED WITH DEBUG = TRUE"
         print "ops = ", ops
         print "ops_reverse = ", ops_reverse
         print "apptix = ", apptix
@@ -633,22 +643,22 @@ def initiate(debug = False):
             print privateFees[key].fees,
             print nhsFees[key].fees
         print "treatmentCode =",treatmentCodes
-    
+
 if __name__ == "__main__":
     #-- testing only
-    
+
     wkdir = determine_path()
     sys.path.append(os.path.dirname(wkdir))
     if os.path.exists(global_cflocation):
         print "using global", global_cflocation
         cflocation = global_cflocation
     else:
-        print "using local", local_cflocation        
-        cflocation = local_cflocation   
+        print "using local", local_cflocation
+        cflocation = local_cflocation
     print cflocation
     print stylesheet
     initiate(False)
     print treatmentCodes
     #print global_cflocation, local_cfloaction
     #updateLocalSettings("stationID","surgery3")
-    
+

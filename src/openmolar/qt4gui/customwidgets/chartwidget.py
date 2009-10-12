@@ -463,7 +463,7 @@ class chartWidget(QtGui.QWidget):
                 #--necessary for condition in a few lines time
                 prop = prop.strip("(")
 
-            if prop[-1] == ")":
+            elif prop[-1] == ")":
                 #--other end of a bridge
                 adj = toothRect.width()*0.10
                 if isUpper:
@@ -636,7 +636,7 @@ class chartWidget(QtGui.QWidget):
                 if "," in prop:
                     #--get materal if present
                     material = prop.split(",")[1]
-                    material = material.replace("(", "").replace(")", "")
+                    material = re.sub("[()]", "", material)
                     prop = prop.split(",")[0]
                     #--adjust for mirror imaging
                 else:
@@ -676,7 +676,6 @@ class chartWidget(QtGui.QWidget):
                 elif material == "dr":
                     painter.setBrush(colours.DRESSING)                    
                 elif material == "fs":
-                    ##TODO TEST CODE
                     painter.setPen(QtGui.QPen(colours.FISSURE, 1))
                     painter.setBrush(colours.FISSURE)
                 else:
@@ -716,9 +715,7 @@ class chartWidget(QtGui.QWidget):
                         toothRect.height() / 2, 0, 0), QtCore.Qt.AlignCenter,
                         material)
 
-                if prop == "pv":
-                    #--caution - upper teeth only
-                    #--NOTE 4.6.2009 not sure why???
+                if prop == "pv" and isUpper:
                     painter.drawPolygon(QtGui.QPolygon(
                     [toothRect.topLeft().x(), toothRect.topLeft().y(),
                     toothRect.topRight().x(), toothRect.topRight().y(),
@@ -727,6 +724,19 @@ class chartWidget(QtGui.QWidget):
 
                     painter.drawText(toothRect.adjusted(0, 0, 0,
                     -toothRect.height() / 2), QtCore.Qt.AlignCenter, prop)
+
+                    prop = ""
+
+                if prop == "pv" and not isUpper:
+                    painter.drawPolygon(QtGui.QPolygon(
+                    [toothRect.bottomLeft().x(), toothRect.bottomLeft().y(),
+                    toothRect.bottomRight().x(), toothRect.bottomRight().y(),
+                    innerRect.bottomRight().x(), innerRect.bottomRight().y(),
+                    innerRect.bottomLeft().x(), innerRect.bottomLeft().y()]))
+
+                    painter.drawText(toothRect.adjusted(0,
+                    toothRect.height() / 2, 0, 0), 
+                    QtCore.Qt.AlignCenter, prop)
 
                     prop = ""
 
@@ -844,19 +854,86 @@ class chartWidget(QtGui.QWidget):
                     elif "b" in prop:
                         n = QtGui.QPolygon([bx, ay, hx, ay, fx, cy, dx, cy])
                         shapes.append(n)
-                else:
-                    if "i" in prop:
-                        painter.drawRect(innerRect)
-                    if "m" in prop:
+                else: #front tooth
+                    if "dr" in prop:
+                        n = QtGui.QPolygon([cx, dy, dx, by, fx, by, hx, dy,
+                        hx, fy, fx, hy, dx, hy, cx, fy])
+                        shapes.append(n)                        
+                    elif re.match("[mbd]{3}", prop):
+                        n = QtGui.QPolygon([ax, by, dx, ay, fx, ay, ix, by,
+                        ix, ey, hx, ey, hx, cy, bx, cy, bx, ey, ax, ey])
+                        shapes.append(n)
+                    elif re.match("[mpd]{3}", prop):
+                        n = QtGui.QPolygon([ax, ey, bx, ey, bx, hy, hx, hy,
+                        hx, ey, ix, ey, ix, gy, gx, iy, bx, iy, ax, gy])
+                        shapes.append(n)                    
+                    elif re.match("[ib]{2}", prop):
+                        n = QtGui.QPolygon([cx, ay, gx, ay, fx, cy, fx, fy,
+                        dx, fy, dx, cy])
+                        shapes.append(n)
+                    elif re.match("[ip]{2}", prop):
+                        n = QtGui.QPolygon([dx, dy, fx, dy, fx, gy, gx, iy,
+                        cx, iy, dx, gy])
+                        shapes.append(n)
+                    elif re.match("[mb]{2}", prop):
+                        n = QtGui.QPolygon([dx, ay, fx, ay, ix, by, ix, ey,
+                        hx, ey, hx, dy, fx, cy, dx, cy, bx, by])
+                        shapes.append(n)
+                    elif re.match("[mp]{2}", prop):
+                        n = QtGui.QPolygon([dx, iy, fx, iy, ix, hy, ix, ey,
+                        hx, ey, hx, fy, fx, gy, dx, gy, bx, hy])
+                        shapes.append(n)
+                    elif re.match("[db]{2}", prop):
+                        n = QtGui.QPolygon([fx, ay, dx, ay, ax, by, ax, ey,
+                        bx, ey, bx, dy, dx, cy, fx, cy, hx, by])
+                        shapes.append(n)
+                    elif re.match("[dp]{2}", prop):
+                        n = QtGui.QPolygon([fx, iy, dx, iy, ax, hy, ax, ey,
+                        bx, ey, bx, fy, dx, gy, fx, gy, hx, hy])
+                        shapes.append(n)
+                    elif re.match("[mid]{3}", prop):
+                        n = QtGui.QPolygon([ax, cy, cx, dy, 
+                        innerRect.topLeft().x(),innerRect.topLeft().y(),
+                        innerRect.topRight().x(),innerRect.topRight().y(),
+                        gx, dy, ix, cy, ix, gy, gx, fy,
+                        innerRect.bottomRight().x(),
+                        innerRect.bottomRight().y(),
+                        innerRect.bottomLeft().x(),
+                        innerRect.bottomLeft().y(),cx, fy, ax, gy])
+                        shapes.append(n)
+                    elif re.match("[mi]{2}", prop):
+                        n = QtGui.QPolygon([innerRect.topLeft().x(),
+                        innerRect.topLeft().y(),
+                        innerRect.topRight().x(),innerRect.topRight().y(),
+                        gx, dy, ix, cy, ix, gy, gx, fy,
+                        innerRect.bottomRight().x(),
+                        innerRect.bottomRight().y(),
+                        innerRect.bottomLeft().x(),
+                        innerRect.bottomLeft().y(),
+                        ])
+                        shapes.append(n)
+                    elif re.match("[di]{2}", prop):
+                        n = QtGui.QPolygon([ax, cy, cx, dy, 
+                        innerRect.topLeft().x(),innerRect.topLeft().y(),
+                        innerRect.topRight().x(),innerRect.topRight().y(),
+                        innerRect.bottomRight().x(),
+                        innerRect.bottomRight().y(),
+                        innerRect.bottomLeft().x(),
+                        innerRect.bottomLeft().y(),
+                        cx, fy, ax, gy])
+                        shapes.append(n)                    
+                    elif "i" in prop:
+                        shapes.append(innerRect.adjusted(2,2,-2,-2))
+                    elif "m" in prop:
                         shapes.append(QtGui.QPolygon(
                         [hx, dy, ix, dy, ix, fy, hx, fy, gx, ey]))
-                    if "d" in prop:
+                    elif "d" in prop:
                         shapes.append(QtGui.QPolygon(
                         [ax, dy, bx, dy, cx, ey, bx, fy, ax, fy]))
-                    if "p" in prop:
+                    elif "p" in prop:
                         shapes.append(QtGui.QPolygon([cx, hy, cx, gy, ex, fy,
                         gx, gy, gx, hy, fx, iy, dx, iy]))
-                    if "b" in prop:
+                    elif "b" in prop:
                         shapes.append(QtGui.QPolygon([cx, cy, cx, ay, ex, ay,
                         gx, ay, gx, cy, fx, dy, dx, dy]))
                 for shape in shapes:
@@ -880,8 +957,11 @@ if __name__ == "__main__":
 
     for properties in (
     ("ur7", "ex "), ("ur6", "gi/modbp mb"), ("ur5", "cr,go mp"),
-    ("ur4", "mop,co"), ("ur3", "AT"), ("ur2", "d,co b"), ("ur1", "pv rt"),
-    ("ul1", "cr,pj"), ("ul2", "d,co b,co"), ("ul4", "do"), ("ul6", "mo"),
+    ("ur4", "mop,co"), ("ur3", "AT"), ("ur2", "di,co b"), ("ur1", "pv rt"),
+    ("ul1", "cr,pj"), ("ul2", "dp,co b,co"), ("ul3","di p,go"),
+    ("ll3", "pv"), ("ll2", "dip"), ("ll1", "midi"),
+    ("lr1", "mpd"), ("lr2", "mld,gl"), ("lr3", "dr"),
+    ("ul4", "do"), ("ul6", "mo"), ("lr8", "("),
     ("ul7", "mop,co"), ("ur8", "mdb,gl mpd,go ob"), ("ll4", "b,gl dl,co"),
     ("ll5", "ob ml"), ("ll6", "mod,co"), ("ll7", "pe"), ("ll8", "ue !watch"),
     ("lr4", "b"), ("lr5", "dr"), ("lr7", "fs"), ("lr6", "modbl,pr")):

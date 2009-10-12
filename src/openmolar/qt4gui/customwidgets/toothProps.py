@@ -12,7 +12,7 @@ from openmolar.qt4gui import colours
 from openmolar.qt4gui.compiled_uis import Ui_crownChoice
 from openmolar.settings import allowed
 
-    
+
 class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def __init__(self, parent=None):
         super(tpWidget, self).__init__(parent)
@@ -45,36 +45,33 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.originalProps=""
         self.existingComments=""
         self.is_Static = False
-        
+
     def isStatic(self,arg):
         '''
         if the editing is of the static chart, then different buttons are enabled
         '''
         self.is_Static = arg
         self.comments_comboBox.setEnabled(arg)
-        
+
     def setExistingProps(self,arg):
         '''
         put the existing tooth props into the lineEdit
         '''
         commentSTR = ""
         self.originalProps = arg
-        
+
         if arg == "":
             self.originalProps = ""
             self.lineEdit.setText("")
-        
         else:
-            arg = arg.strip() + ":"
-            arg = arg.replace(" ",":")
-            comments = re.findall("!.[^:]*:",arg)
+            comments = re.findall("!.[^:]* ",arg)
             for comment in comments:
-                commentSTR += "%s "% comment.strip(":")
+                commentSTR += comment
                 arg = arg.replace(comment, "")
             self.lineEdit.setText(arg)
-            
+
         self.setComments(commentSTR)
-    
+
     def setComments(self, arg):
         '''
         puts the comment into the combobox
@@ -85,11 +82,11 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.existingComments = str(arg)
         self.comments_comboBox.setItemText(0,arg)
         self.comments_comboBox.setCurrentIndex(0)
-        
+
         QtCore.QObject.connect(self.comments_comboBox, QtCore.SIGNAL(
         "currentIndexChanged (const QString&)"), self.comments)
 
-        
+
     def comments(self,arg):
         '''
         comments combobox has been nav'd
@@ -99,33 +96,47 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             self.emit(QtCore.SIGNAL("DeletedComments"))
         else:
             result=QtGui.QMessageBox.question(self, "Confirm",
-            'Add comment "%s"'%arg,
+            'Add comment "%s"'% arg,
             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            
+
             if result == QtGui.QMessageBox.Yes:
                 cstring = self.existingComments
                 if cstring != "":
-                    cstring += ":"
+                    cstring += " "
                 cstring += arg
-                #cstring="%s:%s"%(self.existingComments,arg)
                 self.setComments(cstring)
                 self.finishedEdit()
-        
+
     def clear(self):
-        t =  str(self.lineEdit.text().toAscii())
-        tlist = t.strip(":").split(":")
+        '''
+        user has pressed the delete button
+        remove the last item
+        '''
+        t =  str(self.lineEdit.text().toAscii()).strip(" ")
+        print "old", t
+        tlist = t.split(" ")
+        print tlist
         t = ""
         for props in tlist[:-1]:
-            t += "%s:"% props
+            t += "%s "% props
+        print "new", t
         self.lineEdit.setText(t)
-        
+
         self.tooth.clear()
         self.tooth.update()
         self.finishedEdit() #doesn't work!
-    
+
+    def fulledit(self):
+        '''
+        user has clicked the edit button
+        tell the main gui to show the user the full contents of the tooth's
+        properties
+        '''
+        self.emit(QtCore.SIGNAL("full_edit"))
+
     def checkEntry(self):
         currentFill = str(self.lineEdit.text().toAscii())
-        fillList = currentFill.split(":")
+        fillList = currentFill.split(" ")
         for f in fillList:
             if not self.checkProp(f):
                 return False
@@ -136,12 +147,12 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         '''
         check to see if the user has entered garbage
         '''
-        plist = self.originalProps.replace(":"," ").split(" ")
+        plist = self.originalProps.split(" ")
         print "checking Prop '%s' origs ='%s'"% (f, plist)
         if f in plist:
             print "already present, ignoring"
             return True
-        
+
         allowedCode = True
         if f!= "":
             if self.tooth.isBacktooth and not (f in allowed.backToothCodes):
@@ -154,19 +165,19 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         if not allowedCode:
             message = '''"%s" is not recognised <br />
             do you want to accept anyway?'''% f
-            input = QtGui.QMessageBox.question(self, "Confirm", message, 
-            QtGui.QMessageBox.No,QtGui.QMessageBox.Yes) 
+            input = QtGui.QMessageBox.question(self, "Confirm", message,
+            QtGui.QMessageBox.No,QtGui.QMessageBox.Yes)
 
             if input == QtGui.QMessageBox.Yes:
                 allowedCode = True
             else:
                 allowedCode = False
         return allowedCode
-        
+
     def additional(self, checkedAlready = False):
         existing = str(self.lineEdit.text().toAscii())
-        if ":" in existing:
-            colonPos =existing.rindex(":")
+        if " " in existing:
+            colonPos =existing.rindex(" ")
             keep = existing[:colonPos]
             currentFill = existing[colonPos+1:]
         else:
@@ -174,15 +185,15 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         if currentFill == "":
             return
         if checkedAlready or self.checkProp(currentFill):
-            self.lineEdit.setText(existing+":")
+            self.lineEdit.setText(existing+" ")
             self.tooth.clear()
             self.tooth.update()
             self.finishedEdit()
-            
+
     def updateSurfaces(self):
         existing = str(self.lineEdit.text().toAscii())
-        if ":" in existing:                             #we have an existing filling/property in the tooth
-            colonPos = existing.rindex(":")
+        if " " in existing: #we have an existing filling/property in the tooth
+            colonPos = existing.rindex(" ")
             keep = existing[:colonPos+1]
             currentFill = existing[colonPos:]
         else:                                           #we don't
@@ -199,15 +210,15 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         else:                                           #virgin tooth
             currentFill = self.tooth.filledSurfaces
         self.lineEdit.setText(keep+currentFill)
-    
+
     def changeFillColour(self,arg):
         self.tooth.fillcolour=arg
         self.tooth.update()
 
     def plasticMaterial(self,arg):
         existing=str(self.lineEdit.text().toAscii())
-        if ":" in existing:
-            colonPos=existing.rindex(":")
+        if " " in existing:
+            colonPos=existing.rindex(" ")
             keep=existing[:colonPos+1]
             currentFill=existing[colonPos+1:]
         else:
@@ -224,11 +235,11 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         else:
             currentFill+=","+arg
         self.lineEdit.setText(keep+currentFill)
-        
+
     def labMaterial(self,arg):
         existing=str(self.lineEdit.text().toAscii())
-        if ":" in existing:
-            colonPos=existing.rindex(":")
+        if " " in existing:
+            colonPos=existing.rindex(" ")
             keep=existing[:colonPos+1]
             currentFill=existing[colonPos+1:]
         else:
@@ -273,17 +284,16 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def finishedEdit(self):
         newprops = self.newProps()
         if newprops != self.originalProps:
-            newprops = newprops.replace(":"," ")
             if newprops != "" and newprops[-1]!=" ":
                 newprops += " "
             self.emit(QtCore.SIGNAL("Changed_Properties"), newprops)
-            
+
     def keyNav(self, arg):
         if arg == "up":
             self.prevTooth()
         elif arg == "down":
             self.nextTooth()
-    
+
     def leftTooth(self):
         if self.tooth.isUpper:
             self.prevTooth()
@@ -325,7 +335,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.nextTooth()
 
     def rt(self):
-        existing=str(self.lineEdit.text().toAscii()) 
+        existing=str(self.lineEdit.text().toAscii())
         self.lineEdit.setText(existing+"RT")
         self.additional()
 
@@ -357,7 +367,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         def recem():
             self.lineEdit.setText(existing+"CR,RC")
             Dialog.accept()
-            
+
         existing=self.lineEdit.text()
         Dialog = QtGui.QDialog(self)
         ccwidg = Ui_crownChoice.Ui_Dialog()
@@ -371,9 +381,17 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         ccwidg.gold.connect(ccwidg.temp,QtCore.SIGNAL("clicked()"), temp)
         ccwidg.gold.connect(ccwidg.resin,QtCore.SIGNAL("clicked()"), resin)
         ccwidg.gold.connect(ccwidg.recement,QtCore.SIGNAL("clicked()"), recem)
-        
+
         if Dialog.exec_():
             self.nextTooth()
+
+    def cb_treat(self, arg):
+        if not re.match("--.*", arg.toAscii()):
+            print arg
+            for cb in (self.br_comboBox, self.endo_comboBox, self.ex_comboBox,
+            self.static_comboBox):
+                cb.setCurrentIndex(0)
+
     def staticButPressed(self):
         self.emit(QtCore.SIGNAL("static"))
     def planButPressed(self):
@@ -382,29 +400,89 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.emit(QtCore.SIGNAL("completed"))
 
     def signals(self):
-        QtCore.QObject.connect(self.am_pushButton,QtCore.SIGNAL("clicked()"), self.am)
-        QtCore.QObject.connect(self.co_pushButton,QtCore.SIGNAL("clicked()"), self.co)
-        QtCore.QObject.connect(self.gl_pushButton,QtCore.SIGNAL("clicked()"), self.gl)
-        QtCore.QObject.connect(self.gold_pushButton,QtCore.SIGNAL("clicked()"), self.go)
-        QtCore.QObject.connect(self.porc_pushButton,QtCore.SIGNAL("clicked()"), self.pi)
-        QtCore.QObject.connect(self.tooth,QtCore.SIGNAL("toothSurface"), self.updateSurfaces) #user has clicked a surface
-        QtCore.QObject.connect(self.clear_pushButton,QtCore.SIGNAL("clicked()"), self.clear)
-        QtCore.QObject.connect(self.pushButton,QtCore.SIGNAL("clicked()"), self.additional)
-        QtCore.QObject.connect(self.lineEdit,QtCore.SIGNAL("ArrowKeyPressed"),self.keyNav)
-        QtCore.QObject.connect(self.rightTooth_pushButton,QtCore.SIGNAL("clicked()"), self.rightTooth)
-        QtCore.QObject.connect(self.leftTooth_pushButton,QtCore.SIGNAL("clicked()"), self.leftTooth)
-        QtCore.QObject.connect(self.dec_pushButton,QtCore.SIGNAL("clicked()"), self.dec_perm)
-        QtCore.QObject.connect(self.at_pushButton,QtCore.SIGNAL("clicked()"), self.at)
-        QtCore.QObject.connect(self.tm_pushButton,QtCore.SIGNAL("clicked()"), self.tm)
-        QtCore.QObject.connect(self.ex_pushButton,QtCore.SIGNAL("clicked()"), self.ex)
-        QtCore.QObject.connect(self.rt_pushButton,QtCore.SIGNAL("clicked()"), self.rt)
-        QtCore.QObject.connect(self.defaultCrown_pushButton,QtCore.SIGNAL("clicked()"), self.crown)
-        QtCore.QObject.connect(self.static_pushButton,QtCore.SIGNAL("clicked()"), self.staticButPressed)
-        QtCore.QObject.connect(self.plan_pushButton,QtCore.SIGNAL("clicked()"), self.planButPressed)
-        QtCore.QObject.connect(self.comp_pushButton,QtCore.SIGNAL("clicked()"), self.compButPressed)
-        QtCore.QObject.connect(self.comments_comboBox,QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
-        
-        ##fs_comboBox,cr_comboBox,endo_comboBox,ex_comboBox,static_comboBox,comments_comboBox
+        QtCore.QObject.connect(self.am_pushButton,
+        QtCore.SIGNAL("clicked()"), self.am)
+
+        QtCore.QObject.connect(self.co_pushButton,
+        QtCore.SIGNAL("clicked()"), self.co)
+
+        QtCore.QObject.connect(self.gl_pushButton,
+        QtCore.SIGNAL("clicked()"), self.gl)
+
+        QtCore.QObject.connect(self.gold_pushButton,
+        QtCore.SIGNAL("clicked()"), self.go)
+
+        QtCore.QObject.connect(self.porc_pushButton,
+        QtCore.SIGNAL("clicked()"), self.pi)
+
+        #user has clicked a surface
+        QtCore.QObject.connect(self.tooth,QtCore.
+        SIGNAL("toothSurface"), self.updateSurfaces)
+
+        QtCore.QObject.connect(self.clear_pushButton,
+        QtCore.SIGNAL("clicked()"), self.clear)
+
+        QtCore.QObject.connect(self.edit_pushButton,
+        QtCore.SIGNAL("clicked()"), self.fulledit)
+
+        QtCore.QObject.connect(self.pushButton,
+        QtCore.SIGNAL("clicked()"), self.additional)
+
+        QtCore.QObject.connect(self.lineEdit,
+        QtCore.SIGNAL("ArrowKeyPressed"),self.keyNav)
+
+        QtCore.QObject.connect(self.rightTooth_pushButton,
+        QtCore.SIGNAL("clicked()"), self.rightTooth)
+
+        QtCore.QObject.connect(self.leftTooth_pushButton,
+        QtCore.SIGNAL("clicked()"), self.leftTooth)
+
+        QtCore.QObject.connect(self.dec_pushButton,
+        QtCore.SIGNAL("clicked()"), self.dec_perm)
+
+        QtCore.QObject.connect(self.at_pushButton,
+        QtCore.SIGNAL("clicked()"), self.at)
+
+        QtCore.QObject.connect(self.tm_pushButton,
+        QtCore.SIGNAL("clicked()"), self.tm)
+
+        QtCore.QObject.connect(self.ex_pushButton,
+        QtCore.SIGNAL("clicked()"), self.ex)
+
+        QtCore.QObject.connect(self.rt_pushButton,
+        QtCore.SIGNAL("clicked()"), self.rt)
+
+        QtCore.QObject.connect(self.defaultCrown_pushButton,
+        QtCore.SIGNAL("clicked()"), self.crown)
+
+        QtCore.QObject.connect(self.static_pushButton,
+        QtCore.SIGNAL("clicked()"), self.staticButPressed)
+
+        QtCore.QObject.connect(self.plan_pushButton,
+        QtCore.SIGNAL("clicked()"), self.planButPressed)
+
+        QtCore.QObject.connect(self.comp_pushButton,
+        QtCore.SIGNAL("clicked()"), self.compButPressed)
+
+        QtCore.QObject.connect(self.comments_comboBox,
+        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
+
+        QtCore.QObject.connect(self.fs_comboBox,
+        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
+
+        QtCore.QObject.connect(self.br_comboBox,
+        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
+
+        QtCore.QObject.connect(self.endo_comboBox,
+        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
+
+        QtCore.QObject.connect(self.ex_comboBox,
+        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
+
+        QtCore.QObject.connect(self.static_comboBox,
+        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
+
+        ##cr_comboBox,endo_comboBox,ex_comboBox,static_comboBox,comments_comboBox
 
 
 class tooth(QtGui.QWidget):
@@ -640,20 +718,23 @@ class chartLineEdit(QtGui.QLineEdit):
         elif event.key() == QtCore.Qt.Key_Down:
             self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("down"))
         else:
-            if "a"<= event.text() <="z":
+            inputT = event.text().toAscii()
+            if re.match("[a-z]", inputT):
                 #-- catch and overwrite any lower case
-                event = QtGui.QKeyEvent(event.type(), event.key(), 
-                        event.modifiers(), event.text().toUpper())
-            
+                event = QtGui.QKeyEvent(event.type(), event.key(),
+                event.modifiers(), event.text().toUpper())
+
             QtGui.QLineEdit.keyPressEvent(self,event)
+
 
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
-    Form = QtGui.QWidget()
-    ui = tpWidget(Form)
-    ui.setExistingProps("MOD B,GL !COMMENT_TWO")
+    #Form = QtGui.QWidget()
+    #ui = tpWidget(Form)
+    #ui.setExistingProps("MOD B,GL !COMMENT_TWO")
     #Form.setEnabled(False)
+    Form = chartLineEdit()
     Form.show()
     sys.exit(app.exec_())
 

@@ -9,7 +9,7 @@
 
 import sys
 from openmolar.connect import connect
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 
 def getcandidates(dob,addr,tel,sname,similar_sname,fname,similar_fname,pcde):
     '''this searches the database for patients matching the given fields'''
@@ -33,9 +33,14 @@ def getcandidates(dob,addr,tel,sname,similar_sname,fname,similar_fname,pcde):
             query+='fname sounds like "%s" and '%fname
         else:
             query+='fname like %s and '%('"'+fname+r'%"')
+
     if query!='':
         fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde,tel1,tel2,mobile'%localsettings.sqlDateFormat #this needs to be the headers in qt4gui/main select_patient()
         query="select %s from patients where %s order by sname,fname"%(fields,query[0:query.rindex("and")])
+        if "demo" in localsettings.DBNAME:
+            #demo db uses the same name and address for everyone!
+            query += " limit 10"
+
         if localsettings.logqueries:
             print query
         db=connect()
@@ -55,9 +60,10 @@ def getsimilar(serialno,addr,sname,family):
     fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde'%localsettings.sqlDateFormat #this needs to be the headers in qt4gui/main select_patient()
     if family>0:
         query="select %s from patients where serialno != %d and familyno=%d order by dob"%(fields,serialno,family)
+
         if localsettings.logqueries:
             print query
-        
+
         cursor.execute(query)
         families = cursor.fetchall()
     else:
@@ -65,20 +71,27 @@ def getsimilar(serialno,addr,sname,family):
 
     if addr!='':
         query='(ADDR1 like "%%%s%%" or ADDR2 like "%%%s%%")'% (addr,addr)
-        query='''select %s from patients where serialno != %d 
+        query='''select %s from patients where serialno != %d
         and %s order by fname,sname'''% (fields,serialno,query)
-        
+        if "demo" in localsettings.DBNAME:
+            #demo db uses the same name and address for everyone!
+            query += " limit 10"
+
         if localsettings.logqueries:
             print query
-        
+
         cursor.execute(query)
         addresses = cursor.fetchall()
     else:
         addresses=()
     query='select %s from patients where serialno != %d and sname sounds like "%s" order by fname,sname'%(fields,serialno,sname)
+    if "demo" in localsettings.DBNAME:
+            #demo db uses the same name and address for everyone!
+            query += " limit 10"
+
     if localsettings.logqueries:
             print query
-        
+
     cursor.execute(query)
     snames = cursor.fetchall()
 
@@ -95,7 +108,7 @@ def getcandidates_from_serialnos(list_of_snos):
         query="select %s from patients where %s order by sname,fname"%(fields,query[:query.rindex("or")])
         if localsettings.logqueries:
             print query
-        
+
         db=connect()
         cursor = db.cursor()
         cursor.execute(query)

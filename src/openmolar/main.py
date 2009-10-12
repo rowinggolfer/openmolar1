@@ -28,20 +28,20 @@ if lang:
         print "trying to install your environment language", lang
         lang1 = gettext.translation('openmolar', languages=[lang,])
         lang1.install(unicode=True)
-    except IOError:    
+    except IOError:
         print "%s not found, using default"% lang
         gettext.install('openmolar', unicode=True)
 else:
-    #-- on windows.. os.environ.get("LANG") is None 
+    #-- on windows.. os.environ.get("LANG") is None
     print "no language environment found"
     gettext.install('openmolar', unicode=True)
-    
+
 class LoginError(Exception):
     '''
     a custom exception thrown when the user gets password or username incorrect
     '''
     pass
-    
+
 def proceed():
     '''
     check db schema, and proceed if all is well
@@ -49,7 +49,7 @@ def proceed():
     print "checking schema version...",
     from openmolar.dbtools import schema_version
     sv = schema_version.getVersion()
-    
+
     if localsettings.SCHEMA_VERSION > sv:
         print "schema is out of date"
         from openmolar.qt4gui import schema_updater
@@ -60,15 +60,15 @@ def proceed():
         localsettings.SCHEMA_VERSION)
         if not compatible:
             QtGui.QMessageBox.warning(None, _("Update Client"),
-            _('''<p>Sorry, you cannot run this version of the openMolar client 
+            _('''<p>Sorry, you cannot run this version of the openMolar client
 because your database schema is more advanced.</p>
 <p>this client requires schema version %s, but your database is at %s</p>
-<p>Please Update openMolar now</p>''')% (localsettings.SCHEMA_VERSION, sv)) 
+<p>Please Update openMolar now</p>''')% (localsettings.SCHEMA_VERSION, sv))
         else:
             result = QtGui.QMessageBox.question(None, _("Update Client"),
-            _('''<p>This openMolar client has fallen behind your database 
-schema version<br />this client was written for schema version %s, 
-but your database is now at %s<br />However, the differences are not critical, 
+            _('''<p>This openMolar client has fallen behind your database
+schema version<br />this client was written for schema version %s,
+but your database is now at %s<br />However, the differences are not critical,
 and you can continue if you wish</p>
 <p><i>It would still be wise to update openMolar ASAP</i></p>
 <hr /><p>Do you wish to continue?</p>''')% (
@@ -76,11 +76,11 @@ and you can continue if you wish</p>
             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
             if result == QtGui.QMessageBox.Yes:
-                from openmolar.qt4gui import maingui                
+                from openmolar.qt4gui import maingui
                 sys.exit(maingui.main(sys.argv))
     else:
         print "schema/client versions are correct"
-        from openmolar.qt4gui import maingui                
+        from openmolar.qt4gui import maingui
         sys.exit(maingui.main(sys.argv))
     sys.exit()
 
@@ -91,7 +91,7 @@ def main():
     global localsettings
     from openmolar.settings import localsettings
     from openmolar.qt4gui.compiled_uis import Ui_startscreen
-    
+
     uninitiated = True
 
     def autoreception(arg):    #arg is a QString
@@ -116,7 +116,7 @@ def main():
         pass
     else:
         cf_Found = False
-        
+
     if not cf_Found:
         message = _('''<center><p>
 This appears to be your first running of openMolar<br />
@@ -141,7 +141,7 @@ Are you ready to proceed?</center>''')
             nameDict = server.attributes
             if nameDict.has_key("name"):
                 localsettings.server_names.append(nameDict["name"].value)
-        
+
     except IOError, e:
         print "still no settings... %s\nquitting politely"% e
         QtGui.QMessageBox.information(None, _("Unable to Run OpenMolar"),
@@ -155,7 +155,7 @@ Are you ready to proceed?</center>''')
     dl.setupUi(my_dialog)
     if len(localsettings.server_names) > 1:
         dl.server_comboBox.addItems(localsettings.server_names)
-        QtCore.QObject.connect(dl.options_pushButton, 
+        QtCore.QObject.connect(dl.options_pushButton,
         QtCore.SIGNAL("clicked()"), showServers)
     else:
         dl.options_pushButton.hide()
@@ -167,9 +167,12 @@ Are you ready to proceed?</center>''')
             changedServer = False
             if localsettings.chosenserver != \
             dl.server_comboBox.currentIndex():
-                localsettings.chosenserver = dl.server_comboBox.currentIndex()
+
                 changedServer=True
-            
+
+            localsettings.setChosenServer(
+            dl.server_comboBox.currentIndex())
+
             try:
                 #--"salt" the password
                 pword = "diqug_ADD_SALT_3i2some" + str(
@@ -192,7 +195,7 @@ Are you ready to proceed?</center>''')
                     #-- maybe by using an ssl connection to the server.
                     localsettings.initiate()
                     uninitiated = False
-                    
+
                 u1_qstring = dl.user1_lineEdit.text().toUpper()
                 #-- toUpper is a method of QString
                 u2_qstring = dl.user2_lineEdit.text().toUpper()
@@ -212,16 +215,16 @@ Are you ready to proceed?</center>''')
                 localsettings.setOperator(str(u1_qstring), str(u2_qstring))
 
                 proceed()
-                
+
             except LoginError:
                 QtGui.QMessageBox.warning(my_dialog,
-                _("Login Error"), 
+                _("Login Error"),
                 _('''Incorrect<br />User/password<br />
 combination!<br />Please Try Again.'''))
             except localsettings.omDBerror, e:
                 message = _('''<p>DATABASE ERROR </p>
 <p>application cannot run</p>Error %s''')% e
-            
+
                 QtGui.QMessageBox.warning(my_dialog,
                 _("Login Error"), message)
                 break
@@ -237,7 +240,7 @@ def run():
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....
     print "starting openMolar.... using main.py as __main__"
-    
+
     def determine_path ():
         """Borrowed from wxglade.py"""
         try:
@@ -250,7 +253,7 @@ if __name__ == "__main__":
             print "I'm sorry, but something is wrong."
             print "There is no __file__ variable. Please contact the author."
             sys.exit ()
-            
+
     wkdir = determine_path()
     sys.path.append(os.path.dirname(wkdir))
     run()

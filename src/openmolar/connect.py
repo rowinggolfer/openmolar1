@@ -5,7 +5,7 @@ import MySQLdb
 import sys
 import base64
 from xml.dom import minidom
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 
 mainconnection, forumconnection = None, None
 
@@ -25,7 +25,7 @@ myUser = xmlnode.getElementsByTagName("user")[0].firstChild.data
 myPassword = xmlnode.getElementsByTagName("password")[0].firstChild.data
 if settingsversion == "1.1":
     myPassword = base64.b64decode(myPassword)
-    
+
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
 if sslnode and sslnode[0].firstChild.data=="True":
@@ -96,7 +96,10 @@ def forumConnect():
     except MySQLdb.Error, e:
         print "Error %d: %s" % (e.args[0], e.args[1])
         raise localsettings.omDBerror(e)
-    
+    except MySQLdb.ProgrammingError, e:
+        print "Error %d: %s" % (e.args[0], e.args[1])
+        raise localsettings.omDBerror(e)
+
 def connect():
     '''
     returns a MySQLdb object, connected to the database specified in the
@@ -117,7 +120,7 @@ def connect():
     except MySQLdb.Error, e:
         print "Error %d: %s" % (e.args[0], e.args[1])
         raise localsettings.omDBerror(e)
-    
+
 
 if __name__ == "__main__":
     from openmolar.settings import localsettings
@@ -141,7 +144,7 @@ if __name__ == "__main__":
                 c.close()
         except Exception,e:
             print "error", Exception, e
-        
+
         time.sleep(5)
 
     dbc.close()

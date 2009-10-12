@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Fri Oct  9 01:43:36 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Sat Oct 10 22:01:16 2009
+#      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -1307,7 +1307,6 @@ class Ui_MainWindow(object):
         self.plan_treeWidget.setAnimated(True)
         self.plan_treeWidget.setHeaderHidden(False)
         self.plan_treeWidget.setObjectName("plan_treeWidget")
-        self.plan_treeWidget.header().setSortIndicatorShown(False)
         self.horizontalLayout_5.addWidget(self.plan_treeWidget)
         self.comp_treeWidget = QtGui.QTreeWidget(self.planDetails_groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
@@ -1318,7 +1317,6 @@ class Ui_MainWindow(object):
         self.comp_treeWidget.setAlternatingRowColors(True)
         self.comp_treeWidget.setAnimated(True)
         self.comp_treeWidget.setObjectName("comp_treeWidget")
-        self.comp_treeWidget.header().setSortIndicatorShown(False)
         self.horizontalLayout_5.addWidget(self.comp_treeWidget)
         self.gridLayout_21.addWidget(self.planDetails_groupBox, 1, 0, 1, 1)
         self.tabWidget.addTab(self.tab_5, "")
@@ -2250,7 +2248,6 @@ class Ui_MainWindow(object):
         self.forum_treeWidget = QtGui.QTreeWidget(self.splitter)
         self.forum_treeWidget.setObjectName("forum_treeWidget")
         self.forum_treeWidget.headerItem().setText(0, "1")
-        self.forum_treeWidget.header().setSortIndicatorShown(True)
         self.frame_20 = QtGui.QFrame(self.splitter_3)
         self.frame_20.setMaximumSize(QtCore.QSize(301, 16777215))
         self.frame_20.setFrameShape(QtGui.QFrame.StyledPanel)
