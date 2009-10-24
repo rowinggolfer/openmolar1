@@ -30,7 +30,7 @@ class chartWidget(QtGui.QWidget):
         QtGui.QSizePolicy.Expanding))
 
         self.grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1', \
-        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'], 
+        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
         ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1', \
         'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
 
@@ -113,39 +113,39 @@ class chartWidget(QtGui.QWidget):
         else:
             self.multiSelection.append(self.selected)
             return True
-        
+
     def multiSelectCLEAR(self):
         '''
         select just one tooth
         '''
         self.multiSelection = [self.selected]
-    
+
     def setHighlighted(self, x, y):
         '''
         for mouseOver.
-        indicates a faint line is required around the tooth 
+        indicates a faint line is required around the tooth
         '''
         if [x, y] != self.highlighted:
             self.highlighted = [x, y]
             self.update()
-        
+
     def setSelected(self, x, y, multiselect=False):
         '''
         set the tooth which is currently selected
         '''
         self.selected = [x, y]
         self.update()
-                
+
         #--emit a signal that the user has selected a tooth
         #--will be in the form "ur1"
         if multiselect:
             if not self.multiSelectADD():
-                #-- don't send a signal if user is simply 
+                #-- don't send a signal if user is simply
                 #--deselecting a tooth
-                return 
+                return
         else:
             self.multiSelectCLEAR()
-                    
+
         if x != -1:
             tooth = self.grid[y][x]
             self.emit(QtCore.SIGNAL("toothSelected"), tooth)
@@ -178,29 +178,30 @@ class chartWidget(QtGui.QWidget):
         else:
             y = 1
         self.setHighlighted(x, y)
-        
+
         #--show detailed info
         try:
             tooth = self.grid[y][x]
             show = False
-            advisory = "<b>   %s   </b><br />"% tooth.upper()
+            advisory = "<center><b>   %s   </b></center><hr />"% tooth.upper()
             for f in self.__dict__[tooth]:
-                advisory += "%s<br />"% f.upper()
+                advisory += "%s <br />"% f.upper()
                 show = True
             if show:
-                QtGui.QToolTip.showText(event.globalPos(), advisory)
+                QtGui.QToolTip.showText(event.globalPos(),
+                advisory.rstrip("<br />"))
             else:
                 QtGui.QToolTip.showText(event.globalPos(), "")
         except IndexError:
-            print "handled index error"
-            
+            pass
+
     def leaveEvent(self, event):
         '''
         cursor is leaving the widget
         clear any selections
         '''
         self.setHighlighted(-1, -1)
-        
+
     def mousePressEvent(self, event):
         '''overrides QWidget's mouse event'''
         ctrlClick = (event.modifiers() == QtCore.Qt.ControlModifier)
@@ -212,10 +213,10 @@ class chartWidget(QtGui.QWidget):
             y = 0
         else:
             y = 1
-        
+
         [px, py] = self.selected
         #-- needed for shiftClick
-        
+
         if shiftClick:
             for row in set((py, y)):
                 for column in range(0, 16):
@@ -224,15 +225,15 @@ class chartWidget(QtGui.QWidget):
                             self.setSelected(column, row, True)
             return
             #--add.. but don't exclude duplicates
-            #self.multiSelectADD(False) 
+            #self.multiSelectADD(False)
 
         if event.button() == 2 and self.isStaticChart:
             self.setSelected(x, y)
             tooth = self.grid[y][x]
             self.emit(QtCore.SIGNAL("showHistory"), (tooth, event.globalPos()))
-        
+
         self.setSelected(x, y, ctrlClick or shiftClick)
-    
+
     def mouseDoubleClickEvent(self, event):
         '''overrides QWidget's mouse double click event'''
         if not self.isPlanChart:
@@ -250,7 +251,7 @@ class chartWidget(QtGui.QWidget):
             plannedTreatment.append(item.upper())
         if plannedTreatment != [tooth]:
             self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
-    
+
     def keyPressEvent(self, event):
         '''
         overrides QWidget's keypressEvent
@@ -277,7 +278,7 @@ class chartWidget(QtGui.QWidget):
                 self.selected[1] = 0
             else:
                 self.selected[1] += 1
-        
+
         event.handled = True
         self.update()
 
@@ -297,7 +298,7 @@ class chartWidget(QtGui.QWidget):
         if self.isEnabled():
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
         else:
-            painter.setPen(QtGui.QPen(QtCore.Qt.gray, 2))            
+            painter.setPen(QtGui.QPen(QtCore.Qt.gray, 2))
         sansFont = QtGui.QFont("Helvetica", 8)
         painter.setFont(sansFont)
         fm = QtGui.QFontMetrics(sansFont)
@@ -322,11 +323,11 @@ class chartWidget(QtGui.QWidget):
 
                 #-- draw a tooth (subroutine)
                 self.tooth(painter, rect, tooth_notation)
-                if [x, y] == self.highlighted:                    
+                if [x, y] == self.highlighted:
                     painter.setPen(QtGui.QPen(QtCore.Qt.cyan, 1))
                     painter.setBrush(colours.TRANSPARENT)
                     painter.drawRect(rect.adjusted(1, 1, -1, -1))
-                    
+
                 if self.showSelected and [x, y] in self.multiSelection:
                     #-- these conditions mean that the tooth needs to be
                     #--highlighted draw a rectangle around the selected tooth,
@@ -337,12 +338,12 @@ class chartWidget(QtGui.QWidget):
                         painter.setPen(QtGui.QPen(QtCore.Qt.blue, 2))
                     painter.setBrush(colours.TRANSPARENT)
                     painter.drawRect(rect.adjusted(1, 1, -1, -1))
-        
+
         if self.isEnabled():
             painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
         else:
-            painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))            
-        
+            painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
+
         textRect = QtCore.QRectF(0, 0, self.width(), self.height())
 
         if self.showLeftRight:
@@ -357,22 +358,14 @@ class chartWidget(QtGui.QWidget):
         #--free the painter's saved state
         painter.restore()
 
-    def tooth(self, painter, rect, id):
+    def tooth(self, painter, rect, ident):
         painter.save()
 
         #--get tooth props - ie fillings, plans etc....
         #--this will be a list of values eg ["MOD","RT"]
-        props = self.__dict__[id]
+        props = self.__dict__[ident]
 
-        #--backtooth?
-        backTooth = False
-        pos = id[2]
-        if pos == "*" or int(pos) > 3:
-            #--molars/premolars
-            backTooth = True
-
-        quadrant = id[0:2]
-        isUpper = id[0] == "u"
+        isUpper = ident[0] == "u"
 
         #-- split tooth rectangle into a large graphic square...
         #-- and a smaller text square
@@ -385,19 +378,13 @@ class chartWidget(QtGui.QWidget):
             toothRect = rect.adjusted(0, thirdheight, 0, -2)
             textRect = rect.adjusted(0, 2, 0, -2 * thirdheight)
 
-        #--the occlusal surface (for backteeth)
-        #--or incisal edge for front teeth..
-        #-- is given a width here.
-        #-- irw = inner rectangle width
-        irw = toothRect.width() * 0.25
-
         #--colours are grabbed from the separate colours module
         painter.setPen(colours.TOOTHLINES)
         painter.setBrush(colours.IVORY)
-        toothid = self.chartgrid[id]
+        toothid = self.chartgrid[ident]
 
         ###################### DRAW THE TOOTH's TEXT###########################
-        #--tooth id is always ur1, ur2 ...
+        #--tooth ident is always ur1, ur2 ...
         #--tooth name is more flexible for deciduous teeth etc...
         toothtext = str(toothid[2])
         #check for deciduous teeth
@@ -408,15 +395,14 @@ class chartWidget(QtGui.QWidget):
             if self.isEnabled():
                 painter.setPen(QtGui.QPen(QtCore.Qt.red, 1))
             else:
-                painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))                        
+                painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
             painter.drawText(textRect, QtCore.Qt.AlignCenter, (toothtext))
+            painter.restore()
 
             #-- and "shrink" the tooth
             toothRect = toothRect.adjusted(toothRect.width()*0.1,
             toothRect.height()*0.15,-toothRect.width()*0.1,
             -toothRect.height()*0.15)
-
-            painter.restore()
 
         else:
             #--adult tooth
@@ -424,78 +410,136 @@ class chartWidget(QtGui.QWidget):
             if self.isEnabled():
                 painter.setPen(QtGui.QPen(colours.CHARTTEXT, 1))
             else:
-                painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))                        
+                painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
             painter.drawText(textRect, QtCore.Qt.AlignCenter, toothtext)
             painter.restore()
 
         #--more occlusal/incisal edge sizing
-        if backTooth:
-            irh = toothRect.height()*0.25
-        else:
-            irh = toothRect.height()*0.45
 
-        if id in self.commentedTeeth:
+        if ident in self.commentedTeeth:
             #-- comments
             #-- commented teeth have a red exclamation mark on a yellow square
             painter.save()
             painter.setPen(QtGui.QPen(QtCore.Qt.yellow, 1))
             painter.setBrush(QtCore.Qt.yellow)
-            comRect = textRect.adjusted(textRect.width()*.7, 0, 0, 0)
+            comRect = textRect.adjusted(textRect.width() * .7, 0, 0, 0)
             painter.drawRect(comRect)
             sansFont = QtGui.QFont("Helvetica", 9)
             painter.setFont(sansFont)
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
             painter.drawText(comRect, QtCore.Qt.AlignCenter, "!")
             painter.restore()
+        for prop in ("rt ", "ap ", "-m,1 ", "-m,2 ", "+p ", "+s "):
+            #-- these properties are written in... not drawn
+            if prop in props:
+                painter.save()
+                comRect = textRect.adjusted(0, 0, -textRect.width() * 0.6,
+                0)
+                painter.setPen(QtGui.QPen(QtCore.Qt.blue, 1))
+                painter.drawRect(comRect)
+                sansFont = QtGui.QFont("Helvetica", 7)
+                painter.setFont(sansFont)
+                painter.drawText(comRect, QtCore.Qt.AlignCenter,
+                prop.upper())
+                painter.restore()
+                #props.remove(prop)
 
-        for prop in props:
+        toothS = toothSurfaces(self, toothRect, ident, self.isStaticChart)
+        toothS.setProps(props)
+        toothS.draw(self, painter)
+        painter.restore()
+
+
+class toothSurfaces():
+    '''
+    draws the tooth surfaces
+    '''
+    def __init__(self, parent, rect, ident, isStatic = True):
+        '''
+        initiate using the following args
+        parent (a Qwidget), rect (a Qrect), ident (eg. ur5),
+        and optionally isStatic=True
+        '''
+        self.rect = rect
+        self.parent = parent
+        #--backtooth?
+        self.backTooth = False
+        pos = ident[2]
+        if pos == "*" or int(pos) > 3:
+            self.backTooth = True
+        self.isStatic = isStatic
+
+        self.quadrant = ident[0:2]
+        self.isUpper = ident[0] == "u"
+        self.toothtext = ident[2]
+
+        #--the occlusal surface (for backteeth)
+        #--or incisal edge for front teeth..
+        #-- is given a width here.
+        #-- irw = inner rectangle width
+        irw = self.rect.width() * 0.25
+
+        if self.backTooth:
+            irh = rect.height() * 0.25
+        else:
+            irh = rect.height() * 0.45
+        self.innerRect = self.rect.adjusted(irw, irh, -irw, -irh)
+
+    def setProps(self, props):
+        self.props = props
+
+    def draw(self, parent, painter=None):
+        if painter == None:
+            self.painter = QtGui.QPainter(parent)
+        else:
+            self.painter = painter
+        for prop in self.props:
             prop = prop.strip(" ")
             if prop[0] == "(":
                 #-- brackets are used to indicate the start/end of a bridge
                 #--let's see bridge start by shrinking that edge.
                 ##TODO - draw a demarcation line here??
-                adj = toothRect.width()*0.10
-                if isUpper:
-                    toothRect = toothRect.adjusted(adj, 0, 0, 0)
+                adj = self.rect.width()*0.10
+                if self.isUpper:
+                    self.rect = self.rect.adjusted(adj, 0, 0, 0)
                 else:
-                    toothRect = toothRect.adjusted(0, 0, -adj, 0)
+                    self.rect = self.rect.adjusted(0, 0, -adj, 0)
                 #--remove the bracket
                 #--necessary for condition in a few lines time
                 prop = prop.strip("(")
 
             elif prop[-1] == ")":
                 #--other end of a bridge
-                adj = toothRect.width()*0.10
-                if isUpper:
-                    toothRect = toothRect.adjusted(0, 0, -adj, 0)
+                adj = self.rect.width()*0.10
+                if self.isUpper:
+                    self.rect = self.rect.adjusted(0, 0, -adj, 0)
                 else:
-                    toothRect = toothRect.adjusted(adj, 0, 0, 0)
+                    self.rect = self.rect.adjusted(adj, 0, 0, 0)
                 prop = prop.strip(")")
 
             if "br/p" in prop:
                 #bridge pontic found - shrink
-                toothRect = toothRect.adjusted(0, toothRect.height() * 0.10, 0,
-                -toothRect.height() * 0.10)
+                self.rect = self.rect.adjusted(0, self.rect.height() * 0.10, 0,
+                -self.rect.height() * 0.10)
 
-        innerRect = toothRect.adjusted(irw, irh, -irw, -irh)
 
         #--draw the tooth if static chart or properties to show
         #--leave blank if treatment chart.
-        if self.isStaticChart or props != []:
-            painter.drawRect(toothRect)
-            painter.drawRect(innerRect)
-            painter.drawLine(toothRect.topLeft(), innerRect.topLeft())
-            painter.drawLine(toothRect.topRight(), innerRect.topRight())
-            painter.drawLine(toothRect.bottomLeft(), innerRect.bottomLeft())
-            painter.drawLine(toothRect.bottomRight(), innerRect.bottomRight())
+        if self.isStatic or self.props != []:
+            self.painter.drawRect(self.rect)
+            self.painter.drawRect(self.innerRect)
+            self.painter.drawLine(self.rect.topLeft(), self.innerRect.topLeft())
+            self.painter.drawLine(self.rect.topRight(), self.innerRect.topRight())
+            self.painter.drawLine(self.rect.bottomLeft(), self.innerRect.bottomLeft())
+            self.painter.drawLine(self.rect.bottomRight(), self.innerRect.bottomRight())
 
         #-deciduos (ie. indeterminate) 6, 7, 8 are marked as "*"
         #--paint over these.
-        if toothtext == "*":
-            erase_color = self.palette().background().color()
-            painter.setPen(erase_color)
-            painter.setBrush(erase_color)
-            painter.drawRect(toothRect)
+        if self.toothtext == "*":
+            erase_color = parent.palette().background().color()
+            self.painter.setPen(erase_color)
+            self.painter.setBrush(erase_color)
+            self.painter.drawRect(self.rect)
 
         #--set variables for fill draw points
         #--this are NOT static as the widget is resizable
@@ -503,68 +547,55 @@ class chartWidget(QtGui.QWidget):
         ##by having a default set which changes only if the "tooth" has been
         ##resized.
 
-        if props != []:
-            if backTooth:
-                toothdimen = toothRect.width()
-                ax = toothRect.topLeft().x() + toothdimen * 0.05
-                bx = toothRect.topLeft().x() + toothdimen * 0.15
-                cx = toothRect.topLeft().x() + toothdimen * 0.2
-                dx = toothRect.topLeft().x() + toothdimen * 0.35
-                ex = toothRect.topLeft().x() + toothdimen * 0.5
-                fx = toothRect.topLeft().x() + toothdimen * 0.7
-                gx = toothRect.topLeft().x() + toothdimen * 0.8
-                hx = toothRect.topLeft().x() + toothdimen * 0.85
-                ix = toothRect.topLeft().x() + toothdimen * 0.95
-                toothdimen = toothRect.height()
-                ay = toothRect.topLeft().y() + toothdimen * 0.05
-                by = toothRect.topLeft().y() + toothdimen * 0.15
-                cy = toothRect.topLeft().y() + toothdimen * 0.2
-                dy = toothRect.topLeft().y() + toothdimen * 0.35
-                ey = toothRect.topLeft().y() + toothdimen * 0.5
-                fy = toothRect.topLeft().y() + toothdimen * 0.65
-                gy = toothRect.topLeft().y() + toothdimen * 0.8
-                hy = toothRect.topLeft().y() + toothdimen * 0.85
-                iy = toothRect.topLeft().y() + toothdimen * 0.95
+        if self.props != []:
+            if self.backTooth:
+                toothdimen = self.rect.width()
+                ax = self.rect.topLeft().x() + toothdimen * 0.05
+                bx = self.rect.topLeft().x() + toothdimen * 0.15
+                cx = self.rect.topLeft().x() + toothdimen * 0.2
+                dx = self.rect.topLeft().x() + toothdimen * 0.35
+                ex = self.rect.topLeft().x() + toothdimen * 0.5
+                fx = self.rect.topLeft().x() + toothdimen * 0.7
+                gx = self.rect.topLeft().x() + toothdimen * 0.8
+                hx = self.rect.topLeft().x() + toothdimen * 0.85
+                ix = self.rect.topLeft().x() + toothdimen * 0.95
+                toothdimen = self.rect.height()
+                ay = self.rect.topLeft().y() + toothdimen * 0.05
+                by = self.rect.topLeft().y() + toothdimen * 0.15
+                cy = self.rect.topLeft().y() + toothdimen * 0.2
+                dy = self.rect.topLeft().y() + toothdimen * 0.35
+                ey = self.rect.topLeft().y() + toothdimen * 0.5
+                fy = self.rect.topLeft().y() + toothdimen * 0.65
+                gy = self.rect.topLeft().y() + toothdimen * 0.8
+                hy = self.rect.topLeft().y() + toothdimen * 0.85
+                iy = self.rect.topLeft().y() + toothdimen * 0.95
             else:
                 #--front tooth - different patterns
-                toothdimen = toothRect.width()
-                ax = toothRect.topLeft().x() + toothdimen * 0.05
-                bx = toothRect.topLeft().x() + toothdimen * 0.15
-                cx = toothRect.topLeft().x() + toothdimen * 0.2
-                dx = toothRect.topLeft().x() + toothdimen * 0.3
-                ex = toothRect.topLeft().x() + toothdimen * 0.5
-                fx = toothRect.topLeft().x() + toothdimen * 0.7
-                gx = toothRect.topLeft().x() + toothdimen * 0.8
-                hx = toothRect.topLeft().x() + toothdimen * 0.85
-                ix = toothRect.topLeft().x() + toothdimen * 0.95
-                toothdimen = toothRect.height()
-                ay = toothRect.topLeft().y() + toothdimen * 0.05
-                by = toothRect.topLeft().y() + toothdimen * 0.15
-                cy = toothRect.topLeft().y() + toothdimen * 0.2
-                dy = toothRect.topLeft().y() + toothdimen * 0.3
-                ey = toothRect.topLeft().y() + toothdimen * 0.5
-                fy = toothRect.topLeft().y() + toothdimen * 0.7
-                gy = toothRect.topLeft().y() + toothdimen * 0.8
-                hy = toothRect.topLeft().y() + toothdimen * 0.85
-                iy = toothRect.topLeft().y() + toothdimen * 0.95
+                toothdimen = self.rect.width()
+                ax = self.rect.topLeft().x() + toothdimen * 0.05
+                bx = self.rect.topLeft().x() + toothdimen * 0.15
+                cx = self.rect.topLeft().x() + toothdimen * 0.2
+                dx = self.rect.topLeft().x() + toothdimen * 0.3
+                ex = self.rect.topLeft().x() + toothdimen * 0.5
+                fx = self.rect.topLeft().x() + toothdimen * 0.7
+                gx = self.rect.topLeft().x() + toothdimen * 0.8
+                hx = self.rect.topLeft().x() + toothdimen * 0.85
+                ix = self.rect.topLeft().x() + toothdimen * 0.95
+                toothdimen = self.rect.height()
+                ay = self.rect.topLeft().y() + toothdimen * 0.05
+                by = self.rect.topLeft().y() + toothdimen * 0.15
+                cy = self.rect.topLeft().y() + toothdimen * 0.2
+                dy = self.rect.topLeft().y() + toothdimen * 0.3
+                ey = self.rect.topLeft().y() + toothdimen * 0.5
+                fy = self.rect.topLeft().y() + toothdimen * 0.7
+                gy = self.rect.topLeft().y() + toothdimen * 0.8
+                hy = self.rect.topLeft().y() + toothdimen * 0.85
+                iy = self.rect.topLeft().y() + toothdimen * 0.95
 
-            for prop in props:
+            for prop in self.props:
                 prop = prop.strip(" ")
                 material = ""
-                painter.save()
-                if prop in ("rt", "ap", "-m,1", "-m,2", "+p", "+s"):
-                    #-- these properties are written in... not drawn
-                    painter.save()
-                    comRect = textRect.adjusted(0, 0, -textRect.width() * 0.6,
-                    0)
-                    painter.setPen(QtGui.QPen(QtCore.Qt.blue, 1))
-                    painter.drawRect(comRect)
-                    sansFont = QtGui.QFont("Helvetica", 7)
-                    painter.setFont(sansFont)
-                    painter.drawText(comRect, QtCore.Qt.AlignCenter,
-                    prop.upper())
-                    painter.restore()
-                    prop = ""
+                self.painter.save()
 
                 prop =  prop.strip("#&")
                 if prop == "pv":
@@ -603,28 +634,28 @@ class chartWidget(QtGui.QWidget):
                             prop = prop[3:] + ",gl"
 
                 if prop[:2] in ("tm","at"):
-                    erase_color = self.palette().background().color()
-                    painter.setPen(erase_color)
-                    painter.setBrush(erase_color)
-                    painter.drawRect(toothRect)
-                    painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
-                    painter.drawText(toothRect, QtCore.Qt.AlignCenter,
+                    erase_color = parent.palette().background().color()
+                    self.painter.setPen(erase_color)
+                    self.painter.setBrush(erase_color)
+                    self.painter.drawRect(self.rect)
+                    self.painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
+                    self.painter.drawText(self.rect, QtCore.Qt.AlignCenter,
                     prop.upper())
 
                     prop = ""
                 if prop[:2] in ("ue", "pe", "oe", "rp"):
                     if prop[:2] == "ue":
-                        erase_color = self.palette().background().color()
-                        painter.setBrush(erase_color)
+                        erase_color = parent.palette().background().color()
+                        self.painter.setBrush(erase_color)
                     else:
-                        painter.setBrush(QtCore.Qt.transparent)
-                    painter.drawRect(toothRect)
-                    painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
-                    if backTooth:
-                        painter.drawText(toothRect, QtCore.Qt.AlignCenter, prop)
+                        self.painter.setBrush(QtCore.Qt.transparent)
+                    self.painter.drawRect(self.rect)
+                    self.painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
+                    if self.backTooth:
+                        self.painter.drawText(self.rect, QtCore.Qt.AlignCenter, prop)
                     else:
-                        painter.drawText(toothRect.adjusted(0,
-                        toothRect.height() / 2, 0, 0),
+                        self.painter.drawText(self.rect.adjusted(0,
+                        self.rect.height() / 2, 0, 0),
                         QtCore.Qt.AlignCenter, prop)
                     #--prevent the o's and p's being interpreted as fills
                     prop = ""
@@ -632,7 +663,7 @@ class chartWidget(QtGui.QWidget):
                 if ",pr" in prop:
                     #TODO - pin??
                     prop = prop.replace(",pr", "")
-                    
+
                 if "," in prop:
                     #--get materal if present
                     material = prop.split(",")[1]
@@ -641,121 +672,121 @@ class chartWidget(QtGui.QWidget):
                     #--adjust for mirror imaging
                 else:
                     #--set default material
-                    if id[2] == "4":
+                    if self.toothtext == "4":
                         if prop in ("B", "P"):
                             material = "co"
                         else:
                             material = "am"
-                    elif backTooth:
+                    elif self.backTooth:
                         material = "am"
                     else:
                         material = "co"
 
                 if prop[:2] == "fs":
                     material = "fs"
-                
+
                 if prop[:2] == "dr":
                     material = "dr"
 
                 #--put an outline around the filling
-                painter.setPen(QtGui.QPen(colours.FILL_OUTLINE, 1))
+                self.painter.setPen(QtGui.QPen(colours.FILL_OUTLINE, 1))
 
                 #--set filling color
                 if material == "co":
-                    painter.setBrush(colours.COMP)
+                    self.painter.setBrush(colours.COMP)
                 elif material in ("pj", "ot", "pi", "a1", "v1", "v2"):
-                    painter.setBrush(colours.PORC)
+                    self.painter.setBrush(colours.PORC)
                 elif material == "gl":
-                    painter.setBrush(colours.GI)
+                    self.painter.setBrush(colours.GI)
                 elif material == "go":
-                    painter.setBrush(colours.GOLD)
+                    self.painter.setBrush(colours.GOLD)
                 elif material == "am":
-                    painter.setBrush(colours.AMALGAM)
+                    self.painter.setBrush(colours.AMALGAM)
                 elif material == "mr":
-                    painter.setBrush(colours.METAL)
+                    self.painter.setBrush(colours.METAL)
                 elif material == "dr":
-                    painter.setBrush(colours.DRESSING)                    
+                    self.painter.setBrush(colours.DRESSING)
                 elif material == "fs":
-                    painter.setPen(QtGui.QPen(colours.FISSURE, 1))
-                    painter.setBrush(colours.FISSURE)
+                    self.painter.setPen(QtGui.QPen(colours.FISSURE, 1))
+                    self.painter.setBrush(colours.FISSURE)
                 else:
-                    print "unhanded material colour", toothtext, prop, material
+                    print "unhanded material colour", self.toothtext, prop, material
 
-                if quadrant[1] == "l" and prop != "dr":
+                if self.quadrant[1] == "l" and prop != "dr":
                     #-- left hand side - reverse fills
                     #-- this loods a confusing merry dance...
                     #-- capitalisation used to prevent changes being undone
                     prop = prop.replace("m", "D")
                     prop = prop.replace("d", "m")
                     prop = prop.replace("D", "d")
-                if quadrant[0] == "l":
+                if self.quadrant[0] == "l":
                     prop = prop.replace("b", "L")
                     prop = prop.replace("l", "b")
                     prop = prop.replace("L", "l")
                 if prop[0:2] == "cr" or "PONTIC" in prop:
                     if "PONTIC" in prop:
-                        crRect = toothRect
+                        crRect = self.rect
                     else:
-                        crRect = toothRect.adjusted(0, 2, 0, -2)
-                    painter.drawRect(crRect)
-                    painter.drawRect(innerRect)
-                    painter.drawLine(crRect.topLeft(), innerRect.topLeft())
-                    painter.drawLine(crRect.topRight(), innerRect.topRight())
-                    painter.drawLine(crRect.bottomLeft(),
-                    innerRect.bottomLeft())
+                        crRect = self.rect.adjusted(0, 2, 0, -2)
+                    self.painter.drawRect(crRect)
+                    self.painter.drawRect(self.innerRect)
+                    self.painter.drawLine(crRect.topLeft(), self.innerRect.topLeft())
+                    self.painter.drawLine(crRect.topRight(), self.innerRect.topRight())
+                    self.painter.drawLine(crRect.bottomLeft(),
+                    self.innerRect.bottomLeft())
 
-                    painter.drawLine(crRect.bottomRight(),
-                    innerRect.bottomRight())
+                    self.painter.drawLine(crRect.bottomRight(),
+                    self.innerRect.bottomRight())
 
-                    if backTooth:
-                        painter.drawText(toothRect, QtCore.Qt.AlignCenter,
+                    if self.backTooth:
+                        self.painter.drawText(self.rect, QtCore.Qt.AlignCenter,
                         material)
                     else:
-                        painter.drawText(toothRect.adjusted(0,
-                        toothRect.height() / 2, 0, 0), QtCore.Qt.AlignCenter,
+                        self.painter.drawText(self.rect.adjusted(0,
+                        self.rect.height() / 2, 0, 0), QtCore.Qt.AlignCenter,
                         material)
 
-                if prop == "pv" and isUpper:
-                    painter.drawPolygon(QtGui.QPolygon(
-                    [toothRect.topLeft().x(), toothRect.topLeft().y(),
-                    toothRect.topRight().x(), toothRect.topRight().y(),
-                    innerRect.topRight().x(), innerRect.topRight().y(),
-                    innerRect.topLeft().x(), innerRect.topLeft().y()]))
+                if prop == "pv" and self.isUpper:
+                    self.painter.drawPolygon(QtGui.QPolygon(
+                    [self.rect.topLeft().x(), self.rect.topLeft().y(),
+                    self.rect.topRight().x(), self.rect.topRight().y(),
+                    self.innerRect.topRight().x(), self.innerRect.topRight().y(),
+                    self.innerRect.topLeft().x(), self.innerRect.topLeft().y()]))
 
-                    painter.drawText(toothRect.adjusted(0, 0, 0,
-                    -toothRect.height() / 2), QtCore.Qt.AlignCenter, prop)
+                    self.painter.drawText(self.rect.adjusted(0, 0, 0,
+                    -self.rect.height() / 2), QtCore.Qt.AlignCenter, prop)
 
                     prop = ""
 
-                if prop == "pv" and not isUpper:
-                    painter.drawPolygon(QtGui.QPolygon(
-                    [toothRect.bottomLeft().x(), toothRect.bottomLeft().y(),
-                    toothRect.bottomRight().x(), toothRect.bottomRight().y(),
-                    innerRect.bottomRight().x(), innerRect.bottomRight().y(),
-                    innerRect.bottomLeft().x(), innerRect.bottomLeft().y()]))
+                if prop == "pv" and not self.isUpper:
+                    self.painter.drawPolygon(QtGui.QPolygon(
+                    [self.rect.bottomLeft().x(), self.rect.bottomLeft().y(),
+                    self.rect.bottomRight().x(), self.rect.bottomRight().y(),
+                    self.innerRect.bottomRight().x(), self.innerRect.bottomRight().y(),
+                    self.innerRect.bottomLeft().x(), self.innerRect.bottomLeft().y()]))
 
-                    painter.drawText(toothRect.adjusted(0,
-                    toothRect.height() / 2, 0, 0), 
+                    self.painter.drawText(self.rect.adjusted(0,
+                    self.rect.height() / 2, 0, 0),
                     QtCore.Qt.AlignCenter, prop)
 
                     prop = ""
 
                 if prop == "ex":
                     #-- draw a big red X
-                    painter.save()
+                    self.painter.save()
 
-                    painter.setPen(QtGui.QPen(QtCore.Qt.red, 4))
-                    painter.drawLine(toothRect.topLeft(),
-                    toothRect.bottomRight())
+                    self.painter.setPen(QtGui.QPen(QtCore.Qt.red, 4))
+                    self.painter.drawLine(self.rect.topLeft(),
+                    self.rect.bottomRight())
 
-                    painter.drawLine(toothRect.topRight(),
-                    toothRect.bottomLeft())
+                    self.painter.drawLine(self.rect.topRight(),
+                    self.rect.bottomLeft())
 
-                    painter.restore()
+                    self.painter.restore()
 
                 prop = prop.replace("l", "p")
                 shapes = []
-                if backTooth:
+                if self.backTooth:
                     if "fs" in prop:
                         shapes.append(QtGui.QPolygon(
                         [dx, ey-1, fx, ey-1, fx+1, ey+1, dx, ey+1]))
@@ -764,7 +795,7 @@ class chartWidget(QtGui.QWidget):
                     elif "dr" in prop:
                         n = QtGui.QPolygon([cx, dy, dx, by, fx, by, hx, dy,
                         hx, fy, fx, hy, dx, hy, cx, fy])
-                        shapes.append(n)                        
+                        shapes.append(n)
                     elif re.match("[modbp]{5}", prop):
                         n = QtGui.QPolygon([ax, by, cx, dy, dx, dy, dx, by,
                         fx, by, fx, dy, gx, dy, ix, by, ix, hy, gx, fy, fx,
@@ -789,15 +820,15 @@ class chartWidget(QtGui.QWidget):
                     elif re.match("[mop]{3}", prop):
                         n = QtGui.QPolygon([dx, dy, gx, dy, ix, by, ix, hy,
                         gx, fy, fx, fy, fx, hy, ex, hy, ex, fy, dx, fy])
-                        shapes.append(n)    
+                        shapes.append(n)
                     elif re.match("[dob]{3}", prop):
                         n = QtGui.QPolygon([ax, cy, cx, dy, ex, dy, ex, by,
                         fx, by, fx, dy, fx, dy, fx, fy, cx, fy, ax, gy])
-                        shapes.append(n)    
+                        shapes.append(n)
                     elif re.match("[dop]{3}", prop):
                         n = QtGui.QPolygon([ax, cy, cx, dy, fx, dy, fx, fy,
                         ex, fy, ex, hy, dx, hy, dx, fy, cx, fy, ax, gy])
-                        shapes.append(n)    
+                        shapes.append(n)
                     elif re.match("[mbd]{3}", prop):
                         n = QtGui.QPolygon([ax, by, dx, ay, fx, ay, ix, by,
                         ix, ey, hx, ey, hx, cy, bx, cy, bx, ey, ax, ey])
@@ -805,7 +836,7 @@ class chartWidget(QtGui.QWidget):
                     elif re.match("[mpd]{3}", prop):
                         n = QtGui.QPolygon([ax, ey, bx, ey, bx, hy, hx, hy,
                         hx, ey, ix, ey, ix, gy, gx, iy, bx, iy, ax, gy])
-                        shapes.append(n)                    
+                        shapes.append(n)
                     elif re.match("[ob]{2}", prop):
                         n = QtGui.QPolygon([cx, ay, gx, ay, fx, cy, fx, fy,
                         dx, fy, dx, cy])
@@ -838,7 +869,7 @@ class chartWidget(QtGui.QWidget):
                         n = QtGui.QPolygon([ax, cy, cx, dy, fx, dy, fx, fy,
                         cx, fy, ax, gy])
                         shapes.append(n)
-    
+
                     elif "o" in prop:
                         n = QtGui.QPolygon([dx, dy, fx, dy, fx, fy, dx, fy])
                         shapes.append(n)
@@ -858,7 +889,7 @@ class chartWidget(QtGui.QWidget):
                     if "dr" in prop:
                         n = QtGui.QPolygon([cx, dy, dx, by, fx, by, hx, dy,
                         hx, fy, fx, hy, dx, hy, cx, fy])
-                        shapes.append(n)                        
+                        shapes.append(n)
                     elif re.match("[mbd]{3}", prop):
                         n = QtGui.QPolygon([ax, by, dx, ay, fx, ay, ix, by,
                         ix, ey, hx, ey, hx, cy, bx, cy, bx, ey, ax, ey])
@@ -866,7 +897,7 @@ class chartWidget(QtGui.QWidget):
                     elif re.match("[mpd]{3}", prop):
                         n = QtGui.QPolygon([ax, ey, bx, ey, bx, hy, hx, hy,
                         hx, ey, ix, ey, ix, gy, gx, iy, bx, iy, ax, gy])
-                        shapes.append(n)                    
+                        shapes.append(n)
                     elif re.match("[ib]{2}", prop):
                         n = QtGui.QPolygon([cx, ay, gx, ay, fx, cy, fx, fy,
                         dx, fy, dx, cy])
@@ -892,38 +923,38 @@ class chartWidget(QtGui.QWidget):
                         bx, ey, bx, fy, dx, gy, fx, gy, hx, hy])
                         shapes.append(n)
                     elif re.match("[mid]{3}", prop):
-                        n = QtGui.QPolygon([ax, cy, cx, dy, 
-                        innerRect.topLeft().x(),innerRect.topLeft().y(),
-                        innerRect.topRight().x(),innerRect.topRight().y(),
+                        n = QtGui.QPolygon([ax, cy, cx, dy,
+                        self.innerRect.topLeft().x(),self.innerRect.topLeft().y(),
+                        self.innerRect.topRight().x(),self.innerRect.topRight().y(),
                         gx, dy, ix, cy, ix, gy, gx, fy,
-                        innerRect.bottomRight().x(),
-                        innerRect.bottomRight().y(),
-                        innerRect.bottomLeft().x(),
-                        innerRect.bottomLeft().y(),cx, fy, ax, gy])
+                        self.innerRect.bottomRight().x(),
+                        self.innerRect.bottomRight().y(),
+                        self.innerRect.bottomLeft().x(),
+                        self.innerRect.bottomLeft().y(),cx, fy, ax, gy])
                         shapes.append(n)
                     elif re.match("[mi]{2}", prop):
-                        n = QtGui.QPolygon([innerRect.topLeft().x(),
-                        innerRect.topLeft().y(),
-                        innerRect.topRight().x(),innerRect.topRight().y(),
+                        n = QtGui.QPolygon([self.innerRect.topLeft().x(),
+                        self.innerRect.topLeft().y(),
+                        self.innerRect.topRight().x(),self.innerRect.topRight().y(),
                         gx, dy, ix, cy, ix, gy, gx, fy,
-                        innerRect.bottomRight().x(),
-                        innerRect.bottomRight().y(),
-                        innerRect.bottomLeft().x(),
-                        innerRect.bottomLeft().y(),
+                        self.innerRect.bottomRight().x(),
+                        self.innerRect.bottomRight().y(),
+                        self.innerRect.bottomLeft().x(),
+                        self.innerRect.bottomLeft().y(),
                         ])
                         shapes.append(n)
                     elif re.match("[di]{2}", prop):
-                        n = QtGui.QPolygon([ax, cy, cx, dy, 
-                        innerRect.topLeft().x(),innerRect.topLeft().y(),
-                        innerRect.topRight().x(),innerRect.topRight().y(),
-                        innerRect.bottomRight().x(),
-                        innerRect.bottomRight().y(),
-                        innerRect.bottomLeft().x(),
-                        innerRect.bottomLeft().y(),
+                        n = QtGui.QPolygon([ax, cy, cx, dy,
+                        self.innerRect.topLeft().x(),self.innerRect.topLeft().y(),
+                        self.innerRect.topRight().x(),self.innerRect.topRight().y(),
+                        self.innerRect.bottomRight().x(),
+                        self.innerRect.bottomRight().y(),
+                        self.innerRect.bottomLeft().x(),
+                        self.innerRect.bottomLeft().y(),
                         cx, fy, ax, gy])
-                        shapes.append(n)                    
+                        shapes.append(n)
                     elif "i" in prop:
-                        shapes.append(innerRect.adjusted(2,2,-2,-2))
+                        shapes.append(self.innerRect.adjusted(2,2,-2,-2))
                     elif "m" in prop:
                         shapes.append(QtGui.QPolygon(
                         [hx, dy, ix, dy, ix, fy, hx, fy, gx, ey]))
@@ -937,12 +968,32 @@ class chartWidget(QtGui.QWidget):
                         shapes.append(QtGui.QPolygon([cx, cy, cx, ay, ex, ay,
                         gx, ay, gx, cy, fx, dy, dx, dy]))
                 for shape in shapes:
-                    painter.drawPolygon(shape)
+                    self.painter.drawPolygon(shape)
                     ##todo - drawPath may be MUCH better (curvier)
                     ##- a lot of work to change though?
 
-                painter.restore()
-        painter.restore()
+                self.painter.restore()
+
+class toothImage(QtGui.QWidget):
+    '''
+    a class to grab an image of the tooth widget
+    '''
+    def __init__(self, parent=None):
+        super(toothImage, self).__init__(parent)
+
+    def paintEvent(self, event=None):
+        recd = QtCore.QRectF(0, 0, self.width(), self.height())
+        toothS = toothSurfaces(self, recd, "ur8")
+        toothS.setProps(["m do,gl ",])
+        toothS.draw(self)
+
+    def image(self):
+        '''
+        returns a png image of the tooth
+        '''
+        myimage=QtGui.QPixmap.grabWidget(self)
+
+        return myimage
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)

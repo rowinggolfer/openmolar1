@@ -7,19 +7,161 @@
 
 from PyQt4 import QtGui, QtCore
 import re
+from openmolar.settings import localsettings
+from openmolar.settings import allowed
 from openmolar.qt4gui.compiled_uis import Ui_toothProps
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.compiled_uis import Ui_crownChoice
-from openmolar.settings import allowed
 
+from openmolar.qt4gui.dialogs import toothprop_fulledit
+
+class chartLineEdit(QtGui.QLineEdit):
+    '''
+    A custom line edit that accepts only BLOCK LETTERS
+    and is self aware when verification is needed
+    override the keypress event for up and down arrow keys.
+    '''
+    def __init__(self, parent=None):
+        super(chartLineEdit,self).__init__(parent)
+        self.parent = parent
+        self.originalPropList = []
+        self.unsavedChanges = False
+
+    def finished(self):
+        self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("down"))
+
+    def propListFromText(self):
+        '''
+        returns the current property list
+        '''
+        text = str(self.text().toAscii())
+        propList = text.strip(" ").split(" ")
+        return propList
+
+    def updateFromPropList(self, propList):
+        text = ""
+        for prop in propList:
+            if prop != " ":
+                text += "%s "% prop
+        self.setKnownProps(text)
+        ##not sure these are needed??
+        self.parent.tooth.clear()
+        self.parent.tooth.update()
+        self.parent.finishedEdit()
+
+    def setKnownProps(self, arg):
+        '''
+        put a string of props into the text, and set the known list of
+        properties
+        '''
+        self.setText(arg)
+        self.originalPropList = self.propListFromText()
+
+    def verifyProps(self):
+        '''
+        verify that the current text is valid
+        '''
+        snapshotPropList = self.propListFromText()
+        if snapshotPropList == self.originalPropList:
+            return True
+        for prop in self.originalPropList:
+            if not prop in snapshotPropList:
+                self.originalPropList.remove(prop)
+        for prop in snapshotPropList:
+            if not self.propAllowed(prop):
+                self.removeItem(prop)
+            else:
+                self.originalPropList.append(prop)
+        return True
+
+    def deleteComments(self):
+        snapshotPropList = self.propListFromText()
+        deleted = False
+        for prop in snapshotPropList:
+            if prop[:1] == "!":
+                snapshotPropList.remove(prop)
+                deleted = True
+        if deleted:
+            self.updateFromPropList(snapshotPropList)
+            self.emit(QtCore.SIGNAL("DeletedComments"))
+
+    def addItem(self, item):
+        snapshotPropList = self.propListFromText()
+        snapshotPropList.append(item)
+        self.updateFromPropList(snapshotPropList)
+
+    def removeItem(self, item):
+        if item == "":
+            return
+        snapshotPropList = self.propListFromText()
+        snapshotPropList.remove(item)
+        self.updateFromPropList(snapshotPropList)
+
+    def clear(self):
+        '''
+        user has pressed the delete button
+        remove the last item
+        '''
+        snapshotPropList = self.propListFromText()
+        self.updateFromPropList(snapshotPropList[:-1])
+
+    def propAllowed(self, prop):
+        '''
+        check to see if the user has entered garbage
+        '''
+        #print "checking Prop '%s' origs ='%s'"% (prop, self.originalPropList),
+        if prop[:1] == "!": #comment
+            return True
+        if prop in self.originalPropList:
+        #    print "already present, ignoring"
+            return True
+
+        allowedCode = True
+        if prop!= "":
+            if self.parent.tooth.isBacktooth and not (prop in allowed.backToothCodes):
+                allowedCode = False
+            if not self.parent.tooth.isBacktooth and \
+            not (prop in allowed.frontToothCodes):
+                allowedCode = False
+            if (not self.parent.is_Static) and (prop in allowed.treatment_only):
+                allowedCode = True
+        if not allowedCode:
+            message = '''"%s" is not recognised <br />
+            do you want to accept anyway?'''% prop
+            input = QtGui.QMessageBox.question(self, "Confirm", message,
+            QtGui.QMessageBox.No,QtGui.QMessageBox.Yes)
+
+            if input == QtGui.QMessageBox.Yes:
+                allowedCode = True
+            else:
+                allowedCode = False
+        if allowedCode:
+            print "accepting new entry", prop
+        return allowedCode
+
+    def keyPressEvent(self, event):
+        '''overrudes QWidget's keypressEvent'''
+        if event.key() == QtCore.Qt.Key_Up:
+            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("up"))
+        elif event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Down):
+            self.finished()
+        else:
+            inputT = event.text().toAscii()
+            if re.match("[a-z]", inputT):
+                #-- catch and overwrite any lower case
+                event = QtGui.QKeyEvent(event.type(), event.key(),
+                event.modifiers(), event.text().toUpper())
+            self.unsavedChanges = True
+            QtGui.QLineEdit.keyPressEvent(self,event)
 
 class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def __init__(self, parent=None):
         super(tpWidget, self).__init__(parent)
+        self.parent = parent
         self.setupUi(self)
         hlayout=QtGui.QHBoxLayout(self.editframe)
         hlayout.setContentsMargins(0,0,0,0)
-        self.lineEdit=chartLineEdit()
+        self.lineEdit=chartLineEdit(self)
         self.lineEdit.setMaxLength(34) #as defined in the sql tables for a static entry - may exceed the plan stuff.... but I will validate that anyway.
         hlayout.addWidget(self.lineEdit)
         self.tooth=tooth()  #self.frame)
@@ -42,9 +184,32 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
         self.porc_pushButton.setPalette(palette)
         self.signals()
-        self.originalProps=""
-        self.existingComments=""
         self.is_Static = False
+        self.selectedChart = ""
+        self.selectedTooth = ""
+
+    def setTooth(self, selectedTooth, selectedChart):
+        '''
+        make the widget aware of exactly what it is editing
+        selectedTooth will be 'ur8' etc..
+        selectedChart will be 'st' or 'pl' or 'cmp'
+        '''
+        self.selectedChart = selectedChart
+        self.selectedTooth = selectedTooth
+
+        self.tooth.setBacktooth(int(selectedTooth[2])>3)
+        self.tooth.setRightSide(selectedTooth[1] == "r")
+        self.tooth.setUpper(selectedTooth[0] == "u")
+
+        self.tooth.clear()
+        self.tooth.update()
+
+        self.tooth_label.setText(self.parent.pt.chartgrid[selectedTooth].upper())
+        #--ALLOWS for deciduos teeth
+
+        self.isStatic(selectedChart == "st")
+        self.setExistingProps(self.parent.pt.__dict__[selectedTooth+selectedChart])
+
 
     def isStatic(self,arg):
         '''
@@ -53,126 +218,48 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.is_Static = arg
         self.comments_comboBox.setEnabled(arg)
 
-    def setExistingProps(self,arg):
-        '''
-        put the existing tooth props into the lineEdit
-        '''
-        commentSTR = ""
-        self.originalProps = arg
-
-        if arg == "":
-            self.originalProps = ""
-            self.lineEdit.setText("")
-        else:
-            comments = re.findall("!.[^:]* ",arg)
-            for comment in comments:
-                commentSTR += comment
-                arg = arg.replace(comment, "")
-            self.lineEdit.setText(arg)
-
-        self.setComments(commentSTR)
-
-    def setComments(self, arg):
-        '''
-        puts the comment into the combobox
-        '''
-        QtCore.QObject.disconnect(self.comments_comboBox, QtCore.SIGNAL(
-        "currentIndexChanged (const QString&)"), self.comments)
-
-        self.existingComments = str(arg)
-        self.comments_comboBox.setItemText(0,arg)
-        self.comments_comboBox.setCurrentIndex(0)
-
-        QtCore.QObject.connect(self.comments_comboBox, QtCore.SIGNAL(
-        "currentIndexChanged (const QString&)"), self.comments)
-
-
     def comments(self,arg):
         '''
         comments combobox has been nav'd
         '''
-        if str(arg)=="DELETE COMMENTS":
-            self.setComments("")
-            self.emit(QtCore.SIGNAL("DeletedComments"))
+        if arg ==_("ADD COMMENTS"):
+            return
+        elif arg ==_("DELETE COMMENTS"):
+            self.lineEdit.deleteComments()
         else:
             result=QtGui.QMessageBox.question(self, "Confirm",
             'Add comment "%s"'% arg,
             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
             if result == QtGui.QMessageBox.Yes:
-                cstring = self.existingComments
-                if cstring != "":
-                    cstring += " "
-                cstring += arg
-                self.setComments(cstring)
-                self.finishedEdit()
+                newComment = "%s"% arg.replace(" ","_")
+                self.lineEdit.addItem(newComment)
 
-    def clear(self):
-        '''
-        user has pressed the delete button
-        remove the last item
-        '''
-        t =  str(self.lineEdit.text().toAscii()).strip(" ")
-        print "old", t
-        tlist = t.split(" ")
-        print tlist
-        t = ""
-        for props in tlist[:-1]:
-            t += "%s "% props
-        print "new", t
-        self.lineEdit.setText(t)
-
-        self.tooth.clear()
-        self.tooth.update()
-        self.finishedEdit() #doesn't work!
+        self.comments_comboBox.setCurrentIndex(0)
 
     def fulledit(self):
         '''
         user has clicked the edit button
-        tell the main gui to show the user the full contents of the tooth's
-        properties
+        allow the user to edit the full contents of a tootget\ h
         '''
-        self.emit(QtCore.SIGNAL("full_edit"))
+        Dialog = QtGui.QDialog()
+        lineEdit = chartLineEdit()
+        if self.isStatic:
+            lineEdit.setMaxLength(34)
+        lineEdit.setText(self.lineEdit.text())
 
-    def checkEntry(self):
-        currentFill = str(self.lineEdit.text().toAscii())
-        fillList = currentFill.split(" ")
-        for f in fillList:
-            if not self.checkProp(f):
-                return False
-        self.originalProps = self.newProps()
-        return True
+        dl = toothprop_fulledit.editor(self.selectedTooth, self.selectedChart,
+        lineEdit, Dialog)
 
-    def checkProp(self, f):
-        '''
-        check to see if the user has entered garbage
-        '''
-        plist = self.originalProps.split(" ")
-        print "checking Prop '%s' origs ='%s'"% (f, plist)
-        if f in plist:
-            print "already present, ignoring"
-            return True
+        if dl.exec_():
+            self.lineEdit.setText(dl.result)
+            self.additional()
+        else:
+            self.lineEdit.updateFromPropList(self.lineEdit.originalPropList)
+        #self.emit(QtCore.SIGNAL("full_edit"))
 
-        allowedCode = True
-        if f!= "":
-            if self.tooth.isBacktooth and not (f in allowed.backToothCodes):
-                allowedCode = False
-            if not self.tooth.isBacktooth and \
-            not (f in allowed.frontToothCodes):
-                allowedCode = False
-            if (not self.is_Static) and (f in allowed.treatment_only):
-                allowedCode = True
-        if not allowedCode:
-            message = '''"%s" is not recognised <br />
-            do you want to accept anyway?'''% f
-            input = QtGui.QMessageBox.question(self, "Confirm", message,
-            QtGui.QMessageBox.No,QtGui.QMessageBox.Yes)
-
-            if input == QtGui.QMessageBox.Yes:
-                allowedCode = True
-            else:
-                allowedCode = False
-        return allowedCode
+    def setExistingProps(self, arg):
+        self.lineEdit.setKnownProps(arg)
 
     def additional(self, checkedAlready = False):
         existing = str(self.lineEdit.text().toAscii())
@@ -184,7 +271,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             currentFill = existing
         if currentFill == "":
             return
-        if checkedAlready or self.checkProp(currentFill):
+        if checkedAlready or self.lineEdit.propAllowed(currentFill):
             self.lineEdit.setText(existing+" ")
             self.tooth.clear()
             self.tooth.update()
@@ -209,6 +296,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             currentFill = mat+self.tooth.filledSurfaces
         else:                                           #virgin tooth
             currentFill = self.tooth.filledSurfaces
+        self.lineEdit.unsavedChanges = True
         self.lineEdit.setText(keep+currentFill)
 
     def changeFillColour(self,arg):
@@ -277,16 +365,9 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.changeFillColour(colours.PORC)
         self.labMaterial("PI")
 
-    def newProps(self):
-        comments = self.existingComments.strip(" ").replace(" ","_")
-        return "%s%s"% (self.lineEdit.text().toAscii(), comments)
-
     def finishedEdit(self):
-        newprops = self.newProps()
-        if newprops != self.originalProps:
-            if newprops != "" and newprops[-1]!=" ":
-                newprops += " "
-            self.emit(QtCore.SIGNAL("Changed_Properties"), newprops)
+        newprops = str(self.lineEdit.text().toAscii())
+        self.emit(QtCore.SIGNAL("Changed_Properties"), newprops)
 
     def keyNav(self, arg):
         if arg == "up":
@@ -308,13 +389,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
 
     def prevTooth(self):
         print "prevTooth"
-        if self.checkEntry():
+        if self.lineEdit.verifyProps():
             self.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("up"))
 
     def nextTooth(self):
         print "nextTooth"
-        if self.checkEntry():
+        if self.lineEdit.verifyProps():
             self.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("down"))
 
@@ -323,49 +404,48 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.nextTooth()
 
     def at(self):
-        self.lineEdit.setText("AT")
+        self.addItem("AT")
         self.nextTooth()
 
     def tm(self):
-        self.lineEdit.setText("TM")
+        self.addItem("TM")
         self.nextTooth()
 
     def ex(self):
-        self.lineEdit.setText("EX")
+        self.addItem("EX")
         self.nextTooth()
 
     def rt(self):
-        existing=str(self.lineEdit.text().toAscii())
-        self.lineEdit.setText(existing+"RT")
+        self.addItem("RT")
         self.additional()
 
     def crown(self):
         def gold():
-            self.lineEdit.setText(existing+"CR,GO")
+            self.addItem("CR,GO")
             Dialog.accept()
         def pjc():
-            self.lineEdit.setText(existing+"CR,PJ")
+            self.addItem("CR,PJ")
             Dialog.accept()
         def resin():
-            self.lineEdit.setText(existing+"CR,OT")
+            self.addItem("CR,OT")
             Dialog.accept()
         def lava():
-            self.lineEdit.setText(existing+"CR,PJ")
+            self.addItem("CR,PJ")
             Dialog.accept()
         def fortress():
-            self.lineEdit.setText(existing+"CR,PJ")
+            self.addItem("CR,PJ")
             Dialog.accept()
         def temp():
-            self.lineEdit.setText(existing+"CR,T1")
+            self.addItem("CR,T1")
             Dialog.accept()
         def other():
-            self.lineEdit.setText(existing+"CR,OT")
+            self.addItem("CR,OT")
             Dialog.accept()
         def bonded():
-            self.lineEdit.setText(existing+"CR,V1")
+            self.addItem("CR,V1")
             Dialog.accept()
         def recem():
-            self.lineEdit.setText(existing+"CR,RC")
+            self.addItem("CR,RC")
             Dialog.accept()
 
         existing=self.lineEdit.text()
@@ -388,7 +468,8 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def cb_treat(self, arg):
         if not re.match("--.*", arg.toAscii()):
             print arg
-            for cb in (self.br_comboBox, self.endo_comboBox, self.ex_comboBox,
+            for cb in (self.fs_comboBox, self.br_comboBox,
+            self.endo_comboBox, self.ex_comboBox,
             self.static_comboBox):
                 cb.setCurrentIndex(0)
 
@@ -420,7 +501,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         SIGNAL("toothSurface"), self.updateSurfaces)
 
         QtCore.QObject.connect(self.clear_pushButton,
-        QtCore.SIGNAL("clicked()"), self.clear)
+        QtCore.SIGNAL("clicked()"), self.lineEdit.clear)
 
         QtCore.QObject.connect(self.edit_pushButton,
         QtCore.SIGNAL("clicked()"), self.fulledit)
@@ -513,6 +594,7 @@ class tooth(QtGui.QWidget):
             self.fillcolour=colours.AMALGAM
         else:
             self.fillcolour=colours.COMP
+
     def sortSurfaces(self,arg):
         '''sort the filling surfaces to fit with conventional notation eg... MOD not DOM etc..'''
         retarg=""
@@ -704,37 +786,15 @@ class tooth(QtGui.QWidget):
             painter.setPen(QtGui.QColor("red"))
             painter.drawPolygon(self.mouseOverSurface)
 
-class chartLineEdit(QtGui.QLineEdit):
-    '''override the keypress event for up and down arrow keys.
-    '''
-    def __init__(self, parent=None):
-        super(chartLineEdit,self).__init__(parent)
-    def keyPressEvent(self, event):
-        '''overrudes QWidget's keypressEvent'''
-        if event.key() == QtCore.Qt.Key_Up:
-            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("up"))
-        elif event.key() == QtCore.Qt.Key_Return:
-            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("down"))
-        elif event.key() == QtCore.Qt.Key_Down:
-            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("down"))
-        else:
-            inputT = event.text().toAscii()
-            if re.match("[a-z]", inputT):
-                #-- catch and overwrite any lower case
-                event = QtGui.QKeyEvent(event.type(), event.key(),
-                event.modifiers(), event.text().toUpper())
-
-            QtGui.QLineEdit.keyPressEvent(self,event)
-
 
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
-    #Form = QtGui.QWidget()
-    #ui = tpWidget(Form)
-    #ui.setExistingProps("MOD B,GL !COMMENT_TWO")
+    Form = QtGui.QWidget()
+    ui = tpWidget(Form)
+    ui.setExistingProps("MOD B,GL !COMMENT_TWO")
     #Form.setEnabled(False)
-    Form = chartLineEdit()
+    #Form = chartLineEdit()
     Form.show()
     sys.exit(app.exec_())
 

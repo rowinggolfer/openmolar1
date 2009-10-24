@@ -77,6 +77,15 @@ appt_shortcut_file = os.path.join(wkdir, "resources",
 stylesheet = os.path.join(wkdir, "resources", "style.css")
 resources_path = os.path.join(wkdir, "resources")
 
+
+try:
+    _("hello")
+except:  #TypeError
+    print "installing gettext"
+    ##- an unelegant hack to get _() on the namespace for testing
+    import gettext
+    gettext.install("openmolar",unicode=True)
+
 if "win" in sys.platform:
     print "windows settings"
     #-- sorry about this... but cross platform is a goal :(

@@ -206,6 +206,7 @@ class chartsClass():
         called by a signal from the toothprops widget -
         args are the new tooth properties eg modbl,co
         '''
+        print "update charts called with arg '%s'"% arg
         tooth = str(self.ui.chartsTableWidget.item(
         self.ui.chartsTableWidget.currentRow(), 0).text())
 
@@ -261,24 +262,13 @@ into the plan first then complete it.'''), 1)
             self.advise(
             _("you need to be in the static chart to change tooth state"), 1)
 
-    def tooth_fulledit(self):
-        '''
-        allow the user to edit the full contents of a tootget\ h
-        '''
-        ##TODO get this working
-        row = self.ui.chartsTableWidget.currentRow()
-        tooth=str(self.ui.chartsTableWidget.item(row, 0).text().toAscii())
-        tooth += self.selectedChartWidget
-        prop = self.pt.__dict__[tooth]
-        self.advise("full edit %s - %s"% (tooth.upper(), prop),1)
-
     def checkPreviousEntry(self):
         '''
         check to see if the toothProps widget has unfinished business
         '''
         #-- before continuing, see if user has changes to apply on the
         #-- previous tooth
-        if self.ui.toothPropsWidget.checkEntry():
+        if self.ui.toothPropsWidget.lineEdit.unsavedChanges:
             self.ui.toothPropsWidget.finishedEdit()
             self.ui.toothPropsWidget.additional(checkedAlready=True)
             return True
@@ -345,35 +335,17 @@ into the plan first then complete it.'''), 1)
         ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
         'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
 
+        self.ui.toothPropsWidget.setTooth(tooth, self.selectedChartWidget)
+
         if tooth in grid[0]:
             y=0
         else:
             y=1
-        if int(tooth[2])>3:
-            self.ui.toothPropsWidget.tooth.setBacktooth(True)
-        else:
-            self.ui.toothPropsWidget.tooth.setBacktooth(False)
-        if tooth[1] == "r":
-            self.ui.toothPropsWidget.tooth.setRightSide(True)
-        else:
-            self.ui.toothPropsWidget.tooth.setRightSide(False)
-        if tooth[0] == "u":
-            self.ui.toothPropsWidget.tooth.setUpper(True)
-        else:
-            self.ui.toothPropsWidget.tooth.setUpper(False)
-        self.ui.toothPropsWidget.tooth.clear()
-        self.ui.toothPropsWidget.tooth.update()
 
         #--calculate x, y co-ordinates for the chartwisdgets
         x=grid[y].index(tooth)
-        self.ui.toothPropsWidget.tooth_label.setText(
-                                            self.pt.chartgrid[tooth].upper())
-        #--ALLOWS for deciduos teeth
 
         if self.selectedChartWidget == "st":
-            self.ui.toothPropsWidget.isStatic(True)
-            self.ui.toothPropsWidget.setExistingProps(
-                                                self.pt.__dict__[tooth+"st"])
             self.ui.staticChartWidget.selected=[x, y]
             self.ui.staticChartWidget.update()
             if self.ui.planChartWidget.selected != [-1, -1]:
@@ -384,9 +356,6 @@ into the plan first then complete it.'''), 1)
                 self.ui.completedChartWidget.update()
             column=2
         elif self.selectedChartWidget == "pl":
-            self.ui.toothPropsWidget.isStatic(False)
-            self.ui.toothPropsWidget.setExistingProps(
-                                                self.pt.__dict__[tooth+"pl"])
             self.ui.planChartWidget.selected=[x, y]
             self.ui.planChartWidget.update()
             if self.ui.staticChartWidget.selected != [-1, -1]:
@@ -397,9 +366,6 @@ into the plan first then complete it.'''), 1)
                 self.ui.completedChartWidget.update()
             column=3
         elif self.selectedChartWidget == "cmp":
-            self.ui.toothPropsWidget.isStatic(False)
-            self.ui.toothPropsWidget.lineEdit.setText(
-                                                self.pt.__dict__[tooth+"cmp"])
             self.ui.completedChartWidget.selected=[x, y]
             self.ui.completedChartWidget.update()
             if self.ui.staticChartWidget.selected != [-1, -1]:
@@ -1090,7 +1056,7 @@ to change if clinical circumstances dictate.</i></p>''')
             return
         chartimage=QtGui.QPixmap
         staticimage=chartimage.grabWidget(self.ui.summaryChartWidget)
-        myclass=chartPrint.printChart(self.pt, staticimage)
+        myclass=chartPrint.printChart(staticimage)
         myclass.printpage()
         self.pt.addHiddenNote("printed", "static chart")
 
@@ -1717,8 +1683,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         hlayout.addWidget(self.ui.completedChartWidget)
 
         #-TOOTHPROPS (right hand side on the charts page)
-        self.ui.toothPropsWidget=toothProps.tpWidget()
-        hlayout=QtGui.QHBoxLayout(self.ui.toothProps_frame)
+        self.ui.toothPropsWidget = toothProps.tpWidget(self)
+        hlayout = QtGui.QHBoxLayout(self.ui.toothProps_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.toothPropsWidget)
 
@@ -3986,8 +3952,6 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
         QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
-        QtCore.QObject.connect(self.ui.toothPropsWidget,
-        QtCore.SIGNAL("full_edit"), self.tooth_fulledit)
 
 
     def signals_editPatient(self):

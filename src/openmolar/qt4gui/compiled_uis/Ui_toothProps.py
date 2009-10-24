@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'toothProps.ui'
 #
-# Created: Sat Oct 10 22:10:33 2009
+# Created: Sat Oct 24 13:09:40 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -53,7 +53,9 @@ class Ui_Form(object):
         self.comments_comboBox = QtGui.QComboBox(Form)
         self.comments_comboBox.setObjectName("comments_comboBox")
         self.comments_comboBox.addItem(QtCore.QString())
-        self.comments_comboBox.setItemText(0, "")
+        self.comments_comboBox.addItem(QtCore.QString())
+        self.comments_comboBox.addItem(QtCore.QString())
+        self.comments_comboBox.addItem(QtCore.QString())
         self.comments_comboBox.addItem(QtCore.QString())
         self.comments_comboBox.addItem(QtCore.QString())
         self.comments_comboBox.addItem(QtCore.QString())
@@ -232,13 +234,17 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(_( u"Form"))
         self.clear_pushButton.setToolTip(_( u"delete tooth data"))
+        self.comments_comboBox.setItemText(0, _( u"ADD COMMENTS"))
         self.comments_comboBox.setItemText(1, _( u"!KUO"))
         self.comments_comboBox.setItemText(2, _( u"!Mobile Tooth"))
         self.comments_comboBox.setItemText(3, _( u"!Early Caries"))
         self.comments_comboBox.setItemText(4, _( u"!Filling Missing"))
         self.comments_comboBox.setItemText(5, _( u"!Chipped"))
         self.comments_comboBox.setItemText(6, _( u"!Cracked"))
-        self.comments_comboBox.setItemText(7, _( u"DELETE COMMENTS"))
+        self.comments_comboBox.setItemText(7, _( u"!Poor Prognosis"))
+        self.comments_comboBox.setItemText(8, _( u"!Extract Soon"))
+        self.comments_comboBox.setItemText(9, _( u"!Implant required"))
+        self.comments_comboBox.setItemText(10, _( u"DELETE COMMENTS"))
         self.am_pushButton.setText(_( u"AM"))
         self.co_pushButton.setText(_( u"CO"))
         self.gl_pushButton.setText(_( u"GL"))

@@ -108,7 +108,7 @@
     <widget class="QComboBox" name="comments_comboBox">
      <item>
       <property name="text">
-       <string/>
+       <string>ADD COMMENTS</string>
       </property>
      </item>
      <item>
@@ -139,6 +139,21 @@
      <item>
       <property name="text">
        <string>!Cracked</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>!Poor Prognosis</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>!Extract Soon</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>!Implant required</string>
       </property>
      </item>
      <item>
