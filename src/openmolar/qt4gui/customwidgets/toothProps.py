@@ -41,8 +41,8 @@ class chartLineEdit(QtGui.QLineEdit):
     def updateFromPropList(self, propList):
         text = ""
         for prop in propList:
-            if prop != " ":
-                text += "%s "% prop
+            if not prop in (""," "):
+                text += "%s "% props
         self.setKnownProps(text)
         ##not sure these are needed??
         self.parent.tooth.clear()
@@ -86,9 +86,10 @@ class chartLineEdit(QtGui.QLineEdit):
             self.emit(QtCore.SIGNAL("DeletedComments"))
 
     def addItem(self, item):
-        snapshotPropList = self.propListFromText()
-        snapshotPropList.append(item)
-        self.updateFromPropList(snapshotPropList)
+        if not item in ("", " "):
+            snapshotPropList = self.propListFromText()
+            snapshotPropList.append(item)
+            self.updateFromPropList(snapshotPropList)
 
     def removeItem(self, item):
         if item == "":
@@ -404,48 +405,48 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.nextTooth()
 
     def at(self):
-        self.addItem("AT")
+        self.lineEdit.addItem("AT")
         self.nextTooth()
 
     def tm(self):
-        self.addItem("TM")
+        self.lineEdit.addItem("TM")
         self.nextTooth()
 
     def ex(self):
-        self.addItem("EX")
+        self.lineEdit.addItem("EX")
         self.nextTooth()
 
     def rt(self):
-        self.addItem("RT")
+        self.lineEdit.addItem("RT")
         self.additional()
 
     def crown(self):
         def gold():
-            self.addItem("CR,GO")
+            self.lineEdit.addItem("CR,GO")
             Dialog.accept()
         def pjc():
-            self.addItem("CR,PJ")
+            self.lineEdit.addItem("CR,PJ")
             Dialog.accept()
         def resin():
-            self.addItem("CR,OT")
+            self.lineEdit.addItem("CR,OT")
             Dialog.accept()
         def lava():
-            self.addItem("CR,PJ")
+            self.lineEdit.addItem("CR,PJ")
             Dialog.accept()
         def fortress():
-            self.addItem("CR,PJ")
+            self.lineEdit.addItem("CR,PJ")
             Dialog.accept()
         def temp():
-            self.addItem("CR,T1")
+            self.lineEdit.addItem("CR,T1")
             Dialog.accept()
         def other():
-            self.addItem("CR,OT")
+            self.lineEdit.addItem("CR,OT")
             Dialog.accept()
         def bonded():
-            self.addItem("CR,V1")
+            self.lineEdit.addItem("CR,V1")
             Dialog.accept()
         def recem():
-            self.addItem("CR,RC")
+            self.lineEdit.addItem("CR,RC")
             Dialog.accept()
 
         existing=self.lineEdit.text()
