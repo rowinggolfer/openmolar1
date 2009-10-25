@@ -24,7 +24,7 @@ class document():
         self.sname=sname
         self.addresslines=addresslines
         self.postcode=postcode
-        self.amount=amount
+        self.amount = localsettings.formatMoney(amount)
         self.tone="A"
         self.previousCorrespondenceDate=""
         self.requireDialog=True
@@ -88,33 +88,33 @@ class document():
             painter.drawText(x, y, "Dear %s %s," %(self.title.title(),self.sname.title()))
             y += serifLineHeight*1.5
             if self.tone=="C":
-                painter.drawText(x, y,"STATEMENT OF ACCOUNT - FINAL REMINDER")
+                painter.drawText(x, y,_("STATEMENT OF ACCOUNT - FINAL REMINDER"))
                 y += serifLineHeight*1.2
-                painter.drawText(x, y, "We are concerned that despite previous correspondance,")
+                painter.drawText(x, y, _("We are concerned that despite previous correspondance,"))
                 y += serifLineHeight
-                painter.drawText(x, y, "your account still stands as follows: ")
+                painter.drawText(x, y, _("your account still stands as follows: "))
             else:
-                painter.drawText(x, y, "Please note that your account stands as follows:- ")
+                painter.drawText(x, y, _("Please note that your account stands as follows:- "))
             y += serifLineHeight*1.5
-            painter.drawText(x, y, "Amount : \xa3%s"%self.amount)
+            painter.drawText(x, y, _(u"Amount : %s")%self.amount)
             y += serifLineHeight*2
             if self.tone=="A":
-                painter.drawText(x, y, "This amount is now due in full. *")
+                painter.drawText(x, y, _("This amount is now due in full. *"))
             elif self.tone=="B":
                 d=self.previousCorrespondenceDate
                 if d=="" or d==None:
-                    painter.drawText(x, y, "A previous account was sent out to you on %s"%d)
+                    painter.drawText(x, y, _("A previous account was sent out to you on %s"%d))
                     y+=serifLineHeight
-                painter.drawText(x, y, "It would be appreciated if you would settle this matter as soon as possible.")
+                painter.drawText(x, y, _("It would be appreciated if you would settle this matter as soon as possible."))
             else:
-                painter.drawText(x, y, "It would be appreciated if this account is settled within seven days.")
+                painter.drawText(x, y, _("It would be appreciated if this account is settled within seven days."))
                 y+=serifLineHeight
-                painter.drawText(x, y, "On this deadline, we will pass this debt to") 
+                painter.drawText(x, y, _("On this deadline, we will pass this debt to"))
                 y+=serifLineHeight
-                painter.drawText(x, y, "Scott & Company Sheriff Officers for collection.")
+                painter.drawText(x, y, _("Scott & Company Sheriff Officers for collection."))
 
             y += serifLineHeight*2
-            painter.drawText(x, y, "Yours sincerely,")
+            painter.drawText(x, y, _("Yours sincerely,"))
             y += serifLineHeight * 1.5
             painter.setFont(sigFont)
             painter.drawText(x, y+30, "The Academy Dental Practice")
@@ -129,8 +129,8 @@ class document():
             painter.drawText(
                     QtCore.QRectF(x, y,
                            pageRect.width() - (2 * AddressMargin), 31),
-                    '* Cheques payable to: "Academy Dental Practice"\n'
-                    'Or telephone us with your switch/visa/mastercard details.',
+                    _('* Cheques payable to: "Academy Dental Practice"\n') +
+                    _('Or telephone us with your switch/visa/mastercard details.'),
                     option)
             painter.restore()
         return True

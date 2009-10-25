@@ -598,8 +598,7 @@ class cashbooks():
                     doc=accountPrint.document(printpt.title,
                     printpt.fname, printpt.sname, (printpt.addr1,
                     printpt.addr2, printpt.addr3, printpt.town,
-                    printpt.county), printpt.pcde,
-                    localsettings.formatMoney(printpt.fees))
+                    printpt.county), printpt.pcde, printpt.fees)
                     doc.setTone(tone)
 
                     if firstPage:
@@ -1065,7 +1064,7 @@ to change if clinical circumstances dictate.</i></p>''')
         else:
             doc=accountPrint.document(self.pt.title, self.pt.fname, self.pt.sname,
             (self.pt.addr1, self.pt.addr2, self.pt.addr3, self.pt.town, self.\
-            pt.county), self.pt.pcde, localsettings.formatMoney(self.pt.fees))
+            pt.county), self.pt.pcde, self.pt.fees)
             doc.setTone(tone)
             if tone == "B":
                 doc.setPreviousCorrespondenceDate(self.pt.billdate)
