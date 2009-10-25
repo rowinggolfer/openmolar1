@@ -4,12 +4,21 @@ LINEEDIT=QtGui.QColor("#ffffaa")
 CHARTTEXT=QtGui.QColor("#111111")
 TOOTHLINES=QtGui.QColor("#aaaaaa")
 IVORY=QtGui.QColor("#ffeedd")
-GI=QtGui.QColor("#75d185")
-GOLD=QtGui.QColor("#ffff00")
-COMP=QtGui.QColor("#ffffff")
-PORC=QtGui.QColor("#ddffff")
+
+#these numbers are grabbed for the stylesheet of the toothprop buttons
+GI_ = "#75d185"
+GOLD_="#ffff00"
+COMP_ = "#ffffff"
+PORC_ = "#ddffff"
+AMALGAM_ = "#666666"
+
+GI=QtGui.QColor(GI_)
+GOLD=QtGui.QColor(GOLD_)
+COMP=QtGui.QColor(COMP_)
+PORC=QtGui.QColor(PORC_)
+AMALGAM=QtGui.QColor(AMALGAM_)
+
 FISSURE=QtGui.QColor("#bbd0d0")
-AMALGAM=QtGui.QColor("#666666")
 METAL=QtGui.QColor("#000075")
 DRESSING=QtGui.QColor("magenta")
 GUTTA_PERCHA=QtGui.QColor("#bb0000")

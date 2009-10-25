@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'toothprops_full_edit.ui'
 #
-# Created: Sat Oct 24 12:01:30 2009
-#      by: PyQt4 UI code generator 4.4.4
+# Created: Sun Oct 25 16:16:27 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 

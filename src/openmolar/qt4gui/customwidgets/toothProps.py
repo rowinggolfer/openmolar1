@@ -15,8 +15,53 @@ from openmolar.qt4gui.compiled_uis import Ui_crownChoice
 
 from openmolar.qt4gui.dialogs import toothprop_fulledit
 
+FS_OPTIONS = {
+"--"        : "--"+_("Fissure Sealants"),
+"FS"        : _( u"Fissure Sealant"),
+"FS,CO"     : _( u"Fissure Sealant/Composite")
+}
+
+BR_OPTIONS = {
+"--"        : "--"+_("Bridge Elements"),
+"BR/CR,V1"  : _( u"Bonded Retainer"),
+"BR/P,V1"   : _( u"Bonded Pontic"),
+"BR,AE"     : _( u"Adhesive Wing"),
+"BR/CR,LAVA": _( u"Lava Retainer"),
+"BR/P,LAVA" : _( u"Lava Pontic"),
+"BR/CR,GO"  : _( u"Gold Retainer"),
+"BR/P,GO"   : _( u"Gold Pontic"),
+"BR/CR,OT"  : _( u"Other Retainer"),
+"BR/P,OT"   : _( u"Other Pontic")
+}
+
+ENDO_OPTIONS = {
+"--"        : "--"+_("Endodontics"),
+"PX"        : _( u"Pulp Extirpation - 1 canal"),
+"PX+"       : _( u"Pulp Extirpation - multiple canals"),
+"RT"        : _( u"Root Canal")
+}
+
+SURGICAL_OPTIONS = {
+"--"        : "--"+_("Surgical"),
+"EX"        : _( u"Extraction"),
+"EX/S1"     : _( u"Surgical Extraction"),
+"AP"        : _( u"Apicectomy")
+}
+
+STATIC_OPTIONS = {
+"--"        : "--"+_("Static Only"),
+"TM"        : _( u"Tooth Missing"),
+"AT"        : _( u"Denture Tooth"),
+"RP"        : _( u"Root Present"),
+"+P"        : _( u"Permanent Tooth Present")
+}
+
+COMBOBOXES = (FS_OPTIONS,BR_OPTIONS,ENDO_OPTIONS,SURGICAL_OPTIONS, 
+STATIC_OPTIONS)
+
+
 class chartLineEdit(QtGui.QLineEdit):
-    '''
+    ''' 
     A custom line edit that accepts only BLOCK LETTERS
     and is self aware when verification is needed
     override the keypress event for up and down arrow keys.
@@ -201,27 +246,41 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         hlayout.addWidget(self.lineEdit)
         self.tooth=tooth()  #self.frame)
         self.toothlayout=QtGui.QHBoxLayout(self.frame)
+        self.toothlayout.setContentsMargins(0,0,0,0)
         self.toothlayout.addWidget(self.tooth)
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(colours.AMALGAM)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        self.am_pushButton.setPalette(palette)
-        brush = QtGui.QBrush(colours.COMP)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        self.co_pushButton.setPalette(palette)
-        brush = QtGui.QBrush(colours.GI)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        self.gl_pushButton.setPalette(palette)
-        brush = QtGui.QBrush(colours.GOLD)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        self.gold_pushButton.setPalette(palette)
-        brush = QtGui.QBrush(colours.PORC)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        self.porc_pushButton.setPalette(palette)
-        self.signals()
+        self.am_pushButton.setStyleSheet(
+        "background-color: %s"% colours.AMALGAM_ )
+
+        self.co_pushButton.setStyleSheet(
+        "background-color: %s"% colours.COMP_ )
+        
+        self.gl_pushButton.setStyleSheet(
+        "background-color: %s"% colours.GI_ )
+        
+        self.gold_pushButton.setStyleSheet(
+        "background-color: %s"% colours.GOLD_ )
+
+        self.porc_pushButton.setStyleSheet(
+        "background-color: %s"% colours.PORC_ )
+        
         self.is_Static = False
         self.selectedChart = ""
         self.selectedTooth = ""
+        self.comboboxes = []
+        self.populateComboBoxes()
+        self.signals()
+        
+    def populateComboBoxes(self):
+        vlayout = QtGui.QVBoxLayout(self.cb_scrollArea)
+        vlayout.setMargin(0)
+        for combobox_dict in COMBOBOXES:
+            cb = QtGui.QComboBox(self)
+            vals = combobox_dict.values()
+            vals.sort()
+            for val in vals:
+                cb.addItem(val)
+            vlayout.addWidget(cb)
+            self.comboboxes.append(cb)
 
     def setTooth(self, selectedTooth, selectedChart):
         '''
@@ -262,13 +321,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         elif arg ==_("DELETE COMMENTS"):
             self.lineEdit.deleteComments()
         else:
-            result=QtGui.QMessageBox.question(self, "Confirm",
-            'Add comment "%s"'% arg,
-            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            #result=QtGui.QMessageBox.question(self, "Confirm",
+            #'Add comment "%s"'% arg,
+            #QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
-            if result == QtGui.QMessageBox.Yes:
-                newComment = "%s"% arg.replace(" ","_")
-                self.lineEdit.addItem(newComment)
+            #if result == QtGui.QMessageBox.Yes:
+            newComment = "%s"% arg.replace(" ","_")
+            self.lineEdit.addItem(newComment)
 
         self.comments_comboBox.setCurrentIndex(0)
 
@@ -481,11 +540,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def cb_treat(self, arg):
         if not re.match("--.*", arg.toAscii()):
             print arg
-            for cb in (self.fs_comboBox, self.br_comboBox,
-            self.endo_comboBox, self.ex_comboBox,
-            self.static_comboBox):
+            for cb in self.comboboxes:
                 cb.setCurrentIndex(0)
-
+            for combobox_dict in COMBOBOXES:
+                for key in combobox_dict.keys():
+                    if combobox_dict[key] == arg:
+                        self.lineEdit.addItem(key)
+                
     def staticButPressed(self):
         self.emit(QtCore.SIGNAL("static"))
     def planButPressed(self):
@@ -561,23 +622,10 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         QtCore.QObject.connect(self.comments_comboBox,
         QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
 
-        QtCore.QObject.connect(self.fs_comboBox,
-        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
-
-        QtCore.QObject.connect(self.br_comboBox,
-        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
-
-        QtCore.QObject.connect(self.endo_comboBox,
-        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
-
-        QtCore.QObject.connect(self.ex_comboBox,
-        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
-
-        QtCore.QObject.connect(self.static_comboBox,
-        QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.cb_treat)
-
-        ##cr_comboBox,endo_comboBox,ex_comboBox,static_comboBox,comments_comboBox
-
+        for cb in self.comboboxes:
+            QtCore.QObject.connect(cb,
+            QtCore.SIGNAL("currentIndexChanged (const QString&)"), 
+            self.cb_treat)
 
 class tooth(QtGui.QWidget):
     def __init__(self,parent=None):
