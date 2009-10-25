@@ -204,7 +204,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         (for multiple items)
         '''
         for item in self.items:
-            item.description = str(arg).replace('"', '\"')
+            item.description = str(arg.toAscii()).replace('"', '\"')
 
     def update_Fee(self, arg, userPerforming=True):
         '''

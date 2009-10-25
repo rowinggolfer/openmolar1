@@ -25,10 +25,30 @@ class chartLineEdit(QtGui.QLineEdit):
         super(chartLineEdit,self).__init__(parent)
         self.parent = parent
         self.originalPropList = []
-        self.unsavedChanges = False
+    
+    def unsavedChanges(self):
+        return not (self.originalPropList == self.propListFromText())
 
-    def finished(self):
-        self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("down"))
+    def finishedEdit(self):
+        '''
+        we have finished editing the text.. let the main gui know by 
+        means of a signal
+        '''        
+        props = str(self.text().toAscii())
+        if props != "":
+            if props[-1] != " ":
+                props = props + " "
+            self.emit(QtCore.SIGNAL("Changed_Properties"), props)
+
+    def additional(self, checkedAlready = False):
+        '''
+        we have finished editing, and moving on
+        '''
+        if checkedAlready or self.verifyProps():
+            self.updateFromPropList(self.propListFromText())
+            self.parent.tooth.clear()
+            self.parent.tooth.update()
+            self.finishedEdit()
 
     def propListFromText(self):
         '''
@@ -42,12 +62,12 @@ class chartLineEdit(QtGui.QLineEdit):
         text = ""
         for prop in propList:
             if not prop in (""," "):
-                text += "%s "% props
+                text += "%s "% prop
         self.setKnownProps(text)
         ##not sure these are needed??
         self.parent.tooth.clear()
         self.parent.tooth.update()
-        self.parent.finishedEdit()
+        self.finishedEdit()
 
     def setKnownProps(self, arg):
         '''
@@ -67,12 +87,13 @@ class chartLineEdit(QtGui.QLineEdit):
         for prop in self.originalPropList:
             if not prop in snapshotPropList:
                 self.originalPropList.remove(prop)
+        verified = True
         for prop in snapshotPropList:
             if not self.propAllowed(prop):
-                self.removeItem(prop)
+                verified = False
             else:
                 self.originalPropList.append(prop)
-        return True
+        return verified
 
     def deleteComments(self):
         snapshotPropList = self.propListFromText()
@@ -98,7 +119,7 @@ class chartLineEdit(QtGui.QLineEdit):
         snapshotPropList.remove(item)
         self.updateFromPropList(snapshotPropList)
 
-    def clear(self):
+    def removeEndItem(self):
         '''
         user has pressed the delete button
         remove the last item
@@ -139,21 +160,34 @@ class chartLineEdit(QtGui.QLineEdit):
         if allowedCode:
             print "accepting new entry", prop
         return allowedCode
-
+    
+    def specialKeyPressed(self, arg):
+        '''
+        handles the events when a user hits space, up, down or return
+        '''
+        if arg in ("up", "down"):
+            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),(arg))
+        else:
+            self.additional()
+            
     def keyPressEvent(self, event):
         '''overrudes QWidget's keypressEvent'''
         if event.key() == QtCore.Qt.Key_Up:
-            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),("up"))
+            self.specialKeyPressed("up")
         elif event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Down):
-            self.finished()
+            self.specialKeyPressed("down")
+        elif event.key() == QtCore.Qt.Key_Space:
+            QtGui.QLineEdit.keyPressEvent(self,event)            
+            self.specialKeyPressed("space")            
         else:
             inputT = event.text().toAscii()
             if re.match("[a-z]", inputT):
                 #-- catch and overwrite any lower case
                 event = QtGui.QKeyEvent(event.type(), event.key(),
                 event.modifiers(), event.text().toUpper())
-            self.unsavedChanges = True
-            QtGui.QLineEdit.keyPressEvent(self,event)
+            if not (inputT == "!" and not self.parent.is_Static):
+                #don't allow comments if not in static
+                QtGui.QLineEdit.keyPressEvent(self,event)
 
 class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def __init__(self, parent=None):
@@ -254,29 +288,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
 
         if dl.exec_():
             self.lineEdit.setText(dl.result)
-            self.additional()
+            self.lineEdit.additional()
         else:
             self.lineEdit.updateFromPropList(self.lineEdit.originalPropList)
         #self.emit(QtCore.SIGNAL("full_edit"))
 
     def setExistingProps(self, arg):
         self.lineEdit.setKnownProps(arg)
-
-    def additional(self, checkedAlready = False):
-        existing = str(self.lineEdit.text().toAscii())
-        if " " in existing:
-            colonPos =existing.rindex(" ")
-            keep = existing[:colonPos]
-            currentFill = existing[colonPos+1:]
-        else:
-            currentFill = existing
-        if currentFill == "":
-            return
-        if checkedAlready or self.lineEdit.propAllowed(currentFill):
-            self.lineEdit.setText(existing+" ")
-            self.tooth.clear()
-            self.tooth.update()
-            self.finishedEdit()
 
     def updateSurfaces(self):
         existing = str(self.lineEdit.text().toAscii())
@@ -297,7 +315,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             currentFill = mat+self.tooth.filledSurfaces
         else:                                           #virgin tooth
             currentFill = self.tooth.filledSurfaces
-        self.lineEdit.unsavedChanges = True
         self.lineEdit.setText(keep+currentFill)
 
     def changeFillColour(self,arg):
@@ -366,10 +383,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.changeFillColour(colours.PORC)
         self.labMaterial("PI")
 
-    def finishedEdit(self):
-        newprops = str(self.lineEdit.text().toAscii())
-        self.emit(QtCore.SIGNAL("Changed_Properties"), newprops)
-
     def keyNav(self, arg):
         if arg == "up":
             self.prevTooth()
@@ -391,13 +404,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def prevTooth(self):
         print "prevTooth"
         if self.lineEdit.verifyProps():
-            self.finishedEdit()
+            self.lineEdit.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("up"))
 
     def nextTooth(self):
         print "nextTooth"
         if self.lineEdit.verifyProps():
-            self.finishedEdit()
+            self.lineEdit.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("down"))
 
     def dec_perm(self):
@@ -418,8 +431,8 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
 
     def rt(self):
         self.lineEdit.addItem("RT")
-        self.additional()
-
+        self.lineEdit.additional()
+        
     def crown(self):
         def gold():
             self.lineEdit.addItem("CR,GO")
@@ -449,7 +462,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             self.lineEdit.addItem("CR,RC")
             Dialog.accept()
 
-        existing=self.lineEdit.text()
         Dialog = QtGui.QDialog(self)
         ccwidg = Ui_crownChoice.Ui_Dialog()
         ccwidg.setupUi(Dialog)
@@ -502,13 +514,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         SIGNAL("toothSurface"), self.updateSurfaces)
 
         QtCore.QObject.connect(self.clear_pushButton,
-        QtCore.SIGNAL("clicked()"), self.lineEdit.clear)
+        QtCore.SIGNAL("clicked()"), self.lineEdit.removeEndItem)
 
         QtCore.QObject.connect(self.edit_pushButton,
         QtCore.SIGNAL("clicked()"), self.fulledit)
 
         QtCore.QObject.connect(self.pushButton,
-        QtCore.SIGNAL("clicked()"), self.additional)
+        QtCore.SIGNAL("clicked()"), self.lineEdit.additional)
 
         QtCore.QObject.connect(self.lineEdit,
         QtCore.SIGNAL("ArrowKeyPressed"),self.keyNav)

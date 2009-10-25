@@ -40,7 +40,7 @@ def itemChosen(parent, treeWidgetItem, pl_cmp):
         #message = "You've selected %ss<br /> %s"% (
         #txtype, treeWidgetItem.parent().text(0))
 
-        trtmtType = str(treeWidgetItem.text(0))
+        trtmtType = str(treeWidgetItem.text(0).toAscii())
         #message += "<br />%s"% trtmtType
         #parent.advise(message,1)
         print "deleting ",trtmtType

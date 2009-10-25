@@ -70,6 +70,7 @@ def plannedItems(pt):
         if not tx in ("", None):
             items=tx.strip(" ").split(" ")
             for item in items:
+                item=item.decode("latin-1")
                 if re.match("[ul][lr][0-8]",attrib):
                     #check for deciduous
                     toothName = str(pt.chartgrid.get(attrib)).upper()
@@ -87,6 +88,7 @@ def completedItems(pt):
         if not tx in ("",None):
             items=tx.strip(" ").split(" ")
             for item in items:
+                item=item.decode("latin-1")
                 if re.match("[ul][lr][0-8]",attrib):
                     #check for deciduous
                     toothName = str(pt.chartgrid.get(attrib)).upper()
@@ -109,7 +111,7 @@ def summary(pt):
         retarg += _('Start %s<br />')% localsettings.formatDate(pt.accd)
     if pt.cmpd != None:
         retarg += _('End %s<br />')% localsettings.formatDate(pt.cmpd)
-    plan=""
+    plan=u""
     for item in plannedItems(pt):
         plan+='%s - %s<br />'%(item)
     comp=""
@@ -117,9 +119,9 @@ def summary(pt):
         comp+='%s - %s<br />'%(item)
 
     if plan=="" and comp=="":
-        return "%sNo treatment</body></html>"%retarg
+        return _("%sNo treatment</body></html>")%retarg
     else:
-        return '%s<h4>PLAN</h4>%s<hr /><h4>COMPLETED</h4>%s</body></html>'%(
+        return _('%s<h4>PLAN</h4>%s<hr /><h4>COMPLETED</h4>%s</body></html>')%(
                                                             retarg, plan, comp)
 
 

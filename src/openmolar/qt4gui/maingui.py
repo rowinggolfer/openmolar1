@@ -268,10 +268,10 @@ into the plan first then complete it.'''), 1)
         '''
         #-- before continuing, see if user has changes to apply on the
         #-- previous tooth
-        if self.ui.toothPropsWidget.lineEdit.unsavedChanges:
-            self.ui.toothPropsWidget.finishedEdit()
-            self.ui.toothPropsWidget.additional(checkedAlready=True)
+        if not self.ui.toothPropsWidget.lineEdit.unsavedChanges():
             return True
+        else:
+            return self.ui.toothPropsWidget.lineEdit.verifyProps()
 
     def static_chartNavigation(self, tstring):
         '''
@@ -2196,7 +2196,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                 try:
                     self.loadpatient()
                 except Exception, e:
-                    self.advise("Error populating interface\n%s\n%s"%(Exception, e), 2)
+                    self.advise(
+                    _("Error populating interface\n%s")% e, 2)
                 finally:
                     self.pt_dbstate=copy.deepcopy(self.pt)
 
@@ -3938,9 +3939,9 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                                QtCore.SIGNAL("NextTooth"), self.navigateCharts)
         #--fillings have changed!!
-        QtCore.QObject.connect(self.ui.toothPropsWidget,
+        QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
                         QtCore.SIGNAL("Changed_Properties"), self.updateCharts)
-        QtCore.QObject.connect(self.ui.toothPropsWidget,
+        QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
                         QtCore.SIGNAL("DeletedComments"), self.deleteComments)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,

@@ -462,6 +462,7 @@ class toothSurfaces():
         '''
         self.rect = rect
         self.parent = parent
+        self.props = ""
         #--backtooth?
         self.backTooth = False
         pos = ident[2]
@@ -954,7 +955,15 @@ class toothSurfaces():
                         cx, fy, ax, gy])
                         shapes.append(n)
                     elif "i" in prop:
-                        shapes.append(self.innerRect.adjusted(2,2,-2,-2))
+                        n = QtGui.QPolygon([self.innerRect.topLeft().x(),
+                        self.innerRect.topLeft().y(),
+                        self.innerRect.topRight().x(),
+                        self.innerRect.topRight().y(),
+                        self.innerRect.bottomRight().x(),
+                        self.innerRect.bottomRight().y(),
+                        self.innerRect.bottomLeft().x(),
+                        self.innerRect.bottomLeft().y()])
+                        shapes.append(n)
                     elif "m" in prop:
                         shapes.append(QtGui.QPolygon(
                         [hx, dy, ix, dy, ix, fy, hx, fy, gx, ey]))
