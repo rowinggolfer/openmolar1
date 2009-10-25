@@ -42,7 +42,7 @@ class est():
         return self.__str__()
     
     def __str__(self):
-        retarg="("
+        retarg=u"("
         for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
             retarg+='%s ,'%self.__dict__[att]
         for att in ("category","type","itemcode","description","csetype",
@@ -53,12 +53,13 @@ class est():
         return "%s)"% retarg.strip(",")
 
     def toHtmlRow(self):
-        return '''<tr><td>%s</td><td>%s</td><td>%s</td>td>%s</td><td>%s</td>
-        <td>%s</td><td>&pound;%.02f</td><td>&pound;%.02f</td>
+        return u'''<tr><td>%s</td><td>%s</td><td>%s</td>td>%s</td><td>%s</td>
+        <td>%s</td><td>%s</td><td>%s</td>
         <td>%s</td><td>%s</td><td>%s</td></tr>'''%(
         localsettings.ops.get(self.dent),self.number,self.itemcode,
         self.category, self.type,
-        self.description,self.fee/100,self.ptfee/100,self.feescale,
+        self.description,localsettings.formatMoney(self.fee),
+        localsettings.formatMoney(self.ptfee),self.feescale,
         self.csetype,self.completed)
 
     def htmlHeader(self):
@@ -171,35 +172,40 @@ def toBriefHtml(pt):
     '''
     returns an HTML table showing the estimate in a receptionist friendly format
     '''
-    retarg = '<html><body>'
+    retarg = u'<html><body>'
     if pt.underTreatment:
-        retarg += "<h1>Under Treatment - Current Estimate</h1>"
+        retarg += _("<h1>Under Treatment - Current Estimate</h1>")
     else:
-        retarg += "<h1>Estimate from previous course</h1>"
+        retarg += _("<h1>Estimate from previous course</h1>")
         
     if not pt.estimates:
-        retarg += 'No estimate data found</body></html>'
+        retarg += _('No estimate data found</body></html>')
         return retarg
     
-    retarg +='''<table width ="100%" border="1">
+    retarg += _('''<table width ="100%" border="1">
     <tr><td colspan="7"><h3>ESTIMATE</h3></td></tr>
     <tr><th>No.</th><th>Description</th><th>Category</th>
     <th>Type</th><th>Course</th>
-    <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>'''
+    <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>''')
     total=0
     pt_total=0
     for est in sorted(pt.estimates):
         total+=est.fee
         pt_total+=est.ptfee
-        retarg+='<tr><td>%s</td><td>%s</td>'%(est.number,est.description)
+        retarg+='<tr><td>%s</td><td>%s</td>'%(est.number ,est.description)
         retarg+='<td align="center">%s</td>'%est.category        
         retarg+='<td align="center">%s</td>'%est.type
         if est.csetype==None:
             retarg+='<td align="center">?</td>'
         else:
             retarg+='<td align="center">%s</td>'%est.csetype
-        retarg+='<td align="right">&pound;%.02f</td>'%(est.fee/100)
-        retarg+='<td align="right"><b>&pound;%.02f</b></td>'%(est.ptfee/100)
+
+        retarg+='<td align="right">%s</td>'% (
+        localsettings.formatMoney(est.fee))
+        
+        retarg+='<td align="right"><b>%s</b></td>'%(
+        localsettings.formatMoney(est.ptfee))
+        
         retarg+='<td align="center">'
         if est.completed:
             retarg+='YES'
@@ -207,9 +213,11 @@ def toBriefHtml(pt):
             retarg+='NO'
         retarg+="</td></tr>"
 
-    retarg+='<tr><td colspan="4"></td>'
-    retarg+='<td align="right">&pound;%.02f</td>'%(total/100)
-    retarg+='<td align="right"><b>&pound;%.02f</b></td>'%(pt_total/100)
+    retarg+='<tr><td colspan="5"></td>'
+    retarg+='<td align="right">%s</td>'% localsettings.formatMoney(total)
+    retarg+='<td align="right"><b>%s</b></td>'% (
+    localsettings.formatMoney(pt_total))
+    
     retarg+='<td></td></tr>'
 
     retarg+='</table></body></htsml>'

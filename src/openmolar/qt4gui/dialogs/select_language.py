@@ -24,7 +24,8 @@ def getAvailableLanguages():
     '''
     return a list of installed languages
     '''
-    return ["English - en_GB", "French - fr",]
+    return ["English - en_GB", "Afrikaans - af", "French - fr", 
+    "Hungarian - hun"]
 
 def setLanguage(lang):
     '''

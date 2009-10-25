@@ -80,9 +80,10 @@ class chartLineEdit(QtGui.QLineEdit):
         means of a signal
         '''        
         props = str(self.text().toAscii())
-        if props != "":
-            if props[-1] != " ":
-                props = props + " "
+        if props != "" or (props == "" and self.originalPropList != []):
+            if not re.match ("..* $", props):
+                if props != "":
+                    props = props + " "
             self.emit(QtCore.SIGNAL("Changed_Properties"), props)
 
     def additional(self, checkedAlready = False):

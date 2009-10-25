@@ -999,17 +999,15 @@ class printingClass():
                 if "^" in item:
                     item=item.replace("^", "")
 
-                ehtml+='''<tr><td>%s</td><td>%s</td>
-<td align="right">\xa3%s</td></tr>'''%(
+                ehtml+=u'''<tr><td>%s</td><td>%s</td>
+<td align="right">%s</td></tr>'''%(
                 number, item, localsettings.formatMoney(amount))
 
-            ehtml+='<tr><td></td><td><b>TOTAL</b></td>'
-            ehtml+='<td align="right">\xa3%s</td></tr>'%(
-            localsettings.formatMoney(pt_total))
-            ehtml+="</table>"
-            ehtml+="<br />"*4
-            html=html.replace("<br />"*(12), ehtml)
-            html+=_('''<p><i>Please note, this estimate may be subject
+            ehtml += _('''<tr><td></td><td><b>TOTAL</b></td>
+<td align="right">%s</td></tr>''')% localsettings.formatMoney(pt_total)
+            ehtml +="</table>" + "<br />"*4
+            html = html.replace("<br />"*(12), ehtml)
+            html+= _('''<p><i>Please note, this estimate may be subject
 to change if clinical circumstances dictate.</i></p>''')
         else:
             print "html", html

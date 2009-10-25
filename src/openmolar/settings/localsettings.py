@@ -12,6 +12,7 @@ import MySQLdb
 import sys
 import datetime
 import os
+import locale
 
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
@@ -26,6 +27,8 @@ DBNAME = "default"
 SCHEMA_VERSION = "1.1"
 
 DEBUGMODE = False
+
+
 
 ENCODING = "latin-1" #necessary for the uk £ symbol
 
@@ -309,7 +312,9 @@ def formatMoney(m):
     "7.30"
     '''
     try:
-        return "%.02f"% (m/100)
+        #return unicode(locale.currency(m/100))
+        
+        return _(u"£%.02f")% (m/100)
     except:
         return "???"
 

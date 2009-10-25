@@ -267,16 +267,16 @@ def pass_on_estimate_delete(parent, est):
         deleteTxItem(parent, pl_cmp, txtype, passedOn=True) 
 
         if est.completed and est.ptfee != 0:
-            result = QtGui.QMessageBox.question(parent, "question",
-            '''<p>Credit Patient &pound;%s for undoing this item?</p>
-            '''% localsettings.formatMoney(est.ptfee) ,
+            result = QtGui.QMessageBox.question(parent, _("question"),
+            _('<p>Credit Patient %s for undoing this item?</p>')% (
+            localsettings.formatMoney(est.ptfee)) ,
             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if result == QtGui.QMessageBox.Yes:
                 fees_module.applyFeeNow(parent, -1 * est.ptfee, est.csetype)
         
     except ValueError:
-        parent.advise ("couldn't pass on delete message - " +
-        'badly formed est.type??? %s'% est.type, 1)
+        parent.advise (_("couldn't pass on delete message - ") +
+        _('badly formed est.type??? %s')% est.type, 1)
 
 def estimate_item_delete(parent, pl_cmp, category, ttype):
     '''
@@ -284,8 +284,8 @@ def estimate_item_delete(parent, pl_cmp, category, ttype):
     from the plan or completed
     '''
 
-    result = QtGui.QMessageBox.question(parent, "question",
-    "remove %s %s from the estimate?"% (category, ttype),
+    result = QtGui.QMessageBox.question(parent, _("question"),
+    _("remove %s %s from the estimate?")% (category, ttype),
     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
     
     if result == QtGui.QMessageBox.Yes:
