@@ -20,7 +20,7 @@ class InstallData(install_data):
         for po in glob.glob("src/openmolar/locale/locale-*.po"):
             directory, file = os.path.split(po)
             lang = file.replace("locale-", "").replace(".po","")            
-            mo - os.path.join(directory, lang, "openmolar.mo")
+            mo = os.path.join(directory, lang, "openmolar.mo")
             if not os.path.exists(mo) or newer(po, mo):
                 cmd = 'msgfmt -o %s %s' % (mo, po)
                 info ('compiling %s -> %s' % (po, mo))
