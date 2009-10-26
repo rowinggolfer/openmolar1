@@ -18,21 +18,17 @@ class InstallData(install_data):
         print "COMPILING PO FILES"
         i18nfiles = []
         for po in glob.glob("src/openmolar/locale/locale-*.po"):
-            directory, file = os.path.split(po)
-            mo = os.path.join(directory, file.replace(".po", ".mo"))
-
+            file = os.path.name(po)
+            lang = file.replace("locale-", "").replace(".po","")            
+            mo - os.path.join(directory, lang, "openmolar.mo")
             if not os.path.exists(mo) or newer(po, mo):
                 cmd = 'msgfmt -o %s %s' % (mo, po)
                 info ('compiling %s -> %s' % (po, mo))
                 if os.system(cmd) != 0:
-                    info('Error while running msgfmt on %s') % directory
+                    info('Error while running msgfmt on %s') % po
             
-            lang = file.replace("locale-", "").replace(".po","")            
-            destination_mo = os.path.join ("share",
-            "locale",lang,"LC_MESSAGES","openmolar.mo")
-
-            destdir = os.path.dirname(destination_mo)
-
+            destdir = os.path.join ("share", "locale", lang, "LC_MESSAGES")
+            
             i18nfiles.append((destdir, [mo]))
         return i18nfiles
 
