@@ -25,7 +25,7 @@ class InstallData(install_data):
                 cmd = 'msgfmt -o %s %s' % (mo, po)
                 info ('compiling %s -> %s' % (po, mo))
                 if os.system(cmd) != 0:
-                    info('Error while running msgfmt on %s') % po
+                    info('Error while running msgfmt on %s'% po)
             
             destdir = os.path.join ("share", "locale", lang, "LC_MESSAGES")
             
