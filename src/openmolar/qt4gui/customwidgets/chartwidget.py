@@ -163,8 +163,7 @@ class chartWidget(QtGui.QWidget):
         self.__dict__[tooth] = []
         for prop in proplist:
             if prop != "":
-                if prop[0] != "!":
-                    self.__dict__[tooth].append(prop.lower() + " ")
+                self.__dict__[tooth].append(prop.lower() + " ")
 
     def mouseMoveEvent(self, event):
         '''
@@ -386,7 +385,7 @@ class chartWidget(QtGui.QWidget):
         ###################### DRAW THE TOOTH's TEXT###########################
         #--tooth ident is always ur1, ur2 ...
         #--tooth name is more flexible for deciduous teeth etc...
-        toothtext = str(toothid[2])
+        toothtext = toothid[2]
         #check for deciduous teeth
         if toothtext in ("A", "B", "C", "D", "E", "*"):
             #################BABY TOOTH###########################
@@ -442,9 +441,8 @@ class chartWidget(QtGui.QWidget):
                 painter.drawText(comRect, QtCore.Qt.AlignCenter,
                 prop.upper())
                 painter.restore()
-                #props.remove(prop)
-
-        toothS = toothSurfaces(self, toothRect, ident, self.isStaticChart)
+                
+        toothS = toothSurfaces(self, toothRect, toothid, self.isStaticChart)
         toothS.setProps(props)
         toothS.draw(self, painter)
         painter.restore()
@@ -465,15 +463,14 @@ class toothSurfaces():
         self.props = ""
         #--backtooth?
         self.backTooth = False
-        pos = ident[2]
-        if pos == "*" or int(pos) > 3:
+        self.toothtext = ident[2]
+        if re.match("[DE45678*]", self.toothtext):
             self.backTooth = True
         self.isStatic = isStatic
 
         self.quadrant = ident[0:2]
         self.isUpper = ident[0] == "u"
-        self.toothtext = ident[2]
-
+        
         #--the occlusal surface (for backteeth)
         #--or incisal edge for front teeth..
         #-- is given a width here.
@@ -496,7 +493,7 @@ class toothSurfaces():
             self.painter = painter
         for prop in self.props:
             prop = prop.strip(" ")
-            if prop[0] == "(":
+            if re.match("\(.*", prop):
                 #-- brackets are used to indicate the start/end of a bridge
                 #--let's see bridge start by shrinking that edge.
                 ##TODO - draw a demarcation line here??
@@ -509,7 +506,7 @@ class toothSurfaces():
                 #--necessary for condition in a few lines time
                 prop = prop.strip("(")
 
-            elif prop[-1] == ")":
+            elif re.match(".*\)$", prop):
                 #--other end of a bridge
                 adj = self.rect.width()*0.10
                 if self.isUpper:
@@ -541,7 +538,7 @@ class toothSurfaces():
             self.painter.setPen(erase_color)
             self.painter.setBrush(erase_color)
             self.painter.drawRect(self.rect)
-
+        
         #--set variables for fill draw points
         #--this are NOT static as the widget is resizable
         ##TODO I could probably get performance improvement here.
@@ -601,14 +598,16 @@ class toothSurfaces():
                 prop =  prop.strip("#&")
                 if prop == "pv":
                     prop = "pv,pj"
+                if re.match("!.*", prop):
+                    prop = ""
                 if "/"  in prop:
-                    if prop[0] == "(":
+                    if re.match("\(.*", prop):
                         #--start of a bridge
                         leading_bracket = True
                         prop = prop[1:]
                     else:
                         leading_bracket = False
-                    if prop[0:2] == "br":
+                    if re.match("br/.*",prop):
                         #--bridge
                         prop = prop[3:]
                         if leading_bracket:

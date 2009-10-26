@@ -39,7 +39,7 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.initialVal = str(self.lineEdit.text().toAscii())
         #self.lineEdit.setText(self.initialVal)
         props = self.initialVal.strip(" ").split(" ")
-
+        props.remove("")
         row = 0
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setRowCount(len(props))

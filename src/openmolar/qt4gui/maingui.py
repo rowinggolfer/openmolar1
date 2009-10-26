@@ -2311,11 +2311,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                 split = False
                 while len(mtext) > 50:
                     split = True
-                    i = mtext.index(" ",50)
+                    if not " " in mtext:
+                        i = 50
+                    else:
+                        i = mtext.index(" ",50)
                     base += "%s<br />"% mtext[:i]
                     mtext = mtext[i:]
-                    if not " " in mtext:
-                        break
                 if split:
                     mtext = "%s%s"% (base, mtext)
                 message = _('''<center>Message from %s <br />

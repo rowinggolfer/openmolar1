@@ -7,6 +7,7 @@ from distutils.log import info
 
 import glob
 import os
+import re
 
 class InstallData(install_data):
     def run(self):
@@ -16,17 +17,19 @@ class InstallData(install_data):
     def _compile_po_files(self):
         print "COMPILING PO FILES"
         i18nfiles = []
-        for directory in glob.glob("src/openmolar/locale/*/LC_MESSAGES"):
-            po = os.path.join(directory, 'openmolar.po')
-            mo = os.path.join(directory, 'openmolar.mo')
+        for po in glob.glob("src/openmolar/locale/locale-*.po"):
+            directory, file = os.path.split(po)
+            mo = os.path.join(directory, file.replace(".po", ".mo"))
+
             if not os.path.exists(mo) or newer(po, mo):
                 cmd = 'msgfmt -o %s %s' % (mo, po)
                 info ('compiling %s -> %s' % (po, mo))
                 if os.system(cmd) != 0:
                     info('Error while running msgfmt on %s') % directory
             
-            destination_mo = os.path.join ("share", 
-            mo.replace("src/openmolar/",""))
+            lang = file.replace("locale-", "").replace(".po","")            
+            destination_mo = os.path.join ("share",
+            "locale",lang,"LC_MESSAGES","openmolar.mo")
 
             destdir = os.path.dirname(destination_mo)
 
