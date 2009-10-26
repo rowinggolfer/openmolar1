@@ -18,7 +18,7 @@ class InstallData(install_data):
         print "COMPILING PO FILES"
         i18nfiles = []
         for po in glob.glob("src/openmolar/locale/locale-*.po"):
-            file = os.path.name(po)
+            directory, file = os.path.split(po)
             lang = file.replace("locale-", "").replace(".po","")            
             mo - os.path.join(directory, lang, "openmolar.mo")
             if not os.path.exists(mo) or newer(po, mo):
