@@ -70,9 +70,12 @@ chosenserver = 0
 def setChosenServer(i):
     global DBNAME, chosenserver
     chosenserver = i
-    DBNAME = server_names[i]
-    print "DBNAME=", DBNAME
-
+    try:
+        DBNAME = server_names[i]
+        print "DBNAME=", DBNAME
+    except IndexError:
+        print "no server name.. config file is old format?"
+        
 wkdir = determine_path()
 referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
 appt_shortcut_file = os.path.join(wkdir, "resources",
