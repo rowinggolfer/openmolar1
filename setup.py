@@ -21,8 +21,11 @@ class InstallData(install_data):
             directory, file = os.path.split(po)
             lang = file.replace("locale-", "").replace(".po","")            
             mo = os.path.join(directory, lang)
-            os.mkdir(mo)
-            mo - os.path.join(mo, "openmolar.mo")
+            try:
+            	os.mkdir(mo)
+            except OSError:
+                pass
+            mo = os.path.join(mo, "openmolar.mo")
             if not os.path.exists(mo) or newer(po, mo):
                 cmd = 'msgfmt -o %s %s' % (mo, po)
                 info ('compiling %s -> %s' % (po, mo))
