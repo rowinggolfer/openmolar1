@@ -103,7 +103,7 @@ class document():
             elif self.tone=="B":
                 d=self.previousCorrespondenceDate
                 if d=="" or d==None:
-                    painter.drawText(x, y, _("A previous account was sent out to you on %s"%d))
+                    painter.drawText(x, y, _("A previous account was sent out to you on %s")%d)
                     y+=serifLineHeight
                 painter.drawText(x, y, _("It would be appreciated if you would settle this matter as soon as possible."))
             else:
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate(False)
     app = QtGui.QApplication(sys.argv)
-    account=document('TITLE', 'FNAME', 'SNAME', ("6 ST MARY'S ROAD", 'KIRKHILL', '', '', 'Inverness-shire'),'IV5 7NX',"80.00")
+    account=document('TITLE', 'FNAME', 'SNAME', ("MY STREET", 'MY VILLAGE', '', '', 'Inverness-shire'),'IV2 222',"80.00")
     account.setTone("B")
     account.print_()
     account.setTone("C")
