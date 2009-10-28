@@ -42,8 +42,8 @@ print "Version %s\n Bzr Revision No. %s"%(__MAJOR_VERSION__,__build__)
 APPOINTMENT_CARD_HEADER =\
 "The Academy Dental Practice, 19 Union Street\nInverness. tel 01463 232423"
 
-APPOINTMENT_CARD_FOOTER =\
-"Please try and give at least 24 hours notice\n if you need to change an appointment."
+APPOINTMENT_CARD_FOOTER = _("Please try and give at least 24 hours notice") +\
+"\n" +_("if you need to change an appointment.")
 
 GP17_LEFT = 0
 GP17_TOP = 0
@@ -237,9 +237,27 @@ bookEnd = datetime.date(2009,12,31)
 descriptions = {}
 #--treatment codes..
 
-apptTypes = ("EXAM","BITE","BT","DOUBLE",
-"FAMILY","FILL","FIT","HYG","IMPS","LF","ORTHO",
-"PAIN","PREP","RCT","RECEM","REVIEW","SP","TRY","XLA")
+apptTypes = (
+_("EXAM"),
+_("BITE"),
+_("BT"),
+_("DOUBLE"),
+_("FAMILY"),
+_("FILL"),
+_("FIT"),
+_("HYG"),
+_("IMPS"),
+_("LF"),
+_("ORTHO"),
+_("PAIN"),
+_("PREP"),
+_("RCT"),
+_("RECEMENT"),
+_("REVIEW"),
+_("SP"),
+_("TRY"),
+_("XLA")
+)
 
 #-- default appt font size
 appointmentFontSize = 8
@@ -328,14 +346,29 @@ def pyDatetoSQL(d):
 def formatMoney(m):
     '''
     takes an integer, returns a string
-    "7.30"
+    u"£7.30"
     '''
     try:
         #return unicode(locale.currency(m/100))
         
-        return _(u"£%.02f")% (m/100)
+        return _(u"£") + "%.02f"% (m/100)
     except:
         return "???"
+    
+def reverseFormatMoney(m):
+    '''
+    takes a string (as from above)
+    and returns the value in pence
+    '''
+    numbers = re.findall("\d",m)
+    retarg = ""
+    for number in numbers:
+        retarg += number
+    try:
+        return int(retarg)
+    except ValueError:
+        print "unable to convert %s to an integer - returning 0"% m
+        return 0
 
 def GP17formatDate(d):
     '''
@@ -351,8 +384,8 @@ def dayName(d):
     expects a datetime object, returns the day
     '''
     try:
-        return ("","Monday","Tuesday","Wednesday","Thursday",
-        "Friday","Saturday","Sunday")[d.isoweekday()]
+        return ("",_("Monday"),_("Tuesday"),_("Wednesday"),_("Thursday"),
+        _("Friday"),_("Saturday"),_("Sunday"))[d.isoweekday()]
     except:
         pass
 
@@ -361,8 +394,19 @@ def monthName(d):
     expects a datetime object, returns the month
     '''
     try:
-        return("","January","February","March","April","May","June","July",
-        "August","September","October","November","December")[d.month]
+        return("", 
+        _("January"),
+        _("February"),
+        _("March"),
+        _("April"),
+        _("May"),
+        _("June"),
+        _("July"),
+        _("August"),
+        _("September"),
+        _("October"),
+        _("November"),
+        _("December"))[d.month]
     except:
         pass
 

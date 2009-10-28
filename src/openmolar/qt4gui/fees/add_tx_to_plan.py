@@ -157,14 +157,16 @@ def fromFeeTable(parent, item):
         dl.description_lineEdit.setText(item.text(4))
         if "N" in parent.pt.cset:
             print "using NHS cols"
-            fee = int(item.text(6).replace(".","")) / 100
-            ptfee = int(item.text(7).replace(".","")) / 100
+            fee = localsettings.reverseFormatMoney(item.text(6))
+            ptfee = localsettings.reverseFormatMoney(item.text(7))
         else:
             print "using private cols"
-            fee = int(item.text(8).replace(".","")) / 100
-            ptfee = fee    
-        dl.fee_doubleSpinBox.setValue(fee)
-        dl.ptFee_doubleSpinBox.setValue(ptfee)
+            fee = localsettings.reverseFormatMoney(item.text(8))
+            ptfee = fee 
+        if "I" == parent.pt.cset:
+            ptfee = 0
+        dl.fee_doubleSpinBox.setValue(fee/100)
+        dl.ptFee_doubleSpinBox.setValue(ptfee/100)
         
         if Dialog.exec_():
             no = dl.number_spinBox.value()
