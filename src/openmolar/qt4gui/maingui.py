@@ -1963,7 +1963,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             if result == QtGui.QMessageBox.Yes:
                 try:
                     data, version=docsprinted.getData(ix)
-                    f=open("temp.pdf", "w")
+                    f = open("temp.pdf", "wb")
                     f.write(data)
                     f.close()
                     localsettings.openPDF( "temp.pdf" )
