@@ -17,9 +17,9 @@ class InstallData(install_data):
     def _compile_po_files(self):
         print "COMPILING PO FILES"
         i18nfiles = []
-        for po in glob.glob("src/openmolar/locale/locale-*.po"):
+        for po in glob.glob("src/openmolar/locale/*.po"):
             directory, file = os.path.split(po)
-            lang = file.replace("locale-", "").replace(".po","")            
+            lang = file.replace(".po","")            
             mo = os.path.join(directory, lang)
             try:
             	os.mkdir(mo)
@@ -42,7 +42,7 @@ if os.path.isfile("MANIFEST"):
 
 setup(
     name = 'openmolar',
-    version = '0.1.5',
+    version = '0.1.6',
     description = 'Open Source Dental Practice Management Software',
     author = 'Neil Wallace',
     author_email = 'rowinggolfer@googlemail.com',
