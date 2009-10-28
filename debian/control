@@ -9,11 +9,10 @@ Homepage: https://launchpad.net/openmolar
 
 Package: openmolar
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python-qt4, python-mysqldb, evince
+Depends: ${misc:Depends}, ${python:Depends}, python-qt4, python-mysqldb, xdg-utils
 XB-Python-Version: ${python:Versions}
 Description: Dental Practice Management Software
- see https://launchpad.net/openmolar for project description and 
- http://www.academydental.com/openmolar for screenshots
+ see https://launchpad.net/openmolar for project description and links
  .
  irc channel (for devs and users) is #openmolar on freenode.net
 
