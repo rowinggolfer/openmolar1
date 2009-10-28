@@ -243,11 +243,11 @@ def nhsRegsPDF(parent):
                 doc = os.path.join(localsettings.wkdir, 'resources', 
                 "scotNHSremuneration09.pdf")            
         try:
-            print "opening %s with %s"% (doc, localsettings.pdfProg)
-            subprocess.Popen(["%s"% localsettings.pdfProg, doc])
+            print "opening %s"% doc
+            localsettings.openPDF(doc)
         except Exception, e:
             print Exception, e
-            parent.advise("Error opening PDF file", 2)
+            parent.advise(_("Error opening PDF file"), 2)
 
 def chooseFeescale(parent, arg):
     '''

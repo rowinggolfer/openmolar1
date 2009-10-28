@@ -1966,7 +1966,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                     f=open("temp.pdf", "w")
                     f.write(data)
                     f.close()
-                    subprocess.Popen(["%s"%localsettings.pdfProg, "temp.pdf"])
+                    localsettings.openPDF( "temp.pdf" )
                 except Exception, e:
                     print "view PDF error"
                     print Exception, e

@@ -13,6 +13,8 @@ import sys
 import datetime
 import os
 import locale
+import re
+import subprocess
 
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
@@ -92,12 +94,27 @@ except:  #TypeError
     import gettext
     gettext.install("openmolar",unicode=True)
 
+
+def openPDF(filepath):
+    '''
+    open a PDF - minimal checks to ensure no malicious files have been
+    inserted into my sacred filepaths though.....
+    '''
+    if not re.match(".*[.]pdf$", filepath):
+        raise Exception, "%s is not a pdf file"% filepath
+    if not os.path.exists(filepath):
+        raise IOError, "%s does not exist"% filepath
+        
+    if "win" in sys.platform:
+        os.startfile(filepath)
+    else:
+        subprocess.Popen(["xdg-open", filepath])
+
 if "win" in sys.platform:
     print "windows settings"
     #-- sorry about this... but cross platform is a goal :(
     global_cflocation = 'C:\\Program Files\\openmolar\\openmolar.conf'
     localFileDirectory = os.path.join(os.environ.get("HOMEPATH"),".openmolar")
-    pdfProg = "cmd \c start" #"C:\\Program Files\\SumatraPDF\\SumatraPDF.exe"
     #-- this next line is necessary because I have to resort to relative
     #-- imports for the css stuff eg... ../resources/style.css
     #-- on linux, the root is always /  on windows... ??
@@ -115,7 +132,6 @@ else:
         print "unknown system platform (mac?) - defaulting to linux settings"
     global_cflocation = '/etc/openmolar/openmolar.conf'
     localFileDirectory = os.path.join(os.environ.get("HOME"),".openmolar")
-    pdfProg = "xdg-open"
 
 cflocation = os.path.join(localFileDirectory,"openmolar.conf")
 
