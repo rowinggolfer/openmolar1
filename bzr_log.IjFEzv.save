@@ -1,6 +1,0 @@
-currtrmt-------------- This line and the following will be ignored --------------
-
-modified:
-  src/openmolar/dbtools/patient_class.py
-  src/openmolar/qt4gui/fees/course_module.py
-  src/openmolar/settings/_version.py
