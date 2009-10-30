@@ -741,7 +741,7 @@ def layout_apptTable(parent):
          #convert dentist from int to initials
         dent = localsettings.apptix_reverse.get(row[2])
         if dent == None:
-            parent.advise("removing appointment dentist", 1)
+            parent.advise(_("removing appointment dentist"), 1)
             dent = ""
         length = str(row[9])
         trt1, trt2, trt3 = tuple(row[3:6])
@@ -779,7 +779,7 @@ def layout_apptTable(parent):
         
         if date != None:
             #-- use QVariant to display the date.
-            qv = QtCore.QVariant(date)
+            qv = QtCore.QVariant(QtCore.QDate(date))
             widItem.setData(0, 0, qv)
         
         for i in range (widItem.columnCount()):

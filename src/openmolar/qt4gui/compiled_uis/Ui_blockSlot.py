@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'blockSlot.ui'
 #
-# Created: Thu Oct 29 16:53:56 2009
+# Created: Fri Oct 30 09:05:50 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -24,7 +24,7 @@ class Ui_Dialog(object):
         self.label = QtGui.QLabel(self.tab)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 2)
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 3)
         self.label_3 = QtGui.QLabel(self.tab)
         self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName("label_3")
