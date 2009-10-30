@@ -1489,8 +1489,9 @@ def blockEmptySlot(parent, tup):
     
 def fillEmptySlot(parent, tup):
     '''
-    fill the empty slot
+    fill the empty slot - this is called via the appointment widget.
     '''
+    print "fillEmptySlot", tup
     adate = parent.ui.calendarWidget.selectedDate().toPyDate()
     start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
     end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
