@@ -263,7 +263,7 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
         if self.font != font:
             self.font = font
             self.fm = QtGui.QFontMetrics(font)
-            self.vheaderwidth = self.fm.width("Wednesday 28 ")
+            self.vheaderwidth = self.fm.width(_("Wednesday")+" 28 ")
         
         self.setBankHolColWidth()
             
@@ -388,6 +388,7 @@ class yearCalendar(QtGui.QWidget, raiseMemoDialog):
         self.headingdata={}
         self.data = {}
         self.dents = ()
+        self.setFont()
         self.startDOW = 0
         self.setSelectedDate(datetime.date.today())
         self.setMouseTracking(True)

@@ -1718,16 +1718,19 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         ##frequently don't need 4.
         self.ui.apptBookWidgets=[]
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900"))
+        appointmentWidget(self, "0800", "1900"))
         self.ui.appt1scrollArea.setWidget(self.ui.apptBookWidgets[0])
+        
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900"))
+        appointmentWidget(self, "0800", "1900"))
         self.ui.appt2scrollArea.setWidget(self.ui.apptBookWidgets[1])
+
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900"))
+        appointmentWidget(self,"0800", "1900"))
         self.ui.appt3scrollArea.setWidget(self.ui.apptBookWidgets[2])
+
         self.ui.apptBookWidgets.append(appointmentwidget.
-                                       appointmentWidget("0800", "1900"))
+        appointmentWidget(self, "0800", "1900"))
         self.ui.appt4scrollArea.setWidget(self.ui.apptBookWidgets[3])
 
         #-appointment OVerview widget
@@ -3099,12 +3102,19 @@ WITH PT RECORDS %d and %d''')% (
         '''
         appt_gui_module.clearEmergencySlot(self, arg)
 
-    def apptBook_emptySlotSignal(self, arg):
+    def apptBook_blockSlotSignal(self, arg):
         '''
         a custom widget (dentist diary) has sent a signal that an
-        emergency slot has been selected.
+        free slot has been selected for blocking.
         '''
         appt_gui_module.blockEmptySlot(self, arg)
+        
+    def apptBook_fillSlotSignal(self, arg):
+        '''
+        a custom widget (dentist diary) has sent a signal that an
+        free slot has been selected for filling.
+        '''
+        appt_gui_module.fillEmptySlot(self, arg)
 
     def calendarWidget_changed(self):
         '''
@@ -4034,7 +4044,11 @@ WITH PT RECORDS %d and %d''')% (
             self.apptBook_emergencySlotSignal)
 
             book.connect(book, QtCore.SIGNAL("BlockEmptySlot"),
-            self.apptBook_emptySlotSignal)
+            self.apptBook_blockSlotSignal)
+            
+            book.connect(book, QtCore.SIGNAL("Appointment_into_EmptySlot"),
+            self.apptBook_fillSlotSignal)
+            
 
     def signals_appointmentOVTab(self):
         #appointment overview tab

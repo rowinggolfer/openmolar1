@@ -717,6 +717,38 @@ code2, note, flag0, flag1, flag2, flag3):
     #db.close()
     return result
 
+def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
+    '''
+    this is the procedure called when makingan appointment via clicking on a 
+    free slot in a DAY view.
+    '''
+    #- 1st check the block is free
+    block_length = localsettings.minutesPastMidnight(end) - \
+    localsettings.minutesPastMidnight(start)
+    
+    slots = future_slots(block_length, bldate, bldate, (apptix,))
+    
+    if not (slots and (start, block_length) in slots[0][2]):
+        #-- block no longer available!! 
+        return False
+    
+    name = "%s %s"% (pt.fname, pt.sname)
+    try:
+        cset = ord(pt.cset)
+    except:
+        cset = 0
+        
+    print "making appointment"
+    make_appt(bldate, apptix, start, end, name, pt.serialno, reason, "", "", 
+    "", 1, cset, 0, 0)
+    
+    block_length = localsettings.minutesPastMidnight(bl_end) - \
+    localsettings.minutesPastMidnight(bl_start)
+    print "putting into pt diary"
+    aprix = add_pt_appt(pt.serialno, apptix, block_length, reason)
+    print "adjust pt diary"
+    return pt_appt_made(pt.serialno, aprix, bldate, start, apptix)
+
 def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     '''
     put a block in the book, with text set as reason

@@ -23,21 +23,25 @@ import _version  #--in the same directory - created by bzr
 __MAJOR_VERSION__= "0.1.6"
 
 SUPERVISOR = "boss"
-
 DBNAME = "default"
-
 SCHEMA_VERSION = "1.1"
-
 DEBUGMODE = False
-
-
-
 ENCODING = "latin-1" #necessary for the uk £ symbol
 
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
 
-print "Version %s\n Bzr Revision No. %s"%(__MAJOR_VERSION__,__build__)
+try:
+    _("hello")
+except:  #TypeError
+    print "installing gettext"
+    ##- an unelegant hack to get _() on the namespace for testing
+    ##- main.py will normally do this for us.
+    import gettext
+    gettext.install("openmolar",unicode=True)
+
+
+print "Version %s\nBzr Revision No. %s"% (__MAJOR_VERSION__, __build__)
 
 APPOINTMENT_CARD_HEADER =\
 "The Academy Dental Practice, 19 Union Street\nInverness. tel 01463 232423"
@@ -86,13 +90,6 @@ stylesheet = os.path.join(wkdir, "resources", "style.css")
 resources_path = os.path.join(wkdir, "resources")
 
 
-try:
-    _("hello")
-except:  #TypeError
-    print "installing gettext"
-    ##- an unelegant hack to get _() on the namespace for testing
-    import gettext
-    gettext.install("openmolar",unicode=True)
 
 
 def openPDF(filepath):

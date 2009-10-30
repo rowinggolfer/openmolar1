@@ -8,67 +8,191 @@
 
 
 from PyQt4 import QtCore, QtGui
+from openmolar.settings import localsettings
+from openmolar.qt4gui.compiled_uis import Ui_blockSlot
+from openmolar.qt4gui.compiled_uis import Ui_patient_finder
+from openmolar.dbtools import search
+from openmolar.dbtools import patient_class
+
 from openmolar.qt4gui.customwidgets import fiveminutetimeedit
 
-class blockDialog(object):
+class blockDialog(Ui_blockSlot.Ui_Dialog):
     def __init__(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(332, 199)
-        self.gridLayout = QtGui.QGridLayout(Dialog)
-        self.gridLayout.setObjectName("gridLayout")
-        self.label = QtGui.QLabel(Dialog)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 4)
-        self.label_3 = QtGui.QLabel(Dialog)
-        self.label_3.setObjectName("label_3")
-        self.gridLayout.addWidget(self.label_3, 1, 0, 1, 3)
-        self.start_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit(Dialog)
-        self.start_timeEdit.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.start_timeEdit.setObjectName("start_timeEdit")
-        self.gridLayout.addWidget(self.start_timeEdit, 1, 3, 1, 1)
-        self.label_4 = QtGui.QLabel(Dialog)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 2, 0, 1, 3)
-        self.finish_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit(Dialog)
-        self.finish_timeEdit.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.finish_timeEdit.setObjectName("finish_timeEdit")
-        self.gridLayout.addWidget(self.finish_timeEdit, 2, 3, 1, 1)
-        self.label_2 = QtGui.QLabel(Dialog)
-        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
-        self.comboBox = QtGui.QComboBox(Dialog)
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.gridLayout.addWidget(self.comboBox, 3, 2, 1, 2)
-        spacerItem = QtGui.QSpacerItem(20, 34, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 4, 1, 1, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setCenterButtons(True)
-        self.buttonBox.setObjectName("buttonBox")
-        self.gridLayout.addWidget(self.buttonBox, 5, 0, 1, 4)
+        self.Dialog = Dialog
+        self.setupUi(Dialog)
+        vlayout = QtGui.QVBoxLayout(self.blockStart_frame)
+        vlayout.setMargin(0)
+        self.start_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
+        vlayout.addWidget(self.start_timeEdit)
 
-        self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        vlayout = QtGui.QVBoxLayout(self.blockEnd_frame)        
+        vlayout.setMargin(0)
+        self.finish_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
+        vlayout.addWidget(self.finish_timeEdit)
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Confirm", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Dialog", "Block this Slot?", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("Dialog", "Block Start", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("Dialog", "Bock End", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Dialog", "Text to apply", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(0, QtGui.QApplication.translate("Dialog", "//Blocked//", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(1, QtGui.QApplication.translate("Dialog", "Emergency", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(2, QtGui.QApplication.translate("Dialog", "Reserved Clinical Time", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(3, QtGui.QApplication.translate("Dialog", "Out of Office", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(4, QtGui.QApplication.translate("Dialog", "Lunch", None, QtGui.QApplication.UnicodeUTF8))
+        vlayout = QtGui.QVBoxLayout(self.startTime_frame)        
+        vlayout.setMargin(0)
+        self.appointment_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
+        vlayout.addWidget(self.appointment_timeEdit)
 
+        self.reason_comboBox.addItems(localsettings.apptTypes)
+        self.pt_label.setText(_("No patient chosen!"))
+        self.patient = None
+        self.block = True
+        self.tabWidget.setCurrentIndex(0)
+        
+        QtCore.QObject.connect(self.changePt_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.changePt)
+
+        QtCore.QObject.connect(self.start_timeEdit, 
+        QtCore.SIGNAL("verifiedTime"), self.changedTimes)
+        
+        QtCore.QObject.connect(self.finish_timeEdit, 
+        QtCore.SIGNAL("verifiedTime"), self.changedTimes)
+        
+        QtCore.QObject.connect(self.appointment_timeEdit, 
+        QtCore.SIGNAL("verifiedTime"), self.changedStart)
+        
+        QtCore.QObject.connect(self.length_spinBox, 
+        QtCore.SIGNAL("valueChanged (int)"), self.changedLength)
+        
+    def changedLength(self, mins):
+        '''
+        user has modded the appointment start time, sync the other start
+        '''
+        finish = self.start_timeEdit.time().addSecs(mins*60)
+        self.finish_timeEdit.setTime(finish)
+        self.setLength()
+    
+    def changedStart(self,t):
+        '''
+        user has modded the appointment start time, sync the other start
+        '''
+        self.start_timeEdit.setTime(t)
+        
+    def changedTimes(self,t):
+        '''
+        user has altered the block start
+        '''
+        self.setLength()
+        
+    def exec_(self):
+        if self.Dialog.exec_():
+            if self.tabWidget.currentIndex() == 0:
+                return True
+            else:
+                if not self.patient or self.patient.serialno == 0:
+                    QtGui.QMessageBox.information(self.Dialog,_("error"),
+                    _("You need to choose a patient"))
+                    return False
+                self.block = False #a value to specify an "appointment"
+                return True
+    
+    def changePt(self):
+        def repeat_last_search():
+            dl.dob.setText(localsettings.lastsearch[2])
+            dl.addr1.setText(localsettings.lastsearch[4])
+            dl.tel.setText(localsettings.lastsearch[3])
+            dl.sname.setText(localsettings.lastsearch[0])
+            dl.fname.setText(localsettings.lastsearch[1])
+            dl.pcde.setText(localsettings.lastsearch[5])
+        
+        Dialog = QtGui.QDialog()
+        dl = Ui_patient_finder.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.dob.setText("00/00/0000")
+        dl.dob.setInputMask("00/00/0000")
+        QtCore.QObject.connect(dl.repeat_pushButton, QtCore.\
+                               SIGNAL("clicked()"), repeat_last_search)
+        dl.sname.setFocus()
+        if Dialog.exec_():
+            dob = str(dl.dob.text())
+            addr = str(dl.addr1.text().toAscii())
+            tel = str(dl.tel.text().toAscii())
+            sname = str(dl.sname.text().toAscii())
+            fname = str(dl.fname.text().toAscii())
+            pcde = str(dl.pcde.text().toAscii())
+            localsettings.lastsearch = (sname, fname, dob, tel, addr, pcde)
+            dob = localsettings.uk_to_sqlDate(dl.dob.text())
+
+            try:
+                serialno = int(sname)
+            except:
+                serialno = 0
+                
+            if serialno == 0:
+                candidates = search.getcandidates(dob, addr, tel, sname,
+                dl.snameSoundex_checkBox.checkState(), fname,
+                dl.fnameSoundex_checkBox.checkState(), pcde)
+
+                if candidates == ():
+                    self.omgui.advise(_("no match found"), 1)
+                else:
+                    if len(candidates)>1:
+                        sno = omgui.final_choice(candidates)
+                        if sno == None:
+                            serialno = int(sno)
+                    else:
+                        serialno = int(candidates[0][0])
+            
+            try:
+                self.setPatient(patient_class.patient(serialno))
+            except localsettings.PatientNotFoundError:
+                QtGui.QMessageBox.information(self.Dialog, 
+                _("Error"), _("patient not found"))
+
+                self.setPatient(patient_class.patient(0))
+                
+    def setPatient(self, pt):
+        '''
+        let's the dialog know who the patient is
+        '''
+        if pt.serialno != 0:
+            id = "%s %s %s - %s"% (pt.title, pt.fname, pt.sname, pt.serialno)
+            self.pt_label.setText(_("Chosen Patient is")+"<br />%s"% id) 
+        else:
+            self.pt_label.setText(_("no patient chosen"))             
+    
+        self.patient = pt
+        
+    def setTimes(self, start, finish):
+        '''
+        update the 3 time fields, and the available appointment length
+        '''
+        self.appointment_timeEdit.setMinimumTime(start)
+        self.appointment_timeEdit.setMaximumTime(finish)                                
+        self.appointment_timeEdit.setTime(start)
+        
+        self.start_timeEdit.setMinimumTime(start)                
+        self.start_timeEdit.setMaximumTime(finish)                                
+        self.start_timeEdit.setTime(start)
+                
+        self.finish_timeEdit.setMinimumTime(start)                
+        self.finish_timeEdit.setMaximumTime(finish)                
+        self.finish_timeEdit.setTime(finish)
+        self.setLength(True)
+    
+    def setLength(self, initialise = False):
+        start = self.start_timeEdit.time()
+        finish = self.finish_timeEdit.time()
+        
+        length = (finish.hour()*60 + finish.minute()) -(
+        start.hour()*60 + start.minute())
+        
+        self.length_label.setText("%d<br />"% length + _("minutes"))
+        if initialise:
+            self.length_spinBox.setMaximum(length)
+        self.length_spinBox.setValue(length)
+        
+if __name__ == "__main__":
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    dialog = QtGui.QDialog()
+    dl = blockDialog(dialog)
+    start = QtCore.QTime(14,40)
+    finish = QtCore.QTime(15,15)
+    dl.setTimes(start, finish)
+    dl.exec_()
+    
+    app.closeAllWindows()
+        

@@ -26,7 +26,7 @@ class appointmentWidget(QtGui.QWidget):
     '''
     a custom widget to for a dental appointment book
     '''
-    def __init__(self, sTime, fTime, parent=None):
+    def __init__(self, omgui, sTime, fTime, parent=None):
         ''' 
         useage is (startTime,finishTime, parentWidget - optional)
         startTime,finishTime in format HHMM or HMM or HH:MM or H:MM
@@ -59,6 +59,7 @@ class appointmentWidget(QtGui.QWidget):
         self.selected = (0,0)
         self.setMouseTracking(True)
         self.duplicateNo = -1 #use this for serialnos =0
+        self.omgui = omgui
 
     def setSlotLength(self, arg):
         '''
@@ -316,26 +317,36 @@ class appointmentWidget(QtGui.QWidget):
                 Dialog=QtGui.QDialog(self)
                 dl=blockslot.blockDialog(Dialog)
                 
-                dl.start_timeEdit.setMinimumTime(start)                
-                dl.start_timeEdit.setMaximumTime(finish)                                
-                dl.start_timeEdit.setTime(start)
-                dl.finish_timeEdit.setMinimumTime(start)                
-                dl.finish_timeEdit.setMaximumTime(finish)                
-                dl.finish_timeEdit.setTime(finish)
-                
-                if Dialog.exec_():
-                    reason=str(dl.comboBox.currentText())
+                dl.setTimes(start, finish)
+                dl.setPatient(self.omgui.pt)
+                    
+                if dl.exec_():
                     adjstart = dl.start_timeEdit.time()
                     adjfinish = dl.finish_timeEdit.time()
-                    if finish > start and \
-                    adjstart.minute()%5 == 0 and adjfinish.minute()%5 == 0:                   
-                        self.emit(QtCore.SIGNAL("BlockEmptySlot"),
-                        (start, finish, adjstart, adjfinish ,
-                        localsettings.apptix.get(self.dentist),reason))
-                    else:
-                        QtGui.QMessageBox.information(self, 
-                        "Whoops!","Bad Time Sequence!")
                         
+                    if dl.block == True:
+                        reason=str(dl.comboBox.currentText().toAscii())
+                        if finish > start :                   
+                            self.emit(QtCore.SIGNAL("BlockEmptySlot"),
+                            (start, finish, adjstart, adjfinish ,
+                            localsettings.apptix.get(self.dentist),reason))
+                        else:
+                            QtGui.QMessageBox.information(self, 
+                            "Whoops!","Bad Time Sequence!")
+                    else:
+                        reason = str(dl.reason_comboBox.currentText().toAscii())
+                        self.emit(QtCore.SIGNAL("Appointment_into_EmptySlot"),
+                        (start, finish, adjstart, adjfinish ,
+                        localsettings.apptix.get(self.dentist),reason,
+                        dl.patient))
+                        
+                        print "make a %d minute appointment for patient %d at"% (
+                        dl.length_spinBox.value(), dl.patient.serialno),
+                        print dl.appointment_timeEdit.time(),
+                        print "ending at", adjfinish
+                        print "reason", dl.reason_comboBox.currentText()
+                        
+                    
     def leaveEvent(self,event):
         self.selected=[-1,-1]
         self.update()
@@ -450,6 +461,8 @@ class appointmentWidget(QtGui.QWidget):
             painter.drawPolygon(QtGui.QPolygon(triangle))
 
 if __name__ == "__main__":
+    from openmolar.qt4gui import maingui
+        
     def clicktest_a(a):
         print "clicktest_a", a
     def clicktest_b(a):
@@ -463,7 +476,7 @@ if __name__ == "__main__":
     
     #--initiate a book starttime 08:00 endtime 10:00 
     #--five minute slots, text every 3 slots
-    form = appointmentWidget("0800","1700")
+    form = appointmentWidget(maingui.openmolarGui(),"0800","1700",None)
     form.setStartTime("0830")
     form.setEndTime("1630")
          

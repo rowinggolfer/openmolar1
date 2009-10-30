@@ -232,7 +232,7 @@ def clearApptButtonClicked(parent):
     #--aprix is a UNIQUE, iterating field in the database starting at 1,
     aprix = int(selectedAppt.text(9))
     dateText = str(selectedAppt.text(0))
-    if dateText != "TBA":
+    if dateText != _("TBA"):
         adate =  selectedAppt.data(0,0).toDate().toPyDate()
     else:
         adate = None
@@ -325,7 +325,7 @@ def modifyAppt(parent):
                 QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
     if selectedAppt == None:
-        parent.advise("No appointment selected", 1)
+        parent.advise(_("No appointment selected"), 1)
     else:
         Dialog = QtGui.QDialog(parent)
         dl = Ui_specify_appointment.Ui_Dialog()
@@ -349,7 +349,7 @@ def modifyAppt(parent):
         dentist = str(selectedAppt.text(1))
         dateText = str(selectedAppt.text(0))
         adate = None
-        if dateText != "TBA":
+        if dateText != _("TBA"):
             adate = selectedAppt.data(0,0).toDate().toPyDate()
             for widget in (dl.apptlength_comboBox, dl.practix_comboBox,
             dl.scheduleNow_pushButton):
@@ -412,7 +412,7 @@ def modifyAppt(parent):
             appointments.modify_pt_appt(aprix, parent.pt.serialno,
             practix, length, code0, code1, code2, note, "", cst)
             layout_apptTable(parent)
-            if dateText == "TBA":
+            if dateText == _("TBA"):
                 if dl.makeNow:
                     layout_apptTable(parent)
                     select_apr_ix(parent, aprix)
@@ -432,7 +432,7 @@ def begin_makeAppt(parent):
         parent.advise("Please select an appointment to schedule", 1)
         return
     dateText = selectedAppt.text(0)
-    if str(dateText) != "TBA":
+    if str(dateText) != _("TBA"):
         parent.advise("appointment already scheduled for %s"%dateText, 1)
         return
     ##todo implement datespec  -
@@ -703,7 +703,7 @@ def ptApptTableNav(parent):
         parent.ui.findAppt_pushButton.setEnabled(False)
         #parent.ui.printAppt_pushButton.setEnabled(False)
         return
-    if selected.text(0) == "TBA":
+    if selected.text(0) == _("TBA"):
         parent.ui.makeAppt_pushButton.setEnabled(True)
         parent.ui.modifyAppt_pushButton.setEnabled(True)
         parent.ui.clearAppt_pushButton.setEnabled(True)
@@ -717,7 +717,9 @@ def ptApptTableNav(parent):
         #parent.ui.printAppt_pushButton.setEnabled(True)
 
 def layout_apptTable(parent):
-    '''populates the patients appointment table'''
+    '''
+    populates the patient's diary
+    '''
     headers = ["Date", "Pract..", "Time", "Length", "Trt1", "Trt2", "Trt3",
     "MEMO", "date spec", "orderAdded"]
     parent.ui.ptAppointment_treeWidget.clear()
@@ -1481,9 +1483,31 @@ def blockEmptySlot(parent, tup):
     reason = tup[5]
     if not appointments.block_appt(adate, dent, start, end, 
     adjstart, adjend, reason):
-        parent.advise("unable to block - has the book been altered elsewhere?",
-        1)
+        parent.advise(
+        _("unable to block - has the book been altered elsewhere?"), 1)
     layout_dayView(parent)
+    
+def fillEmptySlot(parent, tup):
+    '''
+    fill the empty slot
+    '''
+    adate = parent.ui.calendarWidget.selectedDate().toPyDate()
+    start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
+    end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
+    adjstart = localsettings.humanTimetoWystime(tup[2].toString("h:mm"))
+    adjend = localsettings.humanTimetoWystime(tup[3].toString("h:mm"))
+    pt = tup[6]
+    dent = tup[4]
+    reason = tup[5]
+    if not appointments.fill_appt(adate, dent, start, end, 
+    adjstart, adjend, reason, pt):
+        parent.advise(
+        _("unable to make appointment - has the book been altered elsewhere?")
+        ,1)
+    layout_dayView(parent)
+    if pt.serialno == parent.pt.serialno:
+        layout_apptTable(parent)
+    
 
 def aptOVlabelRightClicked(parent, d):
     '''
@@ -1509,7 +1533,7 @@ def printApptCard(parent):
     while iterator.value():
         #parent.ui.ptAppointment_treeWidget.setItemSelected(iter)
         i = iterator.value() #parent.ui.ptAppointment_treeWidget.currentItem()
-        if i.data(0,0).toString() != "TBA":
+        if i.data(0,0).toString() != _("TBA"):
             adate = i.data(0,0).toDate().toPyDate()
             if adate > localsettings.currentDay():
                 futureAppts += ((localsettings.longDate(adate), 
