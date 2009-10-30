@@ -126,11 +126,11 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                 dl.fnameSoundex_checkBox.checkState(), pcde)
 
                 if candidates == ():
-                    self.omgui.advise(_("no match found"), 1)
+                    self.Dialog.parent().omgui.advise(_("no match found"), 1)
                 else:
                     if len(candidates)>1:
-                        sno = omgui.final_choice(candidates)
-                        if sno == None:
+                        sno = self.Dialog.parent().omgui.final_choice(candidates)
+                        if sno != None:
                             serialno = int(sno)
                     else:
                         serialno = int(candidates[0][0])
