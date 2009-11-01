@@ -17,8 +17,10 @@ def compile_ui(ui_fname, outdir=""):
     outname = "Ui_%s.py"% name.rstrip(".ui")
     pyfile = os.path.join(outdir, outname)
 
-    if os.path.exists(pyfile) and \
-    (os.stat(pyfile).st_mtime > os.stat(ui_fname).st_mtime):
+    if name!="main.ui":
+        
+      if os.path.exists(pyfile) and \
+      (os.stat(pyfile).st_mtime > os.stat(ui_fname).st_mtime):
         return
 
     f = open(pyfile,"w")
@@ -32,7 +34,11 @@ def compile_ui(ui_fname, outdir=""):
     data = data.replace(", None, QtGui.QApplication.UnicodeUTF8", "")
     data= re.sub('QtGui.QApplication.translate\(".*", ', "_( u", data)
 
-    data = data.replace('setShowSortIndicator',"setSortIndicatorShown")
+    #some hacks for 4.5/4.6 compatibility
+    data = data.replace('setShowSortIndicator',"setSortIndicatorShown") 
+    
+    data = data.replace('spinBox.setProperty("value", 8)',
+    'spinBox.setProperty("value", QtCore.QVariant(8))')
 
     f = open(pyfile,"w")
     f.write(data)
