@@ -1584,6 +1584,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()
         self.editPageVisited=False
+        self.ui.mdiArea.setMaximumHeight(0)
 
     def advise(self, arg, warning_level=0):
         '''
@@ -1595,6 +1596,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         if warning_level == 0:
             self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
         elif warning_level == 1:
+            self.notify(arg)
             QtGui.QMessageBox.information(self, _("Advisory"), arg)
         elif warning_level == 2:
             now=QtCore.QTime.currentTime()
@@ -1602,6 +1604,29 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             #--for logging purposes
             print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
 
+    def notify(self, message):
+        '''
+        pop up a notification
+        '''
+        label = QtGui.QLabel()
+        label.setText(message)
+        label.show()
+        self.ui.mdiArea.addSubWindow(label)
+        label.show()
+        self.ui.mdiArea.cascadeSubWindows()
+        
+    def subWindowManager(self, arg):
+        '''
+        this slot is called when a subwindow of the mdiArea is activated
+        the arg is the subwindow involved
+        if arg=None, all are closed
+        '''
+        if arg == None:
+            height = 0
+        else:
+            height = 100
+        self.ui.mdiArea.setMaximumHeight(height)
+        
     def quit(self):
         '''
         function called by the quit button in the menu
@@ -2585,17 +2610,18 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
     def showForumIcon(self, newItems=True):
         tb=self.ui.main_tabWidget.tabBar()
         if newItems:
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-            tb.setTabIcon(7, icon)
-            tb.setTabText(7, "NEW FORUM POSTS")
+            #icon = QtGui.QIcon()
+            #icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal,
+            #QtGui.QIcon.Off)
+            #tb.setTabIcon(7, icon)
+            tb.setTabText(7, _("NEW FORUM POSTS"))
             tb.setTabTextColor(7, QtGui.QColor("red"))
         else:
             print "removing icon"
-            tb.setTabIcon(7, QtGui.QIcon())
-            tb.setTabText(7, "FORUM")
+            #tb.setTabIcon(7, QtGui.QIcon())
+            tb.setTabText(7, _("FORUM"))
             tb.setTabTextColor(7, QtGui.QColor())
+        self.notify("New Forum Posts")
 
     def save_patient_tofile(self):
         '''
@@ -3625,6 +3651,10 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.tasks_pushButton,
         QtCore.SIGNAL("clicked()"), self.newPtTask)
+        
+        QtCore.QObject.connect(self.ui.mdiArea,
+        QtCore.SIGNAL("subWindowActivated (QMdiSubWindow *)"), 
+        self.subWindowManager)
 
     def signals_admin(self):
         #admin page
