@@ -10,8 +10,8 @@ import sys,datetime
 from openmolar.connect import forumConnect,connect
 from openmolar.settings import localsettings
 
-headers=["db_index",_("topic"),_("author"), _("recipient"),
-_("submitted"),_("comment")]
+headers=["db_index",_("Subject"),_("From"), _("To"),
+_("Date"),_("Message")]
 
 class post():
     def __init__(self):
@@ -22,7 +22,7 @@ class post():
         self.date=None
         self.topic=""
         self.comment=""
-        self.briefcomment=""
+        #self.briefcomment=""
         self.open=True
 
 def commitPost(post):
@@ -78,9 +78,9 @@ def newPosts():
     query='''select max(ix) from forum'''
     cursor.execute(query)
     row = cursor.fetchone()
-    query="select max(id) from forumread where recipient=NULL"
+    query="select max(id) from forumread where op=NULL"
     for user in users:
-        query += " or recipient='%s'"% user
+        query += " or op='%s'"% user
     cursor.execute(query)
     row2 = cursor.fetchone()
     
@@ -116,9 +116,9 @@ def getPosts(table="forum"):
         newpost.date=row[4]
         newpost.recipient = row[5]
         newpost.comment=row[6]
-        newpost.briefcomment=row[6][:40]
-        if newpost.comment!=newpost.briefcomment:
-            newpost.briefcomment+="...."
+        #newpost.briefcomment=row[6][:40]
+        #if newpost.comment!=newpost.briefcomment:
+        #    newpost.briefcomment+="...."
         retarg.append(newpost)
     return retarg
 

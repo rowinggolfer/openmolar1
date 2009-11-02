@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Nov  1 22:03:20 2009
+# Created: Mon Nov  2 23:07:31 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -2812,7 +2812,7 @@ class Ui_MainWindow(object):
         self.feeSearch_pushButton_2.setToolTip(_( u"Click on this Button to search for in patient in your database."))
         self.feeSearch_pushButton_2.setText(_( u"Find"))
         self.feeSearch_pushButton_2.setShortcut(_( u"Ctrl+F"))
-        self.label_37.setText(_( u"Show topics for"))
+        self.label_37.setText(_( u"Show only topics for"))
         self.forumViewFilter_comboBox.setItemText(0, _( u"Everyone"))
         self.main_tabWidget.setTabText(self.main_tabWidget.indexOf(self.tab_23), _( u"FORUM"))
         self.menuMenu.setTitle(_( u"&File"))

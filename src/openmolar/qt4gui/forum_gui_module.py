@@ -39,12 +39,9 @@ def loadForum(parent):
     twidg.setHeaderLabels(headers)
     #-- get the posts
     posts = forum.getPosts()
-    #if topic == "forum":
-    #    topparentItem = QtGui.QTreeWidgetItem(twidg, ["General Topics"])
-    #else:
-    #    topparentItem = QtGui.QTreeWidgetItem(twidg,
-    #    ["OpenMolar and Computer Issues"])
-
+    
+    #topparentItem = QtGui.QTreeWidgetItem(twidg, ["General Topics"])
+    
     parentItems = {None : twidg}
     #--set the forum alternating topic colours
     mcolours = {True : QtCore.Qt.darkGreen, False : QtCore.Qt.darkBlue}
@@ -53,6 +50,7 @@ def loadForum(parent):
 
     for post in posts:
         parentItem = parentItems.get(post.parent_ix)
+        print "index = %s parent = ", (post.parent_ix, parentItem)
         item = QtGui.QTreeWidgetItem(parentItem)
         item.setText(0, "%d"% (post.ix))
         item.setText(1, post.topic)
@@ -65,7 +63,6 @@ def loadForum(parent):
         QtCore.QVariant(QtCore.QDateTime(post.date)))
                 
         item.setText(5, post.comment)
-        item.setText(6, post.briefcomment)
         if post.parent_ix == None:
             highlighted = not highlighted
             colour = mcolours[highlighted]
@@ -86,10 +83,10 @@ def loadForum(parent):
         for i in range(twidg.columnCount()):
             twidg.resizeColumnToContents(i)
         twidg.setColumnWidth(0, 0)
-        twidg.setColumnWidth(5, 0)
         parent.ui.forumDelete_pushButton.setEnabled(False)
         parent.ui.forumReply_pushButton.setEnabled(False)
     #-- turn the tab red.
+    print parentItems
     parent.showForumIcon(False)
 
 def forumItemSelected(parent):
@@ -97,13 +94,14 @@ def forumItemSelected(parent):
     user has selected an item in the forum
     '''
     item = parent.ui.forum_treeWidget.currentItem()
-    datetext = item.data(3,
+    datetext = item.data(4,
     QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
 
-    heading = "<b>Subject:\t%s<br />"% item.text(0)
-    heading += "Author:\t%s<br />"% item.text(1)
+    heading = "<b>Subject:\t%s<br />"% item.text(1)
+    heading += "From:\t%s<br />"% item.text(2)
+    heading += "To:\t%s<br />"% item.text(3)
     heading += "Date:\t%s</b>"% datetext
-    message = item.text(4)
+    message = item.text(5)
     parent.ui.forum_label.setText(heading)
     parent.ui.forum_textBrowser.setPlainText(message)
     enableButtons = not item.parent() == None
