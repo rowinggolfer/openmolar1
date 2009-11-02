@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>7</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -1703,7 +1703,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>736</width>
+                        <width>672</width>
                         <height>494</height>
                        </rect>
                       </property>
@@ -2084,7 +2084,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>744</width>
+                        <width>607</width>
                         <height>485</height>
                        </rect>
                       </property>
@@ -2453,7 +2453,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>736</width>
+                        <width>599</width>
                         <height>426</height>
                        </rect>
                       </property>
@@ -2719,8 +2719,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>759</width>
-                        <height>390</height>
+                        <width>622</width>
+                        <height>302</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2911,7 +2911,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>503</width>
+                           <width>366</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3313,7 +3313,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>738</width>
+                        <width>601</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4717,8 +4717,8 @@ Note - this will not remove items which are currently there. </string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>620</width>
+                     <height>300</height>
                     </rect>
                    </property>
                   </widget>
@@ -5527,6 +5527,9 @@ Note - this will not remove items which are currently there. </string>
                 </item>
                 <item>
                  <widget class="QFrame" name="frame_9">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
                   </property>
@@ -5615,62 +5618,24 @@ Note - this will not remove items which are currently there. </string>
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
                   </property>
-                  <layout class="QGridLayout" name="gridLayout_31">
-                   <item row="0" column="0" colspan="2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_25">
+                   <item>
                     <widget class="QLabel" name="label_37">
                      <property name="text">
-                      <string>Search by initials</string>
+                      <string>Show only topics for</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0">
-                    <widget class="QComboBox" name="comboBox"/>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QPushButton" name="feeSearch_pushButton_3">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>80</width>
-                       <height>28</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>70</width>
-                       <height>28</height>
-                      </size>
-                     </property>
-                     <property name="toolTip">
-                      <string>Click on this Button to search for in patient in your database.</string>
-                     </property>
-                     <property name="text">
-                      <string>Find</string>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="../resources/resources.qrc">
-                       <normaloff>:/search.png</normaloff>:/search.png</iconset>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>24</width>
-                       <height>24</height>
-                      </size>
-                     </property>
-                     <property name="shortcut">
-                      <string>Ctrl+F</string>
-                     </property>
+                   <item>
+                    <widget class="QComboBox" name="forumViewFilter_comboBox">
+                     <item>
+                      <property name="text">
+                       <string>Everyone</string>
+                      </property>
+                     </item>
                     </widget>
                    </item>
                   </layout>

@@ -19,75 +19,74 @@ from openmolar.dbtools import forum
 from openmolar.qt4gui.compiled_uis import Ui_forumPost
 
 def checkForNewForumPosts(parent):
-    '''checks for new forum posts every 5 minutes'''
-    print "checking forum...",
-    lastEvent = localsettings.last_forumCheck
-    greatestForumIx = forum.lastPost("forum")
-    greatestOMForumIx = forum.lastPost("omforum")
-    if greatestForumIx > lastEvent[0] or\
-    greatestOMForumIx > lastEvent[1]:
+    '''
+    checks for new forum posts every 5 minutes
+    '''
+    print "checking forum..."
+    if forum.newPosts():
         print "new posts found"
         parent.showForumIcon(True)
-    else:
-        print
-    localsettings.forumChecked(greatestForumIx, greatestOMForumIx)
             
 def loadForum(parent):
     '''
     loads the forum
     '''
-    #-- I have 2 forums. one for computer issues, and one for general
     twidg = parent.ui.forum_treeWidget
     twidg.clear()
 
-    for topic in ("forum", "omforum"):
-        #-- set the column headers (stored in another module)
-        headers = forum.headers
-        twidg.setHeaderLabels(headers)
-        #-- get the posts
-        posts = forum.getPosts(topic)
-        if topic == "forum":
-            topparentItem = QtGui.QTreeWidgetItem(twidg, ["General Topics"])
+    #-- set the column headers (stored in another module)
+    headers = forum.headers
+    twidg.setHeaderLabels(headers)
+    #-- get the posts
+    posts = forum.getPosts()
+    #if topic == "forum":
+    #    topparentItem = QtGui.QTreeWidgetItem(twidg, ["General Topics"])
+    #else:
+    #    topparentItem = QtGui.QTreeWidgetItem(twidg,
+    #    ["OpenMolar and Computer Issues"])
+
+    parentItems = {None : twidg}
+    #--set the forum alternating topic colours
+    mcolours = {True : QtCore.Qt.darkGreen, False : QtCore.Qt.darkBlue}
+    #--set a boolean for alternating row colours
+    highlighted = True
+
+    for post in posts:
+        parentItem = parentItems.get(post.parent_ix)
+        item = QtGui.QTreeWidgetItem(parentItem)
+        item.setText(0, "%d"% (post.ix))
+        item.setText(1, post.topic)
+        item.setText(2, post.inits)
+        if post.recipient:
+            item.setText(3, post.recipient)
         else:
-            topparentItem = QtGui.QTreeWidgetItem(twidg,
-            ["OpenMolar and Computer Issues"])
-
-        parentItems = {None : topparentItem}
-        #--set the forum alternating topic colours
-        mcolours = {True : QtCore.Qt.darkGreen, False : QtCore.Qt.darkBlue}
-        #--set a boolean for alternating row colours
-        highlighted = True
-
-        for post in posts:
-            parentItem = parentItems.get(post.parent_ix)
-            item = QtGui.QTreeWidgetItem(parentItem)
-            item.setText(0, post.topic)
-            item.setText(1, post.inits)
-            item.setText(2, post.briefcomment)
-            item.setData(3, QtCore.Qt.DisplayRole,
-            QtCore.QVariant(QtCore.QDateTime(post.date)))
-
-            item.setText(4, post.comment)
-            item.setText(5, "%d:%s"% (post.ix, topic))
-            if post.parent_ix == None:
-                highlighted = not highlighted
-                colour = mcolours[highlighted]
-            else:
-                colour = item.parent().textColor(2)
-                bcolour = QtCore.Qt.lightGray
-            for i in range(item.columnCount()):
-                item.setTextColor(i, colour)
-                if i == 3 and post.date > \
-                localsettings.currentTime() - datetime.timedelta(hours = 24):
+            item.setText(3, "-")            
+        item.setData(4, QtCore.Qt.DisplayRole,
+        QtCore.QVariant(QtCore.QDateTime(post.date)))
+                
+        item.setText(5, post.comment)
+        item.setText(6, post.briefcomment)
+        if post.parent_ix == None:
+            highlighted = not highlighted
+            colour = mcolours[highlighted]
+        else:
+            colour = item.parent().textColor(2)
+            bcolour = QtCore.Qt.lightGray
+        for i in range(item.columnCount()):
+            item.setTextColor(i, colour)
+            if i == 4: #date
+                if post.date > (localsettings.currentTime() - 
+                datetime.timedelta(hours = 24)):
                     item.setTextColor(i, QtGui.QColor("orange"))
+                ##TODO - put in some code to set the text for "today" 
+                ##or yesterday etc...
+        parentItems[post.ix] = item
 
-            parentItems[post.ix] = item
         twidg.expandAll()
-        twidg.setColumnWidth(4, 0)
-        twidg.setColumnWidth(5, 0)
         for i in range(twidg.columnCount()):
             twidg.resizeColumnToContents(i)
-            topparentItem.setBackgroundColor(i, QtGui.QColor("#eeeeee"))
+        twidg.setColumnWidth(0, 0)
+        twidg.setColumnWidth(5, 0)
         parent.ui.forumDelete_pushButton.setEnabled(False)
         parent.ui.forumReply_pushButton.setEnabled(False)
     #-- turn the tab red.
@@ -129,15 +128,11 @@ def forumNewTopic(parent):
         else:
             return
 
-    if dl.table_comboBox.currentIndex() == 0:
-        table = "forum"
-    else:
-        table = "omforum"
     post = forum.post()
     post.topic = dl.topic_lineEdit.text()
-    post.comment = dl.comment_textEdit.toPlainText()[:200]
+    post.comment = dl.comment_textEdit.toPlainText()[:255]
     post.inits = dl.comboBox.currentText()
-    forum.commitPost(post, table)
+    forum.commitPost(post)
     loadForum(parent)
 
 
@@ -149,7 +144,7 @@ def forumDeleteItem(parent):
     heading = item.text(0)
 
     result = QtGui.QMessageBox.question(parent, "Confirm",
-    "Delete selected Post?<br />'%s'"% heading,
+    _("Delete selected Post?")+"<br />'%s'"% heading,
     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
     if result == QtGui.QMessageBox.Yes:
@@ -185,3 +180,6 @@ def forumReply(parent):
         post.inits = dl.comboBox.currentText()
         forum.commitPost(post, table)
     loadForum(parent)
+
+def viewFilterChanged(parent, chosen):
+    print "viewFilterChanged", chosen

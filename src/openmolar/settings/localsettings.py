@@ -24,7 +24,7 @@ __MAJOR_VERSION__= "0.1.6"
 
 SUPERVISOR = "boss"
 DBNAME = "default"
-SCHEMA_VERSION = "1.1"
+SCHEMA_VERSION = "1.2"
 DEBUGMODE = False
 ENCODING = "latin-1" #necessary for the uk £ symbol
 
@@ -139,11 +139,6 @@ successful_login = False
 permissionsRaised = False
 permissionExpire = datetime.datetime.now()
 
-#-- set a base time for forum check
-def forumChecked(a,b):
-    global last_forumCheck
-    last_forumCheck = (a,b) #datetime.datetime.now()
-forumChecked(0,0)
 
 #################  MESSAGES ####################################################
 about = '''<p>

@@ -2576,10 +2576,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         brush = QtGui.QBrush(colours.LINEEDIT)
         palette = QtGui.QPalette()
         palette.setBrush(QtGui.QPalette.Base, brush)
-        for widg in (self.ui.snameEdit, self.ui.titleEdit, self.ui.fnameEdit,
-        self.ui.addr1Edit, self.ui.dobEdit, self.ui.pcdeEdit, self.ui.sexEdit):
+        for widg in (self.ui.snameEdit, self.ui.titleEdit, 
+        self.ui.fnameEdit, self.ui.addr1Edit, self.ui.dobEdit, 
+        self.ui.pcdeEdit, self.ui.sexEdit):
             widg.setPalette(palette)
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
+        self.ui.forumViewFilter_comboBox.addItems(
+        localsettings.allowed_logins)
+
         self.addHistoryMenu()
 
     def addHistoryMenu(self):
@@ -2617,12 +2621,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             tb.setTabText(7, _("NEW FORUM POSTS"))
             tb.setTabTextColor(7, QtGui.QColor("red"))
         else:
-            print "removing icon"
+            #print "removing icon"
             #tb.setTabIcon(7, QtGui.QIcon())
             tb.setTabText(7, _("FORUM"))
             tb.setTabTextColor(7, QtGui.QColor())
         self.notify("New Forum Posts")
-
+    
     def save_patient_tofile(self):
         '''
         our "patient" is a python object,
@@ -3437,6 +3441,12 @@ WITH PT RECORDS %d and %d''')% (
         '''
         forum_gui_module.forumItemSelected(self)
 
+    def forumViewFilterChanged(self, chosen):
+        '''
+        user has changed the filter for who's posts to show
+        '''
+        forum_gui_module.viewFilterChanged(self, chosen)
+
     def forumNewTopic_clicked(self):
         '''
         user has called for a new topic in the forum
@@ -3834,14 +3844,22 @@ WITH PT RECORDS %d and %d''')% (
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
 
     def signals_forum(self):
-        QtCore.QObject.connect(self.ui.forum_treeWidget, QtCore.SIGNAL(
-        "itemSelectionChanged ()"), self.forum_treeWidget_selectionChanged)
-        QtCore.QObject.connect(self.ui.forumDelete_pushButton, QtCore.SIGNAL(
-        "clicked()"), self.forumDeleteItem_clicked)
-        QtCore.QObject.connect(self.ui.forumReply_pushButton, QtCore.SIGNAL(
-        "clicked()"), self.forumReply_clicked)
-        QtCore.QObject.connect(self.ui.forumNewTopic_pushButton, QtCore.SIGNAL(
-        "clicked()"), self.forumNewTopic_clicked)
+        QtCore.QObject.connect(self.ui.forum_treeWidget, 
+        QtCore.SIGNAL("itemSelectionChanged ()"), 
+        self.forum_treeWidget_selectionChanged)
+
+        QtCore.QObject.connect(self.ui.forumDelete_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.forumDeleteItem_clicked)
+        
+        QtCore.QObject.connect(self.ui.forumReply_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.forumReply_clicked)
+        
+        QtCore.QObject.connect(self.ui.forumNewTopic_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.forumNewTopic_clicked)
+        
+        QtCore.QObject.connect(self.ui.forumViewFilter_comboBox,
+        QtCore.SIGNAL("currentIndexChanged (const QString&)"), 
+        self.forumViewFilterChanged)        
 
     def signals_history(self):
         QtCore.QObject.connect(self.pastDataMenu,

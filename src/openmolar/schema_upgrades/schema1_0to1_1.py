@@ -188,7 +188,7 @@ class dbUpdater(QtCore.QThread):
             
         except Exception, e:
             print "Exception caught",e
-            self.completeSig(e)
+            self.completeSig(str(e))
 
         return self.completed
 

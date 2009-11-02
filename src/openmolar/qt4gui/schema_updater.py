@@ -20,7 +20,6 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
     
-    
 def proceed():
     '''
     on to the main gui.
@@ -37,7 +36,8 @@ def main(arg):
     main function
     '''
     app = QtGui.QApplication(arg)
-    
+    pb = QtGui.QProgressDialog()
+        
     def updateProgress(arg, message):
         print message
         pb.setLabelText(message)
@@ -47,48 +47,81 @@ def main(arg):
     def completed(sucess, message):
         pb.hide()
         if sucess:
-            QtGui.QMessageBox.information(pb, "Sucess", message)            
+            QtGui.QMessageBox.information(pb, "Sucess", message)  
         else:
-            QtGui.QMessageBox.warning(pb, "Failure",
-            message +'''<br><br>
-            Please File A bug by visiting<br>
-            https://bugs.launchpad.net/openmolar''')
+            print "failure -",message
+            QtGui.QMessageBox.warning(pb, "Failure", message )
+            sys.exit("FAILED TO UPGRADE SCHEMA")
+            app.closeAllWindows()
         
     required = localsettings.SCHEMA_VERSION
     current = schema_version.getVersion()
-    message = '''<h3>Update required</h3>
-    Your Schema is out of date.<br /> 
-    You are at version %s, and %s is required.<br />
-    Would you like to Upgrade Now?'''% (current, required)
+    message = _('''<h3>Update required</h3>
+Your Openmolar database schema is out of date for this version of the client.
+<br /> 
+Your database is at version %s, and %s is required.<br />
+Would you like to Upgrade Now?''')% (current, required)
     
     result = QtGui.QMessageBox.question(None, "Update Schema",
     message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
     if result == QtGui.QMessageBox.Yes:
-        pb = QtGui.QProgressDialog()
         pb.setWindowTitle("openMolar")
         pb.show()
-        
-        if current < "1.1":
-            updateProgress(1,"upgrading to schema version 1.1")        
-            from openmolar.schema_upgrades import schema1_0to1_1
-            dbu = schema1_0to1_1.dbUpdater(pb)
-        
-            QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
-            updateProgress)
+        try:
+            ###################################################################
+            ## UPDATE TO SCHEMA 1.1
+            if current < "1.1":
+                updateProgress(1,_("upgrading to schema version")+" 1.1")        
+                from openmolar.schema_upgrades import schema1_0to1_1
+                dbu = schema1_0to1_1.dbUpdater(pb)
+            
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
+                updateProgress)
 
-            QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
-            completed)
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
+                completed)
+            
+                if not dbu.run():
+                    completed(False, _('Conversion to %s failed')% "1.1")
+            
+            ###################################################################
+            ## UPDATE TO SCHEMA 1.2
+            if current < "1.2":
+                updateProgress(1,_("upgrading to schema version")+" 1.2")        
+                from openmolar.schema_upgrades import schema1_1to1_2
+                dbu = schema1_1to1_2.dbUpdater(pb)
+            
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
+                updateProgress)
+
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
+                completed)
+            
+                if not dbu.run():
+                    completed(False, _('Conversion to %s failed')% "1.2")
+                    
+            else:
+                completed(False,_(
+'''<p>Sorry, we seem unable to update your schema at this point,
+Perhaps you have grabbed a development version of the program?</p>
+If so, please revert to a release version.<br />
+If this is not the case, something odd has happened,
+please let the developers of openmolar know ASAP.</p>'''))        
+            
+            #completed(True, _("schema update sucessful!"))
+            pb.destroy()
+            proceed()          
         
-            if dbu.run():
-                pb.hide()
-                proceed()
-            else:                
-                completed(False, 'Conversion to 1.1 failed')
+        except Exception, e:
+            #fatal error!
+            completed(False, "<p>"+_('Unexpected Error updating the schema') 
+            + "<br><br><b>%s</b></p><br><br>"% e + 
+_('''Please File A bug by visiting<br>https://bugs.launchpad.net/openmolar'''))
+            
     else:
-        QtGui.QMessageBox.warning(None, "Update Schema",
-        '''<p>Sorry, you cannot run this version of the openmolar client 
-        without updating your database schema.</p>''')        
+        completed(False,  _('''<p>Sorry, you cannot run this version of the 
+openmolar client without updating your database schema.</p>'''))        
     app.closeAllWindows()
     
 if __name__ == "__main__":
