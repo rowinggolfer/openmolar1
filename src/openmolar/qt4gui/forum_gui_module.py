@@ -33,27 +33,26 @@ def loadForum(parent):
     '''
     twidg = parent.ui.forum_treeWidget
     twidg.clear()
+    chosen = parent.ui.forumViewFilter_comboBox.currentText()
 
     #-- set the column headers (stored in another module)
     headers = forum.headers
     twidg.setHeaderLabels(headers)
     #-- get the posts
-    posts = forum.getPosts()
-    
-    #topparentItem = QtGui.QTreeWidgetItem(twidg, ["General Topics"])
+    if chosen != _("Everyone"):
+        posts = forum.getPosts(chosen)
+    else:
+        posts = forum.getPosts()
     
     parentItems = {None : twidg}
-    #--set the forum alternating topic colours
-    mcolours = {True : QtCore.Qt.darkGreen, False : QtCore.Qt.darkBlue}
+    
     #--set a boolean for alternating row colours
     highlighted = True
-
     for post in posts:
         parentItem = parentItems.get(post.parent_ix)
-        print "index = %s parent = ", (post.parent_ix, parentItem)
         item = QtGui.QTreeWidgetItem(parentItem)
-        item.setText(0, "%d"% (post.ix))
-        item.setText(1, post.topic)
+        item.setText(0, post.topic)
+        item.setText(1, str(post.ix))
         item.setText(2, post.inits)
         if post.recipient:
             item.setText(3, post.recipient)
@@ -63,14 +62,19 @@ def loadForum(parent):
         QtCore.QVariant(QtCore.QDateTime(post.date)))
                 
         item.setText(5, post.comment)
+        item.setText(6, post.briefcomment)
+        
         if post.parent_ix == None:
             highlighted = not highlighted
-            colour = mcolours[highlighted]
+            if highlighted:
+                bcolour = twidg.palette().base()            
+            else:
+                bcolour = twidg.palette().alternateBase()
         else:
-            colour = item.parent().textColor(2)
-            bcolour = QtCore.Qt.lightGray
+            bcolour = parentItem.background(0)
+             
         for i in range(item.columnCount()):
-            item.setTextColor(i, colour)
+            item.setBackground(i,bcolour)
             if i == 4: #date
                 if post.date > (localsettings.currentTime() - 
                 datetime.timedelta(hours = 24)):
@@ -78,15 +82,16 @@ def loadForum(parent):
                 ##TODO - put in some code to set the text for "today" 
                 ##or yesterday etc...
         parentItems[post.ix] = item
-
-        twidg.expandAll()
-        for i in range(twidg.columnCount()):
-            twidg.resizeColumnToContents(i)
-        twidg.setColumnWidth(0, 0)
-        parent.ui.forumDelete_pushButton.setEnabled(False)
-        parent.ui.forumReply_pushButton.setEnabled(False)
+        
+    twidg.expandAll()
+    for i in range(twidg.columnCount()):
+        twidg.resizeColumnToContents(i)
+    twidg.setColumnWidth(1, 0)
+    twidg.setColumnWidth(5, 0)
+    
+    parent.ui.forumDelete_pushButton.setEnabled(False)
+    parent.ui.forumReply_pushButton.setEnabled(False)
     #-- turn the tab red.
-    print parentItems
     parent.showForumIcon(False)
 
 def forumItemSelected(parent):
@@ -97,16 +102,15 @@ def forumItemSelected(parent):
     datetext = item.data(4,
     QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
 
-    heading = "<b>Subject:\t%s<br />"% item.text(1)
+    heading = "<b>Subject:\t%s<br />"% item.text(0)
     heading += "From:\t%s<br />"% item.text(2)
     heading += "To:\t%s<br />"% item.text(3)
     heading += "Date:\t%s</b>"% datetext
     message = item.text(5)
     parent.ui.forum_label.setText(heading)
     parent.ui.forum_textBrowser.setPlainText(message)
-    enableButtons = not item.parent() == None
-    parent.ui.forumDelete_pushButton.setEnabled(enableButtons)
-    parent.ui.forumReply_pushButton.setEnabled(enableButtons)
+    parent.ui.forumDelete_pushButton.setEnabled(True)
+    parent.ui.forumReply_pushButton.setEnabled(True)
 
 def forumNewTopic(parent):
     '''
@@ -115,7 +119,8 @@ def forumNewTopic(parent):
     Dialog = QtGui.QDialog(parent)
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
-    dl.comboBox.addItems(["Anon"] + localsettings.allowed_logins)
+    dl.from_comboBox.addItems(["Anon"] + localsettings.allowed_logins)
+    dl.to_comboBox.addItems(["Anon"] + localsettings.allowed_logins)
 
     while True:
         if Dialog.exec_():
@@ -129,7 +134,9 @@ def forumNewTopic(parent):
     post = forum.post()
     post.topic = dl.topic_lineEdit.text()
     post.comment = dl.comment_textEdit.toPlainText()[:255]
-    post.inits = dl.comboBox.currentText()
+    post.inits = dl.from_comboBox.currentText()
+    if dl.to_comboBox.currentIndex !=0:
+        post.recipient = dl.to_comboBox.currentText()
     forum.commitPost(post)
     loadForum(parent)
 
@@ -146,10 +153,9 @@ def forumDeleteItem(parent):
     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
     if result == QtGui.QMessageBox.Yes:
-        key = str(item.text(5)).split(":")
-        ix = int(key[0])
-        table = key[1]
-        forum.deletePost(ix, table)
+        
+        ix = int(item.text(1))
+        forum.deletePost(ix)
         loadForum(parent)
 
 def forumReply(parent):
@@ -164,20 +170,20 @@ def forumReply(parent):
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.topic_lineEdit.setText(heading)
-    dl.table_comboBox.hide()
-    dl.label_4.hide()
-    dl.comboBox.addItems(["Anon"] + localsettings.allowed_logins)
+    dl.to_comboBox.addItems(["Anon"] + localsettings.allowed_logins)
+    dl.from_comboBox.addItems(["Anon"] + localsettings.allowed_logins)
+    
     if Dialog.exec_():
-        key = str(item.text(5)).split(":")
-        parentix = int(key[0])
-        table = key[1]
+        parentix = int(item.text(1))
         post = forum.post()
         post.parent_ix = parentix
         post.topic = dl.topic_lineEdit.text()
-        post.comment = dl.comment_textEdit.toPlainText()[:200]
-        post.inits = dl.comboBox.currentText()
-        forum.commitPost(post, table)
+        post.comment = dl.comment_textEdit.toPlainText()[:255]
+        post.inits = dl.from_comboBox.currentText()
+        post.receipient = dl.to_comboBox.currentText()
+        forum.commitPost(post)
     loadForum(parent)
 
 def viewFilterChanged(parent, chosen):
     print "viewFilterChanged", chosen
+    loadForum(parent)

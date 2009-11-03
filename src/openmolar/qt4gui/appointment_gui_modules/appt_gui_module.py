@@ -1336,7 +1336,7 @@ def layout_dayView(parent):
     for dent in parent.appointmentData[0]:
         todaysDents.append(dent[0])
         todaysMemos.append(dent[3])
-    i = 0
+    
     #-- clean past links to dentists
     for book in parent.ui.apptBookWidgets:
         book.dentist = None
@@ -1352,13 +1352,15 @@ def layout_dayView(parent):
             if  bookend > abs_end:
                 abs_end = bookend
         except IndexError, e:
+            print "indexError setting bookstart"
             #-- deal with this later
             pass
-    
+    i = 0
     for dent in todaysDents:
         try:
             parent.ui.apptBookWidgets[i].dentist = \
             localsettings.apptix_reverse[dent]
+         
             parent.ui.apptBookWidgets[i].setDayStartTime(abs_start)        
             parent.ui.apptBookWidgets[i].setDayEndTime(abs_end)                    
             

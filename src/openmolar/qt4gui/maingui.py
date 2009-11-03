@@ -1608,9 +1608,11 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         pop up a notification
         '''
+        vlayout = QtGui.QVBoxLayout()
         label = QtGui.QLabel()
+        label.setWordWrap(True)
         label.setText(message)
-        label.show()
+        vlayout.addWidget(label)
         self.ui.mdiArea.addSubWindow(label)
         label.show()
         self.ui.mdiArea.cascadeSubWindows()
@@ -1869,7 +1871,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.ui.referralLettersComboBox.clear()
 
         self.timer1 = QtCore.QTimer()
-        self.timer1.start(60000) #fire every 60 seconds
+        self.timer1.start(30000) #fire every 60 seconds
         QtCore.QObject.connect(self.timer1, QtCore.SIGNAL("timeout()"),
         self.apptTicker)
 
