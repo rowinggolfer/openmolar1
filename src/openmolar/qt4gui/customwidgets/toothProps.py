@@ -72,7 +72,11 @@ class chartLineEdit(QtGui.QLineEdit):
         self.originalPropList = []
     
     def unsavedChanges(self):
-        return not (self.originalPropList == self.propListFromText())
+        '''
+        checks for unsaved changes
+        '''
+        result = not (self.originalPropList == self.propListFromText())
+        return result
 
     def finishedEdit(self):
         '''
@@ -95,7 +99,7 @@ class chartLineEdit(QtGui.QLineEdit):
             self.parent.tooth.clear()
             self.parent.tooth.update()
             self.finishedEdit()
-
+        
     def propListFromText(self):
         '''
         returns the current property list

@@ -207,8 +207,11 @@ class chartsClass():
         args are the new tooth properties eg modbl,co
         '''
         print "update charts called with arg '%s'"% arg
-        tooth = str(self.ui.chartsTableWidget.item(
-        self.ui.chartsTableWidget.currentRow(), 0).text())
+        if arg == '':
+            tooth="ur8"
+        else:
+            tooth = str(self.ui.chartsTableWidget.item(
+            self.ui.chartsTableWidget.currentRow(), 0).text())
 
         if self.selectedChartWidget == "st":
             self.pt.__dict__[tooth + self.selectedChartWidget] = arg
@@ -271,7 +274,7 @@ into the plan first then complete it.'''), 1)
         if not self.ui.toothPropsWidget.lineEdit.unsavedChanges():
             return True
         else:
-            return self.ui.toothPropsWidget.lineEdit.verifyProps()
+            return self.ui.toothPropsWidget.lineEdit.additional() #lineEdit.verifyProps()
 
     def static_chartNavigation(self, tstring):
         '''
