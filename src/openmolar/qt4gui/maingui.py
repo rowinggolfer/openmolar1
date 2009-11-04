@@ -208,12 +208,12 @@ class chartsClass():
         args are the new tooth properties eg modbl,co
         '''
         print "update charts called with arg '%s'"% arg
-        if arg == '':
-            tooth="ur8"
-        else:
+        try:
             tooth = str(self.ui.chartsTableWidget.item(
             self.ui.chartsTableWidget.currentRow(), 0).text())
-
+        except AttributeError:
+            tooth = "ur8"
+        
         if self.selectedChartWidget == "st":
             self.pt.__dict__[tooth + self.selectedChartWidget] = arg
             #--update the patient!!
