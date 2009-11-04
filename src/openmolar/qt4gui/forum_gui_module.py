@@ -25,7 +25,7 @@ def checkForNewForumPosts(parent):
     print "checking forum..."
     if forum.newPosts():
         print "new posts found"
-        parent.showForumIcon(True)
+        parent.showForumActivity(True)
             
 def loadForum(parent):
     '''
@@ -92,7 +92,7 @@ def loadForum(parent):
     parent.ui.forumDelete_pushButton.setEnabled(False)
     parent.ui.forumReply_pushButton.setEnabled(False)
     #-- turn the tab red.
-    parent.showForumIcon(False)
+    parent.showForumActivity(False)
 
 def forumItemSelected(parent):
     '''
@@ -119,8 +119,10 @@ def forumNewTopic(parent):
     Dialog = QtGui.QDialog(parent)
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
-    dl.from_comboBox.addItems(["Anon"] + localsettings.allowed_logins)
-    dl.to_comboBox.addItems(["Anon"] + localsettings.allowed_logins)
+    dl.from_comboBox.addItems([localsettings.operator, "Anon"] + 
+    localsettings.allowed_logins)
+
+    dl.to_comboBox.addItems(["ALL"] + localsettings.allowed_logins)
 
     while True:
         if Dialog.exec_():

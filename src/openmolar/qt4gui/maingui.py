@@ -121,6 +121,7 @@ from openmolar.qt4gui.customwidgets import perioChartWidget
 from openmolar.qt4gui.customwidgets import estimateWidget
 from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import calendars
+from openmolar.qt4gui.customwidgets import notification_widget
 
 
 ###### TODO - refactor all this into one big class....
@@ -1587,8 +1588,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()
         self.editPageVisited=False
-        self.ui.mdiArea.setMaximumHeight(0)
-
+        
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -1599,7 +1599,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         if warning_level == 0:
             self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
         elif warning_level == 1:
-            self.notify(arg)
             QtGui.QMessageBox.information(self, _("Advisory"), arg)
         elif warning_level == 2:
             now=QtCore.QTime.currentTime()
@@ -1611,26 +1610,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         pop up a notification
         '''
-        vlayout = QtGui.QVBoxLayout()
-        label = QtGui.QLabel()
-        label.setWordWrap(True)
-        label.setText(message)
-        vlayout.addWidget(label)
-        self.ui.mdiArea.addSubWindow(label)
-        label.show()
-        self.ui.mdiArea.cascadeSubWindows()
-        
-    def subWindowManager(self, arg):
-        '''
-        this slot is called when a subwindow of the mdiArea is activated
-        the arg is the subwindow involved
-        if arg=None, all are closed
-        '''
-        if arg == None:
-            height = 0
-        else:
-            height = 100
-        self.ui.mdiArea.setMaximumHeight(height)
+        self.ui.notificationWidget.addMessage(message)
         
     def quit(self):
         '''
@@ -1874,21 +1854,14 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.ui.referralLettersComboBox.clear()
 
         self.timer1 = QtCore.QTimer()
-        self.timer1.start(30000) #fire every 60 seconds
+        self.timer1.start(30000) #fire every 30 seconds
         QtCore.QObject.connect(self.timer1, QtCore.SIGNAL("timeout()"),
         self.apptTicker)
 
-        #--start a thread for the triangle on the appointment book
-        #self.thread1=threading.Thread(target=self.apptTicker)
-        #self.thread1.start()
-
         self.timer2 = QtCore.QTimer()
-        self.timer2.start(180000) #fire every 3 minutes
+        self.timer2.start(60000) #fire every minute
         QtCore.QObject.connect(self.timer2, QtCore.SIGNAL("timeout()"),
         self.checkForNewForumPosts)
-
-        #self.thread2=threading.Thread(target = self.checkForNewForumPosts)
-        #self.thread2.start()
 
         self.enableEdit(False)
         for desc in referral.getDescriptions():
@@ -1904,7 +1877,14 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
         #--history
         self.addHistoryMenu()
+        
+        #--notification widget
+        self.ui.notificationWidget = \
+        notification_widget.notificationWidget(self)
 
+        vlayout = QtGui.QVBoxLayout(self.ui.notification_frame)
+        vlayout.addWidget(self.ui.notificationWidget)
+        
     def setClinician(self):
         self.advise("To change practitioner, please login again", 1)
 
@@ -2615,8 +2595,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.ui.debug_toolButton.setMenu(self.debugMenu)
 
-
-    def showForumIcon(self, newItems=True):
+    def showForumActivity(self, newItems=True):
         tb=self.ui.main_tabWidget.tabBar()
         if newItems:
             #icon = QtGui.QIcon()
@@ -2625,13 +2604,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             #tb.setTabIcon(7, icon)
             tb.setTabText(7, _("NEW FORUM POSTS"))
             tb.setTabTextColor(7, QtGui.QColor("red"))
+            self.notify("New Forum Posts", True)
         else:
             #print "removing icon"
             #tb.setTabIcon(7, QtGui.QIcon())
             tb.setTabText(7, _("FORUM"))
             tb.setTabTextColor(7, QtGui.QColor())
-        self.notify("New Forum Posts")
-    
+        
     def save_patient_tofile(self):
         '''
         our "patient" is a python object,
@@ -3667,9 +3646,9 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.QObject.connect(self.ui.tasks_pushButton,
         QtCore.SIGNAL("clicked()"), self.newPtTask)
         
-        QtCore.QObject.connect(self.ui.mdiArea,
-        QtCore.SIGNAL("subWindowActivated (QMdiSubWindow *)"), 
-        self.subWindowManager)
+        #QtCore.QObject.connect(self.ui.mdiArea,
+        #QtCore.SIGNAL("subWindowActivated (QMdiSubWindow *)"), 
+        #self.subWindowManager)
 
     def signals_admin(self):
         #admin page

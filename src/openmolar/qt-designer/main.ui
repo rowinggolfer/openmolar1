@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>7</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -416,7 +416,14 @@
                 </widget>
                </item>
                <item>
-                <widget class="QMdiArea" name="mdiArea"/>
+                <widget class="QFrame" name="notification_frame">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -1703,7 +1710,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>672</width>
+                        <width>736</width>
                         <height>494</height>
                        </rect>
                       </property>
@@ -2084,7 +2091,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>607</width>
+                        <width>744</width>
                         <height>485</height>
                        </rect>
                       </property>
@@ -2453,7 +2460,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>599</width>
+                        <width>736</width>
                         <height>426</height>
                        </rect>
                       </property>
@@ -2719,8 +2726,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>622</width>
-                        <height>302</height>
+                        <width>759</width>
+                        <height>390</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2911,7 +2918,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>366</width>
+                           <width>503</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3313,7 +3320,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>601</width>
+                        <width>738</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4717,8 +4724,8 @@ Note - this will not remove items which are currently there. </string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>620</width>
-                     <height>300</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
