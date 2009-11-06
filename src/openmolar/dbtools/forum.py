@@ -7,7 +7,7 @@
 # more details.
 
 import sys,datetime
-from openmolar.connect import forumConnect,connect
+from openmolar.connect import connect
 from openmolar.settings import localsettings
 
 headers=[_("Subject"),"db_index",_("From"), _("To"),
@@ -43,7 +43,6 @@ def commitPost(post):
         print query,values
     cursor.execute(query,values)
     db.commit()
-    cursor.close()
     #db.close()
     
 def deletePost(ix,table="forum"):
@@ -70,12 +69,11 @@ def deletePost(ix,table="forum"):
     #db.close()
     
 def newPosts():
-    #--use a different connection because this is called in a thread
     users = localsettings.operator.split("/")
     print "checking for new posts for ", users
     if users == []:
         return
-    db=forumConnect()
+    db=connect()
     cursor=db.cursor()
     query='''select max(ix) from forum'''
     cursor.execute(query)
@@ -87,9 +85,12 @@ def newPosts():
     row2 = cursor.fetchone()
     
     cursor.close()
-    db.close()
-    
-    return row[0] > row2[0]
+    result = row[0] > row2[0]
+    if result:
+        print "none found"
+    else:
+        print "found ", row[0]-row2[0]
+    return result
         
 def updateReadHistory():
     users = localsettings.operator.split("/")
