@@ -106,13 +106,15 @@ class chartWidget(QtGui.QWidget):
         '''
         select multiple teeth
         '''
-        
-        if self.selected in self.multiSelection: 
-            self.multiSelection.remove(self.selected)
+        if self.selected == [-1,-1]:
+            return True
+        if self.selected in self.multiSelection:
+            while self.selected in self.multiSelection: 
+                self.multiSelection.remove(self.selected)
             return False
-        elif self.selected != [-1,-1] and (
-        self.selected not in self.multiSelection):
+        if not self.selected in self.multiSelection:
             self.multiSelection.append(self.selected)
+            return True
         
     def multiSelectCLEAR(self):
         '''
@@ -219,7 +221,10 @@ class chartWidget(QtGui.QWidget):
             if [px,py] not in self.multiSelection:
                 self.multiSelection.append([px,py])
             if not self.multiSelectADD():
-                self.setSelected(px,py)
+                try:
+                    x,y = self.multiSelection[-1]
+                except IndexError:
+                    pass
             self.setSelected(x, y)
         else:
             if not shiftClick:

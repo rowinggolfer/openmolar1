@@ -339,19 +339,19 @@ into the plan first then complete it.'''), 1)
         'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
 
         if teeth == []:
-            print "chartNavigation called with teeth=[]"
+            print '''chartNavigation called with teeth=[]\n
+            THIS SHOULDN'T HAPPEN!!!!'''
             return
         tooth = teeth[0]
 
         self.ui.toothPropsWidget.setTooth(tooth, self.selectedChartWidget)
-
         
-        #--calculate x, y co-ordinates for the chartwisdgets
+        #--calculate x, y co-ordinates for the chartwidgets
         if tooth in grid[0]:
-            y=0
+            y = 0
         else:
-            y=1
-        x=grid[y].index(tooth)
+            y = 1
+        x = grid[y].index(tooth)
             
         if callerIsTable:
             print "table being navigated?"
@@ -380,20 +380,21 @@ into the plan first then complete it.'''), 1)
             self.ui.completedChartWidget.setSelected(-1, -1)
             column=2
 
-                
         if not callerIsTable:
             #-- keep the table correct
                 #print "updating charts table"
-            teeth.reverse()
-            for tusk in teeth:
-                if tusk in grid[0]:
-                    y1=0
+            self.ui.chartsTableWidget.setCurrentCell(x+y*16, column)
+            for tooth in teeth:
+                #other teeth have been selected
+                #ie. ctrl-click or shift ciick
+                if tooth in grid[0]:
+                    y = 0
                 else:
-                    y1=1
-                x1=grid[y].index(tooth)
-                self.ui.chartsTableWidget.setCurrentCell(x1+y1*16, column)
-
-        #print self.ui.chartsTableWidget.selectedIndexes()
+                    y = 1
+                x = grid[y].index(tooth)
+                
+                self.ui.chartsTableWidget.setCurrentCell(x+y*16, column, 
+                QtGui.QItemSelectionModel.Select)
 
     def bpe_dates(self):
         '''
