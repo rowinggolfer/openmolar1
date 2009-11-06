@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>expand.png</file>
     <file>icons/pencil.png</file>
     <file>icons/action.png</file>
     <file>icons/memos.png</file>

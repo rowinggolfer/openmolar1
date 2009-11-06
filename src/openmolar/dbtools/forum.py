@@ -10,7 +10,7 @@ import sys,datetime
 from openmolar.connect import forumConnect,connect
 from openmolar.settings import localsettings
 
-headers=["db_index",_("Subject"),_("From"), _("To"),
+headers=[_("Subject"),"db_index",_("From"), _("To"),
 _("Date"),_("Message")]
 
 HIGHESTID = 0

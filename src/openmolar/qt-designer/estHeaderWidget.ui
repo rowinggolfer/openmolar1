@@ -325,6 +325,10 @@
         <property name="text">
          <string>Expand All</string>
         </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
+          <normaloff>:/expand.png</normaloff>:/expand.png</iconset>
+        </property>
        </widget>
       </item>
      </layout>
@@ -332,6 +336,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

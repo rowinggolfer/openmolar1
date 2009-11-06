@@ -248,7 +248,7 @@ into the plan first then complete it.'''), 1)
         or back again
         '''
         if self.selectedChartWidget == "st":
-            selectedCells=self.ui.chartsTableWidget.selectedIndexes()
+            selectedCells = self.ui.chartsTableWidget.selectedIndexes()
             for cell in selectedCells:
                 row=cell.row()
                 selectedTooth=str(
@@ -277,32 +277,32 @@ into the plan first then complete it.'''), 1)
         else:
             return self.ui.toothPropsWidget.lineEdit.additional() #lineEdit.verifyProps()
 
-    def static_chartNavigation(self, tstring):
+    def static_chartNavigation(self, signal):
         '''
-        called by the static chartwidget
+        called by the static or summary chartwidget
         '''
-        print "static_chartNavigation"
+        #print "static_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="st"
-        self.chartNavigation(tstring)
+        self.chartNavigation(signal)
 
-    def plan_chartNavigation(self, tstring):
+    def plan_chartNavigation(self, signal):
         '''
         called by the plan chartwidget
         '''
-        print "static_chartNavigation"
+        #print "plan_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="pl"
-        self.chartNavigation(tstring)
+        self.chartNavigation(signal)
 
-    def comp_chartNavigation(self, tstring):
+    def comp_chartNavigation(self, signal):
         '''
         called by the completed chartwidget
         '''
-        print "static_chartNavigation"
+        #print "comp_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="cmp"
-        self.chartNavigation(tstring)
+        self.chartNavigation(signal)
 
     def editStatic(self):
         '''
@@ -325,71 +325,75 @@ into the plan first then complete it.'''), 1)
         self.selectedChartWidget="cmp"
         self.chart_navigate()
 
-    def chartNavigation(self, tstring, callerIsTable=False):
+    def chartNavigation(self, teeth, callerIsTable=False):
         '''
         one way or another, a tooth has been selected...
         this updates all relevant widgets
         '''
         #--called by a navigating a chart or the underlying table
         #--convert from QString
-        tooth=str(tstring)
-
+        
         grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
         'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
         ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
         'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
 
+        if teeth == []:
+            print "chartNavigation called with teeth=[]"
+            return
+        tooth = teeth[0]
+
         self.ui.toothPropsWidget.setTooth(tooth, self.selectedChartWidget)
 
+        
+        #--calculate x, y co-ordinates for the chartwisdgets
         if tooth in grid[0]:
             y=0
         else:
             y=1
-
-        #--calculate x, y co-ordinates for the chartwisdgets
         x=grid[y].index(tooth)
-
-        if self.selectedChartWidget == "st":
-            self.ui.staticChartWidget.selected=[x, y]
-            self.ui.staticChartWidget.update()
-            if self.ui.planChartWidget.selected != [-1, -1]:
-                self.ui.planChartWidget.setSelected(-1, -1)
-                self.ui.planChartWidget.update()
-            if self.ui.completedChartWidget.selected != [-1, -1]:
-                self.ui.completedChartWidget.setSelected(-1, -1)
-                self.ui.completedChartWidget.update()
-            column=2
-        elif self.selectedChartWidget == "pl":
-            self.ui.planChartWidget.selected=[x, y]
-            self.ui.planChartWidget.update()
-            if self.ui.staticChartWidget.selected != [-1, -1]:
-                self.ui.staticChartWidget.setSelected(-1, -1)
-                self.ui.staticChartWidget.update()
-            if self.ui.completedChartWidget.selected != [-1, -1]:
-                self.ui.completedChartWidget.setSelected(-1, -1)
-                self.ui.completedChartWidget.update()
+            
+        if callerIsTable:
+            print "table being navigated?"
+            if self.selectedChartWidget == "pl":
+                self.ui.planChartWidget.setSelected(x, y)
+            elif self.selectedChartWidget == "cmp":
+                self.ui.completedChartWidget.setSelected(x, y)
+            else:
+                #either the static or the summary
+                self.selectedChartWidget = "st"
+                self.ui.staticChartWidget.setSelected(x, y)
+        
+        if self.selectedChartWidget == "pl":
+            self.ui.staticChartWidget.setSelected(-1, -1)
+            self.ui.completedChartWidget.setSelected(-1, -1)
             column=3
         elif self.selectedChartWidget == "cmp":
-            self.ui.completedChartWidget.selected=[x, y]
-            self.ui.completedChartWidget.update()
-            if self.ui.staticChartWidget.selected != [-1, -1]:
-                self.ui.staticChartWidget.setSelected(-1, -1)
-                self.ui.staticChartWidget.update()
-            if self.ui.planChartWidget.selected != [-1, -1]:
-                self.ui.planChartWidget.setSelected(-1, -1)
-                self.ui.planChartWidget.update()
+            self.ui.staticChartWidget.setSelected(-1, -1)
+            self.ui.planChartWidget.setSelected(-1, -1)
             column=4
-
         else:
-            #--shouldn't happen??
-            self.advise(_("ERROR IN chartNavigation- please report"), 2)
-            column = 0
-            #-- set this otherwise this variable will
-            #-- create an error in 2 lines time!
+            #either the static or the summary
+            self.selectedChartWidget = "st"
+            self.ui.staticChartWidget.setSelected(x, y)
+            self.ui.planChartWidget.setSelected(-1, -1)
+            self.ui.completedChartWidget.setSelected(-1, -1)
+            column=2
+
+                
         if not callerIsTable:
             #-- keep the table correct
-            #print "updating charts table"
-            self.ui.chartsTableWidget.setCurrentCell(x+y*16, column)
+                #print "updating charts table"
+            teeth.reverse()
+            for tusk in teeth:
+                if tusk in grid[0]:
+                    y1=0
+                else:
+                    y1=1
+                x1=grid[y].index(tooth)
+                self.ui.chartsTableWidget.setCurrentCell(x1+y1*16, column)
+
+        #print self.ui.chartsTableWidget.selectedIndexes()
 
     def bpe_dates(self):
         '''
@@ -519,10 +523,13 @@ into the plan first then complete it.'''), 1)
                 self.ui.perioChartWidget.setToothProps(tooth, stl)
             self.ui.chartsTableWidget.setCurrentCell(0, 0)
 
-    def toothHistory(self, arg):
+    def toothHistory(self, tooth):
         '''
-        show history of %s at position %s"%(arg[0], arg[1])
+        show history of the tooth
         '''
+        print "show history of", tooth
+        print pt.dayBookHistory
+        return
         th = "<br />"
         for item in self.pt.dayBookHistory:
             if arg[0].upper() in item[2].strip():
@@ -2922,7 +2929,9 @@ WITH PT RECORDS %d and %d''')% (
         '''
         disable/enable widgets "en mass" when no patient loaded
         '''
-        for widg in (self.ui.printEst_pushButton,
+        for widg in (
+        self.ui.summaryChartWidget,
+        self.ui.printEst_pushButton,
         self.ui.printAccount_pushButton,
         self.ui.relatedpts_pushButton,
         self.ui.saveButton,
@@ -3455,6 +3464,12 @@ WITH PT RECORDS %d and %d''')% (
         '''
         forum_gui_module.checkForNewForumPosts(self)
 
+    def forum_radioButtons(self):
+        '''
+        the user has requested a different view of the forum
+        '''
+        forum_gui_module.loadForum(self)
+
     def contractTab_navigated(self,i):
         '''
         the contract tab is changing
@@ -3843,7 +3858,11 @@ WITH PT RECORDS %d and %d''')% (
         
         QtCore.QObject.connect(self.ui.forumViewFilter_comboBox,
         QtCore.SIGNAL("currentIndexChanged (const QString&)"), 
-        self.forumViewFilterChanged)        
+        self.forumViewFilterChanged)   
+        
+        QtCore.QObject.connect(self.ui.group_replies_radioButton, 
+        QtCore.SIGNAL("toggled (bool)"), self.forum_radioButtons)
+             
 
     def signals_history(self):
         QtCore.QObject.connect(self.pastDataMenu,
@@ -3966,12 +3985,24 @@ WITH PT RECORDS %d and %d''')% (
                                QtCore.SIGNAL("showHistory"), self.toothHistory)
         QtCore.QObject.connect(self.ui.staticChartWidget,
                                QtCore.SIGNAL("showHistory"), self.toothHistory)
+
+        QtCore.QObject.connect(self.ui.summaryChartWidget,
+        QtCore.SIGNAL("toothSelected"), self.static_chartNavigation)
+        
         QtCore.QObject.connect(self.ui.staticChartWidget,
-                    QtCore.SIGNAL("toothSelected"), self.static_chartNavigation)
+        QtCore.SIGNAL("toothSelected"), self.static_chartNavigation)
+
         QtCore.QObject.connect(self.ui.planChartWidget,
-                    QtCore.SIGNAL("toothSelected"), self.plan_chartNavigation)
+        QtCore.SIGNAL("toothSelected"), self.plan_chartNavigation)
+        
         QtCore.QObject.connect(self.ui.completedChartWidget,
-                    QtCore.SIGNAL("toothSelected"), self.comp_chartNavigation)
+        QtCore.SIGNAL("toothSelected"), self.comp_chartNavigation)
+
+        QtCore.QObject.connect(self.ui.summaryChartWidget,        
+        QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
+
+        QtCore.QObject.connect(self.ui.staticChartWidget,
+        QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
 
         QtCore.QObject.connect(self.ui.planChartWidget,
         QtCore.SIGNAL("completeTreatment"), self.planChartWidget_completed)

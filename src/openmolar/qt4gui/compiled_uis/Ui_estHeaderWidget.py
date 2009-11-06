@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'estHeaderWidget.ui'
 #
-# Created: Thu Oct  8 03:14:24 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Wed Nov  4 23:11:12 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -120,6 +120,9 @@ class Ui_Form(object):
         self.expand_pushButton.setSizePolicy(sizePolicy)
         self.expand_pushButton.setMinimumSize(QtCore.QSize(0, 0))
         self.expand_pushButton.setLayoutDirection(QtCore.Qt.LeftToRight)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/expand.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.expand_pushButton.setIcon(icon)
         self.expand_pushButton.setObjectName("expand_pushButton")
         self.horizontalLayout_2.addWidget(self.expand_pushButton)
         self.horizontalLayout.addWidget(self.frame)
@@ -139,3 +142,4 @@ class Ui_Form(object):
         self.label_6.setText(_( u"Pt Fee"))
         self.expand_pushButton.setText(_( u"Expand All"))
 
+import resources_rc

@@ -98,27 +98,27 @@ class chartWidget(QtGui.QWidget):
     def setShowSelected(self, arg):
         '''
         a boolean as to whether to "select" a tooth
-        by default the overview chart doesn't
+        by default the overview (summary) chart doesn't
         '''
         self.showSelected = arg
 
-    def multiSelectADD(self, removeDups=True):
+    def multiSelectADD(self):
         '''
         select multiple teeth
         '''
-        if self.selected in self.multiSelection:
-            if removeDups:
-                self.multiSelection.remove(self.selected)
-                return False
-        else:
+        
+        if self.selected in self.multiSelection: 
+            self.multiSelection.remove(self.selected)
+            return False
+        elif self.selected != [-1,-1] and (
+        self.selected not in self.multiSelection):
             self.multiSelection.append(self.selected)
-            return True
-
+        
     def multiSelectCLEAR(self):
         '''
         select just one tooth
         '''
-        self.multiSelection = [self.selected]
+        self.multiSelection = []
 
     def setHighlighted(self, x, y):
         '''
@@ -129,26 +129,12 @@ class chartWidget(QtGui.QWidget):
             self.highlighted = [x, y]
             self.update()
 
-    def setSelected(self, x, y, multiselect=False):
+    def setSelected(self, x, y):
         '''
         set the tooth which is currently selected
         '''
         self.selected = [x, y]
         self.update()
-
-        #--emit a signal that the user has selected a tooth
-        #--will be in the form "ur1"
-        if multiselect:
-            if not self.multiSelectADD():
-                #-- don't send a signal if user is simply
-                #--deselecting a tooth
-                return
-        else:
-            self.multiSelectCLEAR()
-
-        if x != -1:
-            tooth = self.grid[y][x]
-            self.emit(QtCore.SIGNAL("toothSelected"), tooth)
 
     def setToothProps(self, tooth, props):
         '''
@@ -214,42 +200,80 @@ class chartWidget(QtGui.QWidget):
             y = 1
 
         [px, py] = self.selected
+        if px == -1: px=0
+        if py == -1: py=0
         #-- needed for shiftClick
-
-        if shiftClick:
-            for row in set((py, y)):
-                for column in range(0, 16):
-                    if px <= column <= x or x <= column <= px:
-                        if not [column, row] in self.multiSelection:
-                            self.setSelected(column, row, True)
-            return
-            #--add.. but don't exclude duplicates
-            #self.multiSelectADD(False)
-
-        if event.button() == 2 and self.isStaticChart:
-            self.setSelected(x, y)
-            tooth = self.grid[y][x]
-            self.emit(QtCore.SIGNAL("showHistory"), (tooth, event.globalPos()))
-
-        self.setSelected(x, y, ctrlClick or shiftClick)
-
-    def mouseDoubleClickEvent(self, event):
-        '''overrides QWidget's mouse double click event'''
-        if not self.isPlanChart:
-            return
-        xOffset = self.width() / 16
-        yOffset = self.height() / 2
-        x = int(event.x() / xOffset)
-        if event.y() < yOffset:
-            y = 0
+        if px <= x:
+            lowx,highx = px,x
         else:
-            y = 1
-        tooth = self.grid[y][x]
-        plannedTreatment = [tooth,]
-        for item in self.__dict__[tooth]:
-            plannedTreatment.append(item.upper())
-        if plannedTreatment != [tooth]:
-            self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
+            lowx,highx = x,px
+                
+        if shiftClick:
+            for row in set((py,y)):
+                for column in range(lowx, highx+1):
+                    if not [column, row] in self.multiSelection:
+                        self.multiSelection.append([column,row])
+        self.setSelected(x, y)
+            
+        if ctrlClick:
+            if [px,py] not in self.multiSelection:
+                self.multiSelection.append([px,py])
+            if not self.multiSelectADD():
+                self.setSelected(px,py)
+            self.setSelected(x, y)
+        else:
+            if not shiftClick:
+                self.multiSelectCLEAR()
+        
+        teeth = []
+        if x != -1:
+            teeth.append(self.grid[y][x])
+        for (a,b) in self.multiSelection:
+            if (a,b) != (x,y):
+                teeth.append(self.grid[b][a])
+        
+        self.emit(QtCore.SIGNAL("toothSelected"), teeth )
+        
+        if event.button() == 2:
+            menu = QtGui.QMenu(self)
+            menu.addAction(_("Toggle Deciduous Status"))
+            menu.addSeparator()
+            menu.addAction(_("Delete All"))
+            for fill in ("MO","PV","RT"):    
+                menu.addAction(_("Delete ")+fill)            
+            if self.isStaticChart:
+                menu.addSeparator()            
+                menu.addAction(_("Show History"))
+            
+            result = menu.exec_(event.globalPos())
+            if result:
+                if result.text() == _("Toggle Deciduous Status"):
+                    self.emit(QtCore.SIGNAL("FlipDeciduousState"))
+                elif result.text() == _("Show History"):
+                    tooth = self.grid[y][x]
+                    self.emit(QtCore.SIGNAL("showHistory"), tooth)
+        
+                else:
+                    print "right click on chart widget ",result.text()
+                return
+    
+    def mouseDoubleClickEvent(self, event):
+        '''
+        overrides QWidget's mouse double click event
+        peforms the default actions
+        if a static chart - deciduous mode is toggled
+        if plan chart, treatment is completed.
+        '''
+        
+        tooth = self.grid[self.selected[1]][self.selected[0]]
+        if self.isStaticChart:
+            self.emit(QtCore.SIGNAL("FlipDeciduousState"))        
+        elif self.isPlanChart:        
+            plannedTreatment = [tooth,]
+            for item in self.__dict__[tooth]:
+                plannedTreatment.append(item.upper())
+            if plannedTreatment != [tooth]:
+                self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
 
     def keyPressEvent(self, event):
         '''
@@ -327,16 +351,20 @@ class chartWidget(QtGui.QWidget):
                     painter.setBrush(colours.TRANSPARENT)
                     painter.drawRect(rect.adjusted(1, 1, -1, -1))
 
-                if self.showSelected and [x, y] in self.multiSelection:
+                if self.showSelected:
                     #-- these conditions mean that the tooth needs to be
                     #--highlighted draw a rectangle around the selected tooth,
                     #--but don't overwrite the centre
+                    
                     if [x, y] == self.selected:
                         painter.setPen(QtGui.QPen(QtCore.Qt.darkBlue, 2))
-                    else:
+                        painter.setBrush(colours.TRANSPARENT)
+                        painter.drawRect(rect.adjusted(1, 1, -1, -1))
+
+                    elif [x, y] in self.multiSelection: 
                         painter.setPen(QtGui.QPen(QtCore.Qt.blue, 2))
-                    painter.setBrush(colours.TRANSPARENT)
-                    painter.drawRect(rect.adjusted(1, 1, -1, -1))
+                        painter.setBrush(colours.TRANSPARENT)
+                        painter.drawRect(rect.adjusted(1, 1, -1, -1))
 
         if self.isEnabled():
             painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
@@ -1004,6 +1032,7 @@ class toothImage(QtGui.QWidget):
         return myimage
 
 if __name__ == "__main__":
+    from gettext import gettext as _
     app = QtGui.QApplication(sys.argv)
     form = chartWidget()
     form.chartgrid = {'lr1': 'lr1', 'lr3': 'lr3', 'lr2': 'lr2', 'lr5': 'lr5',

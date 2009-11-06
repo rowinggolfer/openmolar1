@@ -20,7 +20,7 @@ from openmolar.qt4gui.compiled_uis import Ui_forumPost
 
 def checkForNewForumPosts(parent):
     '''
-    checks for new forum posts every 5 minutes
+    checks for new forum posts every few minutes
     '''
     print "checking forum..."
     if forum.newPosts():
@@ -34,7 +34,7 @@ def loadForum(parent):
     twidg = parent.ui.forum_treeWidget
     twidg.clear()
     chosen = parent.ui.forumViewFilter_comboBox.currentText()
-
+    GROUP_TOPICS = parent.ui.group_replies_radioButton.isChecked()
     #-- set the column headers (stored in another module)
     headers = forum.headers
     twidg.setHeaderLabels(headers)
@@ -49,7 +49,10 @@ def loadForum(parent):
     #--set a boolean for alternating row colours
     highlighted = True
     for post in posts:
-        parentItem = parentItems.get(post.parent_ix)
+        if GROUP_TOPICS:
+            parentItem = parentItems.get(post.parent_ix)
+        else:
+            parentItem = twidg
         item = QtGui.QTreeWidgetItem(parentItem)
         item.setText(0, post.topic)
         item.setText(1, str(post.ix))
@@ -58,13 +61,16 @@ def loadForum(parent):
             item.setText(3, post.recipient)
         else:
             item.setText(3, "-")            
-        item.setData(4, QtCore.Qt.DisplayRole,
-        QtCore.QVariant(QtCore.QDateTime(post.date)))
-                
+        
+        d = QtCore.QDate(post.date)
+        item.setData(4, QtCore.Qt.DisplayRole, QtCore.QVariant(d))
+        
         item.setText(5, post.comment)
         item.setText(6, post.briefcomment)
+        item.setData(7,  QtCore.Qt.UserRole, 
+        QtCore.QVariant(post.parent_ix))
         
-        if post.parent_ix == None:
+        if parentItem == twidg:
             highlighted = not highlighted
             if highlighted:
                 bcolour = twidg.palette().base()            
@@ -81,14 +87,24 @@ def loadForum(parent):
                     item.setTextColor(i, QtGui.QColor("orange"))
                 ##TODO - put in some code to set the text for "today" 
                 ##or yesterday etc...
-        parentItems[post.ix] = item
+        if GROUP_TOPICS:
+            parentItems[post.ix] = item
         
     twidg.expandAll()
     for i in range(twidg.columnCount()):
         twidg.resizeColumnToContents(i)
     twidg.setColumnWidth(1, 0)
     twidg.setColumnWidth(5, 0)
-    
+    twidg.setColumnWidth(7, 0)
+        
+    ##TODO - I would like the user to be able to sort the table
+    ##but this doesn't work as expected :(
+    twidg.setSortingEnabled(True)
+    if GROUP_TOPICS: 
+        twidg.sortByColumn(7)
+    else:
+        twidg.sortByColumn(1)
+        
     parent.ui.forumDelete_pushButton.setEnabled(False)
     parent.ui.forumReply_pushButton.setEnabled(False)
     #-- turn the tab red.
@@ -134,8 +150,8 @@ def forumNewTopic(parent):
             return
 
     post = forum.post()
-    post.topic = dl.topic_lineEdit.text()
-    post.comment = dl.comment_textEdit.toPlainText()[:255]
+    post.topic = dl.topic_lineEdit.text().toAscii()
+    post.comment = dl.comment_textEdit.toPlainText().toAscii()[:255]
     post.inits = dl.from_comboBox.currentText()
     if dl.to_comboBox.currentIndex !=0:
         post.recipient = dl.to_comboBox.currentText()
@@ -172,15 +188,16 @@ def forumReply(parent):
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.topic_lineEdit.setText(heading)
-    dl.to_comboBox.addItems(["Anon"] + localsettings.allowed_logins)
-    dl.from_comboBox.addItems(["Anon"] + localsettings.allowed_logins)
+    dl.from_comboBox.addItems([localsettings.operator, "Anon"] +
+    localsettings.allowed_logins)
+    dl.to_comboBox.addItems(["ALL"] + localsettings.allowed_logins)
     
     if Dialog.exec_():
         parentix = int(item.text(1))
         post = forum.post()
         post.parent_ix = parentix
-        post.topic = dl.topic_lineEdit.text()
-        post.comment = dl.comment_textEdit.toPlainText()[:255]
+        post.topic = dl.topic_lineEdit.text().toAscii()
+        post.comment = dl.comment_textEdit.toPlainText().toAscii()[:255]
         post.inits = dl.from_comboBox.currentText()
         post.receipient = dl.to_comboBox.currentText()
         forum.commitPost(post)
