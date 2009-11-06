@@ -2621,7 +2621,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             #print "removing icon"
             #tb.setTabIcon(7, QtGui.QIcon())
             tb.setTabText(7, _("FORUM"))
-            tb.setTabTextColor(7, QtGui.QColor(self.ui.palette().WindowText))
+            tb.setTabTextColor(7, QtGui.QColor(self.palette().WindowText))
             self.forum_notified = False
         
     def save_patient_tofile(self):
