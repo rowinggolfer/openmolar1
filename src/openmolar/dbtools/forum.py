@@ -70,7 +70,7 @@ def deletePost(ix,table="forum"):
     
 def newPosts():
     users = localsettings.operator.split("/")
-    print "checking for new posts for ", users
+    print "checking for new posts since forum visited by ", users
     if users == []:
         return
     db=connect()
@@ -86,10 +86,9 @@ def newPosts():
     
     cursor.close()
     result = row[0] > row2[0]
-    if result:
-        print "none found"
-    else:
-        print "found ", row[0]-row2[0]
+    print "latest post index=%s, lastvisit=%s, returning %s"% (
+    row[0],row2[0],result)
+    
     return result
         
 def updateReadHistory():

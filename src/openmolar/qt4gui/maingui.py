@@ -522,7 +522,7 @@ into the plan first then complete it.'''), 1)
 
             if stl[:2] in ("at", "tm", "ue"):
                 self.ui.perioChartWidget.setToothProps(tooth, stl)
-            self.ui.chartsTableWidget.setCurrentCell(0, 0)
+        self.ui.chartsTableWidget.setCurrentCell(0, 0)
 
     def toothHistory(self, tooth):
         '''
@@ -1596,6 +1596,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()
         self.editPageVisited=False
+        self.forum_notified = False
         
     def advise(self, arg, warning_level=0):
         '''
@@ -2285,7 +2286,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.ui.summaryChartWidget):
             chart.clear()
             #--necessary to restore the chart to full dentition
+        self.selectedChartWidget = "st"
         self.ui.staticChartWidget.setSelected(0, 0)  #select the UR8
+        self.ui.toothPropsWidget.setTooth("ur8","st")
         self.chartsTable()
         self.bpe_dates()
         if self.pt.recd:
@@ -2613,11 +2616,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             tb.setTabText(7, _("NEW FORUM POSTS"))
             tb.setTabTextColor(7, QtGui.QColor("red"))
             self.notify("New Forum Posts")
+            self.forum_notified = True
         else:
             #print "removing icon"
             #tb.setTabIcon(7, QtGui.QIcon())
             tb.setTabText(7, _("FORUM"))
-            tb.setTabTextColor(7, QtGui.QColor())
+            tb.setTabTextColor(7, QtGui.QColor(self.ui.palette().WindowText))
+            self.forum_notified = False
         
     def save_patient_tofile(self):
         '''

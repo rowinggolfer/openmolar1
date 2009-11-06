@@ -22,11 +22,9 @@ def checkForNewForumPosts(parent):
     '''
     checks for new forum posts every few minutes
     '''
-    print "checking forum..."
-    if forum.newPosts():
-        print "new posts found"
-        parent.showForumActivity(True)
-            
+    if not parent.forum_notified:
+        parent.showForumActivity(forum.newPosts())
+        
 def loadForum(parent):
     '''
     loads the forum
@@ -108,7 +106,6 @@ def loadForum(parent):
     parent.ui.forumDelete_pushButton.setEnabled(False)
     parent.ui.forumReply_pushButton.setEnabled(False)
     #-- turn the tab red.
-    parent.showForumActivity(False)
 
 def forumItemSelected(parent):
     '''
