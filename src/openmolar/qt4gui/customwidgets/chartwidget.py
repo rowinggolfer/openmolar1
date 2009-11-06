@@ -239,28 +239,39 @@ class chartWidget(QtGui.QWidget):
         
         self.emit(QtCore.SIGNAL("toothSelected"), teeth )
         
-        if event.button() == 2:
+        if teeth and event.button() == 2:
+            tooth = teeth[0] #self.grid[y][x]
+                    
             menu = QtGui.QMenu(self)
+            menu.addAction(tooth.upper())
+            
             menu.addAction(_("Toggle Deciduous Status"))
-            menu.addSeparator()
-            menu.addAction(_("Delete All"))
-            for fill in ("MO","PV","RT"):    
-                menu.addAction(_("Delete ")+fill)            
+            fillList = self.__dict__[tooth]
+            if fillList:
+                menu.addSeparator()
+                menu.addAction(_("Delete All Restorations"))
+                for fill in self.__dict__[tooth]:    
+                    menu.addAction(_("Delete ")+fill.upper())            
             if self.isStaticChart:
-                menu.addSeparator()            
+                menu.addSeparator()
+                menu.addAction(_("ADD COMMENTS"))                            
                 menu.addAction(_("Show History"))
             
-            result = menu.exec_(event.globalPos())
-            if result:
-                if result.text() == _("Toggle Deciduous Status"):
-                    self.emit(QtCore.SIGNAL("FlipDeciduousState"))
-                elif result.text() == _("Show History"):
-                    tooth = self.grid[y][x]
-                    self.emit(QtCore.SIGNAL("showHistory"), tooth)
-        
-                else:
-                    print "right click on chart widget ",result.text()
-                return
+            self.rightClickMenuResult(tooth, menu.exec_(event.globalPos()))
+            
+    def rightClickMenuResult(self, tooth, result):
+        if not result:
+            return
+
+        if result.text() == _("Toggle Deciduous Status"):
+            self.emit(QtCore.SIGNAL("FlipDeciduousState"))
+        elif result.text() == _("Show History"):
+            self.emit(QtCore.SIGNAL("showHistory"), tooth)
+
+        else:
+            
+            print "right click on chart widget ",result.text()
+            
     
     def mouseDoubleClickEvent(self, event):
         '''

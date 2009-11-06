@@ -2612,7 +2612,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             #tb.setTabIcon(7, icon)
             tb.setTabText(7, _("NEW FORUM POSTS"))
             tb.setTabTextColor(7, QtGui.QColor("red"))
-            self.notify("New Forum Posts", True)
+            self.notify("New Forum Posts")
         else:
             #print "removing icon"
             #tb.setTabIcon(7, QtGui.QIcon())
