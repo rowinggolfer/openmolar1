@@ -2799,8 +2799,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         Dialog = QtGui.QDialog(self)
         dl = Ui_options.Ui_Dialog()
         dl.setupUi(Dialog)
-        dl.leftMargin_spinBox.setValue(GP17.offsetLeft)
-        dl.topMargin_spinBox.setValue(GP17.offsetTop)
+        dl.leftMargin_spinBox.setValue(localsettings.GP17_LEFT)
+        dl.topMargin_spinBox.setValue(localsettings.GP17_TOP)
 
         if Dialog.exec_():
             localsettings.GP17_LEFT=dl.leftMargin_spinBox.value()

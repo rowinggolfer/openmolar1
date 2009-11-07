@@ -25,11 +25,13 @@ def getAvailableLanguages():
     return a list of installed languages - I do this manually at the moment :(
     '''
     return [
-    _("English") +" - en_GB", 
+    _("English (GB)") +" - en_GB", 
     _("Afrikaans") + "- af",
     _("French") + " - fr", 
     _("Hungarian") + " - hu", 
     _("Polish") + " - pl",
+    _("Portuguese") + " - pt",
+    _("Spanish") + "- es",
     _("Turkish") + " -tr",
     ]
 
@@ -48,34 +50,35 @@ def setLanguage(lang):
         gettext.install('openmolar', unicode=True)
 
 class language_dialog(Ui_choose_language.Ui_Dialog):
-    def __init__(self,dialog,parent=None):
+    def __init__(self, dialog, parent=None):
         self.setupUi(dialog)
-        self.dialog=dialog
+        self.dialog = dialog
         currentlanguage = getCurrentLanguage()
-        languagelist = getAvailableLanguages()
-        self.comboBox.addItems(languagelist)
-        
-        pos = -1  
-        i = 0      
-        for language in languagelist:
+        self.radioboxes = []
+        i = 1
+        for language in getAvailableLanguages():
+            rb = QtGui.QRadioButton(language)
             if currentlanguage in language.split(" - "):
-                pos = i
-            i+=1
-        self.comboBox.setCurrentIndex(pos)
-    
+                rb.setChecked(True)
+            self.radioboxes.append(rb)
+            self.dialog.layout().insertWidget(i, rb)
+            i += 1
+            
     def getInput(self):
         if self.dialog.exec_():
-            lang = self.comboBox.currentText()            
-            try:
-                print "changing language to '%s' ...."% lang,
-                setLanguage(str(lang))
-                print "ok"
-                return True
-            except IOError:
-                print "unable to find translation file"
-                message = _("no translation file found for %s")% lang 
-                QtGui.QMessageBox.information(self.dialog,
-                _("Advisory"), message)
+            for rb in self.radioboxes:
+                if rb.isChecked():
+                    lang = rb.text()            
+                    try:
+                        print "changing language to '%s' ...."% lang,
+                        setLanguage(str(lang))
+                        print "ok"
+                        return True
+                    except IOError:
+                        print "unable to find translation file"
+                        message = _("no translation file found for %s")% lang 
+                        QtGui.QMessageBox.information(self.dialog,
+                        _("Advisory"), message)
                 
 def run(parent=None):
     '''
