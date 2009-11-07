@@ -256,7 +256,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Pt Fee</string>
+      <string>Charge</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

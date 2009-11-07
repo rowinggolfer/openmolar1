@@ -45,7 +45,6 @@ def chartComplete(parent, arg):
     complete tooth treatment 
     the arg is a list - ["ul5","MOD","RT",]
     '''
-    Dialog = QtGui.QDialog(parent)
     if localsettings.clinicianNo != 0:
         dent = localsettings.clinicianInits
     elif parent.pt.dnt2 == None:
@@ -55,6 +54,7 @@ def chartComplete(parent, arg):
     if dent == None:
         dent = ""
     #--tooth may be deciduous
+        
     adultTooth = arg[0]
     toothName = parent.pt.chartgrid.get(arg[0])
     arg[0] = toothName # change the list
@@ -64,13 +64,19 @@ def chartComplete(parent, arg):
         feeTup = fees_module.getFeesFromEst(parent, toothName, treatItem)
         fee += feeTup[0]
         ptfee += feeTup[1]
+        
+    if len(arg) == 2:
+        # only 1 treatment item, no dialog required
+        treatmentItems = (arg[1],)
+    else: 
+        # multiple treatments, does user want to complete them all?
+        Dialog = QtGui.QDialog(parent)
+        dl = completeTreat.treatment(Dialog, arg)
+        treatmentItems = dl.getInput()
+        #-- results will be a tuple of treatments which have been selected
+        #-- eg, ("MOD","RT")
     
-    #here's why we changed the list.... ( 6 lines ago)
-    dl = completeTreat.treatment(Dialog, dent, arg, (fee, ptfee))
-
-    treatmentItems = dl.getInput()
-    #-- results will be a tuple of treatments which have been selected
-    #-- eg, ("MOD","RT")
+    
     for treatmentItem in treatmentItems:
         planATT = "%spl"% adultTooth
         completedATT = "%scmp"% adultTooth
@@ -87,7 +93,10 @@ def chartComplete(parent, arg):
             newcompleted)
 
             checkEstBox(parent, toothName, newcompleted)
-            print "CHART COMPLETE adding hidden note - %s %s"% (toothName.upper(), newcompleted)
+
+            print "CHART COMPLETE adding hidden note - %s %s"% (
+            toothName.upper(), newcompleted)
+
             parent.pt.addHiddenNote("treatment",
             "%s %s"% (toothName.upper(), newcompleted))
                 

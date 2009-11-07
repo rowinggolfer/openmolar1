@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'treatmentItemWidget.ui'
 #
-# Created: Tue Oct  6 21:47:29 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Sat Nov  7 21:58:06 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(553, 30)
+        Form.resize(415, 31)
         self.horizontalLayout = QtGui.QHBoxLayout(Form)
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setContentsMargins(-1, 3, -1, 3)
@@ -30,24 +30,6 @@ class Ui_Form(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        self.doubleSpinBox = QtGui.QDoubleSpinBox(Form)
-        self.doubleSpinBox.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.doubleSpinBox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.doubleSpinBox.setMaximum(2000.0)
-        self.doubleSpinBox.setObjectName("doubleSpinBox")
-        self.horizontalLayout.addWidget(self.doubleSpinBox)
-        self.chain_frame = QtGui.QFrame(Form)
-        self.chain_frame.setMinimumSize(QtCore.QSize(24, 0))
-        self.chain_frame.setFrameShape(QtGui.QFrame.NoFrame)
-        self.chain_frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.chain_frame.setObjectName("chain_frame")
-        self.horizontalLayout.addWidget(self.chain_frame)
-        self.pt_doubleSpinBox = QtGui.QDoubleSpinBox(Form)
-        self.pt_doubleSpinBox.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.pt_doubleSpinBox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.pt_doubleSpinBox.setMaximum(2000.0)
-        self.pt_doubleSpinBox.setObjectName("pt_doubleSpinBox")
-        self.horizontalLayout.addWidget(self.pt_doubleSpinBox)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)

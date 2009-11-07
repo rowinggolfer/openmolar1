@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'estHeaderWidget.ui'
 #
-# Created: Wed Nov  4 23:11:12 2009
+# Created: Sat Nov  7 23:05:23 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -139,7 +139,7 @@ class Ui_Form(object):
         self.label_3.setText(_( u"Type"))
         self.label_4.setText(_( u"cset"))
         self.label_5.setText(_( u"Fee"))
-        self.label_6.setText(_( u"Pt Fee"))
+        self.label_6.setText(_( u"Charge"))
         self.expand_pushButton.setText(_( u"Expand All"))
 
 import resources_rc

@@ -18,6 +18,8 @@ from PyQt4 import QtGui
 
 from openmolar.settings import localsettings, fee_keys
 from openmolar.qt4gui.compiled_uis import Ui_customTreatment
+from openmolar.qt4gui.compiled_uis import Ui_feeTableTreatment
+
 from openmolar.qt4gui.dialogs import addTreat
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module, fees_module
@@ -53,8 +55,9 @@ def xrayAdd(parent):
             print "treat =", treat
             usercode = treat[0]
             parent.pt.xraypl += usercode + " "
+            fee, ptfee = fee_keys.getItemFees(parent.pt, treat[1])
             parent.pt.addToEstimate(1, treat[1], treat[2], 
-            treat[3], treat[4], parent.pt.dnt1, 
+            fee, ptfee, parent.pt.dnt1, 
             parent.pt.cset, "xray", usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
@@ -69,8 +72,9 @@ def perioAdd(parent):
         for treat in chosenTreatments:
             usercode = treat[0]
             parent.pt.periopl += "%s "% usercode
-            parent.pt.addToEstimate(1,treat[1], treat[2], treat[3],
-            treat[4], parent.pt.dnt1, parent.pt.cset, "perio", usercode)
+            fee, ptfee = fee_keys.getItemFees(parent.pt, treat[1])
+            parent.pt.addToEstimate(1,treat[1], treat[2], fee,
+            ptfee, parent.pt.dnt1, parent.pt.cset, "perio", usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
 
@@ -96,8 +100,9 @@ def otherAdd(parent):
         for treat in chosenTreatments:
             usercode = treat[0]
             parent.pt.otherpl += "%s "% usercode
-            parent.pt.addToEstimate(1,treat[1], treat[2], treat[3],
-            treat[4], parent.pt.dnt1, parent.pt.cset, "other", usercode)
+            fee, ptfee = fee_keys.getItemFees(parent.pt, itemcode)            
+            parent.pt.addToEstimate(1,treat[1], treat[2], fee,
+            ptfee, parent.pt.dnt1, parent.pt.cset, "other", usercode)
         parent.load_newEstPage()
         parent.load_treatTrees()
 
@@ -122,11 +127,10 @@ def customAdd(parent):
                 #-- necessary because the est table type col is char(12)
                 ttype = ttype[:12]
             fee = int(dl.fee_doubleSpinBox.value() * 100)
-            ptfee = int(dl.ptFee_doubleSpinBox.value() * 100)
-
+            
             parent.pt.custompl += "%s "% ttype
             parent.pt.addToEstimate(no, "4002", descr, fee,
-            ptfee, parent.pt.dnt1, "P", "custom", ttype)
+            fee, parent.pt.dnt1, "P", "custom", ttype)
             parent.load_newEstPage()
             parent.load_treatTrees()
 
@@ -135,7 +139,6 @@ def fromFeeTable(parent, item):
     add an item which has been selected from the fee table itself
     '''
     print "adding an item from the fee table!!"
-    ##TODO - get this working (should be fun!)
     
     headerItem = item.parent()
     if headerItem == None: # userhas clicked a heading - no use.
@@ -151,9 +154,8 @@ def fromFeeTable(parent, item):
         
     if not course_module.newCourseNeeded(parent):
         Dialog = QtGui.QDialog(parent)
-        dl = Ui_customTreatment.Ui_Dialog()
+        dl = Ui_feeTableTreatment.Ui_Dialog()
         dl.setupUi(Dialog)
-        dl.number_spinBox.setValue(1)
         dl.description_lineEdit.setText(item.text(4))
         if "N" in parent.pt.cset:
             print "using NHS cols"
@@ -165,11 +167,11 @@ def fromFeeTable(parent, item):
             ptfee = fee 
         if "I" == parent.pt.cset:
             ptfee = 0
+        
         dl.fee_doubleSpinBox.setValue(fee/100)
-        dl.ptFee_doubleSpinBox.setValue(ptfee/100)
+        dl.ptfee_doubleSpinBox.setValue(ptfee/100)
         
         if Dialog.exec_():
-            no = dl.number_spinBox.value()
             descr = str(dl.description_lineEdit.text())
             if descr == "":
                 descr = "??"
@@ -177,11 +179,11 @@ def fromFeeTable(parent, item):
             ttype = str(item.text(2)).replace(" ", "_")
             if ttype == "":
                 ttype = descr.replace(" ", "_")[:12]
-            fee = int(dl.fee_doubleSpinBox.value() * 100)
-            ptfee = int(dl.ptFee_doubleSpinBox.value() * 100)
-
+    
             parent.pt.custompl += "%s "% ttype
-            parent.pt.addToEstimate(no, code, descr, fee,
+            fee = int(dl.fee_doubleSpinBox.value() * 100)
+            ptfee = int(dl.ptfee_doubleSpinBox.value() * 100)
+            parent.pt.addToEstimate(1, code, descr, fee,
             ptfee, parent.pt.dnt1, parent.pt.cset, category, ttype)
             
             
@@ -190,8 +192,6 @@ def fromFeeTable(parent, item):
             else:
                 parent.load_newEstPage()
                 parent.load_treatTrees()
-
-
 
     
 def chartAdd(parent, tooth, properties):

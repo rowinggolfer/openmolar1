@@ -19,8 +19,8 @@ import subprocess
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 26th October 2009.
-__MAJOR_VERSION__= "0.1.6"
+#- updated 7th November 2009.
+__MAJOR_VERSION__= "0.1.7"
 
 SUPERVISOR = "boss"
 DBNAME = "default"

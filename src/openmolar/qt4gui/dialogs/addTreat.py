@@ -26,25 +26,6 @@ def getCode(arg):
         " - will revert to OTHER TREATMENT"
     return itemcode
 
-def getItemFees_(cset, item, no_items=1, exmpt=""):
-    #-- delete this code ASAP
-    print "DEPRECATED!!!!!!!"
-    print '''using addTreat.getItemFees 
-    CSETYPE=%s ITEMCODE=%s No_items=%d exmpt=%s'''% (
-    cset, item, no_items, exmpt)
-
-    itemfee, ptfee = 0, 0
-    if "P" in cset:
-        itemfee = localsettings.privateFees[item].getFee(no_items)
-        ptfee = itemfee
-    elif "I" in cset:
-        itemfee = localsettings.privateFees[item].getFee(no_items)        
-    elif "N" in cset:
-        itemfee = localsettings.nhsFees[item].getFee(no_items)
-        if exmpt == "":
-            ptfee = localsettings.nhsFees[item].getPtFee(no_items)
-    return itemfee, ptfee
-
 def getDescription(arg):
     description = ""
     try:
@@ -57,37 +38,6 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
     def __init__(self, parent, widget):
         self.parent = parent
         self.setupUi(widget)
-        self.addchain()
-        self.feesLinked = True
-        self.setChain(parent.pt.cset)
-        self.signals()
-        self.feelist=[]
-        self.ptfeelist=[]
-        
-    def signals(self, connect=True):
-        '''
-        sets the various signals required to monitor user input
-        '''
-        if connect:
-            #-number of items has changed
-            QtCore.QObject.connect(self.spinBox,
-            QtCore.SIGNAL("valueChanged(int)"), self.feeCalc)
-            #fee adjusted
-            QtCore.QObject.connect(self.doubleSpinBox,
-            QtCore.SIGNAL("valueChanged(double)"), self.feeAdjusted)
-            #ptfee adjusted
-            QtCore.QObject.connect(self.pt_doubleSpinBox,
-            QtCore.SIGNAL("valueChanged(double)"), self.ptFeeAdjusted)
-        else:
-            #-number of items has changed
-            QtCore.QObject.disconnect(self.spinBox,
-            QtCore.SIGNAL("valueChanged(int)"), self.feeCalc)
-            #fee adjusted
-            QtCore.QObject.disconnect(self.doubleSpinBox,
-            QtCore.SIGNAL("valueChanged(double)"), self.feeAdjusted)
-            #ptfee adjusted
-            QtCore.QObject.disconnect(self.pt_doubleSpinBox,
-            QtCore.SIGNAL("valueChanged(double)"), self.ptFeeAdjusted)
             
     def setNumber(self, arg):
         self.spinBox.setValue(arg)
@@ -96,88 +46,6 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.itemcode = itemcode
         self.description = getDescription(self.itemcode)
         self.label.setText("%s (%s)"% (self.description, self.itemcode))
-
-    def addchain(self):
-        '''
-        called at init - adds a chain icon showing if the fee/pt fee
-        are identical
-        '''
-        self.chain = chainLabel.chainLabel(self.chain_frame)
-        QtCore.QObject.connect(self.chain,
-        QtCore.SIGNAL("chained"), self.linkfees)
-
-    def linkfees(self, arg):
-        '''
-        toggles a boolean which determines if the pt fee and fee are the same
-        '''
-        self.feesLinked = arg
-
-    def setChain(self, cset):
-        '''
-        break the chain if the course type is not P
-        '''
-        if cset != "P":
-            self.chain.mousePressEvent(None)
-
-    def feeCalc(self, n_items):
-        '''
-        calculate the fee and pt fee from the feescale
-        called when the number of items has changed
-        '''
-        print "feeCalc called ",
-        existing_no = 0
-        existing_fee = 0
-        existing_ptFee = 0
-        for est in self.parent.pt.estimates:
-            if est.itemcode == self.itemcode:
-                existing_no += 1
-        if existing_no >0:
-            print "%d existing %s items"% (existing_no, self.itemcode)
-            warning = "(will be added to existing items)"
-            ex_text = self.label.text()
-            if not warning in ex_text:
-                self.label.setText(ex_text + warning)
-            
-        self.feelist = []
-        self.ptfeelist = []
-        feeSum, pt_feeSum = 0, 0
-        for i in range(n_items):
-            existing_fee, existing_ptFee = fee_keys.getItemFees(
-            self.parent.pt, self.itemcode, existing_no+i)
-            
-            fee, ptfee = fee_keys.getItemFees(self.parent.pt, self.itemcode, 
-            i+existing_no+1)
-
-            fee = fee - existing_fee
-            ptfee = ptfee - existing_ptFee
-            
-            self.feelist.append(fee)
-            self.ptfeelist.append(ptfee)
-            
-            feeSum += fee
-            pt_feeSum += ptfee
-            
-        self.signals(False)
-        self.doubleSpinBox.setValue(feeSum / 100)
-        self.pt_doubleSpinBox.setValue(pt_feeSum / 100)
-        self.signals(True)
-        self.parent.updateTotal()
-    
-    def feeAdjusted(self, arg):
-        '''
-        user has adjusted the fee
-        '''
-        if self.feesLinked:
-            self.pt_doubleSpinBox.setValue(arg)
-        self.parent.updateTotal()
-    
-    def ptFeeAdjusted(self, arg):
-        '''
-        user has adjusted the patient fee
-        '''
-        if self.feesLinked:
-            self.doubleSpinBox.setValue(arg)
-        self.parent.updateTotal()
 
 class treatment(Ui_addTreatment.Ui_Dialog):
     def __init__(self, dialog, items, pt):
@@ -191,44 +59,28 @@ class treatment(Ui_addTreatment.Ui_Dialog):
 
     def showItems(self):
         self.itemWidgets = []
-        vlayout = QtGui.QVBoxLayout(self.frame)
+        vlayout = self.dialog.layout()
+        i=1
         for item in self.items:
             iw = QtGui.QWidget()
-            i = itemWidget(self, iw)
-            i.setItem(item[1])
-            i.setNumber(item[0])
-            i.usercode = item[2]
-            self.itemWidgets.append(i)
-            vlayout.addWidget(iw)
-        spacerItem = QtGui.QSpacerItem(1, 20, QtGui.QSizePolicy.Minimum, 
-        QtGui.QSizePolicy.Expanding)
-        
-        vlayout.addItem(spacerItem)
-        
-    def updateTotal(self):
-        total, pt_total = 0, 0
-        for widg in self.itemWidgets:
-            total += widg.doubleSpinBox.value()
-            pt_total += widg.pt_doubleSpinBox.value()
-        self.fee_doubleSpinBox.setValue(total)
-        self.pt_fee_doubleSpinBox.setValue(pt_total)
-
+            itemW = itemWidget(self, iw)
+            itemW.setItem(item[1])
+            itemW.setNumber(item[0])
+            itemW.usercode = item[2]
+            self.itemWidgets.append(itemW)
+            vlayout.insertWidget(i,iw)
+            i+=1
+            
     def getInput(self):
         if self.dialog.exec_():
             retarg = ()
-            for i in self.itemWidgets:
-                number = i.spinBox.value()
-                #fee = int(i.doubleSpinBox.value()*100)
-                #ptfee = int(i.pt_doubleSpinBox.value()*100)
+            for itemW in self.itemWidgets:
+                number = itemW.spinBox.value()
                 ##TODO - this needs to be modded
                 #should be along the lines of
                 for n in range(number):
-                    retarg += ((i.usercode, i.itemcode,
-                    i.description, i.feelist[n], i.ptfeelist[n]), )
-                #if number > 0:
-                #    retarg += ((number, i.usercode, i.itemcode,
-                #    i.description, fee, ptfee), )
-            print "addTreat.getInput returning",retarg
+                    retarg += ((itemW.usercode, itemW.itemcode,
+                    itemW.description), )
             return retarg
         else:
             return()

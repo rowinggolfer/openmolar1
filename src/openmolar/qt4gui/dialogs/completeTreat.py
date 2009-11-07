@@ -13,20 +13,9 @@ from openmolar.qt4gui.compiled_uis import Ui_completeTreatment
 from openmolar.settings import localsettings
 
 class treatment(Ui_completeTreatment.Ui_Dialog):
-    def __init__(self, dialog, dnt, items, amount, parent=None):
+    def __init__(self, dialog,items, parent=None):
         self.setupUi(dialog)
         self.dialog = dialog
-        practlist = localsettings.activedents+localsettings.activehygs
-        self.dnt_comboBox.addItems(practlist)
-        pos = practlist.index(dnt)
-        self.dnt_comboBox.setCurrentIndex(pos)
-        if amount:
-            self.fee_doubleSpinBox.setValue(amount[0]/100)
-            self.ptfee_doubleSpinBox.setValue(amount[1]/100)
-        else:
-            quote='''Fees Not found in estimate <br />
-            raise a charge if appropriate'''
-            QtGui.QMessageBox.information(self.dialog,"Advisory",quote)
         #-- items is a list - ["ul5","MOD","RT",]
         self.tooth = items[0].upper()
         self.items = items[1:]
@@ -34,13 +23,14 @@ class treatment(Ui_completeTreatment.Ui_Dialog):
     
     def showItems(self):
         self.checkBoxes=[]
-        vlayout = QtGui.QVBoxLayout(self.frame)
+        vlayout = self.dialog.layout()
+        i = 1
         for treat in self.items:
             readableItem="%s - %s"%(self.tooth, treat)
             cb=QtGui.QCheckBox(QtCore.QString(readableItem))
             cb.setChecked(True)
             self.checkBoxes.append(cb)
-            vlayout.addWidget(cb)
+            vlayout.insertWidget(i, cb)
 
     def getInput(self):
         if self.dialog.exec_():
@@ -53,13 +43,12 @@ class treatment(Ui_completeTreatment.Ui_Dialog):
             return()
 
 if __name__ == "__main__":
-    import sys
+    import sys, gettext
+    gettext.install("openmolar", unicode=1)
+    
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
-    items=[]
-    for i in range(4, 6):
-        items.append(("ul%d"%i,"B,GL"))
-    ui = treatment(Dialog,"BW",items,(7699, 6862))
+    ui = treatment(Dialog,["ul5","MOD","RT",])
     print ui.getInput()
 
