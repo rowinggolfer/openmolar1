@@ -1641,6 +1641,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             print "user overuled"
             event.ignore()
 
+    def fullscreen(self):
+        if self.ui.actionFull_Screen_Mode_Ctrl_Alt_F.isChecked():
+            self.setWindowState(QtCore.Qt.WindowFullScreen)
+        else:
+            self.setWindowState(QtCore.Qt.WindowMaximized)
+
     def aboutOM(self):
         '''
         called by menu - help - about openmolar
@@ -3773,17 +3779,19 @@ WITH PT RECORDS %d and %d''')% (
     def signals_menu(self):
         #menu
         QtCore.QObject.connect(self.ui.action_save_patient,
-                        QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
+        QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
+        
         QtCore.QObject.connect(self.ui.action_Open_Patient,
-                    QtCore.SIGNAL("triggered()"), self.open_patient_fromfile)
+        QtCore.SIGNAL("triggered()"), self.open_patient_fromfile)
+
         QtCore.QObject.connect(self.ui.actionSet_Clinician,
-                    QtCore.SIGNAL("triggered()"), self.setClinician)
+        QtCore.SIGNAL("triggered()"), self.setClinician)
 
         QtCore.QObject.connect(self.ui.actionChange_Language,
         QtCore.SIGNAL("triggered()"), self.changeLanguage)
 
         QtCore.QObject.connect(self.ui.actionChoose_Database,
-                               QtCore.SIGNAL("triggered()"), self.changeDB)
+        QtCore.SIGNAL("triggered()"), self.changeDB)
 
         QtCore.QObject.connect(self.ui.action_About,
         QtCore.SIGNAL("triggered()"), self.aboutOM)
@@ -3792,17 +3800,26 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.SIGNAL("triggered()"), QtGui.qApp, QtCore.SLOT("aboutQt()"))
 
         QtCore.QObject.connect(self.ui.action_Quit,
-                               QtCore.SIGNAL("triggered()"), self.quit)
+        QtCore.SIGNAL("triggered()"), self.quit)
+
+        QtCore.QObject.connect(self.ui.actionFull_Screen_Mode_Ctrl_Alt_F,
+        QtCore.SIGNAL("triggered()"), self.fullscreen)        
+
         QtCore.QObject.connect(self.ui.actionTable_View_For_Charting,
-                        QtCore.SIGNAL("triggered()"), self.showChartTable)
+        QtCore.SIGNAL("triggered()"), self.showChartTable)
+ 
         QtCore.QObject.connect(self.ui.actionClear_Today_s_Emergency_Slots,
         QtCore.SIGNAL("triggered()"), self.clearTodaysEmergencyTime_action)
+ 
         QtCore.QObject.connect(self.ui.actionTest_Print_an_NHS_Form,
-                               QtCore.SIGNAL("triggered()"), self.testGP17)
+        QtCore.SIGNAL("triggered()"), self.testGP17)
+ 
         QtCore.QObject.connect(self.ui.actionOptions,
-                        QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
-        QtCore.QObject.connect(self.ui.actionLog_queries_in_underlying_terminal,
-                    QtCore.SIGNAL("triggered()"), localsettings.setlogqueries)
+        QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
+ 
+        QtCore.QObject.connect(
+        self.ui.actionLog_queries_in_underlying_terminal,
+        QtCore.SIGNAL("triggered()"), localsettings.setlogqueries)
 
         QtCore.QObject.connect(self.ui.actionAppointment_Tools,
         QtCore.SIGNAL("triggered()"), self.appointmentTools_action)

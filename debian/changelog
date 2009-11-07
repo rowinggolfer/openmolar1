@@ -1,5 +1,5 @@
-openmolar (0.1.6-6ubuntu1) intrepid; urgency=low
+openmolar (0.1.6-7ubuntu1) intrepid; urgency=low
 
-  * as per bzr version 431 see https://launchpad.net/openmolar for details
+  * as per bzr version 432 see https://launchpad.net/openmolar for details
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 06 Nov 2009 14:48:41 +0000
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Sat, 07 Nov 2009 19:53:16 +0000

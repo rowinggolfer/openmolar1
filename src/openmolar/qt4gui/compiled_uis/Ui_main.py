@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Thu Nov  5 13:56:58 2009
+# Created: Sat Nov  7 20:11:03 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -816,7 +816,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 607, 485))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 334, 485))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.gridLayout_28 = QtGui.QGridLayout(self.scrollAreaWidgetContents_5)
         self.gridLayout_28.setObjectName("gridLayout_28")
@@ -963,7 +963,7 @@ class Ui_MainWindow(object):
         self.scrollArea_6.setWidgetResizable(True)
         self.scrollArea_6.setObjectName("scrollArea_6")
         self.scrollAreaWidgetContents_9 = QtGui.QWidget(self.scrollArea_6)
-        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 599, 426))
+        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 499, 426))
         self.scrollAreaWidgetContents_9.setObjectName("scrollAreaWidgetContents_9")
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents_9)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -1080,7 +1080,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtGui.QWidget(self.scrollArea_3)
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 622, 302))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 301, 134))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_5.setSpacing(0)
@@ -1166,7 +1166,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName("estimate_scrollArea")
         self.scrollAreaWidgetContents_11 = QtGui.QWidget(self.estimate_scrollArea)
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 366, 200))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 98, 200))
         self.scrollAreaWidgetContents_11.setObjectName("scrollAreaWidgetContents_11")
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
@@ -1183,7 +1183,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_4 = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 217, 511))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 210, 511))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1336,7 +1336,7 @@ class Ui_MainWindow(object):
         self.perioCharts_scrollArea.setWidgetResizable(True)
         self.perioCharts_scrollArea.setObjectName("perioCharts_scrollArea")
         self.scrollAreaWidgetContents_6 = QtGui.QWidget(self.perioCharts_scrollArea)
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 601, 392))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 267, 392))
         self.scrollAreaWidgetContents_6.setObjectName("scrollAreaWidgetContents_6")
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
         self.gridLayout_15.setObjectName("gridLayout_15")
@@ -1954,7 +1954,7 @@ class Ui_MainWindow(object):
         self.tasks_scrollArea.setWidgetResizable(True)
         self.tasks_scrollArea.setObjectName("tasks_scrollArea")
         self.scrollAreaWidgetContents_2 = QtGui.QWidget(self.tasks_scrollArea)
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 620, 300))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.tasks_scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.horizontalLayout_4.addWidget(self.tasks_scrollArea)
@@ -2403,6 +2403,9 @@ class Ui_MainWindow(object):
         self.actionSelect_Print_Daylists.setObjectName("actionSelect_Print_Daylists")
         self.actionChange_Language = QtGui.QAction(MainWindow)
         self.actionChange_Language.setObjectName("actionChange_Language")
+        self.actionFull_Screen_Mode_Ctrl_Alt_F = QtGui.QAction(MainWindow)
+        self.actionFull_Screen_Mode_Ctrl_Alt_F.setCheckable(True)
+        self.actionFull_Screen_Mode_Ctrl_Alt_F.setObjectName("actionFull_Screen_Mode_Ctrl_Alt_F")
         self.menuMenu.addAction(self.action_save_patient)
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addSeparator()
@@ -2410,6 +2413,7 @@ class Ui_MainWindow(object):
         self.menu_Help.addAction(self.action_About)
         self.menu_Help.addAction(self.action_About_QT)
         self.menu_Prefences.addAction(self.actionChange_Language)
+        self.menu_Prefences.addAction(self.actionFull_Screen_Mode_Ctrl_Alt_F)
         self.menu_Prefences.addAction(self.actionTable_View_For_Charting)
         self.menu_Prefences.addAction(self.actionClear_Today_s_Emergency_Slots)
         self.menu_Prefences.addAction(self.actionTest_Print_an_NHS_Form)
@@ -2445,7 +2449,7 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(7)
+        self.main_tabWidget.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(0)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
@@ -2855,5 +2859,7 @@ class Ui_MainWindow(object):
         self.actionFeeScale_Adjuster.setText(_( u"FeeScale Adjuster"))
         self.actionSelect_Print_Daylists.setText(_( u"Select && Print Daylists"))
         self.actionChange_Language.setText(_( u"Change Language"))
+        self.actionFull_Screen_Mode_Ctrl_Alt_F.setText(_( u"Full Screen Mode (Ctrl-Alt-F)"))
+        self.actionFull_Screen_Mode_Ctrl_Alt_F.setShortcut(_( u"Ctrl+Alt+F"))
 
 import resources_rc

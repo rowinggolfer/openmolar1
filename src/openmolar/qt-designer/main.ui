@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>7</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -2091,7 +2091,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>607</width>
+                        <width>334</width>
                         <height>485</height>
                        </rect>
                       </property>
@@ -2460,7 +2460,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>599</width>
+                        <width>499</width>
                         <height>426</height>
                        </rect>
                       </property>
@@ -2726,8 +2726,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>622</width>
-                        <height>302</height>
+                        <width>301</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2918,7 +2918,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>366</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2951,7 +2951,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>210</width>
                         <height>511</height>
                        </rect>
                       </property>
@@ -3320,7 +3320,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>601</width>
+                        <width>267</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4724,8 +4724,8 @@ Note - this will not remove items which are currently there. </string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>620</width>
-                     <height>300</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -5724,6 +5724,7 @@ Note - this will not remove items which are currently there. </string>
      <string>&amp;Preferences</string>
     </property>
     <addaction name="actionChange_Language"/>
+    <addaction name="actionFull_Screen_Mode_Ctrl_Alt_F"/>
     <addaction name="actionTable_View_For_Charting"/>
     <addaction name="actionClear_Today_s_Emergency_Slots"/>
     <addaction name="actionTest_Print_an_NHS_Form"/>
@@ -5834,6 +5835,17 @@ Note - this will not remove items which are currently there. </string>
   <action name="actionChange_Language">
    <property name="text">
     <string>Change Language</string>
+   </property>
+  </action>
+  <action name="actionFull_Screen_Mode_Ctrl_Alt_F">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Screen Mode (Ctrl-Alt-F)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+F</string>
    </property>
   </action>
  </widget>
