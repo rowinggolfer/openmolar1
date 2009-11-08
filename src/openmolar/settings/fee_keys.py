@@ -54,11 +54,13 @@ class fee():
 
         if patient:
             feeList=self.ptFees
+            print "using patient feelist=", feeList
+
         else:
             feeList=self.fees
+            print "using feelist=", feeList
             
-        #print "feelist=", feeList
-
+        
         if self.regulations=="":
             return feeList[0]*no_items
         else:
@@ -261,7 +263,7 @@ def getFee(cset,itemcode, no_items=1, conditions=[]):
             #print "Exmeption found warning - partial exemptions not handled"
             
     if "N" in cset:
-        fee = localsettings.nhsFees[itemcode].getFee()
+        fee = localsettings.nhsFees[itemcode].getFee(no_items, conditions)
         if not nhsExempt:
             ptfee= localsettings.nhsFees[itemcode].getPtFee(no_items, conditions)
     elif "I" in cset:

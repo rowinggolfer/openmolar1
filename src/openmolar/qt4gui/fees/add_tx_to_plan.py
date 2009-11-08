@@ -55,9 +55,8 @@ def xrayAdd(parent):
             print "treat =", treat
             usercode = treat[0]
             parent.pt.xraypl += usercode + " "
-            fee, ptfee = fee_keys.getItemFees(parent.pt, treat[1])
             parent.pt.addToEstimate(1, treat[1], treat[2], 
-            fee, ptfee, parent.pt.dnt1, 
+            treat[3], treat[4], parent.pt.dnt1, 
             parent.pt.cset, "xray", usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
@@ -72,9 +71,9 @@ def perioAdd(parent):
         for treat in chosenTreatments:
             usercode = treat[0]
             parent.pt.periopl += "%s "% usercode
-            fee, ptfee = fee_keys.getItemFees(parent.pt, treat[1])
-            parent.pt.addToEstimate(1,treat[1], treat[2], fee,
-            ptfee, parent.pt.dnt1, parent.pt.cset, "perio", usercode)
+            parent.pt.addToEstimate(1,treat[1], treat[2], 
+            treat[3], treat[4], parent.pt.dnt1, 
+            parent.pt.cset, "perio", usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
 
@@ -101,8 +100,9 @@ def otherAdd(parent):
             usercode = treat[0]
             parent.pt.otherpl += "%s "% usercode
             fee, ptfee = fee_keys.getItemFees(parent.pt, itemcode)            
-            parent.pt.addToEstimate(1,treat[1], treat[2], fee,
-            ptfee, parent.pt.dnt1, parent.pt.cset, "other", usercode)
+            parent.pt.addToEstimate(1,treat[1], treat[2], 
+            treat[3], treat[4], parent.pt.dnt1, 
+            parent.pt.cset, "other", usercode)
         parent.load_newEstPage()
         parent.load_treatTrees()
 
