@@ -216,7 +216,7 @@ class chartLineEdit(QtGui.QLineEdit):
         handles the events when a user hits space, up, down or return
         '''
         if arg in ("up", "down"):
-            self.emit(QtCore.SIGNAL("ArrowKeyPressed"),(arg))
+            self.emit(QtCore.SIGNAL("NavKeyPressed"),(arg))
         else:
             self.additional()
             
@@ -293,7 +293,9 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         selectedTooth will be 'ur8' etc..
         selectedChart will be 'st' or 'pl' or 'cmp'
         '''
-        self.selectedChart = selectedChart
+        print "toothProps.setTooth called with args",selectedTooth, selectedChart
+        self.setSelectedChart(selectedChart)
+        
         self.selectedTooth = selectedTooth
 
         self.tooth.setBacktooth(int(selectedTooth[2])>3)
@@ -308,7 +310,13 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
 
         self.isStatic(selectedChart == "st")
         self.setExistingProps(self.parent.pt.__dict__[selectedTooth+selectedChart])
-
+    
+    def setSelectedChart(self, arg):
+        '''
+        make the widget aware which chart it is linked to
+        '''
+        self.selectedChart = arg
+        self.isStatic(arg=="st")
 
     def isStatic(self,arg):
         '''
@@ -589,7 +597,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         QtCore.SIGNAL("clicked()"), self.lineEdit.additional)
 
         QtCore.QObject.connect(self.lineEdit,
-        QtCore.SIGNAL("ArrowKeyPressed"),self.keyNav)
+        QtCore.SIGNAL("NavKeyPressed"),self.keyNav)
 
         QtCore.QObject.connect(self.rightTooth_pushButton,
         QtCore.SIGNAL("clicked()"), self.rightTooth)

@@ -159,6 +159,7 @@ class chartsClass():
                     x, y = 15, 1
                 else:
                     x += 1
+            
         else:
             #--lower teeth
             if direction == "up":
@@ -172,25 +173,26 @@ class chartsClass():
 
         widg.setSelected(x, y)
         tooth = widg.grid[y][x]
+        
+        row = (16*y) + x
+        
+        self.ui.chartsTableWidget.setCurrentCell(row,column)
         self.ui.toothPropsWidget.setTooth(tooth, self.selectedChartWidget)
     
     def chart_navigate(self):
         '''
-        this is called when the charts TABLE is navigated
+        this is called when the tooth props widget 
+        static/plan/completed buttons are used        
         '''
-        print "chart_navigate (user using the TABLE!!)",
+        print "chart_navigate",
+        
+        row=self.ui.chartsTableWidget.currentRow()
 
-        userPerformed = self.ui.chartsTableWidget.isVisible()
-        if userPerformed:
-            print "performed by user"
-        else:
-            print "performed programatically"
-
-            row=self.ui.chartsTableWidget.currentRow()
-            tString=str(self.ui.chartsTableWidget.item(
-            row, 0).text().toAscii())
-
-            self.chartNavigation(tString, userPerformed)
+        tString = str(self.ui.chartsTableWidget.item(
+        row, 0).text().toAscii())
+        print tString
+        self.ui.toothPropsWidget.setTooth(tString, self.selectedChartWidget)
+        self.chartNavigation([tString], True)
 
     def deleteComments(self):
         '''
@@ -210,13 +212,13 @@ class chartsClass():
         called by a signal from the toothprops widget -
         args are the new tooth properties eg modbl,co
         '''
-        print "update charts called with arg '%s'"% arg
         try:
             tooth = str(self.ui.chartsTableWidget.item(
             self.ui.chartsTableWidget.currentRow(), 0).text())
         except AttributeError:
-            tooth = "ur8"
-        
+            return
+        print "update charts called with arg '%s'"% arg,
+        print "tooth is ",tooth
         if self.selectedChartWidget == "st":
             self.pt.__dict__[tooth + self.selectedChartWidget] = arg
             #--update the patient!!
@@ -224,7 +226,7 @@ class chartsClass():
             self.ui.summaryChartWidget.setToothProps(tooth, arg)
             self.ui.staticChartWidget.update()
         elif self.selectedChartWidget == "pl":
-            if course_module.newCourseNeeded(self):
+            if arg != "" and course_module.newCourseNeeded(self):
                 return
             self.toothTreatAdd(tooth, arg)
             self.ui.planChartWidget.update()
@@ -240,6 +242,7 @@ into the plan first then complete it.'''), 1)
         '''
         update the charts when a planned item has moved to completed
         '''
+        print "update charts after treatment", tooth, newplan, newcompleted
         self.ui.planChartWidget.setToothProps(tooth, newplan)
         self.ui.planChartWidget.update()
         self.ui.completedChartWidget.setToothProps(tooth, newcompleted)
@@ -275,6 +278,7 @@ into the plan first then complete it.'''), 1)
         '''
         #-- before continuing, see if user has changes to apply on the
         #-- previous tooth
+        print "checkPreviousEntry"
         if not self.ui.toothPropsWidget.lineEdit.unsavedChanges():
             return True
         else:
@@ -284,7 +288,7 @@ into the plan first then complete it.'''), 1)
         '''
         called by the static or summary chartwidget
         '''
-        #print "static_chartNavigation"
+        print "static_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="st"
         self.chartNavigation(signal)
@@ -293,7 +297,7 @@ into the plan first then complete it.'''), 1)
         '''
         called by the plan chartwidget
         '''
-        #print "plan_chartNavigation"
+        print "plan_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="pl"
         self.chartNavigation(signal)
@@ -302,7 +306,7 @@ into the plan first then complete it.'''), 1)
         '''
         called by the completed chartwidget
         '''
-        #print "comp_chartNavigation"
+        print "comp_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="cmp"
         self.chartNavigation(signal)
@@ -332,7 +336,7 @@ into the plan first then complete it.'''), 1)
         '''
         charts table has been navigated
         '''
-        print "chartTableNav", row,col,row1,col1
+        print "UNUSED chartTableNav", row,col,row1,col1
         
     def chartNavigation(self, teeth, callerIsTable=False):
         '''
@@ -341,7 +345,7 @@ into the plan first then complete it.'''), 1)
         '''
         #--called by a navigating a chart or the underlying table
         #--convert from QString
-        
+        print "chartNavigation", teeth, callerIsTable
         grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
         'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
         ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
@@ -482,6 +486,7 @@ into the plan first then complete it.'''), 1)
         '''
         update the charts table
         '''
+        print "filling chartsTable"
         self.advise("filling charts table")
         self.ui.chartsTableWidget.clear()
         self.ui.chartsTableWidget.setSortingEnabled(False)
@@ -537,18 +542,18 @@ into the plan first then complete it.'''), 1)
         '''
         show history of the tooth
         '''
-        print "show history of", tooth
-        print pt.dayBookHistory
-        return
+        #print "show history of", tooth
+        #print pt.dayBookHistory
+        #return
         th = "<br />"
         for item in self.pt.dayBookHistory:
-            if arg[0].upper() in item[2].strip():
+            if tooth.upper() in item[2].strip():
                 th += "%s - %s - %s<br />"%(
                 item[0], localsettings.ops[int(item[1])], item[2].strip())
         if th == "<br />":
             th += "No History"
         th = th.rstrip("<br />")
-        QtGui.QToolTip.showText(arg[1], arg[0]+th)
+        self.advise(tooth.upper()+th,1)
 
 
 class cashbooks():
@@ -4048,9 +4053,10 @@ WITH PT RECORDS %d and %d''')% (
                                QtCore.SIGNAL("NextTooth"), self.navigateCharts)
         #--fillings have changed!!
         QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
-                        QtCore.SIGNAL("Changed_Properties"), self.updateCharts)
+        QtCore.SIGNAL("Changed_Properties"), self.updateCharts)
+        
         QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
-                        QtCore.SIGNAL("DeletedComments"), self.deleteComments)
+        QtCore.SIGNAL("DeletedComments"), self.deleteComments)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
                                QtCore.SIGNAL("static"), self.editStatic)
