@@ -55,29 +55,31 @@ def proceed():
     from openmolar.dbtools import schema_version
     sv = schema_version.getVersion()
 
-    if localsettings.SCHEMA_VERSION > sv:
+    if localsettings.CLIENT_SCHEMA_VERSION > sv:
         print "schema is out of date"
         from openmolar.qt4gui import schema_updater
         sys.exit(schema_updater.main(sys.argv))
-    elif localsettings.SCHEMA_VERSION < sv:
+    elif localsettings.CLIENT_SCHEMA_VERSION < sv:
         print "client is out of date....."
         compatible  = schema_version.clientCompatibility(
-        localsettings.SCHEMA_VERSION)
+        localsettings.CLIENT_SCHEMA_VERSION)
         if not compatible:
             QtGui.QMessageBox.warning(None, _("Update Client"),
             _('''<p>Sorry, you cannot run this version of the openMolar client
 because your database schema is more advanced.</p>
 <p>this client requires schema version %s, but your database is at %s</p>
-<p>Please Update openMolar now</p>''')% (localsettings.SCHEMA_VERSION, sv))
+<p>Please Update openMolar now</p>''')% (
+            localsettings.CLIENT_SCHEMA_VERSION, sv))
         else:
-            result = QtGui.QMessageBox.question(None, _("Update Client"),
+            result = QtGui.QMessageBox.question(None, 
+            _("Proceed without upgrade?"),
             _('''<p>This openMolar client has fallen behind your database
 schema version<br />this client was written for schema version %s,
 but your database is now at %s<br />However, the differences are not critical,
 and you can continue if you wish</p>
-<p><i>It would still be wise to update openMolar ASAP</i></p>
+<p><i>It would still be wise to update this client ASAP</i></p>
 <hr /><p>Do you wish to continue?</p>''')% (
-            localsettings.SCHEMA_VERSION, sv),
+            localsettings.CLIENT_SCHEMA_VERSION, sv),
             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
             if result == QtGui.QMessageBox.Yes:
@@ -250,8 +252,11 @@ combination!<br />Please Try Again.'''))
     my_app.closeAllWindows()
 
 def run():
-    global my_app
+    global my_app, FIRST_RUN_TESTING
     my_app = QtGui.QApplication(sys.argv)
+    print sys.argv
+    if "firstrun" in sys.argv:
+        FIRST_RUN_TESTING = True
     main()
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ private_only = False
 nhs_only = False
 
 newfeetable_Headers = "section,code,oldcode,USERCODE,regulation," + \
-"description,description1,NF08,NF08_pt,PFA"
+"description,description1,NF08,NF08_pt,NF09,NF09_pt,PFA"
 
 def getFeeHeaders():
     return newfeetable_Headers.split(",")[1:]
@@ -27,9 +27,9 @@ def getFeeDict():
     global newtable_Headers
     option=""
     if private_only:
-        option+="where PFA>0"
+        option += "where PFA>0"
     elif nhs_only:
-        option+="where NF08>0"
+        option += "where NF08>0"
 
     db=connect()
     cursor=db.cursor()

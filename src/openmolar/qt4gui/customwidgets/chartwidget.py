@@ -41,6 +41,7 @@ class chartWidget(QtGui.QWidget):
         self.showLeftRight = True
         self.showSelected = True
         self.setMouseTracking(True)
+        self.selectedTeeth = []
 
     def clear(self):
         '''
@@ -137,7 +138,7 @@ class chartWidget(QtGui.QWidget):
         '''
         self.selected = [x, y]
         self.update()
-
+       
     def setToothProps(self, tooth, props):
         '''
         adds fillings and comments to a tooth
@@ -239,8 +240,8 @@ class chartWidget(QtGui.QWidget):
         
         self.emit(QtCore.SIGNAL("toothSelected"), teeth )
         
-        if teeth and event.button() == 2:
-            tooth = teeth[0] #self.grid[y][x]
+        if self.selectedTeeth and event.button() == 2:
+            tooth = self.selectedTeeth[0] #self.grid[y][x]
                     
             menu = QtGui.QMenu(self)
             menu.addAction(tooth.upper())

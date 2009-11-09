@@ -25,6 +25,7 @@ def getVersion():
         data = row[0]
         if data > version:
             version = data
+    localsettings.DB_SCHEMA_VERSION = version
     return version
     
 def clientCompatibility(client_schema):
@@ -57,8 +58,10 @@ def update(schemas, user):
             values (%s, %s, %s, NOW())'''
     values = ("Schema_Version", latest_schema, user)
     
+    print "making the db aware of it's schema version"
     cursor.execute(query, values)
 
+    print "disabling old clients"
     query = '''delete from settings where value = "compatible_clients" 
     and data < %s'''
     cursor.execute(query, schemas[0])
@@ -66,7 +69,8 @@ def update(schemas, user):
         query = '''insert into settings (value, data, modified_by, time_stamp) 
                 values (%s, %s, %s, NOW())'''
         values = ("compatible_clients", client_schema, user)
-    
+        cursor.execute(query, values)
+        
     db.commit()
-    localsettings.SCHEMA_VERSION = latest_schema
+    localsettings.CLIENT_SCHEMA_VERSION = latest_schema
     return True

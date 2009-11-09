@@ -24,7 +24,8 @@ __MAJOR_VERSION__= "0.1.7"
 
 SUPERVISOR = "boss"
 DBNAME = "default"
-SCHEMA_VERSION = "1.2"
+CLIENT_SCHEMA_VERSION = "1.3"
+DB_SCHEMA_VERSION = "unknown"
 DEBUGMODE = False
 ENCODING = "latin-1" #necessary for the uk £ symbol
 
@@ -90,8 +91,6 @@ stylesheet = os.path.join(wkdir, "resources", "style.css")
 resources_path = os.path.join(wkdir, "resources")
 
 
-
-
 def openPDF(filepath):
     '''
     open a PDF - minimal checks to ensure no malicious files have been
@@ -141,15 +140,18 @@ permissionExpire = datetime.datetime.now()
 
 
 #################  MESSAGES ####################################################
-about = '''<p>
+def about():
+    return '''<p>
 openMolar - open Source dental practice management software.<br />
 Version %s  -  Bazaar Revno %s<br />
+Client Schema Version is %s, DataBase is at version %s<br /><hr />
 Copyright (C) 2009  Neil A. Wallace B.Ch.D.<br />
 sourcecode available at <a href="http://launchpad.net/openmolar">
 "http://launchpad.net/openmolar"</a>.
 </p>
 Thanks to <a href="http://rfquerin.org">Richard Querin</a>
-for the wonderful icon and Logo.'''%(__MAJOR_VERSION__,__build__)
+for the wonderful icon and Logo.'''%(__MAJOR_VERSION__, __build__, 
+CLIENT_SCHEMA_VERSION, DB_SCHEMA_VERSION)
 
 license = '''<hr />
 <p>

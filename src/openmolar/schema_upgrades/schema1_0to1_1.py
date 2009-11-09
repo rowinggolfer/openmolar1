@@ -71,9 +71,8 @@ from openmolar import connect
 
 
 class dbUpdater(QtCore.QThread):
-    def __init__(self, lock, parent=None):
+    def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
-        self.lock = lock
         self.stopped = False
         self.path = None
         self.completed = False

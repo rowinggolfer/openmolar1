@@ -131,36 +131,37 @@ from openmolar.qt4gui.customwidgets import notification_widget
 
 class chartsClass():
 
-    def navigateCharts(self, e):
+    def navigateCharts(self, direction):
         '''
         called by a keypress in the tooth prop LineEdit or a click on one of
         the tooth prop buttons.
         entry will have been checked.
         '''
+        print "navigateCharts",direction
         if self.selectedChartWidget == "cmp":
-            widg=self.ui.completedChartWidget
-            column=4
+            widg = self.ui.completedChartWidget
+            column = 4
         elif self.selectedChartWidget == "pl":
-            widg=self.ui.planChartWidget
-            column=3
+            widg = self.ui.planChartWidget
+            column = 3
         else:
-            widg=self.ui.staticChartWidget
-            column=2
-        [x, y]=widg.selected
+            widg = self.ui.staticChartWidget
+            column = 2
+        [x, y] = widg.selected
 
         if y == 0:
             #--upper teeth
-            if e == "up":
+            if direction == "up":
                 if x != 0:
                     x -= 1
             else:
                 if x == 15:
-                    x, y=15, 1
+                    x, y = 15, 1
                 else:
                     x += 1
         else:
             #--lower teeth
-            if e == "up":
+            if direction == "up":
                 if x == 15:
                     x, y=15, 0
                 else:
@@ -170,7 +171,9 @@ class chartsClass():
                     x -= 1
 
         widg.setSelected(x, y)
-
+        tooth = widg.grid[y][x]
+        self.ui.toothPropsWidget.setTooth(tooth, self.selectedChartWidget)
+    
     def chart_navigate(self):
         '''
         this is called when the charts TABLE is navigated
@@ -325,6 +328,12 @@ into the plan first then complete it.'''), 1)
         self.selectedChartWidget="cmp"
         self.chart_navigate()
 
+    def chartTableNav(self, row, col, row1, col1):
+        '''
+        charts table has been navigated
+        '''
+        print "chartTableNav", row,col,row1,col1
+        
     def chartNavigation(self, teeth, callerIsTable=False):
         '''
         one way or another, a tooth has been selected...
@@ -1651,7 +1660,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         '''
         called by menu - help - about openmolar
         '''
-        self.advise('''<p>%s</p><p>%s</p>'''%(localsettings.about,
+        self.advise('''<p>%s</p><p>%s</p>'''%(localsettings.about(),
         localsettings.license), 1)
 
     def addCustomWidgets(self):
@@ -2621,7 +2630,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             #tb.setTabIcon(7, icon)
             tb.setTabText(7, _("NEW FORUM POSTS"))
             tb.setTabTextColor(7, QtGui.QColor("red"))
-            self.notify("New Forum Posts")
+            if not self.forum_notified:
+                self.notify("New Forum Posts")
             self.forum_notified = True
         else:
             #print "removing icon"
@@ -4026,6 +4036,10 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.staticChartWidget,
         QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
+
+        QtCore.QObject.connect(self.ui.chartsTableWidget,
+        QtCore.SIGNAL("currentCellChanged (int,int,int,int)"), 
+        self.chartTableNav)        
 
         QtCore.QObject.connect(self.ui.planChartWidget,
         QtCore.SIGNAL("completeTreatment"), self.planChartWidget_completed)

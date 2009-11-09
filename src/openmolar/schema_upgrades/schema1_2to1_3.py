@@ -39,9 +39,8 @@ from openmolar import connect
 
     
 class dbUpdater(QtCore.QThread):
-    def __init__(self, lock, parent=None):
+    def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
-        self.lock = lock
         self.stopped = False
         self.path = None
         self.completed = False
@@ -53,14 +52,23 @@ class dbUpdater(QtCore.QThread):
         NOTE - this function may fail depending on the mysql permissions in place
         '''
         db = connect.connect()
+        db.autocommit(False)
         cursor = db.cursor()
-        i, commandNo = 0, len(SQLSTRINGS)
-        for sql_string in SQLSTRINGS:
-            cursor.execute(sql_string)
-            self.progressSig(10+70*i/commandNo,sql_string[:20]+"...")
-        db.commit()
-        return True
-    
+        sucess = False
+        try:
+            i, commandNo = 0, len(SQLSTRINGS)
+            for sql_string in SQLSTRINGS:
+                cursor.execute(sql_string)
+                self.progressSig(10+70*i/commandNo,sql_string[:20]+"...")
+                sucess = True
+        except Exception, e:
+            print "FAILURE create_alter_tables", e
+            db.rollback()
+        if sucess:
+            db.commit()
+            db.autocommit(True)
+        return sucess
+        
     def progressSig(self, val, message=""):
         '''
         emits a signal showhing how we are proceeding.
@@ -88,8 +96,12 @@ class dbUpdater(QtCore.QThread):
                 self.progressSig(100, _("updating stored schema version"))
                 self.completed = True
                 self.completeSig(_("ALL DONE - sucessfully moved db to")
-                +" 1.2")
-            
+                + " 1.3")
+            else:
+                localsettings.CLIENT_SCHEMA_VERSION = " 1.2"
+                self.completeSig(_("couldn't create tables, rolled back to")
+                + "1.2")
+        
         except Exception, e:
             print "Exception caught",e
             self.completeSig(str(e))

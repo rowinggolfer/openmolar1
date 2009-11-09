@@ -54,13 +54,15 @@ def main(arg):
             sys.exit("FAILED TO UPGRADE SCHEMA")
             app.closeAllWindows()
         
-    required = localsettings.SCHEMA_VERSION
+    required = localsettings.CLIENT_SCHEMA_VERSION
     current = schema_version.getVersion()
     message = _('''<h3>Update required</h3>
 Your Openmolar database schema is out of date for this version of the client.
 <br /> 
 Your database is at version %s, and %s is required.<br />
-Would you like to Upgrade Now?''')% (current, required)
+Would you like to Upgrade Now?<br />
+WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
+    current, required)
     
     result = QtGui.QMessageBox.question(None, "Update Schema",
     message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
@@ -68,11 +70,16 @@ Would you like to Upgrade Now?''')% (current, required)
     if result == QtGui.QMessageBox.Yes:
         pb.setWindowTitle("openMolar")
         pb.show()
+
         try:
             ###################################################################
             ## UPDATE TO SCHEMA 1.1
-            if current < "1.1":
-                updateProgress(1,_("upgrading to schema version")+" 1.1")        
+            
+            next_version = "1.1"                            
+            if current < next_version:
+                updateProgress(1,
+                _("upgrading to schema version")+" %s"% next_version)        
+
                 from openmolar.schema_upgrades import schema1_0to1_1
                 dbu = schema1_0to1_1.dbUpdater(pb)
             
@@ -82,13 +89,19 @@ Would you like to Upgrade Now?''')% (current, required)
                 QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
                 completed)
             
-                if not dbu.run():
-                    completed(False, _('Conversion to %s failed')% "1.1")
+                if dbu.run():
+                    localsettings.DB_SCHEMA_VERSION = next_version
+                else:
+                    completed(False, 
+                    _('Conversion to %s failed')% next_version)
             
             ###################################################################
             ## UPDATE TO SCHEMA 1.2
-            if current < "1.2":
-                updateProgress(1,_("upgrading to schema version")+" 1.2")        
+            next_version = "1.2"                            
+            if current < next_version:
+                updateProgress(1,
+                _("upgrading to schema version")+" %s"% next_version)        
+
                 from openmolar.schema_upgrades import schema1_1to1_2
                 dbu = schema1_1to1_2.dbUpdater(pb)
             
@@ -98,13 +111,19 @@ Would you like to Upgrade Now?''')% (current, required)
                 QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
                 completed)
             
-                if not dbu.run():
-                    completed(False, _('Conversion to %s failed')% "1.2")
+                if dbu.run():
+                    localsettings.DB_SCHEMA_VERSION = next_version
+                else:
+                    completed(False, 
+                    _('Conversion to %s failed')% next_version)
             
             ###################################################################
             ## UPDATE TO SCHEMA 1.3
-            if current < "1.3":
-                updateProgress(1,_("upgrading to schema version")+" 1.3")        
+            next_version = "1.3"                            
+            if current < next_version:
+                updateProgress(1,
+                _("upgrading to schema version")+" %s"% next_version)        
+
                 from openmolar.schema_upgrades import schema1_2to1_3
                 dbu = schema1_2to1_3.dbUpdater(pb)
             
@@ -114,8 +133,11 @@ Would you like to Upgrade Now?''')% (current, required)
                 QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
                 completed)
             
-                if not dbu.run():
-                    completed(False, _('Conversion to %s failed')% "1.3")
+                if dbu.run():
+                    localsettings.DB_SCHEMA_VERSION = next_version
+                else:
+                    completed(False, 
+                    _('Conversion to %s failed')% next_version)
                     
             else:
                 completed(False,_(
@@ -125,15 +147,16 @@ If so, please revert to a release version.<br />
 If this is not the case, something odd has happened,
 please let the developers of openmolar know ASAP.</p>'''))        
             
-            #completed(True, _("schema update sucessful!"))
             pb.destroy()
             proceed()          
         
         except Exception, e:
             #fatal error!
-            completed(False, "<p>"+_('Unexpected Error updating the schema') 
+            completed(False, 
+            "<p>"+_('Unexpected Error updating the schema') 
             + "<br><br><b>%s</b></p><br><br>"% e + 
-_('''Please File A bug by visiting<br>https://bugs.launchpad.net/openmolar'''))
+            _('Please File A bug by visiting ') +
+            '<br>https://bugs.launchpad.net/openmolar')
             
     else:
         completed(False,  _('''<p>Sorry, you cannot run this version of the 

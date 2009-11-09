@@ -137,6 +137,7 @@ class newsetup(Ui_newSetup.Ui_Dialog):
                 self.rootPassword_lineEdit.setFocus()
             else:
                 self.stackedWidget.setCurrentIndex(4)
+                self.go_pushButton.setFocus()
         
         elif i == 4:
             self.finish()
@@ -154,7 +155,8 @@ class newsetup(Ui_newSetup.Ui_Dialog):
             <li>database name - %s</li>
             <li>username - %s</li><li>password - (hidden)</li>'''% (
             self.HOST,self.PORT,self.DB,self.MysqlUser),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes)
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.Yes )
             
             if result == QtGui.QMessageBox.Yes:
                 self.stackedWidget.setCurrentIndex(6)

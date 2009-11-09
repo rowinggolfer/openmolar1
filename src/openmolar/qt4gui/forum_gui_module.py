@@ -22,8 +22,7 @@ def checkForNewForumPosts(parent):
     '''
     checks for new forum posts every few minutes
     '''
-    if not parent.forum_notified:
-        parent.showForumActivity(forum.newPosts())
+    parent.showForumActivity(forum.newPosts())
         
 def loadForum(parent):
     '''
