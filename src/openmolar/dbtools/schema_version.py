@@ -42,21 +42,31 @@ def clientCompatibility(client_schema):
             return True
             
 
-def update(arg, user):
+def update(schemas, user):
     '''
-    updates the schema version, pass a version and a user
-    eg. updateSchemaVersion ("1.1", "admin script")
+    updates the schema version, 
+    pass a list of compatible clients version and a user
+    eg. updateSchemaVersion (("1.1","1.2"), "admin script")
+    the first in the list is the minimum allowed, 
+    the last is the current schema
     '''
-    timestamp = localsettings.timestamp()
+    latest_schema = schemas[-1]
     db = connect.connect()
     cursor = db.cursor()
     query = '''insert into settings (value,data,modified_by,time_stamp) 
-            values (%s, %s, %s, %s)'''
-    values = ("Schema_Version", arg, user, timestamp)
+            values (%s, %s, %s, NOW())'''
+    values = ("Schema_Version", latest_schema, user)
+    
     cursor.execute(query, values)
-    db.commit()
-    localsettings.SCHEMA_VERSION = arg
-    return True
 
-if __name__ == "__main__":
-    print commit(11956,"NW","surg",20090617,"hello world",True)
+    query = '''delete from settings where value = "compatible_clients" 
+    and data < %s'''
+    cursor.execute(query, schemas[0])
+    for client_schema in schemas:
+        query = '''insert into settings (value, data, modified_by, time_stamp) 
+                values (%s, %s, %s, NOW())'''
+        values = ("compatible_clients", client_schema, user)
+    
+    db.commit()
+    localsettings.SCHEMA_VERSION = latest_schema
+    return True

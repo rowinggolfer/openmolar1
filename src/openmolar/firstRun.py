@@ -42,244 +42,305 @@ blankXML = '''<?xml version="1.1" ?>
 </connection>
 </settings>'''
 
-myPassword = ""
-myHost, myPort = "", 0
-myDB, myMysqlPassword, myMysqlUser = "", "", ""
 
-def newsetup(parent = None):
+class newsetup(Ui_newSetup.Ui_Dialog):
     '''
     a new setup - creates and saves a config file
     creates a database if required
     loads a demo set of data.
     '''
 
-    def applystage3():
-        global myHost, myPort
-        myHost = str(dl.host_lineEdit.text())
-        myPort = int(dl.port_lineEdit.text())
+    def __init__(self, dialog):
+        self.setupUi(dialog)
+        self.dialog = dialog
+        self.stackedWidget.setCurrentIndex(0)
+        self.PASSWORD = ""
+        self.HOST = ""
+        self.PORT = 3306
+        self.DB = ""
+        self.MysqlPassword = ""
+        self.MysqlUser = ""
+        self.rootpass = ""
+        self.signals()
+        self.back_pushButton.hide()
+        self.groupBox.setEnabled(False)
+        
+    def signals(self):
+        QtCore.QObject.connect(self.go_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.next)
+    
+        QtCore.QObject.connect(self.back_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.back)
 
-    def applystage5():
-        global myDB, myMysqlPassword, myMysqlUser
-        myMysqlUser = str(dl.user_lineEdit.text())
-        myDB = str(dl.database_lineEdit.text())
-        myMysqlPassword = str(dl.password_lineEdit.text())
+        QtCore.QObject.connect(self.rootPassword_checkBox, QtCore.SIGNAL(
+        "stateChanged(int)"), self.rootechomode)
 
-    def testDB():
-        applystage5()
-        testConnection()
+        QtCore.QObject.connect(self.mainpassword_checkBox, QtCore.SIGNAL(
+        "stateChanged(int)"), self.echomode)
+        
+        QtCore.QObject.connect(self.dbpassword_checkBox, QtCore.SIGNAL(
+        "stateChanged(int)"), self.dbechomode)
+    
+        QtCore.QObject.connect(self.existingDB_radioButton, QtCore.SIGNAL(
+        "toggled(bool)"),self.demo_or_existing)
+        
+        QtCore.QObject.connect(self.testDB_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.testConnection)
+        
+        for le in (self.rootPassword_lineEdit,
+                    self.user_lineEdit,
+                    self.password_lineEdit,
+                    self.main_password_lineEdit,
+                    self.repeat_password_lineEdit,
+                    self.host_lineEdit,
+                    self.port_lineEdit):
+            QtCore.QObject.connect(le, 
+            QtCore.SIGNAL("returnPressed()"), self.next)
+    
+    def advise(self, message, warning = False):
+        '''
+        throws up a message box
+        '''
+        if warning:
+            QtGui.QMessageBox.warning(self.dialog, _("Error"), message)
+        else:
+            QtGui.QMessageBox.information(self.dialog, _("Advisory"), message)
+        
 
-    def testConnection():
+    def next(self):
+        '''
+        time to move on to the next screen
+        assuming all is well
+        '''
+        i = self.stackedWidget.currentIndex()
+        
+        if i == 0:
+            self.stackedWidget.setCurrentIndex(1)
+            self.main_password_lineEdit.setFocus()
+            self.back_pushButton.show()
+
+        elif i == 1:
+            p1 = self.main_password_lineEdit.text()
+            p2 = self.repeat_password_lineEdit.text()
+            if p1 != p2:
+                self.advise(_("Passwords don't match!"))
+            else:
+                self.PASSWORD = self.main_password_lineEdit.text()
+                self.stackedWidget.setCurrentIndex(2)
+        
+        elif i == 2:
+            self.stackedWidget.setCurrentIndex(3)
+        
+        elif i == 3:
+            if self.createDemo_radioButton.isChecked():
+                self.stackedWidget.setCurrentIndex(5)
+                self.rootPassword_lineEdit.setFocus()
+            else:
+                self.stackedWidget.setCurrentIndex(4)
+        
+        elif i == 4:
+            self.finish()
+            if self.checkBox.isChecked():
+                self.dialog.accept()
+            else:
+                self.dialog.reject()
+        
+        elif i == 5:
+            self.snapshot()
+            result=QtGui.QMessageBox.question(self.dialog, 
+            _("Create Database"),
+            _("Create Demo Database now with the following settings?") +
+            '''<br><ul><li>host - %s </li><li>port - %s</li>
+            <li>database name - %s</li>
+            <li>username - %s</li><li>password - (hidden)</li>'''% (
+            self.HOST,self.PORT,self.DB,self.MysqlUser),
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes)
+            
+            if result == QtGui.QMessageBox.Yes:
+                self.stackedWidget.setCurrentIndex(6)
+                if self.actuallyCreateDB():
+                    self.advise(_("Database Created Sucessfully"))
+                    self.stackedWidget.setCurrentIndex(4)
+                    self.testDB_pushButton.setEnabled(True)
+                    return
+            self.advise(_("Database NOT Created"))
+            self.stackedWidget.setCurrentIndex(5)        
+        
+    def back(self):
+        '''
+        time to move on to the next screen
+        assuming all is well
+        '''
+        i = self.stackedWidget.currentIndex()
+        
+        if i == 1:
+            self.back_pushButton.hide()
+        elif i == 5:
+            i -= 1
+        self.stackedWidget.setCurrentIndex(i-1)
+
+    def snapshot(self):
+        '''
+        grab the current settings
+        '''
+        if self.createDemo_radioButton.isChecked():
+            self.DB = "openmolar_demo"
+        else:
+            self.DB = unicode(self.database_lineEdit.text())
+        self.HOST = unicode(self.host_lineEdit.text())
+        self.PORT = int(self.port_lineEdit.text())
+        self.MysqlUser = unicode(self.user_lineEdit.text())
+        self.MysqlPassword = unicode(self.password_lineEdit.text())
+        self.rootpass = unicode(self.rootPassword_lineEdit.text())
+
+    def demo_or_existing(self, checked):
+        '''
+        user is choosing between demo or existing db
+        '''
+        
+        self.groupBox.setEnabled(checked)#self.createDemo_radioButton.isChecked())
+        
+        if checked:
+            self.database_lineEdit.setFocus()
+            self.database_lineEdit.selectAll()
+    
+    def testConnection(self):
         '''
         tries to connect to a mysql database with the settings
         '''
+        self.snapshot()
         result = False
         try:
+            
             print "attempting to connect to mysql server on %s port %s..."% (
-            myHost, myPort)
-            db = MySQLdb.connect(host = myHost, port = myPort, db = myDB,
-            passwd = myMysqlPassword, user = myMysqlUser)
+            self.HOST, self.PORT)
+            db = MySQLdb.connect(host = self.HOST, 
+            port = self.PORT, db = self.DB,
+            passwd = self.MysqlPassword, user = self.MysqlUser)
 
             result = db.open
             db.close()
 
         except Exception,e:
-            print "exception during testConnection", e
-
-        if result:
-            if myDB == "":
-                message = "MySQL Server"
-                additional = ""
-            else:
-                message = "Database"
-                additional = "from user %s"% myMysqlUser
-
+            print e
+            self.advise(_("The connection attempt threw an exception")
+            + "<hr>%s"% e, True)
+            return
+        
+        if result:        
             QtGui.QMessageBox.information(None,
             _("Success!"),
-            _("The %s accepted the connection %s.")% (message, additional))
+            _("The %s database accepted the connection.")% self.DB)
 
         else:
-            QtGui.QMessageBox.warning(None, _("FAILURE"), str(e))
+            self.advise(_('''The connection attempt failed, 
+please recheck your settings'''), True)
             print "Connection failed!"
 
-        return result
+    
+    def createDB(self):
+        self.blankXML = self.blankXML.replace(
+        "existing_database","openmolar_demo")
 
-    def createDB():
-        global blankXML
-        blankXML = blankXML.replace("existing_database","openmolar_demo")
-        dl.stackedWidget.setCurrentIndex(6)
-        dl.rootPassword_lineEdit.setFocus()
-        QtCore.QObject.connect(dl.rootPassword_checkBox, QtCore.SIGNAL(
-        "stateChanged(int)"), rootechomode)
-
-        QtCore.QObject.connect(dl.createDB_pushButton_2, QtCore.SIGNAL(
-        "clicked()"), actuallyCreateDB)
-
-    def actuallyCreateDB():
-        rootpass = str(dl.rootPassword_lineEdit.text())
+    def actuallyCreateDB(self):
+        self.progressBar.setValue(0)
+        self.snapshot()
+        PB_LIMIT = 50
+        def updatePB():
+            val = self.progressBar.value()
+            if val < PB_LIMIT:
+                self.progressBar.setValue(val+5)
+                self.progressBar.update()
+                
+        self.timer1 = QtCore.QTimer()        
+        self.timer1.start(10) # 1/100thsecond
+        QtCore.QObject.connect(self.timer1, QtCore.SIGNAL("timeout()"),
+        updatePB)
+        
         try:
             from openmolar import createdemodatabase
-            applystage5()
-            if createdemodatabase.create_database(myHost, myPort,
-            myMysqlUser, myMysqlPassword, myDB, rootpass):
+            self.progressBar.setValue(10)
+            if createdemodatabase.create_database(self.HOST, self.PORT,
+            self.MysqlUser, self.MysqlPassword, self.DB, self.rootpass):
                 print 'New database created sucessfully.'
-                print 'attempting to loadtables....',
-                if createdemodatabase.loadTables(myHost, myPort,
-                myMysqlUser, myMysqlPassword, myDB):
-                    print "successfully loaded tables"
-
+            else:
+                print "error creating database"
+                raise IOError ("error creating database")
+            self.progressBar.setValue(50)
+            PB_LIMIT = 90
+            print 'attempting to loadtables....',
+            if createdemodatabase.loadTables(self.HOST, self.PORT,
+            self.MysqlUser, self.MysqlPassword, self.DB):
+                print "successfully loaded tables"
+            else:
+                print "error loading tables"
+                raise IOError ("error loading tables")
+            self.progressBar.setValue(100)
+            
+            return True
+        
         except Exception, e:
             print "error in actuallyCreateDB",  e
-            QtGui.QMessageBox.warning(Dialog, _("Error Creating Database"),
-            str(e))
-            Dialog.reject()
-        stage6()
-
-    def echomode(arg):
+            self.advise( _("Error Creating Database") +"<hr>%s"% e,2)
+        
+    def echomode(self, arg):
+        '''
+        toggle the echo mode of the password input boxes
+        '''
         if arg == 0:
-            dl.main_password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
+            self.main_password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
+            self.repeat_password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         else:
-            dl.main_password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
+            self.main_password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
+            self.repeat_password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
 
-    def rootechomode(arg):
+    def rootechomode(self, arg):
         if arg == 0:
-            dl.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
+            self.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         else:
-            dl.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
+            self.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
 
-    def dbechomode(arg):
+    def dbechomode(self, arg):
         if arg == 0:
-            dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
+            self.password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         else:
-            dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
+            self.password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
 
-    def stage1():
-        '''
-        user has clicked the first "ok" button
-        this prompts for a password
-        '''
-        dl.stackedWidget.setCurrentIndex(1)
-        dl.main_password_lineEdit.setFocus()
-        QtCore.QObject.connect(dl.mainpassword_checkBox, QtCore.SIGNAL(
-        "stateChanged(int)"), echomode)
-
-        QtCore.QObject.connect(dl.pushButton_2,
-        QtCore.SIGNAL("clicked()"), stage2)
-
-        QtCore.QObject.connect(dl.main_password_lineEdit,
-        QtCore.SIGNAL("returnPressed()"), stage2)
-
-    def stage2():
-        '''
-        user has entered the main password once
-        get it re-entered
-        '''
-
-        global myPassword
-        dl.main_password_lineEdit.setFocus()
-        QtCore.QObject.disconnect(dl.pushButton_2,
-        QtCore.SIGNAL("clicked()"), stage2)
-
-        QtCore.QObject.disconnect(dl.main_password_lineEdit,
-        QtCore.SIGNAL("returnPressed()"), stage2)
-
-        myPassword = dl.main_password_lineEdit.text()
-
-        dl.mainPassword_label.setText(_("Please re-enter this password"))
-        dl.main_password_lineEdit.setText("")
-
-        QtCore.QObject.connect(dl.pushButton_2,
-        QtCore.SIGNAL("clicked()"), stage3)
-
-        QtCore.QObject.connect(dl.main_password_lineEdit,
-        QtCore.SIGNAL("returnPressed()"), stage3)
-
-    def stage3():
-        '''
-        check the passwords match
-        '''
-        QtCore.QObject.disconnect(dl.pushButton_2,
-        QtCore.SIGNAL("clicked()"), stage3)
-
-        QtCore.QObject.disconnect(dl.main_password_lineEdit,
-        QtCore.SIGNAL("returnPressed()"), stage3)
-
-        if dl.main_password_lineEdit.text() != myPassword:
-            print "the two passwords did not match"
-            QtGui.QMessageBox.information(None, _("Advisory"),
-            _("Passwords did not match, please try again"))
-            dl.mainPassword_label.setText(_('''Please enter a password to
-prevent unauthorised running of this application.'''))
-
-            dl.main_password_lineEdit.setText("")
-            stage1()
-        else:
-            print "user has sucessfully entered the same password twice...."
-
-            QtCore.QObject.connect(dl.pushButton_8,
-            QtCore.SIGNAL("clicked()"), stage4)
-
-            dl.stackedWidget.setCurrentIndex(2)
-
-    def stage4():
-        applystage3()
-        dl.stackedWidget.setCurrentIndex(3)
-        QtCore.QObject.connect(dl.createDB_pushButton,
-        QtCore.SIGNAL("clicked()"), createDB)
-
-        QtCore.QObject.connect(dl.haveDB_pushButton,
-        QtCore.SIGNAL("clicked()"), stage5)
-
-    def stage5():
-        dl.stackedWidget.setCurrentIndex(4)
-        QtCore.QObject.connect(dl.testDB_pushButton,
-        QtCore.SIGNAL("clicked()"), testDB)
-
-        QtCore.QObject.connect(dl.dbpassword_checkBox, QtCore.SIGNAL(
-        "stateChanged(int)"), dbechomode)
-
-        QtCore.QObject.connect(dl.pushButton_9,
-        QtCore.SIGNAL("clicked()"), stage6)
-
-    def stage6():
-        applystage5()
-        dl.stackedWidget.setCurrentIndex(5)
-        QtCore.QObject.connect(dl.saveQuit_pushButton,
-        QtCore.SIGNAL("clicked()"), finish)
-
-    def finish():
+    
+    def finish(self):
         result = False
         try:
             dom = minidom.parseString(blankXML)
             #-- hash the password and save it
-            PASSWORD = hashlib.md5(hashlib.sha1(
-            str("diqug_ADD_SALT_3i2some"+myPassword)).hexdigest()).hexdigest()
+            PSWORD = hashlib.md5(hashlib.sha1(
+            str("diqug_ADD_SALT_3i2some"+self.PASSWORD)).hexdigest()).hexdigest()
 
             dom.getElementsByTagName(
-            "system_password")[0].firstChild.replaceWholeText(PASSWORD)
+            "system_password")[0].firstChild.replaceWholeText(PSWORD)
 
             #-- server settings
             xmlnode = dom.getElementsByTagName("server")[0]
             #--save the location
             xmlnode.getElementsByTagName(
-            "location")[0].firstChild.replaceWholeText(myHost)
+            "location")[0].firstChild.replaceWholeText(self.HOST)
 
             #--port
             xmlnode.getElementsByTagName(
-            "port")[0].firstChild.replaceWholeText(str(myPort))
+            "port")[0].firstChild.replaceWholeText(str(self.PORT))
 
             #-- database settings
             xmlnode = dom.getElementsByTagName("database")[0]
 
             #--user
             xmlnode.getElementsByTagName(
-            "user")[0].firstChild.replaceWholeText(myMysqlUser)
+            "user")[0].firstChild.replaceWholeText(self.MysqlUser)
 
             xmlnode.getElementsByTagName(
             "password")[0].firstChild.replaceWholeText(
-            base64.b64encode(myMysqlPassword))
+            base64.b64encode(self.MysqlPassword))
 
             xmlnode.getElementsByTagName(
-            "dbname")[0].firstChild.replaceWholeText(myDB)
+            "dbname")[0].firstChild.replaceWholeText(self.DB)
 
             settingsDir = os.path.dirname(localsettings.global_cflocation)
             
@@ -321,24 +382,21 @@ prevent unauthorised running of this application.'''))
                 print '...ok'
                 localsettings.cflocation = localsettings.cflocation
                 
-            Dialog.accept()
+            self.dialog.accept()
 
         except Exception, e:
             print "error saving settings",  e
             QtGui.QMessageBox.warning(parent, _("FAILURE"), str(e))
             Dialog.reject()
             
-    Dialog = QtGui.QDialog(parent)
-    dl = Ui_newSetup.Ui_Dialog()
-    dl.setupUi(Dialog)
-    dl.stackedWidget.setCurrentIndex(0)
-    result = True
-    QtCore.QObject.connect(dl.pushButton, QtCore.SIGNAL("clicked()"), stage1)
+def run():
     
-    if not Dialog.exec_():
-        result = False
-    return result
+    Dialog = QtGui.QDialog()
+    dl = newsetup(Dialog)
+    
+    return Dialog.exec_()
+
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
-    newsetup()
+    run()

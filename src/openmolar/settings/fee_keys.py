@@ -154,7 +154,7 @@ def getCode(tooth,arg):
     '''
     #print "decrypting tooth %s code %s "%(tooth, arg)
 
-    if arg in ("PV","AP","ST","EX","EX/S1","EX/S2",",PR","DR"):
+    if arg in ("PV","AP","ST","EX","EX/S1","EX/S2",",PR","DR","PX","PX+"):
         return getKeyCode(arg)
 
     if re.match("CR,..$", arg):
@@ -274,20 +274,6 @@ def getFee(cset,itemcode, no_items=1, conditions=[]):
         ptfee = fee
         
     return (fee, ptfee)
-
-def getDescription(arg):
-    '''
-    usage=getDescription("4001")
-    get a description for itemcode "4001"
-    '''
-    print "WARNING fee_keys.getDescription is deprecated - please use the class"
-    description=""
-    try:
-        description=localsettings.descriptions.get(arg)
-    except:
-        print "no description found for item %s"% arg
-    return description
-
 
 if __name__ == "__main__":
     localsettings.initiate(False)

@@ -21,6 +21,11 @@ import hashlib
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
 
+## a variable to force the first run and database update tools
+FIRST_RUN_TESTING = False
+##############################################################
+
+
 import gettext
 lang = os.environ.get("LANG")
 if lang:
@@ -94,6 +99,8 @@ def main():
 
     uninitiated = True
 
+    AUTOUSER = ""
+
     def autoreception(arg):    #arg is a QString
         '''
         check to see if the user is special user "rec"
@@ -109,14 +116,18 @@ def main():
         '''
         dl.stackedWidget.setCurrentIndex(1)
 
-    cf_Found = True
-    if os.path.exists(localsettings.global_cflocation):
-        localsettings.cflocation = localsettings.global_cflocation
-    elif os.path.exists(localsettings.cflocation):
-        pass
+    if not FIRST_RUN_TESTING:
+        cf_Found = True
+        if os.path.exists(localsettings.global_cflocation):
+            localsettings.cflocation = localsettings.global_cflocation
+            pass
+        elif os.path.exists(localsettings.cflocation):
+            pass
+        else:
+            cf_Found = False
     else:
         cf_Found = False
-
+    
     if not cf_Found:
         message = _('''<center><p>
 This appears to be your first running of openMolar<br />
@@ -131,7 +142,12 @@ Are you ready to proceed?</center>''')
 
         if result == QtGui.QMessageBox.Yes:
             import firstRun
-            firstRun.newsetup(None)
+            if not firstRun.run():
+                my_app.closeAllWindows()
+                sys.exit()
+            else:
+                AUTOUSER="user"
+                
     try:
         dom = minidom.parse(localsettings.cflocation)
         sys_password = dom.getElementsByTagName("system_password")[0].\
@@ -153,6 +169,7 @@ Are you ready to proceed?</center>''')
     my_dialog = QtGui.QDialog()
     dl = Ui_startscreen.Ui_Dialog()
     dl.setupUi(my_dialog)
+    dl.user1_lineEdit.setText(AUTOUSER)
     if len(localsettings.server_names) > 1:
         dl.server_comboBox.addItems(localsettings.server_names)
         QtCore.QObject.connect(dl.options_pushButton,

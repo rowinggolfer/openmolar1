@@ -70,4 +70,4 @@ if __name__ == "__main__":
     "openmolar_demo", rootpass):
         print "New database created sucessfully"
 
-    loadTables("localhost", 3306, "user", "password", "openmolar_demo")
+    loadTables("localhost", 3306, "OMuser", "password", "openmolar_demo")

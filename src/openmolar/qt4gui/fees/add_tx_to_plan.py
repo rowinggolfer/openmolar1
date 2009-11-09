@@ -245,7 +245,8 @@ def chartAdd(parent, tooth, properties):
         itemcode = fee_keys.getCode(toothname, item[1])
         ###############################################
         #--get a description (for the estimate)
-        description = fee_keys.getDescription(itemcode)
+        #description = fee_keys.getDescription(itemcode)
+        description=localsettings.descriptions.get(itemcode)        
         #-- get a fee and pt fee
         fee, ptfee = fee_keys.getItemFees(parent.pt, itemcode)
         #--add to estimate

@@ -86,19 +86,21 @@ def chartComplete(parent, arg):
             newplan = existingplan.replace(treatmentItem, "")
             parent.pt.__dict__[planATT] = newplan
             existingcompleted = parent.pt.__dict__[completedATT]
-            newcompleted = treatmentItem
-            parent.pt.__dict__[completedATT] = existingcompleted + newcompleted
-
+            newcompleted = existingcompleted + treatmentItem
+            
+            parent.pt.__dict__[completedATT] = newcompleted
             parent.updateChartsAfterTreatment(adultTooth, newplan, 
             newcompleted)
 
-            checkEstBox(parent, toothName, newcompleted)
+            checkEstBox(parent, toothName, treatmentItem)
 
             print "CHART COMPLETE adding hidden note - %s %s"% (
-            toothName.upper(), newcompleted)
+            toothName.upper(), treatmentItem)
 
             parent.pt.addHiddenNote("treatment",
-            "%s %s"% (toothName.upper(), newcompleted))
+            "%s %s"% (toothName.upper(), treatmentItem))
+        else:
+            print "%s not found in plan!"% treatmentItem 
                 
 def estwidg_complete(parent, item):
     '''

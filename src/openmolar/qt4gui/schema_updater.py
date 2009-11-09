@@ -100,6 +100,22 @@ Would you like to Upgrade Now?''')% (current, required)
             
                 if not dbu.run():
                     completed(False, _('Conversion to %s failed')% "1.2")
+            
+            ###################################################################
+            ## UPDATE TO SCHEMA 1.3
+            if current < "1.3":
+                updateProgress(1,_("upgrading to schema version")+" 1.3")        
+                from openmolar.schema_upgrades import schema1_2to1_3
+                dbu = schema1_2to1_3.dbUpdater(pb)
+            
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
+                updateProgress)
+
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
+                completed)
+            
+                if not dbu.run():
+                    completed(False, _('Conversion to %s failed')% "1.3")
                     
             else:
                 completed(False,_(

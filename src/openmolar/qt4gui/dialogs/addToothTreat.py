@@ -40,7 +40,7 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
         self.usercode=usercode
         self.tooth_label.setText("%s %s"%(tooth.upper(), usercode))
         self.itemcode=fee_keys.getCode(tooth,usercode)
-        self.description=fee_keys.getDescription(self.itemcode)
+        self.description = localsettings.descriptions.get(self.itemcode)
         self.description_label.setText("%s\t(%s)"%(self.description,
                                                     self.itemcode))
         self.feeCalc()

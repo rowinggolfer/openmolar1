@@ -1977,16 +1977,16 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         ix=int(item.text(3))
         if "html" in item.text(1):
             print "html file found!"
-            result=QtGui.QMessageBox.question(self, "Re-open",
-            "Do you want to review and/or reprint this item?",
+            result=QtGui.QMessageBox.question(self, _("Re-open"),
+            _("Do you want to review and/or reprint this item?"),
                     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if result == QtGui.QMessageBox.Yes:
                 html, version=docsprinted.getData(ix)
                 self.customEstimate(html, version)
 
         elif "pdf" in item.text(1):
-            result=QtGui.QMessageBox.question(self, "Re-open",
-            "Do you want to review and/or reprint this item?",
+            result=QtGui.QMessageBox.question(self, _("Re-open"),
+            _("Do you want to review and/or reprint this item?"),
                     QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if result == QtGui.QMessageBox.Yes:
                 try:

@@ -63,92 +63,11 @@ KEY (adate));
 '''
 ]
 
-
 import sys
 from openmolar.settings import localsettings 
 from openmolar.dbtools import schema_version
 from openmolar import connect
 '''this checks for names which have changed.'''
-
-def createNewTables():
-    '''
-    creates the newEstimatesTable.
-    NOTE - this function may fail depending on the mysql permissions in place
-    '''
-    try:
-        db = connect.connect()
-        cursor = db.cursor()
-        for sql_strings in NEW_TABLE_SQLSTRINGS:
-            cursor.execute(sql_strings)
-        db.commit()
-        return True
-    except Exception, e:
-        print e
-        print "unable to execute createNewEstimates" 
-        
-def getRowsFromOld():  
-    '''
-    get ALL data from the estimates table
-    '''  
-    db = connect.connect()
-    cursor=db.cursor()
-    cursor.execute('''select serialno, courseno, type, number, itemcode, 
-    description, fee, ptfee, feescale, csetype, dent, completed, 
-    carriedover, linked from estimates''')
-    rows=cursor.fetchall()
-    cursor.close()
-    db.close()
-    return rows
-
-def convertData(rows):
-    '''
-    convert to the new row type
-    '''
-    retlist=[]
-    for row in rows:
-        newrow = []
-        for i in range(len(row)):
-            data = row[i]
-            if i == 2: #split the type into the new catergory / type fields
-                try:
-                    splitdata = data.split(" ")
-                    category = splitdata[0]
-                    type = splitdata[1]
-                except IndexError:
-                    category = "unknown"
-                    type = data
-                newrow.append(category)
-                newrow.append(type)
-            elif i == 8:
-                newrow.append(row[9])
-            elif i == 9:
-                newrow.append(row[8])                
-            else:
-                newrow.append(data)
-        if len(row) != len(newrow)-1:
-            print "Error converting ",row
-            sys.exit()
-        retlist.append(newrow)
-    return retlist
-
-def insertRowsIntoNew(rows):
-    '''
-    insert new row types into the newestimates table
-    '''
-    timestamp = localsettings.timestamp()
-    
-    db = connect.connect()
-    cursor = db.cursor()
-    for row in rows:
-        values = tuple(row + ["script", timestamp])
-        query='''insert into newestimates
-        (serialno, courseno, category, type, number, itemcode, description, 
-        fee, ptfee , csetype, feescale, dent, completed, carriedover , 
-        linked , modified_by , time_stamp) values 
-        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
-        cursor.execute(query, values)
-    db.commit()
-    db.close()
 
 
 class dbUpdater(QtCore.QThread):
@@ -158,13 +77,107 @@ class dbUpdater(QtCore.QThread):
         self.stopped = False
         self.path = None
         self.completed = False
+        self.MESSAGE = "upating database"
 
-    def progressSig(self, val, message):
+    def createNewTables(self):
+        '''
+        creates the newEstimatesTable.
+        NOTE - this function may fail depending on the mysql permissions in place
+        '''
+        try:
+            db = connect.connect()
+            cursor = db.cursor()
+            for sql_strings in NEW_TABLE_SQLSTRINGS:
+                cursor.execute(sql_strings)
+            db.commit()
+            return True
+        except Exception, e:
+            print e
+            print "unable to execute createNewEstimates" 
+            
+    def getRowsFromOld(self):  
+        '''
+        get ALL data from the estimates table
+        '''  
+        db = connect.connect()
+        cursor=db.cursor()
+        cursor.execute('''select serialno, courseno, type, number, itemcode, 
+        description, fee, ptfee, feescale, csetype, dent, completed, 
+        carriedover, linked from estimates''')
+        rows=cursor.fetchall()
+        cursor.close()
+        db.close()
+        return rows
+
+    def convertData(self, rows):
+        '''
+        convert to the new row type
+        '''
+        retlist=[]
+        progress_var = len(rows)
+        for row in rows:
+            newrow = []
+            for i in range(len(row)):
+                data = row[i]
+                if i == 2: #split the type into the new catergory / type fields
+                    try:
+                        splitdata = data.split(" ")
+                        category = splitdata[0]
+                        type = splitdata[1]
+                    except IndexError:
+                        category = "unknown"
+                        type = data
+                    newrow.append(category)
+                    newrow.append(type)
+                elif i == 8:
+                    newrow.append(row[9])
+                elif i == 9:
+                    newrow.append(row[8])                
+                else:
+                    newrow.append(data)
+                
+                if i % 100 == 0:
+                    self.progressSig((i / progress_var) * 40 + 20)
+            if len(row) != len(newrow)-1:
+                print "Error converting ",row
+                sys.exit()
+            retlist.append(newrow)
+        return retlist
+
+    def insertRowsIntoNew(self, rows):
+        '''
+        insert new row types into the newestimates table
+        '''
+        timestamp = localsettings.timestamp()
+        
+        db = connect.connect()
+        cursor = db.cursor()
+        progress_var = len(rows)
+        i = 0
+        for row in rows:
+            values = tuple(row + ["script", timestamp])
+            query='''insert into newestimates
+            (serialno, courseno, category, type, number, itemcode, description, 
+            fee, ptfee , csetype, feescale, dent, completed, carriedover , 
+            linked , modified_by , time_stamp) values 
+            (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+            cursor.execute(query, values)
+            i += 1
+            if i % 100 == 0:
+                self.progressSig((i / progress_var) * 90 + 40)
+                
+        db.commit()
+        db.close()
+
+
+    def progressSig(self, val, message=""):
         '''
         emits a signal showhing how we are proceeding.
         val is a number between 0 and 100
         '''
-        self.emit(QtCore.SIGNAL("progress"), val, message)
+        if message != "":
+            self.MESSAGE = message
+        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
 
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
@@ -172,17 +185,19 @@ class dbUpdater(QtCore.QThread):
     def run(self):
         print "running script to convert from schema 1.0 to 1.1"
         try:
-            if createNewTables():
-                oldrows = getRowsFromOld()
-                self.progressSig(20, 'rows extracted from old estimates')
-                newRows = convertData(oldrows)
-                self.progressSig(40, 'data converted to new schema')
-                print 'now exporting, this can take some time'
-                insertRowsIntoNew(newRows)
-                self.progressSig(80, 'inserted into newestimate')
-                schema_version.update("1.1", "1_0 to 1_1 script")
+            if self.createNewTables():
+                self.progressSig(10, "extracting estimates")
+                oldrows = self.getRowsFromOld()
+                self.progressSig(20, "converting data")
+                newRows = self.convertData(oldrows)
                 
-                self.progressSig(100, "updating stored schema version")
+                self.progressSig(40, "exporting into newestimates table")
+                print 'now exporting, this can take some time'
+                self.insertRowsIntoNew(newRows)
+                self.progressSig(90, "updating stored schema version")
+                schema_version.update(("1.1",), "1_0 to 1_1 script")
+                
+                self.progressSig(100)
                 self.completed = True
                 self.completeSig("ALL DONE - sucessfully moved db to 1,1")
             

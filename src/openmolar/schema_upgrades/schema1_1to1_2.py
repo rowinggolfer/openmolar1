@@ -121,7 +121,7 @@ class dbUpdater(QtCore.QThread):
                     self.progressSig(80, 
                     'copied data from obsolete table OMforum')
                 
-                schema_version.update("1.2", "1_1 to 1_2 script")
+                schema_version.update(("1.2",), "1_1 to 1_2 script")
                 
                 self.progressSig(100, _("updating stored schema version"))
                 self.completed = True
