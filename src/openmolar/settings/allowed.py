@@ -89,9 +89,9 @@ frontToothCodes=( "+P", "+S", "-D,2", "-M,1", "-M,2", "AP", "AP,RR",
 "PD,GL", "PDB", "PDB,GL", "PDI", "PE", "PI", "PI,GL", "PI/B",
 "PI/MBDL", "PI/MBPD", "PI/MDBL", "PI/MDBP", "PI/MDLB", "PI/MDPB", "PI/MIDB", "PIB",
 "PID,CO", "PIM", "PM", "PM,GL", "PMB", "PMI", "PMID", "PV",
-"PX", "RI", "RP", "RT", "ST", "TM", "UE", "VP", )
+ "RI", "RP", "RT", "ST", "TM", "UE", "VP", )
 
-treatment_only=("EX","EX/S1","EX/S2","CR,RC")  #not exhaustive
+treatment_only=("EX","EX/S1","EX/S2","CR,RC","PX","PX+")  #not exhaustive
 
 if __name__ == "__main__":
     print "Unique to FrontTeeth"

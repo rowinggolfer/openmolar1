@@ -400,12 +400,12 @@ class patient():
             var=self.dent3
             pos=7-pos
         existing=dec_perm.fromSignedByte(var)
-        print "original",existing,
+        #print "original",existing,
         if existing[pos]=="1":
             existing=existing[:pos]+"0"+existing[pos+1:]
         else:
             existing=existing[:pos]+"1"+existing[pos+1:]
-        print "new",existing
+        #print "new",existing
         if quadrant=="ul":
             self.dent1=dec_perm.toSignedByte(existing)
         elif quadrant=="ur":
@@ -533,6 +533,7 @@ class patient():
         if notetype=="close_course":
             HN=chr(3)+chr(97)
         if notetype=="open_course":
+            print "course opened - tried to add a note", note
             pass #- should this be something???
         if notetype=="fee":
             HN=chr(3)+chr(131)+note

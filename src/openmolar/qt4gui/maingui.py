@@ -137,17 +137,8 @@ class chartsClass():
         the tooth prop buttons.
         entry will have been checked.
         '''
-        print "navigateCharts",direction
-        if self.selectedChartWidget == "cmp":
-            widg = self.ui.completedChartWidget
-            column = 4
-        elif self.selectedChartWidget == "pl":
-            widg = self.ui.planChartWidget
-            column = 3
-        else:
-            widg = self.ui.staticChartWidget
-            column = 2
-        [x, y] = widg.selected
+        #print "navigateCharts",direction
+        [x, y] = self.ui.staticChartWidget.selected
 
         if y == 0:
             #--upper teeth
@@ -159,7 +150,6 @@ class chartsClass():
                     x, y = 15, 1
                 else:
                     x += 1
-            
         else:
             #--lower teeth
             if direction == "up":
@@ -171,12 +161,12 @@ class chartsClass():
                 if x != 0:
                     x -= 1
 
-        widg.setSelected(x, y)
-        tooth = widg.grid[y][x]
+        self.selectChartedTooth(x, y)
+        tooth = self.ui.staticChartWidget.grid[y][x]
         
         row = (16*y) + x
         
-        self.ui.chartsTableWidget.setCurrentCell(row,column)
+        self.ui.chartsTableWidget.setCurrentCell(row, 0)
         self.ui.toothPropsWidget.setTooth(tooth, self.selectedChartWidget)
     
     def chart_navigate(self):
@@ -184,13 +174,13 @@ class chartsClass():
         this is called when the tooth props widget 
         static/plan/completed buttons are used        
         '''
-        print "chart_navigate",
+        #print "chart_navigate",
         
         row=self.ui.chartsTableWidget.currentRow()
 
         tString = str(self.ui.chartsTableWidget.item(
         row, 0).text().toAscii())
-        print tString
+        #print tString
         self.ui.toothPropsWidget.setTooth(tString, self.selectedChartWidget)
         self.chartNavigation([tString], True)
 
@@ -217,8 +207,8 @@ class chartsClass():
             self.ui.chartsTableWidget.currentRow(), 0).text())
         except AttributeError:
             return
-        print "update charts called with arg '%s'"% arg,
-        print "tooth is ",tooth
+        #print "update charts called with arg '%s'"% arg,
+        #print "tooth is ",tooth
         if self.selectedChartWidget == "st":
             self.pt.__dict__[tooth + self.selectedChartWidget] = arg
             #--update the patient!!
@@ -242,7 +232,7 @@ into the plan first then complete it.'''), 1)
         '''
         update the charts when a planned item has moved to completed
         '''
-        print "update charts after treatment", tooth, newplan, newcompleted
+        #print "update charts after treatment", tooth, newplan, newcompleted
         self.ui.planChartWidget.setToothProps(tooth, newplan)
         self.ui.planChartWidget.update()
         self.ui.completedChartWidget.setToothProps(tooth, newcompleted)
@@ -278,7 +268,7 @@ into the plan first then complete it.'''), 1)
         '''
         #-- before continuing, see if user has changes to apply on the
         #-- previous tooth
-        print "checkPreviousEntry"
+        #print "checkPreviousEntry"
         if not self.ui.toothPropsWidget.lineEdit.unsavedChanges():
             return True
         else:
@@ -288,7 +278,7 @@ into the plan first then complete it.'''), 1)
         '''
         called by the static or summary chartwidget
         '''
-        print "static_chartNavigation"
+        #print "static_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="st"
         self.chartNavigation(signal)
@@ -297,7 +287,7 @@ into the plan first then complete it.'''), 1)
         '''
         called by the plan chartwidget
         '''
-        print "plan_chartNavigation"
+        #print "plan_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="pl"
         self.chartNavigation(signal)
@@ -306,7 +296,7 @@ into the plan first then complete it.'''), 1)
         '''
         called by the completed chartwidget
         '''
-        print "comp_chartNavigation"
+        #print "comp_chartNavigation"
         self.checkPreviousEntry()
         self.selectedChartWidget="cmp"
         self.chartNavigation(signal)
@@ -345,7 +335,7 @@ into the plan first then complete it.'''), 1)
         '''
         #--called by a navigating a chart or the underlying table
         #--convert from QString
-        print "chartNavigation", teeth, callerIsTable
+        #print "chartNavigation", teeth, callerIsTable
         grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
         'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
         ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
@@ -365,49 +355,34 @@ into the plan first then complete it.'''), 1)
         else:
             y = 1
         x = grid[y].index(tooth)
-            
-        if callerIsTable:
-            print "table being navigated?"
-            if self.selectedChartWidget == "pl":
-                self.ui.planChartWidget.setSelected(x, y)
-            elif self.selectedChartWidget == "cmp":
-                self.ui.completedChartWidget.setSelected(x, y)
+    
+        self.selectChartedTooth(x, y)
+        self.ui.chartsTableWidget.setCurrentCell(x+y*16, 0)
+        for tooth in teeth:
+            #other teeth have been selected
+            #ie. ctrl-click or shift ciick
+            if tooth in grid[0]:
+                y = 0
             else:
-                #either the static or the summary
-                self.selectedChartWidget = "st"
-                self.ui.staticChartWidget.setSelected(x, y)
-        
-        if self.selectedChartWidget == "pl":
-            self.ui.staticChartWidget.setSelected(-1, -1)
-            self.ui.completedChartWidget.setSelected(-1, -1)
-            column=3
-        elif self.selectedChartWidget == "cmp":
-            self.ui.staticChartWidget.setSelected(-1, -1)
-            self.ui.planChartWidget.setSelected(-1, -1)
-            column=4
-        else:
-            #either the static or the summary
-            self.selectedChartWidget = "st"
-            self.ui.staticChartWidget.setSelected(x, y)
-            self.ui.planChartWidget.setSelected(-1, -1)
-            self.ui.completedChartWidget.setSelected(-1, -1)
-            column=2
+                y = 1
+            x = grid[y].index(tooth)
+            
+            self.ui.chartsTableWidget.setCurrentCell(x+y*16, 0, 
+            QtGui.QItemSelectionModel.Select)
 
-        if not callerIsTable:
-            #-- keep the table correct
-                #print "updating charts table"
-            self.ui.chartsTableWidget.setCurrentCell(x+y*16, column)
-            for tooth in teeth:
-                #other teeth have been selected
-                #ie. ctrl-click or shift ciick
-                if tooth in grid[0]:
-                    y = 0
-                else:
-                    y = 1
-                x = grid[y].index(tooth)
-                
-                self.ui.chartsTableWidget.setCurrentCell(x+y*16, column, 
-                QtGui.QItemSelectionModel.Select)
+    def selectChartedTooth(self, x, y):
+        '''
+        only one tooth can be 'selected'
+        '''
+        self.ui.planChartWidget.setSelected(x, y, showSelection =
+        self.selectedChartWidget == "pl")
+
+        self.ui.completedChartWidget.setSelected(x, y, showSelection =
+        self.selectedChartWidget == "cmp")
+
+        self.ui.staticChartWidget.setSelected(x, y, showSelection =
+        self.selectedChartWidget == "st")
+
 
     def bpe_dates(self):
         '''
@@ -486,7 +461,7 @@ into the plan first then complete it.'''), 1)
         '''
         update the charts table
         '''
-        print "filling chartsTable"
+        #print "filling chartsTable"
         self.advise("filling charts table")
         self.ui.chartsTableWidget.clear()
         self.ui.chartsTableWidget.setSortingEnabled(False)
@@ -1034,8 +1009,7 @@ class printingClass():
             html = html.replace("<br />"*(12), ehtml)
             html+= _('''<p><i>Please note, this estimate may be subject
 to change if clinical circumstances dictate.</i></p>''')
-        else:
-            print "html", html
+        
         Dialog = QtGui.QDialog(self)
         dl = Ui_enter_letter_text.Ui_Dialog()
         dl.setupUi(Dialog)
@@ -1162,7 +1136,7 @@ to change if clinical circumstances dictate.</i></p>''')
         if self.ui.accountB_radioButton.isChecked():
             self.printaccount("B")
         elif self.ui.accountC_radioButton.isChecked():
-            print "harsh letter"
+            #print "harsh letter"
             self.printaccount("C")
         else:
             self.printaccount()
@@ -1400,7 +1374,7 @@ class pageHandlingClass():
         if self.enteringNewPatient():
             return
         if not self.okToLeaveRecord():
-            print "not clearing record"
+            #print "not clearing record"
             return
         self.clearRecord()
         #--disable much of the UI
@@ -1416,7 +1390,7 @@ class pageHandlingClass():
         Other pages are disabled.
         '''
         if self.pt.serialno != 0:
-            print "clearing record"
+            #print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.recallDate_comboBox.setCurrentIndex(0)
             self.ui.detailsBrowser.setText("")
@@ -1446,7 +1420,7 @@ class pageHandlingClass():
             self.loadedPatient_label.setText("No Patient Loaded")
 
             if self.editPageVisited:
-                print "blanking edit page fields"
+                #print "blanking edit page fields"
                 self.load_editpage()
                 self.editPageVisited = False
 
@@ -1548,7 +1522,7 @@ class pageHandlingClass():
         return True
 
     def load_dentComboBoxes(self):
-        print "loading dnt comboboxes."
+        #print "loading dnt comboboxes."
         try:
             self.ui.dnt1comboBox.setCurrentIndex(
             localsettings.activedents.index(localsettings.ops[self.pt.dnt1]))
@@ -1917,20 +1891,29 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
     def setClinician(self):
         self.advise("To change practitioner, please login again", 1)
 
-    def okToLeaveRecord(self):
+    def saveButtonClicked(self):
+        if QtGui.QMessageBox.question(self, _("Confirm"), 
+        _("Save Changes?"),
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes ) == QtGui.QMessageBox.Yes:
+            
+            self.okToLeaveRecord(saveOnly = True)
+        
+    def okToLeaveRecord(self, saveOnly=False):
         '''
         leaving a pt record - has state changed?
         '''
         if self.pt.serialno == 0:
             return True
         #--a debug print statement
-        print "leaving record checking to see if save is required...",
+        if not saveOnly:
+            print "leaving record checking to see if save is required...",
+            course_module.prompt_close_course(self)
 
         #--apply changes to patient details
+        
         if self.editPageVisited:
             self.apply_editpage_changes()
-
-        course_module.prompt_close_course(self)
 
         #--check pt against the original loaded state
         #--this returns a LIST of changes ie [] if none.
@@ -1938,25 +1921,29 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         if uc != []:
             #--raise a custom dialog to get user input
             #--(centred over self)
-            Dialog = QtGui.QDialog(self)
-            dl = saveDiscardCancel.sdcDialog(Dialog,
-            "%s %s (%s)"% (self.pt.fname, self.pt.sname, self.pt.serialno),
-            uc)
-            if Dialog.exec_():
-                if dl.result == "discard":
-                    print "user discarding changes"
-                    return True
-                elif dl.result == "save":
-                    print "user is saving"
-                    self.save_changes(False)
-                    return True
-                #--cancelled action
-                else:
-                    print "user chose to continue editing"
-                    return False
+            if not saveOnly:
+                Dialog = QtGui.QDialog(self)
+                dl = saveDiscardCancel.sdcDialog(Dialog,
+                "%s %s (%s)"% (self.pt.fname, self.pt.sname, self.pt.serialno),
+                uc)
+                if Dialog.exec_():
+                    if dl.result == "discard":
+                        print "user discarding changes"
+                        return True
+                    elif dl.result == "save":
+                        print "user is saving"
+                        saveOnly = True
+                    #--cancelled action
+                    else:
+                        print "user chose to continue editing"
+                        return False
         else:
             print "no changes"
             return True
+        if saveOnly:
+            self.save_changes(False)
+            return True
+                    
 
     def showAdditionalFields(self):
         '''
@@ -2248,7 +2235,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                 self.advise ("error getting serialno %d"%serialno+
                               "- please check this number is correct?", 1)
                 return
-                #except Exception, e:
+            except Exception, e:
                 print "#"*20
                 print "SERIOUS ERROR???"
                 print str(Exception)
@@ -2309,7 +2296,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             chart.clear()
             #--necessary to restore the chart to full dentition
         self.selectedChartWidget = "st"
-        self.ui.staticChartWidget.setSelected(0, 0)  #select the UR8
+        self.ui.staticChartWidget.setSelected(0, 0, True)  #select the UR8
+        self.ui.planChartWidget.setSelected(0, 0, False)  #select the UR8
+        self.ui.completedChartWidget.setSelected(0, 0, False)  #select the UR8
+        
         self.ui.toothPropsWidget.setTooth("ur8","st")
         self.chartsTable()
         self.bpe_dates()
@@ -3664,7 +3654,7 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.SIGNAL("clicked()"), self.charge_pushButtonClicked)
 
         QtCore.QObject.connect(self.ui.saveButton,
-        QtCore.SIGNAL("clicked()"), self.okToLeaveRecord)
+        QtCore.SIGNAL("clicked()"), self.saveButtonClicked)
 
         QtCore.QObject.connect(self.ui.exampushButton,
         QtCore.SIGNAL("clicked()"), self.showExamDialog)

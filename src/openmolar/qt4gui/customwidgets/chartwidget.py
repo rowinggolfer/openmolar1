@@ -39,11 +39,10 @@ class chartWidget(QtGui.QWidget):
         self.isPlanChart = False
         self.setMinimumSize(self.minimumSizeHint())
         self.showLeftRight = True
-        self.showSelected = True
+        self.showSelected = False
         self.setMouseTracking(True)
-        self.selectedTeeth = []
-
-    def clear(self):
+        
+    def clear(self, keepSelection=False):
         '''
         clears all fillings etc from the chart
         '''
@@ -73,10 +72,15 @@ class chartWidget(QtGui.QWidget):
         }
 
         #-- select the ur8
-        self.selected = [-1, -1]
-        self.multiSelection = []
-        self.highlighted = [-1, -1]
-
+        if keepSelection:
+            print "keeping exisiting selections"
+        else:
+            self.showSelected = False
+            self.selected = [0, 0]
+            self.multiSelection = []
+            self.highlighted = [-1, -1]
+        self.update()
+        
     def sizeHint(self):
         '''
         set an arbitrary size
@@ -132,12 +136,20 @@ class chartWidget(QtGui.QWidget):
             self.highlighted = [x, y]
             self.update()
 
-    def setSelected(self, x, y):
+    def setSelected(self, x, y, showSelection=False):
         '''
         set the tooth which is currently selected
         '''
-        self.selected = [x, y]
-        self.update()
+        updateRequired = False
+        if self.selected != [x, y]:
+            self.selected = [x, y]
+            updateRequired = True
+            
+        if self.showSelected != showSelection:
+            self.showSelected = showSelection
+            updateRequired = True
+        if updateRequired:
+            self.update()
        
     def setToothProps(self, tooth, props):
         '''
@@ -216,7 +228,7 @@ class chartWidget(QtGui.QWidget):
                 for column in range(lowx, highx+1):
                     if not [column, row] in self.multiSelection:
                         self.multiSelection.append([column,row])
-        self.setSelected(x, y)
+        self.setSelected(x, y, showSelection = True)
             
         if ctrlClick:
             if [px,py] not in self.multiSelection:
@@ -226,7 +238,7 @@ class chartWidget(QtGui.QWidget):
                     x,y = self.multiSelection[-1]
                 except IndexError:
                     pass
-            self.setSelected(x, y)
+            self.setSelected(x, y, showSelection = True)
         else:
             if not shiftClick:
                 self.multiSelectCLEAR()
@@ -240,8 +252,8 @@ class chartWidget(QtGui.QWidget):
         
         self.emit(QtCore.SIGNAL("toothSelected"), teeth )
         
-        if self.selectedTeeth and event.button() == 2:
-            tooth = self.selectedTeeth[0] #self.grid[y][x]
+        if teeth and event.button() == 2:
+            tooth = teeth[0] #self.grid[y][x]
                     
             menu = QtGui.QMenu(self)
             menu.addAction(tooth.upper())
@@ -473,7 +485,8 @@ class chartWidget(QtGui.QWidget):
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
             painter.drawText(comRect, QtCore.Qt.AlignCenter, "!")
             painter.restore()
-        for prop in ("rt ", "ap ", "-m,1 ", "-m,2 ", "+p ", "+s "):
+        for prop in ("rt ", "ap ", "-m,1 ", "-m,2 ", 
+        "+p ", "+s ", "oe", "px", "px+"):
             #-- these properties are written in... not drawn
             if prop in props:
                 painter.save()
@@ -828,6 +841,10 @@ class toothSurfaces():
                     self.rect.bottomLeft())
 
                     self.painter.restore()
+                
+                #IGNORE LIST
+                if prop in ("px", "oe"):
+                    prop=""
 
                 prop = prop.replace("l", "p")
                 shapes = []

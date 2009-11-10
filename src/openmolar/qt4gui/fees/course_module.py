@@ -78,7 +78,7 @@ def setupNewCourse(parent):
             parent.pt.estimates = []
             parent.pt.underTreatment = True
             parent.load_newEstPage()
-            parent.ui.planChartWidget.clear()
+            parent.ui.planChartWidget.clear(keepSelection=True)
             parent.ui.completedChartWidget.clear()
             parent.updateDetails()
             parent.pt.addHiddenNote("open_course")
