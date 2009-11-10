@@ -59,7 +59,7 @@ def loadForum(parent):
         else:
             item.setText(3, "-")            
         
-        d = QtCore.QDate(post.date)
+        d = QtCore.QDateTime(post.date)
         item.setData(4, QtCore.Qt.DisplayRole, QtCore.QVariant(d))
         
         item.setText(5, post.comment)
@@ -97,10 +97,10 @@ def loadForum(parent):
     ##TODO - I would like the user to be able to sort the table
     ##but this doesn't work as expected :(
     twidg.setSortingEnabled(True)
-    if GROUP_TOPICS: 
-        twidg.sortByColumn(7)
-    else:
-        twidg.sortByColumn(1)
+    #if GROUP_TOPICS: 
+    #    twidg.sortByColumn(7)
+    #else:
+    twidg.sortByColumn(4)
         
     parent.ui.forumDelete_pushButton.setEnabled(False)
     parent.ui.forumReply_pushButton.setEnabled(False)
