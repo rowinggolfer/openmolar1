@@ -62,15 +62,15 @@ def deletePost(ix,table="forum"):
     if True or localsettings.logqueries:
         print query
         print query2
-    print cursor.execute(query2)
-    print cursor.execute(query)    
+    cursor.execute(query2)
+    cursor.execute(query)    
     db.commit()
     cursor.close()
     #db.close()
     
 def newPosts():
     users = localsettings.operator.split("/")
-    print "checking for new posts since forum visited by ", users
+    #print "checking for new posts since forum visited by ", users
     if users == []:
         return
     db=connect()
@@ -86,14 +86,14 @@ def newPosts():
     
     cursor.close()
     result = row[0] > row2[0]
-    print "latest post index=%s, lastvisit=%s, returning %s"% (
-    row[0],row2[0],result)
+    #print "latest post index=%s, lastvisit=%s, returning %s"% (
+    #row[0],row2[0],result)
     
     return result
         
 def updateReadHistory():
     users = localsettings.operator.split("/")
-    print "checking for new posts for ", users
+    #print "updating forumread for new posts for ", users
     if users == []:
         return
     db=connect()
