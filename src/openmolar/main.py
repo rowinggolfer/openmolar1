@@ -80,8 +80,9 @@ and you can continue if you wish</p>
 <p><i>It would still be wise to update this client ASAP</i></p>
 <hr /><p>Do you wish to continue?</p>''')% (
             localsettings.CLIENT_SCHEMA_VERSION, sv),
-            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.Yes )
+            
             if result == QtGui.QMessageBox.Yes:
                 from openmolar.qt4gui import maingui
                 sys.exit(maingui.main(sys.argv))
@@ -140,8 +141,10 @@ If you do not have a database, you will be prompted to create one<</p>
 Are you ready to proceed?</center>''')
 
         result = QtGui.QMessageBox.question(None, _("First Run"),
-        message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+        message, 
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
+        
         if result == QtGui.QMessageBox.Yes:
             import firstRun
             if not firstRun.run():

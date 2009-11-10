@@ -827,8 +827,8 @@ please fill in all highlighted fields'''), 2)
         #--ask the question (centred over self)
         result=QtGui.QMessageBox.question(self, "Confirm",
         _("New Patient not saved. Abandon Changes?"),
-        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
         #--act on the answer
         if result == QtGui.QMessageBox.No:
             return False
@@ -1142,8 +1142,8 @@ to change if clinical circumstances dictate.</i></p>''')
             result = QtGui.QMessageBox.question(self,
             _("Question"),
             _("Print an NHS form now?"),
-            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.No:
                 return
 
@@ -1993,7 +1993,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             print "html file found!"
             result=QtGui.QMessageBox.question(self, _("Re-open"),
             _("Do you want to review and/or reprint this item?"),
-                    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
                 html, version=docsprinted.getData(ix)
                 self.customEstimate(html, version)
@@ -2001,7 +2002,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         elif "pdf" in item.text(1):
             result=QtGui.QMessageBox.question(self, _("Re-open"),
             _("Do you want to review and/or reprint this item?"),
-                    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
                 try:
                     data, version=docsprinted.getData(ix)

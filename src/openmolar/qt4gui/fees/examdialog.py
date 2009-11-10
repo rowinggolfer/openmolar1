@@ -65,8 +65,8 @@ course dentist.<br />Is this correct?<br />
 
                     confirm = QtGui.QMessageBox.question(parent,
                     "Confirm", message,
-                    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-                    #--check this was intentional!!
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                    QtGui.QMessageBox.Yes )
 
                     if confirm == QtGui.QMessageBox.Yes:
                         #--dialog rejected
@@ -84,9 +84,8 @@ course dentist, but not the registered dentist</i>''')
 '''<i>consider making %s the registered dentist</i>''')% result[1]
                 confirm = QtGui.QMessageBox.question(parent,
                 _("Confirm"),
-                message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-                #--check this was intentional!!
-
+                message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.Yes )
                 if confirm == QtGui.QMessageBox.Yes:
                     #--dialog rejected
                     parent.pt.dnt2 = localsettings.ops_reverse[examdent]

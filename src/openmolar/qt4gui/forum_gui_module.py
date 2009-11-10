@@ -88,12 +88,6 @@ def loadForum(parent):
             parentItems[post.ix] = item
         
     twidg.expandAll()
-    for i in range(twidg.columnCount()):
-        twidg.resizeColumnToContents(i)
-    twidg.setColumnWidth(1, 0)
-    twidg.setColumnWidth(5, 0)
-    twidg.setColumnWidth(7, 0)
-        
     ##TODO - I would like the user to be able to sort the table
     ##but this doesn't work as expected :(
     twidg.setSortingEnabled(True)
@@ -101,6 +95,13 @@ def loadForum(parent):
     #    twidg.sortByColumn(7)
     #else:
     twidg.sortByColumn(4)
+        
+    for i in range(twidg.columnCount()):
+        twidg.resizeColumnToContents(i)
+    twidg.setColumnWidth(1, 0)
+    twidg.setColumnWidth(5, 0)
+    twidg.setColumnWidth(7, 0)
+        
         
     parent.ui.forumDelete_pushButton.setEnabled(False)
     parent.ui.forumReply_pushButton.setEnabled(False)
@@ -164,8 +165,8 @@ def forumDeleteItem(parent):
 
     result = QtGui.QMessageBox.question(parent, "Confirm",
     _("Delete selected Post?")+"<br />'%s'"% heading,
-    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes )
     if result == QtGui.QMessageBox.Yes:
         
         ix = int(item.text(1))

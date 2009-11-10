@@ -134,7 +134,8 @@ def resumeCourse(parent):
     '''
     message = "Resume the previous course of treatment?"
     result = QtGui.QMessageBox.question(parent, "Confirm", message,
-    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes )
     
     if result == QtGui.QMessageBox.Yes:
         parent.pt.cmpd = None

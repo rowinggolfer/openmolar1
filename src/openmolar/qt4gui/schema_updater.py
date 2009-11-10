@@ -65,8 +65,9 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
     current, required)
     
     result = QtGui.QMessageBox.question(None, "Update Schema",
-    message, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+    message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes )
+    
     if result == QtGui.QMessageBox.Yes:
         pb.setWindowTitle("openMolar")
         pb.show()

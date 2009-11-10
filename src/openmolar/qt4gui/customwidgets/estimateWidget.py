@@ -364,7 +364,8 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
             '''There are %d items associated with this Widget.<br />
             of these, %d would be affected<br />
             %s %s?'''% (number, number_of_relevant_items, action, mystr),
-            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
                 self.completed_checkBox.setChecked(complete)
                 self.checked()
@@ -615,8 +616,8 @@ class estWidget(QtGui.QFrame):
         message = "Delete %s %s from estimate?"%(
         arg.number_label.text(), arg.description_lineEdit.text())
         input = QtGui.QMessageBox.question(self, "confirm",
-        message, QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
-
+        message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
         if input == QtGui.QMessageBox.Yes:
             est = arg.items[0]
             self.ests.remove(est)

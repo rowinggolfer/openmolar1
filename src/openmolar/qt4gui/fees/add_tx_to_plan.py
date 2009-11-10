@@ -273,7 +273,8 @@ def pass_on_estimate_delete(parent, est):
             result = QtGui.QMessageBox.question(parent, _("question"),
             _('<p>Credit Patient %s for undoing this item?</p>')% (
             localsettings.formatMoney(est.ptfee)) ,
-            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
                 fees_module.applyFeeNow(parent, -1 * est.ptfee, est.csetype)
         
@@ -289,8 +290,8 @@ def estimate_item_delete(parent, pl_cmp, category, ttype):
 
     result = QtGui.QMessageBox.question(parent, _("question"),
     _("remove %s %s from the estimate?")% (category, ttype),
-    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-    
+    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes )
     if result == QtGui.QMessageBox.Yes:
         removed = False
         for est in parent.pt.estimates:
@@ -316,8 +317,8 @@ def deleteTxItem(parent, pl_cmp, txtype, passedOn=False):
         treat = tup[1] + " "
         result = QtGui.QMessageBox.question(parent, "question",
         "remove %s %sfrom this course of treatment?"% (att, treat),
-        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-        
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
         if result == QtGui.QMessageBox.Yes:
             att = att.lower()
             if re.match("[ul][lr][a-e]", att):

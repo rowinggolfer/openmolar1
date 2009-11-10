@@ -247,8 +247,8 @@ def clearApptButtonClicked(parent):
         result = QtGui.QMessageBox.question(parent, 
         "Confirm",
         "Delete this Unscheduled or Past Appointment?",
-        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
         if result == QtGui.QMessageBox.No:
             return
         else:
@@ -264,7 +264,9 @@ def clearApptButtonClicked(parent):
         #--raise a dialog
         result = QtGui.QMessageBox.question(parent, "Confirm", 
         "Confirm Delete appointment at %s on %s  with %s"% (
-        atime, dateText, dent), QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        atime, dateText, dent), 
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
 
         if result == QtGui.QMessageBox.Yes:
             #convert into database varaibles (dentist number)
@@ -282,8 +284,8 @@ def clearApptButtonClicked(parent):
                 #--keep in apr? the patient's diary
                 result = QtGui.QMessageBox.question(parent, "Question",
                 "Removed from appointment book - keep for rescheduling?",
-                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.No )
                 if result == QtGui.QMessageBox.Yes:
                     #appointment "POSTPONED" - not totally cancelled
                     if not appointments.made_appt_to_proposed(
@@ -627,7 +629,8 @@ def makeAppt(parent, arg):
 
         #--get final confirmation
         result = QtGui.QMessageBox.question(parent, "Confirm", message,
-        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
         if result == QtGui.QMessageBox.No:
             #dialog rejected
             return
@@ -664,8 +667,8 @@ def makeAppt(parent, arg):
                 result = QtGui.QMessageBox.question(parent, 
                 "Confirm",
                 "Print Appointment Card?", 
-                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.Yes )
                 if result == QtGui.QMessageBox.Yes:
                     printApptCard(parent)
             else:
@@ -966,8 +969,8 @@ def clearTodaysEmergencyTime(parent):
     #-- raise a dialog to check
     result = QtGui.QMessageBox.question(parent, "Confirm",
     "Clear today's emergency slots?",
-    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes )
     if result == QtGui.QMessageBox.Yes:
         number_cleared = appointments.clearEms(localsettings.sqlToday())
         parent.advise("Cleared %d emergency slots"% number_cleared, 1)
@@ -1464,8 +1467,9 @@ def clearEmergencySlot(parent, arg):
     result = QtGui.QMessageBox.question(parent, 
     "Confirm",
     message,
-    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes )
+    
     if result == QtGui.QMessageBox.Yes:
         start = localsettings.humanTimetoWystime(arg[0])
         appointments.delete_appt_from_aslot(arg[2], start, adate, 0)

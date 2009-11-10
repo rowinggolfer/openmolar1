@@ -308,8 +308,8 @@ def makeBadDebt(parent):
     '''
     result = QtGui.QMessageBox.question(parent, "Confirm",
     "Move this patient to Bad Debt Status?",
-    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
+    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes )
     if result == QtGui.QMessageBox.Yes:
         #--what is owed
         parent.pt.money11 = parent.pt.fees

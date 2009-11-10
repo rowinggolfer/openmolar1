@@ -28,17 +28,18 @@ class sdcDialog(Ui_saveDiscardCancel.Ui_Dialog):
     def showDetails(self):
         if self.dialog.height()==168:
             self.dialog.setFixedSize(408,380)
-            self.pushButton.setText("Hide")
+            self.pushButton.setText(_("Hide"))
         else:
             self.dialog.setFixedSize(408,168)
-            self.pushButton.setText("What's Changed?")
+            self.pushButton.setText(_("What's Changed?"))
     def save(self):
         self.result="save"
         self.dialog.accept()
     def discardButtonPushed(self):
-        if QtGui.QMessageBox.question(self.dialog,"Confirm",
+        if QtGui.QMessageBox.question(self.dialog,_("Confirm"),
         "Are you sure you want to discard your changes?",
-        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)==QtGui.QMessageBox.Yes:   
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.No )==QtGui.QMessageBox.Yes:   
             self.result="discard"
             self.dialog.accept()
     

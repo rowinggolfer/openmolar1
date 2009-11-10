@@ -83,8 +83,9 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
         
     def applyTable(self):
         if QtGui.QMessageBox.question(self.parent, "Confirm",
-        "Apply Changes?", QtGui.QMessageBox.Yes, 
-        QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+        "Apply Changes?", 
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes ) == QtGui.QMessageBox.Yes:
             
             feesTable.updateFeeTable(self.feeDict)
             QtGui.QMessageBox.information(self.parent,"Sucess",

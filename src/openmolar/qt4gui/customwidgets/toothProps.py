@@ -201,8 +201,8 @@ class chartLineEdit(QtGui.QLineEdit):
             message = '''"%s" is not recognised <br />
             do you want to accept anyway?'''% prop
             input = QtGui.QMessageBox.question(self, "Confirm", message,
-            QtGui.QMessageBox.No,QtGui.QMessageBox.Yes)
-
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.No )
             if input == QtGui.QMessageBox.Yes:
                 allowedCode = True
             else:
