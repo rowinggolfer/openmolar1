@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'choose_language.ui'
 #
-# Created: Sat Nov  7 19:35:02 2009
+# Created: Tue Nov 10 15:28:19 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -16,17 +16,20 @@ class Ui_Dialog(object):
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtGui.QLabel(Dialog)
+        self.label.setMinimumSize(QtCore.QSize(0, 60))
         self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.label_2 = QtGui.QLabel(Dialog)
+        self.label_2.setMinimumSize(QtCore.QSize(408, 40))
         self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
         self.label_3 = QtGui.QLabel(Dialog)
+        self.label_3.setMinimumSize(QtCore.QSize(0, 80))
         font = QtGui.QFont()
         font.setItalic(True)
         self.label_3.setFont(font)
@@ -34,6 +37,7 @@ class Ui_Dialog(object):
         self.label_3.setObjectName("label_3")
         self.verticalLayout.addWidget(self.label_3)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox.setMinimumSize(QtCore.QSize(0, 27))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(False)

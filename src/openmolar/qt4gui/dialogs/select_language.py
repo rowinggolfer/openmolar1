@@ -31,6 +31,7 @@ def getAvailableLanguages():
     _("Hungarian") + " - hu", 
     _("Polish") + " - pl",
     _("Portuguese") + " - pt",
+    _("Slovak") + " - sl",
     _("Spanish") + "- es",
     _("Turkish") + " -tr",
     ]
