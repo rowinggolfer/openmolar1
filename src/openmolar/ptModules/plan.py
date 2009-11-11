@@ -82,8 +82,8 @@ def plannedItems(pt):
 def completedItems(pt, teethOnly=False):
     compList=[]
     if teethOnly:
-        for attrib in tup_toothAtts:
-            tx=pt.__dict__[attrib+"cmp"]
+        for tooth in tup_toothAtts:
+            tx=pt.__dict__[tooth+"cmp"]
             if not tx in ("", None):
                 items=tx.strip(" ").split(" ")
                 for item in items:
@@ -145,7 +145,7 @@ def completedFillsToStatic(pt):
     '''
     take completed items, and update the static chart
     '''
-    try:
+    if True: #try:
         items = completedItems(pt, teethOnly=True)
         for tooth, prop in items:
             tooth = tooth.lower()
@@ -164,7 +164,7 @@ def completedFillsToStatic(pt):
             print "updating static"    
             #print "comp to static '%s','%s','%s','%s'"% (
             #tooth, prop, existing, new)
-    except Exception, e:
+    else:#except Exception, e:
         #shouldn't happen, but safety first.
         print "FAILED TO TRANSFER FILLS TO STATIC", e
 

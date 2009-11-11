@@ -28,10 +28,8 @@ def performExam(parent):
     if parent.pt.serialno == 0:
         parent.advise("no patient selected", 1)
         return
-    if not parent.pt.underTreatment:
-        if not course_module.setupNewCourse(parent):
-            parent.advise("unable to perform exam", 1)
-            return
+    if course_module.newCourseNeeded(parent):
+        return
     if parent.pt.examt != "":
         parent.advise(_('''<p>You already have an exam on this 
 course of treatment</p>Unable to perform exam'''), 1)

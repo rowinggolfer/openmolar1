@@ -104,7 +104,7 @@ def get_date_from_date(key):
         
 def get_op_for_date(line):
     '''
-    parse the line for an openerator
+    parse the line for an operator
     '''
     op = ""
     for l in line:

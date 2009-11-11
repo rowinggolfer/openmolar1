@@ -8,38 +8,71 @@
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.compiled_uis import Ui_saveDiscardCancel
 
+import gettext
+gettext.install("openmolar")
+
 class sdcDialog(Ui_saveDiscardCancel.Ui_Dialog):
-    def __init__(self,dialog,detail,changelist,parent=None):
+    def __init__(self, dialog):
         self.dialog=dialog
         self.setupUi(self.dialog)
-        self.changes=changelist
-        self.loadList()
+        self.changes=[]
         self.signals()
-        self.dialog.setFixedHeight(168)
-        self.label.setText("You have unsaved changes to the record of<br />%s"%detail)
         self.result=""
-    def loadList(self):
+        self.dialog.setFixedHeight(154)
+        self.compressed = True
+    
+    def setPatient(self, arg):
+        '''
+        let the dialog know who it is referring to
+        '''
+        message = _("You have unsaved changes to the record of")
+        self.label.setText("%s<br />%s"% (message, arg))
+        
+    def setChanges(self,changelist):
+        '''
+        a list of changes
+        '''
+        self.changes = changelist
         self.listWidget.addItems(self.changes)
+
+    def allowDiscard(self, option):
+        '''
+        if not exiting, the changes cannot be discarded
+        '''
+        if not option:
+            for button in self.buttonBox.buttons():
+                if self.buttonBox.buttonRole(button) == (
+                QtGui.QDialogButtonBox.DestructiveRole):
+                    self.buttonBox.removeButton(button)
+            
     def signals(self):
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.save)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.cancel)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("clicked(QAbstractButton*)"),self.slot)
+
         self.pushButton.connect(self.pushButton,QtCore.SIGNAL("clicked()"),self.showDetails)
-        self.saveExit_pushButton.connect(self.saveExit_pushButton,QtCore.SIGNAL("clicked()"),self.saveExit)
-        self.save_pushButton.connect(self.save_pushButton,QtCore.SIGNAL("clicked()"),self.save)
-        self.continue_pushButton.connect(self.continue_pushButton,QtCore.SIGNAL("clicked()"),self.dialog.reject)
-        self.discard_pushButton.connect(self.discard_pushButton,QtCore.SIGNAL("clicked()"),self.discardButtonPushed)
+
     def showDetails(self):
-        if self.dialog.height()==168:
-            self.dialog.setFixedHeight(380)
-            self.pushButton.setText(_("Hide"))
-        else:
-            self.dialog.setFixedHeight(168)
+        
+        if not self.compressed:
+            self.dialog.setFixedHeight(154)
             self.pushButton.setText(_("What's Changed?"))
+        else:
+            self.dialog.setFixedHeight(283)
+            self.pushButton.setText(_("Hide"))
+        self.compressed = not self.compressed
+        
+    def slot(self, arg=None):
+        if self.buttonBox.buttonRole(arg) == (
+        QtGui.QDialogButtonBox.DestructiveRole):
+            self.discard()
+        
     def save(self):
         self.result="save"
         self.dialog.accept()
-    def saveExit(self):
-        self.result="saveExit"
-        self.dialog.accept()
-    def discardButtonPushed(self):
+    def cancel(self):
+        self.dialog.reject()
+    def discard(self):
         if QtGui.QMessageBox.question(self.dialog,_("Confirm"),
         "Are you sure you want to discard your changes?",
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
@@ -51,6 +84,9 @@ if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
-    ui = sdcDialog(Dialog,"TestRecord - 000356",["Sname","Fname"]*10)
+    ui = sdcDialog(Dialog)
+    ui.setPatient("TestRecord - 000356")
+    ui.setChanges(["Sname","Fname"]*2)
+    ui.setOfferDiscard(False)
     if Dialog.exec_():
         print ui.result

@@ -25,11 +25,8 @@ def performPerio(parent):
     if parent.pt.serialno == 0:
         parent.advise("no patient selected", 1)
         return
-    if not parent.pt.underTreatment:
-        if not course_module.setupNewCourse(parent):
-            parent.advise("unable to perform treatment if pt does not "+
-            "have an active course", 1)
-            return
+    if course_module.newCourseNeeded(parent):
+        return
     Dialog = QtGui.QDialog(parent)
     dl = hygTreatWizard.Ui_Dialog(Dialog)
     dl.setPractitioner(localsettings.clinicianNo)

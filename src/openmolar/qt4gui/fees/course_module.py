@@ -26,21 +26,22 @@ def newCourseNeeded(parent):
     if parent.pt.underTreatment:
         return False
     else:
-        if not setupNewCourse(parent):
+        if parent.pt.cmpd != parent.pt_dbstate.cmpd:
+            parent.advise(
+            _("Please save the old course changes before continuing"), 1)
+            return True
+        elif not setupNewCourse(parent):
             parent.advise(_('''<p>unable to plan or perform treatment if pt 
 does not have an active course</p>'''), 1)
             return True
         else:
             print "new course started with accd of '%s'"% parent.pt.accd
-            
+            return False
+        
 def setupNewCourse(parent):
     '''
     set up a new course of treament
     '''
-    if parent.pt.courseno0 != parent.pt_dbstate.courseno0:
-        parent.advise(
-        _("Please save the old course changes before continuing"), 1)
-        return
     
     Dialog = QtGui.QDialog(parent)
 

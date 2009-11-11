@@ -1901,21 +1901,16 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.advise("To change practitioner, please login again", 1)
 
     def saveButtonClicked(self):
-        if QtGui.QMessageBox.question(self, _("Confirm"), 
-        _("Save Changes?"),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.Yes ) == QtGui.QMessageBox.Yes:
-            
-            self.okToLeaveRecord(saveOnly = True)
+        self.okToLeaveRecord(cont = True)
         
-    def okToLeaveRecord(self, saveOnly=False):
+    def okToLeaveRecord(self, cont=False):
         '''
         leaving a pt record - has state changed?
         '''
         if self.pt.serialno == 0:
             return True
         #--a debug print statement
-        if not saveOnly:
+        if not cont:
             print "leaving record checking to see if save is required...",
             course_module.prompt_close_course(self)
 
@@ -1931,32 +1926,22 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         if uc != []:
             #--raise a custom dialog to get user input
             #--(centred over self)
-            if not saveOnly:
-                Dialog = QtGui.QDialog(self)
-                dl = saveDiscardCancel.sdcDialog(Dialog,
-                "%s %s (%s)"% (self.pt.fname, self.pt.sname, self.pt.serialno),
-                uc)
-                if Dialog.exec_():
-                    if dl.result == "discard":
-                        print "user discarding changes"
-                        return True
-                    elif dl.result == "save":
-                        print "user is saving"
-                        saveOnly = True
-                        quit = False                        
-                    elif dl.result == "saveExit":
-                        saveOnly = True
-                    #--cancelled action
-                    else:
-                        print "user chose to continue editing"
-                        return False
-        else:
-            print "no changes"
-            return True
-        
-        if saveOnly:
-            self.save_changes(False)
-            return quit                    
+            Dialog = QtGui.QDialog(self)
+            dl = saveDiscardCancel.sdcDialog(Dialog)
+            dl.setPatient("%s %s (%s)"% (
+            self.pt.fname, self.pt.sname, self.pt.serialno))
+            dl.setChanges(uc)
+            dl.allowDiscard(not cont)
+            if Dialog.exec_():
+                if dl.result == "discard":
+                    print "user discarding changes"
+                elif dl.result == "save":
+                    print "user is saving"
+                    self.save_changes(False)
+            else:
+                print "user chose to continue editing"
+                return False
+        return True
 
     def showAdditionalFields(self):
         '''
@@ -3340,6 +3325,9 @@ WITH PT RECORDS %d and %d''')% (
             course_module.closeCourse(self)
             #static items may have changed
             self.chartsTable()
+            self.load_clinicalSummaryPage()
+            self.ui.summaryChartWidget.update()
+        
         else:
             course_module.resumeCourse(self)
 

@@ -73,7 +73,7 @@ class chartWidget(QtGui.QWidget):
 
         #-- select the ur8
         if keepSelection:
-            print "keeping exisiting selections"
+            print "keeping existing selections"
         else:
             self.showSelected = False
             self.selected = [0, 0]
