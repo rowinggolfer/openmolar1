@@ -292,7 +292,7 @@ class chartWidget(QtGui.QWidget):
                 self.emit(QtCore.SIGNAL("delete_prop"), prop)
 
         elif result.text() == _("Show History"):
-            self.emit(QtCore.SIGNAL("showHistory"))
+            self.emit(QtCore.SIGNAL("showHistory"), tooth)
         
         elif result.text() == _("Complete Treatments"):
             self.signal_treatment_completed()
