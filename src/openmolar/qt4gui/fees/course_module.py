@@ -16,6 +16,7 @@ from openmolar.dbtools import writeNewCourse
 from openmolar.qt4gui.dialogs import newCourse
 from openmolar.qt4gui.compiled_uis import Ui_completionDate
 from openmolar.qt4gui import contract_gui_module
+from openmolar.ptModules import plan
 
 def newCourseNeeded(parent):
     '''
@@ -118,8 +119,12 @@ def closeCourse(parent, leaving=False):
         parent.updateDetails()
         parent.pt.addHiddenNote("close_course")
         offerFinalPaperWork(parent)
+        plan.completedFillsToStatic(parent.pt)
         return True
     
+    return False
+ 
+ 
 def offerFinalPaperWork(parent):
     '''
     a course has been closed ( in surgery )

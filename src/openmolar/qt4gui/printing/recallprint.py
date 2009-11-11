@@ -52,24 +52,37 @@ class printRecall():
                 painter.drawText(x, y, str(recall[10])+".")  #postcode
             y += serifLineHeight
 
-            x,y=LeftMargin,(pageRect.height()*0.4)
+            x,y=LeftMargin,(pageRect.height()*0.3)
             painter.drawText(x+250, y, QtCore.QDate.currentDate().toString(DATE_FORMAT))
             y += sansLineHeight
             painter.setFont(serifFont)
             y += serifLineHeight
-            painter.drawText(x, y, "Dear %s %s," %(recall[0].title(),recall[2].title()))
-            y += serifLineHeight*2
-            painter.drawText(x, y, QtCore.QString('We are writing to inform you that your dental examination is now due.'))
+            painter.drawText(x, y, _("Dear %s %s,") %(recall[0].title(),recall[2].title()))
+            y += serifLineHeight*1.2
+            painter.drawText(x, y, 
+            _('We are writing to inform you that your dental examination is now due.'))
             y += serifLineHeight
-            painter.drawText(x, y, QtCore.QString('Please contact the surgery to arrange an appointment. *'))
-            y += serifLineHeight*2
-            painter.drawText(x, y, QtCore.QString('We look forward to seeing you in the near future.'))
+            painter.drawText(x, y, _('Please contact the surgery to arrange an appointment. *'))
+            y += serifLineHeight*1.2
+            painter.drawText(x, y, _('We look forward to seeing you in the near future.'))
             painter.setPen(QtCore.Qt.black)
-            y += serifLineHeight*3
-            painter.drawText(x, y, "Yours sincerely,")
+            y += serifLineHeight*2
+            painter.drawText(x, y, _("Yours sincerely,"))
             y += serifLineHeight * 1.5
             painter.setFont(sigFont)
-            painter.drawText(x, y+30, "The Academy Dental Practice")
+            y += serifLineHeight * 2            
+            painter.drawText(x, y, "The Academy Dental Practice")
+            painter.setFont(serifFont)
+            y += serifLineHeight *2
+            painter.drawText(x, y, "P.S. we are pleased to announce that Sally Melville, our hygienist,"  )
+            y += serifLineHeight 
+            painter.drawText(x, y, 'had a baby boy, "Leo", on the 22nd September.')
+            y += serifLineHeight 
+            painter.drawText(x, y, 'Her maternity leave has reduced the available number of hygienist' )
+            y += serifLineHeight 
+            painter.drawText(x, y, ' appointments. We apologise for any invonvenience caused, and thankyou '   )
+            y += serifLineHeight 
+            painter.drawText(x, y, 'for your understanding.')            
             y = pageRect.height() - 120
             painter.drawLine(x, y, pageRect.width() - (2 * AddressMargin), y)
             y += 2

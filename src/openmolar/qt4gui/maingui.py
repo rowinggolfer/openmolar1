@@ -2454,11 +2454,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.ui.planDetails_groupBox.setEnabled(False)
 
             self.ui.newCourse_pushButton.setEnabled(True)
+            self.ui.closeCourse_pushButton.setEnabled(False)
+            
             if not self.pt.accd in ("", None):
                 self.ui.closeTx_pushButton.setText("Resume Existing Course")
             else:
                 self.ui.closeTx_pushButton.setEnabled(False)
-
+                
     def final_choice(self, candidates):
         def DoubleClick():
             '''user double clicked on an item... accept the dialog'''
@@ -2966,7 +2968,7 @@ WITH PT RECORDS %d and %d''')% (
         self.ui.phraseBook_pushButton,
         self.ui.exampushButton,
         self.ui.medNotes_pushButton,
-        self.ui.charge_pushButton,
+        self.ui.closeCourse_pushButton,
         self.ui.printGP17_pushButton,
         self.ui.newBPE_pushButton,
         self.ui.hygWizard_pushButton,
@@ -3280,12 +3282,7 @@ WITH PT RECORDS %d and %d''')% (
         '''
         appt_gui_module.aptOVlabelRightClicked(self, arg)
 
-    def charge_pushButtonClicked(self):
-        '''
-        user is raising a charge using the button on the clinical summary page
-        '''
-        fees_module.raiseACharge(self)
-
+    
     def takePayment_pushButton_clicked(self):
         '''
         user has clicked to take a payment
@@ -3354,6 +3351,8 @@ WITH PT RECORDS %d and %d''')% (
         '''
         if self.pt.underTreatment:
             course_module.closeCourse(self)
+            #static items may have changed
+            self.chartsTable()
         else:
             course_module.resumeCourse(self)
 
@@ -3659,8 +3658,8 @@ WITH PT RECORDS %d and %d''')% (
         connect the signals from various buttons which do not
         belong to any other function
         '''
-        QtCore.QObject.connect(self.ui.charge_pushButton,
-        QtCore.SIGNAL("clicked()"), self.charge_pushButtonClicked)
+        QtCore.QObject.connect(self.ui.closeCourse_pushButton,
+        QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.saveButton,
         QtCore.SIGNAL("clicked()"), self.saveButtonClicked)

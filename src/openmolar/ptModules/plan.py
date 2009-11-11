@@ -79,7 +79,7 @@ def plannedItems(pt):
                     plannedList.append((attrib, item), )
     return plannedList
 
-def completedItems(pt):
+def completedItems(pt, teethOnly=False):
     compList=[]
     if pt.examt!="":
         compList.append(("Exam",pt.examt) )
@@ -94,7 +94,8 @@ def completedItems(pt):
                     toothName = str(pt.chartgrid.get(attrib)).upper()
                     compList.append((toothName, item),)
                 else:    
-                    compList.append((attrib, item), )
+                    if not teethOnly:
+                        compList.append((attrib, item), )
     return compList
 
 def summary(pt):
@@ -106,11 +107,13 @@ def summary(pt):
     <link rel="stylesheet" href="%s" type="text/css">
     </head>\n'''%localsettings.stylesheet
     if not pt.underTreatment:
-        retarg += _("<H4>Previous Course</H4>")
+        retarg += "<H4>%s</H4>"% _("Previous Course")
     if pt.accd != None:
-        retarg += _('Start %s<br />')% localsettings.formatDate(pt.accd)
+        retarg += '%s %s<br />'% ( _("Start"), 
+        localsettings.formatDate(pt.accd))
     if pt.cmpd != None:
-        retarg += _('End %s<br />')% localsettings.formatDate(pt.cmpd)
+        retarg += '%s %s<br />'% (_('End'), 
+        localsettings.formatDate(pt.cmpd))
     plan=u""
     for item in plannedItems(pt):
         plan+='%s - %s<br />'%(item)
@@ -119,13 +122,36 @@ def summary(pt):
         comp+='%s - %s<br />'%(item)
 
     if plan=="" and comp=="":
-        return _("%sNo treatment</body></html>")%retarg
+        return "%s%s</body></html>"% (retarg, _("No treatment"))
     else:
-        return _('%s<h4>PLAN</h4>%s<hr /><h4>COMPLETED</h4>%s</body></html>')%(
-                                                            retarg, plan, comp)
+        return '%s<h4>%s</h4>%s<hr /><h4>%s</h4>%s</body></html>'%(
+        retarg, _("PLAN"),plan, _("COMPLETED"), comp)
+
+    return retarg
 
 
-    return retarg+""
+def completedFillsToStatic(pt):
+    '''
+    take completed items, and update the static chart
+    '''
+    items = completedItems(pt, teethOnly=True)
+    for tooth, prop in items:
+        tooth = tooth.lower()
+        if re.match("EX", prop):
+            pt.__dict__["%sst"% tooth] = "TM "
+        else:
+            existing = pt.__dict__.get("%sst"% tooth)
+            new = "%s %s "% (existing, prop)
+            #add the space just to be on the safe side.
+            new = new.replace("  "," ")
+            #34 characters is a database limit.
+            while len(new) > 34:
+                new = new[new.index(" "):]
+            pt.__dict__["%sst"% tooth] = new
+        
+        print "updating static"    
+        #print "comp to static '%s','%s','%s','%s'"% (
+        #tooth, prop, existing, new)
 
 
 

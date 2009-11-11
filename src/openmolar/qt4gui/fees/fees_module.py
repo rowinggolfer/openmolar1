@@ -30,6 +30,9 @@ def raiseACharge(parent):
     this is called by the "raise a charge" button on the
     clinical summary page
     '''
+    ##TODO
+    ###obsolete code
+    print "WARNING - obsolete code executed fees_module.raiseACharge"
     if parent.pt.serialno == 0:
         parent.advise("No patient Selected", 1)
         return
@@ -48,7 +51,8 @@ def raiseACharge(parent):
 
         parent.pt.addHiddenNote("fee", "%.02f"% fee)
             
-
+    ################################################
+    
 def applyFeeNow(parent, arg, cset=None):
     '''
     updates the patients outstanding money

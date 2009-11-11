@@ -17,7 +17,7 @@ def getHistory(pt, tooth):
     hist = ""
     for tdate, apptix, item in pt.dayBookHistory:
         regex = "%s ([^ ]*) "% tooth
-        m = re.match(regex, item)
+        m = re.search(regex, item)
         if m:
             for group in m.groups():
                 hist += "<li>%s - %s - %s</li>"%(

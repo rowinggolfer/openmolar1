@@ -452,10 +452,10 @@
                <property name="spacing">
                 <number>4</number>
                </property>
-               <item row="0" column="0" colspan="6">
+               <item row="0" column="0" colspan="9">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>6</number>
+                  <number>4</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -1710,7 +1710,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>672</width>
+                        <width>736</width>
                         <height>494</height>
                        </rect>
                       </property>
@@ -2091,7 +2091,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>607</width>
+                        <width>744</width>
                         <height>485</height>
                        </rect>
                       </property>
@@ -2459,8 +2459,8 @@
                       <property name="geometry">
                        <rect>
                         <x>0</x>
-                        <y>0</y>
-                        <width>599</width>
+                        <y>-38</y>
+                        <width>736</width>
                         <height>426</height>
                        </rect>
                       </property>
@@ -2596,9 +2596,9 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QPushButton" name="charge_pushButton">
+                          <widget class="QPushButton" name="closeCourse_pushButton">
                            <property name="text">
-                            <string>Charge</string>
+                            <string>Close This Course</string>
                            </property>
                           </widget>
                          </item>
@@ -2918,7 +2918,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>366</width>
+                           <width>503</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3320,7 +3320,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>601</width>
+                        <width>738</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -3621,14 +3621,7 @@ Note - this will not remove items which are currently there. </string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
-                <widget class="QLabel" name="label_39">
-                 <property name="text">
-                  <string>Today's Notes</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="3" rowspan="2">
+               <item row="1" column="4" rowspan="2">
                 <widget class="QTextEdit" name="notesEnter_textEdit">
                  <property name="maximumSize">
                   <size>
@@ -3641,14 +3634,7 @@ Note - this will not remove items which are currently there. </string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="4" rowspan="2">
-                <widget class="Line" name="line_2">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="5" rowspan="2">
+               <item row="1" column="8" rowspan="2">
                 <widget class="QPushButton" name="saveButton">
                  <property name="maximumSize">
                   <size>
@@ -3682,7 +3668,30 @@ Note - this will not remove items which are currently there. </string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="2">
+               <item row="1" column="3" rowspan="2">
+                <widget class="QLabel" name="completed_label">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>TextLabel</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="6">
+                <widget class="QLabel" name="label_39">
+                 <property name="text">
+                  <string>Today's Notes</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="6">
                 <widget class="QPushButton" name="phraseBook_pushButton">
                  <property name="text">
                   <string>PhraseBook</string>
@@ -3693,6 +3702,13 @@ Note - this will not remove items which are currently there. </string>
                  </property>
                  <property name="shortcut">
                   <string>Ins</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="7" rowspan="2">
+                <widget class="Line" name="line_2">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
                  </property>
                 </widget>
                </item>
