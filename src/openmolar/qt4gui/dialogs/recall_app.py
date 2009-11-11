@@ -61,7 +61,8 @@ class Form(QtGui.QDialog):
                 col+=1
             rowno+=1
         self.table.resizeColumnsToContents()
-
+    
+    
     def printViaQPainter(self):
         dialog = QtGui.QPrintDialog(self.printer, self)
         if not dialog.exec_():
@@ -94,41 +95,57 @@ class Form(QtGui.QDialog):
                 painter.drawText(x, y, str(recall[11])+".")  #postcode
             y += serifLineHeight
 
-            x,y=LeftMargin,(pageRect.height()*0.4)
+            x,y=LeftMargin,(pageRect.height()*0.3)
             painter.drawText(x+250, y, QtCore.QDate.currentDate().toString(DATE_FORMAT))
             y += sansLineHeight
             painter.setFont(serifFont)
             y += serifLineHeight
             painter.drawText(x, y, _("Dear %s %s,") %(recall[0].title(),recall[2].title()))
             y += serifLineHeight*2
-            painter.drawText(x, y, _('We are writing to inform you that your dental examination is now due.'))
+            painter.drawText(x, y, 
+            _('We are writing to inform you that your dental examination is now due.'))
             y += serifLineHeight
             painter.drawText(x, y, _('Please contact the surgery to arrange an appointment. *'))
-            y += serifLineHeight*2
+            y += serifLineHeight*1.2
             painter.drawText(x, y, _('We look forward to seeing you in the near future.'))
-            painter.setPen(Qt.black)
-            y += serifLineHeight*3
+            painter.setPen(QtCore.Qt.black)
+            y += serifLineHeight*2
             painter.drawText(x, y, _("Yours sincerely,"))
             y += serifLineHeight * 1.5
             painter.setFont(sigFont)
-            painter.drawText(x, y+30, "The Academy Dental Practice")
+            y += serifLineHeight * 2            
+            painter.drawText(x, y, "The Academy Dental Practice")
+            painter.setFont(serifFont)
+            
+            y += serifLineHeight * 3
+            painter.drawText(x, y, "P.S. we are pleased to announce that Sally Melville, our hygienist,"  )
+            y += serifLineHeight 
+            painter.drawText(x, y, 'had a baby boy, "Leo", on the 22nd September.')
+            y += serifLineHeight 
+            painter.drawText(x, y, 'Her maternity leave has reduced the availability of hygienist' )
+            y += serifLineHeight 
+            painter.drawText(x, y, 'appointments. We apologise for any invonvenience caused, and '   )
+            y += serifLineHeight 
+            painter.drawText(x, y, 'thankyou for your understanding.')            
             y = pageRect.height() - 120
             painter.drawLine(x, y, pageRect.width() - (2 * AddressMargin), y)
             y += 2
             font = QtGui.QFont("Helvetica", 7)
             font.setItalic(True)
             painter.setFont(font)
+            font.setItalic(True)
+            painter.setFont(font)
             option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
             footer = _('''* If you already have a future appointment with us -
 please accept our apologies and ignore this letter.''')
-            painter.drawText(QtGui.QRectF(x, y,
+            painter.drawText(QtCore.QRectF(x, y,
             pageRect.width() - (2 * AddressMargin), 31), footer, option)
             page += 1
             if page <= len(self.recalls):
                 self.printer.newPage()
             painter.restore()
-        return True
+        self.accept()
 
 if __name__ == "__main__":
     from openmolar.dbtools import recall

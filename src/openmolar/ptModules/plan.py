@@ -81,21 +81,32 @@ def plannedItems(pt):
 
 def completedItems(pt, teethOnly=False):
     compList=[]
-    if pt.examt!="" and not teethOnly:
-        compList.append(("Exam",pt.examt) )
-    for attrib in tup_Atts+tup_toothAtts:
-        tx=pt.__dict__[attrib+"cmp"]
-        if not tx in ("",None):
-            items=tx.strip(" ").split(" ")
-            for item in items:
-                item=item.decode("latin-1")
-                if re.match("[ul][lr][0-8]",attrib):
-                    #check for deciduous
-                    toothName = str(pt.chartgrid.get(attrib)).upper()
-                    compList.append((toothName, item),)
-                else:    
-                    if not teethOnly:
-                        compList.append((attrib, item), )
+    if teethOnly:
+        for attrib in tup_toothAtts:
+            tx=pt.__dict__[attrib+"cmp"]
+            if not tx in ("", None):
+                items=tx.strip(" ").split(" ")
+                for item in items:
+                    item=item.decode("latin-1")
+                    if re.match("[ul][lr][0-8]",tooth):
+                        compList.append((tooth, item),)
+    else:    
+        if pt.examt!="":
+            compList.append(("Exam",pt.examt) )
+            
+        for attrib in tup_Atts+tup_toothAtts:
+            tx=pt.__dict__[attrib+"cmp"]
+            if not tx in ("",None):
+                items=tx.strip(" ").split(" ")
+                for item in items:
+                    item=item.decode("latin-1")
+                    if re.match("[ul][lr][0-8]",attrib):
+                        #check for deciduous
+                        toothName = str(pt.chartgrid.get(attrib)).upper()
+                        compList.append((toothName, item),)
+                    else:    
+                        if not teethOnly:
+                            compList.append((attrib, item), )
     return compList
 
 def summary(pt):
