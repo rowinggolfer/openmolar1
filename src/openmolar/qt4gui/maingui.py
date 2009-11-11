@@ -2352,18 +2352,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             for umemo in urgentMemos:
 
                 mtext = umemo.message
-                base = ""
-                split = False
-                while len(mtext) > 50:
-                    split = True
-                    if not " " in mtext:
-                        i = 50
-                    else:
-                        i = mtext.index(" ",50)
-                    base += "%s<br />"% mtext[:i]
-                    mtext = mtext[i:]
-                if split:
-                    mtext = "%s%s"% (base, mtext)
+                
                 message = _('''<center>Message from %s <br />
 Dated %s<br /><br />%s</center>''')% (umemo.author,
                 localsettings.formatDate(umemo.mdate), mtext)

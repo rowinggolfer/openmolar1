@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'showMemo.ui'
 #
-# Created: Tue Oct  6 21:47:28 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Wed Nov 11 17:15:25 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -25,6 +25,7 @@ class Ui_Dialog(object):
         font.setPointSize(12)
         self.message_label.setFont(font)
         self.message_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.message_label.setWordWrap(True)
         self.message_label.setObjectName("message_label")
         self.gridLayout.addWidget(self.message_label, 0, 1, 1, 2)
         self.checkBox = QtGui.QCheckBox(Dialog)
