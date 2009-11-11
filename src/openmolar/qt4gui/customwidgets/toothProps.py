@@ -78,6 +78,21 @@ class chartLineEdit(QtGui.QLineEdit):
         result = not (self.originalPropList == self.propListFromText())
         return result
 
+    def deleteAll(self):
+        '''
+        deletes all props
+        '''
+        self.setText("")
+        self.finishedEdit()
+
+    def deleteProp(self, prop):
+        '''
+        deletes all props
+        '''
+        newProps = self.propListFromText()
+        newProps.remove(prop)
+        self.updateFromPropList(newProps)
+        
     def finishedEdit(self):
         '''
         we have finished editing the text.. let the main gui know by 

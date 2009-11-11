@@ -95,6 +95,7 @@ from openmolar.ptModules import referral
 from openmolar.ptModules import standardletter
 from openmolar.ptModules import debug_html
 from openmolar.ptModules import estimates
+from openmolar.ptModules import tooth_history
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint
@@ -469,13 +470,6 @@ into the plan first then complete it.'''), 1)
         headers=["Tooth", "Deciduous", "Static", "Plan", "Completed"]
         self.ui.chartsTableWidget.setColumnCount(5)
         self.ui.chartsTableWidget.setHorizontalHeaderLabels(headers)
-        w=self.ui.chartsTableWidget.width()-40
-        #-- set column widths but allow for scrollbar
-        self.ui.chartsTableWidget.setColumnWidth(0, .1*w)
-        self.ui.chartsTableWidget.setColumnWidth(1, .1*w)
-        self.ui.chartsTableWidget.setColumnWidth(2, .4*w)
-        self.ui.chartsTableWidget.setColumnWidth(3, .2*w)
-        self.ui.chartsTableWidget.setColumnWidth(4, .2*w)
         self.ui.chartsTableWidget.verticalHeader().hide()
 
         for chart in (self.ui.summaryChartWidget,
@@ -511,25 +505,40 @@ into the plan first then complete it.'''), 1)
 
             if stl[:2] in ("at", "tm", "ue"):
                 self.ui.perioChartWidget.setToothProps(tooth, stl)
+        self.ui.chartsTableWidget.resizeColumnsToContents()
         self.ui.chartsTableWidget.setCurrentCell(0, 0)
 
     def toothHistory(self, tooth):
         '''
         show history of the tooth
         '''
-        #print "show history of", tooth
-        #print pt.dayBookHistory
-        #return
-        th = "<br />"
-        for item in self.pt.dayBookHistory:
-            if tooth.upper() in item[2].strip():
-                th += "%s - %s - %s<br />"%(
-                item[0], localsettings.ops[int(item[1])], item[2].strip())
-        if th == "<br />":
-            th += "No History"
-        th = th.rstrip("<br />")
-        self.advise(tooth.upper()+th,1)
-
+        history = tooth_history.getHistory(self.pt, tooth)
+        self.advise(history,1)
+        
+    def tooth_delete_all(self):
+        '''
+        user has clicked on the delete all option from a tooth's right click
+        menu
+        '''
+        print "tooth_delete_all"
+        self.ui.toothPropsWidget.lineEdit.deleteAll()
+        
+    def tooth_delete_prop(self, prop):
+        '''
+        user has clicked on the delete prop option from a tooth's right click
+        menu - arg is the prop to be deleted
+        '''
+        print "tooth_delete_prop", prop
+        self.ui.toothPropsWidget.lineEdit.deleteProp(prop)
+        
+    def tooth_add_comments(self, tooth):
+        '''
+        user has clicked on the delete all option from a tooth's right click
+        menu
+        '''
+        print "tooth_add_comments"
+        advise("add comments not working yet",1)
+        
 
 class cashbooks():
     def cashbookTab(self):
@@ -4010,29 +4019,35 @@ WITH PT RECORDS %d and %d''')% (
 
         #charts (including underlying table)
         QtCore.QObject.connect(self.ui.chartsview_pushButton,
-                            QtCore.SIGNAL("clicked()"), self.showChartCharts)
-        QtCore.QObject.connect(self.ui.summaryChartWidget,
-                               QtCore.SIGNAL("showHistory"), self.toothHistory)
-        QtCore.QObject.connect(self.ui.staticChartWidget,
-                               QtCore.SIGNAL("showHistory"), self.toothHistory)
-
-        QtCore.QObject.connect(self.ui.summaryChartWidget,
-        QtCore.SIGNAL("toothSelected"), self.static_chartNavigation)
+        QtCore.SIGNAL("clicked()"), self.showChartCharts)
         
-        QtCore.QObject.connect(self.ui.staticChartWidget,
-        QtCore.SIGNAL("toothSelected"), self.static_chartNavigation)
+        for chart in (self.ui.summaryChartWidget, self.ui.staticChartWidget):
+            QtCore.QObject.connect(chart, QtCore.SIGNAL("showHistory"), 
+            self.toothHistory)
 
+            QtCore.QObject.connect(chart, QtCore.SIGNAL("toothSelected"), 
+            self.static_chartNavigation)
+
+            QtCore.QObject.connect(chart,        
+            QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
+
+            QtCore.QObject.connect(chart,        
+            QtCore.SIGNAL("add_comments"), self.tooth_add_comments)
+        
+        for chart in (self.ui.summaryChartWidget, self.ui.staticChartWidget,
+        self.ui.planChartWidget, self.ui.completedChartWidget):
+            QtCore.QObject.connect(chart,        
+            QtCore.SIGNAL("delete_all"), self.tooth_delete_all)
+            
+            QtCore.QObject.connect(chart,        
+            QtCore.SIGNAL("delete_prop"), self.tooth_delete_prop)
+                    
+            
         QtCore.QObject.connect(self.ui.planChartWidget,
         QtCore.SIGNAL("toothSelected"), self.plan_chartNavigation)
         
         QtCore.QObject.connect(self.ui.completedChartWidget,
         QtCore.SIGNAL("toothSelected"), self.comp_chartNavigation)
-
-        QtCore.QObject.connect(self.ui.summaryChartWidget,        
-        QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
-
-        QtCore.QObject.connect(self.ui.staticChartWidget,
-        QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
 
         QtCore.QObject.connect(self.ui.chartsTableWidget,
         QtCore.SIGNAL("currentCellChanged (int,int,int,int)"), 
@@ -4042,7 +4057,8 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.SIGNAL("completeTreatment"), self.planChartWidget_completed)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
-                               QtCore.SIGNAL("NextTooth"), self.navigateCharts)
+        QtCore.SIGNAL("NextTooth"), self.navigateCharts)
+
         #--fillings have changed!!
         QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
         QtCore.SIGNAL("Changed_Properties"), self.updateCharts)

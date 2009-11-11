@@ -256,15 +256,18 @@ class chartWidget(QtGui.QWidget):
             tooth = teeth[0] #self.grid[y][x]
                     
             menu = QtGui.QMenu(self)
-            menu.addAction(tooth.upper())
-            
-            menu.addAction(_("Toggle Deciduous Status"))
+            if self.isStaticChart:
+                menu.addAction(_("Toggle Deciduous State"))
+                menu.addSeparator()
+            elif self.isPlanChart:
+                menu.addAction(_("Complete Treatments"))
+                menu.addSeparator()                    
             fillList = self.__dict__[tooth]
             if fillList:
-                menu.addSeparator()
-                menu.addAction(_("Delete All Restorations"))
+                if len(fillList) > 1:
+                    menu.addAction(_("Delete All Restorations"))
                 for fill in self.__dict__[tooth]:    
-                    menu.addAction(_("Delete ")+fill.upper())            
+                    menu.addAction(_("Delete ") + " - %s"% fill.upper())            
             if self.isStaticChart:
                 menu.addSeparator()
                 menu.addAction(_("ADD COMMENTS"))                            
@@ -276,13 +279,28 @@ class chartWidget(QtGui.QWidget):
         if not result:
             return
 
-        if result.text() == _("Toggle Deciduous Status"):
-            self.emit(QtCore.SIGNAL("FlipDeciduousState"))
+        if result.text() == _("Toggle Deciduous State"):
+            self.emit(QtCore.SIGNAL("FlipDeciduousStatus"))
+            
+        elif result.text() == _("Delete All Restorations"):
+            self.emit(QtCore.SIGNAL("delete_all"))
+
+        elif _("Delete ") in result.text():
+            reg = re.search(" - (.*) ", result.text())
+            if reg:
+                prop = str(reg.groups()[0].toAscii())
+                self.emit(QtCore.SIGNAL("delete_prop"), prop)
+
         elif result.text() == _("Show History"):
-            self.emit(QtCore.SIGNAL("showHistory"), tooth)
+            self.emit(QtCore.SIGNAL("showHistory"))
+        
+        elif result.text() == _("Complete Treatments"):
+            self.signal_treatment_completed()
+
+        elif result.text() == _("ADD COMMENTS"):
+            self.emit(QtCore.SIGNAL("add_comments"))
 
         else:
-            
             print "right click on chart widget ",result.text()
             
     
@@ -294,15 +312,21 @@ class chartWidget(QtGui.QWidget):
         if plan chart, treatment is completed.
         '''
         
-        tooth = self.grid[self.selected[1]][self.selected[0]]
         if self.isStaticChart:
             self.emit(QtCore.SIGNAL("FlipDeciduousState"))        
-        elif self.isPlanChart:        
-            plannedTreatment = [tooth,]
-            for item in self.__dict__[tooth]:
-                plannedTreatment.append(item.upper())
-            if plannedTreatment != [tooth]:
-                self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
+        elif self.isPlanChart:
+            self.signal_treatment_completed()
+    
+    def signal_treatment_completed(self):
+        '''
+        either a double click or default right click on the plan chart
+        '''
+        tooth = self.grid[self.selected[1]][self.selected[0]]
+        plannedTreatment = [tooth,]
+        for item in self.__dict__[tooth]:
+            plannedTreatment.append(item.upper())
+        if plannedTreatment != [tooth]:
+            self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
 
     def keyPressEvent(self, event):
         '''
