@@ -15,25 +15,29 @@ class sdcDialog(Ui_saveDiscardCancel.Ui_Dialog):
         self.changes=changelist
         self.loadList()
         self.signals()
-        self.dialog.setFixedSize(408,168)
+        self.dialog.setFixedHeight(168)
         self.label.setText("You have unsaved changes to the record of<br />%s"%detail)
         self.result=""
     def loadList(self):
         self.listWidget.addItems(self.changes)
     def signals(self):
         self.pushButton.connect(self.pushButton,QtCore.SIGNAL("clicked()"),self.showDetails)
+        self.saveExit_pushButton.connect(self.saveExit_pushButton,QtCore.SIGNAL("clicked()"),self.saveExit)
         self.save_pushButton.connect(self.save_pushButton,QtCore.SIGNAL("clicked()"),self.save)
         self.continue_pushButton.connect(self.continue_pushButton,QtCore.SIGNAL("clicked()"),self.dialog.reject)
         self.discard_pushButton.connect(self.discard_pushButton,QtCore.SIGNAL("clicked()"),self.discardButtonPushed)
     def showDetails(self):
         if self.dialog.height()==168:
-            self.dialog.setFixedSize(408,380)
+            self.dialog.setFixedHeight(380)
             self.pushButton.setText(_("Hide"))
         else:
-            self.dialog.setFixedSize(408,168)
+            self.dialog.setFixedHeight(168)
             self.pushButton.setText(_("What's Changed?"))
     def save(self):
         self.result="save"
+        self.dialog.accept()
+    def saveExit(self):
+        self.result="saveExit"
         self.dialog.accept()
     def discardButtonPushed(self):
         if QtGui.QMessageBox.question(self.dialog,_("Confirm"),

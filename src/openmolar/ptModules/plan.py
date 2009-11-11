@@ -145,25 +145,28 @@ def completedFillsToStatic(pt):
     '''
     take completed items, and update the static chart
     '''
-    items = completedItems(pt, teethOnly=True)
-    for tooth, prop in items:
-        tooth = tooth.lower()
-        if re.match("EX", prop):
-            pt.__dict__["%sst"% tooth] = "TM "
-        else:
-            existing = pt.__dict__.get("%sst"% tooth)
-            new = "%s %s "% (existing, prop)
-            #add the space just to be on the safe side.
-            new = new.replace("  "," ")
-            #34 characters is a database limit.
-            while len(new) > 34:
-                new = new[new.index(" "):]
-            pt.__dict__["%sst"% tooth] = new
-        
-        print "updating static"    
-        #print "comp to static '%s','%s','%s','%s'"% (
-        #tooth, prop, existing, new)
-
+    try:
+        items = completedItems(pt, teethOnly=True)
+        for tooth, prop in items:
+            tooth = tooth.lower()
+            if re.match("EX", prop):
+                pt.__dict__["%sst"% tooth] = "TM "
+            else:
+                existing = pt.__dict__.get("%sst"% tooth)
+                new = "%s %s "% (existing, prop)
+                #add the space just to be on the safe side.
+                new = new.replace("  "," ")
+                #34 characters is a database limit.
+                while len(new) > 34:
+                    new = new[new.index(" "):]
+                pt.__dict__["%sst"% tooth] = new
+            
+            print "updating static"    
+            #print "comp to static '%s','%s','%s','%s'"% (
+            #tooth, prop, existing, new)
+    except Exception, e:
+        #shouldn't happen, but safety first.
+        print "FAILED TO TRANSFER FILLS TO STATIC", e
 
 
 if __name__ == "__main__":

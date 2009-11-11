@@ -1926,6 +1926,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
 
         #--check pt against the original loaded state
         #--this returns a LIST of changes ie [] if none.
+        quit = True
         uc = self.unsavedChanges()
         if uc != []:
             #--raise a custom dialog to get user input
@@ -1942,6 +1943,9 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                     elif dl.result == "save":
                         print "user is saving"
                         saveOnly = True
+                        quit = False                        
+                    elif dl.result == "saveExit":
+                        saveOnly = True
                     #--cancelled action
                     else:
                         print "user chose to continue editing"
@@ -1949,10 +1953,10 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         else:
             print "no changes"
             return True
+        
         if saveOnly:
             self.save_changes(False)
-            return True
-                    
+            return quit                    
 
     def showAdditionalFields(self):
         '''
@@ -2419,36 +2423,29 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         details = patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setText(details)
         self.ui.detailsBrowser.update()
-        self.ui.closeTx_pushButton.setText("Close Course")
+        self.ui.closeTx_pushButton.setText(_("Close Course"))
+        
+        self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
+        self.ui.newCourse_pushButton.setEnabled(not self.pt.underTreatment)
+        self.ui.estimate_groupBox.setEnabled(self.pt.underTreatment)
+        self.ui.completed_groupBox.setEnabled(self.pt.underTreatment)
+        self.ui.planDetails_groupBox.setEnabled(self.pt.underTreatment)
+        self.ui.closeTx_pushButton.setEnabled(self.pt.underTreatment)
+                
         if self.pt.underTreatment:
             self.ui.estimate_groupBox.setTitle(
             "Current Course- started %s"% (
             localsettings.formatDate(self.pt.accd)))
 
-            self.ui.estimate_groupBox.setEnabled(True)
-            self.ui.plan_groupBox.setEnabled(True)
-            self.ui.completed_groupBox.setEnabled(True)
-            self.ui.planDetails_groupBox.setEnabled(True)
-            self.ui.newCourse_pushButton.setEnabled(False)
-            self.ui.closeTx_pushButton.setEnabled(True)
         else:
             self.ui.estimate_groupBox.setTitle(
             "Previous Course - started %s and completed %s"% (
             localsettings.formatDate(self.pt.accd),
             localsettings.formatDate(self.pt.cmpd)))
 
-            self.ui.estimate_groupBox.setEnabled(False)
-            #self.ui.plan_groupBox.setEnabled(False)
-            self.ui.completed_groupBox.setEnabled(False)
-            self.ui.planDetails_groupBox.setEnabled(False)
-
-            self.ui.newCourse_pushButton.setEnabled(True)
-            self.ui.closeCourse_pushButton.setEnabled(False)
-            
             if not self.pt.accd in ("", None):
                 self.ui.closeTx_pushButton.setText("Resume Existing Course")
-            else:
-                self.ui.closeTx_pushButton.setEnabled(False)
+                self.ui.closeTx_pushButton.setEnabled(True)
                 
     def final_choice(self, candidates):
         def DoubleClick():
@@ -2957,7 +2954,6 @@ WITH PT RECORDS %d and %d''')% (
         self.ui.phraseBook_pushButton,
         self.ui.exampushButton,
         self.ui.medNotes_pushButton,
-        self.ui.closeCourse_pushButton,
         self.ui.printGP17_pushButton,
         self.ui.newBPE_pushButton,
         self.ui.hygWizard_pushButton,
@@ -2967,6 +2963,8 @@ WITH PT RECORDS %d and %d''')% (
 
             widg.setEnabled(arg)
 
+        self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
+        
         for i in (0, 1, 2, 5, 6, 7, 8, 9):
             if self.ui.tabWidget.isTabEnabled(i) != arg:
                 self.ui.tabWidget.setTabEnabled(i, arg)

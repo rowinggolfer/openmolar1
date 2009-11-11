@@ -37,6 +37,11 @@ def setupNewCourse(parent):
     '''
     set up a new course of treament
     '''
+    if parent.pt.courseno0 != parent.pt_dbstate.courseno0:
+        parent.advise(
+        _("Please save the old course changes before continuing"), 1)
+        return
+    
     Dialog = QtGui.QDialog(parent)
 
     if localsettings.clinicianNo != 0 and \
