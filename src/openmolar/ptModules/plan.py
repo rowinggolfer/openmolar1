@@ -81,7 +81,7 @@ def plannedItems(pt):
 
 def completedItems(pt, teethOnly=False):
     compList=[]
-    if pt.examt!="":
+    if pt.examt!="" and not teethOnly:
         compList.append(("Exam",pt.examt) )
     for attrib in tup_Atts+tup_toothAtts:
         tx=pt.__dict__[attrib+"cmp"]
