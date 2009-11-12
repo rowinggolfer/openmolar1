@@ -532,63 +532,54 @@ into the plan first then complete it.'''), 1)
         print "tooth_delete_prop", prop
         self.ui.toothPropsWidget.lineEdit.deleteProp(prop)
         
-    def tooth_add_comments(self, tooth):
+    def tooth_add_comments(self):
         '''
         user has clicked on the delete all option from a tooth's right click
         menu
         '''
         print "tooth_add_comments"
-        advise("add comments not working yet",1)
+        self.advise("add comments not working yet",1)
         
 
 class cashbooks():
-    def cashbookTab(self):
-        dent1=self.ui.cashbookDentComboBox.currentText()
-        d=self.ui.cashbookStartDateEdit.date()
-        sdate="%s_%s_%s"%(d.year(), d.month(), d.day())
-        d=self.ui.cashbookEndDateEdit.date()
-        edate="%s_%s_%s"%(d.year(), d.month(), d.day())
+    def cashbookView(self, print_ = False):
+        dent1 = self.ui.cashbookDentComboBox.currentText()
+        sdate = self.ui.cashbookStartDateEdit.date()
+        edate = self.ui.cashbookEndDateEdit.date()
+        if sdate > edate:
+            self.advise(_("bad date sequence"),1)
+            return False
         html=cashbook.details(dent1, sdate, edate)
-        self.ui.cashbookTextBrowser.setHtml('<html><body>'
-        +html+"</body></html>")
-
-    def daybookTab(self):
+        self.ui.cashbookTextBrowser.setHtml(
+        '<html><body>'+html+"</body></html>")
+        if print_:
+            myclass=bookprint.printBook('<html><body>'+html+\
+            "</body></html>")
+            myclass.printpage()
+    
+    def cashbookPrint(self):
+        self.cashbookView(print_=True)
+        
+    def daybookView(self, print_ = False):
         dent1=str(self.ui.daybookDent1ComboBox.currentText())
         dent2=str(self.ui.daybookDent2ComboBox.currentText())
-        d=self.ui.daybookStartDateEdit.date()
-        sdate="%s_%s_%s"%(d.year(), d.month(), d.day())
-        d=self.ui.daybookEndDateEdit.date()
-        edate="%s_%s_%s"%(d.year(), d.month(), d.day())
+        sdate=self.ui.daybookStartDateEdit.date()
+        edate=self.ui.daybookEndDateEdit.date()
+        if sdate > edate:
+            self.advise(_("bad date sequence"),1)
+            return False
         html=daybook.details(dent1, dent2, sdate, edate)
-        self.ui.daybookTextBrowser.setHtml('<html><body>'
-        +html+"</body></html>")
-
+        self.ui.daybookTextBrowser.setHtml(html)
+        if print_:
+            myclass=bookprint.printBook(html)
+            myclass.printpage()
+    
+    def daybookPrint(self):
+        self.daybookView(print_=True)
+        
     def historyPrint(self):
         html=self.ui.debugBrowser.toHtml()
         myclass=bookprint.printBook(html)
-        myclass.printpage()
-
-    def daybookPrint(self):
-        dent1=str(self.ui.daybookDent1ComboBox.currentText())
-        dent2=str(self.ui.daybookDent2ComboBox.currentText())
-        d=self.ui.daybookStartDateEdit.date()
-        sdate="%s_%s_%s"%(d.year(), d.month(), d.day())
-        d=self.ui.daybookEndDateEdit.date()
-        edate="%s_%s_%s"%(d.year(), d.month(), d.day())
-        html=daybook.details(dent1, dent2, sdate, edate)
-        myclass=bookprint.printBook('<html><body>'+html+\
-        "</body></html>")
-        myclass.printpage()
-
-    def cashbookPrint(self):
-        dent1=self.ui.cashbookDentComboBox.currentText()
-        d=self.ui.cashbookStartDateEdit.date()
-        sdate="%s_%s_%s"%(d.year(), d.month(), d.day())
-        d=self.ui.cashbookEndDateEdit.date()
-        edate="%s_%s_%s"%(d.year(), d.month(), d.day())
-        html=cashbook.details(dent1, sdate, edate)
-        myclass=bookprint.printBook('<html><body>'+html+\
-        "</body></html>")
         myclass.printpage()
 
     def printSelectedAccounts(self):
@@ -643,17 +634,6 @@ class cashbooks():
 
                         no_printed+=1
         self.advise("%d letters printed"%no_printed, 1)
-
-    def datemanage(self):
-        if self.ui.daybookStartDateEdit.date() > \
-        self.ui.daybookEndDateEdit.date():
-            self.ui.daybookStartDateEdit.setDate(
-            self.ui.daybookEndDateEdit.date())
-
-        if self.ui.cashbookStartDateEdit.date() > \
-        self.ui.cashbookEndDateEdit.date():
-            self.ui.cashbookStartDateEdit.setDate(
-            self.ui.cashbookEndDateEdit.date())
 
 class newPatientClass():
     def enterNewPatient(self):
@@ -3903,21 +3883,17 @@ WITH PT RECORDS %d and %d''')% (
 
         #daybook - cashbook
         QtCore.QObject.connect(self.ui.daybookGoPushButton,
-                               QtCore.SIGNAL("clicked()"), self.daybookTab)
+        QtCore.SIGNAL("clicked()"), self.daybookView)
+        
         QtCore.QObject.connect(self.ui.cashbookGoPushButton,
-                               QtCore.SIGNAL("clicked()"), self.cashbookTab)
-        QtCore.QObject.connect(self.ui.daybookEndDateEdit, QtCore.SIGNAL(
-        "dateChanged ( const QDate & )"), self.datemanage)
-        QtCore.QObject.connect(self.ui.daybookStartDateEdit, QtCore.SIGNAL(
-        "dateChanged ( const QDate & )"), self.datemanage)
-        QtCore.QObject.connect(self.ui.cashbookEndDateEdit, QtCore.SIGNAL(
-        "dateChanged ( const QDate & )"), self.datemanage)
-        QtCore.QObject.connect(self.ui.cashbookStartDateEdit, QtCore.SIGNAL(
-        "dateChanged ( const QDate & )"), self.datemanage)
-        QtCore.QObject.connect(self.ui.cashbookPrintButton, QtCore.SIGNAL(
-        "clicked()"), self.cashbookPrint)
-        QtCore.QObject.connect(self.ui.daybookPrintButton, QtCore.SIGNAL(
-        "clicked()"), self.daybookPrint)
+        QtCore.SIGNAL("clicked()"), self.cashbookView)
+        
+        QtCore.QObject.connect(self.ui.cashbookPrintButton, 
+        QtCore.SIGNAL("clicked()"), self.cashbookPrint)
+
+        QtCore.QObject.connect(self.ui.daybookPrintButton, 
+        QtCore.SIGNAL("clicked()"), self.daybookPrint)
+    
     def signals_accounts(self):
         #accounts
         QtCore.QObject.connect(self.ui.loadAccountsTable_pushButton,

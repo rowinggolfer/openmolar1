@@ -14,6 +14,7 @@ from __future__ import division
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
+from PyQt4.QtCore import QDate
 
 
 def add(sno, cset, dent, trtid, t, fee, ptfee):
@@ -42,108 +43,125 @@ def details(regdent, trtdent, startdate, enddate):
     '''
     returns an html table, for regdent, trtdent,startdate,enddate
     '''
+    cond1,cond2= "",""
     try:
-        if regdent == "*ALL*":
-            cond1 = ""
-        else:
+        if regdent != "*ALL*":
             cond1 = 'dntid=%s and'% localsettings.ops_reverse[regdent]
-        if trtdent == "*ALL*":
-            cond2 = ""
-        else:
+        if trtdent != "*ALL*":
             cond2 = 'trtid=%s and'% localsettings.ops_reverse[trtdent]
     except KeyError:
-        print "Key Error - %s unregconised"% trtdent
-        return '''<html>
-        <body>Error - unrecognised practioner- sorry</body></html>'''
+        print "Key Error - %s or %s unregconised"% (regdent, trtdent)
+        return '<html><body>%s</body></html>'% _(
+        "Error - unrecognised practioner- sorry") 
     
-    fields = '''DATE_FORMAT(date,'%s'), serialno, coursetype, dntid, trtid, 
-    diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart, feesa, 
-    feesb, feesc, id'''% localsettings.sqlDateFormat
-
+    total, nettotal = 0, 0
+    
+    iterDate = QDate(startdate.year(), startdate.month(), 1)
+    
     db = connect()
     cursor = db.cursor()
-
-    query = '''select %s from daybook 
-    where %s %s date>="%s" and date<="%s" order by date'''% (
-    fields,cond1,cond2,startdate,enddate)
-
-    if localsettings.logqueries:
-        print query
-    cursor.execute(query)
-        
-    rows = cursor.fetchall()
+    retarg = '''<html><body>
+    <h3>Patients of %s treated by %s between %s and %s (inclusive)</h3>'''% (
+    regdent, trtdent,  
+    localsettings.formatDate(startdate.toPyDate()), 
+    localsettings.formatDate(enddate.toPyDate()))
     
-    formatVar = [regdent,trtdent]
-    for d in (startdate,enddate):
-        rev = d.split("_")
-        formatVar += [rev[2], rev[1], rev[0]]
-    retarg = "<h3>Patients of "
-    retarg += "%s treated by %s - %s/%s/%s - %s/%s/%s (inclusive)</h3>"% \
-    tuple(formatVar) 
-
     retarg += '''<table width="100%" border="1"><tr><th>DATE</th>
     <th>Dents</th><th>Serial Number</th><th>Name</th>
     <th>Pt Type</th><th>Treatment</th><th>Gross Fee</th><th>Net Fee</th>'''
-    
-    odd =True
-    total, nettotal = 0, 0
-    for row in rows:
-        if odd:
-            retarg += '<tr bgcolor="#eeeeee">'
-            odd = False
-        else:
-            retarg += '<tr>'
-            odd = True
-        retarg += '<td>%s</td>'% row[0]
-        retarg += '<td>'
-        try:
-            retarg += localsettings.ops[row[3]]
-        except KeyError:
-            retarg += "??"
-        retarg += ' / '
-        try:        
-            retarg += localsettings.ops[row[4]]
-        except KeyError:
-            retarg += "??"
-        
-        retarg += '</td><td>%s</td>'% str(row[1])
-        cursor.execute(
-        'select fname,sname from patients where serialno=%s'% row[1])
 
-        names = cursor.fetchall()
-        if names != ():
-            name = names[0] 
-            retarg += '<td>%s %s</td>'% (name[0].title(),name[1].title())
+    while enddate >= iterDate:
+        print "iterDate = ",iterDate
+        monthtotal, monthnettotal = 0,0
+
+        if startdate > iterDate:
+            queryStartDate = startdate
         else:
-            retarg += "'<td>NOT FOUND</td>"
-        retarg += '<td>%s</td>'% str(row[2])
+            queryStartDate = iterDate
         
-        tx = ""
-        for item in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14):
-            if row[item] != None and row[item] != "":
-                tx += "%s "% str(row[item])
+        queryEndDate = iterDate.addMonths(1)
+        if enddate < queryEndDate:
+            queryEndDate = enddate
+             
+        query = '''select DATE_FORMAT(date,'%s'), serialno, coursetype, dntid, trtid, 
+        diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart, feesa, 
+        feesb, feesc, id from daybook 
+        where %s %s date>=%s and date<=%s order by date'''%(
+        localsettings.sqlDateFormat, cond1, cond2, 
+        localsettings.pyDatetoSQL(queryStartDate.toPyDate()), 
+        localsettings.pyDatetoSQL(queryEndDate.toPyDate()))
+
+        if localsettings.logqueries:
+            print query
+        cursor.execute(query)
+            
+        rows = cursor.fetchall()
         
-        retarg += '<td>%s</td>'% tx.strip(chr(0)+" ")
-        retarg += '<td align="right">&pound; %.02f</td>'% (row[15] / 100)
-        retarg += '<td align="right">&pound; %.02f</td>'%(row[16] / 100)       
-        total += int(row[15])
-        nettotal += int(row[16])
-        retarg += '</tr>\n'
-    retarg += '''<tr><td colspan="5"></td><td><b>TOTAL</b></td>
-    <td align="right"><b>&pound; %.02f</b></td>
-    <td align="right"><b>&pound; %.02f</b></td></tr>
-    '''% (total / 100, nettotal / 100)
-    retarg += '</table>'
-    
+        odd =True
+        for row in rows:
+            if odd:
+                retarg += '<tr bgcolor="#eeeeee">'
+                odd = False
+            else:
+                retarg += '<tr>'
+                odd = True
+            retarg += '<td>%s</td>'% row[0]
+            try:
+                retarg += '<td> %s / '% localsettings.ops[row[3]]
+            except KeyError:
+                retarg += "<td>?? / "
+            try:        
+                retarg += localsettings.ops[row[4]]
+            except KeyError:
+                retarg += "??"
+            
+            retarg += '</td><td>%s</td>'% row[1]
+            
+            cursor.execute(
+            'select fname,sname from patients where serialno=%s'% row[1])
+
+            names = cursor.fetchall()
+            if names != ():
+                name = names[0] 
+                retarg += '<td>%s %s</td>'% (name[0].title(),name[1].title())
+            else:
+                retarg += "<td>NOT FOUND</td>"
+            retarg += '<td>%s</td>'% row[2]
+            
+            tx = ""
+            for item in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14):
+                if row[item] != None and row[item] != "":
+                    tx += "%s "% row[item]
+            
+            retarg += '''<td>%s</td><td align="right">%s</td>
+            <td align="right">%s</td></tr>'''% (tx.strip("%s "% chr(0)),
+            localsettings.formatMoney(row[15]), 
+            localsettings.formatMoney(row[16]))
+            
+            total += int(row[15])
+            monthtotal += int(row[15])
+            
+            nettotal += int(row[16])
+            monthnettotal += int(row[16])
+        retarg += '''<tr><td colspan="5"></td><td><b>%s TOTAL</b></td>
+        <td align="right"><b>%s</b></td>
+        <td align="right"><b>%s</b></td></tr>'''% (
+        localsettings.monthName(iterDate.toPyDate()),
+        localsettings.formatMoney(monthtotal), 
+        localsettings.formatMoney(monthnettotal))
+        iterDate = iterDate.addMonths(1)
     cursor.close()
     #db.close()
-    
+
+    retarg += '''<tr><td colspan="5"></td><td><b>GRAND TOTAL</b></td>
+    <td align="right"><b>%s</b></td>
+    <td align="right"><b>%s</b></td></tr></table></body></html>'''% (
+    localsettings.formatMoney(total), localsettings.formatMoney(nettotal))
+
     return retarg
 
 if __name__ == "__main__":
     localsettings.initiate()
+    localsettings.logqueries = True
     for combo in (("*ALL*", "NW"), ("NW", "AH"), ("NW", "NW")):
-        print'<html><body><head>'
-        print details(combo[0], combo[1], "2008_10_31", "2008_11_11")
-    print "</body></html>"
-    
+        r = details(combo[0], combo[1], QDate(2008,10,31), QDate(2008,11,11))

@@ -280,7 +280,7 @@ class chartWidget(QtGui.QWidget):
             return
 
         if result.text() == _("Toggle Deciduous State"):
-            self.emit(QtCore.SIGNAL("FlipDeciduousStatus"))
+            self.emit(QtCore.SIGNAL("FlipDeciduousState"))
             
         elif result.text() == _("Delete All Restorations"):
             self.emit(QtCore.SIGNAL("delete_all"))
