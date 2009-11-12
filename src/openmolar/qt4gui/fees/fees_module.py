@@ -50,6 +50,7 @@ def raiseACharge(parent):
         str(dl.lineEdit.text().toAscii()))
 
         parent.pt.addHiddenNote("fee", "%.02f"% fee)
+        parent.updateHiddenNotesLabel()
             
     ################################################
     
@@ -144,6 +145,8 @@ def takePayment(parent):
 
             paymentPt.clearHiddenNotes()
             parent.updateDetails()
+            parent.updateHiddenNotesLabel()
+            
         else:
             parent.advise("error applying payment.... sorry!<br />"\
             +"Please write this down and tell Neil what happened", 2)

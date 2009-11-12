@@ -1552,7 +1552,8 @@ def printApptCard(parent):
     
     card.print_()
     parent.pt.addHiddenNote("printed", "appt card")
-
+    parent.updateHiddenNotesLabel()
+            
 def appointmentTools(parent):
     '''
     called from the main menu

@@ -41,7 +41,8 @@ def performPerio(parent):
         newnotes = str(parent.ui.notesEnter_textEdit.toPlainText().toAscii())
         newnotes += "%s performed by %s\n"% (dl.trt, dl.dent)
         parent.pt.addHiddenNote("treatment", "Perio %s"% dl.trt)
-
+        parent.updateHiddenNotesLabel()
+            
         fee = dl.fee
         ptfee = dl.ptFee
 

@@ -96,6 +96,7 @@ from openmolar.ptModules import standardletter
 from openmolar.ptModules import debug_html
 from openmolar.ptModules import estimates
 from openmolar.ptModules import tooth_history
+from openmolar.ptModules import hidden_notes
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint
@@ -2319,6 +2320,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         labeltext = "currently editing  %s %s %s - (%s)"% (self.pt.title, self.pt.fname,
         self.pt.sname, self.pt.serialno)
         self.loadedPatient_label.setText(labeltext)
+        self.ui.hiddenNotes_label.setText("")
 
         if not self.pt.serialno in localsettings.recent_snos:
             #localsettings.recent_snos.remove(self.pt.serialno)
@@ -2389,6 +2391,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.ui.medNotes_pushButton.setText("MedNotes%s"% chkdate)
 
         self.enableEdit(True)
+
+    def updateHiddenNotesLabel(self):
+        '''
+        check and display hidden notes
+        '''
+        self.ui.hiddenNotes_label.setText(hidden_notes.toHtml(self.pt))
 
     def updateStatus(self):
         '''

@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2009-11-07 20:00+0000\n"
-"PO-Revision-Date: 2009-11-07 20:37+0000\n"
-"Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
+"PO-Revision-Date: 2009-11-10 16:04+0000\n"
+"Last-Translator: Harza Lajos <Unknown>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-11-08 04:40+0000\n"
+"X-Launchpad-Export-Date: 2009-11-11 04:46+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:13
@@ -627,7 +627,7 @@ msgstr "2009"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py:49
 msgid "Language Selector"
-msgstr ""
+msgstr "Nyelvválasztó"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py:50
 msgid ""
@@ -643,12 +643,26 @@ msgid ""
 "available languages.<br />Please Note that some of these translations are "
 "not complete.</p></body></html>"
 msgstr ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+"\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style "
+"type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Droid Sans'; font-size:8pt; font-"
+"weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">Az alábbi nyelvek közül "
+"választhat.<br />Egyes nyelvek még fordítása még folyamatban "
+"van.</p></body></html>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py:55
 msgid ""
 "Note - if your preferred language is not available (or incomplete), please "
 "visit https://launchpad.net/openmolar and add a translation of your own!"
 msgstr ""
+"Megjegyzés - amennyiben a kiválasztott fordítás nem áll rendelkezésre (vagy "
+"még folyamatban van), látogasson el a https://launchpad.net/openmolar címre "
+"és segítsen az elkészítésében!"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py:56
 msgid ""
@@ -669,6 +683,22 @@ msgid ""
 "right:0px; -qt-block-indent:0; text-indent:0px;\">who make this "
 "possible.</p></body></html>"
 msgstr ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+"\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style "
+"type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Droid Sans'; font-size:8pt; font-"
+"weight:400; font-style:italic;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">Köszönet mindazoknak, akik "
+"segítettek nemzetközivé tenni az openMolar-t,</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">továbbá a GNU eszközök "
+"létrehozóinak és a launchpad rosetta fejlesztői csapatának</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">akik mindezt lehetővé "
+"tették.</p></body></html>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_completeTreatment.py:95
 msgid "Complete Treatment"
@@ -2042,7 +2072,7 @@ msgstr "Keresés kulcsszóra"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2831
 msgid "Show Topics for"
-msgstr ""
+msgstr "Az alábbi témák megjelenítése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2832
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/forum_gui_module.py:40
@@ -2051,15 +2081,15 @@ msgstr "Mindenki"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2833
 msgid "Layout Options"
-msgstr ""
+msgstr "Nézet beállításai"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2834
 msgid "Group replies"
-msgstr ""
+msgstr "Csoportos válaszok"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2835
 msgid "Split Replies"
-msgstr ""
+msgstr "Válaszok felosztása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2836
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2623
@@ -3252,20 +3282,20 @@ msgstr "Szerda"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:248
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:266
 msgid "Toggle Deciduous Status"
-msgstr ""
+msgstr "Tejfogstátusz bekapcsolása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:252
 msgid "Delete All Restorations"
-msgstr ""
+msgstr "Összes restauráció törlése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:254
 msgid "Delete "
-msgstr ""
+msgstr "Törlés "
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:258
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:268
 msgid "Show History"
-msgstr ""
+msgstr "Előzmények megjelenítése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:19
 msgid "Fissure Sealants"
@@ -3369,7 +3399,7 @@ msgstr "Gyökér"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:56
 msgid "Permanent Tooth Present"
-msgstr ""
+msgstr "Maradó fog előtörőben"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:39
 msgid "No patient chosen!"
@@ -3438,7 +3468,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:28
 msgid "English (GB)"
-msgstr ""
+msgstr "Angol (GB)"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:29
 msgid "Afrikaans"
@@ -3458,11 +3488,11 @@ msgstr "Lengyel"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:33
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugál"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:34
 msgid "Spanish"
-msgstr ""
+msgstr "Spanyol"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:35
 msgid "Turkish"
@@ -3534,6 +3564,8 @@ msgid ""
 "<p>You already have an exam on this \n"
 "course of treatment</p>Unable to perform exam"
 msgstr ""
+"<p>Már elvégezte a vizsgálatot ebben a\n"
+"kezelési sorozatban </p>Nem vizsgálható újra"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:61
 msgid ""
@@ -3584,7 +3616,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:233
 msgid "unable to update chart - this shouldn't happen!!"
-msgstr ""
+msgstr "státusz frissítése sikertelen - ez nem történhet meg!!"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:267
 msgid "you need to be in the static chart to change tooth state"
@@ -3615,6 +3647,8 @@ msgid ""
 "insufficient data to create a new record...\n"
 "please fill in all highlighted fields"
 msgstr ""
+"nincs elég adat az új karton létrehozásához...\n"
+"kérem töltse ki a jelzett mezőket"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:769
 msgid "Error saving patient"
@@ -3622,7 +3656,7 @@ msgstr "Nem sikerült menteni a pácienst"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:803
 msgid "SAVE CHANGES"
-msgstr ""
+msgstr "VÁLTOZÁSOK MENTÉSE"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:815
 msgid "New Patient not saved. Abandon Changes?"
@@ -3654,7 +3688,7 @@ msgstr "nincs kiválasztva páciens"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:933
 msgid "Nothing to print - have you loaded the table?"
-msgstr ""
+msgstr "Nincs mit nyomtatni - betöltötte a táblázatot?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:937
 msgid ""

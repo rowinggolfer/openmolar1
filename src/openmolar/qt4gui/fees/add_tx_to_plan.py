@@ -328,6 +328,7 @@ def deleteTxItem(parent, pl_cmp, txtype, passedOn=False):
                 parent.pt.examt = ""
                 parent.pt.examd = ""
                 parent.pt.addHiddenNote("exam", "%s"% tup[1], True)
+                parent.updateHiddenNotesLabel()
             else:
                 if pl_cmp == "pl":
                     plan = parent.pt.__dict__[att + "pl"].replace(

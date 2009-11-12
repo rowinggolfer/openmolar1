@@ -133,7 +133,7 @@ course dentist, but not the registered dentist</i>''')
                     parent.load_treatTrees()
                 else:
                     parent.load_clinicalSummaryPage()
-
+                parent.updateHiddenNotesLabel()
         else:
             parent.advise(_("Examination not applied"), 2)
             break

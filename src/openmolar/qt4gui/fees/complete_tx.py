@@ -99,6 +99,8 @@ def chartComplete(parent, arg):
 
             parent.pt.addHiddenNote("treatment",
             "%s %s"% (toothName.upper(), treatmentItem))
+            parent.updateHiddenNotesLabel()
+            
         else:
             print "%s not found in plan!"% treatmentItem 
                 
@@ -120,7 +122,7 @@ def estwidg_complete(parent, item):
             parent.pt.examt = item.type
             parent.pt.examd = localsettings.currentDay()
             parent.pt.addHiddenNote("exam", item.type)
-        
+            
         else:
             plan = parent.pt.__dict__[att + "pl"].replace(treat, "")
             parent.pt.__dict__[att + "pl"] = plan
@@ -138,7 +140,8 @@ def estwidg_complete(parent, item):
                 parent.pt.addHiddenNote("treatment", item.type)
                 
         fees_module.applyFeeNow(parent, item.ptfee, item.csetype)
-
+        parent.updateHiddenNotesLabel()
+            
         parent.load_treatTrees()
 
     except Exception,e:
