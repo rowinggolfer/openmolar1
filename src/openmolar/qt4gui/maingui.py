@@ -1405,8 +1405,9 @@ class pageHandlingClass():
             self.ui.recallDate_comboBox.setCurrentIndex(0)
             self.ui.detailsBrowser.setText("")
             self.ui.notesBrowser.setText("")
+            self.ui.hiddenNotes_label.setText("")
             self.ui.notesSummary_textBrowser.setText("")
-            self.ui.bpe_groupBox.setTitle("BPE")
+            self.ui.bpe_groupBox.setTitle(_("BPE"))
             self.ui.bpe_textBrowser.setText("")
             self.ui.planSummary_textBrowser.setText("")
 
