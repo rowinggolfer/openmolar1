@@ -79,7 +79,7 @@ def details(regdent, trtdent, startdate, enddate):
         else:
             queryStartDate = iterDate
         
-        queryEndDate = iterDate.addMonths(1)
+        queryEndDate = iterDate.addMonths(1).addDays(-1)
         if enddate < queryEndDate:
             queryEndDate = enddate
              

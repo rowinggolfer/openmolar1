@@ -201,8 +201,11 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <property name="margin">
+      <number>2</number>
+     </property>
      <property name="spacing">
-      <number>0</number>
+      <number>2</number>
      </property>
      <item row="0" column="0" rowspan="5">
       <widget class="QFrame" name="frame">
@@ -656,7 +659,7 @@
         <x>0</x>
         <y>0</y>
         <width>174</width>
-        <height>150</height>
+        <height>140</height>
        </rect>
       </property>
      </widget>

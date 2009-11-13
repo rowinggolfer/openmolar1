@@ -2902,6 +2902,7 @@ WITH PT RECORDS %d and %d''')% (
             if result != -1:
                 #--result will be a "line number" or -1 if unsucessful write
                 self.ui.notesEnter_textEdit.setText("")
+                self.ui.hiddenNotes_label.setText("")
                 self.pt.getNotesTuple()
                 #--reload the notes
                 self.ui.notesSummary_textBrowser.setHtml(notes.notes(

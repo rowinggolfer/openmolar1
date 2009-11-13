@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'toothProps.ui'
 #
-# Created: Sun Oct 25 16:48:02 2009
+# Created: Fri Nov 13 11:28:27 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -79,7 +79,8 @@ class Ui_Form(object):
         self.comments_comboBox.addItem("")
         self.verticalLayout.addWidget(self.comments_comboBox)
         self.gridLayout = QtGui.QGridLayout()
-        self.gridLayout.setSpacing(0)
+        self.gridLayout.setMargin(2)
+        self.gridLayout.setSpacing(2)
         self.gridLayout.setObjectName("gridLayout")
         self.frame = QtGui.QFrame(Form)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -207,7 +208,7 @@ class Ui_Form(object):
         self.cb_scrollArea.setWidgetResizable(True)
         self.cb_scrollArea.setObjectName("cb_scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.cb_scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 174, 150))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 174, 140))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.cb_scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.cb_scrollArea)
