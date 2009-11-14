@@ -90,7 +90,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
     
     def changePt(self):
         def repeat_last_search():
-            dl.dob.setText(localsettings.lastsearch[2])
+            dl.dob.setDate(localsettings.lastsearch[2])
             dl.addr1.setText(localsettings.lastsearch[4])
             dl.tel.setText(localsettings.lastsearch[3])
             dl.sname.setText(localsettings.lastsearch[0])
@@ -100,21 +100,18 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         Dialog = QtGui.QDialog()
         dl = Ui_patient_finder.Ui_Dialog()
         dl.setupUi(Dialog)
-        dl.dob.setText("00/00/0000")
-        dl.dob.setInputMask("00/00/0000")
         QtCore.QObject.connect(dl.repeat_pushButton, QtCore.\
                                SIGNAL("clicked()"), repeat_last_search)
         dl.sname.setFocus()
         if Dialog.exec_():
-            dob = str(dl.dob.text())
             addr = str(dl.addr1.text().toAscii())
             tel = str(dl.tel.text().toAscii())
             sname = str(dl.sname.text().toAscii())
             fname = str(dl.fname.text().toAscii())
+            dob = dl.dateEdit.date().toPyDate()
             pcde = str(dl.pcde.text().toAscii())
             localsettings.lastsearch = (sname, fname, dob, tel, addr, pcde)
-            dob = localsettings.uk_to_sqlDate(dl.dob.text())
-
+            
             try:
                 serialno = int(sname)
             except:

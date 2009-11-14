@@ -19,7 +19,7 @@ def getcandidates(dob,addr,tel,sname,similar_sname,fname,similar_fname,pcde):
         query+='ADDR2 like %s) and '%(r'"%'+addr+r'%"')
     if tel!='':
         query+='tel1 like %s and '%(r'"%'+tel+r'%"')
-    if str(dob)!='00000000' and str(dob)!="no date":
+    if localsettings.pyDatetoSQL(dob) != '19000101':
         query+='dob="%s" and '%dob
     if pcde!='':
         query+='pcde like %s and '%(r'"%'+pcde+r'%"')

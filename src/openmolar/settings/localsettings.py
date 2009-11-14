@@ -29,6 +29,8 @@ DB_SCHEMA_VERSION = "unknown"
 DEBUGMODE = False
 ENCODING = "latin-1" #necessary for the uk £ symbol
 
+locale.setlocale(locale.LC_ALL, '')
+
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
 
@@ -195,7 +197,7 @@ recent_snos = []
 
 #-- update whenever a manual search is made
 #-- sname,fname dob... etc
-lastsearch = ("","","","","","")
+lastsearch = ("","",datetime.date(1900,1,1),"","","")
 
 #-- used to load combobboxes etc....
 activedents = []
@@ -343,8 +345,8 @@ def formatMoney(m):
     u"£7.30"
     '''
     try:
-        #return unicode(locale.currency(m/100))
-        
+        #return "%s%.02f"% (locale.nl_langinfo (locale.CRNCYSTR), m/100)
+
         return _(u"£") + "%.02f"% (m/100)
     except:
         return "???"
@@ -378,8 +380,14 @@ def dayName(d):
     expects a datetime object, returns the day
     '''
     try:
-        return ("",_("Monday"),_("Tuesday"),_("Wednesday"),_("Thursday"),
-        _("Friday"),_("Saturday"),_("Sunday"))[d.isoweekday()]
+        return ("",
+        locale.nl_langinfo (locale.DAY_2),
+        locale.nl_langinfo (locale.DAY_3),
+        locale.nl_langinfo (locale.DAY_4),
+        locale.nl_langinfo (locale.DAY_5),
+        locale.nl_langinfo (locale.DAY_6),
+        locale.nl_langinfo (locale.DAY_7),
+        locale.nl_langinfo (locale.DAY_1))[d.isoweekday()]
     except:
         pass
 
@@ -389,20 +397,20 @@ def monthName(d):
     '''
     try:
         return("", 
-        _("January"),
-        _("February"),
-        _("March"),
-        _("April"),
-        _("May"),
-        _("June"),
-        _("July"),
-        _("August"),
-        _("September"),
-        _("October"),
-        _("November"),
-        _("December"))[d.month]
+        locale.nl_langinfo (locale.MON_1),
+        locale.nl_langinfo (locale.MON_2),
+        locale.nl_langinfo (locale.MON_3),
+        locale.nl_langinfo (locale.MON_4),
+        locale.nl_langinfo (locale.MON_5),
+        locale.nl_langinfo (locale.MON_6),
+        locale.nl_langinfo (locale.MON_7),
+        locale.nl_langinfo (locale.MON_8),
+        locale.nl_langinfo (locale.MON_9),
+        locale.nl_langinfo (locale.MON_10),
+        locale.nl_langinfo (locale.MON_12)
+        )[d.month]
     except:
-        pass
+        return "?month?"
 
 def longDate(d):
     try:
@@ -413,23 +421,12 @@ def longDate(d):
 def formatDate(d):
     '''takes a date, returns a uk type date string'''
     try:
-        retarg = "%02d/%02d/%d"% (d.day, d.month, d.year)
+        #retarg = "%02d/%02d/%d"% (d.day, d.month, d.year)
+        retarg = d.strftime (locale.nl_langinfo(locale.D_FMT))
     except AttributeError:
         retarg = ""
     return retarg
 
-def uk_to_sqlDate(d):
-    '''
-    takes a date in format "dd/mm/yyyy"
-    converts to "yyyymmdd"
-    '''
-    try:
-        ds = d.split("/")
-        retarg = "%04d%02d%02d"% (int(ds[2]), int(ds[1]), int(ds[0]))
-    except IndexError, e:
-        #print "incorrect uk date format, '%s' returning None"% d
-        retarg = None
-    return retarg
 
 def wystimeToHumanTime(t):
     '''converts a time in the format of 0830 or 1420 to "HH:MM" (string)'''

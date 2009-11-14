@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'patient_finder.ui'
 #
-# Created: Tue Oct  6 21:47:29 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Sat Nov 14 00:18:51 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -66,9 +66,6 @@ class Ui_Dialog(object):
         self.label_2.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 5, 0, 1, 1)
-        self.dob = QtGui.QLineEdit(Dialog)
-        self.dob.setObjectName("dob")
-        self.gridLayout.addWidget(self.dob, 5, 1, 1, 1)
         self.label_7 = QtGui.QLabel(Dialog)
         self.label_7.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.label_7.setObjectName("label_7")
@@ -101,9 +98,13 @@ class Ui_Dialog(object):
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 10, 0, 1, 3)
+        self.dateEdit = QtGui.QDateEdit(Dialog)
+        self.dateEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(1900, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit.setCalendarPopup(True)
+        self.dateEdit.setObjectName("dateEdit")
+        self.gridLayout.addWidget(self.dateEdit, 5, 1, 1, 1)
         self.label_5.setBuddy(self.sname)
         self.label_6.setBuddy(self.fname)
-        self.label_2.setBuddy(self.dob)
         self.label_7.setBuddy(self.addr1)
         self.label_8.setBuddy(self.tel)
         self.label_9.setBuddy(self.pcde)
@@ -113,8 +114,8 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.sname, self.fname)
-        Dialog.setTabOrder(self.fname, self.dob)
-        Dialog.setTabOrder(self.dob, self.addr1)
+        Dialog.setTabOrder(self.fname, self.dateEdit)
+        Dialog.setTabOrder(self.dateEdit, self.addr1)
         Dialog.setTabOrder(self.addr1, self.tel)
         Dialog.setTabOrder(self.tel, self.pcde)
         Dialog.setTabOrder(self.pcde, self.buttonBox)
@@ -141,7 +142,6 @@ class Ui_Dialog(object):
 "eg. \"Neil\" does NOT sound like \"Neil Alexander\"!"))
         self.fnameSoundex_checkBox.setToolTip(_( u"check to search for a similar sounding name"))
         self.label_2.setText(_( u"Date of Birth"))
-        self.dob.setToolTip(_( u"Date of birth in format dd/mm/yyyy"))
         self.label_7.setText(_( u"Address includes"))
         self.addr1.setToolTip(_( u"openMolar will search line1 and line2 of the address for this text"))
         self.label_8.setText(_( u"Telephone"))

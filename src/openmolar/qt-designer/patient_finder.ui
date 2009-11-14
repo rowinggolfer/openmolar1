@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Dialog</class>
- <widget class="QDialog" name="Dialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,234 +10,224 @@
     <height>367</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Patient Finder</string>
   </property>
-  <property name="windowIcon" >
-   <iconset resource="../resources/resources.qrc" >
+  <property name="windowIcon">
+   <iconset resource="../resources/resources.qrc">
     <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" colspan="3" >
-    <widget class="QLabel" name="label_3" >
-     <property name="text" >
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="3">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
       <string>Fill in a few of the following fields to get a list of possible patients</string>
      </property>
-     <property name="alignment" >
+     <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
-     <property name="wordWrap" >
+     <property name="wordWrap">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3" >
-    <widget class="QPushButton" name="repeat_pushButton" >
-     <property name="text" >
+   <item row="1" column="0" colspan="3">
+    <widget class="QPushButton" name="repeat_pushButton">
+     <property name="text">
       <string>Repeat Last Search</string>
      </property>
-     <property name="icon" >
-      <iconset resource="../resources/resources.qrc" >
+     <property name="icon">
+      <iconset resource="../resources/resources.qrc">
        <normaloff>:/agt_reload.png</normaloff>:/agt_reload.png</iconset>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3" >
-    <widget class="Line" name="line" >
-     <property name="orientation" >
+   <item row="2" column="0" colspan="3">
+    <widget class="Line" name="line">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" >
-    <widget class="QLabel" name="label_5" >
-     <property name="layoutDirection" >
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>SNO or Surname</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>sname</cstring>
      </property>
     </widget>
    </item>
-   <item row="3" column="1" >
-    <widget class="QLineEdit" name="sname" >
-     <property name="focusPolicy" >
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="sname">
+     <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Enter either the full name or the first few letters of the name.
 
 If you are unsure of the spelling, type in the COMPLETE name,
-and check the adjacent "sounds like" box.</string>
+and check the adjacent &quot;sounds like&quot; box.</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="2" >
-    <widget class="QCheckBox" name="snameSoundex_checkBox" >
-     <property name="maximumSize" >
+   <item row="3" column="2">
+    <widget class="QCheckBox" name="snameSoundex_checkBox">
+     <property name="maximumSize">
       <size>
        <width>60</width>
        <height>24</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>check to search for a similar sounding name</string>
      </property>
-     <property name="text" >
+     <property name="text">
       <string/>
      </property>
-     <property name="icon" >
-      <iconset resource="../resources/resources.qrc" >
+     <property name="icon">
+      <iconset resource="../resources/resources.qrc">
        <normaloff>:/speaker.svg</normaloff>:/speaker.svg</iconset>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" >
-    <widget class="QLabel" name="label_6" >
-     <property name="layoutDirection" >
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>First Name</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>fname</cstring>
      </property>
     </widget>
    </item>
-   <item row="4" column="1" >
-    <widget class="QLineEdit" name="fname" >
-     <property name="focusPolicy" >
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="fname">
+     <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Enter either the full name or the first few letters of the name.
 
 If you are unsure of the spelling, type in the COMPLETE name,
-and check the adjacent "sounds like" box.
+and check the adjacent &quot;sounds like&quot; box.
 Be wary of middle names. 
-eg. "Neil" does NOT sound like "Neil Alexander"!</string>
+eg. &quot;Neil&quot; does NOT sound like &quot;Neil Alexander&quot;!</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="2" >
-    <widget class="QCheckBox" name="fnameSoundex_checkBox" >
-     <property name="maximumSize" >
+   <item row="4" column="2">
+    <widget class="QCheckBox" name="fnameSoundex_checkBox">
+     <property name="maximumSize">
       <size>
        <width>60</width>
        <height>24</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>check to search for a similar sounding name</string>
      </property>
-     <property name="text" >
+     <property name="text">
       <string/>
      </property>
-     <property name="icon" >
-      <iconset resource="../resources/resources.qrc" >
+     <property name="icon">
+      <iconset resource="../resources/resources.qrc">
        <normaloff>:/speaker.svg</normaloff>:/speaker.svg</iconset>
      </property>
     </widget>
    </item>
-   <item row="5" column="0" >
-    <widget class="QLabel" name="label_2" >
-     <property name="layoutDirection" >
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Date of Birth</string>
      </property>
-     <property name="buddy" >
-      <cstring>dob</cstring>
-     </property>
     </widget>
    </item>
-   <item row="5" column="1" >
-    <widget class="QLineEdit" name="dob" >
-     <property name="toolTip" >
-      <string>Date of birth in format dd/mm/yyyy</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" >
-    <widget class="QLabel" name="label_7" >
-     <property name="layoutDirection" >
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Address includes</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>addr1</cstring>
      </property>
     </widget>
    </item>
-   <item row="6" column="1" colspan="2" >
-    <widget class="QLineEdit" name="addr1" >
-     <property name="focusPolicy" >
+   <item row="6" column="1" colspan="2">
+    <widget class="QLineEdit" name="addr1">
+     <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>openMolar will search line1 and line2 of the address for this text</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" >
-    <widget class="QLabel" name="label_8" >
-     <property name="layoutDirection" >
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Telephone</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>tel</cstring>
      </property>
     </widget>
    </item>
-   <item row="7" column="1" >
-    <widget class="QLineEdit" name="tel" >
-     <property name="focusPolicy" >
+   <item row="7" column="1">
+    <widget class="QLineEdit" name="tel">
+     <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>open molar will search tel1, tel2 and mobile for numbers present here.</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="0" >
-    <widget class="QLabel" name="label_9" >
-     <property name="layoutDirection" >
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Postcode</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>pcde</cstring>
      </property>
     </widget>
    </item>
-   <item row="8" column="1" >
-    <widget class="QLineEdit" name="pcde" >
-     <property name="focusPolicy" >
+   <item row="8" column="1">
+    <widget class="QLineEdit" name="pcde">
+     <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>search for a postcode</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1" >
+   <item row="9" column="1">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>21</height>
@@ -244,15 +235,32 @@ eg. "Neil" does NOT sound like "Neil Alexander"!</string>
      </property>
     </spacer>
    </item>
-   <item row="10" column="0" colspan="3" >
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
+   <item row="10" column="0" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
+     <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
-     <property name="centerButtons" >
+     <property name="centerButtons">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QDateEdit" name="dateEdit">
+     <property name="dateTime">
+      <datetime>
+       <hour>0</hour>
+       <minute>0</minute>
+       <second>0</second>
+       <year>1900</year>
+       <month>1</month>
+       <day>1</day>
+      </datetime>
+     </property>
+     <property name="calendarPopup">
       <bool>true</bool>
      </property>
     </widget>
@@ -262,7 +270,7 @@ eg. "Neil" does NOT sound like "Neil Alexander"!</string>
  <tabstops>
   <tabstop>sname</tabstop>
   <tabstop>fname</tabstop>
-  <tabstop>dob</tabstop>
+  <tabstop>dateEdit</tabstop>
   <tabstop>addr1</tabstop>
   <tabstop>tel</tabstop>
   <tabstop>pcde</tabstop>
@@ -272,7 +280,7 @@ eg. "Neil" does NOT sound like "Neil Alexander"!</string>
   <tabstop>fnameSoundex_checkBox</tabstop>
  </tabstops>
  <resources>
-  <include location="../resources/resources.qrc" />
+  <include location="../resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -281,11 +289,11 @@ eg. "Neil" does NOT sound like "Neil Alexander"!</string>
    <receiver>Dialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -297,11 +305,11 @@ eg. "Neil" does NOT sound like "Neil Alexander"!</string>
    <receiver>Dialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>

@@ -1907,7 +1907,6 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         uc = self.unsavedChanges()
         if uc != []:
             #--raise a custom dialog to get user input
-            #--(centred over self)
             Dialog = QtGui.QDialog(self)
             dl = saveDiscardCancel.sdcDialog(Dialog)
             dl.setPatient("%s %s (%s)"% (
@@ -2480,21 +2479,18 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         Dialog = QtGui.QDialog(self)
         dl = Ui_patient_finder.Ui_Dialog()
         dl.setupUi(Dialog)
-        dl.dob.setText("00/00/0000")
-        dl.dob.setInputMask("00/00/0000")
         QtCore.QObject.connect(dl.repeat_pushButton, QtCore.\
                                SIGNAL("clicked()"), repeat_last_search)
         dl.sname.setFocus()
         if Dialog.exec_():
-            dob=str(dl.dob.text())
+            dob=dl.dateEdit.date().toPyDate()
             addr=str(dl.addr1.text().toAscii())
             tel=str(dl.tel.text().toAscii())
             sname=str(dl.sname.text().toAscii())
             fname=str(dl.fname.text().toAscii())
             pcde=str(dl.pcde.text().toAscii())
             localsettings.lastsearch=(sname, fname, dob, tel, addr, pcde)
-            dob=localsettings.uk_to_sqlDate(dl.dob.text())
-
+            
             try:
                 serialno=int(sname)
             except:

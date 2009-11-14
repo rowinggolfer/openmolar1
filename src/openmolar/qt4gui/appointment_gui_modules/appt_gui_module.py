@@ -625,7 +625,7 @@ def makeAppt(parent, arg):
         #--ok... suitable appointment found
         message = "Confirm Make appointment at %s on %s with %s"% (
         localsettings.wystimeToHumanTime(selectedtime), 
-        localsettings.formatDate(selecteddate.toPyDate()), selectedDent)
+        localsettings.longDate(selecteddate.toPyDate()), selectedDent)
 
         #--get final confirmation
         result = QtGui.QMessageBox.question(parent, "Confirm", message,
