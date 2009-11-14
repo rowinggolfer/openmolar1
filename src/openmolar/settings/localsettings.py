@@ -177,7 +177,9 @@ http://www.gnu.org/licenses</a>.</p>'''
 #-- this is done by cashbook and daybook etc...
 #-- my preference is the UK style dd/mm/YYYY
 #-- feel free to change this!!!
-sqlDateFormat = r"%d/%m/%Y"
+
+#sqlDateFormat = r"%d/%m/%Y"
+sqlDateFormat = locale.nl_langinfo(locale.D_FMT)
 
 #-- ditto the qt one
 DATE_FORMAT = "d, MMMM, yyyy"

@@ -53,7 +53,7 @@ class est():
         return "%s)"% retarg.strip(",")
 
     def toHtmlRow(self):
-        return u'''<tr><td>%s</td><td>%s</td><td>%s</td>td>%s</td><td>%s</td>
+        return '''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
         <td>%s</td><td>%s</td><td>%s</td>
         <td>%s</td><td>%s</td><td>%s</td></tr>'''%(
         localsettings.ops.get(self.dent),self.number,self.itemcode,
@@ -64,8 +64,8 @@ class est():
 
     def htmlHeader(self):
         return '''<tr><th>Dentist</th><th>number</th><th>code</th>
-        <th>input</th><th>Description</th><th>fee</th><th>pt fee</th>
-        <th>feescale</th><th>cset</th><th>completed</th></tr>'''
+        <th colspan="2">Type</th><th>Description</th><th>fee</th>
+        <th>pt fee</th><th>feescale</th><th>cset</th><th>completed</th></tr>'''
         
     def filteredDescription(self):
         '''

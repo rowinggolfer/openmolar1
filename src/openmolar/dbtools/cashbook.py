@@ -86,14 +86,17 @@ def details(dent, startdate, enddate):
     localsettings.sqlDateFormat)
 
     cursor.execute('''select %s from cashbook where %s cbdate>="%s"
-    and cbdate<="%s" order by cbdate'''% (query, cond1, startdate, enddate))
+    and cbdate<="%s" order by cbdate'''% (query, cond1,
+    localsettings.pyDatetoSQL(startdate.toPyDate()), 
+    localsettings.pyDatetoSQL(enddate.toPyDate())))
+    
     rows = cursor.fetchall()
-    format = [dentist]
-    for d in (startdate, enddate):
-        rev = d.split("_")
-        format += [rev[2], rev[1], rev[0]]
+
     retarg = "<h3>Cashbook - "
-    retarg += "%s - %s/%s/%s - %s/%s/%s (inclusive)</h3>"% tuple(format)
+    retarg += "%s - %s - %s (inclusive)</h3>"% (dentist,
+    localsettings.formatDate(startdate.toPyDate()),
+    localsettings.formatDate(enddate.toPyDate()))
+    
     retarg += '<table width="100%" border="1"> <tr>'
     for header in headers:
         retarg += "<th>%s</th>"% header
