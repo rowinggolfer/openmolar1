@@ -178,9 +178,12 @@ http://www.gnu.org/licenses</a>.</p>'''
 #-- my preference is the UK style dd/mm/YYYY
 #-- feel free to change this!!!
 
-#OM_DATE_FORMAT = r"%d/%m/%Y"
-OM_DATE_FORMAT = re.sub("y","Y",locale.nl_langinfo(locale.D_FMT))
-
+OM_DATE_FORMAT = r"%d/%m/%Y"
+try:
+    OM_DATE_FORMAT = re.sub("y","Y",locale.nl_langinfo(locale.D_FMT))
+except AttributeError: # will happen on windows
+    OM_DATE_FORMAT = r"%d/%m/%Y"
+    
 #-- ditto the qt one
 DATE_FORMAT = "d, MMMM, yyyy"
 
@@ -350,7 +353,7 @@ def formatMoney(m):
         retarg = locale.currency(m/100)
         return retarg.decode(ENCODING, "ignore")
     except:
-        return "???"
+        return "?%s"% m/100
     
 def reverseFormatMoney(m):
     '''
@@ -382,37 +385,56 @@ def dayName(d):
     expects a datetime object, returns the day
     '''
     try:
-        return ("",
-        locale.nl_langinfo (locale.DAY_2),
-        locale.nl_langinfo (locale.DAY_3),
-        locale.nl_langinfo (locale.DAY_4),
-        locale.nl_langinfo (locale.DAY_5),
-        locale.nl_langinfo (locale.DAY_6),
-        locale.nl_langinfo (locale.DAY_7),
-        locale.nl_langinfo (locale.DAY_1))[d.isoweekday()]
-    except:
-        pass
-
+        try:
+            return ("",
+            locale.nl_langinfo (locale.DAY_2),
+            locale.nl_langinfo (locale.DAY_3),
+            locale.nl_langinfo (locale.DAY_4),
+            locale.nl_langinfo (locale.DAY_5),
+            locale.nl_langinfo (locale.DAY_6),
+            locale.nl_langinfo (locale.DAY_7),
+            locale.nl_langinfo (locale.DAY_1))[d.isoweekday()]
+        except AttributeError:  #WILL happen on windows - no nl_langinfo
+            return ("",_("Monday"),_("Tuesday"),_("Wednesday"),_("Thursday"),
+            _("Friday"),_("Saturday"),_("Sunday"))[d.isoweekday()]
+    except IndexError:
+        return "?day?"
+    
 def monthName(d):
     '''
     expects a datetime object, returns the month
     '''
     try:
-        return("", 
-        locale.nl_langinfo (locale.MON_1),
-        locale.nl_langinfo (locale.MON_2),
-        locale.nl_langinfo (locale.MON_3),
-        locale.nl_langinfo (locale.MON_4),
-        locale.nl_langinfo (locale.MON_5),
-        locale.nl_langinfo (locale.MON_6),
-        locale.nl_langinfo (locale.MON_7),
-        locale.nl_langinfo (locale.MON_8),
-        locale.nl_langinfo (locale.MON_9),
-        locale.nl_langinfo (locale.MON_10),
-        locale.nl_langinfo (locale.MON_11),        
-        locale.nl_langinfo (locale.MON_12)
-        )[d.month]
-    except:
+        try:
+            return("", 
+            locale.nl_langinfo (locale.MON_1),
+            locale.nl_langinfo (locale.MON_2),
+            locale.nl_langinfo (locale.MON_3),
+            locale.nl_langinfo (locale.MON_4),
+            locale.nl_langinfo (locale.MON_5),
+            locale.nl_langinfo (locale.MON_6),
+            locale.nl_langinfo (locale.MON_7),
+            locale.nl_langinfo (locale.MON_8),
+            locale.nl_langinfo (locale.MON_9),
+            locale.nl_langinfo (locale.MON_10),
+            locale.nl_langinfo (locale.MON_11),        
+            locale.nl_langinfo (locale.MON_12)
+            )[d.month]
+        except AttributeError:  #WILL happen on windows - no nl_langinfo
+                    return("", 
+            _("January"),
+            _("February"),
+            _("March"),
+            _("April"),
+            _("May"),
+            _("June"),
+            _("July"),
+            _("August"),
+            _("September"),
+            _("October"),
+            _("November"),
+            _("December"))[d.month]
+    except IndexError:
         return "?month?"
 
 def longDate(d):
