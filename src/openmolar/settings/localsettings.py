@@ -178,8 +178,8 @@ http://www.gnu.org/licenses</a>.</p>'''
 #-- my preference is the UK style dd/mm/YYYY
 #-- feel free to change this!!!
 
-#sqlDateFormat = r"%d/%m/%Y"
-sqlDateFormat = locale.nl_langinfo(locale.D_FMT)
+#OM_DATE_FORMAT = r"%d/%m/%Y"
+OM_DATE_FORMAT = re.sub("y","Y",locale.nl_langinfo(locale.D_FMT))
 
 #-- ditto the qt one
 DATE_FORMAT = "d, MMMM, yyyy"
@@ -347,9 +347,8 @@ def formatMoney(m):
     u"£7.30"
     '''
     try:
-        #return "%s%.02f"% (locale.nl_langinfo (locale.CRNCYSTR), m/100)
-
-        return _(u"£") + "%.02f"% (m/100)
+        retarg = locale.currency(m/100)
+        return retarg.decode("utf-8","ignore")
     except:
         return "???"
     
@@ -423,8 +422,7 @@ def longDate(d):
 def formatDate(d):
     '''takes a date, returns a uk type date string'''
     try:
-        #retarg = "%02d/%02d/%d"% (d.day, d.month, d.year)
-        retarg = d.strftime (locale.nl_langinfo(locale.D_FMT))
+        retarg = d.strftime (OM_DATE_FORMAT)
     except AttributeError:
         retarg = ""
     return retarg

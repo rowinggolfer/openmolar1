@@ -15,6 +15,7 @@ nhs_only = False
 newfeetable_Headers = "section,code,oldcode,USERCODE,regulation," + \
 "description,description1,NF08,NF08_pt,NF09,NF09_pt,PFA"
 
+
 def getFeeHeaders():
     return newfeetable_Headers.split(",")[1:]
 
@@ -24,12 +25,11 @@ def getFeeDict():
     dict[section]=feedict
     feedict=[(code1,desc1,fees1),(code2,desc2,fees2)]
     '''
-    global newtable_Headers
     option=""
     if private_only:
         option += "where PFA>0"
     elif nhs_only:
-        option += "where NF08>0"
+        option += "where (NF08>0 or NF09>0)"
 
     db=connect()
     cursor=db.cursor()
@@ -50,6 +50,7 @@ def getFeeDictForModification():
     '''
     a comprehensive dictionary formed from the entire table in the database
     '''
+    global feeDict_dbstate
     db = connect()
     cursor = db.cursor()
     cursor.execute('select ix,%s from newfeetable'% newfeetable_Headers)
@@ -61,31 +62,37 @@ def getFeeDictForModification():
 
     for row in rows:
         feeDict[row[0]] = row
-        
+    
     return feeDict
 
-def updateFeeTable(feeDict):
+def updateFeeTable(feeDict, changes):
     '''
     pass a feeDict, and update the existing table with it.
     '''
-    db = connect()
-    cursor = db.cursor()
-    columnNo = len(feeDict[feeDict.keys()[0]])
-    valuesString = "%s," * columnNo
-    valuesString = valuesString.strip(",")
-    query = "insert into newfeetable (ix,%s) values (%s)"% (
-    newfeetable_Headers, valuesString) 
+    print "applying changes to feeTable", changes
+    try:
+        db = connect()
+        cursor = db.cursor()
+        columnNo = len(feeDict[feeDict.keys()[0]])
+        valuesString = "%s," * columnNo
+        valuesString = valuesString.strip(",")
         
-    for key in feeDict.keys():
-        delquery = "delete from newfeetable where ix = %s"% key
-        cursor.execute(delquery)
-        cursor.execute(query, feeDict[key])
+        delquery = "delete from newfeetable where ix = %s"
+        query = "insert into newfeetable (ix,%s) values (%s)"% (
+        newfeetable_Headers, valuesString) 
+            
+        for key in changes:
+            cursor.execute(delquery, key)
+            print query, feeDict[key]
+            cursor.execute(query, feeDict[key])
 
-    cursor.close()
+        cursor.close()        
+        db.commit()
+        return True
+    except Exception, e:
+        print "exception",e
+        return False
     
-    db.commit()
-    
-
 def decode(blob):
     '''
     decode in blocks of 4 bytes - this is a relic from the old database
@@ -106,5 +113,5 @@ if __name__ == "__main__":
     #print localsettings.privateFees
     #print getFeeDict()
     fd = getFeeDictForModification()
-    fd[1] = (1,1, '0101', '1a', 'CE', '', 'Clinical Examination^', 'clinical exam', 800, 0, 1950)
-    updateFeeTable(fd)
+    fd[1] = (1,1, '0101', '1a', 'CE', '', 'Clinical Examination^', 'clinical exam', 801, 2, 803,4, 1951)
+    updateFeeTable(fd,[1])

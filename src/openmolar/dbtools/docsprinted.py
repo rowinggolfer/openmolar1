@@ -25,7 +25,7 @@ def previousDocs(sno):
     cursor = db.cursor()
     query='''select DATE_FORMAT(printdate,'%s'),docname,docversion,ix
     from newdocsprinted where serialno=%s order by ix DESC '''%(
-    localsettings.sqlDateFormat,sno)
+    localsettings.OM_DATE_FORMAT,sno)
     
     cursor.execute(query)
     rows = cursor.fetchall()

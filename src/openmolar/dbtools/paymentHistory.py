@@ -18,7 +18,7 @@ def details(sno):
 
     db=connect()
     cursor=db.cursor()
-    query="DATE_FORMAT(cbdate,'%s'),dntid,descr,code,amt"%localsettings.sqlDateFormat
+    query="DATE_FORMAT(cbdate,'%s'),dntid,descr,code,amt"%localsettings.OM_DATE_FORMAT
     cursor.execute('select %s from cashbook where ref=%06d order by cbdate desc'%(query,sno))
     rows = cursor.fetchall()
     cursor.close()

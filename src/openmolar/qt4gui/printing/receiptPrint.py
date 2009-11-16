@@ -11,9 +11,6 @@ from openmolar.settings import localsettings
 
 import datetime
 
-def toMoneyString(i):
-    return u"£%.02f"%(i/100)
-
 class receipt():
     def __init__(self,parent=None):
         self.printer = QtGui.QPrinter()
@@ -97,7 +94,7 @@ class receipt():
                 if amount !=0:
                     painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString(key))
                     painter.drawText(QtCore.QRectF(x+180, y,100,serifLineHeight),\
-                    QtCore.QString(toMoneyString(amount)),alignRight)
+                    QtCore.QString(localsettings.formatMoney(amount)),alignRight)
 
                     y += serifLineHeight
                     total+=amount
@@ -107,7 +104,7 @@ class receipt():
             y += serifLineHeight*1.5
             painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString("TOTAL"))
             painter.drawText(QtCore.QRectF(x+180, y,100,serifLineHeight),\
-            QtCore.QString(toMoneyString(total)),alignRight)
+            QtCore.QString(localsettings.formatMoney(total)),alignRight)
 
             y += serifLineHeight*4
 

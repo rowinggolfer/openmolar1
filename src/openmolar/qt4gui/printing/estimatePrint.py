@@ -13,9 +13,6 @@ from openmolar.settings import localsettings
 
 import datetime
 
-def toMoneyString(i):
-    return u"£%.02f"%(i/100)
-
 class estimate():
     def __init__(self, parent=None):
         self.setProps()
@@ -101,7 +98,7 @@ class estimate():
                 QtCore.QString(item))            
 
                 painter.drawText(QtCore.QRectF(x+280, y, 100, 
-                serifLineHeight), QtCore.QString(toMoneyString(amount)), 
+                serifLineHeight), QtCore.QString(localsettings.formatMoney(amount)), 
                 alignRight)
 
                 y += serifLineHeight
@@ -115,7 +112,7 @@ class estimate():
             QtCore.QString("TOTAL"))
 
             painter.drawText(QtCore.QRectF(x+280, y, 100,serifLineHeight),
-            QtCore.QString(toMoneyString(pt_total)), alignRight)
+            QtCore.QString(localsettings.formatMoney(pt_total)), alignRight)
 
             y += serifLineHeight * 4
 

@@ -5,6 +5,7 @@
 # by the Free Software Foundation, either version 3 of the License, or 
 # (at your option) any later version. See the GNU General Public License for more details.
 
+import copy
 from PyQt4 import QtGui, QtCore
 
 from openmolar.dbtools import feesTable
@@ -18,6 +19,8 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
         self.parent.closeEvent = self.closeEvent
         self.setupUi(parent)
         self.feeDict = feesTable.getFeeDictForModification()
+        self.feeDict_dbstate = copy.copy(self.feeDict)
+        self.changedItems = []
         self.loadTable()
         self.signals()
 
@@ -30,6 +33,21 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
         self.applyTable()
         self.parent.close()
 
+    def anyChanges(self):
+        '''
+        check to see if anything has been modified
+        '''
+        for key in self.feeDict.keys():
+            if not key in self.changedItems and (
+            self.feeDict[key] != self.feeDict_dbstate.get(key)):
+                print "item %s has changed"
+                self.changedItems.append(key)
+                
+        result = self.changedItems != []
+        if result:
+            print "user changes detected"
+        return result
+                
     def quit(self):
         '''
         function called by the quit button in the menu
@@ -73,24 +91,33 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
         self.tableWidget.resizeColumnsToContents()
 
     def updateDict(self, item):
-        print item.text()
         row = item.row()
         column = item.column()
         ix = int(self.tableWidget.item(row,0).text())
         existing = self.feeDict[ix]
         new = existing[:column] + (item.text(),) + existing[column+1:]
         self.feeDict[ix] = new
+        print "new data",new
+        self.tableWidget.setCurrentCell(row+1,column)
         
     def applyTable(self):
+        if not self.anyChanges():
+            print "no changes to apply"
+            return
         if QtGui.QMessageBox.question(self.parent, "Confirm",
         "Apply Changes?", 
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes ) == QtGui.QMessageBox.Yes:
             
-            feesTable.updateFeeTable(self.feeDict)
-            QtGui.QMessageBox.information(self.parent,"Sucess",
-            "Your changes will take effect when openmolar is restarted")
-        
+            if feesTable.updateFeeTable(self.feeDict, self.changedItems):
+                QtGui.QMessageBox.information(self.parent,"Success",
+                "Your changes will take effect when openmolar is restarted")
+                self.changedItems=[]
+                self.feeDict_dbstate = copy.deepcopy(self.feeDict)
+            else:
+                QtGui.QMessageBox.warning(self.parent,"Error",
+                "Error saving changes")
+                
     def signals(self):
         QtCore.QObject.connect(self.action_Quit,
         QtCore.SIGNAL("triggered()"), self.quit)
@@ -100,6 +127,9 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
         
         QtCore.QObject.connect(self.actionVersion,
         QtCore.SIGNAL("triggered()"), self.version)
+        
+        QtCore.QObject.connect(self.tableWidget, 
+        QtCore.SIGNAL("itemChanged (QTableWidgetItem *)"), self.updateDict)
         
         QtCore.QObject.connect(self.tableWidget, 
         QtCore.SIGNAL("itemChanged (QTableWidgetItem *)"), self.updateDict)

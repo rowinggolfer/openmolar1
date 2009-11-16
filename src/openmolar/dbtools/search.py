@@ -35,7 +35,7 @@ def getcandidates(dob,addr,tel,sname,similar_sname,fname,similar_fname,pcde):
             query+='fname like %s and '%('"'+fname+r'%"')
 
     if query!='':
-        fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde,tel1,tel2,mobile'%localsettings.sqlDateFormat #this needs to be the headers in qt4gui/main select_patient()
+        fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde,tel1,tel2,mobile'%localsettings.OM_DATE_FORMAT #this needs to be the headers in qt4gui/main select_patient()
         query="select %s from patients where %s order by sname,fname"%(fields,query[0:query.rindex("and")])
         if "demo" in localsettings.DBNAME:
             #demo db uses the same name and address for everyone!
@@ -57,7 +57,7 @@ def getsimilar(serialno,addr,sname,family):
     '''this searches the database for patients matching the given fields'''
     db=connect()
     cursor = db.cursor()
-    fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde'%localsettings.sqlDateFormat #this needs to be the headers in qt4gui/main select_patient()
+    fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde'%localsettings.OM_DATE_FORMAT #this needs to be the headers in qt4gui/main select_patient()
     if family>0:
         query="select %s from patients where serialno != %d and familyno=%d order by dob"%(fields,serialno,family)
 
@@ -104,7 +104,7 @@ def getcandidates_from_serialnos(list_of_snos):
     for sno in list_of_snos:
         query+="serialno=%d or "%sno
     if query!='':
-        fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde,tel1,tel2,mobile'%localsettings.sqlDateFormat #this needs to be the headers in qt4gui/main select_patient()
+        fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde,tel1,tel2,mobile'%localsettings.OM_DATE_FORMAT #this needs to be the headers in qt4gui/main select_patient()
         query="select %s from patients where %s order by sname,fname"%(fields,query[:query.rindex("or")])
         if localsettings.logqueries:
             print query

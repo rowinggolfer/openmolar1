@@ -87,7 +87,7 @@ def details(regdent, trtdent, startdate, enddate):
         diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart, feesa, 
         feesb, feesc, id from daybook 
         where %s %s date>=%s and date<=%s order by date'''%(
-        localsettings.sqlDateFormat, cond1, cond2, 
+        localsettings.OM_DATE_FORMAT, cond1, cond2, 
         localsettings.pyDatetoSQL(queryStartDate.toPyDate()), 
         localsettings.pyDatetoSQL(queryEndDate.toPyDate()))
 

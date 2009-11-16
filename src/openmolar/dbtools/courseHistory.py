@@ -115,7 +115,7 @@ def details(sno):
     for field in fields:
         if field in ('examd', 'accd', 'cmpd'):
             query += 'DATE_FORMAT(%s, "%s"),'% (
-            field, localsettings.sqlDateFormat)
+            field, localsettings.OM_DATE_FORMAT)
 
         else:
             query += field+","

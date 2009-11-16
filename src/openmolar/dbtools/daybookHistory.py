@@ -16,7 +16,7 @@ def details(sno):
     '''
     db=connect()
     cursor=db.cursor()
-    query="DATE_FORMAT(date,'%s'),"%localsettings.sqlDateFormat
+    query="DATE_FORMAT(date,'%s'),"%localsettings.OM_DATE_FORMAT
     query+="coursetype,dntid,trtid,"
     query+="concat(diagn,perio,anaes,misc,ndu,ndl,odu,odl),"
     query+="other,chart,feesa,feesb"
