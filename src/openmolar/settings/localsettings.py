@@ -27,7 +27,7 @@ DBNAME = "default"
 CLIENT_SCHEMA_VERSION = "1.3"
 DB_SCHEMA_VERSION = "unknown"
 DEBUGMODE = False
-ENCODING = "latin-1" #necessary for the uk £ symbol
+ENCODING = locale.getpreferredencoding() #"latin-1" #necessary for the uk £ symbol
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -348,7 +348,7 @@ def formatMoney(m):
     '''
     try:
         retarg = locale.currency(m/100)
-        return retarg.decode("utf-8","ignore")
+        return retarg.decode(ENCODING, "ignore")
     except:
         return "???"
     
