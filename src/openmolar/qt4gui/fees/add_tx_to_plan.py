@@ -158,12 +158,12 @@ def fromFeeTable(parent, item):
         dl.setupUi(Dialog)
         dl.description_lineEdit.setText(item.text(4))
         if "N" in parent.pt.cset:
-            print "using NHS cols"
+            print "using NHS 08 cols"
             fee = localsettings.reverseFormatMoney(item.text(6))
             ptfee = localsettings.reverseFormatMoney(item.text(7))
         else:
-            print "using private cols"
-            fee = localsettings.reverseFormatMoney(item.text(8))
+            print "using private column"
+            fee = localsettings.reverseFormatMoney(item.text(10))
             ptfee = fee 
         if "I" == parent.pt.cset:
             ptfee = 0

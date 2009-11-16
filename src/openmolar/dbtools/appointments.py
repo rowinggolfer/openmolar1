@@ -139,13 +139,14 @@ def alterDay(arg):
 
     if cursor.execute(query):
         #-- dentists diary includes this date
-        query = '''update aday set start=%d,end=%d,flag=%d,memo='%s'
-        where adate=%s and apptix=%d'''% (arg.start, arg.end, arg.flag,
-        arg.memo,localsettings.pyDatetoSQL(arg.date),arg.apptix)
+        query = '''update aday set start=%s,end=%s,flag=%s, memo=%s
+        where adate=%s and apptix=%s'''
+        values = (arg.start, arg.end, arg.flag, arg.memo, arg.date, 
+        arg.apptix)
 
-        if localsettings.logqueries:
-            print query
-        result.setNumber(cursor.execute(query))
+        if True: #localsettings.logqueries:
+            print query, values
+        result.setNumber(cursor.execute(query,values))
 
         if result.getNumber() == 1:
             result.setMessage("Date sucessfully modified")

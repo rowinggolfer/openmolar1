@@ -357,16 +357,17 @@ def reverseFormatMoney(m):
     takes a string (as from above)
     and returns the value in pence
     '''
-    numbers = re.findall("\d",m)
-    retarg = ""
-    for number in numbers:
-        retarg += number
     try:
-        return int(retarg)
-    except ValueError:
+        numbers = re.findall("\d",m)
+    except TypeError:
         print "unable to convert %s to an integer - returning 0"% m
         return 0
 
+    retarg = ""
+    for number in numbers:
+        retarg += number
+    return int(retarg)
+    
 def GP17formatDate(d):
     '''
     takes a python date type... formats for use on a NHS form
@@ -408,6 +409,7 @@ def monthName(d):
         locale.nl_langinfo (locale.MON_8),
         locale.nl_langinfo (locale.MON_9),
         locale.nl_langinfo (locale.MON_10),
+        locale.nl_langinfo (locale.MON_11),        
         locale.nl_langinfo (locale.MON_12)
         )[d.month]
     except:
