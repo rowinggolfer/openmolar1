@@ -353,7 +353,7 @@ def formatMoney(m):
         retarg = locale.currency(m/100)
         return retarg.decode(ENCODING, "ignore")
     except:
-        return "?%s"% m/100
+        return u"£%.02f"% (m/100)
     
 def reverseFormatMoney(m):
     '''
