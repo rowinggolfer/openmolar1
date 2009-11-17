@@ -36,4 +36,4 @@ def updateData(value, data, user):
     return True
 
 if __name__ == "__main__":
-    print getData("SCHEMA_VERSION")
+    print getData("enddate")

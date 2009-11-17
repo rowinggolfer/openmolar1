@@ -598,8 +598,10 @@ def initiate(debug = False):
 
     data = db_settings.getData("bookend")
     if data:
-        bookEndString = data[-1][0]
-        bookend = datetime.date(bookEndString.split(","))
+        bookEndVals = data[-1][0].split(",")
+        bookEnd = datetime.date(int(bookEndVals[0]), int(bookEndVals[1]), 
+        int(bookEndVals[2]))
+    
     print "bookEnd is %s"% bookEnd
 
     db = connect.connect()
