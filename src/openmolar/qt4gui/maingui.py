@@ -4266,7 +4266,7 @@ WITH PT RECORDS %d and %d''')% (
         self.ui.planChartWidget.update()
 
         Dialog = QtGui.QDialog(self)
-        dl = addToothTreat.treatment(Dialog,self.pt.cset)
+        dl = addToothTreat.treatment(Dialog, self.pt)
         if ALL == False:
             dl.itemsPerTooth(tooth, item)
         else:

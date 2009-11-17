@@ -50,7 +50,7 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
        '''
         #-- here is why we need to import the division from the future...
         #-- no rounding errors please!
-        fee, ptfee = fee_keys.getFee(self.parent.cset,self.itemcode)
+        fee, ptfee = fee_keys.getFee(self.parent.pt, self.itemcode)
         self.doubleSpinBox.setValue(fee/100)
         self.pt_doubleSpinBox.setValue(ptfee/100)
         self.parent.updateTotal()
@@ -60,11 +60,11 @@ class treatment(Ui_addTreatment.Ui_Dialog,):
     A custom class with a scrollArea, a dentist comboBox,
     and a total double spin box
     '''
-    def __init__(self,dialog,cset):
+    def __init__(self, dialog, pt):
         self.setupUi(dialog)
         self.dialog=dialog
         self.items=[]
-        self.cset=cset
+        self.pt = pt
 
 
     def itemsPerTooth(self, tooth, props):
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
 
     from openmolar.dbtools import patient_class
-    pt=patient_class.patient(29833)
+    pt=patient_class.patient(1)
 
     #print "PLAN for ", toothPlan[0],toothPlan[1]
 

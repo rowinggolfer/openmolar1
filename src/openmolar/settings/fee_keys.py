@@ -34,8 +34,13 @@ class fee():
         self.fees.append(int(arg))
         
     def addPtFee(self,arg):
-        self.ptFees.append(int(arg))
-
+        '''
+        same again, but for the pt charge
+        '''
+        try:
+            self.ptFees.append(int(arg))
+        except TypeError, e:
+            print 'addPtFee', e
     def setRegulations(self, arg):
         '''
         pass a string which sets the conditions for
@@ -244,15 +249,16 @@ def getItemFees(pt, itemcode, no_items=1):
     if pt.cset == "N":
         if pt.exmpt != "":
             conditions.append("NHS exempt=%s"% pt.exmpt)
-    itemfee, ptfee = getFee(pt.cset, itemcode, no_items, conditions)
+    itemfee, ptfee = getFee(pt, itemcode, no_items, conditions)
     return itemfee, ptfee
 
 
-def getFee(cset,itemcode, no_items=1, conditions=[]):
+def getFee(pt,itemcode, no_items=1, conditions=[]):
     '''
     useage = getFee("P","4001")
     get the fee for itemcode "4001" for a private patient
     '''
+    print "fee_keys.getFee called"
     fee,ptfee=0,0
     nhsExempt=False
     #-- presently conditions is just NHS stuff.
@@ -262,15 +268,20 @@ def getFee(cset,itemcode, no_items=1, conditions=[]):
             #print "Exemption - ",condition[condition.index("=")+1:]
             #print "Exmeption found warning - partial exemptions not handled"
             
-    if "N" in cset:
-        fee = localsettings.nhsFees[itemcode].getFee(no_items, conditions)
+    if "N" in pt.cset:
+        
+        relevantNHSFeeDict = localsettings.getNHSFeescale(pt.accd)
+        
+        fee = relevantNHSFeeDict[itemcode].getFee(no_items, conditions)
         if not nhsExempt:
-            ptfee= localsettings.nhsFees[itemcode].getPtFee(no_items, conditions)
-    elif "I" in cset:
-        fee = localsettings.privateFees[itemcode].getFee(no_items, conditions)
+            ptfee = relevantNHSFeeDict[itemcode].getPtFee(no_items, conditions)
+    
+    elif "I" in pt.cset:
+        fee = localsettings.FeesDict["P"][itemcode].getFee(no_items, conditions)
         ptfee = 0
+    
     else:
-        fee = localsettings.privateFees[itemcode].getFee(no_items, conditions)
+        fee = localsettings.FeesDict["P"][itemcode].getFee(no_items, conditions)
         ptfee = fee
         
     return (fee, ptfee)

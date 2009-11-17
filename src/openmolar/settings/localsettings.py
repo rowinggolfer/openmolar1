@@ -35,7 +35,7 @@ locale.setlocale(locale.LC_ALL, '')
 __build__= int(_version.version_info.get("revno"))+1
 
 try:
-    _("hello")
+    print _("translation tools are installed sucessfully")
 except:  #TypeError
     print "installing gettext"
     ##- an unelegant hack to get _() on the namespace for testing
@@ -288,14 +288,18 @@ practiceAddress = ("The Academy Dental Practice","19 Union Street",
 #--pt.county,pt.pcde,pt.tel1)
 defaultNewPatientDetails = ("",)*8
 
-#-- these gets initiated
-privateFees = {}
-nhsFees = {}
+#-- these get initiated
 treatmentCodes = {}
+##TODO - make this customisable.
+##I have 3 fee scales implemented.
+##suggest many more will be needed, and user defined.
+FeesDict = {"P":{},"NF08":{},"NF09":{}}
+    
 #itemCodes=[]
 
 #-- 1 less dialog box for these lucky people
 defaultPrinterforGP17 = True
+
 
 #-- my own class of excpetion, for when a serialno is called
 #--from the database and no match is found
@@ -380,6 +384,15 @@ def GP17formatDate(d):
     except AttributeError:
         return " "*8
 
+def getNHSFeescale(d):
+    '''
+    points to the dictionary of values in use on date d
+    '''
+    if d < datetime.date(2009,9,1):
+        return FeesDict["NF08"]
+    else:
+        return FeesDict["NF09"]
+        
 def dayName(d):
     '''
     expects a datetime object, returns the day
@@ -568,9 +581,9 @@ def updateLocalSettings(setting, value):
 
 def initiate(debug = False):
     print "initiating settings"
-    global fees, message, dentDict, privateFees,\
-    nhsFees, allowed_logins, ops, ops_reverse, activedents, activehygs, \
-    apptix, apptix_reverse
+    global fees, message, dentDict, FeesDict, allowed_logins, ops, \
+    ops_reverse, activedents, activehygs, apptix, apptix_reverse
+    
     from openmolar import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
@@ -651,61 +664,54 @@ def initiate(debug = False):
     #-- the keys are treatment codes for NHS scotland
     #-- the values are a custom data class in the fee_keys module
 
-    try:   #this breaks compatibility with the old database schema
-        query = "select code, description, pfa, USERCODE,"
-        query += "description1, regulation from newfeetable"
+
+    query = "select code, description, pfa, USERCODE,"
+    query += "description1, regulation from newfeetable"
+    if logqueries:
+        print query
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    for row in rows:
+        code = row[0]
+        #itemCodes.append(code)
+        usercode = row[3]
+        if code != "":
+            if FeesDict["P"].has_key(code):
+                FeesDict["P"][code].addFee(row[2])
+            else:
+                newFee = fee_keys.fee()
+                newFee.description = row[4]
+                newFee.setRegulations(row[5])
+                newFee.addFee(row[2])
+                FeesDict["P"][code] = newFee
+
+                descriptions[code] = row[1]
+
+        if usercode != "" and usercode != None:
+            treatmentCodes[usercode] = code
+
+    for NHS in ("NF08", "NF09"):
+
+        query = "select code, description, %s, USERCODE,"% NHS
+        query += "description1, regulation, %s_pt from newfeetable" % NHS
         if logqueries:
             print query
         cursor.execute(query)
         rows = cursor.fetchall()
-        privateFees = {}
-        for row in rows:
-            code = row[0]
-            #itemCodes.append(code)
-            usercode = row[3]
-            if code != "":
-                if privateFees.has_key(code):
-                    privateFees[code].addFee(row[2])
-                else:
-                    newFee = fee_keys.fee()
-                    newFee.description = row[4]
-                    newFee.setRegulations(row[5])
-                    newFee.addFee(row[2])
-                    privateFees[code] = newFee
-
-                    descriptions[code] = row[1]
-
-            if usercode != "" and usercode != None:
-                treatmentCodes[usercode] = code
-
-    except Exception, e:
-        print "error loading privateFees Dict from newfeetable", e
-
-    try:   #this breaks compatibility with the old database schema
-        query = "select code, description, NF08, USERCODE,"
-        query += "description1, regulation, NF08_pt from newfeetable"
-        if logqueries:
-            print query
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        nhsFees = {}
         for row in rows:
             code = row[0]
             usercode = row[3]
             if code != "":
-                if nhsFees.has_key(code):
-                    nhsFees[code].addFee(row[2])
-                    nhsFees[code].addPtFee(row[6])
+                if FeesDict[NHS].has_key(code):
+                    FeesDict[NHS][code].addFee(row[2])
+                    FeesDict[NHS][code].addPtFee(row[6])
                 else:
                     newFee = fee_keys.fee()
                     newFee.description = row[4]
                     newFee.setRegulations(row[5])
                     newFee.addFee(row[2])
                     newFee.addPtFee(row[6])
-                    nhsFees[code] = newFee
-
-    except Exception, e:
-        print "error loading nhs Fees Dict from newfeetable",e
+                    FeesDict[NHS][code] = newFee
 
     getLocalSettings()
 
@@ -731,9 +737,8 @@ def initiate(debug = False):
         print "allowed logins =", allowed_logins
         print "stylesheet =",stylesheet
         print "referralfile = ",referralfile
-        for key in privateFees.keys():
-            print privateFees[key].fees,
-            print nhsFees[key].fees
+        for key in FeesDict.keys():
+            print FeesDict[key]
         print "treatmentCode =",treatmentCodes
 
 if __name__ == "__main__":

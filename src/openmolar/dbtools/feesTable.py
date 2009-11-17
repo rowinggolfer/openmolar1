@@ -33,10 +33,13 @@ def getFeeDict():
 
     db=connect()
     cursor=db.cursor()
-    cursor.execute('select %s from newfeetable %s'%(newfeetable_Headers,option))
+    
+    query = 'select %s from newfeetable %s' % (
+    newfeetable_Headers,option)
+
+    cursor.execute(query)
     feescales = cursor.fetchall()
     cursor.close()
-    #db.close()
 
     sections={}
 
@@ -113,5 +116,5 @@ if __name__ == "__main__":
     #print localsettings.privateFees
     #print getFeeDict()
     fd = getFeeDictForModification()
-    fd[1] = (1,1, '0101', '1a', 'CE', '', 'Clinical Examination^', 'clinical exam', 801, 2, 803,4, 1951)
-    updateFeeTable(fd,[1])
+    #fd[1] = (1,1, '0101', '1a', 'CE', '', 'Clinical Examination^', 'clinical exam', 801, 2, 803,4, 1951)
+    #updateFeeTable(fd,[1])
