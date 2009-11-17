@@ -582,7 +582,7 @@ def updateLocalSettings(setting, value):
 def initiate(debug = False):
     print "initiating settings"
     global fees, message, dentDict, FeesDict, allowed_logins, ops, \
-    ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookend
+    ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd
     
     from openmolar import connect
     from openmolar.settings import fee_keys
