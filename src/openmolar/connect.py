@@ -42,6 +42,7 @@ else:
 dom.unlink()
 
 ProgrammingError = MySQLdb.ProgrammingError
+IntegrityError = MySQLdb.IntegrityError
 
 class omSQLresult():
     '''

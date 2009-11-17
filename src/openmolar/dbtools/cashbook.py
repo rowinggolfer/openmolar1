@@ -83,7 +83,7 @@ def details(dent, startdate, enddate):
         dentist = localsettings.ops_reverse[str(dent)]
         cond1 = 'dntid="%s" and'% dentist
     query = "DATE_FORMAT(cbdate,'%s'),ref,dntid,descr,code,amt"% (
-    localsettings.OMDATEFORMAT)
+    localsettings.OM_DATE_FORMAT)
 
     cursor.execute('''select %s from cashbook where %s cbdate>="%s"
     and cbdate<="%s" order by cbdate'''% (query, cond1,
