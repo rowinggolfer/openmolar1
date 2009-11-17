@@ -11,13 +11,13 @@ import datetime
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_apptTools
-from openmolar.qt4gui.dialogs import apptOpenDay
+from openmolar.qt4gui.dialogs import apptOpenDay, block_wizard
 from openmolar.dbtools import extend_books, db_settings
 
 
 class apptTools(Ui_apptTools.Ui_MainWindow):
-    def __init__(self,parent=None):
-        self.parent=parent
+    def __init__(self, parent=None):
+        self.parent = parent
         self.setupUi(parent)
         self.signals()
     
@@ -91,7 +91,20 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
         print "editing weeks"
         self.advise(_("not yet implemented"))
     
+    def blocks(self):
+        '''
+        insert blocks and appointments
+        '''
+        print "blocks called"
+        Dialog = QtGui.QDialog(self.parent)
+        dl = block_wizard.blocker(Dialog)
+        Dialog.exec_()
+    
+    
     def signals(self):
+        '''
+        connect signals
+        '''
         QtCore.QObject.connect(self.openDay_pushButton,
         QtCore.SIGNAL("clicked()"), self.openDay)
     
@@ -104,6 +117,8 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
         QtCore.QObject.connect(self.removeOld_pushButton,
         QtCore.SIGNAL("clicked()"), self.removeOld)
     
+        QtCore.QObject.connect(self.blocks_pushButton,
+        QtCore.SIGNAL("clicked()"), self.blocks)
     
 if __name__ == "__main__":
     localsettings.initiate(False)

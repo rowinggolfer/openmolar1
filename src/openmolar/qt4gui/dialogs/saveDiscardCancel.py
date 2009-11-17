@@ -46,11 +46,17 @@ class sdcDialog(Ui_saveDiscardCancel.Ui_Dialog):
                     self.buttonBox.removeButton(button)
             
     def signals(self):
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.save)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.cancel)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("clicked(QAbstractButton*)"),self.slot)
+        QtCore.QObject.connect(self.buttonBox, 
+        QtCore.SIGNAL("accepted()"), self.save)
 
-        self.pushButton.connect(self.pushButton,QtCore.SIGNAL("clicked()"),self.showDetails)
+        QtCore.QObject.connect(self.buttonBox, 
+        QtCore.SIGNAL("rejected()"), self.cancel)
+
+        QtCore.QObject.connect(self.buttonBox, 
+        QtCore.SIGNAL("clicked(QAbstractButton*)"),self.slot)
+
+        self.pushButton.connect(self.pushButton,
+        QtCore.SIGNAL("clicked()"),self.showDetails)
 
     def showDetails(self):
         

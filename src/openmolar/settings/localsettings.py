@@ -392,24 +392,26 @@ def getNHSFeescale(d):
         return FeesDict["NF08"]
     else:
         return FeesDict["NF09"]
+
+try:
+    DAYNAMES = (locale.nl_langinfo (locale.DAY_2),
+            locale.nl_langinfo (locale.DAY_3),
+            locale.nl_langinfo (locale.DAY_4),
+            locale.nl_langinfo (locale.DAY_5),
+            locale.nl_langinfo (locale.DAY_6),
+            locale.nl_langinfo (locale.DAY_7),
+            locale.nl_langinfo (locale.DAY_1))
+except AttributeError:  #WILL happen on windows - no nl_langinfo
+    DAYNAMES =  (_("Monday"),_("Tuesday"),_("Wednesday"),_("Thursday"),
+            _("Friday"),_("Saturday"),_("Sunday"))
+    
         
 def dayName(d):
     '''
     expects a datetime object, returns the day
     '''
     try:
-        try:
-            return ("",
-            locale.nl_langinfo (locale.DAY_2),
-            locale.nl_langinfo (locale.DAY_3),
-            locale.nl_langinfo (locale.DAY_4),
-            locale.nl_langinfo (locale.DAY_5),
-            locale.nl_langinfo (locale.DAY_6),
-            locale.nl_langinfo (locale.DAY_7),
-            locale.nl_langinfo (locale.DAY_1))[d.isoweekday()]
-        except AttributeError:  #WILL happen on windows - no nl_langinfo
-            return ("",_("Monday"),_("Tuesday"),_("Wednesday"),_("Thursday"),
-            _("Friday"),_("Saturday"),_("Sunday"))[d.isoweekday()]
+        return DAYNAMES [d.isoweekday()-1]
     except IndexError:
         return "?day?"
     

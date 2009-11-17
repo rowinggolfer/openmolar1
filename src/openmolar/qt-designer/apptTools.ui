@@ -19,7 +19,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" rowspan="4">
+    <item row="0" column="0" rowspan="5">
      <widget class="QLabel" name="label">
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -37,29 +37,39 @@
     </item>
     <item row="0" column="1">
      <widget class="QPushButton" name="extendBook_pushButton">
+      <property name="toolTip">
+       <string>Move the end date for making appointments.</string>
+      </property>
       <property name="text">
        <string>Extend Books</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
+    <item row="2" column="1">
      <widget class="QPushButton" name="removeOld_pushButton">
       <property name="text">
        <string>Remove old weeks</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
+    <item row="3" column="1">
      <widget class="QPushButton" name="editWeeks_pushButton">
       <property name="text">
        <string>Edit Standard Working Weeks for Clinicians</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
+    <item row="4" column="1">
      <widget class="QPushButton" name="openDay_pushButton">
       <property name="text">
        <string>Open A Day</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="blocks_pushButton">
+      <property name="text">
+       <string>Insert regular blocks</string>
       </property>
      </widget>
     </item>

@@ -27,10 +27,10 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
         self.init_lunch("13:00","14:00")
     
     def getMinTime(self):
-        return QtCore.QTime.fromString("08:00","hh:mm")
+        return QtCore.QTime.fromString("08:30","hh:mm")
         
     def getMaxTime(self):
-        return QtCore.QTime.fromString("20:00","hh:mm")
+        return QtCore.QTime.fromString("18:00","hh:mm")
         
     def setTimeLimits(self):
         '''

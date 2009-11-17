@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'apptTools.ui'
 #
-# Created: Tue Nov 17 13:42:07 2009
+# Created: Tue Nov 17 18:53:03 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,19 +25,22 @@ class Ui_MainWindow(object):
         self.label.setPixmap(QtGui.QPixmap(":/appt_ov.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 4, 1)
+        self.gridLayout.addWidget(self.label, 0, 0, 5, 1)
         self.extendBook_pushButton = QtGui.QPushButton(self.centralwidget)
         self.extendBook_pushButton.setObjectName("extendBook_pushButton")
         self.gridLayout.addWidget(self.extendBook_pushButton, 0, 1, 1, 1)
         self.removeOld_pushButton = QtGui.QPushButton(self.centralwidget)
         self.removeOld_pushButton.setObjectName("removeOld_pushButton")
-        self.gridLayout.addWidget(self.removeOld_pushButton, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.removeOld_pushButton, 2, 1, 1, 1)
         self.editWeeks_pushButton = QtGui.QPushButton(self.centralwidget)
         self.editWeeks_pushButton.setObjectName("editWeeks_pushButton")
-        self.gridLayout.addWidget(self.editWeeks_pushButton, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.editWeeks_pushButton, 3, 1, 1, 1)
         self.openDay_pushButton = QtGui.QPushButton(self.centralwidget)
         self.openDay_pushButton.setObjectName("openDay_pushButton")
-        self.gridLayout.addWidget(self.openDay_pushButton, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.openDay_pushButton, 4, 1, 1, 1)
+        self.blocks_pushButton = QtGui.QPushButton(self.centralwidget)
+        self.blocks_pushButton.setObjectName("blocks_pushButton")
+        self.gridLayout.addWidget(self.blocks_pushButton, 1, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 599, 22))
@@ -55,10 +58,12 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_( u"Appointment Tools"))
+        self.extendBook_pushButton.setToolTip(_( u"Move the end date for making appointments."))
         self.extendBook_pushButton.setText(_( u"Extend Books"))
         self.removeOld_pushButton.setText(_( u"Remove old weeks"))
         self.editWeeks_pushButton.setText(_( u"Edit Standard Working Weeks for Clinicians"))
         self.openDay_pushButton.setText(_( u"Open A Day"))
+        self.blocks_pushButton.setText(_( u"Insert regular blocks"))
         self.menu_Quit.setTitle(_( u"&Quit"))
 
 import resources_rc
