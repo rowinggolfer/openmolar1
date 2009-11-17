@@ -1372,14 +1372,14 @@ def layout_dayView(parent):
             
             bookend = parent.appointmentData[0][todaysDents.index(dent)][2]        
             parent.ui.apptBookWidgets[i].setEndTime(bookend)
-            
+            i += 1
+        
         except IndexError, e:
             parent.advise(
             "Damn! too many dentists today!! only 4 widgets available - " +
             "file a bug!<br /><br />%s"% e, 2)
             ####TODO - sort this out... no of widgets shouldn't be fixed.
-        i += 1
-    
+        
     for label in (parent.ui.apptFrameLabel1, parent.ui.apptFrameLabel2,
     parent.ui.apptFrameLabel3, parent.ui.apptFrameLabel4):
         label.setText("")
