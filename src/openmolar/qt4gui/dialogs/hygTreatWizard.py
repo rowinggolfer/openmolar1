@@ -32,10 +32,12 @@ class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
             self.dents_comboBox.setCurrentIndex(-1)
 
     def setFees(self,arg):
-        for fees in arg:
-            self.fees.append(fees[0])
-            self.ptFees.append(fees[1])
+        for fee, ptFee in arg:
+            self.fees.append(fee)
+            self.ptFees.append(ptFee)
+            
         self.treatmentChanged(True)
+    
     def treatmentChanged(self,arg):
         '''
         called when the radio boxes are toggled

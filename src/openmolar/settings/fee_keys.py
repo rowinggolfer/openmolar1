@@ -31,7 +31,11 @@ class fee():
         add a fee to the list of fees contained by this class
         frequently this list will have only one item
         '''
-        self.fees.append(int(arg))
+        try:
+            self.fees.append(int(arg))
+        except TypeError, e:
+            print "error in your feetable, defaulting to zero fee!"
+            self.fees.append(0)
         
     def addPtFee(self,arg):
         '''
@@ -40,7 +44,9 @@ class fee():
         try:
             self.ptFees.append(int(arg))
         except TypeError, e:
-            print 'addPtFee', e
+            print "error in your feetable, defaulting to zero fee!"
+            self.ptFees.append(0)
+            
     def setRegulations(self, arg):
         '''
         pass a string which sets the conditions for
