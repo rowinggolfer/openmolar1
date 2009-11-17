@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'apptTools.ui'
 #
-# Created: Tue Oct  6 21:47:28 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Tue Nov 17 13:42:07 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,21 +26,21 @@ class Ui_MainWindow(object):
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 4, 1)
-        self.pushButton = QtGui.QPushButton(self.centralwidget)
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout.addWidget(self.pushButton, 0, 1, 1, 1)
-        self.pushButton_2 = QtGui.QPushButton(self.centralwidget)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.gridLayout.addWidget(self.pushButton_2, 1, 1, 1, 1)
-        self.pushButton_3 = QtGui.QPushButton(self.centralwidget)
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.gridLayout.addWidget(self.pushButton_3, 2, 1, 1, 1)
+        self.extendBook_pushButton = QtGui.QPushButton(self.centralwidget)
+        self.extendBook_pushButton.setObjectName("extendBook_pushButton")
+        self.gridLayout.addWidget(self.extendBook_pushButton, 0, 1, 1, 1)
+        self.removeOld_pushButton = QtGui.QPushButton(self.centralwidget)
+        self.removeOld_pushButton.setObjectName("removeOld_pushButton")
+        self.gridLayout.addWidget(self.removeOld_pushButton, 1, 1, 1, 1)
+        self.editWeeks_pushButton = QtGui.QPushButton(self.centralwidget)
+        self.editWeeks_pushButton.setObjectName("editWeeks_pushButton")
+        self.gridLayout.addWidget(self.editWeeks_pushButton, 2, 1, 1, 1)
         self.openDay_pushButton = QtGui.QPushButton(self.centralwidget)
         self.openDay_pushButton.setObjectName("openDay_pushButton")
         self.gridLayout.addWidget(self.openDay_pushButton, 3, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 599, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 599, 22))
         self.menubar.setObjectName("menubar")
         self.menu_Quit = QtGui.QMenu(self.menubar)
         self.menu_Quit.setObjectName("menu_Quit")
@@ -55,9 +55,9 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_( u"Appointment Tools"))
-        self.pushButton.setText(_( u"Extend Books"))
-        self.pushButton_2.setText(_( u"Remove old weeks"))
-        self.pushButton_3.setText(_( u"Edit Standard Working Weeks for Clinicians"))
+        self.extendBook_pushButton.setText(_( u"Extend Books"))
+        self.removeOld_pushButton.setText(_( u"Remove old weeks"))
+        self.editWeeks_pushButton.setText(_( u"Edit Standard Working Weeks for Clinicians"))
         self.openDay_pushButton.setText(_( u"Open A Day"))
         self.menu_Quit.setTitle(_( u"&Quit"))
 

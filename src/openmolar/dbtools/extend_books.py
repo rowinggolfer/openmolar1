@@ -29,13 +29,14 @@ values (%s, %s, %s, %s, %s, %s)'''
             values = (curdate, dent, 0, 0, 0, "")
             try:
                 if cursor.execute(query, values):
-                    print "sucessfully added %s for dent %s"% (curdate, dent)
+                    print "successfully added %s for dent %s"% (curdate, dent)
             except IntegrityError:
                 print "%s already present for dent %s"% (curdate, dent)
             curdate+=delta
 
     cursor.close()
     db.commit()
+    return True
 
 
 if __name__ == "__main__":

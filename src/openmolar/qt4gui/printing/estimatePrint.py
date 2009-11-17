@@ -94,11 +94,11 @@ class estimate():
                 painter.drawText(QtCore.QRectF(x, y, 60, serifLineHeight),
                 str(number))
 
-                painter.drawText(QtCore.QRectF(x+60, y, 280, serifLineHeight),
-                QtCore.QString(item))            
+                painter.drawText(QtCore.QRectF(x+60, y, 280, 
+                serifLineHeight), QtCore.QString(item))            
 
                 painter.drawText(QtCore.QRectF(x+280, y, 100, 
-                serifLineHeight), QtCore.QString(localsettings.formatMoney(amount)), 
+                serifLineHeight), localsettings.formatMoney(amount), 
                 alignRight)
 
                 y += serifLineHeight

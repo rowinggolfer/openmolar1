@@ -28,7 +28,7 @@ from openmolar.qt4gui.dialogs import appt_wizard_dialog
 from openmolar.qt4gui.printing import apptcardPrint
 
 #-- secondary applications
-from openmolar.qt4gui.dialogs import apptTools
+from openmolar.qt4gui.tools import apptTools
 
 def oddApptLength(parent):
     '''
@@ -1560,6 +1560,6 @@ def appointmentTools(parent):
     this just invokes a dialog which has a choice of options
     '''
     if permissions.granted(parent):
-        parent.appointmentToolsWindow = QtGui.QMainWindow()
+        parent.appointmentToolsWindow = QtGui.QMainWindow(parent)
         parent.ui2 = apptTools.apptTools(parent.appointmentToolsWindow)
         parent.appointmentToolsWindow.show()

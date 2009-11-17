@@ -582,17 +582,30 @@ def updateLocalSettings(setting, value):
 def initiate(debug = False):
     print "initiating settings"
     global fees, message, dentDict, FeesDict, allowed_logins, ops, \
-    ops_reverse, activedents, activehygs, apptix, apptix_reverse
+    ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookend
     
     from openmolar import connect
     from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
+    from openmolar.dbtools import db_settings
+
+
     if connect.mainconnection != None:
         print "closing connection"
         connect.mainconnection.close()
         reload(connect)
+
+
+    data = db_settings.getData("bookend")
+    if data:
+        bookEndString = data[-1][0]
+        bookend = datetime.date(bookEndString.split(","))
+    print "bookEnd is %s"% bookEnd
+
     db = connect.connect()
     cursor = db.cursor()
+    
+    
     #set up four lists with key/value pairs reversedto make for easy referencing
 
     #first"ops" which is all practitioners

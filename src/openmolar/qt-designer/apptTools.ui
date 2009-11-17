@@ -36,21 +36,21 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="extendBook_pushButton">
       <property name="text">
        <string>Extend Books</string>
       </property>
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="removeOld_pushButton">
       <property name="text">
        <string>Remove old weeks</string>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="editWeeks_pushButton">
       <property name="text">
        <string>Edit Standard Working Weeks for Clinicians</string>
       </property>
@@ -71,7 +71,7 @@
      <x>0</x>
      <y>0</y>
      <width>599</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Quit">
