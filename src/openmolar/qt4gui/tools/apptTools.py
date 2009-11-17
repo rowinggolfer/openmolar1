@@ -61,8 +61,7 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
         if result == QtGui.QMessageBox.No:
             return
         else:
-            dl = QtGui.QInputDialog()
-            months, result = dl.getInt(self.parent, 
+            months, result = QtGui.QInputDialog.getInt(self.parent, 
             _("Extend Books"), _("How many months?"))
         
         if result:
