@@ -384,7 +384,18 @@ class appointmentWidget(QtGui.QWidget):
         rect = QtCore.QRectF(timeWidth, top,self.width()-timeWidth, bottom)
         
         painter.drawRect(rect)
+        
+        if False: #- test code to see what the widget looks like with a spacer
+            painter.setPen(QtGui.QColor("black"))
 
+            midx = (self.width() - timeWidth)/2+timeWidth
+            painter.drawLine(midx, 0, midx, top-1)
+            painter.drawLine(timeWidth, top-1,self.width(), top-1)
+            
+            bottomY = top+bottom+1
+            painter.drawLine(timeWidth, bottomY,self.width(), bottomY)
+            painter.drawLine(midx, bottomY, midx, self.height())
+                        
         # DRAW HORIZONTAL LINES AND TIMES
         
         while currentSlot < self.slotNo:
@@ -436,10 +447,14 @@ class appointmentWidget(QtGui.QWidget):
                 painter.setBrush(APPTCOLORS["BUSY"])
             else:
                 painter.setBrush(APPTCOLORS["default"])
-        
-            painter.drawRect(rect)
-            mytext = "%s %s %s %s %s"% (name.title(), trt1, trt2, trt3 ,memo)
-            painter.drawText(rect, mytext, option)
+            
+            if not (sno == 0 and (
+            endcell < self.firstSlot or startcell > self.lastSlot)):
+                painter.drawRect(rect)
+                mytext = "%s %s %s %s %s"% (name.title(), trt1, 
+                trt2, trt3 ,memo)
+
+                painter.drawText(rect, mytext, option)
 
         for appt in self.doubleAppts:
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
@@ -511,6 +526,7 @@ if __name__ == "__main__":
     
     form.setCurrentTime("945")
     form.clearAppts()
+    form.setAppointment("810","820","emergency",0)
     
     form.setAppointment("0845","0845","WALLACE N",3266,
     "DOUBLE","","","Good Patient",0,"P")

@@ -22,7 +22,7 @@ class blocker(Ui_block_wizard.Ui_Dialog):
         self.addTimeEdit()
         self.start_dateEdit.setDate(QtCore.QDate(2010,1,1)) #currentDate())     
         self.end_dateEdit.setDate(localsettings.bookEnd)     
-        
+        self.lineEdit.setText(_("emergency"))
         QtCore.QObject.connect(self.buttonBox, 
         QtCore.SIGNAL("clicked(QAbstractButton*)"),self.writeToDB)
         

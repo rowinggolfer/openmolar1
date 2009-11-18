@@ -912,6 +912,11 @@ def slots(start, apdata, fin, slotlength=1):
     '''
     #--slotlength is required appt  length, in minutes
 
+    #-- modified this on 18_11_2009, for the situation when a clinician's day
+    #-- start may be later than any first appointment in that book
+    #-- this facilitates having lunch etc.. already in place for a non used 
+    #-- day.
+
     aptstart = localsettings.minutesPastMidnight(start)
     dayfin = localsettings.minutesPastMidnight(fin)
     results = []
@@ -922,11 +927,14 @@ def slots(start, apdata, fin, slotlength=1):
             results.append(
             (localsettings.minutesPastMidnighttoWystime(aptstart),
             sMin-aptstart))
-        aptstart = fMin
+        if fMin > aptstart:
+            aptstart = fMin
+        if aptstart >= dayfin:
+            break
+        
     if dayfin-aptstart >= slotlength:
         results.append((localsettings.minutesPastMidnighttoWystime(aptstart),
         dayfin-aptstart))
-
     return tuple(results)
 
 def future_slots(length, startdate, enddate, dents, override_emergencies=False):

@@ -854,8 +854,8 @@ def aptOVviewMode(parent, Viewmode=True):
         parent.ui.main_tabWidget.setCurrentIndex(0)
     else:
         parent.ui.aptOVmode_label.setText("Scheduling Mode")
-    for cb in (parent.ui.aptOV_apptscheckBox, parent.ui.aptOV_emergencycheckBox,
-    parent.ui.aptOV_lunchcheckBox):
+    for cb in (parent.ui.aptOV_apptscheckBox, 
+    parent.ui.aptOV_emergencycheckBox):    #parent.ui.aptOV_lunchcheckBox):
         if cb.checkState() != Viewmode:
             cb.setChecked(Viewmode)
 
