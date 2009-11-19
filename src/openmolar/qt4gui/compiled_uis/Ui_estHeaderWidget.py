@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'estHeaderWidget.ui'
 #
-# Created: Sat Nov  7 23:05:23 2009
+# Created: Thu Nov 19 21:47:07 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!

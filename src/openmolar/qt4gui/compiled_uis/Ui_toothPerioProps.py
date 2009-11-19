@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'toothPerioProps.ui'
 #
-# Created: Tue Oct  6 21:47:27 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Thu Nov 19 21:47:04 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,14 +27,14 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.tooth_label, 0, 0, 1, 1)
         self.comboBox = QtGui.QComboBox(Form)
         self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.gridLayout.addWidget(self.comboBox, 0, 3, 1, 2)
         self.orig_frame = QtGui.QFrame(Form)
         self.orig_frame.setMinimumSize(QtCore.QSize(100, 100))
@@ -107,10 +107,10 @@ class Ui_Form(object):
         self.mobilitycomboBox = QtGui.QComboBox(Form)
         self.mobilitycomboBox.setMaximumSize(QtCore.QSize(16777215, 28))
         self.mobilitycomboBox.setObjectName("mobilitycomboBox")
-        self.mobilitycomboBox.addItem(QtCore.QString())
-        self.mobilitycomboBox.addItem(QtCore.QString())
-        self.mobilitycomboBox.addItem(QtCore.QString())
-        self.mobilitycomboBox.addItem(QtCore.QString())
+        self.mobilitycomboBox.addItem("")
+        self.mobilitycomboBox.addItem("")
+        self.mobilitycomboBox.addItem("")
+        self.mobilitycomboBox.addItem("")
         self.gridLayout.addWidget(self.mobilitycomboBox, 2, 4, 1, 1)
 
         self.retranslateUi(Form)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'forumPost.ui'
 #
-# Created: Tue Nov  3 00:32:53 2009
+# Created: Thu Nov 19 21:47:06 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!

@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'pt_task.ui'
 #
-# Created: Sat Oct 10 22:01:16 2009
-#      by: PyQt4 UI code generator 4.4.4
+# Created: Thu Nov 19 21:47:06 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -25,12 +25,12 @@ class Ui_Dialog(object):
         self.verticalLayout.addWidget(self.label_2)
         self.comboBox = QtGui.QComboBox(Dialog)
         self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.verticalLayout.addWidget(self.comboBox)
         self.gridLayout.addLayout(self.verticalLayout, 1, 0, 1, 1)
         self.verticalLayout_2 = QtGui.QVBoxLayout()

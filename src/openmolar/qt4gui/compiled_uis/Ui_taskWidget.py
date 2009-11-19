@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'taskWidget.ui'
 #
-# Created: Sat Oct 10 22:01:17 2009
-#      by: PyQt4 UI code generator 4.4.4
+# Created: Thu Nov 19 21:47:04 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 

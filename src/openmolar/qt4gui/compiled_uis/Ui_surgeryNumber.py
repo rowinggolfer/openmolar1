@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'surgeryNumber.ui'
 #
-# Created: Tue Oct  6 21:47:28 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Thu Nov 19 21:47:04 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,9 +26,9 @@ class Ui_Dialog(object):
         self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
         self.comboBox = QtGui.QComboBox(Dialog)
         self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
-        self.comboBox.addItem(QtCore.QString())
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.gridLayout.addWidget(self.comboBox, 1, 1, 1, 1)
         spacerItem1 = QtGui.QSpacerItem(75, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem1, 1, 2, 1, 1)

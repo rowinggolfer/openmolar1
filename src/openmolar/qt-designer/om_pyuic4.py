@@ -17,8 +17,8 @@ def compile_ui(ui_fname, outdir=""):
     outname = "Ui_%s.py"% name.rstrip(".ui")
     pyfile = os.path.join(outdir, outname)
 
-    if os.path.exists(pyfile) and \
-    (os.stat(pyfile).st_mtime > os.stat(ui_fname).st_mtime):
+    if os.path.exists(pyfile) and (
+    os.stat(pyfile).st_mtime > os.stat(ui_fname).st_mtime):
         return
 
     f = open(pyfile,"w")

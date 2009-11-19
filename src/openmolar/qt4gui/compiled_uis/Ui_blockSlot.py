@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'blockSlot.ui'
 #
-# Created: Fri Oct 30 09:05:50 2009
+# Created: Thu Nov 19 21:47:05 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!

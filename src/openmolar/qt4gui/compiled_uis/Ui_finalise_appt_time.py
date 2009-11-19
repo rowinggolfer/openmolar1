@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'finalise_appt_time.ui'
 #
-# Created: Tue Oct  6 21:47:28 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Thu Nov 19 21:47:06 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -25,7 +25,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.minutesB4label, 0, 1, 1, 1)
         self.verticalSlider = QtGui.QSlider(Dialog)
         self.verticalSlider.setMouseTracking(True)
-        self.verticalSlider.setProperty("value", QtCore.QVariant(0))
+        self.verticalSlider.setProperty("value", 0)
         self.verticalSlider.setTracking(True)
         self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
         self.verticalSlider.setInvertedAppearance(True)

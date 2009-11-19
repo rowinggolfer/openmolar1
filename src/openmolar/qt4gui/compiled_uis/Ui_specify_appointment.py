@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'specify_appointment.ui'
 #
-# Created: Tue Oct  6 21:47:29 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Thu Nov 19 21:47:06 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -33,22 +33,22 @@ class Ui_Dialog(object):
         self.apptlength_comboBox = QtGui.QComboBox(Dialog)
         self.apptlength_comboBox.setMaxVisibleItems(20)
         self.apptlength_comboBox.setObjectName("apptlength_comboBox")
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
-        self.apptlength_comboBox.addItem(QtCore.QString())
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
+        self.apptlength_comboBox.addItem("")
         self.gridLayout_3.addWidget(self.apptlength_comboBox, 1, 1, 1, 1)
         self.combinedApptcheckBox = QtGui.QCheckBox(Dialog)
         self.combinedApptcheckBox.setEnabled(False)
@@ -84,14 +84,14 @@ class Ui_Dialog(object):
         self.trt2_comboBox.setMinimumSize(QtCore.QSize(176, 0))
         self.trt2_comboBox.setMaxVisibleItems(20)
         self.trt2_comboBox.setObjectName("trt2_comboBox")
-        self.trt2_comboBox.addItem(QtCore.QString())
+        self.trt2_comboBox.addItem("")
         self.trt2_comboBox.setItemText(0, "")
         self.gridLayout.addWidget(self.trt2_comboBox, 1, 1, 1, 1)
         self.trt3_comboBox = QtGui.QComboBox(Dialog)
         self.trt3_comboBox.setMinimumSize(QtCore.QSize(176, 0))
         self.trt3_comboBox.setMaxVisibleItems(20)
         self.trt3_comboBox.setObjectName("trt3_comboBox")
-        self.trt3_comboBox.addItem(QtCore.QString())
+        self.trt3_comboBox.addItem("")
         self.trt3_comboBox.setItemText(0, "")
         self.gridLayout.addWidget(self.trt3_comboBox, 1, 2, 1, 1)
         self.label_4 = QtGui.QLabel(Dialog)
