@@ -6,7 +6,8 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
-import datetime
+import datetime, hashlib
+
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_permissions
 
@@ -22,7 +23,8 @@ def granted(parent=None):
     dl = Ui_permissions.Ui_Dialog()
     dl.setupUi(Dialog)
     if Dialog.exec_():
-        if dl.lineEdit.text() == localsettings.SUPERVISOR:
+        hash = hashlib.sha1(str((dl.lineEdit.text().toAscii()))).hexdigest() 
+        if  hash == localsettings.SUPERVISOR:
             localsettings.permissionsRaised=True
             resetExpireTime()
             return True
@@ -36,6 +38,6 @@ def resetExpireTime():
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
-    granted()
+    print granted()
     sys.exit(app.exec_())
 

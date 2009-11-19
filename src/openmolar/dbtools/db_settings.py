@@ -23,20 +23,38 @@ def getData(value):
     except connect.ProgrammingError:
         return ()
     
-def updateData(value, data, user):
+def insertData(value, data, user):
     '''
-    update a setting
+    insert a setting (leaving old values behind)
     '''
     db = connect.connect()
     cursor = db.cursor()
     query = '''insert into settings (value,data,modified_by,time_stamp) 
-            values (%s, %s, %s, NOW())'''
+    values (%s, %s, %s, NOW())'''
     values = (value, data, user)
     
     print "saving setting (%s, %s) to settings table"% (value, data)
     cursor.execute(query, values)
     db.commit()
     return True
+
+def updateData(value, data, user):
+    '''
+    update a setting
+    '''
+    db = connect.connect()
+    cursor = db.cursor()
+    query = '''update settings set data = %s, modified_by = %s, 
+    time_stamp = NOW() where value=%s'''
+    values = (data, user, value)
+    
+    print "updating setting (%s, %s) to settings table"% (value, data)
+    if not cursor.execute(query, values):
+        return insertData(value, data, user)
+    else:
+        db.commit()
+        return True
+
 
 if __name__ == "__main__":
     print getData("enddate")

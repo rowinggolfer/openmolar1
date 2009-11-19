@@ -156,7 +156,7 @@ def loadFeesTable(parent):
     loads the fee table
     '''
     headers = feesTable.getFeeHeaders()
-    parent.ui.fees_treeWidget.setHeaderLabels(headers)
+    parent.ui.standardFees_treeWidget.setHeaderLabels(headers)
     feeDict = feesTable.getFeeDict()
     fdKeys = feeDict.keys()
     fdKeys.sort()
@@ -165,7 +165,7 @@ def loadFeesTable(parent):
     for fdKey in fdKeys:
         feeLists = feeDict[fdKey]
         headerText = headers[fdKeys.index(fdKey)]
-        header = QtGui.QTreeWidgetItem(parent.ui.fees_treeWidget, 
+        header = QtGui.QTreeWidgetItem(parent.ui.standardFees_treeWidget, 
         [headerText])
 
         for feeTup in feeLists:
@@ -200,11 +200,11 @@ def feeSearch(parent):
         parent.feesTable_searchpos = 0
     item = parent.feesTable_searchList[parent.feesTable_searchpos]
 
-    parent.ui.fees_treeWidget.scrollToItem(item,
+    parent.ui.standardFees_treeWidget.scrollToItem(item,
     QtGui.QAbstractItemView.ScrollHint(
     QtGui.QAbstractItemView.PositionAtCenter))
 
-    parent.ui.fees_treeWidget.setCurrentItem(item)
+    parent.ui.standardFees_treeWidget.setCurrentItem(item)
     parent.feesTable_searchpos += 1
 
 def newFeeSearch(parent):
@@ -219,7 +219,7 @@ def newFeeSearch(parent):
     QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
 
     #--get a list of items containing that string
-    parent.feesTable_searchList = parent.ui.fees_treeWidget.findItems(
+    parent.standardFeesTable_searchList = parent.ui.standardFees_treeWidget.findItems(
     searchField, matchflags, 4)
 
     parent.feesTable_searchpos = 0
@@ -293,20 +293,20 @@ def expandFees(parent):
     dependent on the state of the feeExpand_radioButton
     '''
     if parent.ui.feeExpand_radioButton.isChecked():
-        parent.ui.fees_treeWidget.expandAll()
+        parent.ui.standardFees_treeWidget.expandAll()
     else:
-        parent.ui.fees_treeWidget.collapseAll()
+        parent.ui.standardFees_treeWidget.collapseAll()
     
 def expandFeeColumns(parent, arg):
-    parent.ui.fees_treeWidget.expandAll()
-    for i in range(parent.ui.fees_treeWidget.columnCount()):
-        parent.ui.fees_treeWidget.resizeColumnToContents(i)
+    parent.ui.standardFees_treeWidget.expandAll()
+    for i in range(parent.ui.standardFees_treeWidget.columnCount()):
+        parent.ui.standardFees_treeWidget.resizeColumnToContents(i)
     if arg < 1:
         #-- hide the geeky column
-        parent.ui.fees_treeWidget.setColumnWidth(3, 0)
+        parent.ui.standardFees_treeWidget.setColumnWidth(3, 0)
     if arg < 2:
         #-- hide the extra description column
-        parent.ui.fees_treeWidget.setColumnWidth(4, 0)
+        parent.ui.standardFees_treeWidget.setColumnWidth(4, 0)
     expandFees(parent)
     
 def makeBadDebt(parent):

@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>5</number>
+           <number>6</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>496</width>
+                        <width>599</width>
                         <height>473</height>
                        </rect>
                       </property>
@@ -2121,7 +2121,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>334</width>
+                        <width>607</width>
                         <height>485</height>
                        </rect>
                       </property>
@@ -2756,8 +2756,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>416</width>
+                        <height>302</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2948,7 +2948,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>366</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2981,7 +2981,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>210</width>
+                        <width>217</width>
                         <height>511</height>
                        </rect>
                       </property>
@@ -3350,7 +3350,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
+                        <width>601</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4807,8 +4807,8 @@ Note - this will not remove items which are currently there. </string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>620</width>
+                     <height>300</height>
                     </rect>
                    </property>
                   </widget>
@@ -5281,7 +5281,7 @@ Note - this will not remove items which are currently there. </string>
            <attribute name="title">
             <string>Feescales</string>
            </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_17">
+           <layout class="QHBoxLayout" name="horizontalLayout_16">
             <item>
              <widget class="QFrame" name="frame_5">
               <property name="minimumSize">
@@ -5520,18 +5520,49 @@ Note - this will not remove items which are currently there. </string>
              </widget>
             </item>
             <item>
-             <widget class="QTreeWidget" name="fees_treeWidget">
-              <property name="alternatingRowColors">
-               <bool>false</bool>
+             <widget class="QTabWidget" name="tabWidget_2">
+              <property name="currentIndex">
+               <number>1</number>
               </property>
-              <property name="animated">
+              <property name="movable">
                <bool>true</bool>
               </property>
-              <column>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </column>
+              <widget class="QWidget" name="tab_28">
+               <attribute name="title">
+                <string>Standard Fees</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_22">
+                <item>
+                 <widget class="QTreeWidget" name="standardFees_treeWidget">
+                  <property name="alternatingRowColors">
+                   <bool>false</bool>
+                  </property>
+                  <property name="animated">
+                   <bool>true</bool>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>1</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="tab_29">
+               <attribute name="title">
+                <string>+</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_23">
+                <item>
+                 <widget class="QLabel" name="label_46">
+                  <property name="text">
+                   <string>Create A New FeeTable</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
            </layout>

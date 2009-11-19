@@ -3277,7 +3277,7 @@ WITH PT RECORDS %d and %d''')% (
         '''
         fees_module.nhsRegsPDF(self)
 
-    def fees_treeWidgetItem_clicked(self,item):
+    def standardFees_treeWidgetItem_clicked(self,item):
         '''
         user has double clicked on an item in the fees_table
         '''
@@ -3985,9 +3985,9 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
 
-        QtCore.QObject.connect(self.ui.fees_treeWidget,
+        QtCore.QObject.connect(self.ui.standardFees_treeWidget,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
-        self.fees_treeWidgetItem_clicked)
+        self.standardFees_treeWidgetItem_clicked)
 
     def signals_charts(self):
 

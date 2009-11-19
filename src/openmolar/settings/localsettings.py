@@ -19,10 +19,10 @@ import subprocess
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 7th November 2009.
-__MAJOR_VERSION__= "0.1.7"
+#- updated 19th November 2009.
+__MAJOR_VERSION__= "0.1.8"
 
-SUPERVISOR = "boss"
+SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 CLIENT_SCHEMA_VERSION = "1.3"
 DB_SCHEMA_VERSION = "unknown"
@@ -505,16 +505,12 @@ def setlogqueries():
     logqueries = True
 
 def setOperator(u1, u2):
-    global operator, clinicianNo, clinicianInits
+    global operator
     if u2 == "":
         operator = u1
     else:
         operator = "%s/%s"% (u1, u2)
-    if u1 in activedents + activehygs:
-        clinicianNo = ops_reverse.get(u1)
-        clinicianInits = u1
-    else:
-        print "no clinician!"
+    
 
 def getLocalSettings():
     '''
@@ -598,8 +594,9 @@ def initiateUsers():
 
 def initiate(debug = False):
     print "initiating settings"
-    global fees, message, dentDict, FeesDict, ops, \
-    ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd
+    global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
+    ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd, \
+    clinicianNo, clinicianInits
     
     from openmolar import connect
     from openmolar.settings import fee_keys
@@ -620,7 +617,17 @@ def initiate(debug = False):
         int(bookEndVals[2]))
     
     print "bookEnd is %s"% bookEnd
-
+    
+    data = db_settings.getData("supervisor_pword")
+    if data:
+        SUPERVISOR = data[0][0]
+        print "supervisor password installed"
+    else:
+        print "#"*30
+        print "WARNING - no supervisor password is set, restting to default"
+        print "#"*30
+        db_settings.updateData("supervisor_pword", SUPERVISOR, 
+        "not found reset") 
     db = connect.connect()
     cursor = db.cursor()
     
@@ -641,7 +648,7 @@ def initiate(debug = False):
         else:
             ops[0] = "NONE"
             ops_reverse["NONE"] = 0
-
+    
     try:
         ##correspondence details for NHS forms
         query = "select id,inits,name,formalname,fpcno,quals "
@@ -681,6 +688,13 @@ def initiate(debug = False):
     except:
         print "error loading practitioners"
 
+    #-- set the clinician if possible
+    u1 = operator.split("/")[0].strip(" ")
+    if u1 in activedents + activehygs:
+        clinicianNo = ops_reverse.get(u1)
+        clinicianInits = u1
+    else:
+        print "no clinician!"
 
     #-- majorly important dictionary being created.
     #-- the keys are treatment codes for NHS scotland
