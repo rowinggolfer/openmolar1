@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'hygenist_wizard.ui'
 #
-# Created: Tue Oct  6 21:47:28 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Wed Nov 18 23:32:57 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -128,9 +128,7 @@ class Ui_Dialog(object):
         self.twovisit2_radioButton.setText(_( u"Part 2 of 2 visit treatment"))
         self.label_2.setText(_( u"Dentist/Hygenist"))
         self.label_4.setText(_( u"Standard Fee"))
-        self.fee_doubleSpinBox.setPrefix(_( u"£"))
         self.label_3.setText(_( u"Charge to Patient"))
-        self.ptFee_doubleSpinBox.setPrefix(_( u"£"))
         self.label_5.setText(_( u"Notes"))
         self.checkBox.setText(_( u"OHI given"))
 

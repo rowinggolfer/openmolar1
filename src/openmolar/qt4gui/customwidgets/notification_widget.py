@@ -15,7 +15,8 @@ class notificationGB(QtGui.QGroupBox):
     def __init__(self, parent=None):
         super(notificationGB,self).__init__(parent)
         
-        self.layout = QtGui.QVBoxLayout(self)
+        self.counter = None
+        self.layout = QtGui.QHBoxLayout(self)
         self.layout.setContentsMargins(2,2,2,2)
         
         t = QtCore.QTime.currentTime()
@@ -30,16 +31,21 @@ class notificationGB(QtGui.QGroupBox):
         icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         #self.label.setPixmap(QtGui.QPixmap(":/logo.png"))
         
-        self.cb = QtGui.QCheckBox("acknowledge")
-        self.cb.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.cb.setIcon(icon)
+        self.but = QtGui.QPushButton(_("close"))
+        self.but.setIcon(icon)
         self.layout.addWidget(self.label)
-        self.layout.addWidget(self.cb)
+        self.layout.addWidget(self.but)
         
         self.connect(self, QtCore.SIGNAL("toggled (bool)"), self.toggle)
 
-        self.connect(self.cb, QtCore.SIGNAL("toggled (bool)"), 
-        self.cb_toggled)
+        self.connect(self.but, QtCore.SIGNAL("clicked ()"), 
+        self.acknowledged)
+        
+    def setId(self, arg):
+        '''
+        give the widget a unique ID
+        '''
+        self.counter = arg
         
     def setMessage(self, message):
         '''
@@ -51,25 +57,26 @@ class notificationGB(QtGui.QGroupBox):
         '''
         called when the groupbox checkstate is altered by the user
         '''
-        for widg in (self.cb, self.label):
+        for widg in (self.but, self.label):
             widg.setVisible(self.isChecked())
         
-    def cb_toggled(self):
+    def acknowledged(self):
         '''
         the "acknowledge" check box has been toggled
         '''
-        self.emit(QtCore.SIGNAL("acknowledged"))
+        self.emit(QtCore.SIGNAL("acknowledged"), self.counter)
             
 class notificationWidget(QtGui.QWidget):
     '''
-    a custom label with a chain link
+    a custom widget which contains children which come and go
     '''
     def __init__(self, parent=None):
         super(notificationWidget,self).__init__(parent)
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
         self.forumAlertedAlready = False
-    
+        self.counter = 0
+        
     def addMessage(self, message, forumMessage=False):
         '''
         pass a message
@@ -83,6 +90,8 @@ class notificationWidget(QtGui.QWidget):
         
         widg = notificationGB(self)
         widg.setMessage(message)
+        widg.setId(self.counter)
+        self.counter += 1
         
         self.connect(widg, QtCore.SIGNAL("acknowledged"), self.removeMessage)
         
@@ -91,18 +100,18 @@ class notificationWidget(QtGui.QWidget):
         if forumMessage:
             self.forumAlertedAlready = True
         
-    def removeMessage(self):
+    def removeMessage(self, counter):
         '''
         user has "acknowledged a message
         '''
         #remove the widget
         i=0
         for widg in self.children():
-            if type(widg) == notificationGB:
-                if widg.cb.isChecked():
-                    widg.hide()
-                    i = self.children().index(widg)
-                    widg.deleteLater()
+            if type(widg) == notificationGB and widg.counter == counter:
+                widg.hide()
+                i = self.children().index(widg)
+                widg.deleteLater()
+                break
         #and if it was the top of the list, expand the next 
         if i == len(self.children())-1:
             widg = self.children()[i-1]

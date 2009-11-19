@@ -87,6 +87,9 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         QtCore.QObject.connect(self.testDB_pushButton, 
         QtCore.SIGNAL("clicked()"), self.testConnection)
         
+        QtCore.QObject.connect(self.stackedWidget, 
+        QtCore.SIGNAL("currentChanged (int)"), self.title_label_update)
+        
         for le in (self.rootPassword_lineEdit,
                     self.user_lineEdit,
                     self.password_lineEdit,
@@ -104,9 +107,9 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         if warning:
             QtGui.QMessageBox.warning(self.dialog, _("Error"), message)
         else:
-            QtGui.QMessageBox.information(self.dialog, _("Advisory"), message)
+            QtGui.QMessageBox.information(self.dialog, _("Advisory"), 
+            message)
         
-
     def next(self):
         '''
         time to move on to the next screen
@@ -130,6 +133,7 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         
         elif i == 2:
             self.stackedWidget.setCurrentIndex(3)
+            self.testDB_pushButton.setEnabled(True)
         
         elif i == 3:
             if self.createDemo_radioButton.isChecked():
@@ -160,14 +164,14 @@ class newsetup(Ui_newSetup.Ui_Dialog):
             
             if result == QtGui.QMessageBox.Yes:
                 self.stackedWidget.setCurrentIndex(6)
-                if self.actuallyCreateDB():
+                if self.createDemoDatabase():
                     self.advise(_("Database Created Sucessfully"))
                     self.stackedWidget.setCurrentIndex(4)
                     self.testDB_pushButton.setEnabled(True)
                     return
             self.advise(_("Database NOT Created"))
             self.stackedWidget.setCurrentIndex(5)        
-        
+                
     def back(self):
         '''
         time to move on to the next screen
@@ -180,7 +184,22 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         elif i == 5:
             i -= 1
         self.stackedWidget.setCurrentIndex(i-1)
-
+        
+    def title_label_update(self, i):
+        '''
+        updates the header label when the stacked widget changes
+        '''
+        message = (
+        _("Welcome to the openMolar settings wizard."),
+        _("Set the application Password"),
+        _("Server Location / Database Name"),
+        _("MySQL user name and password"),
+        _("Save settings and exit"),
+        _("Create a demo database"),
+        _("Creating Database"))[i]
+         
+        self.title_label.setText(message)
+        
     def snapshot(self):
         '''
         grab the current settings
@@ -200,7 +219,7 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         user is choosing between demo or existing db
         '''
         
-        self.groupBox.setEnabled(checked)#self.createDemo_radioButton.isChecked())
+        self.groupBox.setEnabled(checked)
         
         if checked:
             self.database_lineEdit.setFocus()
@@ -239,12 +258,7 @@ class newsetup(Ui_newSetup.Ui_Dialog):
 please recheck your settings'''), True)
             print "Connection failed!"
 
-    
-    def createDB(self):
-        self.blankXML = self.blankXML.replace(
-        "existing_database","openmolar_demo")
-
-    def actuallyCreateDB(self):
+    def createDemoDatabase(self):
         self.progressBar.setValue(0)
         self.snapshot()
         PB_LIMIT = 50
@@ -282,7 +296,7 @@ please recheck your settings'''), True)
             return True
         
         except Exception, e:
-            print "error in actuallyCreateDB",  e
+            print "error in creatDemoDB",  e
             self.advise( _("Error Creating Database") +"<hr>%s"% e,2)
         
     def echomode(self, arg):
@@ -308,14 +322,15 @@ please recheck your settings'''), True)
         else:
             self.password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
 
-    
     def finish(self):
+        self.snapshot()
         result = False
         try:
             dom = minidom.parseString(blankXML)
             #-- hash the password and save it
             PSWORD = hashlib.md5(hashlib.sha1(
-            str("diqug_ADD_SALT_3i2some"+self.PASSWORD)).hexdigest()).hexdigest()
+            str("diqug_ADD_SALT_3i2some"+self.PASSWORD)).hexdigest()
+            ).hexdigest()
 
             dom.getElementsByTagName(
             "system_password")[0].firstChild.replaceWholeText(PSWORD)
@@ -347,6 +362,7 @@ please recheck your settings'''), True)
             settingsDir = os.path.dirname(localsettings.global_cflocation)
             
             sucessful_save = False
+            
             try:
                 if not os.path.exists(settingsDir):
                     print 'putting a global settings file in', settingsDir,

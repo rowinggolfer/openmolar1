@@ -16,7 +16,7 @@ def getVersion():
         cursor.execute(query)
         rows = cursor.fetchall()
     except connect.ProgrammingError, ex:
-        print "no schema_verion found - ",ex
+        print "no settings table!",ex
         print "schema assumed to be 1.0"
         return "1.0"
     

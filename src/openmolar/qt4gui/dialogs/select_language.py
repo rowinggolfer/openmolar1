@@ -57,14 +57,14 @@ class language_dialog(Ui_choose_language.Ui_Dialog):
         self.dialog = dialog
         currentlanguage = getCurrentLanguage()
         self.radioboxes = []
-        i = 1
+        vbox = QtGui.QVBoxLayout()
         for language in getAvailableLanguages():
             rb = QtGui.QRadioButton(language)
             if currentlanguage in language.split(" - "):
                 rb.setChecked(True)
             self.radioboxes.append(rb)
-            self.dialog.layout().insertWidget(i, rb)
-            i += 1
+            vbox.addWidget(rb)
+        self.frame.setLayout(vbox)
             
     def getInput(self):
         if self.dialog.exec_():

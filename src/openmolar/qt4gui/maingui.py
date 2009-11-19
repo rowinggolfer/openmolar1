@@ -1990,6 +1990,12 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
                 data="No information available about this document, sorry"
             self.advise(data, 1)
 
+    def importDoc(self):
+        '''
+        import a document and store into the database
+        '''
+        self.advise("not yet implemented",1)
+
     def load_todays_patients_combobox(self):
         '''
         loads the quick select combobox, with all of todays's
@@ -2682,6 +2688,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             ##TODO add a note like (recall printed) to all relevant pt notes.
             ##or insert into new docs printed??
             pass
+    
+    def bulkMailPrint(self):
+        '''
+        the print button on the bulk mail tab has been clicked
+        '''
+        self.advise("not yet implemented",1)
 
     def showChartTable(self):
         '''
@@ -3734,8 +3746,14 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.QObject.connect(self.ui.standardLetterPushButton,
         QtCore.SIGNAL("clicked()"), self.printLetter)
 
-        QtCore.QObject.connect(self.ui.recallpushButton,
+        QtCore.QObject.connect(self.ui.recallLoad_pushButton,
         QtCore.SIGNAL("clicked()"), self.exportRecalls)
+        
+        QtCore.QObject.connect(self.ui.bulkMailPrint_pushButton,
+        QtCore.SIGNAL("clicked()"), self.bulkMailPrint)        
+
+        QtCore.QObject.connect(self.ui.importDoc_pushButton,
+        QtCore.SIGNAL("clicked()"), self.importDoc)        
 
         QtCore.QObject.connect(self.ui.account2_pushButton,
         QtCore.SIGNAL("clicked()"), self.accountButton2Clicked)
@@ -4316,7 +4334,7 @@ def main(arg):
     if not localsettings.successful_login and not "neil" in os.getcwd():
         print "unable to run... no login"
         sys.exit()
-
+    localsettings.initiate()
     app = QtGui.QApplication(arg)
     #-- user could easily play with this code and avoid login...
     #--the app would however, not have initialised.
@@ -4337,8 +4355,7 @@ if __name__ == "__main__":
     import gettext
     os.environ.setdefault('LANG', 'en')
     gettext.install('openmolar')
-    localsettings.initiate()
-
+    
     print "Qt Version: ", QtCore.QT_VERSION_STR
     print "PyQt Version: ", QtCore.PYQT_VERSION_STR
     main(sys.argv)

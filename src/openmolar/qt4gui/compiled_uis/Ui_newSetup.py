@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'newSetup.ui'
 #
-# Created: Mon Nov  9 01:38:46 2009
+# Created: Wed Nov 18 22:48:46 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,23 +12,23 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(375, 340)
+        Dialog.resize(403, 340)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.title_label = QtGui.QLabel(Dialog)
+        font = QtGui.QFont()
+        font.setWeight(75)
+        font.setBold(True)
+        self.title_label.setFont(font)
+        self.title_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.title_label.setObjectName("title_label")
+        self.verticalLayout.addWidget(self.title_label)
         self.stackedWidget = QtGui.QStackedWidget(Dialog)
         self.stackedWidget.setObjectName("stackedWidget")
         self.page = QtGui.QWidget()
         self.page.setObjectName("page")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.page)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.label_4 = QtGui.QLabel(self.page)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setBold(True)
-        self.label_4.setFont(font)
-        self.label_4.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_4.setObjectName("label_4")
-        self.verticalLayout_3.addWidget(self.label_4)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem)
         self.label_7 = QtGui.QLabel(self.page)
@@ -53,7 +53,7 @@ class Ui_Dialog(object):
         self.mainPassword_label.setAlignment(QtCore.Qt.AlignCenter)
         self.mainPassword_label.setWordWrap(True)
         self.mainPassword_label.setObjectName("mainPassword_label")
-        self.gridLayout.addWidget(self.mainPassword_label, 0, 0, 1, 4)
+        self.gridLayout.addWidget(self.mainPassword_label, 0, 0, 1, 3)
         self.label_5 = QtGui.QLabel(self.page_2)
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 1, 0, 1, 1)
@@ -65,7 +65,7 @@ class Ui_Dialog(object):
         self.mainpassword_checkBox = QtGui.QCheckBox(self.page_2)
         self.mainpassword_checkBox.setFocusPolicy(QtCore.Qt.NoFocus)
         self.mainpassword_checkBox.setObjectName("mainpassword_checkBox")
-        self.gridLayout.addWidget(self.mainpassword_checkBox, 1, 3, 1, 1)
+        self.gridLayout.addWidget(self.mainpassword_checkBox, 1, 2, 1, 1)
         self.label_8 = QtGui.QLabel(self.page_2)
         self.label_8.setObjectName("label_8")
         self.gridLayout.addWidget(self.label_8, 2, 0, 1, 1)
@@ -289,12 +289,12 @@ class Ui_Dialog(object):
         self.verticalLayout.addWidget(self.frame)
 
         self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(6)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_( u"OpenMolar - First Run"))
-        self.label_4.setText(_( u"Welcome to the openMolar settings wizard."))
+        self.title_label.setText(_( u"Welcome to the openMolar settings wizard."))
         self.label_7.setText(_( u"This will set your system password, configure your mysql server, and install a small demo database if required."))
         self.mainPassword_label.setText(_( u"Please enter a password to prevent unauthorised running of this application."))
         self.label_5.setText(_( u"Password"))
@@ -303,7 +303,7 @@ class Ui_Dialog(object):
         self.label_13.setText(_( u"Where is your mysql server located?"))
         self.label_12.setText(_( u"Host"))
         self.label_14.setText(_( u"Port"))
-        self.createDemo_radioButton.setText(_( u"Create A Demo Database on this server"))
+        self.createDemo_radioButton.setText(_( u"Create A Demo Database"))
         self.existingDB_radioButton.setText(_( u"Use with an existing database"))
         self.groupBox.setTitle(_( u"Database Name"))
         self.label_9.setText(_( u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -314,7 +314,7 @@ class Ui_Dialog(object):
         self.label_2.setText(_( u"User"))
         self.label_3.setText(_( u"(mysql)Password"))
         self.dbpassword_checkBox.setText(_( u"show"))
-        self.testDB_pushButton.setText(_( u"Test this connection"))
+        self.testDB_pushButton.setText(_( u"Test this user can connect"))
         self.label.setText(_( u"OK.... you are all set to go.\n"
 "\n"
 "When running openMolar, you are presented a login screen.\n"

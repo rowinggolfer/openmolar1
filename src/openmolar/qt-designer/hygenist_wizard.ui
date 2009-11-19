@@ -133,7 +133,7 @@
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="prefix">
-      <string>£</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -172,7 +172,7 @@
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="prefix">
-      <string>£</string>
+      <string/>
      </property>
     </widget>
    </item>

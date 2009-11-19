@@ -12,14 +12,17 @@ this module reads and write to the settings table of the database
 from openmolar import connect
 
 def getData(value):
-    db = connect.connect()
-    cursor = db.cursor()
-    query = 'select data from settings where value = %s' 
-    cursor.execute(query, value)
-    rows = cursor.fetchall()
-    cursor.close()
-    return rows
-
+    try:
+        db = connect.connect()
+        cursor = db.cursor()
+        query = 'select data from settings where value = %s' 
+        cursor.execute(query, value)
+        rows = cursor.fetchall()
+        cursor.close()
+        return rows
+    except connect.ProgrammingError:
+        return ()
+    
 def updateData(value, data, user):
     '''
     update a setting

@@ -43,7 +43,6 @@ except:  #TypeError
     import gettext
     gettext.install("openmolar",unicode=True)
 
-
 print "Version %s\nBzr Revision No. %s"% (__MAJOR_VERSION__, __build__)
 
 APPOINTMENT_CARD_HEADER =\
@@ -242,7 +241,6 @@ apptTypes = (
 _("EXAM"),
 _("BITE"),
 _("BT"),
-_("DOUBLE"),
 _("FAMILY"),
 _("FILL"),
 _("FIT"),
@@ -581,9 +579,26 @@ def updateLocalSettings(setting, value):
         print "error updating local settings file", e
         return False
 
+def initiateUsers():
+    '''
+    just grab user names. necessary because the db schema could be OOD here
+    '''
+    global allowed_logins
+    from openmolar import connect
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute("select id from opid")
+    #grab initials of those currently allowed to log in
+    trows = cursor.fetchall()
+    cursor.close()
+    allowed_logins = []
+    for row in trows:
+        allowed_logins.append(row[0])
+    
+
 def initiate(debug = False):
     print "initiating settings"
-    global fees, message, dentDict, FeesDict, allowed_logins, ops, \
+    global fees, message, dentDict, FeesDict, ops, \
     ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd
     
     from openmolar import connect
@@ -591,12 +606,12 @@ def initiate(debug = False):
     from openmolar.dbtools import feesTable
     from openmolar.dbtools import db_settings
 
-
+    #close the connection if exists - user could have been connected to a 
+    #a different db before.
     if connect.mainconnection != None:
         print "closing connection"
         connect.mainconnection.close()
         reload(connect)
-
 
     data = db_settings.getData("bookend")
     if data:
@@ -608,7 +623,6 @@ def initiate(debug = False):
 
     db = connect.connect()
     cursor = db.cursor()
-    
     
     #set up four lists with key/value pairs reversedto make for easy referencing
 
@@ -667,15 +681,6 @@ def initiate(debug = False):
     except:
         print "error loading practitioners"
 
-    try:
-        cursor.execute("select id from opid")
-        #grab initials of those currently allowed to log in
-        trows = cursor.fetchall()
-        allowed_logins = []
-        for row in trows:
-            allowed_logins.append(row[0])
-    except Exception, e:
-        print "error loading from opid", e
 
     #-- majorly important dictionary being created.
     #-- the keys are treatment codes for NHS scotland

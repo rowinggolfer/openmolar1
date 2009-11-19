@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'choose_language.ui'
 #
-# Created: Tue Nov 10 15:28:19 2009
+# Created: Wed Nov 18 23:32:57 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,8 +20,21 @@ class Ui_Dialog(object):
         self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
+        self.scrollArea = QtGui.QScrollArea(Dialog)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 406, 124))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.horizontalLayout = QtGui.QHBoxLayout(self.scrollAreaWidgetContents)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.frame = QtGui.QFrame(self.scrollAreaWidgetContents)
+        self.frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.horizontalLayout.addWidget(self.frame)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.verticalLayout.addWidget(self.scrollArea)
         self.label_2 = QtGui.QLabel(Dialog)
         self.label_2.setMinimumSize(QtCore.QSize(408, 40))
         self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)

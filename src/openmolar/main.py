@@ -25,7 +25,6 @@ from xml.dom import minidom
 FIRST_RUN_TESTING = False
 ##############################################################
 
-
 import gettext
 lang = os.environ.get("LANG")
 if lang:
@@ -215,7 +214,7 @@ Are you ready to proceed?</center>''')
                     #-- won't see the mysql password until this point
                     #-- this could and should possibly still be improved upon
                     #-- maybe by using an ssl connection to the server.
-                    localsettings.initiate()
+                    localsettings.initiateUsers()
                     uninitiated = False
 
                 u1_qstring = dl.user1_lineEdit.text().toUpper()

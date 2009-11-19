@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'exam_wizard.ui'
 #
-# Created: Tue Oct  6 21:47:28 2009
-#      by: PyQt4 UI code generator 4.5.4
+# Created: Wed Nov 18 23:32:56 2009
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -52,6 +52,7 @@ class Ui_Dialog(object):
         self.label_3.setObjectName("label_3")
         self.verticalLayout_3.addWidget(self.label_3)
         self.dateEdit = QtGui.QDateEdit(Dialog)
+        self.dateEdit.setMinimumSize(QtCore.QSize(100, 0))
         self.dateEdit.setCalendarPopup(True)
         self.dateEdit.setObjectName("dateEdit")
         self.verticalLayout_3.addWidget(self.dateEdit)
@@ -89,11 +90,11 @@ class Ui_Dialog(object):
         self.gridLayout_2.addWidget(self.checkBox, 4, 0, 1, 1)
         self.co_comboBox = QtGui.QComboBox(Dialog)
         self.co_comboBox.setObjectName("co_comboBox")
-        self.co_comboBox.addItem(QtCore.QString())
-        self.co_comboBox.addItem(QtCore.QString())
-        self.co_comboBox.addItem(QtCore.QString())
-        self.co_comboBox.addItem(QtCore.QString())
-        self.co_comboBox.addItem(QtCore.QString())
+        self.co_comboBox.addItem("")
+        self.co_comboBox.addItem("")
+        self.co_comboBox.addItem("")
+        self.co_comboBox.addItem("")
+        self.co_comboBox.addItem("")
         self.gridLayout_2.addWidget(self.co_comboBox, 4, 1, 1, 4)
         self.softTissues_checkBox = QtGui.QCheckBox(Dialog)
         self.softTissues_checkBox.setObjectName("softTissues_checkBox")
