@@ -64,6 +64,28 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         self.signals()
         self.back_pushButton.hide()
         self.groupBox.setEnabled(False)
+        self.specificLabel()
+        
+    def specificLabel(self):
+        '''
+        offer customised advice depending on the OS
+        '''
+        if "win" in sys.platform:
+            advice = _("If you ever need to run this again, " +
+            "delete the openmolar.conf file in ")
+            advice += "C:\\Program Files\\openmolar\\"
+        else:
+            advice = _("If you ever need to run this wizard again, " +
+            "( if your server location changes, " +
+            "or you require a new password ) ") 
+            advice += "<br>"+ _("type") + " 'openmolar firstrun' " 
+            advice += _("on the command line, or delete the file")
+            advice += "<br />"+"~/.openmolar/openmolar.conf" +"<br />"*2 
+            advice += _(
+            "For a more secure setup, you should move this file to") 
+            advice += "/etc/openmolar/openmolar.conf"
+            
+        self.sysAdvice_label.setText(advice)
         
     def signals(self):
         QtCore.QObject.connect(self.go_pushButton, 
@@ -133,8 +155,7 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         
         elif i == 2:
             self.stackedWidget.setCurrentIndex(3)
-            self.testDB_pushButton.setEnabled(True)
-        
+            
         elif i == 3:
             if self.createDemo_radioButton.isChecked():
                 self.stackedWidget.setCurrentIndex(5)
@@ -169,8 +190,11 @@ class newsetup(Ui_newSetup.Ui_Dialog):
                     self.stackedWidget.setCurrentIndex(4)
                     self.testDB_pushButton.setEnabled(True)
                     return
+            else:
+                self.stackedWidget.setCurrentIndex(3)        
+            
             self.advise(_("Database NOT Created"))
-            self.stackedWidget.setCurrentIndex(5)        
+            self.stackedWidget.setCurrentIndex(4)        
                 
     def back(self):
         '''
@@ -192,8 +216,8 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         message = (
         _("Welcome to the openMolar settings wizard."),
         _("Set the application Password"),
-        _("Server Location / Database Name"),
-        _("MySQL user name and password"),
+        _("Server Location"),
+        _("Database Settings"),
         _("Save settings and exit"),
         _("Create a demo database"),
         _("Creating Database"))[i]
@@ -220,7 +244,7 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         '''
         
         self.groupBox.setEnabled(checked)
-        
+            
         if checked:
             self.database_lineEdit.setFocus()
             self.database_lineEdit.selectAll()

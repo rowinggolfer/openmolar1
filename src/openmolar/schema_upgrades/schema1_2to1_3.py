@@ -60,7 +60,7 @@ class dbUpdater(QtCore.QThread):
             for sql_string in SQLSTRINGS:
                 cursor.execute(sql_string)
                 self.progressSig(10+70*i/commandNo,sql_string[:20]+"...")
-                sucess = True
+            sucess = True
         except Exception, e:
             print "FAILURE create_alter_tables", e
             db.rollback()

@@ -153,13 +153,14 @@ class dbUpdater(QtCore.QThread):
         cursor = db.cursor()
         progress_var = len(rows)
         i = 0
+        query='''insert into newestimates
+        (serialno, courseno, category, type, number, itemcode, description, 
+        fee, ptfee , csetype, feescale, dent, completed, carriedover , 
+        linked , modified_by , time_stamp) values 
+        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+            
         for row in rows:
             values = tuple(row + ["script", timestamp])
-            query='''insert into newestimates
-            (serialno, courseno, category, type, number, itemcode, description, 
-            fee, ptfee , csetype, feescale, dent, completed, carriedover , 
-            linked , modified_by , time_stamp) values 
-            (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
             cursor.execute(query, values)
             i += 1
             if i % 100 == 0:

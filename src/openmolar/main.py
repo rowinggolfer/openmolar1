@@ -133,9 +133,8 @@ def main():
     if not cf_Found:
         message = _('''<center><p>
 This appears to be your first running of openMolar<br />
-Before you run this application ,<br />
-We need to generate a settings file.<br />
-So that openmolar knows where your mysql server resides<br />
+Before you run this application, we need to generate a settings file.<br />
+So that openmolar knows where your mysql server resides<hr />
 If you do not have a database, you will be prompted to create one<</p>
 Are you ready to proceed?</center>''')
 
@@ -146,12 +145,15 @@ Are you ready to proceed?</center>''')
         
         if result == QtGui.QMessageBox.Yes:
             import firstRun
-            if not firstRun.run():
+            if not firstRun.run():                
                 my_app.closeAllWindows()
                 sys.exit()
             else:
                 AUTOUSER="user"
-                
+        else:
+            my_app.closeAllWindows()
+            sys.exit()
+                            
     try:
         dom = minidom.parse(localsettings.cflocation)
         sys_password = dom.getElementsByTagName("system_password")[0].\

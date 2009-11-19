@@ -24,7 +24,7 @@ __MAJOR_VERSION__= "0.1.8"
 
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
-CLIENT_SCHEMA_VERSION = "1.3"
+CLIENT_SCHEMA_VERSION = "1.4"
 DB_SCHEMA_VERSION = "unknown"
 DEBUGMODE = False
 ENCODING = locale.getpreferredencoding() #"latin-1" #necessary for the uk £ symbol
@@ -581,6 +581,12 @@ def initiateUsers():
     '''
     global allowed_logins
     from openmolar import connect
+    
+    if connect.mainconnection != None:
+        print "closing connection"
+        connect.mainconnection.close()
+        reload(connect)    
+    
     db = connect.connect()
     cursor = db.cursor()
     cursor.execute("select id from opid")

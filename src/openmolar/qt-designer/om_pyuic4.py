@@ -34,10 +34,10 @@ def compile_ui(ui_fname, outdir=""):
 
     #some hacks for 4.5/4.6 compatibility
     data = data.replace('setShowSortIndicator',"setSortIndicatorShown") 
-    
     data = data.replace('spinBox.setProperty("value", 8)',
     'spinBox.setProperty("value", QtCore.QVariant(8))')
-
+    
+    
     f = open(pyfile,"w")
     f.write(data)
     f.close()

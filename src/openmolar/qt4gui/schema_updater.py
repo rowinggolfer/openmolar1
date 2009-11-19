@@ -139,6 +139,29 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
                 else:
                     completed(False, 
                     _('Conversion to %s failed')% next_version)
+            
+            ###################################################################
+            ## UPDATE TO SCHEMA 1.4
+            next_version = "1.4"                            
+            if current < next_version:
+                updateProgress(1,
+                _("upgrading to schema version")+" %s"% next_version)        
+
+                from openmolar.schema_upgrades import schema1_3to1_4
+                dbu = schema1_3to1_4.dbUpdater(pb)
+            
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
+                updateProgress)
+
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
+                completed)
+            
+                if dbu.run():
+                    localsettings.DB_SCHEMA_VERSION = next_version
+                else:
+                    completed(False, 
+                    _('Conversion to %s failed')% next_version)
+            
                     
             else:
                 completed(False,_(

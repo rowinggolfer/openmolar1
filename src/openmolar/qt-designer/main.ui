@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>599</width>
+                        <width>496</width>
                         <height>473</height>
                        </rect>
                       </property>
@@ -2121,7 +2121,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>607</width>
+                        <width>334</width>
                         <height>485</height>
                        </rect>
                       </property>
@@ -2756,8 +2756,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>416</width>
-                        <height>302</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2948,7 +2948,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>366</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2981,7 +2981,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>210</width>
                         <height>511</height>
                        </rect>
                       </property>
@@ -3350,7 +3350,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>601</width>
+                        <width>267</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4807,8 +4807,8 @@ Note - this will not remove items which are currently there. </string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>620</width>
-                     <height>300</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -5520,12 +5520,9 @@ Note - this will not remove items which are currently there. </string>
              </widget>
             </item>
             <item>
-             <widget class="QTabWidget" name="tabWidget_2">
+             <widget class="QTabWidget" name="fees_tabWidget">
               <property name="currentIndex">
-               <number>1</number>
-              </property>
-              <property name="movable">
-               <bool>true</bool>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_28">
                <attribute name="title">
