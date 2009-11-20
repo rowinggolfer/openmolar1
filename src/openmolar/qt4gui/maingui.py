@@ -4329,13 +4329,12 @@ WITH PT RECORDS %d and %d''')% (
 ################################################################################
 
 
-def main(arg):
+def main(app):
     #-- app required for polite shutdown
     if not localsettings.successful_login and not "neil" in os.getcwd():
         print "unable to run... no login"
         sys.exit()
     localsettings.initiate()
-    app = QtGui.QApplication(arg)
     #-- user could easily play with this code and avoid login...
     #--the app would however, not have initialised.
 
@@ -4358,4 +4357,6 @@ if __name__ == "__main__":
     
     print "Qt Version: ", QtCore.QT_VERSION_STR
     print "PyQt Version: ", QtCore.PYQT_VERSION_STR
-    main(sys.argv)
+    app = QtGui.QApplication(sys.argv)
+    
+    main(app)

@@ -57,7 +57,7 @@ def proceed():
     if localsettings.CLIENT_SCHEMA_VERSION > sv:
         print "schema is out of date"
         from openmolar.qt4gui import schema_updater
-        sys.exit(schema_updater.main(sys.argv))
+        sys.exit(schema_updater.main(sys.argv, my_app))
     elif localsettings.CLIENT_SCHEMA_VERSION < sv:
         print "client is out of date....."
         compatible  = schema_version.clientCompatibility(
@@ -84,11 +84,11 @@ and you can continue if you wish</p>
             
             if result == QtGui.QMessageBox.Yes:
                 from openmolar.qt4gui import maingui
-                sys.exit(maingui.main(sys.argv))
+                sys.exit(maingui.main(my_app))
     else:
         print "schema/client versions are correct"
         from openmolar.qt4gui import maingui
-        sys.exit(maingui.main(sys.argv))
+        sys.exit(maingui.main(my_app))
     sys.exit()
 
 def main():

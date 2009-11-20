@@ -20,22 +20,22 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
     
-def proceed():
+def proceed(app):
     '''
     on to the main gui.
     '''
     from openmolar.qt4gui import maingui                
-    sys.exit(maingui.main(sys.argv))
+    sys.exit(maingui.main(app))
 
 def logInAgainMessage():
     QtGui.QMessageBox.information(None, "Update Schema",
     "Success - Now please log in again to start openmolar")
 
-def main(arg):
+def main(arg, app):
     '''
     main function
     '''
-    app = QtGui.QApplication(arg)
+    #app = QtGui.QApplication(arg)
     pb = QtGui.QProgressDialog()
         
     def updateProgress(arg, message):
@@ -172,7 +172,7 @@ If this is not the case, something odd has happened,
 please let the developers of openmolar know ASAP.</p>'''))        
             
             pb.destroy()
-            proceed()          
+            proceed(app)          
         
         except Exception, e:
             #fatal error!
@@ -206,4 +206,5 @@ if __name__ == "__main__":
             
     wkdir = determine_path()
     sys.path.append(os.path.dirname(wkdir))
-    main(sys.argv)
+    app = QtGui.QApplication(sys.argv)
+    main(sys.argv, app)
