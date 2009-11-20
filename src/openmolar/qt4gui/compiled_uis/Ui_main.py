@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Thu Nov 19 21:47:04 2009
+# Created: Fri Nov 20 14:54:15 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -1179,7 +1179,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName("estimate_scrollArea")
         self.scrollAreaWidgetContents_11 = QtGui.QWidget(self.estimate_scrollArea)
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 98, 200))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 516, 200))
         self.scrollAreaWidgetContents_11.setObjectName("scrollAreaWidgetContents_11")
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
@@ -1196,7 +1196,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_4 = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 210, 511))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 217, 511))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1323,7 +1323,6 @@ class Ui_MainWindow(object):
         self.plan_treeWidget.setSizePolicy(sizePolicy)
         self.plan_treeWidget.setAlternatingRowColors(True)
         self.plan_treeWidget.setAnimated(True)
-        self.plan_treeWidget.setHeaderHidden(False)
         self.plan_treeWidget.setObjectName("plan_treeWidget")
         self.plan_treeWidget.header().setSortIndicatorShown(False)
         self.horizontalLayout_5.addWidget(self.plan_treeWidget)
@@ -1631,7 +1630,7 @@ class Ui_MainWindow(object):
         self.aptOVdentscrollArea.setWidgetResizable(True)
         self.aptOVdentscrollArea.setObjectName("aptOVdentscrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.aptOVdentscrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 198, 159))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(2)
@@ -1711,7 +1710,7 @@ class Ui_MainWindow(object):
         self.appt1scrollArea.setWidgetResizable(True)
         self.appt1scrollArea.setObjectName("appt1scrollArea")
         self.appt1scrollAreaWidgetContents = QtGui.QWidget(self.appt1scrollArea)
-        self.appt1scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 187, 498))
+        self.appt1scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.appt1scrollAreaWidgetContents.setObjectName("appt1scrollAreaWidgetContents")
         self._2 = QtGui.QVBoxLayout(self.appt1scrollAreaWidgetContents)
         self._2.setObjectName("_2")
@@ -1755,7 +1754,7 @@ class Ui_MainWindow(object):
         self.appt2scrollArea.setWidgetResizable(True)
         self.appt2scrollArea.setObjectName("appt2scrollArea")
         self.appt2scrollAreaWidgetContents = QtGui.QWidget(self.appt2scrollArea)
-        self.appt2scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 187, 499))
+        self.appt2scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.appt2scrollAreaWidgetContents.setObjectName("appt2scrollAreaWidgetContents")
         self.appt2scrollArea.setWidget(self.appt2scrollAreaWidgetContents)
         self.gridLayout_32.addWidget(self.appt2scrollArea, 2, 0, 1, 2)
@@ -1797,7 +1796,7 @@ class Ui_MainWindow(object):
         self.appt3scrollArea.setWidgetResizable(True)
         self.appt3scrollArea.setObjectName("appt3scrollArea")
         self.appt3scrollAreaWidgetContents = QtGui.QWidget(self.appt3scrollArea)
-        self.appt3scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 187, 499))
+        self.appt3scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.appt3scrollAreaWidgetContents.setObjectName("appt3scrollAreaWidgetContents")
         self._3 = QtGui.QVBoxLayout(self.appt3scrollAreaWidgetContents)
         self._3.setObjectName("_3")
@@ -1821,7 +1820,7 @@ class Ui_MainWindow(object):
         self.appt4scrollArea.setWidgetResizable(True)
         self.appt4scrollArea.setObjectName("appt4scrollArea")
         self.appt3scrollAreaWidgetContents_2 = QtGui.QWidget(self.appt4scrollArea)
-        self.appt3scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 187, 499))
+        self.appt3scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.appt3scrollAreaWidgetContents_2.setObjectName("appt3scrollAreaWidgetContents_2")
         self._4 = QtGui.QVBoxLayout(self.appt3scrollAreaWidgetContents_2)
         self._4.setObjectName("_4")
@@ -2319,6 +2318,7 @@ class Ui_MainWindow(object):
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setObjectName("splitter")
         self.forum_treeWidget = QtGui.QTreeWidget(self.splitter)
+        self.forum_treeWidget.setAnimated(True)
         self.forum_treeWidget.setObjectName("forum_treeWidget")
         self.forum_treeWidget.headerItem().setText(0, "1")
         self.forum_treeWidget.header().setSortIndicatorShown(True)
@@ -2515,8 +2515,8 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(6)
-        self.tabWidget.setCurrentIndex(4)
+        self.main_tabWidget.setCurrentIndex(7)
+        self.tabWidget.setCurrentIndex(7)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
         self.diary_tabWidget.setCurrentIndex(0)
@@ -2898,6 +2898,7 @@ class Ui_MainWindow(object):
         self.label_46.setText(_( u"Create A New FeeTable"))
         self.fees_tabWidget.setTabText(self.fees_tabWidget.indexOf(self.tab_29), _( u"+"))
         self.main_tabWidget.setTabText(self.main_tabWidget.indexOf(self.tab_22), _( u"Feescales"))
+        self.forum_treeWidget.setSortingEnabled(True)
         self.forumReply_pushButton.setText(_( u"Reply"))
         self.forumDelete_pushButton.setText(_( u"Delete"))
         self.forumNewTopic_pushButton.setText(_( u"New Topic"))

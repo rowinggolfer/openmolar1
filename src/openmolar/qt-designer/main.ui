@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>6</number>
+           <number>7</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>4</number>
+                  <number>7</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -2948,7 +2948,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>516</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2981,7 +2981,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>210</width>
+                        <width>217</width>
                         <height>511</height>
                        </rect>
                       </property>
@@ -3286,9 +3286,6 @@ Note - this will not remove items which are currently there. </string>
                         </property>
                         <property name="animated">
                          <bool>true</bool>
-                        </property>
-                        <property name="headerHidden">
-                         <bool>false</bool>
                         </property>
                         <attribute name="headerShowSortIndicator" stdset="0">
                          <bool>false</bool>
@@ -4045,8 +4042,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>198</width>
-                    <height>159</height>
+                    <width>98</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4227,8 +4224,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>187</width>
-                         <height>498</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4326,8 +4323,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>187</width>
-                         <height>499</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                       </widget>
@@ -4424,8 +4421,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>187</width>
-                         <height>499</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4477,8 +4474,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>187</width>
-                         <height>499</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>
@@ -5579,6 +5576,12 @@ Note - this will not remove items which are currently there. </string>
                 <enum>Qt::Vertical</enum>
                </property>
                <widget class="QTreeWidget" name="forum_treeWidget">
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="animated">
+                 <bool>true</bool>
+                </property>
                 <attribute name="headerShowSortIndicator" stdset="0">
                  <bool>true</bool>
                 </attribute>
