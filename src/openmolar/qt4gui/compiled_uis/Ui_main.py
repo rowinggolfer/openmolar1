@@ -1653,7 +1653,7 @@ class Ui_MainWindow(object):
         self.fontSize_spinBox.setMaximumSize(QtCore.QSize(51, 16777215))
         self.fontSize_spinBox.setMinimum(4)
         self.fontSize_spinBox.setMaximum(16)
-        self.fontSize_spinBox.setProperty("value", 8)
+        self.fontSize_spinBox.setProperty("value", QtCore.QVariant(8))
         self.fontSize_spinBox.setObjectName("fontSize_spinBox")
         self.gridLayout_5.addWidget(self.fontSize_spinBox, 6, 2, 1, 2)
         self.aptOVmode_label = QtGui.QLabel(self.frame_18)

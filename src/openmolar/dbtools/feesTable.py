@@ -6,8 +6,135 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import sys
+from xml.dom import minidom
+
 from openmolar.connect import connect
 from openmolar.settings import localsettings
+from openmolar.settings import fee_keys
+
+class feeTables():
+    def __init__(self):
+        self.tables = {}
+        self.getTables()
+        self.loadTables()
+        
+    def getTables(self):
+        '''
+        get the key to our tables
+        '''
+        db = connect()
+        cursor = db.cursor() 
+        
+        query = ''' select tablename, categories, description, startdate, 
+        enddate, feecoltypes from feetable_key 
+        where in_use = True order by display_order'''
+
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        cursor.close()
+        
+        i = 0
+        for row in rows:
+            ft = feeTable(row[0], i)
+            ft.setCategories(row[1])
+            ft.setDescription(row[2])
+            ft.setStartDate(row[3])
+            ft.setEndDate(row[4])
+            ft.setFeeColTypes(row[5])
+            self.tables[i] = ft
+
+    def loadTables(self):
+        '''
+        iterate through the child tables, and get them loaded
+        '''
+        for table in self.tables.values():
+            table.loadFees()
+
+class feeTable():
+    def __init__(self, tablename, index):
+        self.tablename = tablename
+        self.index = index
+        self.feeColNames = []
+        self.columnQuery = ""
+        self.feesDict = {}
+        
+    def setCategories(self, arg):
+        '''
+        the categories will be a list like "P", "PB" etc...
+        '''
+        cats = arg.split(",")
+        print "set Categories", cats
+        self.categories = cats
+        
+    def setDescription(self, arg):
+        '''
+        a user friendly description of the table
+        '''
+        self.description = arg
+    
+    def setStartDate(self, arg):
+        '''
+        the date the feetable started (can be in the future)
+        '''
+        self.startDate = arg
+    
+    def setEndDate(self, arg):
+        '''
+        the date the feetable became obsolete (can be in the past)
+        '''
+        self.endDate = arg
+    
+    def setFeeColTypes(self, arg):
+        '''
+        arg is some xml logic to let me know what columns to query
+        '''
+        dom = minidom.parseString(arg)
+        print dom.toxml()
+        
+        self.feeColNames = []  ##TODO - parse the xmlfor this...
+        self.columnQuery = "" ##TODO - parse the xmlfor this...
+        
+    def loadFees(self):
+        '''
+        now load the fees
+        '''
+        # build a query
+        query = "select section, code, USERCODE, regulation, "
+        query += "description, brief_description, hide , fee %s " % self.columnQuery
+        query += "from %s"% self.tablename
+        
+        db = connect()
+        cursor = db.cursor() 
+                
+        if localsettings.logqueries:
+            print query
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            code = row[0]
+            #itemCodes.append(code)
+            usercode = row[2]    ##  <--- not used !!! ???
+            if code != "":
+                if self.feesDict.has_key(code):
+                    self.feesDict[code].addFee(row[7])
+                else:
+                    newFee = fee_keys.fee()
+                    newFee.description = row[5]
+                    newFee.setRegulations(row[3])
+                    newFee.addFee(row[7])
+                    self.feesDict[code] = newFee
+
+            #if usercode != "" and usercode != None:
+            #    treatmentCodes[usercode] = code
+                
+
+    ######## this is the main focus of development for the 0.1.8 version
+
+
+##############################################################################
+## below this line is old code. 
+## NW - 2009_11_08
+
 
 private_only = False
 nhs_only = False
@@ -112,9 +239,5 @@ def feesHtml():
     return toHtml(getFees())
 
 if __name__ == "__main__":
-    #localsettings.initiate(False)
-    #print localsettings.privateFees
-    #print getFeeDict()
-    fd = getFeeDictForModification()
-    #fd[1] = (1,1, '0101', '1a', 'CE', '', 'Clinical Examination^', 'clinical exam', 801, 2, 803,4, 1951)
-    #updateFeeTable(fd,[1])
+    ft = feeTables()
+    print ft

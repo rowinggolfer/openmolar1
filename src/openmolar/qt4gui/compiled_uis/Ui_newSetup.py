@@ -256,7 +256,7 @@ class Ui_Dialog(object):
         spacerItem9 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem9)
         self.progressBar = QtGui.QProgressBar(self.page_7)
-        self.progressBar.setProperty("value", 0)
+        self.progressBar.setProperty("value", QtCore.QVariant(0))
         self.progressBar.setObjectName("progressBar")
         self.verticalLayout_4.addWidget(self.progressBar)
         spacerItem10 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)

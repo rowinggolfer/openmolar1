@@ -29,29 +29,31 @@ def compile_ui(ui_fname, outdir=""):
     data = f.read()
     f.close()
 
-    data = data.replace(", None, QtGui.QApplication.UnicodeUTF8", "")
-    data= re.sub('QtGui.QApplication.translate\(".*", ', "_( u", data)
+    newdata = data.replace(", None, QtGui.QApplication.UnicodeUTF8", "")
+    newdata = re.sub('QtGui.QApplication.translate\(".*", ', "_( u", newdata)
 
     #some hacks for 4.5/4.6 compatibility
-    data = data.replace('setShowSortIndicator',"setSortIndicatorShown") 
+    newdata = newdata.replace('setShowSortIndicator',"setSortIndicatorShown") 
     
     #turn stuff like
     # spinBox.setProperty("values", 8)
     # to
     # spinBox.setProperty("values", QtCore.QVariant(8))
     
-    matches = re.finditer('setProperty\("value", (\d+)\)', data)
+    matches = re.finditer('setProperty\("value", (\d+)\)', newdata)
 
     for m in matches:
-        testString = re.sub(m.groups()[0],
-        "QtCore.QVariant(%s)"%m.groups()[0], data)
+        newdata = newdata.replace(m.group(),
+        'setProperty("value", QtCore.QVariant(%s))'%m.groups()[0])
 
-
-    f = open(pyfile,"w")
-    f.write(data)
-    f.close()
+    
+    if newdata != data:
+        print "writing changes"
+        f = open(pyfile,"w")
+        f.write(newdata)
+        f.close()
     return True
-
+    
 if __name__ == "__main__":
     for ui_file in os.listdir(os.getcwd()):
         #print ui_file,"....",

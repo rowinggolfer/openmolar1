@@ -85,7 +85,7 @@ class Ui_Dialog(object):
         self.progress_label.setObjectName("progress_label")
         self.gridLayout_2.addWidget(self.progress_label, 9, 0, 1, 4)
         self.progressBar = QtGui.QProgressBar(Dialog)
-        self.progressBar.setProperty("value", 0)
+        self.progressBar.setProperty("value", QtCore.QVariant(0))
         self.progressBar.setObjectName("progressBar")
         self.gridLayout_2.addWidget(self.progressBar, 10, 0, 1, 4)
 
