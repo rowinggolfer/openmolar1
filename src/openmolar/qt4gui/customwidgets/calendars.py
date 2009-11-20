@@ -25,7 +25,8 @@ class controlCalendar(QtGui.QCalendarWidget):
     a calendar which has capabilities for highlighting weeks and months
     '''
     def __init__(self, *args):
-        QtGui.QCalendarWidget.__init__(self, *args)
+        super(controlCalendar, self).__init__()
+        #QtGui.QCalendarWidget.__init__(self, *args)
         self.setFirstDayOfWeek(QtCore.Qt.Monday)
         self.setGridVisible(True)
         self.setHorizontalHeaderFormat(QtGui.QCalendarWidget.SingleLetterDayNames)
