@@ -18,6 +18,12 @@ class feeTables():
         self.getTables()
         self.loadTables()
         
+    def __repr__(self):
+        retarg = []
+        for table in self.tables.values():
+            retarg.append(table.tablename)
+        return str(retarg)
+    
     def getTables(self):
         '''
         get the key to our tables
@@ -42,6 +48,7 @@ class feeTables():
             ft.setEndDate(row[4])
             ft.setFeeColTypes(row[5])
             self.tables[i] = ft
+            i += 1
 
     def loadTables(self):
         '''
@@ -57,13 +64,13 @@ class feeTable():
         self.feeColNames = []
         self.columnQuery = ""
         self.feesDict = {}
+        self.categories = []
         
     def setCategories(self, arg):
         '''
         the categories will be a list like "P", "PB" etc...
         '''
         cats = arg.split(",")
-        print "set Categories", cats
         self.categories = cats
         
     def setDescription(self, arg):
@@ -89,7 +96,7 @@ class feeTable():
         arg is some xml logic to let me know what columns to query
         '''
         dom = minidom.parseString(arg)
-        print dom.toxml()
+        #print dom.toxml()
         
         self.feeColNames = []  ##TODO - parse the xmlfor this...
         self.columnQuery = "" ##TODO - parse the xmlfor this...
@@ -111,14 +118,14 @@ class feeTable():
         cursor.execute(query)
         rows = cursor.fetchall()
         for row in rows:
-            code = row[0]
+            code = row[1]
             #itemCodes.append(code)
-            usercode = row[2]    ##  <--- not used !!! ???
             if code != "":
                 if self.feesDict.has_key(code):
                     self.feesDict[code].addFee(row[7])
                 else:
                     newFee = fee_keys.fee()
+                    newFee.usercode = row[2]
                     newFee.description = row[5]
                     newFee.setRegulations(row[3])
                     newFee.addFee(row[7])

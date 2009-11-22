@@ -266,7 +266,9 @@ def run():
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....
     print "starting openMolar.... using main.py as __main__"
-
+    print "Qt Version: ", QtCore.QT_VERSION_STR
+    print "PyQt Version: ", QtCore.PYQT_VERSION_STR
+    
     def determine_path ():
         """Borrowed from wxglade.py"""
         try:

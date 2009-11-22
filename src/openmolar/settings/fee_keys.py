@@ -25,7 +25,8 @@ class fee():
         self.fees=[]
         self.ptFees=[]
         self.regulations=""
-
+        self.usercode = ""
+        
     def addFee(self, arg):
         '''
         add a fee to the list of fees contained by this class

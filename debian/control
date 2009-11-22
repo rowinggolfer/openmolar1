@@ -9,7 +9,7 @@ Homepage: https://launchpad.net/openmolar
 
 Package: openmolar
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python-qt4, python-mysqldb, xdg-utils
+Depends: ${misc:Depends}, ${python:Depends}, python-qt4 (>=4.4.0), python-mysqldb, xdg-utils
 XB-Python-Version: ${python:Versions}
 Description: Dental Practice Management Software
  see https://launchpad.net/openmolar for project description and links
