@@ -186,6 +186,59 @@ def loadFeesTable(parent):
     parent.feesTable_searchList = []
     parent.feesTable_searchpos = 0
     
+    newLoadFeesTable(parent)
+
+def newLoadFeesTable(parent):
+    '''
+    fees table now has multiple tabs, load them
+    '''
+    feeTables = feesTable.feeTables()
+
+    tableKeys = feeTables.tables.keys()
+    tableKeys.sort()
+
+    for index in tableKeys:
+        table = feeTables.tables[index]
+        widg = QtGui.QWidget()
+        #-- insert the tab one from the end (end tab reserved for the
+        #-- specific use of adding a new fee table)
+        i = parent.ui.fees_tabWidget.count()
+        parent.ui.fees_tabWidget.insertTab(i-1, widg, table.tablename)
+        vbox = QtGui.QVBoxLayout()
+
+        label = QtGui.QLabel()
+
+        label.setText("%s %s %s"% (table.index, table.tablename, 
+        table.categories))
+        
+        tab = QtGui.QTreeWidget()
+
+        vbox.addWidget(label)
+        vbox.addWidget(tab)
+
+        widg.setLayout(vbox)
+
+        headers = ("code", "usercode", "description", "fees", "regulation")
+        tab.setHeaderLabels(headers)
+
+        feeDict = table.feesDict
+
+        keys=feeDict.keys()
+        keys.sort()
+        for key in keys:
+            
+            feekey = feeDict[key]
+            
+            cols = [str(key), feekey.usercode, feekey.description, 
+            str(feekey.fees), feekey.regulations]    
+            
+            QtGui.QTreeWidgetItem(tab, cols)
+
+        tab.expandAll()
+        for i in range(tab.columnCount()):
+                tab.resizeColumnToContents(i)
+
+
 def feeSearch(parent):
     '''
     fee search button clicked...
