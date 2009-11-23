@@ -10,19 +10,38 @@ from xml.dom import minidom
 
 from openmolar.connect import connect
 from openmolar.settings import localsettings
-from openmolar.settings import fee_keys
+from openmolar.settings import fee_keys   # soon to be removed!
+from openmolar.dbtools import feeClass
 
 class feeTables():
+    '''
+    a wrapper class to contain as many fee tables as the user has outlined.
+    '''
     def __init__(self):
         self.tables = {}
         self.getTables()
         self.loadTables()
         
     def __repr__(self):
-        retarg = []
-        for table in self.tables.values():
-            retarg.append(table.tablename)
-        return str(retarg)
+        '''
+        a readable description of the object
+        '''
+        retarg = "%d Tables \n"% len(self.tables)
+        for key in self.tables:
+            table = self.tables[key]
+            retarg += "===" * 12 + "\n"
+            retarg += "   table %s - %s\n"% (key, table.tablename)
+            retarg += "%s \n"% table.description
+            retarg += "valid %s - %s\n"% (
+            localsettings.formatDate(table.startDate),
+            localsettings.formatDate(table.endDate))
+        
+            retarg += "       categories %s\n"% table.categories
+            retarg += "       fee cols %s\n"% str(table.feeColNames)
+            retarg += "    pt_fee cols %s\n"% str(table.pt_feeColNames)            
+            retarg += "       query %s\n"% table.columnQuery
+            retarg += "===" * 12 + "\n"
+        return retarg
     
     def getTables(self):
         '''
@@ -40,13 +59,14 @@ class feeTables():
         cursor.close()
         
         i = 0
-        for row in rows:
-            ft = feeTable(row[0], i)
-            ft.setCategories(row[1])
-            ft.setDescription(row[2])
-            ft.setStartDate(row[3])
-            ft.setEndDate(row[4])
-            ft.setFeeColTypes(row[5])
+        for (tablename, categories, description, startdate, endate,
+        feecoltypes) in rows:
+            ft = feeTable(tablename, i)
+            ft.setCategories(categories)
+            ft.setDescription(description)
+            ft.setStartDate(startdate)
+            ft.setEndDate(endate)
+            ft.setFeeCols(feecoltypes)
             self.tables[i] = ft
             i += 1
 
@@ -58,13 +78,30 @@ class feeTables():
             table.loadFees()
 
 class feeTable():
+    '''
+    a class to contain and allow quick access to data stored in a fee table
+    '''
     def __init__(self, tablename, index):
         self.tablename = tablename
         self.index = index
-        self.feeColNames = []
+        self.feeColNames = ()
+        self.pt_feeColNames = ()
         self.columnQuery = ""
         self.feesDict = {}
         self.categories = []
+        self.hasPtCols = False
+        
+    def __repr__(self):
+        '''
+        a readable description of the object
+        '''
+        retarg = "FeeTable %s\n"% self.tablename
+        keys = self.feesDict.keys()
+        keys.sort()
+        for key in keys:
+            feeItem = self.feesDict[key]
+            retarg += "FEE ITEM %s\n %s\n%s\n"% (key, feeItem, "===" * 2) 
+        return retarg
         
     def setCategories(self, arg):
         '''
@@ -91,15 +128,28 @@ class feeTable():
         '''
         self.endDate = arg
     
-    def setFeeColTypes(self, arg):
+    def setFeeCols(self, arg):
         '''
         arg is some xml logic to let me know what columns to query
         '''
         dom = minidom.parseString(arg)
         #print dom.toxml()
         
-        self.feeColNames = []  ##TODO - parse the xmlfor this...
-        self.columnQuery = "" ##TODO - parse the xmlfor this...
+        cols = dom.getElementsByTagName("column")
+        feeCol_list = []
+        ptfeeCol_list = []
+        for col in cols:
+            colname = col.firstChild.data
+            self.columnQuery += ", %s"% colname 
+            if col.getAttribute("type") == "fee":
+                feeCol_list.append(colname)
+            else:
+                ptfeeCol_list.append(colname)
+                
+        self.feeColNames = tuple(feeCol_list)
+        self.pt_feeColNames = tuple(ptfeeCol_list)
+
+        self.hasPtCols = not(len(self.pt_feeColNames)==0)
         
     def loadFees(self):
         '''
@@ -107,7 +157,7 @@ class feeTable():
         '''
         # build a query
         query = "select section, code, USERCODE, regulation, "
-        query += "description, brief_description, hide , fee %s " % self.columnQuery
+        query += "description, brief_description, hide %s " % self.columnQuery
         query += "from %s"% self.tablename
         
         db = connect()
@@ -117,20 +167,32 @@ class feeTable():
             print query
         cursor.execute(query)
         rows = cursor.fetchall()
+
+        #create some blank tuples of the correct length
+        feeTup = (0,) * len(self.feeColNames)
+        ptfeeTup = (0,) * len(self.pt_feeColNames)
+
         for row in rows:
-            code = row[1]
-            #itemCodes.append(code)
+            (section, code, USERCODE, regulation, description, 
+            brief_description, hide) = row[:7]
+            #unpack the fees into the blank tuples
+            start, end = 7, 7+len(feeTup)
+            feeTup = row[start:end]
+            start, end = end, end+len(ptfeeTup)            
+            ptfeeTup = row[start:end]
             if code != "":
                 if self.feesDict.has_key(code):
-                    self.feesDict[code].addFee(row[7])
+                    feeItem = self.feesDict[code] 
                 else:
-                    newFee = fee_keys.fee()
-                    newFee.usercode = row[2]
-                    newFee.description = row[5]
-                    newFee.setRegulations(row[3])
-                    newFee.addFee(row[7])
-                    self.feesDict[code] = newFee
-
+                    feeItem = feeClass.fee()
+                    feeItem.usercode = USERCODE
+                    feeItem.description = description
+                    feeItem.setRegulations(regulation)
+                    self.feesDict[code] = feeItem
+                feeItem.addFees(feeTup)
+                feeItem.addPtFees(ptfeeTup)
+                feeItem.addBriefDescription(brief_description)
+                
             #if usercode != "" and usercode != None:
             #    treatmentCodes[usercode] = code
                 

@@ -63,7 +63,7 @@
          <x>0</x>
          <y>0</y>
          <width>1036</width>
-         <height>628</height>
+         <height>630</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>7</number>
+           <number>6</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,8 +472,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>496</width>
-                        <height>473</height>
+                        <width>476</width>
+                        <height>469</height>
                        </rect>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -1710,8 +1710,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>607</width>
-                        <height>507</height>
+                        <width>558</width>
+                        <height>504</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_20">
@@ -2121,8 +2121,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>334</width>
-                        <height>485</height>
+                        <width>324</width>
+                        <height>484</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_28">
@@ -2490,8 +2490,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>770</width>
-                        <height>451</height>
+                        <width>508</width>
+                        <height>425</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_4">
@@ -2948,7 +2948,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>516</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2981,7 +2981,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>511</height>
                        </rect>
                       </property>
@@ -3667,8 +3667,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>118</width>
-                    <height>58</height>
+                    <width>98</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -5527,6 +5527,19 @@ Note - this will not remove items which are currently there. </string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_22">
                 <item>
+                 <widget class="QLabel" name="label_47">
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Warning - this table is deprecated. It is still in use, but to be discontinued with version 0.1.9</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QTreeWidget" name="standardFees_treeWidget">
                   <property name="alternatingRowColors">
                    <bool>false</bool>
@@ -5830,7 +5843,7 @@ Note - this will not remove items which are currently there. </string>
      <x>0</x>
      <y>0</y>
      <width>1036</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

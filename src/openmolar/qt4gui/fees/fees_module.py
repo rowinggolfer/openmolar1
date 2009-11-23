@@ -192,52 +192,77 @@ def newLoadFeesTable(parent):
     '''
     fees table now has multiple tabs, load them
     '''
+    #initiate the class of fees
+    print "INITIATING FEES"
     feeTables = feesTable.feeTables()
-
+    
     tableKeys = feeTables.tables.keys()
     tableKeys.sort()
 
     for index in tableKeys:
         table = feeTables.tables[index]
-        widg = QtGui.QWidget()
         #-- insert the tab one from the end (end tab reserved for the
         #-- specific use of adding a new fee table)
-        i = parent.ui.fees_tabWidget.count()
-        parent.ui.fees_tabWidget.insertTab(i-1, widg, table.tablename)
-        vbox = QtGui.QVBoxLayout()
-
-        label = QtGui.QLabel()
-
-        label.setText("%s %s %s"% (table.index, table.tablename, 
-        table.categories))
-        
         tab = QtGui.QTreeWidget()
+        label = QtGui.QLabel()
+        
+        label.setText("<b>%s</b> %s - %s"% (
+        table.description, 
+        localsettings.formatDate(table.startDate),
+        localsettings.formatDate(table.endDate)))        
+        
+        headers = [_("code"), _("usercode"),_("regulation"),
+         _("description"), _("brief descriptions")]
 
-        vbox.addWidget(label)
-        vbox.addWidget(tab)
-
-        widg.setLayout(vbox)
-
-        headers = ("code", "usercode", "description", "fees", "regulation")
-        tab.setHeaderLabels(headers)
+        fee_colHeaders = []
+        for cat in table.categories:
+            fee_colHeaders.append("%s %s"% (cat, _("fee")))
+            if table.hasPtCols:
+                fee_colHeaders.append(_("charge"))
+        
+        tab.setHeaderLabels(headers+ fee_colHeaders)
 
         feeDict = table.feesDict
 
         keys=feeDict.keys()
         keys.sort()
+        
+        colNo = len(table.categories)
         for key in keys:
-            
-            feekey = feeDict[key]
-            
-            cols = [str(key), feekey.usercode, feekey.description, 
-            str(feekey.fees), feekey.regulations]    
-            
-            QtGui.QTreeWidgetItem(tab, cols)
+            feeItem = feeDict[key]
+            for subNo in range(len(feeItem.brief_descriptions)):
+                if subNo == 0:                    
+                    cols = [str(key), feeItem.usercode, feeItem.regulations,
+                    feeItem.description ]
+                else:
+                    cols = ["","","",""]
+                cols.append(feeItem.brief_descriptions[subNo])
+                for i in range(colNo):
+                    cols.append(str(feeItem.fees[i][subNo]))
+                    if table.hasPtCols:
+                        cols.append(str(feeItem.ptFees[i][subNo]))
+                
+                QtGui.QTreeWidgetItem(tab, cols)
+
+        #ok data loaded, so now insert it into the fees Tabwidget
+        i = parent.ui.fees_tabWidget.count()        
+        widg = QtGui.QWidget()
+        parent.ui.fees_tabWidget.insertTab(i-1, widg, table.tablename)
+        vbox = QtGui.QVBoxLayout()
+
+        vbox.addWidget(label)
+        vbox.addWidget(tab)
+        widg.setLayout(vbox)
 
         tab.expandAll()
         for i in range(tab.columnCount()):
-                tab.resizeColumnToContents(i)
+            tab.resizeColumnToContents(i)
 
+        #hide the descriptions and regulations
+        tab.setColumnWidth(2, 10)
+        tab.setColumnWidth(3, 10)
+        
+    
 
 def feeSearch(parent):
     '''

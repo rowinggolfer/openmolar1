@@ -11,6 +11,7 @@ import re
 
 class fee():
     '''
+    DEPRECATED - MOVED to openmolar.dbtools
     this class handles the calculation of fees
     part of the challenge is recognising the fact that
     2x an item is not necessarily

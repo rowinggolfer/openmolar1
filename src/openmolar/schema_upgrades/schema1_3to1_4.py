@@ -38,7 +38,7 @@ enddate, display_order, feecoltypes)
 values ("feetable_scotNHS_08_Adult","N", 
 "Scottish NHS Adult feescale implemented April 2008", 
 20080401, 20090831, 5, 
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">fee</column></columns>'
+'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
 )
 ''',
 '''
@@ -63,7 +63,7 @@ enddate, display_order, feecoltypes)
 values ("feetable_scotNHS_08_Child","C", 
 "Scottish NHS Child feescale implemented April 2008", 
 20080401, 20090831, 6,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">fee</column></columns>'
+'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
 )
 
 ''',
@@ -89,7 +89,7 @@ display_order, feecoltypes)
 values ("feetable_scotNHS_09_Adult","N", 
 "Scottish NHS Adult feescale implemented September 2009", 
 20090901, 3, 
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">fee</column></columns>'
+'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
 )
 ''',
 '''
@@ -113,7 +113,7 @@ INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes) 
 values ("feetable_scotNHS_09_Child","C", 
 "Scottish NHS Adult feescale implemented September 2009", 20090901, 4,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">fee</column></columns>'
+'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
 )
 
 ''',
@@ -138,7 +138,7 @@ INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes) 
 values ("feetable_HDP", "I", 
 "Highland Dental Plan FeeScale", 20080401, 2,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">fee</column></columns>'
+'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
 )
 
 ''',
@@ -296,7 +296,7 @@ class dbUpdater(QtCore.QThread):
             
             cursor.execute('''select section, code, oldcode, USERCODE, 
 regulation, description, description1, %s from newfeetable 
-order by code'''% vals)
+order by code, ix'''% vals)
             rows=cursor.fetchall()
             
             query = 'insert into %s'% table
@@ -326,7 +326,7 @@ regulation, description, brief_description, fee'''
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
                 
     def run(self):
-        print "running script to convert from schema 1.3 to 1.2"
+        print "running script to convert from schema 1.3 to 1.4"
         try:
             #- execute the SQL commands
             self.progressSig(10, _("creating new tables"))
