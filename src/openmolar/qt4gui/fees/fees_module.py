@@ -155,46 +155,11 @@ def loadFeesTable(parent):
     '''
     loads the fee table
     '''
-    headers = feesTable.getFeeHeaders()
-    parent.ui.standardFees_treeWidget.setHeaderLabels(headers)
-    feeDict = feesTable.getFeeDict()
-    fdKeys = feeDict.keys()
-    fdKeys.sort()
-    headers = ("Diagnosis", "Preventive", "Perio", "Conservation", "Surgical",
-    "Prosthetics", "Orthodontics", "Other", "Capitation (minors)","Occasional")
-    for fdKey in fdKeys:
-        feeLists = feeDict[fdKey]
-        headerText = headers[fdKeys.index(fdKey)]
-        header = QtGui.QTreeWidgetItem(parent.ui.standardFees_treeWidget, 
-        [headerText])
-
-        for feeTup in feeLists:
-            feeList = []
-            col = 0
-            for item in feeTup:
-                if col > 5:
-                    feeList.append(localsettings.formatMoney(item))
-                else:
-                    feeList.append(str(item))
-                col += 1
-            QtGui.QTreeWidgetItem(header, feeList)
-            
-    expandFeeColumns(parent, 0)
-    #-- prevent it getting loaded again
-    #--(and undoing any user changes to col widths, expanded items etc...
     parent.feestableLoaded = True
-    parent.feesTable_searchList = []
-    parent.feesTable_searchpos = 0
+    #parent.feesTable_searchList = []
+    #parent.feesTable_searchpos = 0
     
-    newLoadFeesTable(parent)
-
-def newLoadFeesTable(parent):
-    '''
-    fees table now has multiple tabs, load them
-    '''
-    #initiate the class of fees
-    print "INITIATING FEES"
-    feeTables = feesTable.feeTables()
+    feeTables = localsettings.FEETABLES
     
     tableKeys = feeTables.tables.keys()
     tableKeys.sort()

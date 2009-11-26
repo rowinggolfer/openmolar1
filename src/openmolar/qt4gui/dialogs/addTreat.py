@@ -14,42 +14,38 @@ from openmolar.qt4gui.customwidgets import chainLabel
 from openmolar.qt4gui.fees import fees_module
 from openmolar.settings import localsettings,fee_keys
 
-def getCode(arg):
+@localsettings.debug
+def getDescription(pt, arg):
     '''
-    converts a usercode into a computer code eg CE -> 101
+    converts a "0101" into the given description eg "clinical examination"
     '''
-    itemcode = 4001
+    description = "???"
     try:
-        itemcode = fee_keys.getKeyCode(arg)
-    except:
-        print "no itemcode found for item %s"% arg + \
-        " - will revert to OTHER TREATMENT"
-    return itemcode
-
-def getDescription(arg):
-    description = ""
-    try:
-        description = localsettings.descriptions[arg]
-    except:
+        #description = localsettings.descriptions[arg]
+        description = pt.getFeeTable().getDescription(arg)
+    except KeyError:
         print "no description found for item %s"% arg
     return description
-
-
 
 
 class itemWidget(Ui_treatmentItemWidget.Ui_Form):
     def __init__(self, parent, widget):
         self.parent = parent
         self.setupUi(widget)
-        self.feelist=[]
-        self.ptfeelist=[]
-            
+        self.feelist = []
+        self.ptfeelist = []
+        self.description = ""
+        self.itemcode = ""
+        
     def setNumber(self, arg):
         self.spinBox.setValue(arg)
 
     def setItem(self, itemcode):
         self.itemcode = itemcode
-        self.description = getDescription(self.itemcode)
+        #self.description = getDescription(self.itemcode)
+    
+    def setDescription(self, description):
+        self.description = description
         self.label.setText("%s (%s)"% (self.description, self.itemcode))
 
     def feeCalc(self):
@@ -96,28 +92,37 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         #    _("fees modified due to multiple similar items")) 
     
 class treatment(Ui_addTreatment.Ui_Dialog):
-    def __init__(self, dialog, items, pt):
+    '''
+    a custom dialog to offer a range of treatments for selection
+    '''
+    def __init__(self, dialog, itemTups, pt):
+        
         self.setupUi(dialog)
         self.dialog = dialog
         self.items = []
-        for item in items:
-            self.items.append((item[0], getCode(item[1]), item[1]),)
+        for n_items, usercode in itemTups:
+            item, fee, ptfee, item_description = \
+            pt.getFeeTable().userCodeWizard(usercode)
+            
+            self.items.append((n_items, item, fee, ptfee, item_description,
+            usercode))
         self.pt = pt
         self.showItems()
 
     def showItems(self):
         self.itemWidgets = []
-        vlayout = self.dialog.layout()
-        i=1
-        for item in self.items:
+        vlayout = QtGui.QVBoxLayout()
+        for n_items, item, fee, ptfee, item_description, usercode \
+        in self.items:
             iw = QtGui.QWidget()
             itemW = itemWidget(self, iw)
-            itemW.setItem(item[1])
-            itemW.setNumber(item[0])
-            itemW.usercode = item[2]
+            itemW.setItem(item)
+            itemW.setNumber(n_items)
+            itemW.usercode = usercode
+            itemW.setDescription(item_description)
             self.itemWidgets.append(itemW)
-            vlayout.insertWidget(i,iw)
-            i+=1
+            vlayout.addWidget(iw)
+        self.frame.setLayout(vlayout)
             
     def getInput(self):
         if self.dialog.exec_():

@@ -109,16 +109,12 @@ course dentist, but not the registered dentist</i>''')
                 examtype, examdent)
 
                 parent.pt.addHiddenNote("exam", "%s"% examtype)
-                item = fee_keys.getKeyCode(examtype)
 
-                #-- get the fee and patien fee
-                itemfee, ptfee = fee_keys.getItemFees(parent.pt, item, 1)
-
-                item_description = localsettings.descriptions.get(item)
-                if item_description == None:
-                    item_description = _("unknown exam type")
-
-                parent.pt.addToEstimate(1, item, item_description, itemfee,
+                #new code for v 0.1.9
+                item, fee, ptfee, item_description = \
+                parent.pt.getFeeTable().userCodeWizard(examtype)
+    
+                parent.pt.addToEstimate(1, item, item_description, fee,
                 ptfee, localsettings.ops_reverse[examdent], parent.pt.cset,
                 "exam", examtype, True)
 

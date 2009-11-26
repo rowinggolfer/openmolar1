@@ -19,6 +19,10 @@ import subprocess
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
+DEBUGMODE = False
+if "neil" in os.getcwd():
+    DEBUGMODE = True
+
 #- updated 19th November 2009.
 __MAJOR_VERSION__= "0.1.8"
 
@@ -26,8 +30,8 @@ SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 CLIENT_SCHEMA_VERSION = "1.4"
 DB_SCHEMA_VERSION = "unknown"
-DEBUGMODE = False
-ENCODING = locale.getpreferredencoding() #"latin-1" #necessary for the uk £ symbol
+ENCODING = locale.getpreferredencoding() #"latin-1" for the uk currrency??
+FEESTABLE = None
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -53,6 +57,20 @@ APPOINTMENT_CARD_FOOTER = _("Please try and give at least 24 hours notice") +\
 
 GP17_LEFT = 0
 GP17_TOP = 0
+
+def debug(func):
+    if DEBUGMODE:
+        def callf(*args, **kwargs):
+            print "===="*20
+            print timestamp()
+            print "Calling %s:%s, %s"% (func.__name__, args, kwargs)
+            r = func(*args, **kwargs)
+            print "%s returned %s"% (func.__name__, r)
+            print "===="*20
+            return r
+        return callf
+    else:
+        return func
 
 def determine_path ():
     '''
@@ -233,8 +251,6 @@ apptix_reverse = {}
 ##todo - this will need to change!!!!
 bookEnd = datetime.date(2009,12,31)
 
-##TODO - is this obselete now?
-descriptions = {}
 #--treatment codes..
 
 apptTypes = (
@@ -285,15 +301,6 @@ practiceAddress = ("The Academy Dental Practice","19 Union Street",
 #--pt.addr1,pt.addr2,pt.addr3,pt.town,
 #--pt.county,pt.pcde,pt.tel1)
 defaultNewPatientDetails = ("",)*8
-
-#-- these get initiated
-treatmentCodes = {}
-##TODO - make this customisable.
-##I have 3 fee scales implemented.
-##suggest many more will be needed, and user defined.
-FeesDict = {"P":{},"NF08":{},"NF09":{}}
-    
-#itemCodes=[]
 
 #-- 1 less dialog box for these lucky people
 defaultPrinterforGP17 = True
@@ -602,7 +609,7 @@ def initiate(debug = False):
     print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd, \
-    clinicianNo, clinicianInits
+    clinicianNo, clinicianInits, FEETABLES
     
     from openmolar import connect
     from openmolar.settings import fee_keys
@@ -706,55 +713,8 @@ def initiate(debug = False):
     #-- the keys are treatment codes for NHS scotland
     #-- the values are a custom data class in the fee_keys module
 
-
-    query = "select code, description, pfa, USERCODE,"
-    query += "description1, regulation from newfeetable"
-    if logqueries:
-        print query
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    for row in rows:
-        code = row[0]
-        #itemCodes.append(code)
-        usercode = row[3]
-        if code != "":
-            if FeesDict["P"].has_key(code):
-                FeesDict["P"][code].addFee(row[2])
-            else:
-                newFee = fee_keys.fee()
-                newFee.description = row[4]
-                newFee.setRegulations(row[5])
-                newFee.addFee(row[2])
-                FeesDict["P"][code] = newFee
-
-                descriptions[code] = row[1]
-
-        if usercode != "" and usercode != None:
-            treatmentCodes[usercode] = code
-
-    for NHS in ("NF08", "NF09"):
-
-        query = "select code, description, %s, USERCODE,"% NHS
-        query += "description1, regulation, %s_pt from newfeetable" % NHS
-        if logqueries:
-            print query
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        for row in rows:
-            code = row[0]
-            usercode = row[3]
-            if code != "":
-                if FeesDict[NHS].has_key(code):
-                    FeesDict[NHS][code].addFee(row[2])
-                    FeesDict[NHS][code].addPtFee(row[6])
-                else:
-                    newFee = fee_keys.fee()
-                    newFee.description = row[4]
-                    newFee.setRegulations(row[5])
-                    newFee.addFee(row[2])
-                    newFee.addPtFee(row[6])
-                    FeesDict[NHS][code] = newFee
-
+    FEETABLES = feesTable.feeTables()
+    
     getLocalSettings()
 
     message = '''<html><head>
@@ -779,9 +739,6 @@ def initiate(debug = False):
         print "allowed logins =", allowed_logins
         print "stylesheet =",stylesheet
         print "referralfile = ",referralfile
-        for key in FeesDict.keys():
-            print FeesDict[key]
-        print "treatmentCode =",treatmentCodes
 
 if __name__ == "__main__":
     #-- testing only
@@ -797,7 +754,7 @@ if __name__ == "__main__":
     print cflocation
     print stylesheet
     initiate(False)
-    print treatmentCodes
+   
     #print global_cflocation, local_cfloaction
     #updateLocalSettings("stationID","surgery3")
 

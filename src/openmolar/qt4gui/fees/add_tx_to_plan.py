@@ -24,6 +24,7 @@ from openmolar.qt4gui.dialogs import addTreat
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module, fees_module
 
+@localsettings.debug
 def offerTreatmentItems(parent, arg):
     '''
     offers treatment items passed by argument like ((1,"SP"),)
@@ -33,6 +34,7 @@ def offerTreatmentItems(parent, arg):
     result =  dl.getInput()
     return result
 
+@localsettings.debug
 def offerSpecificTreatmentItems(parent, arg):
     '''
     offers treatment items passed by argument like
@@ -43,6 +45,7 @@ def offerSpecificTreatmentItems(parent, arg):
     result =  dl.getInput()
     return result
 
+@localsettings.debug
 def xrayAdd(parent):
     '''
     add xray items
@@ -52,7 +55,6 @@ def xrayAdd(parent):
         chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
             #(usercode,itemcode,description, fee,ptfee)
-            print "treat =", treat
             usercode = treat[0]
             parent.pt.xraypl += usercode + " "
             parent.pt.addToEstimate(1, treat[1], treat[2], 
@@ -61,6 +63,7 @@ def xrayAdd(parent):
         parent.load_treatTrees()
         parent.load_newEstPage()
 
+@localsettings.debug
 def perioAdd(parent):
     '''
     add perio items
@@ -77,35 +80,32 @@ def perioAdd(parent):
         parent.load_treatTrees()
         parent.load_newEstPage()
 
+@localsettings.debug
 def otherAdd(parent):
     '''
     add 'other' items
     '''
     if not course_module.newCourseNeeded(parent):
         mylist = ()
-        items = localsettings.treatmentCodes.keys()
-        itemDict = {}
-        for item in items:
-            code = localsettings.treatmentCodes[item]
-            if 3500 < int(code) < 4002:
-                itemDict[code] = item
-        items = itemDict.keys()
-        items.sort()
+        itemDict= parent.pt.getFeeTable().treatmentCodes
+        usercodes = itemDict.keys()
+        usercodes.sort()
 
-        for item in items:
-            code = itemDict[item]
-            mylist += ((0, code), )
+        for usercode in usercodes:
+            mylist += ((0, usercode), )
+        
         chosenTreatments = offerTreatmentItems(parent, mylist)
         for treat in chosenTreatments:
             usercode = treat[0]
             parent.pt.otherpl += "%s "% usercode
-            fee, ptfee = fee_keys.getItemFees(parent.pt, itemcode)            
             parent.pt.addToEstimate(1,treat[1], treat[2], 
             treat[3], treat[4], parent.pt.dnt1, 
             parent.pt.cset, "other", usercode)
+            
         parent.load_newEstPage()
         parent.load_treatTrees()
 
+@localsettings.debug
 def customAdd(parent):
     '''
     add 'custom' items
@@ -121,8 +121,7 @@ def customAdd(parent):
             if descr == "":
                 descr = "??"
             ttype = str (descr.replace(" ", "_"))
-            #ttype = ttype.encode("ascii","ignore")
-
+            
             if len(ttype) > 12:
                 #-- necessary because the est table type col is char(12)
                 ttype = ttype[:12]
@@ -134,6 +133,7 @@ def customAdd(parent):
             parent.load_newEstPage()
             parent.load_treatTrees()
 
+@localsettings.debug
 def fromFeeTable(parent, item):
     '''
     add an item which has been selected from the fee table itself
@@ -193,12 +193,36 @@ def fromFeeTable(parent, item):
                 parent.load_newEstPage()
                 parent.load_treatTrees()
 
+@localsettings.debug
+def itemsPerTooth(tooth,props):
+    '''
+    usage itemsPerTooth("ul7","MOD,CO,PR ")
+    returns (("ul7","MOD,CO"),("ul7","PR"))
+    '''
+    treats=[]
+    items=props.strip("() ").split(" ")
+    for item in items:
+        #--look for pins and posts
+        if re.match(".*,PR.*",item):
+            #print "removing .pr"
+            treats.append((tooth,",PR"),)
+            item=item.replace(",PR","")
+        if re.match("CR.*,C[1-4].*",item):
+            posts=re.findall(",C[1-4]",item)
+            #print "making Post a separate item"
+            for post in posts:
+                treats.append((tooth,"CR%s"%post),)
+            item=item.replace(post,"")
+
+        treats.append((tooth, item), )
+    return treats
+
     
+@localsettings.debug
 def chartAdd(parent, tooth, properties):
     '''
-    add treatment to a tooth
+    add treatment to a toothtreatment to a tooth
     '''
-    #-- important stuff. user has added treatment to a tooth
     #-- let's cite this eample to show how this funtion works
     #-- assume the UR1 has a root treatment and a palatal fill.
     #-- user enters UR1 RT P,CO
@@ -216,8 +240,8 @@ def chartAdd(parent, tooth, properties):
     #-- this also separates off any postsetc..
     #-- and bridge brackets
 
-    existingItems = fee_keys.itemsPerTooth(tooth, existing)
-    updatedItems = fee_keys.itemsPerTooth(tooth, properties)
+    existingItems = itemsPerTooth(tooth, existing)
+    updatedItems = itemsPerTooth(tooth, properties)
 
     #check to see if treatments have been removed
     
@@ -231,28 +255,18 @@ def chartAdd(parent, tooth, properties):
                 parent.pt.removeFromEstimate(toothname, item[1])
                 parent.advise("removed %s from estimate"% item[1], 1)
     #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
-    for item in updatedItems:
-        #--ok, so now lookup the four digit itemcode
-        ###############################################
-        #-- this is critical bit"!!!!!
-        #-- if this is incorrect... est will be crap.
-        #-- the function returns "4001" - unknown if it is confused by
-        #-- the input.
+    for tooth, usercode in updatedItems:
         
         #--tooth may be deciduous
-        toothname = parent.pt.chartgrid.get(item[0])
-            
-        itemcode = fee_keys.getCode(toothname, item[1])
-        ###############################################
-        #--get a description (for the estimate)
-        #description = fee_keys.getDescription(itemcode)
-        description=localsettings.descriptions.get(itemcode)        
-        #-- get a fee and pt fee
-        fee, ptfee = fee_keys.getItemFees(parent.pt, itemcode)
-        #--add to estimate
-        parent.pt.addToEstimate(1, itemcode, description, fee, ptfee,
-        parent.pt.dnt1, parent.pt.cset, toothname, item[1])
+        toothname = parent.pt.chartgrid.get(tooth)
+        
+        item, fee, ptfee, item_description = \
+        parent.pt.getFeeTable().toothCodeWizard(toothname, usercode)
+        
+        parent.pt.addToEstimate(1, item, item_description, fee, ptfee,
+        parent.pt.dnt1, parent.pt.cset, toothname, usercode)
 
+@localsettings.debug
 def pass_on_estimate_delete(parent, est):
     '''
     the est has been deleted...
@@ -282,6 +296,7 @@ def pass_on_estimate_delete(parent, est):
         parent.advise (_("couldn't pass on delete message - ") +
         _('badly formed est.type??? %s')% est.type, 1)
 
+@localsettings.debug
 def estimate_item_delete(parent, pl_cmp, category, ttype):
     '''
     delete an estimate item when user has removed an item of treatment
@@ -306,6 +321,7 @@ def estimate_item_delete(parent, pl_cmp, category, ttype):
         else:
             parent.load_newEstPage()
            
+@localsettings.debug
 def deleteTxItem(parent, pl_cmp, txtype, passedOn=False):
     '''
     delete an item of treatment (called by clicking on the treewidget)

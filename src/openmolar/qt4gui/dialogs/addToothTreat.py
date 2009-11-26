@@ -44,6 +44,7 @@ class itemWidget(Ui_toothtreatmentItemWidget.Ui_Form):
         self.description_label.setText("%s\t(%s)"%(self.description,
                                                     self.itemcode))
         self.feeCalc()
+        
     def feeCalc(self):
         '''
         puts the fee into widget's double spinbox
@@ -70,12 +71,27 @@ class treatment(Ui_addTreatment.Ui_Dialog,):
     def itemsPerTooth(self, tooth, props):
         '''
         this is called when treatment is added to a single tooth
-        usage
-        itemsPerTooth("ul6","MOD RT")
-        provides a more convenient way of calling setItems
+        usage itemsPerTooth("ul7","MOD,CO,PR ")
+        returns (("ul7","MOD,CO"),("ul7","PR"))
         '''
+        treats=[]
+        items=props.strip("() ").split(" ")
+        for item in items:
+            #--look for pins and posts
+            if re.match(".*,PR.*",item):
+                #print "removing .pr"
+                treats.append((tooth,",PR"),)
+                item=item.replace(",PR","")
+            if re.match("CR.*,C[1-4].*",item):
+                posts=re.findall(",C[1-4]",item)
+                #print "making Post a separate item"
+                for post in posts:
+                    treats.append((tooth,"CR%s"%post),)
+                item=item.replace(post,"")
 
-        self.setItems(fee_keys.itemsPerTooth(tooth,props))
+            treats.append((tooth, item), )
+        
+        self.setItems(treats)
 
     def setItems(self, items):
         '''

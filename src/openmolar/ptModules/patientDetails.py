@@ -17,36 +17,23 @@ import datetime
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 
-def getAge(dob):
+def getAge(pt):
     '''
     display the patient's age in human readable form
     '''
-    try:
-        today = datetime.date.today()
-        nextbirthday = datetime.date(today.year, dob.month, dob.day)
-        age = today.year - dob.year
-        if nextbirthday > today:
-            age -= 1
-            m = (12 - dob.month) + today.month
-        else:
-            m = today.month - dob.month
-        if dob.day > today.day:
-            m -= 1
-        if nextbirthday == today:
-            return "<h5> %s TODAY!</h5>"% age
-        if age > 18:
-            return "(%syo)<hr />"% age
-        else:
-            retarg = "<br />%s years"% age
-            if age == 1:
-                retarg = retarg.strip("s")
-            retarg += " %s months"% m
-            if m == 1:
-                retarg = retarg.strip("s")
-            return retarg + "<hr />"
-    except Exception, e:
-        print "error calculating pt age - ", e
-        return "unknown age<hr />"
+    ageYears, months, isToday = pt.getAge()
+    if isToday:
+        return "<h5> %s TODAY!</h5>"% age
+    if ageYears > 18:
+        return "(%syo)<hr />"% ageYears
+    else:
+        retarg = "<br />%s years"% ageYears
+        if ageYears == 1:
+            retarg = retarg.strip("s")
+        retarg += " %s months"% months
+        if months == 1:
+            retarg = retarg.strip("s")
+        return retarg + "<hr />"
 
 def details(pt, Saved=True):
     '''returns an html set showing pt name etc...'''
@@ -59,7 +46,7 @@ def details(pt, Saved=True):
         localsettings.stylesheet, pt.serialno, pt.title.title(),
         pt.fname.title(), pt.sname.title())
 
-        retarg += '%s %s'% (localsettings.formatDate(pt.dob), getAge(pt.dob))
+        retarg += '%s %s'% (localsettings.formatDate(pt.dob), getAge(pt))
         for line in (pt.addr1, pt.addr2, pt.addr3, pt.town, pt.county):
             if str(line) != '':
                 retarg += "%s <br />"% line

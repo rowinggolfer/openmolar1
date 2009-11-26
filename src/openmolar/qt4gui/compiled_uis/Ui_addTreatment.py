@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'addTreatment.ui'
 #
-# Created: Thu Nov 19 21:47:04 2009
+# Created: Thu Nov 26 15:29:03 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(455, 162)
+        Dialog.resize(459, 212)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtGui.QLabel(Dialog)
@@ -20,8 +20,23 @@ class Ui_Dialog(object):
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
+        self.scrollArea = QtGui.QScrollArea(Dialog)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 439, 140))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.horizontalLayout = QtGui.QHBoxLayout(self.scrollAreaWidgetContents)
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setMargin(0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.frame = QtGui.QFrame(self.scrollAreaWidgetContents)
+        self.frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.horizontalLayout.addWidget(self.frame)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.verticalLayout.addWidget(self.scrollArea)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)

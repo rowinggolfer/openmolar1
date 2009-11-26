@@ -30,10 +30,14 @@ def performPerio(parent):
     Dialog = QtGui.QDialog(parent)
     dl = hygTreatWizard.Ui_Dialog(Dialog)
     dl.setPractitioner(localsettings.clinicianNo)
-    item = fee_keys.getKeyCode("SP")
-    fee, ptfee = fee_keys.getItemFees(parent.pt, item, 1)
-    item2 = fee_keys.getKeyCode("SP+")
-    fee2, ptfee2 = fee_keys.getItemFees(parent.pt, item2, 1)
+ 
+    item, fee, ptfee, item_description = \
+    parent.pt.getFeeTable().userCodeWizard("SP")
+    
+    item2, fee2, ptfee2, item_description = \
+    parent.pt.getFeeTable().userCodeWizard("SP+")
+        
+    fee, ptfee, fee2, ptfee2
     dl.setFees(((fee, ptfee), (fee2, ptfee2)))
     result = dl.getInput()
 
@@ -42,16 +46,13 @@ def performPerio(parent):
         newnotes += "%s performed by %s\n"% (dl.trt, dl.dent)
         parent.pt.addHiddenNote("treatment", "Perio %s"% dl.trt)
         parent.updateHiddenNotesLabel()
-            
-        fee = dl.fee
-        ptfee = dl.ptFee
 
-        item = fee_keys.getKeyCode(dl.trt)
-        try:
-            item_description = localsettings.descriptions[item]
-        except KeyError:
-            item_description = "unknown perio treatment"
-
+        ##update values in case user has selected a different code/fee
+        item, fee, ptfee, item_description = \
+        parent.pt.getFeeTable().userCodeWizard(dl.trt)
+        
+        fee, ptfee = dl.fee, dl.ptFee
+      
         foundInEsts = False
         for est in parent.pt.estimates:
             if est.itemcode == item and est.completed == False:
@@ -89,3 +90,5 @@ def performPerio(parent):
             parent.load_clinicalSummaryPage()
     else:
         parent.advise("Hyg Treatment not applied", 2)
+        
+

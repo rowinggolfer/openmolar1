@@ -5,13 +5,12 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
-import sys
+import re, sys
 from xml.dom import minidom
 
 from openmolar.connect import connect
 from openmolar.settings import localsettings
 from openmolar.settings import fee_keys   # soon to be removed!
-from openmolar.dbtools import feeClass
 
 class feeTables():
     '''
@@ -63,7 +62,7 @@ class feeTables():
         feecoltypes) in rows:
             ft = feeTable(tablename, i)
             ft.setCategories(categories)
-            ft.setDescription(description)
+            ft.setTableDescription(description)
             ft.setStartDate(startdate)
             ft.setEndDate(endate)
             ft.setFeeCols(feecoltypes)
@@ -90,17 +89,18 @@ class feeTable():
         self.feesDict = {}
         self.categories = []
         self.hasPtCols = False
+        self.treatmentCodes = {}
         
     def __repr__(self):
         '''
         a readable description of the object
         '''
-        retarg = "FeeTable %s\n"% self.tablename
-        keys = self.feesDict.keys()
-        keys.sort()
-        for key in keys:
-            feeItem = self.feesDict[key]
-            retarg += "FEE ITEM %s\n %s\n%s\n"% (key, feeItem, "===" * 2) 
+        retarg = "Class feeTable %s"% self.tablename
+        #keys = self.feesDict.keys()
+        #keys.sort()
+        #for key in keys:
+        #    feeItem = self.feesDict[key]
+        #    retarg += "FEE ITEM %s\n %s\n%s\n"% (key, feeItem, "===" * 2) 
         return retarg
         
     def setCategories(self, arg):
@@ -110,7 +110,7 @@ class feeTable():
         cats = arg.split(",")
         self.categories = cats
         
-    def setDescription(self, arg):
+    def setTableDescription(self, arg):
         '''
         a user friendly description of the table
         '''
@@ -150,7 +150,7 @@ class feeTable():
         self.pt_feeColNames = tuple(ptfeeCol_list)
 
         self.hasPtCols = not(len(self.pt_feeColNames)==0)
-        
+    
     def loadFees(self):
         '''
         now load the fees
@@ -184,7 +184,7 @@ class feeTable():
                 if self.feesDict.has_key(code):
                     feeItem = self.feesDict[code] 
                 else:
-                    feeItem = feeClass.fee()
+                    feeItem = fee()
                     feeItem.usercode = USERCODE
                     feeItem.description = description
                     feeItem.setRegulations(regulation)
@@ -193,57 +193,319 @@ class feeTable():
                 feeItem.addPtFees(ptfeeTup)
                 feeItem.addBriefDescription(brief_description)
                 
-            #if usercode != "" and usercode != None:
-            #    treatmentCodes[usercode] = code
-                
+            if USERCODE != "" and USERCODE != None:
+                self.treatmentCodes[USERCODE] = code
+    
+    @localsettings.debug
+    def getToothCode(self, tooth, arg):
+        '''
+        converts fillings into four digit codes used in the feescale
+        eg "MOD" -> "1404" (both are strings)
+        arg will be something like "CR,GO" or "MOD,CO"
+        '''
+        #print "decrypting tooth %s code %s "%(tooth, arg)
 
-    ######## this is the main focus of development for the 0.1.8 version
+        if arg in ("PV","AP","ST","EX","EX/S1","EX/S2",",PR","DR","PX","PX+"):
+            return self.getItemCodeFromUserCode(arg)
+
+        if re.match("CR,..$", arg):
+            #-- CR,V1 etc....
+            return self.getItemCodeFromUserCode(arg)
+
+        if re.match("RT",arg):
+            if re.match("u.[45]",tooth):
+                return self.getItemCodeFromUserCode("Rt_upm")
+            if re.match("l.[45]",tooth):
+                return self.getItemCodeFromUserCode("Rt_lpm")
+            if re.match("..[123]",tooth):
+                return self.getItemCodeFromUserCode("Rt_inc_can")
+            if re.match("..[ABCDE]",tooth):
+                return self.getItemCodeFromUserCode("dec_rct")            
+            else:
+                return self.getItemCodeFromUserCode("Rt_molar")
+
+        if "PI/" in arg:
+            return self.getItemCodeFromUserCode("Porc")
+
+        if re.match("BR/P.*",arg):
+            return self.getItemCodeFromUserCode(arg)
+
+        if re.match("BR/CR,..$",arg):
+            return self.getItemCodeFromUserCode(arg)
+
+        if re.match("..[ABCDE]", tooth):
+            return self.getItemCodeFromUserCode("dec_fill")            
+
+        if re.match(".*GL.*",arg):
+            return self.getItemCodeFromUserCode("Glfill")
+
+        #-- ok... so it's probably a filling
+        #-- split off the material, and if not present, add one.
+        array=arg.split(",")
+
+        #-- MOD
+        #-- MOD,CO
+
+
+        #SET DEFAULT MATERIALS
+        if len (array)>1:
+            material=array[1]
+        else:
+            material=""
+
+        if re.match("u.[4-8]",tooth):
+            #--upper back tooth
+            if material=="":
+                material="AM"
+            no_of_surfaces=len(re.findall("M|O|D|B|P",array[0]))
+        elif re.match("l.[4-8]",tooth):
+            #--lower back tooth
+            if material=="":
+                material="AM"
+            no_of_surfaces=len(re.findall("M|O|D|B|L",array[0]))
+        elif re.match("u.[1-3]",tooth):
+            #-- upper anterior
+            if material=="":
+                material="CO"
+            no_of_surfaces=len(re.findall("M|I|D|B|P",array[0]))
+        else:
+            #--lower anterior
+            if material=="":
+                material="CO"
+            no_of_surfaces=len(re.findall("M|I|D|B|L",array[0]))
+        
+        if no_of_surfaces==len(array[0]):
+            #-- to stop "MOV" being classed as an "MO"
+            if no_of_surfaces>3:
+                no_of_surfaces=3
+            #return self.getItemCodeFromUserCode("%s-%ssurf"%(material,no_of_surfaces))
+            return self.getItemCodeFromUserCode(
+            "%s-%ssurf"%(material, no_of_surfaces))
+        else:
+            print '''no match in %s getToothCode for %s - %s"
+            RETURNING '4001' '''% (self.tablename, tooth, arg)
+            return "4001"
+        
+    @localsettings.debug
+    def getItemCodeFromUserCode(self, arg):
+        '''
+        the table stores it's own usercodes now.
+        return the itemcode associated with it, otherwise, return "4001"
+        '''
+        return self.treatmentCodes.get(arg,"4001")
+    
+    @localsettings.debug
+    def hasItemCode(self, arg):
+        '''
+        check to see if the table contains a data about itemcode "arg"
+        '''
+        return arg in self.feesDict.keys()
+    
+    @localsettings.debug
+    def getFees(self, itemcode, no_items=1, conditions=[]):
+        '''
+        returns a tuple of (fee, ptfee) for an item
+        '''
+        if self.hasItemCode(itemcode):
+            return self.feesDict[itemcode].getFees(no_items, conditions)
+        else:
+            print "itemcode %s not found in %s"% (itemcode, self.tablename)
+            return (0,0)
+    
+    @localsettings.debug
+    def getItemDescription(self, itemcode):
+        '''
+        returns the patient readable (ie. estimate ready) description of the
+        item
+        '''
+        if self.hasItemCode(itemcode):
+            return self.feesDict[itemcode].description
+        else:
+            return "No description for this item!"
+    
+    @localsettings.debug    
+    def userCodeWizard(self, usercode, n_items=1):
+        '''
+        send a usercode, get a results set
+        (item (string), fee (int), ptfee (int), description (string))
+        where description is the estimate ready description of the item
+        '''
+        item = self.getItemCodeFromUserCode(usercode)
+        fee, ptfee = self.getFees(item, n_items)
+        description = self.getItemDescription(item)
+    
+        return (item, fee, ptfee, description)
+    
+    @localsettings.debug        
+    def toothCodeWizard(self, tooth, usercode):
+        '''
+        send a usercode, get a results set
+        (item (string), fee (int), ptfee (int), description (string))
+        where description is the estimate ready description of the item
+        '''
+        item = self.getToothCode(tooth, usercode)
+        fee, ptfee = self.getFees(item)
+        description = "%s - %s"% (self.getItemDescription(item), tooth)
+    
+        return (item, fee, ptfee, description)
+    
+    
+class fee():
+    '''
+    this class handles the calculation of fees
+    part of the challenge is recognising the fact that
+    2x an item is not necessarily
+    the same as double the fee for a single item etc..
+    '''
+    def __init__(self):
+        '''
+        initiate the class with the default settings for a private fee
+        '''
+        self.description = ""
+        self.brief_descriptions = ()
+        self.fees = {}
+        self.ptFees = {}
+        self.regulations = ""
+        self.usercode = ""
+    
+    def __repr__(self):
+        '''
+        a readable version of the instance
+        '''
+        return '''feeitem - Usercode    = '%s'
+    brief description  = '%s'
+    estimate phrase    = '%s'
+    regulations        = '%s'
+    fees               =  %s
+    ptFees             =  %s'''% (self.usercode, self.brief_descriptions,
+    self.description, self.regulations, self.fees, self.ptFees)
+        
+    def addFees(self, arg):
+        '''
+        add a fee to the list of fees contained by this class
+        frequently this list will have only one item
+        '''
+        for i in range(len(arg)):
+            try:
+                val = int(arg[i])
+            except TypeError, e:
+                #print "error in your feetable, defaulting to zero fee!"
+                val =0
+            
+            if self.fees.has_key(i):
+                self.fees[i] += (val,)
+            else:
+                self.fees[i] = (val,)
+                
+    def addPtFees(self,arg):
+        '''
+        same again, but for the pt charge
+        '''
+        for i in range(len(arg)):
+            try:
+                val = int(arg[i])
+            except TypeError, e:
+                #print "error in your feetable, defaulting to zero fee!"
+                val =0
+            
+            if self.ptFees.has_key(i):
+                self.ptFees[i] += (val,)
+            else:
+                self.ptFees[i] = (val,)
+        
+    def addBriefDescription(self, arg):
+        '''
+        add a brief description
+        '''
+        self.brief_descriptions += (arg,)
+            
+    def setRegulations(self, arg):
+        '''
+        pass a string which sets the conditions for
+        applying fees to this treatment item
+        '''
+        self.regulations=arg
+
+    def getFees(self, no_items=1, conditions=""):
+        fee = self.getFee(no_items,conditions)
+        ptFee = self.getFee(no_items,conditions, True)
+        if ptFee == None:
+            return (fee, fee)
+        else:
+            return (fee, ptFee)
+        
+    def getFee(self, no_items=1,conditions="",patient=False):
+        '''
+        get a fee for x items of this type
+        conditions allows some flexibility (eg conditions=lower premolar)
+        '''
+
+        ##todo - this is a holder for when I include multi column fee dicts
+        KEY = 0
+
+        if patient:
+            if self.ptFees == {}:
+                return None
+            else:
+                feeList=self.ptFees[KEY]
+                #print "using patient feelist=", feeList
+        else:
+            feeList=self.fees[KEY]
+            #print "using feelist=", feeList
+        
+        if self.regulations=="":
+            return feeList[0]*no_items
+        else:
+            #-- this is the "regulation" for small xrays
+            #--  n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E
+            fee=0
+
+            #-- check for a direct hit
+            directMatch=re.findall("n=%d:."%no_items,self.regulations)
+            if directMatch:
+                column=directMatch[0][-1]
+                fee=feeList[ord(column)-65]
+
+            #--check for a greater than
+            greaterThan=re.findall("n>\d", self.regulations)
+            if greaterThan:
+                #print "greater than found ", greaterThan
+                limit=int(greaterThan[0][2:])
+                #print "limit", limit
+                if no_items>limit:
+                    formula=re.findall("n>\d:.*,", self.regulations)[0]
+                    formula=formula.strip(greaterThan[0]+":")
+                    formula=formula.strip(",")
+                    #print "formula", formula
+                    #--get the base fee
+                    column=formula[0]
+                    fee=feeList[ord(column)-65]
+                    #--add additional items fees
+                    a_items=re.findall("\(n-\d\)",formula)[0].strip("()")
+                    n_a_items=no_items-int(a_items[2:])
+                    column=formula[-1]
+                    fee+=n_a_items*feeList[ord(column)-65]
+
+            #-- if fee is still zero
+            if fee==0:
+                #print "returning linear fee (n* singleItem Fee)"
+                fee=feeList[0]*no_items
+
+            #check for a max amount
+            max= re.findall("max=.",self.regulations)
+            if max:
+                column=max[0][-1:]
+                maxFee=feeList[ord(column)-65]
+                if maxFee<fee:
+                    fee=maxFee
+
+            return fee
 
 
 ##############################################################################
 ## below this line is old code. 
 ## NW - 2009_11_08
 
-
-private_only = False
-nhs_only = False
-
-newfeetable_Headers = "section,code,oldcode,USERCODE,regulation," + \
-"description,description1,NF08,NF08_pt,NF09,NF09_pt,PFA"
-
-
-def getFeeHeaders():
-    return newfeetable_Headers.split(",")[1:]
-
-def getFeeDict():
-    '''
-    returns a dictionary of lists of tuples (!)
-    dict[section]=feedict
-    feedict=[(code1,desc1,fees1),(code2,desc2,fees2)]
-    '''
-    option=""
-    if private_only:
-        option += "where PFA>0"
-    elif nhs_only:
-        option += "where (NF08>0 or NF09>0)"
-
-    db=connect()
-    cursor=db.cursor()
-    
-    query = 'select %s from newfeetable %s' % (
-    newfeetable_Headers,option)
-
-    cursor.execute(query)
-    feescales = cursor.fetchall()
-    cursor.close()
-
-    sections={}
-
-    for row in feescales:
-        if not sections.has_key(row[0]):
-            sections[row[0]]=[]
-        sections[row[0]].append(row[1:])
-    return sections
 
 def getFeeDictForModification():
     '''
@@ -291,22 +553,13 @@ def updateFeeTable(feeDict, changes):
     except Exception, e:
         print "exception",e
         return False
-    
-def decode(blob):
-    '''
-    decode in blocks of 4 bytes - this is a relic from the old database
-    '''
-    i=0
-    retlist=[]
-    for i in range(0,len(blob),4):
-        cost=struct.unpack_from('H',blob,i)[0]
-        retlist.append(cost)
-    return retlist
-
-
-def feesHtml():
-    return toHtml(getFees())
 
 if __name__ == "__main__":
-    ft = feeTables()
-    print ft
+    fts = feeTables()
+
+    for table in fts.tables.values():
+        print table.tablename
+        for tx in ("CE","SP","SP+","SR F/F"):
+            print "looking up %s"%tx
+            code = table.getItemCodeFromUserCode(tx)
+            print "got code %s, fee %s"% (code, table.getFees(code))

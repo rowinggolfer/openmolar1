@@ -15,16 +15,6 @@ from openmolar.connect import connect
 from openmolar.ptModules import perio,dec_perm,estimates
 from openmolar.settings import localsettings
 
-def formatDate(d):
-    ''' 
-    takes a python date type, returns a string
-    '''
-    try:
-        retarg = "%02d/%02d/%d"%(d.day,d.month,d.year)
-    except:
-        retarg = "no date"
-    return retarg
-
 dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6", 
 "pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
 "recd", "billdate", "enrolled", "initaccept", "lastreaccept", "lastclaim",
@@ -95,27 +85,20 @@ perioTableAtts=('chartdate','bpe','chartdata','flag')
 
 mnhistTableAtts=('chgdate','ix','note')
 
-##TODO undergoing changes
-##I no longer use this table
-prvfeesTableAtts=()#'courseno','dent','esta','acta','estb','actb','data')
-
 notesTableAtts=('lineno','line')
 
 mouth= ['ul8','ul7','ul6','ul5','ul4','ul3','ul2','ul1',
 'ur1','ur2','ur3','ur4','ur5','ur6','ur7','ur8',
 'lr8','lr7','lr6','lr5','lr4','lr3','lr2','lr1',
 'll1','ll2','ll3','ll4','ll5','ll6','ll7','ll8']
+
 decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA',
 'urA','urB','urC','urD','urE','***','***','***',
 '***','***','***','lrE','lrD','lrC','lrB','lrA',
 'llA','llB','llC','llD','llE','***','***','***']
 
-#TODO this table no longer used, data moved elsewhere
-#userdataTableAtts=('data',)
-
 planDBAtts=("serialno", "plantype","band", "grosschg","discount","netchg", 
 "catcode", "planjoin","regno")
-
 
 #################### sub classes ##############################################
 class planData():
@@ -167,100 +150,105 @@ class planData():
             print "error loading from plandata",e    
     
 class patient():
-    def __init__(self,sno):
+    def __init__(self, sno):
         '''
         initiate the class with default variables, then load from database
         '''
-        self.serialno=sno
-        self.courseno=None
+        self.serialno = sno
+        self.courseno = None
         i=0
         for att in patientTableAtts:
-            self.__dict__[att]=patientTableVals[i]
-            i+=1
+            self.__dict__[att] = patientTableVals[i]
+            i += 1
+        
         ######TABLE 'mnhist'#######
-        self.chgdate =nullDate # date 	YES 	 	None
-        self.ix = 0 #tinyint(3) unsigned 	YES 	 	None
-        self.note='' #varchar(60) 	YES 	 	None
+        self.chgdate = nullDate   # date 	YES 	 	None
+        self.ix = 0               #tinyint(3) unsigned 	YES 	 	None
+        self.note = ''            #varchar(60) 	YES 	 	None
 
         ######data from the completed table#########
         self.blankCurrtrt()
 
-        #from prvfees
-        self.estimates=[]
+        self.estimates = []
 
         ##from userdata
-        self.plandata=planData(self.serialno)
+        self.plandata = planData(self.serialno)
 
-        ##from userdata
-
-        ####NEIL'S STUFF####
-        self.perioData={}
-        self.bpe=[]
-        self.fees=0
-        self.notestuple=()
-        self.MH=()
-        self.MEDALERT=False
-        self.HIDDENNOTES=[]
-        self.chartgrid={}
-        self.dayBookHistory=()
-        self.underTreatment=False
-        self.estblob=""
+        ###NEIL'S STUFF####
+        self.perioData = {}
+        self.bpe = []
+        self.fees = 0
+        self.notestuple = ()
+        self.MH = ()
+        self.MEDALERT = False
+        self.HIDDENNOTES = []
+        self.chartgrid = {}
+        self.dayBookHistory = ()
+        self.underTreatment = False
+        self.feeTable = None
         
-        if self.serialno!=0:
+        if self.serialno != 0:
             #load stuff from the database
-            db=connect()
+            db = connect()
             cursor = db.cursor()
 
-            fields=patientTableAtts
-            query=""
+            fields = patientTableAtts
+            query = ""
             for field in fields:
-                query+=field+","
-            query=query.strip(",")
+                query += field + ","
 
-            cursor.execute('SELECT %s from patients where serialno=%d'%(
-            query,self.serialno))
+            query = 'SELECT %s from patients where serialno ='% (
+            query.strip(","))
+            
+            cursor.execute(query + "%s", self.serialno)
             values= cursor.fetchall()
 
-            if values==():
-                print "raising an exception"
+            if values == ():
                 raise localsettings.PatientNotFoundError
 
-            i=0
+            i = 0
             for field in fields:
                 if values[0][i] !=None:
                     self.__dict__[field]=values[0][i]
-                i+=1
+                i += 1
 
-            cursor.execute('''select bpedate, bpe from bpe 
-            where serialno=%d'''% self.serialno)
+            query = 'select bpedate, bpe from bpe where serialno=%s'
+            cursor.execute(query, self.serialno)
+            
             values = cursor.fetchall()
+
             for value in values:
                 self.bpe.append(value)
-            if self.courseno0!=0:
+
+            if self.courseno0 != 0:
                 self.getCurrtrt(cursor)
                 self.getEsts(cursor)
            
             self.getNotesTuple(cursor)
 
-            cursor.execute('''select chartdate,chartdata from perio
-            where serialno=%d'''%self.serialno)
+
+            query = 'select chartdate,chartdata from perio where serialno=%s'
+            cursor.execute(query, self.serialno)
             perioData=cursor.fetchall()
+            
             for data in perioData:
-                self.perioData[formatDate(data[0])]=perio.\
-                get_perioData(data[1])
+                self.perioData[localsettings.formatDate(data[0])] = (
+                perio.get_perioData(data[1]))
                 #--perioData is
                 #--a dictionary (keys=dates) of dictionaries with keys
                 #--like "ur8" and containing 7 tuples of data
-            cursor.execute('''select drnm,adrtel,curmed,oldmed,allerg,heart,
-            lungs,liver,kidney,bleed,anaes,other,alert,chkdate 
-            from mednotes where serialno=%d'''% self.serialno)
+            
+            query = 'select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,'+\
+            'liver,kidney,bleed,anaes,other,alert,chkdate from mednotes'+\
+            ' where serialno=%s'
+            cursor.execute(query, (self.serialno,))
 
             self.MH=cursor.fetchone()
             if self.MH!=None:
                 self.MEDALERT=self.MH[12]
-                
-            cursor.execute('''select date, trtid, chart from
-            daybook where serialno = %d'''% self.serialno)
+                    
+            query = 'select date, trtid, chart from daybook where serialno=%s'
+            cursor.execute(query, self.serialno)
             self.dayBookHistory=cursor.fetchall()
             
             cursor.close()
@@ -273,6 +261,60 @@ class patient():
             self.updateFees()
             #self.setCurrentEstimate()
 
+    def getAge(self):
+        '''
+        return the age in form (year(int), months(int), isToday(bool))
+        '''
+        try:
+            today = localsettings.currentDay()
+            nextbirthday = datetime.date(today.year, self.dob.month, 
+            self.dob.day)
+
+            ageYears = today.year - self.dob.year
+
+            if nextbirthday > today:
+                ageYears -= 1
+                months = (12 - self.dob.month) + today.month
+            else:
+                months = today.month - self.dob.month
+            if self.dob.day > today.day:
+                months -= 1
+            
+            isToday =  nextbirthday == today
+            
+            return (ageYears, months, isToday)
+        
+        except Exception, e:
+            print "error calculating patient's age", e
+            return (0,0,False)
+            
+    def getFeeTable(self):
+        '''
+        logic to determine which feeTable should be used for standard items
+        '''
+        if self.feeTable == None:
+            feecat = self.cset       
+            if self.cset == "N":
+                if self.getAge()[0] < 18:
+                    feecat = "C"
+            if self.accd == None:
+                self.accd = localsettings.currentDay()
+            for table in localsettings.FEETABLES.tables.values():
+                start, end = table.startDate, table.endDate
+                if end == None:
+                    end = localsettings.currentDay()
+                
+                if feecat in table.categories and start <= self.accd <=end:
+                    print "using %s for fees"% table.tablename
+                    self.feeTable = table
+                    return table
+                
+            #-- if no table returned, use the default.
+            print "WARNING - NO SUITABLE FEETABLE FOUND, RETURNING DEFAULT"
+            return localsettings.FEETABLES.tables[0]
+        else:
+            return self.feeTable
+        
     def getEsts(self, cursor=None):
         '''
         get estimate data

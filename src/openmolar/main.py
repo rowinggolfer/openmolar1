@@ -90,7 +90,6 @@ and you can continue if you wish</p>
         from openmolar.qt4gui import maingui
         sys.exit(maingui.main(my_app))
     sys.exit()
-
 def main():
     '''
     main function
