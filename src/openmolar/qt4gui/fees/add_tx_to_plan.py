@@ -16,7 +16,7 @@ from __future__ import division
 import re
 from PyQt4 import QtGui
 
-from openmolar.settings import localsettings, fee_keys
+from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_customTreatment
 from openmolar.qt4gui.compiled_uis import Ui_feeTableTreatment
 
@@ -53,12 +53,9 @@ def xrayAdd(parent):
     if not course_module.newCourseNeeded(parent):
         mylist = ((0, "S"), (0, "M"), (0, "P"))
         chosenTreatments = offerTreatmentItems(parent, mylist)
-        for treat in chosenTreatments:
-            #(usercode,itemcode,description, fee,ptfee)
-            usercode = treat[0]
-            parent.pt.xraypl += usercode + " "
-            parent.pt.addToEstimate(1, treat[1], treat[2], 
-            treat[3], treat[4], parent.pt.dnt1, 
+        for usercode, itemcode, description in chosenTreatments:
+            parent.pt.xraypl += "%s "% usercode
+            parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
             parent.pt.cset, "xray", usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
@@ -71,11 +68,9 @@ def perioAdd(parent):
     if not course_module.newCourseNeeded(parent):
         mylist = ((0, "SP"), (0, "SP+"))
         chosenTreatments = offerTreatmentItems(parent, mylist)
-        for treat in chosenTreatments:
-            usercode = treat[0]
+        for usercode, itemcode, description in chosenTreatments:
             parent.pt.periopl += "%s "% usercode
-            parent.pt.addToEstimate(1,treat[1], treat[2], 
-            treat[3], treat[4], parent.pt.dnt1, 
+            parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
             parent.pt.cset, "perio", usercode)
         parent.load_treatTrees()
         parent.load_newEstPage()
@@ -95,11 +90,9 @@ def otherAdd(parent):
             mylist += ((0, usercode), )
         
         chosenTreatments = offerTreatmentItems(parent, mylist)
-        for treat in chosenTreatments:
-            usercode = treat[0]
+        for usercode, itemcode, description in chosenTreatments:
             parent.pt.otherpl += "%s "% usercode
-            parent.pt.addToEstimate(1,treat[1], treat[2], 
-            treat[3], treat[4], parent.pt.dnt1, 
+            parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
             parent.pt.cset, "other", usercode)
             
         parent.load_newEstPage()
@@ -120,16 +113,13 @@ def customAdd(parent):
             
             if descr == "":
                 descr = "??"
-            ttype = str (descr.replace(" ", "_"))
+            usercode = str (descr.replace(" ", "_"))[:12]
             
-            if len(ttype) > 12:
-                #-- necessary because the est table type col is char(12)
-                ttype = ttype[:12]
             fee = int(dl.fee_doubleSpinBox.value() * 100)
             
-            parent.pt.custompl += "%s "% ttype
-            parent.pt.addToEstimate(no, "4002", descr, fee,
-            fee, parent.pt.dnt1, "P", "custom", ttype)
+            parent.pt.custompl += "%s "% usercode
+            parent.pt.addToEstimate(no, "4002", parent.pt.dnt1, 
+            "P", "custom", usercode, descr, fee, fee, )
             parent.load_newEstPage()
             parent.load_treatTrees()
 
@@ -183,6 +173,7 @@ def fromFeeTable(parent, item):
             parent.pt.custompl += "%s "% ttype
             fee = int(dl.fee_doubleSpinBox.value() * 100)
             ptfee = int(dl.ptfee_doubleSpinBox.value() * 100)
+       
             parent.pt.addToEstimate(1, code, descr, fee,
             ptfee, parent.pt.dnt1, parent.pt.cset, category, ttype)
             
@@ -263,8 +254,9 @@ def chartAdd(parent, tooth, properties):
         item, fee, ptfee, item_description = \
         parent.pt.getFeeTable().toothCodeWizard(toothname, usercode)
         
-        parent.pt.addToEstimate(1, item, item_description, fee, ptfee,
-        parent.pt.dnt1, parent.pt.cset, toothname, usercode)
+        parent.pt.addToEstimate(1, item, 
+        parent.pt.dnt1, parent.pt.cset, toothname, usercode, 
+        item_description, fee, ptfee,)
 
 @localsettings.debug
 def pass_on_estimate_delete(parent, est):
@@ -383,7 +375,8 @@ if __name__ == "__main__":
     #disable the functions called
     mw.load_treatTrees = lambda : None
     mw.load_newEstPage = lambda : None
-            
-    #mw.show()
-    otherAdd(mw)
     
+    xrayAdd(mw)     
+    perioAdd(mw)   
+    otherAdd(mw)
+    customAdd(mw)

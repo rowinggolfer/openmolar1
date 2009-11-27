@@ -15,7 +15,7 @@ from __future__ import division
 
 from PyQt4 import QtGui
 
-from openmolar.settings import localsettings, fee_keys
+from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs import hygTreatWizard
 
 #-- fee modules which interact with the gui
@@ -68,10 +68,8 @@ def performPerio(parent):
                 else:
                     parent.advise("need to split a multi unit perio item", 1)
         if not foundInEsts:
-            parent.pt.addToEstimate(1, item, item_description, fee,
-            ptfee, parent.pt.dnt1, parent.pt.cset,
-            "perio", dl.trt, True)
-
+            parent.pt.addToEstimate(1, item, parent.pt.dnt1, parent.pt.cset,
+            "perio", dl.trt, item_description, fee, ptfee, True)
         if ptfee > 0:
             fees_module.applyFeeNow(parent, ptfee)
 

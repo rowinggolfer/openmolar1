@@ -76,6 +76,8 @@ def changeCourseType(parent, cset):
     parent.updateDetails()
     i = ["P", "I", "N"].index(parent.pt.cset[:1])
     parent.ui.contract_tabWidget.setCurrentIndex(i)
+    #do this so that the table is reset at any lookup
+    parent.pt.feeTable = None 
 
 def editNHScontract(parent):
     '''blank function which needs work'''

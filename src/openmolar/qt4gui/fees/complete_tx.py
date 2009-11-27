@@ -15,7 +15,7 @@ from __future__ import division
 import re
 from PyQt4 import QtGui, QtCore
 
-from openmolar.settings import localsettings, fee_keys
+from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs import completeTreat
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import fees_module

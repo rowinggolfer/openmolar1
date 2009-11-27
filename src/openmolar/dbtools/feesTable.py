@@ -10,7 +10,6 @@ from xml.dom import minidom
 
 from openmolar.connect import connect
 from openmolar.settings import localsettings
-from openmolar.settings import fee_keys   # soon to be removed!
 
 class feeTables():
     '''
@@ -302,12 +301,22 @@ class feeTable():
         return arg in self.feesDict.keys()
     
     @localsettings.debug
-    def getFees(self, itemcode, no_items=1, conditions=[]):
+    def getFees(self, itemcode, no_items=1, conditions=[], 
+    no_already_in_estimate=0):
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
         if self.hasItemCode(itemcode):
-            return self.feesDict[itemcode].getFees(no_items, conditions)
+            if no_already_in_estimate == 0:
+                return self.feesDict[itemcode].getFees(no_items, conditions)
+            else:
+                fee, ptfee = self.feesDict[itemcode].getFees(
+                no_items+no_already_in_estimate, conditions) 
+                
+                offset, ptoffset = self.feesDict[itemcode].getFees(
+                no_already_in_estimate, conditions) 
+                
+                return (fee - offset, ptfee - ptoffset) 
         else:
             print "itemcode %s not found in %s"% (itemcode, self.tablename)
             return (0,0)

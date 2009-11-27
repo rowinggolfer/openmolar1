@@ -15,7 +15,7 @@ from __future__ import division
 
 from PyQt4 import QtGui
 
-from openmolar.settings import localsettings, fee_keys
+from openmolar.settings import localsettings
 
 from openmolar.qt4gui.dialogs import examWizard
 #-- fee modules which interact with the gui
@@ -114,9 +114,10 @@ course dentist, but not the registered dentist</i>''')
                 item, fee, ptfee, item_description = \
                 parent.pt.getFeeTable().userCodeWizard(examtype)
     
-                parent.pt.addToEstimate(1, item, item_description, fee,
-                ptfee, localsettings.ops_reverse[examdent], parent.pt.cset,
-                "exam", examtype, True)
+                parent.pt.addToEstimate(1, item, 
+                localsettings.ops_reverse[examdent], parent.pt.cset,
+                "exam", examtype,  item_description, fee,
+                ptfee,True)
 
                 fees_module.applyFeeNow(parent, ptfee)
 

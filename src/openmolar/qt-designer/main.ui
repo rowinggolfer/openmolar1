@@ -2948,7 +2948,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>516</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2981,7 +2981,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>197</width>
+                        <width>217</width>
                         <height>511</height>
                        </rect>
                       </property>
@@ -3667,8 +3667,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>98</width>
-                    <height>28</height>
+                    <width>118</width>
+                    <height>58</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4923,6 +4923,12 @@ Note - this will not remove items which are currently there. </string>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -4935,6 +4941,12 @@ Note - this will not remove items which are currently there. </string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
               </property>
               <property name="calendarPopup">
                <bool>true</bool>
@@ -5062,6 +5074,12 @@ Note - this will not remove items which are currently there. </string>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -5074,6 +5092,12 @@ Note - this will not remove items which are currently there. </string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
               </property>
               <property name="calendarPopup">
                <bool>true</bool>
@@ -5302,6 +5326,9 @@ Note - this will not remove items which are currently there. </string>
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <item>
                 <widget class="QComboBox" name="chooseFeescale_comboBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <item>
                   <property name="text">
                    <string>Show All Fee Scales</string>
@@ -5321,6 +5348,9 @@ Note - this will not remove items which are currently there. </string>
                </item>
                <item>
                 <widget class="QComboBox" name="feeItems_comboBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <item>
                   <property name="text">
                    <string>Show All Items</string>
@@ -5335,6 +5365,9 @@ Note - this will not remove items which are currently there. </string>
                </item>
                <item>
                 <widget class="QRadioButton" name="feeExpand_radioButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Expand All Sections</string>
                  </property>
@@ -5342,6 +5375,9 @@ Note - this will not remove items which are currently there. </string>
                </item>
                <item>
                 <widget class="QRadioButton" name="feeCompress_radioButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Compress All Sections</string>
                  </property>
@@ -5352,6 +5388,9 @@ Note - this will not remove items which are currently there. </string>
                </item>
                <item>
                 <widget class="QFrame" name="frame_6">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -5496,6 +5535,9 @@ Note - this will not remove items which are currently there. </string>
                </item>
                <item>
                 <widget class="QComboBox" name="feesColumn_comboBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <item>
                   <property name="text">
                    <string>Default Columns</string>
@@ -5521,50 +5563,15 @@ Note - this will not remove items which are currently there. </string>
               <property name="currentIndex">
                <number>0</number>
               </property>
-              <widget class="QWidget" name="tab_28">
-               <attribute name="title">
-                <string>Standard Fees</string>
-               </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_22">
-                <item>
-                 <widget class="QLabel" name="label_47">
-                  <property name="font">
-                   <font>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Warning - this table is deprecated. It is still in use, but to be discontinued with version 0.1.9</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QTreeWidget" name="standardFees_treeWidget">
-                  <property name="alternatingRowColors">
-                   <bool>false</bool>
-                  </property>
-                  <property name="animated">
-                   <bool>true</bool>
-                  </property>
-                  <column>
-                   <property name="text">
-                    <string>1</string>
-                   </property>
-                  </column>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
               <widget class="QWidget" name="tab_29">
                <attribute name="title">
                 <string>+</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_23">
                 <item>
-                 <widget class="QLabel" name="label_46">
+                 <widget class="QPushButton" name="manageFeeTables_pushButton">
                   <property name="text">
-                   <string>Create A New FeeTable</string>
+                   <string>Manage Fee Tables / Create a New FeeTable</string>
                   </property>
                  </widget>
                 </item>

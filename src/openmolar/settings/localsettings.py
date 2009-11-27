@@ -61,8 +61,7 @@ GP17_TOP = 0
 def debug(func):
     if DEBUGMODE:
         def callf(*args, **kwargs):
-            print "===="*20
-            print timestamp()
+            print "===="*2, currentTime(), "===="*2
             print "Calling %s:%s, %s"% (func.__name__, args, kwargs)
             r = func(*args, **kwargs)
             print "%s returned %s"% (func.__name__, r)
@@ -612,7 +611,6 @@ def initiate(debug = False):
     clinicianNo, clinicianInits, FEETABLES
     
     from openmolar import connect
-    from openmolar.settings import fee_keys
     from openmolar.dbtools import feesTable
     from openmolar.dbtools import db_settings
 
@@ -709,12 +707,11 @@ def initiate(debug = False):
     else:
         print "no clinician!"
 
-    #-- majorly important dictionary being created.
-    #-- the keys are treatment codes for NHS scotland
-    #-- the values are a custom data class in the fee_keys module
-
-    FEETABLES = feesTable.feeTables()
+    #-- majorly important class being initiated
     
+    print "loading fee and treamtment logic tables"
+    FEETABLES = feesTable.feeTables()
+
     getLocalSettings()
 
     message = '''<html><head>

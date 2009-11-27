@@ -19,7 +19,7 @@ import subprocess
 
 from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
 patient_write_changes
-from openmolar.settings import localsettings, fee_keys
+from openmolar.settings import localsettings
 
 from openmolar.qt4gui.dialogs import paymentwidget
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
@@ -58,12 +58,7 @@ def applyFeeNow(parent, arg, cset=None):
     '''
     updates the patients outstanding money
     '''
-    if cset == None:
-        cset = parent.pt.cset
-    if "N" in cset:
-        parent.pt.money0 += arg
-    else:
-        parent.pt.money1 += arg
+    parent.pt.applyFee(arg, cset)
     updateFees(parent)
 
 def updateFees(parent):
@@ -227,7 +222,9 @@ def loadFeesTable(parent):
         tab.setColumnWidth(2, 10)
         tab.setColumnWidth(3, 10)
         
-    
+        QtCore.QObject.connect(tab,
+        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
+        parent.fees_treeWidgetItem_clicked)
 
 def feeSearch(parent):
     '''

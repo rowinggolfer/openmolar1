@@ -59,7 +59,6 @@ from openmolar.qt4gui.dialogs import recall_app
 from openmolar.qt4gui.dialogs import medNotes
 from openmolar.qt4gui.dialogs import saveDiscardCancel
 from openmolar.qt4gui.dialogs import newBPE
-from openmolar.qt4gui.dialogs import addToothTreat
 from openmolar.qt4gui.dialogs import saveMemo
 from openmolar.qt4gui.dialogs import save_pttask
 from openmolar.qt4gui.dialogs import permissions
@@ -3276,8 +3275,9 @@ WITH PT RECORDS %d and %d''')% (
         user should be offered a PDF of the current regulations
         '''
         fees_module.nhsRegsPDF(self)
-
-    def standardFees_treeWidgetItem_clicked(self,item):
+    
+    @localsettings.debug
+    def fees_treeWidgetItem_clicked(self, item, item_no):
         '''
         user has double clicked on an item in the fees_table
         '''
@@ -3984,11 +3984,7 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.SIGNAL("editingFinished ()"), self.feeSearch_lineEdit_edited)
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.standardFees_treeWidget,
-        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
-        self.standardFees_treeWidgetItem_clicked)
-
+        
     def signals_charts(self):
 
         #charts (including underlying table)
@@ -4273,61 +4269,25 @@ WITH PT RECORDS %d and %d''')% (
 ###############################################################################
 ########          ATTENTION NEEDED HERE         ###############################
 
-    def recalculateEstimate(self, ALL=True):
-        ####################todo - -move this to the estimates module.....
-        ####################see NEW function below
+    def recalculateEstimate(self):
         '''
         Adds ALL tooth items to the estimate.
         prompts the user to confirm tooth treatment fees
         '''
         ##TODO - redesign this!!!
-        self.ui.planChartWidget.update()
-
-        Dialog = QtGui.QDialog(self)
-        dl = addToothTreat.treatment(Dialog, self.pt)
-        if ALL == False:
-            dl.itemsPerTooth(tooth, item)
-        else:
-            treatmentDict = estimates.toothTreatDict(self.pt)
-            dl.setItems(treatmentDict["pl"],)
-            dl.setItems(treatmentDict["cmp"],)
-
-        dl.showItems()
-
-        chosen = dl.getInput()
-
-        if chosen:
-            if self.pt.dnt2 != 0:
-                dent = self.pt.dnt2
-            else:
-                dent = self.pt.dnt1
-
-            for treat in chosen:
-                #-- treat[0]= the tooth name
-                #-- treat[1] = item code
-                #-- treat[2]= description
-                #-- treat[3]= adjusted fee
-                #-- treat[4]=adjusted ptfee
-
-                self.pt.addToEstimate(1, treat[1], treat[2], treat[3],
-                treat[4], dent, self.pt.cset, treat[0])
-
+        result=QtGui.QMessageBox.question(self, "Confirm",
+        _("Scrap the estimate and re-price everything?"),
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.No )
+        if result == QtGui.QMessageBox.No:
+            return
+        
+        if estimates.recalculate_estimate(self.pt):
             self.load_newEstPage()
             self.load_treatTrees()
-
-    def NEWrecalculateEstimate(self):
-        '''
-        Adds ALL tooth items to the estimate.
-        prompts the user to confirm tooth treatment fees
-        '''
-        ##TODO - redesign this!!!
-        estimates.abandon_estimate(self.pt)
-        if estimates.calculate_estimate(self.pt):
-            self.load_newEstPage()
-            self.load_treatTrees()
+            self.updateDetails()
 
 ################################################################################
-
 
 def main(app):
     #-- app required for polite shutdown

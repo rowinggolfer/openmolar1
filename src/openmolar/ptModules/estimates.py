@@ -11,7 +11,7 @@ import copy
 import re
 import sys
 
-from openmolar.settings import localsettings,fee_keys
+from openmolar.settings import localsettings
 from openmolar.ptModules import plan
 
 import struct
@@ -139,33 +139,53 @@ def toothTreatDict(pt):
     #print "returning ",treats
     return treats
 
-def abandon_estimate(pt):
-    pt.ests = ()
-
+@localsettings.debug
 def recalculate_estimate(pt):
-    #########################needs wordk
+    '''
+    re look up all the itemcodes in the patients feetable 
+    (which could have changed, or maybe we have been informed of an exemption?)
+    '''
+    dent = pt.dnt1
+    if pt.dnt2 and pt.dnt2 != "":
+        dent = pt.dnt2
+        
+    codeList=[]
+    for est in pt.estimates:
+        codeList.append((est.number, est.itemcode, est.csetype, 
+        est.category, est.type, est.description , est.completed))
+        if est.completed:
+            pt.applyFee(est.ptfee * -1)
     
+    pt.estimates = []
+    for number, itemcode, cset, category, type, descrpt, complete \
+    in codeList:
+        est = pt.addToEstimate(number, itemcode, dent, cset, category, type,
+        descr = descrpt, completed=complete)
+        if est.completed:
+            pt.applyFee(est.ptfee * -1)
+    
+    return True
+    
+def estimateFromPlan(pt):
+    '''
+    the idea here is that this iterates through the plan and completed    
+    and gets new itemcodes for estimates....
+    '''
     planned = plan.plannedDict(pt)
     completed = plan.completedDict(pt)
     if pt.dnt2 != 0:
         dent = pt.dnt2
     else:
         dent = pt.dnt1
+    
     for key in planned.keys():
         print key,planned[key]
     for key in completed.keys():
         print key,completed[key]
         
-    return
-    for treat in chosen:
-        #-- treat[0]= the tooth name
-        #-- treat[1] = item code
-        #-- treat[2]= description
-        #-- treat[3]= adjusted fee
-        #-- treat[4]=adjusted ptfee
         
-        pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
-                               dent, self.pt.cset, treat[0])
+    #pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
+    #                        dent, self.pt.cset, treat[0])
 
 
 def toBriefHtml(pt):

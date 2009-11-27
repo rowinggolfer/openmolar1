@@ -71,13 +71,13 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         offer customised advice depending on the OS
         '''
         if "win" in sys.platform:
-            advice = _("If you ever need to run this again, " +
-            "delete the openmolar.conf file in ")
+            advice = _("If you ever need to run this again, ") 
+            advice += _("delete the openmolar.conf file in ")
             advice += "C:\\Program Files\\openmolar\\"
         else:
-            advice = _("If you ever need to run this wizard again, " +
-            "( if your server location changes, " +
-            "or you require a new password ) ") 
+            advice = _("If you ever need to run this wizard again, ") +\
+            "(" + _("Eg. if your server location changes, ") +\
+            _("or you require a new password")+")" 
             advice += "<br>"+ _("type") + " 'openmolar firstrun' " 
             advice += _("on the command line, or delete the file")
             advice += "<br />"+"~/.openmolar/openmolar.conf" +"<br />"*2 
