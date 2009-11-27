@@ -1389,6 +1389,7 @@ class pageHandlingClass():
             self.ui.bpe_groupBox.setTitle(_("BPE"))
             self.ui.bpe_textBrowser.setText("")
             self.ui.planSummary_textBrowser.setText("")
+            self.ui.synopsis_lineEdit.setText("")
 
             #--restore the charts to full dentition
             ##TODO - perhaps handle this with the tabwidget calls?
@@ -1896,7 +1897,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
             course_module.prompt_close_course(self)
 
         #--apply changes to patient details
-        
+        self.pt.synopsis = str(self.ui.synopsis_lineEdit.text().toAscii())
         if self.editPageVisited:
             self.apply_editpage_changes()
 
@@ -2267,6 +2268,7 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.load_dentComboBoxes()
         self.ui.recallDate_comboBox.setCurrentIndex(0)
         self.updateDetails()
+        self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         note=notes.notes(self.pt.notestuple)
         #--notes not verbose
@@ -2926,6 +2928,7 @@ WITH PT RECORDS %d and %d''')% (
         self.ui.newBPE_pushButton,
         self.ui.hygWizard_pushButton,
         self.ui.notesEnter_textEdit,
+        self.ui.synopsis_lineEdit,
         self.ui.memos_pushButton,
         self.ui.printAppt_pushButton):
 

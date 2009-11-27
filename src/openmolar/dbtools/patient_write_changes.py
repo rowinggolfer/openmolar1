@@ -48,6 +48,12 @@ def all_changes(pt, pt_dbstate, changes):
                 alternate_bpe_command='update bpe set bpe="%s" where serialno=%d and bpedate="%s"'%(
                 pt.bpe[-1][1], pt.serialno, pt.bpe[-1][0])
 
+            elif change == "synopsis":
+                sqlcommands['clinical_memos']= ('''insert into clinical_memos 
+                (serialno, synopsis, author, datestamp) values (%s, %s, %s, 
+                NOW())''', (pt.serialno, pt.synopsis, localsettings.operator
+                ))
+                
             elif change == "estimates":
                 sqlcommands["estimates"]=[]
                 oldEstDict={}
@@ -193,9 +199,13 @@ def all_changes(pt, pt_dbstate, changes):
             #-- and uniterable - hence the "if tables"
             for table in tables:
                 try:
+                    query = sqlcommands[table]
                     if localsettings.logqueries:
-                        print sqlcommands[table]
-                    cursor.execute(sqlcommands[table])
+                        print query
+                    if type(query) == types.TupleType:
+                        cursor.execute(query[0],query[1])                    
+                    else:
+                        cursor.execute(query)
                 except Exception,e:
                     print "error saving %s for patient %d"%(table,pt.serialno)
                     print e

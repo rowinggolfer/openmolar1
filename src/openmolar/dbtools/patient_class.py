@@ -11,7 +11,7 @@ import pickle
 import re
 import sys
 import time
-from openmolar.connect import connect
+from openmolar import connect
 from openmolar.ptModules import perio,dec_perm,estimates
 from openmolar.settings import localsettings
 
@@ -100,6 +100,8 @@ decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA',
 planDBAtts=("serialno", "plantype","band", "grosschg","discount","netchg", 
 "catcode", "planjoin","regno")
 
+clinical_memos = ("synopsis",)
+
 #################### sub classes ##############################################
 class planData():
     '''
@@ -125,7 +127,7 @@ class planData():
         
     def getFromDB(self):
         try:
-            db=connect()
+            db=connect.connect()
             cursor=db.cursor()
             
             query='SELECT %s,%s,%s,%s,%s,%s,%s,%s from plandata where serialno=%s'%(
@@ -186,11 +188,14 @@ class patient():
         self.dayBookHistory = ()
         self.underTreatment = False
         self.feeTable = None
+        self.synopsis = ""
         
         if self.serialno != 0:
             #load stuff from the database
-            db = connect()
+            db = connect.connect()
             cursor = db.cursor()
+            
+            self.getSynopsis()
 
             fields = patientTableAtts
             query = ""
@@ -325,7 +330,7 @@ class patient():
 
         if cursor == None:
             disconnectNeeded = True
-            db = connect()
+            db = connect.connect()
             cursor = db.cursor()
 
         #--old code for old (non om schema) database
@@ -375,11 +380,28 @@ class patient():
             else:
                 self.__dict__[att] = ""
 
+    def getSynopsis(self):
+        db = connect.connect()
+        cursor = db.cursor()
+        fields = clinical_memos
+        query=""
+        for field in fields:
+            query += field+","
+        query=query.strip(",")
+        try:
+            if cursor.execute(
+            'SELECT %s from clinical_memos where serialno=%d'% ( query, 
+            self.serialno)):
+                self.synopsis = cursor.fetchall()[-1][0]
+        except connect.OperationalError, e:
+            'necessary because the column is missing is db schema 1.4'
+            print "WARNING -", e            
+            
     def getCurrtrt(self, cursor=None):
         disconnectNeeded=False
         if cursor==None:
             disconnectNeeded=True
-            db=connect()
+            db=connect.connect()
             cursor=db.cursor()
         fields=currtrtmtTableAtts
         query=""
@@ -388,7 +410,7 @@ class patient():
         query=query.strip(",")
         cursor.execute('''SELECT %s from currtrtmt where serialno=%d
         and courseno=%d'''%(query,self.serialno,self.courseno0))
-        ##todo - I should lever these multiple tx plans!!!!
+
         values= cursor.fetchall()
         for value in values:
             i=0
@@ -410,7 +432,7 @@ class patient():
         in the latter case, a new cursor needs to be initiated here.
         '''
         if cursor==None:
-            db=connect()
+            db=connect.connect()
             cursor=db.cursor()
             cursor.execute(
             "SELECT lineno,line from notes where serialno=%d"%self.serialno)

@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import datetime
-import sys
+import re, sys
 from openmolar.settings import localsettings
 
 CHART = { 
@@ -129,7 +129,6 @@ def get_codes_for_date(line):
     else:
         return code
     
-@localsettings.debug
 def get_notes_for_date(line):
     '''
     this is the actual user entered stuff!
@@ -139,6 +138,9 @@ def get_notes_for_date(line):
         if "NOTE" in l[0]:
             mytext = l[1].replace("<","&lt;").replace(">","&gt;")
             note += "%s"% mytext
+    match = re.search(r"[\n ]*$", note)
+    if match:
+        note = note[:note.rindex(match.group())] 
     return note.replace("\n","<br />")
 
 def get_reception_for_date(line):
@@ -155,6 +157,7 @@ def get_reception_for_date(line):
         return "-"
     else:
         return recep.strip("<br />")
+    
 def get_estimate_for_date(line):
     est=""
     for l in line:

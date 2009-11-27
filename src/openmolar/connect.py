@@ -43,6 +43,7 @@ dom.unlink()
 
 ProgrammingError = MySQLdb.ProgrammingError
 IntegrityError = MySQLdb.IntegrityError
+OperationalError = MySQLdb.OperationalError
 
 class omSQLresult():
     '''
