@@ -28,7 +28,7 @@ class feeTables():
         for key in self.tables:
             table = self.tables[key]
             retarg += "===" * 12 + "\n"
-            retarg += "   table %s - %s\n"% (key, table.tablename)
+            retarg += "   table %s - %s\n"% (key, table.briefName)
             retarg += "%s \n"% table.description
             retarg += "valid %s - %s\n"% (
             localsettings.formatDate(table.startDate),
@@ -81,6 +81,7 @@ class feeTable():
     '''
     def __init__(self, tablename, index):
         self.tablename = tablename
+        self.briefName = tablename.replace("feetable_","")
         self.index = index
         self.feeColNames = ()
         self.pt_feeColNames = ()

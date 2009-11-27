@@ -84,6 +84,56 @@ class treatment(Ui_addTreatment.Ui_Dialog):
         else:
             return()
 
+class feeTable_treatment(Ui_addTreatment.Ui_Dialog):
+    '''
+    a custom dialog to offer a treatment where the itemcode is known
+    '''
+    def __init__(self, dialog, table, itemcodes):
+        '''
+        pass in a dialog, a tuple of feeclassitems (normally only one)
+        and a patient
+        '''
+        self.setupUi(dialog)
+        self.dialog = dialog
+        self.table = table
+        self.itemcodes = itemcodes
+        self.showItems()
+
+    def showItems(self):
+        self.itemWidgets = []
+        vlayout = QtGui.QVBoxLayout()
+        for itemcode in self.itemcodes:
+            item = self.table.feesDict.get(itemcode)
+            iw = QtGui.QWidget()
+            itemW = itemWidget(self, iw)
+            itemW.setItem(itemcode)
+            itemW.setNumber(1)
+            usercode = item.usercode
+            if usercode == "":
+                usercode = itemcode
+            itemW.usercode = usercode
+            itemW.setDescription(item.description)
+            self.itemWidgets.append(itemW)
+            vlayout.addWidget(iw)
+        self.frame.setLayout(vlayout)
+            
+    def getInput(self):
+        '''
+        returns a tuple of tuples (usercode, itemcode, description) eg.
+        (("CE", "0101", "clinical exam"),)
+        '''
+        if self.dialog.exec_():
+            retarg = ()
+            for itemW in self.itemWidgets:
+                number = itemW.spinBox.value()
+                if number != 0:
+                    for n in range(number):
+                        retarg += ((itemW.usercode, itemW.itemcode, 
+                        itemW.description), )
+            return retarg
+        else:
+            return()
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
@@ -94,4 +144,9 @@ if __name__ == "__main__":
     items = [(0,"CE"),(0,"M"),(1,"SP")]
     ui = treatment(Dialog, items, pt)
     print ui.getInput()
-
+    
+    Dialog = QtGui.QDialog()    
+    table = pt.getFeeTable()
+    items = ("0101","1001")
+    ui = feeTable_treatment(Dialog, table, items)
+    print ui.getInput()

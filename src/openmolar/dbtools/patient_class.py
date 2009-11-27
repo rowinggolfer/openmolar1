@@ -555,9 +555,9 @@ class patient():
                     break #-- only remove 1 occurrence??
     
     @localsettings.debug
-    def addToEstimate(self, number, itemcode, dent, csetype, 
+    def addToEstimate(self, number, itemcode, dent, csetype="", 
     category="", type="", descr=None, fee=None, ptfee=None,
-    completed=False, feescale="A", carriedover=False):
+    completed=False, feescale=None, carriedover=False):
         '''
         add an item to the patient's estimate
         '''
@@ -574,28 +574,37 @@ class patient():
         #handle the case where there are more than one item of the same code
         existing_no = 0
         for existing_est in self.estimates:
-            if existing_est.itemcode == est.itemcode:
+            if existing_est.itemcode == est.itemcode and \
+            est.csetype == existing_est.csetype:
                 existing_no += 1
         linked = existing_no > 0
         for existing_est in self.estimates:
             if existing_est.itemcode == est.itemcode:
                 existing_est.linked = linked
         est.linked = linked
-    
+        
+        if feescale == None:
+            table = self.getFeeTable()
+        else:
+            table = localsettings.FEETABLES.tables[feescale]
+        
+        est.feescale = table.index
+        if csetype == "":
+            csetype = table.categories[0]
+        est.csetype = csetype
+        
         est.category = category
         est.type = type
         if descr == None:
-            est.description = self.getFeeTable().getItemDescription(itemcode)
+            est.description = table.getItemDescription(itemcode)
         else:
             est.description = descr
         if fee == None:
-            est.fee, est.ptfee = self.getFeeTable().getFees(
+            est.fee, est.ptfee = table.getFees(
             itemcode, number, no_already_in_estimate=existing_no)
         else:
             est.fee, est.ptfee = fee, ptfee
-            
-        est.feescale = self.getFeeTable().index
-        est.csetype = csetype
+        
         est.dent = dent
         est.completed = completed
         est.carriedover = carriedover

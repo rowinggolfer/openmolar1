@@ -97,7 +97,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
             dl.fname.setText(localsettings.lastsearch[1])
             dl.pcde.setText(localsettings.lastsearch[5])
         
-        Dialog = QtGui.QDialog()
+        Dialog = QtGui.QDialog(self.Dialog)
         dl = Ui_patient_finder.Ui_Dialog()
         dl.setupUi(Dialog)
         QtCore.QObject.connect(dl.repeat_pushButton, QtCore.\

@@ -364,7 +364,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         user has clicked the edit button
         allow the user to edit the full contents of a tootget\ h
         '''
-        Dialog = QtGui.QDialog()
+        Dialog = QtGui.QDialog(self)
         lineEdit = chartLineEdit()
         if self.isStatic:
             lineEdit.setMaxLength(34)

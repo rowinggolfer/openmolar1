@@ -128,61 +128,56 @@ def fromFeeTable(parent, item):
     '''
     add an item which has been selected from the fee table itself
     '''
-    print "adding an item from the fee table!!"
+    print "adding an item from the fee table!!"  
     
-    headerItem = item.parent()
-    if headerItem == None: # userhas clicked a heading - no use.
+    
+    if course_module.newCourseNeeded(parent):
         return
     
-    category = str(headerItem.text(0))
+    table = parent.pt.getFeeTable()
+    clicked_tableIndex = parent.ui.fees_tabWidget.currentIndex()
+    itemcode = str(item.text(0))
+        
+    if  clicked_tableIndex != table.index:
+        table = confirmWrongFeeTable(parent, clicked_tableIndex, table.index)
+        if not table:
+            return
+
+    Dialog = QtGui.QDialog(parent)    
+    items = (itemcode, )
+    dl = addTreat.feeTable_treatment(Dialog, table, items)
     
-    if False: #debug stuff
-        for i in range(item.columnCount()):
-            print item.text(i),
-            
-        print "category",category
+    chosenTreatments = dl.getInput()
+    for usercode, itemcode, description in chosenTreatments:
+        parent.pt.otherpl += "%s "% usercode
+        parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
+        category="other", type=usercode, feescale=table.index)
         
-    if not course_module.newCourseNeeded(parent):
-        Dialog = QtGui.QDialog(parent)
-        dl = Ui_feeTableTreatment.Ui_Dialog()
-        dl.setupUi(Dialog)
-        dl.description_lineEdit.setText(item.text(4))
-        if "N" in parent.pt.cset:
-            print "using NHS 08 cols"
-            fee = localsettings.reverseFormatMoney(item.text(6))
-            ptfee = localsettings.reverseFormatMoney(item.text(7))
-        else:
-            print "using private column"
-            fee = localsettings.reverseFormatMoney(item.text(10))
-            ptfee = fee 
-        if "I" == parent.pt.cset:
-            ptfee = 0
-        
-        dl.fee_doubleSpinBox.setValue(fee/100)
-        dl.ptfee_doubleSpinBox.setValue(ptfee/100)
-        
-        if Dialog.exec_():
-            descr = str(dl.description_lineEdit.text())
-            if descr == "":
-                descr = "??"
-            code = str(item.text(0))
-            ttype = str(item.text(2)).replace(" ", "_")
-            if ttype == "":
-                ttype = descr.replace(" ", "_")[:12]
-    
-            parent.pt.custompl += "%s "% ttype
-            fee = int(dl.fee_doubleSpinBox.value() * 100)
-            ptfee = int(dl.ptfee_doubleSpinBox.value() * 100)
-       
-            parent.pt.addToEstimate(1, code, descr, fee,
-            ptfee, parent.pt.dnt1, parent.pt.cset, category, ttype)
+    if parent.ui.tabWidget.currentIndex() != 7:
+        parent.ui.tabWidget.setCurrentIndex(7)
+    else:
+        parent.load_newEstPage()
+        parent.load_treatTrees()
+
+def confirmWrongFeeTable(parent, suggested, current):
+    '''
+    check that the user is happy to use the suggested table, not the current 
+    one. returns the selected table, or None to keep the current.
+    '''
+    suggestedTable = localsettings.FEETABLES.tables.get(suggested)
+    currentTable = localsettings.FEETABLES.tables.get(current)
+    message = '''<p>Confirm you wish to use the fee table <br />
+    '%s - %s'<br /><br />
+    and not the patient's current fee table <br />
+    '%s - %s'<br /> for this item?</p>'''% (
+    suggestedTable.tablename, suggestedTable.description,
+    currentTable.tablename, currentTable.description)
+    input = QtGui.QMessageBox.question(parent, "Confirm", message,
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.No )
+    if input == QtGui.QMessageBox.Yes:
+        return suggestedTable
             
-            
-            if parent.ui.tabWidget.currentIndex() != 7:
-                parent.ui.tabWidget.setCurrentIndex(7)
-            else:
-                parent.load_newEstPage()
-                parent.load_treatTrees()
 
 @localsettings.debug
 def itemsPerTooth(tooth,props):

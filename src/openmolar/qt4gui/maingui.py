@@ -1277,6 +1277,9 @@ class pageHandlingClass():
             #--user is viewing the feetable
             if not self.feestableLoaded:
                 fees_module.loadFeesTable(self)
+            if self.pt.serialno !=0:
+                self.ui.fees_tabWidget.setCurrentIndex(
+                self.pt.getFeeTable().index)
         if ci == 7:
             #--forum
             forum_gui_module.loadForum(self)

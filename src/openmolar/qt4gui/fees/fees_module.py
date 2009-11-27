@@ -190,37 +190,44 @@ def loadFeesTable(parent):
         colNo = len(table.categories)
         for key in keys:
             feeItem = feeDict[key]
+                        
             for subNo in range(len(feeItem.brief_descriptions)):
                 if subNo == 0:                    
                     cols = [str(key), feeItem.usercode, feeItem.regulations,
                     feeItem.description ]
+                    parent_twi = tab
                 else:
-                    cols = ["","","",""]
+                    if subNo ==1:
+                        parent_twi = prev_twi
+                    cols = [str(key),"","",""]
+                    
                 cols.append(feeItem.brief_descriptions[subNo])
                 for i in range(colNo):
                     cols.append(str(feeItem.fees[i][subNo]))
                     if table.hasPtCols:
                         cols.append(str(feeItem.ptFees[i][subNo]))
                 
-                QtGui.QTreeWidgetItem(tab, cols)
-
+                prev_twi = QtGui.QTreeWidgetItem(parent_twi, cols)
+            
+            prev_twi.setExpanded(False)
         #ok data loaded, so now insert it into the fees Tabwidget
         i = parent.ui.fees_tabWidget.count()        
         widg = QtGui.QWidget()
-        parent.ui.fees_tabWidget.insertTab(i-1, widg, table.tablename)
+        tab_label = table.briefName
+        parent.ui.fees_tabWidget.insertTab(i-1, widg, tab_label)
         vbox = QtGui.QVBoxLayout()
 
         vbox.addWidget(label)
         vbox.addWidget(tab)
         widg.setLayout(vbox)
 
-        tab.expandAll()
+        #tab.expandAll()
         for i in range(tab.columnCount()):
             tab.resizeColumnToContents(i)
 
         #hide the descriptions and regulations
         tab.setColumnWidth(2, 10)
-        tab.setColumnWidth(3, 10)
+        tab.setColumnWidth(4, 10)
         
         QtCore.QObject.connect(tab,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
