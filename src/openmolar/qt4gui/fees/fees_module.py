@@ -225,7 +225,8 @@ def loadFeesTable(parent):
         QtCore.QObject.connect(tab,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
         parent.fees_treeWidgetItem_clicked)
-
+    parent.ui.fees_tabWidget.setCurrentIndex(0)
+    
 def feeSearch(parent):
     '''
     fee search button clicked...

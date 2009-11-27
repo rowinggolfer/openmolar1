@@ -60,7 +60,7 @@ def notes(ptNotesTuple, verbosity=0):
     retarg += '</tr>'
     for key in dates:
         retarg += '''<tr><td class="date">%s</td><td class="ops">%s</td>
-        <td class="tx">%s</td><td class="notes">%s</td>'''% (
+        <td class="tx">%s</td><td width="70%%" class="notes">%s</td>'''% (
         get_date_from_date(key), get_op_for_date(notes_dict[key]),
         get_codes_for_date(notes_dict[key]),
         get_notes_for_date(notes_dict[key]))
@@ -128,6 +128,8 @@ def get_codes_for_date(line):
         return "-"
     else:
         return code
+    
+@localsettings.debug
 def get_notes_for_date(line):
     '''
     this is the actual user entered stuff!
@@ -135,10 +137,9 @@ def get_notes_for_date(line):
     note=""
     for l in line:
         if "NOTE" in l[0]:
-            mytext = l[1].replace("<","&lt;")
-            mytext = mytext.replace(">","&gt;")
-            note += "%s<br />"% mytext
-    return note.strip("<br />")
+            mytext = l[1].replace("<","&lt;").replace(">","&gt;")
+            note += "%s"% mytext
+    return note.replace("\n","<br />")
 
 def get_reception_for_date(line):
     '''
@@ -348,7 +349,7 @@ if __name__ == "__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=502
+        serialno=11956
     if "-v" in sys.argv:
         verbose=True
     else:

@@ -162,7 +162,7 @@ def recalculate_estimate(pt):
         est = pt.addToEstimate(number, itemcode, dent, cset, category, type,
         descr = descrpt, completed=complete)
         if est.completed:
-            pt.applyFee(est.ptfee * -1)
+            pt.applyFee(est.ptfee)
     
     return True
     

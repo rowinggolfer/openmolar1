@@ -206,17 +206,19 @@ def all_changes(pt, pt_dbstate, changes):
         #db.close()
     return result
 
-def toNotes(serialno,newnotes):
+@localsettings.debug
+def toNotes(serialno, newnotes):
     print "write changes - toNotes for patient %d"%serialno
     #print "writing to db",serialno,newnotes
+    
+    #database version stores max line length of 80chars 
+    
     query="select max(lineno) from notes where serialno=%d"%serialno
     db=connect()
     cursor = db.cursor()
     cursor.execute(query)
-    rows=cursor.fetchall()
-    if rows != ((None,),):
-        lineNo=rows[0][0]
-    else:
+    lineNo = cursor.fetchone()[0]
+    if lineNo == None:
         lineNo=0
     try:
         n=1
@@ -224,30 +226,43 @@ def toNotes(serialno,newnotes):
         year,month,day,hour,min=t.year-1900,t.month,t.day,t.hour,t.minute
 
         #-- grrr - crap date implementation coming up......
-        #-- ok, for backwards compatibility reasons, I have to put a little hack in here,
-        #-- because of the idiotic (though arguably efficient) way time is stored
-        #-- in the original data. If I build an sql query with a " in it (which happens at 34
-        #-- minutes past the hour so I have to escape any "
-
-        openstr="\x01%s%s%s%s%s%s%s%s%s"%(localsettings.operator,chr(day),chr(month),chr(year),
-        chr(day),chr(month),chr(year),chr(hour),chr(min))
-        if '"' in openstr:
-            openstr=openstr.replace('"',r'\"')
-
-        closestr="\x02%s%s%s%s%s%s"%(localsettings.operator,chr(day),chr(month),chr(year),chr(hour),
-        chr(min))
-        if '"' in closestr:
-            closestr=closestr.replace('"',r'\"')
-
-        for note in [openstr]+newnotes+[closestr]:
-            query='insert into notes (serialno,lineno,line) values (%d,%d,"%s")'%(serialno,
-                                                                            lineNo+n,note)
-            cursor.execute(query)
+        #-- ok, for backwards compatibility reasons, 
+        #-- I have to put a little hack in here,
+        #-- because of the idiotic (though arguably efficient) 
+        #-- way time is stored in the original data. 
+        
+        openstr="\x01%s%s%s%s%s%s%s%s%s"%(
+        localsettings.operator,chr(day), chr(month), chr(year),
+        chr(day), chr(month), chr(year), chr(hour), chr(min))
+        
+        closestr="\x02%s%s%s%s%s%s"%(localsettings.operator, chr(day), 
+        chr(month), chr(year), chr(hour), chr(min))
+        
+        query='insert into notes (serialno,lineno,line) values (%s, %s,%s)'        
+        for note in [openstr] + newnotes + [closestr]:
+            while len(note)>79:
+                if " " in note[:79]:
+                    pos = note[:79].rindex(" ")
+                    #--try to split nicely
+                elif "," in note[:79]:
+                    pos = note[:79].rindex(",")
+                    #--try to split nicely
+                else:
+                    pos = 79
+                    #--ok, no option (unlikely to happen though)
+                values = (serialno, lineNo+n, note[:pos])
+                cursor.execute(query, values)
+                n += 1
+                note = note[pos+1:]
+    
+            values = (serialno, lineNo+n, note+"\n")
+            cursor.execute(query, values)
             n+=1
-        result=lineNo
+    
+        result = lineNo
     except Exception,e:
         print e
-        result=-1
+        result = -1
     cursor.close()
     db.commit()
     #db.close()

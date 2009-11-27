@@ -2847,7 +2847,9 @@ WITH PT RECORDS %d and %d''')% (
             #-- hidden notes is
             #-- treatment codes... money, printing etc..
             print "saving hiddennotes"
-            patient_write_changes.toNotes(self.pt.serialno, self.pt.HIDDENNOTES)
+            patient_write_changes.toNotes(self.pt.serialno, 
+            self.pt.HIDDENNOTES)
+
             self.pt.clearHiddenNotes()
 
         daybook_module.updateDaybook(self)
@@ -2887,23 +2889,7 @@ WITH PT RECORDS %d and %d''')% (
         #--convert to python datatype
         newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
         if len(newnote)>0:
-            newnote=newnote.replace('"', "'")
-            #--because " knackers my sql queries!!
-            notelines=[]
-            #-- silly database stores note lines as strings of max 80chrs
-            while len(newnote)>79:
-                if "\n" in newnote[:79]:
-                    pos=newnote[:79].rindex("\n")
-                elif " " in newnote[:79]:
-                    pos=newnote[:79].rindex(" ")
-                    #--try to split nicely
-                else:
-                    pos=79
-                    #--ok, no option
-                notelines.append(newnote[:pos])
-                newnote=newnote[pos+1:]
-            notelines.append(newnote)
-            print "NOTES UPDATE\n%s"%notelines
+            notelines = newnote.split("\n")
             result= patient_write_changes.toNotes(self.pt.serialno, notelines)
             #--sucessful write to db?
             if result != -1:
@@ -2913,7 +2899,7 @@ WITH PT RECORDS %d and %d''')% (
                 self.pt.getNotesTuple()
                 #--reload the notes
                 self.ui.notesSummary_textBrowser.setHtml(notes.notes(
-                                                            self.pt.notestuple))
+                                                        self.pt.notestuple))
                 self.ui.notesSummary_textBrowser.scrollToAnchor("anchor")
                 if self.ui.tabWidget.currentIndex() == 5:
                     self.updateNotesPage()

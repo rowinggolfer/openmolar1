@@ -24,7 +24,7 @@ table{width:100%;}
 .date{background-color:#ffeedd}
 .ops{background-color:#dddddd;}
 .tx{background-color:#aaaaaa}
-.notes{background-color:#dddddd;}
+.notes{background-color:#dddddd; width:70%}
 .reception{background-color:#eeeeee;}
 .verbose{background-color:#ddeeff}
 
