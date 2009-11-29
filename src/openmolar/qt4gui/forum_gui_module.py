@@ -23,7 +23,7 @@ def checkForNewForumPosts(parent):
     checks for new forum posts every few minutes
     '''
     parent.showForumActivity(forum.newPosts())
-        
+
 def loadForum(parent):
     '''
     loads the forum
@@ -40,9 +40,9 @@ def loadForum(parent):
         posts = forum.getPosts(chosen)
     else:
         posts = forum.getPosts()
-    
+
     parentItems = {None : twidg}
-    
+
     #--set a boolean for alternating row colours
     highlighted = True
     for post in posts:
@@ -57,52 +57,52 @@ def loadForum(parent):
         if post.recipient:
             item.setText(3, post.recipient)
         else:
-            item.setText(3, "-")            
-        
+            item.setText(3, "-")
+
         d = QtCore.QDateTime(post.date)
         item.setData(4, QtCore.Qt.DisplayRole, QtCore.QVariant(d))
-        
+
         item.setText(5, post.comment)
         item.setText(6, post.briefcomment)
-        item.setData(7,  QtCore.Qt.UserRole, 
+        item.setData(7,  QtCore.Qt.UserRole,
         QtCore.QVariant(post.parent_ix))
-        
+
         if parentItem == twidg:
             highlighted = not highlighted
             if highlighted:
-                bcolour = twidg.palette().base()            
+                bcolour = twidg.palette().base()
             else:
                 bcolour = twidg.palette().alternateBase()
         else:
             bcolour = parentItem.background(0)
-             
+
         for i in range(item.columnCount()):
             item.setBackground(i,bcolour)
             if i == 4: #date
-                if post.date > (localsettings.currentTime() - 
+                if post.date > (localsettings.currentTime() -
                 datetime.timedelta(hours = 24)):
                     item.setTextColor(i, QtGui.QColor("orange"))
-                ##TODO - put in some code to set the text for "today" 
+                ##TODO - put in some code to set the text for "today"
                 ##or yesterday etc...
         if GROUP_TOPICS:
             parentItems[post.ix] = item
-        
+
     twidg.expandAll()
     ##TODO - I would like the user to be able to sort the table
     ##but this doesn't work as expected :(
     twidg.setSortingEnabled(True)
-    #if GROUP_TOPICS: 
+    #if GROUP_TOPICS:
     #    twidg.sortByColumn(7)
     #else:
-    twidg.sortByColumn(4)
-        
+    twidg.sortByColumn(4, QtCore.Qt.AscendingOrder)
+
     for i in range(twidg.columnCount()):
         twidg.resizeColumnToContents(i)
     twidg.setColumnWidth(1, 0)
     twidg.setColumnWidth(5, 0)
     twidg.setColumnWidth(7, 0)
-        
-        
+
+
     parent.ui.forumDelete_pushButton.setEnabled(False)
     parent.ui.forumReply_pushButton.setEnabled(False)
     #-- turn the tab red.
@@ -132,7 +132,7 @@ def forumNewTopic(parent):
     Dialog = QtGui.QDialog(parent)
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
-    dl.from_comboBox.addItems([localsettings.operator, "Anon"] + 
+    dl.from_comboBox.addItems([localsettings.operator, "Anon"] +
     localsettings.allowed_logins)
 
     dl.to_comboBox.addItems(["ALL"] + localsettings.allowed_logins)
@@ -160,18 +160,30 @@ def forumDeleteItem(parent):
     '''
     delete a forum posting
     '''
-    item = parent.ui.forum_treeWidget.currentItem()
-    heading = item.text(0)
+    items = parent.ui.forum_treeWidget.selectedItems()
+    number = len(items)
+    if number >1:
+        result = QtGui.QMessageBox.question(parent, "Confirm",
+        _("Delete %d Posts?")% number,
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
+        if result == QtGui.QMessageBox.Yes:
+            for item in items:
+                ix = int(item.text(1))
+                forum.deletePost(ix)
+    else:
+        item = parent.ui.forum_treeWidget.currentItem()
+        heading = item.text(0)
 
-    result = QtGui.QMessageBox.question(parent, "Confirm",
-    _("Delete selected Post?")+"<br />'%s'"% heading,
-    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-    QtGui.QMessageBox.Yes )
-    if result == QtGui.QMessageBox.Yes:
-        
-        ix = int(item.text(1))
-        forum.deletePost(ix)
-        loadForum(parent)
+        result = QtGui.QMessageBox.question(parent, "Confirm",
+        _("Delete selected Post?")+"<br />'%s'"% heading,
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
+        if result == QtGui.QMessageBox.Yes:
+            ix = int(item.text(1))
+            forum.deletePost(ix)
+
+    loadForum(parent)
 
 def forumReply(parent):
     '''
@@ -188,7 +200,7 @@ def forumReply(parent):
     dl.from_comboBox.addItems([localsettings.operator, "Anon"] +
     localsettings.allowed_logins)
     dl.to_comboBox.addItems(["ALL"] + localsettings.allowed_logins)
-    
+
     if Dialog.exec_():
         parentix = int(item.text(1))
         post = forum.post()
