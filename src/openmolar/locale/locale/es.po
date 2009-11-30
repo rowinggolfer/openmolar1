@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2009-11-27 02:18+0000\n"
-"PO-Revision-Date: 2009-11-27 03:48+0000\n"
-"Last-Translator: David Alvarez <Unknown>\n"
+"PO-Revision-Date: 2009-11-29 21:02+0000\n"
+"Last-Translator: Monkey <Unknown>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-11-28 04:57+0000\n"
+"X-Launchpad-Export-Date: 2009-11-30 04:39+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/daybook.py:54
@@ -62,7 +62,7 @@ msgstr "Por ejemplo. si cambia su ubicación de servidor, "
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:80
 msgid "or you require a new password"
-msgstr ""
+msgstr "o requiere una nueva contraseña"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:81
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estimateItemWidget.py:144
@@ -101,48 +101,48 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:178
 msgid "Create Demo Database now with the following settings?"
-msgstr ""
+msgstr "¿Crear base de datos de prueba con las siguientes configuraciones?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:189
 msgid "Database Created Sucessfully"
-msgstr ""
+msgstr "Base de datos creada satisfactoriamente"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:196
 msgid "Database NOT Created"
-msgstr ""
+msgstr "Base de datos NO creada"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:217
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:287
 msgid "Welcome to the openMolar settings wizard."
-msgstr ""
+msgstr "Bienvenido al asistente de configuraciones de openMolar"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:218
 msgid "Set the application Password"
-msgstr ""
+msgstr "Establezca la contraseña de la aplicación"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:219
 msgid "Server Location"
-msgstr ""
+msgstr "Localización del servidor"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:220
 msgid "Database Settings"
-msgstr ""
+msgstr "Configuraciones de la base de datos"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:221
 msgid "Save settings and exit"
-msgstr ""
+msgstr "Guardar las configuraciones y salir"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:222
 msgid "Create a demo database"
-msgstr ""
+msgstr "Crear base de datos de prueba"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:223
 msgid "Creating Database"
-msgstr ""
+msgstr "Creando base de datos"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:271
 msgid "The connection attempt threw an exception"
-msgstr ""
+msgstr "El intento de conexión produjo una excepción"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:277
 msgid "Success!"
@@ -150,13 +150,15 @@ msgstr "¡Perfecto!"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:278
 msgid "The %s database accepted the connection."
-msgstr ""
+msgstr "La base de datos %s aceptó la conexión."
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:281
 msgid ""
 "The connection attempt failed, \n"
 "please recheck your settings"
 msgstr ""
+"El intento de conexión falló, \n"
+"por favor compruebe sus configuraciones"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:324
 msgid "Error Creating Database"
@@ -185,7 +187,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/main.py:74
 msgid "Proceed without upgrade?"
-msgstr ""
+msgstr "¿Proceder sin actualizar?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/main.py:75
 msgid ""
@@ -247,7 +249,7 @@ msgstr "<h1>Bajo Tratamiento - Actual Estimado</h1>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:199
 msgid "<h1>Estimate from previous course</h1>"
-msgstr ""
+msgstr "<h1>Estimación del proceso anterior</h1>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:202
 msgid "No estimate data found</body></html>"
@@ -261,10 +263,15 @@ msgid ""
 "    <th>Type</th><th>Course</th>\n"
 "    <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>"
 msgstr ""
+"<table width =\"100%\" border=\"1\">\n"
+"    <tr><td colspan=\"7\"><h3>ESTIMADO</h3></td></tr>\n"
+"    <tr><th>No.</th><th>Descripción</th><th>Categoría</th>\n"
+"    <th>Type</th><th>Proceso</th>\n"
+"    <th>Fee</th><th>Honorarios Pt/th><th>Completado</th></tr>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/plan.py:121
 msgid "Previous Course"
-msgstr ""
+msgstr "Proceso anterior"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/plan.py:123
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:152
@@ -280,15 +287,15 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/plan.py:136
 msgid "No treatment"
-msgstr ""
+msgstr "Ningún tratamiento"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/plan.py:139
 msgid "COMPLETED"
-msgstr ""
+msgstr "COMPLETADO"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/plan.py:139
 msgid "PLAN"
-msgstr ""
+msgstr "PLAN"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:235
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:354
@@ -297,15 +304,15 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:709
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1543
 msgid "TBA"
-msgstr ""
+msgstr "TBA"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:330
 msgid "No appointment selected"
-msgstr ""
+msgstr "Ninguna cita seleccionada"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:747
 msgid "removing appointment dentist"
-msgstr ""
+msgstr "eliminando cita del dentista"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1493
 msgid "unable to block - has the book been altered elsewhere?"
@@ -337,7 +344,7 @@ msgstr "Casilla"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_addTreatment.py:53
 msgid "Plan Treatment"
-msgstr ""
+msgstr "Planear tratamiento"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_addTreatment.py:54
 msgid "Add the following Treatment Items to the Current Treatment Plan"
@@ -357,16 +364,16 @@ msgstr "Minutos"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:146
 msgid "Open a Day"
-msgstr ""
+msgstr "Abrir un día"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:147
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:70
 msgid "Clinician"
-msgstr ""
+msgstr "Clínico"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:148
 msgid "Date to Open"
-msgstr ""
+msgstr "Día a abrir"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:149
 msgid "Day Memo - optional"
@@ -374,11 +381,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:150
 msgid "Day Start"
-msgstr ""
+msgstr "Iniciar día"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:151
 msgid "Morning Emergency Slot"
-msgstr ""
+msgstr "Espacio de emergencia de la mañana"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:153
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:156
@@ -398,12 +405,12 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:160
 msgid "Day Finish"
-msgstr ""
+msgstr "Terminar día"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:60
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2929
 msgid "Appointment Tools"
-msgstr ""
+msgstr "Herramientas de cita"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:61
 msgid "Move the end date for making appointments."
@@ -416,7 +423,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:63
 msgid "Remove old weeks"
-msgstr ""
+msgstr "Eliminar semanas viejas"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:64
 msgid "Edit Standard Working Weeks for Clinicians"
@@ -424,11 +431,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:65
 msgid "Open A Day"
-msgstr ""
+msgstr "Abrir un día"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:66
 msgid "Insert regular blocks"
-msgstr ""
+msgstr "Insertar bloques regulares"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:67
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:64
@@ -476,11 +483,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:130
 msgid "Would you like to Block (or partially Block) this Slot?"
-msgstr ""
+msgstr "¿Desea bloquear (o bloquear parcialmente) esta ranura?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:131
 msgid "Block Start"
-msgstr ""
+msgstr "Inicio bloqueado"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:132
 msgid "Bock End"
@@ -488,11 +495,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:133
 msgid "Text to apply"
-msgstr ""
+msgstr "Texto a aplicar"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:134
 msgid "//Blocked//"
-msgstr ""
+msgstr "//Bloqueado//"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:135
 msgid "Emergency"
@@ -513,11 +520,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:140
 msgid "Insert a Block"
-msgstr ""
+msgstr "Insertar un bloque"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
 msgid "Insert A Patient into this slot?"
-msgstr ""
+msgstr "¿Insertar un paciente a esta ranura?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
 msgid "Start Time"
@@ -575,11 +582,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:104
 msgid "Text to Apply"
-msgstr ""
+msgstr "Texto a aplicar"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:105
 msgid "Days to Apply"
-msgstr ""
+msgstr "Días a aplicar"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:106
 msgid "Clinicians"
@@ -591,11 +598,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:112
 msgid "Porcelain / Precious Metal"
-msgstr ""
+msgstr "Porcelana / Metal precioso"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:113
 msgid "Lava (or all ceramic)"
-msgstr ""
+msgstr "Lava (o toda la cerámica)"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:114
 msgid "Resin Retained"
@@ -612,7 +619,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:117
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:123
 msgid "Full (acrylic)"
-msgstr ""
+msgstr "Completo (metacrilato)"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:118
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:124
@@ -622,7 +629,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:119
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:125
 msgid "Partial (acrylic)"
-msgstr ""
+msgstr "Parcial (metacrilato)"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:120
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:126
@@ -675,7 +682,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_changeDatabase.py:69
 msgid "display password"
-msgstr ""
+msgstr "Mostrar contraseña"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_changeDatabase.py:70
 msgid "Database"
@@ -691,11 +698,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_chooseDocument.py:65
 msgid "Choose a Document"
-msgstr ""
+msgstr "Elija un documento"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_chooseDocument.py:66
 msgid "Choose a document to view"
-msgstr ""
+msgstr "Elija un documento para ver"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_chooseDocument.py:67
 msgid "NHS Schedule of Remuneration April 2008"
@@ -715,7 +722,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_chooseDocument.py:71
 msgid "NHS \"Information Guide\""
-msgstr ""
+msgstr "NHS «guía de información»"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_chooseDocument.py:72
 msgid "2009"
@@ -768,7 +775,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_completeTreatment.py:41
 msgid "Complete Treatment"
-msgstr ""
+msgstr "Completar tratamiento"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_completeTreatment.py:42
 msgid "Complete Multiple Treatments?"
@@ -790,7 +797,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_completionDate.py:63
 msgid "Suggested completion Date"
-msgstr ""
+msgstr "Día completo sugerido"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_completionDate.py:64
 msgid ""
@@ -832,11 +839,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:63
 msgid "Resin"
-msgstr ""
+msgstr "Resina"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:64
 msgid "PJC"
-msgstr ""
+msgstr "PJC"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:65
 msgid "Temporary"
@@ -856,7 +863,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:70
 msgid "Recement"
-msgstr ""
+msgstr "Reciente"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:71
 msgid "Cancel"
@@ -864,7 +871,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_customTreatment.py:64
 msgid "Custom Item"
-msgstr ""
+msgstr "Personalizar elemento"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_customTreatment.py:65
 msgid "Number of Items"

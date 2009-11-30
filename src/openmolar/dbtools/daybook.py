@@ -105,7 +105,7 @@ def details(regdent, trtdent, startdate, enddate):
             else:
                 retarg += '<tr>'
                 odd = True
-            retarg += '<td>%s</td>'% row[0]
+            retarg += "<td>'%s' %s</td>"% (row[18], row[0])
             try:
                 retarg += '<td> %s / '% localsettings.ops[row[3]]
             except KeyError:

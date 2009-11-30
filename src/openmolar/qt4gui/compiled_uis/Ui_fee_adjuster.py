@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'fee_adjuster.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
+# Created: Mon Nov 30 13:26:16 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,8 +15,17 @@ class Ui_MainWindow(object):
         MainWindow.resize(800, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.gridLayout = QtGui.QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName("gridLayout")
+        self.comboBox = QtGui.QComboBox(self.centralwidget)
+        self.comboBox.setObjectName("comboBox")
+        self.gridLayout.addWidget(self.comboBox, 0, 0, 1, 1)
+        self.delete_pushButton = QtGui.QPushButton(self.centralwidget)
+        self.delete_pushButton.setObjectName("delete_pushButton")
+        self.gridLayout.addWidget(self.delete_pushButton, 0, 1, 1, 1)
+        self.add_insert_pushButton = QtGui.QPushButton(self.centralwidget)
+        self.add_insert_pushButton.setObjectName("add_insert_pushButton")
+        self.gridLayout.addWidget(self.add_insert_pushButton, 0, 2, 1, 1)
         self.tableWidget = QtGui.QTableWidget(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(7)
@@ -25,10 +34,10 @@ class Ui_MainWindow(object):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
-        self.verticalLayout.addWidget(self.tableWidget)
+        self.gridLayout.addWidget(self.tableWidget, 1, 0, 1, 3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 20))
         self.menubar.setObjectName("menubar")
         self.menu_Quit = QtGui.QMenu(self.menubar)
         self.menu_Quit.setObjectName("menu_Quit")
@@ -58,6 +67,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_( u"FeeAdjuster"))
+        self.delete_pushButton.setText(_( u"Delete Rows"))
+        self.add_insert_pushButton.setText(_( u"Add/Insert Rows"))
         self.menu_Quit.setTitle(_( u"&File"))
         self.menu_Help.setTitle(_( u"&About"))
         self.action_Save_Changes.setText(_( u"&Save Changes"))

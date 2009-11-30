@@ -53,6 +53,8 @@ from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
 from openmolar.qt4gui.compiled_uis import Ui_daylist_print
 from openmolar.qt4gui.compiled_uis import Ui_confirmDentist
 from openmolar.qt4gui.compiled_uis import Ui_showMemo
+from openmolar.qt4gui.compiled_uis import Ui_ortho_ref_wizard
+
 
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import recall_app
@@ -1022,11 +1024,32 @@ to change if clinical circumstances dictate.</i></p>''')
             self.advise("no patient selected", 1)
             return
         desc=self.ui.referralLettersComboBox.currentText()
+        if "Ortho" in desc:
+            self.orthoWizard()
+            return
         html=referral.getHtml(desc, self.pt)
         Dialog = QtGui.QDialog(self)
         dl = Ui_enter_letter_text.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.textEdit.setHtml(html)
+        if Dialog.exec_():
+            html=dl.textEdit.toHtml()
+            myclass=letterprint.letter(html)
+            myclass.printpage()
+            docsprinted.add(self.pt.serialno, "referral (html)", html)
+            self.pt.addHiddenNote("printed", "referral")
+            if self.ui.previousCorrespondence_treeWidget.isVisible():
+                self.docsPrinted()
+    
+    def orthoWizard(self):
+        '''prints a referal letter controlled by referal.xml file'''
+        desc=self.ui.referralLettersComboBox.currentText()
+        html=referral.getHtml(desc, self.pt)
+        
+        Dialog = QtGui.QDialog(self)
+        dl = Ui_ortho_ref_wizard.Ui_Dialog()
+        dl.setupUi(Dialog)
+        dl.notes_textEdit.setHtml(html)
         if Dialog.exec_():
             html=dl.textEdit.toHtml()
             myclass=letterprint.letter(html)
@@ -3067,6 +3090,13 @@ WITH PT RECORDS %d and %d''')% (
         if permissions.granted():
             fee_adjuster.main(self)
 
+    def feeScale_new(self):
+        '''
+        launch a 2nd application to organise and extend the practice diary
+        '''
+        if permissions.granted():
+            self.advise(_("Function not yet available"),1)
+
     def clearTodaysEmergencyTime_action(self):
         '''
         convenience function to auto clear all the reserved time for today
@@ -3979,6 +4009,12 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.SIGNAL("editingFinished ()"), self.feeSearch_lineEdit_edited)
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
+
+        QtCore.QObject.connect(self.ui.adjustFeeTables_pushButton,
+        QtCore.SIGNAL("clicked()"), self.feeScale_Adjuster_action)
+
+        QtCore.QObject.connect(self.ui.newFeeTable_pushButton,
+        QtCore.SIGNAL("clicked()"), self.feeScale_new)
 
     def signals_charts(self):
 

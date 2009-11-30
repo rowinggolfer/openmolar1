@@ -133,7 +133,6 @@ class feeTable():
         arg is some xml logic to let me know what columns to query
         '''
         dom = minidom.parseString(arg)
-        #print dom.toxml()
         
         cols = dom.getElementsByTagName("column")
         feeCol_list = []
@@ -536,30 +535,48 @@ class fee():
 
 
 ##############################################################################
-## below this line is old code. 
-## NW - 2009_11_08
+## below this line is code utilised by the adjuster.
 
+def getTableNames():
+    '''
+    get table names to load into the feescale adjuster
+    '''
+    db = connect()
+    cursor = db.cursor() 
+    
+    query = ''' select ix, tablename, categories, description, startdate, 
+    enddate, feecoltypes from feetable_key order by ix'''
 
-def getFeeDictForModification():
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    
+    return rows
+
+def getFeeDictForModification(table):
     '''
     a comprehensive dictionary formed from the entire table in the database
     '''
-    global feeDict_dbstate
+    
+    query = '''select column_name from information_schema.columns where  
+    table_name = "%s"'''% table
+    
     db = connect()
     cursor = db.cursor()
-    cursor.execute('select ix,%s from newfeetable'% newfeetable_Headers)
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    header = []
+    for row in rows:
+        header.append(row[0])
+
+    query = 'select * from %s'%table
+    cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
-    #db.close()
-
-    feeDict = {}
-
-    for row in rows:
-        feeDict[row[0]] = row
     
-    return feeDict
-
-def updateFeeTable(feeDict, changes):
+    return (header, rows)
+    
+def updateFeeTable(table, feeDict, changes, deletions):
     '''
     pass a feeDict, and update the existing table with it.
     '''
@@ -571,15 +588,18 @@ def updateFeeTable(feeDict, changes):
         valuesString = "%s," * columnNo
         valuesString = valuesString.strip(",")
         
-        delquery = "delete from newfeetable where ix = %s"
-        query = "insert into newfeetable (ix,%s) values (%s)"% (
-        newfeetable_Headers, valuesString) 
+        delquery = "delete from %s"%table + " where ix = %s"
+        
+        query = "insert into %s values (%s)"% (table, valuesString)
             
         for key in changes:
             cursor.execute(delquery, key)
             print query, feeDict[key]
             cursor.execute(query, feeDict[key])
 
+        for key in deletions:
+            cursor.execute(delquery, key)
+            
         cursor.close()        
         db.commit()
         return True

@@ -118,7 +118,7 @@ def estwidg_complete(parent, item):
             number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
             att = "%s%d"% (att[:2], number)
             
-        if item.category == "exam":
+        if att == "exam":
             parent.pt.examt = item.type
             parent.pt.examd = localsettings.currentDay()
             parent.pt.addHiddenNote("exam", item.type)
@@ -129,7 +129,6 @@ def estwidg_complete(parent, item):
             completed = parent.pt.__dict__[att + "cmp"] + treat
             parent.pt.__dict__[att + "cmp"] = completed
 
-            #-- now update the charts
             if re.findall("[ul][lr][1-8]", att):
                 parent.updateChartsAfterTreatment(att, plan, completed)
                 toothName = parent.pt.chartgrid.get(att)
@@ -138,11 +137,6 @@ def estwidg_complete(parent, item):
                 "treatment", "%s %s"% (toothName.upper(), treat))
             else:
                 parent.pt.addHiddenNote("treatment", item.type)
-                
-        fees_module.applyFeeNow(parent, item.ptfee, item.csetype)
-        parent.updateHiddenNotesLabel()
-            
-        parent.load_treatTrees()
 
     except Exception,e:
         completed = "%s - %s"% (item.category, item.type)
@@ -150,7 +144,14 @@ def estwidg_complete(parent, item):
         </p>Please complete manually'''% completed, 1)
         print "UNABLE TO COMPLETE %s"% item
         print e
+    
+    finally:        
+        fees_module.applyFeeNow(parent, item.ptfee, item.csetype)
+        parent.updateHiddenNotesLabel()
+            
+        parent.load_treatTrees()
 
+    
 def estwidg_unComplete(parent, item):
     '''
     reponds to a signal when the user "uncompletes" an item of treatment by
