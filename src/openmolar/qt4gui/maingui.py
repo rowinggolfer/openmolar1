@@ -1672,12 +1672,13 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.ui.staticChartWidget=chartwidget.chartWidget()
         hlayout=QtGui.QHBoxLayout(self.ui.static_groupBox)
         hlayout.addWidget(self.ui.staticChartWidget)
-
+        self.ui.static_groupBox.setStyleSheet("border: 1px solid gray;")
+        
         #-plan chart
         self.ui.planChartWidget=chartwidget.chartWidget()
         self.ui.planChartWidget.isStaticChart=False
         self.ui.planChartWidget.isPlanChart=True
-        #self.ui.plan_groupBox.setStyleSheet("background-color: grey")
+        self.ui.plan_groupBox.setStyleSheet("border: 1px solid gray;")
         hlayout=QtGui.QHBoxLayout(self.ui.plan_groupBox)
         hlayout.addWidget(self.ui.planChartWidget)
 
@@ -1686,7 +1687,8 @@ pageHandlingClass, newPatientClass, printingClass, cashbooks):
         self.ui.completedChartWidget.isStaticChart=False
         hlayout=QtGui.QHBoxLayout(self.ui.completed_groupBox)
         hlayout.addWidget(self.ui.completedChartWidget)
-
+        self.ui.completed_groupBox.setStyleSheet("border: 1px solid gray;")
+        
         #-TOOTHPROPS (right hand side on the charts page)
         self.ui.toothPropsWidget = toothProps.tpWidget(self)
         hlayout = QtGui.QHBoxLayout(self.ui.toothProps_frame)

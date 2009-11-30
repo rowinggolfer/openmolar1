@@ -185,6 +185,7 @@ class feeTable():
                     feeItem = self.feesDict[code] 
                 else:
                     feeItem = fee()
+                    feeItem.setCategory(section)
                     feeItem.usercode = USERCODE
                     feeItem.description = description
                     feeItem.setRegulations(regulation)
@@ -333,6 +334,20 @@ class feeTable():
         else:
             return "No description for this item!"
     
+    def getTxCategory(self, itemcode):
+        '''
+        tries to categorise the treatment (BETA FOR NOW)
+        '''
+        i = 0
+        if self.hasItemCode(itemcode):
+            i = self.feesDict[itemcode].category
+        
+        try:
+            return ("other","exam", "diagnosis", "perio", 
+            "tooth", "surgery", "prosthetics", "ortho") [i]
+        except IndexError:
+            return "other"
+    
     @localsettings.debug    
     def userCodeWizard(self, usercode, n_items=1):
         '''
@@ -371,6 +386,7 @@ class fee():
         '''
         initiate the class with the default settings for a private fee
         '''
+        self.category = 0
         self.description = ""
         self.brief_descriptions = ()
         self.fees = {}
@@ -423,6 +439,13 @@ class fee():
             else:
                 self.ptFees[i] = (val,)
         
+    def setCategory(self, arg):
+        '''
+        add a numeric category, which is later translated into diagnosis, 
+        perio, chart etc...
+        '''
+        self.category = arg
+    
     def addBriefDescription(self, arg):
         '''
         add a brief description

@@ -151,7 +151,7 @@ def fromFeeTable(parent, item):
     for usercode, itemcode, description in chosenTreatments:
         parent.pt.otherpl += "%s "% usercode
         parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
-        category="other", type=usercode, feescale=table.index)
+        type=usercode, feescale=table.index)
         
     if parent.ui.tabWidget.currentIndex() != 7:
         parent.ui.tabWidget.setCurrentIndex(7)

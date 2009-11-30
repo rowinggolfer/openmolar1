@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Nov 28 15:10:08 2009
+# Created: Sun Nov 29 23:27:25 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -210,7 +210,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName("scrollArea_4")
         self.scrollAreaWidgetContents_7 = QtGui.QWidget(self.scrollArea_4)
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 468, 469))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 730, 469))
         self.scrollAreaWidgetContents_7.setObjectName("scrollAreaWidgetContents_7")
         self.horizontalLayout_10 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_7)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
@@ -646,7 +646,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollArea_5.setObjectName("scrollArea_5")
         self.scrollAreaWidgetContents_8 = QtGui.QWidget(self.scrollArea_5)
-        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 539, 504))
+        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 730, 504))
         self.scrollAreaWidgetContents_8.setObjectName("scrollAreaWidgetContents_8")
         self.gridLayout_20 = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
         self.gridLayout_20.setObjectName("gridLayout_20")
@@ -829,7 +829,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 319, 484))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 738, 484))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.gridLayout_28 = QtGui.QGridLayout(self.scrollAreaWidgetContents_5)
         self.gridLayout_28.setObjectName("gridLayout_28")
@@ -976,7 +976,7 @@ class Ui_MainWindow(object):
         self.scrollArea_6.setWidgetResizable(True)
         self.scrollArea_6.setObjectName("scrollArea_6")
         self.scrollAreaWidgetContents_9 = QtGui.QWidget(self.scrollArea_6)
-        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 501, 429))
+        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 730, 429))
         self.scrollAreaWidgetContents_9.setObjectName("scrollAreaWidgetContents_9")
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents_9)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -1128,6 +1128,8 @@ class Ui_MainWindow(object):
         self.gridLayout_14 = QtGui.QGridLayout(self.charts)
         self.gridLayout_14.setObjectName("gridLayout_14")
         self.static_groupBox = QtGui.QGroupBox(self.charts)
+        font = QtGui.QFont()
+        self.static_groupBox.setFont(font)
         self.static_groupBox.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.static_groupBox.setObjectName("static_groupBox")
         self.gridLayout_14.addWidget(self.static_groupBox, 0, 0, 1, 1)
@@ -1183,7 +1185,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName("estimate_scrollArea")
         self.scrollAreaWidgetContents_11 = QtGui.QWidget(self.estimate_scrollArea)
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 98, 200))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 497, 200))
         self.scrollAreaWidgetContents_11.setObjectName("scrollAreaWidgetContents_11")
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
@@ -1200,7 +1202,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_4 = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 188, 511))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 217, 511))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1352,7 +1354,7 @@ class Ui_MainWindow(object):
         self.perioCharts_scrollArea.setWidgetResizable(True)
         self.perioCharts_scrollArea.setObjectName("perioCharts_scrollArea")
         self.scrollAreaWidgetContents_6 = QtGui.QWidget(self.perioCharts_scrollArea)
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 267, 392))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 732, 392))
         self.scrollAreaWidgetContents_6.setObjectName("scrollAreaWidgetContents_6")
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
         self.gridLayout_15.setObjectName("gridLayout_15")
@@ -2521,8 +2523,8 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(7)
-        self.tabWidget.setCurrentIndex(6)
+        self.main_tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
         self.diary_tabWidget.setCurrentIndex(0)
@@ -2723,7 +2725,7 @@ class Ui_MainWindow(object):
         self.recallDate_comboBox.setItemText(3, _( u"6 Months hence"))
         self.recallDate_comboBox.setItemText(4, _( u"12 Months hence"))
         self.printRecall_pushButton.setToolTip(_( u"Print a recall saying the patient is due now."))
-        self.printRecall_pushButton.setText(_( u"Print letter Now"))
+        self.printRecall_pushButton.setText(_( u"Print Recall Now"))
         self.groupBox_9.setTitle(_( u"Accounts"))
         self.accountA_radioButton.setText(_( u"\"A\" letter"))
         self.accountB_radioButton.setText(_( u"\"B\" letter"))

@@ -593,7 +593,6 @@ class patient():
             csetype = table.categories[0]
         est.csetype = csetype
         
-        est.category = category
         est.type = type
         if descr == None:
             est.description = table.getItemDescription(itemcode)
@@ -605,6 +604,11 @@ class patient():
         else:
             est.fee, est.ptfee = fee, ptfee
         
+        if category != "":
+            est.category = category
+        else:
+            est.category = table.getTxCategory(itemcode)
+                
         est.dent = dent
         est.completed = completed
         est.carriedover = carriedover
