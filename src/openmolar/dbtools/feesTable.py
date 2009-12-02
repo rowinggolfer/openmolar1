@@ -459,6 +459,10 @@ class fee():
         self.regulations=arg
 
     def getFees(self, no_items=1, conditions=""):
+        '''
+        convenience wrapper for getFee function
+        returns a tuple fee,ptfee
+        '''
         fee = self.getFee(no_items,conditions)
         ptFee = self.getFee(no_items,conditions, True)
         if ptFee == None:

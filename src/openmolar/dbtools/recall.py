@@ -8,14 +8,25 @@
 import sys
 from openmolar.settings import localsettings
 from openmolar.connect import connect
+from datetime import date
 
 def getpatients(month,year):
     '''returns patients with a recall in (month,year)...'''
-    startdate="%s_%s_01"%(year,month)
-    enddate="%s_%s_01"%(year,month+1)
+    startdate = date(year, month, 1)
+    if month <= 11:
+        enddate = date(year, month+1, 1)
+    else:
+        enddate = date(year+1, 1, 1)        
+
+    query = '''select title,fname,sname,dnt1,familyno,dob,addr1,addr2,addr3,
+    town,county,pcde,recd from patients where recd>=%s and recd<%s 
+    order by familyno,dob,fname,sname'''
+    values = (startdate,enddate)
+    
     db = connect()
     cursor = db.cursor()
-    cursor.execute('select title,fname,sname,dnt1,familyno,dob,addr1,addr2,addr3,town,county,pcde,recd from patients where recd>="%s" and recd<"%s" order by familyno,dob,fname,sname'%(startdate,enddate))
+
+    cursor.execute(query, values)
     rows = cursor.fetchall()
     cursor.close()
     #db.close()

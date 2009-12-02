@@ -571,6 +571,16 @@ class patient():
         est.number = number
         est.itemcode = itemcode
         
+        if feescale == None:
+            table = self.getFeeTable()
+        else:
+            table = localsettings.FEETABLES.tables[feescale]
+        
+        est.feescale = table.index
+        if csetype == "":
+            csetype = table.categories[0]
+        est.csetype = csetype
+        
         #handle the case where there are more than one item of the same code
         existing_no = 0
         for existing_est in self.estimates:
@@ -582,16 +592,6 @@ class patient():
             if existing_est.itemcode == est.itemcode:
                 existing_est.linked = linked
         est.linked = linked
-        
-        if feescale == None:
-            table = self.getFeeTable()
-        else:
-            table = localsettings.FEETABLES.tables[feescale]
-        
-        est.feescale = table.index
-        if csetype == "":
-            csetype = table.categories[0]
-        est.csetype = csetype
         
         est.type = type
         if descr == None:

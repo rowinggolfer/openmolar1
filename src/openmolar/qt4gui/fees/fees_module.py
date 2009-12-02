@@ -20,7 +20,7 @@ import subprocess
 from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
 patient_write_changes
 from openmolar.settings import localsettings
-
+from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import paymentwidget
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
 from openmolar.qt4gui.compiled_uis import Ui_raiseCharge
@@ -117,7 +117,7 @@ def takePayment(parent):
             dl.otherPayments))
 
             if parent.pt.serialno != 0:
-                parent.printReceipt({
+                om_printing.printReceipt(parent,{
                 "Professional Services" : dl.paymentsForTreatment * 100, 
                 "Other Items" : dl.otherPayments * 100})
 
@@ -267,8 +267,8 @@ def newFeeSearch(parent):
     QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
 
     #--get a list of items containing that string
-    parent.standardFeesTable_searchList = parent.ui.standardFees_treeWidget.findItems(
-    searchField, matchflags, 4)
+    parent.standardFeesTable_searchList = \
+    parent.ui.standardFees_treeWidget.findItems(searchField, matchflags, 4)
 
     parent.feesTable_searchpos = 0
     parent.ui.feeSearch_pushButton.setFocus()

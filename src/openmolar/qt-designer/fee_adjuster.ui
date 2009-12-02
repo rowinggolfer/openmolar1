@@ -61,6 +61,7 @@
     </property>
     <addaction name="action_Save_Changes"/>
     <addaction name="action_Quit"/>
+    <addaction name="actionPrint"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -91,6 +92,11 @@
   <action name="actionVersion">
    <property name="text">
     <string>&amp;Version</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="text">
+    <string>Print</string>
    </property>
   </action>
  </widget>

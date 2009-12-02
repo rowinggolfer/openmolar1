@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'fee_adjuster.ui'
 #
-# Created: Mon Nov 30 13:26:16 2009
+# Created: Tue Dec  1 23:37:33 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,8 +55,11 @@ class Ui_MainWindow(object):
         self.actionHelp.setObjectName("actionHelp")
         self.actionVersion = QtGui.QAction(MainWindow)
         self.actionVersion.setObjectName("actionVersion")
+        self.actionPrint = QtGui.QAction(MainWindow)
+        self.actionPrint.setObjectName("actionPrint")
         self.menu_Quit.addAction(self.action_Save_Changes)
         self.menu_Quit.addAction(self.action_Quit)
+        self.menu_Quit.addAction(self.actionPrint)
         self.menu_Help.addAction(self.actionHelp)
         self.menu_Help.addAction(self.actionVersion)
         self.menubar.addAction(self.menu_Quit.menuAction())
@@ -75,4 +78,5 @@ class Ui_MainWindow(object):
         self.action_Quit.setText(_( u"&Quit"))
         self.actionHelp.setText(_( u"Help"))
         self.actionVersion.setText(_( u"&Version"))
+        self.actionPrint.setText(_( u"Print"))
 
