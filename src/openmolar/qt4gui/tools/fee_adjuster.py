@@ -133,7 +133,7 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
         '''
         add some rows
         '''
-        number, result = QtGui.QInputDialog().getInt(
+        number, result = QtGui.QInputDialog().getInteger(
         self.tableWidget, _("Question"), _("Add how many Rows?"),1,0,100)
         if result:
             self.tableSignal(False)

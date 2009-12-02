@@ -3805,7 +3805,7 @@ WITH PT RECORDS %d and %d''')% (
         QtGui.QMessageBox.No )
         if result == QtGui.QMessageBox.No:
             return
-        max, result = QtGui.QInputDialog.getInt(self, _("input needed"), 
+        max, result = QtGui.QInputDialog.getInteger(self, _("input needed"), 
         _("maximum charge for the patient")+"<br />"+_(
         "please enter the amount in pence, or leave as 0 for full exmption"))
 

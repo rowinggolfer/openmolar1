@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1018</width>
-    <height>554</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>997</width>
-         <height>552</height>
+         <width>1018</width>
+         <height>558</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>7</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>476</width>
+                        <width>730</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -2121,7 +2121,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>324</width>
+                        <width>738</width>
                         <height>484</height>
                        </rect>
                       </property>
@@ -2490,7 +2490,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>508</width>
+                        <width>730</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2759,8 +2759,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>547</width>
+                        <height>379</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2959,7 +2959,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>497</width>
+                           <width>507</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3365,7 +3365,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
+                        <width>732</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -3685,7 +3685,7 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>108</width>
+                    <width>113</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4060,8 +4060,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>98</width>
-                    <height>28</height>
+                    <width>198</width>
+                    <height>95</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4242,8 +4242,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>183</width>
+                         <height>432</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_2"/>
@@ -4341,8 +4341,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>182</width>
+                         <height>434</height>
                         </rect>
                        </property>
                       </widget>
@@ -4439,8 +4439,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>183</width>
+                         <height>434</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_3"/>
@@ -4492,8 +4492,8 @@ Note - this will not remove items which are currently there. </string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>182</width>
+                         <height>434</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="_4"/>
@@ -5872,6 +5872,9 @@ Note - this will not remove items which are currently there. </string>
                      <property name="text">
                       <string>Group replies</string>
                      </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -5880,7 +5883,7 @@ Note - this will not remove items which are currently there. </string>
                       <string>Split Replies</string>
                      </property>
                      <property name="checked">
-                      <bool>true</bool>
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
