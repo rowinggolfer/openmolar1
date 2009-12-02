@@ -10,6 +10,7 @@ from PyQt4 import QtGui, QtCore
 
 from openmolar.dbtools import feesTable
 from openmolar.qt4gui.compiled_uis import Ui_fee_adjuster
+from openmolar.qt4gui.printing import table_print
 
 __version__ = "0.1"
 
@@ -212,10 +213,27 @@ class feeAdjust(Ui_fee_adjuster.Ui_MainWindow):
             else:
                 QtGui.QMessageBox.warning(self.parent,"Error",
                 "Error saving changes")
-                
+    def print_(self):
+        '''
+        print out the table
+        '''
+        print "printing the current table...",
+        try:
+            headers, rows = feesTable.getFeeDictForModification(
+            self.tableKey["tablename"])
+            
+            printout = table_print.printout((headers,)+rows)
+            printout.print_()
+            print "done."
+        except AttributeError:
+            print "nothing to print!"
+            
     def signals(self):
         QtCore.QObject.connect(self.action_Quit,
         QtCore.SIGNAL("triggered()"), self.quit)
+    
+        QtCore.QObject.connect(self.actionPrint,
+        QtCore.SIGNAL("triggered()"), self.print_)
         
         QtCore.QObject.connect(self.actionHelp,
         QtCore.SIGNAL("triggered()"), self.help)

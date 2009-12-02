@@ -20,20 +20,19 @@ class printout():
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
-        #self.printer.setOrientation(QtGui.QPrinter.Landscape)
-        self.printer.setFullPage(True)
+        self.printer.setOrientation(QtGui.QPrinter.Landscape)
+        self.printer.setFullPage(False)
         painter = QtGui.QPainter(self.printer)
         pageRect = self.printer.pageRect()
         painter.setPen(QtCore.Qt.black)
         
-        font = QtGui.QFont("Helvetica", 7)
+        font = QtGui.QFont("sans", 6)
         fm=QtGui.QFontMetrics(font)
         fontLineHeight = fm.height()
         
         painter.setFont(font)
-        option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
-        
-        option.setWrapMode(QtGui.QTextOption.WordWrap)
+        option = QtGui.QTextOption(QtCore.Qt.AlignLeft)
+        #option.setWrapMode(QtGui.QTextOption.WordWrap)
 
         #find out the longest list to get the number of columns 
         colcount = 0
@@ -44,14 +43,14 @@ class printout():
         
         colwidths = {}
         for col in range (colcount):
-            colwidth[col] = 0
+            colwidths[col] = 0
         
         for row in self.rows:
             colno = 0
             for col in row:
                 wdth = fm.width(str(col))
-                if wdth > colwidth[colno]:
-                    colwidth[colno] = wdth
+                if wdth > colwidths[colno]:
+                    colwidths[colno] = wdth
                 colno += 1
         y=0
         for row in self.rows:
@@ -59,10 +58,15 @@ class printout():
             x=0
             for col in row:                        
                 painter.drawText(QtCore.QRectF(
-                x,y,colwidth[colno],fontLineHeight),str(col),option)            
-                x += colwidth[colno]
+                x,y,colwidths[colno],fontLineHeight),str(col),option)            
+                x += colwidths[colno]
                 colno += 1
             y += fontLineHeight
+            
+            if y > self.printer.pageRect().height()-fontLineHeight:
+                y=0
+                self.printer.newPage()
+        
         
 if __name__ == "__main__":
     app = QtGui.QApplication([])
