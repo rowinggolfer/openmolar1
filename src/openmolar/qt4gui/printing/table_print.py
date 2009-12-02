@@ -47,8 +47,8 @@ class printout():
         
         for row in self.rows:
             colno = 0
-            for col in row:
-                wdth = fm.width(str(col))
+            for column in row:
+                wdth = fm.width("%s "% column)
                 if wdth > colwidths[colno]:
                     colwidths[colno] = wdth
                 colno += 1
@@ -56,9 +56,10 @@ class printout():
         for row in self.rows:
             colno = 0
             x=0
-            for col in row:                        
-                painter.drawText(QtCore.QRectF(
-                x,y,colwidths[colno],fontLineHeight),str(col),option)            
+            for column in row: 
+                rect = QtCore.QRectF(x, y, colwidths[colno], fontLineHeight)             
+                painter.drawRect(rect)
+                painter.drawText(rect,"%s "% column,option)            
                 x += colwidths[colno]
                 colno += 1
             y += fontLineHeight

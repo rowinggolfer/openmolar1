@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2009-11-27 02:18+0000\n"
-"PO-Revision-Date: 2009-11-26 10:09+0000\n"
+"PO-Revision-Date: 2009-12-01 09:19+0000\n"
 "Last-Translator: Harza Lajos <Unknown>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-11-27 04:52+0000\n"
+"X-Launchpad-Export-Date: 2009-12-02 04:56+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/daybook.py:54
@@ -46,23 +46,23 @@ msgstr "Dátum"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:74
 msgid "If you ever need to run this again, "
-msgstr ""
+msgstr "Ha bármikor újra kívánja futtatni, "
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:75
 msgid "delete the openmolar.conf file in "
-msgstr ""
+msgstr "az alábbi helyről törölje ki az openmolar.conf file-t "
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:78
 msgid "If you ever need to run this wizard again, "
-msgstr ""
+msgstr "Ha bármikor újra kívánja futtatni ezt a varázslót, "
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:79
 msgid "Eg. if your server location changes, "
-msgstr ""
+msgstr "Pl. ha megváltozik a szerver címe, "
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:80
 msgid "or you require a new password"
-msgstr ""
+msgstr "vagy új jelszót állítana be"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:81
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estimateItemWidget.py:144
@@ -71,11 +71,11 @@ msgstr "típus"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:82
 msgid "on the command line, or delete the file"
-msgstr ""
+msgstr "a parancssorból, vagy törölje a következő file-t"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:84
 msgid "For a more secure setup, you should move this file to"
-msgstr ""
+msgstr "A biztonságosabb telepítés érdekében helyezze át a file-t"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:130
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:139
@@ -118,27 +118,27 @@ msgstr "Üdvözlöm az openMolar beállítás varázslójában."
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:218
 msgid "Set the application Password"
-msgstr ""
+msgstr "Állítsa be a felhasználói jelszót"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:219
 msgid "Server Location"
-msgstr ""
+msgstr "Szerver címe"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:220
 msgid "Database Settings"
-msgstr ""
+msgstr "Adatbázis beállítások"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:221
 msgid "Save settings and exit"
-msgstr ""
+msgstr "Beállítások mentése és kilépés"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:222
 msgid "Create a demo database"
-msgstr ""
+msgstr "Demó adatbázis létrehozása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:223
 msgid "Creating Database"
-msgstr ""
+msgstr "Adatbázis létrehozása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:271
 msgid "The connection attempt threw an exception"
@@ -214,6 +214,10 @@ msgid ""
 "If you do not have a database, you will be prompted to create one<</p>\n"
 "Are you ready to proceed?</center>"
 msgstr ""
+"<center><p>Valószínűleg most futtatja először az openMolar-t<br />Az "
+"alkalmazás futtatása előtt létre kell hozni a beállításokat tartalmazó file-"
+"t.<br />Ez fogja tartalmazni a mysql szerver elérhetőségét<hr />Ha még "
+"nincsen adatbázisa, létrehozhat egyet<</p>Felkészült a folytatásra?</center>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/main.py:140
 msgid "First Run"
@@ -419,7 +423,7 @@ msgstr "Berendelő eszköztár"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:61
 msgid "Move the end date for making appointments."
-msgstr ""
+msgstr "Berendelések záródátumának áthelyezése."
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:62
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:65
@@ -583,7 +587,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:102
 msgid "Time"
-msgstr ""
+msgstr "Idő"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:104
 msgid "Text to Apply"

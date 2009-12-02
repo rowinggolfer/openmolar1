@@ -137,7 +137,7 @@ def get_notes_for_date(line):
     for l in line:
         if "NOTE" in l[0]:
             mytext = l[1].replace("<","&lt;").replace(">","&gt;")
-            note += "%s"% mytext
+            note += "%s "% mytext
     match = re.search(r"[\n ]*$", note)
     if match:
         note = note[:note.rindex(match.group())] 
