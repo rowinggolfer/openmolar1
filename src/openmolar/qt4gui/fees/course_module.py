@@ -138,7 +138,7 @@ def offerFinalPaperWork(parent):
     time to print a claim form?
     '''
     if "N" in parent.pt.cset:
-        om_printing.printGP17(known_course=True)
+        om_printing.printGP17(parent, known_course=True)
     
 def resumeCourse(parent):
     '''
