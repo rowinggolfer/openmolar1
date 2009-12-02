@@ -140,10 +140,33 @@ def toothTreatDict(pt):
     return treats
 
 @localsettings.debug
+def apply_exemption(pt, maxCharge=0):
+    '''
+    apply an exemption
+    '''
+    total = 0
+    for est in pt.estimates:
+        if est.completed:
+            pt.applyFee(est.ptfee * -1)
+        
+        if maxCharge - total >= est.ptfee:
+            pass
+        else:
+            if maxCharge - total > 0:
+                est.ptfee = maxCharge - total
+            else:
+                est.ptfee = 0
+        total += est.ptfee
+        
+        if est.completed:
+            pt.applyFee(est.ptfee)
+    return True
+        
+@localsettings.debug
 def recalculate_estimate(pt):
     '''
-    re look up all the itemcodes in the patients feetable 
-    (which could have changed, or maybe we have been informed of an exemption?)
+    look up all the itemcodes in the patients feetable 
+    (which could have changed), and apply new fees
     '''
     dent = pt.dnt1
     if pt.dnt2 and pt.dnt2 != "":

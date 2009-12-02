@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>6</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>2</number>
+                  <number>7</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -2959,7 +2959,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>497</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2992,8 +2992,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>197</width>
-                        <height>511</height>
+                        <width>217</width>
+                        <height>544</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3074,6 +3074,13 @@ Note - this will not remove items which are currently there. </string>
                             </property>
                             <property name="checked">
                              <bool>false</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="apply_exemption_pushButton">
+                            <property name="text">
+                             <string>Apply Exemption</string>
                             </property>
                            </widget>
                           </item>

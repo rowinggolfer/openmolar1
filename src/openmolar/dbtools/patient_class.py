@@ -612,6 +612,7 @@ class patient():
         est.dent = dent
         est.completed = completed
         est.carriedover = carriedover
+        
         self.estimates.append(est)
             
         return est

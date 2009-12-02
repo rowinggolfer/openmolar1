@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Nov 30 13:14:13 2009
+# Created: Wed Dec  2 16:10:07 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -1185,7 +1185,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName("estimate_scrollArea")
         self.scrollAreaWidgetContents_11 = QtGui.QWidget(self.estimate_scrollArea)
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 98, 200))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 497, 200))
         self.scrollAreaWidgetContents_11.setObjectName("scrollAreaWidgetContents_11")
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
@@ -1202,7 +1202,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_4 = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 197, 511))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 217, 544))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1239,6 +1239,9 @@ class Ui_MainWindow(object):
         self.recalcEst_pushButton.setChecked(False)
         self.recalcEst_pushButton.setObjectName("recalcEst_pushButton")
         self.verticalLayout_12.addWidget(self.recalcEst_pushButton)
+        self.apply_exemption_pushButton = QtGui.QPushButton(self.groupBox_16)
+        self.apply_exemption_pushButton.setObjectName("apply_exemption_pushButton")
+        self.verticalLayout_12.addWidget(self.apply_exemption_pushButton)
         self.estView_comboBox = QtGui.QComboBox(self.groupBox_16)
         self.estView_comboBox.setObjectName("estView_comboBox")
         self.estView_comboBox.addItem("")
@@ -2530,8 +2533,8 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(6)
-        self.tabWidget.setCurrentIndex(2)
+        self.main_tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(7)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
         self.diary_tabWidget.setCurrentIndex(0)
@@ -2803,6 +2806,7 @@ class Ui_MainWindow(object):
 "\n"
 "Note - this will not remove items which are currently there. "))
         self.recalcEst_pushButton.setText(_( u"ReCalculate Estimate"))
+        self.apply_exemption_pushButton.setText(_( u"Apply Exemption"))
         self.estView_comboBox.setItemText(0, _( u"Standard View"))
         self.estView_comboBox.setItemText(1, _( u"Expanded View"))
         self.estView_comboBox.setItemText(2, _( u"Plan/Completed (standard)"))

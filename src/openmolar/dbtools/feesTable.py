@@ -464,12 +464,16 @@ class fee():
         returns a tuple fee,ptfee
         '''
         fee = self.getFee(no_items,conditions)
+        if "no_charge" in conditions:
+            return (fee, 0)
+                
         ptFee = self.getFee(no_items,conditions, True)
+        
         if ptFee == None:
             return (fee, fee)
         else:
             return (fee, ptFee)
-        
+    
     def getFee(self, no_items=1,conditions="",patient=False):
         '''
         get a fee for x items of this type

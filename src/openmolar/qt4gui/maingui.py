@@ -3334,9 +3334,14 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
         QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
         QtCore.QObject.connect(self.ui.estLetter_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.customEstimate)
+        QtCore.SIGNAL("clicked()"), self.customEstimate)
+        
         QtCore.QObject.connect(self.ui.recalcEst_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.recalculateEstimate)
+        QtCore.SIGNAL("clicked()"), self.recalculateEstimate)
+
+        QtCore.QObject.connect(self.ui.apply_exemption_pushButton,
+        QtCore.SIGNAL("clicked()"), self.apply_exemption)
+
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
                                QtCore.SIGNAL("clicked()"), self.addXrayItems)
         QtCore.QObject.connect(self.ui.perioTxpushButton,
@@ -3773,15 +3778,11 @@ WITH PT RECORDS %d and %d''')% (
                 QtCore.SIGNAL("stateChanged(int)"),
                 self.hyg_appt_checkbox_changed)
 
-###############################################################################
-########          ATTENTION NEEDED HERE         ###############################
-
     def recalculateEstimate(self):
         '''
         Adds ALL tooth items to the estimate.
         prompts the user to confirm tooth treatment fees
         '''
-        ##TODO - redesign this!!!
         result=QtGui.QMessageBox.question(self, "Confirm",
         _("Scrap the estimate and re-price everything?"),
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
@@ -3794,7 +3795,25 @@ WITH PT RECORDS %d and %d''')% (
             self.load_treatTrees()
             self.updateDetails()
 
-################################################################################
+    def apply_exemption(self):
+        '''
+        applies a max fee chargeable
+        '''
+        result=QtGui.QMessageBox.question(self, _("Confirm"),
+        _("apply an exmption to this estimate?"),
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.No )
+        if result == QtGui.QMessageBox.No:
+            return
+        max, result = QtGui.QInputDialog.getInt(self, _("input needed"), 
+        _("maximum charge for the patient")+"<br />"+_(
+        "please enter the amount in pence, or leave as 0 for full exmption"))
+
+        if result and estimates.apply_exemption(self.pt, max):
+            self.load_newEstPage()
+            self.load_treatTrees()
+            self.updateDetails()
+
 
 def main(app):
     '''
