@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2009-11-27 02:18+0000\n"
-"PO-Revision-Date: 2009-11-28 08:21+0000\n"
-"Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
+"PO-Revision-Date: 2009-12-02 22:15+0000\n"
+"Last-Translator: Jonathon Hodges <Unknown>\n"
 "Language-Team: English (United Kingdom) <en_GB@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-11-29 04:36+0000\n"
+"X-Launchpad-Export-Date: 2009-12-03 04:47+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/daybook.py:54
@@ -602,7 +602,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:106
 msgid "Clinicians"
-msgstr ""
+msgstr "Clinicians"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:111
 msgid "Bridge - Denture Entry"
@@ -2099,7 +2099,7 @@ msgstr "Print Table"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2873
 msgid "Recall Letters"
-msgstr ""
+msgstr "Recall Letters"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2874
 msgid "MM/yyyy"
@@ -2171,11 +2171,11 @@ msgstr "All Columns"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2896
 msgid "Manage Fee Tables / Create a New FeeTable"
-msgstr ""
+msgstr "Manage Fee Tables / Create a new Fee Table"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2897
 msgid "+"
-msgstr ""
+msgstr "+"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2898
 msgid "Feescales"
@@ -2463,6 +2463,25 @@ msgid ""
 "right:0px; -qt-block-indent:0; text-indent:0px;\">install a small (4 "
 "patient) demo database if required.</li></ul></body></html>"
 msgstr ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+"\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style "
+"type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Droid Sans'; font-size:8pt; font-"
+"weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">This first-run application "
+"will: </p>\n"
+"<ul style=\"-qt-list-indent: 1;\"><li style=\" margin-top:12px; margin-"
+"bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-"
+"indent:0px;\">Set your system password</li>\n"
+"<li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">Make this client aware of "
+"your mysql server settings</li>\n"
+"<li style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">Install a small (four "
+"patient) demo database if required.</li></ul></body></html>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:297
 msgid ""
@@ -2482,7 +2501,7 @@ msgstr "Repeat Password"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:301
 msgid "Where is your mysql server located?  **"
-msgstr ""
+msgstr "Where is your mysql server located?  **"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:303
 msgid "Port"
@@ -2499,7 +2518,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:308
 msgid "Database Details"
-msgstr ""
+msgstr "Database Details"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:310
 msgid "(mysql)Password"
@@ -2511,11 +2530,11 @@ msgstr "Database Name"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:313
 msgid "Test this Connection"
-msgstr ""
+msgstr "Test this Connection"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:314
 msgid "Create A Demo Database"
-msgstr ""
+msgstr "Create a Demo Database"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:315
 msgid "Use with an existing database"
@@ -3440,7 +3459,7 @@ msgstr "Show History"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/notification_widget.py:34
 msgid "close"
-msgstr ""
+msgstr "Close"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:19
 msgid "Fissure Sealants"
@@ -3552,7 +3571,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/block_wizard.py:93
 msgid "applying changes for"
-msgstr ""
+msgstr "applying changes for"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:39
 msgid "No patient chosen!"
@@ -3584,7 +3603,7 @@ msgstr "no patient chosen"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/hygTreatWizard.py:82
 msgid "Please enter a dentist / hygenist"
-msgstr ""
+msgstr "Please enter a dentist / hygenist"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/recall_app.py:103
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/recallprint.py:60
@@ -3649,7 +3668,7 @@ msgstr "French"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:31
 msgid "German"
-msgstr ""
+msgstr "German"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:32
 msgid "Hungarian"
@@ -3784,7 +3803,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:174
 msgid "usercode"
-msgstr ""
+msgstr "Usercode"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:175
 msgid "brief descriptions"
@@ -4130,20 +4149,20 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:53
 msgid "Books Currently end on"
-msgstr ""
+msgstr "Books currently end on"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:55
 msgid "extend the books now?"
-msgstr ""
+msgstr "Extend the books now?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:65
 msgid "How many months?"
-msgstr ""
+msgstr "How many months?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:85
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:92
 msgid "not yet implemented"
-msgstr ""
+msgstr "Not yet implemented"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_1to1_2.py:125
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_2to1_3.py:96
@@ -4173,7 +4192,7 @@ msgstr "couldn't create tables, rolled back to"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:337
 msgid "copying data across from old feetable"
-msgstr ""
+msgstr "Copying data across from old Fee Table"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:357
 msgid "rolled back to"
@@ -4181,7 +4200,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:42
 msgid "translation tools are installed sucessfully"
-msgstr ""
+msgstr "Translation tools are installed sucessfully"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:55
 msgid "Please try and give at least 24 hours notice"

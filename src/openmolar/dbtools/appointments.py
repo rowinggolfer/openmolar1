@@ -314,8 +314,6 @@ def allAppointmentData(adate, dents=()):
     this gets appointment data for a specifc date and dents
     2nd arg will frequently be provided by getWorkingDents(adate)
     '''
-    db = connect()
-    cursor = db.cursor()
     if dents != ():
         mystr = " and ("
         for dent in dents:
@@ -323,14 +321,15 @@ def allAppointmentData(adate, dents=()):
         mystr = mystr[0:mystr.rindex(" or")]+")"
     else:
         mystr = ""
-    fields = '''adate,apptix,start,end,name,serialno,code0,
-    code1,code2,note,flag0,flag1,flag2,flag3'''
-
-    fullquery = '''select %s from aslot where adate="%s" %s
-    order by apptix,start'''% (fields, adate, mystr)
+    
+    db = connect()
+    cursor = db.cursor()    
+    fullquery = '''select adate,apptix,start,end,name,serialno,code0,
+    code1,code2,note,flag0,flag1,flag2,flag3 from aslot where adate=%s'''
+    fullquery += " %s order by apptix,start"% mystr
     if localsettings.logqueries:
         print fullquery
-    cursor.execute(fullquery)
+    cursor.execute(fullquery, (adate,))
 
     data = cursor.fetchall()
     cursor.close()

@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>7</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1710,7 +1710,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
+                        <width>558</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2121,7 +2121,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>738</width>
+                        <width>324</width>
                         <height>484</height>
                        </rect>
                       </property>
@@ -2490,7 +2490,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
+                        <width>508</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2759,8 +2759,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>547</width>
-                        <height>379</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2959,7 +2959,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>507</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2992,7 +2992,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3365,7 +3365,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>732</width>
+                        <width>267</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -3685,8 +3685,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>113</width>
-                    <height>58</height>
+                    <width>98</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4156,408 +4156,10 @@ Note - this will not remove items which are currently there. </string>
                  <number>2</number>
                 </property>
                 <item>
-                 <widget class="QSplitter" name="splitter_2">
+                 <widget class="QSplitter" name="dayView_splitter">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
-                  <widget class="QFrame" name="frame_14">
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_11">
-                    <property name="margin">
-                     <number>0</number>
-                    </property>
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="apptFrameLabel1">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>18</height>
-                       </size>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>12</pointsize>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Book</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QPushButton" name="printBook1_pushButton">
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>24</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>Print</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../resources/resources.qrc">
-                        <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0" colspan="2">
-                     <widget class="QScrollArea" name="appt1scrollArea">
-                      <property name="frameShape">
-                       <enum>QFrame::NoFrame</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Sunken</enum>
-                      </property>
-                      <property name="widgetResizable">
-                       <bool>true</bool>
-                      </property>
-                      <widget class="QWidget" name="appt1scrollAreaWidgetContents">
-                       <property name="geometry">
-                        <rect>
-                         <x>0</x>
-                         <y>0</y>
-                         <width>183</width>
-                         <height>432</height>
-                        </rect>
-                       </property>
-                       <layout class="QVBoxLayout" name="_2"/>
-                      </widget>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" colspan="2">
-                     <widget class="QLabel" name="book1memo_label">
-                      <property name="text">
-                       <string>Memo</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                  <widget class="QFrame" name="frame_13">
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_32">
-                    <property name="margin">
-                     <number>0</number>
-                    </property>
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="apptFrameLabel2">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>18</height>
-                       </size>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>12</pointsize>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Book</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QPushButton" name="printBook2_pushButton">
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>24</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>Print</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../resources/resources.qrc">
-                        <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0" colspan="2">
-                     <widget class="QScrollArea" name="appt2scrollArea">
-                      <property name="frameShape">
-                       <enum>QFrame::NoFrame</enum>
-                      </property>
-                      <property name="widgetResizable">
-                       <bool>true</bool>
-                      </property>
-                      <widget class="QWidget" name="appt2scrollAreaWidgetContents">
-                       <property name="geometry">
-                        <rect>
-                         <x>0</x>
-                         <y>0</y>
-                         <width>182</width>
-                         <height>434</height>
-                        </rect>
-                       </property>
-                      </widget>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" colspan="2">
-                     <widget class="QLabel" name="book2memo_label">
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                  <widget class="QFrame" name="frame_12">
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_33">
-                    <property name="margin">
-                     <number>0</number>
-                    </property>
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="apptFrameLabel3">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>18</height>
-                       </size>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>12</pointsize>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Book</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QPushButton" name="printBook3_pushButton">
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>24</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>Print</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../resources/resources.qrc">
-                        <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0" colspan="2">
-                     <widget class="QScrollArea" name="appt3scrollArea">
-                      <property name="frameShape">
-                       <enum>QFrame::NoFrame</enum>
-                      </property>
-                      <property name="widgetResizable">
-                       <bool>true</bool>
-                      </property>
-                      <widget class="QWidget" name="appt3scrollAreaWidgetContents">
-                       <property name="geometry">
-                        <rect>
-                         <x>0</x>
-                         <y>0</y>
-                         <width>183</width>
-                         <height>434</height>
-                        </rect>
-                       </property>
-                       <layout class="QVBoxLayout" name="_3"/>
-                      </widget>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" colspan="2">
-                     <widget class="QLabel" name="book3memo_label">
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                  <widget class="QFrame" name="frame_11">
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_34">
-                    <property name="margin">
-                     <number>0</number>
-                    </property>
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <item row="2" column="0" colspan="2">
-                     <widget class="QScrollArea" name="appt4scrollArea">
-                      <property name="frameShape">
-                       <enum>QFrame::NoFrame</enum>
-                      </property>
-                      <property name="widgetResizable">
-                       <bool>true</bool>
-                      </property>
-                      <widget class="QWidget" name="appt3scrollAreaWidgetContents_2">
-                       <property name="geometry">
-                        <rect>
-                         <x>0</x>
-                         <y>0</y>
-                         <width>182</width>
-                         <height>434</height>
-                        </rect>
-                       </property>
-                       <layout class="QVBoxLayout" name="_4"/>
-                      </widget>
-                     </widget>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="apptFrameLabel4">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>18</height>
-                       </size>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>12</pointsize>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Book</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QPushButton" name="printBook4_pushButton">
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>24</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>Print</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../resources/resources.qrc">
-                        <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" colspan="2">
-                     <widget class="QLabel" name="book4memo_label">
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
                  </widget>
                 </item>
                </layout>

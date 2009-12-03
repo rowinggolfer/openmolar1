@@ -24,18 +24,19 @@ from openmolar.qt4gui.dialogs import finalise_appt_time,permissions
 from openmolar.qt4gui.compiled_uis import Ui_appointment_length
 from openmolar.qt4gui.compiled_uis import Ui_specify_appointment
 from openmolar.qt4gui.dialogs import appt_wizard_dialog
+from openmolar.qt4gui.customwidgets import appointmentwidget
 
 from openmolar.qt4gui.printing import apptcardPrint
 
 #-- secondary applications
 from openmolar.qt4gui.tools import apptTools
 
-def oddApptLength(parent):
+def oddApptLength(om_gui):
     '''
     this is called from within the a dialog when the appointment lengths
     offered aren't enough!!
     '''
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     dl = Ui_appointment_length.Ui_Dialog()
     dl.setupUi(Dialog)
     if Dialog.exec_():
@@ -43,7 +44,7 @@ def oddApptLength(parent):
         mins = dl.mins_spinBox.value()
         return (hours, mins)
 
-def addApptLength(parent, dl, hourstext, minstext):
+def addApptLength(om_gui, dl, hourstext, minstext):
     '''
     adds our new time option to the dialog, and selects it
     '''
@@ -63,10 +64,10 @@ def addApptLength(parent, dl, hourstext, minstext):
         return
     except Exception, e:
         print "exception in addApptLengthFunction", e
-        parent.advise("unable to set the length of the appointment", 1)
+        om_gui.advise("unable to set the length of the appointment", 1)
         return
     
-def newApptWizard(parent):
+def newApptWizard(om_gui):
     '''
     this shows a dialog to providing shortcuts to common groups of 
     appointments - eg imps,bite,try,fit
@@ -74,42 +75,42 @@ def newApptWizard(parent):
     def applyApptWizard(arg):
         i=0
         for appt in arg:
-            apr_ix = appointments.add_pt_appt(parent.pt.serialno, 
+            apr_ix = appointments.add_pt_appt(om_gui.pt.serialno, 
             appt.get("clinician"), appt.get("length"), appt.get("trt1"),
             -1, appt.get("trt2"), appt.get("trt3"), appt.get("memo"),
-            appt.get("datespec"), parent.pt.cset)
+            appt.get("datespec"), om_gui.pt.cset)
             
             if i == 0:
                 i = apr_ix
         if i:
-            layout_apptTable(parent)
-            select_apr_ix(parent, i)
+            layout_apptTable(om_gui)
+            select_apr_ix(om_gui, i)
 
     #--check there is a patient attached to this request!
-    if parent.pt.serialno == 0:
-        parent.advise(
+    if om_gui.pt.serialno == 0:
+        om_gui.advise(
         "You need to select a patient before performing this action.", 1)
         return
-    if parent.pt.dnt1 in (0, None):
-        parent.advise('''Patient doesn't have a dentist set,<br /> 
+    if om_gui.pt.dnt1 in (0, None):
+        om_gui.advise('''Patient doesn't have a dentist set,<br /> 
         please correct this before using these shortcuts''', 1)
         return
         
     #--initiate a custom dialog
-    Dialog = QtGui.QDialog(parent)
-    dl = appt_wizard_dialog.apptWizard(Dialog, parent)
+    Dialog = QtGui.QDialog(om_gui)
+    dl = appt_wizard_dialog.apptWizard(Dialog, om_gui)
     
     Dialog.connect(Dialog, QtCore.SIGNAL("AddAppointments"), applyApptWizard)
     
     Dialog.exec_()
         
-def newAppt(parent):
+def newAppt(om_gui):
     '''
     this shows a dialog to get variables required for an appointment
     '''
     #--check there is a patient attached to this request!
-    if parent.pt.serialno == 0:
-        parent.advise(
+    if om_gui.pt.serialno == 0:
+        om_gui.advise(
         "You need to select a patient before performing this action.", 1)
         return
 
@@ -120,17 +121,17 @@ def newAppt(parent):
     def oddLength(i):
         #-- last item of the appointment length combobox is "other length"
         if i == dl.apptlength_comboBox.count()-1:
-            ol = oddApptLength(parent)
+            ol = oddApptLength(om_gui)
             if ol:
                 QtCore.QObject.disconnect(dl.apptlength_comboBox,
                 QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
                 
-                addApptLength(parent, dl, ol[0], ol[1])
+                addApptLength(om_gui, dl, ol[0], ol[1])
                 QtCore.QObject.connect(dl.apptlength_comboBox,
                 QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
     #--initiate a custom dialog
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     dl = Ui_specify_appointment.Ui_Dialog()
     dl.setupUi(Dialog)
     #--add an attribute to the dialog
@@ -142,9 +143,9 @@ def newAppt(parent):
         s = QtCore.QString(dent)
         dl.practix_comboBox.addItem(s)
     #--and select the patient's dentist
-    if localsettings.apptix_reverse.has_key(parent.pt.dnt1):
-        if localsettings.apptix_reverse[parent.pt.dnt1] in dents:
-            pos = dents.index(localsettings.apptix_reverse[parent.pt.dnt1])
+    if localsettings.apptix_reverse.has_key(om_gui.pt.dnt1):
+        if localsettings.apptix_reverse[om_gui.pt.dnt1] in dents:
+            pos = dents.index(localsettings.apptix_reverse[om_gui.pt.dnt1])
             dl.practix_comboBox.setCurrentIndex(pos)
     else:
         dl.practix_comboBox.setCurrentIndex(-1)
@@ -193,40 +194,40 @@ def newAppt(parent):
         ##TODO - add datespec and joint appointment options
 
         #--attempt WRITE appointement to DATABASE
-        apr_ix = appointments.add_pt_appt(parent.pt.serialno, practix, length,
-        code0, -1, code1, code2, note, "", parent.pt.cset)
+        apr_ix = appointments.add_pt_appt(om_gui.pt.serialno, practix, length,
+        code0, -1, code1, code2, note, "", om_gui.pt.cset)
         if apr_ix:
-            layout_apptTable(parent)
-            select_apr_ix(parent, apr_ix)
+            layout_apptTable(om_gui)
+            select_apr_ix(om_gui, apr_ix)
             if dl.makeNow:
-                begin_makeAppt(parent)
+                begin_makeAppt(om_gui)
         else:
             #--commit failed
-            parent.advise("Error saving appointment", 2)
+            om_gui.advise("Error saving appointment", 2)
 
-def select_apr_ix(parent, apr_ix):
+def select_apr_ix(om_gui, apr_ix):
     '''
     select the row of the patient's diary where apr_ix is as specified
     '''
     print "select row where index = ", apr_ix
     iterator = QtGui.QTreeWidgetItemIterator(
-    parent.ui.ptAppointment_treeWidget,
+    om_gui.ui.ptAppointment_treeWidget,
     QtGui.QTreeWidgetItemIterator.Selectable)
 
     while iterator.value():
         row = iterator.value() 
         if apr_ix == int(row.text(9)):
-            parent.ui.ptAppointment_treeWidget.setCurrentItem(row,0)
+            om_gui.ui.ptAppointment_treeWidget.setCurrentItem(row,0)
             break
         iterator += 1
     
-def clearApptButtonClicked(parent):
+def clearApptButtonClicked(om_gui):
     '''
     user is deleting an appointment
     '''
-    selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
+    selectedAppt = om_gui.ui.ptAppointment_treeWidget.currentItem()
     if selectedAppt == None:
-        parent.advise("No appointment selected", 1)
+        om_gui.advise("No appointment selected", 1)
         return
 
     #--aprix is a UNIQUE, iterating field in the database starting at 1,
@@ -244,7 +245,7 @@ def clearApptButtonClicked(parent):
 
     #--is appointment not is aslot (appt book proper) or in the past??
     if adate == None or adate < QtCore.QDate.currentDate().toPyDate():
-        result = QtGui.QMessageBox.question(parent, 
+        result = QtGui.QMessageBox.question(om_gui, 
         "Confirm",
         "Delete this Unscheduled or Past Appointment?",
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
@@ -253,16 +254,16 @@ def clearApptButtonClicked(parent):
             return
         else:
             if appointments.delete_appt_from_apr(
-            parent.pt.serialno, aprix, adate, appttime):
-                parent.advise("Sucessfully removed appointment")
-                layout_apptTable(parent)
+            om_gui.pt.serialno, aprix, adate, appttime):
+                om_gui.advise("Sucessfully removed appointment")
+                layout_apptTable(om_gui)
             else:
-                parent.advise("Error removing proposed appointment", 2)
+                om_gui.advise("Error removing proposed appointment", 2)
     else:
         #--get dentists number value
         dent = selectedAppt.text(1)
         #--raise a dialog
-        result = QtGui.QMessageBox.question(parent, "Confirm", 
+        result = QtGui.QMessageBox.question(om_gui, "Confirm", 
         "Confirm Delete appointment at %s on %s  with %s"% (
         atime, dateText, dent), 
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
@@ -276,39 +277,39 @@ def clearApptButtonClicked(parent):
             
             #--delete from the dentists book (aslot)
             if appointments.delete_appt_from_aslot(dent, start, adate,
-            parent.pt.serialno):
+            om_gui.pt.serialno):
                 ##todo - if we deleted from the appt book,
                 ##we should add to notes
                 print "future appointment deleted - add to notes!!"
 
                 #--keep in apr? the patient's diary
-                result = QtGui.QMessageBox.question(parent, "Question",
+                result = QtGui.QMessageBox.question(om_gui, "Question",
                 "Removed from appointment book - keep for rescheduling?",
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.No )
                 if result == QtGui.QMessageBox.Yes:
                     #appointment "POSTPONED" - not totally cancelled
                     if not appointments.made_appt_to_proposed(
-                    parent.pt.serialno, aprix):
-                        parent.advise("Error removing Proposed appointment", 2)
+                    om_gui.pt.serialno, aprix):
+                        om_gui.advise("Error removing Proposed appointment", 2)
                 else:
                     #remove from the patients diary
                     if not appointments.delete_appt_from_apr(
-                    parent.pt.serialno, aprix, adate, appttime):
-                        parent.advise("Error removing proposed appointment", 2)
+                    om_gui.pt.serialno, aprix, adate, appttime):
+                        om_gui.advise("Error removing proposed appointment", 2)
             else:
                 #--aslot proc has returned False!
                 #let the user know, and go no further
-                parent.advise("Error Removing from Appointment Book", 2)
+                om_gui.advise("Error Removing from Appointment Book", 2)
                 return
-            layout_apptTable(parent)
+            layout_apptTable(om_gui)
 
-def modifyAppt(parent):
+def modifyAppt(om_gui):
     '''
     user is changing an appointment
     much of this code is a duplicate of make new appt
     '''
-    selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
+    selectedAppt = om_gui.ui.ptAppointment_treeWidget.currentItem()
 
     def makeNow():
         dl.makeNow = True
@@ -316,20 +317,20 @@ def modifyAppt(parent):
     def oddLength(i):
         #-- odd appt length selected (see above)
         if i == dl.apptlength_comboBox.count()-1:
-            ol = oddApptLength(parent)
+            ol = oddApptLength(om_gui)
             if ol:
                 QtCore.QObject.disconnect(dl.apptlength_comboBox,
                 QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
-                addApptLength(parent, dl, ol[0], ol[1])
+                addApptLength(om_gui, dl, ol[0], ol[1])
 
                 QtCore.QObject.connect(dl.apptlength_comboBox,
                 QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
 
     if selectedAppt == None:
-        parent.advise(_("No appointment selected"), 1)
+        om_gui.advise(_("No appointment selected"), 1)
     else:
-        Dialog = QtGui.QDialog(parent)
+        Dialog = QtGui.QDialog(om_gui)
         dl = Ui_specify_appointment.Ui_Dialog()
         dl.setupUi(Dialog)
         dl.makeNow = False
@@ -347,7 +348,7 @@ def modifyAppt(parent):
         length = int(selectedAppt.text(3))
         hours = length // 60
         mins = length % 60
-        addApptLength(parent, dl, hours, mins)
+        addApptLength(om_gui, dl, hours, mins)
         dentist = str(selectedAppt.text(1))
         dateText = str(selectedAppt.text(0))
         adate = None
@@ -407,41 +408,41 @@ def modifyAppt(parent):
 
             aprix = int(selectedAppt.text(9))
             
-            if parent.pt.cset == "":
+            if om_gui.pt.cset == "":
                 cst = 32
             else:
-                cst = ord(parent.pt.cset[0])
-            appointments.modify_pt_appt(aprix, parent.pt.serialno,
+                cst = ord(om_gui.pt.cset[0])
+            appointments.modify_pt_appt(aprix, om_gui.pt.serialno,
             practix, length, code0, code1, code2, note, "", cst)
-            layout_apptTable(parent)
+            layout_apptTable(om_gui)
             if dateText == _("TBA"):
                 if dl.makeNow:
-                    layout_apptTable(parent)
-                    select_apr_ix(parent, aprix)
-                    begin_makeAppt(parent)
+                    layout_apptTable(om_gui)
+                    select_apr_ix(om_gui, aprix)
+                    begin_makeAppt(om_gui)
             else:
                 if not appointments.modify_aslot_appt(adate, practix, start,
-                parent.pt.serialno, code0, code1, code2, note, cst, 0, 0, 0):
-                    parent.advise("Error putting into dentists book", 2)
+                om_gui.pt.serialno, code0, code1, code2, note, cst, 0, 0, 0):
+                    om_gui.advise("Error putting into dentists book", 2)
             
-def begin_makeAppt(parent):
+def begin_makeAppt(om_gui):
     '''
     make an appointment - switch user to "scheduling mode" and present the
     appointment overview to show possible appointments
     '''
-    selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
+    selectedAppt = om_gui.ui.ptAppointment_treeWidget.currentItem()
     if selectedAppt == None:
-        parent.advise("Please select an appointment to schedule", 1)
+        om_gui.advise("Please select an appointment to schedule", 1)
         return
     dateText = selectedAppt.text(0)
     if str(dateText) != _("TBA"):
-        parent.advise("appointment already scheduled for %s"%dateText, 1)
+        om_gui.advise("appointment already scheduled for %s"%dateText, 1)
         return
     ##todo implement datespec  -
-    ##datespec = parent.ui.ptAppointmentTableWidget.item(rowno, 8).text()
+    ##datespec = om_gui.ui.ptAppointmentTableWidget.item(rowno, 8).text()
     dent = localsettings.apptix[str(selectedAppt.text(1))]
     #--sets "schedule mode" - user is now adding an appointment
-    aptOVviewMode(parent, False)
+    aptOVviewMode(om_gui, False)
 
     #--does the patient has a previous appointment booked?
     ########################################################################
@@ -451,61 +452,61 @@ def begin_makeAppt(parent):
     if previousApptRow >= 0:
         #--get the date of preceeding appointment
         try:
-            pdateText = str(parent.ui.ptAppointmentTableWidget.item(
+            pdateText = str(om_gui.ui.ptAppointmentTableWidget.item(
                                             previousApptRow, 0).text())
             qdate = QtCore.QDate.fromString(pdateText, "dd'/'MM'/'yyyy")
             #--if the date found is earlier than today... it is irrelevant
             if qdate < QtCore.QDate.currentDate():
                 qdate = QtCore.QDate.currentDate()
-            parent.ui.calendarWidget.setSelectedDate(qdate)
+            om_gui.ui.calendarWidget.setSelectedDate(qdate)
 
         except TypeError:
             #--previous row had TBA as a date and the fromString
             #--raised a TypeError exception? so use today
-            parent.ui.calendarWidget.setSelectedDate(
+            om_gui.ui.calendarWidget.setSelectedDate(
                                             QtCore.QDate.currentDate())
     else:
     '''
     
     #--deselect ALL dentists and hygenists so only one "book" is viewable
-    parent.ui.aptOV_alldentscheckBox.setChecked(False)
-    parent.ui.aptOV_allhygscheckBox.setChecked(False)
+    om_gui.ui.aptOV_alldentscheckBox.setChecked(False)
+    om_gui.ui.aptOV_allhygscheckBox.setChecked(False)
     #--if previous 2 lines didn't CHANGE the state,
     #--these slots have to be fired manually
-    apptOVdents(parent)
-    apptOVhygs(parent)
+    apptOVdents(om_gui)
+    apptOVhygs(om_gui)
     try:
         #--SELECT the appointment dentist
-        parent.ui.aptOVdent_checkBoxes[dent].setChecked(True)
+        om_gui.ui.aptOVdent_checkBoxes[dent].setChecked(True)
     except KeyError:
         #--oops.. maybe it's a hygenist?
-        parent.ui.aptOVhyg_checkBoxes[dent].setChecked(True)
+        om_gui.ui.aptOVhyg_checkBoxes[dent].setChecked(True)
 
     #--compute first available appointment
-    parent.ui.calendarWidget.setSelectedDate(
+    om_gui.ui.calendarWidget.setSelectedDate(
     QtCore.QDate.currentDate())
     #--show the appointment overview tab
-    parent.signals_tabs(False) #disconnect slots
-    parent.ui.main_tabWidget.setCurrentIndex(1)
-    parent.signals_tabs() #reconnect
+    om_gui.signals_tabs(False) #disconnect slots
+    om_gui.ui.main_tabWidget.setCurrentIndex(1)
+    om_gui.signals_tabs() #reconnect
     
-    ci = parent.ui.diary_tabWidget.currentIndex()
+    ci = om_gui.ui.diary_tabWidget.currentIndex()
     if ci != 1:
-        parent.ui.diary_tabWidget.setCurrentIndex(1)
+        om_gui.ui.diary_tabWidget.setCurrentIndex(1)
     else:
-        layout_weekView(parent)
-    offerAppt(parent, True)
+        layout_weekView(om_gui)
+    offerAppt(om_gui, True)
 
-def offerAppt(parent, firstRun=False):
+def offerAppt(om_gui, firstRun=False):
     '''offer an appointment'''
-    selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
+    selectedAppt = om_gui.ui.ptAppointment_treeWidget.currentItem()
     dateText = selectedAppt.text(0)
     dents = []
-    for dent in parent.ui.aptOVdent_checkBoxes.keys():
-        if parent.ui.aptOVdent_checkBoxes[dent].checkState():
+    for dent in om_gui.ui.aptOVdent_checkBoxes.keys():
+        if om_gui.ui.aptOVdent_checkBoxes[dent].checkState():
             dents.append(dent)
-    for hyg in parent.ui.aptOVhyg_checkBoxes.keys():
-        if parent.ui.aptOVhyg_checkBoxes[hyg].checkState():
+    for hyg in om_gui.ui.aptOVhyg_checkBoxes.keys():
+        if om_gui.ui.aptOVhyg_checkBoxes[hyg].checkState():
             dents.append(hyg)
     start = selectedAppt.text(2)
     length = selectedAppt.text(3)
@@ -514,19 +515,19 @@ def offerAppt(parent, firstRun=False):
     trt3 = selectedAppt.text(6)
     memo = selectedAppt.text(7)
 
-    #-- parent.ui.calendarWidget date originally set when user
+    #-- om_gui.ui.calendarWidget date originally set when user
     #--clicked the make button
-    seldate = parent.ui.calendarWidget.selectedDate()
+    seldate = om_gui.ui.calendarWidget.selectedDate()
     today = QtCore.QDate.currentDate()
 
     if seldate < today:
-        parent.advise("can't schedule an appointment in the past", 1)
+        om_gui.advise("can't schedule an appointment in the past", 1)
         #-- change the calendar programatically (this will call THIS
         #--procedure again!)
-        parent.ui.calendarWidget.setSelectedDate(today)
+        om_gui.ui.calendarWidget.setSelectedDate(today)
         return
     elif seldate.toPyDate() > localsettings.bookEnd:
-        parent.advise('''Reached %s<br />
+        om_gui.advise('''Reached %s<br />
         No suitable appointments found<br />
         Is the appointment very long?<br />
         If so, Perhaps cancel some emergency time?
@@ -554,19 +555,19 @@ def offerAppt(parent, firstRun=False):
             for day in weekdates:
                 for apt in possibleAppts:
                     if apt[0] == day.toPyDate():
-                        parent.ui.apptoverviews[weekdates.index(day)].\
+                        om_gui.ui.apptoverviews[weekdates.index(day)].\
                         freeslots[apt[1]] = apt[2]
 
                         
         else:
-            parent.advise("no slots available for selected week")
+            om_gui.advise("no slots available for selected week")
             if firstRun:
                 #--we reached this proc to offer 1st appointmentm but
                 #--haven't found it
-                aptOV_weekForward(parent)
-                offerAppt(parent, True)
+                aptOV_weekForward(om_gui)
+                offerAppt(om_gui, True)
 
-def makeAppt(parent, arg):
+def makeAppt(om_gui, arg):
     '''
     called by a click on my custom overview slot -
     user has selected an offered appointment
@@ -576,9 +577,9 @@ def makeAppt(parent, arg):
     day = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
     "Saturday")[arg[0]]
 
-    parent.advise("offer appointment for %s %s"% (day, str(arg[1])))
+    om_gui.advise("offer appointment for %s %s"% (day, str(arg[1])))
 
-    selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
+    selectedAppt = om_gui.ui.ptAppointment_treeWidget.currentItem()
     dentist = str(selectedAppt.text(1))
     start = selectedAppt.text(2)
     length = int(selectedAppt.text(3))
@@ -588,7 +589,7 @@ def makeAppt(parent, arg):
     memo = str(selectedAppt.text(7).toAscii())
     #--aprix is a UNIQUE field in the database starting at 1,
     aprix = int(selectedAppt.text(9))
-    caldate = parent.ui.calendarWidget.selectedDate()
+    caldate = om_gui.ui.calendarWidget.selectedDate()
     appointment_made = False
     dayno = caldate.dayOfWeek()
     selecteddate = caldate.addDays(1 -dayno + arg[0])
@@ -600,7 +601,7 @@ def makeAppt(parent, arg):
         #--raise a dialog to check this was intentional!!
         message = '''You have chosen an appointment with %s<br />
         Is this correct?'''% selectedDent
-        result = QtGui.QMessageBox.question(parent, "Confirm", message,
+        result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
         QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
 
         if result == QtGui.QMessageBox.Cancel:
@@ -610,7 +611,7 @@ def makeAppt(parent, arg):
     if slotlength > length:
         #--the slot selected is bigger than the appointment length so
         #--fire up a dialog to allow for fine tuning
-        Dialog = QtGui.QDialog(parent)
+        Dialog = QtGui.QDialog(om_gui)
         dl = finalise_appt_time.ftDialog(Dialog, selectedtime,
         slotlength, length)
 
@@ -628,7 +629,7 @@ def makeAppt(parent, arg):
         localsettings.longDate(selecteddate.toPyDate()), selectedDent)
 
         #--get final confirmation
-        result = QtGui.QMessageBox.question(parent, "Confirm", message,
+        result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes )
         if result == QtGui.QMessageBox.No:
@@ -638,104 +639,104 @@ def makeAppt(parent, arg):
         endtime = localsettings.minutesPastMidnighttoWystime(
         localsettings.minutesPastMidnight(selectedtime) + length)
 
-        name = parent.pt.sname + " " + parent.pt.fname
+        name = om_gui.pt.sname + " " + om_gui.pt.fname
  
         #--make name conform to the 30 character sql limitation
         #--on this field.
         name = name[:30]
         #--don't throw an exception with ord("")
-        if parent.pt.cset == "":
+        if om_gui.pt.cset == "":
             cst = 32
         else:
-            cst = ord(parent.pt.cset[0])
+            cst = ord(om_gui.pt.cset[0])
 
         #-- make appointment
         if appointments.make_appt(
             selecteddate.toPyDate(), 
             localsettings.apptix[selectedDent],
-            selectedtime, endtime, name, parent.pt.serialno, trt1, trt2,
+            selectedtime, endtime, name, om_gui.pt.serialno, trt1, trt2,
             trt3, memo, 1, cst, 0, 0):
 
             ##TODO use these flags for family and double appointments
 
-            if appointments.pt_appt_made(parent.pt.serialno, aprix,
+            if appointments.pt_appt_made(om_gui.pt.serialno, aprix,
             selecteddate.toPyDate(), selectedtime,
             localsettings.apptix[selectedDent]):
                 #-- proc returned True so....update the patient apr table
-                layout_apptTable(parent)
+                layout_apptTable(om_gui)
                 #== and offer an appointment card
-                result = QtGui.QMessageBox.question(parent, 
+                result = QtGui.QMessageBox.question(om_gui, 
                 "Confirm",
                 "Print Appointment Card?", 
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.Yes )
                 if result == QtGui.QMessageBox.Yes:
-                    printApptCard(parent)
+                    printApptCard(om_gui)
             else:
-                parent.advise("Error putting appointment back onto patient " +
+                om_gui.advise("Error putting appointment back onto patient " +
                 "record - it may be in the appointment book though?", 2)
 
             #--#cancel scheduling mode
-            aptOVviewMode(parent, True)
+            aptOVviewMode(om_gui, True)
             
         else:
-            parent.advise("Error making appointment - sorry!", 2)
+            om_gui.advise("Error making appointment - sorry!", 2)
     else:
         #Hopefully this should never happen!!!!
-        parent.advise(
+        om_gui.advise(
         "error - the appointment doesn't fit there.. slotlength "+
         "is %d and we need %d"% (slotlength, length), 2)
 
-def apptOVheaderclick(parent, arg):
+def apptOVheaderclick(om_gui, arg):
     '''a click on the dentist portion of the appointment overview widget'''
     ##TODO doing this should offer the user better options than just this..
-    result = QtGui.QMessageBox.question(parent, "Confirm",
+    result = QtGui.QMessageBox.question(om_gui, "Confirm",
     "Confirm Print Daybook", QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
 
     if result == QtGui.QMessageBox.Ok:
-        parent.printBook(arg)
+        om_gui.printBook(arg)
 
-def ptApptTableNav(parent):
+def ptApptTableNav(om_gui):
     '''called by signals from the patient's appointment table'''
 
-    selected = parent.ui.ptAppointment_treeWidget.currentItem()
+    selected = om_gui.ui.ptAppointment_treeWidget.currentItem()
     if selected is None or selected.childCount() != 0:
-        parent.ui.makeAppt_pushButton.setEnabled(False)
-        parent.ui.modifyAppt_pushButton.setEnabled(False)
-        parent.ui.clearAppt_pushButton.setEnabled(False)
-        parent.ui.findAppt_pushButton.setEnabled(False)
-        #parent.ui.printAppt_pushButton.setEnabled(False)
+        om_gui.ui.makeAppt_pushButton.setEnabled(False)
+        om_gui.ui.modifyAppt_pushButton.setEnabled(False)
+        om_gui.ui.clearAppt_pushButton.setEnabled(False)
+        om_gui.ui.findAppt_pushButton.setEnabled(False)
+        #om_gui.ui.printAppt_pushButton.setEnabled(False)
         return
     if selected.text(0) == _("TBA"):
-        parent.ui.makeAppt_pushButton.setEnabled(True)
-        parent.ui.modifyAppt_pushButton.setEnabled(True)
-        parent.ui.clearAppt_pushButton.setEnabled(True)
-        parent.ui.findAppt_pushButton.setEnabled(False)
-        #parent.ui.printAppt_pushButton.setEnabled(False)
+        om_gui.ui.makeAppt_pushButton.setEnabled(True)
+        om_gui.ui.modifyAppt_pushButton.setEnabled(True)
+        om_gui.ui.clearAppt_pushButton.setEnabled(True)
+        om_gui.ui.findAppt_pushButton.setEnabled(False)
+        #om_gui.ui.printAppt_pushButton.setEnabled(False)
     else:
-        parent.ui.makeAppt_pushButton.setEnabled(False)
-        parent.ui.modifyAppt_pushButton.setEnabled(True)
-        parent.ui.clearAppt_pushButton.setEnabled(True)
-        parent.ui.findAppt_pushButton.setEnabled(True)
-        #parent.ui.printAppt_pushButton.setEnabled(True)
+        om_gui.ui.makeAppt_pushButton.setEnabled(False)
+        om_gui.ui.modifyAppt_pushButton.setEnabled(True)
+        om_gui.ui.clearAppt_pushButton.setEnabled(True)
+        om_gui.ui.findAppt_pushButton.setEnabled(True)
+        #om_gui.ui.printAppt_pushButton.setEnabled(True)
 
-def layout_apptTable(parent):
+def layout_apptTable(om_gui):
     '''
     populates the patient's diary
     '''
     headers = ["Date", "Pract..", "Time", "Length", "Trt1", "Trt2", "Trt3",
     "MEMO", "date spec", "orderAdded"]
-    parent.ui.ptAppointment_treeWidget.clear()
-    parent.ui.ptAppointment_treeWidget.setHeaderLabels(headers)
-    parentItems = {}
+    om_gui.ui.ptAppointment_treeWidget.clear()
+    om_gui.ui.ptAppointment_treeWidget.setHeaderLabels(headers)
+    om_guiItems = {}
     #hflag=QtCore.Qt.QItemFlags(QtCore.Qt.ItemIsSelectable)
     for heading in ("Past", "TODAY", "Future", "Unscheduled"):
-        parentItems[heading] = QtGui.QTreeWidgetItem(
-        parent.ui.ptAppointment_treeWidget, [heading])
+        om_guiItems[heading] = QtGui.QTreeWidgetItem(
+        om_gui.ui.ptAppointment_treeWidget, [heading])
 
-        parentItems[heading].setTextColor(0, colours.diary[heading])
+        om_guiItems[heading].setTextColor(0, colours.diary[heading])
 
-    rows = appointments.get_pts_appts(parent.pt.serialno)
+    rows = appointments.get_pts_appts(om_gui.pt.serialno)
     #--which will give us stuff like...
     #--(4820L, 7, 4, 'RCT', '', '', 'OR PREP', datetime.date(2008, 12, 15),
     #-- 1200, 60, 0, 73, 0, 0, 0, '')
@@ -744,7 +745,7 @@ def layout_apptTable(parent):
          #convert dentist from int to initials
         dent = localsettings.apptix_reverse.get(row[2])
         if dent == None:
-            parent.advise(_("removing appointment dentist"), 1)
+            om_gui.advise(_("removing appointment dentist"), 1)
             dent = ""
         length = str(row[9])
         trt1, trt2, trt3 = tuple(row[3:6])
@@ -770,15 +771,15 @@ def layout_apptTable(parent):
         date = row[7]
         
         if date == None:
-            parentItem = parentItems["Unscheduled"]
+            om_guiItem = om_guiItems["Unscheduled"]
         elif date == today:
-            parentItem = parentItems["TODAY"]
+            om_guiItem = om_guiItems["TODAY"]
         elif date < localsettings.currentDay():
-            parentItem = parentItems["Past"]
+            om_guiItem = om_guiItems["Past"]
         else:
-            parentItem = parentItems["Future"]
+            om_guiItem = om_guiItems["Future"]
             
-        widItem = QtGui.QTreeWidgetItem(parentItem, appointmentList)
+        widItem = QtGui.QTreeWidgetItem(om_guiItem, appointmentList)
         
         if date != None:
             #-- use QVariant to display the date.
@@ -786,38 +787,38 @@ def layout_apptTable(parent):
             widItem.setData(0, 0, qv)
         
         for i in range (widItem.columnCount()):
-            widItem.setTextColor(i, parentItem.textColor(0))
-    parent.ui.ptAppointment_treeWidget.expandAll()
+            widItem.setTextColor(i, om_guiItem.textColor(0))
+    om_gui.ui.ptAppointment_treeWidget.expandAll()
 
-    for i in range(parent.ui.ptAppointment_treeWidget.columnCount()):
-        parent.ui.ptAppointment_treeWidget.resizeColumnToContents(i)
+    for i in range(om_gui.ui.ptAppointment_treeWidget.columnCount()):
+        om_gui.ui.ptAppointment_treeWidget.resizeColumnToContents(i)
 
-    if parentItems["Past"].childCount() != 0:
-        parentItems["Past"].setExpanded(False)
+    if om_guiItems["Past"].childCount() != 0:
+        om_guiItems["Past"].setExpanded(False)
 
-    for parentItem in parentItems.values():
-        if parentItem.childCount() == 0:
-            parent.ui.ptAppointment_treeWidget.removeItemWidget(parentItem, 0)
+    for om_guiItem in om_guiItems.values():
+        if om_guiItem.childCount() == 0:
+            om_gui.ui.ptAppointment_treeWidget.removeItemWidget(om_guiItem, 0)
         else:
-            parentItem.setFlags(QtCore.Qt.ItemIsEnabled)
+            om_guiItem.setFlags(QtCore.Qt.ItemIsEnabled)
 
-    #parent.ui.ptAppointment_treeWidget.setColumnWidth(9, 0)
+    #om_gui.ui.ptAppointment_treeWidget.setColumnWidth(9, 0)
     
     #--programmatically ensure the correct buttons are enabled
-    ptApptTableNav(parent)
+    ptApptTableNav(om_gui)
 
-def triangles(parent, call_update=True):
+def triangles(om_gui, call_update=True):
     ''''
     this moves a
     red line down the appointment books -
     note needs to run in a thread!
     '''
-    if parent.ui.main_tabWidget.currentIndex() == 1 and \
-    parent.ui.diary_tabWidget.currentIndex()==0:
+    if om_gui.ui.main_tabWidget.currentIndex() == 1 and \
+    om_gui.ui.diary_tabWidget.currentIndex()==0:
         currenttime = "%02d%02d"%(time.localtime()[3], time.localtime()[4])
-        d = parent.ui.calendarWidget.selectedDate()
+        d = om_gui.ui.calendarWidget.selectedDate()
         if d == QtCore.QDate.currentDate():
-            for book in parent.ui.apptBookWidgets:
+            for book in om_gui.apptBookWidgets:
                 if book.setCurrentTime(currenttime) and call_update:
                     book.update()
 
@@ -831,305 +832,305 @@ def getAppointmentData(d, dents=()):
 
     return appointments.allAppointmentData(d, workingdents)
     
-def calendar(parent, sd):
+def calendar(om_gui, sd):
     '''comes from click proceedures'''
-    #parent.ui.main_tabWidget.setCurrentIndex(1)
-    parent.ui.calendarWidget.setSelectedDate(sd)
+    #om_gui.ui.main_tabWidget.setCurrentIndex(1)
+    om_gui.ui.calendarWidget.setSelectedDate(sd)
 
-def aptFontSize(parent, e):
+def aptFontSize(om_gui, e):
     '''
     user selecting a different appointment book slot
     '''
     localsettings.appointmentFontSize = e
-    for book in parent.ui.apptBookWidgets:
+    for book in om_gui.apptBookWidgets:
         book.update()
-    parent.ui.yearView.update()
+    om_gui.ui.yearView.update()
     
-def aptOVviewMode(parent, Viewmode=True):
+def aptOVviewMode(om_gui, Viewmode=True):
     '''
     toggle between "scheduling" and "viewing modes"
     '''
     if Viewmode:
-        parent.ui.aptOVmode_label.setText("View Mode")
-        parent.ui.main_tabWidget.setCurrentIndex(0)
+        om_gui.ui.aptOVmode_label.setText("View Mode")
+        om_gui.ui.main_tabWidget.setCurrentIndex(0)
     else:
-        parent.ui.aptOVmode_label.setText("Scheduling Mode")
-    for cb in (parent.ui.aptOV_apptscheckBox, 
-    parent.ui.aptOV_emergencycheckBox):    #parent.ui.aptOV_lunchcheckBox):
+        om_gui.ui.aptOVmode_label.setText("Scheduling Mode")
+    for cb in (om_gui.ui.aptOV_apptscheckBox, 
+    om_gui.ui.aptOV_emergencycheckBox):    #om_gui.ui.aptOV_lunchcheckBox):
         if cb.checkState() != Viewmode:
             cb.setChecked(Viewmode)
 
-def aptOVlabelClicked(parent, sd):
+def aptOVlabelClicked(om_gui, sd):
     '''
     go to the appointment book for the date on the label
     '''
-    calendar(parent, sd)
-    parent.ui.diary_tabWidget.setCurrentIndex(0)
+    calendar(om_gui, sd)
+    om_gui.ui.diary_tabWidget.setCurrentIndex(0)
 
-def gotoCurWeek(parent):
+def gotoCurWeek(om_gui):
     '''
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    parent.ui.calendarWidget.setSelectedDate(
+    om_gui.ui.calendarWidget.setSelectedDate(
     QtCore.QDate.currentDate())
         
-def aptOV_weekBack(parent):
+def aptOV_weekBack(om_gui):
     '''
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addDays(-7))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(-7))
 
-def aptOV_weekForward(parent):
+def aptOV_weekForward(om_gui):
     '''
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addDays(7))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(7))
 
-def aptOV_monthBack(parent):
+def aptOV_monthBack(om_gui):
     '''
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addMonths(-1))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(-1))
 
-def aptOV_monthForward(parent):
+def aptOV_monthForward(om_gui):
     '''
     appointment Overview page - change the calendar date, 
     and let it's event handler do the rest
     '''    
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addMonths(1))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(1))
 
-def gotoToday(parent):
+def gotoToday(om_gui):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    parent.ui.calendarWidget.setSelectedDate(
+    om_gui.ui.calendarWidget.setSelectedDate(
     QtCore.QDate.currentDate())
 
-def apt_dayBack(parent):
+def apt_dayBack(om_gui):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addDays(-1))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(-1))
 
-def apt_dayForward(parent):
+def apt_dayForward(om_gui):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addDays(1))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(1))
 
-def apt_weekBack(parent):
+def apt_weekBack(om_gui):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addDays(-7))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(-7))
 
-def apt_weekForward(parent):
+def apt_weekForward(om_gui):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addDays(7))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(7))
 
-def apt_monthBack(parent):
+def apt_monthBack(om_gui):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addMonths(-1))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(-1))
 
-def apt_monthForward(parent):
+def apt_monthForward(om_gui):
     '''
     appointment page - change the calendar date, 
     and let it's event handler do the rest
     '''
-    date = parent.ui.calendarWidget.selectedDate()
-    parent.ui.calendarWidget.setSelectedDate(date.addMonths(1))
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(1))
 
-def clearTodaysEmergencyTime(parent):
+def clearTodaysEmergencyTime(om_gui):
     '''
     clears emergency slots for today
     '''
     #-- raise a dialog to check
-    result = QtGui.QMessageBox.question(parent, "Confirm",
+    result = QtGui.QMessageBox.question(om_gui, "Confirm",
     "Clear today's emergency slots?",
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes )
     if result == QtGui.QMessageBox.Yes:
         number_cleared = appointments.clearEms(localsettings.sqlToday())
-        parent.advise("Cleared %d emergency slots"% number_cleared, 1)
-        if number_cleared > 0 and parent.ui.main_tabWidget.currentIndex() == 1:
-            layout_dayView(parent)
+        om_gui.advise("Cleared %d emergency slots"% number_cleared, 1)
+        if number_cleared > 0 and om_gui.ui.main_tabWidget.currentIndex() == 1:
+            layout_dayView(om_gui)
 
-def change_allclinicianscb(parent):
+def change_allclinicianscb(om_gui):
     '''
     check (and change if necessary) the all clnicians checkbox 
     '''
 
-    state = parent.ui.aptOV_alldentscheckBox.checkState() and \
-    parent.ui.aptOV_allhygscheckBox.checkState()
+    state = om_gui.ui.aptOV_alldentscheckBox.checkState() and \
+    om_gui.ui.aptOV_allhygscheckBox.checkState()
     
-    if parent.ui.aptOV_everybody_checkBox.checkState != (state):
-        parent.connectAllClinicians(False)
-        parent.ui.aptOV_everybody_checkBox.setChecked(state)
-        parent.connectAllClinicians()
+    if om_gui.ui.aptOV_everybody_checkBox.checkState != (state):
+        om_gui.connectAllClinicians(False)
+        om_gui.ui.aptOV_everybody_checkBox.setChecked(state)
+        om_gui.connectAllClinicians()
             
-def change_alldentscb(parent, state):
+def change_alldentscb(om_gui, state):
     '''
     change the all dentists checkbox without firing the signals
     '''
     #print "checking all dentscb...",
-    if parent.ui.aptOV_alldentscheckBox.checkState() != state: 
+    if om_gui.ui.aptOV_alldentscheckBox.checkState() != state: 
         #print "changing state"
-        parent.connectAllDents(False)
-        parent.ui.aptOV_alldentscheckBox.setChecked(state)
-        parent.connectAllDents()
-        change_allclinicianscb(parent)
+        om_gui.connectAllDents(False)
+        om_gui.ui.aptOV_alldentscheckBox.setChecked(state)
+        om_gui.connectAllDents()
+        change_allclinicianscb(om_gui)
         
-def change_allhygscb(parent, state):
+def change_allhygscb(om_gui, state):
     '''
     change the all hygenists checkbox without firing the signals
     '''
     #print "checking all hygscb...",
-    if parent.ui.aptOV_allhygscheckBox.checkState() != state: 
+    if om_gui.ui.aptOV_allhygscheckBox.checkState() != state: 
         #print "changing state"
-        parent.connectAllHygs(False)
-        parent.ui.aptOV_allhygscheckBox.setChecked(state)
-        parent.connectAllHygs()
+        om_gui.connectAllHygs(False)
+        om_gui.ui.aptOV_allhygscheckBox.setChecked(state)
+        om_gui.connectAllHygs()
         
-        change_allclinicianscb(parent)
+        change_allclinicianscb(om_gui)
     
-def apptOVclinicians(parent):
+def apptOVclinicians(om_gui):
     '''
     user has checked/unchecked the button to toggle ALL clinicians
     everybody's book to be viewed
     '''
     #print "all clinicians toggled by user"
-    state = parent.ui.aptOV_everybody_checkBox.checkState()
+    state = om_gui.ui.aptOV_everybody_checkBox.checkState()
     
-    change_alldentscb(parent, state)
-    change_allhygscb(parent, state)
+    change_alldentscb(om_gui, state)
+    change_allhygscb(om_gui, state)
     
-    apptOVdents(parent, False)        
-    apptOVhygs(parent, False)
+    apptOVdents(om_gui, False)        
+    apptOVhygs(om_gui, False)
     
-    handle_calendar_signal(parent, newDate=False)
+    handle_calendar_signal(om_gui, newDate=False)
 
-def apptOVhygs(parent, byUser=True):
+def apptOVhygs(om_gui, byUser=True):
     '''
     called by checking the all hygenists checkbox on the apptov tab
     this diconnects the hygenist checkboxes from their slots,
     alters their state, then reconnects
     (if byUser = False, the allclinicians box started this)
     '''
-    parent.connectAptOVhygcbs(False)
-    state = parent.ui.aptOV_allhygscheckBox.checkState()
-    for cb in parent.ui.aptOVhyg_checkBoxes.values():
+    om_gui.connectAptOVhygcbs(False)
+    state = om_gui.ui.aptOV_allhygscheckBox.checkState()
+    for cb in om_gui.ui.aptOVhyg_checkBoxes.values():
         if cb.checkState() != state:
             cb.setCheckState(state)
-    parent.connectAptOVhygcbs()
+    om_gui.connectAptOVhygcbs()
     
     if byUser:
-        change_allclinicianscb(parent)
-        handle_calendar_signal(parent, newDate=False)
+        change_allclinicianscb(om_gui)
+        handle_calendar_signal(om_gui, newDate=False)
         
-def apptOVdents(parent, byUser=True):
+def apptOVdents(om_gui, byUser=True):
     '''
     called by checking the all dentists checkbox on the apptov tab
     this diconnects the dentist checkboxes from their slots,
     alters their state, then reconnects
     (if byUser = False, the allclinicians box started this)
     '''
-    parent.connectAptOVdentcbs(False)
+    om_gui.connectAptOVdentcbs(False)
 
-    state = parent.ui.aptOV_alldentscheckBox.checkState() 
-    for cb in parent.ui.aptOVdent_checkBoxes.values():
+    state = om_gui.ui.aptOV_alldentscheckBox.checkState() 
+    for cb in om_gui.ui.aptOVdent_checkBoxes.values():
         if cb.checkState() != state:
             cb.setCheckState(state)
-    parent.connectAptOVdentcbs()
+    om_gui.connectAptOVdentcbs()
     
     if byUser:
-        change_allclinicianscb(parent)
-        handle_calendar_signal(parent, newDate=False)
+        change_allclinicianscb(om_gui)
+        handle_calendar_signal(om_gui, newDate=False)
 
-def dentToggled(parent):
+def dentToggled(om_gui):
     '''
     a dentist checkbox has been toggled by user action 
     '''
     dentstate = True
-    for cb in parent.ui.aptOVdent_checkBoxes.values():
+    for cb in om_gui.ui.aptOVdent_checkBoxes.values():
         dentstate = dentstate and cb.checkState()
-    change_alldentscb(parent, dentstate)
-    handle_calendar_signal(parent, newDate=False)
+    change_alldentscb(om_gui, dentstate)
+    handle_calendar_signal(om_gui, newDate=False)
     
-def hygToggled(parent):
+def hygToggled(om_gui):
     '''
     a hygenist checkbox has been toggled by user action
     '''
     hygstate = True
-    for cb in parent.ui.aptOVhyg_checkBoxes.values():
+    for cb in om_gui.ui.aptOVhyg_checkBoxes.values():
         hygstate = hygstate and cb.checkState()
-    change_allhygscb(parent, hygstate)
+    change_allhygscb(om_gui, hygstate)
 
-    handle_calendar_signal(parent, newDate=False)
+    handle_calendar_signal(om_gui, newDate=False)
 
-def handle_aptOV_checkboxes(parent):
+def handle_aptOV_checkboxes(om_gui):
     '''
     user has altered one of the checkboxes on the appointment options
     emergency, lunch etc..
     '''
     #print "checkbox"
     
-    handle_calendar_signal(parent, newDate=False)
+    handle_calendar_signal(om_gui, newDate=False)
 
-def findApptButtonClicked(parent):
+def findApptButtonClicked(om_gui):
     '''
     search for an appointment
     '''
-    selectedAppt = parent.ui.ptAppointment_treeWidget.currentItem()
+    selectedAppt = om_gui.ui.ptAppointment_treeWidget.currentItem()
     d = selectedAppt.data(0,0).toDate()
 
-    QtCore.QObject.disconnect(parent.ui.main_tabWidget,
-    QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
+    QtCore.QObject.disconnect(om_gui.ui.main_tabWidget,
+    QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
 
-    parent.ui.calendarWidget.setSelectedDate(d)
-    parent.ui.diary_tabWidget.setCurrentIndex(0)
-    parent.ui.main_tabWidget.setCurrentIndex(1)
+    om_gui.ui.calendarWidget.setSelectedDate(d)
+    om_gui.ui.diary_tabWidget.setCurrentIndex(0)
+    om_gui.ui.main_tabWidget.setCurrentIndex(1)
 
-    QtCore.QObject.connect(parent.ui.main_tabWidget,
-    QtCore.SIGNAL("currentChanged(int)"), parent.handle_mainTab)
-    layout_dayView(parent)
+    QtCore.QObject.connect(om_gui.ui.main_tabWidget,
+    QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
+    layout_dayView(om_gui)
 
-def makeDiaryVisible(parent):
+def makeDiaryVisible(om_gui):
     '''
     user has navigated the main tab to show the appointments/diary
     '''
     #print "appt_gui_module.book makeDiaryVisible() called"
     today=QtCore.QDate.currentDate()
-    if parent.ui.diary_tabWidget.currentIndex() != 0:
-        parent.ui.diary_tabWidget.setCurrentIndex(0)
-    if parent.ui.calendarWidget.selectedDate() != today:
-        parent.ui.calendarWidget.setSelectedDate(today)
+    if om_gui.ui.diary_tabWidget.currentIndex() != 0:
+        om_gui.ui.diary_tabWidget.setCurrentIndex(0)
+    if om_gui.ui.calendarWidget.selectedDate() != today:
+        om_gui.ui.calendarWidget.setSelectedDate(today)
     else:
-        handle_calendar_signal(parent)    
+        handle_calendar_signal(om_gui)    
 
-def handle_calendar_signal(parent, newDate=True):
+def handle_calendar_signal(om_gui, newDate=True):
     '''
     slot to catch a date change from the custom mont/year widgets emitting
     a date signal 
@@ -1137,76 +1138,76 @@ def handle_calendar_signal(parent, newDate=True):
     OR the checkboxes have been tweaked
     OR a memo has been added
     '''
-    d = parent.ui.calendarWidget.selectedDate().toPyDate()
-    parent.ui.monthView.setSelectedDate(d)    
-    parent.ui.yearView.setSelectedDate(d)
-    parent.ui.goTodayPushButton.setEnabled(
-    parent.ui.calendarWidget.selectedDate() != \
+    d = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    om_gui.ui.monthView.setSelectedDate(d)    
+    om_gui.ui.yearView.setSelectedDate(d)
+    om_gui.ui.goTodayPushButton.setEnabled(
+    om_gui.ui.calendarWidget.selectedDate() != \
     QtCore.QDate.currentDate())
     
-    if parent.ui.main_tabWidget.currentIndex() == 1:
-        i = parent.ui.diary_tabWidget.currentIndex()
+    if om_gui.ui.main_tabWidget.currentIndex() == 1:
+        i = om_gui.ui.diary_tabWidget.currentIndex()
 
-        if i==0 and newDate:
-            layout_dayView(parent)
+        if i==0:
+            layout_dayView(om_gui)
         elif i==1:
-            layout_weekView(parent)
+            layout_weekView(om_gui)
         elif i==2:
-            layout_month(parent)
+            layout_month(om_gui)
         elif i==3:
-            layout_year(parent)
-            layout_yearHeader(parent)
+            layout_year(om_gui)
+            layout_yearHeader(om_gui)
         elif i==4:
-            parent.taskView.layoutTasks()
+            om_gui.taskView.layoutTasks()
     
-def updateDayMemos(parent, memos):
+def updateDayMemos(om_gui, memos):
     '''
     user has added some memos
     '''
-    appointments.setMemos(parent.ui.calendarWidget.selectedDate().toPyDate(), 
+    appointments.setMemos(om_gui.ui.calendarWidget.selectedDate().toPyDate(), 
     memos)
-    handle_calendar_signal(parent)
+    handle_calendar_signal(om_gui)
         
-def layout_month(parent):
+def layout_month(om_gui):
     '''
     grab month memos
     '''
-    year = parent.ui.calendarWidget.selectedDate().year()
-    month = parent.ui.calendarWidget.selectedDate().month()
+    year = om_gui.ui.calendarWidget.selectedDate().year()
+    month = om_gui.ui.calendarWidget.selectedDate().month()
     startdate = datetime.date(year, month, 1)
     if month == 12:
         month = 0
         year += 1
     month += 1
     enddate = datetime.date(year, month, 1)
-    dents = getUserCheckedClinicians(parent)
-    parent.ui.monthView.setDents(dents)
+    dents = getUserCheckedClinicians(om_gui)
+    om_gui.ui.monthView.setDents(dents)
     rows = appointments.getDayMemos(startdate, enddate, dents)
-    parent.ui.monthView.setData(rows)
+    om_gui.ui.monthView.setData(rows)
     data = appointments.getBankHols(startdate, enddate)
-    parent.ui.monthView.setHeadingData(data)        
-    parent.ui.monthView.update()
+    om_gui.ui.monthView.setHeadingData(data)        
+    om_gui.ui.monthView.update()
     
-def layout_year(parent):
+def layout_year(om_gui):
     '''
     grab year memos
     '''
-    year = parent.ui.calendarWidget.selectedDate().year()
+    year = om_gui.ui.calendarWidget.selectedDate().year()
     startdate = datetime.date(year, 1, 1)
     enddate = datetime.date(year+1, 1, 1)
-    dents = getUserCheckedClinicians(parent)
-    parent.ui.yearView.setDents(dents)    
+    dents = getUserCheckedClinicians(om_gui)
+    om_gui.ui.yearView.setDents(dents)    
     data = appointments.getDayMemos(startdate, enddate, dents)
-    parent.ui.yearView.setData(data)
+    om_gui.ui.yearView.setData(data)
     data = appointments.getBankHols(startdate, enddate)
-    parent.ui.yearView.setHeadingData(data)    
-    parent.ui.yearView.update()
+    om_gui.ui.yearView.setHeadingData(data)    
+    om_gui.ui.yearView.update()
 
-def layout_yearHeader(parent):
+def layout_yearHeader(om_gui):
     '''
     put dayname, bank hol info, and any memos into the year header textBrowser
     '''
-    dayData = parent.ui.yearView.getDayData()
+    dayData = om_gui.ui.yearView.getDayData()
     #print dayData.dayName, dayData.publicHoliday, dayData.memos
     headerText = '''<html><head><link rel="stylesheet"
     href="%s" type="text/css"></head><body><div class="center">
@@ -1228,31 +1229,31 @@ def layout_yearHeader(parent):
             localsettings.apptix_reverse.get(dent), memo)
     headerText += "</table></body></html>"
     
-    parent.ui.year_textBrowser.setText(headerText)
+    om_gui.ui.year_textBrowser.setText(headerText)
 
-def getUserCheckedClinicians(parent):
+def getUserCheckedClinicians(om_gui):
     '''
     checks the gui to see which dentists, hygenists are checked.
     '''
     retarg=[]
-    for dent in parent.ui.aptOVdent_checkBoxes.keys():
-        if parent.ui.aptOVdent_checkBoxes[dent].checkState():
+    for dent in om_gui.ui.aptOVdent_checkBoxes.keys():
+        if om_gui.ui.aptOVdent_checkBoxes[dent].checkState():
             retarg.append(dent)
-    for dent in parent.ui.aptOVhyg_checkBoxes.keys():
-        if parent.ui.aptOVhyg_checkBoxes[dent].checkState():
+    for dent in om_gui.ui.aptOVhyg_checkBoxes.keys():
+        if om_gui.ui.aptOVhyg_checkBoxes[dent].checkState():
             retarg.append(dent)
     return retarg
         
-def layout_weekView(parent):
+def layout_weekView(om_gui):
     '''
     called by checking a dentist checkbox on apptov tab
     or by changeing the date on the appt OV calendar
     '''
-    if parent.ui.main_tabWidget.currentIndex() !=1 and \
-    parent.ui.diary_tabWidget.currentIndex() != 1:
+    if om_gui.ui.main_tabWidget.currentIndex() !=1 and \
+    om_gui.ui.diary_tabWidget.currentIndex() != 1:
         return
     
-    cal = parent.ui.calendarWidget
+    cal = om_gui.ui.calendarWidget
     date = cal.selectedDate()
     
     dayno = date.dayOfWeek()
@@ -1262,18 +1263,18 @@ def layout_weekView(parent):
     for day in range(1, 6):
         weekday = (date.addDays(day - dayno))
         weekdates.append(weekday)
-        parent.ui.apptoverviewControls[day-1].setDate(weekday)
+        om_gui.ui.apptoverviewControls[day-1].setDate(weekday)
 
     if QtCore.QDate.currentDate() in weekdates:
-        parent.ui.goTodayPushButton.setEnabled(False)
+        om_gui.ui.goTodayPushButton.setEnabled(False)
     else:
-        parent.ui.goTodayPushButton.setEnabled(True)
+        om_gui.ui.goTodayPushButton.setEnabled(True)
 
-    userCheckedClinicians = getUserCheckedClinicians(parent)
+    userCheckedClinicians = getUserCheckedClinicians(om_gui)
     
-    for ov in parent.ui.apptoverviews:
+    for ov in om_gui.ui.apptoverviews:
         #--reset
-        ov.date = weekdates[parent.ui.apptoverviews.index(ov)]
+        ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
         if userCheckedClinicians != []:
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
             tuple(userCheckedClinicians))
@@ -1290,181 +1291,167 @@ def layout_weekView(parent):
             ov.dents = ()
         ov.clear()
 
-    if parent.ui.aptOV_apptscheckBox.checkState():
+    if om_gui.ui.aptOV_apptscheckBox.checkState():
         #--add appts
-        for ov in parent.ui.apptoverviews:
+        for ov in om_gui.ui.apptoverviews:
             for dent in ov.dents:
                 ov.appts[dent] = appointments.daysummary(
                 ov.date.toPyDate(), dent)
 
-    if parent.ui.aptOV_emergencycheckBox.checkState():
+    if om_gui.ui.aptOV_emergencycheckBox.checkState():
         #--add emergencies
-        for ov in parent.ui.apptoverviews:
+        for ov in om_gui.ui.apptoverviews:
             for dent in ov.dents:
                 ov.eTimes[dent] = appointments.getBlocks(
                 ov.date.toPyDate(), dent)
 
-    if parent.ui.aptOV_lunchcheckBox.checkState():
+    if om_gui.ui.aptOV_lunchcheckBox.checkState():
         #--add lunches
-        for ov in parent.ui.apptoverviews:
+        for ov in om_gui.ui.apptoverviews:
             for dent in ov.dents:
                 ov.lunches[dent] = appointments.getLunch(
                 ov.date.toPyDate(), dent)
         
-    if str(parent.ui.aptOVmode_label.text()) == "Scheduling Mode":
+    if str(om_gui.ui.aptOVmode_label.text()) == "Scheduling Mode":
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
-        offerAppt(parent)
+        offerAppt(om_gui)
 
-    for ov in parent.ui.apptoverviews:
+    for ov in om_gui.ui.apptoverviews:
         #--repaint widgets
         ov.update()
 
-def layout_dayView(parent):
+def layout_dayView(om_gui):
     '''
     this populates the appointment book widgets (on maintab, pageindex 1)
     '''
-    if parent.ui.main_tabWidget.currentIndex() !=1 and \
-    parent.ui.diary_tabWidget.currentIndex() != 0:
+    if om_gui.ui.main_tabWidget.currentIndex() !=1 and \
+    om_gui.ui.diary_tabWidget.currentIndex() != 0:
         return
     
-    for book in parent.ui.apptBookWidgets:
+    for book in om_gui.apptBookWidgets:
         book.clearAppts()
         book.setTime = "None"
     
-    d = parent.ui.calendarWidget.selectedDate().toPyDate()
-    parent.appointmentData = getAppointmentData(d)
+    d = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    om_gui.appointmentData = getAppointmentData(d)
     todaysDents = []
     todaysMemos = []
-    for dent in parent.appointmentData[0]:
-        todaysDents.append(dent[0])
-        todaysMemos.append(dent[3])
-    
+    userCheckedClinicians = getUserCheckedClinicians(om_gui)
+    print "user checked clinicians",userCheckedClinicians
+    for dent in om_gui.appointmentData[0]:
+        print dent
+        if dent[0] in userCheckedClinicians:
+            todaysDents.append(dent[0])
+            todaysMemos.append(dent[3])
+
+    number_of_books = len(todaysDents)
+    while number_of_books > len(om_gui.apptBookWidgets):
+        book = appointmentwidget.appointmentWidget(om_gui, "0800", "1900")
+        om_gui.apptBookWidgets.append(book)
+        om_gui.ui.dayView_splitter.addWidget(book)
+        om_gui.signals_apptWidgets(book)
+            
     #-- clean past links to dentists
-    for book in parent.ui.apptBookWidgets:
+    i = 0
+    for book in om_gui.apptBookWidgets:
+        i += 1
         book.dentist = None
+            
     abs_start=2359
     abs_end=0
     #-- cycle through todays dents, get the extreme hours for the practice
     for dent in todaysDents:        
         try:
-            bookstart = parent.appointmentData[0][todaysDents.index(dent)][1] 
+            bookstart = om_gui.appointmentData[0][todaysDents.index(dent)][1] 
             if  bookstart < abs_start:
                 abs_start = bookstart
-            bookend = parent.appointmentData[0][todaysDents.index(dent)][2]
+            bookend = om_gui.appointmentData[0][todaysDents.index(dent)][2]
             if  bookend > abs_end:
                 abs_end = bookend
         except IndexError, e:
             print "indexError setting bookstart"
             #-- deal with this later
             pass
+    
     i = 0
     for dent in todaysDents:
-        try:
-            parent.ui.apptBookWidgets[i].dentist = \
-            localsettings.apptix_reverse[dent]
-         
-            parent.ui.apptBookWidgets[i].setDayStartTime(abs_start)        
-            parent.ui.apptBookWidgets[i].setDayEndTime(abs_end)                    
-            
-            bookstart = parent.appointmentData[0][todaysDents.index(dent)][1] 
-            parent.ui.apptBookWidgets[i].setStartTime(bookstart)
-            
-            bookend = parent.appointmentData[0][todaysDents.index(dent)][2]        
-            parent.ui.apptBookWidgets[i].setEndTime(bookend)
-            i += 1
+        book = om_gui.apptBookWidgets[i]
         
-        except IndexError, e:
-            parent.advise(
-            "Damn! too many dentists today!! only 4 widgets available - " +
-            "file a bug!<br /><br />%s"% e, 2)
-            ####TODO - sort this out... no of widgets shouldn't be fixed.
+        book.dentist = localsettings.apptix_reverse[dent]
+     
+        book.setDayStartTime(abs_start)        
+        book.setDayEndTime(abs_end)                    
         
-    for label in (parent.ui.apptFrameLabel1, parent.ui.apptFrameLabel2,
-    parent.ui.apptFrameLabel3, parent.ui.apptFrameLabel4):
-        label.setText("")
-    for label in (parent.ui.book1memo_label, parent.ui.book2memo_label,
-    parent.ui.book2memo_label, parent.ui.book4memo_label):
-        label.setText("")
-    
-    if i > 0 :
-        parent.ui.apptFrameLabel1.setText(
-        localsettings.apptix_reverse[todaysDents[0]])
+        bookstart = om_gui.appointmentData[0][todaysDents.index(dent)][1] 
+        bookend = om_gui.appointmentData[0][todaysDents.index(dent)][2]        
         
-        parent.ui.book1memo_label.setText(todaysMemos[0])
+        book.setStartTime(bookstart)                
+        book.setEndTime(bookend)
+                
+        book.header_label.setText(
+        localsettings.apptix_reverse[todaysDents[i]])
+        
+        book.memo_label.setText(todaysMemos[i])
 
-        if i > 1 :
-            parent.ui.apptFrameLabel2.setText(
-            localsettings.apptix_reverse[todaysDents[1]])
-
-            parent.ui.book2memo_label.setText(todaysMemos[1])
-
-        if i > 2 :
-            parent.ui.apptFrameLabel3.setText(
-            localsettings.apptix_reverse[todaysDents[2]])
-
-            parent.ui.book3memo_label.setText(todaysMemos[2])
-
-        if i > 3 :
-            parent.ui.apptFrameLabel4.setText(
-            localsettings.apptix_reverse[todaysDents[3]])
-
-            parent.ui.book4memo_label.setText(todaysMemos[3])
-
-        apps = parent.appointmentData[1]
-
+        apps = om_gui.appointmentData[1]
         for app in apps:
-            dent = app[1]
-            #--his will be a number
-            book = parent.ui.apptBookWidgets[todaysDents.index(dent)]
-
-            book.setAppointment(str(app[2]), str(app[3]), app[4], app[5],
-            app[6], app[7], app[8], app[9], app[10], chr(app[11]))
-    else:
-        parent.advise("all off today")
+            if app[1] == dent:
+                book.setAppointment(str(app[2]), str(app[3]), app[4], app[5],
+                app[6], app[7], app[8], app[9], app[10], chr(app[11]))
     
-    triangles(parent, False)
+        i += 1
+            
+    triangles(om_gui, False)
 
-    for book in parent.ui.apptBookWidgets:
+    book_list = []
+    for book in om_gui.apptBookWidgets:
         if book.dentist == None:
             #--book has no data
             book.hide()
         else:
+            book_list.append(100)
             book.show()
             book.update()
-    #print "sucessfully laid out books for", d
+
+    # make sure the splitter is reset (user could have hidden a widget they
+    # now need)
+    om_gui.ui.dayView_splitter.setSizes(book_list)
+    
+    if i == 0:
+        om_gui.advise("all off today")
         
-def appointment_clicked(parent, list_of_snos):
+def appointment_clicked(om_gui, list_of_snos):
     if len(list_of_snos) == 1:
         sno = list_of_snos[0]
     else:
-        sno = parent.final_choice(
+        sno = om_gui.final_choice(
         search.getcandidates_from_serialnos(list_of_snos))
         
     if sno != None:
         serialno = int(sno)
-        if serialno == parent.pt.serialno:
+        if serialno == om_gui.pt.serialno:
             #-- pt is already loaded.. just revert to the correct view
-            parent.advise("patient already loaded")            
-            parent.ui.main_tabWidget.setCurrentIndex(0)
+            om_gui.advise("patient already loaded")            
+            om_gui.ui.main_tabWidget.setCurrentIndex(0)
         else:
-            parent.advise("getting record %s"% sno)
-            parent.getrecord(serialno)
+            om_gui.advise("getting record %s"% sno)
+            om_gui.getrecord(serialno)
         
-def clearEmergencySlot(parent, arg):
+def clearEmergencySlot(om_gui, arg):
     '''
     this function is the slot for a signal invoked when the user clicks
     on a "blocked" slot.
     only question is... do they want to free it?
     it expects an arg like ('8:50', '11:00', 4)
     '''
-    adate = parent.ui.calendarWidget.selectedDate().toPyDate()
+    adate = om_gui.ui.calendarWidget.selectedDate().toPyDate()
     message = "Do you want to unblock the selected slot?<br />"
     message += "%s - %s <br />"% (arg[0], arg[1])
     message += "%s<br />"% localsettings.longDate(adate)
     message += "with %s?"% localsettings.ops.get(arg[2])
     
-    result = QtGui.QMessageBox.question(parent, 
+    result = QtGui.QMessageBox.question(om_gui, 
     "Confirm",
     message,
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
@@ -1473,13 +1460,13 @@ def clearEmergencySlot(parent, arg):
     if result == QtGui.QMessageBox.Yes:
         start = localsettings.humanTimetoWystime(arg[0])
         appointments.delete_appt_from_aslot(arg[2], start, adate, 0)
-        layout_dayView(parent)
+        layout_dayView(om_gui)
 
-def blockEmptySlot(parent, tup):
+def blockEmptySlot(om_gui, tup):
     '''
     block the empty slot
     '''
-    adate = parent.ui.calendarWidget.selectedDate().toPyDate()
+    adate = om_gui.ui.calendarWidget.selectedDate().toPyDate()
     start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
     end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
     adjstart = localsettings.humanTimetoWystime(tup[2].toString("h:mm"))
@@ -1489,16 +1476,16 @@ def blockEmptySlot(parent, tup):
     reason = tup[5]
     if not appointments.block_appt(adate, dent, start, end, 
     adjstart, adjend, reason):
-        parent.advise(
+        om_gui.advise(
         _("unable to block - has the book been altered elsewhere?"), 1)
-    layout_dayView(parent)
+    layout_dayView(om_gui)
     
-def fillEmptySlot(parent, tup):
+def fillEmptySlot(om_gui, tup):
     '''
     fill the empty slot - this is called via the appointment widget.
     '''
     print "fillEmptySlot", tup
-    adate = parent.ui.calendarWidget.selectedDate().toPyDate()
+    adate = om_gui.ui.calendarWidget.selectedDate().toPyDate()
     start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
     end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
     adjstart = localsettings.humanTimetoWystime(tup[2].toString("h:mm"))
@@ -1508,58 +1495,58 @@ def fillEmptySlot(parent, tup):
     reason = tup[5]
     if not appointments.fill_appt(adate, dent, start, end, 
     adjstart, adjend, reason, pt):
-        parent.advise(
+        om_gui.advise(
         _("unable to make appointment - has the book been altered elsewhere?")
         ,1)
-    layout_dayView(parent)
-    if pt.serialno == parent.pt.serialno:
-        layout_apptTable(parent)
+    layout_dayView(om_gui)
+    if pt.serialno == om_gui.pt.serialno:
+        layout_apptTable(om_gui)
     
 
-def aptOVlabelRightClicked(parent, d):
+def aptOVlabelRightClicked(om_gui, d):
     '''
     user wants to change appointment overview properties for date d
     '''
-    if permissions.granted(parent):
-        Dialog = QtGui.QDialog(parent)
+    if permissions.granted(om_gui):
+        Dialog = QtGui.QDialog(om_gui)
         dl = alterAday.alterDay(Dialog)
         dl.setDate(d)
 
         if dl.getInput():
-            layout_weekView(parent)
+            layout_weekView(om_gui)
 
-def printApptCard(parent):
+def printApptCard(om_gui):
     '''
     print an appointment card
     '''
     iterator = QtGui.QTreeWidgetItemIterator(
-    parent.ui.ptAppointment_treeWidget,
+    om_gui.ui.ptAppointment_treeWidget,
     QtGui.QTreeWidgetItemIterator.Selectable)
 
     futureAppts = ()
     while iterator.value():
-        #parent.ui.ptAppointment_treeWidget.setItemSelected(iter)
-        i = iterator.value() #parent.ui.ptAppointment_treeWidget.currentItem()
+        #om_gui.ui.ptAppointment_treeWidget.setItemSelected(iter)
+        i = iterator.value() #om_gui.ui.ptAppointment_treeWidget.currentItem()
         if i.data(0,0).toString() != _("TBA"):
             adate = i.data(0,0).toDate().toPyDate()
             if adate > localsettings.currentDay():
                 futureAppts += ((localsettings.longDate(adate), 
                 str(i.text(2)), str(i.text(1))), )
         iterator += 1
-    card = apptcardPrint.card(parent.ui)
-    card.setProps(parent.pt.title, parent.pt.fname, parent.pt.sname,
-    parent.pt.serialno, futureAppts)
+    card = apptcardPrint.card(om_gui.ui)
+    card.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
+    om_gui.pt.serialno, futureAppts)
     
     card.print_()
-    parent.pt.addHiddenNote("printed", "appt card")
-    parent.updateHiddenNotesLabel()
+    om_gui.pt.addHiddenNote("printed", "appt card")
+    om_gui.updateHiddenNotesLabel()
             
-def appointmentTools(parent):
+def appointmentTools(om_gui):
     '''
     called from the main menu
     this just invokes a dialog which has a choice of options
     '''
-    if permissions.granted(parent):
-        parent.appointmentToolsWindow = QtGui.QMainWindow(parent)
-        parent.ui2 = apptTools.apptTools(parent.appointmentToolsWindow)
-        parent.appointmentToolsWindow.show()
+    if permissions.granted(om_gui):
+        om_gui.appointmentToolsWindow = QtGui.QMainWindow(om_gui)
+        om_gui.ui2 = apptTools.apptTools(om_gui.appointmentToolsWindow)
+        om_gui.appointmentToolsWindow.show()

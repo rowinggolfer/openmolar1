@@ -430,10 +430,10 @@ class chartWidget(QtGui.QWidget):
             #--show left/right (this is done here to avoid being overwritten
             #--during the rest of the paint job
             painter.drawText(textRect, QtCore.Qt.AlignRight|
-            QtCore.Qt.AlignVCenter, (QtCore.QString("Left")))
+            QtCore.Qt.AlignVCenter, (_("Left")))
 
             painter.drawText(textRect, QtCore.Qt.AlignLeft|
-            QtCore.Qt.AlignVCenter, (QtCore.QString("Right")))
+            QtCore.Qt.AlignVCenter, (_("Right")))
 
         #--free the painter's saved state
         painter.restore()

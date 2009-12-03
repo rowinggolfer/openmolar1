@@ -411,40 +411,15 @@ def printmultiDayList(om_gui, args):
             dlist.addDaylist(arg[1], arg[0], data)
     if something_to_print:
         dlist.print_()
+        
 def book1print(om_gui):
     try:
-        dent=localsettings.apptix[om_gui.ui.apptBookWidgets[0].dentist]
+        dent=localsettings.apptix[om_gui.apptBookWidgets[0].dentist]
         date=om_gui.ui.calendarWidget.selectedDate()
         books=((dent, date), )
         om_gui.printdaylists(books)
     except KeyError:
         om_gui.advise("error printing book", 1)
-def book2print(om_gui):
-    try:
-        dent=localsettings.apptix[om_gui.ui.apptBookWidgets[1].dentist]
-        date=om_gui.ui.calendarWidget.selectedDate()
-        books=((dent, date), )
-        om_gui.printdaylists(books)
-    except KeyError:
-            om_gui.advise("error printing book", 1)
-
-def book3print(om_gui):
-    try:
-        dent=localsettings.apptix[om_gui.ui.apptBookWidgets[2].dentist]
-        date=om_gui.ui.calendarWidget.selectedDate()
-        books=((dent, date), )
-        om_gui.printdaylists(books)
-    except KeyError:
-            om_gui.advise("error printing book", 1)
-
-def book4print(om_gui):
-    try:
-        dent=localsettings.apptix[om_gui.ui.apptBookWidgets[3].dentist]
-        date=om_gui.ui.calendarWidget.selectedDate()
-        books=((dent, date), )
-        om_gui.printdaylists(books)
-    except KeyError:
-            om_gui.advise("error printing book", 1)
 
 def daylistPrintWizard(om_gui):
     def checkAll(arg):

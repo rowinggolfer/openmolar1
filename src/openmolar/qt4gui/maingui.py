@@ -98,7 +98,6 @@ from openmolar.qt4gui.printing import multiDayListPrint
 
 #--custom widgets
 from openmolar.qt4gui.customwidgets import chartwidget
-from openmolar.qt4gui.customwidgets import appointmentwidget
 from openmolar.qt4gui.customwidgets import toothProps
 from openmolar.qt4gui.customwidgets import appointment_overviewwidget
 from openmolar.qt4gui.customwidgets import toothProps
@@ -698,22 +697,11 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         ##TODO - This should be done during runtime... only making the
         ##widgets when necessary??
         ##frequently don't need 4.
-        self.ui.apptBookWidgets=[]
-        self.ui.apptBookWidgets.append(appointmentwidget.
-        appointmentWidget(self, "0800", "1900"))
-        self.ui.appt1scrollArea.setWidget(self.ui.apptBookWidgets[0])
+        self.apptBookWidgets=[]
+        #self.apptBookWidgets.append(appointmentwidget.
+        #appointmentWidget(self, "0800", "1900"))
+        #self.ui.appt1scrollArea.setWidget(self.apptBookWidgets[0])
 
-        self.ui.apptBookWidgets.append(appointmentwidget.
-        appointmentWidget(self, "0800", "1900"))
-        self.ui.appt2scrollArea.setWidget(self.ui.apptBookWidgets[1])
-
-        self.ui.apptBookWidgets.append(appointmentwidget.
-        appointmentWidget(self,"0800", "1900"))
-        self.ui.appt3scrollArea.setWidget(self.ui.apptBookWidgets[2])
-
-        self.ui.apptBookWidgets.append(appointmentwidget.
-        appointmentWidget(self, "0800", "1900"))
-        self.ui.appt4scrollArea.setWidget(self.ui.apptBookWidgets[3])
 
         #-appointment OVerview widget
         self.ui.apptoverviews=[]
@@ -1476,9 +1464,9 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         '''
         if self.pt.serialno == 0 and \
         self.ui.newPatientPushButton.isEnabled():
-            ###firstly.. don't apply edit page changes if there
-            ####is no patient loaded,
-            ###and no new patient to apply
+            #- firstly.. don't apply edit page changes if there
+            #- iss no patient loaded,
+            #- and no new patient to apply
             return
 
         self.pt.title = str(self.ui.titleEdit.text().toAscii()).upper()
@@ -3046,42 +3034,15 @@ WITH PT RECORDS %d and %d''')% (
         if something_to_print:
             dlist.print_()
 
-    def book1print(self):
+    def book1print(self, dentist):
         try:
-            dent=localsettings.apptix[self.ui.apptBookWidgets[0].dentist]
+            dent=localsettings.apptix[dentist]
             date=self.ui.calendarWidget.selectedDate()
             books=((dent, date), )
             om_printing.printdaylists(self, books)
         except KeyError:
             self.advise("error printing book", 1)
     
-    def book2print(self):
-        try:
-            dent=localsettings.apptix[self.ui.apptBookWidgets[1].dentist]
-            date=self.ui.calendarWidget.selectedDate()
-            books=((dent, date), )
-            om_printing.printdaylists(self, books)
-        except KeyError:
-                self.advise("error printing book", 1)
-
-    def book3print(self):
-        try:
-            dent=localsettings.apptix[self.ui.apptBookWidgets[2].dentist]
-            date=self.ui.calendarWidget.selectedDate()
-            books=((dent, date), )
-            om_printing.printdaylists(self, books)
-        except KeyError:
-                self.advise("error printing book", 1)
-
-    def book4print(self):
-        try:
-            dent=localsettings.apptix[self.ui.apptBookWidgets[3].dentist]
-            date=self.ui.calendarWidget.selectedDate()
-            books=((dent, date), )
-            om_printing.printdaylists(self, books)
-        except KeyError:
-                self.advise("error printing book", 1)
-
     def daylistPrintWizard(self):
         '''
         raise a dialog and give options for what should be printed
@@ -3621,29 +3582,21 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.SIGNAL("valueChanged (int)"), self.fontSize_spinBox_changed)
 
 
-        ########## still to be tidied
-        QtCore.QObject.connect(self.ui.printBook1_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.book1print)
-        QtCore.QObject.connect(self.ui.printBook2_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.book2print)
-        QtCore.QObject.connect(self.ui.printBook3_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.book3print)
-        QtCore.QObject.connect(self.ui.printBook4_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.book4print)
-        #############################
+    def signals_apptWidgets(self, book):
 
-        for book in self.ui.apptBookWidgets:
-            book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
-            self.apptBook_appointmentClickedSignal)
+        book.connect(book, QtCore.SIGNAL("print_me"), self.book1print)
 
-            book.connect(book, QtCore.SIGNAL("ClearEmergencySlot"),
-            self.apptBook_emergencySlotSignal)
+        book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
+        self.apptBook_appointmentClickedSignal)
 
-            book.connect(book, QtCore.SIGNAL("BlockEmptySlot"),
-            self.apptBook_blockSlotSignal)
+        book.connect(book, QtCore.SIGNAL("ClearEmergencySlot"),
+        self.apptBook_emergencySlotSignal)
 
-            book.connect(book, QtCore.SIGNAL("Appointment_into_EmptySlot"),
-            self.apptBook_fillSlotSignal)
+        book.connect(book, QtCore.SIGNAL("BlockEmptySlot"),
+        self.apptBook_blockSlotSignal)
+
+        book.connect(book, QtCore.SIGNAL("Appointment_into_EmptySlot"),
+        self.apptBook_fillSlotSignal)
 
 
     def signals_appointmentOVTab(self):
