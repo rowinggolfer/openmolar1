@@ -1793,7 +1793,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.advise("Not loading patient")
             return
         def repeat_last_search():
-            dl.dob.setText(localsettings.lastsearch[2])
+            dl.dateEdit.setDate(localsettings.lastsearch[2])
             dl.addr1.setText(localsettings.lastsearch[4])
             dl.tel.setText(localsettings.lastsearch[3])
             dl.sname.setText(localsettings.lastsearch[0])
@@ -3043,6 +3043,13 @@ WITH PT RECORDS %d and %d''')% (
         except KeyError:
             self.advise("error printing book", 1)
     
+    def memo_clicked(self, arg):
+        '''
+        user has double clicked on the appointment widget memo label
+        '''
+        dentist, memo = arg
+        self.advise("%s %s"% (dentist, memo),1)
+    
     def daylistPrintWizard(self):
         '''
         raise a dialog and give options for what should be printed
@@ -3585,7 +3592,10 @@ WITH PT RECORDS %d and %d''')% (
     def signals_apptWidgets(self, book):
 
         book.connect(book, QtCore.SIGNAL("print_me"), self.book1print)
-
+        
+        book.connect(book, QtCore.SIGNAL("memo_label_double_clicked"),
+        self.memo_clicked)
+        
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
         self.apptBook_appointmentClickedSignal)
 

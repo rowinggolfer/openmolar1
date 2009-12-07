@@ -284,13 +284,15 @@ class chartWidget(QtGui.QWidget):
             
         elif result.text() == _("Delete All Restorations"):
             self.emit(QtCore.SIGNAL("delete_all"))
+            self.update()
 
         elif _("Delete ") in result.text():
-            reg = re.search(" - (.*) ", result.text())
+            reg = re.search(" - (.*) ", str(result.text().toAscii()))
             if reg:
-                prop = str(reg.groups()[0].toAscii())
+                prop = reg.groups()[0]
                 self.emit(QtCore.SIGNAL("delete_prop"), prop)
-
+                self.update()
+                
         elif result.text() == _("Show History"):
             self.emit(QtCore.SIGNAL("showHistory"), tooth)
         

@@ -83,6 +83,8 @@ def setupNewCourse(parent):
             parent.pt.courseno0 = course[1]
             parent.pt.setAccd(accd)
             parent.advise(_("Sucessfully started new course of treatment"))
+            # force a recheck for the new course date
+            parent.pt.feeTable = None 
             parent.pt.estimates = []
             parent.pt.underTreatment = True
             parent.load_newEstPage()

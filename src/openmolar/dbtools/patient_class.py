@@ -303,13 +303,15 @@ class patient():
                 if self.getAge()[0] < 18:
                     feecat = "C"
             if self.accd == None:
-                self.accd = localsettings.currentDay()
+                cse_accd = localsettings.currentDay()
+            else:
+                cse_accd = self.accd
             for table in localsettings.FEETABLES.tables.values():
                 start, end = table.startDate, table.endDate
                 if end == None:
                     end = localsettings.currentDay()
                 
-                if feecat in table.categories and start <= self.accd <=end:
+                if feecat in table.categories and start <= cse_accd <=end:
                     print "using %s for fees"% table.tablename
                     self.feeTable = table
                     return table

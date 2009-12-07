@@ -47,31 +47,32 @@ class appointmentWidget(QtGui.QFrame):
         self.connect(self.printButton, QtCore.SIGNAL("clicked()"), 
         self.printme)
         
-        self.header_label = QtGui.QLabel("label", self.header_frame)
+        self.header_label = QtGui.QLabel("dent", self.header_frame)
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
         
         font = QtGui.QFont("Sans",14,75)
         self.header_label.setFont(font)
         
-        self.memo_label = QtGui.QLabel("memo", self.header_frame)
+        self.memo_label = clickableLabel(self)
+        self.memo_label.setText("hello")
         self.memo_label.setAlignment(QtCore.Qt.AlignCenter)
 
         font = QtGui.QFont("Sans",12,75,True)
         self.memo_label.setFont(font)
+        self.memo_label.setStyleSheet("background:white")
 
         self.dentist = "DENTIST"
 
-        glay = QtGui.QGridLayout(self)
+        glay = QtGui.QGridLayout()
         glay.setSpacing(0)
         glay.addWidget(self.printButton,0,1)
         glay.addWidget(self.header_label,0,0)
-        glay.addWidget(self.memo_label,1,0,1,2,QtCore.Qt.AlignHCenter)
+        glay.addWidget(self.memo_label,1,0,1,2)
         self.header_frame.setLayout(glay)
   
         SA = QtGui.QScrollArea()
         SA.setWidgetResizable(True)
         
-  
         self.canvas = appointmentCanvas(om_gui, self)
         SA.setWidget(self.canvas) 
         
@@ -184,6 +185,25 @@ class appointmentWidget(QtGui.QFrame):
                 self.canvas.rows[row].append(sno)
             else:
                 self.canvas.rows[row] = [sno]
+
+class clickableLabel(QtGui.QLabel):
+    '''
+    a custom label which takes a double click for altering the memo
+    '''
+    def __init__(self, pWidget=None):
+        super(clickableLabel, self).__init__(pWidget)
+        self.pWidget = pWidget
+        self.setMouseTracking(True)
+        print "made clickablelabel"
+    def mouseDoubleClickEvent(self, event):
+        '''
+        emits a signal when the memo label is double clicked
+        '''
+        print "double click", self.text()
+        self.pWidget.emit(
+        QtCore.SIGNAL("memo_label_double_clicked"), 
+        (self.pWidget.dentist, self.text()))
+    
     
 class appointmentCanvas(QtGui.QWidget):
     '''
