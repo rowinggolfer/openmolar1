@@ -53,13 +53,14 @@ class appointmentWidget(QtGui.QFrame):
         font = QtGui.QFont("Sans",14,75)
         self.header_label.setFont(font)
         
-        self.memo_label = clickableLabel(self)
-        self.memo_label.setText("hello")
-        self.memo_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.memo_lineEdit = QtGui.QLineEdit(self)
+        self.memo_lineEdit.setText("hello")
+        self.memo_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.memo_lineEdit.setMaxLength(30) # due to schema restrictions :(
 
         font = QtGui.QFont("Sans",12,75,True)
-        self.memo_label.setFont(font)
-        self.memo_label.setStyleSheet("background:white")
+        self.memo_lineEdit.setFont(font)
+        #self.memo_lineEdit.setStyleSheet("background:white")
 
         self.dentist = "DENTIST"
 
@@ -67,7 +68,7 @@ class appointmentWidget(QtGui.QFrame):
         glay.setSpacing(0)
         glay.addWidget(self.printButton,0,1)
         glay.addWidget(self.header_label,0,0)
-        glay.addWidget(self.memo_label,1,0,1,2)
+        glay.addWidget(self.memo_lineEdit,1,0,1,2)
         self.header_frame.setLayout(glay)
   
         SA = QtGui.QScrollArea()
@@ -87,7 +88,8 @@ class appointmentWidget(QtGui.QFrame):
         lay.addWidget(SA)
         self.setLayout(lay)
         self.setMinimumSize(self.minimumSizeHint())
-    
+        self.signals()
+        
     def sizeHint(self):
         '''
         set an (arbitrary) size for the widget
@@ -151,6 +153,22 @@ class appointmentWidget(QtGui.QFrame):
         '''
         self.emit(QtCore.SIGNAL("print_me"), self.dentist)
     
+    def newMemo(self):
+        '''
+        user has edited the memo line Edit - emit a signal so the 
+        gui can handle it
+        '''
+        if not self.memo_lineEdit.hasFocus():
+            self.emit(QtCore.SIGNAL("new_memo"), 
+            (self.dentist, str(self.memo_lineEdit.text().toAscii())))
+        
+    def signals(self):
+        '''
+        set up the widget's signals and slots
+        '''
+        self.connect(self.memo_lineEdit, 
+        QtCore.SIGNAL("editingFinished()"), self.newMemo)
+
     def update(self):
         self.canvas.update()
     
@@ -184,26 +202,7 @@ class appointmentWidget(QtGui.QFrame):
             if self.canvas.rows.has_key(row):
                 self.canvas.rows[row].append(sno)
             else:
-                self.canvas.rows[row] = [sno]
-
-class clickableLabel(QtGui.QLabel):
-    '''
-    a custom label which takes a double click for altering the memo
-    '''
-    def __init__(self, pWidget=None):
-        super(clickableLabel, self).__init__(pWidget)
-        self.pWidget = pWidget
-        self.setMouseTracking(True)
-        print "made clickablelabel"
-    def mouseDoubleClickEvent(self, event):
-        '''
-        emits a signal when the memo label is double clicked
-        '''
-        print "double click", self.text()
-        self.pWidget.emit(
-        QtCore.SIGNAL("memo_label_double_clicked"), 
-        (self.pWidget.dentist, self.text()))
-    
+                self.canvas.rows[row] = [sno]    
     
 class appointmentCanvas(QtGui.QWidget):
     '''

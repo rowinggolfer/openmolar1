@@ -292,21 +292,21 @@ def getBankHols(startdate, enddate):
     
     
 def setMemos(adate, memos):
+    '''
+    updates the aday table with memos
+    useage is setMemos(pydate, ((4, "NW not working"),(5, "BW is")))
+    '''
     print "setting memos", memos
     db = connect()
     cursor = db.cursor()
-    for memo in memos:
-        query = 'update aday set memo="%s" where adate=%s and apptix=%d'% (
-        memo[1], localsettings.pyDatetoSQL(adate), memo[0])
+    query = '''insert into aday (memo, adate, apptix) values (%s,%s,%s)
+    on duplicate key update memo=%s'''
+        
+    for apptix, memo in memos:
+        values = (memo, adate, apptix, memo)
         if localsettings.logqueries:
-            print query
-        if cursor.execute(query) == 0:
-            query = 'insert into aday (adate, apptix, memo) values (%s,%s,%s)'
-            values = (localsettings.pyDatetoSQL(adate), memo[0], memo[1])
-            if localsettings.logqueries:
-                print query, values
-            cursor.execute(query, values)
-            
+            print query, values
+        cursor.execute(query, values)
     cursor.close()
     
 def allAppointmentData(adate, dents=()):

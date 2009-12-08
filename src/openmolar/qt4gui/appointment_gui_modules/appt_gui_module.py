@@ -1392,7 +1392,7 @@ def layout_dayView(om_gui):
         book.header_label.setText(
         localsettings.apptix_reverse[todaysDents[i]])
         
-        book.memo_label.setText(todaysMemos[i])
+        book.memo_lineEdit.setText(todaysMemos[i])
 
         apps = om_gui.appointmentData[1]
         for app in apps:

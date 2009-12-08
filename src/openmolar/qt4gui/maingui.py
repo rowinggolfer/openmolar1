@@ -3043,13 +3043,22 @@ WITH PT RECORDS %d and %d''')% (
         except KeyError:
             self.advise("error printing book", 1)
     
-    def memo_clicked(self, arg):
+    def bookmemo_Edited(self, arg):
         '''
         user has double clicked on the appointment widget memo label
         '''
         dentist, memo = arg
-        self.advise("%s %s"% (dentist, memo),1)
-    
+        apptix = localsettings.apptix[dentist]
+        new_memo = True
+        for apptix_, start, finish, memo_ in self.appointmentData[0]:
+            if (apptix, memo) == (apptix_, memo_):
+                new_memo = False
+        if new_memo:
+            appointments.setMemos(
+            self.ui.calendarWidget.selectedDate().toPyDate(), 
+            ((apptix, memo),))
+            self.advise("adding day memo - %s %s"% (dentist, memo))
+            
     def daylistPrintWizard(self):
         '''
         raise a dialog and give options for what should be printed
@@ -3593,8 +3602,8 @@ WITH PT RECORDS %d and %d''')% (
 
         book.connect(book, QtCore.SIGNAL("print_me"), self.book1print)
         
-        book.connect(book, QtCore.SIGNAL("memo_label_double_clicked"),
-        self.memo_clicked)
+        book.connect(book, QtCore.SIGNAL("new_memo"),
+        self.bookmemo_Edited)
         
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
         self.apptBook_appointmentClickedSignal)
