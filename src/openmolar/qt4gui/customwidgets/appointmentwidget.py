@@ -158,6 +158,7 @@ class appointmentWidget(QtGui.QFrame):
         user has edited the memo line Edit - emit a signal so the 
         gui can handle it
         '''
+        print "new memo"
         if not self.memo_lineEdit.hasFocus():
             self.emit(QtCore.SIGNAL("new_memo"), 
             (self.dentist, str(self.memo_lineEdit.text().toAscii())))
@@ -172,8 +173,7 @@ class appointmentWidget(QtGui.QFrame):
     def update(self):
         self.canvas.update()
     
-    def setAppointment(self, start, finish, name, sno=0, trt1="", trt2="",
-        trt3="", memo="", flag=0, cset=0):
+    def setAppointment(self, app):
         '''
         adds an appointment to the widget dictionary of appointments
         typical useage is instance.setAppointment
@@ -185,6 +185,10 @@ class appointmentWidget(QtGui.QFrame):
         ('17/04/2009', 4, 830, 845, 'HAAS D', 10203L, 
         'EXAM', '', '', '', 1, 80, 0, 0)
         '''
+        (start, finish, name, sno, trt1, trt2, trt3, memo, flag, cset) = ( 
+        str(app[1]), str(app[2]), app[3], app[4],
+        app[5], app[6], app[7], app[8], app[9], chr(app[10]))
+        
         startcell = self.canvas.getCell_from_time(start)
         endcell = self.canvas.getCell_from_time(finish)
         if endcell == startcell: #double and family appointments!!
@@ -663,6 +667,7 @@ if __name__ == "__main__":
     #from openmolar.qt4gui import maingui
     #parent = maingui.openmolarGui()
     parent = QtGui.QFrame()
+    parent.layout().setSpacing(0)
     parent.pt = patient()
     
     form = appointmentWidget(parent, "0700","1800", parent)

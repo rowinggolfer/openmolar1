@@ -535,10 +535,11 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         self.pt_dbstate=patient_class.patient(0)
         #--make a deep copy to check for changes
         self.pt=copy.deepcopy(self.pt_dbstate)
-        self.selectedChartWidget="st" #other values are "pl" or "cmp"
-        self.grid = ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
-        'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', "lr8", "lr7", "lr6", "lr5",
-        'lr4', 'lr3', 'lr2', 'lr1', 'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
+        self.selectedChartWidget = "st" #other values are "pl" or "cmp"
+        self.grid = ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1', 
+        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', 
+        "lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1', 
+        'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
         self.addCustomWidgets()
         self.labels_and_tabs()
         self.setValidators()
@@ -550,6 +551,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         self.load_todays_patients_combobox()
         self.editPageVisited=False
         self.forum_notified = False
+        self.appointmentData = appointments.dayAppointmentData()
 
     def advise(self, arg, warning_level=0):
         '''
@@ -983,9 +985,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         '''
         catches a signal that the diary tab widget has been moved
         '''
-        if localsettings.DEBUGMODE:
-            print "diary_tabWidget_nav"
-        #-- enable week view in on tab number 1
+        self.ui.diary_stackedWidget.setCurrentIndex(i)
         self.ui.calendarWidget.setHighlightWeek(i==1)
         self.ui.calendarWidget.setHighlightMonth(i==2)
         if self.ui.diary_tabWidget.isVisible():
@@ -2500,6 +2500,7 @@ WITH PT RECORDS %d and %d''')% (
         handles the signals from the options checkboxes on the appt OV page
         Lunch, emergencies  etc..
         '''
+        print "checkbox"
         appt_gui_module.handle_aptOV_checkboxes(self)
 
     def apptOV_all_clinicians_checkbox_changed(self):
@@ -2515,6 +2516,13 @@ WITH PT RECORDS %d and %d''')% (
         changed state
         '''
         appt_gui_module.apptOVdents(self)
+    
+    def dayView_radiobutton_toggled(self):
+        '''
+        radiobutton toggling who's book to show on the appointment 
+        '''
+        print "radiobuttontoggled"
+        appt_gui_module.handle_calendar_signal(self, False)
 
     def dent_appt_checkbox_changed(self):
         '''
@@ -3049,11 +3057,7 @@ WITH PT RECORDS %d and %d''')% (
         '''
         dentist, memo = arg
         apptix = localsettings.apptix[dentist]
-        new_memo = True
-        for apptix_, start, finish, memo_ in self.appointmentData[0]:
-            if (apptix, memo) == (apptix_, memo_):
-                new_memo = False
-        if new_memo:
+        if self.appointmentData.getMemo(apptix) != memo:
             appointments.setMemos(
             self.ui.calendarWidget.selectedDate().toPyDate(), 
             ((apptix, memo),))
@@ -3648,15 +3652,16 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.SIGNAL("clicked()"), self.aptOV_monthForward_clicked)
 
         #--next three signals connect to the same slot
-        QtCore.QObject.connect(self.ui.aptOV_apptscheckBox,
-        QtCore.SIGNAL("stateChanged(int)"), self.aptOV_checkboxes_changed)
-
-        QtCore.QObject.connect(self.ui.aptOV_emergencycheckBox,
-        QtCore.SIGNAL("stateChanged(int)"), self.aptOV_checkboxes_changed)
-
-        QtCore.QObject.connect(self.ui.aptOV_lunchcheckBox,
-        QtCore.SIGNAL("stateChanged(int)"), self.aptOV_checkboxes_changed)
-
+        for widg in (self.ui.aptOV_apptscheckBox,
+        self.ui.aptOV_emergencycheckBox, self.ui.aptOV_lunchcheckBox):
+            QtCore.QObject.connect(widg, QtCore.SIGNAL("stateChanged(int)"), 
+            self.aptOV_checkboxes_changed)
+            
+        for widg in (self.ui.dayView_all_radioButton, 
+        self.ui.dayView_smart_radioButton,
+        self.ui.dayView_selectedBooks_radioButton):
+            QtCore.QObject.connect(widg, QtCore.SIGNAL("clicked()"), 
+            self.dayView_radiobutton_toggled)
 
         for widg in self.ui.apptoverviews:
             widg.connect(widg, QtCore.SIGNAL("AppointmentClicked"),
@@ -3664,7 +3669,6 @@ WITH PT RECORDS %d and %d''')% (
 
             widg.connect(widg, QtCore.SIGNAL("DentistHeading"),
             self.apptOVwidget_header_clicked)
-
 
         self.connectAllClinicians()
         self.connectAllDents()

@@ -822,15 +822,13 @@ def triangles(om_gui, call_update=True):
                 if book.setCurrentTime(currenttime) and call_update:
                     book.update()
 
-def getAppointmentData(d, dents=()):
+def getAppointmentData(d, dents="ALL", includeNonWorking = False):
     '''
     gets appointment data for date d.
     '''
-    print "getappointmentData"
-    
-    workingdents = appointments.getWorkingDents(d, dents)
+    dents = appointments.getWorkingDents(d, dents, includeNonWorking)
 
-    return appointments.allAppointmentData(d, workingdents)
+    return appointments.allAppointmentData(d, dents)
     
 def calendar(om_gui, sd):
     '''comes from click proceedures'''
@@ -1263,8 +1261,16 @@ def layout_weekView(om_gui):
     for day in range(1, 6):
         weekday = (date.addDays(day - dayno))
         weekdates.append(weekday)
-        om_gui.ui.apptoverviewControls[day-1].setDate(weekday)
-
+        header = om_gui.ui.apptoverviewControls[day-1] 
+        header.setDate(weekday)
+        pydate = weekday.toPyDate()
+        memo = appointments.getBankHol(pydate)
+        gm = appointments.getGlobalMemo(pydate)
+        if memo !="" and gm != "":
+            memo += "<br />"
+        memo += gm
+        header.setMemo(memo)
+        
     if QtCore.QDate.currentDate() in weekdates:
         om_gui.ui.goTodayPushButton.setEnabled(False)
     else:
@@ -1325,8 +1331,8 @@ def layout_dayView(om_gui):
     '''
     this populates the appointment book widgets (on maintab, pageindex 1)
     '''
-    if om_gui.ui.main_tabWidget.currentIndex() !=1 and \
-    om_gui.ui.diary_tabWidget.currentIndex() != 0:
+    if (om_gui.ui.main_tabWidget.currentIndex() !=1 and 
+    om_gui.ui.diary_tabWidget.currentIndex() != 0):
         return
     
     for book in om_gui.apptBookWidgets:
@@ -1334,17 +1340,28 @@ def layout_dayView(om_gui):
         book.setTime = "None"
     
     d = om_gui.ui.calendarWidget.selectedDate().toPyDate()
-    om_gui.appointmentData = getAppointmentData(d)
+    workingOnly = False
+    if om_gui.ui.dayView_smart_radioButton.isChecked():
+        workingOnly = True
+        dents = "ALL"
+    elif om_gui.ui.dayView_selectedBooks_radioButton.isChecked():
+        dents = tuple(getUserCheckedClinicians(om_gui))       
+    else:
+        dents = ()
+        for dent in localsettings.activedents + localsettings.activehygs:
+            dents += ((localsettings.apptix[dent]),)
+        
+    om_gui.appointmentData.setDate(d)
+    om_gui.appointmentData.getAppointments(workingOnly, dents)
+    
+    om_gui.ui.daymemo_label.setText(om_gui.appointmentData.memo)
+
     todaysDents = []
     todaysMemos = []
-    userCheckedClinicians = getUserCheckedClinicians(om_gui)
-    print "user checked clinicians",userCheckedClinicians
-    for dent in om_gui.appointmentData[0]:
-        print dent
-        if dent[0] in userCheckedClinicians:
-            todaysDents.append(dent[0])
-            todaysMemos.append(dent[3])
-
+    for dent in om_gui.appointmentData.workingDents:
+        todaysDents.append(dent)
+        todaysMemos.append(om_gui.appointmentData.getMemo(dent))
+                
     number_of_books = len(todaysDents)
     while number_of_books > len(om_gui.apptBookWidgets):
         book = appointmentwidget.appointmentWidget(om_gui, "0800", "1900")
@@ -1358,21 +1375,8 @@ def layout_dayView(om_gui):
         i += 1
         book.dentist = None
             
-    abs_start=2359
-    abs_end=0
-    #-- cycle through todays dents, get the extreme hours for the practice
-    for dent in todaysDents:        
-        try:
-            bookstart = om_gui.appointmentData[0][todaysDents.index(dent)][1] 
-            if  bookstart < abs_start:
-                abs_start = bookstart
-            bookend = om_gui.appointmentData[0][todaysDents.index(dent)][2]
-            if  bookend > abs_end:
-                abs_end = bookend
-        except IndexError, e:
-            print "indexError setting bookstart"
-            #-- deal with this later
-            pass
+    abs_start = om_gui.appointmentData.earliest_start
+    abs_end = om_gui.appointmentData.latest_end
     
     i = 0
     for dent in todaysDents:
@@ -1383,22 +1387,19 @@ def layout_dayView(om_gui):
         book.setDayStartTime(abs_start)        
         book.setDayEndTime(abs_end)                    
         
-        bookstart = om_gui.appointmentData[0][todaysDents.index(dent)][1] 
-        bookend = om_gui.appointmentData[0][todaysDents.index(dent)][2]        
+        bookstart = om_gui.appointmentData.getStart(dent)
+        bookend = om_gui.appointmentData.getEnd(dent)        
         
         book.setStartTime(bookstart)                
         book.setEndTime(bookend)
                 
-        book.header_label.setText(
-        localsettings.apptix_reverse[todaysDents[i]])
+        book.header_label.setText(localsettings.apptix_reverse[dent])
         
-        book.memo_lineEdit.setText(todaysMemos[i])
+        book.memo_lineEdit.setText(om_gui.appointmentData.getMemo(dent))
 
-        apps = om_gui.appointmentData[1]
+        apps = om_gui.appointmentData.dentAppointments(dent)
         for app in apps:
-            if app[1] == dent:
-                book.setAppointment(str(app[2]), str(app[3]), app[4], app[5],
-                app[6], app[7], app[8], app[9], app[10], chr(app[11]))
+            book.setAppointment(app)
     
         i += 1
             

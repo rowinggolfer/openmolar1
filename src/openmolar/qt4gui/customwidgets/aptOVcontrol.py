@@ -6,38 +6,49 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui,QtCore
+from openmolar.settings import localsettings
 
 class control(QtGui.QLabel):
     '''
-    a custom label with a chain link
+    a custom label for the top of the appointment overview widgets
     '''
     def __init__(self, parent=None):
         super(control,self).__init__(parent)
         self.setMinimumSize(140,40)
-        self.dateString=""
-        self.hoverString=""
+        self.memo=""
+        self.date = QtCore.QDate(1900,1,1)
+        
     def setDate(self,arg):
         '''
         takes a QDate
         '''
-        self.date=arg
+        self.date = arg
+        self.memo = ""
+        self.updateLabels()
+
+    def setMemo(self, arg):
+        '''
+        takes a string
+        '''
+        self.memo = arg
         self.updateLabels()
         
     def updateLabels(self):
-        day=self.date.toString("dddd")
-        format=self.date.toString("dd MMMM yyyy")
-        self.dateString="<center><b>%s</b><br />%s</center>"%(day,format)
-        self.hoverString="<center><b>%s</b><br /><b>%s</b></center>"%(day,format)
-        
-        self.setText(self.dateString)
+        day = localsettings.longDate(self.date.toPyDate())
+        if self.memo != "":
+            str="<center><b>%s</b><br />%s</center>"%(day, self.memo)
+        else:
+            str="<center><b>%s</b></center>"% day
+            
+        self.setText(str)
         self.setToolTip('''<center>Left click to go to<br />%s<br />
-        <br />Right click for admin options</center>'''%self.date.toString())
+        <br />Right click for admin options</center>'''% day)
     
     def mouseMoveEvent(self,e):
-        self.setText(self.hoverString)
-    
+        self.setStyleSheet("background:white")
+        
     def leaveEvent(self,e):
-        self.setText(self.dateString)
+        self.setStyleSheet("")
         
     
     def mousePressEvent(self,e):

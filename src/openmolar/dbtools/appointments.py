@@ -10,6 +10,112 @@ import datetime
 from openmolar.connect import connect, omSQLresult, ProgrammingError
 from openmolar.settings import localsettings
 
+class dayAppointmentData():
+    '''
+    a data structure to hold all data for a day
+    '''
+    def __init__(self):
+        self.date = datetime.date(1900,1,1)
+        self.earliest_start = 2359
+        self.latest_end = 0
+        self.workingDents = ()
+        self.memo = "today"
+        self.memos = {}
+        self.appointments = {}
+   
+    def setDate(self, date):
+        '''
+        update the class with data for date
+        '''
+        self.date = date
+        workingDents = []
+        self.memos = {}
+        self.startTimes = {}
+        self.endTimes = {}
+        self.earliest_start = 2359
+        self.latest_end = 0
+        self.memo = "%s %s"% (localsettings.longDate(date), self.header())
+        
+        for apptix,start,end,memo,flag in getWorkingDents(self.date):
+            self.memos[apptix] = memo
+            self.startTimes[apptix] = start
+            self.endTimes[apptix] = end
+            if flag != 0:
+                workingDents.append(apptix)
+                if start < self.earliest_start:
+                    self.earliest_start = start
+                if end > self.latest_end:
+                    self.latest_end = end
+        self.workingDents = tuple(workingDents)
+    
+    def header(self):
+        '''
+        get any text from the calendar table + memo for dentist 0
+        '''
+        retarg = ""
+        bh = getBankHol(self.date)
+        if bh != "":
+            retarg += "   <i>'%s'</i>"% bh
+        gm = getGlobalMemo(self.date) 
+        if gm != "":
+            retarg += "   -   %s"% gm            
+        return retarg
+        
+    def getMemo(self, dent):
+        '''
+        return the memo for the dent, or "" if there is none
+        '''
+        try:
+            return self.memos[dent]
+        except KeyError:
+            return ""
+    
+    def getStart(self, dent):
+        '''
+        return the memo for the dent, or "" if there is none
+        '''
+        try:
+            return self.startTimes[dent]
+        except KeyError:
+            return 1200
+        
+    def getEnd(self, dent):
+        '''
+        return the memo for the dent, or "" if there is none
+        '''
+        try:
+            return self.endTimes[dent]
+        except KeyError:
+            return 1200
+        
+    def getAppointments(self, workingOnly=True, dents="ALL"):
+        '''
+        get the appointments for the date.
+        '''
+        if not workingOnly:
+            wds = []
+            for dent in localsettings.activedents + localsettings.activehygs:
+                apptix = localsettings.apptix[dent]
+                if dents=="ALL" or apptix in dents:
+                    wds.append(apptix)
+            
+            self.workingDents = tuple(wds)
+        if dents != "ALL":
+            for dent in self.workingDents:
+                if not dent in dents:
+                    self.workingDents.remove(dent)    
+        self.appointments = allAppointmentData(self.date, self.workingDents)
+    
+    def dentAppointments(self, dent):
+        '''
+        return only appointments for the specified dent
+        '''
+        retList = []
+        for app in self.appointments:
+            if app[0] == dent:
+                retList.append(app)
+        return retList
+    
 class workingDay():
     '''
     a small class to store data about a dentist's day
@@ -194,15 +300,19 @@ def todays_patients(dents=("*")):
     #db.close()
     return rows
 
-def getWorkingDents(gwdate, dents=()):
+@localsettings.debug
+def getWorkingDents(gwdate, dents="ALL", include_non_working=False):
     '''
     dentists are part time, or take holidays...this proc takes a date,
     and optionally a tuple of dents
     then checks to see if they are flagged as off that day
     '''
+    if dents == ():
+        return ()
+    
     db = connect()
     cursor = db.cursor()
-    if dents != ():
+    if dents != "ALL":
         #-- dents are numbers here..... I need to get consistent :(
         mystr = " AND ("
         for dent in dents:
@@ -210,18 +320,20 @@ def getWorkingDents(gwdate, dents=()):
         mystr = mystr[0:mystr.rindex(" OR")] + ")"
     else:
         mystr = ""
+    
+    if not include_non_working:
+        mystr = "AND (flag=1 or flag=2) %s"% mystr
 
-    fullquery = '''SELECT apptix,start,end,memo FROM aday
-    WHERE adate="%s" AND (flag=1 or flag=2) %s'''% (
-    localsettings.pyDatetoSQL(gwdate), mystr)
-
+    query = 'SELECT apptix,start,end,memo,flag FROM aday WHERE adate=%s ' \
+    + mystr
+    
     if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery)
+        print query, gwdate
+    cursor.execute(query, (gwdate,))
 
     rows = cursor.fetchall()
     cursor.close()
-    #db.close()
+    
     return rows
 
 def getDayMemos(startdate, enddate, dents=[]):
@@ -262,6 +374,49 @@ def getDayMemos(startdate, enddate, dents=[]):
     #db.close()
     return data
 
+def getBankHol(date):
+    '''
+    get Bank Hol for one specific date
+    '''
+    db = connect()
+    cursor = db.cursor()
+    
+    query = '''SELECT memo FROM calendar WHERE adate=%s''' 
+    retarg = ""
+            
+    try:
+        if localsettings.logqueries:
+            print query, (date, )
+        cursor.execute(query, (date, ))
+
+        rows = cursor.fetchall()
+        cursor.close()
+        for row in rows:
+            retarg += "%s "% row
+    except ProgrammingError, e:
+        retarg =  "couldn't get Bank Holiday details"
+    return retarg
+    
+def getGlobalMemo(date):
+    '''
+    get global memo for one specific date
+    '''
+    db = connect()
+    cursor = db.cursor()
+    
+    query = '''SELECT memo FROM aday WHERE adate=%s and apptix=0''' 
+    retarg = ""
+            
+    if localsettings.logqueries:
+        print query, (date, )
+    cursor.execute(query, (date, ))
+
+    rows = cursor.fetchall()
+    cursor.close()
+    for row in rows:
+        retarg += "%s "% row
+    return retarg
+
 def getBankHols(startdate, enddate):
     '''
     useage is getDayMemos(pydate,pydate)
@@ -270,15 +425,14 @@ def getBankHols(startdate, enddate):
     db = connect()
     cursor = db.cursor()
     
-    fullquery = '''SELECT adate, memo FROM calendar WHERE memo!="" AND 
-    adate>=%s AND adate<%s'''% (localsettings.pyDatetoSQL(startdate), 
-    localsettings.pyDatetoSQL(enddate))
-    
+    query = '''SELECT adate, memo FROM calendar WHERE memo!="" AND 
+    adate>=%s AND adate<%s'''
+     
     data = {}
     try:
         if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
+            print fullquery, (startdate, enddate)
+        cursor.execute(query, (startdate, enddate))
 
         rows = cursor.fetchall()
         cursor.close()
@@ -317,24 +471,24 @@ def allAppointmentData(adate, dents=()):
     if dents != ():
         mystr = " and ("
         for dent in dents:
-            mystr += "apptix=%d or "% dent[0]
+            mystr += "apptix=%d or "% dent
         mystr = mystr[0:mystr.rindex(" or")]+")"
     else:
         mystr = ""
     
     db = connect()
     cursor = db.cursor()    
-    fullquery = '''select adate,apptix,start,end,name,serialno,code0,
+    query = '''select apptix,start,end,name,serialno,code0,
     code1,code2,note,flag0,flag1,flag2,flag3 from aslot where adate=%s'''
-    fullquery += " %s order by apptix,start"% mystr
+    query += " %s order by apptix,start"% mystr
     if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery, (adate,))
+        print query
+    cursor.execute(query, (adate,))
 
     data = cursor.fetchall()
     cursor.close()
     #db.close()
-    return (dents, data)
+    return data
 
 def convertResults(appointments):
     '''changes (830,845) to (830,15)   ie start,end to start,length'''
