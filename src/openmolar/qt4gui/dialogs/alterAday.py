@@ -108,7 +108,7 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
                     startData.setStart(row[1])
                     startData.setFinish(row[2])
                     startData.setMemo(row[3])
-                    startData.active=True
+                    startData.active=bool(row[4])
             self.clinicians.append(startData)
 
     def checkForChanges(self):
