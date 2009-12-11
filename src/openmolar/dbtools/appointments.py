@@ -322,10 +322,10 @@ def getWorkingDents(gwdate, dents="ALL", include_non_working=True):
             mystr += "apptix=%d OR "% dent
         mystr = mystr[0:mystr.rindex(" OR")] + ")"
     else:
-        mystr = ""
+        mystr = "AND apptix != 0"
     
     if not include_non_working:
-        mystr = "AND (flag=1 or flag=2) %s"% mystr
+        mystr = " AND (flag=1 or flag=2) %s"% mystr
 
     query = 'SELECT apptix,start,end,memo,flag FROM aday WHERE adate=%s ' \
     + mystr

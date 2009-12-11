@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -4024,7 +4024,7 @@ Note - this will not remove items which are currently there. </string>
                   </size>
                  </property>
                  <property name="currentIndex">
-                  <number>4</number>
+                  <number>1</number>
                  </property>
                  <widget class="QWidget" name="dayViewPage">
                   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -4078,7 +4078,7 @@ Note - this will not remove items which are currently there. </string>
                    <item>
                     <widget class="QCheckBox" name="weekView_outOfOffice_checkBox">
                      <property name="text">
-                      <string>Ignore  Out-of-office clinicians</string>
+                      <string>Ignore  Out-of-office</string>
                      </property>
                      <property name="checked">
                       <bool>true</bool>
@@ -4167,7 +4167,7 @@ Note - this will not remove items which are currently there. </string>
                     <x>0</x>
                     <y>0</y>
                     <width>198</width>
-                    <height>133</height>
+                    <height>99</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4258,7 +4258,7 @@ Note - this will not remove items which are currently there. </string>
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_26">
                <attribute name="title">

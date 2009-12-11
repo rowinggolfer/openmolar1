@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Fri Dec 11 01:03:24 2009
+# Created: Fri Dec 11 09:30:44 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -1686,7 +1686,7 @@ class Ui_MainWindow(object):
         self.aptOVdentscrollArea.setWidgetResizable(True)
         self.aptOVdentscrollArea.setObjectName("aptOVdentscrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.aptOVdentscrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 198, 133))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 198, 99))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(2)
@@ -2438,12 +2438,12 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(0)
+        self.main_tabWidget.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(7)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
-        self.diary_stackedWidget.setCurrentIndex(4)
-        self.diary_tabWidget.setCurrentIndex(1)
+        self.diary_stackedWidget.setCurrentIndex(1)
+        self.diary_tabWidget.setCurrentIndex(0)
         self.fees_tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.saveButton, self.tabWidget)
@@ -2754,7 +2754,7 @@ class Ui_MainWindow(object):
         self.dayView_selectedBooks_radioButton.setText(_( u"Show Books  selected below"))
         self.aptOV_emergencycheckBox.setText(_( u"show emergency spaces"))
         self.aptOV_lunchcheckBox.setText(_( u"show lunch breaks"))
-        self.weekView_outOfOffice_checkBox.setText(_( u"Ignore  Out-of-office clinicians"))
+        self.weekView_outOfOffice_checkBox.setText(_( u"Ignore  Out-of-office"))
         self.aptOV_apptscheckBox.setText(_( u"show appointments"))
         self.label_47.setText(_( u"Month Options"))
         self.label_48.setText(_( u"Year"))
