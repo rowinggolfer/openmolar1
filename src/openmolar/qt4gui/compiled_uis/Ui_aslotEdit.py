@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'aslotEdit.ui'
 #
-# Created: Thu Nov 19 21:47:07 2009
+# Created: Fri Dec 11 13:15:14 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,17 +12,18 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(568, 300)
+        Dialog.resize(490, 382)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.frame = QtGui.QFrame(Dialog)
-        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame.setFrameShape(QtGui.QFrame.NoFrame)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.horizontalLayout = QtGui.QHBoxLayout(self.frame)
+        self.horizontalLayout.setContentsMargins(18, -1, 18, -1)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtGui.QLabel(self.frame)
-        self.label.setMinimumSize(QtCore.QSize(80, 0))
+        self.label.setMinimumSize(QtCore.QSize(92, 0))
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
@@ -46,11 +47,19 @@ class Ui_Dialog(object):
         self.verticalLayout.addWidget(self.frame)
         self.scrollArea = QtGui.QScrollArea(Dialog)
         self.scrollArea.setMinimumSize(QtCore.QSize(346, 0))
+        self.scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 546, 194))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 472, 287))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.frame_2 = QtGui.QFrame(self.scrollAreaWidgetContents)
+        self.frame_2.setFrameShape(QtGui.QFrame.NoFrame)
+        self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_2.setObjectName("frame_2")
+        self.verticalLayout_2.addWidget(self.frame_2)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.scrollArea)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)

@@ -37,6 +37,7 @@ class adayData():
 
     def sqlStart(self):
         return int(self.start.toString("hmm"))
+    
     def sqlFinish(self):
         return int(self.finish.toString("hmm"))
 
@@ -53,14 +54,27 @@ class adayData():
 class dentWidget(Ui_activeDentStartFinish.Ui_Form):
     def __init__(self,widget):
         self.setupUi(widget)
+
         QtCore.QObject.connect(self.checkBox,
         QtCore.SIGNAL("stateChanged(int)"),self.toggle)
+        
         self.addTimeEdits()
 
     def addTimeEdits(self):
-        self.start_timeEdit=fiveminutetimeedit.FiveMinuteTimeEdit(self.widget)
-        self.finish_timeEdit=fiveminutetimeedit.FiveMinuteTimeEdit(self.widget_2)
+        self.start_timeEdit = \
+        fiveminutetimeedit.FiveMinuteTimeEdit(self.widget)
+        
+        l = QtGui.QVBoxLayout(self.widget)
+        l.addWidget(self.start_timeEdit)
+        
+        self.finish_timeEdit = \
+        fiveminutetimeedit.FiveMinuteTimeEdit(self.widget_2)
+        
+        l = QtGui.QVBoxLayout(self.widget_2)
+        l.addWidget(self.finish_timeEdit)
+        
         self.start_timeEdit.setMinimumTime(localsettings.earliestStart)
+        
         self.finish_timeEdit.setMaximumTime(localsettings.latestFinish)
         
     def toggle(self,arg):
@@ -77,38 +91,44 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         self.lineEdit.setText(arg.memo)
 
 class alterDay(Ui_aslotEdit.Ui_Dialog):
+    '''
+    a custom dialog to enter the start dates, end dates and availability
+    of a clinician
+    '''
     def __init__(self,dialog):
         self.setupUi(dialog)
-        self.dialog=dialog
-        self.clinicians=[]
+        self.dialog = dialog
+        self.clinicians = []
 
     def setDate(self,d):
         '''
         d should be a QDate
         '''
-        self.date=d
+        self.date = d
         self.dialog.setWindowTitle("Clinician Times - %s"%d.toString())
 
     def showItems(self):
         self.dentWidgets=[]
-        vlayout = QtGui.QVBoxLayout(self.scrollArea)
+        vlayout = QtGui.QVBoxLayout(self.frame_2)
         for clinician in self.clinicians:
-            iw=QtGui.QWidget()
-            dw=dentWidget(iw)
+            iw = QtGui.QWidget()
+            dw = dentWidget(iw)
             dw.setData(clinician)
             self.dentWidgets.append(dw)
             vlayout.addWidget(iw)
+        
+        vlayout.insertStretch(-1)
 
     def loadData(self):
         dentData=appointments.getWorkingDents(self.date.toPyDate())
-        for clinician in localsettings.activedents+localsettings.activehygs:
-            startData=adayData(clinician)
+        for clinician in localsettings.activedents + localsettings.activehygs:
+            startData = adayData(clinician)
             for row in dentData:
-                if row[0]==startData.apptix:
+                if row[0] == startData.apptix:
                     startData.setStart(row[1])
                     startData.setFinish(row[2])
                     startData.setMemo(row[3])
-                    startData.active=bool(row[4])
+                    startData.active = bool(row[4])
             self.clinicians.append(startData)
 
     def checkForChanges(self):

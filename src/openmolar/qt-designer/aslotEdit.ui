@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>568</width>
-    <height>300</height>
+    <width>490</width>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,17 +17,23 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>18</number>
+      </property>
+      <property name="rightMargin">
+       <number>18</number>
+      </property>
       <item>
        <widget class="QLabel" name="label">
         <property name="minimumSize">
          <size>
-          <width>80</width>
+          <width>92</width>
           <height>0</height>
          </size>
         </property>
@@ -111,6 +117,9 @@
        <height>0</height>
       </size>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -119,10 +128,22 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>546</width>
-        <height>194</height>
+        <width>472</width>
+        <height>287</height>
        </rect>
       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QFrame" name="frame_2">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
