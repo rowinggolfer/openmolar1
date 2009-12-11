@@ -3651,14 +3651,14 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.QObject.connect(self.ui.aptOVnextmonth,
         QtCore.SIGNAL("clicked()"), self.aptOV_monthForward_clicked)
 
-        #--next three signals connect to the same slot
+        #--next 4 signals connect to the same slot
         for widg in (self.ui.aptOV_apptscheckBox,
-        self.ui.aptOV_emergencycheckBox, self.ui.aptOV_lunchcheckBox):
+        self.ui.aptOV_emergencycheckBox, self.ui.aptOV_lunchcheckBox,
+        self.ui.weekView_outOfOffice_checkBox):
             QtCore.QObject.connect(widg, QtCore.SIGNAL("stateChanged(int)"), 
             self.aptOV_checkboxes_changed)
             
-        for widg in (self.ui.dayView_all_radioButton, 
-        self.ui.dayView_smart_radioButton,
+        for widg in ( self.ui.dayView_smart_radioButton,
         self.ui.dayView_selectedBooks_radioButton):
             QtCore.QObject.connect(widg, QtCore.SIGNAL("clicked()"), 
             self.dayView_radiobutton_toggled)

@@ -19,9 +19,10 @@ class dayAppointmentData():
         self.earliest_start = 2359
         self.latest_end = 0
         self.workingDents = ()
+        self.inOffice = {}
         self.memo = "today"
         self.memos = {}
-        self.appointments = {}
+        self.appointments = ()
    
     def setDate(self, date):
         '''
@@ -29,6 +30,7 @@ class dayAppointmentData():
         '''
         self.date = date
         workingDents = []
+        self.inOffice = {}
         self.memos = {}
         self.startTimes = {}
         self.endTimes = {}
@@ -40,6 +42,7 @@ class dayAppointmentData():
             self.memos[apptix] = memo
             self.startTimes[apptix] = start
             self.endTimes[apptix] = end
+            self.inOffice[apptix] = bool(flag)
             if flag != 0:
                 workingDents.append(apptix)
                 if start < self.earliest_start:
@@ -301,7 +304,7 @@ def todays_patients(dents=("*")):
     return rows
 
 @localsettings.debug
-def getWorkingDents(gwdate, dents="ALL", include_non_working=False):
+def getWorkingDents(gwdate, dents="ALL", include_non_working=True):
     '''
     dentists are part time, or take holidays...this proc takes a date,
     and optionally a tuple of dents

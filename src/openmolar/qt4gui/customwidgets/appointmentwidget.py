@@ -37,7 +37,8 @@ class appointmentWidget(QtGui.QFrame):
         
         self.header_frame = QtGui.QFrame(self)
         
-        self.printButton = QtGui.QPushButton("print", self.header_frame)
+        self.printButton = QtGui.QPushButton("", self.header_frame)
+        self.printButton.setMaximumWidth(50)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/ps.png"), 
         QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -64,18 +65,19 @@ class appointmentWidget(QtGui.QFrame):
 
         self.dentist = "DENTIST"
 
-        glay = QtGui.QGridLayout()
-        glay.setSpacing(0)
+        glay = QtGui.QGridLayout(self.header_frame)
+        glay.setSpacing(2)
+        glay.setMargin(2)
         glay.addWidget(self.printButton,0,1)
         glay.addWidget(self.header_label,0,0)
         glay.addWidget(self.memo_lineEdit,1,0,1,2)
-        self.header_frame.setLayout(glay)
+        #self.header_frame.setLayout(glay)
   
-        SA = QtGui.QScrollArea()
-        SA.setWidgetResizable(True)
+        self.scrollArea = QtGui.QScrollArea()
+        self.scrollArea.setWidgetResizable(True)
         
         self.canvas = appointmentCanvas(om_gui, self)
-        SA.setWidget(self.canvas) 
+        self.scrollArea.setWidget(self.canvas) 
         
         self.setDayStartTime(sTime)
         self.setStartTime(sTime)
@@ -85,9 +87,10 @@ class appointmentWidget(QtGui.QFrame):
         lay = QtGui.QVBoxLayout()
         lay.setSpacing(0)
         lay.addWidget(self.header_frame)
-        lay.addWidget(SA)
+        lay.addWidget(self.scrollArea)
         self.setLayout(lay)
         self.setMinimumSize(self.minimumSizeHint())
+        self.setMaximumSize(self.maximumSizeHint())
         self.signals()
         
     def sizeHint(self):
@@ -103,7 +106,12 @@ class appointmentWidget(QtGui.QFrame):
         '''
         return QtCore.QSize(150, 300)
 
-    
+    def maximumSizeHint(self):
+        '''
+        widget looks daft if too wide
+        '''
+        return QtCore.QSize(500, 16777215)
+        
     def setDayStartTime(self, sTime):
         '''
         a public method to set the Practice Day Start
@@ -182,8 +190,9 @@ class appointmentWidget(QtGui.QFrame):
         dictionary which has
         row number as key, used for signals when appts are clicked
     
-        ('17/04/2009', 4, 830, 845, 'HAAS D', 10203L, 
-        'EXAM', '', '', '', 1, 80, 0, 0)
+        (5, 915, 930, 'MCPHERSON I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
+        (5, 1100, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0)
+
         '''
         (start, finish, name, sno, trt1, trt2, trt3, memo, flag, cset) = ( 
         str(app[1]), str(app[2]), app[3], app[4],
@@ -667,7 +676,6 @@ if __name__ == "__main__":
     #from openmolar.qt4gui import maingui
     #parent = maingui.openmolarGui()
     parent = QtGui.QFrame()
-    parent.layout().setSpacing(0)
     parent.pt = patient()
     
     form = appointmentWidget(parent, "0700","1800", parent)
@@ -686,21 +694,15 @@ if __name__ == "__main__":
     
     form.setCurrentTime("945")
     form.clearAppts()
-    form.setAppointment("810","820","emergency",0)
-    
-    form.setAppointment("0845","0845","WALLACE N",3266,
-    "DOUBLE","","","Good Patient",0,"P")
-    form.setAppointment("0845","0930","WALLACE I",36,"FILL","SP",
-    "","Good Patient",0,"N")
-    form.setAppointment("0930","0945","JOHNSTONE J",3673,
-    "EXAM","","","",0,"P")
-    form.setAppointment("1000","1015","turell J",3674,"EXAM",
-    "","","",0,"I")
-    form.setAppointment("1430","1500","JOHN J",3675,"EXAM",
-    "","","",0,"P")
-    form.setAppointment("1600","1610","JOHNSTONE T",3676,"EXAM",
-    "","","",0,"P")
-    form.setAppointment("1300","1400","LUNCH",0)
+    for appoint in (
+    (5, 915, 930, 'MCDoNOLD I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
+    ,(5, 1100, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0),
+    (5, 1300, 1400, 'LUNCH', 0L, '', '', '', '', -128, 0, 0, 0),
+    (5, 1400, 1410, 'STAFF MEETING', 0L, '', '', '', '', -128, 0, 0, 0),
+    (5, 1410, 1425, 'TAYLOR JANE', 19373L, 'EXAM', '', '', '', 1, 80, 0, 0),
+    (5, 1600, 1630, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0)
+    ):
+        form.setAppointment(appoint)
     
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("AppointmentClicked"), clicktest_a)
