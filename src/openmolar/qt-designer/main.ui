@@ -2959,7 +2959,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>497</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2992,7 +2992,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3685,8 +3685,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>108</width>
-                    <height>58</height>
+                    <width>98</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4024,7 +4024,7 @@ Note - this will not remove items which are currently there. </string>
                   </size>
                  </property>
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="dayViewPage">
                   <layout class="QVBoxLayout" name="verticalLayout_4">

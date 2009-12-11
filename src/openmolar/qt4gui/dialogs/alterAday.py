@@ -110,6 +110,7 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
     def showItems(self):
         self.dentWidgets=[]
         vlayout = QtGui.QVBoxLayout(self.frame_2)
+        vlayout.setSpacing(2)
         for clinician in self.clinicians:
             iw = QtGui.QWidget()
             dw = dentWidget(iw)

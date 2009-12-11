@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'aslotEdit.ui'
 #
-# Created: Fri Dec 11 13:15:14 2009
+# Created: Fri Dec 11 15:08:13 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(490, 382)
+        Dialog.resize(602, 382)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.frame = QtGui.QFrame(Dialog)
@@ -20,7 +20,7 @@ class Ui_Dialog(object):
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.horizontalLayout = QtGui.QHBoxLayout(self.frame)
-        self.horizontalLayout.setContentsMargins(18, -1, 18, -1)
+        self.horizontalLayout.setContentsMargins(18, 0, 18, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtGui.QLabel(self.frame)
         self.label.setMinimumSize(QtCore.QSize(92, 0))
@@ -51,7 +51,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 472, 287))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 584, 305))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName("verticalLayout_2")

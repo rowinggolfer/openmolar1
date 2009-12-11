@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Fri Dec 11 09:30:44 2009
+# Created: Fri Dec 11 15:11:19 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -1185,7 +1185,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName("estimate_scrollArea")
         self.scrollAreaWidgetContents_11 = QtGui.QWidget(self.estimate_scrollArea)
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 497, 200))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 98, 200))
         self.scrollAreaWidgetContents_11.setObjectName("scrollAreaWidgetContents_11")
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
@@ -1202,7 +1202,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_4 = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 217, 544))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 197, 544))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1498,7 +1498,7 @@ class Ui_MainWindow(object):
         self.scrollArea_8.setWidgetResizable(True)
         self.scrollArea_8.setObjectName("scrollArea_8")
         self.scrollAreaWidgetContents_13 = QtGui.QWidget(self.scrollArea_8)
-        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 108, 58))
+        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents_13.setObjectName("scrollAreaWidgetContents_13")
         self.verticalLayout_20 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_13)
         self.verticalLayout_20.setSpacing(0)
@@ -2442,7 +2442,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(7)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
-        self.diary_stackedWidget.setCurrentIndex(1)
+        self.diary_stackedWidget.setCurrentIndex(0)
         self.diary_tabWidget.setCurrentIndex(0)
         self.fees_tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'activeDentStartFinish.ui'
 #
-# Created: Fri Dec 11 13:15:14 2009
+# Created: Fri Dec 11 15:09:44 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,8 +12,9 @@ from PyQt4 import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(562, 41)
+        Form.resize(562, 25)
         self.horizontalLayout = QtGui.QHBoxLayout(Form)
+        self.horizontalLayout.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.checkBox = QtGui.QCheckBox(Form)
         self.checkBox.setMinimumSize(QtCore.QSize(92, 23))
