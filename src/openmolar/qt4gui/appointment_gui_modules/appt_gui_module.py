@@ -842,6 +842,9 @@ def aptFontSize(om_gui, e):
     localsettings.appointmentFontSize = e
     for book in om_gui.apptBookWidgets:
         book.update()
+    for book in om_gui.ui.apptoverviews:
+        book.update()
+    om_gui.ui.monthView.update()
     om_gui.ui.yearView.update()
     
 def aptOVviewMode(om_gui, Viewmode=True):
@@ -1280,25 +1283,24 @@ def layout_weekView(om_gui):
     
     for ov in om_gui.ui.apptoverviews:
         #--reset
+        ov.dents = []
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
+        
         if userCheckedClinicians != []:
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
             tuple(userCheckedClinicians), 
             not om_gui.ui.weekView_outOfOffice_checkBox.isChecked())
-            #--tuple like ((4, 840, 1900,"memo"), (5, 830, 1400, "memo"))
+            #--tuple like ((4, 840, 1900,"memo", 0) , (5, 830, 1400, "memo", 1))
 
-            dlist = []
-            for dent in workingdents:
-                dlist.append(dent[0])
-                ov.setStartTime(dent[0], dent[1])
-                ov.setEndTime(dent[0], dent[2])
-                ov.setMemo(dent[0], dent[3])
-                print "setting memo %s %s"%(dent[0], dent[3])
-            ov.dents = tuple(dlist)
-        else:
-            ov.dents = ()
+            for dent, start, end, memo, flag  in workingdents:
+                ov.dents.append(dent)
+                ov.setStartTime(dent, start)
+                ov.setEndTime(dent, end)
+                ov.setMemo(dent, memo)
+                print "setting flag=%s for dent %s"% (flag, dent)
+                ov.setFlags(dent, flag)
         ov.clear()
-
+        
     if om_gui.ui.aptOV_apptscheckBox.checkState():
         #--add appts
         for ov in om_gui.ui.apptoverviews:

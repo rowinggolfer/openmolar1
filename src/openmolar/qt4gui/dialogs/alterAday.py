@@ -15,25 +15,28 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
 
 class adayData():
+    '''
+    a custom data structure to stor data
+    '''
     def __init__(self,dent):
-        self.apptix=localsettings.apptix.get(dent)
-        self.dent=dent
-        self.active=False
-        self.start=QtCore.QTime(8,30)
-        self.finish=QtCore.QTime(18,0)
-        self.memo=""
+        self.apptix = localsettings.apptix.get(dent)
+        self.dent = dent
+        self.active = False
+        self.start = QtCore.QTime(8,30)
+        self.finish = QtCore.QTime(18,0)
+        self.memo = ""
 
     def setStart(self,arg):
         '''
         takes a time in form 800 (==8:00)
         '''
-        self.start=QtCore.QTime(arg/100,arg%100)
+        self.start = QtCore.QTime(arg/100,arg%100)
 
     def setFinish(self,arg):
         '''
         takes a time in form 800 (==8:00)
         '''
-        self.finish=QtCore.QTime(arg/100,arg%100)
+        self.finish = QtCore.QTime(arg/100,arg%100)
 
     def sqlStart(self):
         return int(self.start.toString("hmm"))
@@ -42,16 +45,18 @@ class adayData():
         return int(self.finish.toString("hmm"))
 
     def setMemo(self,arg):
-        if arg!=None:
-            self.memo=arg
+        if arg != None:
+            self.memo = arg
 
     def __repr__(self):
         return"%s %s %s %s %s %s"%(
         self.apptix,self.dent,self.active,self.start,self.finish,self.memo)
 
 
-
 class dentWidget(Ui_activeDentStartFinish.Ui_Form):
+    '''
+    a custom widget collection to get user input
+    '''
     def __init__(self,widget):
         self.setupUi(widget)
 
@@ -82,6 +87,9 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         self.finish_timeEdit.setEnabled(arg)
 
     def setData(self,arg):
+        '''
+        set the data with an instance of adayData
+        '''
         self.checkBox.setText(arg.dent)
         self.checkBox.setChecked(arg.active)
         self.start_timeEdit.setEnabled(arg.active)
@@ -108,9 +116,12 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
         self.dialog.setWindowTitle("Clinician Times - %s"%d.toString())
 
     def showItems(self):
-        self.dentWidgets=[]
+        '''
+        load the dentWidgets into the gui
+        '''
+        self.dentWidgets = []
         vlayout = QtGui.QVBoxLayout(self.frame_2)
-        vlayout.setSpacing(2)
+        vlayout.setSpacing(0)
         for clinician in self.clinicians:
             iw = QtGui.QWidget()
             dw = dentWidget(iw)
@@ -121,7 +132,7 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
         vlayout.insertStretch(-1)
 
     def loadData(self):
-        dentData=appointments.getWorkingDents(self.date.toPyDate())
+        dentData = appointments.getWorkingDents(self.date.toPyDate())
         for clinician in localsettings.activedents + localsettings.activehygs:
             startData = adayData(clinician)
             for row in dentData:
@@ -133,18 +144,18 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
             self.clinicians.append(startData)
 
     def checkForChanges(self):
-        retarg=[]
-        i=0
+        retarg = []
+        i = 0
         #-- iterate through the initial values, and compare with the
         #-- inputted values
         #-- make a list of changes
         for clinician in self.clinicians:
             dw = self.dentWidgets[i]
-            alteredClinician=adayData(clinician.dent)
-            alteredClinician.active=dw.checkBox.isChecked()
-            alteredClinician.start=dw.start_timeEdit.time()
-            alteredClinician.finish=dw.finish_timeEdit.time()
-            alteredClinician.memo=str(dw.lineEdit.text().toAscii())
+            alteredClinician = adayData(clinician.dent)
+            alteredClinician.active = dw.checkBox.isChecked()
+            alteredClinician.start = dw.start_timeEdit.time()
+            alteredClinician.finish = dw.finish_timeEdit.time()
+            alteredClinician.memo = str(dw.lineEdit.text().toAscii())
 
             if alteredClinician.active!=clinician.active or \
             alteredClinician.start!=clinician.start or \
@@ -156,10 +167,10 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
         return retarg
 
     def applyChanges(self,changes):
-        d=self.date.toPyDate()
-        changed=False
+        d = self.date.toPyDate()
+        changed = False
         for change in changes:
-            changed=True
+            changed = True
             appointments.updateAday(d,change)
         return changed
 
@@ -167,7 +178,7 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
         self.loadData()
         self.showItems()
         if self.dialog.exec_():
-            changes=self.checkForChanges()
+            changes = self.checkForChanges()
             return self.applyChanges(changes)
 
 if __name__ == "__main__":
@@ -176,7 +187,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
     dl = alterDay(Dialog)
-    date=QtCore.QDate.currentDate()
+    date = QtCore.QDate.currentDate()
     dl.setDate(date)
 
     print dl.getInput()
