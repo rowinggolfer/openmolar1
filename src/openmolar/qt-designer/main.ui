@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>7</number>
+                  <number>4</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>476</width>
+                        <width>730</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1710,7 +1710,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>558</width>
+                        <width>730</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2121,7 +2121,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>324</width>
+                        <width>738</width>
                         <height>484</height>
                        </rect>
                       </property>
@@ -2490,7 +2490,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>508</width>
+                        <width>730</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2615,6 +2615,13 @@
                            </property>
                            <property name="text">
                             <string>Exam</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="xray_pushButton">
+                           <property name="text">
+                            <string>X-ray</string>
                            </property>
                           </widget>
                          </item>
@@ -2759,8 +2766,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>547</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2959,7 +2966,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>497</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -2992,7 +2999,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>197</width>
+                        <width>217</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3365,8 +3372,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
-                        <height>392</height>
+                        <width>753</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -3685,8 +3692,8 @@ Note - this will not remove items which are currently there. </string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>98</width>
-                    <height>28</height>
+                    <width>108</width>
+                    <height>58</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4113,19 +4120,58 @@ Note - this will not remove items which are currently there. </string>
                   </widget>
                  </widget>
                  <widget class="QWidget" name="page_5">
-                  <widget class="QLabel" name="label_48">
-                   <property name="geometry">
-                    <rect>
-                     <x>30</x>
-                     <y>20</y>
-                     <width>44</width>
-                     <height>13</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>Year</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_22">
+                   <item>
+                    <widget class="QPushButton" name="aptOVprevyear">
+                     <property name="maximumSize">
+                      <size>
+                       <width>28</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../resources/resources.qrc">
+                       <normaloff>:/back.png</normaloff>:/back.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_64">
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Year</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="aptOVnextyear">
+                     <property name="maximumSize">
+                      <size>
+                       <width>28</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../resources/resources.qrc">
+                       <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                  <widget class="QWidget" name="page_6">
                   <widget class="QLabel" name="label_49">
@@ -4592,8 +4638,8 @@ Note - this will not remove items which are currently there. </string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>663</width>
+                     <height>287</height>
                     </rect>
                    </property>
                   </widget>

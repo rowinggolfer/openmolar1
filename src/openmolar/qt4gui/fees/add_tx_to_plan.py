@@ -22,7 +22,9 @@ from openmolar.qt4gui.compiled_uis import Ui_feeTableTreatment
 
 from openmolar.qt4gui.dialogs import addTreat
 #-- fee modules which interact with the gui
-from openmolar.qt4gui.fees import course_module, fees_module
+from openmolar.qt4gui.fees import course_module
+from openmolar.qt4gui.fees import fees_module
+from openmolar.qt4gui.fees import complete_tx
 
 @localsettings.debug
 def offerTreatmentItems(parent, arg):
@@ -46,19 +48,32 @@ def offerSpecificTreatmentItems(parent, arg):
     return result
 
 @localsettings.debug
-def xrayAdd(parent):
+def xrayAdd(parent, complete=False):
     '''
     add xray items
     '''
-    if not course_module.newCourseNeeded(parent):
-        mylist = ((0, "S"), (0, "M"), (0, "P"))
-        chosenTreatments = offerTreatmentItems(parent, mylist)
-        for usercode, itemcode, description in chosenTreatments:
-            parent.pt.xraypl += "%s "% usercode
-            parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
-            parent.pt.cset, "xray", usercode)
+    if course_module.newCourseNeeded(parent):
+        return
+    mylist = ((0, "S"), (0, "M"), (0, "P"))
+    chosenTreatments = offerTreatmentItems(parent, mylist)
+    added = []
+    for usercode, itemcode, description in chosenTreatments:
+        parent.pt.xraypl += "%s "% usercode
+
+        result = parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
+        parent.pt.cset, "xray", usercode)
+        
+        added.append(result)
+    
+    if complete:
+        for result in added:
+            complete_tx.estwidg_complete(parent, result)
+    else:
+        #if complete is false, then this was called by a button shared by 
+        #widgets which need updating
         parent.load_treatTrees()
         parent.load_newEstPage()
+    
 
 @localsettings.debug
 def perioAdd(parent):
@@ -365,7 +380,7 @@ if __name__ == "__main__":
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class
     app = QtGui.QApplication([])
-    mw = maingui.openmolarGui()
+    mw = maingui.openmolarGui(app)
     mw.getrecord(11956)
     #disable the functions called
     mw.load_treatTrees = lambda : None

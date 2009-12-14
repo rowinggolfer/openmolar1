@@ -908,6 +908,22 @@ def aptOV_monthForward(om_gui):
     date = om_gui.ui.calendarWidget.selectedDate()
     om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(1))
 
+def aptOV_yearBack(om_gui):
+    '''
+    appointment Overview page - change the calendar date, 
+    and let it's event handler do the rest
+    '''    
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addYears(-1))
+
+def aptOV_yearForward(om_gui):
+    '''
+    appointment Overview page - change the calendar date, 
+    and let it's event handler do the rest
+    '''    
+    date = om_gui.ui.calendarWidget.selectedDate()
+    om_gui.ui.calendarWidget.setSelectedDate(date.addYears(1))
+
 def gotoToday(om_gui):
     '''
     appointment page - change the calendar date, 

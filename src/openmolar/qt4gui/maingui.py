@@ -2239,6 +2239,7 @@ WITH PT RECORDS %d and %d''')% (
         self.ui.saveButton,
         self.ui.phraseBook_pushButton,
         self.ui.exampushButton,
+        self.ui.xray_pushButton,
         self.ui.medNotes_pushButton,
         self.ui.printGP17_pushButton,
         self.ui.newBPE_pushButton,
@@ -2484,16 +2485,27 @@ WITH PT RECORDS %d and %d''')% (
 
     def aptOV_monthBack_clicked(self):
         '''
-        handles a request to move back a month in the appointment overview page
+        handles a request to move back a month in the appointments page
         '''
         appt_gui_module.aptOV_monthBack(self)
 
     def aptOV_monthForward_clicked(self):
         '''
-        handles a request to move forward a month in the appointment overview
-        page
+        handles a request to move forward a month in the appointments page
         '''
         appt_gui_module.aptOV_monthForward(self)
+    
+    def aptOV_yearBack_clicked(self):
+        '''
+        handles a request to move back a month in the appointments page
+        '''
+        appt_gui_module.aptOV_yearBack(self)
+
+    def aptOV_yearForward_clicked(self):
+        '''
+        handles a request to move forward a year in the appointments page
+        '''
+        appt_gui_module.aptOV_yearForward(self)
 
     def aptOV_checkboxes_changed(self):
         '''
@@ -2667,6 +2679,12 @@ WITH PT RECORDS %d and %d''')% (
         add Xray items to the treatment plan
         '''
         add_tx_to_plan.xrayAdd(self)
+    
+    def addXrays(self):
+        '''
+        add Xray items to COMPLETED tx
+        '''
+        add_tx_to_plan.xrayAdd(self, complete=True)
 
     def addPerioItems(self):
         '''
@@ -3127,7 +3145,10 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.hygWizard_pushButton,
         QtCore.SIGNAL("clicked()"), self.showHygDialog)
-
+        
+        QtCore.QObject.connect(self.ui.xray_pushButton,
+        QtCore.SIGNAL("clicked()"), self.addXrays)
+        
         QtCore.QObject.connect(self.ui.newBPE_pushButton,
         QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
 
@@ -3324,7 +3345,8 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.SIGNAL("clicked()"), self.apply_exemption)
 
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
-                               QtCore.SIGNAL("clicked()"), self.addXrayItems)
+        QtCore.SIGNAL("clicked()"), self.addXrayItems)
+        
         QtCore.QObject.connect(self.ui.perioTxpushButton,
                                QtCore.SIGNAL("clicked()"), self.addPerioItems)
         QtCore.QObject.connect(self.ui.otherTxpushButton,
@@ -3650,6 +3672,12 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.aptOVnextmonth,
         QtCore.SIGNAL("clicked()"), self.aptOV_monthForward_clicked)
+        
+        QtCore.QObject.connect(self.ui.aptOVprevyear,
+        QtCore.SIGNAL("clicked()"), self.aptOV_yearBack_clicked)
+
+        QtCore.QObject.connect(self.ui.aptOVnextyear,
+        QtCore.SIGNAL("clicked()"), self.aptOV_yearForward_clicked)
 
         #--next 4 signals connect to the same slot
         for widg in (self.ui.aptOV_apptscheckBox,
