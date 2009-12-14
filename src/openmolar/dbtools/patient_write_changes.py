@@ -14,9 +14,18 @@ from openmolar.dbtools import patient_class
 def all_changes(pt, pt_dbstate, changes):
     print "writing_changes to patient"
     if changes==[]:
-        print "write changes called, but no changes for patient %d"%pt.serialno
+        print "write changes called, but no changes for patient %d"% (
+        pt.serialno)
+        
         return True
     else:
+        if pt.HIDDENNOTES != []:
+            #-- hidden notes is
+            #-- treatment codes... money, printing etc..
+            print "saving hiddennotes"
+            toNotes(pt.serialno, pt.HIDDENNOTES)
+            pt.clearHiddenNotes()
+
         sqlcommands={}
         patchanges=""
         trtchanges=""

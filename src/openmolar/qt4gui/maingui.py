@@ -2122,7 +2122,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         fieldsToExclude=("notestuple", "fees")#, "estimates")
         changes=[]
         if self.pt.serialno == self.pt_dbstate.serialno:
-            if len(self.ui.notesEnter_textEdit.toPlainText()) != 0:
+            if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
+            len(self.pt.HIDDENNOTES) != 0):
                 changes.append("New Notes")
             for attr in self.pt.__dict__:
                 try:
@@ -2161,14 +2162,6 @@ WITH PT RECORDS %d and %d''')% (
         if self.editPageVisited:
             #-- only make changes if user has visited this tab
             self.apply_editpage_changes()
-        if self.pt.HIDDENNOTES != []:
-            #-- hidden notes is
-            #-- treatment codes... money, printing etc..
-            print "saving hiddennotes"
-            patient_write_changes.toNotes(self.pt.serialno,
-            self.pt.HIDDENNOTES)
-
-            self.pt.clearHiddenNotes()
 
         daybook_module.updateDaybook(self)
         uc = self.unsavedChanges()
@@ -2186,11 +2179,6 @@ WITH PT RECORDS %d and %d''')% (
                         self.load_newEstPage()
                     else:
                         print "tab widget page=",self.ui.tabWidget.currentIndex()
-                else:
-                    print "not updating ests because...."
-                    print "     leaving record=",leavingRecord
-                    print "     'estimates' in uc = ","estimates" in uc
-
 
                 self.pt_dbstate=copy.deepcopy(self.pt)
                 if localsettings.showSaveChanges:
@@ -2206,7 +2194,7 @@ WITH PT RECORDS %d and %d''')% (
 
         #--convert to python datatype
         newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
-        if len(newnote)>0:
+        if "New Notes" in uc:
             notelines = newnote.split("\n")
             result= patient_write_changes.toNotes(self.pt.serialno, notelines)
             #--sucessful write to db?
