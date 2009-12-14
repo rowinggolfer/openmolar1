@@ -2579,6 +2579,9 @@
                               <verstretch>0</verstretch>
                              </sizepolicy>
                             </property>
+                            <property name="toolTip">
+                             <string>Update the Basic Perio Exam (CPITN) score</string>
+                            </property>
                             <property name="text">
                              <string>New</string>
                             </property>
@@ -2613,6 +2616,9 @@
                              <height>28</height>
                             </size>
                            </property>
+                           <property name="toolTip">
+                            <string>perform a clinical exam</string>
+                           </property>
                            <property name="text">
                             <string>Exam</string>
                            </property>
@@ -2620,6 +2626,9 @@
                          </item>
                          <item>
                           <widget class="QPushButton" name="xray_pushButton">
+                           <property name="toolTip">
+                            <string>add x-rays to the patient's current course.</string>
+                           </property>
                            <property name="text">
                             <string>X-ray</string>
                            </property>
@@ -2627,8 +2636,18 @@
                          </item>
                          <item>
                           <widget class="QPushButton" name="hygWizard_pushButton">
+                           <property name="toolTip">
+                            <string>perform common perio treatments</string>
+                           </property>
                            <property name="text">
                             <string>Hyg</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="Line" name="line_4">
+                           <property name="orientation">
+                            <enum>Qt::Vertical</enum>
                            </property>
                           </widget>
                          </item>
@@ -2659,6 +2678,9 @@
                              <width>200</width>
                              <height>0</height>
                             </size>
+                           </property>
+                           <property name="toolTip">
+                            <string>check / update the patients medical history</string>
                            </property>
                            <property name="text">
                             <string>Med Notes</string>

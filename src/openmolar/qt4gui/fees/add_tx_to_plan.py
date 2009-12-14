@@ -61,7 +61,7 @@ def xrayAdd(parent, complete=False):
         parent.pt.xraypl += "%s "% usercode
 
         result = parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
-        parent.pt.cset, "xray", usercode)
+        parent.pt.cset, "xray", usercode, completed=complete)
         
         added.append(result)
     

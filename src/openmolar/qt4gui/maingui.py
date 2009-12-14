@@ -2192,11 +2192,12 @@ WITH PT RECORDS %d and %d''')% (
                 print "error saving changes to record %s"%self.pt.serialno,
                 print result, str(uc)
 
-        #--convert to python datatype
-        newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
         if "New Notes" in uc:
+            newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+        
             notelines = newnote.split("\n")
-            result= patient_write_changes.toNotes(self.pt.serialno, notelines)
+            result = patient_write_changes.toNotes(self.pt.serialno, 
+            newnote.split("\n")) 
             #--sucessful write to db?
             if result != -1:
                 #--result will be a "line number" or -1 if unsucessful write

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Dec 14 12:59:14 2009
+# Created: Mon Dec 14 14:58:10 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -1042,6 +1042,11 @@ class Ui_MainWindow(object):
         self.hygWizard_pushButton = QtGui.QPushButton(self.scrollAreaWidgetContents_9)
         self.hygWizard_pushButton.setObjectName("hygWizard_pushButton")
         self.horizontalLayout_13.addWidget(self.hygWizard_pushButton)
+        self.line_4 = QtGui.QFrame(self.scrollAreaWidgetContents_9)
+        self.line_4.setFrameShape(QtGui.QFrame.VLine)
+        self.line_4.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_13.addWidget(self.line_4)
         self.closeCourse_pushButton = QtGui.QPushButton(self.scrollAreaWidgetContents_9)
         self.closeCourse_pushButton.setObjectName("closeCourse_pushButton")
         self.horizontalLayout_13.addWidget(self.closeCourse_pushButton)
@@ -2698,11 +2703,16 @@ class Ui_MainWindow(object):
         self.apptWizard_pushButton.setText(_( u"Appointment Shortcuts"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _( u"Reception"))
         self.bpe_groupBox.setTitle(_( u"BPE"))
+        self.newBPE_pushButton.setToolTip(_( u"Update the Basic Perio Exam (CPITN) score"))
         self.newBPE_pushButton.setText(_( u"New"))
+        self.exampushButton.setToolTip(_( u"perform a clinical exam"))
         self.exampushButton.setText(_( u"Exam"))
+        self.xray_pushButton.setToolTip(_( u"add x-rays to the patient\'s current course."))
         self.xray_pushButton.setText(_( u"X-ray"))
+        self.hygWizard_pushButton.setToolTip(_( u"perform common perio treatments"))
         self.hygWizard_pushButton.setText(_( u"Hyg"))
         self.closeCourse_pushButton.setText(_( u"Close This Course"))
+        self.medNotes_pushButton.setToolTip(_( u"check / update the patients medical history"))
         self.medNotes_pushButton.setText(_( u"Med Notes"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _( u"Clinical Summary"))
         self.label_35.setText(_( u"Verbosity Level"))

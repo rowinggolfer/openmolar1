@@ -134,6 +134,8 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
         self.parent = parent
         self.setMinimumSize(self.minimumSizeHint())
+        self.rowNo = 1
+        self.colNo = 1
         self.monthStarts = {}
         self.font = None
         self.setSelectedDate(datetime.date.today())
@@ -145,6 +147,7 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
         self.headingdata = {}
         self.data = {}
         self.dents = ()
+        
         
     def sizeHint(self):
         '''
@@ -164,6 +167,7 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
         dents is a tuple like (4, 5)
         '''
         self.dents = dents
+        self.colNo = len(dents)
     
     def setHeadingData(self, data):
         '''
@@ -187,6 +191,7 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
         '''
         pass a dictionary like {"1209", "Neil's Birthday"}
         '''
+        print data
         self.data = data
     
     def setRowNo(self):
@@ -722,7 +727,7 @@ if __name__ == "__main__":
     mcal = monthCalendar()
     ycal = yearCalendar()
 
-    for c in (cal, mcal, ycal):
+    for c in (mcal,): #(cal, mcal, ycal):
         c.show()
     
     sys.exit(app.exec_())

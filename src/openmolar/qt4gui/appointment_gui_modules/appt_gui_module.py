@@ -1435,6 +1435,9 @@ def layout_dayView(om_gui):
     om_gui.ui.dayView_splitter.setSizes(book_list)
     
     if i == 0:
+        t = om_gui.ui.daymemo_label.text() + " - All Off Today!"
+        om_gui.ui.daymemo_label.setText(t)
+
         om_gui.advise("all off today")
         
 def appointment_clicked(om_gui, list_of_snos):
