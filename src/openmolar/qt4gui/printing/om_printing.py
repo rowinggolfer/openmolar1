@@ -477,7 +477,7 @@ def printNotes(om_gui, detailed=False):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
         return
-    note=notes.notes(om_gui.pt.notestuple, detailed)
+    note=notes.notes(om_gui.pt.notes_dict, detailed)
     #--not verbose...
     myclass=notesPrint.printNotes(note)
     myclass.printpage()

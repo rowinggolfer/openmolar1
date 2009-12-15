@@ -1069,7 +1069,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         estimateHtml=estimates.toBriefHtml(self.pt)
         self.ui.moneytextBrowser.setText(estimateHtml)
         appt_gui_module.layout_apptTable(self)
-        note=notes.notes(self.pt.notestuple,1)
+        note=notes.notes(self.pt.notes_dict,1, True)
         #--notes not verbose
         self.ui.reception_notes_textBrowser.setHtml(note)
         self.ui.reception_notes_textBrowser.scrollToAnchor('anchor')
@@ -1524,7 +1524,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         '''
         if self.enteringNewPatient():
             return
-        print "get record %d"%serialno
+        print "get record %s"% serialno
         if not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
             print "not loading"
             self.advise("Not loading patient")
@@ -1537,7 +1537,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
                 #--has to be a deep copy, as opposed to shallow
                 #--otherwise changes to attributes which are lists aren't
                 #--spotted new "instance" of patient
-                self.pt=patient_class.patient(serialno)
+                self.pt = patient_class.patient(serialno)
                 #-- this next line is to prevent a "not saved warning"
                 self.pt_dbstate.fees = self.pt.fees
                 try:
@@ -1546,8 +1546,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
                     self.advise(
                     _("Error populating interface\n%s")% e, 2)
                 finally:
-                    self.pt_dbstate=copy.deepcopy(self.pt)
-
+                    self.pt_dbstate = copy.deepcopy(self.pt)
 
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
@@ -1574,12 +1573,12 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
 
     def updateNotesPage(self):
         if self.ui.notesMaximumVerbosity_radioButton.isChecked():
-            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notestuple, 2))
+            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notes_dict, 2))
             #--2=verbose
         elif self.ui.notesMediumVerbosity_radioButton.isChecked():
-            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notestuple, 1))
+            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notes_dict, 1))
         else: #self.ui.notesMinimumVerbosity_radioButton.isChecked():
-            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notestuple))
+            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notes_dict))
         self.ui.notesBrowser.scrollToAnchor('anchor')
 
     def loadpatient(self):
@@ -1604,7 +1603,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-        note=notes.notes(self.pt.notestuple)
+        note=notes.notes(self.pt.notes_dict, ignoreRec=True)
         #--notes not verbose
         self.ui.notesSummary_textBrowser.setHtml(note)
         self.ui.notesSummary_textBrowser.scrollToAnchor('anchor')
@@ -2136,7 +2135,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         important function, checks for changes since the patient was loaded
         '''
-        fieldsToExclude=("notestuple", "fees")#, "estimates")
+        fieldsToExclude=("notes_dict", "fees")#, "estimates")
         changes=[]
         if self.pt.serialno == self.pt_dbstate.serialno:
             if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
@@ -2222,9 +2221,13 @@ WITH PT RECORDS %d and %d''')% (
                 self.ui.hiddenNotes_label.setText("")
                 self.pt.getNotesTuple()
                 #--reload the notes
-                self.ui.notesSummary_textBrowser.setHtml(notes.notes(
-                                                        self.pt.notestuple))
+                html = notes.notes(self.pt.notes_dict, ignoreRec=True)
+                self.ui.notesSummary_textBrowser.setHtml(html)
                 self.ui.notesSummary_textBrowser.scrollToAnchor("anchor")
+                
+                if self.ui.tabWidget.currentIndex() == 3:
+                    self.load_receptionSummaryPage()
+                    
                 if self.ui.tabWidget.currentIndex() == 5:
                     self.updateNotesPage()
             else:

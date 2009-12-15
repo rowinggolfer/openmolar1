@@ -12,7 +12,7 @@ import re
 import sys
 import time
 from openmolar import connect
-from openmolar.ptModules import perio,dec_perm,estimates
+from openmolar.ptModules import perio,dec_perm,estimates, notes
 from openmolar.settings import localsettings
 
 dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6", 
@@ -180,7 +180,7 @@ class patient():
         self.perioData = {}
         self.bpe = []
         self.fees = 0
-        self.notestuple = ()
+        self.notes_dict = {}
         self.MH = ()
         self.MEDALERT = False
         self.HIDDENNOTES = []
@@ -226,11 +226,10 @@ class patient():
                 self.bpe.append(value)
 
             if self.courseno0 != 0:
-                self.getCurrtrt(cursor)
-                self.getEsts(cursor)
+                self.getCurrtrt()
+                self.getEsts()
            
-            self.getNotesTuple(cursor)
-
+            self.getNotesTuple()
 
             query = 'select chartdate,chartdata from perio where serialno=%s'
             cursor.execute(query, self.serialno)
@@ -322,33 +321,18 @@ class patient():
         else:
             return self.feeTable
         
-    def getEsts(self, cursor=None):
+    def getEsts(self):
         '''
         get estimate data
         '''
-        print "gettingEstimates for patient", self.serialno
-        
-        disconnectNeeded = False
+        db = connect.connect()
+        cursor = db.cursor()
 
-        if cursor == None:
-            disconnectNeeded = True
-            db = connect.connect()
-            cursor = db.cursor()
-
-        #--old code for old (non om schema) database
-        #cursor.execute('''SELECT serialno,courseno,dent,esta,acta, estb,actb ,
-        #data from prvfees where serialno=%d and courseno=%d'''%(
-        #self.serialno,self.courseno0))
-        #self.estimates = cursor.fetchall()
-        #cursor.execute('''SELECT serialno,courseno, dent, ct,data from tsfees
-        #where serialno=%d and courseno=%d'''%(self.serialno,self.courseno0))
-        #self.tsfees = cursor.fetchall()
-
-        #--replaced with
         cursor.execute('''SELECT ix, number, itemcode, description, category,
-        type, fee, ptfee, feescale, csetype, dent, completed, carriedover from
-        newestimates where serialno=%d and courseno=%d order by itemcode desc'''%(
-        self.serialno, self.courseno0))
+type, fee, ptfee, feescale, csetype, dent, completed, carriedover from
+newestimates where serialno=%s and courseno=%s order by itemcode desc''', (
+self.serialno, self.courseno0))
+
         rows = cursor.fetchall()
         self.estimates = []
         for row in rows:
@@ -369,10 +353,8 @@ class patient():
             est.carriedover = bool(row[12])
             self.estimates.append(est)
 
-        if disconnectNeeded:
-            cursor.close()
-            #db.close()
-
+        cursor.close()
+        
     def blankCurrtrt(self):
         for att in currtrtmtTableAtts:
             if att == 'courseno':
@@ -399,12 +381,9 @@ class patient():
             'necessary because the column is missing is db schema 1.4'
             print "WARNING -", e            
             
-    def getCurrtrt(self, cursor=None):
-        disconnectNeeded=False
-        if cursor==None:
-            disconnectNeeded=True
-            db=connect.connect()
-            cursor=db.cursor()
+    def getCurrtrt(self):
+        db=connect.connect()
+        cursor=db.cursor()
         fields=currtrtmtTableAtts
         query=""
         for field in fields:
@@ -419,35 +398,27 @@ class patient():
             for field in fields:
                 self.__dict__[field]=value[i]
                 i+=1
-        #if self.courseno0!=0:
         if not self.accd in ("", None) and self.cmpd in ("", None):
             self.underTreatment = True
                 
-        if disconnectNeeded:
-            cursor.close()
-            #db.close()
+        cursor.close()
 
-    def getNotesTuple(self,cursor=None):
+    def getNotesTuple(self):
         '''
         this is either called when the class is initiated (when cursor will
         be an active db cursor) or to refresh the notes.
         in the latter case, a new cursor needs to be initiated here.
         '''
-        if cursor==None:
-            db=connect.connect()
-            cursor=db.cursor()
-            cursor.execute(
-            "SELECT lineno,line from notes where serialno=%d"%self.serialno)
-            self.notestuple = cursor.fetchall()
-            #--so "notes" is a tuple like this ((0,'notes'),
-            #--(1,"morenotes"),...etc...)
-            cursor.close()
-            #db.close()
-        else:
-            cursor.execute(
-            "SELECT lineno,line from notes where serialno=%d"%self.serialno)
-            self.notestuple = cursor.fetchall()
-
+        db = connect.connect()
+        cursor = db.cursor()
+        cursor.execute('''SELECT line from notes where serialno = %s 
+        order by lineno''', self.serialno)
+        
+        notestuple = cursor.fetchall()
+        
+        cursor.close()
+        self.notes_dict = notes.getNotesDict(notestuple)
+        
     def flipDec_Perm(self,tooth):
         '''
         switches a deciduous tooth to a permanent one,

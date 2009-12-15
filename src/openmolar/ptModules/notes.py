@@ -24,29 +24,36 @@ CHART = {
 170:"LLC", 169:"LLB", 168:"LLA", 183:"LRA", 
 184:"LRB", 185:"LRC", 186:"LRD", 187:"LRE"}
 
+def getNotesDict(ptNotesTuple):
+    notes_dict = {}
+    ndate, op = "", ""
+    
+    #a line is like ('\x01REC\x0c\x08m\x0c\x08m\n\x08',)
+    for line in ptNotesTuple:
+        ntype, note, operator, date2 = decipher_noteline(line[0]) 
+        if date2 != "":
+            ndate = date2
+        if operator != "":
+            op = operator
+        key = (ndate, op)
+        if notes_dict.has_key(key):
+            notes_dict[key].append((ntype,note,operator))
+        else:
+            notes_dict[key] = [(ntype,note,operator)]
+    return notes_dict
 
-def notes(ptNotesTuple, verbosity=0):
+def notes(notes_dict, verbosity=0, recOnly=False, ignoreRec=False):
     '''
     returns an html string of notes...
     if verbose=1 you get reception stuff too. 
     if verbose =2 you get full notes
+    if recOnly, clinicians notes are omitted
     '''
 
     retarg = '''<html><head><link rel="stylesheet"
     href="%s" type="text/css"></head><body>'''% localsettings.stylesheet
-    notes_dict = {}
-    date = ""
-    for line in ptNotesTuple:
-        if len(line) > 0:
-            notelist = decipher_noteline(line[1])
-            if notelist[3] != "":
-                date = notelist[3]
-            if notes_dict.has_key(date):
-                notes_dict[date].append(notelist[0:3])
-            else:
-                notes_dict[date] = [notelist[0:3]]
-    dates = notes_dict.keys()
-    dates.sort()
+    keys = notes_dict.keys()
+    keys.sort()
     retarg += '''<table width = "100%">
     <tr><th class = "date">Date</th><th class = "ops">ops</th>
     <th class = "tx">Tx</th><th class = "notes">Notes</th>'''
@@ -58,31 +65,37 @@ def notes(ptNotesTuple, verbosity=0):
         retarg += '<th class="verbose">Detailed</th>'
 
     retarg += '</tr>'
-    for key in dates:
-        retarg += '''<tr><td class="date">%s</td><td class="ops">%s</td>
-        <td class="tx">%s</td><td width="70%%" class="notes">%s</td>'''% (
-        get_date_from_date(key), get_op_for_date(notes_dict[key]),
-        get_codes_for_date(notes_dict[key]),
-        get_notes_for_date(notes_dict[key]))
+    if recOnly:
+        wstring = "30%"
+    else:
+        wstring = "70%"
+    for key in keys:
+        date, op = key
+        if ("REC" in op and not ignoreRec) or (not "REC" in op and not recOnly):
+            retarg += '''<tr><td class="date">%s</td><td class="ops">%s</td>
+            <td class="tx">%s</td><td width="%s" class="notes">%s</td>'''% (
+            get_date_from_date(date), op,
+            get_codes_for_date(notes_dict[key]),
+            wstring, get_notes_for_date(notes_dict[key]))
 
-        ests = get_estimate_for_date(notes_dict[key])
-        rec = get_reception_for_date(notes_dict[key])
-        if verbosity > 0:
-            retarg += '<td class="reception">'
-            if rec != "" and ests == "":
-                retarg += '%s</td>'% rec
-            elif rec == "" and ests != "":
-                retarg += '%s</td>'% ests
-            else:
-                retarg += "%s<br />%s</td>"% (ests, rec)
-            
-        if verbosity == 2:
-            text = ""
-            for item in notes_dict[key]:
-                text += "%s<br />"% item
-            retarg += "<td class=verbose>%s</td>"% text
+            ests = get_estimate_for_date(notes_dict[key])
+            rec = get_reception_for_date(notes_dict[key])
+            if verbosity > 0:
+                retarg += '<td class="reception">'
+                if rec != "" and ests == "":
+                    retarg += '%s</td>'% rec
+                elif rec == "" and ests != "":
+                    retarg += '%s</td>'% ests
+                else:
+                    retarg += "%s<br />%s</td>"% (ests, rec)
+                
+            if verbosity == 2:
+                text = ""
+                for item in notes_dict[key]:
+                    text += "%s<br />"% str(item)
+                retarg += "<td class=verbose>%s</td>"% text
 
-        retarg += "</tr>"
+            retarg += "</tr>"
         
     retarg += '</table></div>\n<a name="anchor"></a>END</body></html>'
     
@@ -102,7 +115,7 @@ def get_date_from_date(key):
     except ValueError:
         return "TypeERROR converting date %s" %key
         
-def get_op_for_date(line):
+def get_op_for_date(line, recOnly=False):
     '''
     parse the line for an operator
     '''
@@ -357,6 +370,6 @@ if __name__ == "__main__":
         verbose=True
     else:
          verbose=False
-    print notes(patient_class.patient(serialno).notestuple)
-
+    print "getting notes"
+    print notes(patient_class.patient(serialno).notes_dict)
 
