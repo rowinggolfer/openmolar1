@@ -1037,7 +1037,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
                 chart.update()
             self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
             self.ui.moneytextBrowser.setHtml("")
-            self.ui.reception_notes_textBrowser(localsettings.message)
+            self.ui.reception_notes_textBrowser.setHtml(localsettings.message)
             self.ui.chartsTableWidget.clear()
             self.ui.ptAppointment_treeWidget.clear()
             self.ui.notesEnter_textEdit.setHtml("")
