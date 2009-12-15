@@ -1069,7 +1069,11 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         estimateHtml=estimates.toBriefHtml(self.pt)
         self.ui.moneytextBrowser.setText(estimateHtml)
         appt_gui_module.layout_apptTable(self)
-
+        note=notes.notes(self.pt.notestuple,1)
+        #--notes not verbose
+        self.ui.reception_notes_textBrowser.setHtml(note)
+        self.ui.reception_notes_textBrowser.scrollToAnchor('anchor')
+        
     def load_newEstPage(self):
         '''
         populate my custom widget (estWidget)
