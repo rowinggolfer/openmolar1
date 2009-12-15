@@ -1413,7 +1413,6 @@ def layout_dayView(om_gui):
 
         apps = om_gui.appointmentData.dentAppointments(dent)
         for app in apps:
-            print app
             book.setAppointment(app)
     
         i += 1
