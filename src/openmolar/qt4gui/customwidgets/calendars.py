@@ -122,21 +122,23 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
         self.parent = parent
-        self.setMinimumSize(self.minimumSizeHint())
         self.rowNo = 1
         self.colNo = 1
         self.monthStarts = {}
+        self.headingdata = {}
+        self.data = {}
+        self.dents = (0,)
+        self.dentColWidths = {}
+        self.defaultColWidth = 100
         self.font = None
+        self.setFont()
         self.setSelectedDate(datetime.date.today())
         self.setMouseTracking(True)
         self.mouseBrush = QtGui.QColor(self.palette().color(
         QtGui.QPalette.Highlight))
         self.mouseBrush.setAlpha(64)
         self.highlightedDate = None
-        self.headingdata = {}
-        self.data = {}
-        self.dents = (0,)
-        
+        self.setMinimumSize(self.minimumSizeHint())
         
     def sizeHint(self):
         '''
@@ -149,6 +151,31 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
         set an (arbitrary) minimum size for the widget
         '''
         return QtCore.QSize(200, 400)
+    
+    def minimumWidth(self):
+        '''
+        calculate how much space we need to display the data
+        '''
+        self.defaultColWidth = (self.width() - self.bankHolColwidth - 
+        self.vheaderwidth) / self.colNo
+        
+        vheaders_total = self.bankHolColwidth + self.vheaderwidth
+        dentwidth = 0
+        
+        for dent in self.dents:
+            width = self.dentColWidths.get(dent, self.defaultColWidth)
+            dentwidth += width
+        
+        minrequiredWidth = vheaders_total + dentwidth 
+            
+        # if there is space, fill it up....
+        if self.width() > minrequiredWidth:
+            factor = (self.width() - vheaders_total) / (dentwidth)
+        
+            for dent in self.dents:
+                self.dentColWidths[dent] = self.dentColWidths[dent] * factor
+                
+        return minrequiredWidth
     
     def setDents(self, dents):
         '''
@@ -185,6 +212,27 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
             self.data[key]= {}
             for dent, memo in data[key]:
                 self.data[key][dent]= memo
+        self.setColWidths()
+        
+    def setColWidths(self):
+        '''
+        update the widget's size (because data or font have changed)
+        '''
+        self.dentColWidths = {}
+        for dent in self.dents:
+            self.dentColWidths[dent] = self.fm.width(
+            localsettings.apptix_reverse.get(dent,"   "))
+
+        for dent in self.dents:
+            memo = ""
+            for dentDict in self.data.values():
+                if dentDict.has_key(dent):
+                    memo = dentDict[dent]
+                    if dent == 0:
+                        memo = memo.upper()
+                    width = self.fm.width("  "+memo)
+                    if width > self.dentColWidths[dent]:
+                        self.dentColWidths[dent] = width
         
     def setRowNo(self):
         '''
@@ -263,12 +311,14 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
             self.vheaderwidth = self.fm.width(_("Wednesday")+" 28 ")
         
         self.setBankHolColWidth()
+        self.setColWidths()
             
     def paintEvent(self, event=None):
         '''
         draws the widget - recalled at any point by instance.update()
         '''
         self.setFont()
+        self.setMinimumWidth(self.minimumWidth())
         painter = QtGui.QPainter(self)
         painter.setFont(self.font)
                 
@@ -295,55 +345,58 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
         #painter.setBrush(self.palette().base())  
         #painter.setPen(self.palette().color(self.palette().WindowText))
         
-        colWidth = (self.width() - self.bankHolColwidth - 
-        self.vheaderwidth) / self.colNo
-        
         for day in range(0, self.rowNo-1):
-            rect = QtCore.QRectF(0, (day+1) *rowHeight, 
-            self.vheaderwidth, rowHeight)               
+            rect = QtCore.QRectF(0, (day+1) *rowHeight, self.vheaderwidth, 
+            rowHeight)               
 
-            painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))                
-            painter.setBrush(self.palette().alternateBase())        
-                
+            painter.setPen(self.palette().color(self.palette().WindowText))
+            painter.setBrush(self.palette().base())
+            
             if day ==0:
                 my_text = _("DATE")
                 c_date = datetime.date(1900,1,1)
+                painter.setBrush(self.palette().button())                        
             else:
                 option = QtCore.Qt.AlignLeft        
-
+                if day % 2 == 0:
+                    painter.setBrush(self.palette().alternateBase())                    
                 c_date = datetime.date(self.year, self.month, day)
                 my_text = "%2s %s "% (day, localsettings.dayName(c_date))
                 if c_date == self.selectedDate:
-                    painter.setBrush(self.palette().highlight())                            
+                    painter.setBrush(self.palette().highlight())                                                
                 elif c_date == self.highlightedDate:
                     painter.setBrush(self.mouseBrush)
                 
+            painter.save()
+            painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
             painter.drawRect(rect)
-            
+            painter.restore()
             if c_date in (self.selectedDate, self.highlightedDate):
                 painter.setPen(self.palette().color(
                 self.palette().HighlightedText))
+                painter.drawText(rect, option, my_text)
+            
             elif c_date.isoweekday() < 6:
                 painter.setPen(self.palette().color(
                 self.palette().WindowText))
+                painter.drawText(rect, option, my_text)
+            
             else:
+                painter.save()
                 painter.setPen(QtCore.Qt.red)
-            painter.drawText(rect, option, my_text)
-        
-            rect = rect.adjusted(self.vheaderwidth, 0, 
-            self.bankHolColwidth, 0)               
-
-            #headings
-            painter.setBrush(self.palette().alternateBase())        
+                painter.drawText(rect, option, my_text)
+                painter.restore()
             
+            rect = rect.adjusted(self.vheaderwidth, 0, self.bankHolColwidth,
+            0)               
+
+            painter.save()
             painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))                
-            
             painter.drawRect(rect)
-
+            painter.restore()
+            
             key = "%d%02d"%(self.month, day)
             if self.headingdata.has_key(key):
-                painter.setPen(self.palette().color(
-                self.palette().WindowText))
                 my_text = str(self.headingdata.get(key))
                 self.font.setItalic(True)
                 painter.setFont(self.font)
@@ -353,24 +406,27 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
                 
             #- text column
             x = self.bankHolColwidth + self.vheaderwidth
-            rect = rect.adjusted(self.bankHolColwidth, 0, colWidth, 0)               
+            rect = rect.adjusted(self.bankHolColwidth, 0, 0, 0)               
             
-            painter.setBrush(self.palette().base())
-
             option = QtCore.Qt.AlignCenter        
 
             for col in range(self.colNo):
                 dent = self.dents[col]
                 my_text = ""
-                    
+            
+                colWidth = self.dentColWidths[dent]
+                rect = rect.adjusted(0, 0, colWidth, 0)               
+                
+                painter.save()    
                 painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))                
                 painter.drawRect(rect)
+                painter.restore()
     
                 if day ==0:
-                    my_text = "%s"% localsettings.apptix_reverse.get(dent, "all")
+                    my_text = "%s"% localsettings.apptix_reverse.get(dent, 
+                    "all")
     
                 elif self.data.has_key(key):
-                    #option = QtCore.Qt.AlignLeft        
                     memo = self.data[key].get(dent,"")
                     if memo:
                         if dent == 0:
@@ -379,13 +435,11 @@ class monthCalendar(QtGui.QWidget, raiseMemoDialog):
                             my_text = memo
 
                 if my_text:
-                    painter.setPen(self.palette().color(
-                    self.palette().WindowText))
-
                     painter.drawText(rect, option, my_text)
                 
-                rect = rect.adjusted(colWidth, 0, colWidth, 0)               
-                    
+                rect = rect.adjusted(colWidth, 0, 0, 0)               
+        painter.setPen(QtGui.QColor("black"))
+        painter.drawLine(self.bankHolColwidth+self.vheaderwidth, rowHeight, self.bankHolColwidth+self.vheaderwidth, self.height())
             
 class yearCalendar(QtGui.QWidget, raiseMemoDialog):
     '''

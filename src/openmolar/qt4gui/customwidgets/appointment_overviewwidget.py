@@ -65,12 +65,15 @@ class appointmentOverviewWidget(QtGui.QWidget):
         self.highlightedRect = None
         self.setMouseTracking(True)
         self.clear()
+        self.init_dicts()
         
     def clear(self):
         self.appts = {}
         self.eTimes = {}
         self.freeslots = {}
         self.lunches = {}
+        
+    def init_dicts(self):
         for dent in self.dents:
             self.freeslots[dent] = ()
             self.appts[dent] = ()
@@ -389,10 +392,6 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
                         painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
                         
-                        #painter.drawText(rect.adjusted(0,rect.height()/2,0,0),
-                        #QtCore.Qt.AlignCenter,QtCore.QString("(%dmins)"%length))
-
-                    
                     ###emergencies
                     painter.setBrush(APPTCOLORS["EMERGENCY"])
                     for appt in self.eTimes[dent]:
@@ -453,7 +452,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 painter.drawRect(self.highlightedRect)
         
         except Exception, e:
-            print "error painting appointment overviewwidget", e
+            print "error painting appointment overviewwidget", Exception, e
 
 if __name__ == "__main__":
     def clicktest(a):
@@ -476,6 +475,7 @@ if __name__ == "__main__":
     form.appts[4] = ((900,40),(1000,15))
     form.eTimes[4] = ((1115, 15), (1300, 60), (1600, 30))
     form.lunches[4] = ((1300,60),)
+    form.setMemo(4,"hello")
     form.setFlags(4,True)
     form.setFlags(5,True)    
     form.setStartTime(5,1300)

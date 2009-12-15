@@ -803,10 +803,11 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         hlayout.addWidget(self.ui.calendarWidget)
         #--add a month view
         self.ui.monthView = calendars.monthCalendar()
-        hlayout=QtGui.QHBoxLayout(self.ui.monthView_placeholder)
-        hlayout.setMargin(0)
-        hlayout.addWidget(self.ui.monthView)
-        #--add a month view
+        #hlayout=QtGui.QHBoxLayout(self.ui.monthView_frame)
+        #hlayout.setMargin(0)
+        #hlayout.addWidget(self.ui.monthView)
+        self.ui.monthView_scrollArea.setWidget(self.ui.monthView)
+        #--add a year view
         self.ui.yearView = calendars.yearCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.yearView_frame)
         hlayout.setMargin(0)

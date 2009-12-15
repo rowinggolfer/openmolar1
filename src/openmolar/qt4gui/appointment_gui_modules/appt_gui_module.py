@@ -1301,6 +1301,7 @@ def layout_weekView(om_gui):
         #--reset
         ov.dents = []
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
+        ov.clear()
         
         if userCheckedClinicians != []:
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
@@ -1310,12 +1311,12 @@ def layout_weekView(om_gui):
 
             for dent, start, end, memo, flag  in workingdents:
                 ov.dents.append(dent)
+            ov.init_dicts()
+            for dent, start, end, memo, flag  in workingdents:            
                 ov.setStartTime(dent, start)
                 ov.setEndTime(dent, end)
                 ov.setMemo(dent, memo)
-                print "setting flag=%s for dent %s"% (flag, dent)
                 ov.setFlags(dent, flag)
-        ov.clear()
         
     if om_gui.ui.aptOV_apptscheckBox.checkState():
         #--add appts
