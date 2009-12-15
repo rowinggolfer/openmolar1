@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'related_patients.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
+# Created: Tue Dec 15 14:57:15 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(1014, 540)
+        Dialog.resize(898, 515)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.thisPatient_label = QtGui.QLabel(Dialog)

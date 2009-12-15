@@ -1036,7 +1036,8 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
                 chart.clear()
                 chart.update()
             self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
-            self.ui.moneytextBrowser.setHtml(localsettings.message)
+            self.ui.moneytextBrowser.setHtml("")
+            self.ui.reception_notes_textBrowser(localsettings.message)
             self.ui.chartsTableWidget.clear()
             self.ui.ptAppointment_treeWidget.clear()
             self.ui.notesEnter_textEdit.setHtml("")
@@ -1369,17 +1370,20 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
             self.advise("No patient to compare to", 2)
             return
         def family_navigated():
-            dl.selected = dl.family_tableWidget.item(dl.family_tableWidget.\
-                                                     currentRow(), 0).text()
+            dl.selected = dl.family_tableWidget.item(
+            dl.family_tableWidget.currentRow(), 0).text()
         def address_navigated():
-            dl.selected = dl.address_tableWidget.item(dl.address_tableWidget.\
-                                                      currentRow(), 0).text()
+            dl.selected = dl.address_tableWidget.item(
+            dl.address_tableWidget.currentRow(), 0).text()
         def soundex_navigated():
-            dl.selected = dl.soundex_tableWidget.item(dl.soundex_tableWidget.\
-                                                      currentRow(), 0).text()
-
-        candidates=search.getsimilar(self.pt.serialno, self.pt.addr1, self.\
-                                     pt.sname, self.pt.familyno)
+            dl.selected = dl.soundex_tableWidget.item(
+            dl.soundex_tableWidget.currentRow(), 0).text()
+        def DoubleClick():
+            Dialog.accept()
+            
+        candidates = search.getsimilar(self.pt.serialno, self.pt.addr1, 
+        self.pt.sname, self.pt.familyno)
+        
         if candidates != ():
             Dialog = QtGui.QDialog(self)
             dl = Ui_related_patients.Ui_Dialog()
@@ -1391,7 +1395,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
             self.pt.serialno, self.pt.fname, self.pt.sname, self.pt.addr1))
 
             Dialog.setFixedSize(self.width()-50, self.height()-50)
-            headers=['Serialno', 'Surname', 'Forename', 'dob', 'Address1',\
+            headers=['Serialno', 'Surname', 'Forename', 'dob', 'Address1',
             'Address2', 'POSTCODE']
             tableNo=0
             for table in (dl.family_tableWidget, dl.address_tableWidget,
@@ -1417,11 +1421,20 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
                 tableNo+=1
             QtCore.QObject.connect(dl.family_tableWidget, QtCore.SIGNAL(
             "itemSelectionChanged()"), family_navigated)
+            QtCore.QObject.connect(dl.family_tableWidget, QtCore.SIGNAL(
+            "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
+                    
             QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
             "itemSelectionChanged()"), address_navigated)
+            QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
+            "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
+                    
+            
             QtCore.QObject.connect(dl.soundex_tableWidget, QtCore.SIGNAL(
             "itemSelectionChanged()"), soundex_navigated)
-
+            QtCore.QObject.connect(dl.soundex_tableWidget, QtCore.SIGNAL(
+            "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
+        
             if Dialog.exec_():
                 self.getrecord(int(dl.selected))
         else:
@@ -1779,8 +1792,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         dl.tableWidget.setCurrentCell(0, 1)
         QtCore.QObject.connect(dl.tableWidget, QtCore.SIGNAL(
         "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
-        #dl.tableWidget.setSortingEnabled(True)
-        #allow user to sort pt attributes - buggers things up!!
         if Dialog.exec_():
             row=dl.tableWidget.currentRow()
             result=dl.tableWidget.item(row, 0).text()
@@ -1860,7 +1871,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
-        self.ui.moneytextBrowser.setHtml(localsettings.message)
+        self.ui.moneytextBrowser.setHtml("")
+        self.ui.reception_notes_textBrowser.setHtml(localsettings.message)
         self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
 
         today=QtCore.QDate().currentDate()

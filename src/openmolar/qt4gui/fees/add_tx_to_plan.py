@@ -27,99 +27,100 @@ from openmolar.qt4gui.fees import fees_module
 from openmolar.qt4gui.fees import complete_tx
 
 @localsettings.debug
-def offerTreatmentItems(parent, arg):
+def offerTreatmentItems(om_gui, arg):
     '''
     offers treatment items passed by argument like ((1,"SP"),)
     '''
-    Dialog = QtGui.QDialog(parent)
-    dl = addTreat.treatment(Dialog, arg, parent.pt)
+    Dialog = QtGui.QDialog(om_gui)
+    dl = addTreat.treatment(Dialog, arg, om_gui.pt)
     result =  dl.getInput()
     return result
 
 @localsettings.debug
-def offerSpecificTreatmentItems(parent, arg):
+def offerSpecificTreatmentItems(om_gui, arg):
     '''
     offers treatment items passed by argument like
     ((1,"SP,"Scale and Polish", 2600, 2400),)
     '''
-    Dialog = QtGui.QDialog(parent)
-    dl = addTreat.customTreatment(Dialog, arg, parent.pt)
+    Dialog = QtGui.QDialog(om_gui)
+    dl = addTreat.customTreatment(Dialog, arg, om_gui.pt)
     result =  dl.getInput()
     return result
 
 @localsettings.debug
-def xrayAdd(parent, complete=False):
+def xrayAdd(om_gui, complete=False):
     '''
     add xray items
     '''
-    if course_module.newCourseNeeded(parent):
+    if course_module.newCourseNeeded(om_gui):
         return
     mylist = ((0, "S"), (0, "M"), (0, "P"))
-    chosenTreatments = offerTreatmentItems(parent, mylist)
+    chosenTreatments = offerTreatmentItems(om_gui, mylist)
     added = []
     for usercode, itemcode, description in chosenTreatments:
-        parent.pt.xraypl += "%s "% usercode
+        om_gui.pt.xraypl += "%s "% usercode
 
-        result = parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
-        parent.pt.cset, "xray", usercode, completed=complete)
+        result = om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+        om_gui.pt.cset, "xray", usercode, completed=complete)
         
         added.append(result)
     
     if complete:
         for result in added:
-            complete_tx.estwidg_complete(parent, result)
+            complete_tx.estwidg_complete(om_gui, result)
+        om_gui.load_clinicalSummaryPage()
     else:
         #if complete is false, then this was called by a button shared by 
         #widgets which need updating
-        parent.load_treatTrees()
-        parent.load_newEstPage()
+        om_gui.load_treatTrees()
+        om_gui.load_newEstPage()
     
 
 @localsettings.debug
-def perioAdd(parent):
+def perioAdd(om_gui):
     '''
     add perio items
     '''
-    if not course_module.newCourseNeeded(parent):
+    if not course_module.newCourseNeeded(om_gui):
         mylist = ((0, "SP"), (0, "SP+"))
-        chosenTreatments = offerTreatmentItems(parent, mylist)
+        chosenTreatments = offerTreatmentItems(om_gui, mylist)
         for usercode, itemcode, description in chosenTreatments:
-            parent.pt.periopl += "%s "% usercode
-            parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
-            parent.pt.cset, "perio", usercode)
-        parent.load_treatTrees()
-        parent.load_newEstPage()
+            om_gui.pt.periopl += "%s "% usercode
+            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+            om_gui.pt.cset, "perio", usercode)
+        om_gui.load_treatTrees()
+        om_gui.load_newEstPage()
 
 @localsettings.debug
-def otherAdd(parent):
+def otherAdd(om_gui):
     '''
     add 'other' items
     '''
-    if not course_module.newCourseNeeded(parent):
+    if not course_module.newCourseNeeded(om_gui):
         mylist = ()
-        itemDict= parent.pt.getFeeTable().treatmentCodes
+        itemDict= om_gui.pt.getFeeTable().treatmentCodes
         usercodes = itemDict.keys()
         usercodes.sort()
 
         for usercode in usercodes:
             mylist += ((0, usercode), )
         
-        chosenTreatments = offerTreatmentItems(parent, mylist)
+        chosenTreatments = offerTreatmentItems(om_gui, mylist)
         for usercode, itemcode, description in chosenTreatments:
-            parent.pt.otherpl += "%s "% usercode
-            parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
-            parent.pt.cset, "other", usercode)
+            om_gui.pt.otherpl += "%s "% usercode
+            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+            om_gui.pt.cset, "other", usercode)
             
-        parent.load_newEstPage()
-        parent.load_treatTrees()
+        om_gui.load_newEstPage()
+        om_gui.load_treatTrees()
 
 @localsettings.debug
-def customAdd(parent):
+def customAdd(om_gui):
     '''
     add 'custom' items
     '''
-    if not course_module.newCourseNeeded(parent):
-        Dialog = QtGui.QDialog(parent)
+    if not course_module.newCourseNeeded(om_gui):
+        Dialog = QtGui.QDialog(om_gui)
         dl = Ui_customTreatment.Ui_Dialog()
         dl.setupUi(Dialog)
         if Dialog.exec_():
@@ -132,49 +133,49 @@ def customAdd(parent):
             
             fee = int(dl.fee_doubleSpinBox.value() * 100)
             
-            parent.pt.custompl += "%s "% usercode
-            parent.pt.addToEstimate(no, "4002", parent.pt.dnt1, 
+            om_gui.pt.custompl += "%s "% usercode
+            om_gui.pt.addToEstimate(no, "4002", om_gui.pt.dnt1, 
             "P", "custom", usercode, descr, fee, fee, )
-            parent.load_newEstPage()
-            parent.load_treatTrees()
+            om_gui.load_newEstPage()
+            om_gui.load_treatTrees()
 
 @localsettings.debug
-def fromFeeTable(parent, item):
+def fromFeeTable(om_gui, item):
     '''
     add an item which has been selected from the fee table itself
     '''
     print "adding an item from the fee table!!"  
     
     
-    if course_module.newCourseNeeded(parent):
+    if course_module.newCourseNeeded(om_gui):
         return
     
-    table = parent.pt.getFeeTable()
-    clicked_tableIndex = parent.ui.fees_tabWidget.currentIndex()
+    table = om_gui.pt.getFeeTable()
+    clicked_tableIndex = om_gui.ui.fees_tabWidget.currentIndex()
     itemcode = str(item.text(0))
         
     if  clicked_tableIndex != table.index:
-        table = confirmWrongFeeTable(parent, clicked_tableIndex, table.index)
+        table = confirmWrongFeeTable(om_gui, clicked_tableIndex, table.index)
         if not table:
             return
 
-    Dialog = QtGui.QDialog(parent)    
+    Dialog = QtGui.QDialog(om_gui)    
     items = (itemcode, )
     dl = addTreat.feeTable_treatment(Dialog, table, items)
     
     chosenTreatments = dl.getInput()
     for usercode, itemcode, description in chosenTreatments:
-        parent.pt.otherpl += "%s "% usercode
-        parent.pt.addToEstimate(1, itemcode, parent.pt.dnt1, 
+        om_gui.pt.otherpl += "%s "% usercode
+        om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
         type=usercode, feescale=table.index)
         
-    if parent.ui.tabWidget.currentIndex() != 7:
-        parent.ui.tabWidget.setCurrentIndex(7)
+    if om_gui.ui.tabWidget.currentIndex() != 7:
+        om_gui.ui.tabWidget.setCurrentIndex(7)
     else:
-        parent.load_newEstPage()
-        parent.load_treatTrees()
+        om_gui.load_newEstPage()
+        om_gui.load_treatTrees()
 
-def confirmWrongFeeTable(parent, suggested, current):
+def confirmWrongFeeTable(om_gui, suggested, current):
     '''
     check that the user is happy to use the suggested table, not the current 
     one. returns the selected table, or None to keep the current.
@@ -187,7 +188,7 @@ def confirmWrongFeeTable(parent, suggested, current):
     '%s - %s'<br /> for this item?</p>'''% (
     suggestedTable.tablename, suggestedTable.description,
     currentTable.tablename, currentTable.description)
-    input = QtGui.QMessageBox.question(parent, "Confirm", message,
+    input = QtGui.QMessageBox.question(om_gui, "Confirm", message,
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.No )
     if input == QtGui.QMessageBox.Yes:
@@ -220,7 +221,7 @@ def itemsPerTooth(tooth,props):
 
     
 @localsettings.debug
-def chartAdd(parent, tooth, properties):
+def chartAdd(om_gui, tooth, properties):
     '''
     add treatment to a toothtreatment to a tooth
     '''
@@ -229,11 +230,11 @@ def chartAdd(parent, tooth, properties):
     #-- user enters UR1 RT P,CO
 
     #-- what is the current item in ur1pl?
-    existing = parent.pt.__dict__[tooth + "pl"]
+    existing = om_gui.pt.__dict__[tooth + "pl"]
 
-    parent.pt.__dict__[tooth + "pl"] = properties
+    om_gui.pt.__dict__[tooth + "pl"] = properties
     #--update the patient!!
-    parent.ui.planChartWidget.setToothProps(tooth, properties)
+    om_gui.ui.planChartWidget.setToothProps(tooth, properties)
 
     #-- new items are input - existing.
     #-- split our string into a list of treatments.
@@ -252,24 +253,24 @@ def chartAdd(parent, tooth, properties):
         else:
             if item[1] != "":
                 #--tooth may be deciduous
-                toothname = parent.pt.chartgrid.get(item[0])
-                parent.pt.removeFromEstimate(toothname, item[1])
-                parent.advise("removed %s from estimate"% item[1], 1)
+                toothname = om_gui.pt.chartgrid.get(item[0])
+                om_gui.pt.removeFromEstimate(toothname, item[1])
+                om_gui.advise("removed %s from estimate"% item[1], 1)
     #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
     for tooth, usercode in updatedItems:
         
         #--tooth may be deciduous
-        toothname = parent.pt.chartgrid.get(tooth)
+        toothname = om_gui.pt.chartgrid.get(tooth)
         
         item, fee, ptfee, item_description = \
-        parent.pt.getFeeTable().toothCodeWizard(toothname, usercode)
+        om_gui.pt.getFeeTable().toothCodeWizard(toothname, usercode)
         
-        parent.pt.addToEstimate(1, item, 
-        parent.pt.dnt1, parent.pt.cset, toothname, usercode, 
+        om_gui.pt.addToEstimate(1, item, 
+        om_gui.pt.dnt1, om_gui.pt.cset, toothname, usercode, 
         item_description, fee, ptfee,)
 
 @localsettings.debug
-def pass_on_estimate_delete(parent, est):
+def pass_on_estimate_delete(om_gui, est):
     '''
     the est has been deleted...
     remove from the plan or completed also?
@@ -283,48 +284,48 @@ def pass_on_estimate_delete(parent, est):
         #-- format the treatment into the notation used in the 
         #-- plan tree widget
         txtype = "%s - %s"% (est.category,est.type)
-        deleteTxItem(parent, pl_cmp, txtype, passedOn=True) 
+        deleteTxItem(om_gui, pl_cmp, txtype, passedOn=True) 
 
         if est.completed and est.ptfee != 0:
-            result = QtGui.QMessageBox.question(parent, _("question"),
+            result = QtGui.QMessageBox.question(om_gui, _("question"),
             _('<p>Credit Patient %s for undoing this item?</p>')% (
             localsettings.formatMoney(est.ptfee)) ,
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
-                fees_module.applyFeeNow(parent, -1 * est.ptfee, est.csetype)
+                fees_module.applyFeeNow(om_gui, -1 * est.ptfee, est.csetype)
         
     except ValueError:
-        parent.advise (_("couldn't pass on delete message - ") +
+        om_gui.advise (_("couldn't pass on delete message - ") +
         _('badly formed est.type??? %s')% est.type, 1)
 
 @localsettings.debug
-def estimate_item_delete(parent, pl_cmp, category, ttype):
+def estimate_item_delete(om_gui, pl_cmp, category, ttype):
     '''
     delete an estimate item when user has removed an item of treatment
     from the plan or completed
     '''
 
-    result = QtGui.QMessageBox.question(parent, _("question"),
+    result = QtGui.QMessageBox.question(om_gui, _("question"),
     _("remove %s %s from the estimate?")% (category, ttype),
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes )
     if result == QtGui.QMessageBox.Yes:
         removed = False
-        for est in parent.pt.estimates:
+        for est in om_gui.pt.estimates:
             if est.category.lower() == category.lower() and \
             est.type == ttype and est.completed == ("cmp" == pl_cmp):
-                if parent.pt.removeKnownEstimate(est):
+                if om_gui.pt.removeKnownEstimate(est):
                     removed = True
                     break
         if not removed:
-            parent.advise("Unable to remove %s %s from estimate, sorry"%(
+            om_gui.advise("Unable to remove %s %s from estimate, sorry"%(
             category, ttype), 1)
         else:
-            parent.load_newEstPage()
+            om_gui.load_newEstPage()
            
 @localsettings.debug
-def deleteTxItem(parent, pl_cmp, txtype, passedOn=False):
+def deleteTxItem(om_gui, pl_cmp, txtype, passedOn=False):
     '''
     delete an item of treatment (called by clicking on the treewidget)
     or passed on from the est widget.
@@ -333,7 +334,7 @@ def deleteTxItem(parent, pl_cmp, txtype, passedOn=False):
     try:
         att = tup[0]
         treat = tup[1] + " "
-        result = QtGui.QMessageBox.question(parent, "question",
+        result = QtGui.QMessageBox.question(om_gui, "question",
         "remove %s %sfrom this course of treatment?"% (att, treat),
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes )
@@ -343,34 +344,34 @@ def deleteTxItem(parent, pl_cmp, txtype, passedOn=False):
                 att = "%s%s"% (att[:2],"abcde".index(att[2])+1)
 
             if att == "exam":
-                parent.pt.examt = ""
-                parent.pt.examd = ""
-                parent.pt.addHiddenNote("exam", "%s"% tup[1], True)
-                parent.updateHiddenNotesLabel()
+                om_gui.pt.examt = ""
+                om_gui.pt.examd = ""
+                om_gui.pt.addHiddenNote("exam", "%s"% tup[1], True)
+                om_gui.updateHiddenNotesLabel()
             else:
                 if pl_cmp == "pl":
-                    plan = parent.pt.__dict__[att + "pl"].replace(
+                    plan = om_gui.pt.__dict__[att + "pl"].replace(
                     treat, "", 1)#-- only remove 1 occurrence
-                    parent.pt.__dict__[att + "pl"] = plan
-                    completed = parent.pt.__dict__[att + "cmp"]
+                    om_gui.pt.__dict__[att + "pl"] = plan
+                    completed = om_gui.pt.__dict__[att + "cmp"]
                 else:
-                    plan = parent.pt.__dict__[att + "pl"]
-                    #parent.pt.__dict__[att+"pl"]=plan
-                    completed = parent.pt.__dict__[att + "cmp"].replace(
+                    plan = om_gui.pt.__dict__[att + "pl"]
+                    #om_gui.pt.__dict__[att+"pl"]=plan
+                    completed = om_gui.pt.__dict__[att + "cmp"].replace(
                     treat, "", 1) #-- only remove 1 occurrence
                     
-                    parent.pt.__dict__[att + "cmp"] = completed
+                    om_gui.pt.__dict__[att + "cmp"] = completed
                 
                 #-- now update the charts
                 if re.search("[ul][lr][1-8]", att):
-                    parent.updateChartsAfterTreatment(att, plan, completed)
+                    om_gui.updateChartsAfterTreatment(att, plan, completed)
 
-            parent.load_treatTrees()
+            om_gui.load_treatTrees()
             if not passedOn:
-                estimate_item_delete(parent, pl_cmp, tup[0], tup[1])
+                estimate_item_delete(om_gui, pl_cmp, tup[0], tup[1])
 
     except Exception, e:
-        parent.advise("Error deleting %s from plan<br>"% txtype +
+        om_gui.advise("Error deleting %s from plan<br>"% txtype +
         "Please remove manually", 1)
         print "handled this in add_tx_to_plan.deleteTxItem", Exception, e
 
