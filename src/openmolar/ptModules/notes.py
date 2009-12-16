@@ -69,14 +69,31 @@ def notes(notes_dict, verbosity=0, recOnly=False, ignoreRec=False):
         wstring = "30%"
     else:
         wstring = "70%"
-    for key in keys:
+    
+    previousdate="" #necessary to group notes on same day
+    rowspan = 1
+    for key in keys: 
         date, op = key
-        if ("REC" in op and not ignoreRec) or (not "REC" in op and not recOnly):
-            retarg += '''<tr><td class="date">%s</td><td class="ops">%s</td>
+        notes = get_notes_for_date(notes_dict[key])
+        if notes != "" or ("REC" in op and not ignoreRec) or (
+        not "REC" in op and not recOnly):
+            retarg += "<tr>"
+            d = get_date_from_date(date)
+            if d != previousdate:
+                previousdate = d
+                rowspan = 1
+                retarg += '<td class="date">%s</td>'% d
+            else:
+                #alter the previous html, so that the rows are spanned
+                rowspan += 1
+                retarg = re.sub(
+                '(?![\s\S]+?\class="date")class="date"( rowspan="\d")*',
+                'class="date" rowspan="%d"'% rowspan, retarg) 
+                
+            retarg += '''<td class="ops">%s</td>
             <td class="tx">%s</td><td width="%s" class="notes">%s</td>'''% (
-            get_date_from_date(date), op,
-            get_codes_for_date(notes_dict[key]),
-            wstring, get_notes_for_date(notes_dict[key]))
+            op, get_codes_for_date(notes_dict[key]),
+            wstring, notes)
 
             ests = get_estimate_for_date(notes_dict[key])
             rec = get_reception_for_date(notes_dict[key])
