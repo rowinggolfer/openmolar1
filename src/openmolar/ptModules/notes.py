@@ -72,25 +72,28 @@ def notes(notes_dict, verbosity=0, recOnly=False, ignoreRec=False):
     
     previousdate="" #necessary to group notes on same day
     rowspan = 1
+    newline = ""
     for key in keys: 
         date, op = key
         notes = get_notes_for_date(notes_dict[key])
-        if notes != "" or ("REC" in op and not ignoreRec) or (
+        if ("REC" in op and notes != "") or (
+        "REC" in op and not ignoreRec) or (
         not "REC" in op and not recOnly):
-            retarg += "<tr>"
+            newline += "<tr>"
             d = get_date_from_date(date)
             if d != previousdate:
                 previousdate = d
                 rowspan = 1
-                retarg += '<td class="date">%s</td>'% d
+                retarg += newline
+                newline = '<td class="date">%s</td>'% d
             else:
                 #alter the previous html, so that the rows are spanned
                 rowspan += 1
-                retarg = re.sub(
-                '(?![\s\S]+?\class="date")class="date"( rowspan="\d")*',
-                'class="date" rowspan="%d"'% rowspan, retarg) 
+                newline = re.sub(
+                'class="date"( rowspan="\d")*',
+                'class="date" rowspan="%d"'% rowspan, newline)
                 
-            retarg += '''<td class="ops">%s</td>
+            newline += '''<td class="ops">%s</td>
             <td class="tx">%s</td><td width="%s" class="notes">%s</td>'''% (
             op, get_codes_for_date(notes_dict[key]),
             wstring, notes)
@@ -98,22 +101,22 @@ def notes(notes_dict, verbosity=0, recOnly=False, ignoreRec=False):
             ests = get_estimate_for_date(notes_dict[key])
             rec = get_reception_for_date(notes_dict[key])
             if verbosity > 0:
-                retarg += '<td class="reception">'
+                newline += '<td class="reception">'
                 if rec != "" and ests == "":
-                    retarg += '%s</td>'% rec
+                    newline += '%s</td>'% rec
                 elif rec == "" and ests != "":
-                    retarg += '%s</td>'% ests
+                    newline += '%s</td>'% ests
                 else:
-                    retarg += "%s<br />%s</td>"% (ests, rec)
+                    newline += "%s<br />%s</td>"% (ests, rec)
                 
             if verbosity == 2:
                 text = ""
                 for item in notes_dict[key]:
                     text += "%s<br />"% str(item)
-                retarg += "<td class=verbose>%s</td>"% text
+                newline += "<td class=verbose>%s</td>"% text
 
-            retarg += "</tr>"
-        
+            newline += "</tr>"
+    retarg += newline    
     retarg += '</table></div>\n<a name="anchor"></a>END</body></html>'
     
     return retarg 

@@ -1235,15 +1235,15 @@ def layout_yearHeader(om_gui):
     if dayData.publicHoliday != "":
         headerText += '''<tr><td colspan="2" class="bankholiday">%s</td>
         </tr>'''% dayData.publicHoliday
-
-    for dent, memo in dayData.memos:
+    
+    for dent in dayData.memos.keys():
         if dent==0:
             headerText += '''<tr><td class="yearops">ALL</td>
-            <td class="yearmemo">%s</td></tr>''' % memo   
+            <td class="yearmemo">%s</td></tr>''' % dayData.memos[dent]   
         else:
             headerText += '''<tr><td class="yearops">%s</td>
             <td class="yearmemo">%s</td></tr>''' %(
-            localsettings.apptix_reverse.get(dent), memo)
+            localsettings.apptix_reverse.get(dent), dayData.memos[dent])
     headerText += "</table></body></html>"
     
     om_gui.ui.year_textBrowser.setText(headerText)

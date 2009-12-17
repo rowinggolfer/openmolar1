@@ -18,7 +18,7 @@ class dayData(object):
     def  __init__(self, dayDate):
         self.dayName = localsettings.longDate(dayDate)
         self.publicHoliday = ""
-        self.memos = []
+        self.memos = {}
 
 class controlCalendar(QtGui.QCalendarWidget):
     '''
