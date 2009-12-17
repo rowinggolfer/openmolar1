@@ -21,8 +21,12 @@ def compile_ui(ui_fname, outdir=""):
     os.stat(pyfile).st_mtime > os.stat(ui_fname).st_mtime):
         return
 
+    makeEx = False
+    if name == "initialise.ui":
+        makeEx = True
+        
     f = open(pyfile,"w")
-    uic.compileUi(ui_fname, f)
+    uic.compileUi(ui_fname, f, execute=makeEx)
     f.close()
 
     f = open(pyfile,"r")
