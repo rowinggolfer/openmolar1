@@ -1642,9 +1642,9 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         self.loadedPatient_label.setText(labeltext)
         self.ui.hiddenNotes_label.setText("")
 
-        if not self.pt.serialno in localsettings.recent_snos:
-            #localsettings.recent_snos.remove(self.pt.serialno)
-            localsettings.recent_snos.append(self.pt.serialno)
+        if self.pt.serialno in localsettings.recent_snos:
+            localsettings.recent_snos.remove(self.pt.serialno)
+        localsettings.recent_snos.append(self.pt.serialno)
         if self.ui.tabWidget.currentIndex() == 4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.ui.debugBrowser.setText("")
