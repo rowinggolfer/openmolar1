@@ -21,24 +21,39 @@ FS_OPTIONS = {
 "FS,CO"     : _( u"Fissure Sealant/Composite")
 }
 
+CR_OPTIONS = {
+"--"        : "--"+_("Crowns / Inlays"),
+"CR,V1"  : _( u"Precious Metal/ Porcelain Bonded Crown"),
+"CR,A1"  : _( u"Base Metal / Porcelain Bonded Crown"),
+"CR,GO"  : _( u"Gold Crown"),
+"CR,LAVA": _( u"Lava Crown"),
+"CR,PJ"  : _( u"Porcelain Jacket Crown"),
+"CR,TC"  : _( u"Temporary Crown"),
+"CR,SR"  : _( u"Resin Crown"),
+"CR,OT"  : _( u"Other Crown"),
+}
+
 BR_OPTIONS = {
 "--"        : "--"+_("Bridge Elements"),
-"BR/CR,V1"  : _( u"Bonded Retainer"),
-"BR/P,V1"   : _( u"Bonded Pontic"),
-"BR,AE"     : _( u"Adhesive Wing"),
+"--"        : "--"+_("Retainers"),
+"BR/CR,V1"  : _( u"Bonded"),
+"BR/CR,GO"  : _( u"Gold"),
 "BR/CR,LAVA": _( u"Lava Retainer"),
-"BR/P,LAVA" : _( u"Lava Pontic"),
-"BR/CR,GO"  : _( u"Gold Retainer"),
-"BR/P,GO"   : _( u"Gold Pontic"),
-"BR/CR,OT"  : _( u"Other Retainer"),
-"BR/P,OT"   : _( u"Other Pontic")
+"BR/CR,OT"  : _( u"Other"),
+"BR,AE"     : _( u"Adhesive Wing"),
+"--"        : "--"+_("Pontics"),
+"BR/P,V1"   : _( u"Bonded"),
+"BR/P,GO"   : _( u"Gold"),
+"BR/P,LAVA" : _( u"Lava"),
+"BR/P,OT"   : _( u"Other")
 }
 
 ENDO_OPTIONS = {
 "--"        : "--"+_("Endodontics"),
 "PX"        : _( u"Pulp Extirpation - 1 canal"),
 "PX+"       : _( u"Pulp Extirpation - multiple canals"),
-"RT"        : _( u"Root Canal")
+"RT"        : _( u"Root Canal"),
+"IE"        : _( u"Incomplete Endodontics"),
 }
 
 SURGICAL_OPTIONS = {
@@ -53,11 +68,19 @@ STATIC_OPTIONS = {
 "TM"        : _( u"Tooth Missing"),
 "AT"        : _( u"Denture Tooth"),
 "RP"        : _( u"Root Present"),
-"+P"        : _( u"Permanent Tooth Present")
+"+P"        : _( u"Permanent Tooth Present"),
+"PE"        : _( u"Partially Erupted Tooth"),
+"UE"        : _( u"Unerupted Tooth"),
 }
 
-COMBOBOXES = (FS_OPTIONS,BR_OPTIONS,ENDO_OPTIONS,SURGICAL_OPTIONS, 
-STATIC_OPTIONS)
+COMBOBOXES = (
+STATIC_OPTIONS,
+FS_OPTIONS,
+CR_OPTIONS,
+BR_OPTIONS,
+ENDO_OPTIONS,
+SURGICAL_OPTIONS, 
+)
 
 
 class chartLineEdit(QtGui.QLineEdit):

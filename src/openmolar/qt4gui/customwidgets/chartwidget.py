@@ -155,16 +155,20 @@ class chartWidget(QtGui.QWidget):
         '''
         adds fillings and comments to a tooth
         '''
+        if tooth in self.commentedTeeth:
+                self.commentedTeeth.remove(tooth)
         if "!" in props:
             self.commentedTeeth.append(tooth)
-        else:
-            if tooth in self.commentedTeeth:
-                self.commentedTeeth.remove(tooth)
+        
         proplist = props.split(" ")
         self.__dict__[tooth] = []
         for prop in proplist:
             if prop != "":
-                self.__dict__[tooth].append(prop.lower() + " ")
+                if not re.match("!.*", prop):
+                    prop = "%s "% prop.lower()
+                else:
+                    prop = "%s "% prop
+                self.__dict__[tooth].append(prop)
 
     def mouseMoveEvent(self, event):
         '''
@@ -184,8 +188,10 @@ class chartWidget(QtGui.QWidget):
             tooth = self.grid[y][x]
             show = False
             advisory = "<center><b>   %s   </b></center><hr />"% tooth.upper()
-            for f in self.__dict__[tooth]:
-                advisory += "%s <br />"% f.upper()
+            for fill in self.__dict__[tooth]:
+                if not re.match("!.*", fill):
+                    fill = fill.upper()
+                advisory += "%s <br />"% fill
                 show = True
             if show:
                 QtGui.QToolTip.showText(event.globalPos(),
@@ -266,8 +272,10 @@ class chartWidget(QtGui.QWidget):
             if fillList:
                 if len(fillList) > 1:
                     menu.addAction(_("Delete All Restorations"))
-                for fill in self.__dict__[tooth]:    
-                    menu.addAction(_("Delete ") + " - %s"% fill.upper())            
+                for fill in self.__dict__[tooth]:   
+                    if not re.match("!.*", fill):
+                        fill = fill.upper()
+                    menu.addAction(_("Delete ") + " - %s"% fill)            
             if self.isStaticChart:
                 menu.addSeparator()
                 menu.addAction(_("ADD COMMENTS"))                            

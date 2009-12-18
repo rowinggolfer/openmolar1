@@ -475,9 +475,8 @@ into the plan first then complete it.'''), 1)
             self.ui.chartsTableWidget.setItem(row, 1, decidousitem)
             self.ui.chartsTableWidget.setItem(row, 2, staticitem)
             row += 1
-            stl = static_text.lower()
-            self.ui.summaryChartWidget.setToothProps(tooth, stl)
-            self.ui.staticChartWidget.setToothProps(tooth, stl)
+            self.ui.summaryChartWidget.setToothProps(tooth, static_text)
+            self.ui.staticChartWidget.setToothProps(tooth, static_text)
             pItem = self.pt.__dict__[tooth+"pl"]
             cItem = self.pt.__dict__[tooth+"cmp"]
             planitem = QtGui.QTableWidgetItem(pItem)

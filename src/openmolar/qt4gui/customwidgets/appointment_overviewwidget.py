@@ -334,7 +334,6 @@ class appointmentOverviewWidget(QtGui.QWidget):
                     trect = QtCore.QRect(0,
                     0.8 * self.headingHeight + currentSlot * self.slotHeight,
                     self.timeOffset, self.textDetail * self.slotHeight)
-                    #painter.drawRect(trect) #remove this
                     painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
 
                     painter.drawText(trect, QtCore.Qt.AlignHCenter,
@@ -390,7 +389,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                         painter.drawText(rect,QtCore.Qt.AlignHCenter,
                         localsettings.wystimeToHumanTime(slotstart))
 
-                        painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
+                    painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
                         
                     ###emergencies
                     painter.setBrush(APPTCOLORS["EMERGENCY"])
@@ -410,8 +409,9 @@ class appointmentOverviewWidget(QtGui.QWidget):
                             painter.drawText(rect,QtCore.Qt.AlignCenter, 
                             QtCore.QString("Bloc..."))
 
-                            painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
+                    painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
                             
+                    painter.setBrush(APPTCOLORS["LUNCH"])
                     painter.setBrush(APPTCOLORS["LUNCH"])
                     for lunch in self.lunches[dent]:
                         (slotstart,length)=lunch
@@ -428,6 +428,8 @@ class appointmentOverviewWidget(QtGui.QWidget):
                             painter.drawText(rect,QtCore.Qt.AlignCenter,
                             QtCore.QString("Lunch"))
                 
+                painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
+                    
                 ###appts
                 painter.setBrush(APPTCOLORS["BUSY"])
                 for appt in self.appts[dent]:
