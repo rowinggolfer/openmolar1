@@ -486,8 +486,8 @@ into the plan first then complete it.'''), 1)
             self.ui.planChartWidget.setToothProps(tooth, pItem.lower())
             self.ui.completedChartWidget.setToothProps(tooth, cItem.lower())
 
-            if stl[:2] in ("at", "tm", "ue"):
-                self.ui.perioChartWidget.setToothProps(tooth, stl)
+            if static_text[:2] in ("AT", "TM", "UE"):
+                self.ui.perioChartWidget.setToothProps(tooth, static_text)
         self.ui.chartsTableWidget.resizeColumnsToContents()
         self.ui.chartsTableWidget.setCurrentCell(0, 0)
 
