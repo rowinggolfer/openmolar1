@@ -16,8 +16,8 @@ from openmolar.dbtools.patient_class import currtrtmtTableAtts
 
 uppers = ('ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 
 'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8')
-lowers = ('ll8', 'll7', 'll6', 'll5', 'll4', 'll3', 'll2', 'll1', 
-'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7', 'lr8')
+lowers = ('lr8', 'lr7', 'lr6', 'lr5', 'lr4', 'lr3', 'lr2', 'lr1', 
+'ll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
 
 class txCourse():
     '''
@@ -27,79 +27,101 @@ class txCourse():
         i = 0
         for att in currtrtmtTableAtts:
             val = vals[i]
-            if val == "":
-                val = "-"
             self.__dict__[att] = val
             i += 1
+            
+    @localsettings.debug
     def toHtml(self):
         '''
         returns an HTML representation of itself
         '''
-        headers = (
-        ("Acceptance Date", self.accd), 
-        ("Completion Date", self.cmpd), 
-        ("Exam", "%s dated - %s"% (self.examt, self.examd)), 
-        )
-
+        
         retarg = '''<table width = "100%%" border = "2">
         <tr><th colspan = "3" bgcolor = "yellow">CourseNo %s</th>
-        <//tr>'''% self.courseno
-
+        <//tr>'''% self.courseno        
+        
+        headers = [("Acceptance Date", self.accd),
+        ("Completion Date", self.cmpd)]
+        
+        if self.examt !="" and self.examd:
+            headers.append(
+            ("Exam", "%s dated - %s"% (self.examt, self.examd)),)
+        
         for header in headers:
-            retarg += '<tr><th colspan = "2">%s</th><td>%s</td></tr>'% header
+            retarg += '<tr><th colspan = "2">%s</th><td>%s</td></tr>\n'% header
+        
         #-plan row.
         for planned in ("pl", "cmp"):
+            rows = []
+            
             if planned == "pl":
                 bgcolor = ' bgcolor = "#eeeeee"'
-                retarg += '''<tr>
-                <th rowspan = "7" %s>PLANNED / INCOMPLETE</th>'''% bgcolor
+                header = "PLANNED / INCOMPLETE"
             else:
-                retarg += '<tr><th rowspan = "7">COMPLETED</th>'
                 bgcolor = ""
-            
+                header = "COMPLETED"
+                
             for att in ("perio", 'xray', 'anaes', 'other', "custom"):
-                if att != "perio":
-                    retarg += "<tr>"
-                retarg += "<th%s>%s</th><td%s>%s</td></tr>"% (bgcolor, 
-                att, bgcolor, self.__dict__[att+planned])
+                if self.__dict__[att+planned] != "":
+                    cells = "<th%s>%s</th><td%s>%s</td>"% (bgcolor, 
+                    att, bgcolor, self.__dict__[att+planned])
+                    rows.append(cells)
 
             dentureWork = ""
             for att in ('ndu', 'ndl', 'odu', 'odl'):
                 val = self.__dict__[att+planned]
-                if val != "-":
+                if val != "":
                     dentureWork += "%s - '%s' "% (att, val)
-            if dentureWork == "":
-                dentureWork = "-"
+            if dentureWork != "":            
+                cells = "<th%s>Denture Work</th><td%s>%s</td>"% (
+                bgcolor, bgcolor, dentureWork)
+        
+                rows.append(cells)
 
-            retarg += "<tr><th%s>Denture Work</th><td%s>%s</td></tr>"% (
-            bgcolor, bgcolor, dentureWork)
-
-            retarg += '''<tr><th%s>Chart</th>
-            <td><table width = "100%%" border = "1"><tr>'''% bgcolor
+            showChart = False
+            cells = '''<th%s>Chart</th><td>
+            <table width = "100%%" border = "1"><tr>'''% bgcolor
 
             for att in uppers:
-                retarg += '<td align = "center"%s>%s</td>'% (
+                cells += '<td align = "center"%s>%s</td>'% (
                 bgcolor, att.upper())
-
-            retarg += "</tr><tr>"
+                
+            cells += "</tr><tr>"
             for att in uppers:
-                retarg += '<td align = "center"%s>%s</td>'% (
-                bgcolor, self.__dict__[att+planned])
+                work = self.__dict__[att+planned]
+                cells += '<td align = "center"%s>%s</td>'% (
+                bgcolor, work)
+                showChart = showChart or work !=""
 
-            retarg += "</tr><tr>"
+            cells += "</tr><tr>"
             for att in lowers:
-                retarg += '<td align = "center"%s>%s</td>'% (
+                cells += '<td align = "center"%s>%s</td>'% (
                 bgcolor, att.upper())
 
-            retarg += "</tr><tr>"
+            cells += "</tr><tr>"
             for att in lowers:
-                retarg += '<td align = "center"%s>%s</td>'% (
-                bgcolor, self.__dict__[att+planned])
+                work = self.__dict__[att+planned]
+                cells += '<td align = "center"%s>%s</td>'% (
+                bgcolor, work)
+                showChart = showChart or work !=""
 
-            retarg += "</tr></table>"
+            cells += "</tr></table></td>"
 
-        retarg += '</tr></table>\n'
+            if showChart:
+                rows.append(cells)
 
+            row_span = len(rows)
+            
+            if rows != []:
+                retarg += '<tr><th rowspan = "%s"%s>%s</th>'% (
+                row_span, bgcolor,header)
+            for row in rows:
+                if row == rows[0]:
+                    retarg += "%s</tr>\n"% row
+                else:
+                    retarg += "<tr>%s</tr>\n"% row
+
+        retarg += '</table>\n'
         return retarg
 
 
@@ -138,9 +160,7 @@ def details(sno):
 
     for course in courses:
         retarg += course.toHtml()
-
-    retarg += '</table>'
-
+        retarg += "<br /><hr /><br />"
     #db.close()
     return retarg
 

@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2009-12-03 17:00+0000\n"
-"PO-Revision-Date: 2009-12-09 15:46+0000\n"
-"Last-Translator: <<g33ky>> <Unknown>\n"
+"PO-Revision-Date: 2009-12-19 15:14+0000\n"
+"Last-Translator: Philippe Le Toquin <philippe@ppmt.org>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-10 04:35+0000\n"
+"X-Launchpad-Export-Date: 2009-12-20 04:37+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/daybook.py:54
@@ -28,7 +28,7 @@ msgstr "Sujet"
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:13
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_forumPost.py:81
 msgid "To"
-msgstr ""
+msgstr "Destination"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:13
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_forumPost.py:84
@@ -83,7 +83,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:567
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:37
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:132
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:83
@@ -94,11 +94,11 @@ msgstr "Conseil"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:151
 msgid "Passwords don't match!"
-msgstr ""
+msgstr "Les mots de passe ne correspondent pas !"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:177
 msgid "Create Database"
-msgstr ""
+msgstr "Créer la base de données"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:178
 msgid "Create Demo Database now with the following settings?"
@@ -148,7 +148,7 @@ msgstr "La tentative de connexion à renvoyé une exception"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:277
 msgid "Success!"
-msgstr ""
+msgstr "Succès !"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:278
 msgid "The %s database accepted the connection."
@@ -201,6 +201,15 @@ msgid ""
 "<p><i>It would still be wise to update this client ASAP</i></p>\n"
 "<hr /><p>Do you wish to continue?</p>"
 msgstr ""
+"Ce client Openmolar n'est plus en phase avec la version du schéma de \n"
+"la base de données<br />ce client utilise le schéma version %s,\n"
+"alors que la base de données est maintenant a la version %s<br />Cependant,\n"
+"ces différences ne sont pas critiques et vous pouvez continuer ainsi si vous "
+"le\n"
+"désirez</p>\n"
+"<p><i>Il serait cependant plus simple de mettre a jour le client des que "
+"possible</i></p>\n"
+"<hr /><p>Voulez vous continuer ?</p>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/main.py:133
 msgid ""
@@ -274,6 +283,11 @@ msgid ""
 "    <th>Type</th><th>Course</th>\n"
 "    <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>"
 msgstr ""
+"<table width =\"100%\" border=\"1\">\n"
+"    <tr><td colspan=\"7\"><h3>ESTIMATION</h3></td></tr>\n"
+"    <tr><th>No.</th><th>Description</th><th>Category</th>\n"
+"    <th>Type</th><th>Course</th>\n"
+"    <th>Fee</th><th>Frais Pt</th><th>Termine</th></tr>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/plan.py:121
 msgid "Previous Course"
@@ -289,7 +303,7 @@ msgstr "Début"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/plan.py:126
 msgid "End"
-msgstr ""
+msgstr "Terminer"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/ptModules/plan.py:136
 msgid "No treatment"
@@ -314,7 +328,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:331
 msgid "No appointment selected"
-msgstr ""
+msgstr "Aucun rendez-vous sélectionné"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:748
 msgid "removing appointment dentist"
@@ -322,11 +336,12 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1480
 msgid "unable to block - has the book been altered elsewhere?"
-msgstr ""
+msgstr "Impossible de bloquer - l'agenda a t'il été modifié ailleurs ?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1499
 msgid "unable to make appointment - has the book been altered elsewhere?"
 msgstr ""
+"Impossible de creer un rendez-vous - l'agenda a t'il été modifié ailleurs ?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_activeDentStartFinish.py:44
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptWizardItem.py:42
@@ -485,11 +500,11 @@ msgstr "Mémo"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:129
 msgid "Options"
-msgstr ""
+msgstr "Options"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:130
 msgid "Would you like to Block (or partially Block) this Slot?"
-msgstr ""
+msgstr "Voulez vous bloquer ce créneau (ou seulement partiellement) ?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:131
 msgid "Block Start"
@@ -522,7 +537,7 @@ msgstr "Absent du bureau"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:139
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:179
 msgid "minutes"
-msgstr ""
+msgstr "minutes"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:140
 msgid "Insert a Block"
@@ -530,11 +545,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
 msgid "Insert A Patient into this slot?"
-msgstr ""
+msgstr "Insérer un Patient dans ce créneau ?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
 msgid "Start Time"
-msgstr ""
+msgstr "Heure de début"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:143
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:103
@@ -548,7 +563,7 @@ msgstr "Le patient choisi est<br />"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:145
 msgid "Change"
-msgstr ""
+msgstr "Modifier"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:146
 msgid "Reason for appointment is"
@@ -557,7 +572,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:147
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:107
 msgid " minutes"
-msgstr ""
+msgstr " minutes"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:148
 msgid "Insert a Known Patient"
@@ -580,11 +595,11 @@ msgstr "Date de début"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:101
 msgid "End Date (inclusive)"
-msgstr ""
+msgstr "Date de fin (incluse)"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:102
 msgid "Time"
-msgstr ""
+msgstr "Heure"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:104
 msgid "Text to Apply"
@@ -596,7 +611,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:106
 msgid "Clinicians"
-msgstr ""
+msgstr "Cliniciens"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:111
 msgid "Bridge - Denture Entry"
@@ -736,7 +751,7 @@ msgstr "2009"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py:66
 msgid "Language Selector"
-msgstr ""
+msgstr "Sélecteur de langue"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py:67
 msgid ""
@@ -752,12 +767,28 @@ msgid ""
 "available languages.<br />Please Note that some of these translations are "
 "not complete.</p></body></html>"
 msgstr ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+"\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style "
+"type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Droid Sans'; font-size:8pt; font-"
+"weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">Choisissez une langue "
+"parmi celle disponible.<br />Vous remarquerez que certaines traductions ne "
+"sont pas complètes.</p></body></html>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py:72
 msgid ""
 "Note - if your preferred language is not available (or incomplete), please "
 "visit https://launchpad.net/openmolar and add a translation of your own!"
 msgstr ""
+"Note - if your preferred language is not available (or incomplete), please "
+"visit https://launchpad.net/openmolar and add a translation of your own!\r\n"
+"Note - si votre language prefere n'est pas disponible (ou incomplet), "
+"veuillez visiter https://launchpad.net/openmolar pour pouvoir y ajouter vos "
+"propres traductions  !"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py:73
 msgid ""
@@ -778,6 +809,22 @@ msgid ""
 "right:0px; -qt-block-indent:0; text-indent:0px;\">who make this "
 "possible.</p></body></html>"
 msgstr ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+"\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style "
+"type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Droid Sans'; font-size:8pt; font-"
+"weight:400; font-style:italic;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">Merci à tous ceux qui ont "
+"aidé à internationaliser openMolar,</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">ainsi qu'a tous  les "
+"créateurs d'outils GNU et à l'équipe de Launchpad Rosetta</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\">sans eux tous cela ne "
+"serait pas possible.</p></body></html>"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_completeTreatment.py:41
 msgid "Complete Treatment"

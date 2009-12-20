@@ -958,29 +958,18 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         if ci == 4:
             self.load_clinicalSummaryPage()
 
-        if ci == 5:
+        if ci == 5: #-- full notes
             self.updateNotesPage()
 
-        #--perio tab
-        if ci == 8:
+        if ci == 8: #-- perio tab
             self.periochart_dates()
             #load the periocharts (if the patient has data)
             self.layoutPerioCharts()
-            #--select the UR8 on the perioChartWidget
-            self.ui.perioChartWidget.selected=[0, 0]
-
-        if ci == 7:
-            #-- estimate/plan page.
+            
+        if ci == 7:  #-- estimate/plan page.
             self.load_newEstPage()
             self.load_treatTrees()
-        #--debug tab
-        ##TODO - this is a development tab- remove eventually
-        if ci == 9:
-            pass
-            #-- this was causing issues when user went "home".. it was getting
-            #-- triggered
-            #self.ui.pastData_toolButton.showMenu()
-
+        
     def diary_tabWidget_nav(self, i):
         '''
         catches a signal that the diary tab widget has been moved
@@ -1905,11 +1894,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         for old data about the patient
         '''
         self.pastDataMenu=QtGui.QMenu()
-        self.pastDataMenu.addAction("Payments history")
-        self.pastDataMenu.addAction("Daybook history")
-        self.pastDataMenu.addAction("Courses history")
-        self.pastDataMenu.addAction("Estimates history")
-        self.pastDataMenu.addAction("NHS claims history")
+        self.pastDataMenu.addAction("No Options Set")
 
         self.ui.pastData_toolButton.setMenu(self.pastDataMenu)
 
@@ -1926,18 +1911,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
     def showForumActivity(self, newItems=True):
         tb=self.ui.main_tabWidget.tabBar()
         if newItems:
-            #icon = QtGui.QIcon()
-            #icon.addPixmap(QtGui.QPixmap(":/logo.png"), QtGui.QIcon.Normal,
-            #QtGui.QIcon.Off)
-            #tb.setTabIcon(7, icon)
             tb.setTabText(7, _("NEW FORUM POSTS"))
             tb.setTabTextColor(7, QtGui.QColor("red"))
             if not self.forum_notified:
                 self.notify("New Forum Posts")
             self.forum_notified = True
         else:
-            #print "removing icon"
-            #tb.setTabIcon(7, QtGui.QIcon())
             tb.setTabText(7, _("FORUM"))
             tb.setTabTextColor(7, QtGui.QColor(self.palette().WindowText))
             self.forum_notified = False
@@ -1956,7 +1935,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 f.close()
                 self.advise("Patient File Saved", 1)
         except Exception, e:
-            self.advise("Patient File not saved - %s"%e, 2)
+            self.advise("Patient File not saved - %s"% e, 2)
 
     def open_patient_fromfile(self):
         '''
@@ -1982,7 +1961,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.pt=loadedpt
                 f.close()
             except Exception, e:
-                self.advise("error loading patient file - %s"%e, 2)
+                self.advise("error loading patient file - %s"% e, 2)
         else:
             self.advise("no file chosen", 1)
         self.loadpatient()
@@ -2874,18 +2853,25 @@ WITH PT RECORDS %d and %d''')% (
         '''
         called from pastData toolbutton - arg is the chosen qstring
         '''
-        txtype=str(arg.text()).split(" ")[0]
-        if txtype == "NHS":
-            self.showPastNHSclaims()
-        elif txtype == "Payments":
-            self.showPaymentHistory()
-        elif txtype == "Daybook":
-            self.showDaybookHistory()
-        elif txtype == "Courses":
-            self.showCoursesHistory()
-        elif txtype == "Estimates":
-            self.showEstimatesHistory()
+        ## TODO deprecated - toolbutton is not good enough 
+        ## for this important functionality
+        print "deprectaed pastDataMenu_clicked, received arg", arg
+        
+    def pastPayments_clicked(self):
+        self.showPaymentHistory()
+        
+    def pastTreatment_clicked(self):
+        self.showDaybookHistory()
+        
+    def pastCourses_clicked(self):
+        self.showCoursesHistory()
+        
+    def pastEstimates_clicked(self):
+        self.showEstimatesHistory()
 
+    def NHSClaims_clicked(self):
+        self.showPastNHSclaims()
+                
     def showEstimatesHistory(self):
         '''
         show all past estimates for a patient
@@ -2898,7 +2884,7 @@ WITH PT RECORDS %d and %d''')% (
         show all past treatment plans for a patient
         (including treatment that was never carried out)
         '''
-        html=courseHistory.details(self.pt.serialno)
+        html = courseHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
 
     def showPaymentHistory(self):
@@ -3408,8 +3394,20 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.QObject.connect(self.ui.ptAtts_checkBox,
         QtCore.SIGNAL("stateChanged (int)"), self.updateAttributes)
 
-        QtCore.QObject.connect(self.ui.historyPrint_pushButton, QtCore.SIGNAL(
-        "clicked()"), self.historyPrint)
+        QtCore.QObject.connect(self.ui.historyPrint_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.historyPrint)
+
+        QtCore.QObject.connect(self.ui.pastPayments_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.pastPayments_clicked)
+        QtCore.QObject.connect(self.ui.pastTreatment_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.pastTreatment_clicked)
+        QtCore.QObject.connect(self.ui.pastCourses_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.pastCourses_clicked)
+        QtCore.QObject.connect(self.ui.pastEstimates_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.pastEstimates_clicked)
+        QtCore.QObject.connect(self.ui.NHSClaims_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.NHSClaims_clicked)
+        
 
     def signals_daybook(self):
 

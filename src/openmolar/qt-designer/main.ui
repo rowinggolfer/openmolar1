@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>9</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>730</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1710,7 +1710,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>730</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2791,8 +2791,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>459</width>
-                        <height>289</height>
+                        <width>547</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2991,7 +2991,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>409</width>
+                           <width>497</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3397,8 +3397,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>644</width>
-                        <height>392</height>
+                        <width>753</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -3602,78 +3602,169 @@ Note - this will not remove items which are currently there. </string>
                   <attribute name="title">
                    <string>History</string>
                   </attribute>
-                  <layout class="QGridLayout" name="gridLayout_23">
-                   <item row="0" column="0">
-                    <widget class="QToolButton" name="pastData_toolButton">
+                  <layout class="QHBoxLayout" name="horizontalLayout_29">
+                   <item>
+                    <widget class="QTextBrowser" name="debugBrowser"/>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_3">
                      <property name="minimumSize">
                       <size>
-                       <width>0</width>
+                       <width>100</width>
                        <height>0</height>
                       </size>
                      </property>
-                     <property name="text">
-                      <string>History Options</string>
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
                      </property>
-                     <property name="popupMode">
-                      <enum>QToolButton::InstantPopup</enum>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
                      </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="2">
-                    <spacer name="horizontalSpacer">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>358</width>
-                       <height>21</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item row="0" column="3">
-                    <widget class="Line" name="line_3">
-                     <property name="orientation">
-                      <enum>Qt::Vertical</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="4">
-                    <widget class="QToolButton" name="debug_toolButton">
-                     <property name="text">
-                      <string>debug</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>false</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                     <property name="popupMode">
-                      <enum>QToolButton::InstantPopup</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="5">
-                    <widget class="QCheckBox" name="ptAtts_checkBox">
-                     <property name="text">
-                      <string>changes only</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0" colspan="6">
-                    <widget class="QTextBrowser" name="debugBrowser"/>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QPushButton" name="historyPrint_pushButton">
-                     <property name="text">
-                      <string>Print</string>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="../resources/resources.qrc">
-                       <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_25">
+                      <item>
+                       <widget class="QPushButton" name="pastPayments_pushButton">
+                        <property name="toolTip">
+                         <string>See all payments in the database made by this patient</string>
+                        </property>
+                        <property name="text">
+                         <string>Past Payments</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pastTreatment_pushButton">
+                        <property name="toolTip">
+                         <string>View treatments completed, by date order</string>
+                        </property>
+                        <property name="text">
+                         <string>Past Treatment</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pastCourses_pushButton">
+                        <property name="toolTip">
+                         <string>View all Courses of treatment. This includes treatment that was planned but not completed.</string>
+                        </property>
+                        <property name="text">
+                         <string>Courses</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pastEstimates_pushButton">
+                        <property name="toolTip">
+                         <string>Estimate history for this patient.</string>
+                        </property>
+                        <property name="text">
+                         <string>Estimates</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="NHSClaims_pushButton">
+                        <property name="text">
+                         <string>NHS Claims</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="historyPrint_pushButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="toolTip">
+                         <string>Print the text displayed on this page.</string>
+                        </property>
+                        <property name="text">
+                         <string>Print</string>
+                        </property>
+                        <property name="icon">
+                         <iconset resource="../resources/resources.qrc">
+                          <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="verticalSpacer_14">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>123</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QToolButton" name="pastData_toolButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>Custom Options</string>
+                        </property>
+                        <property name="popupMode">
+                         <enum>QToolButton::InstantPopup</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="Line" name="line_3">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QToolButton" name="debug_toolButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="toolTip">
+                         <string>Advanced options for developer use. Don't expect this to make much sense!
+
+If the &quot;changes only&quot; checkbox is checked, only data which has been changed will be displayed.</string>
+                        </property>
+                        <property name="text">
+                         <string>debug tools</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>false</bool>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                        <property name="popupMode">
+                         <enum>QToolButton::InstantPopup</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QCheckBox" name="ptAtts_checkBox">
+                        <property name="text">
+                         <string>changes only</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                   </layout>
@@ -4238,7 +4329,7 @@ Note - this will not remove items which are currently there. </string>
                     <x>0</x>
                     <y>0</y>
                     <width>198</width>
-                    <height>98</height>
+                    <height>99</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
