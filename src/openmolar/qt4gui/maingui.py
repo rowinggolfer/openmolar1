@@ -2855,65 +2855,60 @@ WITH PT RECORDS %d and %d''')% (
         '''
         ## TODO deprecated - toolbutton is not good enough 
         ## for this important functionality
-        print "deprectaed pastDataMenu_clicked, received arg", arg
+        print "deprecated pastDataMenu_clicked, received arg", arg
         
     def pastPayments_clicked(self):
-        self.showPaymentHistory()
-        
-    def pastTreatment_clicked(self):
-        self.showDaybookHistory()
-        
-    def pastCourses_clicked(self):
-        self.showCoursesHistory()
-        
-    def pastEstimates_clicked(self):
-        self.showEstimatesHistory()
-
-    def NHSClaims_clicked(self):
-        self.showPastNHSclaims()
-                
-    def showEstimatesHistory(self):
-        '''
-        show all past estimates for a patient
-        '''
-        html=estimatesHistory.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
-
-    def showCoursesHistory(self):
-        '''
-        show all past treatment plans for a patient
-        (including treatment that was never carried out)
-        '''
-        html = courseHistory.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
-
-    def showPaymentHistory(self):
         '''
         show all past payments for a patient
         '''
         html=paymentHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
 
-    def showDaybookHistory(self):
+        
+    def pastTreatment_clicked(self):
         '''
         show all past estimates for a patient
         '''
         html=daybookHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-
-    def nhsClaimsShortcut(self):
+        
+    def pastCourses_clicked(self):
         '''
-        a convenience function called from the contracts page
+        show all past treatment plans for a patient
+        (including treatment that was never carried out)
         '''
-        self.ui.tabWidget.setCurrentIndex(9)
-        self.showPastNHSclaims()
-
-    def showPastNHSclaims(self):
+        html = courseHistory.details(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)
+    
+    def pastEstimates_clicked(self):
+        '''
+        show all past estimates for a patient
+        '''
+        html = estimatesHistory.details(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)
+    
+    def past_course_estimates_clicked(self):
+        '''
+        show all past treatment plans for a patient
+        (including treatment that was never carried out)
+        and include the estimate for that course
+        '''
+        html = courseHistory.all_details(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)
+        
+    def NHSClaims_clicked(self):
         '''
         show all past NHS claims for a patient
         '''
         html=nhs_claims.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
+    
+    def nhsClaimsShortcut(self):
+        '''
+        a convenience function called from the contracts page
+        '''
+        self.ui.tabWidget.setCurrentIndex(9)
+        self.NHSClaims_clicked()
 
     def updateAttributes(self, arg=None):
         '''
@@ -3399,12 +3394,19 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.pastPayments_pushButton, 
         QtCore.SIGNAL("clicked()"), self.pastPayments_clicked)
+        
         QtCore.QObject.connect(self.ui.pastTreatment_pushButton, 
         QtCore.SIGNAL("clicked()"), self.pastTreatment_clicked)
+
         QtCore.QObject.connect(self.ui.pastCourses_pushButton, 
         QtCore.SIGNAL("clicked()"), self.pastCourses_clicked)
+
         QtCore.QObject.connect(self.ui.pastEstimates_pushButton, 
         QtCore.SIGNAL("clicked()"), self.pastEstimates_clicked)
+
+        QtCore.QObject.connect(self.ui.past_course_estimates_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.past_course_estimates_clicked)
+        
         QtCore.QObject.connect(self.ui.NHSClaims_pushButton, 
         QtCore.SIGNAL("clicked()"), self.NHSClaims_clicked)
         

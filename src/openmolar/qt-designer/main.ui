@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -3662,6 +3662,16 @@ Note - this will not remove items which are currently there. </string>
                        </widget>
                       </item>
                       <item>
+                       <widget class="QPushButton" name="past_course_estimates_pushButton">
+                        <property name="toolTip">
+                         <string>display a combination of courses and estimates.</string>
+                        </property>
+                        <property name="text">
+                         <string>Courses / Estimates</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QPushButton" name="NHSClaims_pushButton">
                         <property name="text">
                          <string>NHS Claims</string>
@@ -4170,7 +4180,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <item>
                     <widget class="QRadioButton" name="dayView_selectedBooks_radioButton">
                      <property name="text">
-                      <string>Show Books  selected below</string>
+                      <string>Books as selected below</string>
                      </property>
                     </widget>
                    </item>
@@ -4692,8 +4702,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>287</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_30"/>
@@ -4750,8 +4760,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>287</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>

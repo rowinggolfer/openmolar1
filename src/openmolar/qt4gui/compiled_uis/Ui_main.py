@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Dec 20 22:11:45 2009
+# Created: Mon Dec 21 10:53:31 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -1484,6 +1484,9 @@ class Ui_MainWindow(object):
         self.pastEstimates_pushButton = QtGui.QPushButton(self.frame_3)
         self.pastEstimates_pushButton.setObjectName("pastEstimates_pushButton")
         self.verticalLayout_25.addWidget(self.pastEstimates_pushButton)
+        self.past_course_estimates_pushButton = QtGui.QPushButton(self.frame_3)
+        self.past_course_estimates_pushButton.setObjectName("past_course_estimates_pushButton")
+        self.verticalLayout_25.addWidget(self.past_course_estimates_pushButton)
         self.NHSClaims_pushButton = QtGui.QPushButton(self.frame_3)
         self.NHSClaims_pushButton.setObjectName("NHSClaims_pushButton")
         self.verticalLayout_25.addWidget(self.NHSClaims_pushButton)
@@ -1928,7 +1931,7 @@ class Ui_MainWindow(object):
         self.monthView_scrollArea.setWidgetResizable(True)
         self.monthView_scrollArea.setObjectName("monthView_scrollArea")
         self.scrollAreaWidgetContents_14 = QtGui.QWidget(self.monthView_scrollArea)
-        self.scrollAreaWidgetContents_14.setGeometry(QtCore.QRect(0, 0, 663, 287))
+        self.scrollAreaWidgetContents_14.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents_14.setObjectName("scrollAreaWidgetContents_14")
         self.horizontalLayout_30 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_14)
         self.horizontalLayout_30.setObjectName("horizontalLayout_30")
@@ -1962,7 +1965,7 @@ class Ui_MainWindow(object):
         self.tasks_scrollArea.setWidgetResizable(True)
         self.tasks_scrollArea.setObjectName("tasks_scrollArea")
         self.scrollAreaWidgetContents_2 = QtGui.QWidget(self.tasks_scrollArea)
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 663, 287))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.tasks_scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.horizontalLayout_4.addWidget(self.tasks_scrollArea)
@@ -2801,13 +2804,23 @@ class Ui_MainWindow(object):
         self.newPerioChartPushButton.setText(_( u"New"))
         self.groupBox_12.setTitle(_( u"BPE"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_8), _( u"Perio Charts"))
+        self.pastPayments_pushButton.setToolTip(_( u"See all payments in the database made by this patient"))
         self.pastPayments_pushButton.setText(_( u"Past Payments"))
+        self.pastTreatment_pushButton.setToolTip(_( u"View treatments completed, by date order"))
         self.pastTreatment_pushButton.setText(_( u"Past Treatment"))
+        self.pastCourses_pushButton.setToolTip(_( u"View all Courses of treatment. This includes treatment that was planned but not completed."))
         self.pastCourses_pushButton.setText(_( u"Courses"))
+        self.pastEstimates_pushButton.setToolTip(_( u"Estimate history for this patient."))
         self.pastEstimates_pushButton.setText(_( u"Estimates"))
+        self.past_course_estimates_pushButton.setToolTip(_( u"display a combination of courses and estimates."))
+        self.past_course_estimates_pushButton.setText(_( u"Courses / Estimates"))
         self.NHSClaims_pushButton.setText(_( u"NHS Claims"))
+        self.historyPrint_pushButton.setToolTip(_( u"Print the text displayed on this page."))
         self.historyPrint_pushButton.setText(_( u"Print"))
         self.pastData_toolButton.setText(_( u"Custom Options"))
+        self.debug_toolButton.setToolTip(_( u"Advanced options for developer use. Don\'t expect this to make much sense!\n"
+"\n"
+"If the \"changes only\" checkbox is checked, only data which has been changed will be displayed."))
         self.debug_toolButton.setText(_( u"debug tools"))
         self.ptAtts_checkBox.setText(_( u"changes only"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_9), _( u"History"))

@@ -13,6 +13,7 @@ a module to search for previous course items
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 from openmolar.dbtools.patient_class import currtrtmtTableAtts
+from openmolar.dbtools import estimatesHistory
 
 uppers = ('ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 
 'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8')
@@ -30,7 +31,6 @@ class txCourse():
             self.__dict__[att] = val
             i += 1
             
-    @localsettings.debug
     def toHtml(self):
         '''
         returns an HTML representation of itself
@@ -44,7 +44,7 @@ class txCourse():
         ("Completion Date", self.cmpd)]
         
         for header in headers:
-            retarg += '<tr><th colspan = "2">%s</th><td>%s</td></tr>\n'% header
+            retarg +='<tr><th colspan = "2">%s</th><td>%s</td></tr>\n'% header
         
         #-plan row.
         for planned in ("pl", "cmp"):
@@ -87,16 +87,16 @@ class txCourse():
             <table width = "100%%" border = "1"><tr>'''% bgcolor
 
             for att in uppers:
-                cells += '<td align = "center"%s>%s</td>'% (
-                bgcolor, att.upper())
-                
-            cells += "</tr><tr>"
-            for att in uppers:
                 work = self.__dict__[att+planned]
                 cells += '<td align = "center"%s>%s</td>'% (
                 bgcolor, work)
                 showChart = showChart or work !=""
-
+            
+            cells += "</tr><tr>"            
+            for att in uppers:
+                cells += '<td align = "center"%s>%s</td>'% (
+                bgcolor, att.upper())
+            
             cells += "</tr><tr>"
             for att in lowers:
                 cells += '<td align = "center"%s>%s</td>'% (
@@ -167,6 +167,62 @@ def details(sno):
         retarg += "<br /><hr /><br />"
     #db.close()
     return retarg
+
+def all_details(sno):
+    '''
+    returns an html page showing pt's Treatment History
+    '''
+    db = connect()
+    cursor = db.cursor()
+    fields = currtrtmtTableAtts
+    query = ""
+    
+    for field in fields:
+        if field in ('examd', 'accd', 'cmpd'):
+            query += 'DATE_FORMAT(%s, "%s"),'% (
+            field, localsettings.OM_DATE_FORMAT)
+
+        else:
+            query += field + ","
+
+    query = query.strip(",")
+
+    cursor.execute('''SELECT %s from currtrtmt where serialno = %d
+    order by courseno desc'''% (query, sno))
+
+    rows = cursor.fetchall()
+    cursor.close()
+
+    courses = []
+    for row in rows:
+        course = txCourse(row)
+        courses.append(course)
+
+    claimNo = len(courses)
+    retarg = "<h2>Past Courses of Treatment - %d rows found</h2>"% claimNo
+
+    estimatesList = estimatesHistory.getEsts(sno)
+    
+    for course in courses:
+        retarg += course.toHtml()
+        estTableStarted = False
+        for est in estimatesList:
+            if est.courseno == course.courseno:
+                if not estTableStarted:                    
+                    retarg+='''<h3>Estimate for course number %d</h3>
+                    <table width="100%%" border="1">'''% est.courseno
+                    estTableStarted = True
+                    retarg += est.htmlHeader()
+                retarg += est.toHtmlRow()
+            
+        if estTableStarted:
+            retarg += '</table>\n'
+        else:
+            retarg += "no estimate found for courseno %d"% course.courseno
+        retarg += "<br /><hr /><br />"
+    #db.close()
+    return retarg
+
 
 if __name__ == "__main__":
     localsettings.initiate()
