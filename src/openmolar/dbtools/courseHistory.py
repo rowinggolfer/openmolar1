@@ -43,10 +43,6 @@ class txCourse():
         headers = [("Acceptance Date", self.accd),
         ("Completion Date", self.cmpd)]
         
-        if self.examt !="" and self.examd:
-            headers.append(
-            ("Exam", "%s dated - %s"% (self.examt, self.examd)),)
-        
         for header in headers:
             retarg += '<tr><th colspan = "2">%s</th><td>%s</td></tr>\n'% header
         
@@ -58,10 +54,18 @@ class txCourse():
                 bgcolor = ' bgcolor = "#eeeeee"'
                 header = "PLANNED / INCOMPLETE"
             else:
-                bgcolor = ""
+                bgcolor = ' bgcolor = "#ddeeee"'
                 header = "COMPLETED"
-                
-            for att in ("perio", 'xray', 'anaes', 'other', "custom"):
+                if self.examt !="":
+                    exam_details = self.examt
+                    if self.examd and self.examd != self.accd:
+                        exam_details += " dated - %s"% self.examd
+                    cells = "<th%s>%s</th><td%s>%s</td>"% (bgcolor, 
+                    _("Exam"), bgcolor, exam_details)
+                    rows.append(cells)
+
+            for att in (_("perio"), _('xray'), _('anaes'), 
+            _('other'), _("custom")):
                 if self.__dict__[att+planned] != "":
                     cells = "<th%s>%s</th><td%s>%s</td>"% (bgcolor, 
                     att, bgcolor, self.__dict__[att+planned])
@@ -73,8 +77,8 @@ class txCourse():
                 if val != "":
                     dentureWork += "%s - '%s' "% (att, val)
             if dentureWork != "":            
-                cells = "<th%s>Denture Work</th><td%s>%s</td>"% (
-                bgcolor, bgcolor, dentureWork)
+                cells = "<th%s>%s</th><td%s>%s</td>"% (
+                bgcolor, +_("Denture Work"), bgcolor, dentureWork)
         
                 rows.append(cells)
 
