@@ -30,15 +30,8 @@ def performPerio(parent):
     Dialog = QtGui.QDialog(parent)
     dl = hygTreatWizard.Ui_Dialog(Dialog)
     dl.setPractitioner(localsettings.clinicianNo)
- 
-    item, fee, ptfee, item_description = \
-    parent.pt.getFeeTable().userCodeWizard("SP")
-    
-    item2, fee2, ptfee2, item_description = \
-    parent.pt.getFeeTable().userCodeWizard("SP+")
-        
-    fee, ptfee, fee2, ptfee2
-    dl.setFees(((fee, ptfee), (fee2, ptfee2)))
+    if "N" in parent.pt.cset:
+        dl.db_radioButton.setEnabled(False)
     result = dl.getInput()
 
     if result:
@@ -50,8 +43,6 @@ def performPerio(parent):
         ##update values in case user has selected a different code/fee
         item, fee, ptfee, item_description = \
         parent.pt.getFeeTable().userCodeWizard(dl.trt)
-        
-        fee, ptfee = dl.fee, dl.ptFee
       
         foundInEsts = False
         for est in parent.pt.estimates:
@@ -61,9 +52,7 @@ def performPerio(parent):
                     foundInEsts = True
                     if est.ptfee != ptfee:
                         parent.advise(
-                        "different fee found in estimate - please check", 1)
-                    else:
-                        print "patient fees", est.ptfee, ptfee
+        _("different (outdated?) fee found in estimate - please check"), 1)
                     break
                 else:
                     parent.advise("need to split a multi unit perio item", 1)
@@ -75,11 +64,10 @@ def performPerio(parent):
 
         treatmentCode = "%s "% dl.trt
         if treatmentCode in parent.pt.periopl:
-            parent.pt.periopl = parent.pt.periopl.replace(treatmentCode, "", 1)
+            parent.pt.periopl = parent.pt.periopl.replace(
+            treatmentCode, "", 1)
         parent.pt.periocmp += treatmentCode
-        for note in dl.notes:
-            newnotes += note + ", "
-        parent.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+        
         if parent.ui.tabWidget.currentIndex() == 7:
             #-- it won't be ;)
             parent.load_newEstPage()

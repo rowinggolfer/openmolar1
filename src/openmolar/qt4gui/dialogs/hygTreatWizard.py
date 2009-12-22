@@ -15,14 +15,8 @@ class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
         self.dialog=dialog
         self.practitioners=localsettings.activedents+localsettings.activehygs
         self.dents_comboBox.addItems(self.practitioners)
-        self.fees=[] #to store the fees for the items offered 
-        self.ptFees=[] #to store the ptfees
-        self.signals()
         self.trt=None
         self.dent=None
-        self.notes=None
-        self.fee=None
-        self.ptFee=None
         
     def setPractitioner(self,arg):
         '''
@@ -34,29 +28,6 @@ class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
         except:
             self.dents_comboBox.setCurrentIndex(-1)
 
-    def setFees(self, arg):
-        '''
-        pass a tuple of tuples of fees
-        '''
-        for fee, ptFee in arg:
-            self.fees.append(fee)
-            self.ptFees.append(ptFee)
-            
-        self.treatmentChanged(True)
-    
-    def treatmentChanged(self,arg):
-        '''
-        called when the radio boxes are toggled
-        '''
-        
-        ##todo - this use of i looks barmy
-        i = 1
-        if arg:
-            i = 0
-        fee, ptfee = self.fees[i], self.ptFees[i]
-        self.fee_doubleSpinBox.setValue(fee/100)
-        self.ptFee_doubleSpinBox.setValue(ptfee/100)
-        
     def getInput(self):
         '''
         called to exec the dialog
@@ -66,6 +37,8 @@ class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
             if self.dialog.exec_():
                 if self.sp_radioButton.isChecked():
                     self.trt = "SP"
+                elif self.db_radioButton.isChecked():
+                   self.trt = "SP-"
                 elif self.extsp_radioButton.isChecked():
                    self.trt = "SP+"
                 elif self.twovisit1_radioButton.isChecked():
@@ -73,9 +46,6 @@ class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
                 else:    # self.twovisit1_radioButton.isChecked():
                     self.trt = "SP+/2"
                 self.dent = str(self.dents_comboBox.currentText())
-                self.notes = (self.getNotes())
-                self.fee = int(self.fee_doubleSpinBox.value()*100)
-                self.ptFee = int(self.ptFee_doubleSpinBox.value()*100)
                 if self.dent != "":
                     break
                 else:
@@ -85,20 +55,6 @@ class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
             else:
                 result = False
         return result
-        
-    def getNotes(self):
-        notes = []
-        if self.checkBox.checkState():
-            notes.append("OHI instruction given")
-        return tuple(notes)
-
-    def signals(self):
-        '''
-        only signal require is when the radio buttons are toggled
-        '''
-        QtCore.QObject.connect(self.sp_radioButton,
-        QtCore.SIGNAL("toggled (bool)"), self.treatmentChanged)
-        
 
 if __name__ == "__main__":
     localsettings.initiate(False)
@@ -107,10 +63,7 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
     ui = Ui_Dialog(Dialog)
     ui.setPractitioner(0)
-    ui.setFees(((2050,1800),(3760,2800),))
     if ui.getInput():
         print ui.trt
         print ui.dent
-        print ui.fee, ui.ptfee
-        print ui.notes
         
