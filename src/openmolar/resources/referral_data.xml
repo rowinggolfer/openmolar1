@@ -12,19 +12,20 @@
 </referral>
 
 <referral>
-<description>High School Dental Unit</description>
+<description>Inverness Dental Centre (GA kids..)</description>
 <surgeon_postal>The Community Dental Officer</surgeon_postal>
-<surgeon_greeting>Dear Sir/Madam</surgeon_greeting>
+<surgeon_greeting>Sir/Madam</surgeon_greeting>
 <address> 
-<line>High School Dental Unit</line>
-<line>Montague Row</line>
-<line>Inverness</line>
+<line>Inverness Dental Centre</line>
+<line>Centre For Health Science</line>
+<line>Old Perth Road</line>
+<line>Inverness IV2 3JH.</line>
 </address>
 </referral>
 <referral>
 <description>Oral Surgery - Raigmore</description>
 <surgeon_postal>Dr Duncan Railton</surgeon_postal>
-<surgeon_greeting>Duncan</surgeon_greeting>
+<surgeon_greeting>Dear Dr Railton</surgeon_greeting>
 <address>
 <line>The Acting Consultant</line>
 <line>Oral Surgery</line>

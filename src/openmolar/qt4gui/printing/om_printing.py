@@ -256,9 +256,10 @@ def printReferral(om_gui):
         om_gui.advise("no patient selected", 1)
         return
     desc=om_gui.ui.referralLettersComboBox.currentText()
-    if "Ortho" in desc:
-        orthoWizard(om_gui)
-        return
+    ##todo re-enable this
+    #if "Ortho" in desc:
+    #    orthoWizard(om_gui)
+    #    return
     html=referral.getHtml(desc, om_gui.pt)
     Dialog = QtGui.QDialog(om_gui)
     dl = Ui_enter_letter_text.Ui_Dialog()
