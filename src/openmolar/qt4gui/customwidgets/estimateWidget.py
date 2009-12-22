@@ -74,7 +74,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         '''
         icon = QtGui.QIcon()
         if separate:
-            icon.addPixmap(QtGui.QPixmap(":icons/separate.png"),
+            icon.addPixmap(QtGui.QPixmap(":icons/expand.png"),
             QtGui.QIcon.Normal, QtGui.QIcon.Off)
         else:
             icon.addPixmap(QtGui.QPixmap(":/eraser.png"),

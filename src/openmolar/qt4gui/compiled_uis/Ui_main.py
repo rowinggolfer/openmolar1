@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Dec 21 10:53:31 2009
+# Created: Tue Dec 22 11:05:57 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -2504,7 +2504,7 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(0)
+        self.main_tabWidget.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(9)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
@@ -2838,7 +2838,7 @@ class Ui_MainWindow(object):
         self.label_62.setText(_( u"Week"))
         self.label_63.setText(_( u"Month"))
         self.dayView_smart_radioButton.setText(_( u"Smart Selection"))
-        self.dayView_selectedBooks_radioButton.setText(_( u"Show Books  selected below"))
+        self.dayView_selectedBooks_radioButton.setText(_( u"Books as selected below"))
         self.aptOV_emergencycheckBox.setText(_( u"show emergency spaces"))
         self.aptOV_lunchcheckBox.setText(_( u"show lunch breaks"))
         self.weekView_outOfOffice_checkBox.setText(_( u"Ignore  Out-of-office"))

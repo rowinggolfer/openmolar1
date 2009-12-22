@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'estHeaderWidget.ui'
 #
-# Created: Thu Nov 19 21:47:07 2009
+# Created: Tue Dec 22 11:05:58 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -121,7 +121,7 @@ class Ui_Form(object):
         self.expand_pushButton.setMinimumSize(QtCore.QSize(0, 0))
         self.expand_pushButton.setLayoutDirection(QtCore.Qt.LeftToRight)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/expand.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/expand.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.expand_pushButton.setIcon(icon)
         self.expand_pushButton.setObjectName("expand_pushButton")
         self.horizontalLayout_2.addWidget(self.expand_pushButton)
