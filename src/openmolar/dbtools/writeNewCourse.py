@@ -36,7 +36,6 @@ def write(sno,dnt,accd):
             cno=currentMax+1
         else:
             cno=1
-        print cno
         query="insert into currtrtmt set serialno=%d,courseno=%s,%s "%(
                                                     sno,cno,query.strip(","))
         if localsettings.logqueries:
@@ -56,7 +55,7 @@ def write(sno,dnt,accd):
     cursor.close()
     #db.close()
 
-    return (result,cno)
+    return (result, cno)
 
 if __name__ == "__main__":
     write(31720,4,"20081225")

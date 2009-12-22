@@ -173,7 +173,7 @@ def all_changes(pt, pt_dbstate, changes):
     if trtchanges != "":
         sqlcommands['currtrtmt'] = \
         '''update currtrtmt SET %s where serialno=%d and courseno=%d'''%(
-                                trtchanges.strip(","),pt.serialno,pt.courseno)
+                            trtchanges.strip(","), pt.serialno, pt.courseno)
 
     if sqlcommands != {}:
         db=connect()

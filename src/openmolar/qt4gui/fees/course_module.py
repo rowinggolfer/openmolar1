@@ -57,12 +57,11 @@ def setupNewCourse(parent):
     dl = newCourse.course(Dialog, localsettings.ops.get(parent.pt.dnt1),
     localsettings.ops.get(cdnt), parent.pt.cset)
     
-    result = dl.getInput()
+    result, atts = dl.getInput()
 
     #-- (True, ['BW', 'AH', '', PyQt4.QtCore.QDate(2009, 5, 3)])
 
-    if result[0]:
-        atts = result[1]
+    if result:
         dnt1 = localsettings.ops_reverse.get(atts[0])
         if dnt1 != parent.pt.dnt1:
             contract_gui_module.changeContractedDentist(parent, atts[0])
@@ -74,13 +73,14 @@ def setupNewCourse(parent):
 
         accd = atts[3].toPyDate()
 
-        course = writeNewCourse.write(parent.pt.serialno,
+        result, courseno = writeNewCourse.write(parent.pt.serialno,
         localsettings.ops_reverse.get(atts[1]), accd)
         
-        if course[0]:
+        if result:
             parent.pt.blankCurrtrt()
-            parent.pt.courseno = course[1]
-            parent.pt.courseno0 = course[1]
+            parent.pt_dbstate.blankCurrtrt()
+            parent.pt.courseno = courseno
+            parent.pt.courseno0 = courseno
             parent.pt.setAccd(accd)
             parent.advise(_("Sucessfully started new course of treatment"))
             # force a recheck for the new course date

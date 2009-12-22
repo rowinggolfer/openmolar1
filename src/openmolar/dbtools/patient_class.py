@@ -491,9 +491,8 @@ self.serialno, self.courseno0))
         '''
         set the completion date (with a pydate)
         '''
-        print "setAccd called with date", cmpd
+        print "setCmpd called with date", cmpd
         self.cmpd = cmpd
-    
     
     def resetAllMonies(self):
         '''

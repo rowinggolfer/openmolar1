@@ -78,7 +78,7 @@ class txCourse():
                     dentureWork += "%s - '%s' "% (att, val)
             if dentureWork != "":            
                 cells = "<th%s>%s</th><td%s>%s</td>"% (
-                bgcolor, +_("Denture Work"), bgcolor, dentureWork)
+                bgcolor, _("Denture Work"), bgcolor, dentureWork)
         
                 rows.append(cells)
 
