@@ -35,9 +35,7 @@ def performPerio(parent):
     result = dl.getInput()
 
     if result:
-        newnotes = str(parent.ui.notesEnter_textEdit.toPlainText().toAscii())
-        newnotes += "%s performed by %s\n"% (dl.trt, dl.dent)
-        parent.pt.addHiddenNote("treatment", "Perio %s"% dl.trt)
+        parent.pt.addHiddenNote("treatment", "%s"% dl.trt)
         parent.updateHiddenNotesLabel()
 
         ##update values in case user has selected a different code/fee
@@ -74,6 +72,10 @@ def performPerio(parent):
             parent.load_treatTrees()
         else:
             parent.load_clinicalSummaryPage()
+        
+        newnotes = str(parent.ui.notesEnter_textEdit.toPlainText().toAscii())
+        newnotes += "%s %s %s\n"%(dl.trt,_("performed by"), dl.dent)
+        parent.ui.notesEnter_textEdit.setText(newnotes)
     else:
         parent.advise("Hyg Treatment not applied", 2)
         

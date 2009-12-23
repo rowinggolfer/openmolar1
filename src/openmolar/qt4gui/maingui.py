@@ -1313,18 +1313,16 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         then only pt's of that dentist show up
         '''
         if localsettings.clinicianNo != 0:
-            dents = (localsettings.clinicianInits, )
-            visibleItem = _("Today's Patients (%s)")% dents
+            visibleItem = _("Today's Patients")+ \
+            " (%s)"%localsettings.clinicianInits
         else:
-            dents = ("*", )
             visibleItem  =_("Today's Patients (ALL)")
-
+        
+        dents = (localsettings.clinicianNo, )        
         ptList = appointments.todays_patients(dents)
         if len(ptList) ==0:
             self.ui.daylistBox.hide()
             return
-
-        self.advise(_("loading today's patients"))
 
         self.ui.daylistBox.addItem(visibleItem)
 

@@ -39,9 +39,15 @@ class adayData():
         self.finish = QtCore.QTime(arg/100,arg%100)
 
     def sqlStart(self):
+        '''
+        returns an int
+        '''
         return int(self.start.toString("hmm"))
     
     def sqlFinish(self):
+        '''
+        returns an int
+        '''
         return int(self.finish.toString("hmm"))
 
     def setMemo(self,arg):

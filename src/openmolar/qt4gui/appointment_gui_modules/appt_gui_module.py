@@ -821,14 +821,6 @@ def triangles(om_gui, call_update=True):
             for book in om_gui.apptBookWidgets:
                 if book.setCurrentTime(currenttime) and call_update:
                     book.update()
-
-def getAppointmentData(d, dents="ALL", includeNonWorking = False):
-    '''
-    gets appointment data for date d.
-    '''
-    dents = appointments.getWorkingDents(d, dents, includeNonWorking)
-
-    return appointments.allAppointmentData(d, dents)
     
 def calendar(om_gui, sd):
     '''comes from click proceedures'''
@@ -1307,7 +1299,8 @@ def layout_weekView(om_gui):
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
             tuple(userCheckedClinicians), 
             not om_gui.ui.weekView_outOfOffice_checkBox.isChecked())
-            #--tuple like ((4, 840, 1900,"memo", 0) , (5, 830, 1400, "memo", 1))
+            #-- tuple like 
+            #-- ((4, 840, 1900,"memo", 0) , (5, 830, 1400, "memo", 1))
 
             for dent, start, end, memo, flag  in workingdents:
                 ov.dents.append(dent)

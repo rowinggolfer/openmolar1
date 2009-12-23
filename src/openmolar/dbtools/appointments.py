@@ -183,22 +183,30 @@ class printableAppt():
             self.name = name
 
     def setSerialno(self, arg):
-        '''set serialno'''
+        '''
+        set serialno
+        '''
         if arg != None:
             self.serialno = arg
 
     def setTreat(self, arg):
-        '''set what is planned for the appointment'''
+        '''
+        set what is planned for the appointment
+        '''
         if arg != None:
             self.treat = arg.strip()
 
     def setCset(self, arg):
-        '''cset is the TYPE of patient (P,N,I....)'''
+        '''
+        cset is the TYPE of patient (P,N,I....)
+        '''
         if arg != None:
             self.cset = arg
 
     def length(self):
-        '''returns the appointment length (in minutes)'''
+        '''
+        returns the appointment length (in minutes)
+        '''
         time1 = localsettings.minutesPastMidnight(self.start)
         time2 = localsettings.minutesPastMidnight(self.end)
         return time2-time1
@@ -217,15 +225,15 @@ def updateAday(uddate, arg):
     db = connect()
     cursor = db.cursor()
     result = omSQLresult()
-    query = '''update aday set start=%d, end=%d, flag=%s, memo="%s"
-    where adate=%s and apptix=%d'''% (arg.sqlStart(), arg.sqlFinish(),
-    arg.active, arg.memo.replace('"', '\"'),
-    localsettings.pyDatetoSQL(uddate), arg.apptix)
+    query = '''update aday set start=%s, end=%s, flag=%s, memo=%s
+where adate=%s and apptix=%s'''
+    values = (arg.sqlStart(), arg.sqlFinish(), arg.active, arg.memo, 
+    uddate, arg.apptix)
 
     if localsettings.logqueries:
-        print query
+        print query, values
 
-    result.setNumber(cursor.execute(query))
+    result.setNumber(cursor.execute(query, values))
 
     if result:
         db.commit()
@@ -273,38 +281,34 @@ def alterDay(arg):
 
     return result
 
-def todays_patients(dents=("*")):
+def todays_patients(dents):
     '''
-    connect to the db,
-    get todays patients for dents supplied as a tuple such as ("NW","HW")
-    or ("*") for all'''
-    #--TODO one day I should change all of these to ref to a dentist by number,
-    #--not by inits
+    get todays patients for dents supplied as a tuple such as (4,5)
+    or (0,) for all
+    used to populate the combobox on the front page
+    '''
     db = connect()
     cursor = db.cursor()
-    cond = ""
-    #--build the query
-    for dent in dents:
-        if dent != "*":
-            cond += "apptix=%s or "% localsettings.apptix[dent]
-            #converts from "NW" to 4 .... as above - this is dumb
-
-    if " or" in cond:
-        cond = "(%s) and"% cond[:cond.rindex(" or")]
-    fullquery = '''SELECT serialno,name FROM aslot
-    WHERE adate="%s" and %s serialno!=0 ORDER BY name'''% (
-    localsettings.sqlToday(),cond)
-
+    
+    if 0 in dents:
+        cond=""
+        values = (localsettings.currentDay(),)
+    else:
+        cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s )"
+        values = (localsettings.currentDay(),) + dents
+    
+    query = 'SELECT serialno,name FROM aslot WHERE adate=%s ' + cond + \
+    ' and serialno!=0 ORDER BY name'
+        
     if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery)
+        print query, values
+    cursor.execute(query, values)
     rows = cursor.fetchall()
     cursor.close()
-    #db.close()
     return rows
 
 @localsettings.debug
-def getWorkingDents(gwdate, dents="ALL", include_non_working=True):
+def getWorkingDents(adate, dents=(0,), include_non_working=True):
     '''
     dentists are part time, or take holidays...this proc takes a date,
     and optionally a tuple of dents
@@ -315,24 +319,22 @@ def getWorkingDents(gwdate, dents="ALL", include_non_working=True):
     
     db = connect()
     cursor = db.cursor()
-    if dents != "ALL":
-        #-- dents are numbers here..... I need to get consistent :(
-        mystr = " AND ("
-        for dent in dents:
-            mystr += "apptix=%d OR "% dent
-        mystr = mystr[0:mystr.rindex(" OR")] + ")"
+    if 0 in dents:
+        cond = "AND apptix != 0 "
+        values = (adate,)
     else:
-        mystr = "AND apptix != 0"
+        cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s ) "
+        values = (adate,) + dents
     
     if not include_non_working:
-        mystr = " AND (flag=1 or flag=2) %s"% mystr
+        cond += " AND (flag=1 or flag=2) %s"% mystr
 
     query = 'SELECT apptix,start,end,memo,flag FROM aday WHERE adate=%s ' \
-    + mystr
+    + cond
     
     if localsettings.logqueries:
-        print query, gwdate
-    cursor.execute(query, (gwdate,))
+        print query, values
+    cursor.execute(query, values)
 
     rows = cursor.fetchall()
     cursor.close()

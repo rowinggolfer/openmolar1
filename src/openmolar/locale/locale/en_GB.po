@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-11-27 02:18+0000\n"
-"PO-Revision-Date: 2009-12-02 22:15+0000\n"
-"Last-Translator: Jonathon Hodges <Unknown>\n"
+"POT-Creation-Date: 2009-12-21 00:01+0000\n"
+"PO-Revision-Date: 2009-12-22 14:45+0000\n"
+"Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
 "Language-Team: English (United Kingdom) <en_GB@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-03 04:47+0000\n"
+"X-Launchpad-Export-Date: 2009-12-23 04:34+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/daybook.py:54
@@ -40,7 +40,7 @@ msgid "Message"
 msgstr "Message"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:14
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2727
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2710
 msgid "Date"
 msgstr "Date"
 
@@ -79,14 +79,14 @@ msgstr "For a more secure setup, you should move this file to"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:130
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:139
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1592
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:568
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:37
 msgid "Error"
 msgstr "Error"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:132
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:83
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1589
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:565
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:34
 msgid "Advisory"
 msgstr "Advisory"
@@ -255,19 +255,19 @@ msgstr ""
 "<p>DATABASE ERROR </p>\n"
 "<p>application cannot run</p>Error %s"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:197
+#: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:220
 msgid "<h1>Under Treatment - Current Estimate</h1>"
 msgstr "<h1>Under Treatment - Current Estimate</h1>"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:199
+#: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:222
 msgid "<h1>Estimate from previous course</h1>"
 msgstr "<h1>Estimate from previous course</h1>"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:202
+#: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:225
 msgid "No estimate data found</body></html>"
 msgstr "No estimate data found</body></html>"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:205
+#: /home/neil/openmolar/openmolar/src/openmolar/ptModules/estimates.py:228
 msgid ""
 "<table width =\"100%\" border=\"1\">\n"
 "    <tr><td colspan=\"7\"><h3>ESTIMATE</h3></td></tr>\n"
@@ -289,7 +289,8 @@ msgstr "Previous Course"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:152
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:155
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:158
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:71
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:85
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:537
 msgid "Start"
 msgstr "Start"
 
@@ -309,28 +310,28 @@ msgstr "COMPLETED"
 msgid "PLAN"
 msgstr "PLAN"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:235
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:354
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:417
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:437
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:709
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1543
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:236
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:355
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:418
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:438
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:710
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1549
 msgid "TBA"
 msgstr "TBA"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:330
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:331
 msgid "No appointment selected"
 msgstr "No appointment selected"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:747
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:748
 msgid "removing appointment dentist"
 msgstr "removing appointment dentist"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1493
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1499
 msgid "unable to block - has the book been altered elsewhere?"
 msgstr "unable to block - has the book been altered elsewhere?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1512
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1518
 msgid "unable to make appointment - has the book been altered elsewhere?"
 msgstr "unable to make appointment - has the book been altered elsewhere?"
 
@@ -379,7 +380,7 @@ msgid "Open a Day"
 msgstr "Open a Day"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:147
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:70
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:84
 msgid "Clinician"
 msgstr "Clinician"
 
@@ -402,7 +403,7 @@ msgstr "Morning Emergency Slot"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:153
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:156
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:159
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:72
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:86
 msgid "Finish"
 msgstr "Finish"
 
@@ -420,7 +421,7 @@ msgid "Day Finish"
 msgstr "Day Finish"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:60
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2929
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2924
 msgid "Appointment Tools"
 msgstr "Appointment Tools"
 
@@ -450,8 +451,8 @@ msgid "Insert regular blocks"
 msgstr "Insert regular blocks"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:67
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:64
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2921
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:78
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2916
 msgid "&Quit"
 msgstr "&Quit"
 
@@ -464,6 +465,7 @@ msgid "Add a combination of proposed appointments to the patients diary."
 msgstr "Add a combination of proposed appointments to the patients diary."
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptWizardItem.py:43
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2838
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_memoItem.py:40
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_memoitem.py:40
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:296
@@ -478,13 +480,12 @@ msgstr "TextLabel"
 msgid "Add"
 msgstr "Add"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:69
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:83
 msgid "Clinicians - DATE"
 msgstr "Clinicians - DATE"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:73
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2677
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2839
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:87
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2660
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_showMemo.py:47
 msgid "Memo"
 msgstr "Memo"
@@ -579,8 +580,8 @@ msgstr "Insert a block into a book for a range of dates."
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:100
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_daylist_print.py:104
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2852
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2859
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2846
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2853
 msgid "Start Date"
 msgstr "Start Date"
 
@@ -594,11 +595,11 @@ msgstr "Time"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:104
 msgid "Text to Apply"
-msgstr ""
+msgstr "Text to apply"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:105
 msgid "Days to Apply"
-msgstr ""
+msgstr "Days to apply"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:106
 msgid "Clinicians"
@@ -651,9 +652,12 @@ msgstr "Partial (co-chrome)"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:121
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py:127
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:69
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:616
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_medhist.py:171
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_pt_task.py:95
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothPerioProps.py:129
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:42
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:48
 msgid "Other"
 msgstr "Other"
 
@@ -887,6 +891,8 @@ msgid "Choose"
 msgstr "Choose"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:62
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:40
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:46
 msgid "Gold"
 msgstr "Gold"
 
@@ -903,6 +909,7 @@ msgid "Temporary"
 msgstr "Temporary"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:66
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:47
 msgid "Lava"
 msgstr "Lava"
 
@@ -911,6 +918,8 @@ msgid "Fortress"
 msgstr "Fortress"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_crownChoice.py:68
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:39
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:45
 msgid "Bonded"
 msgstr "Bonded"
 
@@ -950,8 +959,8 @@ msgid "Specify Dates and Practitioners for a Daylist Print Run"
 msgstr "Specify Dates and Practitioners for a Daylist Print Run"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_daylist_print.py:105
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2853
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2860
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2847
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2854
 msgid "End Date"
 msgstr "End Date"
 
@@ -1039,8 +1048,8 @@ msgid "Split Items"
 msgstr "Split Items"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estimateItemWidget.py:140
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2733
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2754
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2716
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2737
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newBPE.py:107
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newBPE.py:113
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newBPE.py:119
@@ -1069,8 +1078,8 @@ msgid "1000.00"
 msgstr "1000.00"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estimateItemWidget.py:148
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2778
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2807
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2767
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2797
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/toothprop_fulledit.py:34
 msgid "Completed"
 msgstr "Completed"
@@ -1096,12 +1105,13 @@ msgid "Exam Date"
 msgstr "Exam Date"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_exam_wizard.py:126
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:561
 msgid "Dentist"
 msgstr "Dentist"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_exam_wizard.py:127
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_hygenist_wizard.py:132
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2774
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2763
 msgid "Notes"
 msgstr "Notes"
 
@@ -1150,30 +1160,48 @@ msgstr "Add Fee Table Item"
 msgid "Patient Contribution"
 msgstr "Patient Contribution"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:60
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:72
 msgid "FeeAdjuster"
 msgstr "FeeAdjuster"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:61
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2913
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:73
+msgid "Delete Rows"
+msgstr "Delete Rows"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:74
+msgid "Add/Insert Rows"
+msgstr "Add/Insert Rows"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:75
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2908
 msgid "&File"
 msgstr "&File"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:62
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:76
 msgid "&About"
 msgstr "&About"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:63
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:77
 msgid "&Save Changes"
 msgstr "&Save Changes"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:65
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:79
 msgid "Help"
 msgstr "Help"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:66
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:80
 msgid "&Version"
 msgstr "&Version"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_adjuster.py:81
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2713
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2720
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2809
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2851
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2859
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2871
+msgid "Print"
+msgstr "Print"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_finalise_appt_time.py:64
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_finalise_appt_time.py:67
@@ -1245,433 +1273,707 @@ msgstr "Standard Fee"
 msgid "Charge to Patient"
 msgstr "Charge to Patient"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2633
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:533
+msgid "MainWindow"
+msgstr "MainWindow"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:534
+msgid "What do you want to do?"
+msgstr "What do you want to do?"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:535
+msgid "Create a New database (from the default template)"
+msgstr "Create a New database (from the default template)"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:536
+msgid "Modify an existing openmolar database"
+msgstr "Modify an existing openmolar database"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:538
+msgid "Practice Name"
+msgstr "Practice Name"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:539
+msgid "Used in receipts, appointment cards etc."
+msgstr "Used in receipts, appointment cards etc."
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:540
+msgid "Address Line 1"
+msgstr "Address Line 1"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:541
+msgid "Address Line 2"
+msgstr "Address Line 2"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:542
+msgid "Address Line 3"
+msgstr "Address Line 3"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:543
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2659
+msgid "Town"
+msgstr "Town"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:544
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2661
+msgid "County"
+msgstr "County"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:545
+msgid "Postcode / Zip"
+msgstr "Postcode / Zip"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:546
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:147
+msgid "Telephone"
+msgstr "Telephone"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:547
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2646
+msgid "Fax"
+msgstr "Fax"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:548
+msgid "Website"
+msgstr "Website"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:549
+msgid "Email"
+msgstr "Email"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:550
+msgid "Practice Details"
+msgstr "Practice Details"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:551
+msgid "The Following users can login to the application"
+msgstr "The Following users can login to the application"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:552
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:557
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:568
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:573
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:581
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:586
+msgid "Initials"
+msgstr "Initials"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:553
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:558
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:569
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:574
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:582
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:587
+msgid "Name"
+msgstr "Name"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:554
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:559
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:570
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:583
+msgid "User Group"
+msgstr "User Group"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:555
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:571
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:584
+msgid "Active?"
+msgstr "Active?"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:556
+msgid "Add a User"
+msgstr "Add a User"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:560
+msgid "Standard User"
+msgstr "Standard User"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:562
+msgid "Hygienist"
+msgstr "Hygienist"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:563
+msgid "Receptionist"
+msgstr "Receptionist"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:564
+msgid "Active User"
+msgstr "Active User"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:565
+msgid "Users"
+msgstr "Users"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:566
+msgid ""
+"The Following dentists have notes in this database\n"
+"(note - dentists should not be removed from the database, as this could "
+"create lookup issues for cashbooks and notes) "
+msgstr ""
+"The Following dentists have notes in this database\n"
+"(note - dentists should not be removed from the database, as this could "
+"create lookup issues for cashbooks and notes) "
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:572
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:585
+msgid "Add a Dentist"
+msgstr "Add a Dentist"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:575
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:588
+msgid "Registration"
+msgstr "Registration"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:576
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:589
+msgid "Active Appointment Book"
+msgstr "Active Appointment Book"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:577
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:590
+msgid "Patients can be assigned to this dentist"
+msgstr "Patients can be assigned to this dentist"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:578
+msgid "Dentists"
+msgstr "Dentists"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:579
+msgid ""
+"The Following hygienists have notes in this database\n"
+"(note - hygienists should not be removed from the database, as this could "
+"create lookup issues for cashbooks and notes) "
+msgstr ""
+"The Following hygienists have notes in this database\n"
+"(note - hygienists should not be removed from the database, as this could "
+"create lookup issues for cashbooks and notes) "
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:591
+msgid "Hygienists"
+msgstr "Hygienists"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:592
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
+msgid "Monday"
+msgstr "Monday"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:593
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
+msgid "Tuesday"
+msgstr "Tuesday"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:594
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/calendars.py:311
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
+msgid "Wednesday"
+msgstr "Wednesday"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:595
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
+msgid "Thursday"
+msgstr "Thursday"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:596
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:410
+msgid "Friday"
+msgstr "Friday"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:597
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:410
+msgid "Saturday"
+msgstr "Saturday"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:598
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:410
+msgid "Sunday"
+msgstr "Sunday"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:599
+msgid "Practice Hours"
+msgstr "Practice Hours"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:600
+msgid "The Following Categories are used in this database"
+msgstr "The Following Categories are used in this database"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:601
+msgid "Category"
+msgstr "Category"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:602
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:608
+msgid "Category Name"
+msgstr "Category Name"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:603
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:609
+msgid "Image"
+msgstr "Image"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:604
+msgid "Age Category"
+msgstr "Age Category"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:605
+msgid "Minimum Age"
+msgstr "Minimum Age"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:606
+msgid "Maximum Age"
+msgstr "Maximum Age"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:607
+msgid "Add a Category"
+msgstr "Add a Category"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:610
+msgid "..."
+msgstr "..."
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:611
+msgid "Age Limit"
+msgstr "Age Limit"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:612
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:175
+msgid "None"
+msgstr "None"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:613
+msgid "Under 18"
+msgstr "Under 18"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:614
+msgid "Adult"
+msgstr "Adult"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:615
+msgid "OAP"
+msgstr "OAP"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:617
+msgid "Category Letter"
+msgstr "Category Letter"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:618
+msgid "Category Active"
+msgstr "Category Active"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:619
+msgid "Patient Categories"
+msgstr "Patient Categories"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:620
+msgid "Treatments and Fees"
+msgstr "Treatments and Fees"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:621
+msgid "Referral Centres"
+msgstr "Referral Centres"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2616
 msgid "Open Molar - YOUR dental database application"
 msgstr "Open Molar - YOUR dental database application"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2634
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2617
 msgid "Exit the Current Patient Record."
 msgstr "Exit the Current Patient Record."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2635
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2618
 msgid "Esc"
 msgstr "Esc"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2636
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2619
 msgid "Add a New Patient to the database."
 msgstr "Add a New Patient to the database."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2637
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2887
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2904
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2620
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2881
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2899
 msgid "Click on this Button to search for in patient in your database."
 msgstr "Click on this Button to search for in patient in your database."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2638
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2888
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2905
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2621
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2882
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2900
 msgid "Find"
 msgstr "Find"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2639
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2889
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2906
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2622
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2883
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2901
 msgid "Ctrl+F"
 msgstr "Ctrl+F"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2640
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2623
 msgid "This cycles back through the history of records loaded today."
 msgstr "This cycles back through the history of records loaded today."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2641
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2624
 msgid "Reload the patient from the database."
 msgstr "Reload the patient from the database."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2642
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2625
 msgid "Ctrl+R"
 msgstr "Ctrl+R"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2643
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2626
 msgid "This cycles forwards through the history of records loaded today."
 msgstr "This cycles forwards through the history of records loaded today."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2644
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2627
 msgid ""
 "Show patients who live at the same address, or who have a similar name."
 msgstr ""
 "Show patients who live at the same address, or who have a similar name."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2645
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2628
 msgid "&Related"
 msgstr "&Related"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2646
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2629
 msgid "Ctrl+G"
 msgstr "Ctrl+G"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2647
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2630
 msgid "A drop down box of all patients who have an appointment today."
 msgstr "A drop down box of all patients who have an appointment today."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2648
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2803
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2631
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2793
 msgid "Details"
 msgstr "Details"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2649
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2632
 msgid "Title"
 msgstr "Title"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2650
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2633
 msgid "Sex"
 msgstr "Sex"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2651
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2634
 msgid "M"
 msgstr "M"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2652
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2635
 msgid "F"
 msgstr "F"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2653
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2636
 msgid "Tel (home)"
 msgstr "Tel (home)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2654
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2637
 msgid "More Fields are available. Click Here to Edit."
 msgstr "More Fields are available. Click Here to Edit."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2655
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2638
 msgid "More"
 msgstr "More"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2656
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2639
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:136
 msgid "First Name"
 msgstr "First Name"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2657
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2640
 msgid "Tel (work)"
 msgstr "Tel (work)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2658
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2641
 msgid "Surname"
 msgstr "Surname"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2659
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2642
 msgid "Tel (mob)"
 msgstr "Tel (mob)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2660
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2643
 msgid "send an sms"
 msgstr "send an sms"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2661
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2644
 msgid "sms"
 msgstr "sms"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2662
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2645
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:144
 msgid "Date of Birth"
 msgstr "Date of Birth"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2663
-msgid "Fax"
-msgstr "Fax"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2664
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2647
 msgid "send a fax"
 msgstr "send a fax"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2665
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2648
 msgid "fax"
 msgstr "fax"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2666
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2649
 msgid "Address1"
 msgstr "Address1"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2667
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2650
 msgid "email1"
 msgstr "email1"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2668
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2672
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2651
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2655
 msgid "send an email"
 msgstr "send an email"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2669
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2673
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2652
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2656
 msgid "email"
 msgstr "email"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2670
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2653
 msgid "Address2"
 msgstr "Address2"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2671
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2654
 msgid "email2"
 msgstr "email2"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2674
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2657
 msgid "Address3"
 msgstr "Address3"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2675
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2658
 msgid "Occupation"
 msgstr "Occupation"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2676
-msgid "Town"
-msgstr "Town"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2678
-msgid "County"
-msgstr "County"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2679
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2662
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:149
 msgid "Postcode"
 msgstr "Postcode"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2680
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2663
 msgid "New Patients"
 msgstr "New Patients"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2681
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2664
 msgid "Use the Sname and Address details from the previous patient."
 msgstr "Use the Sname and Address details from the previous patient."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2682
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2665
 msgid "Default Sname / Address"
 msgstr "Default Sname / Address"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2683
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2666
 msgid "Not implemented yet."
 msgstr "Not implemented yet."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2684
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2667
 msgid "Family"
 msgstr "Family"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2685
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2668
 msgid "Higlighted Fields are Mandatory for New Patients"
 msgstr "Higlighted Fields are Mandatory for New Patients"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2686
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2669
 msgid "Patient Details"
 msgstr "Patient Details"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2687
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2670
 msgid "Pt is registered with Dentist"
 msgstr "Pt is registered with Dentist"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2688
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2671
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newCourse.py:67
 msgid "Course Type"
 msgstr "Course Type"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2689
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2672
 msgid "Status"
 msgstr "Status"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2690
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2673
 msgid "Active"
 msgstr "Active"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2691
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2674
 msgid "Moved Away"
 msgstr "Moved Away"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2692
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2675
 msgid "Deceased"
 msgstr "Deceased"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2693
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2676
 msgid "Bad Debt"
 msgstr "Bad Debt"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2694
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2677
 msgid "No More Appts"
 msgstr "No More Appts"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2695
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2678
 msgid "Write Off Bad Debt"
 msgstr "Write Off Bad Debt"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2696
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2679
 msgid "This label is for displaying Private contractual stuff"
 msgstr "This label is for displaying Private contractual stuff"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2697
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2700
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2703
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2707
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2680
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2683
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2686
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2690
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2839
 msgid "Edit"
 msgstr "Edit"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2698
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2681
 msgid "Private"
 msgstr "Private"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2699
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2682
 msgid "This label is for displaying HDP contractual stuff"
 msgstr "This label is for displaying HDP contractual stuff"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2701
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2684
 msgid "Highland Dental Plan"
 msgstr "Highland Dental Plan"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2702
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2685
 msgid "This label is for displaying NHS contractual stuff"
 msgstr "This label is for displaying NHS contractual stuff"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2704
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2687
 msgid "View Claims History"
 msgstr "View Claims History"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2705
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2750
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2688
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2733
 msgid "NHS"
 msgstr "NHS"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2706
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2689
 msgid "No Details of Pt's Registered Dentist Found"
 msgstr "No Details of Pt's Registered Dentist Found"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2708
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2691
 msgid "Registered Elsewhere"
 msgstr "Registered Elsewhere"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2709
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2692
 msgid "Contract"
 msgstr "Contract"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2710
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2693
 msgid "Letters TO the patient"
 msgstr "Letters TO the patient"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2711
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2694
 msgid " Custom Letter to the patient"
 msgstr " Custom Letter to the patient"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2712
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2695
 msgid "Recall management"
 msgstr "Recall management"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2713
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2696
 msgid "Set the date for a recall to be generated automatically"
 msgstr "Set the date for a recall to be generated automatically"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2714
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2697
 msgid "Date Shortcuts"
 msgstr "Date Shortcuts"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2715
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2698
 msgid "1 Month hence"
 msgstr "1 Month hence"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2716
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2699
 msgid "3 Months hence"
 msgstr "3 Months hence"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2717
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2700
 msgid "6 Months hence"
 msgstr "6 Months hence"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2718
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2701
 msgid "12 Months hence"
 msgstr "12 Months hence"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2719
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2702
 msgid "Print a recall saying the patient is due now."
 msgstr "Print a recall saying the patient is due now."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2720
-msgid "Print letter Now"
-msgstr "Print letter Now"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2703
+msgid "Print Recall Now"
+msgstr "Print Recall Now"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2721
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2872
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2704
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2866
 msgid "Accounts"
 msgstr "Accounts"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2722
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2705
 msgid "\"A\" letter"
 msgstr "\"A\" letter"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2723
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2706
 msgid "\"B\" letter"
 msgstr "\"B\" letter"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2724
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2707
 msgid "\"C\" letter"
 msgstr "\"C\" letter"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2725
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2708
 msgid "Print A Statement of Account"
 msgstr "Print A Statement of Account"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2726
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2709
 msgid "Duplicate Receipt"
 msgstr "Duplicate Receipt"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2728
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2711
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_raiseCharge.py:57
 msgid "Amount"
 msgstr "Amount"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2729
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2712
 msgid "Print a receipt - useful for duplicates."
 msgstr "Print a receipt - useful for duplicates."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2730
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2737
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2817
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2838
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2841
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2843
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2845
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2857
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2865
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2877
-msgid "Print"
-msgstr "Print"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2731
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2714
 msgid "Previous Correspondence"
 msgstr "Previous Correspondence"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2732
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2715
 msgid "Generated By OpenMolar"
-msgstr ""
+msgstr "Generated By OpenMolar"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2734
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2717
 msgid "Imported into database"
-msgstr ""
+msgstr "Imported into database"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2735
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2718
 msgid "Import A Document"
-msgstr ""
+msgstr "Import A Document"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2736
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2719
 msgid "Referrals (Letters about the patient)"
 msgstr "Referrals (Letters about the patient)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2738
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2721
 msgid "Export this record card"
 msgstr "Export this record card"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2739
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2722
 msgid "Print a patient's static chart."
 msgstr "Print a patient's static chart."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2740
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2723
 msgid "Print the Patient's static Chart"
 msgstr "Print the Patient's static Chart"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2741
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2724
 msgid ""
 "Print a summary of the patient's notes (for them to take on). Includes No "
 "fee details."
@@ -1679,183 +1981,207 @@ msgstr ""
 "Print a summary of the patient's notes (for them to take on). Includes No "
 "fee details."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2742
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2725
 msgid "Print A Summary of the Notes"
 msgstr "Print A Summary of the Notes"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2743
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2726
 msgid ""
 "Print a summary of the patient's notes. Includes FEE and ESTIMATE details."
 msgstr ""
 "Print a summary of the patient's notes. Includes FEE and ESTIMATE details."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2744
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2727
 msgid "Print Detailed Notes"
 msgstr "Print Detailed Notes"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2745
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2728
 msgid "Correspondence"
 msgstr "Correspondence"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2746
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2729
 msgid "Account"
 msgstr "Account"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2747
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2730
 msgid "Print &Estimate"
 msgstr "Print &Estimate"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2748
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2731
 msgid "Print &Account"
 msgstr "Print &Account"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2749
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2732
 msgid "Take &Payment"
 msgstr "Take &Payment"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2751
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2734
 msgid "Print A GP17"
 msgstr "Print A GP17"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2752
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2735
 msgid "Custom Estimate on File"
 msgstr "Custom Estimate on File"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2753
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2736
 msgid "Patient's Diary"
 msgstr "Patient's Diary"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2755
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2738
 msgid "&New"
 msgstr "&New"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2756
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2739
 msgid "Schedule"
 msgstr "Schedule"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2757
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2740
 msgid "Modify"
 msgstr "Modify"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2758
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2741
 msgid "Find in Book"
 msgstr "Find in Book"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2759
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2742
 msgid "Print Card"
 msgstr "Print Card"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2760
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2743
 msgid "Clear/Cancel"
 msgstr "Clear/Cancel"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2761
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2744
 msgid "Appointment Shortcuts"
 msgstr "Appointment Shortcuts"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2762
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2745
 msgid "Reception"
 msgstr "Reception"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2763
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2812
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:427
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1389
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2746
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2802
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:411
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1014
 msgid "BPE"
 msgstr "BPE"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2764
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2811
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2747
+msgid "Update the Basic Perio Exam (CPITN) score"
+msgstr "Update the Basic Perio Exam (CPITN) score"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2748
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2801
 msgid "New"
 msgstr "New"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2765
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2749
+msgid "perform a clinical exam"
+msgstr "perform a clinical exam"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2750
 msgid "Exam"
 msgstr "Exam"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2766
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2751
+msgid "add x-rays to the patient's current course."
+msgstr "add x-rays to the patient's current course."
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2752
+msgid "X-ray"
+msgstr "X-ray"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2753
+msgid "perform common perio treatments"
+msgstr "perform common perio treatments"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2754
 msgid "Hyg"
 msgstr "Hyg"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2767
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2755
 msgid "Close This Course"
 msgstr "Close This Course"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2768
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2756
+msgid "check / update the patients medical history"
+msgstr "check / update the patients medical history"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2757
 msgid "Med Notes"
 msgstr "Med Notes"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2769
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2758
 msgid "Clinical Summary"
 msgstr "Clinical Summary"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2770
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2759
 msgid "Verbosity Level"
 msgstr "Verbosity Level"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2771
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2760
 msgid "minimum"
 msgstr "minimum"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2772
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2761
 msgid "medium"
 msgstr "medium"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2773
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2762
 msgid "maximum"
 msgstr "maximum"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2775
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2764
 msgid "Charts View"
 msgstr "Charts View"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2776
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2765
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothProps.py:243
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/toothprop_fulledit.py:32
 msgid "Static"
 msgstr "Static"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2777
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2805
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2766
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2795
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothProps.py:251
 msgid "Plan"
 msgstr "Plan"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2779
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2768
 msgid "Charts"
 msgstr "Charts"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2780
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2769
 msgid "Estimate"
 msgstr "Estimate"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2781
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2770
 msgid "Course Management"
 msgstr "Course Management"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2782
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2771
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newCourse.py:66
 msgid "Course Dentist"
 msgstr "Course Dentist"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2783
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2772
 msgid "New Course Of Treatment"
 msgstr "New Course Of Treatment"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2784
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2404
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2773
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1727
 msgid "Close Course"
 msgstr "Close Course"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2785
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2774
 msgid "Estimate Management"
 msgstr "Estimate Management"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2786
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2775
 msgid "Custom Estimate Letter"
 msgstr "Custom Estimate Letter"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2787
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2776
 msgid ""
 "Use this feature to re-price all items in the \"tooth\" category of "
 "treatments. i.e all those which appear on the charts.\n"
@@ -1867,439 +2193,481 @@ msgstr ""
 "\n"
 "Note - this will not remove items which are currently there. "
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2790
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2779
 msgid "ReCalculate Estimate"
 msgstr "ReCalculate Estimate"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2791
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2780
+msgid "Apply Exemption"
+msgstr "Apply Exemption"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2781
 msgid "Standard View"
 msgstr "Standard View"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2792
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2782
 msgid "Expanded View"
 msgstr "Expanded View"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2793
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2783
 msgid "Plan/Completed (standard)"
 msgstr "Plan/Completed (standard)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2794
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2784
 msgid "Plan/Completed (expanded)"
 msgstr "Plan/Completed (expanded)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2795
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2785
 msgid "Treatment Planning"
 msgstr "Treatment Planning"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2796
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2786
 msgid "Perform Exam"
 msgstr "Perform Exam"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2797
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2787
 msgid "Perio"
 msgstr "Perio"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2798
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2788
 msgid "X-Rays"
 msgstr "X-Rays"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2799
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2789
 msgid "Dentures"
 msgstr "Dentures"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2800
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2790
 msgid "Ortho"
 msgstr "Ortho"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2801
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2791
 msgid "Other Tx"
 msgstr "Other Tx"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2802
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2792
 msgid "Add Custom Item"
 msgstr "Add Custom Item"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2808
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2798
 msgid "Estimate/Plan"
 msgstr "Estimate/Plan"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2809
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2799
 msgid "Choose Data"
 msgstr "Choose Data"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2810
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2800
 msgid "Chart Date"
 msgstr "Chart Date"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2813
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2803
 msgid "Perio Charts"
 msgstr "Perio Charts"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2814
-msgid "History Options"
-msgstr "History Options"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2804
+msgid "Past Payments"
+msgstr "Past Payments"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2815
-msgid "debug"
-msgstr "debug"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2805
+msgid "Past Treatment"
+msgstr "Past Treatment"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2816
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2806
+msgid "Courses"
+msgstr "Courses"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2807
+msgid "Estimates"
+msgstr "Estimates"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2808
+msgid "NHS Claims"
+msgstr "NHS Claims"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2810
+msgid "Custom Options"
+msgstr "Custom Options"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2811
+msgid "debug tools"
+msgstr "debug tools"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2812
 msgid "changes only"
 msgstr "changes only"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2818
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2813
 msgid "History"
 msgstr "History"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2819
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2814
 msgid "Memos"
 msgstr "Memos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2820
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2815
 msgid "Enter Notes."
 msgstr "Enter Notes."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2821
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2816
 msgid "Today's Notes"
 msgstr "Today's Notes"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2822
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2817
 msgid "Save the changes made to this record."
 msgstr "Save the changes made to this record."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2823
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2818
 msgid "Save Changes"
 msgstr "Save Changes"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2824
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2819
 msgid "Ctrl+S"
 msgstr "Ctrl+S"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2825
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2850
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2820
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2835
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2844
 msgid "Tasks"
 msgstr "Tasks"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2826
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2821
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_saveMemo.py:84
 msgid "PhraseBook"
 msgstr "PhraseBook"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2827
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2822
 msgid "Ins"
 msgstr "Ins"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2828
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2823
 msgid "Patient Database"
 msgstr "Patient Database"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2829
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2824
 msgid "Go To Today"
 msgstr "Go To Today"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2830
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2825
 msgid "Week"
 msgstr "Week"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2831
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2826
 msgid "Month"
 msgstr "Month"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2832
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2827
+msgid "Smart Selection"
+msgstr "Smart Selection"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2828
+msgid "Show Books  selected below"
+msgstr "Show Books  selected below"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2829
 msgid "show emergency spaces"
 msgstr "show emergency spaces"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2833
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2830
 msgid "show lunch breaks"
 msgstr "show lunch breaks"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2834
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2831
+msgid "Ignore  Out-of-office"
+msgstr "Ignore  Out-of-office"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2832
 msgid "show appointments"
 msgstr "show appointments"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2835
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2833
+msgid "Month Options"
+msgstr "Month Options"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2834
+msgid "Year"
+msgstr "Year"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2836
 msgid "Font Size"
 msgstr "Font Size"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2836
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2837
 msgid "View Mode"
 msgstr "View Mode"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2837
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2840
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2842
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2844
-msgid "Book"
-msgstr "Book"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2846
 msgid "Day View"
 msgstr "Day View"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2847
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2841
 msgid "Week View"
 msgstr "Week View"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2848
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2842
 msgid "Month View"
 msgstr "Month View"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2849
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2843
 msgid "Year View"
 msgstr "Year View"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2851
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2845
 msgid "Appointments / Diary"
 msgstr "Appointments / Diary"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2854
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2861
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2848
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2855
 msgid "Registered Dentist"
 msgstr "Registered Dentist"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2855
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2863
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2849
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2857
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothProps.py:237
 msgid "Go"
 msgstr "Go"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2856
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2864
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2850
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2858
 msgid "Print the Data"
 msgstr "Print the Data"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2858
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2852
 msgid "Cashbook"
 msgstr "Cashbook"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2862
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2856
 msgid "Treating Dentist / Hygenist"
 msgstr "Treating Dentist / Hygenist"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2866
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2860
 msgid "Daybook"
 msgstr "Daybook"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2868
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2876
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2862
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2870
 msgid "Load Table"
 msgstr "Load Table"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2869
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2863
 msgid "Print Selected Letters"
 msgstr "Print Selected Letters"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2870
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2864
 msgid "TOTAL OUTSTANDING"
 msgstr "TOTAL OUTSTANDING"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2871
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2865
 msgid "Print Table"
 msgstr "Print Table"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2873
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2867
 msgid "Recall Letters"
 msgstr "Recall Letters"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2874
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2868
 msgid "MM/yyyy"
 msgstr "MM/yyyy"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2875
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2869
 msgid "choose month"
 msgstr "choose month"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2878
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2872
 msgid "Bulk Mailings"
-msgstr ""
+msgstr "Bulk Mailings"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2879
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2873
 msgid "Show All Fee Scales"
 msgstr "Show All Fee Scales"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2880
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2874
 msgid "Private FeeScale"
 msgstr "Private FeeScale"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2881
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2875
 msgid "NHS FeeScale 2008"
 msgstr "NHS FeeScale 2008"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2882
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2876
 msgid "Show All Items"
 msgstr "Show All Items"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2883
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2877
 msgid "Favourite Items Only"
 msgstr "Favourite Items Only"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2884
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2878
 msgid "Expand All Sections"
 msgstr "Expand All Sections"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2885
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2879
 msgid "Compress All Sections"
 msgstr "Compress All Sections"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2886
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2880
 msgid "Search for an Item"
 msgstr "Search for an Item"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2890
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2884
 msgid "NHS Regulation Document"
 msgstr "NHS Regulation Document"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2891
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2885
 msgid "Open A PDF of the latest NHS Regulations"
 msgstr "Open A PDF of the latest NHS Regulations"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2892
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2886
 msgid "Open"
 msgstr "Open"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2893
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2887
 msgid "Default Columns"
 msgstr "Default Columns"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2894
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2888
 msgid "Show Geek Column"
 msgstr "Show Geek Column"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2895
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2889
 msgid "All Columns"
 msgstr "All Columns"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2896
-msgid "Manage Fee Tables / Create a New FeeTable"
-msgstr "Manage Fee Tables / Create a new Fee Table"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2890
+msgid "Adjust FeeTables"
+msgstr "Adjust FeeTables"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2897
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2891
+msgid "Create a New FeeTable"
+msgstr "Create a New FeeTable"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2892
 msgid "+"
 msgstr "+"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2898
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2893
 msgid "Feescales"
 msgstr "Feescales"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2900
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2895
 msgid "Reply"
 msgstr "Reply"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2901
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2896
 msgid "Delete"
 msgstr "Delete"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2902
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2897
 msgid "New Topic"
 msgstr "New Topic"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2903
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2898
 msgid "Search by keyword"
 msgstr "Search by keyword"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2907
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2902
 msgid "Show Topics for"
 msgstr "Show Topics for"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2908
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2903
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/forum_gui_module.py:39
 msgid "Everyone"
 msgstr "Everyone"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2909
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2904
 msgid "Layout Options"
 msgstr "Layout Options"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2910
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2905
 msgid "Group replies"
 msgstr "Group replies"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2911
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2906
 msgid "Split Replies"
 msgstr "Split Replies"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2912
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2608
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2907
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1920
 msgid "FORUM"
 msgstr "FORUM"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2914
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2909
 msgid "&Help"
 msgstr "&Help"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2915
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2910
 msgid "&Preferences"
 msgstr "&Preferences"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2916
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2911
 msgid "Tools"
 msgstr "Tools"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2917
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2912
 msgid "&Export Patient to disk"
 msgstr "&Export Patient to disk"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2918
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2913
 msgid "&Import Patient from disk"
 msgstr "&Import Patient from disk"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2919
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2914
 msgid "About &OpenMolar"
 msgstr "About &OpenMolar"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2920
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2915
 msgid "&About QT"
 msgstr "&About QT"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2922
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2917
 msgid "Appointment Font Size"
 msgstr "Appointment Font Size"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2923
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2918
 msgid "Table View For Charting"
 msgstr "Table View For Charting"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2924
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2919
 msgid "Clear Today's Emergency Slots"
 msgstr "Clear Today's Emergency Slots"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2925
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2920
 msgid "Test Print an NHS Form"
 msgstr "Test Print an NHS Form"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2926
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2921
 msgid "options"
 msgstr "options"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2927
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2922
 msgid "log queries in underlying terminal"
 msgstr "log queries in underlying terminal"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2928
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2923
 msgid "Set Clinician"
 msgstr "Set Clinician"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2930
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2925
 msgid "Choose Database"
 msgstr "Choose Database"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2931
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2926
 msgid "FeeScale Adjuster"
 msgstr "FeeScale Adjuster"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2932
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2927
 msgid "Select && Print Daylists"
 msgstr "Select && Print Daylists"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2933
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2928
 msgid "Change Language"
 msgstr "Change Language"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2934
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2929
 msgid "Full Screen Mode (Ctrl-Alt-F)"
 msgstr "Full Screen Mode (Ctrl-Alt-F)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2935
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2930
 msgid "Ctrl+Alt+F"
 msgstr "Ctrl+Alt+F"
 
@@ -2515,6 +2883,11 @@ msgid ""
 "If you are a debian or ubuntu user, \"sudo apt-get install mysql-server\"\n"
 "and make a note of the root password you create during set up. "
 msgstr ""
+"** If you do not have a mysql server on your network, please quit this "
+"setup, and install mysql server now.\n"
+"\n"
+"If you are a debian or ubuntu user, \"sudo apt-get install mysql-server\"\n"
+"and make a note of the root password you create during set up. "
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:308
 msgid "Database Details"
@@ -2631,6 +3004,7 @@ msgid "Proceed"
 msgstr "Proceed"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_options.py:45
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:167
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_phraseBook.py:54
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_pt_task.py:83
 msgid "Dialog"
@@ -2647,6 +3021,126 @@ msgstr "Left Margin Width"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_options.py:48
 msgid "Top Margin Width"
 msgstr "Top Margin Width"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:168
+msgid "1st referral"
+msgstr "1st referral"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:169
+msgid "re - referral"
+msgstr "re - referral"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:170
+msgid "Previous Referral Date"
+msgstr "Previous Referral Date"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:171
+msgid "I am Willing to carry out simple treatment"
+msgstr "I am Willing to carry out simple treatment"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:172
+msgid "Reason for Referral"
+msgstr "Reason for Referral"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:173
+msgid "Crowding"
+msgstr "Crowding"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:174
+msgid "Spaced"
+msgstr "Spaced"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:176
+msgid "Mild"
+msgstr "Mild"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:177
+msgid "Moderate"
+msgstr "Moderate"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:178
+msgid "Severe"
+msgstr "Severe"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:179
+msgid "Incisal Relationship"
+msgstr "Incisal Relationship"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:180
+msgid "Overjet:"
+msgstr "Overjet:"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:181
+msgid "mm"
+msgstr "mm"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:182
+msgid "Overbite"
+msgstr "Overbite"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:183
+msgid "Complete"
+msgstr "Complete"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:184
+msgid "InComplete"
+msgstr "InComplete"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:185
+msgid "Traumatic"
+msgstr "Traumatic"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:186
+msgid "%"
+msgstr "%"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:187
+msgid "Relevant Medical History"
+msgstr "Relevant Medical History"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:188
+msgid ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+"\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style "
+"type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Droid Serif'; font-size:7pt; font-"
+"weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; "
+"margin-left:0px; margin-right:0px; -qt-block-indent:0; text-"
+"indent:0px;\"></p></body></html>"
+msgstr ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+"\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style "
+"type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Droid Serif'; font-size:7pt; font-"
+"weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; "
+"margin-left:0px; margin-right:0px; -qt-block-indent:0; text-"
+"indent:0px;\"></p></body></html>"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:193
+msgid "Dental History"
+msgstr "Dental History"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:194
+msgid "Teeth With Poor Prognosis"
+msgstr "Teeth With Poor Prognosis"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:195
+msgid "Patient Motivation"
+msgstr "Patient Motivation"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:196
+msgid "Removable Applicance"
+msgstr "Removable Applicance"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:197
+msgid "Fixed Appliance"
+msgstr "Fixed Appliance"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:127
 msgid "Patient Finder"
@@ -2706,10 +3200,6 @@ msgstr "Address includes"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:146
 msgid "openMolar will search line1 and line2 of the address for this text"
 msgstr "openMolar will search line1 and line2 of the address for this text"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:147
-msgid "Telephone"
-msgstr "Telephone"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:148
 msgid ""
@@ -2907,7 +3397,8 @@ msgstr "Note"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_quick_daylist_print.py:50
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_surgeryNumber.py:48
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1106
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:360
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/fee_adjuster.py:137
 msgid "Question"
 msgstr "Question"
 
@@ -3282,9 +3773,9 @@ msgid "III"
 msgstr "III"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothProps.py:222
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:273
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:300
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:347
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:281
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:310
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:370
 msgid "ADD COMMENTS"
 msgstr "ADD COMMENTS"
 
@@ -3325,7 +3816,7 @@ msgid "!Implant required"
 msgstr "!Implant required"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothProps.py:232
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:349
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:372
 msgid "DELETE COMMENTS"
 msgstr "DELETE COMMENTS"
 
@@ -3427,35 +3918,42 @@ msgstr "Items"
 msgid "Database Line"
 msgstr "Database Line"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/calendars.py:266
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
-msgid "Wednesday"
-msgstr "Wednesday"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/calendars.py:356
+msgid "DATE"
+msgstr "DATE"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:260
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:282
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:266
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:290
 msgid "Toggle Deciduous State"
 msgstr "Toggle Deciduous State"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:263
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:297
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:269
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:307
 msgid "Complete Treatments"
 msgstr "Complete Treatments"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:268
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:285
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:274
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:293
 msgid "Delete All Restorations"
 msgstr "Delete All Restorations"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:270
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:288
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:278
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:297
 msgid "Delete "
 msgstr "Delete "
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:274
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:294
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:282
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:304
 msgid "Show History"
 msgstr "Show History"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:443
+msgid "Left"
+msgstr "Left"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:446
+msgid "Right"
+msgstr "Right"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/notification_widget.py:34
 msgid "close"
@@ -3474,100 +3972,128 @@ msgid "Fissure Sealant/Composite"
 msgstr "Fissure Sealant/Composite"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:25
+msgid "Crowns / Inlays"
+msgstr "Crowns / Inlays"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:26
+msgid "Precious Metal/ Porcelain Bonded Crown"
+msgstr "Precious Metal/ Porcelain Bonded Crown"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:27
+msgid "Base Metal / Porcelain Bonded Crown"
+msgstr "Base Metal / Porcelain Bonded Crown"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:28
+msgid "Gold Crown"
+msgstr "Gold Crown"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:29
+msgid "Lava Crown"
+msgstr "Lava Crown"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:30
+msgid "Porcelain Jacket Crown"
+msgstr "Porcelain Jacket Crown"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:31
+msgid "Temporary Crown"
+msgstr "Temporary Crown"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:32
+msgid "Resin Crown"
+msgstr "Resin Crown"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:33
+msgid "Other Crown"
+msgstr "Other Crown"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:37
 msgid "Bridge Elements"
 msgstr "Bridge Elements"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:26
-msgid "Bonded Retainer"
-msgstr "Bonded Retainer"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:38
+msgid "Retainers"
+msgstr "Retainers"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:27
-msgid "Bonded Pontic"
-msgstr "Bonded Pontic"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:28
-msgid "Adhesive Wing"
-msgstr "Adhesive Wing"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:29
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:41
 msgid "Lava Retainer"
 msgstr "Lava Retainer"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:30
-msgid "Lava Pontic"
-msgstr "Lava Pontic"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:43
+msgid "Adhesive Wing"
+msgstr "Adhesive Wing"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:31
-msgid "Gold Retainer"
-msgstr "Gold Retainer"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:44
+msgid "Pontics"
+msgstr "Pontics"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:32
-msgid "Gold Pontic"
-msgstr "Gold Pontic"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:33
-msgid "Other Retainer"
-msgstr "Other Retainer"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:34
-msgid "Other Pontic"
-msgstr "Other Pontic"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:38
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:52
 msgid "Endodontics"
 msgstr "Endodontics"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:39
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:53
 msgid "Pulp Extirpation - 1 canal"
 msgstr "Pulp Extirpation - 1 canal"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:40
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:54
 msgid "Pulp Extirpation - multiple canals"
 msgstr "Pulp Extirpation - multiple canals"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:41
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:55
 msgid "Root Canal"
 msgstr "Root Canal"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:45
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:56
+msgid "Incomplete Endodontics"
+msgstr "Incomplete Endodontics"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:60
 msgid "Surgical"
 msgstr "Surgical"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:46
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:61
 msgid "Extraction"
 msgstr "Extraction"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:47
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:62
 msgid "Surgical Extraction"
 msgstr "Surgical Extraction"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:48
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:63
 msgid "Apicectomy"
 msgstr "Apicectomy"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:52
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:67
 msgid "Static Only"
 msgstr "Static Only"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:53
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:68
 msgid "Tooth Missing"
 msgstr "Tooth Missing"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:54
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:69
 msgid "Denture Tooth"
 msgstr "Denture Tooth"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:55
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:70
 msgid "Root Present"
 msgstr "Root Present"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:56
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:71
 msgid "Permanent Tooth Present"
 msgstr "Permanent Tooth Present"
 
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:72
+msgid "Partially Erupted Tooth"
+msgstr "Partially Erupted Tooth"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:73
+msgid "Unerupted Tooth"
+msgstr "Unerupted Tooth"
+
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/block_wizard.py:25
 msgid "emergency"
-msgstr ""
+msgstr "emergency"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/block_wizard.py:93
 msgid "applying changes for"
@@ -3650,6 +4176,7 @@ msgstr "Hide"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/saveDiscardCancel.py:82
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:84
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3812
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:57
 msgid "Confirm"
 msgstr "Confirm"
@@ -3718,32 +4245,37 @@ msgstr "click to delete item - "
 msgid "click to promote Item - "
 msgstr "click to promote Item - "
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:279
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:298
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:290
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:309
 msgid "question"
 msgstr "question"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:280
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:291
 msgid "<p>Credit Patient %s for undoing this item?</p>"
 msgstr "<p>Credit Patient %s for undoing this item?</p>"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:288
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:299
 msgid "couldn't pass on delete message - "
 msgstr "couldn't pass on delete message - "
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:289
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:300
 msgid "badly formed est.type??? %s"
 msgstr "badly formed est.type??? %s"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:299
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:310
 msgid "remove %s %s from the estimate?"
 msgstr "remove %s %s from the estimate?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/course_module.py:31
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/cashbook_module.py:21
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/daybook_module.py:107
+msgid "bad date sequence"
+msgstr "bad date sequence"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/course_module.py:32
 msgid "Please save the old course changes before continuing"
 msgstr "Please save the old course changes before continuing"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/course_module.py:34
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/course_module.py:35
 msgid ""
 "<p>unable to plan or perform treatment if pt \n"
 "does not have an active course</p>"
@@ -3751,11 +4283,11 @@ msgstr ""
 "<p>unable to plan or perform treatment if pt \n"
 "does not have an active course</p>"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/course_module.py:84
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/course_module.py:85
 msgid "Sucessfully started new course of treatment"
 msgstr "Sucessfully started new course of treatment"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/course_module.py:94
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/course_module.py:97
 msgid "ERROR STARTING NEW COURSE, sorry"
 msgstr "ERROR STARTING NEW COURSE, sorry"
 
@@ -3799,7 +4331,7 @@ msgstr "Examination not applied"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:174
 msgid "regulation"
-msgstr ""
+msgstr "regulation"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:174
 msgid "usercode"
@@ -3807,29 +4339,33 @@ msgstr "Usercode"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:175
 msgid "brief descriptions"
-msgstr ""
+msgstr "brief descriptions"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:175
 msgid "description"
-msgstr ""
+msgstr "description"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:179
 msgid "fee"
-msgstr ""
+msgstr "fee"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:181
 msgid "charge"
-msgstr ""
+msgstr "charge"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:297
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:305
 msgid "Error opening PDF file"
 msgstr "Error opening PDF file"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/forum_gui_module.py:167
+msgid "Delete %d Posts?"
+msgstr "Delete %d Posts?"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/forum_gui_module.py:179
 msgid "Delete selected Post?"
 msgstr "Delete selected Post?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:226
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:210
 msgid ""
 "<p>for the moment, please enter treatment\n"
 "into the plan first then complete it."
@@ -3837,160 +4373,49 @@ msgstr ""
 "<p>for the moment, please enter treatment\n"
 "into the plan first then complete it."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:229
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:213
 msgid "unable to update chart - this shouldn't happen!!"
 msgstr "unable to update chart - this shouldn't happen!!"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:264
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:248
 msgid "you need to be in the static chart to change tooth state"
 msgstr "you need to be in the static chart to change tooth state"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:439
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:423
 msgid "NO CHARTS"
 msgstr "NO CHARTS"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:549
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:568
-msgid "bad date sequence"
-msgstr "bad date sequence"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1223
+msgid "SAVE NEW PATIENT"
+msgstr "SAVE NEW PATIENT"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:681
-msgid ""
-"<div align=\"center\">\n"
-"<h3>Enter New Patient</h3>Please enter at least the required fields,\n"
-"then use the Save Changes button to commit this patient to the database.\n"
-"</div>"
-msgstr ""
-"<div align=\"center\">\n"
-"<h3>Enter New Patient</h3>Please enter at least the required fields,\n"
-"then use the Save Changes button to commit this patient to the database.\n"
-"</div>"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:732
-msgid "Error saving new patient, sorry!"
-msgstr "Error saving new patient, sorry!"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:735
-msgid ""
-"insufficient data to create a new record...\n"
-"please fill in all highlighted fields"
-msgstr ""
-"insufficient data to create a new record...\n"
-"please fill in all highlighted fields"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:747
-msgid "Error saving patient"
-msgstr "Error saving patient"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:781
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1235
 msgid "SAVE CHANGES"
 msgstr "SAVE CHANGES"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:793
-msgid "New Patient not saved. Abandon Changes?"
-msgstr "New Patient not saved. Abandon Changes?"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:832
-msgid "PDF is NONE - (tell devs this happened)"
-msgstr "PDF is NONE - (tell devs this happened)"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:840
-msgid "Error saving PDF copy %s"
-msgstr "Error saving PDF copy %s"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:848
-msgid "Professional Services"
-msgstr "Professional Services"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:850
-msgid "duplicate receipt for %.02f"
-msgstr "duplicate receipt for %.02f"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:857
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:885
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:951
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:970
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2841
-msgid "no patient selected"
-msgstr "no patient selected"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:911
-msgid "Nothing to print - have you loaded the table?"
-msgstr "Nothing to print - have you loaded the table?"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:915
-msgid ""
-"<tr><th>Dent</th><th>SerialNo</th><th>Cset</th>\n"
-"<th>FName</th><th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>\n"
-"<th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>\n"
-"<th>Amount</th></tr>"
-msgstr ""
-"<tr><th>Dent</th><th>SerialNo</th><th>Cset</th>\n"
-"<th>FName</th><th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>\n"
-"<th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>\n"
-"<th>Amount</th></tr>"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:938
-msgid ""
-"<tr><td colspan=\"11\"></td><td><b>TOTAL</b></td>\n"
-"<td align=\"right\"><b>&pound; %.02f</b></td></tr>\n"
-"</table></body></html>"
-msgstr ""
-"<tr><td colspan=\"11\"></td><td><b>TOTAL</b></td>\n"
-"<td align=\"right\"><b>&pound; %.02f</b></td></tr>\n"
-"</table></body></html>"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:975
-msgid "Estimate for your current course of treatment."
-msgstr "Estimate for your current course of treatment."
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:995
-msgid ""
-"<tr><td></td><td><b>TOTAL</b></td>\n"
-"<td align=\"right\">%s</td></tr>"
-msgstr ""
-"<tr><td></td><td><b>TOTAL</b></td>\n"
-"<td align=\"right\">%s</td></tr>"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:999
-msgid ""
-"<p><i>Please note, this estimate may be subject\n"
-"to change if clinical circumstances dictate.</i></p>"
-msgstr ""
-"<p><i>Please note, this estimate may be subject\n"
-"to change if clinical circumstances dictate.</i></p>"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1088
-msgid "Previous Course (%s - %s)"
-msgstr "Previous Course (%s - %s)"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1107
-msgid "Print an NHS form now?"
-msgstr "Print an NHS form now?"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1959
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1968
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1270
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1279
 msgid "Re-open"
 msgstr "Re-open"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1960
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1969
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1271
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1280
 msgid "Do you want to review and/or reprint this item?"
 msgstr "Do you want to review and/or reprint this item?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2006
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1317
 msgid "Today's Patients (%s)"
 msgstr "Today's Patients (%s)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2009
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1320
 msgid "Today's Patients (ALL)"
 msgstr "Today's Patients (ALL)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2016
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1327
 msgid "loading today's patients"
 msgstr "loading today's patients"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2212
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1535
 msgid ""
 "Error populating interface\n"
 "%s"
@@ -3998,7 +4423,7 @@ msgstr ""
 "Error populating interface\n"
 "%s"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2332
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1655
 msgid ""
 "<center>Message from %s <br />\n"
 "Dated %s<br /><br />%s</center>"
@@ -4006,15 +4431,15 @@ msgstr ""
 "<center>Message from %s <br />\n"
 "Dated %s<br /><br />%s</center>"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2345
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1668
 msgid "problem getting a memo %s"
 msgstr "problem getting a memo %s"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2600
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1914
 msgid "NEW FORUM POSTS"
 msgstr "NEW FORUM POSTS"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2831
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2144
 msgid ""
 "POTENTIALLY SERIOUS CONFUSION PROBLEM\n"
 "WITH PT RECORDS %d and %d"
@@ -4022,13 +4447,73 @@ msgstr ""
 "POTENTIALLY SERIOUS CONFUSION PROBLEM\n"
 "WITH PT RECORDS %d and %d"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2877
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2154
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:185
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:204
+msgid "no patient selected"
+msgstr "no patient selected"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2179
 msgid "Sucessfully altered the following items"
 msgstr "Sucessfully altered the following items"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:4279
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2373
+msgid "Function not yet available"
+msgstr "Function not yet available"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3797
 msgid "Scrap the estimate and re-price everything?"
+msgstr "Scrap the estimate and re-price everything?"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3813
+msgid "apply an exmption to this estimate?"
+msgstr "apply an exmption to this estimate?"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3818
+msgid "input needed"
+msgstr "input needed"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3819
+msgid "maximum charge for the patient"
+msgstr "maximum charge for the patient"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3819
+msgid "please enter the amount in pence, or leave as 0 for full exmption"
+msgstr "please enter the amount in pence, or leave as 0 for full exmption"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/new_patient_gui.py:48
+msgid ""
+"<div align=\"center\">\n"
+"<h3>Enter New Patient</h3>Please enter at least the required fields,\n"
+"then use the Save Changes button to commit this patient to the database.\n"
+"</div>"
 msgstr ""
+"<div align=\"center\">\n"
+"<h3>Enter New Patient</h3>Please enter at least the required fields,\n"
+"then use the Save Changes button to commit this patient to the database.\n"
+"</div>"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/new_patient_gui.py:80
+msgid "Error saving new patient, sorry!"
+msgstr "Error saving new patient, sorry!"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/new_patient_gui.py:83
+msgid ""
+"insufficient data to create a new record...\n"
+"please fill in all highlighted fields"
+msgstr ""
+"insufficient data to create a new record...\n"
+"please fill in all highlighted fields"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/new_patient_gui.py:95
+msgid "Error saving patient"
+msgstr "Error saving patient"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/new_patient_gui.py:132
+msgid "New Patient not saved. Abandon Changes?"
+msgstr "New Patient not saved. Abandon Changes?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/accountPrint.py:91
 msgid "STATEMENT OF ACCOUNT - FINAL REMINDER"
@@ -4084,6 +4569,76 @@ msgstr "* Cheques payable to: \"Academy Dental Practice\"\n"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/accountPrint.py:133
 msgid "Or telephone us with your switch/visa/mastercard details."
 msgstr "Or telephone us with your switch/visa/mastercard details."
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:66
+msgid "PDF is NONE - (tell devs this happened)"
+msgstr "PDF is NONE - (tell devs this happened)"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:74
+msgid "Error saving PDF copy %s"
+msgstr "Error saving PDF copy %s"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:82
+msgid "Professional Services"
+msgstr "Professional Services"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:84
+msgid "duplicate receipt for %.02f"
+msgstr "duplicate receipt for %.02f"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:145
+msgid "Nothing to print - have you loaded the table?"
+msgstr "Nothing to print - have you loaded the table?"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:149
+msgid ""
+"<tr><th>Dent</th><th>SerialNo</th><th>Cset</th>\n"
+"<th>FName</th><th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>\n"
+"<th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>\n"
+"<th>Amount</th></tr>"
+msgstr ""
+"<tr><th>Dent</th><th>SerialNo</th><th>Cset</th>\n"
+"<th>FName</th><th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>\n"
+"<th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>\n"
+"<th>Amount</th></tr>"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:172
+msgid ""
+"<tr><td colspan=\"11\"></td><td><b>TOTAL</b></td>\n"
+"<td align=\"right\"><b>&pound; %.02f</b></td></tr>\n"
+"</table></body></html>"
+msgstr ""
+"<tr><td colspan=\"11\"></td><td><b>TOTAL</b></td>\n"
+"<td align=\"right\"><b>&pound; %.02f</b></td></tr>\n"
+"</table></body></html>"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:209
+msgid "Estimate for your current course of treatment."
+msgstr "Estimate for your current course of treatment."
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:229
+msgid ""
+"<tr><td></td><td><b>TOTAL</b></td>\n"
+"<td align=\"right\">%s</td></tr>"
+msgstr ""
+"<tr><td></td><td><b>TOTAL</b></td>\n"
+"<td align=\"right\">%s</td></tr>"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:233
+msgid ""
+"<p><i>Please note, this estimate may be subject\n"
+"to change if clinical circumstances dictate.</i></p>"
+msgstr ""
+"<p><i>Please note, this estimate may be subject\n"
+"to change if clinical circumstances dictate.</i></p>"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:342
+msgid "Previous Course (%s - %s)"
+msgstr "Previous Course (%s - %s)"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:361
+msgid "Print an NHS form now?"
+msgstr "Print an NHS form now?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/schema_updater.py:59
 msgid ""
@@ -4164,25 +4719,37 @@ msgstr "How many months?"
 msgid "not yet implemented"
 msgstr "Not yet implemented"
 
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/fee_adjuster.py:88
+msgid "Choose a fee table to continue"
+msgstr "Choose a fee table to continue"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/fee_adjuster.py:137
+msgid "Add how many Rows?"
+msgstr "Add how many Rows?"
+
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_1to1_2.py:125
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_2to1_3.py:96
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:350
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:107
 msgid "updating stored schema version"
 msgstr "updating stored schema version"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_1to1_2.py:127
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_2to1_3.py:98
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:352
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:109
 msgid "ALL DONE - sucessfully moved db to"
 msgstr "ALL DONE - sucessfully moved db to"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_2to1_3.py:87
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:332
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:89
 msgid "creating new tables"
 msgstr "creating new tables"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_2to1_3.py:89
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:345
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:102
 msgid "updating settings"
 msgstr "updating settings"
 
@@ -4191,12 +4758,14 @@ msgid "couldn't create tables, rolled back to"
 msgstr "couldn't create tables, rolled back to"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:337
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:94
 msgid "copying data across from old feetable"
 msgstr "Copying data across from old Fee Table"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:357
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:114
 msgid "rolled back to"
-msgstr ""
+msgstr "rolled back to"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:42
 msgid "translation tools are installed sucessfully"
@@ -4281,30 +4850,6 @@ msgstr "TRY"
 #: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:273
 msgid "XLA"
 msgstr "XLA"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
-msgid "Monday"
-msgstr "Monday"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
-msgid "Thursday"
-msgstr "Thursday"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
-msgid "Tuesday"
-msgstr "Tuesday"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:410
-msgid "Friday"
-msgstr "Friday"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:410
-msgid "Saturday"
-msgstr "Saturday"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:410
-msgid "Sunday"
-msgstr "Sunday"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:444
 msgid "January"
@@ -4439,6 +4984,18 @@ msgstr "December"
 
 #~ msgid "Pt Fee"
 #~ msgstr "Pt Fee"
+
+#~ msgid "Print letter Now"
+#~ msgstr "Print letter Now"
+
+#~ msgid "History Options"
+#~ msgstr "History Options"
+
+#~ msgid "debug"
+#~ msgstr "debug"
+
+#~ msgid "Book"
+#~ msgstr "Book"
 
 #~ msgid "Find Patients"
 #~ msgstr "Find Patients"
@@ -4592,6 +5149,27 @@ msgstr "December"
 
 #~ msgid "Toggle Deciduous Status"
 #~ msgstr "Toggle Deciduous Status"
+
+#~ msgid "Bonded Retainer"
+#~ msgstr "Bonded Retainer"
+
+#~ msgid "Bonded Pontic"
+#~ msgstr "Bonded Pontic"
+
+#~ msgid "Lava Pontic"
+#~ msgstr "Lava Pontic"
+
+#~ msgid "Gold Retainer"
+#~ msgstr "Gold Retainer"
+
+#~ msgid "Gold Pontic"
+#~ msgstr "Gold Pontic"
+
+#~ msgid "Other Retainer"
+#~ msgstr "Other Retainer"
+
+#~ msgid "Other Pontic"
+#~ msgstr "Other Pontic"
 
 #~ msgid "unknown exam type"
 #~ msgstr "unknown exam type"
