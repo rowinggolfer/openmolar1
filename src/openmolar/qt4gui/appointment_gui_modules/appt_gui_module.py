@@ -1189,7 +1189,7 @@ def layout_month(om_gui):
         year += 1
     month += 1
     enddate = datetime.date(year, month, 1)
-    dents = getUserCheckedClinicians(om_gui)
+    dents = tuple(getUserCheckedClinicians(om_gui))
     om_gui.ui.monthView.setDents(dents)
     rows = appointments.getDayMemos(startdate, enddate, dents)
     om_gui.ui.monthView.setData(rows)
@@ -1204,7 +1204,7 @@ def layout_year(om_gui):
     year = om_gui.ui.calendarWidget.selectedDate().year()
     startdate = datetime.date(year, 1, 1)
     enddate = datetime.date(year+1, 1, 1)
-    dents = getUserCheckedClinicians(om_gui)
+    dents = tuple(getUserCheckedClinicians(om_gui))
     om_gui.ui.yearView.setDents(dents)    
     data = appointments.getDayMemos(startdate, enddate, dents)
     om_gui.ui.yearView.setData(data)

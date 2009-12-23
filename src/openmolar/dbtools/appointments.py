@@ -327,7 +327,7 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
         values = (adate,) + dents
     
     if not include_non_working:
-        cond += " AND (flag=1 or flag=2) %s"% mystr
+        cond += " AND (flag=1 or flag=2)"
 
     query = 'SELECT apptix,start,end,memo,flag FROM aday WHERE adate=%s ' \
     + cond
@@ -341,30 +341,28 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
     
     return rows
 
-def getDayMemos(startdate, enddate, dents=[]):
+def getDayMemos(startdate, enddate, dents=() ):
     '''
     get any day memo's for a range of dents and tuple of dentists
     if month = 0, return all memos for the given year
     useage is getDayMemos(pydate,pydate,(1,4))
     start date is inclusive, enddate not so 
     '''
+    dents = (0,) + dents
+    
+    cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s ) "
+    
+    query = '''SELECT adate, apptix, memo FROM aday WHERE memo!="" AND 
+    adate>=%s AND adate<%s ''' + cond 
+    
+    values = (startdate, enddate) + dents
     
     db = connect()
     cursor = db.cursor()
-    #-- dents are numbers here..... I need to get consistent :(
-    mystr = ""
-    dents = [0,] + dents
-    for dent in dents:
-        mystr += "apptix=%d OR "% dent
-    mystr = mystr[0:mystr.rindex(" OR")] + ")"
-    
-    fullquery = '''SELECT adate, apptix, memo FROM aday WHERE memo!="" AND 
-    adate>=%s AND adate<%s AND (%s'''% (localsettings.pyDatetoSQL(startdate), 
-    localsettings.pyDatetoSQL(enddate), mystr)
-    
+
     if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery)
+        print query, values
+    cursor.execute(query, values)
 
     rows = cursor.fetchall()
     cursor.close()
@@ -376,10 +374,10 @@ def getDayMemos(startdate, enddate, dents=[]):
             data[key].append(value)
         else:
             data[key] = [value]
-    #db.close()
+    
     return data
 
-def getBankHol(date):
+def getBankHol(adate):
     '''
     get Bank Hol for one specific date
     '''
@@ -391,14 +389,15 @@ def getBankHol(date):
             
     try:
         if localsettings.logqueries:
-            print query, (date, )
-        cursor.execute(query, (date, ))
+            print query, (adate, )
+        cursor.execute(query, (adate, ))
 
         rows = cursor.fetchall()
         cursor.close()
         for row in rows:
             retarg += "%s "% row
     except ProgrammingError, e:
+        #in case their is no bank holiday table.
         retarg =  "couldn't get Bank Holiday details"
     return retarg
     
@@ -410,7 +409,6 @@ def getGlobalMemo(date):
     cursor = db.cursor()
     
     query = '''SELECT memo FROM aday WHERE adate=%s and apptix=0''' 
-    retarg = ""
             
     if localsettings.logqueries:
         print query, (date, )
@@ -418,13 +416,15 @@ def getGlobalMemo(date):
 
     rows = cursor.fetchall()
     cursor.close()
+    
+    retarg = ""
     for row in rows:
         retarg += "%s "% row
     return retarg
 
 def getBankHols(startdate, enddate):
     '''
-    useage is getDayMemos(pydate,pydate)
+    useage is getBankHols(pydate,pydate)
     start date is inclusive, enddate not so 
     '''
     db = connect()
@@ -448,8 +448,7 @@ def getBankHols(startdate, enddate):
     except ProgrammingError, e:
         print "couldn't get Bank Holiday details"
     return data
-    
-    
+        
 def setMemos(adate, memos):
     '''
     updates the aday table with memos
@@ -473,26 +472,23 @@ def allAppointmentData(adate, dents=()):
     this gets appointment data for a specifc date and dents
     2nd arg will frequently be provided by getWorkingDents(adate)
     '''
-    if dents != ():
-        mystr = " and ("
-        for dent in dents:
-            mystr += "apptix=%d or "% dent
-        mystr = mystr[0:mystr.rindex(" or")]+")"
+    if dents == ():
+        cond = ""
     else:
-        mystr = ""
-    
+        cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s ) "
+
     db = connect()
     cursor = db.cursor()    
     query = '''select apptix,start,end,name,serialno,code0,
     code1,code2,note,flag0,flag1,flag2,flag3 from aslot where adate=%s'''
-    query += " %s order by apptix,start"% mystr
+    query += " %s order by apptix, start"% cond
     if localsettings.logqueries:
         print query
-    cursor.execute(query, (adate,))
+    cursor.execute(query, (adate,)+dents)
 
     data = cursor.fetchall()
     cursor.close()
-    #db.close()
+    
     return data
 
 def convertResults(appointments):

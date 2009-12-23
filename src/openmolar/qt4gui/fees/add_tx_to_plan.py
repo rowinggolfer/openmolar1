@@ -82,7 +82,10 @@ def perioAdd(om_gui):
     add perio items
     '''
     if not course_module.newCourseNeeded(om_gui):
-        mylist = ((0, "SP"), (0, "SP+"))
+        if "N" in om_gui.pt.cset:
+            mylist = ((0, "SP"), (0, "SP+"))
+        else:
+            mylist = ((0, "SP-"), (0, "SP"), (0, "SP+"))            
         chosenTreatments = offerTreatmentItems(om_gui, mylist)
         for usercode, itemcode, description in chosenTreatments:
             om_gui.pt.periopl += "%s "% usercode
