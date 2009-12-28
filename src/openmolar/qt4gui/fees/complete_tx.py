@@ -19,9 +19,10 @@ from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs import completeTreat
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import fees_module
+from openmolar.qt4gui.charts import charts_gui
 
 
-def checkEstBox(parent, tooth, treat):
+def checkEstBox(om_gui, tooth, treat):
     '''
     when a "tooth" item is completed
     this looks through the estimates, applies the fee
@@ -29,39 +30,39 @@ def checkEstBox(parent, tooth, treat):
     '''
     # "looking for est item where type= '%s'?"%completed
     found = False
-    for est in parent.pt.estimates:
+    for est in om_gui.pt.estimates:
         if est.category == tooth and est.type == treat.strip(" "):
             est.completed = True
-            fees_module.applyFeeNow(parent, est.ptfee)
+            fees_module.applyFeeNow(om_gui, est.ptfee)
             found = True
             break
     if not found:
         completed = "%s %s"% (tooth, treat)
-        parent.advise('''<p>couldn't locate '%s' in estimate</p>
+        om_gui.advise('''<p>couldn't locate '%s' in estimate</p>
         Please complete manually'''% completed, 1)
 
-def chartComplete(parent, arg):   
+def chartComplete(om_gui, arg):   
     '''
     complete tooth treatment 
     the arg is a list - ["ul5","MOD","RT",]
     '''
     if localsettings.clinicianNo != 0:
         dent = localsettings.clinicianInits
-    elif parent.pt.dnt2 == None:
-        dent = localsettings.ops.get(parent.pt.dnt2)
+    elif om_gui.pt.dnt2 == None:
+        dent = localsettings.ops.get(om_gui.pt.dnt2)
     else:
-        dent = localsettings.ops.get(parent.pt.dnt1)
+        dent = localsettings.ops.get(om_gui.pt.dnt1)
     if dent == None:
         dent = ""
     #--tooth may be deciduous
         
     adultTooth = arg[0]
-    toothName = parent.pt.chartgrid.get(arg[0])
+    toothName = om_gui.pt.chartgrid.get(arg[0])
     arg[0] = toothName # change the list
 
     fee, ptfee = 0, 0
     for treatItem in arg[1:]:
-        feeTup = fees_module.getFeesFromEst(parent, toothName, treatItem)
+        feeTup = fees_module.getFeesFromEst(om_gui, toothName, treatItem)
         fee += feeTup[0]
         ptfee += feeTup[1]
         
@@ -70,7 +71,7 @@ def chartComplete(parent, arg):
         treatmentItems = (arg[1],)
     else: 
         # multiple treatments, does user want to complete them all?
-        Dialog = QtGui.QDialog(parent)
+        Dialog = QtGui.QDialog(om_gui)
         dl = completeTreat.treatment(Dialog, arg)
         treatmentItems = dl.getInput()
         #-- results will be a tuple of treatments which have been selected
@@ -81,30 +82,30 @@ def chartComplete(parent, arg):
         planATT = "%spl"% adultTooth
         completedATT = "%scmp"% adultTooth
         #print "moving '%s' from %s to %s"% (result[1], planATT, completedATT)
-        if treatmentItem in parent.pt.__dict__[planATT]:
-            existingplan = parent.pt.__dict__[planATT]
+        if treatmentItem in om_gui.pt.__dict__[planATT]:
+            existingplan = om_gui.pt.__dict__[planATT]
             newplan = existingplan.replace(treatmentItem, "")
-            parent.pt.__dict__[planATT] = newplan
-            existingcompleted = parent.pt.__dict__[completedATT]
+            om_gui.pt.__dict__[planATT] = newplan
+            existingcompleted = om_gui.pt.__dict__[completedATT]
             newcompleted = existingcompleted + treatmentItem
             
-            parent.pt.__dict__[completedATT] = newcompleted
-            parent.updateChartsAfterTreatment(adultTooth, newplan, 
+            om_gui.pt.__dict__[completedATT] = newcompleted
+            charts_gui.updateChartsAfterTreatment(adultTooth, newplan, 
             newcompleted)
 
-            checkEstBox(parent, toothName, treatmentItem)
+            checkEstBox(om_gui, toothName, treatmentItem)
 
             print "CHART COMPLETE adding hidden note - %s %s"% (
             toothName.upper(), treatmentItem)
 
-            parent.pt.addHiddenNote("treatment",
+            om_gui.pt.addHiddenNote("treatment",
             "%s %s"% (toothName.upper(), treatmentItem))
-            parent.updateHiddenNotesLabel()
+            om_gui.updateHiddenNotesLabel()
             
         else:
             print "%s not found in plan!"% treatmentItem 
                 
-def estwidg_complete(parent, item):
+def estwidg_complete(om_gui, item):
     '''
     reponds to a signal when the user completes an item of treatment by
     checking a checkbox on the estwidget
@@ -119,40 +120,40 @@ def estwidg_complete(parent, item):
             att = "%s%d"% (att[:2], number)
             
         if att == "exam":
-            parent.pt.examt = item.type
-            parent.pt.examd = localsettings.currentDay()
-            parent.pt.addHiddenNote("exam", item.type)
+            om_gui.pt.examt = item.type
+            om_gui.pt.examd = localsettings.currentDay()
+            om_gui.pt.addHiddenNote("exam", item.type)
             
         else:
-            plan = parent.pt.__dict__[att + "pl"].replace(treat, "")
-            parent.pt.__dict__[att + "pl"] = plan
-            completed = parent.pt.__dict__[att + "cmp"] + treat
-            parent.pt.__dict__[att + "cmp"] = completed
+            plan = om_gui.pt.__dict__[att + "pl"].replace(treat, "")
+            om_gui.pt.__dict__[att + "pl"] = plan
+            completed = om_gui.pt.__dict__[att + "cmp"] + treat
+            om_gui.pt.__dict__[att + "cmp"] = completed
 
             if re.findall("[ul][lr][1-8]", att):
-                parent.updateChartsAfterTreatment(att, plan, completed)
-                toothName = parent.pt.chartgrid.get(att)
+                charts_gui.updateChartsAfterTreatment(att, plan, completed)
+                toothName = om_gui.pt.chartgrid.get(att)
     
-                parent.pt.addHiddenNote(
+                om_gui.pt.addHiddenNote(
                 "treatment", "%s %s"% (toothName.upper(), treat))
             else:
-                parent.pt.addHiddenNote("treatment", item.type)
+                om_gui.pt.addHiddenNote("treatment", item.type)
 
     except Exception,e:
         completed = "%s - %s"% (item.category, item.type)
-        parent.advise('''<p>Error moving %s from plan to completed
+        om_gui.advise('''<p>Error moving %s from plan to completed
         </p>Please complete manually'''% completed, 1)
         print "UNABLE TO COMPLETE %s"% item
         print e
     
     finally:        
-        fees_module.applyFeeNow(parent, item.ptfee, item.csetype)
-        parent.updateHiddenNotesLabel()
+        fees_module.applyFeeNow(om_gui, item.ptfee, item.csetype)
+        om_gui.updateHiddenNotesLabel()
             
-        parent.load_treatTrees()
+        om_gui.load_treatTrees()
 
     
-def estwidg_unComplete(parent, item):
+def estwidg_unComplete(om_gui, item):
     '''
     reponds to a signal when the user "uncompletes" an item of treatment by
     unchecking a checkbox on the estwidget
@@ -167,31 +168,31 @@ def estwidg_unComplete(parent, item):
             att = "%s%d"% (att[:2], number)
                     
         if att =="exam":
-            parent.pt.examt = ""
-            parent.pt.examd = ""
-            parent.pt.addHiddenNote("exam", item.type, True)
+            om_gui.pt.examt = ""
+            om_gui.pt.examd = ""
+            om_gui.pt.addHiddenNote("exam", item.type, True)
         else:
-            plan = parent.pt.__dict__[att + "pl"] + treat
-            parent.pt.__dict__[att + "pl"] = plan
-            completed = parent.pt.__dict__[att + "cmp"].replace(treat, "")
-            parent.pt.__dict__[att + "cmp"] = completed
+            plan = om_gui.pt.__dict__[att + "pl"] + treat
+            om_gui.pt.__dict__[att + "pl"] = plan
+            completed = om_gui.pt.__dict__[att + "cmp"].replace(treat, "")
+            om_gui.pt.__dict__[att + "cmp"] = completed
 
             if re.findall("[ul][lr][1-8]", att):
-                parent.updateChartsAfterTreatment(att, plan, completed)
-                toothName = parent.pt.chartgrid.get(att)
+                charts_gui.updateChartsAfterTreatment(att, plan, completed)
+                toothName = om_gui.pt.chartgrid.get(att)
     
-                parent.pt.addHiddenNote(
+                om_gui.pt.addHiddenNote(
                 "treatment", "%s %s"% (toothName.upper(), treat), True)
             else:
-                parent.pt.addHiddenNote("treatment", item.type, True)
+                om_gui.pt.addHiddenNote("treatment", item.type, True)
                 
-        fees_module.applyFeeNow(parent, -1 * item.ptfee, item.csetype)
-        parent.load_treatTrees()
+        fees_module.applyFeeNow(om_gui, -1 * item.ptfee, item.csetype)
+        om_gui.load_treatTrees()
 
     except Exception, e:
         print e
         completed = "%s - %s"% (item.category, item.type)        
-        parent.advise('''<p>Error moving %s from completed to plan
+        om_gui.advise('''<p>Error moving %s from completed to plan
         </p>Please complete manually'''% completed, 1)
         print "UNABLE TO UNCOMPLETE %s"% item
         print e

@@ -26,6 +26,8 @@ from openmolar.qt4gui.fees import course_module
 from openmolar.qt4gui.fees import fees_module
 from openmolar.qt4gui.fees import complete_tx
 
+from openmolar.qt4gui.charts import charts_gui
+
 @localsettings.debug
 def offerTreatmentItems(om_gui, arg):
     '''
@@ -367,7 +369,7 @@ def deleteTxItem(om_gui, pl_cmp, txtype, passedOn=False):
                 
                 #-- now update the charts
                 if re.search("[ul][lr][1-8]", att):
-                    om_gui.updateChartsAfterTreatment(att, plan, completed)
+                    charts_gui.updateChartsAfterTreatment(att, plan, completed)
 
             om_gui.load_treatTrees()
             if not passedOn:

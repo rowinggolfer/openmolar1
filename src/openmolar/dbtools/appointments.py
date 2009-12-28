@@ -492,13 +492,17 @@ def allAppointmentData(adate, dents=()):
     return data
 
 def convertResults(appointments):
-    '''changes (830,845) to (830,15)   ie start,end to start,length'''
+    '''
+    changes (830,845) to (830,15)   
+    ie start,end to start,length
+    '''
     aptlist = []
     for appt in appointments:
+        #change times to minutes past midnight and do simple subtraction
         time2 = localsettings.minutesPastMidnight(appt[1])
         time1 = localsettings.minutesPastMidnight(appt[0])
         aptlist.append((appt[0], time2 - time1))
-        #change time to minutes past midnight and do simple subtraction
+        
     return tuple(aptlist)
 
 def printableDaylistData(adate, dent):
@@ -508,11 +512,12 @@ def printableDaylistData(adate, dent):
     db = connect()
     cursor = db.cursor()
 
-    fullquery = '''SELECT start,end,memo FROM aday
-    WHERE adate="%s" and apptix=%d and (flag=1 or flag=2)'''% (adate, dent)
+    query = '''SELECT start,end,memo FROM aday
+    WHERE adate=%s and apptix=%s and (flag=1 or flag=2)'''
+    values = (adate, dent)
     if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery)
+        print query, values
+    cursor.execute(query, values)
 
     daydata = cursor.fetchall()
     retlist = []
@@ -523,14 +528,14 @@ def printableDaylistData(adate, dent):
         retlist.append(daydata[0][2])
         dayend=daydata[0][1]
         #--now get data for those days so that we can find slots within
-        fullquery = '''SELECT start,end,name,
+        query = '''SELECT start,end,name,
         concat(patients.title," ",patients.fname," ",patients.sname),
         patients.serialno,concat(code0," ",code1," ",code2),note,patients.cset
         FROM patients right join aslot on patients.serialno=aslot.serialno
-        WHERE adate = "%s" and apptix = %d  order by start'''% (adate, dent)
+        WHERE adate = %s and apptix = %s  order by start'''
         if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
+            print query, values
+        cursor.execute(query,values)
 
         results = cursor.fetchall()
         
@@ -564,86 +569,68 @@ def printableDaylistData(adate, dent):
     #db.close()
     return retlist
 
-def daysummary(dsdate, dent):
+def daysummary(adate, dent):
     '''
     gets start,finish and booked appointments for this date
     returned as (start,fin,appts)
     '''
     db = connect()
     cursor = db.cursor()
-    if dent == -1:
-        ##TODO check this is use?
-        apptix = ""
-    else:
-        apptix = "AND apptix=%d"% dent
-
+    
     #--fist get start date and end date
-    fullquery = '''SELECT start,end FROM aday
-    WHERE adate="%s" and (flag=1 or flag=2) %s'''% (dsdate, apptix)
+    query = '''SELECT start,end FROM aday
+    WHERE adate=%s and (flag=1 or flag=2) and apptix=%s'''
+    values = (adate, dent)
     if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery)
+        print query, values
+    cursor.execute(query, values)
 
     daydata = cursor.fetchall()
     query = ""
     retarg = ()
     #--now get data for those days so that we can find slots within
     if daydata != ():
-        query = ' adate = "%s" and apptix = %d '% (dsdate, dent)
-
-        fullquery = '''SELECT start,end FROM aslot
-        WHERE %s AND flag0!=-128 ORDER BY start'''% query
+        query = '''SELECT start,end FROM aslot
+        WHERE adate = %s and apptix = %s AND flag0!=-128 ORDER BY start'''
         if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
+            print query, values
+        cursor.execute(query, values)
 
         results = cursor.fetchall()
-        ## TODO - this works, but would it be more efficient to join these
-        ## 2 queries??
         retarg = convertResults(results)
     cursor.close()
-    #db.close()
     return retarg
 
-def getBlocks(gbdate, dent):
+def getBlocks(adate, dent):
     '''
     get emergencies and blocked bits for date,dent
     '''
     db = connect()
     cursor = db.cursor()
-    if dent == -1:
-        ##TODO - again is this used?
-        apptix = ""
-    else:
-        apptix = "and apptix=%d"% dent
-
-    fullquery = '''SELECT start,end FROM aday
-    WHERE adate="%s" AND (flag=1 OR flag=2) %s'''% (gbdate, apptix)
+    
+    query = '''SELECT start,end FROM aday
+    WHERE adate=%s and apptix=%s AND (flag=1 OR flag=2)'''
+    
+    values = (adate, dent)
     if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery)
+        print query, values
+    cursor.execute(query, values)
 
-    #--SQL query to get start and end
-    daydata = cursor.fetchall()
-    #--now get data for those days so that we can find slots within
-
+    retarg = cursor.fetchall()
+    
     query = ""
-    if daydata != ():
-        query = ' adate = "%s" and apptix = %d '% (gbdate, dent)
-        fullquery = '''SELECT start,end FROM aslot
-        WHERE %s AND flag0=-128 and name!="LUNCH" ORDER BY start'''% query
+    if retarg != ():
+        query = '''SELECT start,end FROM aslot
+        WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH" 
+        ORDER BY start'''
         if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
+            print query, values
+        cursor.execute(query, values)
 
         results = cursor.fetchall()
-        ##TODO - again, should I join these queries??
-        cursor.close()
-        #db.close()
-        return convertResults(results)
-    else:
-        #--day not used!
-        return()
+        retarg = convertResults(results)
+    cursor.close()
+    return retarg
 
 def getLunch(gbdate, dent):
     '''

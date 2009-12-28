@@ -43,6 +43,8 @@ from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.appointment_gui_modules import appt_gui_module
 from openmolar.qt4gui.appointment_gui_modules import taskgui
 
+from openmolar.qt4gui.charts import charts_gui
+
 #--dialogs made with designer
 from openmolar.qt4gui.compiled_uis import Ui_main
 from openmolar.qt4gui.compiled_uis import Ui_patient_finder
@@ -115,381 +117,93 @@ from openmolar.qt4gui.customwidgets import notification_widget
 #--watch out for namespace clashes!!!!!
 
 class chartsClass():
-
-    def navigateCharts(self, direction):
+    def bpe_table(self, arg):
         '''
-        called by a keypress in the tooth prop LineEdit or a click on one of
-        the tooth prop buttons.
-        entry will have been checked.
+        updates the BPE chart on the clinical summary page
         '''
-        #print "navigateCharts",direction
-        [x, y] = self.ui.staticChartWidget.selected
+        charts_gui.bpe_table(self, arg)
 
-        if y == 0:
-            #--upper teeth
-            if direction == "up":
-                if x != 0:
-                    x -= 1
-            else:
-                if x == 15:
-                    x, y = 15, 1
-                else:
-                    x += 1
-        else:
-            #--lower teeth
-            if direction == "up":
-                if x == 15:
-                    x, y=15, 0
-                else:
-                    x += 1
-            else:
-                if x != 0:
-                    x -= 1
-
-        self.selectChartedTooth(x, y)
-        tooth = self.ui.staticChartWidget.grid[y][x]
-
-        row = (16*y) + x
-
-        self.ui.chartsTableWidget.setCurrentCell(row, 0)
-        self.ui.toothPropsWidget.setTooth(tooth, self.selectedChartWidget)
-
-    def chart_navigate(self):
+    def layoutPerioCharts(self):
         '''
-        this is called when the tooth props widget
-        static/plan/completed buttons are used
+        layout the perio charts
         '''
-        #print "chart_navigate",
-
-        row=self.ui.chartsTableWidget.currentRow()
-
-        tString = str(self.ui.chartsTableWidget.item(
-        row, 0).text().toAscii())
-        #print tString
-        self.ui.toothPropsWidget.setTooth(tString, self.selectedChartWidget)
-        self.chartNavigation([tString], True)
-
-    def deleteComments(self):
-        '''
-        called when user has trigger deleted comments in the toothProp
-        '''
-        tooth = str(self.ui.chartsTableWidget.item(
-        self.ui.chartsTableWidget.currentRow(), 0).text())
-
-        if tooth in self.ui.staticChartWidget.commentedTeeth:
-            self.ui.staticChartWidget.commentedTeeth.remove(tooth)
-            self.ui.staticChartWidget.update()
-        existing = self.pt.__dict__[tooth+"st"]
-        self.pt.__dict__[tooth+"st"] = re.sub("![^ ]* ","",existing)
-
-    def updateCharts(self, arg):
-        '''
-        called by a signal from the toothprops widget -
-        args are the new tooth properties eg modbl,co
-        '''
-        try:
-            tooth = str(self.ui.chartsTableWidget.item(
-            self.ui.chartsTableWidget.currentRow(), 0).text())
-        except AttributeError:
-            return
-        #print "update charts called with arg '%s'"% arg,
-        #print "tooth is ",tooth
-        if self.selectedChartWidget == "st":
-            self.pt.__dict__[tooth + self.selectedChartWidget] = arg
-            #--update the patient!!
-            self.ui.staticChartWidget.setToothProps(tooth, arg)
-            self.ui.summaryChartWidget.setToothProps(tooth, arg)
-            self.ui.staticChartWidget.update()
-        elif self.selectedChartWidget == "pl":
-            if arg != "" and course_module.newCourseNeeded(self):
-                return
-            self.toothTreatAdd(tooth, arg)
-            self.ui.planChartWidget.update()
-
-        elif self.selectedChartWidget == "cmp":
-            self.advise(_('''<p>for the moment, please enter treatment
-into the plan first then complete it.'''), 1)
-        else:
-            self.advise(_("unable to update chart - this shouldn't happen!!"),
-            2) #--should NEVER happen
-
-    def updateChartsAfterTreatment(self, tooth, newplan, newcompleted):
-        '''
-        update the charts when a planned item has moved to completed
-        '''
-        #print "update charts after treatment", tooth, newplan, newcompleted
-        self.ui.planChartWidget.setToothProps(tooth, newplan)
-        self.ui.planChartWidget.update()
-        self.ui.completedChartWidget.setToothProps(tooth, newcompleted)
-        self.ui.completedChartWidget.update()
-
-    def flipDeciduous(self):
-        '''
-        change a tooth state from deciduous to permanent
-        or back again
-        '''
-        if self.selectedChartWidget == "st":
-            selectedCells = self.ui.chartsTableWidget.selectedIndexes()
-            for cell in selectedCells:
-                row=cell.row()
-                selectedTooth=str(
-                self.ui.chartsTableWidget.item(row, 0).text().toAscii())
-
-                #print "flipping tooth ", selectedTooth
-                self.pt.flipDec_Perm(selectedTooth)
-            for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
-            self.ui.completedChartWidget, self.ui.perioChartWidget,
-            self.ui.summaryChartWidget):
-                chart.chartgrid=self.pt.chartgrid
-                #--necessary to restore the chart to full dentition
-                chart.update()
-        else:
-            self.advise(
-            _("you need to be in the static chart to change tooth state"), 1)
-
-    def checkPreviousEntry(self):
-        '''
-        check to see if the toothProps widget has unfinished business
-        '''
-        #-- before continuing, see if user has changes to apply on the
-        #-- previous tooth
-        #print "checkPreviousEntry"
-        if not self.ui.toothPropsWidget.lineEdit.unsavedChanges():
-            return True
-        else:
-            return self.ui.toothPropsWidget.lineEdit.additional() #lineEdit.verifyProps()
-
-    def static_chartNavigation(self, signal):
-        '''
-        called by the static or summary chartwidget
-        '''
-        #print "static_chartNavigation"
-        self.checkPreviousEntry()
-        self.selectedChartWidget="st"
-        self.chartNavigation(signal)
-
-    def plan_chartNavigation(self, signal):
-        '''
-        called by the plan chartwidget
-        '''
-        #print "plan_chartNavigation"
-        self.checkPreviousEntry()
-        self.selectedChartWidget="pl"
-        self.chartNavigation(signal)
-
-    def comp_chartNavigation(self, signal):
-        '''
-        called by the completed chartwidget
-        '''
-        #print "comp_chartNavigation"
-        self.checkPreviousEntry()
-        self.selectedChartWidget="cmp"
-        self.chartNavigation(signal)
-
+        charts_gui.layoutPerioCharts(self)
+        
     def editStatic(self):
         '''
         called by the static button on the toothprops widget
         '''
         self.selectedChartWidget="st"
-        self.chart_navigate()
+        charts_gui.chart_navigate(self)
 
     def editPlan(self):
         '''
         called by the plan button on the toothprops widget
         '''
         self.selectedChartWidget="pl"
-        self.chart_navigate()
+        charts_gui.chart_navigate(self)
 
     def editCompleted(self):
         '''
         called by the cmp button on the toothprops widget
         '''
         self.selectedChartWidget="cmp"
-        self.chart_navigate()
+        charts_gui.chart_navigate(self)
+
+    def deleteComments(self):
+        '''
+        called when user has trigger deleted comments in the toothProp
+        '''
+        charts_gui.deleteComments(self)
+        
+    def updateCharts(self, arg):
+        '''
+        called by a signal from the toothprops widget -
+        args are the new tooth properties eg modbl,co
+        '''
+        charts_gui.updateCharts(self, arg)
+        
+    def navigateCharts(self, direction):
+        '''
+        catches a keypress in the toothprop widget
+        '''
+        charts_gui.navigateCharts(self, direction)
+        
+    def static_chartNavigation(self, signal):
+        '''
+        called by the static or summary chartwidget
+        '''
+        charts_gui.checkPreviousEntry(self)
+        self.selectedChartWidget="st"
+        charts_gui.chartNavigation(self, signal)
+
+    def plan_chartNavigation(self, signal):
+        '''
+        called by the plan chartwidget
+        '''
+        charts_gui.checkPreviousEntry(self)
+        self.selectedChartWidget="pl"
+        charts_gui.chartNavigation(self, signal)
+
+    def comp_chartNavigation(self, signal):
+        '''
+        called by the completed chartwidget
+        '''
+        charts_gui.checkPreviousEntry(self)
+        self.selectedChartWidget="cmp"
+        charts_gui.chartNavigation(self, signal)
+    
+    def flipDeciduous(self):
+        '''
+        toggle the selected tooth's deciduos state
+        '''
+        charts_gui.flipDeciduous(self)
 
     def chartTableNav(self, row, col, row1, col1):
         '''
         charts table has been navigated
         '''
-        print "UNUSED chartTableNav", row,col,row1,col1
-
-    def chartNavigation(self, teeth, callerIsTable=False):
-        '''
-        one way or another, a tooth has been selected...
-        this updates all relevant widgets
-        '''
-        #--called by a navigating a chart or the underlying table
-        #--convert from QString
-        #print "chartNavigation", teeth, callerIsTable
-        grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
-        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
-        ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
-        'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
-
-        if teeth == []:
-            print '''chartNavigation called with teeth=[]\n
-            THIS SHOULDN'T HAPPEN!!!!'''
-            return
-        tooth = teeth[0]
-
-        self.ui.toothPropsWidget.setTooth(tooth, self.selectedChartWidget)
-
-        #--calculate x, y co-ordinates for the chartwidgets
-        if tooth in grid[0]:
-            y = 0
-        else:
-            y = 1
-        x = grid[y].index(tooth)
-
-        self.selectChartedTooth(x, y)
-        self.ui.chartsTableWidget.setCurrentCell(x+y*16, 0)
-        for tooth in teeth:
-            #other teeth have been selected
-            #ie. ctrl-click or shift ciick
-            if tooth in grid[0]:
-                y = 0
-            else:
-                y = 1
-            x = grid[y].index(tooth)
-
-            self.ui.chartsTableWidget.setCurrentCell(x+y*16, 0,
-            QtGui.QItemSelectionModel.Select)
-
-    def selectChartedTooth(self, x, y):
-        '''
-        only one tooth can be 'selected'
-        '''
-        self.ui.planChartWidget.setSelected(x, y, showSelection =
-        self.selectedChartWidget == "pl")
-
-        self.ui.completedChartWidget.setSelected(x, y, showSelection =
-        self.selectedChartWidget == "cmp")
-
-        self.ui.staticChartWidget.setSelected(x, y, showSelection =
-        self.selectedChartWidget == "st")
-
-
-    def bpe_dates(self):
-        '''
-        updates the date in the bpe date groupbox
-        '''
-        #--bpe = "basic periodontal exam"
-        self.ui.bpeDateComboBox.clear()
-        self.ui.bpe_textBrowser.setPlainText("")
-        if self.pt.bpe == []:
-            self.ui.bpeDateComboBox.addItem(QtCore.QString("NO BPE"))
-        else:
-            l = copy.deepcopy(self.pt.bpe)
-            l.reverse() #show newest first
-            for sets in l:
-                bpedate = localsettings.formatDate(sets[0])
-                self.ui.bpeDateComboBox.addItem(bpedate)
-
-    def bpe_table(self, arg):
-        '''
-        updates the BPE chart on the clinical summary page
-        '''
-        if self.pt.bpe != []:
-            last_bpe_date = localsettings.formatDate(self.pt.bpe[-1][0])
-            self.ui.bpe_groupBox.setTitle("BPE " + last_bpe_date)
-            l=copy.deepcopy(self.pt.bpe)
-            l.reverse()
-            bpestring=l[arg][1]
-            bpe_html='<table width="100%" border="1"><tr>'
-            for i in range(len(bpestring)):
-                if i == 3:
-                    bpe_html+="</tr><tr>"
-                bpe_html+='<td align="center">%s</td>'%bpestring[i]
-            for i in range(i+1, 6):
-                if i == 3:
-                    bpe_html+="</tr><tr>"
-                bpe_html+='<td align="center">_</td>'
-            bpe_html+='</tr></table>'
-            self.ui.bpe_textBrowser.setHtml(bpe_html)
-        else:
-            #--necessary in case of the "NO DATA FOUND" option
-            self.ui.bpe_groupBox.setTitle(_("BPE"))
-            self.ui.bpe_textBrowser.setHtml("")
-
-    def periochart_dates(self):
-        '''
-        multiple perio charts on multiple dates....
-        display those dates in a combo box
-        '''
-        self.ui.perioChartDateComboBox.clear()
-        for date in self.pt.perioData.keys():
-            self.ui.perioChartDateComboBox.addItem(QtCore.QString(date))
-        if self.pt.perioData == {}:
-            self.ui.perioChartDateComboBox.addItem(_("NO CHARTS"))
-
-    def layoutPerioCharts(self):
-        '''
-        layout the perio charts
-        '''
-        #--convert from QString
-        selected_date=str(self.ui.perioChartDateComboBox.currentText())
-        if self.pt.perioData.has_key(selected_date):
-            perioD = self.pt.perioData[selected_date]
-            #--headers=("Recession", "Pocketing", "Plaque", "Bleeding", "Other",
-            #--"Suppuration", "Furcation", "Mobility")
-            for key in perioD.keys():
-                for i in range(8):
-                    self.ui.perioChartWidgets[i].setProps(key, perioD[key][i])
-        else:
-            self.advise("no perio data found for", selected_date)
-            for i in range(8):
-                self.ui.perioChartWidgets[i].props = {}
-        for chart in self.ui.perioChartWidgets:
-            chart.update()
-
-    def chartsTable(self):
-        '''
-        update the charts table
-        '''
-        #print "filling chartsTable"
-        self.advise("filling charts table")
-        self.ui.chartsTableWidget.clear()
-        self.ui.chartsTableWidget.setSortingEnabled(False)
-        self.ui.chartsTableWidget.setRowCount(32)
-        headers=["Tooth", "Deciduous", "Static", "Plan", "Completed"]
-        self.ui.chartsTableWidget.setColumnCount(5)
-        self.ui.chartsTableWidget.setHorizontalHeaderLabels(headers)
-        self.ui.chartsTableWidget.verticalHeader().hide()
-
-        for chart in (self.ui.summaryChartWidget,
-        self.ui.staticChartWidget,
-        self.ui.planChartWidget,
-        self.ui.completedChartWidget,
-        self.ui.perioChartWidget):
-            chart.chartgrid=self.pt.chartgrid
-            #--sets the tooth numbering
-        row=0
-
-        for tooth in self.grid:
-            item1=QtGui.QTableWidgetItem(tooth)
-            static_text=self.pt.__dict__[tooth+"st"]
-            staticitem=QtGui.QTableWidgetItem(static_text)
-            decidousitem=QtGui.QTableWidgetItem(self.pt.chartgrid[tooth])
-            self.ui.chartsTableWidget.setRowHeight(row, 15)
-            self.ui.chartsTableWidget.setItem(row, 0, item1)
-            self.ui.chartsTableWidget.setItem(row, 1, decidousitem)
-            self.ui.chartsTableWidget.setItem(row, 2, staticitem)
-            row += 1
-            self.ui.summaryChartWidget.setToothProps(tooth, static_text)
-            self.ui.staticChartWidget.setToothProps(tooth, static_text)
-            pItem = self.pt.__dict__[tooth+"pl"]
-            cItem = self.pt.__dict__[tooth+"cmp"]
-            planitem = QtGui.QTableWidgetItem(pItem)
-            cmpitem = QtGui.QTableWidgetItem(cItem)
-            self.ui.chartsTableWidget.setItem(row, 3, planitem)
-            self.ui.chartsTableWidget.setItem(row, 4, cmpitem)
-            self.ui.planChartWidget.setToothProps(tooth, pItem.lower())
-            self.ui.completedChartWidget.setToothProps(tooth, cItem.lower())
-
-            if static_text[:2] in ("AT", "TM", "UE"):
-                self.ui.perioChartWidget.setToothProps(tooth, static_text)
-        self.ui.chartsTableWidget.resizeColumnsToContents()
-        self.ui.chartsTableWidget.setCurrentCell(0, 0)
+        charts_gui.chartTableNav(self, row, col, row1, col1)
 
     def toothHistory(self, tooth):
         '''
@@ -923,9 +637,6 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         '''
         handles navigation of patient record
         '''
-        if localsettings.DEBUGMODE:
-            print "handling patientTab"
-
         ci=self.ui.tabWidget.currentIndex()
 
         if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
@@ -933,7 +644,8 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
             appt_gui_module.aptOVviewMode(self, True)
 
         if ci != 6:
-            if not self.checkPreviousEntry():
+            if self.ui.tabWidget.isTabEnabled(6) and \
+            not charts_gui.checkPreviousEntry(self):
                 self.ui.tabWidget.setCurrentIndex(6)
 
         if self.editPageVisited:
@@ -962,9 +674,9 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
             self.updateNotesPage()
 
         if ci == 8: #-- perio tab
-            self.periochart_dates()
+            charts_gui.periochart_dates(self)
             #load the periocharts (if the patient has data)
-            self.layoutPerioCharts()
+            charts_gui.layoutPerioCharts(self)
             
         if ci == 7:  #-- estimate/plan page.
             self.load_newEstPage()
@@ -1606,8 +1318,8 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         self.ui.completedChartWidget.setSelected(0, 0, False)  #select the UR8
 
         self.ui.toothPropsWidget.setTooth("ur8","st")
-        self.chartsTable()
-        self.bpe_dates()
+        charts_gui.chartsTable(self)
+        charts_gui.bpe_dates(self)
         if self.pt.recd:
             self.ui.recall_dateEdit.setDate(self.pt.recd)
         try:
@@ -2089,8 +1801,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.ui.bpe_textBrowser
         else:
             self.advise("BPE not applied", 2)
-        self.bpe_dates()
-        self.bpe_table(0)
+        charts_gui.bpe_dates(self)
+        charts_gui.bpe_table(self, 0)
 
     def userOptionsDialog(self):
         '''
@@ -2639,7 +2351,7 @@ WITH PT RECORDS %d and %d''')% (
         if self.pt.underTreatment:
             course_module.closeCourse(self)
             #static items may have changed
-            self.chartsTable()
+            charts_gui.chartsTable(self)
             self.load_clinicalSummaryPage()
             self.ui.summaryChartWidget.update()
 
