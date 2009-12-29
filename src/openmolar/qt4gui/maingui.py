@@ -1152,19 +1152,22 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
             addToRecentSnos=False)
             localsettings.recent_sno_index = desiredPos
         else:
-            self.advise(_("Reached end of the List")+str(localsettings.recent_snos))
+            self.advise(_("Reached end of the List"))
             
     def last_patient(self):
         '''
         cycle backwards through recently visited records
         '''
-        desiredPos = localsettings.recent_sno_index - 1
+        if self.pt.serialno == 0:
+            desiredPos = localsettings.recent_sno_index
+        else:
+            desiredPos = localsettings.recent_sno_index - 1
         if len(localsettings.recent_snos) > desiredPos >= 0: 
             self.getrecord(localsettings.recent_snos[desiredPos],
             addToRecentSnos=False)
             localsettings.recent_sno_index = desiredPos
         else:
-            self.advise(_("Reached Start of the List")+str(localsettings.recent_snos))
+            self.advise(_("Reached Start of the List"))
         
     def apply_editpage_changes(self):
         '''
