@@ -369,7 +369,8 @@ def deleteTxItem(om_gui, pl_cmp, txtype, passedOn=False):
                 
                 #-- now update the charts
                 if re.search("[ul][lr][1-8]", att):
-                    charts_gui.updateChartsAfterTreatment(att, plan, completed)
+                    charts_gui.updateChartsAfterTreatment(om_gui, att, plan,
+                    completed)
 
             om_gui.load_treatTrees()
             if not passedOn:

@@ -90,7 +90,7 @@ def chartComplete(om_gui, arg):
             newcompleted = existingcompleted + treatmentItem
             
             om_gui.pt.__dict__[completedATT] = newcompleted
-            charts_gui.updateChartsAfterTreatment(adultTooth, newplan, 
+            charts_gui.updateChartsAfterTreatment(om_gui, adultTooth, newplan, 
             newcompleted)
 
             checkEstBox(om_gui, toothName, treatmentItem)
@@ -131,7 +131,8 @@ def estwidg_complete(om_gui, item):
             om_gui.pt.__dict__[att + "cmp"] = completed
 
             if re.findall("[ul][lr][1-8]", att):
-                charts_gui.updateChartsAfterTreatment(att, plan, completed)
+                charts_gui.updateChartsAfterTreatment(om_gui, att, plan, 
+                completed)
                 toothName = om_gui.pt.chartgrid.get(att)
     
                 om_gui.pt.addHiddenNote(
@@ -178,7 +179,8 @@ def estwidg_unComplete(om_gui, item):
             om_gui.pt.__dict__[att + "cmp"] = completed
 
             if re.findall("[ul][lr][1-8]", att):
-                charts_gui.updateChartsAfterTreatment(att, plan, completed)
+                charts_gui.updateChartsAfterTreatment(om_gui, att, plan, 
+                completed)
                 toothName = om_gui.pt.chartgrid.get(att)
     
                 om_gui.pt.addHiddenNote(

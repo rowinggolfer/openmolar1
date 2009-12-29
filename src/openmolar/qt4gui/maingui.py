@@ -1146,34 +1146,26 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         '''
         cycle forwards through the list of recently visited records
         '''
-        cp= self.pt.serialno
-        recent=localsettings.recent_snos
-        try:
-            last_serialno=recent[recent.index(cp)+1]
-            self.getrecord(last_serialno)
-        except ValueError:
-            self.advise("Reached End of  List")
-        except Exception, e:
-            print "Exception in maingui.next_patient", e
-
+        desiredPos = localsettings.recent_sno_index + 1
+        if len(localsettings.recent_snos) > desiredPos:
+            self.getrecord(localsettings.recent_snos[desiredPos],
+            addToRecentSnos=False)
+            localsettings.recent_sno_index = desiredPos
+        else:
+            self.advise(_("Reached end of the List")+str(localsettings.recent_snos))
+            
     def last_patient(self):
         '''
         cycle backwards through recently visited records
         '''
-        cp= self.pt.serialno
-        recent=localsettings.recent_snos
-        if cp == 0 and len(recent)>0:
-            last_serialno=recent[-1]
-            self.getrecord(last_serialno)
+        desiredPos = localsettings.recent_sno_index - 1
+        if len(localsettings.recent_snos) > desiredPos > 0: 
+            self.getrecord(localsettings.recent_snos[desiredPos],
+            addToRecentSnos=False)
+            localsettings.recent_sno_index = desiredPos
         else:
-            try:
-                last_serialno=recent[recent.index(cp)-1]
-                self.getrecord(last_serialno)
-            except ValueError:
-                self.advise("Reached start of  List")
-            except Exception, e:
-                print "Exception in maingui.next_patient", e
-
+            self.advise(_("Reached Start of the List")+str(localsettings.recent_snos))
+        
     def apply_editpage_changes(self):
         '''
         apply any changes made on the edit patient page
@@ -1216,18 +1208,24 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         sno = self.ui.accounts_tableWidget.item(row, 1).text()
         self.getrecord(int(sno))
 
-    def getrecord(self, serialno, checkedNeedToLeaveAlready=False):
+    @localsettings.debug
+    def getrecord(self, serialno, checkedNeedToLeaveAlready=False, 
+    addToRecentSnos=True):
         '''
         a record has been called byone of several means
         '''
         if self.enteringNewPatient():
             return
-        print "get record %s"% serialno
         if not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
             print "not loading"
             self.advise("Not loading patient")
             return
         if serialno != 0:
+            if addToRecentSnos:
+                localsettings.recent_snos.append(serialno)
+                localsettings.recent_sno_index = len(
+                localsettings.recent_snos) - 1
+            
             self.advise("connecting to database to get patient details..")
 
             try:
@@ -1339,10 +1337,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         self.pt.sname, self.pt.serialno)
         self.loadedPatient_label.setText(labeltext)
         self.ui.hiddenNotes_label.setText("")
-
-        if self.pt.serialno in localsettings.recent_snos:
-            localsettings.recent_snos.remove(self.pt.serialno)
-        localsettings.recent_snos.append(self.pt.serialno)
+        
         if self.ui.tabWidget.currentIndex() == 4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.ui.debugBrowser.setText("")
