@@ -23,7 +23,7 @@ def getAge(pt):
     '''
     ageYears, months, isToday = pt.getAge()
     if isToday:
-        return "<h5> %s TODAY!</h5>"% age
+        return "<h5> %s TODAY!</h5>"% ageYears
     if ageYears > 18:
         return "(%syo)<hr />"% ageYears
     else:

@@ -1159,7 +1159,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         cycle backwards through recently visited records
         '''
         desiredPos = localsettings.recent_sno_index - 1
-        if len(localsettings.recent_snos) > desiredPos > 0: 
+        if len(localsettings.recent_snos) > desiredPos >= 0: 
             self.getrecord(localsettings.recent_snos[desiredPos],
             addToRecentSnos=False)
             localsettings.recent_sno_index = desiredPos
