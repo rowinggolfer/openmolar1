@@ -55,6 +55,7 @@ setup(
                 'openmolar.qt4gui',
                 'openmolar.qt4gui.dialogs',
                 'openmolar.qt4gui.appointment_gui_modules',
+                'openmolar.qt4gui.charts',                
                 'openmolar.qt4gui.compiled_uis',
                 'openmolar.qt4gui.customwidgets',
                 'openmolar.qt4gui.dialogs',
