@@ -15,7 +15,7 @@ DATE_FORMAT = "MMMM, yyyy"
 
 class Form(QtGui.QDialog):
 
-    def __init__(self,rows,parent=None):
+    def __init__(self,rows,adate,parent=None):
         super(Form, self).__init__(parent)
 
         self.printer = QtGui.QPrinter()
@@ -23,7 +23,7 @@ class Form(QtGui.QDialog):
         self.recalls=rows
         self.table = QtGui.QTableWidget()
         self.populateTable()
-
+        self.adate = adate
         painterButton = QtGui.QPushButton("Print All")
         quitButton = QtGui.QPushButton("&Quit")
 
@@ -96,7 +96,8 @@ class Form(QtGui.QDialog):
             y += serifLineHeight
 
             x,y=LeftMargin,(pageRect.height()*0.3)
-            painter.drawText(x+250, y, QtCore.QDate.currentDate().toString(DATE_FORMAT))
+            
+            painter.drawText(x+250, y, self.adate.toString(DATE_FORMAT))
             y += sansLineHeight
             painter.setFont(serifFont)
             y += serifLineHeight
@@ -120,7 +121,7 @@ class Form(QtGui.QDialog):
             y += serifLineHeight * 3
             painter.drawText(x, y, "P.S. we are pleased to announce that Sally Melville, our hygienist,"  )
             y += serifLineHeight 
-            painter.drawText(x, y, 'had a baby boy, "Leo", on the 22nd September.')
+            painter.drawText(x, y, 'had a baby boy, "Leo", on the 23rd September.')
             y += serifLineHeight 
             painter.drawText(x, y, 'Her maternity leave has reduced the availability of hygienist' )
             y += serifLineHeight 
@@ -152,7 +153,7 @@ if __name__ == "__main__":
     localsettings.initiate()
     pts=recall.getpatients(3,2009)
     app = QtGui.QApplication(sys.argv)
-    form = Form(pts)
+    form = Form(pts, QtCore.QDate.currentDate())
     form.show()
     app.exec_()
 

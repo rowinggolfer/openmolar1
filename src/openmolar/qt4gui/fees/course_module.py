@@ -19,43 +19,43 @@ from openmolar.qt4gui.compiled_uis import Ui_completionDate
 from openmolar.qt4gui import contract_gui_module
 from openmolar.ptModules import plan
 
-def newCourseNeeded(parent):
+def newCourseNeeded(om_gui):
     '''
     checks to see if the patient is under treatment.
     if not, start a course
     '''
-    if parent.pt.underTreatment:
+    if om_gui.pt.underTreatment:
         return False
     else:
-        if parent.pt.cmpd != parent.pt_dbstate.cmpd:
-            parent.advise(
+        if om_gui.pt.cmpd != om_gui.pt_dbstate.cmpd:
+            om_gui.advise(
             _("Please save the old course changes before continuing"), 1)
             return True
-        elif not setupNewCourse(parent):
-            parent.advise(_('''<p>unable to plan or perform treatment if pt 
+        elif not setupNewCourse(om_gui):
+            om_gui.advise(_('''<p>unable to plan or perform treatment if pt 
 does not have an active course</p>'''), 1)
             return True
         else:
-            print "new course started with accd of '%s'"% parent.pt.accd
+            print "new course started with accd of '%s'"% om_gui.pt.accd
             return False
         
-def setupNewCourse(parent):
+def setupNewCourse(om_gui):
     '''
     set up a new course of treament
     '''
     
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
 
     if localsettings.clinicianNo != 0 and \
     localsettings.clinicianInits in localsettings.activedents:
         #-- clinician could be a hygenist!
         cdnt = localsettings.clinicianNo
-    elif parent.pt.dnt2 == 0:
-        cdnt = parent.pt.dnt1
+    elif om_gui.pt.dnt2 == 0:
+        cdnt = om_gui.pt.dnt1
     else:
-        cdnt = parent.pt.dnt2
-    dl = newCourse.course(Dialog, localsettings.ops.get(parent.pt.dnt1),
-    localsettings.ops.get(cdnt), parent.pt.cset)
+        cdnt = om_gui.pt.dnt2
+    dl = newCourse.course(Dialog, localsettings.ops.get(om_gui.pt.dnt1),
+    localsettings.ops.get(cdnt), om_gui.pt.cset)
     
     result, atts = dl.getInput()
 
@@ -63,97 +63,99 @@ def setupNewCourse(parent):
 
     if result:
         dnt1 = localsettings.ops_reverse.get(atts[0])
-        if dnt1 != parent.pt.dnt1:
-            contract_gui_module.changeContractedDentist(parent, atts[0])
+        if dnt1 != om_gui.pt.dnt1:
+            contract_gui_module.changeContractedDentist(om_gui, atts[0])
         dnt2 = localsettings.ops_reverse.get(atts[1])
-        if dnt2 != parent.pt.dnt2:
-            contract_gui_module.changeCourseDentist(parent, atts[1])
-        if atts[2] != parent.pt.cset:
-            contract_gui_module.changeCourseType(parent, atts[2])
+        if dnt2 != om_gui.pt.dnt2:
+            contract_gui_module.changeCourseDentist(om_gui, atts[1])
+        if atts[2] != om_gui.pt.cset:
+            contract_gui_module.changeCourseType(om_gui, atts[2])
 
         accd = atts[3].toPyDate()
 
-        result, courseno = writeNewCourse.write(parent.pt.serialno,
+        result, courseno = writeNewCourse.write(om_gui.pt.serialno,
         localsettings.ops_reverse.get(atts[1]), accd)
         
         if result:
-            parent.pt.blankCurrtrt()
-            parent.pt_dbstate.blankCurrtrt()
-            parent.pt.courseno = courseno
-            parent.pt.courseno0 = courseno
-            parent.pt.setAccd(accd)
-            parent.advise(_("Sucessfully started new course of treatment"))
+            om_gui.pt.blankCurrtrt()
+            om_gui.pt_dbstate.blankCurrtrt()
+            om_gui.pt.courseno = courseno
+            om_gui.pt.courseno0 = courseno
+            om_gui.pt.setAccd(accd)
+            om_gui.advise(_("Sucessfully started new course of treatment"))
             # force a recheck for the new course date
-            parent.pt.feeTable = None 
-            parent.pt.estimates = []
-            parent.pt.underTreatment = True
-            parent.load_newEstPage()
-            parent.ui.planChartWidget.clear(keepSelection=True)
-            parent.ui.completedChartWidget.clear()
-            parent.updateDetails()
-            parent.pt.addHiddenNote("open_course")
+            om_gui.pt.feeTable = None 
+            om_gui.pt.estimates = []
+            om_gui.pt.underTreatment = True
+            om_gui.load_newEstPage()
+            om_gui.ui.planChartWidget.clear(keepSelection=True)
+            om_gui.ui.completedChartWidget.clear()
+            om_gui.updateDetails()
+            om_gui.pt.addHiddenNote("open_course")
             return True
         else:
-            parent.advise(_("ERROR STARTING NEW COURSE, sorry"), 2)
+            om_gui.advise(_("ERROR STARTING NEW COURSE, sorry"), 2)
 
-def prompt_close_course(parent):
+def prompt_close_course(om_gui):
     '''
     pt is marked as under treatment.....
     let's see if there is anything outstanding
     '''
-    if "surgery" in localsettings.station and parent.pt.underTreatment:
-        if not parent.pt.treatmentOutstanding():
-            closeCourse(parent, True)
+    if "surgery" in localsettings.station and om_gui.pt.underTreatment:
+        if not om_gui.pt.treatmentOutstanding():
+            closeCourse(om_gui, True)
     
-def closeCourse(parent, leaving=False):
+def closeCourse(om_gui, leaving=False):
     '''
     allow the user to add a completion Date to a course of treatment
     '''
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     my_dialog = Ui_completionDate.Ui_Dialog()
     my_dialog.setupUi(Dialog)
-    my_dialog.pt_label.setText("%s %s - (%s)"% (parent.pt.fname, 
-    parent.pt.sname, parent.pt.serialno))
+    my_dialog.pt_label.setText("%s %s - (%s)"% (om_gui.pt.fname, 
+    om_gui.pt.sname, om_gui.pt.serialno))
 
     if not leaving:
         my_dialog.autoComplete_label.hide()
-    my_dialog.dateEdit.setMinimumDate(parent.pt.accd)
+    my_dialog.dateEdit.setMinimumDate(om_gui.pt.accd)
     my_dialog.dateEdit.setMaximumDate(QtCore.QDate().currentDate())
     my_dialog.dateEdit.setDate(QtCore.QDate().currentDate())
+    ##focus the "yes" button
+    my_dialog.buttonBox.buttons()[0].setFocus()
     
     if Dialog.exec_():
         cmpd = my_dialog.dateEdit.date().toPyDate()
-        parent.pt.setCmpd(cmpd)
-        parent.pt.underTreatment = False
-        parent.updateDetails()
-        parent.pt.addHiddenNote("close_course")
-        offerFinalPaperWork(parent)
-        plan.completedFillsToStatic(parent.pt)
+        om_gui.pt.setCmpd(cmpd)
+        om_gui.pt.underTreatment = False
+        om_gui.updateDetails()
+        om_gui.pt.addHiddenNote("close_course")
+        offerFinalPaperWork(om_gui)
+        plan.completedFillsToStatic(om_gui.pt)
         return True
     
     return False
  
  
-def offerFinalPaperWork(parent):
+def offerFinalPaperWork(om_gui):
     '''
     a course has been closed ( in surgery )
     time to print a claim form?
     '''
-    if "N" in parent.pt.cset:
-        om_printing.printGP17(parent, known_course=True)
+    if "N" in om_gui.pt.cset:
+        om_printing.printGP17(om_gui, known_course=True)
     
-def resumeCourse(parent):
+def resumeCourse(om_gui):
     '''
     resume the previous treatment course
     '''
     message = "Resume the previous course of treatment?"
-    result = QtGui.QMessageBox.question(parent, "Confirm", message,
+    result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes )
     
     if result == QtGui.QMessageBox.Yes:
-        parent.pt.cmpd = None
-        parent.pt.underTreatment = True
-        parent.updateDetails()
-        parent.pt.addHiddenNote("resume_course")
+        om_gui.pt.cmpd = None
+        om_gui.pt.underTreatment = True
+        om_gui.updateDetails()
+        om_gui.pt.addHiddenNote("resume_course")
         return True

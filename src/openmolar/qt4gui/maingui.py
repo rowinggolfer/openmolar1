@@ -1702,7 +1702,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         month = self.ui.recalldateEdit.date().month()
         year = self.ui.recalldateEdit.date().year()
         pts = recall.getpatients(month, year)
-        dialog = recall_app.Form(pts)
+        dialog = recall_app.Form(pts, self.ui.recalldateEdit.date(), self)
         if dialog.exec_():
             ##TODO add a note like (recall printed) to all relevant pt notes.
             ##or insert into new docs printed??

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'completionDate.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
+# Created: Wed Dec 30 10:29:59 2009
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,6 +33,7 @@ class Ui_Dialog(object):
         self.label_4.setObjectName("label_4")
         self.horizontalLayout.addWidget(self.label_4)
         self.dateEdit = QtGui.QDateEdit(Dialog)
+        self.dateEdit.setFocusPolicy(QtCore.Qt.TabFocus)
         self.dateEdit.setCalendarPopup(True)
         self.dateEdit.setObjectName("dateEdit")
         self.horizontalLayout.addWidget(self.dateEdit)
@@ -45,6 +46,7 @@ class Ui_Dialog(object):
         spacerItem1 = QtGui.QSpacerItem(20, 14, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.No|QtGui.QDialogButtonBox.Yes)
         self.buttonBox.setCenterButtons(True)

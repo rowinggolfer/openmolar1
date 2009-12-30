@@ -5,11 +5,11 @@ So don't edit it. :)
 """
 
 version_info = {'branch_nick': u'openmolar',
- 'build_date': '2009-12-29 18:01:49 +0000',
+ 'build_date': '2009-12-30 10:54:31 +0000',
  'clean': None,
- 'date': '2009-12-29 17:29:35 +0000',
- 'revision_id': 'rowinggolfer@googlemail.com-20091229172935-s383u0h5nxq3k5rs',
- 'revno': 540}
+ 'date': '2009-12-29 18:01:50 +0000',
+ 'revision_id': 'rowinggolfer@googlemail.com-20091229180150-pvolxe6owmi8hd9r',
+ 'revno': 541}
 
 revisions = {}
 

@@ -64,6 +64,9 @@
      </item>
      <item>
       <widget class="QDateEdit" name="dateEdit">
+       <property name="focusPolicy">
+        <enum>Qt::TabFocus</enum>
+       </property>
        <property name="calendarPopup">
         <bool>true</bool>
        </property>
@@ -103,6 +106,9 @@ p, li { white-space: pre-wrap; }
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
