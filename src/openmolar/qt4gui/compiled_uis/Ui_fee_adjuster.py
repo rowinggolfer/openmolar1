@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'fee_adjuster.ui'
 #
-# Created: Tue Dec  1 23:37:33 2009
+# Created: Sat Jan  2 16:05:28 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!

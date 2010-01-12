@@ -7,18 +7,18 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>OpenMolar - database wizard</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>7</number>
+       <number>9</number>
       </property>
       <widget class="QWidget" name="tab_8">
        <attribute name="title">
@@ -84,7 +84,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QFrame" name="frame">
+         <widget class="QFrame" name="practice_frame">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -1036,6 +1036,29 @@
         <string>Referral Centres</string>
        </attribute>
       </widget>
+      <widget class="QWidget" name="tab_7">
+       <attribute name="title">
+        <string>View XML</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="xml_label">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::PlainText</enum>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -1049,8 +1072,26 @@
      <height>20</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad_Template"/>
+    <addaction name="action_Save_Template"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionLoad_Template">
+   <property name="text">
+    <string>L&amp;oad Template</string>
+   </property>
+  </action>
+  <action name="action_Save_Template">
+   <property name="text">
+    <string>&amp;Save Template</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

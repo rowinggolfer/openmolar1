@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'aslotEdit.ui'
 #
-# Created: Fri Dec 11 20:57:25 2009
+# Created: Sat Jan  2 16:05:28 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
