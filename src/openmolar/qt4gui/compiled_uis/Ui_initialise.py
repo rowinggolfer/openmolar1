@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'initialise.ui'
 #
-# Created: Mon Jan 11 14:04:36 2010
+# Created: Wed Jan 13 11:44:45 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,24 +26,29 @@ class Ui_MainWindow(object):
         self.label_17 = QtGui.QLabel(self.tab_8)
         self.label_17.setObjectName("label_17")
         self.gridLayout_3.addWidget(self.label_17, 0, 0, 1, 2)
-        self.radioButton = QtGui.QRadioButton(self.tab_8)
-        self.radioButton.setChecked(True)
-        self.radioButton.setObjectName("radioButton")
-        self.gridLayout_3.addWidget(self.radioButton, 1, 0, 1, 3)
-        self.radioButton_2 = QtGui.QRadioButton(self.tab_8)
-        self.radioButton_2.setObjectName("radioButton_2")
-        self.gridLayout_3.addWidget(self.radioButton_2, 2, 0, 1, 1)
+        self.modifydb_radioButton = QtGui.QRadioButton(self.tab_8)
+        self.modifydb_radioButton.setEnabled(False)
+        self.modifydb_radioButton.setObjectName("modifydb_radioButton")
+        self.gridLayout_3.addWidget(self.modifydb_radioButton, 4, 0, 1, 1)
         self.comboBox = QtGui.QComboBox(self.tab_8)
         self.comboBox.setEnabled(False)
         self.comboBox.setObjectName("comboBox")
-        self.gridLayout_3.addWidget(self.comboBox, 2, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.comboBox, 4, 1, 1, 1)
         self.line = QtGui.QFrame(self.tab_8)
         self.line.setFrameShape(QtGui.QFrame.HLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName("line")
-        self.gridLayout_3.addWidget(self.line, 3, 0, 1, 3)
+        self.gridLayout_3.addWidget(self.line, 5, 0, 1, 3)
         spacerItem = QtGui.QSpacerItem(20, 407, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem, 4, 1, 1, 1)
+        self.gridLayout_3.addItem(spacerItem, 6, 1, 1, 1)
+        self.blankdb_radioButton = QtGui.QRadioButton(self.tab_8)
+        self.blankdb_radioButton.setChecked(True)
+        self.blankdb_radioButton.setObjectName("blankdb_radioButton")
+        self.gridLayout_3.addWidget(self.blankdb_radioButton, 2, 0, 1, 1)
+        self.newdb_template_radioButton = QtGui.QRadioButton(self.tab_8)
+        self.newdb_template_radioButton.setChecked(False)
+        self.newdb_template_radioButton.setObjectName("newdb_template_radioButton")
+        self.gridLayout_3.addWidget(self.newdb_template_radioButton, 3, 0, 1, 1)
         self.tabWidget.addTab(self.tab_8, "")
         self.tab = QtGui.QWidget()
         self.tab.setObjectName("tab")
@@ -546,14 +551,15 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(9)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_( u"OpenMolar - database wizard"))
         self.label_17.setText(_( u"What do you want to do?"))
-        self.radioButton.setText(_( u"Create a New database (from the default template)"))
-        self.radioButton_2.setText(_( u"Modify an existing openmolar database"))
+        self.modifydb_radioButton.setText(_( u"Modify an existing openmolar database"))
+        self.blankdb_radioButton.setText(_( u"Create a New database from scratch"))
+        self.newdb_template_radioButton.setText(_( u"Create a New database (from a known template)"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_8), _( u"Start"))
         self.label.setText(_( u"Practice Name"))
         self.label_18.setText(_( u"Used in receipts, appointment cards etc."))

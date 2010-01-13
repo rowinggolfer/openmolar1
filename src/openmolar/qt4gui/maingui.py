@@ -68,6 +68,7 @@ from openmolar.qt4gui.dialogs import select_language
 
 #secondary applications
 from openmolar.qt4gui.tools import fee_adjuster
+from openmolar.qt4gui.tools import new_setup
 
 #--database modules
 #--(do not even think of making db queries from ANYWHERE ELSE)
@@ -2068,11 +2069,20 @@ WITH PT RECORDS %d and %d''')% (
 
     def feeScale_Adjuster_action(self):
         '''
-        launch a 2nd application to organise and extend the practice diary
+        launch a 2nd application to adjust fees
         '''
         if permissions.granted():
             fee_adjuster.main(self)
-
+    
+    def actionNewSetup(self):
+        '''
+        launch a 2nd application to modify the database to allow a new practice
+        note - probably not the way to launch this action
+        '''
+        if permissions.granted():
+            self.ui2 = new_setup.setup_gui(self.app)
+            self.ui2.show()
+            
     def feeScale_new(self):
         '''
         launch a 2nd application to organise and extend the practice diary
@@ -3024,6 +3034,8 @@ WITH PT RECORDS %d and %d''')% (
         QtCore.QObject.connect(self.ui.actionFeeScale_Adjuster,
         QtCore.SIGNAL("triggered()"), self.feeScale_Adjuster_action)
 
+        QtCore.QObject.connect(self.ui.actionCreate_Modify_database,
+        QtCore.SIGNAL("triggered()"), self.actionNewSetup)
 
     def signals_estimates(self):
 
