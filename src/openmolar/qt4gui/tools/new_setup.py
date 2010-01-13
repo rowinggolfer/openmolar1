@@ -6,6 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import re
+import sys
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
 from openmolar.settings import localsettings
@@ -13,6 +14,9 @@ from openmolar.qt4gui.compiled_uis import Ui_initialise
 
 PRACTICE_ATTRIBS = ("name","add1","add2","add3", "town", "county",
 "pcde_zip", "tel", "fax", "web", "email")
+
+USER_ATTRIBS = ("user_id","user_name",'user_group','de_activation_dt',
+"active")
 
 class setup_gui(QtGui.QMainWindow):
     '''
@@ -195,5 +199,5 @@ def main(args):
 
 
 if __name__ == "__main__":
-    import sys
+    
     main(sys.argv)

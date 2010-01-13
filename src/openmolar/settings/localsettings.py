@@ -47,7 +47,13 @@ except:  #TypeError
     import gettext
     gettext.install("openmolar",unicode=True)
 
-print "Version %s\nBzr Revision No. %s"% (__MAJOR_VERSION__, __build__)
+def showVersion():
+    '''
+    push version details to std out
+    '''
+    print "Version %s\nBzr Revision No. %s"% (__MAJOR_VERSION__, __build__)
+
+showVersion()
 
 APPOINTMENT_CARD_HEADER =\
 "The Academy Dental Practice, 19 Union Street\nInverness. tel 01463 232423"

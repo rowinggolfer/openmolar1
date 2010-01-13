@@ -26,14 +26,15 @@ def getAvailableLanguages():
     '''
     return [
     _("English (GB)") +" - en_GB", 
-    _("Afrikaans") + "- af",    
+    _("Afrikaans") + " - af",    
     _("French") + " - fr", 
     _("German") + " - de",     
     _("Hungarian") + " - hu", 
+    _("Italian") + " - it",
     _("Polish") + " - pl",
     _("Portuguese") + " - pt",
     _("Slovak") + " - sk",
-    _("Spanish") + "- es",
+    _("Spanish") + " - es",
     _("Turkish") + " -tr",
     ]
 

@@ -15,6 +15,7 @@ this module puts the "openmolar" modules onto the python path,
 and starts the gui
 '''
 
+import getopt
 import sys
 import os
 import hashlib
@@ -23,6 +24,8 @@ from xml.dom import minidom
 
 ## a variable to force the first run and database update tools
 FIRST_RUN_TESTING = False
+SHORTARGS = ""
+LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=",]
 ##############################################################
 
 import gettext
@@ -90,11 +93,14 @@ and you can continue if you wish</p>
         from openmolar.qt4gui import maingui
         sys.exit(maingui.main(my_app))
     sys.exit()
+    
 def main():
     '''
     main function
     '''
-    global localsettings
+    global localsettings, my_app
+    my_app = QtGui.QApplication(sys.argv)
+    
     from openmolar.settings import localsettings
     from openmolar.qt4gui.compiled_uis import Ui_startscreen
 
@@ -254,12 +260,56 @@ combination!<br />Please Try Again.'''))
             break
     my_app.closeAllWindows()
 
+def setup(argv):
+    '''
+    run the setup gui, which allows customisation of the app
+    '''
+    print "running setup"
+    from openmolar.qt4gui.tools import new_setup
+    new_setup.main(argv)
+
+def usage():
+    '''
+    called by --help, bad arguments, or no arguments
+    simply importing the localsettings will display some system info
+    '''
+    from openmolar.settings import localsettings
+    
 def run():
-    global my_app, FIRST_RUN_TESTING
-    my_app = QtGui.QApplication(sys.argv)
+    '''
+    the real entry point for the app
+    '''
+    global FIRST_RUN_TESTING
     print sys.argv
+    
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv[1:], SHORTARGS, LONGARGS)
+    except getopt.GetoptError, err:
+        # print help information and exit:
+        print str(err) 
+        # above will print something like "option -foo not recognized"
+        sys.exit(2)
+    
+    #some backward compatibility stuff here...
+    if "setup" in sys.argv:
+        opts.append(("--setup",""))
     if "firstrun" in sys.argv:
-        FIRST_RUN_TESTING = True
+        opts.append(("--firstrun",""))
+        
+    for option, arg in opts:
+        print option, arg
+        if option in ("--help", "--version"):
+            usage()
+            sys.exit()
+        
+        if option == "--setup":
+            print "setup found"
+            setup(sys.argv)
+            sys.exit()
+            
+        if option == "--firstrun":
+            FIRST_RUN_TESTING = True
+    
     main()
 
 if __name__ == "__main__":

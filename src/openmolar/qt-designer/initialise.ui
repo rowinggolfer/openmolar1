@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>476</height>
+    <height>490</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_8">
        <attribute name="title">
@@ -341,6 +341,11 @@
           </column>
           <column>
            <property name="text">
+            <string>Start Date</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>Active?</string>
            </property>
           </column>
@@ -355,102 +360,102 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_16">
-             <property name="text">
-              <string>Add a User</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_13">
-             <property name="text">
-              <string>Initials</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_12"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_14">
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEdit_13"/>
-           </item>
-           <item row="2" column="2" colspan="2">
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_15">
-             <property name="text">
-              <string>User Group</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QComboBox" name="comboBox_2">
-             <item>
-              <property name="text">
-               <string>Standard User</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Dentist</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Hygienist</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Receptionist</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QCheckBox" name="checkBox">
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
+           <item row="0" column="0" colspan="2">
+            <widget class="QPushButton" name="newUser_pushButton">
+             <property name="enabled">
+              <bool>false</bool>
              </property>
              <property name="text">
-              <string>Active User</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
+              <string>Add a New User</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="3">
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="0" column="2">
+            <widget class="QGroupBox" name="groupBox">
+             <property name="title">
+              <string>New User Details</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
+             <layout class="QGridLayout" name="gridLayout_8">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_13">
+                <property name="text">
+                 <string>Initials</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLineEdit" name="lineEdit_12"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>Name</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QLineEdit" name="lineEdit_13"/>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string>User Group</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2">
+               <widget class="QComboBox" name="comboBox_2">
+                <item>
+                 <property name="text">
+                  <string>Standard User</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Dentist</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Hygienist</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Receptionist</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="3">
+               <widget class="QCheckBox" name="checkBox">
+                <property name="layoutDirection">
+                 <enum>Qt::RightToLeft</enum>
+                </property>
+                <property name="text">
+                 <string>Active User</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>Start Date</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QDateEdit" name="dateEdit">
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </item>
           </layout>
          </widget>
