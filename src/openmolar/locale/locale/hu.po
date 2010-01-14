@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2009-12-21 00:01+0000\n"
-"PO-Revision-Date: 2010-01-08 10:11+0000\n"
+"PO-Revision-Date: 2010-01-13 08:05+0000\n"
 "Last-Translator: Harza Lajos <Unknown>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-01-09 07:51+0000\n"
+"X-Launchpad-Export-Date: 2010-01-14 04:50+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/daybook.py:54
@@ -429,7 +429,7 @@ msgstr "Berendelések záródátumának áthelyezése."
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:62
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:65
 msgid "Extend Books"
-msgstr "Számlaegyenleg megnyitása"
+msgstr "Berendelő kiterjesztése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:63
 msgid "Remove old weeks"
@@ -1446,7 +1446,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:591
 msgid "Hygienists"
-msgstr ""
+msgstr "Higiénikusok"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:592
 #: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:409
@@ -1486,49 +1486,49 @@ msgstr "Vasárnap"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:599
 msgid "Practice Hours"
-msgstr ""
+msgstr "Rendelési órák"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:600
 msgid "The Following Categories are used in this database"
-msgstr ""
+msgstr "Ebben az adatbázisban a következő kategóriák vannak használatban"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:601
 msgid "Category"
-msgstr ""
+msgstr "Kategória"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:602
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:608
 msgid "Category Name"
-msgstr ""
+msgstr "Kategórianév"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:603
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:609
 msgid "Image"
-msgstr ""
+msgstr "Kép"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:604
 msgid "Age Category"
-msgstr ""
+msgstr "Korkategória"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:605
 msgid "Minimum Age"
-msgstr ""
+msgstr "Minimumkor"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:606
 msgid "Maximum Age"
-msgstr ""
+msgstr "Maximumkor"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:607
 msgid "Add a Category"
-msgstr ""
+msgstr "Kategória hozzáadása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:610
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:611
 msgid "Age Limit"
-msgstr ""
+msgstr "Korhatár"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:612
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:175
@@ -1537,11 +1537,11 @@ msgstr "Semmi"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:613
 msgid "Under 18"
-msgstr ""
+msgstr "18 éves korig"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:614
 msgid "Adult"
-msgstr ""
+msgstr "Felnőtt"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:615
 msgid "OAP"
@@ -1549,19 +1549,19 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:617
 msgid "Category Letter"
-msgstr ""
+msgstr "Kategórialevél"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:618
 msgid "Category Active"
-msgstr ""
+msgstr "Kategória aktív"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:619
 msgid "Patient Categories"
-msgstr ""
+msgstr "Páciens kategóriák"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:620
 msgid "Treatments and Fees"
-msgstr ""
+msgstr "Kezelések és díjak"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:621
 msgid "Referral Centres"
@@ -2061,7 +2061,7 @@ msgstr "CPITN"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2747
 msgid "Update the Basic Perio Exam (CPITN) score"
-msgstr ""
+msgstr "CPITN értékek aktualizálása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2748
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2801
@@ -2070,7 +2070,7 @@ msgstr "Új"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2749
 msgid "perform a clinical exam"
-msgstr ""
+msgstr "klinikai vizsgálat végzése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2750
 msgid "Exam"
@@ -2078,15 +2078,15 @@ msgstr "Vizsgálat"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2751
 msgid "add x-rays to the patient's current course."
-msgstr ""
+msgstr "röntgenek hozzáadása aktuális kezelési sorozathoz"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2752
 msgid "X-ray"
-msgstr ""
+msgstr "Röntgen"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2753
 msgid "perform common perio treatments"
-msgstr ""
+msgstr "általános periodontális kezelések elvégzése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2754
 msgid "Hyg"
@@ -2259,19 +2259,19 @@ msgstr "Perio státuszok"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2804
 msgid "Past Payments"
-msgstr ""
+msgstr "Előző befizetések"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2805
 msgid "Past Treatment"
-msgstr ""
+msgstr "Előző kezelések"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2806
 msgid "Courses"
-msgstr ""
+msgstr "Kezelési sorozatok"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2807
 msgid "Estimates"
-msgstr ""
+msgstr "Árajánlatok"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2808
 msgid "NHS Claims"
@@ -2279,11 +2279,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2810
 msgid "Custom Options"
-msgstr ""
+msgstr "Egyedi beállítások"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2811
 msgid "debug tools"
-msgstr ""
+msgstr "hibakereső eszközök"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2812
 msgid "changes only"
@@ -2354,7 +2354,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2828
 msgid "Show Books  selected below"
-msgstr ""
+msgstr "Kiválasztott berendelők mutatása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2829
 msgid "show emergency spaces"
@@ -2366,7 +2366,7 @@ msgstr "ebédszünet megjelenítése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2831
 msgid "Ignore  Out-of-office"
-msgstr ""
+msgstr "Távollét figyelmen kívülhagyása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2832
 msgid "show appointments"
@@ -2374,11 +2374,11 @@ msgstr "időpontok megjelenítése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2833
 msgid "Month Options"
-msgstr ""
+msgstr "Hónap beállítások"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2834
 msgid "Year"
-msgstr ""
+msgstr "Év"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2836
 msgid "Font Size"
@@ -3062,7 +3062,7 @@ msgstr "Overjet:"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:181
 msgid "mm"
-msgstr ""
+msgstr "hh"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:182
 msgid "Overbite"
@@ -3906,7 +3906,7 @@ msgstr "Adatbázis sor"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/calendars.py:356
 msgid "DATE"
-msgstr ""
+msgstr "DÁTUM"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:266
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:290
@@ -3959,39 +3959,39 @@ msgstr "Barázdazáró/Kompozit"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:25
 msgid "Crowns / Inlays"
-msgstr ""
+msgstr "Koronák / Betétek"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:26
 msgid "Precious Metal/ Porcelain Bonded Crown"
-msgstr ""
+msgstr "Nemesfémkerámia korona"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:27
 msgid "Base Metal / Porcelain Bonded Crown"
-msgstr ""
+msgstr "Fémkerámia korona"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:28
 msgid "Gold Crown"
-msgstr ""
+msgstr "Aranykorona"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:29
 msgid "Lava Crown"
-msgstr ""
+msgstr "Fémmentes korona"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:30
 msgid "Porcelain Jacket Crown"
-msgstr ""
+msgstr "Porcelán jacketkorona"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:31
 msgid "Temporary Crown"
-msgstr ""
+msgstr "Ideiglenes korona"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:32
 msgid "Resin Crown"
-msgstr ""
+msgstr "Kompozitkorona"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:33
 msgid "Other Crown"
-msgstr ""
+msgstr "Egyéb korona"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:37
 msgid "Bridge Elements"
@@ -3999,7 +3999,7 @@ msgstr "Hídtagok"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:38
 msgid "Retainers"
-msgstr ""
+msgstr "Pillérek"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:41
 msgid "Lava Retainer"
@@ -4011,7 +4011,7 @@ msgstr "Adhezív szárny"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:44
 msgid "Pontics"
-msgstr ""
+msgstr "Hídtagok"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:52
 msgid "Endodontics"
@@ -4031,7 +4031,7 @@ msgstr "Gyökércsatorna"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:56
 msgid "Incomplete Endodontics"
-msgstr ""
+msgstr "Inkomplett gyökérkezelés"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:60
 msgid "Surgical"
@@ -4071,11 +4071,11 @@ msgstr "Maradó fog előtörőben"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:72
 msgid "Partially Erupted Tooth"
-msgstr ""
+msgstr "Részben előtört fog"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/toothProps.py:73
 msgid "Unerupted Tooth"
-msgstr ""
+msgstr "Elő nem tört fog"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/block_wizard.py:25
 msgid "emergency"

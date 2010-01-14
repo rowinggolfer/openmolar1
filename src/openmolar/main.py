@@ -274,6 +274,11 @@ def usage():
     simply importing the localsettings will display some system info
     '''
     from openmolar.settings import localsettings
+    print '''command line options are as follows
+--help    \tshow this text
+--firstrun\toffer the firstrun config and demodatabase generation
+--setup   \ttakes you to the admin page
+--version \tshow the versioning and exit''' 
     
 def run():
     '''

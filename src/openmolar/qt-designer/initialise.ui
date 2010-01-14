@@ -326,6 +326,11 @@
          <widget class="QTableWidget" name="tableWidget">
           <column>
            <property name="text">
+            <string>Id</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>Initials</string>
            </property>
           </column>
@@ -363,7 +368,7 @@
            <item row="0" column="0" colspan="2">
             <widget class="QPushButton" name="newUser_pushButton">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
               <string>Add a New User</string>
@@ -371,40 +376,40 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QGroupBox" name="groupBox">
+            <widget class="QGroupBox" name="newUser_groupBox">
              <property name="title">
               <string>New User Details</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_8">
               <item row="0" column="0">
-               <widget class="QLabel" name="label_13">
-                <property name="text">
-                 <string>Initials</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QLineEdit" name="lineEdit_12"/>
-              </item>
-              <item row="1" column="0">
                <widget class="QLabel" name="label_14">
                 <property name="text">
                  <string>Name</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="2">
-               <widget class="QLineEdit" name="lineEdit_13"/>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="userName_lineEdit"/>
               </item>
-              <item row="2" column="0" colspan="2">
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_13">
+                <property name="text">
+                 <string>Initials</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="userInits_lineEdit"/>
+              </item>
+              <item row="2" column="0">
                <widget class="QLabel" name="label_15">
                 <property name="text">
                  <string>User Group</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="2">
-               <widget class="QComboBox" name="comboBox_2">
+              <item row="2" column="1">
+               <widget class="QComboBox" name="userGroup_comboBox">
                 <item>
                  <property name="text">
                   <string>Standard User</string>
@@ -427,8 +432,8 @@
                 </item>
                </widget>
               </item>
-              <item row="2" column="3">
-               <widget class="QCheckBox" name="checkBox">
+              <item row="2" column="2">
+               <widget class="QCheckBox" name="userActive_checkBox">
                 <property name="layoutDirection">
                  <enum>Qt::RightToLeft</enum>
                 </property>
@@ -447,8 +452,8 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="2">
-               <widget class="QDateEdit" name="dateEdit">
+              <item row="3" column="1">
+               <widget class="QDateEdit" name="user_dateEdit">
                 <property name="calendarPopup">
                  <bool>true</bool>
                 </property>
@@ -1058,21 +1063,40 @@
        <attribute name="title">
         <string>View XML</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_10">
         <item>
-         <widget class="QLabel" name="xml_label">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-          </property>
-          <property name="wordWrap">
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="widgetResizable">
            <bool>true</bool>
           </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>758</width>
+             <height>382</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item>
+             <widget class="QLabel" name="xml_label">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
