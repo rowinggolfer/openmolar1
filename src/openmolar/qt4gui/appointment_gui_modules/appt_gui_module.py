@@ -1176,6 +1176,14 @@ def updateDayMemos(om_gui, memos):
     appointments.setMemos(om_gui.ui.calendarWidget.selectedDate().toPyDate(), 
     memos)
     handle_calendar_signal(om_gui)
+    
+def addpubHol(om_gui, arg):
+    '''
+    user has update/added a pub holiday
+    '''
+    appointments.setPubHol(om_gui.ui.calendarWidget.selectedDate().toPyDate(), 
+    arg)
+    handle_calendar_signal(om_gui)
         
 def layout_month(om_gui):
     '''

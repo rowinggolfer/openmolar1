@@ -467,6 +467,27 @@ def setMemos(adate, memos):
         cursor.execute(query, values)
     cursor.close()
     
+def setPubHol(adate, arg):
+    '''
+    updates the aday table with memos
+    useage is pubHol(pydate, "Christmas Day")
+    '''
+    print "updating pubHol", arg
+    db = connect()
+    cursor = db.cursor()
+    if arg == "":
+        query = 'delete from calendar where adate = %s'
+        values = (adate,)
+    else:
+        query = '''insert into calendar (adate, memo) values (%s,%s)
+        on duplicate key update memo=%s'''            
+        values = (adate, arg, arg)    
+    if localsettings.logqueries:
+            print query, values
+    cursor.execute(query, values)
+    cursor.close()
+    
+    
 def allAppointmentData(adate, dents=()):
     '''
     this gets appointment data for a specifc date and dents

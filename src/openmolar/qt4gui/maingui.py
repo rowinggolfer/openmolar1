@@ -2174,6 +2174,12 @@ WITH PT RECORDS %d and %d''')% (
         a memo needs to be added to a day
         '''
         appt_gui_module.updateDayMemos(self, memos)
+    
+    def addCalendarPubHol(self, arg):
+        '''
+        a public holiday needs to be added to a day
+        '''
+        appt_gui_module.addpubHol(self, arg)
 
     def aptOV_weekBack_clicked(self):
         '''
@@ -3388,6 +3394,9 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.yearView,
         QtCore.SIGNAL("add_memo"), self.addCalendarMemo)
+        
+        QtCore.QObject.connect(self.ui.yearView,
+        QtCore.SIGNAL("add_pub_hol"), self.addCalendarPubHol)
 
         QtCore.QObject.connect(self.ui.aptOVprevweek,
         QtCore.SIGNAL("clicked()"), self.aptOV_weekBack_clicked)

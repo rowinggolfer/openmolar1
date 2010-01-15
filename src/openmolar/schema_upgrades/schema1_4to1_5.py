@@ -19,9 +19,9 @@ from openmolar import connect
 from PyQt4 import QtGui, QtCore
 
 SQLSTRINGS = [
-'''
-alter table clinical_memos add column synopsis text;
-''',
+'alter table clinical_memos add column synopsis text',
+'alter table calendar drop column ix',
+'alter table calendar add primary key(adate)'
 ]
 
 
