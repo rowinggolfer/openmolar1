@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'editmemos.ui'
 #
-# Created: Thu Nov 19 21:47:07 2009
+# Created: Fri Jan 15 14:59:35 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,7 +38,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 399, 233))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 399, 253))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 3, 0, 1, 3)

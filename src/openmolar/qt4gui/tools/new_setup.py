@@ -5,6 +5,7 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
+import datetime
 import re
 import sys
 from PyQt4 import QtGui, QtCore
@@ -16,7 +17,7 @@ PRACTICE_ATTRIBS = ("name","add1","add2","add3", "town", "county",
 "pcde_zip", "tel", "fax", "web", "email")
 
 USER_ATTRIBS = ("user_id", "user_inits", "user_name", 'user_group',
-'deactivation_dt', "active")
+'active', 'deactivation_dt')
 
 class om_user():
     def __init__(self, parent_ui):
@@ -27,7 +28,6 @@ class om_user():
         self.deactivation_dt = None
         self.active = False
         self.parent_ui = parent_ui
-        self.load()
     
     def toTuple(self):
         '''
@@ -35,8 +35,22 @@ class om_user():
         the USER_ATTRIBS expected
         '''
         return (str(self.id), self.inits.upper(), self.name, self.group, 
-        str(self.deactivation_dt), str(self.active))
-    
+        str(self.active), str(self.deactivation_dt))
+        
+    def fromTuple(self, tup):
+        '''
+        reloads the values from a tuple
+        '''
+        self.id = tup[0]
+        self.inits = tup[1]
+        self.name = tup[2]
+        self.group = tup[3]
+        self.active = tup[4] == "True"
+        if not self.active:
+            da = tup[5].split("-")
+            self.deactivation_dt = datetime.date(int(da[0]), int(da[1]), 
+            int(da[2]))
+        
     def load(self):
         '''
         grab the user entered values
@@ -55,11 +69,11 @@ class om_user():
         '''
         error = ""
         if self.inits == "":
-            error = "<p>%s</p>"% _("Please enter initials for the new user")
+            error = "<p>%s</p>"% _("Please enter initials for this user")
         if self.name == "":
-            error += "<p>%s</p>"% _("Please set a name for the new user")
+            error += "<p>%s</p>"% _("Please set a name for this user")
         
-        return (error=="",error)
+        return (error == "", error)
 
     def toNode(self):
         '''
@@ -77,6 +91,24 @@ class om_user():
             i += 1
         return unode
     
+    def fromNode(self, unode):
+        '''
+        creates an instance from existing xml
+        '''
+        tup = []
+        for attrib in USER_ATTRIBS:
+            d = unode.getElementsByTagName(attrib)
+            value = None
+            if d:
+                try:
+                    child = d[0].childNodes
+                    value = child[0].data
+                except IndexError:
+                    value = None
+            tup.append(value)
+        
+        self.fromTuple(tuple(tup))    
+        
 class setup_gui(QtGui.QMainWindow):
     '''
     a ui for customising the database of openmolar
@@ -92,6 +124,10 @@ class setup_gui(QtGui.QMainWindow):
         self.template = minidom.Document()
         self.template.appendChild(self.template.createElement("template"))
         self.ui.user_dateEdit.setDate(QtCore.QDate.currentDate())
+        self.ui.user_dateEdit.hide()
+        self.ui.user_date_label.hide()        
+        self.ui.user_groupBox.hide()
+        self.ui.modifyUser_pushButton.hide()
         self.signals()
 
     def advise(self, arg, warning_level=0):
@@ -251,30 +287,99 @@ class setup_gui(QtGui.QMainWindow):
                 pass
         self.ui.userInits_lineEdit.setText(inits)
 
-    def addNewUser(self):
+    def add_modify_User(self):
         '''
         user has clicked the button to add a new user
         '''
-        user = om_user(self.ui)
-        result, error = user.verifies()
-        if result:
-            nodelist = self.template.getElementsByTagName("users")
-            if nodelist:
-                d = nodelist[0]
+        if self.ui.newUser_pushButton.text() in (
+        _("Apply Now"), _("Modify Now")) :
+            user = om_user(self.ui)
+            user.load()
+            result, error = user.verifies()
+            if result:
+                nodelist = self.template.getElementsByTagName("users")
+                if nodelist:
+                    d = nodelist[0]
+                else:
+                    d = self.template.createElement("users")
+                if self.ui.newUser_pushButton.text() == _("Modify Now"):
+                    selected = self.ui.users_tableWidget.currentItem().row()
+                    d.removeChild(d.childNodes[selected])
+                    self.ui.users_tableWidget.setCurrentCell(-1,-1)
+                    self.ui.modifyUser_pushButton.hide()
+                    
+                d.appendChild(user.toNode())
+                self.template.childNodes[0].appendChild(d)
+                self.ui.user_groupBox.hide()
+                self.ui.userName_lineEdit.setText("")
+                self.ui.userGroup_comboBox.setCurrentIndex(0)
+                self.ui.newUser_pushButton.setText(_("Add New User"))
+                    
+                self.tab_navigated(self.ui.tabWidget.currentIndex(), False)
             else:
-                d = self.template.createElement("users")
-            d.appendChild(user.toNode())
-            self.template.childNodes[0].appendChild(d)
+                self.advise(error,1)
+                
         else:
-            self.advise(error,1)
+            self.ui.users_tableWidget.setCurrentCell(-1, -1)
+            self.ui.user_groupBox.show()
+            self.ui.userActive_checkBox.setChecked(True)
+            self.ui.newUser_pushButton.setText(_("Apply Now"))
 
+    def userSelected(self):
+        '''
+        user has navigated the users table
+        '''
+        if self.ui.users_tableWidget.currentRow() != -1:
+            self.ui.user_groupBox.hide()
+            self.ui.modifyUser_pushButton.show()
+        else:
+            self.ui.modifyUser_pushButton.hide()
+            
+    def modifyUser(self):
+        '''
+        modify user pushButton ha been pressed
+        '''
+        self.ui.newUser_pushButton.setText(_("Modify Now"))
+        self.ui.modifyUser_pushButton.hide()
+        selected = self.ui.users_tableWidget.selectedItems()
+        tup = []
+        for val in selected:
+            tup.append(val.text())
+        user = om_user(self.ui)
+        user.fromTuple(tuple(tup))
+        self.ui.user_groupBox.show()
+        self.ui.userName_lineEdit.setText(user.name)
+        self.ui.userInits_lineEdit.setText(user.inits)
+        self.ui.userActive_checkBox.setChecked(user.active)
+        try:
+            self.ui.user_dateEdit.setDate(user.deactivation_dt)
+        except TypeError:
+            self.ui.user_dateEdit.setDate(QtCore.QDate.currentDate())
+            
+            
+    def handleUserActive(self, arg):
+        '''
+        hide/show the deactivation date
+        '''
+        self.ui.user_dateEdit.setVisible(not arg)
+        self.ui.user_date_label.setVisible(not arg)
+            
     def load_users(self):
         '''
         populate the user table from the template
         '''
         users = self.template.getElementsByTagName("user")
+        self.ui.users_tableWidget.setRowCount(len(users))
+        rowno = 0
         for user in users:
-            print user.toxml()
+            uclass = om_user(self)
+            uclass.fromNode(user)
+            colno = 0
+            for val in uclass.toTuple():
+                item = QtGui.QTableWidgetItem(val)
+                self.ui.users_tableWidget.setItem(rowno, colno, item)
+                colno += 1
+            rowno += 1
             
     def signals(self):
         '''
@@ -299,8 +404,21 @@ class setup_gui(QtGui.QMainWindow):
         QtCore.SIGNAL("textChanged (const QString&)"), self.nameEntered)
         
         QtCore.QObject.connect(self.ui.newUser_pushButton,
-        QtCore.SIGNAL("clicked()"), self.addNewUser)
-
+        QtCore.SIGNAL("clicked()"), self.add_modify_User)
+        
+        QtCore.QObject.connect(self.ui.users_tableWidget,
+        QtCore.SIGNAL("itemSelectionChanged()"), self.userSelected)
+        
+        QtCore.QObject.connect(self.ui.users_tableWidget,
+        QtCore.SIGNAL("itemDoubleClicked (QTableWidgetItem *)"), 
+        self.modifyUser)
+        
+        QtCore.QObject.connect(self.ui.modifyUser_pushButton,
+        QtCore.SIGNAL("clicked()"), self.modifyUser)
+        
+        QtCore.QObject.connect(self.ui.userActive_checkBox,
+        QtCore.SIGNAL("stateChanged (int)"), self.handleUserActive)
+        
 def main(args):
     app = QtGui.QApplication(args)
     ui = setup_gui(app)
