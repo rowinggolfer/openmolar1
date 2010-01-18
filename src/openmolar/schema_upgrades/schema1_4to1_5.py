@@ -86,19 +86,9 @@ class dbUpdater(QtCore.QThread):
         print "running script to convert from schema 1.4 to 1.5"
         try:
             #- execute the SQL commands
-            self.progressSig(10, _("creating new tables"))
+            self.progressSig(50, _("executing statements"))
             self.create_alter_tables()
 
-            #- transfer data
-            self.progressSig(20, 
-            _("copying data across from old feetable"))            
-            self.transferData()
-            
-            #- update the schema version
-            #pass a tuple of compatible clients and the "user"
-            #who made these changes.
-            #only 1.4 client will work now.
-            
             self.progressSig(90, _('updating settings'))
             print "update database settings..." 
             
@@ -107,7 +97,7 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
-            + " 1.4")
+            + " 1.5")
         
         except UpdateException, e:
             localsettings.CLIENT_SCHEMA_VERSION = " 1.4"

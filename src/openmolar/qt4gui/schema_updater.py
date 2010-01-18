@@ -81,8 +81,8 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
                 updateProgress(1,
                 _("upgrading to schema version")+" %s"% next_version)        
 
-                from openmolar.schema_upgrades import schema1_0to1_1
-                dbu = schema1_0to1_1.dbUpdater(pb)
+                from openmolar.schema_upgrades import schema1_0to1_1 as upmod
+                dbu = upmod.dbUpdater(pb)
             
                 QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
                 updateProgress)
@@ -103,8 +103,8 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
                 updateProgress(1,
                 _("upgrading to schema version")+" %s"% next_version)        
 
-                from openmolar.schema_upgrades import schema1_1to1_2
-                dbu = schema1_1to1_2.dbUpdater(pb)
+                from openmolar.schema_upgrades import schema1_1to1_2 as upmod
+                dbu = upmod.dbUpdater(pb)
             
                 QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
                 updateProgress)
@@ -125,8 +125,8 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
                 updateProgress(1,
                 _("upgrading to schema version")+" %s"% next_version)        
 
-                from openmolar.schema_upgrades import schema1_2to1_3
-                dbu = schema1_2to1_3.dbUpdater(pb)
+                from openmolar.schema_upgrades import schema1_2to1_3 as upmod
+                dbu = upmod.dbUpdater(pb)
             
                 QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
                 updateProgress)
@@ -147,8 +147,8 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
                 updateProgress(1,
                 _("upgrading to schema version")+" %s"% next_version)        
 
-                from openmolar.schema_upgrades import schema1_3to1_4
-                dbu = schema1_3to1_4.dbUpdater(pb)
+                from openmolar.schema_upgrades import schema1_3to1_4 as upmod
+                dbu = upmod.dbUpdater(pb)
             
                 QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
                 updateProgress)
@@ -162,6 +162,27 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
                     completed(False, 
                     _('Conversion to %s failed')% next_version)
             
+            ###################################################################
+            ## UPDATE TO SCHEMA 1.5
+            next_version = "1.5"                            
+            if current < next_version:
+                updateProgress(1,
+                _("upgrading to schema version")+" %s"% next_version)        
+
+                from openmolar.schema_upgrades import schema1_4to1_5 as upmod
+                dbu = upmod.dbUpdater(pb)
+            
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"), 
+                updateProgress)
+
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"), 
+                completed)
+            
+                if dbu.run():
+                    localsettings.DB_SCHEMA_VERSION = next_version
+                else:
+                    completed(False, 
+                    _('Conversion to %s failed')% next_version)
                     
             else:
                 completed(False,_(

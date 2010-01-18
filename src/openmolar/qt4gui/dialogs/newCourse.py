@@ -10,6 +10,9 @@ from openmolar.qt4gui.compiled_uis import Ui_newCourse
 from openmolar.settings import localsettings
 
 class course(Ui_newCourse.Ui_Dialog):
+    '''
+    a custom dialog to set the variables for a new course of treatment
+    '''
     def __init__(self,dialog,dnt1,dnt2,csetype,parent=None):
         self.setupUi(dialog)
         self.dialog=dialog
@@ -30,17 +33,29 @@ class course(Ui_newCourse.Ui_Dialog):
         try:
             pos=localsettings.csetypes.index(csetype)  
         except ValueError:
-            QtGui.QMessageBox.information(self.dialog,"Advisory","Please set a Valid Course Type")
+            QtGui.QMessageBox.information(self.dialog, _("Advisory"),
+            _("Please set a Valid Course Type"))
             pos=-1
         self.cseType_comboBox.setCurrentIndex(pos)
+        
     def getInput(self):
-        if self.dialog.exec_():
-            retarg=[str(self.dnt1_comboBox.currentText()),str(self.dnt2_comboBox.currentText())]
-            retarg.append(str(self.cseType_comboBox.currentText()))
-            retarg.append(self.dateEdit.date())
-            return (True,retarg)
-        else:
-            return(False,)
+        '''
+        called to show and execute the dialog until 
+        sensible values are returned
+        '''
+        while True:
+            if self.dialog.exec_():
+                dnt1 = str(self.dnt1_comboBox.currentText())
+                dnt2 = str(self.dnt2_comboBox.currentText())
+                cset = str(self.cseType_comboBox.currentText())
+                retarg = (dnt1, dnt2, cset, self.dateEdit.date())
+                if "" in retarg:
+                    QtGui.QMessageBox.information(self.dialog, 
+                    _("Error"), _("Some fields are missing, please check"))
+                else:
+                    return (True,retarg)
+            else:
+                return(False,)
     
 if __name__ == "__main__":
     import sys
