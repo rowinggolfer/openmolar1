@@ -40,10 +40,10 @@ def all_changes(pt, pt_dbstate, changes):
                 pass #these values should never get munged.
             
             elif change in ("money0, money1"):
-                diff = pt.__dict__[change]-pt_dbstate.__dict__[change]
+                diff = pt.__dict__[change] - pt_dbstate.__dict__[change]
                 patvalues.append (diff)
                 print "money has changed"
-                patchanges += '%s = %%s,'% change
+                patchanges += '%s = %s + %%s,'% (change, change)
             
             elif change in patient_class.patientTableAtts:
                 patvalues.append(pt.__dict__[change])
