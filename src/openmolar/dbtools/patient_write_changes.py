@@ -13,12 +13,17 @@ from openmolar.dbtools import patient_class
 
 def all_changes(pt, pt_dbstate, changes):
     print "writing_changes to patient"
-    if changes==[]:
+    if changes == []:
         print "write changes called, but no changes for patient %d"% (
         pt.serialno)
         
         return True
     else:
+        
+        #set up some booleans to prevent multiple updates of the same data
+        #example exemption AND exemption text have changed..
+        exemptionsHandled = False
+        
         if pt.HIDDENNOTES != []:
             #-- hidden notes is
             #-- treatment codes... money, printing etc..
@@ -26,36 +31,38 @@ def all_changes(pt, pt_dbstate, changes):
             toNotes(pt.serialno, pt.HIDDENNOTES)
             pt.clearHiddenNotes()
 
-        sqlcommands={}
-        patchanges=""
-        trtchanges=""
+        sqlcommands = {}
+        patchanges = ""
+        patvalues = []
+        trtchanges = ""
         for change in changes:
-            if change=="courseno":
+            if change == "courseno":
                 pass #these values should never get munged.
+            
             elif change in ("money0, money1"):
-                value=pt.__dict__[change]-pt_dbstate.__dict__[change]
+                diff = pt.__dict__[change]-pt_dbstate.__dict__[change]
+                patvalues.append (diff)
                 print "money has changed"
-                patchanges += '%s=%s+%s ,'% (change,change,value)
+                patchanges += '%s = %%s,'% change
+            
             elif change in patient_class.patientTableAtts:
-                value=pt.__dict__[change]
-                if change in patient_class.dateFields:
-                    if value != None and value != "":
-                        patchanges+='%s="%s" ,'%(
-                                    change,value)
-                    else:
-                        patchanges+='%s=NULL ,'% change
-                elif value==None:
-                    patchanges+='%s=NULL ,'%(change)
-                elif (type(value) is types.IntType) or (type(value) is types.LongType):
-                    patchanges+='%s=%s ,'%(change,value)
-                else:
-                    patchanges+='%s="%s" ,'%(change,value)
+                patvalues.append(pt.__dict__[change])
+                patchanges+='%s = %%s,'% change
+            
+            elif (change in patient_class.exemptionTableAtts and 
+            not exemptionsHandled):
+                value = pt.__dict__[change]
+                sqlcommands['exemptions'] = ('''insert into exemptions 
+                (serialno, exemption, exempttext, datestamp) 
+                values (%s,%s,%s, NOW())''', 
+                (pt.serialno, pt.exemption, pt.exempttext))
+                exemptionsHandled = True
+                                
             elif change == "bpe":
-                sqlcommands['bpe']='insert into bpe set serialno=%d,bpedate="%s",bpe="%s"'%(
-                pt.serialno, pt.bpe[-1][0] ,pt.bpe[-1][1])
-
-                alternate_bpe_command='update bpe set bpe="%s" where serialno=%d and bpedate="%s"'%(
-                pt.bpe[-1][1], pt.serialno, pt.bpe[-1][0])
+                sqlcommands['bpe'] =('''insert into bpe 
+                (serialno, bpedate, bpe) values (%s, %s, %s)
+                on duplicate key update bpe=%s''', (pt.serialno, 
+                pt.bpe[-1][0] ,pt.bpe[-1][1], pt.bpe[-1][1]))
 
             elif change == "synopsis":
                 sqlcommands['clinical_memos']= ('''insert into clinical_memos 
@@ -168,8 +175,11 @@ def all_changes(pt, pt_dbstate, changes):
 
     result=True
     if patchanges != "":
-        sqlcommands['patients'] = "update patients SET %s where serialno=%d"%(
-                                    patchanges.strip(","),pt.serialno)
+        patvalues.append(pt.serialno)
+        sqlcommands['patients'] = (
+        "update patients SET %s where serialno=%%s"% patchanges.strip(","),
+        tuple(patvalues))
+        
     if trtchanges != "":
         sqlcommands['currtrtmt'] = \
         '''update currtrtmt SET %s where serialno=%d and courseno=%d'''%(
@@ -180,18 +190,6 @@ def all_changes(pt, pt_dbstate, changes):
         cursor = db.cursor()
         tables=sqlcommands.keys()
         print tables
-        if "bpe" in tables:
-            tables.remove("bpe")
-            try:
-                if localsettings.logqueries:
-                    print sqlcommands["bpe"]
-                cursor.execute(sqlcommands["bpe"])
-            except MySQLdb.IntegrityError,e:
-                #-- the bpe table only allows one bpe to be recorded on a single day.
-                #-- so we get an integrity error if there's a clash
-                if localsettings.logqueries:
-                    print alternate_bpe_command
-                cursor.execute(alternate_bpe_command)
         if "estimates" in tables:
             tables.remove("estimates")
 

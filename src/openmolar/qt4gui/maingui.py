@@ -1238,16 +1238,16 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
                 #--otherwise changes to attributes which are lists aren't
                 #--spotted new "instance" of patient
                 self.pt = patient_class.patient(serialno)
+                self.pt_dbstate = copy.deepcopy(self.pt)
+
                 #-- this next line is to prevent a "not saved warning"
-                self.pt_dbstate.fees = self.pt.fees
+                #self.pt_dbstate.fees = self.pt.fees
                 try:
                     self.loadpatient()
                 except Exception, e:
                     self.advise(
                     _("Error populating interface\n%s")% e, 2)
-                finally:
-                    self.pt_dbstate = copy.deepcopy(self.pt)
-
+                    
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
                 self.advise ("error getting serialno %d"%serialno+
@@ -1255,12 +1255,11 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
                 return
             except Exception, e:
                 print "#"*20
-                print "SERIOUS ERROR???"
-                print str(Exception)
-                print e
+                print "Unknown ERROR loading patient???"
+                print str(Exception), e
                 print "maingself.ui.getrecord - serialno%d"%serialno
                 print "#"*20
-                self.advise ("Serious Error - Tell Neil<br />%s"%e, 2)
+                self.advise ("Unknown Error - Tell Neil<br />%s"%e, 2)
 
         else:
             self.advise("get record called with serialno 0")
@@ -1300,6 +1299,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         #--populate dnt1 and dnt2 comboboxes
         self.load_dentComboBoxes()
         self.ui.recallDate_comboBox.setCurrentIndex(0)
+        self.pt.checkExemption()
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
@@ -1337,8 +1337,9 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         self.pt.sname, self.pt.addr1, self.pt.addr2,
         self.pt.addr3, self.pt.town, self.pt.county,
         self.pt.pcde, self.pt.tel1)
-        labeltext = "currently editing  %s %s %s - (%s)"% (self.pt.title, self.pt.fname,
-        self.pt.sname, self.pt.serialno)
+        
+        labeltext = "currently editing  %s %s %s - (%s)"% (
+        self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
         self.loadedPatient_label.setText(labeltext)
         self.ui.hiddenNotes_label.setText("")
         
@@ -1347,9 +1348,11 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         self.ui.debugBrowser.setText("")
         self.medalert()
         self.getmemos()
-
+        for warning in self.pt.load_warnings:
+            self.advise(warning, 1)
         if localsettings.station == "surgery":
             self.callXrays()
+    
 
     def getmemos(self):
         '''
@@ -1822,39 +1825,40 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         important function, checks for changes since the patient was loaded
         '''
-        fieldsToExclude=("notes_dict", "fees")#, "estimates")
         changes=[]
-        if self.pt.serialno == self.pt_dbstate.serialno:
-            if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
-            len(self.pt.HIDDENNOTES) != 0):
-                changes.append("New Notes")
-            for attr in self.pt.__dict__:
-                try:
-                    newval=str(self.pt.__dict__[attr])
-                    oldval=str(self.pt_dbstate.__dict__[attr])
-                except UnicodeEncodeError:
-                    print attr, self.pt.__dict__[attr]
-                if oldval != newval:
-                    if attr == "xraycmp":
-                        daybook_module.xrayDates(self, newval)
-                        changes.append(attr)
-                    elif attr == "periocmp":
-                        daybook_module.perioDates(self, newval)
-                        changes.append(attr)
-                    elif attr not in fieldsToExclude:
-                        if attr != "memo" or oldval.replace(chr(13), "") != newval:
-                            #--ok - windows line ends from old DB were
-                            #-- creating an issue
-                            #-- memo was reporting that update had occurred.
-                            changes.append(attr)
-
-            return changes
-        else: #this should NEVER happen!!!
-            self.advise( _('''POTENTIALLY SERIOUS CONFUSION PROBLEM
-WITH PT RECORDS %d and %d''')% (
-            self.pt.serialno, self.pt_dbstate.serialno), 2)
+        if self.pt.serialno != self.pt_dbstate.serialno:
+            #this should NEVER happen!!!
+            self.advise( 
+            _('''POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS''') +
+            ' %d and %d'% (self.pt.serialno, self.pt_dbstate.serialno), 2)
             return changes
 
+        if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
+        len(self.pt.HIDDENNOTES) != 0):
+            changes.append("New Notes")
+                
+        for attr in patient_class.ATTRIBS_TO_CHECK:
+            try:
+                newval = str(self.pt.__dict__.get(attr, ""))
+                oldval = str(self.pt_dbstate.__dict__.get(attr, ""))
+            except UnicodeEncodeError:
+                print attr, self.pt.__dict__[attr]
+            if oldval != newval:
+                if attr == "xraycmp":
+                    daybook_module.xrayDates(self, newval)
+                    changes.append(attr)
+                elif attr == "periocmp":
+                    daybook_module.perioDates(self, newval)
+                    changes.append(attr)
+                else:
+                    if (attr != "memo" or 
+                    oldval.replace(chr(13), "") != newval):
+                        #-- ok - windows line ends from old DB were
+                        #-- creating an issue
+                        #-- memo was reporting that update had occurred.
+                        changes.append(attr)
+        return changes
+            
     def save_changes(self, leavingRecord=True):
         '''
         updates the database when the save is requested
@@ -2549,6 +2553,12 @@ WITH PT RECORDS %d and %d''')% (
         '''
         contract_gui_module.editNHScontract(self)
 
+    def exemption_edited(self):
+        '''
+        exemption fields have altered
+        '''
+        contract_gui_module.exemption_edited(self)
+
     def editPriv_pushButton_clicked(self):
         '''
         edit Private contract
@@ -3168,6 +3178,7 @@ WITH PT RECORDS %d and %d''')% (
         #contract
         QtCore.QObject.connect(self.ui.badDebt_pushButton,
         QtCore.SIGNAL("clicked()"), self.makeBadDebt_clicked)
+        
         QtCore.QObject.connect(self.ui.contract_tabWidget,
         QtCore.SIGNAL("currentChanged(int)"), self.contractTab_navigated)
 
@@ -3183,6 +3194,10 @@ WITH PT RECORDS %d and %d''')% (
 
         QtCore.QObject.connect(self.ui.editNHS_pushButton,
         QtCore.SIGNAL("clicked()"), self.editNHS_pushButton_clicked)
+
+        for le in (self.ui.exemption_lineEdit, self.ui.exempttext_lineEdit):
+            QtCore.QObject.connect(le,QtCore.SIGNAL("editingFinished ()"), 
+            self.exemption_edited)
 
         QtCore.QObject.connect(self.ui.editPriv_pushButton,
         QtCore.SIGNAL("clicked()"), self.editPriv_pushButton_clicked)

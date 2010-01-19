@@ -59,8 +59,8 @@ def details(pt, Saved=True):
             retarg += '''<img src="%s/nhs_scot.png" alt="NHS">
             <br />'''% localsettings.resources_path
 
-            if pt.exmpt != "":
-                retarg += " exemption=%s"% str(pt.exmpt)
+            if pt.exemption != "":
+                retarg += " exemption=%s"% str(pt.exemption)
             else:
                 retarg += "NOT EXEMPT"
             retarg += "<br />"

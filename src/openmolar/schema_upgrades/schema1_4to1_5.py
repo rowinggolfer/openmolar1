@@ -8,8 +8,11 @@
 # See the GNU General Public License for more details.
 
 '''
-This module provides a function 'run' which will move data from the estimates 
-table in schema 1_3 to the newestimates table in schema 1_4
+This module provides a function 'run' which will move data 
+from the patients table 
+in schema 1_4 to a new exemptions table in schema 1_5
+also, remove the key for calendar, it makes more sense to have the date
+as the primary key. (cleaner code for updates)
 '''
 import sys
 from openmolar.settings import localsettings 
@@ -21,7 +24,17 @@ from PyQt4 import QtGui, QtCore
 SQLSTRINGS = [
 'alter table clinical_memos add column synopsis text',
 'alter table calendar drop column ix',
-'alter table calendar add primary key(adate)'
+'alter table calendar add primary key(adate)',
+'''
+CREATE TABLE if not exists exemptions (
+ix int(10) unsigned NOT NULL auto_increment ,
+serialno int(11) unsigned NOT NULL ,
+exemption varchar(10),
+exempttext varchar(50),
+datestamp DATETIME NOT NULL,
+PRIMARY KEY (ix),
+key (serialno))
+'''
 ]
 
 
@@ -61,22 +74,50 @@ class dbUpdater(QtCore.QThread):
         try:
             i, commandNo = 0, len(SQLSTRINGS)
             for sql_string in SQLSTRINGS:
-                cursor.execute(sql_string)
+                try:
+                    cursor.execute(sql_string)
+                except connect.GeneralError, e:
+                    print "FAILURE in executing sql statement",  e
+                    print "erroneous statement was ",sql_string
+                    if 1060 in e.args:
+                        print "continuing, as column already exists issue"
                 self.progressSig(10+70*i/commandNo,sql_string[:20]+"...")
             sucess = True
         except Exception, e:
-            print "FAILURE create_alter_tables", e
+            print "FAILURE in executing sql statements",  e
             db.rollback()
         if sucess:
             db.commit()
             db.autocommit(True)
         else:
-            raise UpdateException("couldn't create tables!")
+            raise UpdateException("couldn't execute all statements!")
     
     def transferData(self):
         '''
         move data into the new tables
         ''' 
+        db = connect.connect()
+        cursor=db.cursor()
+        cursor.execute('lock tables patients read, exemptions write')
+            
+        cursor.execute('select serialno, exmpt, exempttext from patients')
+        rows=cursor.fetchall()
+            
+        query = '''insert into exemptions (serialno, exemption, exempttext) 
+        values (%s, %s, %s)'''
+        
+        values = []
+        for row in rows:
+            if row[1] != "" or row[2] != "":
+                values.append(row)
+
+        cursor.executemany(query, values)
+
+        db.commit()
+        cursor.execute("unlock tables")
+        
+        cursor.close()
+        db.close()
         return True
 
     def completeSig(self, arg):
@@ -86,8 +127,17 @@ class dbUpdater(QtCore.QThread):
         print "running script to convert from schema 1.4 to 1.5"
         try:
             #- execute the SQL commands
-            self.progressSig(50, _("executing statements"))
+            self.progressSig(20, _("executing statements"))
             self.create_alter_tables()
+
+            #- transfer data between tables
+            self.progressSig(50, _('transfering data'))
+            
+            print "transfering data to new table, ...",
+            if self.transferData():
+                print "ok"
+            else:
+                print "FAILED!!!!!"
 
             self.progressSig(90, _('updating settings'))
             print "update database settings..." 

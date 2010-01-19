@@ -41,6 +41,7 @@ else:
 
 dom.unlink()
 
+GeneralError = MySQLdb.Error
 ProgrammingError = MySQLdb.ProgrammingError
 IntegrityError = MySQLdb.IntegrityError
 OperationalError = MySQLdb.OperationalError

@@ -32,12 +32,11 @@ patientTableAtts = (
 'sname','fname','title','sex','dob', 'addr1','addr2','addr3','pcde','tel1',
 'tel2','occup',
 'nhsno','cnfd','psn','cset','dnt1','dnt2','courseno0','courseno1',
-'exempttext',
 'ur8st','ur7st','ur6st','ur5st','ur4st','ur3st','ur2st','ur1st',
 'ul1st','ul2st','ul3st','ul4st','ul5st','ul6st','ul7st','ul8st',
 'll8st','ll7st','ll6st','ll5st','ll4st','ll3st','ll2st','ll1st',
 'lr1st','lr2st','lr3st','lr4st','lr5st','lr6st','lr7st','lr8st',
-'dent0','dent1','dent2','dent3','exmpt','recd',
+'dent0','dent1','dent2','dent3','recd',
 'dmask','minstart','maxend','billdate','billct',
 'billtype','pf20','money11','pf13','familyno','memo',
 'town','county','mobile','fax','email1','email2','status','source',
@@ -45,18 +44,20 @@ patientTableAtts = (
 'initaccept','lastreaccept','lastclaim','expiry','cstatus','transfer',
 'pstatus','courseno2')
 
+exemptionTableAtts = ('exemption','exempttext')
+
 patientTableVals=(
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,
 nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,
 nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,nullDate,
 '','','','',nullDate,'','', '','', '','', '',
-'',nullDate, '','',0,0,0,0,'',
+'',nullDate, '','',0,0,0,0,
 '','', '','', '','', '','',
 '','', '','', '','', '','',
 '','', '','', '','', '','',
 '','', '','', '','', '','',
-0,0,0,0,'',nullDate,
+0,0,0,0,nullDate,
 '',0,0,nullDate,0,
 '',0,0,0,0,'',
 '','','','','','','','',nullDate,0,
@@ -101,6 +102,12 @@ planDBAtts=("serialno", "plantype","band", "grosschg","discount","netchg",
 "catcode", "planjoin","regno")
 
 clinical_memos = ("synopsis",)
+
+## important tuple here - these are the values which are checked for user 
+## changes
+ATTRIBS_TO_CHECK = patientTableAtts + exemptionTableAtts + bpeTableAtts + \
+currtrtmtTableAtts + mnhistTableAtts + perioTableAtts + planDBAtts + \
+clinical_memos
 
 #################### sub classes ##############################################
 class planData():
@@ -157,6 +164,7 @@ class patient():
         initiate the class with default variables, then load from database
         '''
         self.serialno = sno
+        self.load_warnings = []
         self.courseno = None
         i=0
         for att in patientTableAtts:
@@ -177,8 +185,13 @@ class patient():
         self.plandata = planData(self.serialno)
 
         ###NEIL'S STUFF####
+        self.ageYears = 0
+        self.exemption = ""
+        self.exempttext = ""
         self.perioData = {}
         self.bpe = []
+        self.bpedate = nullDate
+        self.chartdate = nullDate
         self.fees = 0
         self.notes_dict = {}
         self.MH = ()
@@ -216,6 +229,15 @@ class patient():
                 if values[0][i] !=None:
                     self.__dict__[field]=values[0][i]
                 i += 1
+
+            query = '''select exemption, exempttext from exemptions 
+            where serialno=%s'''
+            cursor.execute(query, self.serialno)
+            
+            values = cursor.fetchall()
+
+            for value in values:
+                self.exemption, self.exempttext = value
 
             query = 'select bpedate, bpe from bpe where serialno=%s'
             cursor.execute(query, self.serialno)
@@ -635,7 +657,13 @@ self.serialno, self.courseno0))
             if att[-2:] == "pl":
                 if self.__dict__[att] != "":
                     return True
-                
+    
+    def checkExemption(self):
+        if self.exemption == "A" and self.getAge()[0] > 17:
+            self.exemption = ""
+            self.load_warnings.append(_("Age Exemption removed"))
+        else:
+            return True
 
 if __name__ =="__main__":
     '''testing stuff'''

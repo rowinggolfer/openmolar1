@@ -18,7 +18,7 @@ def toHtml(pt):
     <h3>NHS DETAILS</h3>
     <table width ="100%" border="1">
     '''
-    retarg+="<tr><td>EXEMPTION</td><td>%s</td></tr>"%pt.exmpt
+    retarg+="<tr><td>EXEMPTION</td><td>%s</td></tr>"%pt.exemption
     retarg+="<tr><td>EXEMPTION TEXT</td><td>%s</td></tr>"%pt.exempttext 
     retarg+="<tr><td>PREVIOUS SURNAME</td><td>%s</td></tr>"%pt.psn
     retarg+="<tr><td>NHS NUMBER</td><td>%s</td></tr>"%pt.nhsno
