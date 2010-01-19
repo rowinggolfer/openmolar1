@@ -32,9 +32,8 @@ def all_changes(pt, pt_dbstate, changes):
             pt.clearHiddenNotes()
 
         sqlcommands = {}
-        patchanges = ""
-        patvalues = []
-        trtchanges = ""
+        patchanges, patvalues = "", []
+        trtchanges, trtvalues = "", []
         for change in changes:
             if change == "courseno":
                 pass #these values should never get munged.
@@ -82,14 +81,11 @@ def all_changes(pt, pt_dbstate, changes):
                         newEstimateIndexes = True
                 
                 for est in pt.estimates:
-                    if est.ix==None: #--new item
-                        print "new estimate item"
-                        query='''insert into newestimates (serialno, courseno, 
-                        category, type, number, itemcode, description, fee, 
-                        ptfee, feescale, csetype, dent, completed, carriedover, 
-                        linked, modified_by, time_stamp) values 
-                        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                        %s, %s, %s, %s, %s, %s, %s)'''
+                    if est.ix == None: #--new item
+                        query = '''insert into newestimates (serialno, 
+courseno, category, type, number, itemcode, description, fee, ptfee, feescale, 
+csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values 
+(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
                         values = (pt.serialno, pt.courseno, est.category, 
                         est.type, est.number, est.itemcode, est.description, 
                         est.fee, est.ptfee, est.feescale, est.csetype, 
@@ -98,46 +94,59 @@ def all_changes(pt, pt_dbstate, changes):
                         localsettings.timestamp())
                         
                         sqlcommands["estimates"].append((query,values),)
+                    
                     elif est.ix in oldEstDict.keys():
                         oldEst = oldEstDict[est.ix]
 
                         if str(oldEst) !=  str(est):
-                            #print "est (index %s) changed"% est.ix
-                            #print "old %s"%oldEst
-                            #print "new %s"%est
                             #-- have to use the str because est class does not
                             #-- have a _eq_ property ??
                             query = 'update newestimates set '
+                            values = []
                             if oldEst.type != est.type:
-                                query += "type=%s,"% est.type
+                                query += "type=%s,"
+                                values.append(est.type)
                             if oldEst.number != est.number:
-                                query += "number=%d,"% est.number
+                                query += "number=%s,"
+                                values.append(est.number)
                             if oldEst.itemcode != est.itemcode:
-                                query += 'itemcode="%s",'% est.itemcode
+                                query += 'itemcode=%s,'
+                                values.append(est.itemcode)
                             if oldEst.description != est.description:
-                                query +=  'description="%s",'% est.description
+                                query += 'description=%s,'
+                                values.append(est.description)
                             if oldEst.fee != est.fee:
-                                query += 'fee=%d,'% est.fee
+                                query += 'fee=%s,'
+                                values.append(est.fee)
                             if oldEst.ptfee != est.ptfee:
-                                query += "ptfee=%d,"% est.ptfee
+                                query += "ptfee=%s,"
+                                values.append(est.ptfee)
                             if oldEst.feescale != est.feescale:
-                                query += 'feescale="%s",'% pt.feescale
+                                query += 'feescale=%s,'
+                                values.append(pt.feescale)
                             if oldEst.csetype != est.csetype:
-                                query += 'csetype="%s",'% est.csetype
+                                query += 'csetype=%s,'
+                                values.append(est.csetype)
                             if oldEst.dent != est.dent:
-                                query += 'dent=%d,'% est.dent
+                                query += 'dent=%d,'
+                                values.append(est.dent)
                             if oldEst.completed != est.completed:
-                                query += 'completed=%s,'% est.completed
+                                query += 'completed=%s,'
+                                values.append(est.completed)
                             if oldEst.carriedover != est.carriedover:
-                                query += 'carriedover=%s,'% est.carriedover
+                                query += 'carriedover=%s,'
+                                values.append(est.carriedover)
                             if oldEst.linked != est.linked:
-                                query += 'linked=%s,'% est.linked
-                            query += 'modified_by = "%s", '% localsettings.operator
-                            query += 'time_stamp = "%s"'% localsettings.timestamp()
-                                
-                            query += " where ix = %d"% est.ix
+                                query += 'linked=%s,'
+                                values.append(est.linked)
+                            query += '''modified_by = %s, 
+                            time_stamp = NOW() where ix = %s'''
+                            
+                            values.append(localsettings.operator)
+                            values.append(est.ix)
 
-                            sqlcommands["estimates"].append(query)
+                            sqlcommands["estimates"].append(
+                            (query, tuple(values)),)
 
                         oldEstDict.pop(est.ix)
                 #-- all that is left in oldEstDict now are items which
@@ -145,33 +154,13 @@ def all_changes(pt, pt_dbstate, changes):
                 #-- so remove from database also.
                 for ix in oldEstDict.keys():
                     #--removed
-                    print "deleting est index",ix
-                    query="delete from newestimates where ix=%d"%ix
-                    sqlcommands["estimates"].append(query)
+                    query = "delete from newestimates where ix=%s"
+                    sqlcommands["estimates"].append((query, est.ix),)
 
-                #--old code from old schema
-                #mydata=pt.estimates[0][7]
-                #if '"' in mydata:
-                #    mydata=mydata.replace('"',r'\"')
-                #query='update prvfees set data="%s" where serialno=%d
-                #and courseno=%d '%(mydata,
-                #pt.serialno,pt.courseno0)
-                #sqlcommands["prvfees"]=query
             elif change in patient_class.currtrtmtTableAtts:
-                value=pt.__dict__[change]
-                if change in patient_class.dateFields:
-                    if value != None and value != "":
-                        trtchanges+='%s="%s" ,'%(change, value)
-                    else:
-                        trtchanges+='%s=NULL ,'% change
-                
-                elif value==None:
-                    trtchanges+='%s=NULL ,'%(change)
-                elif (type(value) is types.IntType) or (
-                                                type(value) is types.LongType) :
-                    trtchanges+='%s=%s ,'%(change,value)
-                else:
-                    trtchanges+='%s="%s" ,'%(change,value)
+                value = pt.__dict__[change]
+                trtchanges += '%s = %%s ,'% change
+                trtvalues.append(value)
 
     result=True
     if patchanges != "":
@@ -181,40 +170,31 @@ def all_changes(pt, pt_dbstate, changes):
         tuple(patvalues))
         
     if trtchanges != "":
-        sqlcommands['currtrtmt'] = \
-        '''update currtrtmt SET %s where serialno=%d and courseno=%d'''%(
-                            trtchanges.strip(","), pt.serialno, pt.courseno)
-
+        trtvalues.append(pt.serialno)
+        trtvalues.append(pt.courseno)
+        sqlcommands['currtrtmt'] = (
+        '''update currtrtmt SET %s where serialno=%%s and courseno=%%s'''%(
+        trtchanges.strip(",")), tuple(trtvalues))
+        
     if sqlcommands != {}:
         db=connect()
         cursor = db.cursor()
-        tables=sqlcommands.keys()
-        print tables
-        if "estimates" in tables:
-            tables.remove("estimates")
-
-            for query in sqlcommands["estimates"]:
+        tables = sqlcommands.keys()
+        for table in tables:
+            if table == "estimates":
+                statements = ()
+                for query in sqlcommands["estimates"]:
+                    statements += ((query[0], query[1]),)
+            else:
+                statements = (sqlcommands[table],)
+            for query, values in statements:
                 if localsettings.logqueries:
-                    print query
-                if type(query) == types.TupleType:
-                    cursor.execute(query[0],query[1])
-                else:
-                    cursor.execute(query)
-        if tables:
-            #-- if the keys were bpe and or estimates alone...
-            #--tables would be a None type at this point
-            #-- and uniterable - hence the "if tables"
-            for table in tables:
+                    print query, values
                 try:
-                    query = sqlcommands[table]
-                    if localsettings.logqueries:
-                        print query
-                    if type(query) == types.TupleType:
-                        cursor.execute(query[0],query[1])                    
-                    else:
-                        cursor.execute(query)
+                    cursor.execute(query, values)
                 except Exception,e:
-                    print "error saving %s for patient %d"%(table,pt.serialno)
+                    print "error saving %s for patient %d"%(table, 
+                    pt.serialno)
                     print e
                     result = False
         cursor.close()

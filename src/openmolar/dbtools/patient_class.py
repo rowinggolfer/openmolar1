@@ -107,7 +107,7 @@ clinical_memos = ("synopsis",)
 ## changes
 ATTRIBS_TO_CHECK = patientTableAtts + exemptionTableAtts + bpeTableAtts + \
 currtrtmtTableAtts + mnhistTableAtts + perioTableAtts + planDBAtts + \
-clinical_memos
+clinical_memos + ("estimates",)
 
 #################### sub classes ##############################################
 class planData():
