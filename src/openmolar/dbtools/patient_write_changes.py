@@ -155,7 +155,7 @@ csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
                 for ix in oldEstDict.keys():
                     #--removed
                     query = "delete from newestimates where ix=%s"
-                    sqlcommands["estimates"].append((query, est.ix),)
+                    sqlcommands["estimates"].append((query, ix),)
 
             elif change in patient_class.currtrtmtTableAtts:
                 value = pt.__dict__[change]
