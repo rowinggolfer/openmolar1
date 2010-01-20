@@ -68,8 +68,8 @@ def commitPDFtoDB(om_gui, descr, serialno=None):
             #-field is 20 chars max.. hence the [:14]
             docsprinted.add(serialno, descr[:14] + " (pdf)", pdfDup)
             #--now refresh the docprinted widget (if visible)
-            if om_gui.ui.previousCorrespondence_treeWidget.isVisible():
-                om_gui.docsPrinted()
+            if om_gui.ui.prevCorres_treeWidget.isVisible():
+                om_gui.docsPrintedInit()
     except Exception, e:
         om_gui.advise(_("Error saving PDF copy %s")% e, 2)
 
@@ -130,8 +130,8 @@ def printLetter(om_gui):
         html=str(html.toAscii())
         docsprinted.add(om_gui.pt.serialno, "std letter (html)", html)
         om_gui.pt.addHiddenNote("printed", "std letter")
-        if om_gui.ui.previousCorrespondence_treeWidget.isVisible():
-            om_gui.docsPrinted()
+        if om_gui.ui.prevCorres_treeWidget.isVisible():
+            om_gui.docsPrintedInit()
 
 def printAccountsTable(om_gui):
     '''
@@ -271,8 +271,8 @@ def printReferral(om_gui):
         myclass.printpage()
         docsprinted.add(om_gui.pt.serialno, "referral (html)", html)
         om_gui.pt.addHiddenNote("printed", "referral")
-        if om_gui.ui.previousCorrespondence_treeWidget.isVisible():
-            om_gui.docsPrinted()
+        if om_gui.ui.prevCorres_treeWidget.isVisible():
+            om_gui.docsPrintedInit()
 
 def orthoWizard(om_gui):
     '''prints a referal letter controlled by referal.xml file'''
@@ -289,8 +289,8 @@ def orthoWizard(om_gui):
         myclass.printpage()
         docsprinted.add(om_gui.pt.serialno, "referral (html)", html)
         om_gui.pt.addHiddenNote("printed", "referral")
-        if om_gui.ui.previousCorrespondence_treeWidget.isVisible():
-            om_gui.docsPrinted()
+        if om_gui.ui.prevCorres_treeWidget.isVisible():
+            om_gui.docsPrintedInit()
 
 def printChart(om_gui):
     if om_gui.pt.serialno == 0:

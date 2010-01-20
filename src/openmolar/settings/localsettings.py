@@ -122,6 +122,13 @@ def openPDF(filepath):
     '''
     if not re.match(".*[.]pdf$", filepath):
         raise Exception, "%s is not a pdf file"% filepath
+    openFile(filepath)
+    
+def openFile(filepath):
+    '''
+    open a File - minimal checks to ensure no malicious files have been
+    inserted into my sacred filepaths though.....
+    '''
     if not os.path.exists(filepath):
         raise IOError, "%s does not exist"% filepath
         

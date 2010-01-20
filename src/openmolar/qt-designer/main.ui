@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>2</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -1955,7 +1955,7 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QTreeWidget" name="previousCorrespondence_treeWidget">
+                           <widget class="QTreeWidget" name="prevCorres_treeWidget">
                             <property name="alternatingRowColors">
                              <bool>true</bool>
                             </property>

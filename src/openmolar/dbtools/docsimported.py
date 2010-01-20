@@ -5,7 +5,7 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
-
+import os
 from openmolar import connect
 from openmolar.settings import localsettings
 
@@ -16,47 +16,56 @@ def getData(ix):
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query='''select data, docversion from newdocsprinted where ix=%d'''%ix
+    query = '''select filedata from docsimporteddata where masterid=%s'''%ix
     cursor.execute(query)
-    rows = cursor.fetchone()
+    rows = cursor.fetchall()
     cursor.close()
-    return rows
+    if rows:
+        return rows
+    else:
+        return (("no data found",),)
 
-def previousDocs(sno):
+def storedDocs(sno):
     '''
     find previously printed docs related to the serialno given as the argument
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query='''select DATE_FORMAT(printdate,'%s'),docname,docversion,ix
-    from newdocsprinted where serialno=%s order by ix DESC '''%(
+    query = '''select DATE_FORMAT(filedate,'%s'), name, size, ix
+    from docsimported where serialno=%s order by ix DESC '''%(
     localsettings.OM_DATE_FORMAT, sno)
-    
+     
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
     #db.close()
     return rows
 
-def add(sno, docname, object, version=1):
+def add(sno, filepath):
     '''
     add a note in the database of stuff which has been printed
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query = '''INSERT INTO newdocsprinted
-(serialno,printdate,docname,docversion,data) VALUES (%s, NOW(), %s, %s, %s)'''
-    values = (sno, docname, version, object)
-    print "adding letter to newdocsprinted table"
-    if localsettings.logqueries:
-        print query, values
+    query = '''insert into docsimported 
+    (serialno, datatype, name, size, filedate) values (%s, %s, %s, %s, %s)'''
+    values = (sno, "", filepath, 2080, localsettings.datetime.datetime.now())
+
     cursor.execute(query, values)
+    
+    query = 'INSERT INTO docsimporteddata (masterid, filedata) VALUES (%s, %s)'
+    f = open(filepath, "rb")
+    fileid = db.insert_id()
+    fileid = db.insert_id()  
+    for data in f.readlines(65535):
+        values = (fileid, data)
+        cursor.execute(query, values)
+    f.close()
+    print "added doc to importeddocs table"
     db.commit()
     cursor.close()
 
 if __name__ == "__main__":
     #- test function
-    data, version= getData(80982)
-    print data,version
-
-
+    data = getData(1)
+    print data

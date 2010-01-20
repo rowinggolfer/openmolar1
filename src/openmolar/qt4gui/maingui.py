@@ -79,6 +79,7 @@ from openmolar.dbtools import search
 from openmolar.dbtools import appointments
 from openmolar.dbtools import calldurr
 from openmolar.dbtools import docsprinted
+from openmolar.dbtools import docsimported
 from openmolar.dbtools import memos
 from openmolar.dbtools import nhs_claims
 from openmolar.dbtools import daybookHistory
@@ -663,8 +664,9 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
             self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
             contract_gui_module.handle_ContractTab(self)
 
-        if ci == 2:
-            self.docsPrinted()
+        if ci == 2: #-correspondence
+            self.docsPrintedInit()
+            self.docsImportedInit()
 
         if ci == 3:
             self.load_receptionSummaryPage()
@@ -954,48 +956,47 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         '''
         new_patient_gui.defaultNP(self)
     
-    def docsPrinted(self):
+    def docsPrintedInit(self):
         '''
         load the docsprinted listWidget
         '''
-        self.ui.previousCorrespondence_treeWidget.clear()
-        self.ui.previousCorrespondence_treeWidget.setHeaderLabels(["Date", "Type", "Version", "Index"])
+        self.ui.prevCorres_treeWidget.clear()
+        self.ui.prevCorres_treeWidget.setHeaderLabels(
+        ["Date", "Type", "Version", "Index"])
+
         docs=docsprinted.previousDocs(self.pt.serialno)
         for d in docs:
             doc=[str(d[0]), str(d[1]), str(d[2]), str(d[3])]
             i=QtGui.QTreeWidgetItem(
-            self.ui.previousCorrespondence_treeWidget, doc)
-        self.ui.previousCorrespondence_treeWidget.expandAll()
-        for i in range(self.ui.previousCorrespondence_treeWidget.columnCount()):
-            self.ui.previousCorrespondence_treeWidget.resizeColumnToContents(i)
+            self.ui.prevCorres_treeWidget, doc)
+        self.ui.prevCorres_treeWidget.expandAll()
+        for i in range(self.ui.prevCorres_treeWidget.columnCount()):
+            self.ui.prevCorres_treeWidget.resizeColumnToContents(i)
         #-- hide the index column
-        self.ui.previousCorrespondence_treeWidget.setColumnWidth(3, 0)
+        self.ui.prevCorres_treeWidget.setColumnWidth(3, 0)
 
-    def showDoc(self, item, index):
+    def showPrevPrintedDoc(self, item, index):
         '''
         called by a double click on the documents listview
         '''
-        print "showDoc"
-
-        ix=int(item.text(3))
+        ix = int(item.text(3))
         if "html" in item.text(1):
-            print "html file found!"
-            result=QtGui.QMessageBox.question(self, _("Re-open"),
+            result = QtGui.QMessageBox.question(self, _("Re-open"),
             _("Do you want to review and/or reprint this item?"),
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
                 html, version=docsprinted.getData(ix)
                 om_printing.customEstimate(self, html, version)
-
+                
         elif "pdf" in item.text(1):
-            result=QtGui.QMessageBox.question(self, _("Re-open"),
+            result = QtGui.QMessageBox.question(self, _("Re-open"),
             _("Do you want to review and/or reprint this item?"),
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
                 try:
-                    data, version=docsprinted.getData(ix)
+                    data, version = docsprinted.getData(ix)
                     f = open("temp.pdf", "wb")
                     f.write(data)
                     f.close()
@@ -1003,26 +1004,77 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
                 except Exception, e:
                     print "view PDF error"
                     print Exception, e
-                    self.advise("error reviewing PDF file<br />"
-                    +"tried to open with evince on Linux"
-                    +" or default PDF reader on windows", 1)
+                    self.advise(_("error reviewing PDF file"), 1)
         else: #unknown data type... probably plain text.
             print "other type of doc"
-            data=docsprinted.getData(ix)[0]
+            data = docsprinted.getData(ix)[0]
             if data == None:
-                data="No information available about this document, sorry"
+                data = _(
+                "No information available about this document, sorry")
             self.advise(data, 1)
+    
+    def docsImportedInit(self):
+        '''
+        load the docsImported listWidget
+        '''
+        self.ui.importDoc_treeWidget.clear()
+        self.ui.importDoc_treeWidget.setHeaderLabels(
+        [_("Date imported"), _("Description"), _("Size"), "Index"])
 
+        docs = docsimported.storedDocs(self.pt.serialno)
+        for d in docs:
+            doc =  [str(d[0]), str(d[1]), str(d[2]), str(d[3])]
+            i = QtGui.QTreeWidgetItem(
+            self.ui.importDoc_treeWidget, doc)
+        self.ui.importDoc_treeWidget.expandAll()
+        for i in range(self.ui.importDoc_treeWidget.columnCount()):
+            self.ui.importDoc_treeWidget.resizeColumnToContents(i)
+        #-- hide the index column
+        self.ui.importDoc_treeWidget.setColumnWidth(3, 0)
+        
     def importDoc(self):
         '''
         import a document and store into the database
         '''
-        self.advise("not yet implemented",1)
-
+        filename = QtGui.QFileDialog.getOpenFileName()
+        if filename != '':
+            self.advise(_("opening")+" %s"% filename)
+            try:
+                docsimported.add(self.pt.serialno, filename)
+            except Exception, e:
+                self.advise(_("error importing file") + "<br /> - %s"% e, 2)
+        else:
+            self.advise(_("no file chosen"), 1)
+        self.docsImportedInit()
+    
+    def showImportedDoc(self, item, index):
+        '''
+        called by a double click on the imported documents listview
+        '''
+        ix = int(item.text(3))
+        print "opening file index ",ix
+        result = QtGui.QMessageBox.question(self, _("Re-open"),
+        _("Do you want to open a copy of this document?"),
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
+        if result == QtGui.QMessageBox.Yes:
+            try:
+                dataBlocks = docsimported.getData(ix)
+                f = open("import_temp", "wb")
+                for data in dataBlocks:
+                    print "data", data
+                    f.write(data[0])
+                f.close()
+                localsettings.openFile( "import_temp" )
+            except Exception, e:
+                print "unable to open stored document"
+                print Exception, e
+                self.advise(_("error reviewing PDF file"), 1)
+        
     def load_todays_patients_combobox(self):
         '''
         loads the quick select combobox, with all of todays's
-        patients - if a list(tuple) of dentists is passed eg ,(("NW"))
+        patients - if a list(tuple) of dentists is passed eg ,(("NW"),)
         then only pt's of that dentist show up
         '''
         if localsettings.clinicianNo != 0:
@@ -2984,10 +3036,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.account2_pushButton,
         QtCore.SIGNAL("clicked()"), self.accountButton2Clicked)
 
-        QtCore.QObject.connect(self.ui.previousCorrespondence_treeWidget,
+        QtCore.QObject.connect(self.ui.prevCorres_treeWidget,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
-        self.showDoc)
+        self.showPrevPrintedDoc)
 
+        QtCore.QObject.connect(self.ui.importDoc_treeWidget,
+        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
+        self.showImportedDoc)
+        
         QtCore.QObject.connect(self.ui.recall_dateEdit,
         QtCore.SIGNAL("dateChanged (const QDate&)"), self.recallDate)
 

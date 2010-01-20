@@ -9,10 +9,7 @@
 
 '''
 This module provides a function 'run' which will move data 
-from the patients table 
-in schema 1_4 to a new exemptions table in schema 1_5
-also, remove the key for calendar, it makes more sense to have the date
-as the primary key. (cleaner code for updates)
+to schema 1_6
 '''
 import sys
 from openmolar.settings import localsettings 
@@ -22,18 +19,26 @@ from openmolar import connect
 from PyQt4 import QtGui, QtCore
 
 SQLSTRINGS = [
-'alter table clinical_memos add column synopsis text',
-'alter table calendar drop column ix',
-'alter table calendar add primary key(adate)',
 '''
-CREATE TABLE if not exists exemptions (
-ix int(10) unsigned NOT NULL auto_increment ,
-serialno int(11) unsigned NOT NULL ,
-exemption varchar(10),
-exempttext varchar(50),
-datestamp DATETIME NOT NULL default '0000-00-00 00:00:00',
+drop table docsimported
+''', 
+'''
+CREATE TABLE docsimported (
+ix mediumint(8) unsigned NOT NULL auto_increment,
+serialno int(11) unsigned NOT NULL default 0,
+datatype varchar(60) NOT NULL default 'application/octet-stream',
+name varchar(120) NOT NULL default '',
+size bigint(20) unsigned NOT NULL default '1024',
+filedate datetime NOT NULL default '0000-00-00 00:00:00',
+PRIMARY KEY (ix) )
+''',
+'''
+CREATE TABLE docsimporteddata (
+ix mediumint(8) unsigned NOT NULL auto_increment,
+masterid mediumint(8) unsigned NOT NULL default '0',
+filedata blob NOT NULL,
 PRIMARY KEY (ix),
-key (serialno))
+KEY master_idx (masterid) )
 '''
 ]
 
@@ -96,28 +101,28 @@ class dbUpdater(QtCore.QThread):
         '''
         move data into the new tables
         ''' 
-        db = connect.connect()
-        cursor=db.cursor()
-        cursor.execute('lock tables patients read, exemptions write')
+        #db = connect.connect()
+        #cursor=db.cursor()
+        #cursor.execute('lock tables patients read, exemptions write')
             
-        cursor.execute('select serialno, exmpt, exempttext from patients')
-        rows=cursor.fetchall()
+        #cursor.execute('select serialno, exmpt, exempttext from patients')
+        #rows=cursor.fetchall()
             
-        query = '''insert into exemptions (serialno, exemption, exempttext) 
-        values (%s, %s, %s)'''
+        #query = '''insert into exemptions (serialno, exemption, exempttext) 
+        #values (%s, %s, %s)'''
         
-        values = []
-        for row in rows:
-            if row[1] != "" or row[2] != "":
-                values.append(row)
+        #values = []
+        #for row in rows:
+        #    if row[1] != "" or row[2] != "":
+        #        values.append(row)
 
-        cursor.executemany(query, values)
+        #cursor.executemany(query, values)
 
-        db.commit()
-        cursor.execute("unlock tables")
+        #db.commit()
+        #cursor.execute("unlock tables")
         
-        cursor.close()
-        db.close()
+        #cursor.close()
+        #db.close()
         return True
 
     def completeSig(self, arg):
