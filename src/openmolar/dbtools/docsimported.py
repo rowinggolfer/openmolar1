@@ -41,9 +41,23 @@ def storedDocs(sno):
     #db.close()
     return rows
 
+def chunks_from_file(filepath, chunksize = 57344):
+    '''
+    a generator to break a file into chunks
+    '''
+    f = open(filepath, "rb")
+    while True:
+        chunk = f.read(chunksize)
+        if chunk:
+            yield chunk
+        else:
+            break
+    f.close()
+
+
 def add(sno, filepath):
     '''
-    add a note in the database of stuff which has been printed
+    add a binary file to the database (broken into chunks)
     '''
     db = connect.connect()
     cursor = db.cursor()
@@ -52,15 +66,11 @@ def add(sno, filepath):
     values = (sno, "", filepath, 2080, localsettings.datetime.datetime.now())
 
     cursor.execute(query, values)
-    
-    query = 'INSERT INTO docsimporteddata (masterid, filedata) VALUES (%s, %s)'
-    f = open(filepath, "rb")
     fileid = db.insert_id()
-    fileid = db.insert_id()  
-    for data in f.readlines(65535):
+    query = 'INSERT INTO docsimporteddata (masterid, filedata) VALUES (%s, %s)'
+    for data in chunks_from_file(filepath):
         values = (fileid, data)
         cursor.execute(query, values)
-    f.close()
     print "added doc to importeddocs table"
     db.commit()
     cursor.close()

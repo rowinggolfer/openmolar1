@@ -1059,10 +1059,8 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         QtGui.QMessageBox.Yes )
         if result == QtGui.QMessageBox.Yes:
             try:
-                dataBlocks = docsimported.getData(ix)
                 f = open("import_temp", "wb")
-                for data in dataBlocks:
-                    print "data", data
+                for data in docsimported.getData(ix):
                     f.write(data[0])
                 f.close()
                 localsettings.openFile( "import_temp" )
