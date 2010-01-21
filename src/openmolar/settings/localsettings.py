@@ -114,29 +114,6 @@ appt_shortcut_file = os.path.join(wkdir, "resources",
 stylesheet = os.path.join(wkdir, "resources", "style.css")
 resources_path = os.path.join(wkdir, "resources")
 
-
-def openPDF(filepath):
-    '''
-    open a PDF - minimal checks to ensure no malicious files have been
-    inserted into my sacred filepaths though.....
-    '''
-    if not re.match(".*[.]pdf$", filepath):
-        raise Exception, "%s is not a pdf file"% filepath
-    openFile(filepath)
-    
-def openFile(filepath):
-    '''
-    open a File - minimal checks to ensure no malicious files have been
-    inserted into my sacred filepaths though.....
-    '''
-    if not os.path.exists(filepath):
-        raise IOError, "%s does not exist"% filepath
-        
-    if "win" in sys.platform:
-        os.startfile(filepath)
-    else:
-        subprocess.Popen(["xdg-open", filepath])
-
 if "win" in sys.platform:
     print "windows settings"
     #-- sorry about this... but cross platform is a goal :(
@@ -161,6 +138,7 @@ else:
     localFileDirectory = os.path.join(os.environ.get("HOME"),".openmolar")
 
 cflocation = os.path.join(localFileDirectory,"openmolar.conf")
+TEMP_PDF = os.path.join(localFileDirectory, "temp.pdf")
 
 #this is updated if correct password is given
 successful_login = False
@@ -169,6 +147,27 @@ successful_login = False
 permissionsRaised = False
 permissionExpire = datetime.datetime.now()
 
+def openPDF(filepath=TEMP_PDF):
+    '''
+    open a PDF - minimal checks to ensure no malicious files have been
+    inserted into my sacred filepaths though.....
+    '''
+    if not re.match(".*[.]pdf$", filepath):
+        raise Exception, "%s is not a pdf file"% filepath
+    openFile(filepath)
+    
+def openFile(filepath):
+    '''
+    open a File - minimal checks to ensure no malicious files have been
+    inserted into my sacred filepaths though.....
+    '''
+    if not os.path.exists(filepath):
+        raise IOError, "%s does not exist"% filepath
+        
+    if "win" in sys.platform:
+        os.startfile(filepath)
+    else:
+        subprocess.Popen(["xdg-open", filepath])
 
 #################  MESSAGES ####################################################
 def about():

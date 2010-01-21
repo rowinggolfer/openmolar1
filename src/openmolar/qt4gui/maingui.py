@@ -69,6 +69,8 @@ from openmolar.qt4gui.dialogs import select_language
 #secondary applications
 from openmolar.qt4gui.tools import fee_adjuster
 from openmolar.qt4gui.tools import new_setup
+from openmolar.qt4gui.tools import recordtools
+
 
 #--database modules
 #--(do not even think of making db queries from ANYWHERE ELSE)
@@ -305,7 +307,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         print "quit called"
         if self.okToLeaveRecord():
             #TODO - save some settings here????
-            utilities.deletePDF()
+            utilities.deleteTempFiles()
             pass
         else:
             print "user overuled"
@@ -997,10 +999,10 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
             if result == QtGui.QMessageBox.Yes:
                 try:
                     data, version = docsprinted.getData(ix)
-                    f = open("temp.pdf", "wb")
+                    f = open(localsettings.TEMP_PDF, "wb")
                     f.write(data)
                     f.close()
-                    localsettings.openPDF( "temp.pdf" )
+                    localsettings.openPDF()
                 except Exception, e:
                     print "view PDF error"
                     print Exception, e
@@ -1018,19 +1020,17 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         load the docsImported listWidget
         '''
         self.ui.importDoc_treeWidget.clear()
-        self.ui.importDoc_treeWidget.setHeaderLabels(
-        [_("Date imported"), _("Description"), _("Size"), "Index"])
+        self.ui.importDoc_treeWidget.setHeaderLabels([_("Date imported"),
+        _("Description"), _("Size"), _("Type"), "Index"])
 
         docs = docsimported.storedDocs(self.pt.serialno)
-        for d in docs:
-            doc =  [str(d[0]), str(d[1]), str(d[2]), str(d[3])]
-            i = QtGui.QTreeWidgetItem(
-            self.ui.importDoc_treeWidget, doc)
+        for doc in docs:
+            i = QtGui.QTreeWidgetItem(self.ui.importDoc_treeWidget, doc)
         self.ui.importDoc_treeWidget.expandAll()
         for i in range(self.ui.importDoc_treeWidget.columnCount()):
             self.ui.importDoc_treeWidget.resizeColumnToContents(i)
         #-- hide the index column
-        self.ui.importDoc_treeWidget.setColumnWidth(3, 0)
+        self.ui.importDoc_treeWidget.setColumnWidth(4, 0)
         
     def importDoc(self):
         '''
@@ -1040,7 +1040,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         if filename != '':
             self.advise(_("opening")+" %s"% filename)
             try:
-                docsimported.add(self.pt.serialno, filename)
+                docsimported.add(self.pt.serialno, str(filename))
             except Exception, e:
                 self.advise(_("error importing file") + "<br /> - %s"% e, 2)
         else:
@@ -1051,7 +1051,7 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         '''
         called by a double click on the imported documents listview
         '''
-        ix = int(item.text(3))
+        ix = int(item.text(4))
         print "opening file index ",ix
         result = QtGui.QMessageBox.question(self, _("Re-open"),
         _("Do you want to open a copy of this document?"),
@@ -1059,15 +1059,17 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
         QtGui.QMessageBox.Yes )
         if result == QtGui.QMessageBox.Yes:
             try:
-                f = open("import_temp", "wb")
+                fpath = os.path.join(localsettings.localFileDirectory,
+                "import_temp")
+                f = open(fpath, "wb")
                 for data in docsimported.getData(ix):
                     f.write(data[0])
                 f.close()
-                localsettings.openFile( "import_temp" )
+                localsettings.openFile( fpath )
             except Exception, e:
                 print "unable to open stored document"
                 print Exception, e
-                self.advise(_("error reviewing PDF file"), 1)
+                self.advise(_("error opening document"), 1)
         
     def load_todays_patients_combobox(self):
         '''
@@ -2156,6 +2158,17 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.appointmentTools(self)
 
+    def advancedRecordTools(self):
+        '''
+        menu option which allows adanced record changes
+        '''
+        if self.pt.serialno == 0:
+            self.advise(_("no record selected"),1)
+        else:
+            if permissions.granted(self):
+                dl = recordtools.recordTools(self)
+                dl.exec_()
+        
     def gotoToday_clicked(self):
         '''
         handles button pressed asking for today to be loaded on the
@@ -3103,6 +3116,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.actionFeeScale_Adjuster,
         QtCore.SIGNAL("triggered()"), self.feeScale_Adjuster_action)
+
+        QtCore.QObject.connect(self.ui.actionAdvanced_Record_Management,
+        QtCore.SIGNAL("triggered()"), self.advancedRecordTools)
 
         QtCore.QObject.connect(self.ui.actionCreate_Modify_database,
         QtCore.SIGNAL("triggered()"), self.actionNewSetup)

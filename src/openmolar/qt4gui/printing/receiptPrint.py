@@ -41,7 +41,7 @@ class receipt():
         if not dialog.exec_():
             return
         self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
-        self.pdfprinter.setOutputFileName("temp.pdf")
+        self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
     
         for printer in (self.printer,self.pdfprinter):
         

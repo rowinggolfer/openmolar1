@@ -6,6 +6,8 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import os
+import mimetypes
+import datetime
 from openmolar import connect
 from openmolar.settings import localsettings
 
@@ -31,15 +33,17 @@ def storedDocs(sno):
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query = '''select DATE_FORMAT(filedate,'%s'), name, size, ix
+    query = '''select DATE_FORMAT(filedate,'%s'), name, size, datatype, ix
     from docsimported where serialno=%s order by ix DESC '''%(
     localsettings.OM_DATE_FORMAT, sno)
      
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
-    #db.close()
-    return rows
+    docs = []
+    for fdate, fname, fsize, typ, ix in rows:
+        docs.append([fdate, fname, sizeof_fmt(fsize), typ, str(ix)])
+    return docs
 
 def chunks_from_file(filepath, chunksize = 57344):
     '''
@@ -54,16 +58,24 @@ def chunks_from_file(filepath, chunksize = 57344):
             break
     f.close()
 
+def sizeof_fmt(num):
+    for x in ['bytes','KB','MB','GB','TB']:
+        if num < 1024.0:
+            return "%3.1f%s" % (num, x)
+        num /= 1024.0
 
 def add(sno, filepath):
     '''
     add a binary file to the database (broken into chunks)
     '''
+    st = os.stat(filepath)
     db = connect.connect()
     cursor = db.cursor()
     query = '''insert into docsimported 
     (serialno, datatype, name, size, filedate) values (%s, %s, %s, %s, %s)'''
-    values = (sno, "", filepath, 2080, localsettings.datetime.datetime.now())
+    values = (sno, mimetypes.guess_type(filepath)[0], 
+    os.path.basename(filepath), st.st_size, 
+    datetime.datetime.fromtimestamp (st.st_mtime))
 
     cursor.execute(query, values)
     fileid = db.insert_id()

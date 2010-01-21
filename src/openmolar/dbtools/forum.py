@@ -6,7 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for
 # more details.
 
-import sys,datetime
+import sys
 from openmolar import connect
 from openmolar.settings import localsettings
 
@@ -30,15 +30,14 @@ class post():
 def commitPost(post):
     #use a different connection for forum, as it runs in a separate thread
 
-    db=connect.connect() 
-    cursor=db.cursor()
-    columns="parent_ix,inits,recipient,fdate,topic,comment"
+    db = connect.connect() 
+    cursor = db.cursor()
+    columns = "parent_ix,inits,recipient,fdate,topic,comment"
     
-    values=(post.parent_ix,post.inits,post.recipient,
-    datetime.datetime.now(),post.topic,post.comment.replace("\n"," "))
+    values = (post.parent_ix, post.inits, post.recipient,
+    "NOW()", post.topic, post.comment.replace("\n"," "))
 
-    query="insert into forum (%s) "% columns
-    query+="VALUES (%s,%s,%s,%s,%s,%s)"
+    query = "insert into forum (%s) VALUES (%%s,%%s,%%s,%%s,%%s,%%s)"% columns
     if localsettings.logqueries:
         print query,values
     cursor.execute(query,values)

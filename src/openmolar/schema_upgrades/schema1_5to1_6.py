@@ -19,6 +19,7 @@ from openmolar import connect
 from PyQt4 import QtGui, QtCore
 
 SQLSTRINGS = [
+'alter table forum change comment comment text not null',
 '''
 drop table docsimported
 ''', 

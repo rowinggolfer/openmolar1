@@ -49,7 +49,7 @@ class document():
         if not self.dialogExec():
             return False
         self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
-        self.pdfprinter.setOutputFileName("temp.pdf")
+        self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
     
         for printer in (self.printer,self.pdfprinter):
             AddressMargin=80

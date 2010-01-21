@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -2157,7 +2157,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>738</width>
+                        <width>324</width>
                         <height>580</height>
                        </rect>
                       </property>
@@ -2529,7 +2529,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
+                        <width>608</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2827,8 +2827,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>547</width>
-                        <height>430</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3027,7 +3027,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>497</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3060,7 +3060,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3433,8 +3433,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>753</width>
-                        <height>430</height>
+                        <width>267</width>
+                        <height>392</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4374,8 +4374,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>198</width>
-                    <height>99</height>
+                    <width>98</width>
+                    <height>98</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -5925,6 +5925,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="actionChoose_Database"/>
     <addaction name="actionFeeScale_Adjuster"/>
     <addaction name="actionSelect_Print_Daylists"/>
+    <addaction name="actionAdvanced_Record_Management"/>
     <addaction name="separator"/>
     <addaction name="actionCreate_Modify_database"/>
    </widget>
@@ -6037,6 +6038,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionCreate_Modify_database">
    <property name="text">
     <string>Create/Modify database</string>
+   </property>
+  </action>
+  <action name="actionAdvanced_Record_Management">
+   <property name="text">
+    <string>Advanced Record Management</string>
    </property>
   </action>
  </widget>

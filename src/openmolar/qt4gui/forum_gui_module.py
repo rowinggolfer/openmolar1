@@ -148,7 +148,7 @@ def forumNewTopic(parent):
 
     post = forum.post()
     post.topic = dl.topic_lineEdit.text().toAscii()
-    post.comment = dl.comment_textEdit.toPlainText().toAscii()[:255]
+    post.comment = dl.comment_textEdit.toPlainText().toAscii()
     post.inits = dl.from_comboBox.currentText()
     if dl.to_comboBox.currentIndex !=0:
         post.recipient = dl.to_comboBox.currentText()

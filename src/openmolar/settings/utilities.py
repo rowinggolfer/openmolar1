@@ -7,26 +7,30 @@
 # for more details.
 
 import os
+from openmolar.settings import localsettings
 
 def getPDF():
     '''
     get's the pdf which has been created to local file during some print proc
     '''
     try:
-        f=open("temp.pdf","rb")
-        data=f.read()
+        f = open(localsettings.TEMP_PDF,"rb")
+        data = f.read()
         f.close()
         return data
     except Exception,e:
         print "error in utilities.getPdf"
         print Exception,e
         
-def deletePDF():
+def deleteTempFiles():
     '''
     delete's any temprorary pdf file
     '''
-    if os.path.exists("temp.pdf"):
-        os.remove("temp.pdf")
+    print "deleting temporary Files"
+    for name in ("import_temp", "temp.pdf"):
+        fpath = os.path.join(localsettings.localFileDirectory, name)
+        if os.path.exists(fpath):
+            os.remove(fpath)
     
 if __name__ == "__main__":
     '''testing only'''
