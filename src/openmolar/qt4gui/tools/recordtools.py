@@ -136,19 +136,20 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         apply date changes 
         '''
         if self.pd5_dateEdit.isVisible():
-            self.om_gui.pt.pd5 = self.pd5_dateEditdate().toPyDate()
+            self.om_gui.pt.pd5 = self.pd5_dateEdit.date().toPyDate()
         if self.pd6_dateEdit.isVisible():
-            self.om_gui.pt.pd6 = self.pd6_dateEditdate().toPyDate()     
+            self.om_gui.pt.pd6 = self.pd6_dateEdit.date().toPyDate()     
         if self.pd7_dateEdit.isVisible():
-            self.om_gui.pt.pd7 = self.pd7_dateEditdate().toPyDate()     
+            self.om_gui.pt.pd7 = self.pd7_dateEdit.date().toPyDate()     
         if self.pd8_dateEdit.isVisible():
-            self.om_gui.pt.pd8 = self.pd8_dateEditdate().toPyDate()     
+            self.om_gui.pt.pd8 = self.pd8_dateEdit.date().toPyDate()     
         if self.pd9_dateEdit.isVisible():
-            self.om_gui.pt.pd9 = self.pd9_dateEditdate().toPyDate()     
+            self.om_gui.pt.pd9 = self.pd9_dateEdit.date().toPyDate()     
         if self.pd10_dateEdit.isVisible():
-            self.om_gui.pt.pd10 = self.pd10_dateEditdate().toPyDate()     
+            self.om_gui.pt.pd10 = self.pd10_dateEdit.date().toPyDate()     
         if self.billdate_dateEdit.isVisible():
-            self.om_gui.pt.billdate = self.billdate_dateEditdate().toPyDate()    
+            self.om_gui.pt.billdate = \
+            self.billdate_dateEdit.date().toPyDate()    
             
         self.om_gui.updateDetails()
         

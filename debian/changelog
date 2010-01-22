@@ -1,5 +1,5 @@
-openmolar (0.1.8-39rgppa) intrepid; urgency=low
+openmolar (0.1.8-40rgppa) intrepid; urgency=low
 
-  * as per bzr version 553 see https://launchpad.net/openmolar for details
+  * as per bzr version 557 see https://launchpad.net/openmolar for details
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 19 Jan 2010 19:08:05 +0000
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 22 Jan 2010 15:30:48 +0000
