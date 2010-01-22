@@ -114,133 +114,7 @@ from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import calendars
 from openmolar.qt4gui.customwidgets import notification_widget
 
-
-###### TODO - refactor all this into one big class....
-#--the main gui class inherits from a lot of smaller classes to make the \
-#--code more manageable. (supposedly!)
-#--watch out for namespace clashes!!!!!
-
-class chartsClass():
-    def bpe_table(self, arg):
-        '''
-        updates the BPE chart on the clinical summary page
-        '''
-        charts_gui.bpe_table(self, arg)
-
-    def layoutPerioCharts(self):
-        '''
-        layout the perio charts
-        '''
-        charts_gui.layoutPerioCharts(self)
-        
-    def editStatic(self):
-        '''
-        called by the static button on the toothprops widget
-        '''
-        self.selectedChartWidget="st"
-        charts_gui.chart_navigate(self)
-
-    def editPlan(self):
-        '''
-        called by the plan button on the toothprops widget
-        '''
-        self.selectedChartWidget="pl"
-        charts_gui.chart_navigate(self)
-
-    def editCompleted(self):
-        '''
-        called by the cmp button on the toothprops widget
-        '''
-        self.selectedChartWidget="cmp"
-        charts_gui.chart_navigate(self)
-
-    def deleteComments(self):
-        '''
-        called when user has trigger deleted comments in the toothProp
-        '''
-        charts_gui.deleteComments(self)
-        
-    def updateCharts(self, arg):
-        '''
-        called by a signal from the toothprops widget -
-        args are the new tooth properties eg modbl,co
-        '''
-        charts_gui.updateCharts(self, arg)
-        
-    def navigateCharts(self, direction):
-        '''
-        catches a keypress in the toothprop widget
-        '''
-        charts_gui.navigateCharts(self, direction)
-        
-    def static_chartNavigation(self, signal):
-        '''
-        called by the static or summary chartwidget
-        '''
-        charts_gui.checkPreviousEntry(self)
-        self.selectedChartWidget="st"
-        charts_gui.chartNavigation(self, signal)
-
-    def plan_chartNavigation(self, signal):
-        '''
-        called by the plan chartwidget
-        '''
-        charts_gui.checkPreviousEntry(self)
-        self.selectedChartWidget="pl"
-        charts_gui.chartNavigation(self, signal)
-
-    def comp_chartNavigation(self, signal):
-        '''
-        called by the completed chartwidget
-        '''
-        charts_gui.checkPreviousEntry(self)
-        self.selectedChartWidget="cmp"
-        charts_gui.chartNavigation(self, signal)
-    
-    def flipDeciduous(self):
-        '''
-        toggle the selected tooth's deciduos state
-        '''
-        charts_gui.flipDeciduous(self)
-
-    def chartTableNav(self, row, col, row1, col1):
-        '''
-        charts table has been navigated
-        '''
-        charts_gui.chartTableNav(self, row, col, row1, col1)
-
-    def toothHistory(self, tooth):
-        '''
-        show history of the tooth
-        '''
-        history = tooth_history.getHistory(self.pt, tooth)
-        self.advise(history,1)
-
-    def tooth_delete_all(self):
-        '''
-        user has clicked on the delete all option from a tooth's right click
-        menu
-        '''
-        print "tooth_delete_all"
-        self.ui.toothPropsWidget.lineEdit.deleteAll()
-
-    def tooth_delete_prop(self, prop):
-        '''
-        user has clicked on the delete prop option from a tooth's right click
-        menu - arg is the prop to be deleted
-        '''
-        print "tooth_delete_prop", prop
-        self.ui.toothPropsWidget.lineEdit.deleteProp(prop)
-
-    def tooth_add_comments(self):
-        '''
-        user has clicked on the delete all option from a tooth's right click
-        menu
-        '''
-        print "tooth_add_comments"
-        self.advise("add comments not working yet",1)
-
-class openmolarGui(QtGui.QMainWindow, chartsClass):
+class openmolarGui(QtGui.QMainWindow):
 
     def __init__(self, app):
         QtGui.QMainWindow.__init__(self)
@@ -570,6 +444,126 @@ class openmolarGui(QtGui.QMainWindow, chartsClass):
 
     def saveButtonClicked(self):
         self.okToLeaveRecord(cont = True)
+
+    def bpe_table(self, arg):
+        '''
+        updates the BPE chart on the clinical summary page
+        '''
+        charts_gui.bpe_table(self, arg)
+
+    def layoutPerioCharts(self):
+        '''
+        layout the perio charts
+        '''
+        charts_gui.layoutPerioCharts(self)
+        
+    def editStatic(self):
+        '''
+        called by the static button on the toothprops widget
+        '''
+        self.selectedChartWidget="st"
+        charts_gui.chart_navigate(self)
+
+    def editPlan(self):
+        '''
+        called by the plan button on the toothprops widget
+        '''
+        self.selectedChartWidget="pl"
+        charts_gui.chart_navigate(self)
+
+    def editCompleted(self):
+        '''
+        called by the cmp button on the toothprops widget
+        '''
+        self.selectedChartWidget="cmp"
+        charts_gui.chart_navigate(self)
+
+    def deleteComments(self):
+        '''
+        called when user has trigger deleted comments in the toothProp
+        '''
+        charts_gui.deleteComments(self)
+        
+    def updateCharts(self, arg):
+        '''
+        called by a signal from the toothprops widget -
+        args are the new tooth properties eg modbl,co
+        '''
+        charts_gui.updateCharts(self, arg)
+        
+    def navigateCharts(self, direction):
+        '''
+        catches a keypress in the toothprop widget
+        '''
+        charts_gui.navigateCharts(self, direction)
+        
+    def static_chartNavigation(self, signal):
+        '''
+        called by the static or summary chartwidget
+        '''
+        charts_gui.checkPreviousEntry(self)
+        self.selectedChartWidget="st"
+        charts_gui.chartNavigation(self, signal)
+
+    def plan_chartNavigation(self, signal):
+        '''
+        called by the plan chartwidget
+        '''
+        charts_gui.checkPreviousEntry(self)
+        self.selectedChartWidget="pl"
+        charts_gui.chartNavigation(self, signal)
+
+    def comp_chartNavigation(self, signal):
+        '''
+        called by the completed chartwidget
+        '''
+        charts_gui.checkPreviousEntry(self)
+        self.selectedChartWidget="cmp"
+        charts_gui.chartNavigation(self, signal)
+    
+    def flipDeciduous(self):
+        '''
+        toggle the selected tooth's deciduos state
+        '''
+        charts_gui.flipDeciduous(self)
+
+    def chartTableNav(self, row, col, row1, col1):
+        '''
+        charts table has been navigated
+        '''
+        charts_gui.chartTableNav(self, row, col, row1, col1)
+
+    def toothHistory(self, tooth):
+        '''
+        show history of the tooth
+        '''
+        history = tooth_history.getHistory(self.pt, tooth)
+        self.advise(history,1)
+
+    def tooth_delete_all(self):
+        '''
+        user has clicked on the delete all option from a tooth's right click
+        menu
+        '''
+        print "tooth_delete_all"
+        self.ui.toothPropsWidget.lineEdit.deleteAll()
+
+    def tooth_delete_prop(self, prop):
+        '''
+        user has clicked on the delete prop option from a tooth's right click
+        menu - arg is the prop to be deleted
+        '''
+        print "tooth_delete_prop", prop
+        self.ui.toothPropsWidget.lineEdit.deleteProp(prop)
+
+    def tooth_add_comments(self):
+        '''
+        user has clicked on the delete all option from a tooth's right click
+        menu
+        '''
+        print "tooth_add_comments"
+        self.advise("add comments not working yet",1)
+
 
     def okToLeaveRecord(self, cont=False):
         '''
