@@ -41,7 +41,7 @@ does not have an active course</p>'''), 1)
         
 def setupNewCourse(om_gui):
     '''
-    set up a new course of treament
+    set up a new course of treatment
     '''
     
     Dialog = QtGui.QDialog(om_gui)

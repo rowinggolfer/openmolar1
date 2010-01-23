@@ -722,7 +722,7 @@ def initiate(debug = False):
 
     #-- majorly important class being initiated
     
-    print "loading fee and treamtment logic tables"
+    print "loading fee and treatment logic tables"
     FEETABLES = feesTable.feeTables()
 
     getLocalSettings()
