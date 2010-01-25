@@ -28,7 +28,8 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         self.chartplan_lineEdits = {}
         self.initialPlan()
         self.chartcompleted_lineEdits = {}
-        self.initialCompleted()        
+        self.initialCompleted() 
+        self.initialHidden_notes()       
         self.signals()
         
     def initialMoney(self):
@@ -81,6 +82,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         
         self.om_gui.pt.updateFees()
         self.om_gui.updateDetails()
+        self.om_gui.advise(_("money changes applied"), 1)
     
     def initialDates(self):
         '''
@@ -163,6 +165,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
             self.billdate_dateEdit.date().toPyDate()    
             
         self.om_gui.updateDetails()
+        self.om_gui.advise(_("date changes applied"), 1)
         
     def initialPlan(self):
         '''
@@ -227,6 +230,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         self.om_gui.pt.ndlpl = self.dentureEntry(self.ndlpl_lineEdit)
         self.om_gui.pt.odupl = self.dentureEntry(self.odupl_lineEdit)
         self.om_gui.pt.odlpl = self.dentureEntry(self.odlpl_lineEdit)
+        self.om_gui.advise(_("plan changes applied"), 1)
     
     def initialCompleted(self):
         '''
@@ -273,7 +277,27 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         self.om_gui.pt.ndlcmp = self.dentureEntry(self.ndlcmp_lineEdit)
         self.om_gui.pt.oducmp = self.dentureEntry(self.oducmp_lineEdit)
         self.om_gui.pt.odlcmp = self.dentureEntry(self.odlcmp_lineEdit)
-         
+        self.om_gui.advise(_("completed treatment changes applied"), 1)
+        
+    def initialHidden_notes(self):
+        '''
+        load the patients hidden notes
+        '''
+        hn_string = ""
+        for n in self.om_gui.pt.HIDDENNOTES:
+            hn_string += "%s\n"% n
+        self.hidden_notes_plainTextEdit.setPlainText(hn_string)
+        
+    def changeHidden_notes(self):
+        '''
+        apply new notes
+        '''
+        hn_string = self.hidden_notes_plainTextEdit.toPlainText()
+        hn_list = hn_string.split("\n") #Qlist
+        hn_list.removeAll("") #Qlist function
+        self.om_gui.pt.HIDDENNOTES = list(hn_list)
+        self.om_gui.advise(_("updated hidden notes list"), 1)
+        
     def signals(self):
         '''
         connect signals
@@ -294,6 +318,9 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         
         QtCore.QObject.connect(self.completed_pushButton,
         QtCore.SIGNAL("clicked()"), self.changeCompleted)
+        
+        QtCore.QObject.connect(self.hidden_notes_pushButton,
+        QtCore.SIGNAL("clicked()"), self.changeHidden_notes)
             
     def exec_(self):
         self.dialog.exec_()

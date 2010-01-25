@@ -259,7 +259,7 @@ class chartWidget(QtGui.QWidget):
         self.emit(QtCore.SIGNAL("toothSelected"), teeth )
         
         if teeth and event.button() == 2:
-            tooth = teeth[0] #self.grid[y][x]
+            tooth = teeth[0] 
                     
             menu = QtGui.QMenu(self)
             if self.isStaticChart:

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'addTreatment.ui'
 #
-# Created: Thu Nov 26 15:29:03 2009
+# Created: Mon Jan 25 13:13:19 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(459, 212)
+        Dialog.resize(459, 245)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtGui.QLabel(Dialog)
@@ -24,7 +24,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 439, 140))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 439, 173))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.horizontalLayout = QtGui.QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setSpacing(0)

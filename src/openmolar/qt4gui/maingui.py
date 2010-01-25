@@ -2514,17 +2514,17 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def planItemClicked(self,item,col):
         '''
-        user has double clicked on the treatment plan tree
+        user has clicked on the treatment plan tree
         col is of no importance as I only have 1 column
         '''
-        manipulate_tx_plan.itemChosen(self, item, "pl")
+        manipulate_tx_plan.planItemChosen(self, item)
 
     def cmpItemClicked(self,item,col):
         '''
         user has double clicked on the treatment competled tree
         col is of no importance - tree widget has only 1 column.
         '''
-        manipulate_tx_plan.itemChosen(self, item, "cmp")
+        manipulate_tx_plan.cmpItemChosen(self, item)
 
     def makeBadDebt_clicked(self):
         '''
@@ -3153,7 +3153,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
 
         QtCore.QObject.connect(self.ui.plan_treeWidget, QtCore.SIGNAL(
-        "itemDoubleClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
+        "itemClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
+
         QtCore.QObject.connect(self.ui.comp_treeWidget, QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
 

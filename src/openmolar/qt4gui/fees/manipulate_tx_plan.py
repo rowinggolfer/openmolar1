@@ -7,41 +7,79 @@
 # See the GNU General Public License for more details.
 
 '''
-currently only one function, to offer options when an item of the treatment
-plan is chosen.
+this module handles interactions with the plan/completed tree widgets
 '''
 
-#-- fee modules which interact with the gui
+from PyQt4 import QtGui
 from openmolar.qt4gui.fees import add_tx_to_plan
+from openmolar.qt4gui.fees import complete_tx
 
-##TODO this function should do a lot more than just offer to delete an item.
-def itemChosen(parent, treeWidgetItem, pl_cmp):
+def planItemChosen(om_gui, treeWidgetItem):
     '''
-    user has clicked on a planned item in the treewidget 
-    if pl_cmp="pl"
-    or a completed one if pl_cmp="cmp"
+    user has clicked on an item in the treatment plan treewidget 
     '''
-    if pl_cmp == "pl":
-        txtype = "Planned Item"
-    else:
-        txtype = "Completed Item"
-    #-- check to see if it is end of a branch.
     if treeWidgetItem.parent() == None:
-        #--header
-        message = "You've selected %ss <ul>%s"% (
+        #this will be true if the user has clicked a header item
+        message = "You've selected planned Items <ul>%s"% (
+        treeWidgetItem.text(0))
+        
+        for i in range(treeWidgetItem.childCount()):
+            message += "<li>%s</li>"% treeWidgetItem.child(i).text(0)
+        message += "</ul>"
+        om_gui.advise(message, 1)
+    else:
+        trtmtType = str(treeWidgetItem.text(0).toAscii())
+        planItemOptions(om_gui, trtmtType)
+
+def planItemOptions(om_gui, trtmtType, performDefault=False):
+    '''
+    offer the user a menu of options
+    '''
+
+    actions = {
+    "complete" : "%s - %s"%(_("Complete Treatment"), trtmtType),
+
+    "delete" : "%s %s %s"%(_("Remove"), trtmtType, 
+    _("From the Treatment Plan"))
+    }
+    
+    def processResult(result):
+        if not result:
+            return
+        if result.text() == actions["complete"]:
+            complete_tx.planTreeWidgetComplete(om_gui, trtmtType) 
+        elif result.text() == actions["delete"]:
+            add_tx_to_plan.deleteTxItem(om_gui, "pl", trtmtType)
+        
+    menu = QtGui.QMenu(om_gui)
+    for action in actions.values():
+        menu.addAction(action)
+    cu = QtGui.QCursor()
+    processResult(menu.exec_(cu.pos()))
+
+def planItemDoubleClicked(om_gui, treeWidgetItem):
+    '''
+    user has double clicked on a planned item in the treewidget 
+    '''
+    if treeWidgetItem.parent() != None:
+        trtmtType = str(treeWidgetItem.text(0).toAscii())
+        
+        planItemOptions(om_gui, trtmtType, performDefault=True)
+
+def cmpItemChosen(om_gui, treeWidgetItem):
+    '''
+    user has clicked on a completed treatment item in the treewidget 
+    '''
+    if treeWidgetItem.parent() == None:
+        #this will be true if the user has clicked a header item
+        message = "You've selected completed Items <ul>%s"% (
         txtype, treeWidgetItem.text(0))
         
         for i in range(treeWidgetItem.childCount()):
             message += "<li>%s</li>"% treeWidgetItem.child(i).text(0)
         message += "</ul>"
-        parent.advise(message, 1)
+        om_gui.advise(message, 1)
     else:
-        #--item
-        #message = "You've selected %ss<br /> %s"% (
-        #txtype, treeWidgetItem.parent().text(0))
-
         trtmtType = str(treeWidgetItem.text(0).toAscii())
-        #message += "<br />%s"% trtmtType
-        #parent.advise(message,1)
-        print "deleting ",trtmtType
-        add_tx_to_plan.deleteTxItem(parent, pl_cmp, trtmtType)
+        add_tx_to_plan.deleteTxItem(om_gui, "cmp", trtmtType)
+

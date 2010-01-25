@@ -17,10 +17,8 @@ from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs import completeTreat
-#-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import fees_module
 from openmolar.qt4gui.charts import charts_gui
-
 
 def checkEstBox(om_gui, tooth, treat):
     '''
@@ -31,7 +29,8 @@ def checkEstBox(om_gui, tooth, treat):
     # "looking for est item where type= '%s'?"%completed
     found = False
     for est in om_gui.pt.estimates:
-        if est.category == tooth and est.type == treat.strip(" "):
+        if (est.category == tooth and est.type == treat.strip(" ")
+        and not est.completed):
             est.completed = True
             fees_module.applyFeeNow(om_gui, est.ptfee)
             found = True
@@ -125,7 +124,7 @@ def estwidg_complete(om_gui, item):
             om_gui.pt.addHiddenNote("exam", item.type)
             
         else:
-            plan = om_gui.pt.__dict__[att + "pl"].replace(treat, "")
+            plan = om_gui.pt.__dict__[att + "pl"].replace(treat, "", 1)
             om_gui.pt.__dict__[att + "pl"] = plan
             completed = om_gui.pt.__dict__[att + "cmp"] + treat
             om_gui.pt.__dict__[att + "cmp"] = completed
@@ -169,8 +168,8 @@ def estwidg_unComplete(om_gui, item):
             att = "%s%d"% (att[:2], number)
                     
         if att =="exam":
-            om_gui.pt.examt = ""
-            om_gui.pt.examd = ""
+            #om_gui.pt.examt = ""
+            om_gui.pt.examd = None
             om_gui.pt.addHiddenNote("exam", item.type, True)
         else:
             plan = om_gui.pt.__dict__[att + "pl"] + treat
@@ -198,3 +197,49 @@ def estwidg_unComplete(om_gui, item):
         </p>Please complete manually'''% completed, 1)
         print "UNABLE TO UNCOMPLETE %s"% item
         print e
+
+
+def planTreeWidgetComplete(om_gui, txtype):   
+    '''
+    complete any treatment itemised in the tree widget 
+    the arg is a list - ["ul5","MOD","RT",]
+    '''
+    if localsettings.clinicianNo != 0:
+        dent = localsettings.clinicianInits
+    elif om_gui.pt.dnt2 == None:
+        dent = localsettings.ops.get(om_gui.pt.dnt2)
+    else:
+        dent = localsettings.ops.get(om_gui.pt.dnt1)
+    if dent == None:
+        dent = ""
+    #--tooth may be deciduous
+    
+    print "TREE WIDGET COMPLETE", txtype
+    tup = txtype.split(" - ")
+    try:
+        att = tup[0]
+        treat = tup[1] + " "
+        att = att.lower()
+        if re.match("[ul][lr][a-e]", att):
+            att = "%s%s"% (att[:2],"abcde".index(att[2])+1)
+
+        if att == "exam":
+            om_gui.pt.examd = localsettings.currentDay()
+        elif re.search("[ul][lr][1-8]", att):
+            chartComplete(om_gui, [att, treat])
+        else:
+            plan = om_gui.pt.__dict__[att + "pl"].replace(
+            treat, "", 1)#-- only remove 1 occurrence
+            om_gui.pt.__dict__[att + "pl"] = plan
+            
+            completed = om_gui.pt.__dict__[att + "cmp"] 
+            om_gui.pt.__dict__[att + "cmp"] = completed + treat
+            
+            checkEstBox(om_gui, att, treat)
+            
+        om_gui.load_treatTrees()
+        om_gui.load_newEstPage()
+        
+    except Exception, e:
+        om_gui.advise("Error completing %s, sorry"% txtype, 1)
+        

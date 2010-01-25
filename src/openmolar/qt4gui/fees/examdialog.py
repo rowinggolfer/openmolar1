@@ -21,21 +21,21 @@ from openmolar.qt4gui.dialogs import examWizard
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module, fees_module
 
-def performExam(parent):
+def performExam(om_gui):
     '''
     perform an exam
     '''
-    if parent.pt.serialno == 0:
-        parent.advise("no patient selected", 1)
+    if om_gui.pt.serialno == 0:
+        om_gui.advise("no patient selected", 1)
         return
-    if course_module.newCourseNeeded(parent):
+    if course_module.newCourseNeeded(om_gui):
         return
-    if parent.pt.examt != "":
-        parent.advise(_('''<p>You already have an exam on this 
+    if om_gui.pt.examt != "" and om_gui.pt.examd:
+        om_gui.advise(_('''<p>You already have a completed exam on this 
 course of treatment</p>Unable to perform exam'''), 1)
         return
 
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     dl = examWizard.Ui_Dialog(Dialog, localsettings.clinicianNo)
 
     ####TODO - set dentist correctly in this dialog
@@ -50,87 +50,99 @@ course of treatment</p>Unable to perform exam'''), 1)
             #--'Palpated for upper canines - NAD'), "000000")]
             examtype = result[0]
             examdent = result[1]
-            if examdent  == localsettings.ops.get(parent.pt.dnt1):
+            if examdent  == localsettings.ops.get(om_gui.pt.dnt1):
                 #--normal dentist.
-                if parent.pt.dnt2 == 0 or parent.pt.dnt2 == parent.pt.dnt1:
+                if om_gui.pt.dnt2 == 0 or om_gui.pt.dnt2 == om_gui.pt.dnt1:
                     #--no dnt2
                     APPLIED = True
                 else:
                     message = _('''<p>%s is now both the registered and 
 course dentist.<br />Is this correct?<br />
 <i>confirming this will remove reference to %s</i></p>''')% (
-                    examdent, localsettings.ops.get(parent.pt.dnt2))
+                    examdent, localsettings.ops.get(om_gui.pt.dnt2))
 
-                    confirm = QtGui.QMessageBox.question(parent,
+                    confirm = QtGui.QMessageBox.question(om_gui,
                     "Confirm", message,
                     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                     QtGui.QMessageBox.Yes )
 
                     if confirm == QtGui.QMessageBox.Yes:
                         #--dialog rejected
-                        parent.pt.dnt2 = 0
-                        parent.updateDetails()
+                        om_gui.pt.dnt2 = 0
+                        om_gui.updateDetails()
                         APPLIED = True
             else:
                 message = '''%s performed this exam<br />
                 Is this correct?'''% examdent
-                if result[2] != localsettings.ops.get(parent.pt.dnt2):
+                if result[2] != localsettings.ops.get(om_gui.pt.dnt2):
                     message += _('''<<br /><i>confirming this will change the 
 course dentist, but not the registered dentist</i>''')
                 else:
                     message += _(
 '''<i>consider making %s the registered dentist</i>''')% result[1]
-                confirm = QtGui.QMessageBox.question(parent,
+                confirm = QtGui.QMessageBox.question(om_gui,
                 _("Confirm"),
                 message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.Yes )
                 if confirm == QtGui.QMessageBox.Yes:
                     #--dialog rejected
-                    parent.pt.dnt2 = localsettings.ops_reverse[examdent]
-                    parent.updateDetails()
+                    om_gui.pt.dnt2 = localsettings.ops_reverse[examdent]
+                    om_gui.updateDetails()
                     APPLIED = True
 
             if APPLIED:
-                parent.pt.examt = examtype
+                om_gui.pt.examt = examtype
                 examd = result[2].toPyDate()
-                if parent.pt.examt == "CE":
-                    parent.pt.pd5 = examd
-                if parent.pt.examt == "ECE":
-                    parent.pt.pd6 = examd
-                if parent.pt.examt == "FCA":
-                    parent.pt.pd7 = examd
-                parent.pt.examd = examd
-                parent.pt.recd = result[2].addMonths(6).toPyDate()
+                if om_gui.pt.examt == "CE":
+                    om_gui.pt.pd5 = examd
+                if om_gui.pt.examt == "ECE":
+                    om_gui.pt.pd6 = examd
+                if om_gui.pt.examt == "FCA":
+                    om_gui.pt.pd7 = examd
+                om_gui.pt.examd = examd
+                om_gui.pt.recd = result[2].addMonths(6).toPyDate()
 
                 newnotes = \
-                str(parent.ui.notesEnter_textEdit.toPlainText().toAscii())
+                str(om_gui.ui.notesEnter_textEdit.toPlainText().toAscii())
                 
                 newnotes += _("%s examination performed by %s\n")% (
                 examtype, examdent)
 
-                parent.pt.addHiddenNote("exam", "%s"% examtype)
+                om_gui.pt.addHiddenNote("exam", "%s"% examtype)
 
                 #new code for v 0.1.9
                 item, fee, ptfee, item_description = \
-                parent.pt.getFeeTable().userCodeWizard(examtype)
-    
-                parent.pt.addToEstimate(1, item, 
-                localsettings.ops_reverse[examdent], parent.pt.cset,
-                "exam", examtype,  item_description, fee,
-                ptfee,True)
+                om_gui.pt.getFeeTable().userCodeWizard(examtype)
+                
+                foundInEsts = False
+                for est in om_gui.pt.estimates:
+                    if est.itemcode == item and est.completed == False:
+                        if est.number == 1:
+                            est.completed = True
+                            foundInEsts = True
+                            if est.ptfee != ptfee:
+                                parent.advise(
+_("different (outdated?) fee found in estimate - please check"), 1)
+                            break
+                
+                if not foundInEsts:
+                    om_gui.pt.addToEstimate(1, item, 
+                    localsettings.ops_reverse[examdent], om_gui.pt.cset,
+                    "exam", examtype,  item_description, fee,
+                    ptfee,True)
 
-                fees_module.applyFeeNow(parent, ptfee)
+                fees_module.applyFeeNow(om_gui, ptfee)
 
                 for note in result[3]:
                     newnotes += note + ", "
-                parent.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
+                om_gui.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
 
-                if parent.ui.tabWidget.currentIndex() == 7:
-                    parent.load_newEstPage()
-                    parent.load_treatTrees()
+                if om_gui.ui.tabWidget.currentIndex() == 7:
+                    om_gui.load_newEstPage()
+                    om_gui.load_treatTrees()
                 else:
-                    parent.load_clinicalSummaryPage()
-                parent.updateHiddenNotesLabel()
+                    om_gui.load_clinicalSummaryPage()
+                om_gui.updateHiddenNotesLabel()
         else:
-            parent.advise(_("Examination not applied"), 2)
+            om_gui.advise(_("Examination not applied"), 2)
             break

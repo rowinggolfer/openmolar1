@@ -29,12 +29,14 @@ from openmolar.qt4gui.fees import complete_tx
 from openmolar.qt4gui.charts import charts_gui
 
 @localsettings.debug
-def offerTreatmentItems(om_gui, arg):
+def offerTreatmentItems(om_gui, arg, completedItems=False):
     '''
     offers treatment items passed by argument like ((1,"SP"),)
     '''
     Dialog = QtGui.QDialog(om_gui)
     dl = addTreat.treatment(Dialog, arg, om_gui.pt)
+    if completedItems: #we are adding to the completed treatments, not plan
+        dl.completed_messages()
     result =  dl.getInput()
     return result
 
@@ -57,27 +59,47 @@ def xrayAdd(om_gui, complete=False):
     if course_module.newCourseNeeded(om_gui):
         return
     mylist = ((0, "S"), (0, "M"), (0, "P"))
-    chosenTreatments = offerTreatmentItems(om_gui, mylist)
+    chosenTreatments = offerTreatmentItems(om_gui, mylist, complete)
+    if chosenTreatments == ():
+        return
+    
     added = []
     for usercode, itemcode, description in chosenTreatments:
-        om_gui.pt.xraypl += "%s "% usercode
-
-        result = om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
-        om_gui.pt.cset, "xray", usercode, completed=complete)
+        foundInEsts = False
+        if complete:
+            for est in om_gui.pt.estimates:
+                if (est.itemcode == itemcode and est.completed == False
+                and est.number == 1 and not est in added):
+                    foundInEsts = True
+                    added.append(est)
+                    break
         
-        added.append(result)
+        if not foundInEsts:
+            om_gui.pt.xraypl += "%s "% usercode
+
+            est = om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+            om_gui.pt.cset, "xray", usercode, completed=False)
+        
+            added.append(est)
+    
+    if not complete:
+        input = QtGui.QMessageBox.question(om_gui, _("question"),
+        _("Were these xrays taken today?"),
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.No )
+        if input == QtGui.QMessageBox.Yes:
+            complete = True
     
     if complete:
-        for result in added:
-            complete_tx.estwidg_complete(om_gui, result)
+        for est in added:
+            est.completed = True
+            complete_tx.estwidg_complete(om_gui, est)
+        
+    if om_gui.ui.tabWidget.currentIndex() == 7: #estimates page
         om_gui.load_clinicalSummaryPage()
-    else:
-        #if complete is false, then this was called by a button shared by 
-        #widgets which need updating
         om_gui.load_treatTrees()
         om_gui.load_newEstPage()
     
-
 @localsettings.debug
 def perioAdd(om_gui):
     '''
@@ -350,7 +372,7 @@ def deleteTxItem(om_gui, pl_cmp, txtype, passedOn=False):
 
             if att == "exam":
                 om_gui.pt.examt = ""
-                om_gui.pt.examd = ""
+                om_gui.pt.examd = None
                 om_gui.pt.addHiddenNote("exam", "%s"% tup[1], True)
                 om_gui.updateHiddenNotesLabel()
             else:

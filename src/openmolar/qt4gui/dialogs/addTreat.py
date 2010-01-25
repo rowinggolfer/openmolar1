@@ -50,7 +50,15 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             self.items.append((n_items, item, item_description,usercode))
         self.pt = pt
         self.showItems()
-
+        
+    def completed_messages(self):
+        '''
+        if called, the dialog shows different messages, indicating to the
+        users that treatment will be COMPLETED upon entry
+        '''
+        self.dialog.setWindowTitle(_("Complete Treatments"))
+        self.label.setText(_("What treatment has been performed?"))
+        
     def showItems(self):
         self.itemWidgets = []
         vlayout = QtGui.QVBoxLayout()
@@ -143,6 +151,7 @@ if __name__ == "__main__":
     pt = patient_class.patient(11956)
     items = [(0,"CE"),(0,"M"),(1,"SP")]
     ui = treatment(Dialog, items, pt)
+    ui.completed_messages()
     print ui.getInput()
     
     Dialog = QtGui.QDialog()    

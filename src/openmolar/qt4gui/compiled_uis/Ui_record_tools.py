@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'record_tools.ui'
 #
-# Created: Sat Jan 23 16:19:47 2010
+# Created: Mon Jan 25 12:05:38 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -472,6 +472,24 @@ class Ui_Dialog(object):
         self.gridLayout_13.addWidget(self.ndlcmp_lineEdit, 2, 2, 1, 1)
         self.gridLayout_5.addLayout(self.gridLayout_13, 2, 2, 1, 1)
         self.tabWidget.addTab(self.tab_4, "")
+        self.tab_5 = QtGui.QWidget()
+        self.tab_5.setObjectName("tab_5")
+        self.gridLayout_6 = QtGui.QGridLayout(self.tab_5)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.label_26 = QtGui.QLabel(self.tab_5)
+        self.label_26.setObjectName("label_26")
+        self.gridLayout_6.addWidget(self.label_26, 0, 0, 1, 1)
+        self.hidden_notes_pushButton = QtGui.QPushButton(self.tab_5)
+        self.hidden_notes_pushButton.setIcon(icon)
+        self.hidden_notes_pushButton.setObjectName("hidden_notes_pushButton")
+        self.gridLayout_6.addWidget(self.hidden_notes_pushButton, 0, 2, 1, 1)
+        spacerItem6 = QtGui.QSpacerItem(20, 291, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem6, 1, 1, 1, 1)
+        self.hidden_notes_plainTextEdit = QtGui.QPlainTextEdit(self.tab_5)
+        self.hidden_notes_plainTextEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.hidden_notes_plainTextEdit.setObjectName("hidden_notes_plainTextEdit")
+        self.gridLayout_6.addWidget(self.hidden_notes_plainTextEdit, 0, 1, 1, 1)
+        self.tabWidget.addTab(self.tab_5, "")
         self.verticalLayout.addWidget(self.tabWidget)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -480,7 +498,7 @@ class Ui_Dialog(object):
         self.verticalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -544,5 +562,8 @@ class Ui_Dialog(object):
         self.label_61.setText(_( u"repair upper"))
         self.label_62.setText(_( u"repair lower"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _( u"Completed Treatment"))
+        self.label_26.setText(_( u"Hidden Notes"))
+        self.hidden_notes_pushButton.setText(_( u"Apply Changes"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _( u"Miscellaneous"))
 
 import resources_rc

@@ -9,7 +9,7 @@
 import sys,re
 from openmolar.settings import localsettings
 
-treatmentTypeHeaders={
+treatmentTypeHeaders = {
     "Diagnosis":("Exam","xray", "Diagnosis", "Preventive"),
     "Perio":("perio", ),
     "Tooth":("UL", "LL", "UR", "LR", "Conservation" ),
@@ -19,30 +19,30 @@ treatmentTypeHeaders={
     "Child Specific":("Capitation",),
     "Custom":("custom",)}
 
-templist=[]
+templist = []
 for quad in ("ur", "ul", "ll", "lr"):
     for tooth in range(1, 9):
         templist.append("%s%d"%(quad, tooth))
-tup_toothAtts=tuple(templist)
+tup_toothAtts = tuple(templist)
 
-tup_Atts=('xray','perio','anaes','other','ndu',
+tup_Atts = ('xray','perio','anaes','other','ndu',
 'ndl','odu','odl','custom')
 
 def plannedDict(pt):
     '''
     returns a dicitonary for use in the plan treeWidget
     '''
-    items=plannedItems(pt)
-    pdict={}
+    items = plannedItems(pt)
+    pdict = {}
     for header in treatmentTypeHeaders.keys():
         for att in treatmentTypeHeaders[header]:
             for item in items:
                 if att in item[0]:
-                    istring="%s - %s"%(item)
+                    istring = "%s - %s"%(item)
                     if pdict.has_key(header):
                         pdict[header].append(istring)
                     else:
-                        pdict[header]=[istring]
+                        pdict[header] = [istring]
     return pdict
 
 
@@ -50,27 +50,29 @@ def completedDict(pt):
     '''
     returns a dicitonary for use in the completed treeWidget
     '''
-    items=completedItems(pt)
-    pdict={}
+    items = completedItems(pt)
+    pdict = {}
     for header in treatmentTypeHeaders.keys():
         for att in treatmentTypeHeaders[header]:
             for item in items:
                 if att in item[0]:
-                    istring="%s - %s"%(item)
+                    istring = "%s - %s"%(item)
                     if pdict.has_key(header):
                         pdict[header].append(istring)
                     else:
-                        pdict[header]=[istring]
+                        pdict[header] = [istring]
     return pdict
 
 def plannedItems(pt):
-    plannedList=[]
+    plannedList = []
+    if pt.examt != "" and not pt.examd:
+        plannedList.append(("Exam", pt.examt),)
     for attrib in tup_Atts+tup_toothAtts:
-        tx=pt.__dict__[attrib+"pl"]
+        tx = pt.__dict__[attrib+"pl"]
         if not tx in ("", None):
-            items=tx.strip(" ").split(" ")
+            items = tx.strip(" ").split(" ")
             for item in items:
-                item=item.decode("latin-1")
+                item = item.decode("latin-1")
                 if re.match("[ul][lr][0-8]",attrib):
                     #check for deciduous
                     toothName = str(pt.chartgrid.get(attrib)).upper()
@@ -80,26 +82,26 @@ def plannedItems(pt):
     return plannedList
 
 def completedItems(pt, teethOnly=False):
-    compList=[]
+    compList = []
     if teethOnly:
         for tooth in tup_toothAtts:
-            tx=pt.__dict__[tooth+"cmp"]
+            tx = pt.__dict__[tooth+"cmp"]
             if not tx in ("", None):
-                items=tx.strip(" ").split(" ")
+                items = tx.strip(" ").split(" ")
                 for item in items:
-                    item=item.decode("latin-1")
+                    item = item.decode("latin-1")
                     if re.match("[ul][lr][0-8]",tooth):
                         compList.append((tooth, item),)
     else:    
-        if pt.examt!="":
-            compList.append(("Exam",pt.examt) )
+        if pt.examt!="" and pt.examd:
+            compList.append(("Exam", pt.examt),)
             
         for attrib in tup_Atts+tup_toothAtts:
-            tx=pt.__dict__[attrib+"cmp"]
+            tx = pt.__dict__[attrib+"cmp"]
             if not tx in ("",None):
-                items=tx.strip(" ").split(" ")
+                items = tx.strip(" ").split(" ")
                 for item in items:
-                    item=item.decode("latin-1")
+                    item = item.decode("latin-1")
                     if re.match("[ul][lr][0-8]",attrib):
                         #check for deciduous
                         toothName = str(pt.chartgrid.get(attrib)).upper()
@@ -114,7 +116,7 @@ def summary(pt):
     returns html set showing a summary of planned or completed treatment
     '''
 
-    retarg='''<html><body><head>
+    retarg = '''<html><body><head>
     <link rel="stylesheet" href="%s" type="text/css">
     </head>\n'''%localsettings.stylesheet
     if not pt.underTreatment:
@@ -125,10 +127,10 @@ def summary(pt):
     if pt.cmpd != None:
         retarg += '%s %s<br />'% (_('End'), 
         localsettings.formatDate(pt.cmpd))
-    plan=u""
+    plan = u""
     for item in plannedItems(pt):
         plan+='%s - %s<br />'%(item)
-    comp=""
+    comp = ""
     for item in completedItems(pt):
         comp+='%s - %s<br />'%(item)
 
@@ -174,10 +176,10 @@ if __name__ == "__main__":
 
     localsettings.initiate(False)
     try:
-        serialno=int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=29833
-    pt=patient_class.patient(serialno)
+        serialno = 29833
+    pt = patient_class.patient(serialno)
     print plannedItems(pt)
     print completedItems(pt)
     print summary(pt)
