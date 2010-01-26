@@ -118,7 +118,7 @@ class openmolarGui(QtGui.QMainWindow):
 
     def __init__(self, app):
         QtGui.QMainWindow.__init__(self)
-        self.ui=Ui_main.Ui_MainWindow()
+        self.ui = Ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
         self.app = app
         #--initiate a blank version of the patient class this
@@ -545,7 +545,6 @@ class openmolarGui(QtGui.QMainWindow):
         user has clicked on the delete all option from a tooth's right click
         menu
         '''
-        print "tooth_delete_all"
         self.ui.toothPropsWidget.lineEdit.deleteAll()
 
     def tooth_delete_prop(self, prop):
@@ -553,8 +552,23 @@ class openmolarGui(QtGui.QMainWindow):
         user has clicked on the delete prop option from a tooth's right click
         menu - arg is the prop to be deleted
         '''
-        print "tooth_delete_prop", prop
         self.ui.toothPropsWidget.lineEdit.deleteProp(prop)
+
+    def tooth_change_material(self, prop):
+        '''
+        user has clicked on the change material option from a tooth's 
+        right click menu - prop is the fill to be changed
+        '''
+        print "tooth_change_material", prop
+        self.advise("change material not working yet",1)
+
+    def tooth_change_crown(self, prop):
+        '''
+        user has clicked on the change crown type option from a tooth's 
+        right click menu - prop is the crown to be changed
+        '''
+        print "tooth_change_crown", prop
+        self.advise("change crown type not working yet",1)
 
     def tooth_add_comments(self):
         '''
@@ -3341,6 +3355,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.QObject.connect(chart,
             QtCore.SIGNAL("delete_prop"), self.tooth_delete_prop)
 
+            QtCore.QObject.connect(chart,
+            QtCore.SIGNAL("change_crown"), self.tooth_change_crown)
+
+            QtCore.QObject.connect(chart,
+            QtCore.SIGNAL("change_material"), self.tooth_change_material)
 
         QtCore.QObject.connect(self.ui.planChartWidget,
         QtCore.SIGNAL("toothSelected"), self.plan_chartNavigation)

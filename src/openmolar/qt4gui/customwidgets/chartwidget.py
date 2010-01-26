@@ -265,17 +265,33 @@ class chartWidget(QtGui.QWidget):
             if self.isStaticChart:
                 menu.addAction(_("Toggle Deciduous State"))
                 menu.addSeparator()
-            elif self.isPlanChart:
-                menu.addAction(_("Complete Treatments"))
-                menu.addSeparator()                    
+            
             fillList = self.__dict__[tooth]
-            if fillList:
+            if fillList:                            
+                if self.isPlanChart:
+                    menu.addAction(_("Complete Treatments"))
+                    for fill in fillList:   
+                        if not re.match("!.*", fill):
+                            fill = fill.upper()
+                        menu.addAction(_("Complete") + " - %s"% fill)           
+                    menu.addSeparator()
+                for fill in fillList:
+                    fill = fill.upper() 
+                    if re.match("CR,.*", fill):
+                        menu.addAction(
+                        _("Change Crown Type") + " - %s"% fill)           
+                      
+                    elif re.match("[MODBPIL]{1,5},?([COAMGOL]{2,2})? $", fill):
+                        menu.addAction(
+                        _("Change Material of") + " - %s"% fill)           
+                menu.addSeparator()
+                
                 if len(fillList) > 1:
                     menu.addAction(_("Delete All Restorations"))
-                for fill in self.__dict__[tooth]:   
+                for fill in fillList:   
                     if not re.match("!.*", fill):
                         fill = fill.upper()
-                    menu.addAction(_("Delete ") + " - %s"% fill)            
+                    menu.addAction(_("Delete") + " - %s"% fill)            
             if self.isStaticChart:
                 menu.addSeparator()
                 menu.addAction(_("ADD COMMENTS"))                            
@@ -289,6 +305,20 @@ class chartWidget(QtGui.QWidget):
 
         if result.text() == _("Toggle Deciduous State"):
             self.emit(QtCore.SIGNAL("FlipDeciduousState"))
+        
+        elif _("Change Crown Type") in result.text():
+            reg = re.search(" - (.*) ", str(result.text().toAscii()))
+            if reg:
+                prop = reg.groups()[0]
+                self.emit(QtCore.SIGNAL("change_crown"), prop)
+                self.update()
+        
+        elif _("Change Material of") in result.text():
+            reg = re.search(" - (.*) ", str(result.text().toAscii()))
+            if reg:
+                prop = reg.groups()[0]
+                self.emit(QtCore.SIGNAL("change_material"), prop)
+                self.update()
             
         elif result.text() == _("Delete All Restorations"):
             self.emit(QtCore.SIGNAL("delete_all"))

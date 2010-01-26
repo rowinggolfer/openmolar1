@@ -55,7 +55,7 @@ class course(Ui_newCourse.Ui_Dialog):
                 else:
                     return (True,retarg)
             else:
-                return(False,)
+                return(False, None)
     
 if __name__ == "__main__":
     import sys

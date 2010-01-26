@@ -35,9 +35,11 @@ def commitPost(post):
     columns = "parent_ix,inits,recipient,fdate,topic,comment"
     
     values = (post.parent_ix, post.inits, post.recipient,
-    "NOW()", post.topic, post.comment.replace("\n"," "))
+    post.topic, post.comment.replace("\n"," "))
 
-    query = "insert into forum (%s) VALUES (%%s,%%s,%%s,%%s,%%s,%%s)"% columns
+    query = \
+    "insert into forum (%s) VALUES (%%s,%%s,%%s,NOW(),%%s,%%s)"% columns
+
     if localsettings.logqueries:
         print query,values
     cursor.execute(query,values)
