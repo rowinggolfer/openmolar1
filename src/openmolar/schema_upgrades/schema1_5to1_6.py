@@ -24,17 +24,18 @@ SQLSTRINGS = [
 drop table docsimported
 ''', 
 '''
-CREATE TABLE docsimported (
+CREATE TABLE if not exists docsimported (
 ix mediumint(8) unsigned NOT NULL auto_increment,
 serialno int(11) unsigned NOT NULL default 0,
 datatype varchar(60) NOT NULL default 'application/octet-stream',
 name varchar(120) NOT NULL default '',
 size bigint(20) unsigned NOT NULL default '1024',
 filedate datetime NOT NULL default '0000-00-00 00:00:00',
+importime timestamp NOT NULL default CURRENT_TIMESTAMP,
 PRIMARY KEY (ix) )
 ''',
 '''
-CREATE TABLE docsimporteddata (
+CREATE TABLE if not exists docsimporteddata (
 ix mediumint(8) unsigned NOT NULL auto_increment,
 masterid mediumint(8) unsigned NOT NULL default '0',
 filedata blob NOT NULL,

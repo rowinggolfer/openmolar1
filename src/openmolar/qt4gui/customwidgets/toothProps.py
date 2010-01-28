@@ -33,19 +33,21 @@ CR_OPTIONS = {
 "CR,OT"  : _( u"Other Crown"),
 }
 
-BR_OPTIONS = {
-"--"        : "--"+_("Bridge Elements"),
-"--"        : "--"+_("Retainers"),
+BR_RE_OPTIONS = {
+"--"        : "--"+_("Bridge Retainers"),
 "BR/CR,V1"  : _( u"Bonded"),
 "BR/CR,GO"  : _( u"Gold"),
 "BR/CR,LAVA": _( u"Lava Retainer"),
 "BR/CR,OT"  : _( u"Other"),
 "BR,AE"     : _( u"Adhesive Wing"),
-"--"        : "--"+_("Pontics"),
-"BR/P,V1"   : _( u"Bonded"),
-"BR/P,GO"   : _( u"Gold"),
-"BR/P,LAVA" : _( u"Lava"),
-"BR/P,OT"   : _( u"Other")
+}
+
+BR_PO_OPTIONS = {
+"--"        : "--"+_("Bridge Pontics"),
+"BR/P,V1"   : _( u"Bonded_"),
+"BR/P,GO"   : _( u"Gold_"),
+"BR/P,LAVA" : _( u"Lava_"),
+"BR/P,OT"   : _( u"Other_")
 }
 
 ENDO_OPTIONS = {
@@ -77,7 +79,8 @@ COMBOBOXES = (
 STATIC_OPTIONS,
 FS_OPTIONS,
 CR_OPTIONS,
-BR_OPTIONS,
+BR_RE_OPTIONS,
+BR_PO_OPTIONS,
 ENDO_OPTIONS,
 SURGICAL_OPTIONS, 
 )
