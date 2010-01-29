@@ -25,7 +25,7 @@ from openmolar.qt4gui.dialogs import paymentwidget
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
 from openmolar.qt4gui.compiled_uis import Ui_raiseCharge
 
-def raiseACharge(parent):
+def raiseACharge(om_gui):
     '''
     this is called by the "raise a charge" button on the
     clinical summary page
@@ -33,69 +33,69 @@ def raiseACharge(parent):
     ##TODO
     ###obsolete code
     print "WARNING - obsolete code executed fees_module.raiseACharge"
-    if parent.pt.serialno == 0:
-        parent.advise("No patient Selected", 1)
+    if om_gui.pt.serialno == 0:
+        om_gui.advise("No patient Selected", 1)
         return
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     dl = Ui_raiseCharge.Ui_Dialog()
     dl.setupUi(Dialog)
     if Dialog.exec_():
         fee = dl.doubleSpinBox.value()
-        if parent.pt.cset[:1] == "N":
-            parent.pt.money0 += int(fee*100)
+        if om_gui.pt.cset[:1] == "N":
+            om_gui.pt.money0 += int(fee*100)
         else:
-            parent.pt.money1 += int(fee*100)
-        updateFees(parent)
-        parent.pt.addHiddenNote("treatment", " %s"%
+            om_gui.pt.money1 += int(fee*100)
+        updateFees(om_gui)
+        om_gui.pt.addHiddenNote("treatment", " %s"%
         str(dl.lineEdit.text().toAscii()))
 
-        parent.pt.addHiddenNote("fee", "%.02f"% fee)
-        parent.updateHiddenNotesLabel()
+        om_gui.pt.addHiddenNote("fee", "%.02f"% fee)
+        om_gui.updateHiddenNotesLabel()
             
     ################################################
     
-def applyFeeNow(parent, arg, cset=None):
+def applyFeeNow(om_gui, arg, cset=None):
     '''
     updates the patients outstanding money
     '''
-    parent.pt.applyFee(arg, cset)
-    updateFees(parent)
+    om_gui.pt.applyFee(arg, cset)
+    updateFees(om_gui)
 
-def updateFees(parent):
+def updateFees(om_gui):
     '''
     recalc money and
     update the details down the left hand side
     '''
-    if parent.pt.serialno != 0:
-        parent.pt.updateFees()
-        parent.updateDetails()
+    if om_gui.pt.serialno != 0:
+        om_gui.pt.updateFees()
+        om_gui.updateDetails()
         
-def getFeesFromEst(parent, tooth, treat):
+def getFeesFromEst(om_gui, tooth, treat):
     '''
     iterate through the ests... find this item
     '''
     tooth = tooth.rstrip("pl")
     retarg = (0,0)
-    for est in parent.pt.estimates:
+    for est in om_gui.pt.estimates:
         if est.type == treat.strip(" "):
             retarg = (est.fee, est.ptfee)
             break
     return retarg
 
-def takePayment(parent):
+def takePayment(om_gui):
     '''
     raise a dialog, and take some money
     '''
-    if parent.pt.serialno == 0:
-        parent.advise("No patient Selected <br />Monies will be "+ \
+    if om_gui.pt.serialno == 0:
+        om_gui.advise("No patient Selected <br />Monies will be "+ \
         "allocated to Other Payments, and no receipt offered", 1)
-    dl = paymentwidget.paymentWidget(parent)
-    dl.setDefaultAmount(parent.pt.fees)
+    dl = paymentwidget.paymentWidget(om_gui)
+    dl.setDefaultAmount(om_gui.pt.fees)
     if dl.exec_():
-        if parent.pt.serialno == 0:
+        if om_gui.pt.serialno == 0:
             paymentPt = patient_class.patient(18222)
         else:
-            paymentPt = parent.pt
+            paymentPt = om_gui.pt
         cash = dl.cash_lineEdit.text()
         cheque = dl.cheque_lineEdit.text()
         debit = dl.debitCard_lineEdit.text()
@@ -116,43 +116,43 @@ def takePayment(parent):
             " treatment %.02f sundries %.02f"% (dl.paymentsForTreatment, 
             dl.otherPayments))
 
-            if parent.pt.serialno != 0:
-                om_printing.printReceipt(parent,{
+            if om_gui.pt.serialno != 0:
+                om_printing.printReceipt(om_gui,{
                 "Professional Services" : dl.paymentsForTreatment * 100, 
                 "Other Items" : dl.otherPayments * 100})
 
                 #-- always refer to money in terms of pence
 
-                if parent.pt.cset[:1] == "N":
-                    parent.pt.money2 += int(dl.paymentsForTreatment*100)
+                if om_gui.pt.cset[:1] == "N":
+                    om_gui.pt.money2 += int(dl.paymentsForTreatment*100)
                 else:
-                    parent.pt.money3 += int(dl.paymentsForTreatment*100)
-                parent.pt.updateFees()
+                    om_gui.pt.money3 += int(dl.paymentsForTreatment*100)
+                om_gui.pt.updateFees()
 
             patient_write_changes.toNotes(paymentPt.serialno,
                                           paymentPt.HIDDENNOTES)
 
             if patient_write_changes.discreet_changes(paymentPt,
-            ("money2", "money3")) and parent.pt.serialno != 0:
+            ("money2", "money3")) and om_gui.pt.serialno != 0:
 
-                parent.pt_dbstate.money2 = parent.pt.money2
-                parent.pt_dbstate.money3 = parent.pt.money3
+                om_gui.pt_dbstate.money2 = om_gui.pt.money2
+                om_gui.pt_dbstate.money3 = om_gui.pt.money3
 
             paymentPt.clearHiddenNotes()
-            parent.updateDetails()
-            parent.updateHiddenNotesLabel()
+            om_gui.updateDetails()
+            om_gui.updateHiddenNotesLabel()
             
         else:
-            parent.advise("error applying payment.... sorry!<br />"\
+            om_gui.advise("error applying payment.... sorry!<br />"\
             +"Please write this down and tell Neil what happened", 2)
 
-def loadFeesTable(parent):
+def loadFeesTable(om_gui):
     '''
     loads the fee table
     '''
-    parent.feestableLoaded = True
-    #parent.feesTable_searchList = []
-    #parent.feesTable_searchpos = 0
+    om_gui.feestableLoaded = True
+    #om_gui.feesTable_searchList = []
+    #om_gui.feesTable_searchpos = 0
     
     feeTables = localsettings.FEETABLES
     
@@ -195,10 +195,10 @@ def loadFeesTable(parent):
                 if subNo == 0:                    
                     cols = [str(key), feeItem.usercode, feeItem.regulations,
                     feeItem.description ]
-                    parent_twi = tab
+                    om_gui_twi = tab
                 else:
                     if subNo ==1:
-                        parent_twi = prev_twi
+                        om_gui_twi = prev_twi
                     cols = [str(key),"","",""]
                     
                 cols.append(feeItem.brief_descriptions[subNo])
@@ -207,14 +207,14 @@ def loadFeesTable(parent):
                     if table.hasPtCols:
                         cols.append(str(feeItem.ptFees[i][subNo]))
                 
-                prev_twi = QtGui.QTreeWidgetItem(parent_twi, cols)
+                prev_twi = QtGui.QTreeWidgetItem(om_gui_twi, cols)
             
             prev_twi.setExpanded(False)
         #ok data loaded, so now insert it into the fees Tabwidget
-        i = parent.ui.fees_tabWidget.count()        
+        i = om_gui.ui.fees_tabWidget.count()        
         widg = QtGui.QWidget()
         tab_label = table.briefName
-        parent.ui.fees_tabWidget.insertTab(i-1, widg, tab_label)
+        om_gui.ui.fees_tabWidget.insertTab(i-1, widg, tab_label)
         vbox = QtGui.QVBoxLayout()
 
         vbox.addWidget(label)
@@ -231,55 +231,55 @@ def loadFeesTable(parent):
         
         QtCore.QObject.connect(tab,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
-        parent.fees_treeWidgetItem_clicked)
-    parent.ui.fees_tabWidget.setCurrentIndex(0)
+        om_gui.fees_treeWidgetItem_clicked)
+    om_gui.ui.fees_tabWidget.setCurrentIndex(0)
     
-def feeSearch(parent):
+def feeSearch(om_gui):
     '''
     fee search button clicked...
     user is looking up a fee from the fee table
     the values are already stored.
     '''
-    n = len(parent.feesTable_searchList)
+    n = len(om_gui.feesTable_searchList)
     if n == 0:
-        parent.advise("Not found, or invalid search")
+        om_gui.advise("Not found, or invalid search")
         return
-    if parent.feesTable_searchpos >= n:
-        parent.feesTable_searchpos = 0
-    item = parent.feesTable_searchList[parent.feesTable_searchpos]
+    if om_gui.feesTable_searchpos >= n:
+        om_gui.feesTable_searchpos = 0
+    item = om_gui.feesTable_searchList[om_gui.feesTable_searchpos]
 
-    parent.ui.standardFees_treeWidget.scrollToItem(item,
+    om_gui.ui.standardFees_treeWidget.scrollToItem(item,
     QtGui.QAbstractItemView.ScrollHint(
     QtGui.QAbstractItemView.PositionAtCenter))
 
-    parent.ui.standardFees_treeWidget.setCurrentItem(item)
-    parent.feesTable_searchpos += 1
+    om_gui.ui.standardFees_treeWidget.setCurrentItem(item)
+    om_gui.feesTable_searchpos += 1
 
-def newFeeSearch(parent):
+def newFeeSearch(om_gui):
     '''
     user has finished editing the
     feesearchLineEdit - time to refill the searchList
     '''
     #-- what are we searching for??
-    searchField = parent.ui.feeSearch_lineEdit.text()
+    searchField = om_gui.ui.feeSearch_lineEdit.text()
 
     matchflags = QtCore.Qt.MatchFlags(
     QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
 
     #--get a list of items containing that string
-    parent.standardFeesTable_searchList = \
-    parent.ui.standardFees_treeWidget.findItems(searchField, matchflags, 4)
+    om_gui.standardFeesTable_searchList = \
+    om_gui.ui.standardFees_treeWidget.findItems(searchField, matchflags, 4)
 
-    parent.feesTable_searchpos = 0
-    parent.ui.feeSearch_pushButton.setFocus()
-    feeSearch(parent)
+    om_gui.feesTable_searchpos = 0
+    om_gui.ui.feeSearch_pushButton.setFocus()
+    feeSearch(om_gui)
 
-def nhsRegsPDF(parent):
+def nhsRegsPDF(om_gui):
     '''
     I have some stored PDF documents
     the user wants to see these
     '''
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     dl = Ui_chooseDocument.Ui_Dialog()
     dl.setupUi(Dialog)
     if Dialog.exec_():
@@ -302,9 +302,9 @@ def nhsRegsPDF(parent):
             localsettings.openPDF(doc)
         except Exception, e:
             print Exception, e
-            parent.advise(_("Error opening PDF file"), 2)
+            om_gui.advise(_("Error opening PDF file"), 2)
 
-def chooseFeescale(parent, arg):
+def chooseFeescale(om_gui, arg):
     '''
     receives signals from the choose feescale combobox
     acts on the fee table
@@ -321,7 +321,7 @@ def chooseFeescale(parent, arg):
         #show NHS
         pass
 
-def chooseFeeItemDisplay(parent, arg):
+def chooseFeeItemDisplay(om_gui, arg):
     '''
     recieves signals from the choose feescale Items combobox
     arg 0 = show all items
@@ -335,59 +335,59 @@ def chooseFeeItemDisplay(parent, arg):
         #show favourites
         pass
     
-def expandFees(parent):
+def expandFees(om_gui):
     '''
     expands/contracts the fees treewidget
     dependent on the state of the feeExpand_radioButton
     '''
-    if parent.ui.feeExpand_radioButton.isChecked():
-        parent.ui.standardFees_treeWidget.expandAll()
+    if om_gui.ui.feeExpand_radioButton.isChecked():
+        om_gui.ui.standardFees_treeWidget.expandAll()
     else:
-        parent.ui.standardFees_treeWidget.collapseAll()
+        om_gui.ui.standardFees_treeWidget.collapseAll()
     
-def expandFeeColumns(parent, arg):
-    parent.ui.standardFees_treeWidget.expandAll()
-    for i in range(parent.ui.standardFees_treeWidget.columnCount()):
-        parent.ui.standardFees_treeWidget.resizeColumnToContents(i)
+def expandFeeColumns(om_gui, arg):
+    om_gui.ui.standardFees_treeWidget.expandAll()
+    for i in range(om_gui.ui.standardFees_treeWidget.columnCount()):
+        om_gui.ui.standardFees_treeWidget.resizeColumnToContents(i)
     if arg < 1:
         #-- hide the geeky column
-        parent.ui.standardFees_treeWidget.setColumnWidth(3, 0)
+        om_gui.ui.standardFees_treeWidget.setColumnWidth(3, 0)
     if arg < 2:
         #-- hide the extra description column
-        parent.ui.standardFees_treeWidget.setColumnWidth(4, 0)
-    expandFees(parent)
+        om_gui.ui.standardFees_treeWidget.setColumnWidth(4, 0)
+    expandFees(om_gui)
     
-def makeBadDebt(parent):
+def makeBadDebt(om_gui):
     '''
     write off the debt (stops cluttering up the accounts table)
     '''
-    result = QtGui.QMessageBox.question(parent, "Confirm",
+    result = QtGui.QMessageBox.question(om_gui, "Confirm",
     "Move this patient to Bad Debt Status?",
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes )
     if result == QtGui.QMessageBox.Yes:
         #--what is owed
-        parent.pt.money11 = parent.pt.fees
-        parent.pt.resetAllMonies()
-        parent.pt.status = "BAD DEBT"
-        parent.ui.notesEnter_textEdit.setText(
+        om_gui.pt.money11 = om_gui.pt.fees
+        om_gui.pt.resetAllMonies()
+        om_gui.pt.status = "BAD DEBT"
+        om_gui.ui.notesEnter_textEdit.setText(
         "changed patients status to BAD DEBT")
 
-        parent.updateStatus()
-        parent.updateDetails()
+        om_gui.updateStatus()
+        om_gui.updateDetails()
 
-def populateAccountsTable(parent):
+def populateAccountsTable(om_gui):
     rows = accounts.details()
-    parent.ui.accounts_tableWidget.clear()
-    parent.ui.accounts_tableWidget.setSortingEnabled(False)
-    parent.ui.accounts_tableWidget.setRowCount(len(rows))
+    om_gui.ui.accounts_tableWidget.clear()
+    om_gui.ui.accounts_tableWidget.setSortingEnabled(False)
+    om_gui.ui.accounts_tableWidget.setRowCount(len(rows))
     headers = ("Dent", "Serialno", "", "First", "Last", "DOB", "Memo",
     "Last Appt", "Last Bill", "Type", "Number", "T/C", "Fees", "A", "B",
     "C")
 
-    parent.ui.accounts_tableWidget.setColumnCount(len(headers))
-    parent.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
-    parent.ui.accounts_tableWidget.verticalHeader().hide()
+    om_gui.ui.accounts_tableWidget.setColumnCount(len(headers))
+    om_gui.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
+    om_gui.ui.accounts_tableWidget.verticalHeader().hide()
     rowno = 0
     total = 0
     for row in rows:
@@ -419,15 +419,15 @@ def populateAccountsTable(parent):
                         item.setText("Y")
                 else:
                     item.setText(str(d).title())
-                parent.ui.accounts_tableWidget.setItem(rowno, col, item)
+                om_gui.ui.accounts_tableWidget.setItem(rowno, col, item)
         for col in range(13, 16):
             item = QtGui.QTableWidgetItem()
             item.setCheckState(QtCore.Qt.Unchecked)
-            parent.ui.accounts_tableWidget.setItem(rowno, col, item)
+            om_gui.ui.accounts_tableWidget.setItem(rowno, col, item)
         rowno += 1
-    parent.ui.accounts_tableWidget.sortItems(7, QtCore.Qt.DescendingOrder)
-    parent.ui.accounts_tableWidget.setSortingEnabled(True)
-    #parent.ui.accounts_tableWidget.update()
-    for i in range(parent.ui.accounts_tableWidget.columnCount()):
-        parent.ui.accounts_tableWidget.resizeColumnToContents(i)
-    parent.ui.accountsTotal_doubleSpinBox.setValue(total / 100)
+    om_gui.ui.accounts_tableWidget.sortItems(7, QtCore.Qt.DescendingOrder)
+    om_gui.ui.accounts_tableWidget.setSortingEnabled(True)
+    #om_gui.ui.accounts_tableWidget.update()
+    for i in range(om_gui.ui.accounts_tableWidget.columnCount()):
+        om_gui.ui.accounts_tableWidget.resizeColumnToContents(i)
+    om_gui.ui.accountsTotal_doubleSpinBox.setValue(total / 100)

@@ -57,7 +57,6 @@ from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
 from openmolar.qt4gui.compiled_uis import Ui_showMemo
 
 #--custom dialog modules
-from openmolar.qt4gui.dialogs import recall_app
 from openmolar.qt4gui.dialogs import medNotes
 from openmolar.qt4gui.dialogs import saveDiscardCancel
 from openmolar.qt4gui.dialogs import newBPE
@@ -101,6 +100,7 @@ from openmolar.ptModules import hidden_notes
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import multiDayListPrint
+from openmolar.qt4gui.printing import bulk_mail
 
 #--custom widgets
 from openmolar.qt4gui.customwidgets import chartwidget
@@ -1643,7 +1643,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.daybookStartDateEdit.setDate(today)
         self.ui.cashbookStartDateEdit.setDate(today)
         self.ui.cashbookEndDateEdit.setDate(today)
-        self.ui.recalldateEdit.setDate(today)
+        self.ui.recallstart_dateEdit.setDate(today)
+        self.ui.recallend_dateEdit.setDate(today)        
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.dupReceiptDate_lineEdit.setText(today.toString(
         "dd'/'MM'/'yyyy"))
@@ -1763,15 +1764,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         gets patients who have the recall date stipulated
         by the ui.recallDateEdit value
         '''
-        month = self.ui.recalldateEdit.date().month()
-        year = self.ui.recalldateEdit.date().year()
-        pts = recall.getpatients(month, year)
-        dialog = recall_app.Form(pts, self.ui.recalldateEdit.date(), self)
-        if dialog.exec_():
-            ##TODO add a note like (recall printed) to all relevant pt notes.
-            ##or insert into new docs printed??
-            pass
-
+        start = self.ui.recallstart_dateEdit.date().toPyDate()
+        end = self.ui.recallend_dateEdit.date().toPyDate()
+        pts = recall.getpatients(start, end)
+        bulk_mail.populateTree(self, pts)
+        
     def bulkMailPrint(self):
         '''
         the print button on the bulk mail tab has been clicked
@@ -3147,6 +3144,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.apply_exemption_pushButton,
         QtCore.SIGNAL("clicked()"), self.apply_exemption)
 
+        QtCore.QObject.connect(self.ui.rec_apply_exemption_pushButton,
+        QtCore.SIGNAL("clicked()"), self.apply_exemption)
+
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
         QtCore.SIGNAL("clicked()"), self.addXrayItems)
         
@@ -3650,8 +3650,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         "please enter the amount in pence, or leave as 0 for full exmption"))
 
         if result and estimates.apply_exemption(self.pt, max):
-            self.load_newEstPage()
-            self.load_treatTrees()
+            self.handle_patientTab()
             self.updateDetails()
 
 

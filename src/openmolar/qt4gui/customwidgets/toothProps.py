@@ -22,9 +22,8 @@ FS_OPTIONS = {
 }
 
 CR_OPTIONS = {
-"--"        : "--"+_("Crowns / Inlays"),
-"CR,V1"  : _( u"Precious Metal/ Porcelain Bonded Crown"),
-"CR,A1"  : _( u"Base Metal / Porcelain Bonded Crown"),
+"--"        : "--"+_("Crowns"),
+"CR,V1"  : _( u"Porcelain Bonded Crown"),
 "CR,GO"  : _( u"Gold Crown"),
 "CR,LAVA": _( u"Lava Crown"),
 "CR,PJ"  : _( u"Porcelain Jacket Crown"),
@@ -327,6 +326,9 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
                 cb.addItem(val)
             vlayout.addWidget(cb)
             self.comboboxes.append(cb)
+        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, 
+        QtGui.QSizePolicy.Expanding)
+        vlayout.addItem(spacerItem)
 
     def setTooth(self, selectedTooth, selectedChart):
         '''
