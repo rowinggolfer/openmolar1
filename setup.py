@@ -32,7 +32,8 @@ class InstallData(install_data):
                 if os.system(cmd) != 0:
                     info('Error while running msgfmt on %s'% po)
             
-            destdir = os.path.join ("share", "locale", lang, "LC_MESSAGES")
+            destdir = os.path.join ("/usr","share", "locale", lang, 
+            "LC_MESSAGES")
             
             i18nfiles.append((destdir, [mo]))
         return i18nfiles
@@ -69,8 +70,9 @@ setup(
                                     'html/*.*',
                                     'html/images/*.*',
                                     'html/firstrun/*.*',] },
-    data_files=[('share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
-                ('share/applications', ['bin/openmolar.desktop']),],
-    cmdclass={'install_data': InstallData},
+    data_files = [
+        ('/usr/share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
+        ('/usr/share/applications', ['bin/openmolar.desktop']),],
+    cmdclass = {'install_data': InstallData},
     scripts = ['openmolar'],
     )

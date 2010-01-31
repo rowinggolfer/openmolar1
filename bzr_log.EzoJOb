@@ -1,9 +1,0 @@
-
-
--------------- This line and the following will be ignored --------------
-
-modified:
-  debian/changelog
-  src/openmolar/qt4gui/printing/om_printing.py
-  src/openmolar/resources/referral_data.xml
-  src/openmolar/settings/_version.py
