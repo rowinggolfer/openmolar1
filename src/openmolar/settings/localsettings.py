@@ -616,7 +616,7 @@ def getAge(dob):
             return "%s months"% (ageYears *12 + months)
         else:
             return "%s"% ageYears
-    except Exception as e:
+    except Exception, e:
         print e
         return "dob = %s"% dob
 
