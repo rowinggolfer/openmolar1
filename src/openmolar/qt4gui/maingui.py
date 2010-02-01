@@ -143,7 +143,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.editPageVisited=False
         self.forum_notified = False
         self.appointmentData = appointments.dayAppointmentData()
-
+        self.letters = bulk_mail.bulkMails(self)
+        
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -1766,15 +1767,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         start = self.ui.recallstart_dateEdit.date().toPyDate()
         end = self.ui.recallend_dateEdit.date().toPyDate()
-        pts = recall.getpatients(start, end)
-        bulk_mail.populateTree(self, pts)
+        
+        self.letters.setData(recall.HEADERS, recall.getpatients(start, end))
         
     def bulkMailPrint(self):
         '''
         the print button on the bulk mail tab has been clicked
         '''
-        self.advise("not yet implemented",1)
-
+        self.letters.printViaQPainter()
+            
     def showChartTable(self):
         '''
         flips a stackedwidget to display the table underlying the charts
@@ -1802,7 +1803,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             for cb in (dl.checkBox, dl.checkBox_2, dl.checkBox_3, dl.checkBox_4,
             dl.checkBox_5, dl.checkBox_6, dl.checkBox_7, dl.checkBox_8):
                 if cb.checkState():
-                    newNotes+=cb.text()+"\n"
+                    newNotes += cb.text()+"\n"
             if newNotes != "":
                 self.addNewNote(newNotes)
 
@@ -1810,8 +1811,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         used when I programatically add text to the user textEdit
         '''
-        self.ui.notesEnter_textEdit.setText(
-                self.ui.notesEnter_textEdit.toPlainText()+" "+arg)
+        current = self.ui.notesEnter_textEdit.toPlainText().trimmed()
+        if current != "":
+            current += "\n" 
+        self.ui.notesEnter_textEdit.setText(current + arg)
 
     def callXrays(self):
         '''

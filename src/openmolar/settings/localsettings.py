@@ -594,6 +594,32 @@ def updateLocalSettings(setting, value):
         print "error updating local settings file", e
         return False
 
+def getAge(dob):
+    '''
+    return the age in string form 
+    '''
+    try:
+        today = currentDay()
+        nextbirthday = datetime.date(today.year, dob.month, dob.day)
+
+        ageYears = today.year - dob.year
+
+        if nextbirthday > today:
+            ageYears -= 1
+            months = (12 - dob.month) + today.month        
+        else:
+            months = today.month - dob.month
+        if dob.day > today.day:
+            months -= 1
+        
+        if ageYears < 2:
+            return "%s months"% (ageYears *12 + months)
+        else:
+            return "%s"% ageYears
+    except Exception as e:
+        print e
+        return "dob = %s"% dob
+
 def initiateUsers():
     '''
     just grab user names. necessary because the db schema could be OOD here
