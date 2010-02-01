@@ -61,6 +61,8 @@ APPOINTMENT_CARD_HEADER =\
 APPOINTMENT_CARD_FOOTER = _("Please try and give at least 24 hours notice") +\
 "\n" +_("if you need to change an appointment.")
 
+CORRESPONDENCE_SIG = "The Academy Dental Practice"
+
 GP17_LEFT = 0
 GP17_TOP = 0
 
@@ -606,19 +608,12 @@ def getAge(dob):
 
         if nextbirthday > today:
             ageYears -= 1
-            months = (12 - dob.month) + today.month        
-        else:
-            months = today.month - dob.month
-        if dob.day > today.day:
-            months -= 1
         
-        if ageYears < 2:
-            return "%s months"% (ageYears *12 + months)
-        else:
-            return "%s"% ageYears
+        return ageYears
+    
     except Exception, e:
         print e
-        return "dob = %s"% dob
+        return 0
 
 def initiateUsers():
     '''

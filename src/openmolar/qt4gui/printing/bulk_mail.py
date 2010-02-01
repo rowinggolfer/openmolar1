@@ -18,7 +18,16 @@ class omLetter(object):
         self.salutation = ""
         self.patients = ""
         self.address = ""
-        self.paragraphs = []
+        self.body = '''%s <<SALUTATION>>,\n%s\n\n%s\n\n%s\n\n%s'''%(
+_("Dear"),
+_("We are writing to inform you that your dental examination is now due."),
+_("Please contact the surgery to arrange an appointment. *"),
+_("We look forward to seeing you in the near future."),
+_("Yours sincerely,"))
+        self.signature = localsettings.CORRESPONDENCE_SIG
+
+        self.footer = _('''* If you already have a future appointment with us -
+please accept our apologies and ignore this letter.''')
 
 class TreeItem(object):
     def __init__(self, data, parent=None):
@@ -40,7 +49,7 @@ class TreeItem(object):
 
     def data(self, column):
         try:
-            return self.itemData[column]
+            return QtCore.QVariant(self.itemData[column])
         except IndexError:
             return None
 
@@ -52,7 +61,6 @@ class TreeItem(object):
             return self.parentItem.childItems.index(self)
 
         return 0
-
 
 class treeModel(QtCore.QAbstractItemModel):
     def __init__(self, header, mydata):
@@ -203,89 +211,124 @@ class bulkMails(object):
 
             letter.names = ""
             for r in recipients:
-                letter.names += "%s %s %s,\n"% (r.title, r.fname, r.sname)
-            letter.names = letter.names.rstrip(",\n")
+                letter.names += "%s %s %s, "% (r.title, r.fname, r.sname)
+            letter.names = letter.names.rstrip(", ")
             
-            letter.salutation == "%s %s %s,\n"% (head.title, head.fname, 
+            letter.salutation = "%s %s %s,"% (head.title, head.fname, 
             head.sname)
-
+            
             for r in recipients[1:]:
                 if r.age > 18:
                     letter.salutation += "\n%s %s %s"% (r.title, r.fname, 
                     r.sname)
                 else:
-                    letter.salutation += ", "% (r.fname)
+                    letter.salutation += ", %s"% (r.fname)
 
-            if "," in letter.salutation:
+            if ", " in letter.salutation:
                 i = letter.salutation.rindex(", ")
-                letter.salutation = "%s and %s"% (letter.salutation[:i],
+                letter.salutation = "%s and%s"% (letter.salutation[:i],
                 letter.salutation[i+1:])
                 
             yield letter, key == sorted(letters)[-1]
 
-    def printViaQPainter(self):
+    def printViaQPainter(self, showRects = False):
         dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
         if not dialog.exec_():
             return
-        AddressMargin=80
-        LeftMargin = 50
-        TopMargin = 120
+        
         sansFont = QtGui.QFont("Helvetica", 9)
         sansLineHeight = QtGui.QFontMetrics(sansFont).height()
         serifFont = QtGui.QFont("Times", 10)
         serifLineHeight = QtGui.QFontMetrics(serifFont).height()
         sigFont = QtGui.QFont("Lucida Handwriting",8)
         fm = QtGui.QFontMetrics(serifFont)
-        DateWidth = fm.width(" September 99, 2999 ")
-        painter = QtGui.QPainter(self.printer)
+        datewidth = fm.width(" September 99, 2999 ")
+        dateheight = fm.height()
         pageRect = self.printer.pageRect()
+        
+        LEFT = 50
+        TOP = 120
+        RECT_WIDTH = pageRect.width() - (2 * LEFT)
+        ADDRESS_HEIGHT = 120
+        FOOTER_HEIGHT = 120
+        
+        addressRect = QtCore.QRectF(LEFT, TOP, RECT_WIDTH, ADDRESS_HEIGHT)
+
+        dateRect = QtCore.QRectF(RECT_WIDTH - datewidth, TOP + ADDRESS_HEIGHT,
+        datewidth, dateheight)
+
+        bodyRect = QtCore.QRectF(LEFT, TOP + ADDRESS_HEIGHT + dateheight,
+        RECT_WIDTH, pageRect.height()/2)
+
+        footerRect = QtCore.QRectF(LEFT, 
+        pageRect.height() - TOP - FOOTER_HEIGHT, 
+        RECT_WIDTH, FOOTER_HEIGHT)
+        
+        painter = QtGui.QPainter(self.printer)
+        
         page = 1
         for letter, lastpage in self.iterate_letters():        
             painter.save()
             painter.setPen(QtCore.Qt.black)
-            x,y = AddressMargin,TopMargin
-
+            
             option = QtGui.QTextOption(QtCore.Qt.AlignLeft)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
-            painter.drawText(QtCore.QRectF(x, y, pageRect.width(), 120), 
-            "%s\n%s"% (letter.salutation, letter.address),
-             option)
+            
+            ##address
+            painter.drawText(addressRect, "%s\n%s"% (
+            letter.salutation, letter.address), option)
+            if showRects:
+                painter.drawRect(addressRect)
+            
+            painter.drawText(dateRect, 
+            localsettings.formatDate(self.adate))
+            painter.setFont(serifFont)
+            if showRects:
+                painter.drawRect(dateRect)
+            
+            ##body
+            painter.drawText(bodyRect, 
+            letter.body.replace("<<SALUTATION>>",letter.salutation), option)
 
-            painter.drawText(x+250, y, localsettings.formatDate(self.adate))
-            painter.setFont(serifFont)
-            y = pageRect.height()/3
-            painter.drawText(x, y, _("Dear %s") %letter.names)
-            y += serifLineHeight*2
-            painter.drawText(x, y, 
-            _('We are writing to inform you that your dental examination is now due.'))
-            y += serifLineHeight
-            painter.drawText(x, y, _('Please contact the surgery to arrange an appointment. *'))
-            y += serifLineHeight*1.2
-            painter.drawText(x, y, _('We look forward to seeing you in the near future.'))
-            painter.setPen(QtCore.Qt.black)
-            y += serifLineHeight*2
-            painter.drawText(x, y, _("Yours sincerely,"))
-            y += serifLineHeight * 1.5
             painter.setFont(sigFont)
-            y += serifLineHeight * 2            
-            painter.drawText(x, y, "The Academy Dental Practice")
-            painter.setFont(serifFont)
-            y = pageRect.height() - 120
-            painter.drawLine(x, y, pageRect.width() - (2 * AddressMargin), y)
-            y += 2
+            font = QtGui.QFont("Helvetica", 7)
+            font.setItalic(True)
+            painter.setFont(font)            
+            
+            painter.drawText(bodyRect.adjusted(0,bodyRect.height()/2,0,0), 
+            letter.signature, option)
+            if showRects:
+                painter.drawRect(bodyRect)
+            
+            ##footer
+            painter.drawLine(footerRect.topLeft(), footerRect.topRight())
             font = QtGui.QFont("Helvetica", 7)
             font.setItalic(True)
             painter.setFont(font)
-            font.setItalic(True)
-            painter.setFont(font)
+            
             option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
-            footer = _('''* If you already have a future appointment with us -
-please accept our apologies and ignore this letter.''')
-            painter.drawText(QtCore.QRectF(x, y,
-            pageRect.width() - (2 * AddressMargin), 31), footer, option)
+            
+            painter.drawText(footerRect, letter.footer, option) 
+            if showRects:
+                painter.drawRect(footerRect)
+            
             page += 1
             if not lastpage:
                 self.printer.newPage()
             painter.restore()
 
+if __name__ == "__main__":
+    
+    app = QtGui.QApplication([])
+    import datetime
+    from openmolar.qt4gui import maingui
+    from openmolar.dbtools import recall
+    om_gui = maingui.openmolarGui(app)
+    start = datetime.date(2009,2,1)
+    end = datetime.date(2009,2,1)
+    
+    letters = bulkMails(om_gui)
+    letters.setData(recall.HEADERS, recall.getpatients(start, end))
+    letters.printViaQPainter(True)
+    app.closeAllWindows()
