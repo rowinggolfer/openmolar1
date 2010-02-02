@@ -1769,6 +1769,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         end = self.ui.recallend_dateEdit.date().toPyDate()
         
         self.letters.setData(recall.HEADERS, recall.getpatients(start, end))
+    
+    def bulkMailExpand(self):
+        '''
+        expand/contract all children
+        '''
+        self.letters.expand_contract()
         
     def bulkMailPrint(self):
         '''
@@ -3048,6 +3054,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.bulkMailPrint_pushButton,
         QtCore.SIGNAL("clicked()"), self.bulkMailPrint)
+
+        QtCore.QObject.connect(self.ui.bulk_mail_expand_pushButton,
+        QtCore.SIGNAL("clicked()"), self.bulkMailExpand)
 
         QtCore.QObject.connect(self.ui.importDoc_pushButton,
         QtCore.SIGNAL("clicked()"), self.importDoc)

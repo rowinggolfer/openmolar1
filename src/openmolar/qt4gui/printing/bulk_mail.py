@@ -18,12 +18,19 @@ class omLetter(object):
         self.salutation = ""
         self.patients = ""
         self.address = ""
-        self.body = '''%s <<SALUTATION>>,\n%s\n\n%s\n\n%s\n\n%s'''%(
+        self.body = '''%s <<SALUTATION>>,\n\n%s\n\n%s\n\n%s\n\n\n%s'''%(
 _("Dear"),
 _("We are writing to inform you that your dental examination is now due."),
 _("Please contact the surgery to arrange an appointment. *"),
 _("We look forward to seeing you in the near future."),
 _("Yours sincerely,"))
+        self.bodyfamily = '''%s,\n\n<<SALUTATION>>\n%s\n\n%s\n%s\n\n%s'''%(
+_("Dear Patients"),
+_("We are writing to inform you that your dental examinations are now due."),
+_("Please contact the surgery to arrange suitable appointments. *"),
+_("We look forward to seeing you in the near future."),
+_("Yours sincerely,"))
+        
         self.signature = localsettings.CORRESPONDENCE_SIG
 
         self.footer = _('''* If you already have a future appointment with us -
@@ -76,13 +83,23 @@ class treeModel(QtCore.QAbstractItemModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return None
-
-        if role != QtCore.Qt.DisplayRole:
-            return None
+            return QtCore.QVariant()
 
         item = index.internalPointer()
-
+        
+        if role == QtCore.Qt.BackgroundRole:
+            if item.itemData.grouped:
+                if item.itemData.letterno % 2:
+                    brush = QtGui.QBrush(QtGui.QColor(190, 190, 190))
+                else:
+                    brush = QtGui.QBrush(QtGui.QColor(160, 160, 160))                    
+                return brush
+            else:
+                return QtCore.QVariant()
+            
+        if role != QtCore.Qt.DisplayRole:
+            return QtCore.QVariant()
+        
         return item.data(index.column())
 
     def flags(self, index):
@@ -92,10 +109,11 @@ class treeModel(QtCore.QAbstractItemModel):
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
 
     def headerData(self, section, orientation, role):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+        if (orientation == QtCore.Qt.Horizontal and 
+        role == QtCore.Qt.DisplayRole):
             return self.rootItem.data(section)
 
-        return None
+        return QtCore.QVariant()
 
     def index(self, row, column, parent):
         if not self.hasIndex(row, column, parent):
@@ -151,7 +169,8 @@ class treeModel(QtCore.QAbstractItemModel):
             
             if position > indentations[-1]:
                 if parents[-1].childCount() > 0:
-                    parents.append(parents[-1].child(parents[-1].childCount() - 1))
+                    parents.append(
+                    parents[-1].child(parents[-1].childCount() - 1))
                     indentations.append(position)
             else:
                 while position < indentations[-1] and len(parents) > 0:
@@ -169,7 +188,30 @@ class bulkMails(object):
         self.headers = ()
         self.recipients = ()
         self.adate = localsettings.currentDay()
-
+        self.expanded = False
+        
+    def expand_contract(self):
+        '''
+        change the expansion state
+        '''
+        self.expanded = not self.expanded
+        if self.expanded:
+            self.om_gui.ui.bulk_mailings_treeView.expandAll()
+        else:
+            self.om_gui.ui.bulk_mailings_treeView.collapseAll()
+        self.update_expand_ButtonText()
+    
+    def update_expand_ButtonText(self):
+        '''
+        make sure the expand / collapse button text is correct
+        '''
+        if self.expanded:
+            self.om_gui.ui.bulk_mail_expand_pushButton.setText(
+            _("Collapse All"))
+        else:
+            self.om_gui.ui.bulk_mail_expand_pushButton.setText(
+            _("Expand All"))
+        
     def setData(self, headers, recipients):
         '''
         load the recipient data
@@ -177,6 +219,10 @@ class bulkMails(object):
         self.headers = headers
         self.recipients = recipients
         self.populateTree()
+        self.expanded =  False
+        self.update_expand_ButtonText()
+        for i in range(len(self.headers)):
+            self.om_gui.ui.bulk_mailings_treeView.resizeColumnToContents(i)
         
     def populateTree(self):
         '''
@@ -211,16 +257,19 @@ class bulkMails(object):
 
             letter.names = ""
             for r in recipients:
-                letter.names += "%s %s %s, "% (r.title, r.fname, r.sname)
-            letter.names = letter.names.rstrip(", ")
-            
-            letter.salutation = "%s %s %s,"% (head.title, head.fname, 
+                letter.names += "\t\t%s %s %s - %s %s\n"% (
+                r.title, r.fname, r.sname, _("our ref"), r.serialno)
+                
+            letter.salutation = "%s %s %s"% (head.title, head.fname, 
             head.sname)
             
+            if len(recipients) == 1:
+                letter.salutation += ","
+                
             for r in recipients[1:]:
                 if r.age > 18:
                     letter.salutation += "\n%s %s %s"% (r.title, r.fname, 
-                    r.sname)
+                    r.sname) 
                 else:
                     letter.salutation += ", %s"% (r.fname)
 
@@ -228,8 +277,11 @@ class bulkMails(object):
                 i = letter.salutation.rindex(", ")
                 letter.salutation = "%s and%s"% (letter.salutation[:i],
                 letter.salutation[i+1:])
-                
-            yield letter, key == sorted(letters)[-1]
+            
+            isFamily = len(recipients)>1
+            isLastLetter = key == sorted(letters)[-1]
+            
+            yield letter, isFamily, isLastLetter
 
     def printViaQPainter(self, showRects = False):
         dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
@@ -251,23 +303,24 @@ class bulkMails(object):
         RECT_WIDTH = pageRect.width() - (2 * LEFT)
         ADDRESS_HEIGHT = 120
         FOOTER_HEIGHT = 120
+        BODY_HEIGHT = pageRect.height() - TOP - ADDRESS_HEIGHT - FOOTER_HEIGHT
         
         addressRect = QtCore.QRectF(LEFT, TOP, RECT_WIDTH, ADDRESS_HEIGHT)
 
-        dateRect = QtCore.QRectF(RECT_WIDTH - datewidth, TOP + ADDRESS_HEIGHT,
-        datewidth, dateheight)
+        dateRect = QtCore.QRectF(LEFT + RECT_WIDTH - datewidth, 
+        TOP + ADDRESS_HEIGHT, datewidth, dateheight)
 
         bodyRect = QtCore.QRectF(LEFT, TOP + ADDRESS_HEIGHT + dateheight,
-        RECT_WIDTH, pageRect.height()/2)
+        RECT_WIDTH, BODY_HEIGHT)
 
         footerRect = QtCore.QRectF(LEFT, 
-        pageRect.height() - TOP - FOOTER_HEIGHT, 
+        pageRect.height() - FOOTER_HEIGHT, 
         RECT_WIDTH, FOOTER_HEIGHT)
         
         painter = QtGui.QPainter(self.printer)
         
         page = 1
-        for letter, lastpage in self.iterate_letters():        
+        for letter, FamilyLetter, lastpage in self.iterate_letters():        
             painter.save()
             painter.setPen(QtCore.Qt.black)
             
@@ -279,23 +332,23 @@ class bulkMails(object):
             letter.salutation, letter.address), option)
             if showRects:
                 painter.drawRect(addressRect)
-            
+            ##date
             painter.drawText(dateRect, 
-            localsettings.formatDate(self.adate))
+            localsettings.longDate(self.adate))
             painter.setFont(serifFont)
             if showRects:
                 painter.drawRect(dateRect)
             
             ##body
-            painter.drawText(bodyRect, 
-            letter.body.replace("<<SALUTATION>>",letter.salutation), option)
+            if FamilyLetter:
+                painter.drawText(bodyRect, letter.bodyfamily.replace(
+                "<<SALUTATION>>",letter.names), option)                
+            else:
+                painter.drawText(bodyRect, letter.body.replace(
+                "<<SALUTATION>>",letter.salutation), option)
 
             painter.setFont(sigFont)
-            font = QtGui.QFont("Helvetica", 7)
-            font.setItalic(True)
-            painter.setFont(font)            
-            
-            painter.drawText(bodyRect.adjusted(0,bodyRect.height()/2,0,0), 
+            painter.drawText(bodyRect.adjusted(0,bodyRect.height()*.75,0,0), 
             letter.signature, option)
             if showRects:
                 painter.drawRect(bodyRect)
@@ -321,9 +374,11 @@ class bulkMails(object):
 if __name__ == "__main__":
     
     app = QtGui.QApplication([])
-    import datetime
+    import datetime,os
+    os.chdir("/home/neil")
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall
+    
     om_gui = maingui.openmolarGui(app)
     start = datetime.date(2009,2,1)
     end = datetime.date(2009,2,1)

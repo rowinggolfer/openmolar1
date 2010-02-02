@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Jan 30 13:00:14 2010
+# Created: Tue Feb  2 10:19:31 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -859,7 +859,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 748, 538))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 324, 538))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.verticalLayout_24 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_5)
         self.verticalLayout_24.setObjectName("verticalLayout_24")
@@ -1586,7 +1586,7 @@ class Ui_MainWindow(object):
         self.scrollArea_8.setWidgetResizable(True)
         self.scrollArea_8.setObjectName("scrollArea_8")
         self.scrollAreaWidgetContents_13 = QtGui.QWidget(self.scrollArea_8)
-        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 113, 58))
+        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 87, 58))
         self.scrollAreaWidgetContents_13.setObjectName("scrollAreaWidgetContents_13")
         self.verticalLayout_20 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_13)
         self.verticalLayout_20.setSpacing(0)
@@ -1788,7 +1788,7 @@ class Ui_MainWindow(object):
         self.aptOVdentscrollArea.setWidgetResizable(True)
         self.aptOVdentscrollArea.setObjectName("aptOVdentscrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.aptOVdentscrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 198, 112))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 198, 98))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(2)
@@ -2245,17 +2245,20 @@ class Ui_MainWindow(object):
         self.recallLoad_pushButton = QtGui.QPushButton(self.tab_15)
         self.recallLoad_pushButton.setObjectName("recallLoad_pushButton")
         self.horizontalLayout_18.addWidget(self.recallLoad_pushButton)
-        self.gridLayout_10.addLayout(self.horizontalLayout_18, 0, 0, 1, 1)
+        self.gridLayout_10.addLayout(self.horizontalLayout_18, 1, 0, 1, 1)
         spacerItem21 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_10.addItem(spacerItem21, 0, 1, 1, 1)
+        self.gridLayout_10.addItem(spacerItem21, 1, 2, 1, 1)
         self.bulkMailPrint_pushButton = QtGui.QPushButton(self.tab_15)
         self.bulkMailPrint_pushButton.setIcon(icon9)
         self.bulkMailPrint_pushButton.setIconSize(QtCore.QSize(24, 24))
         self.bulkMailPrint_pushButton.setObjectName("bulkMailPrint_pushButton")
-        self.gridLayout_10.addWidget(self.bulkMailPrint_pushButton, 0, 2, 1, 1)
+        self.gridLayout_10.addWidget(self.bulkMailPrint_pushButton, 1, 4, 1, 1)
         self.bulk_mailings_treeView = QtGui.QTreeView(self.tab_15)
         self.bulk_mailings_treeView.setObjectName("bulk_mailings_treeView")
-        self.gridLayout_10.addWidget(self.bulk_mailings_treeView, 1, 0, 1, 3)
+        self.gridLayout_10.addWidget(self.bulk_mailings_treeView, 2, 0, 1, 5)
+        self.bulk_mail_expand_pushButton = QtGui.QPushButton(self.tab_15)
+        self.bulk_mail_expand_pushButton.setObjectName("bulk_mail_expand_pushButton")
+        self.gridLayout_10.addWidget(self.bulk_mail_expand_pushButton, 1, 1, 1, 1)
         self.main_tabWidget.addTab(self.tab_15, "")
         self.tab_22 = QtGui.QWidget()
         self.tab_22.setObjectName("tab_22")
@@ -2972,6 +2975,7 @@ class Ui_MainWindow(object):
         self.label_53.setText(_( u"(Inclusive)"))
         self.recallLoad_pushButton.setText(_( u"Load Table"))
         self.bulkMailPrint_pushButton.setText(_( u"Print Letters"))
+        self.bulk_mail_expand_pushButton.setText(_( u"Expand All"))
         self.main_tabWidget.setTabText(self.main_tabWidget.indexOf(self.tab_15), _( u"Bulk Mailings"))
         self.chooseFeescale_comboBox.setItemText(0, _( u"Show All Fee Scales"))
         self.chooseFeescale_comboBox.setItemText(1, _( u"Private FeeScale"))

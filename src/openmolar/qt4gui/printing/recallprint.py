@@ -73,17 +73,6 @@ class printRecall():
             y += serifLineHeight * 2            
             painter.drawText(x, y, "The Academy Dental Practice")
             painter.setFont(serifFont)
-            
-            y += serifLineHeight * 3
-            painter.drawText(x, y, "P.S. we are pleased to announce that Sally Melville, our hygienist,"  )
-            y += serifLineHeight 
-            painter.drawText(x, y, 'had a baby boy, "Leo", on the 22nd September.')
-            y += serifLineHeight 
-            painter.drawText(x, y, 'Her maternity leave has reduced the availability of hygienist' )
-            y += serifLineHeight 
-            painter.drawText(x, y, 'appointments. We apologise for any invonvenience caused, and '   )
-            y += serifLineHeight 
-            painter.drawText(x, y, 'thankyou for your understanding.')            
             y = pageRect.height() - 120
             painter.drawLine(x, y, pageRect.width() - (2 * AddressMargin), y)
             y += 2

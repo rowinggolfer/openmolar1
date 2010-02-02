@@ -22,6 +22,7 @@ class recalled_patient(object):
     '''
     def __init__(self, letterno, row):
         self.letterno = letterno
+        self.grouped = False
         self.serialno = row[0]
         self.title = row[1].title()
         self.fname = row[2].title()
@@ -32,12 +33,13 @@ class recalled_patient(object):
         else:
             self.familyno = row[5]
         self.age = localsettings.getAge(row[6])
-        self.addr1 = row[7].strip(" ")
-        self.addr2 = row[8]
-        self.addr3 = row[9]
-        self.town = row[10]
-        self.county = row[11]
-        self.pcde = row[12]
+        self.addr1 = row[7].strip()
+        
+        self.addr2 = row[8] if row[8] != None else ""
+        self.addr3 = row[9] if row[9] != None else ""
+        self.town = row[10] if row[10] != None else ""
+        self.county = row[11] if row[11] != None else ""
+        self.pcde = row[12] if row[12] != None else ""
         self.recd = localsettings.formatDate(row[13])  
         
     def __getitem__(self, pos):
@@ -121,6 +123,8 @@ def getpatients(startdate, enddate):
         if patient == prev_patient:
             letterno -= 1
             patient.letterno = letterno
+            patient.grouped = True
+            patients[-1].grouped = True
         letterno += 1
         patients.append(patient)
     

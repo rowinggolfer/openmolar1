@@ -263,7 +263,7 @@ apptix_reverse = {}
 #--(necessary if a very long appointment goes right on through)
 #-- would get maximum recursion, quite quickly!
 ##todo - this will need to change!!!!
-bookEnd = datetime.date(2009,12,31)
+bookEnd = datetime.date(2010,12,31)
 
 #--treatment codes..
 

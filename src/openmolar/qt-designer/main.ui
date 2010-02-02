@@ -2169,7 +2169,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>748</width>
+                        <width>324</width>
                         <height>538</height>
                        </rect>
                       </property>
@@ -3891,7 +3891,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>113</width>
+                    <width>87</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4412,7 +4412,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <x>0</x>
                     <y>0</y>
                     <width>198</width>
-                    <height>112</height>
+                    <height>98</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -5323,7 +5323,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <string>Bulk Mailings</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_10">
-            <item row="0" column="0">
+            <item row="1" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_18">
               <item>
                <widget class="QLabel" name="label_50">
@@ -5409,7 +5409,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </item>
              </layout>
             </item>
-            <item row="0" column="1">
+            <item row="1" column="2">
              <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -5422,7 +5422,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
              </spacer>
             </item>
-            <item row="0" column="2">
+            <item row="1" column="4">
              <widget class="QPushButton" name="bulkMailPrint_pushButton">
               <property name="text">
                <string>Print Letters</string>
@@ -5439,8 +5439,15 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
              </widget>
             </item>
-            <item row="1" column="0" colspan="3">
+            <item row="2" column="0" colspan="5">
              <widget class="QTreeView" name="bulk_mailings_treeView"/>
+            </item>
+            <item row="1" column="1">
+             <widget class="QPushButton" name="bulk_mail_expand_pushButton">
+              <property name="text">
+               <string>Expand All</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
