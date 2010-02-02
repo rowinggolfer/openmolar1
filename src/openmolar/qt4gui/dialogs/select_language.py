@@ -71,7 +71,7 @@ class language_dialog(Ui_choose_language.Ui_Dialog):
         if self.dialog.exec_():
             for rb in self.radioboxes:
                 if rb.isChecked():
-                    lang = rb.text()            
+                    lang = rb.text().toAscii()          
                     try:
                         print "changing language to '%s' ...."% lang,
                         setLanguage(str(lang))
