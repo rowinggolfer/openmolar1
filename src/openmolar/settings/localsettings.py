@@ -473,9 +473,23 @@ def monthName(d):
 
 def longDate(d):
     try:
-        return "%s, %d %s %d"% (dayName(d), d.day, monthName(d), d.year)
-    except:
-        pass
+        day = str(d.day)
+        if day == "1":
+            day = day + "st"
+        elif day[0] == "1":
+            day = day + "th"
+        elif day[-1] == "1":
+            day = day + "st"
+        elif day[-1] == "2":
+            day = day + "nd"
+        elif day[-1] == "3":
+            day = day + "rd"        
+        else:
+            day = day + "th"
+        return "%s, %s %s %d"% (dayName(d), day, monthName(d), d.year)
+    except Exception, e:
+        print e
+        return "date"
 
 def formatDate(d):
     '''takes a date, returns a uk type date string'''

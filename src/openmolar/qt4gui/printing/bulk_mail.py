@@ -16,15 +16,16 @@ DATE_FORMAT = "MMMM, yyyy"
 class omLetter(object):
     def __init__(self):
         self.salutation = ""
+        self.address_topline =""
         self.patients = ""
         self.address = ""
-        self.body = '''%s <<SALUTATION>>,\n\n%s\n\n%s\n\n%s\n\n\n%s'''%(
-_("Dear"),
+        self.body = '''%s <<SALUTATION>>,
+\n<<NAMES>>\n\n%s\n\n%s\n\n%s\n\n\n%s'''% (_("Dear"),
 _("We are writing to inform you that your dental examination is now due."),
 _("Please contact the surgery to arrange an appointment. *"),
 _("We look forward to seeing you in the near future."),
 _("Yours sincerely,"))
-        self.bodyfamily = '''%s,\n\n<<SALUTATION>>\n%s\n\n%s\n%s\n\n%s'''%(
+        self.bodyfamily = '''%s,\n\n<<NAMES>>\n%s\n\n%s\n%s\n\n%s'''%(
 _("Dear Patients"),
 _("We are writing to inform you that your dental examinations are now due."),
 _("Please contact the surgery to arrange suitable appointments. *"),
@@ -258,26 +259,28 @@ class bulkMails(object):
 
             letter.names = ""
             for r in recipients:
-                letter.names += "\t\t%s %s %s - %s %s\n"% (
+                letter.names += "        %s %s %s - %s %s\n"% (
                 r.title, r.fname, r.sname, _("our ref"), r.serialno)
-                
-            letter.salutation = "%s %s %s"% (head.title, head.fname, 
-            head.sname)
             
-            if len(recipients) == 1:
-                letter.salutation += ","
+            letter.address_topline = "%s %s %s"% (head.title, 
+            head.fname.strip(), head.sname.strip())
                 
+            if head.age < 18:
+                letter.salutation = head.fname
+            else:
+                letter.salutation = "%s %s"% (head.title, head.sname.strip())
+            
             for r in recipients[1:]:
                 if r.age > 18:
-                    letter.salutation += "\n%s %s %s"% (r.title, r.fname, 
-                    r.sname) 
+                    letter.address_topline += "\n%s %s %s"% (r.title, 
+                    r.fname, r.sname) 
                 else:
-                    letter.salutation += ", %s"% (r.fname)
+                    letter.address_topline += ", %s"% (r.fname)
 
-            if ", " in letter.salutation:
-                i = letter.salutation.rindex(", ")
-                letter.salutation = "%s and%s"% (letter.salutation[:i],
-                letter.salutation[i+1:])
+            if ", " in letter.address_topline:
+                i = letter.address_topline.rindex(", ")
+                letter.address_topline = "%s and%s"% (
+                letter.address_topline[:i], letter.address_topline[i+1:])
             
             isFamily = len(recipients)>1
             isLastLetter = key == sorted(letters)[-1]
@@ -293,9 +296,9 @@ class bulkMails(object):
         sansLineHeight = QtGui.QFontMetrics(sansFont).height()
         serifFont = QtGui.QFont("Times", 10)
         serifLineHeight = QtGui.QFontMetrics(serifFont).height()
-        sigFont = QtGui.QFont("Lucida Handwriting",8)
+        sigFont = QtGui.QFont("Lucida Handwriting",12)
         fm = QtGui.QFontMetrics(serifFont)
-        datewidth = fm.width(" September 99, 2999 ")
+        datewidth = fm.width("Wednesday September 2999 ")
         dateheight = fm.height()
         pageRect = self.printer.pageRect()
         
@@ -330,23 +333,25 @@ class bulkMails(object):
             
             ##address
             painter.drawText(addressRect, "%s\n%s"% (
-            letter.salutation, letter.address), option)
+            letter.address_topline, letter.address), option)
             if showRects:
                 painter.drawRect(addressRect)
             ##date
+            painter.setFont(serifFont)
             painter.drawText(dateRect, 
             localsettings.longDate(self.adate))
-            painter.setFont(serifFont)
             if showRects:
                 painter.drawRect(dateRect)
             
             ##body
             if FamilyLetter:
                 painter.drawText(bodyRect, letter.bodyfamily.replace(
-                "<<SALUTATION>>",letter.names), option)                
+                "<<NAMES>>",letter.names), option)                
             else:
-                painter.drawText(bodyRect, letter.body.replace(
-                "<<SALUTATION>>",letter.salutation), option)
+                body = letter.body.replace(
+                "<<SALUTATION>>",letter.salutation)
+                body = body.replace("<<NAMES>>",letter.names)
+                painter.drawText(bodyRect, body, option)
 
             painter.setFont(sigFont)
             painter.drawText(bodyRect.adjusted(0,bodyRect.height()*.75,0,0), 
