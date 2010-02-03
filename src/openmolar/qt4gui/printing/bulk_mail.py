@@ -187,6 +187,7 @@ class bulkMails(object):
         self.printer.setPageSize(QtGui.QPrinter.A5)
         self.headers = ()
         self.recipients = ()
+        self.bulk_model = None
         self.adate = localsettings.currentDay()
         self.expanded = False
         
@@ -228,8 +229,8 @@ class bulkMails(object):
         '''
         load the bulk mailing tree view
         '''
-        bulk_model = treeModel(self.headers, self.recipients)
-        self.om_gui.ui.bulk_mailings_treeView.setModel(bulk_model)
+        self.bulk_model = treeModel(self.headers, self.recipients)
+        self.om_gui.ui.bulk_mailings_treeView.setModel(self.bulk_model)
 
     def iterate_letters(self):
         '''
