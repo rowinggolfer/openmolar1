@@ -180,7 +180,7 @@ def loadFeesTable(om_gui):
             if table.hasPtCols:
                 fee_colHeaders.append(_("charge"))
         
-        tab.setHeaderLabels(headers+ fee_colHeaders)
+        tab.setHeaderLabels(headers + fee_colHeaders)
 
         feeDict = table.feesDict
 

@@ -13,6 +13,9 @@ from openmolar.settings import localsettings
 
 DATE_FORMAT = "MMMM, yyyy"
 
+FAMILYICON = QtGui.QIcon()
+FAMILYICON.addPixmap(QtGui.QPixmap(":/agt_family.png"))
+
 class omLetter(object):
     def __init__(self):
         self.salutation = ""
@@ -87,8 +90,12 @@ class treeModel(QtCore.QAbstractItemModel):
             return QtCore.QVariant()
 
         item = index.internalPointer()
-        
-        if role == QtCore.Qt.BackgroundRole:
+        if role == QtCore.Qt.DisplayRole:
+            return item.data(index.column())
+        elif role == QtCore.Qt.DecorationRole and index.column() == 1:
+            if item.itemData.grouped:
+                return QtCore.QVariant(FAMILYICON)
+        elif role == QtCore.Qt.BackgroundRole:
             if item.itemData.grouped:
                 if item.itemData.letterno % 2:
                     brush = QtGui.QBrush(QtGui.QColor(190, 190, 190))
@@ -97,12 +104,12 @@ class treeModel(QtCore.QAbstractItemModel):
                 return brush
             else:
                 return QtCore.QVariant()
-            
-        if role != QtCore.Qt.DisplayRole:
+        elif role == QtCore.Qt.UserRole:
+            ## a user role which simply returns the python object
+            return item.itemData   
+        else:
             return QtCore.QVariant()
         
-        return item.data(index.column())
-
     def flags(self, index):
         if not index.isValid():
             return QtCore.Qt.NoItemFlags
@@ -186,9 +193,9 @@ class bulkMails(object):
         self.om_gui = om_gui
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A5)
-        self.headers = ()
+        self.headers = (_("no data loaded"),)
         self.recipients = ()
-        self.bulk_model = None
+        self.bulk_model = treeModel(self.headers, self.recipients)
         self.adate = localsettings.currentDay()
         self.expanded = False
         
@@ -287,6 +294,19 @@ class bulkMails(object):
             
             yield letter, isFamily, isLastLetter
 
+    def selected(self, index):
+        '''
+        emit the serialno of the selected row
+        '''
+        try:
+            #item = index.internalPointer()
+            pt = self.bulk_model.data(index, QtCore.Qt.UserRole)
+            print pt.serialno
+            return pt.serialno
+
+        except IndexError:
+            print "selected bulk mail out of range"
+            
     def printViaQPainter(self, showRects = False):
         dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
         if not dialog.exec_():

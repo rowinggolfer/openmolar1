@@ -134,6 +134,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.addCustomWidgets()
         self.labels_and_tabs()
         self.setValidators()
+        self.letters = bulk_mail.bulkMails(self)
+        self.ui.bulk_mailings_treeView.setModel(self.letters.bulk_model)
         self.setupSignals()
         self.loadDentistComboboxes()
         self.feestableLoaded=False
@@ -143,7 +145,6 @@ class openmolarGui(QtGui.QMainWindow):
         self.editPageVisited=False
         self.forum_notified = False
         self.appointmentData = appointments.dayAppointmentData()
-        self.letters = bulk_mail.bulkMails(self)
         
     def advise(self, arg, warning_level=0):
         '''
@@ -1781,6 +1782,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         the print button on the bulk mail tab has been clicked
         '''
         self.letters.printViaQPainter()
+        
+    def bulk_mail_doubleclicked(self, index):
+        '''
+        a row in the bulk_mail data model has been double clicked
+        '''
+        self.getrecord(self.letters.selected(index))
             
     def showChartTable(self):
         '''
@@ -2906,6 +2913,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         om_printing.printNotes(self, detailed)
 
     def setupSignals(self):
+        '''
+        a function to call other functions (to keep the code clean)
+        '''
         self.signals_miscbuttons()
         self.signals_admin()
         self.signals_reception()
@@ -2925,6 +2935,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.signals_appointmentOVTab()
         self.signals_forum()
         self.signals_history()
+        self.signals_bulk_mail()
 
     def signals_miscbuttons(self):
         '''
@@ -3183,6 +3194,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.comp_treeWidget, QtCore.SIGNAL(
         "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
+
+    def signals_bulk_mail(self):
+        QtCore.QObject.connect(self.ui.bulk_mailings_treeView,
+        QtCore.SIGNAL("doubleClicked (const QModelIndex&)"),
+        self.bulk_mail_doubleclicked)
 
     def signals_forum(self):
         QtCore.QObject.connect(self.ui.forum_treeWidget,

@@ -23,8 +23,8 @@ DEBUGMODE = False
 if "neil" in os.getcwd():
     DEBUGMODE = True
 
-#- updated 19th November 2009.
-__MAJOR_VERSION__= "0.1.8"
+#- updated 4th Feb 2010.
+__MAJOR_VERSION__= "0.1.9"
 
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"

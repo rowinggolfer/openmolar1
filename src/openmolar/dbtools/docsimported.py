@@ -73,10 +73,12 @@ def add(sno, filepath):
     cursor = db.cursor()
     query = '''insert into docsimported 
     (serialno, datatype, name, size, filedate) values (%s, %s, %s, %s, %s)'''
-    values = (sno, mimetypes.guess_type(filepath)[0], 
-    os.path.basename(filepath), st.st_size, 
+    file_type = mimetypes.guess_type(filepath)[0]
+    if file_type == None:
+        file_type = "unknown"
+    values = (sno, file_type, os.path.basename(filepath), st.st_size, 
     datetime.datetime.fromtimestamp (st.st_mtime))
-
+    
     cursor.execute(query, values)
     fileid = db.insert_id()
     query = 'INSERT INTO docsimporteddata (masterid, filedata) VALUES (%s, %s)'
