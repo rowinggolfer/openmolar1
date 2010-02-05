@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-01-31 14:18+0000\n"
-"PO-Revision-Date: 2010-02-03 12:43+0000\n"
-"Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
+"PO-Revision-Date: 2010-02-04 23:37+0000\n"
+"Last-Translator: A. Emmanuel Mendoza <Unknown>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-02-04 04:49+0000\n"
+"X-Launchpad-Export-Date: 2010-02-05 05:03+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:64
@@ -1317,7 +1317,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_hygenist_wizard.py:79
 msgid "Scale and Polish"
-msgstr ""
+msgstr "Escalar y Limpiar"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_hygenist_wizard.py:80
 msgid "Extensive Scaling"
@@ -1636,7 +1636,7 @@ msgstr "Adulto"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:678
 msgid "OAP"
-msgstr ""
+msgstr "OAP"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:680
 msgid "Category Letter"
@@ -2012,7 +2012,7 @@ msgstr "De aquí a 6 meses"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2785
 msgid "12 Months hence"
-msgstr ""
+msgstr "12 Meses a partir de ahora"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2786
 msgid "Print a recall saying the patient is due now."

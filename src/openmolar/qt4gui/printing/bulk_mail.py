@@ -101,14 +101,14 @@ class treeModel(QtCore.QAbstractItemModel):
                     brush = QtGui.QBrush(QtGui.QColor(190, 190, 190))
                 else:
                     brush = QtGui.QBrush(QtGui.QColor(160, 160, 160))                    
-                return brush
+                return QtCore.QVariant(brush)
             else:
                 return QtCore.QVariant()
         elif role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
             return item.itemData   
-        else:
-            return QtCore.QVariant()
+        
+        return QtCore.QVariant()
         
     def flags(self, index):
         if not index.isValid():
