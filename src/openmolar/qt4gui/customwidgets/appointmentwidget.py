@@ -36,7 +36,7 @@ class appointmentWidget(QtGui.QFrame):
         super(appointmentWidget, self).__init__(parent)
         
         self.header_frame = QtGui.QFrame(self)
-        
+        self.om_gui = om_gui
         self.printButton = QtGui.QPushButton("", self.header_frame)
         self.printButton.setMaximumWidth(50)
         icon = QtGui.QIcon()
@@ -64,7 +64,7 @@ class appointmentWidget(QtGui.QFrame):
         #self.memo_lineEdit.setStyleSheet("background:white")
 
         self.dentist = "DENTIST"
-
+        self.apptix = 0
         glay = QtGui.QGridLayout(self.header_frame)
         glay.setSpacing(2)
         glay.setMargin(2)
@@ -92,7 +92,14 @@ class appointmentWidget(QtGui.QFrame):
         self.setMinimumSize(self.minimumSizeHint())
         self.setMaximumSize(self.maximumSizeHint())
         self.signals()
-        
+    
+    def setDentist(self, apptix):
+        '''
+        update the dentist the widget relates to
+        '''
+        self.apptix = apptix
+        self.dentist = localsettings.apptix_reverse[apptix]
+     
     def sizeHint(self):
         '''
         set an (arbitrary) size for the widget
@@ -159,7 +166,8 @@ class appointmentWidget(QtGui.QFrame):
         '''
         emits a signal when the print button is clicked
         '''
-        self.emit(QtCore.SIGNAL("print_me"), self.dentist)
+        self.emit(QtCore.SIGNAL("print_me"), self.apptix, 
+        self.om_gui.ui.calendarWidget.selectedDate())
     
     def newMemo(self):
         '''

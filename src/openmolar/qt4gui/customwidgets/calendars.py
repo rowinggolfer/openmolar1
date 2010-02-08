@@ -101,8 +101,8 @@ class calDialogs():
             memoDict = parent.data[key]
             
         memowidget_dict = {}
-        for dent in parent.dents:
-            if dent == 0:
+        for dentix in parent.dents:
+            if dentix == 0:
                 dl.lineEdit.setText(memoDict.get(0, ""))
                 memowidget_dict[0] = dl.lineEdit
             else:
@@ -110,12 +110,16 @@ class calDialogs():
                 memoitem = Ui_memoitem.Ui_Form()
                 memoitem.setupUi(widg)
                 memoitem.label.setText(
-                "%s"% localsettings.apptix_reverse.get(dent))
-
-                memoitem.lineEdit.setText(memoDict.get(dent,""))
+                localsettings.apptix_reverse.get(dentix,"??"))
+                
+                memo = ""
+                if memoDict.has_key(dentix):
+                    memo = memoDict[dentix].memo
+                memoitem.lineEdit.setText(memo)
             
-                dl.layout.addWidget(widg) 
-                memowidget_dict[dent] = memoitem.lineEdit
+                dl.layout.addWidget(widg)
+                
+                memowidget_dict[dentix] = memoitem.lineEdit
             
         spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, 
         QtGui.QSizePolicy.Expanding)
@@ -225,13 +229,14 @@ class monthCalendar(QtGui.QWidget, calDialogs):
     
     def setData(self, data):
         '''
-        pass a dictionary like {"1209", "Neil's Birthday"}
+        pass a dictionary like {"1209":[d1,d2]}
+        where d1 and d2 are instances of appointments.dentistDay
         '''
-        self.data={}
+        self.data = {}
         for key in data:
             self.data[key]= {}
-            for dent, memo in data[key]:
-                self.data[key][dent]= memo
+            for dent in data[key]:
+                self.data[key][dent.ix]= dent
         self.setColWidths()
         
     def setColWidths(self):
@@ -243,16 +248,20 @@ class monthCalendar(QtGui.QWidget, calDialogs):
             self.dentColWidths[dent] = self.fm.width(
             localsettings.apptix_reverse.get(dent,"   "))
 
-        for dent in self.dents:
+        for ix in self.dents:
             memo = ""
             for dentDict in self.data.values():
-                if dentDict.has_key(dent):
-                    memo = dentDict[dent]
-                    if dent == 0:
-                        memo = memo.upper()
-                    width = self.fm.width("  "+memo)
-                    if width > self.dentColWidths[dent]:
-                        self.dentColWidths[dent] = width
+                if dentDict.has_key(ix):
+                    dent = dentDict.get(ix)
+                    if dent:
+                        memo = dentDict[ix].memo
+                        if ix == 0:
+                            memo = memo.upper()
+                        elif dent.flag:
+                            memo += "18:55 - 18:55  "
+                        width = self.fm.width(memo)
+                        if width > self.dentColWidths[ix]:
+                            self.dentColWidths[dent] = width
         
     def setRowNo(self):
         '''
@@ -428,13 +437,13 @@ class monthCalendar(QtGui.QWidget, calDialogs):
             x = self.bankHolColwidth + self.vheaderwidth
             rect = rect.adjusted(self.bankHolColwidth, 0, 0, 0)               
             
-            option = QtCore.Qt.AlignCenter        
+            option = QtCore.Qt.AlignLeft        
 
             for col in range(self.colNo):
-                dent = self.dents[col]
+                dentix = self.dents[col]
                 my_text = ""
             
-                colWidth = self.dentColWidths[dent]
+                colWidth = self.dentColWidths[dentix]
                 rect = rect.adjusted(0, 0, colWidth, 0)               
                 
                 painter.save()    
@@ -443,17 +452,23 @@ class monthCalendar(QtGui.QWidget, calDialogs):
                 painter.restore()
     
                 if day ==0:
-                    my_text = "%s"% localsettings.apptix_reverse.get(dent, 
+                    my_text = "%s"% localsettings.apptix_reverse.get(dentix, 
                     "all")
     
                 elif self.data.has_key(key):
-                    memo = self.data[key].get(dent,"")
-                    if memo:
-                        if dent == 0:
-                            my_text = memo.upper()
+                    dent = self.data[key].get(dentix)
+                    if dent:
+                        if dentix == 0:
+                            my_text = dent.memo.upper()
                         else:
-                            my_text = memo
-
+                            if not dent.flag:
+                                times = "" 
+                            else:
+                                times = "%s - %s "%(
+                                localsettings.wystimeToHumanTime(dent.start), 
+                                localsettings.wystimeToHumanTime(dent.end))
+                            my_text = "%s%s"% (times, dent.memo)
+                            
                 if my_text:
                     painter.drawText(rect, option, my_text)
                 
@@ -477,6 +492,7 @@ class yearCalendar(QtGui.QWidget, calDialogs):
         self.monthStarts = {}
         self.headingdata={}
         self.data = {}
+        self.flags = {}
         self.dents = (0,)
         self.setFont()
         self.startDOW = 0
@@ -524,10 +540,13 @@ class yearCalendar(QtGui.QWidget, calDialogs):
         data is a dictionary {"mdd":((4,"Memo"),(2,"note"),) , ...}
         '''
         self.data={}
+        self.flags={}
         for key in data:
             self.data[key]= {}
-            for dent, memo in data[key]:
-                self.data[key][dent]= memo
+            for dent in data[key]:
+                self.data[key][dent.ix]= dent
+                if dent.memo:
+                    self.flags[key] = True
     
     def setDents(self, dents):
         '''
@@ -585,13 +604,18 @@ class yearCalendar(QtGui.QWidget, calDialogs):
             if self.headingdata.has_key(datekey):
                 advisory += "<h3>%s</h3><hr />"% self.headingdata[datekey]
             if self.data.has_key(datekey):
-                for dent in self.data[datekey].keys():
-                    memo = self.data[datekey].get(dent, "")
-                    if dent == 0:
-                        advisory += "<h3>%s</h3>"% memo
-                    else:
-                        advisory += "%s - %s <br />"% (
-                        localsettings.apptix_reverse.get(dent), memo)
+                for ix in self.data[datekey].keys():
+                    dent = self.data[datekey].get(ix)
+                    if dent:
+                        if ix == 0:
+                            advisory += "<h3>%s</h3>"% dent.memo
+                        else:
+                            if not dent.flag:
+                                times = "OFF" 
+                            else:
+                                times = "%s - %s"%(dent.start, dent.end)
+                            advisory += "%s\t%s\t%s <br />"% (dent.initials, 
+                            times, dent.memo)
             if advisory.endswith(" <br />"):
                 advisory = advisory.rstrip(" <br />")
             
@@ -788,7 +812,7 @@ class yearCalendar(QtGui.QWidget, calDialogs):
                             datekey = "%d%02d"%(month, c_date.day)
                             
                             if self.headingdata.has_key(datekey):
-                                #-- draw a blue triangle!
+                                #-- draw a gray underscore!
                                 painter.save()
                                 painter.setBrush(QtCore.Qt.lightGray)
                                 painter.setPen(QtCore.Qt.lightGray)
@@ -799,7 +823,7 @@ class yearCalendar(QtGui.QWidget, calDialogs):
 
                                 painter.restore()
             
-                            if self.data.has_key(datekey):
+                            if self.flags.get(datekey,False):
                                 #-- draw a blue triangle!
                                 painter.save()
                                 painter.setBrush(QtCore.Qt.blue)
@@ -817,7 +841,7 @@ class yearCalendar(QtGui.QWidget, calDialogs):
 
                                 painter.drawPolygon(shape)
                                 painter.restore()
-            
+        
                         except ValueError: 
                             # month doesn't have this day eg feb 30th
                             pass
@@ -832,9 +856,9 @@ if __name__ == "__main__":
     mcal = monthCalendar()
     ycal = yearCalendar()
     
-    startdate = datetime.date(2009,12,1) 
-    enddate =datetime.date(2009,12,31)
-    rows = appointments.getDayMemos(startdate, enddate, (4,6,7))
+    startdate = datetime.date(2010,2,1) 
+    enddate =datetime.date(2010,2,28)
+    rows = appointments.getDayInfo(startdate, enddate, (4,6,7))
     data = appointments.getBankHols(startdate, enddate)
     
     cal.show()

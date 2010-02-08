@@ -57,7 +57,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
         self.textDetail = textDetail
         self.day = day
         self.date = None
-        self.dents = ()
+        self.dents = []
         self.daystart = {}
         self.dayend = {}
         self.memoDict={}
@@ -75,23 +75,23 @@ class appointmentOverviewWidget(QtGui.QWidget):
         
     def init_dicts(self):
         for dent in self.dents:
-            self.freeslots[dent] = ()
-            self.appts[dent] = ()
-            self.eTimes[dent] = ()
-            self.lunches[dent] = ()
-            self.memoDict[dent] = ""
+            self.freeslots[dent.ix] = ()
+            self.appts[dent.ix] = ()
+            self.eTimes[dent.ix] = ()
+            self.lunches[dent.ix] = ()
+            self.memoDict[dent.ix] = ""
             
-    def setStartTime(self, dent, t):
-        self.daystart[dent] = localsettings.minutesPastMidnight(t)
+    def setStartTime(self, dent):
+        self.daystart[dent.ix] = localsettings.minutesPastMidnight(dent.start)
 
-    def setEndTime(self, dent, t):
-        self.dayend[dent] = localsettings.minutesPastMidnight(t)
+    def setEndTime(self, dent):
+        self.dayend[dent.ix] = localsettings.minutesPastMidnight(dent.end)
 
-    def setMemo(self, dent, memo):
-        self.memoDict[dent] = memo
+    def setMemo(self, dent):
+        self.memoDict[dent.ix] = dent.memo
         
-    def setFlags(self, dent, flag):
-        self.flagDict[dent] = flag
+    def setFlags(self, dent):
+        self.flagDict[dent.ix] = dent.flag
 
     def sizeHint(self):
         return QtCore.QSize(80, 600)
@@ -106,6 +106,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
             return #nothing to do... and division by zero errors!
         columnWidth = (self.width() - self.timeOffset) / columnCount
         for dent in self.dents:
+            ix = dent.ix
             leftx = self.timeOffset + (col) * columnWidth
             rightx = self.timeOffset + (col + 1) * columnWidth
 
@@ -113,10 +114,9 @@ class appointmentOverviewWidget(QtGui.QWidget):
             rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
             if rect.contains(event.pos()):
                 self.highlightedRect = rect
-                QtGui.QToolTip.showText(event.globalPos(),
-                    QtCore.QString(self.memoDict[dent]))
+                QtGui.QToolTip.showText(event.globalPos(), dent.memo)
 
-            for slot in self.freeslots[dent]:
+            for slot in self.freeslots[ix]:
                 (slotstart,length) = slot
                 startcell = (localsettings.minutesPastMidnight(slotstart)
                 - self.startTime) / self.slotLength
@@ -127,15 +127,15 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
                 if rect.contains(event.pos()):
                     self.highlightedRect = rect
-                    feedback = '%d mins starting at '% length + \
-                    localsettings.wystimeToHumanTime(slotstart) + \
-                    "  with " + localsettings.apptix_reverse[dent]
+                    feedback = '%d mins starting at %s with %s'% (length,
+                    localsettings.wystimeToHumanTime(slotstart), 
+                    dent.initials)
                     
                     QtGui.QToolTip.showText(event.globalPos(),
                     QtCore.QString(feedback))
                     break
 
-            for appt in self.appts[dent]:
+            for appt in self.appts[ix]:
                 (slotstart,length) = appt
                 startcell = (localsettings.minutesPastMidnight(slotstart) -
                 self.startTime) / self.slotLength
@@ -148,7 +148,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                     self.highlightedRect = rect
                     break
 
-            for appt in self.eTimes[dent]:
+            for appt in self.eTimes[ix]:
                 (slotstart, length) = appt
                 startcell = (localsettings.minutesPastMidnight(slotstart) - 
                 self.startTime) / self.slotLength
@@ -161,7 +161,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                     self.highlightedRect = rect
                     break
 
-            for lunch in self.lunches[dent]:
+            for lunch in self.lunches[ix]:
                 (slotstart, length) = lunch
                 startcell = (localsettings.minutesPastMidnight(slotstart) - 
                 self.startTime) / self.slotLength
@@ -198,10 +198,10 @@ class appointmentOverviewWidget(QtGui.QWidget):
             rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
             if rect.contains(event.pos()):
                 self.highlightedRect = rect
-                self.emit(QtCore.SIGNAL("DentistHeading"), (dent, self.date))
+                self.emit(QtCore.SIGNAL("DentistHeading"),(dent.ix, self.date))
                 return
             if event.button() == 1: #left click
-                for slot in self.freeslots[dent]:
+                for slot in self.freeslots[dent.ix]:
                     (slotstart, length) = slot
                     startcell = (localsettings.minutesPastMidnight(
                     slotstart) - self.startTime) / self.slotLength
@@ -212,7 +212,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.emit(QtCore.SIGNAL("AppointmentClicked"),
-                        (self.day, slot, dent))
+                        (self.day, slot, dent.ix))
 
                         break
 
@@ -220,7 +220,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 leftx = self.timeOffset + col * columnWidth
                 rightx = self.timeOffset + (col+1) * columnWidth
 
-                for slot in self.freeslots[dent]:
+                for slot in self.freeslots[dent.ix]:
                     (slotstart, length) = slot
                     startcell = (localsettings.minutesPastMidnight(
                     slotstart) - self.startTime) / self.slotLength
@@ -231,15 +231,15 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.highlightedRect = rect
-                        feedback = '%d mins starting at '% length + \
-                        localsettings.wystimeToHumanTime(slotstart) + \
-                        "  with " + localsettings.apptix_reverse[dent]
+                        feedback = '%d mins starting at %s with %s'% (length,
+                        localsettings.wystimeToHumanTime(slotstart),
+                        dent.initials)
 
                         QtGui.QMessageBox.information(self, "Info",
                         "You've right clicked on a slot<br />%s"% feedback)
                         return
 
-                for appt in self.appts[dent]:
+                for appt in self.appts[dent.ix]:
                     (slotstart, length) = appt
                     startcell = (localsettings.minutesPastMidnight(
                     slotstart) - self.startTime) / self.slotLength
@@ -250,15 +250,15 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.highlightedRect = rect
-                        feedback = '%d mins starting at '% length + \
-                        localsettings.wystimeToHumanTime(
-                        slotstart)+"  with "+localsettings.apptix_reverse[dent]
+                        feedback = '%d mins starting at %s with %s'% (length,
+                        localsettings.wystimeToHumanTime(slotstart),
+                        dent.initials)
 
                         QtGui.QMessageBox.information(self,"Info",
                         "You've right clicked on an appt<br />%s"% feedback)
                         return
 
-                for lunch in self.lunches[dent]:
+                for lunch in self.lunches[dent.ix]:
                     (slotstart, length) = lunch
                     startcell = (localsettings.minutesPastMidnight(
                     slotstart) - self.startTime) / self.slotLength
@@ -270,15 +270,15 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.highlightedRect = rect
-                        feedback = '%d mins starting at '% length + \
-                        localsettings.wystimeToHumanTime(slotstart) + \
-                        "  with " + localsettings.apptix_reverse[dent]
+                        feedback = '%d mins starting at %s with %s'% (length,
+                        localsettings.wystimeToHumanTime(slotstart),
+                        dent.initials)
 
                         QtGui.QMessageBox.information(self, "Info",
                         "You've right clicked Lunch<br />%s"% feedback)
                         return
 
-                for appt in self.eTimes[dent]:
+                for appt in self.eTimes[dent.ix]:
                     (slotstart, length) = appt
                     startcell = (localsettings.minutesPastMidnight(
                     slotstart) - self.startTime) / self.slotLength
@@ -289,9 +289,9 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.highlightedRect = rect
-                        feedback = '%d mins starting at '% length + \
-                        localsettings.wystimeToHumanTime(slotstart) + \
-                        "  with " + localsettings.apptix_reverse[dent]
+                        feedback = '%d mins starting at %s with %s'% (length,
+                        localsettings.wystimeToHumanTime(slotstart),
+                        dent.initials)
 
                         QtGui.QMessageBox.information(self, "Info",
                         "You've right clicked on an emergency slot<br />%s"% \
@@ -350,31 +350,31 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 painter.setBrush(BGCOLOR)
                 rect=QtCore.QRect(leftx,0,columnWidth,self.headingHeight)
                 painter.drawRect(rect)
-                initials = localsettings.apptix_reverse.get(dent)
-                if self.memoDict[dent] != "":
+                initials = localsettings.apptix_reverse.get(dent.ix)
+                if dent.memo != "":
                     initials = "*%s*"% initials
                 painter.drawText(rect,QtCore.Qt.AlignHCenter, initials)
 
                 ##dentist start/finish
                 painter.setBrush(APPTCOLORS["FREE"])
 
-                startcell = (
-                self.daystart[dent]-self.startTime)/self.slotLength
+                startcell = ((self.daystart[dent.ix]-self.startTime) /
+                self.slotLength)
 
-                length=self.dayend[dent]-self.daystart[dent]
+                length=self.dayend[dent.ix]-self.daystart[dent.ix]
                 
                 startY = startcell*self.slotHeight+self.headingHeight
                 endY = (length/self.slotLength)*self.slotHeight
                 rect=QtCore.QRectF(leftx, startY, columnWidth, endY)
                 
-                if self.flagDict[dent]:
+                if self.flagDict[dent.ix]:
                     #don't draw a white canvas if dentist is out of office
                     painter.drawRect(rect)
                 
                     ###slots
                     painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
                     painter.setBrush(APPTCOLORS["SLOT"])
-                    for slot in self.freeslots[dent]:
+                    for slot in self.freeslots[dent.ix]:
                         (slotstart, length) = slot
                         startcell = (localsettings.minutesPastMidnight(
                         slotstart)-self.startTime)/self.slotLength
@@ -393,10 +393,10 @@ class appointmentOverviewWidget(QtGui.QWidget):
                         
                     ###emergencies
                     painter.setBrush(APPTCOLORS["EMERGENCY"])
-                    for appt in self.eTimes[dent]:
+                    for appt in self.eTimes[dent.ix]:
                         (slotstart,length)=appt
                         slotTime = localsettings.minutesPastMidnight(slotstart)
-                        if self.daystart[dent] <= slotTime < self.dayend[dent]: 
+                        if self.daystart[dent.ix] <= slotTime < self.dayend[dent.ix]: 
                             startcell=(slotTime-self.startTime)/self.slotLength
 
                             rect=QtCore.QRectF(leftx,
@@ -413,10 +413,10 @@ class appointmentOverviewWidget(QtGui.QWidget):
                             
                     painter.setBrush(APPTCOLORS["LUNCH"])
                     painter.setBrush(APPTCOLORS["LUNCH"])
-                    for lunch in self.lunches[dent]:
+                    for lunch in self.lunches[dent.ix]:
                         (slotstart,length)=lunch
                         slotTime = localsettings.minutesPastMidnight(slotstart)
-                        if self.daystart[dent] <= slotTime < self.dayend[dent]: 
+                        if self.daystart[dent.ix] <= slotTime < self.dayend[dent.ix]: 
                             startcell=(slotTime-self.startTime)/self.slotLength
 
                             rect=QtCore.QRectF(leftx,
@@ -432,7 +432,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                     
                 ###appts
                 painter.setBrush(APPTCOLORS["BUSY"])
-                for appt in self.appts[dent]:
+                for appt in self.appts[dent.ix]:
                     (slotstart,length) = appt
                     startcell=(localsettings.minutesPastMidnight(
                     slotstart)-self.startTime)/self.slotLength
@@ -441,7 +441,6 @@ class appointmentOverviewWidget(QtGui.QWidget):
                     startcell*self.slotHeight+self.headingHeight,
                     columnWidth,(length/self.slotLength)*self.slotHeight)
                     painter.drawRect(rect)
-
 
                 painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
                 if col>0: 
@@ -454,7 +453,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 painter.drawRect(self.highlightedRect)
         
         except Exception, e:
-            print "error painting appointment overviewwidget", Exception, e
+            print "error painting appointment overviewwidget", e
 
 if __name__ == "__main__":
     def clicktest(a):
@@ -464,24 +463,35 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate(False)
     app = QtGui.QApplication(sys.argv)
-    
+    from openmolar.dbtools import appointments 
     #-initiate a book starttime 08:00 
     #-endtime 10:00 five minute slots, text every 3 slots
     form = appointmentOverviewWidget(1,"0800","1900",15,2)     
-    form.dents=(4,5)
+    d1, d2 = appointments.dentistDay(4), appointments.dentistDay(5)
+
+    d1.start=830
+    d1.end=1800
+    d1.memo="hello"
+    d2.start=1300
+    d2.end=1700
+    
+    form.dents=[d1,d2]
     form.clear()
-   
-    form.setStartTime(4,830)
-    form.setEndTime(4,1800)
+    form.init_dicts()
+    
+    form.setStartTime(d1)
+    form.setEndTime(d1)
+    form.setMemo(d1)
+    form.setFlags(d1)
+
+    form.setStartTime(d2)
+    form.setEndTime(d2)
+    form.setFlags(d2)    
+    
     form.freeslots[4] = ((1015, 30), (1735, 20))
     form.appts[4] = ((900,40),(1000,15))
     form.eTimes[4] = ((1115, 15), (1300, 60), (1600, 30))
     form.lunches[4] = ((1300,60),)
-    form.setMemo(4,"hello")
-    form.setFlags(4,True)
-    form.setFlags(5,True)    
-    form.setStartTime(5,1300)
-    form.setEndTime(5,1530)
     form.appts[5] = ((1400,15),)
     form.eTimes[5] = ((1115, 15), (1300, 60), (1600, 30))
     form.lunches[5] = ((1300,60),)

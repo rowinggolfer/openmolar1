@@ -141,12 +141,12 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
         dentData = appointments.getWorkingDents(self.date.toPyDate())
         for clinician in localsettings.activedents + localsettings.activehygs:
             startData = adayData(clinician)
-            for row in dentData:
-                if row[0] == startData.apptix:
-                    startData.setStart(row[1])
-                    startData.setFinish(row[2])
-                    startData.setMemo(row[3])
-                    startData.active = bool(row[4])
+            for dent in dentData:
+                if dent.ix == startData.apptix:
+                    startData.setStart(dent.start)
+                    startData.setFinish(dent.end)
+                    startData.setMemo(dent.memo)
+                    startData.active = dent.flag
             self.clinicians.append(startData)
 
     def checkForChanges(self):

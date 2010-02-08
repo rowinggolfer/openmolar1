@@ -10,9 +10,9 @@ import datetime
 from openmolar.connect import connect, omSQLresult, ProgrammingError
 from openmolar.settings import localsettings
 
-class dayAppointmentData():
+class daySummary(object):
     '''
-    a data structure to hold all data for a day
+    a data structure to hold just summary data for a day
     '''
     def __init__(self):
         self.date = datetime.date(1900,1,1)
@@ -23,7 +23,7 @@ class dayAppointmentData():
         self.memo = "today"
         self.memos = {}
         self.appointments = ()
-   
+    
     def setDate(self, date):
         '''
         update the class with data for date
@@ -38,18 +38,33 @@ class dayAppointmentData():
         self.latest_end = 0
         self.memo = "%s %s"% (localsettings.longDate(date), self.header())
         
-        for apptix,start,end,memo,flag in getWorkingDents(self.date):
-            self.memos[apptix] = memo
-            self.startTimes[apptix] = start
-            self.endTimes[apptix] = end
-            self.inOffice[apptix] = bool(flag)
-            if flag != 0:
-                workingDents.append(apptix)
-                if start < self.earliest_start:
-                    self.earliest_start = start
-                if end > self.latest_end:
-                    self.latest_end = end
+        for dent in getWorkingDents(self.date):
+            self.memos[dent.ix] = dent.memo
+            self.startTimes[dent.ix] = dent.start
+            self.endTimes[dent.ix] = dent.end
+            self.inOffice[dent.ix] = dent.flag
+            if dent.flag != 0:
+                workingDents.append(dent.ix)
+                if dent.start < self.earliest_start:
+                    self.earliest_start = dent.start
+                if dent.end > self.latest_end:
+                    self.latest_end = dent.end
         self.workingDents = tuple(workingDents)
+   
+class dayAppointmentData(daySummary):
+    '''
+    a data structure to hold all data for a day
+    '''
+    def __init__(self):
+        daySummary.__init__(self)
+        #self.date = datetime.date(1900,1,1)
+        #self.earliest_start = 2359
+        #self.latest_end = 0
+        #self.workingDents = ()
+        #self.inOffice = {}
+        #self.memo = "today"
+        #self.memos = {}
+        self.appointments = ()
     
     def header(self):
         '''
@@ -119,24 +134,24 @@ class dayAppointmentData():
                 retList.append(app)
         return retList
     
-class workingDay():
+class dentistDay():
     '''
     a small class to store data about a dentist's day
     '''
-    def __init__(self):
+    def __init__(self,apptix=0):
         self.date = datetime.date.today()
         self.start = 830
         self.end = 1800
-        self.apptix = 0
-
+        self.ix = apptix
+        self.initials = localsettings.apptix_reverse.get(apptix,"???")
         #a boolean showing if day is in use? (stored as a tiny int though)
-        self.flag = 1
+        self.flag = True
         self.memo = ""
 
     def __repr__(self):
         retarg = 'working day - %s times = %s - %s\n'% (
         self.date, self.start, self.end)
-        retarg += 'dentistNo = %s in office = %s\n'% (self.apptix, self.flag)
+        retarg += 'dentistNo = %s in office = %s\n'% (self.ix, self.flag)
         retarg += 'memo=%s'% self.memo
         return retarg
 
@@ -215,9 +230,10 @@ class printableAppt():
         return "%s %s %s %s %s %s %s %s"% (self.start, self.end, self.name,
         self.serialno, self.treat, self.note, self.cset, self.length())
 
+@localsettings.debug
 def updateAday(uddate, arg):
     '''
-    takes an arg of type alterAday.adayData, (a gui module)
+    takes an instance of the workingDay class
     and updates the database
     returns an omSQLresult
     '''
@@ -241,7 +257,7 @@ where adate=%s and apptix=%s'''
 
 def alterDay(arg):
     '''
-    takes a workingDay object tries to change the aday table
+    takes a dentistDay object tries to change the aday table
     returns an omSQLresult
     '''
     #-- this method is called from the apptOpenDay Dialog, which is deprecated!!
@@ -259,7 +275,7 @@ def alterDay(arg):
         query = '''update aday set start=%s,end=%s,flag=%s, memo=%s
         where adate=%s and apptix=%s'''
         values = (arg.start, arg.end, arg.flag, arg.memo, arg.date, 
-        arg.apptix)
+        arg.ix)
 
         if True: #localsettings.logqueries:
             print query, values
@@ -277,7 +293,7 @@ def alterDay(arg):
     else:
         result.setMessage("The date you have tried to modify is " + \
         "beyond the dates opened for dentist %s"%(
-        localsettings.ops.get(arg.apptix),))
+        localsettings.ops.get(arg.ix),))
 
     return result
 
@@ -307,7 +323,6 @@ def todays_patients(dents):
     cursor.close()
     return rows
 
-@localsettings.debug
 def getWorkingDents(adate, dents=(0,), include_non_working=True):
     '''
     dentists are part time, or take holidays...this proc takes a date,
@@ -339,21 +354,31 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
     rows = cursor.fetchall()
     cursor.close()
     
-    return rows
+    ##originally I just return the rows here...
+    wds = []
+    for apptix, start, end, memo, flag in rows:
+        dent = dentistDay(apptix)
+        dent.start = start
+        dent.end = end
+        dent.memo = memo
+        dent.flag = bool(flag)
+        wds.append(dent)
+        
+    return tuple(wds)
 
-def getDayMemos(startdate, enddate, dents=() ):
+def getDayInfo(startdate, enddate, dents=() ):
     '''
     get any day memo's for a range of dents and tuple of dentists
     if month = 0, return all memos for the given year
-    useage is getDayMemos(pydate,pydate,(1,4))
+    useage is getDayInfo(pydate,pydate,(1,4))
     start date is inclusive, enddate not so 
     '''
     dents = (0,) + dents
     
     cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s ) "
     
-    query = '''SELECT adate, apptix, memo FROM aday WHERE memo!="" AND 
-    adate>=%s AND adate<%s ''' + cond 
+    query = '''SELECT adate, apptix, start, end, memo, flag FROM aday 
+    WHERE adate>=%s AND adate<%s ''' + cond 
     
     values = (startdate, enddate) + dents
     
@@ -367,13 +392,17 @@ def getDayMemos(startdate, enddate, dents=() ):
     rows = cursor.fetchall()
     cursor.close()
     data = {}
-    for row in rows:
-        key = "%d%02d"% (row[0].month, row[0].day)
-        value = (row[1], row[2])
+    for adate, apptix, start, end, memo, flag in rows:
+        key = "%d%02d"% (adate.month, adate.day)
+        dent = dentistDay(apptix)
+        dent.start = start
+        dent.end = end
+        dent.memo = memo
+        dent.flag = bool(flag)
         if data.has_key(key):
-            data[key].append(value)
+            data[key].append(dent)
         else:
-            data[key] = [value]
+            data[key] = [dent]
     
     return data
 
@@ -1171,5 +1200,5 @@ if __name__ == "__main__":
     #print getBlocks(testdate,4)
     #print daysSlots("2009_2_02","NW")
     #delete_appt(420,2)
-    #print workingDay()
+    #print dentistDay()
 

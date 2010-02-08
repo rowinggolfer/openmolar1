@@ -692,9 +692,9 @@ def apptOVheaderclick(om_gui, arg):
     ##TODO doing this should offer the user better options than just this..
     result = QtGui.QMessageBox.question(om_gui, "Confirm",
     "Confirm Print Daybook", QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
-
     if result == QtGui.QMessageBox.Ok:
-        om_gui.printBook(arg)
+        apptix, adate = arg
+        om_gui.bookPrint(apptix, adate)
 
 def ptApptTableNav(om_gui):
     '''called by signals from the patient's appointment table'''
@@ -1199,7 +1199,7 @@ def layout_month(om_gui):
     enddate = datetime.date(year, month, 1)
     dents = tuple(getUserCheckedClinicians(om_gui))
     om_gui.ui.monthView.setDents(dents)
-    rows = appointments.getDayMemos(startdate, enddate, dents)
+    rows = appointments.getDayInfo(startdate, enddate, dents)
     om_gui.ui.monthView.setData(rows)
     data = appointments.getBankHols(startdate, enddate)
     om_gui.ui.monthView.setHeadingData(data)        
@@ -1214,7 +1214,7 @@ def layout_year(om_gui):
     enddate = datetime.date(year+1, 1, 1)
     dents = tuple(getUserCheckedClinicians(om_gui))
     om_gui.ui.yearView.setDents(dents)    
-    data = appointments.getDayMemos(startdate, enddate, dents)
+    data = appointments.getDayInfo(startdate, enddate, dents)
     om_gui.ui.yearView.setData(data)
     data = appointments.getBankHols(startdate, enddate)
     om_gui.ui.yearView.setHeadingData(data)    
@@ -1310,35 +1310,35 @@ def layout_weekView(om_gui):
             #-- tuple like 
             #-- ((4, 840, 1900,"memo", 0) , (5, 830, 1400, "memo", 1))
 
-            for dent, start, end, memo, flag  in workingdents:
+            for dent in workingdents:
                 ov.dents.append(dent)
             ov.init_dicts()
-            for dent, start, end, memo, flag  in workingdents:            
-                ov.setStartTime(dent, start)
-                ov.setEndTime(dent, end)
-                ov.setMemo(dent, memo)
-                ov.setFlags(dent, flag)
+            for dent in workingdents:            
+                ov.setStartTime(dent)
+                ov.setEndTime(dent)
+                ov.setMemo(dent)
+                ov.setFlags(dent)
         
     if om_gui.ui.aptOV_apptscheckBox.checkState():
         #--add appts
         for ov in om_gui.ui.apptoverviews:
             for dent in ov.dents:
-                ov.appts[dent] = appointments.daysummary(
-                ov.date.toPyDate(), dent)
+                ov.appts[dent.ix] = appointments.daysummary(
+                ov.date.toPyDate(), dent.ix)
 
     if om_gui.ui.aptOV_emergencycheckBox.checkState():
         #--add emergencies
         for ov in om_gui.ui.apptoverviews:
             for dent in ov.dents:
-                ov.eTimes[dent] = appointments.getBlocks(
-                ov.date.toPyDate(), dent)
+                ov.eTimes[dent.ix] = appointments.getBlocks(
+                ov.date.toPyDate(), dent.ix)
 
     if om_gui.ui.aptOV_lunchcheckBox.checkState():
         #--add lunches
         for ov in om_gui.ui.apptoverviews:
             for dent in ov.dents:
-                ov.lunches[dent] = appointments.getLunch(
-                ov.date.toPyDate(), dent)
+                ov.lunches[dent.ix] = appointments.getLunch(
+                ov.date.toPyDate(), dent.ix)
         
     if str(om_gui.ui.aptOVmode_label.text()) == "Scheduling Mode":
         #--user is scheduling an appointment so show 'slots'
@@ -1397,8 +1397,8 @@ def layout_dayView(om_gui):
     for dent in todaysDents:
         book = om_gui.apptBookWidgets[i]
         
-        book.dentist = localsettings.apptix_reverse[dent]
-     
+        book.setDentist(dent)
+        
         book.setDayStartTime(abs_start)        
         book.setDayEndTime(abs_end)                    
         

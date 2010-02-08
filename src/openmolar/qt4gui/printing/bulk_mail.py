@@ -13,9 +13,6 @@ from openmolar.settings import localsettings
 
 DATE_FORMAT = "MMMM, yyyy"
 
-FAMILYICON = QtGui.QIcon()
-FAMILYICON.addPixmap(QtGui.QPixmap(":/agt_family.png"))
-
 class omLetter(object):
     def __init__(self):
         self.salutation = ""
@@ -76,9 +73,12 @@ class TreeItem(object):
 class treeModel(QtCore.QAbstractItemModel):
     def __init__(self, header, mydata):
         super(QtCore.QAbstractItemModel, self).__init__()
+        self.FAMILYICON = QtGui.QIcon()
+        self.FAMILYICON.addPixmap(QtGui.QPixmap(":/agt_family.png"))
+
         self.rootItem = TreeItem(header)
         self.setupModelData(mydata, self.rootItem)
-
+    
     def columnCount(self, parent):
         if parent.isValid():
             return parent.internalPointer().columnCount()
@@ -94,7 +94,7 @@ class treeModel(QtCore.QAbstractItemModel):
             return item.data(index.column())
         elif role == QtCore.Qt.DecorationRole and index.column() == 1:
             if item.itemData.grouped:
-                return QtCore.QVariant(FAMILYICON)
+                return QtCore.QVariant(self.FAMILYICON)
         elif role == QtCore.Qt.BackgroundRole:
             if item.itemData.grouped:
                 if item.itemData.letterno % 2:

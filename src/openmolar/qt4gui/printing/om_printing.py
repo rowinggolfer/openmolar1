@@ -390,12 +390,11 @@ def printdaylists(om_gui, args, expanded=False):
     '''prints the single book pages'''
     dlist=daylistprint.printDaylist()
     something_to_print=False
-    for arg in args:
-        data=appointments.printableDaylistData(arg[1].toPyDate(), arg[0])
-        #note arg[1]=Qdate
+    for apptix, adate in args:
+        data = appointments.printableDaylistData(adate.toPyDate(), apptix)
         if data != []:
             something_to_print=True
-            dlist.addDaylist(arg[1], arg[0], data)
+            dlist.addDaylist(adate, apptix, data)
     if something_to_print:
         dlist.print_(expanded)
 
@@ -414,14 +413,12 @@ def printmultiDayList(om_gui, args):
         dlist.print_()
         
 def book1print(om_gui):
-    try:
-        dent=localsettings.apptix[om_gui.apptBookWidgets[0].dentist]
-        date=om_gui.ui.calendarWidget.selectedDate()
-        books=((dent, date), )
-        om_gui.printdaylists(books)
-    except KeyError:
-        om_gui.advise("error printing book", 1)
-
+    print "DEPRECATED FUNCTION CALLED - book1print"
+    dent = om_gui.apptBookWidgets[0].apptix
+    adate = om_gui.ui.calendarWidget.selectedDate()
+    books = ((dent, adate), )
+    om_gui.printdaylists(books)
+    
 def daylistPrintWizard(om_gui):
     def checkAll(arg):
         for cb in checkBoxes.values():

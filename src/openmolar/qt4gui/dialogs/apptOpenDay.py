@@ -156,12 +156,11 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
         user has entered a good sequence, so write it to the DB now
         '''
         print "writing to DB"
-        day=appointments.workingDay()
-        day.apptix=self.chosenDent
-        day.date=self.dateEdit.date().toPyDate()
-        day.start=int(self.dayStart_timeEdit.time().toString("hmm"))
-        day.end=int(self.dayFinish_timeEdit.time().toString("hmm"))
-        day.memo=str(self.memo_lineEdit.text())
+        day = appointments.dentistDay(self.chosenDent)
+        day.date = self.dateEdit.date().toPyDate()
+        day.start = int(self.dayStart_timeEdit.time().toString("hmm"))
+        day.end = int(self.dayFinish_timeEdit.time().toString("hmm"))
+        day.memo = str(self.memo_lineEdit.text())
         
         
         #QtGui.QMessageBox.information(self.dialog,"sorry","this method is deprecated")

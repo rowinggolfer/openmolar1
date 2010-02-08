@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-01-31 14:18+0000\n"
-"PO-Revision-Date: 2010-01-31 15:03+0000\n"
-"Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
+"PO-Revision-Date: 2010-02-07 13:50+0000\n"
+"Last-Translator: Harza Lajos <Unknown>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-02-01 04:47+0000\n"
+"X-Launchpad-Export-Date: 2010-02-08 04:47+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:64
@@ -28,11 +28,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:67
 msgid "perio"
-msgstr ""
+msgstr "perio"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:67
 msgid "xray"
-msgstr ""
+msgstr "rtg"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:68
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:545
@@ -45,11 +45,11 @@ msgstr "egyéb"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:546
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:558
 msgid "custom"
-msgstr ""
+msgstr "egyedi"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:81
 msgid "Denture Work"
-msgstr ""
+msgstr "Fogsoros munka"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/daybook.py:54
 msgid "Error - unrecognised practioner- sorry"
@@ -379,6 +379,8 @@ msgid ""
 "for the moment, please enter treatment\n"
 "into the plan first then complete it."
 msgstr ""
+"egyenlőre vigye fel a kezelést\n"
+"a tervbe, majd valósítsa meg."
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/charts/charts_gui.py:111
 msgid "unable to update chart - this shouldn't happen!!"
@@ -1326,11 +1328,11 @@ msgstr "Fogorvos/Higiénikus"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_hygenist_wizard.py:84
 msgid "Debridement"
-msgstr ""
+msgstr "Hídeltávolítás"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:590
 msgid "OpenMolar - database wizard"
-msgstr ""
+msgstr "OpenMolar - adatbázis varázsló"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:591
 msgid "What do you want to do?"
@@ -1342,11 +1344,11 @@ msgstr "Létező openMolar adatbázis megváltoztatása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:593
 msgid "Create a New database from scratch"
-msgstr ""
+msgstr "Új adatbázis létrehozása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:594
 msgid "Create a New database (from a known template)"
-msgstr ""
+msgstr "Új adatbázis létrehozása (minta alapján)"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:596
 msgid "Practice Name"
@@ -1410,7 +1412,7 @@ msgstr "A következő felhasználók léphetnek be a rendszerbe"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:610
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:611
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:619
@@ -1450,11 +1452,11 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:616
 msgid "Modify Selected User"
-msgstr ""
+msgstr "Felhasználó módosítása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:617
 msgid "New User Details"
-msgstr ""
+msgstr "Új felhasználó adatai"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:621
 msgid "Standard User"
@@ -1474,7 +1476,7 @@ msgstr "Aktív felhasználó"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:627
 msgid "Add a New User"
-msgstr ""
+msgstr "Új felhasználó hozzáadása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:628
 msgid "Users"
@@ -1646,19 +1648,19 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:685
 msgid "View XML"
-msgstr ""
+msgstr "XML nézet"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:686
 msgid "File"
-msgstr ""
+msgstr "File"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:687
 msgid "L&oad Template"
-msgstr ""
+msgstr "Minta betöltése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:688
 msgid "&Save Template"
-msgstr ""
+msgstr "&Minta mentése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2698
 msgid "Open Molar - YOUR dental database application"

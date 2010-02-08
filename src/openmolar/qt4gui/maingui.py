@@ -2867,11 +2867,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if something_to_print:
             dlist.print_()
 
-    def book1print(self, dentist):
+    def bookPrint(self, dentist, adate):
+        '''
+        print an appointment book
+        '''
         try:
-            dent=localsettings.apptix[dentist]
-            date=self.ui.calendarWidget.selectedDate()
-            books=((dent, date), )
+            books = ((dentist, adate), )
             om_printing.printdaylists(self, books)
         except KeyError:
             self.advise("error printing book", 1)
@@ -3487,7 +3488,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_apptWidgets(self, book):
 
-        book.connect(book, QtCore.SIGNAL("print_me"), self.book1print)
+        book.connect(book, QtCore.SIGNAL("print_me"), self.bookPrint)
         
         book.connect(book, QtCore.SIGNAL("new_memo"),
         self.bookmemo_Edited)
