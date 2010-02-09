@@ -308,9 +308,10 @@ def printMonth(om_gui):
     myimage = QtGui.QPixmap
     printimage = myimage.grabWidget(om_gui.ui.monthView)
     myclass = chartPrint.printChart(printimage, landscape=True)
+    myclass.sizeToFit()
     myclass.printpage()
     om_gui.ui.monthView.selectedDate = temp
-    
+
 def printaccount(om_gui, tone="A"):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)

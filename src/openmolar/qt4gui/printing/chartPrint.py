@@ -12,11 +12,18 @@ from PyQt4 import QtCore, QtGui
 class printChart():
     '''initiates with an image (chart) as the argument'''
     def __init__(self, chartimage, landscape=False):
-        self.chart=chartimage
+        self.image = chartimage
         self.printer = QtGui.QPrinter()
         if landscape:
             self.printer.setOrientation(QtGui.QPrinter.Landscape)
         self.printer.setPageSize(QtGui.QPrinter.A4)
+
+    def sizeToFit(self):
+        '''
+        make the image fill the page
+        '''
+        rect = self.printer.pageRect()
+        self.image = self.image.scaled(rect.width(), rect.height())
 
     def printpage(self, askfirst=True):
         '''
@@ -33,8 +40,8 @@ class printChart():
         painter.save()
         y = 0
         x = 0
-        painter.drawPixmap(x, 0, self.chart)
-        y += self.chart.height()
+        painter.drawPixmap(x, 0, self.image)
+        y += self.image.height()
         painter.restore()
 
 if __name__ == "__main__":
