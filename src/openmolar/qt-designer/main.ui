@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>5</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -2169,7 +2169,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>324</width>
+                        <width>748</width>
                         <height>538</height>
                        </rect>
                       </property>
@@ -3891,7 +3891,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>87</width>
+                    <width>113</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4230,7 +4230,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </size>
                  </property>
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="dayViewPage">
                   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -4304,19 +4304,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </layout>
                  </widget>
                  <widget class="QWidget" name="page_4">
-                  <widget class="QLabel" name="label_47">
-                   <property name="geometry">
-                    <rect>
-                     <x>40</x>
-                     <y>30</y>
-                     <width>111</width>
-                     <height>16</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>Month Options</string>
-                   </property>
-                  </widget>
+                  <layout class="QVBoxLayout" name="verticalLayout_28">
+                   <item>
+                    <widget class="QPushButton" name="printMonth_pushButton">
+                     <property name="text">
+                      <string>Print Month View</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../resources/resources.qrc">
+                       <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                  <widget class="QWidget" name="page_5">
                   <layout class="QHBoxLayout" name="horizontalLayout_22">
@@ -4412,7 +4412,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <x>0</x>
                     <y>0</y>
                     <width>198</width>
-                    <height>98</height>
+                    <height>112</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4503,7 +4503,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="tab_26">
                <attribute name="title">
@@ -4775,8 +4775,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>287</height>
+                     <width>740</width>
+                     <height>513</height>
                     </rect>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_30"/>

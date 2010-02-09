@@ -2836,6 +2836,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         om_printing.printaccount(self, tone)
         
+    def printMonth_pushButton_clicked(self):
+        '''
+        print the current Monthe View
+        '''
+        om_printing.printMonth(self)
+
     def testGP17(self):
         '''
         used to test print a GP17 (NHS scotland) claim form
@@ -3475,7 +3481,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.goTodayPushButton,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
 
-
         QtCore.QObject.connect(self.ui.apptPrevDay_pushButton,
         QtCore.SIGNAL("clicked()"), self.apt_dayBack_clicked)
 
@@ -3485,10 +3490,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.fontSize_spinBox,
         QtCore.SIGNAL("valueChanged (int)"), self.fontSize_spinBox_changed)
 
+        QtCore.QObject.connect(self.ui.printMonth_pushButton,
+        QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)
 
     def signals_apptWidgets(self, book):
 
         book.connect(book, QtCore.SIGNAL("print_me"), self.bookPrint)
+        
         
         book.connect(book, QtCore.SIGNAL("new_memo"),
         self.bookmemo_Edited)

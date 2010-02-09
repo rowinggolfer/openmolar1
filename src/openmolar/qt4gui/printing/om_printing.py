@@ -302,7 +302,15 @@ def printChart(om_gui):
     myclass.printpage()
     om_gui.pt.addHiddenNote("printed", "static chart")
 
-
+def printMonth(om_gui):
+    temp = om_gui.ui.monthView.selectedDate
+    om_gui.ui.monthView.selectedDate = None
+    myimage = QtGui.QPixmap
+    printimage = myimage.grabWidget(om_gui.ui.monthView)
+    myclass = chartPrint.printChart(printimage, landscape=True)
+    myclass.printpage()
+    om_gui.ui.monthView.selectedDate = temp
+    
 def printaccount(om_gui, tone="A"):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)

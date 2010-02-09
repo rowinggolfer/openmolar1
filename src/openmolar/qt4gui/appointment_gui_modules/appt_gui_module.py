@@ -1229,21 +1229,29 @@ def layout_yearHeader(om_gui):
     headerText = '''<html><head><link rel="stylesheet"
     href="%s" type="text/css"></head><body><div class="center">
     <table width="100%%">
-    <tr><td colspan="2" class="yearheader">%s</td></tr>'''% (
+    <tr><td colspan="3" class="yearheader">%s</td></tr>'''% (
     localsettings.stylesheet, dayData.dayName)
     
     if dayData.publicHoliday != "":
-        headerText += '''<tr><td colspan="2" class="bankholiday">%s</td>
+        headerText += '''<tr><td colspan="3" class="bankholiday">%s</td>
         </tr>'''% dayData.publicHoliday
     
-    for dent in dayData.memos.keys():
-        if dent==0:
-            headerText += '''<tr><td class="yearops">ALL</td>
-            <td class="yearmemo">%s</td></tr>''' % dayData.memos[dent]   
+    for dentix in dayData.dents.keys():
+        dent = dayData.dents[dentix]
+        if dentix==0:
+            headerText += '''<tr><td class="yearops" colspan="2">ALL</td>
+            <td class="yearmemo">%s</td></tr>''' % dent.memo   
         else:
+            times = ""
+            if dent.flag:
+                times = "%s - %s"%(
+                localsettings.wystimeToHumanTime(dent.start),
+                localsettings.wystimeToHumanTime(dent.end))
+                                
             headerText += '''<tr><td class="yearops">%s</td>
+            <td class="yearops">%s</td>
             <td class="yearmemo">%s</td></tr>''' %(
-            localsettings.apptix_reverse.get(dent), dayData.memos[dent])
+            dent.initials, times, dent.memo)
     headerText += "</table></body></html>"
     
     om_gui.ui.year_textBrowser.setText(headerText)

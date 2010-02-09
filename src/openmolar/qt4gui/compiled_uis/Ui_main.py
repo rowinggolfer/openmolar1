@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Tue Feb  2 10:19:31 2010
+# Created: Tue Feb  9 12:06:33 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -859,7 +859,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 324, 538))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 748, 538))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.verticalLayout_24 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_5)
         self.verticalLayout_24.setObjectName("verticalLayout_24")
@@ -1586,7 +1586,7 @@ class Ui_MainWindow(object):
         self.scrollArea_8.setWidgetResizable(True)
         self.scrollArea_8.setObjectName("scrollArea_8")
         self.scrollAreaWidgetContents_13 = QtGui.QWidget(self.scrollArea_8)
-        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 87, 58))
+        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 113, 58))
         self.scrollAreaWidgetContents_13.setObjectName("scrollAreaWidgetContents_13")
         self.verticalLayout_20 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_13)
         self.verticalLayout_20.setSpacing(0)
@@ -1751,9 +1751,12 @@ class Ui_MainWindow(object):
         self.diary_stackedWidget.addWidget(self.week_controls)
         self.page_4 = QtGui.QWidget()
         self.page_4.setObjectName("page_4")
-        self.label_47 = QtGui.QLabel(self.page_4)
-        self.label_47.setGeometry(QtCore.QRect(40, 30, 111, 16))
-        self.label_47.setObjectName("label_47")
+        self.verticalLayout_28 = QtGui.QVBoxLayout(self.page_4)
+        self.verticalLayout_28.setObjectName("verticalLayout_28")
+        self.printMonth_pushButton = QtGui.QPushButton(self.page_4)
+        self.printMonth_pushButton.setIcon(icon9)
+        self.printMonth_pushButton.setObjectName("printMonth_pushButton")
+        self.verticalLayout_28.addWidget(self.printMonth_pushButton)
         self.diary_stackedWidget.addWidget(self.page_4)
         self.page_5 = QtGui.QWidget()
         self.page_5.setObjectName("page_5")
@@ -1788,7 +1791,7 @@ class Ui_MainWindow(object):
         self.aptOVdentscrollArea.setWidgetResizable(True)
         self.aptOVdentscrollArea.setObjectName("aptOVdentscrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.aptOVdentscrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 198, 98))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 198, 112))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(2)
@@ -1967,7 +1970,7 @@ class Ui_MainWindow(object):
         self.monthView_scrollArea.setWidgetResizable(True)
         self.monthView_scrollArea.setObjectName("monthView_scrollArea")
         self.scrollAreaWidgetContents_14 = QtGui.QWidget(self.monthView_scrollArea)
-        self.scrollAreaWidgetContents_14.setGeometry(QtCore.QRect(0, 0, 663, 287))
+        self.scrollAreaWidgetContents_14.setGeometry(QtCore.QRect(0, 0, 740, 513))
         self.scrollAreaWidgetContents_14.setObjectName("scrollAreaWidgetContents_14")
         self.horizontalLayout_30 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_14)
         self.horizontalLayout_30.setObjectName("horizontalLayout_30")
@@ -2588,12 +2591,12 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(5)
+        self.main_tabWidget.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(3)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
-        self.diary_stackedWidget.setCurrentIndex(0)
-        self.diary_tabWidget.setCurrentIndex(0)
+        self.diary_stackedWidget.setCurrentIndex(3)
+        self.diary_tabWidget.setCurrentIndex(2)
         self.fees_tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.saveButton, self.tabWidget)
@@ -2928,7 +2931,7 @@ class Ui_MainWindow(object):
         self.aptOV_lunchcheckBox.setText(_( u"show lunch breaks"))
         self.weekView_outOfOffice_checkBox.setText(_( u"Ignore  Out-of-office"))
         self.aptOV_apptscheckBox.setText(_( u"show appointments"))
-        self.label_47.setText(_( u"Month Options"))
+        self.printMonth_pushButton.setText(_( u"Print Month View"))
         self.label_64.setText(_( u"Year"))
         self.label_49.setText(_( u"Tasks"))
         self.label_42.setText(_( u"Font Size"))

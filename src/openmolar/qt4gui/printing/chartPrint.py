@@ -11,9 +11,11 @@ from PyQt4 import QtCore, QtGui
 
 class printChart():
     '''initiates with an image (chart) as the argument'''
-    def __init__(self, chartimage):
+    def __init__(self, chartimage, landscape=False):
         self.chart=chartimage
         self.printer = QtGui.QPrinter()
+        if landscape:
+            self.printer.setOrientation(QtGui.QPrinter.Landscape)
         self.printer.setPageSize(QtGui.QPrinter.A4)
 
     def printpage(self, askfirst=True):
