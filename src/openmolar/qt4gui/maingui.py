@@ -145,6 +145,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.editPageVisited=False
         self.forum_notified = False
         self.appointmentData = appointments.dayAppointmentData()
+        self.fee_models = []
         
     def advise(self, arg, warning_level=0):
         '''
@@ -641,7 +642,7 @@ class openmolarGui(QtGui.QMainWindow):
             if not self.feestableLoaded:
                 fees_module.loadFeesTable(self)
             if self.pt.serialno !=0:
-                self.ui.fees_tabWidget.setCurrentIndex(
+                self.ui.chooseFeescale_comboBox.setCurrentIndex(
                 self.pt.getFeeTable().index)
         if ci == 7:
             #--forum
@@ -1662,7 +1663,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         localsettings.allowed_logins)
 
         self.addHistoryMenu()
-
+        
+        
     def addHistoryMenu(self):
         '''
         add items to a toolbutton for trawling the database

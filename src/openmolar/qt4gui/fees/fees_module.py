@@ -20,6 +20,7 @@ import subprocess
 from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
 patient_write_changes
 from openmolar.settings import localsettings
+from openmolar.qt4gui.fees import fee_table_model
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import paymentwidget
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
@@ -159,81 +160,12 @@ def loadFeesTable(om_gui):
     tableKeys = feeTables.tables.keys()
     tableKeys.sort()
 
-    for index in tableKeys:
-        table = feeTables.tables[index]
-        #-- insert the tab one from the end (end tab reserved for the
-        #-- specific use of adding a new fee table)
-        tab = QtGui.QTreeWidget()
-        label = QtGui.QLabel()
+    for key in tableKeys:
+        table = feeTables.tables[key]
+        om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
+        model = fee_table_model.treeModel(table)
+        om_gui.fee_models.append(model)    
         
-        label.setText("<b>%s</b> %s - %s"% (
-        table.description, 
-        localsettings.formatDate(table.startDate),
-        localsettings.formatDate(table.endDate)))        
-        
-        headers = [_("code"), _("usercode"),_("regulation"),
-         _("description"), _("brief descriptions")]
-
-        fee_colHeaders = []
-        for cat in table.categories:
-            fee_colHeaders.append("%s %s"% (cat, _("fee")))
-            if table.hasPtCols:
-                fee_colHeaders.append(_("charge"))
-        
-        tab.setHeaderLabels(headers + fee_colHeaders)
-
-        feeDict = table.feesDict
-
-        keys=feeDict.keys()
-        keys.sort()
-        
-        colNo = len(table.categories)
-        for key in keys:
-            feeItem = feeDict[key]
-                        
-            for subNo in range(len(feeItem.brief_descriptions)):
-                if subNo == 0:                    
-                    cols = [str(key), feeItem.usercode, feeItem.regulations,
-                    feeItem.description ]
-                    om_gui_twi = tab
-                else:
-                    if subNo ==1:
-                        om_gui_twi = prev_twi
-                    cols = [str(key),"","",""]
-                    
-                cols.append(feeItem.brief_descriptions[subNo])
-                for i in range(colNo):
-                    cols.append(str(feeItem.fees[i][subNo]))
-                    if table.hasPtCols:
-                        cols.append(str(feeItem.ptFees[i][subNo]))
-                
-                prev_twi = QtGui.QTreeWidgetItem(om_gui_twi, cols)
-            
-            prev_twi.setExpanded(False)
-        #ok data loaded, so now insert it into the fees Tabwidget
-        i = om_gui.ui.fees_tabWidget.count()        
-        widg = QtGui.QWidget()
-        tab_label = table.briefName
-        om_gui.ui.fees_tabWidget.insertTab(i-1, widg, tab_label)
-        vbox = QtGui.QVBoxLayout()
-
-        vbox.addWidget(label)
-        vbox.addWidget(tab)
-        widg.setLayout(vbox)
-
-        #tab.expandAll()
-        for i in range(tab.columnCount()):
-            tab.resizeColumnToContents(i)
-
-        #hide the descriptions and regulations
-        tab.setColumnWidth(2, 10)
-        tab.setColumnWidth(4, 10)
-        
-        QtCore.QObject.connect(tab,
-        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
-        om_gui.fees_treeWidgetItem_clicked)
-    om_gui.ui.fees_tabWidget.setCurrentIndex(0)
-    
 def feeSearch(om_gui):
     '''
     fee search button clicked...
@@ -304,23 +236,23 @@ def nhsRegsPDF(om_gui):
             print Exception, e
             om_gui.advise(_("Error opening PDF file"), 2)
 
-def chooseFeescale(om_gui, arg):
+def chooseFeescale(om_gui, i):
     '''
     receives signals from the choose feescale combobox
     acts on the fee table
-    arg will be 0,1 or 2.
+    arg will be the chosen index
     '''
-    ##TODO - this is not called!!!
-    if arg == 0:
-        #show all
-        pass
-    elif arg == 1:
-        #show private
-        pass
-    elif arg == 2:
-        #show NHS
-        pass
-
+    table = localsettings.FEETABLES.tables[i]
+        
+    om_gui.ui.feeScale_label.setText("<b>%s</b> %s - %s"% (
+    table.description, 
+    localsettings.formatDate(table.startDate),
+    localsettings.formatDate(table.endDate))) 
+    try:
+        om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i])      
+    except IndexError:
+        om_gui.advise(_("fee table error"),2)
+        
 def chooseFeeItemDisplay(om_gui, arg):
     '''
     recieves signals from the choose feescale Items combobox

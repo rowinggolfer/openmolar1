@@ -31,7 +31,7 @@ DBNAME = "default"
 CLIENT_SCHEMA_VERSION = "1.5"
 DB_SCHEMA_VERSION = "unknown"
 ENCODING = locale.getpreferredencoding() #"latin-1" for the uk currrency??
-FEESTABLE = None
+FEETABLES = {}
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -759,7 +759,7 @@ def initiate(debug = False):
     
     print "loading fee and treatment logic tables"
     FEETABLES = feesTable.feeTables()
-
+    
     getLocalSettings()
 
     message = '''<html><head>
