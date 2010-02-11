@@ -54,7 +54,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="3" column="0" rowspan="2">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Text to apply</string>
@@ -66,6 +66,9 @@
        </item>
        <item row="3" column="1" colspan="2">
         <widget class="QComboBox" name="comboBox">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
          <item>
           <property name="text">
            <string>//Blocked//</string>
@@ -91,9 +94,19 @@
            <string>Lunch</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Catch up time</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Phone Call</string>
+          </property>
+         </item>
         </widget>
        </item>
-       <item row="4" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -250,6 +263,9 @@
         <widget class="QSpinBox" name="length_spinBox">
          <property name="suffix">
           <string> minutes</string>
+         </property>
+         <property name="minimum">
+          <number>-600</number>
          </property>
          <property name="maximum">
           <number>600</number>

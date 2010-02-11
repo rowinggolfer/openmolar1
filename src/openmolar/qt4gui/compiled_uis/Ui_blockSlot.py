@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'blockSlot.ui'
 #
-# Created: Thu Nov 19 21:47:05 2009
+# Created: Thu Feb 11 13:07:40 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,9 +36,12 @@ class Ui_Dialog(object):
         self.label_2 = QtGui.QLabel(self.tab)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_2, 3, 0, 2, 1)
         self.comboBox = QtGui.QComboBox(self.tab)
+        self.comboBox.setEditable(True)
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
@@ -46,7 +49,7 @@ class Ui_Dialog(object):
         self.comboBox.addItem("")
         self.gridLayout.addWidget(self.comboBox, 3, 1, 1, 2)
         spacerItem = QtGui.QSpacerItem(20, 34, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 4, 0, 1, 2)
+        self.gridLayout.addItem(spacerItem, 5, 0, 1, 2)
         self.blockStart_frame = QtGui.QFrame(self.tab)
         self.blockStart_frame.setMinimumSize(QtCore.QSize(0, 0))
         self.blockStart_frame.setFrameShape(QtGui.QFrame.NoFrame)
@@ -101,6 +104,7 @@ class Ui_Dialog(object):
         spacerItem1 = QtGui.QSpacerItem(20, 99, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem1, 5, 2, 1, 1)
         self.length_spinBox = QtGui.QSpinBox(self.tab_2)
+        self.length_spinBox.setMinimum(-600)
         self.length_spinBox.setMaximum(600)
         self.length_spinBox.setSingleStep(5)
         self.length_spinBox.setObjectName("length_spinBox")
@@ -136,6 +140,8 @@ class Ui_Dialog(object):
         self.comboBox.setItemText(2, _( u"Reserved Clinical Time"))
         self.comboBox.setItemText(3, _( u"Out of Office"))
         self.comboBox.setItemText(4, _( u"Lunch"))
+        self.comboBox.setItemText(5, _( u"Catch up time"))
+        self.comboBox.setItemText(6, _( u"Phone Call"))
         self.length_label.setText(_( u"minutes"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _( u"Insert a Block"))
         self.label_7.setText(_( u"Insert A Patient into this slot?"))

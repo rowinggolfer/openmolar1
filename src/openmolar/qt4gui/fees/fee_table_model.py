@@ -17,7 +17,7 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
 CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart", "Surgical",
-"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom")
+"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom","Occasional")
 
 
 class TreeItem(object):

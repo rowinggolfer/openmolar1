@@ -56,6 +56,11 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         QtCore.QObject.connect(self.length_spinBox, 
         QtCore.SIGNAL("valueChanged (int)"), self.changedLength)
         
+        self.earliestStart = None
+        self.latestFinish = None
+        self.minimumLength = 0
+        self.length = 0
+        
     def changedLength(self, mins):
         '''
         user has modded the appointment start time, sync the other start
@@ -77,17 +82,44 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         self.setLength()
         
     def exec_(self):
-        if self.Dialog.exec_():
-            if self.tabWidget.currentIndex() == 0:
-                return True
-            else:
-                if not self.patient or self.patient.serialno == 0:
+        while True:
+            if self.Dialog.exec_():
+                errors = []
+                if self.start_timeEdit.time() < self.earliestStart:
+                    errors.append(
+                    _("Start is outwith slot bounds (too early)"))
+                if self.start_timeEdit.time() > self.latestFinish:
+                    errors.append(
+                    _("Start is outwith slot bounds (too late)"))
+                if self.finish_timeEdit.time() > self.latestFinish:
+                    errors.append(
+                    _("Finish is outwith slot bounds (too late"))                    
+                if self.finish_timeEdit.time() > self.latestFinish:
+                    errors.append(
+                    _("Finish is outwith slot bounds (too early"))                    
+                if self.length < self.minimumLength:
+                    errors.append(_("length of appointment is too short"))
+                if self.tabWidget.currentIndex() == 0:
+                    if self.comboBox.currentText() == "":
+                        errors.append(_("no reason for the block given"))
+                else:
+                    if not self.patient or self.patient.serialno == 0:
+                        errors.append(_("no patient selected"))
+                if errors: 
+                    errorlist = ""
+                    for error in errors:
+                        errorlist += "<li>%s</li>"% error
+                    message = "<p>%s...<ul>%s</ul></p>"% (
+                    _("Unable to commit because"), errorlist )
                     QtGui.QMessageBox.information(self.Dialog,_("error"),
-                    _("You need to choose a patient"))
-                    return False
-                self.block = False #a value to specify an "appointment"
-                return True
-    
+                    message)
+                
+                else:
+                    self.block = self.tabWidget.currentIndex() == 0
+                    return True
+            else:
+                return False
+            
     def changePt(self):
         def repeat_last_search():
             dl.dob.setDate(localsettings.lastsearch[2])
@@ -156,16 +188,10 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         '''
         update the 3 time fields, and the available appointment length
         '''
-        self.appointment_timeEdit.setMinimumTime(start)
-        self.appointment_timeEdit.setMaximumTime(finish)                                
+        self.earliestStart = start
+        self.latestFinish = finish
         self.appointment_timeEdit.setTime(start)
-        
-        self.start_timeEdit.setMinimumTime(start)                
-        self.start_timeEdit.setMaximumTime(finish)                                
         self.start_timeEdit.setTime(start)
-                
-        self.finish_timeEdit.setMinimumTime(start)                
-        self.finish_timeEdit.setMaximumTime(finish)                
         self.finish_timeEdit.setTime(finish)
         self.setLength(True)
     
@@ -173,13 +199,13 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         start = self.start_timeEdit.time()
         finish = self.finish_timeEdit.time()
         
-        length = (finish.hour()*60 + finish.minute()) -(
-        start.hour()*60 + start.minute())
+        self.length = (finish.hour() * 60 + finish.minute()) -(
+        start.hour() * 60 + start.minute())
         
-        self.length_label.setText("%d<br />"% length + _("minutes"))
+        self.length_label.setText("%d<br />"% self.length + _("minutes"))
         if initialise:
-            self.length_spinBox.setMaximum(length)
-        self.length_spinBox.setValue(length)
+            self.length_spinBox.setMaximum(self.length)
+        self.length_spinBox.setValue(self.length)
         
 if __name__ == "__main__":
     import sys

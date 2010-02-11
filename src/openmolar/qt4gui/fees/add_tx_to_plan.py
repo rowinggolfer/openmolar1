@@ -171,17 +171,17 @@ def fromFeeTable(om_gui, model_index):
     '''
     add an item which has been selected from the fee table itself
     '''
-    print "adding an item from the fee table!!", model_index  
+    fee_item = om_gui.fee_models[
+    om_gui.ui.chooseFeescale_comboBox.currentIndex()].data(
+    model_index, QtCore.Qt.UserRole)
+
+    if not fee_item: 
+        # this will be the case if a header item was double clicked
+        return
     
     if course_module.newCourseNeeded(om_gui):
         return
     
-    fee_item = om_gui.fee_models[
-    om_gui.ui.chooseFeescale_comboBox.currentIndex()].data(
-    model_index, QtCore.Qt.UserRole)
-    
-    print fee_item
-
     table = om_gui.pt.getFeeTable()
         
     if fee_item.table != table:
