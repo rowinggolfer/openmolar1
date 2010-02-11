@@ -14,12 +14,19 @@ this module provides a model class so that feescales can be displayed
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
+from openmolar.settings import localsettings
+
+CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart", "Surgical",
+"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom")
+
 
 class TreeItem(object):
-    def __init__(self, key, data, parent=None):
+    def __init__(self, table, key, data, parent=None, index=0):
+        self.table = table
         self.parentItem = parent
         self.key = key
         self.itemData = data
+        self.index = index
         self.childItems = []
 
     def appendChild(self, item):
@@ -32,31 +39,39 @@ class TreeItem(object):
         return len(self.childItems)
 
     def columnCount(self):
-        if self.itemData == None:
-            return 9
-        else:
-            return 4 + len(self.itemData.fees) + len(self.itemData.ptFees)
-
+        return 5 + self.table.feeColCount
+        
     def data(self, column):
-        if column==0:
+        if column == 0:
             return QtCore.QVariant(self.key)
         if self.itemData == None:
-            return QtCore.QVariant()        
-        elif column==1:
+            return QtCore.QVariant() 
+        showAll =  self.parentItem.itemData == None       
+        if column == 1:
             return QtCore.QVariant(self.itemData.usercode)
-        elif column==2:
-            return QtCore.QVariant(self.itemData.brief_descriptions[0])
-        elif column==3:
-            return QtCore.QVariant(self.itemData.regulations)
-        elif column==4:
+        if showAll:
+            if column == 2:
+                return QtCore.QVariant(self.itemData.brief_descriptions[0])
+            if column == 3:
+                return QtCore.QVariant(self.itemData.regulations)
+        if column == 4:
             return QtCore.QVariant(self.itemData.description)
-        elif column>4:
-            try:
-                return QtCore.QVariant(str(self.itemData.fees[column-5]))
-            except IndexError:
-                print "oops", column, self.itemData.fees
-                pass
         
+        if column > 4:
+            if self.table.hasPtCols:
+                if column % 2 == 0:
+                    fee = localsettings.formatMoney(
+                    self.itemData.ptFees[(column-6)/2][self.index])
+                    return QtCore.QVariant(fee)
+                else:
+                    fee = localsettings.formatMoney(
+                    self.itemData.fees[(column-5)/2][self.index]) 
+                    return QtCore.QVariant(fee)
+            else:
+                fee = localsettings.formatMoney(
+                self.itemData.fees[column-5][self.index])
+                return QtCore.QVariant(fee)
+            
         return QtCore.QVariant()
 
     def parent(self):
@@ -69,6 +84,9 @@ class TreeItem(object):
         return 0
 
 class treeModel(QtCore.QAbstractItemModel):
+    '''
+    a model to display a feetables data
+    '''
     def __init__(self, table):
         super(QtCore.QAbstractItemModel, self).__init__()
         self.table = table
@@ -78,11 +96,11 @@ class treeModel(QtCore.QAbstractItemModel):
             self.feecats = []
             for cat in self.table.categories:
                 self.feecats.append(cat)
-                self.feecats.append("%s_fee")
+                self.feecats.append("%s_fee"% cat)
         else:
             self.feecats = self.table.categories
             
-        self.rootItem = TreeItem(None, None)
+        self.rootItem = TreeItem(self.table, None, None)
                 
         self.setupModelData()
     
@@ -175,29 +193,30 @@ class treeModel(QtCore.QAbstractItemModel):
         current_cat = 0
         keys = self.table.feesDict.keys()
         keys.sort()
-        for key in keys[:10]:
+        for key in keys:
             feeItem = self.table.feesDict[key]
             cat = feeItem.category
             if not parents.has_key(cat) :
-                head = TreeItem("HEADER", None, self.rootItem)
+                try:
+                    header = CATEGORIES[cat]
+                except IndexError:
+                    header = "CATEGORY %d"%cat
+                head = TreeItem(self.table, header, None, self.rootItem)
                 parents[cat] = head
                 self.rootItem.appendChild(head)
                 
             number_in_group = len(feeItem.brief_descriptions)
-            for row in range(number_in_group):
-                if row == 0:
-                    position = 0
-                else:
-                    print "multiples found for item", key
-                    position = 1
-            print key
-            parents[cat].appendChild(TreeItem(key,feeItem, parents[cat]))
-            
+            branch = TreeItem(self.table, key,feeItem, parents[cat])
+            parents[cat].appendChild(branch)
+                
+            for row in range(1,number_in_group):
+                branch.appendChild(
+                TreeItem(self.table, key,feeItem, branch, row))
+                            
     
 if __name__ == "__main__":
     
     app = QtGui.QApplication([])
-    from openmolar.settings import localsettings
     localsettings.initiate()
     
     model = treeModel(localsettings.FEETABLES.tables[0])

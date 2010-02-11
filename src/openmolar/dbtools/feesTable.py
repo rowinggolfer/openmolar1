@@ -90,6 +90,7 @@ class feeTable():
         self.categories = []
         self.hasPtCols = False
         self.treatmentCodes = {}
+        self.feeColCount = 0
         
     def __repr__(self):
         '''
@@ -135,6 +136,7 @@ class feeTable():
         dom = minidom.parseString(arg)
         
         cols = dom.getElementsByTagName("column")
+        self.feeColCount = len(cols)
         feeCol_list = []
         ptfeeCol_list = []
         for col in cols:
@@ -183,7 +185,7 @@ class feeTable():
                 if self.feesDict.has_key(code):
                     feeItem = self.feesDict[code] 
                 else:
-                    feeItem = fee()
+                    feeItem = fee(self, code)
                     feeItem.setCategory(section)
                     feeItem.usercode = USERCODE
                     feeItem.description = description
@@ -374,17 +376,19 @@ class feeTable():
         return (item, fee, ptfee, description)
     
     
-class fee():
+class fee(object):
     '''
     this class handles the calculation of fees
     part of the challenge is recognising the fact that
     2x an item is not necessarily
     the same as double the fee for a single item etc..
     '''
-    def __init__(self):
+    def __init__(self, table, itemcode):
         '''
         initiate the class with the default settings for a private fee
         '''
+        self.table = table
+        self.itemcode = itemcode
         self.category = 0
         self.description = ""
         self.brief_descriptions = ()

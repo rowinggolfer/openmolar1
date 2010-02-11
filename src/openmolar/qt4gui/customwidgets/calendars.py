@@ -107,8 +107,13 @@ class calDialogs():
             
         memowidget_dict = {}
         for dentix in parent.dents:
+            if memoDict.has_key(dentix):
+                memo = memoDict[dentix].memo
+            else:
+                memo = ""
+                
             if dentix == 0:
-                dl.lineEdit.setText(memoDict.get(0, ""))
+                dl.lineEdit.setText(memo)
                 memowidget_dict[0] = dl.lineEdit
             else:
                 widg = QtGui.QWidget()
@@ -117,9 +122,6 @@ class calDialogs():
                 memoitem.label.setText(
                 localsettings.apptix_reverse.get(dentix,"??"))
                 
-                memo = ""
-                if memoDict.has_key(dentix):
-                    memo = memoDict[dentix].memo
                 memoitem.lineEdit.setText(memo)
             
                 dl.layout.addWidget(widg)

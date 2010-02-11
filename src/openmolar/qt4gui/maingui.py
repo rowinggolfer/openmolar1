@@ -2410,12 +2410,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         fees_module.nhsRegsPDF(self)
 
     @localsettings.debug
-    def fees_treeWidgetItem_clicked(self, item, item_no):
+    def feeScale_doubleclicked(self, model_index):
         '''
         user has double clicked on an item in the fees_table
         '''
         if self.pt.serialno != 0:
-            add_tx_to_plan.fromFeeTable(self, item)
+            add_tx_to_plan.fromFeeTable(self, model_index)
 
     def chooseFeescale_comboBox_changed(self, arg):
         '''
@@ -3334,6 +3334,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         ##TODO bring this functionality back
         #QtCore.QObject.connect(self.ui.printFeescale_pushButton,
         #QtCore.SIGNAL("clicked()"), self.printFeesTable)
+
+        QtCore.QObject.connect(self.ui.feeScales_treeView,
+        QtCore.SIGNAL("doubleClicked (const QModelIndex&)"),
+        self.feeScale_doubleclicked)
+
         QtCore.QObject.connect(self.ui.chooseFeescale_comboBox,
         QtCore.SIGNAL("currentIndexChanged(int)"),
         self.chooseFeescale_comboBox_changed)
@@ -3354,8 +3359,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.nhsRegs_pushButton,
         QtCore.SIGNAL("clicked()"), self.nhsRegs_pushButton_clicked)
+
         QtCore.QObject.connect(self.ui.feeSearch_lineEdit,
         QtCore.SIGNAL("editingFinished ()"), self.feeSearch_lineEdit_edited)
+
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
 

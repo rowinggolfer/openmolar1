@@ -154,7 +154,6 @@ def loadFeesTable(om_gui):
     om_gui.feestableLoaded = True
     #om_gui.feesTable_searchList = []
     #om_gui.feesTable_searchpos = 0
-    
     feeTables = localsettings.FEETABLES
     
     tableKeys = feeTables.tables.keys()
@@ -162,9 +161,11 @@ def loadFeesTable(om_gui):
 
     for key in tableKeys:
         table = feeTables.tables[key]
-        om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
         model = fee_table_model.treeModel(table)
-        om_gui.fee_models.append(model)    
+        om_gui.fee_models.append(model)  
+        om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
+        
+    print "loaded feesTable, %d fee models in use"% len(om_gui.fee_models)
         
 def feeSearch(om_gui):
     '''
@@ -242,6 +243,7 @@ def chooseFeescale(om_gui, i):
     acts on the fee table
     arg will be the chosen index
     '''
+    print "chooseFeeScale"
     table = localsettings.FEETABLES.tables[i]
         
     om_gui.ui.feeScale_label.setText("<b>%s</b> %s - %s"% (
@@ -251,6 +253,7 @@ def chooseFeescale(om_gui, i):
     try:
         om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i])      
     except IndexError:
+        print i, len(om_gui.fee_models)
         om_gui.advise(_("fee table error"),2)
         
 def chooseFeeItemDisplay(om_gui, arg):

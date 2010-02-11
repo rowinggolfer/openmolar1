@@ -14,7 +14,7 @@ to the treatment plan
 from __future__ import division
 
 import re
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_customTreatment
@@ -167,27 +167,32 @@ def customAdd(om_gui):
             om_gui.load_treatTrees()
 
 @localsettings.debug
-def fromFeeTable(om_gui, item):
+def fromFeeTable(om_gui, model_index):
     '''
     add an item which has been selected from the fee table itself
     '''
-    print "adding an item from the fee table!!"  
-    
+    print "adding an item from the fee table!!", model_index  
     
     if course_module.newCourseNeeded(om_gui):
         return
     
+    fee_item = om_gui.fee_models[
+    om_gui.ui.chooseFeescale_comboBox.currentIndex()].data(
+    model_index, QtCore.Qt.UserRole)
+    
+    print fee_item
+
     table = om_gui.pt.getFeeTable()
-    clicked_tableIndex = om_gui.ui.fees_tabWidget.currentIndex()
-    itemcode = str(item.text(0))
         
-    if  clicked_tableIndex != table.index:
-        table = confirmWrongFeeTable(om_gui, clicked_tableIndex, table.index)
+    if fee_item.table != table:
+        table = confirmWrongFeeTable(om_gui, fee_item.table.index, 
+        table.index)
+
         if not table:
             return
 
     Dialog = QtGui.QDialog(om_gui)    
-    items = (itemcode, )
+    items = (fee_item.itemcode, )
     dl = addTreat.feeTable_treatment(Dialog, table, items)
     
     chosenTreatments = dl.getInput()
