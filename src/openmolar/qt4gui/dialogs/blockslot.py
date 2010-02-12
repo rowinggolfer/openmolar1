@@ -17,8 +17,9 @@ from openmolar.dbtools import patient_class
 from openmolar.qt4gui.customwidgets import fiveminutetimeedit
 
 class blockDialog(Ui_blockSlot.Ui_Dialog):
-    def __init__(self, Dialog):
+    def __init__(self, Dialog, om_gui = None):
         self.Dialog = Dialog
+        self.om_gui = om_gui
         self.setupUi(Dialog)
         vlayout = QtGui.QVBoxLayout(self.blockStart_frame)
         vlayout.setMargin(0)
@@ -155,10 +156,10 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                 dl.fnameSoundex_checkBox.checkState(), pcde)
 
                 if candidates == ():
-                    self.Dialog.parent().omgui.advise(_("no match found"), 1)
+                    self.om_gui.advise(_("no match found"), 1)
                 else:
                     if len(candidates)>1:
-                        sno = self.Dialog.parent().omgui.final_choice(candidates)
+                        sno = self.om_gui.final_choice(candidates)
                         if sno != None:
                             serialno = int(sno)
                     else:

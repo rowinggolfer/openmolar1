@@ -489,8 +489,8 @@ class appointmentCanvas(QtGui.QWidget):
                 int(self.dayStartTime+self.selected[1]*self.slotDuration))
 
                 Dialog=QtGui.QDialog(self)
-                dl=blockslot.blockDialog(Dialog)
-                
+                dl=blockslot.blockDialog(Dialog, self.om_gui)
+
                 dl.setTimes(start, finish)
                 dl.setPatient(self.om_gui.pt)
                     
