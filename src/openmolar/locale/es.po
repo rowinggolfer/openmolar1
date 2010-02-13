@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-02-11 00:36+0000\n"
-"PO-Revision-Date: 2010-02-11 01:28+0000\n"
+"POT-Creation-Date: 2010-02-11 13:45+0000\n"
+"PO-Revision-Date: 2010-02-11 14:46+0000\n"
 "Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-02-11 05:03+0000\n"
+"X-Launchpad-Export-Date: 2010-02-12 04:52+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:64
@@ -179,7 +179,7 @@ msgid "For a more secure setup, you should move this file to"
 msgstr "Para una configuración más segura, deberia mover el archivo a"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:130
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:139
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:171
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:54
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:163
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:37
@@ -542,7 +542,7 @@ msgid "Finish"
 msgstr "Terminar"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:154
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:138
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
 msgid "Lunch"
 msgstr "Almuerzo"
 
@@ -624,83 +624,91 @@ msgstr "Clinicos - FECHA"
 msgid "Memo"
 msgstr "Memo"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:129
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:133
 msgid "Options"
 msgstr "Opciones"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:130
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:134
 msgid "Would you like to Block (or partially Block) this Slot?"
 msgstr "¿Desea bloquear (o bloquear parcialmente) esta ranura?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:131
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:135
 msgid "Block Start"
 msgstr "Inicio bloqueado"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:132
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:136
 msgid "Bock End"
 msgstr "Administración"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:133
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:137
 msgid "Text to apply"
 msgstr "Texto a aplicar"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:134
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:138
 msgid "//Blocked//"
 msgstr "//Bloqueado//"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:135
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:139
 msgid "Emergency"
 msgstr "Emergencia"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:136
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:140
 msgid "Reserved Clinical Time"
 msgstr "Tiempo Reservado de Clínica"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:137
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
 msgid "Out of Office"
 msgstr "Fuera de la Oficina"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:139
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:179
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:143
+msgid "Catch up time"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:144
+msgid "Phone Call"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:145
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:205
 msgid "minutes"
 msgstr "minutos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:140
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:146
 msgid "Insert a Block"
 msgstr "Insertar un bloque"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:147
 msgid "Insert A Patient into this slot?"
 msgstr "¿Insertar un paciente a esta ranura?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:148
 msgid "Start Time"
 msgstr "Hora de comienzo"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:143
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:149
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:103
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_specify_appointment.py:151
 msgid "Length"
 msgstr "Longitud"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:144
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:150
 msgid "Chosen Patient is<br />"
 msgstr "El Paciente Elegido es<br />"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:145
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:151
 msgid "Change"
 msgstr "Cambiar"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:146
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:152
 msgid "Reason for appointment is"
 msgstr "La razón de la cita es"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:147
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:153
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:107
 msgid " minutes"
 msgstr " minutos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:148
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:154
 msgid "Insert a Known Patient"
 msgstr "Inserte un Paciente Conocido"
 
@@ -4520,27 +4528,60 @@ msgstr ""
 msgid "No patient chosen!"
 msgstr "¡Ningún paciente elegido!"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:85
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:90
+msgid "Start is outwith slot bounds (too early)"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:93
+msgid "Start is outwith slot bounds (too late)"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:96
+msgid "Finish is outwith slot bounds (too late"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:99
+msgid "Finish is outwith slot bounds (too early"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:101
+msgid "length of appointment is too short"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:104
+msgid "no reason for the block given"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:107
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1942
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:185
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:204
+msgid "no patient selected"
+msgstr "ningún paciente seleccionado"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:113
+msgid "Unable to commit because"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:114
 msgid "error"
 msgstr "error"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:86
-msgid "You need to choose a patient"
-msgstr "Necesita elegir un paciente"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:126
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:158
 msgid "no match found"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:139
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:171
 msgid "patient not found"
 msgstr "paciente no encontrado"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:149
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:181
 msgid "Chosen Patient is"
 msgstr "El paciente elegido es"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:151
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:183
 msgid "no patient chosen"
 msgstr "ningún paciente elegido"
 
@@ -4858,14 +4899,6 @@ msgstr "NUEVOS MENSAJES EN EL FORO"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1907
 msgid "POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS"
 msgstr ""
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1942
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:185
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:204
-msgid "no patient selected"
-msgstr "ningún paciente seleccionado"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1967
 msgid "Sucessfully altered the following items"
@@ -5524,6 +5557,9 @@ msgstr "diciembre"
 
 #~ msgid "+"
 #~ msgstr "+"
+
+#~ msgid "You need to choose a patient"
+#~ msgstr "Necesita elegir un paciente"
 
 #~ msgid "Recall Letters"
 #~ msgstr "Comunicaciones de recordatorio"

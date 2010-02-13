@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-02-11 00:36+0000\n"
-"PO-Revision-Date: 2010-02-10 07:37+0000\n"
-"Last-Translator: Harza Lajos <Unknown>\n"
+"POT-Creation-Date: 2010-02-11 13:45+0000\n"
+"PO-Revision-Date: 2010-02-11 14:45+0000\n"
+"Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-02-11 05:03+0000\n"
+"X-Launchpad-Export-Date: 2010-02-12 04:52+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:64
@@ -179,7 +179,7 @@ msgid "For a more secure setup, you should move this file to"
 msgstr "A biztonságosabb telepítés érdekében helyezze át a file-t"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:130
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:139
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:171
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:54
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:163
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:37
@@ -536,7 +536,7 @@ msgid "Finish"
 msgstr "Befejezés"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:154
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:138
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
 msgid "Lunch"
 msgstr "Ebédidő"
 
@@ -617,83 +617,91 @@ msgstr "Orvosok - DÁTUM"
 msgid "Memo"
 msgstr "Emlékeztető"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:129
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:133
 msgid "Options"
 msgstr "Opciók"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:130
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:134
 msgid "Would you like to Block (or partially Block) this Slot?"
 msgstr "Szeretné zárolni (vagy részlegesen zárolni) ezt az időpontot?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:131
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:135
 msgid "Block Start"
 msgstr "Zárolás kezdete"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:132
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:136
 msgid "Bock End"
 msgstr "Zárolás vége"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:133
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:137
 msgid "Text to apply"
 msgstr "Szövegcimke"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:134
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:138
 msgid "//Blocked//"
 msgstr "//Zárolva//"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:135
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:139
 msgid "Emergency"
 msgstr "Sürgősségi"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:136
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:140
 msgid "Reserved Clinical Time"
 msgstr "Foglalt karbantartási idő"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:137
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
 msgid "Out of Office"
 msgstr "Nincs rendelés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:139
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:179
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:143
+msgid "Catch up time"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:144
+msgid "Phone Call"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:145
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:205
 msgid "minutes"
 msgstr "perc"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:140
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:146
 msgid "Insert a Block"
 msgstr "Zárolás beillesztése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:147
 msgid "Insert A Patient into this slot?"
 msgstr "Szeretne beilleszteni egy pácienst ehhez az időponthoz?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:148
 msgid "Start Time"
 msgstr "Kezdés ideje"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:143
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:149
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:103
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_specify_appointment.py:151
 msgid "Length"
 msgstr "Időtartam"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:144
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:150
 msgid "Chosen Patient is<br />"
 msgstr "A kiválasztott páciens<br />"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:145
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:151
 msgid "Change"
 msgstr "Módosítás"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:146
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:152
 msgid "Reason for appointment is"
 msgstr "Bejelentkezés oka"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:147
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:153
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:107
 msgid " minutes"
 msgstr " perc"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:148
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:154
 msgid "Insert a Known Patient"
 msgstr "Ismert páciens beillesztése"
 
@@ -4489,27 +4497,60 @@ msgstr "változások rögzítése"
 msgid "No patient chosen!"
 msgstr "Nem választott pácienst!"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:85
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:90
+msgid "Start is outwith slot bounds (too early)"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:93
+msgid "Start is outwith slot bounds (too late)"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:96
+msgid "Finish is outwith slot bounds (too late"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:99
+msgid "Finish is outwith slot bounds (too early"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:101
+msgid "length of appointment is too short"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:104
+msgid "no reason for the block given"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:107
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1942
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:185
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:204
+msgid "no patient selected"
+msgstr "nincs kiválasztva páciens"
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:113
+msgid "Unable to commit because"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:114
 msgid "error"
 msgstr "hiba"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:86
-msgid "You need to choose a patient"
-msgstr "Pácienst kell választania"
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:126
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:158
 msgid "no match found"
 msgstr "nincs egyezés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:139
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:171
 msgid "patient not found"
 msgstr "nincs ilyen páciens"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:149
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:181
 msgid "Chosen Patient is"
 msgstr "A kiválasztott páciens"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:151
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:183
 msgid "no patient chosen"
 msgstr "nincs kiválasztva páciens"
 
@@ -4838,14 +4879,6 @@ msgstr "ÚJ FÓRUM BEJEGYZÉSEK"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1907
 msgid "POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS"
 msgstr ""
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1942
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:185
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:204
-msgid "no patient selected"
-msgstr "nincs kiválasztva páciens"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1967
 msgid "Sucessfully altered the following items"
@@ -5781,6 +5814,9 @@ msgstr "December"
 
 #~ msgid "Total Fee for these Items"
 #~ msgstr "Aktuális tételek összköltsége"
+
+#~ msgid "You need to choose a patient"
+#~ msgstr "Pácienst kell választania"
 
 #~ msgid "loading today's patients"
 #~ msgstr "mai páciensek betöltése"

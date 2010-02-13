@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-02-11 13:22+GMT\n"
+"POT-Creation-Date: 2010-02-13 05:24+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -177,7 +177,7 @@ msgid "For a more secure setup, you should move this file to"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:130
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:171
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:172
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:54
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:163
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:37
@@ -685,7 +685,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:145
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:205
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:206
 msgid "minutes"
 msgstr ""
 
@@ -5097,38 +5097,39 @@ msgstr ""
 msgid "applying changes for"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:39
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:40
 msgid "No patient chosen!"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:90
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:91
 msgid "Start is outwith slot bounds (too early)"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:93
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:94
 msgid "Start is outwith slot bounds (too late)"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:96
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:97
 msgid "Finish is outwith slot bounds (too late"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:99
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:100
 msgid "Finish is outwith slot bounds (too early"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:101
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:102
 msgid "length of appointment is too short"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:104
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:105
 msgid "no reason for the block given"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:107
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:108
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1942
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
@@ -5138,32 +5139,32 @@ msgid "no patient selected"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:113
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:114
 msgid "Unable to commit because"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:114
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:115
 msgid "error"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:158
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:159
 msgid "no match found"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:171
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:172
 msgid "patient not found"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:181
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:182
 msgid "Chosen Patient is"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:183
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:184
 msgid "no patient chosen"
 msgstr ""
 
