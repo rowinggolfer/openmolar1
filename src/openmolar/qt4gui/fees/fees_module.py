@@ -158,7 +158,6 @@ def loadFeesTable(om_gui):
     
     tableKeys = feeTables.tables.keys()
     tableKeys.sort()
-
     for key in tableKeys:
         table = feeTables.tables[key]
         model = fee_table_model.treeModel(table)
@@ -173,20 +172,23 @@ def feeSearch(om_gui):
     user is looking up a fee from the fee table
     the values are already stored.
     '''
-    n = len(om_gui.feesTable_searchList)
+    if om_gui.feeSearchList:
+        n = len(om_gui.feesTable_searchList)
+    else:
+        n = 0
     if n == 0:
         om_gui.advise("Not found, or invalid search")
         return
-    if om_gui.feesTable_searchpos >= n:
-        om_gui.feesTable_searchpos = 0
-    item = om_gui.feesTable_searchList[om_gui.feesTable_searchpos]
+    if om_gui.fees_searchpos >= n:
+        om_gui.fees_searchpos = 0
+    item = om_gui.feeSearchList[om_gui.fees_searchpos]
 
-    om_gui.ui.standardFees_treeWidget.scrollToItem(item,
-    QtGui.QAbstractItemView.ScrollHint(
-    QtGui.QAbstractItemView.PositionAtCenter))
+    #om_gui.ui.standardFees_treeWidget.scrollToItem(item,
+    #QtGui.QAbstractItemView.ScrollHint(
+    #QtGui.QAbstractItemView.PositionAtCenter))
 
-    om_gui.ui.standardFees_treeWidget.setCurrentItem(item)
-    om_gui.feesTable_searchpos += 1
+    #om_gui.ui.standardFees_treeWidget.setCurrentItem(item)
+    om_gui.fees_searchpos += 1
 
 def newFeeSearch(om_gui):
     '''
@@ -200,13 +202,14 @@ def newFeeSearch(om_gui):
     QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
 
     #--get a list of items containing that string
-    om_gui.standardFeesTable_searchList = \
-    om_gui.ui.standardFees_treeWidget.findItems(searchField, matchflags, 4)
+    om_gui.feeSearchList = \
+    om_gui.ui.feeScales_treeView.model().findItems(searchField, matchflags, 4)
 
-    om_gui.feesTable_searchpos = 0
+    #om_gui.feesTable_searchpos = 0
     om_gui.ui.feeSearch_pushButton.setFocus()
     feeSearch(om_gui)
-
+    om_gui.ui.feeSearch_pushButton.setText("Search Again")    
+    
 def nhsRegsPDF(om_gui):
     '''
     I have some stored PDF documents
@@ -251,10 +254,18 @@ def chooseFeescale(om_gui, i):
     localsettings.formatDate(table.startDate),
     localsettings.formatDate(table.endDate))) 
     try:
-        om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i])      
+        om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i]) 
     except IndexError:
         print i, len(om_gui.fee_models)
         om_gui.advise(_("fee table error"),2)
+
+def adjustTable(om_gui, index):
+    tv = om_gui.ui.feeScales_treeView
+    for col in range(tv.model().columnCount(index)):
+        if col == 3 and not om_gui.ui.actionShow_Geek_Column.isChecked():
+            tv.setColumnWidth(3,0)
+        else:
+            tv.resizeColumnToContents(col)
         
 def chooseFeeItemDisplay(om_gui, arg):
     '''

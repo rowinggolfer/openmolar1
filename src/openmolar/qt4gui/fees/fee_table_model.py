@@ -26,7 +26,7 @@ class TreeItem(object):
         self.parentItem = parent
         self.key = key
         self.itemData = data
-        self.index = index
+        self.myindex = index
         self.childItems = []
 
     def appendChild(self, item):
@@ -42,13 +42,16 @@ class TreeItem(object):
         return 5 + self.table.feeColCount
         
     def data(self, column):
+        showAll = self.parentItem.itemData == None       
         if column == 0:
-            return QtCore.QVariant(self.key)
+            if showAll or (self.key != self.parentItem.key):
+                return QtCore.QVariant(self.key)
         if self.itemData == None:
             return QtCore.QVariant() 
-        showAll =  self.parentItem.itemData == None       
         if column == 1:
-            return QtCore.QVariant(self.itemData.usercode)
+            if showAll or (self.itemData.usercode != 
+            self.parentItem.itemData.usercode):
+                return QtCore.QVariant(self.itemData.usercode)
         if showAll:
             if column == 2:
                 return QtCore.QVariant(self.itemData.brief_descriptions[0])
@@ -61,15 +64,15 @@ class TreeItem(object):
             if self.table.hasPtCols:
                 if column % 2 == 0:
                     fee = localsettings.formatMoney(
-                    self.itemData.ptFees[(column-6)/2][self.index])
+                    self.itemData.ptFees[(column-6)/2][self.myindex])
                     return QtCore.QVariant(fee)
                 else:
                     fee = localsettings.formatMoney(
-                    self.itemData.fees[(column-5)/2][self.index]) 
+                    self.itemData.fees[(column-5)/2][self.myindex]) 
                     return QtCore.QVariant(fee)
             else:
                 fee = localsettings.formatMoney(
-                self.itemData.fees[column-5][self.index])
+                self.itemData.fees[column-5][self.myindex])
                 return QtCore.QVariant(fee)
             
         return QtCore.QVariant()
@@ -101,9 +104,9 @@ class treeModel(QtCore.QAbstractItemModel):
             self.feecats = self.table.categories
             
         self.rootItem = TreeItem(self.table, None, None)
-                
-        self.setupModelData()
     
+        self.setupModelData()
+        
     def columnCount(self, parent):
         if parent.isValid():
             return parent.internalPointer().columnCount()
@@ -117,6 +120,9 @@ class treeModel(QtCore.QAbstractItemModel):
         item = index.internalPointer()
         if role == QtCore.Qt.DisplayRole:
             return item.data(index.column())
+        elif role == QtCore.Qt.TextAlignmentRole:
+            if index.column > 5:
+                return QtCore.Qt.AlignRight
         elif role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
             return item.itemData   
@@ -169,6 +175,9 @@ class treeModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
 
         childItem = index.internalPointer()
+        if not childItem:
+            return QtCore.QModelIndex()
+        
         parentItem = childItem.parent()
 
         if parentItem == self.rootItem:
@@ -216,16 +225,51 @@ class treeModel(QtCore.QAbstractItemModel):
     
 if __name__ == "__main__":
     
+    def resize(arg):
+        print "resizing"
+        for col in range(model.columnCount(arg)):
+            if col != 3:#regulation column
+                tv.resizeColumnToContents(col)
+            else:
+                tv.setColumnWidth(3,0)
+                
     app = QtGui.QApplication([])
     localsettings.initiate()
     
     model = treeModel(localsettings.FEETABLES.tables[0])
-    dialog = QtGui.QDialog()
-    dialog.setMinimumSize(800,300)
-    layout = QtGui.QHBoxLayout(dialog)
-    tv = QtGui.QTreeView(dialog)
-    tv.setModel(model)
-    layout.addWidget(tv)
-    dialog.exec_()
+    #i=model.createIndex(0, 0)
+    #print model.data(i, QtCore.Qt.DisplayRole)
     
+    if True: #change for display testing
+        dialog = QtGui.QDialog()
+    
+        dialog.setMinimumSize(800,300)
+        layout = QtGui.QHBoxLayout(dialog)
+        
+        tv = QtGui.QTreeView(dialog)
+        tv.setModel(model)
+        tv.setAlternatingRowColors(True)
+        layout.addWidget(tv)
+        
+        QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"), 
+        resize)
+        dialog.exec_()
+    
+    matchflags = QtCore.Qt.MatchFlags(
+    QtCore.Qt.MatchContains|QtCore.Qt.MatchWrap)
+    
+    indexes = []
+    for parent in model.rootItem.childItems:
+        for child in parent.childItems:
+            for column in (2,4): # check decription and brief description
+            
+                t_index = model.createIndex(0, column, child)
+              
+                indexes += model.match(t_index, QtCore.Qt.DisplayRole,
+                "denture", -1, matchflags)
+    print model.mimeData(indexes)
+    #for index in indexes:
+    #    print "found '%s' item (row=%d, column=%d)"% (
+    #    model.data(index, QtCore.Qt.DisplayRole),index.row(), index.column())
+
     app.closeAllWindows()

@@ -146,6 +146,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.forum_notified = False
         self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
+        self.feeSearchList = None
+        self.fees_searchpos=0
         
     def advise(self, arg, warning_level=0):
         '''
@@ -289,28 +291,20 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.perioGroupBoxes.append(periogb)
             self.ui.perioChartWidgets.append(pchart)
 
-        ##appt books
-        ##TODO - This should be done during runtime... only making the
-        ##widgets when necessary??
-        ##frequently don't need 4.
         self.apptBookWidgets=[]
-        #self.apptBookWidgets.append(appointmentwidget.
-        #appointmentWidget(self, "0800", "1900"))
-        #self.ui.appt1scrollArea.setWidget(self.apptBookWidgets[0])
-
-
+        
         #-appointment OVerview widget
         self.ui.apptoverviews=[]
 
         for day in range(5):
             if day == 4: #friday
                 self.ui.apptoverviews.append(appointment_overviewwidget.
-                            appointmentOverviewWidget(day, "0800", "1900", 15, 2))
+                appointmentOverviewWidget(day, "0800", "1900", 15, 2))
             elif day == 1: #Tuesday:
                 self.ui.apptoverviews.append(appointment_overviewwidget.
-                            appointmentOverviewWidget(day, "0800", "1900", 15, 2))
+                appointmentOverviewWidget(day, "0800", "1900", 15, 2))
             else:
-                self.ui.apptoverviews.append(appointment_overviewwidget.\
+                self.ui.apptoverviews.append(appointment_overviewwidget.
                 appointmentOverviewWidget(day, "0800", "1900", 15, 2))
 
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
@@ -434,7 +428,7 @@ class openmolarGui(QtGui.QMainWindow):
 
         #--history
         self.addHistoryMenu()
-
+        
         #--notification widget
         self.ui.notificationWidget = \
         notification_widget.notificationWidget(self)
@@ -2161,14 +2155,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if permissions.granted():
             self.ui2 = new_setup.setup_gui(self.app)
             self.ui2.show()
-            
-    def feeScale_new(self):
-        '''
-        launch a 2nd application to organise and extend the practice diary
-        '''
-        if permissions.granted():
-            self.advise(_("Function not yet available"),1)
-
+    
     def clearTodaysEmergencyTime_action(self):
         '''
         convenience function to auto clear all the reserved time for today
@@ -2417,30 +2404,24 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if self.pt.serialno != 0:
             add_tx_to_plan.fromFeeTable(self, model_index)
 
+    def feeScale_expanded(self, model_index):
+        '''
+        user has expanded an item in the fees_table
+        '''
+        fees_module.adjustTable(self, model_index)
+
     def chooseFeescale_comboBox_changed(self, arg):
         '''
         receives signals from the choose feescale combobox
         '''
         fees_module.chooseFeescale(self,arg)
-
-    def feeItems_comboBox_changed(self, arg):
-        '''
-        receives signals from the choose feescale Items combobox
-        '''
-        fees_module.chooseFeeItemDisplay(self, arg)
-
+        
     def feeExpand_radiobuttons_clicked(self):
         '''
         the expand or collapse radio buttons on the fees page
         have been clicked.
         '''
         fees_module.expandFees(self)
-
-    def feesColumn_comboBox_changed(self, arg):
-        '''
-        expand columns within the fees table
-        '''
-        fees_module.expandFeeColumns(self,arg)
 
     def newCourse_pushButton_clicked(self):
         '''
@@ -3336,20 +3317,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #QtCore.SIGNAL("clicked()"), self.printFeesTable)
 
         QtCore.QObject.connect(self.ui.feeScales_treeView,
-        QtCore.SIGNAL("doubleClicked (const QModelIndex&)"),
+        QtCore.SIGNAL("doubleClicked (QModelIndex)"),
         self.feeScale_doubleclicked)
+        
+        QtCore.QObject.connect(self.ui.feeScales_treeView,
+        QtCore.SIGNAL("expanded (QModelIndex)"),
+        self.feeScale_expanded)
 
         QtCore.QObject.connect(self.ui.chooseFeescale_comboBox,
         QtCore.SIGNAL("currentIndexChanged(int)"),
         self.chooseFeescale_comboBox_changed)
-
-        QtCore.QObject.connect(self.ui.feeItems_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"),
-        self.feeItems_comboBox_changed)
-
-        QtCore.QObject.connect(self.ui.feesColumn_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"),
-        self.feesColumn_comboBox_changed)
 
         QtCore.QObject.connect(self.ui.feeExpand_radioButton,
         QtCore.SIGNAL("clicked()"), self.feeExpand_radiobuttons_clicked)
@@ -3368,9 +3345,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.adjustFeeTables_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeScale_Adjuster_action)
-
-        QtCore.QObject.connect(self.ui.newFeeTable_pushButton,
-        QtCore.SIGNAL("clicked()"), self.feeScale_new)
 
     def signals_charts(self):
 

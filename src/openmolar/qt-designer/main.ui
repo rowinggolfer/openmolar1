@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>558</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2566,7 +2566,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>608</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2864,8 +2864,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>459</width>
-                        <height>289</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3064,7 +3064,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>409</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3097,7 +3097,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3470,7 +3470,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>644</width>
+                        <width>267</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4833,8 +4833,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>287</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -5466,7 +5466,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                </widget>
               </item>
               <item>
-               <widget class="QTreeView" name="feeScales_treeView"/>
+               <widget class="QTreeView" name="feeScales_treeView">
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -5499,26 +5503,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="feeItems_comboBox">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Show All Items</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Favourite Items Only</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
                 <widget class="QRadioButton" name="feeExpand_radioButton">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
                   <string>Expand All Sections</string>
@@ -5528,7 +5515,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                <item>
                 <widget class="QRadioButton" name="feeCompress_radioButton">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
                   <string>Compress All Sections</string>
@@ -5541,7 +5528,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                <item>
                 <widget class="QFrame" name="frame_6">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
@@ -5690,35 +5677,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                  <property name="text">
                   <string>Adjust FeeTables</string>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="newFeeTable_pushButton">
-                 <property name="text">
-                  <string>Create a New FeeTable</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="feesColumn_comboBox">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Default Columns</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Show Geek Column</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>All Columns</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
               </layout>
@@ -6041,6 +5999,12 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <property name="title">
      <string>Tools</string>
     </property>
+    <widget class="QMenu" name="menu_FeesScale_Options">
+     <property name="title">
+      <string>&amp;FeesScale Options</string>
+     </property>
+     <addaction name="actionShow_Geek_Column"/>
+    </widget>
     <addaction name="actionAppointment_Tools"/>
     <addaction name="actionChoose_Database"/>
     <addaction name="actionFeeScale_Adjuster"/>
@@ -6048,6 +6012,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="actionAdvanced_Record_Management"/>
     <addaction name="separator"/>
     <addaction name="actionCreate_Modify_database"/>
+    <addaction name="menu_FeesScale_Options"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -6163,6 +6128,14 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionAdvanced_Record_Management">
    <property name="text">
     <string>Advanced Record Management</string>
+   </property>
+  </action>
+  <action name="actionShow_Geek_Column">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Geek Column</string>
    </property>
   </action>
  </widget>
