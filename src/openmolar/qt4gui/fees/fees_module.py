@@ -163,53 +163,55 @@ def loadFeesTable(om_gui):
         model = fee_table_model.treeModel(table)
         om_gui.fee_models.append(model)  
         om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
+    
+    n = len(om_gui.fee_models)
+    text = om_gui.ui.feescales_available_label.text()
+    om_gui.ui.feescales_available_label.setText("%d"%n + text) 
+    print "loaded feesTable, %d fee models in use"% n
         
-    print "loaded feesTable, %d fee models in use"% len(om_gui.fee_models)
-        
-def feeSearch(om_gui):
-    '''
-    fee search button clicked...
-    user is looking up a fee from the fee table
-    the values are already stored.
-    '''
-    if om_gui.feeSearchList:
-        n = len(om_gui.feesTable_searchList)
-    else:
-        n = 0
-    if n == 0:
-        om_gui.advise("Not found, or invalid search")
-        return
-    if om_gui.fees_searchpos >= n:
-        om_gui.fees_searchpos = 0
-    item = om_gui.feeSearchList[om_gui.fees_searchpos]
-
-    #om_gui.ui.standardFees_treeWidget.scrollToItem(item,
-    #QtGui.QAbstractItemView.ScrollHint(
-    #QtGui.QAbstractItemView.PositionAtCenter))
-
-    #om_gui.ui.standardFees_treeWidget.setCurrentItem(item)
-    om_gui.fees_searchpos += 1
-
 def newFeeSearch(om_gui):
     '''
     user has finished editing the
     feesearchLineEdit - time to refill the searchList
     '''
-    #-- what are we searching for??
-    searchField = om_gui.ui.feeSearch_lineEdit.text()
+    def ensureVisible(index):
+        ''' expand all parents of a found leaf'''
+        parentIndex = model.parent(index)
+        om_gui.ui.feeScales_treeView.setExpanded(parentIndex, True)
+        if parentIndex.internalPointer() != None:
+            ensureVisible(parentIndex)        
+        
+    search_phrase = om_gui.ui.feeSearch_lineEdit.text()
+    model = om_gui.fee_models[
+    om_gui.ui.chooseFeescale_comboBox.currentIndex()]
 
-    matchflags = QtCore.Qt.MatchFlags(
-    QtCore.Qt.MatchContains|QtCore.Qt.MatchRecursive)
+    columns = []
+    if om_gui.ui.feesSearch_usercodes_checkBox.isChecked():
+        columns.append(1)
+    if om_gui.ui.feesSearch_descriptions_checkBox.isChecked():
+        columns.append(2)
+        columns.append(4)
 
-    #--get a list of items containing that string
-    om_gui.feeSearchList = \
-    om_gui.ui.feeScales_treeView.model().findItems(searchField, matchflags, 4)
-
-    #om_gui.feesTable_searchpos = 0
-    om_gui.ui.feeSearch_pushButton.setFocus()
-    feeSearch(om_gui)
-    om_gui.ui.feeSearch_pushButton.setText("Search Again")    
-    
+    if model.search(search_phrase, columns):
+        om_gui.ui.feeScales_treeView.collapseAll()        
+        indexes = model.foundItems
+        
+        om_gui.ui.feesearch_results_label.setText(
+        "%d %s"%(len(indexes), _("Items Found")))
+        for index in indexes: #indexes[1:]:
+            ensureVisible(index)
+        #om_gui.ui.feeScales_treeView.scrollTo(indexes[0])
+    else:
+        message = _("phrase not found in feetable")
+        if 2 in columns and 4 in columns:
+            message += " " + _("usercodes or descriptions")            
+        elif 2 in columns:
+            message += " " + _("usercodes")
+        elif 4 in columns:
+            message += " " + _("descriptions")
+        
+        om_gui.advise(message, 1)
+            
 def nhsRegsPDF(om_gui):
     '''
     I have some stored PDF documents
@@ -253,6 +255,9 @@ def chooseFeescale(om_gui, i):
     table.description, 
     localsettings.formatDate(table.startDate),
     localsettings.formatDate(table.endDate))) 
+    
+    om_gui.ui.feesearch_results_label.setText("")
+            
     try:
         om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i]) 
     except IndexError:
@@ -266,20 +271,6 @@ def adjustTable(om_gui, index):
             tv.setColumnWidth(3,0)
         else:
             tv.resizeColumnToContents(col)
-        
-def chooseFeeItemDisplay(om_gui, arg):
-    '''
-    recieves signals from the choose feescale Items combobox
-    arg 0 = show all items
-    arg 1 = show "favourites"
-    '''
-    ##TODO - this is not called!!!
-    if arg == 0:
-        #show all
-        pass
-    elif arg == 1:
-        #show favourites
-        pass
     
 def expandFees(om_gui):
     '''

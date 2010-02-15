@@ -106,6 +106,8 @@ class treeModel(QtCore.QAbstractItemModel):
         self.rootItem = TreeItem(self.table, None, None)
     
         self.setupModelData()
+        self.foundItems = []
+        self.search_phrase = ""
         
     def columnCount(self, parent):
         if parent.isValid():
@@ -120,10 +122,13 @@ class treeModel(QtCore.QAbstractItemModel):
         item = index.internalPointer()
         if role == QtCore.Qt.DisplayRole:
             return item.data(index.column())
-        elif role == QtCore.Qt.TextAlignmentRole:
+        if role == QtCore.Qt.BackgroundRole and index in self.foundItems:
+            brush = QtGui.QBrush(QtGui.QColor("yellow"))
+            return QtCore.QVariant(brush)
+        if role == QtCore.Qt.TextAlignmentRole:
             if index.column > 5:
                 return QtCore.Qt.AlignRight
-        elif role == QtCore.Qt.UserRole:
+        if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
             return item.itemData   
         
@@ -221,7 +226,36 @@ class treeModel(QtCore.QAbstractItemModel):
             for row in range(1,number_in_group):
                 branch.appendChild(
                 TreeItem(self.table, key,feeItem, branch, row))
-                            
+    
+    def searchNode(self, node, columns=()):
+        '''
+        a function called recursively, looking at all nodes beneath node
+        '''
+        matchflags = QtCore.Qt.MatchFlags(QtCore.Qt.MatchContains)
+        child = node.childItems[0]
+        #columns = range(child.columnCount()) ## <-- would search entire model
+        for column in columns:
+            start_index = self.createIndex(0, column, child)
+        
+            indexes = self.match(start_index, QtCore.Qt.DisplayRole, 
+            self.search_phrase, -1, matchflags)
+            
+            for index in indexes:
+                self.foundItems.append(index)
+
+        for child in node.childItems:
+            if child.childCount():
+                self.searchNode(child, columns)
+    
+    @localsettings.debug
+    def search(self, search_phrase, columns=()):
+        self.foundItems = []
+        self.search_phrase = search_phrase
+        if search_phrase == "":
+            return True
+        self.searchNode(self.rootItem, columns)
+        
+        return self.foundItems != []
     
 if __name__ == "__main__":
     
@@ -237,39 +271,20 @@ if __name__ == "__main__":
     localsettings.initiate()
     
     model = treeModel(localsettings.FEETABLES.tables[0])
-    #i=model.createIndex(0, 0)
-    #print model.data(i, QtCore.Qt.DisplayRole)
     
-    if True: #change for display testing
-        dialog = QtGui.QDialog()
-    
-        dialog.setMinimumSize(800,300)
-        layout = QtGui.QHBoxLayout(dialog)
-        
-        tv = QtGui.QTreeView(dialog)
-        tv.setModel(model)
-        tv.setAlternatingRowColors(True)
-        layout.addWidget(tv)
-        
-        QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"), 
-        resize)
-        dialog.exec_()
-    
-    matchflags = QtCore.Qt.MatchFlags(
-    QtCore.Qt.MatchContains|QtCore.Qt.MatchWrap)
-    
-    indexes = []
-    for parent in model.rootItem.childItems:
-        for child in parent.childItems:
-            for column in (2,4): # check decription and brief description
-            
-                t_index = model.createIndex(0, column, child)
-              
-                indexes += model.match(t_index, QtCore.Qt.DisplayRole,
-                "denture", -1, matchflags)
-    print model.mimeData(indexes)
-    #for index in indexes:
-    #    print "found '%s' item (row=%d, column=%d)"% (
-    #    model.data(index, QtCore.Qt.DisplayRole),index.row(), index.column())
+    dialog = QtGui.QDialog()
 
+    dialog.setMinimumSize(800,300)
+    layout = QtGui.QHBoxLayout(dialog)
+    
+    tv = QtGui.QTreeView(dialog)
+    tv.setModel(model)
+    tv.setAlternatingRowColors(True)
+    layout.addWidget(tv)
+    
+    QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"), 
+    resize)
+
+    dialog.exec_()
+    
     app.closeAllWindows()

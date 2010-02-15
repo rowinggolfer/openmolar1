@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>476</width>
+                        <width>642</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>558</width>
+                        <width>642</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2566,7 +2566,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>608</width>
+                        <width>642</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2864,8 +2864,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>459</width>
+                        <height>289</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3064,7 +3064,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>409</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3097,7 +3097,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>197</width>
+                        <width>217</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3470,7 +3470,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
+                        <width>644</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4833,8 +4833,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>663</width>
+                     <height>287</height>
                     </rect>
                    </property>
                   </widget>
@@ -5496,32 +5496,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <item>
+                <widget class="QLabel" name="feescales_available_label">
+                 <property name="text">
+                  <string>Fee Scales Available</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QComboBox" name="chooseFeescale_comboBox">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="feeExpand_radioButton">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>Expand All Sections</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="feeCompress_radioButton">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>Compress All Sections</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
+                 <property name="toolTip">
+                  <string>Use this control to select a feescale</string>
                  </property>
                 </widget>
                </item>
@@ -5536,76 +5523,145 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                 <layout class="QGridLayout" name="gridLayout_19">
-                  <item row="0" column="0" colspan="2">
+                 <layout class="QVBoxLayout" name="verticalLayout_30">
+                  <item>
                    <widget class="QLabel" name="label_26">
                     <property name="text">
-                     <string>Search for an Item</string>
+                     <string>Search  Items</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
                     </property>
                    </widget>
                   </item>
-                  <item row="1" column="0" colspan="2">
-                   <widget class="QLineEdit" name="feeSearch_lineEdit"/>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_31">
+                    <item>
+                     <widget class="QLineEdit" name="feeSearch_lineEdit"/>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="feeSearch_pushButton">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>70</width>
+                        <height>28</height>
+                       </size>
+                      </property>
+                      <property name="toolTip">
+                       <string>Click on this Button to search for in patient in your database.</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="../resources/resources.qrc">
+                        <normaloff>:/search.png</normaloff>:/search.png</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>24</width>
+                        <height>24</height>
+                       </size>
+                      </property>
+                      <property name="shortcut">
+                       <string>Ctrl+F</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
-                  <item row="2" column="0">
-                   <spacer name="horizontalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>67</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="QPushButton" name="feeSearch_pushButton">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>80</width>
-                      <height>28</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>70</width>
-                      <height>28</height>
-                     </size>
-                    </property>
+                  <item>
+                   <widget class="QCheckBox" name="feesSearch_usercodes_checkBox">
                     <property name="toolTip">
-                     <string>Click on this Button to search for in patient in your database.</string>
+                     <string>only search for the given phrase in the usercode column</string>
                     </property>
                     <property name="text">
-                     <string>Find</string>
+                     <string>Search Usercodes</string>
                     </property>
-                    <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
-                      <normaloff>:/search.png</normaloff>:/search.png</iconset>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>24</width>
-                      <height>24</height>
-                     </size>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="feesSearch_descriptions_checkBox">
+                    <property name="toolTip">
+                     <string>search for the given phrase in description columns</string>
                     </property>
-                    <property name="shortcut">
-                     <string>Ctrl+F</string>
+                    <property name="text">
+                     <string>Search Descriptions</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="feesearch_results_label">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
                     </property>
                    </widget>
                   </item>
                  </layout>
                 </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="feeExpand_radioButton">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Quickly expand all items</string>
+                 </property>
+                 <property name="text">
+                  <string>Expand All Sections</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="feeCompress_radioButton">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Quickly compress all items</string>
+                 </property>
+                 <property name="text">
+                  <string>Compress All Sections</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer_9">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
                <item>
                 <widget class="QFrame" name="frame_7">

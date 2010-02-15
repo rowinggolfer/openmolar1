@@ -146,8 +146,6 @@ class openmolarGui(QtGui.QMainWindow):
         self.forum_notified = False
         self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
-        self.feeSearchList = None
-        self.fees_searchpos=0
         
     def advise(self, arg, warning_level=0):
         '''
@@ -2382,13 +2380,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         user has entered a field to search for in the fees table
         '''
-        fees_module.newFeeSearch(self)
+        self.feeSearch_pushButton_clicked()
 
     def feeSearch_pushButton_clicked(self):
         '''
         user is searching fees
         '''
-        fees_module.feeSearch(self)
+        fees_module.newFeeSearch(self)
 
     def nhsRegs_pushButton_clicked(self):
         '''
