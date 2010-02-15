@@ -83,7 +83,6 @@ class TreeItem(object):
     def row(self):
         if self.parentItem:
             return self.parentItem.childItems.index(self)
-
         return 0
 
 class treeModel(QtCore.QAbstractItemModel):
@@ -127,7 +126,7 @@ class treeModel(QtCore.QAbstractItemModel):
             return QtCore.QVariant(brush)
         if role == QtCore.Qt.TextAlignmentRole:
             if index.column > 5:
-                return QtCore.Qt.AlignRight
+                return QtCore.QVariant(QtCore.Qt.AlignRight)
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
             return item.itemData   
