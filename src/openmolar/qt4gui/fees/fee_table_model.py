@@ -237,7 +237,7 @@ class treeModel(QtCore.QAbstractItemModel):
             start_index = self.createIndex(0, column, child)
         
             indexes = self.match(start_index, QtCore.Qt.DisplayRole, 
-            self.search_phrase, -1, matchflags)
+            QtCore.QVariant(self.search_phrase), -1, matchflags)
             
             for index in indexes:
                 self.foundItems.append(index)
