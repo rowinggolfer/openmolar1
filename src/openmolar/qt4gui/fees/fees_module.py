@@ -152,21 +152,19 @@ def loadFeesTable(om_gui):
     loads the fee table
     '''
     om_gui.feestableLoaded = True
-    #om_gui.feesTable_searchList = []
-    #om_gui.feesTable_searchpos = 0
-    feeTables = localsettings.FEETABLES
     
-    tableKeys = feeTables.tables.keys()
+    tableKeys = localsettings.FEETABLES.tables.keys()
     tableKeys.sort()
     for key in tableKeys:
-        table = feeTables.tables[key]
+        table = localsettings.FEETABLES.tables[key]
         model = fee_table_model.treeModel(table)
         om_gui.fee_models.append(model)  
         om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
     
     n = len(om_gui.fee_models)
-    text = om_gui.ui.feescales_available_label.text()
-    om_gui.ui.feescales_available_label.setText("%d"%n + text) 
+    text = "%d "%n + _("Fee Scales Available")
+    om_gui.ui.feescales_available_label.setText(text) 
+    
     print "loaded feesTable, %d fee models in use"% n
         
 def newFeeSearch(om_gui):
@@ -191,27 +189,29 @@ def newFeeSearch(om_gui):
     if om_gui.ui.feesSearch_descriptions_checkBox.isChecked():
         columns.append(2)
         columns.append(4)
-
-    if model.search(search_phrase, columns):
-        om_gui.ui.feeScales_treeView.collapseAll()        
-        indexes = model.foundItems
-        
-        om_gui.ui.feesearch_results_label.setText(
-        "%d %s"%(len(indexes), _("Items Found")))
-        for index in indexes: #indexes[1:]:
-            ensureVisible(index)
-        #om_gui.ui.feeScales_treeView.scrollTo(indexes[0])
-    else:
-        message = _("phrase not found in feetable")
-        if 2 in columns and 4 in columns:
-            message += " " + _("usercodes or descriptions")            
-        elif 2 in columns:
-            message += " " + _("usercodes")
-        elif 4 in columns:
-            message += " " + _("descriptions")
-        
-        om_gui.advise(message, 1)
+    if columns:
+        if model.search(search_phrase, columns):
+            om_gui.ui.feeScales_treeView.collapseAll()        
+            indexes = model.foundItems
             
+            om_gui.ui.feesearch_results_label.setText(
+            "%d %s"%(len(indexes), _("Items Found")))
+            for index in indexes:
+                ensureVisible(index)
+        else:
+            message = _("phrase not found in feetable")
+            if 1 in columns and 4 in columns:
+                message += " " + _("usercodes or descriptions")            
+            elif 1 in columns:
+                message += " " + _("usercodes")
+            elif 4 in columns:
+                message += " " + _("descriptions")
+            
+            om_gui.advise(message, 1)
+    else:
+        om_gui.advise(_("nothing to search")+ "<br />" +
+        _("please select usercodes and/or descriptions then search again"), 1)
+        
 def nhsRegsPDF(om_gui):
     '''
     I have some stored PDF documents
@@ -248,13 +248,14 @@ def chooseFeescale(om_gui, i):
     acts on the fee table
     arg will be the chosen index
     '''
-    print "chooseFeeScale"
     table = localsettings.FEETABLES.tables[i]
-        
+    if table.endDate == None:
+        end = _("IN CURRENT USE")
+    else:
+        end = localsettings.formatDate(table.endDate) 
     om_gui.ui.feeScale_label.setText("<b>%s</b> %s - %s"% (
     table.description, 
-    localsettings.formatDate(table.startDate),
-    localsettings.formatDate(table.endDate))) 
+    localsettings.formatDate(table.startDate), end)) 
     
     om_gui.ui.feesearch_results_label.setText("")
             
@@ -278,21 +279,9 @@ def expandFees(om_gui):
     dependent on the state of the feeExpand_radioButton
     '''
     if om_gui.ui.feeExpand_radioButton.isChecked():
-        om_gui.ui.standardFees_treeWidget.expandAll()
+        om_gui.ui.feeScales_treeView.expandAll()
     else:
-        om_gui.ui.standardFees_treeWidget.collapseAll()
-    
-def expandFeeColumns(om_gui, arg):
-    om_gui.ui.standardFees_treeWidget.expandAll()
-    for i in range(om_gui.ui.standardFees_treeWidget.columnCount()):
-        om_gui.ui.standardFees_treeWidget.resizeColumnToContents(i)
-    if arg < 1:
-        #-- hide the geeky column
-        om_gui.ui.standardFees_treeWidget.setColumnWidth(3, 0)
-    if arg < 2:
-        #-- hide the extra description column
-        om_gui.ui.standardFees_treeWidget.setColumnWidth(4, 0)
-    expandFees(om_gui)
+        om_gui.ui.feeScales_treeView.collapseAll()
     
 def makeBadDebt(om_gui):
     '''

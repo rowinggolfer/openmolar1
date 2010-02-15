@@ -3336,7 +3336,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.nhsRegs_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.feeSearch_lineEdit,
-        QtCore.SIGNAL("editingFinished ()"), self.feeSearch_lineEdit_edited)
+        QtCore.SIGNAL("returnPressed()"), self.feeSearch_lineEdit_edited)
 
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
