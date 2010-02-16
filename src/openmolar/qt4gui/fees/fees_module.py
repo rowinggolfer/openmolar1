@@ -167,7 +167,7 @@ def loadFeesTable(om_gui):
     
     print "loaded feesTable, %d fee models in use"% n
         
-def newFeeSearch(om_gui):
+def feeSearch(om_gui):
     '''
     user has finished editing the
     feesearchLineEdit - time to refill the searchList
@@ -190,15 +190,18 @@ def newFeeSearch(om_gui):
         columns.append(2)
         columns.append(4)
     if columns:
+        om_gui.wait(True)
         if model.search(search_phrase, columns):
             om_gui.ui.feeScales_treeView.collapseAll()        
             indexes = model.foundItems
             
             om_gui.ui.feesearch_results_label.setText(
-            "%d %s"%(len(indexes), _("Items Found")))
+            "%d %s %s"%(len(indexes), _("Items containing"), search_phrase))
             for index in indexes:
                 ensureVisible(index)
+            om_gui.wait(False)
         else:
+            om_gui.wait(False)
             message = _("phrase not found in feetable")
             if 1 in columns and 4 in columns:
                 message += " " + _("usercodes or descriptions")            
@@ -206,8 +209,8 @@ def newFeeSearch(om_gui):
                 message += " " + _("usercodes")
             elif 4 in columns:
                 message += " " + _("descriptions")
-            
             om_gui.advise(message, 1)
+        
     else:
         om_gui.advise(_("nothing to search")+ "<br />" +
         _("please select usercodes and/or descriptions then search again"), 1)
@@ -280,6 +283,8 @@ def expandFees(om_gui):
     '''
     if om_gui.ui.feeExpand_radioButton.isChecked():
         om_gui.ui.feeScales_treeView.expandAll()
+        if not om_gui.ui.actionShow_Geek_Column.isChecked():
+            om_gui.ui.feeScales_treeView.setColumnWidth(3, 0)
     else:
         om_gui.ui.feeScales_treeView.collapseAll()
     

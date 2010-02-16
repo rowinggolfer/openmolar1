@@ -7,45 +7,77 @@
 
 '''this script connects to the database and performs searches'''
 
+import datetime
 import sys
 from openmolar.connect import connect
 from openmolar.settings import localsettings
 
-def getcandidates(dob,addr,tel,sname,similar_sname,fname,similar_fname,pcde):
-    '''this searches the database for patients matching the given fields'''
-    query=''
-    if addr!='':
-        query+='(ADDR1 like %s or '%(r'"%'+addr+r'%"')
-        query+='ADDR2 like %s) and '%(r'"%'+addr+r'%"')
-    if tel!='':
-        query+='tel1 like %s and '%(r'"%'+tel+r'%"')
-    if localsettings.pyDatetoSQL(dob) != '19000101':
-        query+='dob="%s" and '%dob
-    if pcde!='':
-        query+='pcde like %s and '%(r'"%'+pcde+r'%"')
-    if sname!='':
+def getcandidates(dob, addr, tel, sname, similar_sname, fname, 
+similar_fname, pcde):
+    '''
+    this searches the database for patients matching the given fields
+    '''
+    query = ''
+    values = []
+    if addr != '':
+        query += '(ADDR1 like %s or ADDR2 like %s) and '
+        values.append("%" + addr + "%")
+        values.append("%" + addr + "%")        
+    if tel != '':
+        query += 'tel1 like %s and '
+        values.append("%" + tel + "%")
+    if dob != datetime.date(1900,1,1):
+        query += 'dob = %s and '
+        values.append(dob)
+    if pcde != '':
+        query += 'pcde like %s and '
+        values.append("%" + pcde + "%")
+    if sname != '':
         if similar_sname:
-            query+='sname sounds like "%s" and '%sname
+            query += 'sname sounds like %s and '
+            values.append(sname)
         else:
-            query+='sname like %s and '%('"'+sname+r'%"')
-    if fname!='':
+            sname += "%"
+            if "'" in sname:
+                query += '(sname like %s or sname like %s) and '
+                values.append(sname)
+                values.append(sname.replace("'","")) 
+            elif sname[:1] == "o":
+                query += '(sname like %s or sname like %s) and '
+                values.append(sname)
+                values.append("o'" + sname[1:]) 
+            elif sname[:2] == "mc":
+                query += '(sname like %s or sname like %s) and '
+                values.append(sname)
+                values.append(sname.replace("mc","mac"))  
+            elif sname[:3] == "mac":
+                query += '(sname like %s or sname like %s) and '
+                values.append(sname)
+                values.append(sname.replace("mac","mc"))                  
+            else:
+                query += 'sname like %s and '
+                values.append(sname)
+            
+    if fname != '':
         if similar_fname:
-            query+='fname sounds like "%s" and '%fname
+            query += 'fname sounds like %s and '
+            values.append(fname)
         else:
-            query+='fname like %s and '%('"'+fname+r'%"')
+            query += 'fname like %s and '
+            values.append(fname + "%")
 
-    if query!='':
-        fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde,tel1,tel2,mobile'%localsettings.OM_DATE_FORMAT #this needs to be the headers in qt4gui/main select_patient()
-        query="select %s from patients where %s order by sname,fname"%(fields,query[0:query.rindex("and")])
-        if "demo" in localsettings.DBNAME:
-            #demo db uses the same name and address for everyone!
-            query += " limit 10"
-
+    if query != '':
+        fields = '''serialno, sname, fname, dob, addr1, addr2, pcde, tel1, 
+        tel2, mobile'''
+        
+        query = "select %s from patients where %s order by sname, fname"% (
+        fields, query[0 : query.rindex("and")])
+        print query, tuple(values)
         if localsettings.logqueries:
-            print query
-        db=connect()
+            print query, values
+        db = connect()
         cursor = db.cursor()
-        cursor.execute(query)
+        cursor.execute(query,tuple(values))
         results = cursor.fetchall()
         cursor.close()
         #db.close()
@@ -57,9 +89,11 @@ def getsimilar(serialno,addr,sname,family):
     '''this searches the database for patients matching the given fields'''
     db=connect()
     cursor = db.cursor()
-    fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde'%localsettings.OM_DATE_FORMAT #this needs to be the headers in qt4gui/main select_patient()
+    fields='serialno,sname,fname,dob,addr1,addr2,pcde'
+    
     if family>0:
-        query="select %s from patients where serialno != %d and familyno=%d order by dob"%(fields,serialno,family)
+        query = '''select %s from patients where serialno != %d 
+        and familyno=%d order by dob'''% (fields,serialno,family)
 
         if localsettings.logqueries:
             print query
@@ -84,11 +118,9 @@ def getsimilar(serialno,addr,sname,family):
         addresses = cursor.fetchall()
     else:
         addresses=()
-    query='select %s from patients where serialno != %d and sname sounds like "%s" order by fname,sname'%(fields,serialno,sname)
-    if "demo" in localsettings.DBNAME:
-            #demo db uses the same name and address for everyone!
-            query += " limit 10"
-
+    query = '''select %s from patients where serialno != %d and 
+    sname sounds like "%s" order by fname,sname'''% (fields,serialno,sname)
+    
     if localsettings.logqueries:
             print query
 
@@ -104,8 +136,10 @@ def getcandidates_from_serialnos(list_of_snos):
     for sno in list_of_snos:
         query+="serialno=%d or "%sno
     if query!='':
-        fields='serialno,sname,fname,DATE_FORMAT(dob,"%s"),addr1,addr2,pcde,tel1,tel2,mobile'%localsettings.OM_DATE_FORMAT #this needs to be the headers in qt4gui/main select_patient()
-        query="select %s from patients where %s order by sname,fname"%(fields,query[:query.rindex("or")])
+        fields='serialno,sname,fname,dob, addr1,addr2,pcde,tel1,tel2,mobile' 
+        query="select %s from patients where %s order by sname,fname"%(
+        fields,query[:query.rindex("or")])
+
         if localsettings.logqueries:
             print query
 
@@ -118,6 +152,7 @@ def getcandidates_from_serialnos(list_of_snos):
         return results
     else:
         return()
+        
 if __name__=='__main__':
-    print getcandidates("0000-00-00","","","wallace","","","","")
-    print getcandidates_from_serialnos((1,2,3,4))
+    print getcandidates(datetime.date(1900,1,1),"","","smit","","","","")
+    #print getcandidates_from_serialnos((1,2,3,4))

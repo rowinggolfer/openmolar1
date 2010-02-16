@@ -125,7 +125,7 @@ class treeModel(QtCore.QAbstractItemModel):
             brush = QtGui.QBrush(QtGui.QColor("yellow"))
             return QtCore.QVariant(brush)
         if role == QtCore.Qt.TextAlignmentRole:
-            if index.column > 5:
+            if index.column() > 5:
                 return QtCore.QVariant(QtCore.Qt.AlignRight)
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
@@ -222,7 +222,7 @@ class treeModel(QtCore.QAbstractItemModel):
             branch = TreeItem(self.table, key,feeItem, parents[cat])
             parents[cat].appendChild(branch)
                 
-            for row in range(1,number_in_group):
+            for row in range(1, number_in_group):
                 branch.appendChild(
                 TreeItem(self.table, key,feeItem, branch, row))
     

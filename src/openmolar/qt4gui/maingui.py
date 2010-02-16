@@ -163,7 +163,13 @@ class openmolarGui(QtGui.QMainWindow):
             QtGui.QMessageBox.warning(self, _("Error"), arg)
             #--for logging purposes
             print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
-
+    
+    def wait(self, waiting):
+        if waiting:
+            self.app.setOverrideCursor(QtCore.Qt.WaitCursor) 
+        else:
+            self.app.restoreOverrideCursor()
+            
     def notify(self, message):
         '''
         pop up a notification
@@ -1169,7 +1175,11 @@ class openmolarGui(QtGui.QMainWindow):
                 for candidate in candidates[tableNo]:
                     col=0
                     for attr in candidate:
-                        item=QtGui.QTableWidgetItem(str(attr))
+                        if type(attr) == type(datetime.date(1900,1,1)):
+                            item = QtGui.QTableWidgetItem(
+                            localsettings.formatDate(attr))
+                        else:
+                            item = QtGui.QTableWidgetItem(str(attr))
                         table.setItem(row, col, item)
                         col+=1
                     row+=1
@@ -1543,7 +1553,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         for candidate in candidates:
             col=0
             for attr in candidate:
-                item=QtGui.QTableWidgetItem(str(attr))
+                if type(attr) == type(datetime.date(1900,1,1)):
+                    item = QtGui.QTableWidgetItem(
+                    localsettings.formatDate(attr))
+                else:
+                    item = QtGui.QTableWidgetItem(str(attr))
                 dl.tableWidget.setItem(row, col, item)
                 col+=1
             row+=1
@@ -1572,34 +1586,36 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         Dialog = QtGui.QDialog(self)
         dl = Ui_patient_finder.Ui_Dialog()
         dl.setupUi(Dialog)
-        QtCore.QObject.connect(dl.repeat_pushButton, QtCore.\
-                               SIGNAL("clicked()"), repeat_last_search)
+        
+        QtCore.QObject.connect(dl.repeat_pushButton, 
+        QtCore.SIGNAL("clicked()"), repeat_last_search)
+
         dl.sname.setFocus()
         if Dialog.exec_():
-            dob=dl.dateEdit.date().toPyDate()
-            addr=str(dl.addr1.text().toAscii())
-            tel=str(dl.tel.text().toAscii())
-            sname=str(dl.sname.text().toAscii())
-            fname=str(dl.fname.text().toAscii())
-            pcde=str(dl.pcde.text().toAscii())
-            localsettings.lastsearch=(sname, fname, dob, tel, addr, pcde)
+            dob = dl.dateEdit.date().toPyDate()
+            addr = str(dl.addr1.text().toAscii())
+            tel = str(dl.tel.text().toAscii())
+            sname = str(dl.sname.text().toAscii())
+            fname = str(dl.fname.text().toAscii())
+            pcde = str(dl.pcde.text().toAscii())
+            localsettings.lastsearch = (sname, fname, dob, tel, addr, pcde)
 
             try:
-                serialno=int(sname)
+                serialno = int(sname)
             except:
-                serialno=0
-            if serialno>0:
+                serialno = 0
+            if serialno > 0:
                 self.getrecord(serialno, True)
             else:
-                candidates=search.getcandidates(dob, addr, tel, sname,
+                candidates = search.getcandidates(dob, addr, tel, sname,
                 dl.snameSoundex_checkBox.checkState(), fname,
                 dl.fnameSoundex_checkBox.checkState(), pcde)
 
                 if candidates == ():
                     self.advise("no match found", 1)
                 else:
-                    if len(candidates)>1:
-                        sno=self.final_choice(candidates)
+                    if len(candidates) > 1:
+                        sno = self.final_choice(candidates)
                         if sno != None:
                             self.getrecord(int(sno), True)
                     else:
@@ -2386,7 +2402,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         user is searching fees
         '''
-        fees_module.newFeeSearch(self)
+        fees_module.feeSearch(self)
 
     def nhsRegs_pushButton_clicked(self):
         '''
