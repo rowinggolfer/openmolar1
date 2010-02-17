@@ -127,9 +127,9 @@ class openmolarGui(QtGui.QMainWindow):
         #--make a deep copy to check for changes
         self.pt=copy.deepcopy(self.pt_dbstate)
         self.selectedChartWidget = "st" #other values are "pl" or "cmp"
-        self.grid = ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1', 
-        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', 
-        "lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1', 
+        self.grid = ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
+        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8',
+        "lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
         'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
         self.addCustomWidgets()
         self.labels_and_tabs()
@@ -146,7 +146,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.forum_notified = False
         self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
-        
+
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -163,13 +163,13 @@ class openmolarGui(QtGui.QMainWindow):
             QtGui.QMessageBox.warning(self, _("Error"), arg)
             #--for logging purposes
             print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
-    
+
     def wait(self, waiting):
         if waiting:
-            self.app.setOverrideCursor(QtCore.Qt.WaitCursor) 
+            self.app.setOverrideCursor(QtCore.Qt.WaitCursor)
         else:
             self.app.restoreOverrideCursor()
-            
+
     def notify(self, message):
         '''
         pop up a notification
@@ -246,7 +246,7 @@ class openmolarGui(QtGui.QMainWindow):
         hlayout=QtGui.QHBoxLayout(self.ui.static_groupBox)
         hlayout.addWidget(self.ui.staticChartWidget)
         self.ui.static_groupBox.setStyleSheet("border: 1px solid gray;")
-        
+
         #-plan chart
         self.ui.planChartWidget=chartwidget.chartWidget()
         self.ui.planChartWidget.isStaticChart=False
@@ -261,7 +261,7 @@ class openmolarGui(QtGui.QMainWindow):
         hlayout=QtGui.QHBoxLayout(self.ui.completed_groupBox)
         hlayout.addWidget(self.ui.completedChartWidget)
         self.ui.completed_groupBox.setStyleSheet("border: 1px solid gray;")
-        
+
         #-TOOTHPROPS (right hand side on the charts page)
         self.ui.toothPropsWidget = toothProps.tpWidget(self)
         hlayout = QtGui.QHBoxLayout(self.ui.toothProps_frame)
@@ -296,7 +296,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.perioChartWidgets.append(pchart)
 
         self.apptBookWidgets=[]
-        
+
         #-appointment OVerview widget
         self.ui.apptoverviews=[]
 
@@ -432,7 +432,7 @@ class openmolarGui(QtGui.QMainWindow):
 
         #--history
         self.addHistoryMenu()
-        
+
         #--notification widget
         self.ui.notificationWidget = \
         notification_widget.notificationWidget(self)
@@ -457,7 +457,7 @@ class openmolarGui(QtGui.QMainWindow):
         layout the perio charts
         '''
         charts_gui.layoutPerioCharts(self)
-        
+
     def editStatic(self):
         '''
         called by the static button on the toothprops widget
@@ -484,20 +484,20 @@ class openmolarGui(QtGui.QMainWindow):
         called when user has trigger deleted comments in the toothProp
         '''
         charts_gui.deleteComments(self)
-        
+
     def updateCharts(self, arg):
         '''
         called by a signal from the toothprops widget -
         args are the new tooth properties eg modbl,co
         '''
         charts_gui.updateCharts(self, arg)
-        
+
     def navigateCharts(self, direction):
         '''
         catches a keypress in the toothprop widget
         '''
         charts_gui.navigateCharts(self, direction)
-        
+
     def static_chartNavigation(self, signal):
         '''
         called by the static or summary chartwidget
@@ -521,7 +521,7 @@ class openmolarGui(QtGui.QMainWindow):
         charts_gui.checkPreviousEntry(self)
         self.selectedChartWidget="cmp"
         charts_gui.chartNavigation(self, signal)
-    
+
     def flipDeciduous(self):
         '''
         toggle the selected tooth's deciduos state
@@ -557,7 +557,7 @@ class openmolarGui(QtGui.QMainWindow):
 
     def tooth_change_material(self, prop):
         '''
-        user has clicked on the change material option from a tooth's 
+        user has clicked on the change material option from a tooth's
         right click menu - prop is the fill to be changed
         '''
         print "tooth_change_material", prop
@@ -565,7 +565,7 @@ class openmolarGui(QtGui.QMainWindow):
 
     def tooth_change_crown(self, prop):
         '''
-        user has clicked on the change crown type option from a tooth's 
+        user has clicked on the change crown type option from a tooth's
         right click menu - prop is the crown to be changed
         '''
         print "tooth_change_crown", prop
@@ -691,11 +691,11 @@ class openmolarGui(QtGui.QMainWindow):
             charts_gui.periochart_dates(self)
             #load the periocharts (if the patient has data)
             charts_gui.layoutPerioCharts(self)
-            
+
         if ci == 7:  #-- estimate/plan page.
             self.load_newEstPage()
             self.load_treatTrees()
-        
+
     def diary_tabWidget_nav(self, i):
         '''
         catches a signal that the diary tab widget has been moved
@@ -787,7 +787,7 @@ class openmolarGui(QtGui.QMainWindow):
         #--notes not verbose
         self.ui.reception_notes_textBrowser.setHtml(note)
         self.ui.reception_notes_textBrowser.scrollToAnchor('anchor')
-        
+
     def load_newEstPage(self):
         '''
         populate my custom widget (estWidget)
@@ -870,39 +870,35 @@ class openmolarGui(QtGui.QMainWindow):
 
     def load_dentComboBoxes(self):
         #print "loading dnt comboboxes."
-        try:
+        inits = localsettings.ops.get(self.pt.dnt1, "")
+        if inits in localsettings.activedents:
             self.ui.dnt1comboBox.setCurrentIndex(
-            localsettings.activedents.index(localsettings.ops[self.pt.dnt1]))
-
-            self.ui.dnt2comboBox.setCurrentIndex(
-            localsettings.activedents.index(localsettings.ops[self.pt.dnt1]))
-
-        except Exception, e:
+            localsettings.activedents.index(inits))
+        else:
             self.ui.dnt1comboBox.setCurrentIndex(-1)
-            if self.pt.dnt1 != 0:
-                print "self.pt.dnt1 error - record %d"%self.pt.serialno
-                if localsettings.ops.has_key(self.pt.dnt1):
-                    self.advise(
-                    "%s is no longer an active dentist in this practice"%\
-                    localsettings.ops[self.pt.dnt1], 2)
-                else:
-                    print "unknown dentist number", self.pt.dnt1
-                    self.advise(
-                    "unknown contract dentist - please correct this", 2)
-        if self.pt.dnt2>0:
-            try:
-                self.ui.dnt2comboBox.setCurrentIndex(localsettings.activedents.\
-                                        index(localsettings.ops[self.pt.dnt2]))
-            except KeyError, e:
-                print "self.pt.dnt2 error - record %d"
-                self.ui.dnt2comboBox.setCurrentIndex(-1)
-                if localsettings.ops.has_key(self.pt.dnt1):
-                    self.advise("%s (dentist 2) "%localsettings.\
-                    ops[self.pt.dnt2]+"is no longer an active dentist i"
-                    +"n this practice", 1)
-                else:
-                    self.advise(
-                    "unknown course dentist - please correct this", 2)
+            print "dnt1 error - record %d"% self.pt.serialno
+            if inits:
+                message = "%s "% inits + _(
+                "is no longer an active dentist in this practice")
+            else:
+                print "unknown dentist number", self.pt.dnt1
+                message = _("unknown contract dentist - please correct this")
+            self.advise(message, 2)
+
+        inits = localsettings.ops.get(self.pt.dnt2, "")
+        if inits in localsettings.activedents:
+            self.ui.dnt2comboBox.setCurrentIndex(
+            localsettings.activedents.index(inits))
+        else:
+            self.ui.dnt2comboBox.setCurrentIndex(-1)
+            print "dnt2 error - record %d"% self.pt.serialno
+            if inits:
+                message = "%s "% inits + _(
+                "is no longer an active dentist in this practice")
+            else:
+                print "unknown dentist number", self.pt.dnt1
+                message = _("unknown course dentist - please correct this")
+            self.advise(message, 2)
 
     def showAdditionalFields(self):
         '''
@@ -910,7 +906,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         #TODO - add more code here!!
         self.advise("not yet available", 1)
-        
+
     def enterNewPatient(self):
         '''
         called by the user clicking the new patient button
@@ -922,7 +918,7 @@ class openmolarGui(QtGui.QMainWindow):
         an alternate slot for the save button, used when in new patient mode
         '''
         new_patient_gui.checkNewPatient(self)
-        
+
     def enteringNewPatient(self):
         '''
         determines if the user is entering a new patient
@@ -966,7 +962,7 @@ class openmolarGui(QtGui.QMainWindow):
         from the previous patient
         '''
         new_patient_gui.defaultNP(self)
-    
+
     def docsPrintedInit(self):
         '''
         load the docsprinted listWidget
@@ -999,7 +995,7 @@ class openmolarGui(QtGui.QMainWindow):
             if result == QtGui.QMessageBox.Yes:
                 html, version=docsprinted.getData(ix)
                 om_printing.customEstimate(self, html, version)
-                
+
         elif "pdf" in item.text(1):
             result = QtGui.QMessageBox.question(self, _("Re-open"),
             _("Do you want to review and/or reprint this item?"),
@@ -1023,7 +1019,7 @@ class openmolarGui(QtGui.QMainWindow):
                 data = _(
                 "No information available about this document, sorry")
             self.advise(data, 1)
-    
+
     def docsImportedInit(self):
         '''
         load the docsImported listWidget
@@ -1040,7 +1036,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.importDoc_treeWidget.resizeColumnToContents(i)
         #-- hide the index column
         self.ui.importDoc_treeWidget.setColumnWidth(4, 0)
-        
+
     def importDoc(self):
         '''
         import a document and store into the database
@@ -1055,7 +1051,7 @@ class openmolarGui(QtGui.QMainWindow):
         else:
             self.advise(_("no file chosen"), 1)
         self.docsImportedInit()
-    
+
     def showImportedDoc(self, item, index):
         '''
         called by a double click on the imported documents listview
@@ -1079,7 +1075,7 @@ class openmolarGui(QtGui.QMainWindow):
                 print "unable to open stored document"
                 print Exception, e
                 self.advise(_("error opening document"), 1)
-        
+
     def load_todays_patients_combobox(self):
         '''
         loads the quick select combobox, with all of todays's
@@ -1091,8 +1087,8 @@ class openmolarGui(QtGui.QMainWindow):
             " (%s)"%localsettings.clinicianInits
         else:
             visibleItem  =_("Today's Patients (ALL)")
-        
-        dents = (localsettings.clinicianNo, )        
+
+        dents = (localsettings.clinicianNo, )
         ptList = appointments.todays_patients(dents)
         if len(ptList) ==0:
             self.ui.daylistBox.hide()
@@ -1144,10 +1140,10 @@ class openmolarGui(QtGui.QMainWindow):
             dl.soundex_tableWidget.currentRow(), 0).text()
         def DoubleClick():
             Dialog.accept()
-            
-        candidates = search.getsimilar(self.pt.serialno, self.pt.addr1, 
+
+        candidates = search.getsimilar(self.pt.serialno, self.pt.addr1,
         self.pt.sname, self.pt.familyno)
-        
+
         if candidates != ():
             Dialog = QtGui.QDialog(self)
             dl = Ui_related_patients.Ui_Dialog()
@@ -1191,18 +1187,18 @@ class openmolarGui(QtGui.QMainWindow):
             "itemSelectionChanged()"), family_navigated)
             QtCore.QObject.connect(dl.family_tableWidget, QtCore.SIGNAL(
             "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
-                    
+
             QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
             "itemSelectionChanged()"), address_navigated)
             QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
             "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
-                    
-            
+
+
             QtCore.QObject.connect(dl.soundex_tableWidget, QtCore.SIGNAL(
             "itemSelectionChanged()"), soundex_navigated)
             QtCore.QObject.connect(dl.soundex_tableWidget, QtCore.SIGNAL(
             "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
-        
+
             if Dialog.exec_():
                 self.getrecord(int(dl.selected))
         else:
@@ -1219,7 +1215,7 @@ class openmolarGui(QtGui.QMainWindow):
             localsettings.recent_sno_index = desiredPos
         else:
             self.advise(_("Reached end of the List"))
-            
+
     def last_patient(self):
         '''
         cycle backwards through recently visited records
@@ -1228,13 +1224,13 @@ class openmolarGui(QtGui.QMainWindow):
             desiredPos = localsettings.recent_sno_index
         else:
             desiredPos = localsettings.recent_sno_index - 1
-        if len(localsettings.recent_snos) > desiredPos >= 0: 
+        if len(localsettings.recent_snos) > desiredPos >= 0:
             self.getrecord(localsettings.recent_snos[desiredPos],
             addToRecentSnos=False)
             localsettings.recent_sno_index = desiredPos
         else:
             self.advise(_("Reached Start of the List"))
-        
+
     def apply_editpage_changes(self):
         '''
         apply any changes made on the edit patient page
@@ -1278,7 +1274,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.getrecord(int(sno))
 
     @localsettings.debug
-    def getrecord(self, serialno, checkedNeedToLeaveAlready=False, 
+    def getrecord(self, serialno, checkedNeedToLeaveAlready=False,
     addToRecentSnos=True):
         '''
         a record has been called byone of several means
@@ -1294,7 +1290,7 @@ class openmolarGui(QtGui.QMainWindow):
                 localsettings.recent_snos.append(serialno)
                 localsettings.recent_sno_index = len(
                 localsettings.recent_snos) - 1
-            
+
             self.advise("connecting to database to get patient details..")
 
             try:
@@ -1312,7 +1308,7 @@ class openmolarGui(QtGui.QMainWindow):
                 except Exception, e:
                     self.advise(
                     _("Error populating interface\n%s")% e, 2)
-                    
+
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
                 self.advise ("error getting serialno %d"%serialno+
@@ -1402,12 +1398,12 @@ class openmolarGui(QtGui.QMainWindow):
         self.pt.sname, self.pt.addr1, self.pt.addr2,
         self.pt.addr3, self.pt.town, self.pt.county,
         self.pt.pcde, self.pt.tel1)
-        
+
         labeltext = "currently editing  %s %s %s - (%s)"% (
         self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
         self.loadedPatient_label.setText(labeltext)
         self.ui.hiddenNotes_label.setText("")
-        
+
         if self.ui.tabWidget.currentIndex() == 4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.ui.debugBrowser.setText("")
@@ -1417,7 +1413,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.advise(warning, 1)
         if localsettings.station == "surgery":
             self.callXrays()
-    
+
 
     def getmemos(self):
         '''
@@ -1586,8 +1582,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         Dialog = QtGui.QDialog(self)
         dl = Ui_patient_finder.Ui_Dialog()
         dl.setupUi(Dialog)
-        
-        QtCore.QObject.connect(dl.repeat_pushButton, 
+
+        QtCore.QObject.connect(dl.repeat_pushButton,
         QtCore.SIGNAL("clicked()"), repeat_last_search)
 
         dl.sname.setFocus()
@@ -1655,7 +1651,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.cashbookStartDateEdit.setDate(today)
         self.ui.cashbookEndDateEdit.setDate(today)
         self.ui.recallstart_dateEdit.setDate(today)
-        self.ui.recallend_dateEdit.setDate(today)        
+        self.ui.recallend_dateEdit.setDate(today)
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.dupReceiptDate_lineEdit.setText(today.toString(
         "dd'/'MM'/'yyyy"))
@@ -1671,8 +1667,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         localsettings.allowed_logins)
 
         self.addHistoryMenu()
-        
-        
+
+
     def addHistoryMenu(self):
         '''
         add items to a toolbutton for trawling the database
@@ -1778,27 +1774,27 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         start = self.ui.recallstart_dateEdit.date().toPyDate()
         end = self.ui.recallend_dateEdit.date().toPyDate()
-        
+
         self.letters.setData(recall.HEADERS, recall.getpatients(start, end))
-    
+
     def bulkMailExpand(self):
         '''
         expand/contract all children
         '''
         self.letters.expand_contract()
-        
+
     def bulkMailPrint(self):
         '''
         the print button on the bulk mail tab has been clicked
         '''
         self.letters.printViaQPainter()
-        
+
     def bulk_mail_doubleclicked(self, index):
         '''
         a row in the bulk_mail data model has been double clicked
         '''
         self.getrecord(self.letters.selected(index))
-            
+
     def showChartTable(self):
         '''
         flips a stackedwidget to display the table underlying the charts
@@ -1836,7 +1832,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         current = self.ui.notesEnter_textEdit.toPlainText().trimmed()
         if current != "":
-            current += "\n" 
+            current += "\n"
         self.ui.notesEnter_textEdit.setText(current + arg)
 
     def callXrays(self):
@@ -1911,7 +1907,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         changes=[]
         if self.pt.serialno != self.pt_dbstate.serialno:
             #this should NEVER happen!!!
-            self.advise( 
+            self.advise(
             _('''POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS''') +
             ' %d and %d'% (self.pt.serialno, self.pt_dbstate.serialno), 2)
             return changes
@@ -1919,7 +1915,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
         len(self.pt.HIDDENNOTES) != 0):
             changes.append("New Notes")
-                
+
         for attr in patient_class.ATTRIBS_TO_CHECK:
             try:
                 newval = str(self.pt.__dict__.get(attr, ""))
@@ -1934,14 +1930,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                     daybook_module.perioDates(self, newval)
                     changes.append(attr)
                 else:
-                    if (attr != "memo" or 
+                    if (attr != "memo" or
                     oldval.replace(chr(13), "") != newval):
                         #-- ok - windows line ends from old DB were
                         #-- creating an issue
                         #-- memo was reporting that update had occurred.
                         changes.append(attr)
         return changes
-            
+
     def save_changes(self, leavingRecord=True):
         '''
         updates the database when the save is requested
@@ -1984,10 +1980,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         if "New Notes" in uc:
             newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
-        
+
             notelines = newnote.split("\n")
-            result = patient_write_changes.toNotes(self.pt.serialno, 
-            newnote.split("\n")) 
+            result = patient_write_changes.toNotes(self.pt.serialno,
+            newnote.split("\n"))
             #--sucessful write to db?
             if result != -1:
                 #--result will be a "line number" or -1 if unsucessful write
@@ -1998,10 +1994,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 html = notes.notes(self.pt.notes_dict, ignoreRec=True)
                 self.ui.notesSummary_textBrowser.setHtml(html)
                 self.ui.notesSummary_textBrowser.scrollToAnchor("anchor")
-                
+
                 if self.ui.tabWidget.currentIndex() == 3:
                     self.load_receptionSummaryPage()
-                    
+
                 if self.ui.tabWidget.currentIndex() == 5:
                     self.updateNotesPage()
             else:
@@ -2160,7 +2156,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         if permissions.granted():
             fee_adjuster.main(self)
-    
+
     def actionNewSetup(self):
         '''
         launch a 2nd application to modify the database to allow a new practice
@@ -2169,7 +2165,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if permissions.granted():
             self.ui2 = new_setup.setup_gui(self.app)
             self.ui2.show()
-    
+
     def clearTodaysEmergencyTime_action(self):
         '''
         convenience function to auto clear all the reserved time for today
@@ -2192,7 +2188,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             if permissions.granted(self):
                 dl = recordtools.recordTools(self)
                 dl.exec_()
-        
+
     def gotoToday_clicked(self):
         '''
         handles button pressed asking for today to be loaded on the
@@ -2265,7 +2261,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         a memo needs to be added to a day
         '''
         appt_gui_module.updateDayMemos(self, memos)
-    
+
     def addCalendarPubHol(self, arg):
         '''
         a public holiday needs to be added to a day
@@ -2296,7 +2292,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         handles a request to move forward a month in the appointments page
         '''
         appt_gui_module.aptOV_monthForward(self)
-    
+
     def aptOV_yearBack_clicked(self):
         '''
         handles a request to move back a month in the appointments page
@@ -2330,10 +2326,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         changed state
         '''
         appt_gui_module.apptOVdents(self)
-    
+
     def dayView_radiobutton_toggled(self):
         '''
-        radiobutton toggling who's book to show on the appointment 
+        radiobutton toggling who's book to show on the appointment
         '''
         print "radiobuttontoggled"
         appt_gui_module.handle_calendar_signal(self, False)
@@ -2429,7 +2425,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         receives signals from the choose feescale combobox
         '''
         fees_module.chooseFeescale(self,arg)
-        
+
     def feeExpand_radiobuttons_clicked(self):
         '''
         the expand or collapse radio buttons on the fees page
@@ -2475,7 +2471,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         add Xray items to the treatment plan
         '''
         add_tx_to_plan.xrayAdd(self)
-    
+
     def addXrays(self):
         '''
         add Xray items to COMPLETED tx
@@ -2668,10 +2664,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         called from pastData toolbutton - arg is the chosen qstring
         '''
-        ## TODO deprecated - toolbutton is not good enough 
+        ## TODO deprecated - toolbutton is not good enough
         ## for this important functionality
         print "deprecated pastDataMenu_clicked, received arg", arg
-        
+
     def pastPayments_clicked(self):
         '''
         show all past payments for a patient
@@ -2679,14 +2675,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         html=paymentHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
 
-        
+
     def pastTreatment_clicked(self):
         '''
         show all past estimates for a patient
         '''
         html=daybookHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-        
+
     def pastCourses_clicked(self):
         '''
         show all past treatment plans for a patient
@@ -2694,14 +2690,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         html = courseHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-    
+
     def pastEstimates_clicked(self):
         '''
         show all past estimates for a patient
         '''
         html = estimatesHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-    
+
     def past_course_estimates_clicked(self):
         '''
         show all past treatment plans for a patient
@@ -2710,14 +2706,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         html = courseHistory.all_details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-        
+
     def NHSClaims_clicked(self):
         '''
         show all past NHS claims for a patient
         '''
         html=nhs_claims.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-    
+
     def nhsClaimsShortcut(self):
         '''
         a convenience function called from the contracts page
@@ -2752,7 +2748,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         cashbook Go button clicked
         '''
         cashbook_module.show_cashbook(self)
-        
+
     def cashbookPrint(self):
         '''
         cashbook print button clicked
@@ -2764,7 +2760,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         daybook Go button clicked
         '''
         daybook_module.daybookView(self)
-        
+
     def daybookPrint(self):
         '''
         daybook print button clicked
@@ -2777,50 +2773,50 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         more than just history!
         '''
         om_printing.historyPrint(self)
-        
+
     def printSelectedAccounts(self):
         '''
-        iterate over te accounts table, and print letters to those who 
+        iterate over te accounts table, and print letters to those who
         have been selected to get an invoice
         '''
         om_printing.printSelectedAccounts(self)
-    
+
     def printDupReceipt(self):
         '''
         print a duplicate receipt
         '''
         om_printing.printDupReceipt(self)
-    
+
     def printLetter(self):
         '''
         prints a letter to the patient
         '''
         om_printing.printLetter(self)
-        
+
     def printAccountsTable(self):
         '''
         print the table
         '''
         om_printing.printAccountsTable(self)
-        
+
     def printEstimate(self):
         '''
         print an estimate
         '''
         om_printing.printEstimate(self)
-        
+
     def customEstimate(self):
         '''
         prints a custom estimate to the patient
         '''
         om_printing.customEstimate(self)
-        
+
     def printReferral(self):
         '''
         prints a referal letter controlled by referal.xml file
         '''
         om_printing.printReferral(self)
-        
+
     def printChart(self):
         '''
         prints the static chart
@@ -2832,7 +2828,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         print an account
         '''
         om_printing.printaccount(self, tone)
-        
+
     def printMonth_pushButton_clicked(self):
         '''
         print the current Monthe View
@@ -2879,7 +2875,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             om_printing.printdaylists(self, books)
         except KeyError:
             self.advise("error printing book", 1)
-    
+
     def bookmemo_Edited(self, arg):
         '''
         user has double clicked on the appointment widget memo label
@@ -2888,22 +2884,22 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         apptix = localsettings.apptix[dentist]
         if self.appointmentData.getMemo(apptix) != memo:
             appointments.setMemos(
-            self.ui.calendarWidget.selectedDate().toPyDate(), 
+            self.ui.calendarWidget.selectedDate().toPyDate(),
             ((apptix, memo),))
             self.advise("adding day memo - %s %s"% (dentist, memo))
-            
+
     def daylistPrintWizard(self):
         '''
         raise a dialog and give options for what should be printed
         '''
         om_printing.daylistPrintWizard(self)
-        
+
     def printrecall(self):
         '''
         print a one-off recall
         '''
         om_printing.printrecall(self)
-        
+
     def printNotesV(self):
         '''
         verbose notes print
@@ -2960,10 +2956,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.hygWizard_pushButton,
         QtCore.SIGNAL("clicked()"), self.showHygDialog)
-        
+
         QtCore.QObject.connect(self.ui.xray_pushButton,
         QtCore.SIGNAL("clicked()"), self.addXrays)
-        
+
         QtCore.QObject.connect(self.ui.newBPE_pushButton,
         QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
 
@@ -3086,7 +3082,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.importDoc_treeWidget,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
         self.showImportedDoc)
-        
+
         QtCore.QObject.connect(self.ui.recall_dateEdit,
         QtCore.SIGNAL("dateChanged (const QDate&)"), self.recallDate)
 
@@ -3164,7 +3160,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
         QtCore.QObject.connect(self.ui.estLetter_pushButton,
         QtCore.SIGNAL("clicked()"), self.customEstimate)
-        
+
         QtCore.QObject.connect(self.ui.recalcEst_pushButton,
         QtCore.SIGNAL("clicked()"), self.recalculateEstimate)
 
@@ -3176,7 +3172,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.xrayTxpushButton,
         QtCore.SIGNAL("clicked()"), self.addXrayItems)
-        
+
         QtCore.QObject.connect(self.ui.perioTxpushButton,
                                QtCore.SIGNAL("clicked()"), self.addPerioItems)
         QtCore.QObject.connect(self.ui.otherTxpushButton,
@@ -3236,27 +3232,27 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.ptAtts_checkBox,
         QtCore.SIGNAL("stateChanged (int)"), self.updateAttributes)
 
-        QtCore.QObject.connect(self.ui.historyPrint_pushButton, 
+        QtCore.QObject.connect(self.ui.historyPrint_pushButton,
         QtCore.SIGNAL("clicked()"), self.historyPrint)
 
-        QtCore.QObject.connect(self.ui.pastPayments_pushButton, 
+        QtCore.QObject.connect(self.ui.pastPayments_pushButton,
         QtCore.SIGNAL("clicked()"), self.pastPayments_clicked)
-        
-        QtCore.QObject.connect(self.ui.pastTreatment_pushButton, 
+
+        QtCore.QObject.connect(self.ui.pastTreatment_pushButton,
         QtCore.SIGNAL("clicked()"), self.pastTreatment_clicked)
 
-        QtCore.QObject.connect(self.ui.pastCourses_pushButton, 
+        QtCore.QObject.connect(self.ui.pastCourses_pushButton,
         QtCore.SIGNAL("clicked()"), self.pastCourses_clicked)
 
-        QtCore.QObject.connect(self.ui.pastEstimates_pushButton, 
+        QtCore.QObject.connect(self.ui.pastEstimates_pushButton,
         QtCore.SIGNAL("clicked()"), self.pastEstimates_clicked)
 
-        QtCore.QObject.connect(self.ui.past_course_estimates_pushButton, 
+        QtCore.QObject.connect(self.ui.past_course_estimates_pushButton,
         QtCore.SIGNAL("clicked()"), self.past_course_estimates_clicked)
-        
-        QtCore.QObject.connect(self.ui.NHSClaims_pushButton, 
+
+        QtCore.QObject.connect(self.ui.NHSClaims_pushButton,
         QtCore.SIGNAL("clicked()"), self.NHSClaims_clicked)
-        
+
 
     def signals_daybook(self):
 
@@ -3289,7 +3285,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #contract
         QtCore.QObject.connect(self.ui.badDebt_pushButton,
         QtCore.SIGNAL("clicked()"), self.makeBadDebt_clicked)
-        
+
         QtCore.QObject.connect(self.ui.contract_tabWidget,
         QtCore.SIGNAL("currentChanged(int)"), self.contractTab_navigated)
 
@@ -3307,7 +3303,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.editNHS_pushButton_clicked)
 
         for le in (self.ui.exemption_lineEdit, self.ui.exempttext_lineEdit):
-            QtCore.QObject.connect(le,QtCore.SIGNAL("editingFinished ()"), 
+            QtCore.QObject.connect(le,QtCore.SIGNAL("editingFinished ()"),
             self.exemption_edited)
 
         QtCore.QObject.connect(self.ui.editPriv_pushButton,
@@ -3333,7 +3329,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.feeScales_treeView,
         QtCore.SIGNAL("doubleClicked (QModelIndex)"),
         self.feeScale_doubleclicked)
-        
+
         QtCore.QObject.connect(self.ui.feeScales_treeView,
         QtCore.SIGNAL("expanded (QModelIndex)"),
         self.feeScale_expanded)
@@ -3493,11 +3489,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
     def signals_apptWidgets(self, book):
 
         book.connect(book, QtCore.SIGNAL("print_me"), self.bookPrint)
-        
-        
+
+
         book.connect(book, QtCore.SIGNAL("new_memo"),
         self.bookmemo_Edited)
-        
+
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
         self.apptBook_appointmentClickedSignal)
 
@@ -3527,7 +3523,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.yearView,
         QtCore.SIGNAL("add_memo"), self.addCalendarMemo)
-        
+
         QtCore.QObject.connect(self.ui.yearView,
         QtCore.SIGNAL("add_pub_hol"), self.addCalendarPubHol)
 
@@ -3542,7 +3538,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.aptOVnextmonth,
         QtCore.SIGNAL("clicked()"), self.aptOV_monthForward_clicked)
-        
+
         QtCore.QObject.connect(self.ui.aptOVprevyear,
         QtCore.SIGNAL("clicked()"), self.aptOV_yearBack_clicked)
 
@@ -3553,12 +3549,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         for widg in (self.ui.aptOV_apptscheckBox,
         self.ui.aptOV_emergencycheckBox, self.ui.aptOV_lunchcheckBox,
         self.ui.weekView_outOfOffice_checkBox):
-            QtCore.QObject.connect(widg, QtCore.SIGNAL("stateChanged(int)"), 
+            QtCore.QObject.connect(widg, QtCore.SIGNAL("stateChanged(int)"),
             self.aptOV_checkboxes_changed)
-            
+
         for widg in ( self.ui.dayView_smart_radioButton,
         self.ui.dayView_selectedBooks_radioButton):
-            QtCore.QObject.connect(widg, QtCore.SIGNAL("clicked()"), 
+            QtCore.QObject.connect(widg, QtCore.SIGNAL("clicked()"),
             self.dayView_radiobutton_toggled)
 
         for widg in self.ui.apptoverviews:
@@ -3679,7 +3675,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtGui.QMessageBox.No )
         if result == QtGui.QMessageBox.No:
             return
-        max, result = QtGui.QInputDialog.getInteger(self, _("input needed"), 
+        max, result = QtGui.QInputDialog.getInteger(self, _("input needed"),
         _("maximum charge for the patient")+"<br />"+_(
         "please enter the amount in pence, or leave as 0 for full exmption"))
 
@@ -3692,13 +3688,13 @@ def main(app):
     '''
     the entry point for the app
     '''
-    
+
     if not localsettings.successful_login and not "neil" in os.getcwd():
         print "unable to run... no login"
         sys.exit()
     localsettings.initiate()
 
-    mainWindow = openmolarGui(app) #-- app required for polite shutdown    
+    mainWindow = openmolarGui(app) #-- app required for polite shutdown
     mainWindow.show()
 
     if __name__ != "__main__":
