@@ -877,7 +877,7 @@ class openmolarGui(QtGui.QMainWindow):
         else:
             self.ui.dnt1comboBox.setCurrentIndex(-1)
             print "dnt1 error - record %d"% self.pt.serialno
-            if inits:
+            if not inits in ("", "NONE"):
                 message = "%s "% inits + _(
                 "is no longer an active dentist in this practice")
             else:
@@ -892,13 +892,16 @@ class openmolarGui(QtGui.QMainWindow):
         else:
             self.ui.dnt2comboBox.setCurrentIndex(-1)
             print "dnt2 error - record %d"% self.pt.serialno
-            if inits:
+            if self.pt.dnt1 == self.pt.dnt2:
+                pass
+            elif not inits in ("", "NONE"):
                 message = "%s "% inits + _(
                 "is no longer an active dentist in this practice")
-            else:
-                print "unknown dentist number", self.pt.dnt1
+                self.advise(message, 2)
+            elif inits ==  "":
+                print "unknown dentist number", self.pt.dnt2
                 message = _("unknown course dentist - please correct this")
-            self.advise(message, 2)
+                self.advise(message, 2)
 
     def showAdditionalFields(self):
         '''
