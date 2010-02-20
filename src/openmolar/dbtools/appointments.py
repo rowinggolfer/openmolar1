@@ -10,6 +10,82 @@ import datetime
 from openmolar.connect import connect, omSQLresult, ProgrammingError
 from openmolar.settings import localsettings
 
+class appt_class(object):
+    '''
+    a class to hold data about a patient's appointment
+    '''
+    def __init__(self):
+        self.serialno = 0
+        self.aprix = 0
+        self.dent = 0
+
+        self.date = None
+        self.atime = 0
+        self.length = 0
+        self.today = False
+        self.past = False
+        self.future = False
+        self.unscheduled = False
+
+        self.memo = ""
+        self.trt1 = ""
+        self.trt2 = ""
+        self.trt3 = ""
+        self.datespec = ""
+
+    def past_or_present(self):
+        today = localsettings.currentDay()
+
+        self.unscheduled = self.date == None
+        self.today = self.date == today
+        self.past = self.date < today
+        if self.today:
+            self.future = self.atime > localsettings.timestamp
+        else:
+            self.future = self.date > today
+
+
+
+        rows = appointments.get_pts_appts(om_gui.pt.serialno)
+        '''
+        #--which will give us stuff like...
+        #--(4820L, 7, 4, 'RCT', '', '', 'OR PREP', datetime.date(2008, 12, 15),
+        #-- 1200, 60, 0, 73, 0, 0, 0, '')
+        today = localsettings.currentDay()
+        for row in rows:
+             #convert dentist from int to initials
+            dent = localsettings.apptix_reverse.get(row[2])
+            if dent == None:
+                om_gui.advise(_("removing appointment dentist"), 1)
+                dent = ""
+            length = str(row[9])
+            trt1, trt2, trt3 = tuple(row[3:6])
+            memo = str(row[6])
+            datespec = str(row[15])
+
+            if row[8] == None:
+                start = ""
+            else:
+                start = localsettings.wystimeToHumanTime(int(row[8]))
+
+            appointmentList = ["TBA"]
+            appointmentList.append(dent)
+            appointmentList.append(start)
+            appointmentList.append(length)
+            appointmentList.append(trt1)
+            appointmentList.append(trt2)
+            appointmentList.append(trt3)
+            appointmentList.append(memo)
+            appointmentList.append(datespec)
+            appointmentList.append(str(row[1]))
+
+            date = row[7]
+
+
+            #widItem = QtGui.QTreeWidgetItem(om_guiItem, appointmentList)
+        '''
+
+
 class daySummary(object):
     '''
     a data structure to hold just summary data for a day
@@ -23,7 +99,7 @@ class daySummary(object):
         self.memo = "today"
         self.memos = {}
         self.appointments = ()
-    
+
     def setDate(self, date):
         '''
         update the class with data for date
@@ -37,7 +113,7 @@ class daySummary(object):
         self.earliest_start = 2359
         self.latest_end = 0
         self.memo = "%s %s"% (localsettings.longDate(date), self.header())
-        
+
         for dent in getWorkingDents(self.date):
             self.memos[dent.ix] = dent.memo
             self.startTimes[dent.ix] = dent.start
@@ -50,7 +126,7 @@ class daySummary(object):
                 if dent.end > self.latest_end:
                     self.latest_end = dent.end
         self.workingDents = tuple(workingDents)
-   
+
 class dayAppointmentData(daySummary):
     '''
     a data structure to hold all data for a day
@@ -65,7 +141,7 @@ class dayAppointmentData(daySummary):
         #self.memo = "today"
         #self.memos = {}
         self.appointments = ()
-    
+
     def header(self):
         '''
         get any text from the calendar table + memo for dentist 0
@@ -74,11 +150,11 @@ class dayAppointmentData(daySummary):
         bh = getBankHol(self.date)
         if bh != "":
             retarg += "   <i>'%s'</i>"% bh
-        gm = getGlobalMemo(self.date) 
+        gm = getGlobalMemo(self.date)
         if gm != "":
-            retarg += "   -   %s"% gm            
+            retarg += "   -   %s"% gm
         return retarg
-        
+
     def getMemo(self, dent):
         '''
         return the memo for the dent, or "" if there is none
@@ -87,7 +163,7 @@ class dayAppointmentData(daySummary):
             return self.memos[dent]
         except KeyError:
             return ""
-    
+
     def getStart(self, dent):
         '''
         return the memo for the dent, or "" if there is none
@@ -96,7 +172,7 @@ class dayAppointmentData(daySummary):
             return self.startTimes[dent]
         except KeyError:
             return 1200
-        
+
     def getEnd(self, dent):
         '''
         return the memo for the dent, or "" if there is none
@@ -105,7 +181,7 @@ class dayAppointmentData(daySummary):
             return self.endTimes[dent]
         except KeyError:
             return 1200
-        
+
     def getAppointments(self, workingOnly=True, dents="ALL"):
         '''
         get the appointments for the date.
@@ -116,14 +192,14 @@ class dayAppointmentData(daySummary):
                 apptix = localsettings.apptix[dent]
                 if dents=="ALL" or apptix in dents:
                     wds.append(apptix)
-            
+
             self.workingDents = tuple(wds)
         if dents != "ALL":
             for dent in self.workingDents:
                 if not dent in dents:
-                    self.workingDents.remove(dent)    
+                    self.workingDents.remove(dent)
         self.appointments = allAppointmentData(self.date, self.workingDents)
-    
+
     def dentAppointments(self, dent):
         '''
         return only appointments for the specified dent
@@ -133,7 +209,7 @@ class dayAppointmentData(daySummary):
             if app[0] == dent:
                 retList.append(app)
         return retList
-    
+
 class dentistDay():
     '''
     a small class to store data about a dentist's day
@@ -243,7 +319,7 @@ def updateAday(uddate, arg):
     result = omSQLresult()
     query = '''update aday set start=%s, end=%s, flag=%s, memo=%s
 where adate=%s and apptix=%s'''
-    values = (arg.sqlStart(), arg.sqlFinish(), arg.active, arg.memo, 
+    values = (arg.sqlStart(), arg.sqlFinish(), arg.active, arg.memo,
     uddate, arg.apptix)
 
     if localsettings.logqueries:
@@ -274,7 +350,7 @@ def alterDay(arg):
         #-- dentists diary includes this date
         query = '''update aday set start=%s,end=%s,flag=%s, memo=%s
         where adate=%s and apptix=%s'''
-        values = (arg.start, arg.end, arg.flag, arg.memo, arg.date, 
+        values = (arg.start, arg.end, arg.flag, arg.memo, arg.date,
         arg.ix)
 
         if True: #localsettings.logqueries:
@@ -305,17 +381,17 @@ def todays_patients(dents):
     '''
     db = connect()
     cursor = db.cursor()
-    
+
     if 0 in dents:
         cond=""
         values = (localsettings.currentDay(),)
     else:
         cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s )"
         values = (localsettings.currentDay(),) + dents
-    
+
     query = 'SELECT serialno,name FROM aslot WHERE adate=%s ' + cond + \
     ' and serialno!=0 ORDER BY name'
-        
+
     if localsettings.logqueries:
         print query, values
     cursor.execute(query, values)
@@ -331,7 +407,7 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
     '''
     if dents == ():
         return ()
-    
+
     db = connect()
     cursor = db.cursor()
     if 0 in dents:
@@ -340,20 +416,20 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
     else:
         cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s ) "
         values = (adate,) + dents
-    
+
     if not include_non_working:
         cond += " AND (flag=1 or flag=2)"
 
     query = 'SELECT apptix,start,end,memo,flag FROM aday WHERE adate=%s ' \
     + cond
-    
+
     if localsettings.logqueries:
         print query, values
     cursor.execute(query, values)
 
     rows = cursor.fetchall()
     cursor.close()
-    
+
     ##originally I just return the rows here...
     wds = []
     for apptix, start, end, memo, flag in rows:
@@ -363,7 +439,7 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
         dent.memo = memo
         dent.flag = bool(flag)
         wds.append(dent)
-        
+
     return tuple(wds)
 
 def getDayInfo(startdate, enddate, dents=() ):
@@ -371,17 +447,17 @@ def getDayInfo(startdate, enddate, dents=() ):
     get any day memo's for a range of dents and tuple of dentists
     if month = 0, return all memos for the given year
     useage is getDayInfo(pydate,pydate,(1,4))
-    start date is inclusive, enddate not so 
+    start date is inclusive, enddate not so
     '''
     dents = (0,) + dents
-    
+
     cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s ) "
-    
-    query = '''SELECT adate, apptix, start, end, memo, flag FROM aday 
-    WHERE adate>=%s AND adate<%s ''' + cond 
-    
+
+    query = '''SELECT adate, apptix, start, end, memo, flag FROM aday
+    WHERE adate>=%s AND adate<%s ''' + cond
+
     values = (startdate, enddate) + dents
-    
+
     db = connect()
     cursor = db.cursor()
 
@@ -403,7 +479,7 @@ def getDayInfo(startdate, enddate, dents=() ):
             data[key].append(dent)
         else:
             data[key] = [dent]
-    
+
     return data
 
 def getBankHol(adate):
@@ -412,10 +488,10 @@ def getBankHol(adate):
     '''
     db = connect()
     cursor = db.cursor()
-    
-    query = '''SELECT memo FROM calendar WHERE adate=%s''' 
+
+    query = '''SELECT memo FROM calendar WHERE adate=%s'''
     retarg = ""
-            
+
     try:
         if localsettings.logqueries:
             print query, (adate, )
@@ -429,23 +505,23 @@ def getBankHol(adate):
         #in case their is no bank holiday table.
         retarg =  "couldn't get Bank Holiday details"
     return retarg
-    
+
 def getGlobalMemo(date):
     '''
     get global memo for one specific date
     '''
     db = connect()
     cursor = db.cursor()
-    
-    query = '''SELECT memo FROM aday WHERE adate=%s and apptix=0''' 
-            
+
+    query = '''SELECT memo FROM aday WHERE adate=%s and apptix=0'''
+
     if localsettings.logqueries:
         print query, (date, )
     cursor.execute(query, (date, ))
 
     rows = cursor.fetchall()
     cursor.close()
-    
+
     retarg = ""
     for row in rows:
         retarg += "%s "% row
@@ -454,14 +530,14 @@ def getGlobalMemo(date):
 def getBankHols(startdate, enddate):
     '''
     useage is getBankHols(pydate,pydate)
-    start date is inclusive, enddate not so 
+    start date is inclusive, enddate not so
     '''
     db = connect()
     cursor = db.cursor()
-    
-    query = '''SELECT adate, memo FROM calendar WHERE memo!="" AND 
+
+    query = '''SELECT adate, memo FROM calendar WHERE memo!="" AND
     adate>=%s AND adate<%s'''
-     
+
     data = {}
     try:
         if localsettings.logqueries:
@@ -470,14 +546,14 @@ def getBankHols(startdate, enddate):
 
         rows = cursor.fetchall()
         cursor.close()
-        
+
         for row in rows:
             key = "%d%02d"% (row[0].month, row[0].day)
             data[key] = row[1]
     except ProgrammingError, e:
         print "couldn't get Bank Holiday details"
     return data
-        
+
 def setMemos(adate, memos):
     '''
     updates the aday table with memos
@@ -488,14 +564,14 @@ def setMemos(adate, memos):
     cursor = db.cursor()
     query = '''insert into aday (memo, adate, apptix) values (%s,%s,%s)
     on duplicate key update memo=%s'''
-        
+
     for apptix, memo in memos:
         values = (memo, adate, apptix, memo)
         if localsettings.logqueries:
             print query, values
         cursor.execute(query, values)
     cursor.close()
-    
+
 def setPubHol(adate, arg):
     '''
     updates the aday table with memos
@@ -509,14 +585,14 @@ def setPubHol(adate, arg):
         values = (adate,)
     else:
         query = '''insert into calendar (adate, memo) values (%s,%s)
-        on duplicate key update memo=%s'''            
-        values = (adate, arg, arg)    
+        on duplicate key update memo=%s'''
+        values = (adate, arg, arg)
     if localsettings.logqueries:
             print query, values
     cursor.execute(query, values)
     cursor.close()
-    
-    
+
+
 def allAppointmentData(adate, dents=()):
     '''
     this gets appointment data for a specifc date and dents
@@ -528,7 +604,7 @@ def allAppointmentData(adate, dents=()):
         cond = "and (" + "apptix=%s or " * (len(dents)-1) + "apptix=%s ) "
 
     db = connect()
-    cursor = db.cursor()    
+    cursor = db.cursor()
     query = '''select apptix,start,end,name,serialno,code0,
     code1,code2,note,flag0,flag1,flag2,flag3 from aslot where adate=%s'''
     query += " %s order by apptix, start"% cond
@@ -538,12 +614,12 @@ def allAppointmentData(adate, dents=()):
 
     data = cursor.fetchall()
     cursor.close()
-    
+
     return data
 
 def convertResults(appointments):
     '''
-    changes (830,845) to (830,15)   
+    changes (830,845) to (830,15)
     ie start,end to start,length
     '''
     aptlist = []
@@ -552,7 +628,7 @@ def convertResults(appointments):
         time2 = localsettings.minutesPastMidnight(appt[1])
         time1 = localsettings.minutesPastMidnight(appt[0])
         aptlist.append((appt[0], time2 - time1))
-        
+
     return tuple(aptlist)
 
 def printableDaylistData(adate, dent):
@@ -588,7 +664,7 @@ def printableDaylistData(adate, dent):
         cursor.execute(query,values)
 
         results = cursor.fetchall()
-        
+
         current_apttime = daydata[0][0]
         if results:
             for row in results:
@@ -614,7 +690,7 @@ def printableDaylistData(adate, dent):
                 last_pa.start = pa.end
                 last_pa.end = dayend
                 retlist.append(last_pa)
-    
+
     cursor.close()
     #db.close()
     return retlist
@@ -626,7 +702,7 @@ def daysummary(adate, dent):
     '''
     db = connect()
     cursor = db.cursor()
-    
+
     #--fist get start date and end date
     query = '''SELECT start,end FROM aday
     WHERE adate=%s and (flag=1 or flag=2) and apptix=%s'''
@@ -657,21 +733,21 @@ def getBlocks(adate, dent):
     '''
     db = connect()
     cursor = db.cursor()
-    
+
     query = '''SELECT start,end FROM aday
     WHERE adate=%s and apptix=%s AND (flag=1 OR flag=2)'''
-    
+
     values = (adate, dent)
     if localsettings.logqueries:
         print query, values
     cursor.execute(query, values)
 
     retarg = cursor.fetchall()
-    
+
     query = ""
     if retarg != ():
         query = '''SELECT start,end FROM aslot
-        WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH" 
+        WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH"
         ORDER BY start'''
         if localsettings.logqueries:
             print query, values
@@ -688,7 +764,7 @@ def getLunch(gbdate, dent):
     '''
     db = connect()
     cursor = db.cursor()
-    
+
     query = ""
     query = ' adate = "%s" and apptix = %d '% (gbdate, dent)
     fullquery = '''SELECT start,end FROM aslot
@@ -742,10 +818,21 @@ def get_pts_appts(sno):
         print fullquery
     cursor.execute(fullquery)
 
-    data = cursor.fetchall()
-
+    rows = cursor.fetchall()
+    data = []
     cursor.close()
+    for row in rows:
+        appt = appt_class()
+        appt.serialno = row[0]
+        appt.aprix = row[1]
+        appt.dent = row[2]
     #db.close()
+
+
+    ##etc......
+
+
+
     return data
 
 def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
@@ -769,7 +856,7 @@ def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
         note = ""
     if datespec == None:
         datespec = ""
-    
+
     db = connect()
     cursor = db.cursor()
     try:
@@ -911,29 +998,29 @@ code2, note, flag0, flag1, flag2, flag3):
 
 def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     '''
-    this is the procedure called when makingan appointment via clicking on a 
+    this is the procedure called when makingan appointment via clicking on a
     free slot in a DAY view.
     '''
     #- 1st check the block is free
     block_length = localsettings.minutesPastMidnight(end) - \
     localsettings.minutesPastMidnight(start)
-    
+
     slots = future_slots(block_length, bldate, bldate, (apptix,))
-    
+
     if not (slots and (start, block_length) in slots[0][2]):
-        #-- block no longer available!! 
+        #-- block no longer available!!
         return False
-    
+
     name = "%s %s *"% (pt.fname, pt.sname)
     try:
         cset = ord(pt.cset)
     except:
         cset = 0
-        
+
     print "making appointment"
-    make_appt(bldate, apptix, bl_start, bl_end, name, 
+    make_appt(bldate, apptix, bl_start, bl_end, name,
     pt.serialno, reason, "", "", "", 1, cset, 0, 0)
-    
+
     block_length = localsettings.minutesPastMidnight(bl_end) - \
     localsettings.minutesPastMidnight(bl_start)
     print "putting into pt diary"
@@ -948,13 +1035,13 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     #- 1st check the block is free
     block_length = localsettings.minutesPastMidnight(end) - \
     localsettings.minutesPastMidnight(start)
-    
+
     slots = future_slots(block_length, bldate, bldate, (apptix,))
-    
+
     if not (slots and (start, block_length) in slots[0][2]):
-        #-- block no longer available!! 
+        #-- block no longer available!!
         return False
-            
+
     db = connect()
     cursor = db.cursor()
     query = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
@@ -992,7 +1079,7 @@ note, flag1, flag0, flag2, flag3):
     code0,code1,code2,note,flag0,flag1,flag2,flag3)
 
     fullquery = '''update aslot set %s where adate="%s" and apptix=%d
-    and start=%d and serialno=%d'''% (changes, 
+    and start=%d and serialno=%d'''% (changes,
     localsettings.pyDatetoSQL(moddate), apptix, start, serialno)
 
     if localsettings.logqueries:
@@ -1039,7 +1126,7 @@ def delete_appt_from_apr(serialno, aprix, adate, atime):
     cursor.close()
 
     return result
-    
+
 def delete_appt_from_aslot(dent, start, adate, serialno):
     #--delete from the appointment book proper
     result = True
@@ -1105,7 +1192,7 @@ def slots(start, apdata, fin, slotlength=1):
 
     #-- modified this on 18_11_2009, for the situation when a clinician's day
     #-- start may be later than any first appointment in that book
-    #-- this facilitates having lunch etc.. already in place for a non used 
+    #-- this facilitates having lunch etc.. already in place for a non used
     #-- day.
 
     aptstart = localsettings.minutesPastMidnight(start)
@@ -1122,7 +1209,7 @@ def slots(start, apdata, fin, slotlength=1):
             aptstart = fMin
         if aptstart >= dayfin:
             break
-        
+
     if dayfin-aptstart >= slotlength:
         results.append((localsettings.minutesPastMidnighttoWystime(aptstart),
         dayfin-aptstart))

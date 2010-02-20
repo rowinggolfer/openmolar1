@@ -73,7 +73,7 @@ because your database schema is more advanced.</p>
 <p>Please Update openMolar now</p>''')% (
             localsettings.CLIENT_SCHEMA_VERSION, sv))
         else:
-            result = QtGui.QMessageBox.question(None, 
+            result = QtGui.QMessageBox.question(None,
             _("Proceed without upgrade?"),
             _('''<p>This openMolar client has fallen behind your database
 schema version<br />this client was written for schema version %s,
@@ -84,7 +84,7 @@ and you can continue if you wish</p>
             localsettings.CLIENT_SCHEMA_VERSION, sv),
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes )
-            
+
             if result == QtGui.QMessageBox.Yes:
                 from openmolar.qt4gui import maingui
                 sys.exit(maingui.main(my_app))
@@ -93,14 +93,14 @@ and you can continue if you wish</p>
         from openmolar.qt4gui import maingui
         sys.exit(maingui.main(my_app))
     sys.exit()
-    
+
 def main():
     '''
     main function
     '''
     global localsettings, my_app
     my_app = QtGui.QApplication(sys.argv)
-    
+
     from openmolar.settings import localsettings
     from openmolar.qt4gui.compiled_uis import Ui_startscreen
 
@@ -116,12 +116,31 @@ def main():
         if arg.toLower() == "rec":
             dl.reception_radioButton.setChecked(True)
 
-    def showServers():
+    def chosenServer(chosenAction):
         '''
-        hide the options pushbutton, show the servers combobox instead
-        (called by the options pushbutton)
+        the advanced qmenu has been triggered
         '''
-        dl.stackedWidget.setCurrentIndex(1)
+        i = actions.index(chosenAction)
+
+        message = localsettings.server_names[i] + "<br />" + _(
+        "This is not the default database - are you sure?")
+        if i != 0:
+            if QtGui.QMessageBox.question(my_dialog, _("confirm"), message,
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                i = 0
+
+        dl.chosenServer = i
+        for action in actions:
+            action.setChecked(False)
+        chosenAction.setChecked(True)
+        labelServer(i)
+
+    def labelServer(i):
+        def_string = " (" + _("DEFAULT") + ")" if i == 0 else ""
+
+        dl.chosenServer_label.setText(_("Chosen server") + " - " +
+        localsettings.server_names[i] +  def_string)
 
     if not FIRST_RUN_TESTING:
         cf_Found = True
@@ -134,7 +153,7 @@ def main():
             cf_Found = False
     else:
         cf_Found = False
-    
+
     if not cf_Found:
         message = _('''<center><p>
 This appears to be your first running of openMolar<br />
@@ -144,13 +163,13 @@ If you do not have a database, you will be prompted to create one<</p>
 Are you ready to proceed?</center>''')
 
         result = QtGui.QMessageBox.question(None, _("First Run"),
-        message, 
+        message,
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes )
-        
+
         if result == QtGui.QMessageBox.Yes:
             import firstRun
-            if not firstRun.run():                
+            if not firstRun.run():
                 my_app.closeAllWindows()
                 sys.exit()
             else:
@@ -158,7 +177,7 @@ Are you ready to proceed?</center>''')
         else:
             my_app.closeAllWindows()
             sys.exit()
-                            
+
     try:
         dom = minidom.parse(localsettings.cflocation)
         sys_password = dom.getElementsByTagName("system_password")[0].\
@@ -181,25 +200,32 @@ Are you ready to proceed?</center>''')
     dl = Ui_startscreen.Ui_Dialog()
     dl.setupUi(my_dialog)
     dl.user1_lineEdit.setText(AUTOUSER)
+
+    servermenu = QtGui.QMenu()
+    dl.chosenServer = 0
+    labelServer(0)
+    actions = []
     if len(localsettings.server_names) > 1:
-        dl.server_comboBox.addItems(localsettings.server_names)
-        QtCore.QObject.connect(dl.options_pushButton,
-        QtCore.SIGNAL("clicked()"), showServers)
+        for name in localsettings.server_names:
+            action = QtGui.QAction(name, servermenu)
+            servermenu.addAction(action)
+            dl.advanced_toolButton.setMenu(servermenu)
+            actions.append(action)
     else:
-        dl.options_pushButton.hide()
+        dl.advanced_frame.hide()
+
+    servermenu.connect(servermenu,
+    QtCore.SIGNAL("triggered (QAction *)"), chosenServer)
+
     QtCore.QObject.connect(dl.user1_lineEdit,
-    QtCore.SIGNAL("textEdited (const QString&)"),autoreception)
+    QtCore.SIGNAL("textEdited (const QString&)"), autoreception)
 
     while True:
         if my_dialog.exec_():
-            changedServer = False
-            if localsettings.chosenserver != \
-            dl.server_comboBox.currentIndex():
 
-                changedServer=True
+            changedServer = localsettings.chosenserver != dl.chosenServer
 
-            localsettings.setChosenServer(
-            dl.server_comboBox.currentIndex())
+            localsettings.setChosenServer(dl.chosenServer)
 
             try:
                 #--"salt" the password
@@ -278,43 +304,43 @@ def usage():
 --help    \tshow this text
 --firstrun\toffer the firstrun config and demodatabase generation
 --setup   \ttakes you to the admin page
---version \tshow the versioning and exit''' 
-    
+--version \tshow the versioning and exit'''
+
 def run():
     '''
     the real entry point for the app
     '''
     global FIRST_RUN_TESTING
     print sys.argv
-    
+
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], SHORTARGS, LONGARGS)
     except getopt.GetoptError, err:
         # print help information and exit:
-        print str(err) 
+        print str(err)
         # above will print something like "option -foo not recognized"
         sys.exit(2)
-    
+
     #some backward compatibility stuff here...
     if "setup" in sys.argv:
         opts.append(("--setup",""))
     if "firstrun" in sys.argv:
         opts.append(("--firstrun",""))
-        
+
     for option, arg in opts:
         print option, arg
         if option in ("--help", "--version"):
             usage()
             sys.exit()
-        
+
         if option == "--setup":
             print "setup found"
             setup(sys.argv)
             sys.exit()
-            
+
         if option == "--firstrun":
             FIRST_RUN_TESTING = True
-    
+
     main()
 
 if __name__ == "__main__":
@@ -322,7 +348,7 @@ if __name__ == "__main__":
     print "starting openMolar.... using main.py as __main__"
     print "Qt Version: ", QtCore.QT_VERSION_STR
     print "PyQt Version: ", QtCore.PYQT_VERSION_STR
-    
+
     def determine_path ():
         """Borrowed from wxglade.py"""
         try:
