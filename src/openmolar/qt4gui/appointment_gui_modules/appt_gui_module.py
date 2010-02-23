@@ -719,6 +719,13 @@ def ptApptTableNav(om_gui):
         om_gui.ui.findAppt_pushButton.setEnabled(True)
         #om_gui.ui.printAppt_pushButton.setEnabled(True)
 
+def adjustDiaryColWidths(om_gui, arg=None):
+    '''
+    adjusts the width of the diary columns to fit the current display
+    '''
+    for col in range(om_gui.ui.pt_diary_treeView.model().columnCount(arg)):
+        om_gui.ui.pt_diary_treeView.resizeColumnToContents(col)
+
 def layout_apptTable(om_gui):
     '''
     populates the patient's diary
@@ -726,8 +733,14 @@ def layout_apptTable(om_gui):
     appts = appointments.get_pts_appts(om_gui.pt.serialno)
     model = pt_diary_treemodel.treeModel(appts)
     om_gui.ui.pt_diary_treeView.setModel(model)
+    om_gui.ui.pt_diary_treeView.expandAll()
+    index = model.parents.get(1, None)
+    if index:
+        om_gui.ui.pt_diary_treeView.collapse(model.createIndex(0,0,index))
 
 def _layout_apptTable(om_gui):
+    
+    ######obsolete code...
     '''
     populates the patient's diary
     '''

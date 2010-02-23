@@ -17,17 +17,20 @@ from openmolar.settings import localsettings
 import datetime
 
 CATEGORIES = ("", _("Past"), _("Today"), _("Future"), ("Unscheduled"))
-HORIZONTAL_HEADERS = (_("Practitioner"), _("Date & Time"), _("Length"),
-_("Treatment"), "Date Spec", "Added")
-
+HORIZONTAL_HEADERS = (_("Date & Time"), _("Practitioner"), _("Length"),
+_("Treatment"), _("Memo"))
 
 class TreeItem(object):
     def __init__(self, category, appointment, parent=None, index=0):
         self.appointment = appointment
-        print "new tree item",appointment
         self.isAppointment = True
         try:
-            self.headerCol = appointment.date
+            if appointment.date:
+                self.headerCol = (
+                localsettings.wystimeToHumanTime(appointment.atime) + " - " +
+                localsettings.longDate(appointment.date))
+            else:
+                self.headerCol = "TBA"
         except AttributeError:
             self.headerCol = category
             self.isAppointment = False
@@ -53,15 +56,15 @@ class TreeItem(object):
         if not self.isAppointment:
             return QtCore.QVariant()
         if column == 1:
-            return QtCore.QVariant(self.appointment.atime)
+            return QtCore.QVariant(self.appointment.dent_inits)
         if column == 2:
             return QtCore.QVariant(self.appointment.length)
         if column == 3:
             trt = "%s %s %s"% (self.appointment.trt1,
             self.appointment.trt2, self.appointment.trt3)
             return QtCore.QVariant(trt)
-        #if column == 4:
-        #    return QtCore.QVariant(self.appointment.memo)
+        if column == 4:
+            return QtCore.QVariant(self.appointment.memo)
 
         return QtCore.QVariant()
 
@@ -81,10 +84,11 @@ class treeModel(QtCore.QAbstractItemModel):
         super(QtCore.QAbstractItemModel, self).__init__()
         self.appointments = appointments
         self.rootItem = TreeItem("Appointments",None, None, None)
+        self.parents = {0:self.rootItem}
         self.setupModelData()
 
-    def columnCount(self, parent):
-        if parent.isValid():
+    def columnCount(self, parent=None):
+        if parent and parent.isValid():
             return parent.internalPointer().columnCount()
         else:
             return len(HORIZONTAL_HEADERS)
@@ -160,8 +164,6 @@ class treeModel(QtCore.QAbstractItemModel):
         return parentItem.childCount()
 
     def setupModelData(self):
-        parents = {0:self.rootItem}
-
         for appt in self.appointments:
 
             if appt.unscheduled:
@@ -173,7 +175,7 @@ class treeModel(QtCore.QAbstractItemModel):
             else:
                 cat = 3 #future
 
-            if not parents.has_key(cat) :
+            if not self.parents.has_key(cat) :
                 try:
                     category = CATEGORIES[cat]
                 except IndexError:
@@ -181,25 +183,22 @@ class treeModel(QtCore.QAbstractItemModel):
                 parent = TreeItem(category, None, None, self.rootItem)
                 self.rootItem.appendChild(parent)
 
-                parents[cat] = parent
+                self.parents[cat] = parent
 
-            parents[cat].appendChild(TreeItem("", appt, parents[cat] ))
+            self.parents[cat].appendChild(TreeItem("", appt, 
+                self.parents[cat] ))
 
 if __name__ == "__main__":
     from openmolar.dbtools import appointments
-    #################################
-    #def resize(arg):
-    #    print "resizing"
-    #    for col in range(model.columnCount(arg)):
-    #        if col != 3:#regulation column
-    #            tv.resizeColumnToContents(col)
-    #        else:
-    #            tv.setColumnWidth(3,0)
-
+    def resize(arg=None):
+        print "resizing"
+        for col in range(model.columnCount(arg)):
+            tv.resizeColumnToContents(col)
+    
     app = QtGui.QApplication([])
     localsettings.initiate()
 
-    appts = appointments.get_pts_appts(1)
+    appts = appointments.get_pts_appts(737)
     model = treeModel(appts)
 
     dialog = QtGui.QDialog()
@@ -211,7 +210,13 @@ if __name__ == "__main__":
     tv.setModel(model)
     tv.setAlternatingRowColors(True)
     layout.addWidget(tv)
-
+    tv.expandAll()
+    index = model.parents.get(1, None)
+    if index:
+        tv.collapse(model.createIndex(0,0,index))
+    resize()
+    QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"), 
+    resize)
     dialog.exec_()
 
     app.closeAllWindows()

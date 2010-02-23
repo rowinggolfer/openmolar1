@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>468</width>
+                        <width>730</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>539</width>
+                        <width>730</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2380,6 +2380,10 @@
                             <property name="text">
                              <string>&amp;New</string>
                             </property>
+                            <property name="icon">
+                             <iconset resource="../resources/resources.qrc">
+                              <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
+                            </property>
                            </widget>
                           </item>
                           <item row="1" column="2">
@@ -2395,10 +2399,6 @@
                             </property>
                             <property name="text">
                              <string>Modify</string>
-                            </property>
-                            <property name="icon">
-                             <iconset resource="../resources/resources.qrc">
-                              <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
                             </property>
                            </widget>
                           </item>
@@ -2509,7 +2509,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>601</width>
+                        <width>730</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2807,8 +2807,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>547</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3007,7 +3007,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>497</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3040,7 +3040,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>188</width>
+                        <width>217</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3413,8 +3413,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
-                        <height>392</height>
+                        <width>753</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4354,8 +4354,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>98</width>
-                    <height>98</height>
+                    <width>198</width>
+                    <height>99</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4718,8 +4718,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>719</width>
+                     <height>500</height>
                     </rect>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_30"/>

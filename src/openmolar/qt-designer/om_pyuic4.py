@@ -67,4 +67,5 @@ if __name__ == "__main__":
         path = os.path.join(root, name)
         if compile_ui(path, "../qt4gui/compiled_uis"):
             print "compiled py file for", ui_file
+
     print "ALL DONE!"

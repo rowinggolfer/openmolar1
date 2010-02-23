@@ -33,6 +33,10 @@ class appt_class(object):
         self.trt3 = ""
         self.datespec = ""
 
+    @property
+    def dent_inits(self):
+        return localsettings.apptix_reverse.get(self.dent,"?")
+    
     def past_or_present(self):
         '''
         perform logic to decide if past/present future

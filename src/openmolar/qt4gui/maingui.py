@@ -2104,6 +2104,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.ptApptTableNav(self)
 
+    def pt_diary_expanded(self, arg):
+        '''
+        user has expanded an item in the patient's diary.
+        this will resize columns (if necessary)
+        '''
+        appt_gui_module.adjustDiaryColWidths(self, arg)
+
     def newAppt_pushButton_clicked(self):
         '''
         user has asked for a new appointment
@@ -3000,9 +3007,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                         QtCore.SIGNAL("clicked()"), self.find_related)
         QtCore.QObject.connect(self.ui.daylistBox,
                     QtCore.SIGNAL("currentIndexChanged(int)"),self.todays_pts)
-        QtCore.QObject.connect(self.ui.ptAppointment_treeWidget,
-        QtCore.SIGNAL("itemSelectionChanged()"),
-        self.ptApptTreeWidget_selectionChanged)
+        QtCore.QObject.connect(self.ui.pt_diary_treeView, 
+        QtCore.SIGNAL("expanded(QModelIndex)"), self.pt_diary_expanded)
+        
+        #QtCore.QObject.connect(self.ui.ptAppointment_treeWidget,
+        #QtCore.SIGNAL("itemSelectionChanged()"),
+        #self.ptApptTreeWidget_selectionChanged)
 
         QtCore.QObject.connect(self.ui.printAccount_pushButton,
                         QtCore.SIGNAL("clicked()"), self.printaccount)
