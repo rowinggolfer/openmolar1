@@ -13,18 +13,12 @@ import sys
 def compile_ui(ui_fname, outdir=""):
     if outdir == "":
         outdir = os.path.dirname(ui_fname)
-    name = os.path.split(ui_fname)[1]
+    name = os.path.basename(ui_fname)
     outname = "Ui_%s.py"% name.rstrip(".ui")
     pyfile = os.path.join(outdir, outname)
 
-    if os.path.exists(pyfile) and (
-    os.stat(pyfile).st_mtime > os.stat(ui_fname).st_mtime):
-        return
+    makeEx = False  ## can be switched to make executable ui files
 
-    makeEx = False
-    if name == "initialise.ui":
-        makeEx = True
-        
     f = open(pyfile,"w")
     uic.compileUi(ui_fname, f, execute=makeEx)
     f.close()
@@ -37,34 +31,40 @@ def compile_ui(ui_fname, outdir=""):
     newdata = re.sub('QtGui.QApplication.translate\(".*", ', "_( u", newdata)
 
     #some hacks for 4.5/4.6 compatibility
-    newdata = newdata.replace('setShowSortIndicator',"setSortIndicatorShown") 
-    
+    newdata = newdata.replace('setShowSortIndicator',"setSortIndicatorShown")
+
     #turn stuff like
     # spinBox.setProperty("values", 8)
     # to
     # spinBox.setProperty("values", QtCore.QVariant(8))
-    
+
     matches = re.finditer('setProperty\("value", (\d+)\)', newdata)
 
     for m in matches:
         newdata = newdata.replace(m.group(),
         'setProperty("value", QtCore.QVariant(%s))'%m.groups()[0])
 
-    
+
     if newdata != data:
         print "writing changes"
         f = open(pyfile,"w")
         f.write(newdata)
         f.close()
     return True
-    
+
+def get_changed_ui_files():
+    from bzrlib.workingtree import WorkingTree
+    tree = WorkingTree.open("../../../")
+    changes = tree.changes_from (tree.basis_tree ()).modified
+    for change in changes:
+        if re.match(".*.ui$", change[0]):
+            yield change[0]
+
 if __name__ == "__main__":
-    for ui_file in os.listdir(os.getcwd()):
-        #print ui_file,"....",
-        if re.match(".*.ui$", ui_file):
-            if compile_ui(ui_file, "../qt4gui/compiled_uis"):
-                print "compiled py file for", ui_file
-        else:
-            pass
-            #print "not a ui file... SKIPPING"
+    root = os.getcwd()
+    for ui_file in get_changed_ui_files():
+        name = os.path.basename(ui_file)
+        path = os.path.join(root, name)
+        if compile_ui(path, "../qt4gui/compiled_uis"):
+            print "compiled py file for", ui_file
     print "ALL DONE!"

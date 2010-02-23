@@ -34,57 +34,22 @@ class appt_class(object):
         self.datespec = ""
 
     def past_or_present(self):
+        '''
+        perform logic to decide if past/present future
+        '''
         today = localsettings.currentDay()
-
-        self.unscheduled = self.date == None
-        self.today = self.date == today
-        self.past = self.date < today
-        if self.today:
-            self.future = self.atime > localsettings.timestamp
+        if self.date == None:
+            self.unscheduled = True
         else:
-            self.future = self.date > today
-
-
-
-        rows = appointments.get_pts_appts(om_gui.pt.serialno)
-        '''
-        #--which will give us stuff like...
-        #--(4820L, 7, 4, 'RCT', '', '', 'OR PREP', datetime.date(2008, 12, 15),
-        #-- 1200, 60, 0, 73, 0, 0, 0, '')
-        today = localsettings.currentDay()
-        for row in rows:
-             #convert dentist from int to initials
-            dent = localsettings.apptix_reverse.get(row[2])
-            if dent == None:
-                om_gui.advise(_("removing appointment dentist"), 1)
-                dent = ""
-            length = str(row[9])
-            trt1, trt2, trt3 = tuple(row[3:6])
-            memo = str(row[6])
-            datespec = str(row[15])
-
-            if row[8] == None:
-                start = ""
+            self.today = self.date == today
+            self.past = self.date < today
+            if self.today:
+                self.future = self.atime > localsettings.timestamp
             else:
-                start = localsettings.wystimeToHumanTime(int(row[8]))
+                self.future = self.date > today
 
-            appointmentList = ["TBA"]
-            appointmentList.append(dent)
-            appointmentList.append(start)
-            appointmentList.append(length)
-            appointmentList.append(trt1)
-            appointmentList.append(trt2)
-            appointmentList.append(trt3)
-            appointmentList.append(memo)
-            appointmentList.append(datespec)
-            appointmentList.append(str(row[1]))
-
-            date = row[7]
-
-
-            #widItem = QtGui.QTreeWidgetItem(om_guiItem, appointmentList)
-        '''
-
+    def __repr__(self):
+        return str((self.serialno, self.date, self.unscheduled))
 
 class daySummary(object):
     '''
@@ -810,15 +775,18 @@ def get_pts_appts(sno):
     db = connect()
     cursor = db.cursor()
 
-    fullquery = '''SELECT serialno,aprix,practix,code0,code1,code2,note,
-    adate,atime,length,flag0,flag1,flag2,flag3,flag4,datespec
-    FROM apr WHERE serialno=%d ORDER BY aprix, adate'''% sno
+    fullquery = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
+    adate, atime, length, datespec FROM apr
+    WHERE serialno=%d ORDER BY aprix, adate'''% sno
+
+    ## - table also contains flag0,flag1,flag2,flag3,flag4,
 
     if localsettings.logqueries:
         print fullquery
     cursor.execute(fullquery)
 
     rows = cursor.fetchall()
+    #return rows
     data = []
     cursor.close()
     for row in rows:
@@ -826,12 +794,17 @@ def get_pts_appts(sno):
         appt.serialno = row[0]
         appt.aprix = row[1]
         appt.dent = row[2]
-    #db.close()
-
-
-    ##etc......
-
-
+        appt.date = row[7]
+        appt.atime = row[8]
+        appt.length = row[9]
+        appt.memo = row[6]
+        appt.trt1 = row[3]
+        appt.trt2 = row[4]
+        appt.trt3 = row[5]
+        appt.datespec = row[10]
+        appt.unscheduled = False
+        appt.past_or_present()
+        data.append(appt)
 
     return data
 
@@ -1267,11 +1240,11 @@ def future_slots(length, startdate, enddate, dents, override_emergencies=False):
 
 if __name__ == "__main__":
     '''test procedures......'''
-    testdate = "2009_08_10"
-    testdate1 = "2009_08_10"
-    localsettings.initiate(False)
-    localsettings.logqueries = True
-    print printableDaylistData("20090921", 4)
+    #testdate = "2009_08_10"
+    #testdate1 = "2009_08_10"
+    #localsettings.initiate(False)
+    #localsettings.logqueries = True
+    #print printableDaylistData("20090921", 4)
 
     #print todays_patients()
     #print todays_patients(("NW","BW"))
@@ -1288,4 +1261,4 @@ if __name__ == "__main__":
     #print daysSlots("2009_2_02","NW")
     #delete_appt(420,2)
     #print dentistDay()
-
+    print get_pts_appts(1)

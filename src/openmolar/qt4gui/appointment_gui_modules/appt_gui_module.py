@@ -25,6 +25,7 @@ from openmolar.qt4gui.compiled_uis import Ui_appointment_length
 from openmolar.qt4gui.compiled_uis import Ui_specify_appointment
 from openmolar.qt4gui.dialogs import appt_wizard_dialog
 from openmolar.qt4gui.customwidgets import appointmentwidget
+from openmolar.qt4gui.appointment_gui_modules import pt_diary_treemodel
 
 from openmolar.qt4gui.printing import apptcardPrint
 
@@ -719,6 +720,14 @@ def ptApptTableNav(om_gui):
         #om_gui.ui.printAppt_pushButton.setEnabled(True)
 
 def layout_apptTable(om_gui):
+    '''
+    populates the patient's diary
+    '''
+    appts = appointments.get_pts_appts(om_gui.pt.serialno)
+    model = pt_diary_treemodel.treeModel(appts)
+    om_gui.ui.pt_diary_treeView.setModel(model)
+
+def _layout_apptTable(om_gui):
     '''
     populates the patient's diary
     '''
