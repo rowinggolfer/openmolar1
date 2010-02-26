@@ -53,7 +53,8 @@ class appt_class(object):
                 self.future = self.date > today
 
     def __repr__(self):
-        return str((self.serialno, self.date, self.unscheduled))
+        return "%s %s scheduled=%s dent=%s ix=%s"%(self.serialno, 
+        self.date, self.unscheduled, self.dent_inits, self.aprix)
 
 class daySummary(object):
     '''
@@ -771,17 +772,19 @@ def clearEms(cedate):
     #db.close()
     return number
 
-def get_pts_appts(sno):
+def get_pts_appts(sno, futureOnly=False):
     '''
     gets appointments from the apr table which stores appointments from
     patients perspective (including appts which have yet to be scheduled)
     '''
     db = connect()
     cursor = db.cursor()
-
+    
+    condition = " and adate>=NOW() " if futureOnly else ""
+        
     fullquery = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
     adate, atime, length, datespec FROM apr
-    WHERE serialno=%d ORDER BY aprix, adate'''% sno
+    WHERE serialno=%d %s ORDER BY aprix, adate'''% (sno, condition)
 
     ## - table also contains flag0,flag1,flag2,flag3,flag4,
 
@@ -922,26 +925,26 @@ def pt_appt_made(serialno, aprix, date, time, dent):
     #db.close()
     return result
 
-def made_appt_to_proposed(serialno, aprix):
+def made_appt_to_proposed(appt):
     '''
     modifies the apr table, when an appointment has been postponed,
     but not totally cancelled
     '''
     db = connect()
     cursor = db.cursor()
-    result = True
+    result = False
     try:
-        fullquery = '''UPDATE apr SET adate=NULL, atime=NULL
-        WHERE serialno=%d AND aprix=%d'''% (serialno, aprix)
+        query = '''UPDATE apr SET adate=NULL, atime=NULL 
+        WHERE serialno=%s AND aprix=%s'''
+        values = (appt.serialno, appt.aprix)
         if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
+            print query, values
+        result = cursor.execute(query, values)
         db.commit()
     except Exception, ex:
         print "exception in appointments.made_appt_to_proposed ", ex
-        result = False
     cursor.close()
-    #db.close()
+    
     return result
 
 def make_appt(make_date, apptix, start, end, name, serialno, code0, code1,
@@ -1075,52 +1078,55 @@ note, flag1, flag0, flag2, flag3):
     #db.close()
     return result
 
-def delete_appt_from_apr(serialno, aprix, adate, atime):
-    '''this deletes an appointment from the apr table'''
+def delete_appt_from_apr(appt):
+    '''
+    this deletes an appointment from the apr table
+    '''
     db = connect()
     cursor = db.cursor()
+    result = False
+        
     try:
-        fullquery = 'DELETE FROM apr WHERE serialno=%d AND aprix=%d'% (
-        serialno, aprix)
-        if adate == None:
-            fullquery += ' and adate is NULL'
+        query = 'DELETE FROM apr WHERE serialno=%d AND aprix=%d'% (
+        appt.serialno, appt.aprix)
+        if appt.date == None:
+            query += ' and adate is NULL'
         else:
-            fullquery += ' and adate ="%s"'% adate
-        if atime == None:
-            fullquery += ' and atime is NULL'
+            query += ' and adate ="%s"'% appt.date
+        if appt.atime == None:
+            query += ' and atime is NULL'
         else:
-            fullquery += ' and atime =%d'% atime
+            query += ' and atime =%d'% appt.atime
         if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
-
+            print query,"....",
+        result = cursor.execute(query)
+        if localsettings.logqueries:
+            print result
         db.commit()
-        #db.close()
-        result = True
     except Exception, ex:
         print "exception in appointments.delete_appt_from_apr ", ex
-        result = False
     cursor.close()
 
     return result
 
-def delete_appt_from_aslot(dent, start, adate, serialno):
+def delete_appt_from_aslot(appt):
     #--delete from the appointment book proper
     result = True
     db = connect()
     cursor = db.cursor()
+    result = False
     try:
-        fullquery = '''DELETE FROM aslot WHERE adate="%s" AND serialno=%d
-        AND apptix=%d AND start=%d'''% (adate, serialno, dent, start)
+        query = '''DELETE FROM aslot WHERE adate=%s AND serialno=%s
+        AND apptix=%s AND start=%s'''
+        values =  (appt.date, appt.serialno, appt.dent, appt.atime)
         if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
+            print query, values
+        result = cursor.execute(query, values)
         db.commit()
     except Exception, ex:
         print "exception in appointments.delete_appt_from_aslot ", ex
-        result = False
     cursor.close()
-    #db.close()
+    
     return result
 
 def daysSlots(adate, dent):

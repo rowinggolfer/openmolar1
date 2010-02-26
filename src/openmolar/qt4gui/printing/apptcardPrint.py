@@ -11,17 +11,21 @@ from openmolar.settings import localsettings
 import datetime
 
 class card():
-    def __init__(self,parent=None):
+    def __init__(self, parent=None):
         self.printer = QtGui.QPrinter()
         self.printer.setPaperSize(QtGui.QPrinter.A8)
-        self.setProps()
+        self.title = ""
+        self.fname = ""
+        self.sname = ""
+        self.ourref = 0
         self.appts=()
-    def setProps(self,tit="",fn="",sn="",serialno=0,appts=()):
-        self.title=tit
-        self.fname=fn
-        self.sname=sn
-        self.ourref=serialno
-        self.appts=appts
+        
+    def setProps(self, patient, appts=()):
+        self.title = patient.title.title()
+        self.fname = patient.fname.title()
+        self.sname = patient.sname.title()
+        self.ourref = patient.serialno
+        self.appts = appts
         
     def print_(self):
         dialog = QtGui.QPrintDialog(self.printer)
@@ -51,8 +55,8 @@ class card():
 
         y = fontLineHeight*2
         
-        painter.drawText(QtCore.QRectF(0, 0,pageRect.width(), y),
-        localsettings.APPOINTMENT_CARD_HEADER,option)
+        rect = QtCore.QRectF(0, 0,pageRect.width(), y)
+        painter.drawText(rect, localsettings.APPOINTMENT_CARD_HEADER,option)
         
         y+=2
         
@@ -61,19 +65,22 @@ class card():
         painter.setFont(font2)
         
         y+=2 #fontLineHeight
-        name= "%s %s %s - (%s)"%(
-        self.title.title(),self.fname.title(),self.sname.title(),self.ourref)
+        name = "%s %s %s - (%s)"%(self.title, self.fname, self.sname, 
+        self.ourref)
 
-        painter.drawText(QtCore.QRectF(
-        0,y,pageRect.width(),font2LineHeight),name,option)
+        rect = QtCore.QRectF(0, y, pageRect.width(), font2LineHeight)
+        painter.drawText(rect, name, option)
                 
         y += font2LineHeight*1.2
         
-        for app in self.appts[:5]:
-            formatString="%s - %s with %s"%(app[1], app[0], app[2])
+        for appt in self.appts[:5]:
+            atime = localsettings.wystimeToHumanTime(appt.atime)
+            adate = localsettings.longDate(appt.date)
+            formatString = "%s - %s with %s"%(atime, adate, appt.dent_inits)
 
-            painter.drawText(QtCore.QRectF(
-            0,y,pageRect.width(),font2LineHeight),formatString,option)            
+            rect = QtCore.QRectF(0,y,pageRect.width(),font2LineHeight)
+            
+            painter.drawText(rect,formatString,option)            
 
             y += font2LineHeight
             
@@ -84,15 +91,20 @@ class card():
         y+=2
         
         painter.setFont(font)
-        painter.drawText(QtCore.QRectF(0, y,pageRect.width(), fontLineHeight*2),
-        localsettings.APPOINTMENT_CARD_FOOTER, option)
+        
+        rect = QtCore.QRectF(0, y,pageRect.width(), fontLineHeight*2)
+        painter.drawText(rect, localsettings.APPOINTMENT_CARD_FOOTER, option)
 
 if __name__ == "__main__":
     import sys
     localsettings.initiate(False)
     app = QtGui.QApplication(sys.argv)
-    mycard=card()
+    mycard = card()
     print mycard.printer.getPageMargins(QtGui.QPrinter.Millimeter)
-    mycard.setProps("Mr","Neil","Wallace",11956,(("7/7/2009","10:30","NW"),("29/12/2009","8:30","NW")))
+    from openmolar.dbtools import patient_class
+    from openmolar.dbtools import appointments
+    pt = patient_class.patient(11956)
+    appts = appointments.get_pts_appts(11956)
+    mycard.setProps(pt, appts)
     mycard.print_()
 

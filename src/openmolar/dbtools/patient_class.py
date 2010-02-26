@@ -202,6 +202,7 @@ class patient():
         self.underTreatment = False
         self.feeTable = None
         self.synopsis = ""
+        self.selectedAppt = None
         
         if self.serialno != 0:
             #load stuff from the database

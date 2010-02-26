@@ -44,7 +44,6 @@ def compile_ui(ui_fname, outdir=""):
         newdata = newdata.replace(m.group(),
         'setProperty("value", QtCore.QVariant(%s))'%m.groups()[0])
 
-
     if newdata != data:
         print "writing changes"
         f = open(pyfile,"w")

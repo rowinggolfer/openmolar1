@@ -491,8 +491,22 @@ def longDate(d):
         print e
         return "date"
 
+def readableDate(d):
+    '''
+    takes a python date type, returns either the date, 
+    or yesterday, today, tommorrow if necessary
+    '''
+    today = currentDay()
+    if d == today:
+        return _("Today")
+    if d - today == datetime.timedelta(1):
+        return _("Tomorrow")
+    if d - today == datetime.timedelta(-1):
+       return _("Yesterday")
+    return longDate(d)
+
 def formatDate(d):
-    '''takes a date, returns a uk type date string'''
+    '''takes a date, returns a formatted date string'''
     try:
         retarg = d.strftime (OM_DATE_FORMAT)
     except AttributeError:

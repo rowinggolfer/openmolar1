@@ -29,13 +29,12 @@ BACKGROUND = QtGui.QPalette().window()
 APPT_Background=QtCore.Qt.white
 APPT_LINECOLOUR=QtGui.QColor("#dddddd")
 
-diary={
+DIARY={
 "Unscheduled":QtGui.QColor("red"),
 "Past":QtGui.QColor("#8c7d3b"),
 "TODAY":QtGui.QColor("#3b8c55"),
 "Future":QtGui.QColor("#3b4a8c")
 }
-
 
 APPTCOLORS={
     "N":QtGui.QColor("#99ccff"),

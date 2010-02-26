@@ -753,7 +753,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.moneytextBrowser.setHtml("")
             self.ui.reception_notes_textBrowser.setHtml(localsettings.message)
             self.ui.chartsTableWidget.clear()
-            self.ui.ptAppointment_treeWidget.clear()
+            self.ui.pt_diary_treeView.setModel(None)
             self.ui.notesEnter_textEdit.setHtml("")
 
             #--load a blank version of the patient class
@@ -782,7 +782,7 @@ class openmolarGui(QtGui.QMainWindow):
     def load_receptionSummaryPage(self):
         estimateHtml=estimates.toBriefHtml(self.pt)
         self.ui.moneytextBrowser.setText(estimateHtml)
-        appt_gui_module.layout_apptTable(self)
+        appt_gui_module.layout_ptDiary(self)
         note=notes.notes(self.pt.notes_dict,1, True)
         #--notes not verbose
         self.ui.reception_notes_textBrowser.setHtml(note)
@@ -1416,8 +1416,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.advise(warning, 1)
         if localsettings.station == "surgery":
             self.callXrays()
-
-
+        
     def getmemos(self):
         '''
         get valid memos for the patient
@@ -2008,11 +2007,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.advise("error writing notes to database... sorry!", 2)
         self.updateDetails()
 
-
+    @localsettings.debug
     def enableEdit(self, arg=True):
         '''
         disable/enable widgets "en mass" when no patient loaded
         '''
+        self.ui.makeAppt_pushButton.hide() #setEnabled(False)
+        self.ui.modifyAppt_pushButton.hide() #setEnabled(False)
+        self.ui.clearAppt_pushButton.hide() #setEnabled(False)
+        self.ui.findAppt_pushButton.hide() #setEnabled(False)
+        
         for widg in (
         self.ui.summaryChartWidget,
         self.ui.printEst_pushButton,
@@ -2029,7 +2033,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.notesEnter_textEdit,
         self.ui.synopsis_lineEdit,
         self.ui.memos_pushButton,
-        self.ui.printAppt_pushButton):
+        self.ui.appt_buttons_frame):
 
             widg.setEnabled(arg)
 
@@ -2098,11 +2102,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.triangles(self)
 
-    def ptApptTreeWidget_selectionChanged(self):
+    def pt_diary_clicked(self, index):
         '''
         user has selected an appointment in the patient's diary
         '''
-        appt_gui_module.ptApptTableNav(self)
+        appt_gui_module.ptDiary_selection(self, index)
 
     def pt_diary_expanded(self, arg):
         '''
@@ -2990,43 +2994,53 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #self.subWindowManager)
 
     def signals_admin(self):
-        #admin page
+        #admin frame
         QtCore.QObject.connect(self.ui.home_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.home)
-        QtCore.QObject.connect(self.ui.newPatientPushButton,
-                        QtCore.SIGNAL("clicked()"), self.enterNewPatient)
-        QtCore.QObject.connect(self.ui.findButton,
-                        QtCore.SIGNAL("clicked()"), self.find_patient)
-        QtCore.QObject.connect(self.ui.reloadButton,
-                        QtCore.SIGNAL("clicked()"), self.reload_patient)
-        QtCore.QObject.connect(self.ui.backButton,
-                        QtCore.SIGNAL("clicked()"), self.last_patient)
-        QtCore.QObject.connect(self.ui.nextButton,
-                        QtCore.SIGNAL("clicked()"), self.next_patient)
-        QtCore.QObject.connect(self.ui.relatedpts_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.find_related)
-        QtCore.QObject.connect(self.ui.daylistBox,
-                    QtCore.SIGNAL("currentIndexChanged(int)"),self.todays_pts)
-        QtCore.QObject.connect(self.ui.pt_diary_treeView, 
-        QtCore.SIGNAL("expanded(QModelIndex)"), self.pt_diary_expanded)
+        QtCore.SIGNAL("clicked()"), self.home)
         
-        #QtCore.QObject.connect(self.ui.ptAppointment_treeWidget,
-        #QtCore.SIGNAL("itemSelectionChanged()"),
-        #self.ptApptTreeWidget_selectionChanged)
-
-        QtCore.QObject.connect(self.ui.printAccount_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.printaccount)
-        QtCore.QObject.connect(self.ui.printEst_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.printEstimate)
-        QtCore.QObject.connect(self.ui.printRecall_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.printrecall)
-        QtCore.QObject.connect(self.ui.takePayment_pushButton,
-        QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
+        QtCore.QObject.connect(self.ui.newPatientPushButton,
+        QtCore.SIGNAL("clicked()"), self.enterNewPatient)
+        
+        QtCore.QObject.connect(self.ui.findButton,
+        QtCore.SIGNAL("clicked()"), self.find_patient)
+        
+        QtCore.QObject.connect(self.ui.reloadButton,
+        QtCore.SIGNAL("clicked()"), self.reload_patient)
+        
+        QtCore.QObject.connect(self.ui.backButton,
+        QtCore.SIGNAL("clicked()"), self.last_patient)
+        
+        QtCore.QObject.connect(self.ui.nextButton,
+        QtCore.SIGNAL("clicked()"), self.next_patient)
+        
+        QtCore.QObject.connect(self.ui.relatedpts_pushButton,
+        QtCore.SIGNAL("clicked()"), self.find_related)
+        
+        QtCore.QObject.connect(self.ui.daylistBox,
+        QtCore.SIGNAL("currentIndexChanged(int)"),self.todays_pts)
 
     def signals_reception(self):
         '''
         a function to connect all the receptionists buttons
-        '''
+        '''        
+        QtCore.QObject.connect(self.ui.pt_diary_treeView, 
+        QtCore.SIGNAL("expanded(QModelIndex)"), self.pt_diary_expanded)
+        
+        QtCore.QObject.connect(self.ui.pt_diary_treeView, 
+        QtCore.SIGNAL("clicked (QModelIndex)"), self.pt_diary_clicked)
+
+        QtCore.QObject.connect(self.ui.printAccount_pushButton,
+        QtCore.SIGNAL("clicked()"), self.printaccount)
+        
+        QtCore.QObject.connect(self.ui.printEst_pushButton,
+        QtCore.SIGNAL("clicked()"), self.printEstimate)
+        
+        QtCore.QObject.connect(self.ui.printRecall_pushButton,
+        QtCore.SIGNAL("clicked()"), self.printrecall)
+        
+        QtCore.QObject.connect(self.ui.takePayment_pushButton,
+        QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
+
         QtCore.QObject.connect(self.ui.apptWizard_pushButton,
         QtCore.SIGNAL("clicked()"), self.apptWizard_pushButton_clicked)
 
@@ -3165,12 +3179,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("triggered()"), self.actionNewSetup)
 
     def signals_estimates(self):
-
         #Estimates and course ManageMent
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
         QtCore.SIGNAL("clicked()"), self.newCourse_pushButton_clicked)
+        
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
         QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
+
         QtCore.QObject.connect(self.ui.estLetter_pushButton,
         QtCore.SIGNAL("clicked()"), self.customEstimate)
 
@@ -3187,11 +3202,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.addXrayItems)
 
         QtCore.QObject.connect(self.ui.perioTxpushButton,
-                               QtCore.SIGNAL("clicked()"), self.addPerioItems)
+        QtCore.SIGNAL("clicked()"), self.addPerioItems)
+
         QtCore.QObject.connect(self.ui.otherTxpushButton,
-                               QtCore.SIGNAL("clicked()"), self.addOtherItems)
+        QtCore.SIGNAL("clicked()"), self.addOtherItems)
+
         QtCore.QObject.connect(self.ui.customTx_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.addCustomItem)
+        QtCore.SIGNAL("clicked()"), self.addCustomItem)
 
         QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("completedItem"), self.estwidget_completeItem)
@@ -3233,7 +3250,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.group_replies_radioButton,
         QtCore.SIGNAL("toggled (bool)"), self.forum_radioButtons)
-
 
     def signals_history(self):
         QtCore.QObject.connect(self.pastDataMenu,
@@ -3286,13 +3302,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #accounts
         QtCore.QObject.connect(self.ui.loadAccountsTable_pushButton,
         QtCore.SIGNAL("clicked()"), self.loadAccountsTable_clicked)
+        
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.printSelectedAccounts)
+        QtCore.SIGNAL("clicked()"), self.printSelectedAccounts)
+        
         QtCore.QObject.connect(self.ui.printAccountsTable_pushButton,
-                        QtCore.SIGNAL("clicked()"), self.printAccountsTable)
+        QtCore.SIGNAL("clicked()"), self.printAccountsTable)
 
         QtCore.QObject.connect(self.ui.accounts_tableWidget,
-        QtCore.SIGNAL("cellDoubleClicked (int,int)"), self.accountsTableClicked)
+        QtCore.SIGNAL("cellDoubleClicked (int,int)"), 
+        self.accountsTableClicked)
 
     def signals_contract(self):
         #contract
