@@ -1790,6 +1790,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         the print button on the bulk mail tab has been clicked
         '''
         self.letters.printViaQPainter()
+        
+    def bulkMailLetterOptions(self):
+        '''
+        user has clicked on the letter option button
+        '''
+        self.letters.showOptions()
 
     def bulk_mail_doubleclicked(self, index):
         '''
@@ -3090,6 +3096,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.recallLoad_pushButton,
         QtCore.SIGNAL("clicked()"), self.exportRecalls)
 
+        QtCore.QObject.connect(self.ui.bulkMail_options_pushButton,
+        QtCore.SIGNAL("clicked()"), self.bulkMailLetterOptions)
+        
         QtCore.QObject.connect(self.ui.bulkMailPrint_pushButton,
         QtCore.SIGNAL("clicked()"), self.bulkMailPrint)
 

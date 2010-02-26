@@ -17,7 +17,7 @@ from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
 import datetime
 
-CATEGORIES = ("", _("Past") ,_("Unscheduled"))
+CATEGORIES = ("", _("View Past Appointments") ,_("Unscheduled"))
 HORIZONTAL_HEADERS = (_("Date & Time"), _("Practitioner"), _("Length"),
 _("Treatment"), _("Memo"))#, "ix")
 

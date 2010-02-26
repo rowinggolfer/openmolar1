@@ -10,6 +10,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
+from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
 
 DATE_FORMAT = "MMMM, yyyy"
 
@@ -19,6 +20,7 @@ class omLetter(object):
         self.address_topline =""
         self.patients = ""
         self.address = ""
+        self.recd = None
         self.body = '''%s <<SALUTATION>>,
 \n<<NAMES>>\n\n%s\n\n%s\n\n%s\n\n\n%s'''% (_("Dear"),
 _("We are writing to inform you that your dental examination is now due."),
@@ -198,7 +200,35 @@ class bulkMails(object):
         self.bulk_model = treeModel(self.headers, self.recipients)
         self.adate = localsettings.currentDay()
         self.expanded = False
+        self.use_given_recall_date = False
+        self.LONGDATE = True
         
+    def showOptions(self):
+        '''
+        user is wishing to change some default setting
+        currently the only option is the date
+        '''
+        def enableDate(checked):
+            '''
+            only enable the date Edit if customRadio button is checked
+            '''
+            dl.dateEdit.setEnabled(checked)
+        dialog = QtGui.QDialog(self.om_gui)
+        dl = Ui_bulkmail_options.Ui_Dialog()
+        dl.setupUi(dialog)
+        dl.dateEdit.setDate(localsettings.currentDay())
+        dialog.connect(dl.custDate_radioButton, 
+        QtCore.SIGNAL("toggled (bool)"), enableDate)
+        if dialog.exec_():
+            if dl.custDate_radioButton.isChecked():
+                self.adate = dl.dateEdit.date().toPyDate()
+            if dl.today_radioButton.isChecked():
+                self.adate = localsettings.currentDay()
+            self.use_given_recall_date = dl.recd_radioButton.isChecked()
+            self.LONGDATE = dl.fullDate_radioButton.isChecked()
+            
+            self.om_gui.advise(_("options set"), 1)
+                
     def expand_contract(self):
         '''
         change the expansion state
@@ -263,6 +293,7 @@ class bulkMails(object):
             while "\n\n" in address:
                 address = address.replace("\n\n","\n")
             letter.address = address
+            letter.recd = head.recd
 
             letter.names = ""
             for r in recipients:
@@ -358,8 +389,18 @@ class bulkMails(object):
                 painter.drawRect(addressRect)
             ##date
             painter.setFont(serifFont)
-            painter.drawText(dateRect, 
-            localsettings.longDate(self.adate))
+            if self.use_given_recall_date:
+                pdate = letter.recd
+            else:
+                pdate = self.adate
+                
+            if self.LONGDATE:
+                pdate_str = localsettings.longDate(pdate)
+            else:
+                pdate_str = "%s %s"% (localsettings.monthName(pdate), 
+                pdate.year)
+            
+            painter.drawText(dateRect, pdate_str)
             if showRects:
                 painter.drawRect(dateRect)
             
@@ -410,6 +451,7 @@ if __name__ == "__main__":
     end = datetime.date(2009,2,1)
     
     letters = bulkMails(om_gui)
+    letters.showOptions()
     letters.setData(recall.HEADERS, recall.getpatients(start, end))
     letters.printViaQPainter(True)
     app.closeAllWindows()

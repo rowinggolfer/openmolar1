@@ -54,8 +54,8 @@ def compile_ui(ui_fname, outdir=""):
 def get_changed_ui_files():
     from bzrlib.workingtree import WorkingTree
     tree = WorkingTree.open("../../../")
-    changes = tree.changes_from (tree.basis_tree ()).modified
-    for change in changes:
+    changes = tree.changes_from (tree.basis_tree ())
+    for change in changes.added + changes.modified:
         if re.match(".*.ui$", change[0]):
             yield change[0]
 

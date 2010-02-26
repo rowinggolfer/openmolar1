@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1018</width>
-    <height>554</height>
+    <width>973</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,7 +62,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>997</width>
+         <width>1017</width>
          <height>603</height>
         </rect>
        </property>
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>5</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
+                        <width>558</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2168,7 +2168,7 @@
                       <property name="geometry">
                        <rect>
                         <x>0</x>
-                        <y>-28</y>
+                        <y>0</y>
                         <width>738</width>
                         <height>464</height>
                        </rect>
@@ -2565,7 +2565,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>730</width>
+                        <width>608</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2863,8 +2863,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>547</width>
-                        <height>430</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3063,7 +3063,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>497</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3096,7 +3096,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3469,8 +3469,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>753</width>
-                        <height>430</height>
+                        <width>267</width>
+                        <height>392</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4410,8 +4410,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>198</width>
-                    <height>99</height>
+                    <width>98</width>
+                    <height>98</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4774,8 +4774,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>719</width>
-                     <height>500</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_30"/>
@@ -5448,6 +5448,13 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
              </widget>
             </item>
+            <item row="1" column="3">
+             <widget class="QPushButton" name="bulkMail_options_pushButton">
+              <property name="text">
+               <string>Letter Options</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="tab_22">
@@ -6016,7 +6023,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1018</width>
+     <width>973</width>
      <height>20</height>
     </rect>
    </property>

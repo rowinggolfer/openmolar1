@@ -40,7 +40,7 @@ class recalled_patient(object):
         self.town = row[10] if row[10] != None else ""
         self.county = row[11] if row[11] != None else ""
         self.pcde = row[12] if row[12] != None else ""
-        self.recd = localsettings.formatDate(row[13])  
+        self.recd = row[13]  
         
     def __getitem__(self, pos):
         if pos == 0:
