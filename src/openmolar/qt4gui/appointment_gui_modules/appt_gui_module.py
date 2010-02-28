@@ -215,7 +215,24 @@ def select_apr_ix(om_gui, apr_ix):
         om_gui.ui.pt_diary_treeView.setCurrentIndex(index)
     else:
         print "select_apr_ix was unsucessful"
-    
+  
+def deletePastAppointments(om_gui):
+    '''
+    user has selected delete all past appointments for a patient
+    '''
+    sno = om_gui.pt.serialno
+    if sno == 0: #shouldn't happen!
+        om_gui.advise("Serious error - you can't delete all Lunchtimes!", 2)
+    if QtGui.QMessageBox.question(om_gui, _("Confirm"),
+        _("Delete all past Appointments?") + "<br />" + 
+        _("from the diary of") + " %s %s"% (
+        om_gui.pt.sname, om_gui.pt.sname) ,
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes, 
+        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            number = appointments.deletePastAppts(om_gui.pt.serialno)
+            om_gui.advise("%d appointments deleted"% number)
+            layout_ptDiary(om_gui)
+            
 def clearApptButtonClicked(om_gui):
     '''
     user is deleting an appointment
@@ -632,25 +649,27 @@ def ptDiary_selection(om_gui, index=None):
     om_gui.pt.selectedAppt = appt
     
     if not appt:
-        om_gui.ui.makeAppt_pushButton.hide() #setEnabled(False)
-        om_gui.ui.modifyAppt_pushButton.hide() #setEnabled(False)
-        om_gui.ui.clearAppt_pushButton.hide() #setEnabled(False)
-        om_gui.ui.findAppt_pushButton.hide() #setEnabled(False)
-        #om_gui.ui.printAppt_pushButton.setEnabled(False)
+        if index:
+            om_gui.ui.del_pastAppointments_pushButton.show()
+        else:
+            om_gui.ui.del_pastAppointments_pushButton.hide()
+        om_gui.ui.makeAppt_pushButton.hide() 
+        om_gui.ui.modifyAppt_pushButton.hide() 
+        om_gui.ui.clearAppt_pushButton.hide()
+        om_gui.ui.findAppt_pushButton.hide() 
         return
+    
+    om_gui.ui.del_pastAppointments_pushButton.hide()
+    om_gui.ui.modifyAppt_pushButton.show() 
+    om_gui.ui.clearAppt_pushButton.show() 
+            
     if appt.unscheduled:
-        om_gui.ui.makeAppt_pushButton.show() #setEnabled(True)
-        om_gui.ui.modifyAppt_pushButton.show() #setEnabled(True)
-        om_gui.ui.clearAppt_pushButton.show() #setEnabled(True)
-        om_gui.ui.findAppt_pushButton.hide() #setEnabled(False)
-        #om_gui.ui.printAppt_pushButton.setEnabled(False)
+        om_gui.ui.makeAppt_pushButton.show() 
+        om_gui.ui.findAppt_pushButton.hide() 
     else:
-        om_gui.ui.makeAppt_pushButton.hide() #setEnabled(False)
-        om_gui.ui.modifyAppt_pushButton.show() #setEnabled(True)
-        om_gui.ui.clearAppt_pushButton.show() #setEnabled(True)
-        om_gui.ui.findAppt_pushButton.show() #setEnabled(True)
-        #om_gui.ui.printAppt_pushButton.setEnabled(True)
-
+        om_gui.ui.makeAppt_pushButton.hide()
+        om_gui.ui.findAppt_pushButton.show()
+    
 def adjustDiaryColWidths(om_gui, arg=None):
     '''
     adjusts the width of the diary columns to fit the current display
@@ -987,16 +1006,20 @@ def findApptButtonClicked(om_gui):
     om_gui.ui.calendarWidget.setSelectedDate(appt.date)
     om_gui.ui.diary_tabWidget.setCurrentIndex(0)
     om_gui.ui.main_tabWidget.setCurrentIndex(1)
+        
+    QtCore.QObject.connect(om_gui.ui.main_tabWidget,
+    QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
+    layout_dayView(om_gui)
     
     ######################################################################
     ##TODO - add some code like
     ## appointment widgets - highlight appt (appt)
     ######################################################################
-    
-    QtCore.QObject.connect(om_gui.ui.main_tabWidget,
-    QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
-    layout_dayView(om_gui)
 
+    for book in om_gui.apptBookWidgets:
+        if book.apptix == appt.dent:
+            book.highlightAppt(appt.atime)
+        
 def makeDiaryVisible(om_gui):
     '''
     if called, this will take any steps necessary to show the current day's
@@ -1239,6 +1262,7 @@ def layout_dayView(om_gui):
     for book in om_gui.apptBookWidgets:
         book.clearAppts()
         book.setTime = "None"
+        book.highlightAppt(None)
 
     d = om_gui.ui.calendarWidget.selectedDate().toPyDate()
     workingOnly = False

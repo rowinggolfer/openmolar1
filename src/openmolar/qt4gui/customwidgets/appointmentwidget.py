@@ -189,6 +189,12 @@ class appointmentWidget(QtGui.QFrame):
     def update(self):
         self.canvas.update()
     
+    def highlightAppt(self, atime):
+        '''
+        highlights the appointment at the given time
+        '''
+        self.canvas.highlight = str(atime)
+        
     def setAppointment(self, app):
         '''
         adds an appointment to the widget dictionary of appointments
@@ -252,7 +258,7 @@ class appointmentCanvas(QtGui.QWidget):
         self.setMouseTracking(True)
         self.duplicateNo = -1 #use this for serialnos =0
         self.om_gui = om_gui
-
+        self.highlight = None
     
     def setDayStartTime(self, sTime):
         '''
@@ -407,8 +413,6 @@ class appointmentCanvas(QtGui.QWidget):
                 if key>=upper:
                     upper=key
         return (lower,upper+1)
-    
-    
     
     def mouseMoveEvent(self, event):
         y = event.y()
@@ -597,6 +601,8 @@ class appointmentCanvas(QtGui.QWidget):
         option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
         option.setWrapMode(QtGui.QTextOption.WordWrap)
         
+        drawHighlight = False
+                
         for appt in self.appts:
             #-- multiple assignment
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
@@ -623,7 +629,11 @@ class appointmentCanvas(QtGui.QWidget):
                 trt2, trt3 ,memo)
 
                 painter.drawText(rect, mytext, option)
-
+            
+            if self.highlight == start:
+                drawHighlight = True
+                highlightRect = rect.adjusted(0,-2,0,-2)
+                
         for appt in self.doubleAppts:
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
             trt3,memo,flag,cset)=appt
@@ -651,6 +661,13 @@ class appointmentCanvas(QtGui.QWidget):
             corner3=[self.width(),(cellno+0.5)*slotHeight]
             triangle=corner1+corner2+corner3
             painter.drawPolygon(QtGui.QPolygon(triangle))
+        
+        ##user has "asked to find this appointment"
+        if drawHighlight:
+            painter.setPen(QtGui.QPen(QtGui.QColor("red"),3))
+            painter.setBrush(QtCore.Qt.transparent)
+            painter.drawRect(highlightRect)
+            
 
 if __name__ == "__main__":
 
@@ -727,5 +744,7 @@ if __name__ == "__main__":
     v.addWidget(form)
     parent.setLayout(v)
     parent.show()
+    
+    form.highlightAppt(915)
 
     sys.exit(app.exec_())

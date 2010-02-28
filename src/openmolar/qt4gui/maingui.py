@@ -2018,10 +2018,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         disable/enable widgets "en mass" when no patient loaded
         '''
-        self.ui.makeAppt_pushButton.hide() #setEnabled(False)
-        self.ui.modifyAppt_pushButton.hide() #setEnabled(False)
-        self.ui.clearAppt_pushButton.hide() #setEnabled(False)
-        self.ui.findAppt_pushButton.hide() #setEnabled(False)
+        self.ui.makeAppt_pushButton.hide() 
+        self.ui.modifyAppt_pushButton.hide()
+        self.ui.clearAppt_pushButton.hide() 
+        self.ui.findAppt_pushButton.hide() 
+        self.ui.del_pastAppointments_pushButton.hide()
         
         for widg in (
         self.ui.summaryChartWidget,
@@ -2139,6 +2140,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user about to make an appointment
         '''
         appt_gui_module.begin_makeAppt(self)
+        
+    def del_pastAppointments(self):
+        '''
+        user has requested deletion of all past appointments for the patient
+        '''
+        appt_gui_module.deletePastAppointments(self)
 
     def clearApptButton_clicked(self):
         '''
@@ -3055,6 +3062,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.makeAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.makeApptButton_clicked)
+
+        QtCore.QObject.connect(self.ui.del_pastAppointments_pushButton,
+        QtCore.SIGNAL("clicked()"), self.del_pastAppointments)
 
         QtCore.QObject.connect(self.ui.clearAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.clearApptButton_clicked)

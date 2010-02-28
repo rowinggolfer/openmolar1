@@ -60,7 +60,7 @@
       <widget class="QWidget" name="scrollAreaWidgetContents_12">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>-65</x>
          <y>0</y>
          <width>1017</width>
          <height>603</height>
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>5</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>476</width>
+                        <width>740</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>558</width>
+                        <width>740</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2169,8 +2169,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>738</width>
-                        <height>464</height>
+                        <width>748</width>
+                        <height>497</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -2397,6 +2397,9 @@
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
                                </property>
+                               <property name="toolTip">
+                                <string>A Wizard to select some common appointment combinations</string>
+                               </property>
                                <property name="text">
                                 <string>Appointment Shortcuts</string>
                                </property>
@@ -2411,6 +2414,9 @@
                                    <width>16777215</width>
                                    <height>16777215</height>
                                   </size>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>A New Appointment for this patient</string>
                                  </property>
                                  <property name="text">
                                   <string>&amp;New</string>
@@ -2431,6 +2437,9 @@
                                    <width>16777215</width>
                                    <height>28</height>
                                   </size>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>delete or cancel the appointment</string>
                                  </property>
                                  <property name="text">
                                   <string>Clear/Cancel</string>
@@ -2460,12 +2469,31 @@
                                      <height>16777215</height>
                                     </size>
                                    </property>
+                                   <property name="toolTip">
+                                    <string>Make the selected appointment</string>
+                                   </property>
                                    <property name="text">
                                     <string>Schedule</string>
                                    </property>
                                    <property name="icon">
                                     <iconset resource="../resources/resources.qrc">
                                      <normaloff>:/month.png</normaloff>:/month.png</iconset>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item>
+                                  <widget class="QPushButton" name="del_pastAppointments_pushButton">
+                                   <property name="sizePolicy">
+                                    <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                     <horstretch>0</horstretch>
+                                     <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Housekeeping - remove all past appointments from the patient's diary</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>Delete All Past Appointments</string>
                                    </property>
                                   </widget>
                                  </item>
@@ -2485,6 +2513,9 @@
                                      <width>16777215</width>
                                      <height>16777215</height>
                                     </size>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Find the appointment in the the practice appointment list</string>
                                    </property>
                                    <property name="text">
                                     <string>Find in Book</string>
@@ -2508,6 +2539,9 @@
                                    <height>16777215</height>
                                   </size>
                                  </property>
+                                 <property name="toolTip">
+                                  <string>Print out the next 5 appointments for this patient</string>
+                                 </property>
                                  <property name="text">
                                   <string>Print Card</string>
                                  </property>
@@ -2527,6 +2561,9 @@
                                    <width>16777215</width>
                                    <height>28</height>
                                   </size>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>Allows modifcation of certain criteria for this appointment</string>
                                  </property>
                                  <property name="text">
                                   <string>Modify</string>
@@ -2565,7 +2602,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>608</width>
+                        <width>740</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2863,8 +2900,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>557</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3063,7 +3100,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>507</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3096,7 +3133,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>197</width>
+                        <width>217</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3469,8 +3506,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
-                        <height>392</height>
+                        <width>763</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -3890,7 +3927,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>108</width>
+                    <width>113</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4410,8 +4447,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>98</width>
-                    <height>98</height>
+                    <width>198</width>
+                    <height>99</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4774,8 +4811,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>739</width>
+                     <height>500</height>
                     </rect>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_30"/>
