@@ -1002,24 +1002,26 @@ def findApptButtonClicked(om_gui):
 
     QtCore.QObject.disconnect(om_gui.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
+    om_gui.connectAllClinicians(False)
 
     om_gui.ui.calendarWidget.setSelectedDate(appt.date)
     om_gui.ui.diary_tabWidget.setCurrentIndex(0)
     om_gui.ui.main_tabWidget.setCurrentIndex(1)
-        
+    if appt.dent in om_gui.ui.aptOVdent_checkBoxes.keys():
+        om_gui.ui.aptOVdent_checkBoxes[appt.dent].setChecked(True)
+    if appt.dent in om_gui.ui.aptOVhyg_checkBoxes.keys():
+        om_gui.ui.aptOVhyg_checkBoxes[appt.dent].setChecked(True)
+    
     QtCore.QObject.connect(om_gui.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
     layout_dayView(om_gui)
+    om_gui.connectAllClinicians(True)
     
-    ######################################################################
-    ##TODO - add some code like
-    ## appointment widgets - highlight appt (appt)
-    ######################################################################
-
     for book in om_gui.apptBookWidgets:
         if book.apptix == appt.dent:
             book.highlightAppt(appt.atime)
-        
+            #book.update()
+            
 def makeDiaryVisible(om_gui):
     '''
     if called, this will take any steps necessary to show the current day's
