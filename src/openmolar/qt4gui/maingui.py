@@ -56,6 +56,7 @@ from openmolar.qt4gui.compiled_uis import Ui_options
 from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
 from openmolar.qt4gui.compiled_uis import Ui_showMemo
 
+
 #--custom dialog modules
 from openmolar.qt4gui.dialogs import medNotes
 from openmolar.qt4gui.dialogs import saveDiscardCancel
@@ -64,6 +65,7 @@ from openmolar.qt4gui.dialogs import saveMemo
 from openmolar.qt4gui.dialogs import save_pttask
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
+from openmolar.qt4gui.dialogs import choose_tooth_dialog
 
 #secondary applications
 from openmolar.qt4gui.tools import fee_adjuster
@@ -579,7 +581,12 @@ class openmolarGui(QtGui.QMainWindow):
         print "tooth_add_comments"
         self.advise("add comments not working yet",1)
 
-
+    def chooseTooth(self):
+        '''
+        ask the user to select a tooth
+        '''
+        return choose_tooth_dialog.run(self)
+        
     def okToLeaveRecord(self, cont=False):
         '''
         leaving a pt record - has state changed?

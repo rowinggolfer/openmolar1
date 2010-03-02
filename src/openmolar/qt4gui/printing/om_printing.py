@@ -261,18 +261,24 @@ def printReferral(om_gui):
     #    orthoWizard(om_gui)
     #    return
     html=referral.getHtml(desc, om_gui.pt)
-    Dialog = QtGui.QDialog(om_gui)
+    Dialog = QtGui.QDialog(om_gui,  QtCore.Qt.WindowMinimizeButtonHint)
+    t.WindowMinimizeButtonHint
     dl = Ui_enter_letter_text.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.textEdit.setHtml(html)
+    referred_pt = om_gui.pt
+    Dialog.show()
     if Dialog.exec_():
         html=dl.textEdit.toHtml()
         myclass=letterprint.letter(html)
         myclass.printpage()
-        docsprinted.add(om_gui.pt.serialno, "referral (html)", html)
-        om_gui.pt.addHiddenNote("printed", "referral")
-        if om_gui.ui.prevCorres_treeWidget.isVisible():
-            om_gui.docsPrintedInit()
+        docsprinted.add(referred_pt.serialno, "referral (html)", html)
+        referred_pt.addHiddenNote("printed", "referral")
+        if referred_pt == om_gui.pt:
+            if om_gui.ui.prevCorres_treeWidget.isVisible():
+                om_gui.docsPrintedInit()
+        else:
+            referred_pt.toNotes(referred_pt.serialno, referred_pt.HIDDENNOTES)
 
 def orthoWizard(om_gui):
     '''prints a referal letter controlled by referal.xml file'''

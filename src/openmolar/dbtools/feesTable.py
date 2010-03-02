@@ -96,13 +96,8 @@ class feeTable():
         '''
         a readable description of the object
         '''
-        retarg = "Class feeTable %s"% self.tablename
-        #keys = self.feesDict.keys()
-        #keys.sort()
-        #for key in keys:
-        #    feeItem = self.feesDict[key]
-        #    retarg += "FEE ITEM %s\n %s\n%s\n"% (key, feeItem, "===" * 2) 
-        return retarg
+        return "Class feeTable %s - %s feeItems"% (self.tablename, 
+        len(self.feesDict))
         
     def setCategories(self, arg):
         '''
@@ -157,9 +152,9 @@ class feeTable():
         now load the fees
         '''
         # build a query
-        query = "select section, code, USERCODE, regulation, "
-        query += "description, brief_description, hide %s " % self.columnQuery
-        query += "from %s"% self.tablename
+        query = '''select section, code, USERCODE, regulation, description, 
+brief_description, pl_cmp, hide %s from %s''' % (
+        self.columnQuery, self.tablename)
         
         db = connect()
         cursor = db.cursor() 
@@ -175,18 +170,19 @@ class feeTable():
 
         for row in rows:
             (section, code, USERCODE, regulation, description, 
-            brief_description, hide) = row[:7]
+            brief_description, pl_cmp, hide) = row[:8]
             #unpack the fees into the blank tuples
-            start, end = 7, 7+len(feeTup)
+            start, end = 8, 8 + len(feeTup)
             feeTup = row[start:end]
-            start, end = end, end+len(ptfeeTup)            
+            start, end = end, end + len(ptfeeTup)            
             ptfeeTup = row[start:end]
             if code != "":
                 if self.feesDict.has_key(code):
                     feeItem = self.feesDict[code] 
                 else:
-                    feeItem = fee(self, code)
+                    feeItem = feeItemClass(self, code)
                     feeItem.setCategory(section)
+                    feeItem.setPl_Cmp_Type(pl_cmp)
                     feeItem.usercode = USERCODE
                     feeItem.description = description
                     feeItem.setRegulations(regulation)
@@ -376,7 +372,7 @@ class feeTable():
         return (item, fee, ptfee, description)
     
     
-class fee(object):
+class feeItemClass(object):
     '''
     this class handles the calculation of fees
     part of the challenge is recognising the fact that
@@ -390,6 +386,7 @@ class fee(object):
         self.table = table
         self.itemcode = itemcode
         self.category = 0
+        self.pl_cmp_type = "other"
         self.description = ""
         self.brief_descriptions = ()
         self.fees = {}
@@ -401,13 +398,19 @@ class fee(object):
         '''
         a readable version of the instance
         '''
-        return '''feeitem - Usercode    = '%s'
-    brief description  = '%s'
-    estimate phrase    = '%s'
-    regulations        = '%s'
-    fees               =  %s
-    ptFees             =  %s'''% (self.usercode, self.brief_descriptions,
-    self.description, self.regulations, self.fees, self.ptFees)
+        return '''
+feesTable.feeItem object
+table, Item           =  %s   %s 
+category, usercode    =  %s, '%s'
+pl_cmp_type           =  %s,
+brief description(s)  = '%s'
+estimate phrase       = '%s'
+regulations           = '%s'
+fees                  =  %s
+ptFees                =  %s'''% (self.table.tablename, 
+        self.itemcode, self.category, self.usercode, self.pl_cmp_type, 
+        self.brief_descriptions, self.description, self.regulations, 
+        self.fees, self.ptFees)
         
     def addFees(self, arg):
         '''
@@ -448,6 +451,17 @@ class fee(object):
         perio, chart etc...
         '''
         self.category = arg
+        
+    def setPl_Cmp_Type(self,arg):
+        '''
+        the fee needs to know where it would belong in the treatment plan,
+        if added via an indirect method. default is "other"
+        this is where the item would be inserted into the pt class
+        eg "ul7pl" or "otherpl"
+        use 'CHART' to indicate that a tooth needs to be specified.
+        '''
+        if arg:
+            self.pl_cmp_type = arg
     
     def addBriefDescription(self, arg):
         '''

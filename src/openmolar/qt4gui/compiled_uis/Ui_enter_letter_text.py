@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'enter_letter_text.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/enter_letter_text.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
+# Created: Mon Mar  1 15:12:37 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,9 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(712, 591)
+        Dialog.setWindowModality(QtCore.Qt.NonModal)
+        Dialog.resize(644, 641)
+        Dialog.setSizeGripEnabled(True)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtGui.QLabel(Dialog)
@@ -33,6 +35,6 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( u"Norman - Letter Text Entry"))
+        Dialog.setWindowTitle(_( u"Letter Text Entry"))
         self.label.setText(_( u"<b>Please enter the body text for your letter here.</b>"))
 

@@ -45,11 +45,10 @@ def compile_ui(ui_fname, outdir=""):
         'setProperty("value", QtCore.QVariant(%s))'%m.groups()[0])
 
     if newdata != data:
-        print "writing changes"
         f = open(pyfile,"w")
         f.write(newdata)
         f.close()
-    return True
+    return pyfile
 
 def get_changed_ui_files():
     from bzrlib.workingtree import WorkingTree
@@ -64,7 +63,8 @@ if __name__ == "__main__":
     for ui_file in get_changed_ui_files():
         name = os.path.basename(ui_file)
         path = os.path.join(root, name)
-        if compile_ui(path, "../qt4gui/compiled_uis"):
-            print "compiled py file for", ui_file
+        pyfile = compile_ui(path, "../qt4gui/compiled_uis")
+        if pyfile:
+            print "created/updated py file", pyfile
 
     print "ALL DONE!"

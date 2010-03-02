@@ -129,6 +129,7 @@ class treeModel(QtCore.QAbstractItemModel):
                 return QtCore.QVariant(QtCore.Qt.AlignRight)
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
+            ## in this case a feeItemClass
             return item.itemData   
         
         return QtCore.QVariant()

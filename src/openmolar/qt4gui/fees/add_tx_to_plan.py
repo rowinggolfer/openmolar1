@@ -190,23 +190,41 @@ def fromFeeTable(om_gui, model_index):
 
         if not table:
             return
-
+    print "adding", fee_item, 
+    print "to the treatment plan of patient", om_gui.pt.serialno
+    
     Dialog = QtGui.QDialog(om_gui)    
     items = (fee_item.itemcode, )
+    type = fee_item.pl_cmp_type
+    if "CHART" in type:
+        update_charts_needed = True
+        types = om_gui.chooseTooth()
+    else:
+        update_charts_needed = False        
+        types = [type]
     dl = addTreat.feeTable_treatment(Dialog, table, items)
     
     chosenTreatments = dl.getInput()
     for usercode, itemcode, description in chosenTreatments:
-        om_gui.pt.otherpl += "%s "% usercode
-        om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
-        type=usercode, feescale=table.index)
+        for type in types:
+            try:        
+                om_gui.pt.__dict__[type+"pl"] += "%s "% usercode
+                if update_charts_needed:
+                    om_gui.ui.planChartWidget.setToothProps(type, 
+                    om_gui.pt.__dict__[type+"pl"])
+            except AttributeError, e:
+                print "patient class has no attribute '%spl'", type,
+                print "Will default to 'other'"
+                om_gui.pt.otherpl += "%s "% usercode
+            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+            category = type, type=usercode, feescale=table.index)
         
     if om_gui.ui.tabWidget.currentIndex() != 7:
         om_gui.ui.tabWidget.setCurrentIndex(7)
     else:
         om_gui.load_newEstPage()
         om_gui.load_treatTrees()
-
+        
 def confirmWrongFeeTable(om_gui, suggested, current):
     '''
     check that the user is happy to use the suggested table, not the current 

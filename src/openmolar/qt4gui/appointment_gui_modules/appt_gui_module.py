@@ -1380,7 +1380,7 @@ def clearEmergencySlot(om_gui, arg):
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
         appt = appointments.appt_class()
-        appt.time = localsettings.humanTimetoWystime(arg[0])
+        appt.atime = localsettings.humanTimetoWystime(arg[0])
         appt.date = adate
         appt.dent = arg[2]
         appointments.delete_appt_from_aslot(appt)
