@@ -682,7 +682,7 @@ def layout_ptDiary(om_gui):
     populates the patient's diary
     '''
     appts = appointments.get_pts_appts(om_gui.pt.serialno)
-    model = pt_diary_treemodel.treeModel(appts)
+    model = pt_diary_treemodel.treeModel(appts, om_gui)
     om_gui.ui.pt_diary_treeView.setModel(model)
     om_gui.ui.pt_diary_treeView.expandAll()
     index = model.parents.get(1, None)

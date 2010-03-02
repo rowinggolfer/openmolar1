@@ -83,8 +83,8 @@ class treeModel(QtCore.QAbstractItemModel):
     '''
     a model to display a feetables data
     '''
-    def __init__(self, appointments):
-        super(QtCore.QAbstractItemModel, self).__init__()
+    def __init__(self, appointments, parent=None):
+        super(QtCore.QAbstractItemModel, self).__init__(parent)
         self.appointments = appointments
         self.rootItem = TreeItem("Appointments",None, None, None)
         self.parents = {0:self.rootItem}

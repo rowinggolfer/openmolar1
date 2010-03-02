@@ -1,3 +1,9 @@
+openmolar (0.1.9-9~intrepid1) intrepid; urgency=low
+
+  * as per bzr version 600 see https://launchpad.net/openmolar for details
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Sun, 28 Feb 2010 11:10:34 +0000
+
 openmolar (0.1.9-8~intrepid1) intrepid; urgency=low
 
   * as per bzr version 600 see https://launchpad.net/openmolar for details
