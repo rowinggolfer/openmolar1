@@ -189,7 +189,8 @@ Are you ready to proceed?</center>''')
             nameDict = server.attributes
             if nameDict.has_key("name"):
                 localsettings.server_names.append(nameDict["name"].value)
-
+        if localsettings.server_names == []:
+            localsettings.server_names.append("")
     except IOError, e:
         print "still no settings... %s\nquitting politely"% e
         QtGui.QMessageBox.information(None, _("Unable to Run OpenMolar"),
@@ -207,7 +208,7 @@ Are you ready to proceed?</center>''')
     dl.chosenServer = 0
     labelServer(0)
     actions = []
-    if len(localsettings.server_names) > 0:
+    if len(localsettings.server_names) > 1:
         for name in localsettings.server_names:
             action = QtGui.QAction(name, servermenu)
             servermenu.addAction(action)

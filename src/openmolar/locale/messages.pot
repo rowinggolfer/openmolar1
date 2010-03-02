@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-03-02 14:54+GMT\n"
+"POT-Creation-Date: 2010-03-02 15:00+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -326,26 +326,26 @@ msgstr ""
 msgid "First Run"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:195
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:196
 msgid "Unable to Run OpenMolar"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:196
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:197
 msgid "Good Bye!"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:277
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:285
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:278
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:286
 msgid "Login Error"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:278
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:279
 msgid ""
 "Incorrect<br />User/password<br />\n"
 "combination!<br />Please Try Again."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:281
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:282
 msgid ""
 "<p>DATABASE ERROR </p>\n"
 "<p>application cannot run</p>Error %s"
