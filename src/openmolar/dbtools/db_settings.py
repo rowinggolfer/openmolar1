@@ -55,6 +55,23 @@ def updateData(value, data, user):
         db.commit()
         return True
 
+def getWikiUrl(): 
+    '''
+    the database may know of the url (presumably an internally facing ip)
+    for the practice wiki??
+    ''' 
+    try:
+        db = connect.connect()
+        cursor = db.cursor()
+        query = 'select data from settings where value = "wikiurl"' 
+        cursor.execute(query)
+        rows = cursor.fetchall()
+    except connect.ProgrammingError, ex:
+        print "no wikiurl loaded as there is no settings table??"
+    if rows:
+        return rows[-1][0]
+    else:
+        return "http://openmolar.wikidot.com/"    
 
 if __name__ == "__main__":
     print getData("enddate")

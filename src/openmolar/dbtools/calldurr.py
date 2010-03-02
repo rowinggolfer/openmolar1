@@ -10,22 +10,24 @@
 update a simple table which stores which records are in use
 '''
 
-from openmolar.connect import connect
+from openmolar import connect
 
 def commit(serialno, surgeryno):
     '''
     sets a copy of the riu table
     '''
-    db = connect()
-    sqlcommand = "update calldurr set serialno=%d where stn=%d"% (
-    serialno, surgeryno)
-    print sqlcommand
+    db = connect.connect()
+    query = "update calldurr set serialno=%s where stn=%s"
+    values = (serialno, surgeryno)
     cursor = db.cursor()
-    result = cursor.execute(sqlcommand)
-    result = db.commit()
+    
+    result = cursor.execute(query, values)
+    if result:
+        db.commit()
+
     cursor.close()
     #db.close()
     return result
 
 if __name__ == "__main__":
-    print commit(23, 1)
+    print commit(24, 1)

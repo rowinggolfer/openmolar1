@@ -66,6 +66,7 @@ setup(
                 'openmolar.settings',
                 'openmolar.ptModules'],
     package_data = {'openmolar' : ['resources/icons/*.*',
+                                    'resources/teeth/*.png',
                                     'resources/*.*',
                                     'html/*.*',
                                     'html/images/*.*',

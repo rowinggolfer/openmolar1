@@ -33,6 +33,8 @@ DB_SCHEMA_VERSION = "unknown"
 ENCODING = locale.getpreferredencoding() #"latin-1" for the uk currrency??
 FEETABLES = {}
 
+WIKIURL = ""
+
 locale.setlocale(locale.LC_ALL, '')
 
 #--this is a hack to get the correct bzr number. it will always be one up.
@@ -670,7 +672,7 @@ def initiate(debug = False):
     print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd, \
-    clinicianNo, clinicianInits, FEETABLES
+    clinicianNo, clinicianInits, FEETABLES, WIKIURL
     
     from openmolar import connect
     from openmolar.dbtools import feesTable
@@ -776,6 +778,8 @@ def initiate(debug = False):
     
     getLocalSettings()
 
+    WIKIURL = db_settings.getWikiUrl()
+    
     message = '''<html><head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head><body><div align="center">

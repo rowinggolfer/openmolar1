@@ -60,7 +60,7 @@
       <widget class="QWidget" name="scrollAreaWidgetContents_12">
        <property name="geometry">
         <rect>
-         <x>-65</x>
+         <x>0</x>
          <y>0</y>
          <width>1017</width>
          <height>603</height>
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>8</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>740</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>740</width>
+                        <width>558</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2602,7 +2602,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>740</width>
+                        <width>608</width>
                         <height>429</height>
                        </rect>
                       </property>
@@ -2900,8 +2900,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>557</width>
-                        <height>430</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3100,7 +3100,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>507</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3133,7 +3133,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3506,8 +3506,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>763</width>
-                        <height>430</height>
+                        <width>267</width>
+                        <height>392</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -6047,6 +6047,22 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="tab_28">
+           <attribute name="title">
+            <string>Wiki</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_33">
+            <item>
+             <widget class="QWebView" name="wiki_webView">
+              <property name="url">
+               <url>
+                <string>about:blank</string>
+               </url>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -6238,6 +6254,13 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKit/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>saveButton</tabstop>
   <tabstop>tabWidget</tabstop>

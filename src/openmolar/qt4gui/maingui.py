@@ -148,6 +148,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.forum_notified = False
         self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
+        self.wikiloaded = False
 
     def advise(self, arg, warning_level=0):
         '''
@@ -652,7 +653,15 @@ class openmolarGui(QtGui.QMainWindow):
         if ci == 7:
             #--forum
             forum_gui_module.loadForum(self)
-
+    
+        if ci == 8:
+            #-- wiki
+            if self.wikiloaded:
+                self.ui.wiki_webView.reload()
+            else:
+                self.ui.wiki_webView.setUrl(QtCore.QUrl(localsettings.WIKIURL))
+                self.wikiloaded = True
+            
     def handle_patientTab(self):
         '''
         handles navigation of patient record
