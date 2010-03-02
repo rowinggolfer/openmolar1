@@ -137,7 +137,9 @@ def main():
         labelServer(i)
 
     def labelServer(i):
-        def_string = " (" + _("DEFAULT") + ")" if i == 0 else ""
+        def_string = ""
+        if i == 0:
+            def_string = " (" + _("DEFAULT") + ")"
 
         dl.chosenServer_label.setText(_("Chosen server") + " - " +
         localsettings.server_names[i] +  def_string)
@@ -205,7 +207,7 @@ Are you ready to proceed?</center>''')
     dl.chosenServer = 0
     labelServer(0)
     actions = []
-    if len(localsettings.server_names) > 1:
+    if len(localsettings.server_names) > 0:
         for name in localsettings.server_names:
             action = QtGui.QAction(name, servermenu)
             servermenu.addAction(action)

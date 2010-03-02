@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-03-02 14:03+GMT\n"
+"POT-Creation-Date: 2010-03-02 14:54+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -304,15 +304,15 @@ msgstr ""
 msgid "confirm"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:140
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:142
 msgid "DEFAULT"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:142
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:144
 msgid "Chosen server"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:158
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:160
 msgid ""
 "<center><p>\n"
 "This appears to be your first running of openMolar<br />\n"
@@ -322,30 +322,30 @@ msgid ""
 "Are you ready to proceed?</center>"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:165
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:167
 msgid "First Run"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:193
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:195
 msgid "Unable to Run OpenMolar"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:194
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:196
 msgid "Good Bye!"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:275
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:283
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:277
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:285
 msgid "Login Error"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:276
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:278
 msgid ""
 "Incorrect<br />User/password<br />\n"
 "combination!<br />Please Try Again."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:279
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:281
 msgid ""
 "<p>DATABASE ERROR </p>\n"
 "<p>application cannot run</p>Error %s"
