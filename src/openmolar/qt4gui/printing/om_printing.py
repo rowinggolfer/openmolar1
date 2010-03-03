@@ -262,7 +262,7 @@ def printReferral(om_gui):
     #    return
     html=referral.getHtml(desc, om_gui.pt)
     Dialog = QtGui.QDialog(om_gui,  QtCore.Qt.WindowMinimizeButtonHint)
-    t.WindowMinimizeButtonHint
+    
     dl = Ui_enter_letter_text.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.textEdit.setHtml(html)
