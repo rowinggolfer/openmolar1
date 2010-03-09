@@ -48,7 +48,7 @@ class appt_class(object):
             self.today = self.date == today
             self.past = self.date < today
             if self.today:
-                self.future = self.atime > localsettings.timestamp
+                self.future = self.atime > localsettings.timestamp()
             else:
                 self.future = self.date > today
 
@@ -757,14 +757,14 @@ def clearEms(cedate):
     cursor = db.cursor()
     number = 0
     try:
-        fullquery = '''delete from aslot WHERE adate="%s"
-        and flag0=-128 and name like "%%Emergency%%"'''% cedate
+        query = \
+        'delete from aslot WHERE adate=%s and flag0=%s and name like %s'
+        values = (cedate, -128, "%Emergency%")
         if localsettings.logqueries:
-            print fullquery
-        number = cursor.execute(fullquery)
-
+            print query, values
+        number = cursor.execute(query, values)
         db.commit()
-    except Exception,ex:
+    except Exception, ex:
         print "exception in appointments module, clearEms"
         print ex
 
@@ -1070,14 +1070,14 @@ note, flag1, flag0, flag2, flag3):
     flag1=%d,flag2=%d,flag3=%d'''% (
     code0,code1,code2,note,flag0,flag1,flag2,flag3)
 
-    fullquery = '''update aslot set %s where adate="%s" and apptix=%d
-    and start=%d and serialno=%d'''% (changes,
-    localsettings.pyDatetoSQL(moddate), apptix, start, serialno)
+    query = '''update aslot set %s where adate=%%s and apptix=%%s
+    and start=%%s and serialno=%%s'''% changes
+    values = (moddate, apptix, start, serialno)
 
     if localsettings.logqueries:
-        print fullquery
+        print query, values
     try:
-        cursor.execute(fullquery)
+        cursor.execute(query, values)
         db.commit()
         result = True
     except Exception, ex:

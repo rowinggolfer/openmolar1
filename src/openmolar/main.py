@@ -64,7 +64,7 @@ def proceed():
     elif localsettings.CLIENT_SCHEMA_VERSION < sv:
         print "client is out of date....."
         compatible  = schema_version.clientCompatibility(
-        localsettings.CLIENT_SCHEMA_VERSION)
+            localsettings.CLIENT_SCHEMA_VERSION)
         if not compatible:
             QtGui.QMessageBox.warning(None, _("Update Client"),
             _('''<p>Sorry, you cannot run this version of the openMolar client

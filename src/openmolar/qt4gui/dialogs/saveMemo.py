@@ -23,16 +23,15 @@ class Ui_Dialog(Ui_saveMemo.Ui_Dialog):
         if not self.dialog.exec_():
             return False
         if not self.noExpire_radioButton.isChecked():
-            d=self.dateEdit.date().toPyDate()
-            exdate=localsettings.pyDatetoSQL(d)
+            exdate = self.dateEdit.date().toPyDate()
         else: 
-            exdate=30000101
+            exdate = None
         
-        author=str(self.author_comboBox.currentText())
-        if author=="":
-            author="Anon"
+        author = str(self.author_comboBox.currentText())
+        if author == "":
+            author = "Anon"
         
-        open=True
+        open = True
         
         message=str(self.textEdit.toPlainText().toAscii())
         
@@ -43,8 +42,8 @@ class Ui_Dialog(Ui_saveMemo.Ui_Dialog):
         else:
             type = "all"
         
-        return memos.saveMemo(self.serialno,author,type,exdate,message,open) 
-    
+        return memos.saveMemo(self.serialno, author, type, exdate, 
+        message, open) 
     
 if __name__ == "__main__":
     localsettings.initiate(False)

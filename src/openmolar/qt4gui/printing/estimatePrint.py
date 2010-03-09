@@ -65,7 +65,7 @@ class estimate():
             painter.drawText(x, y, mystr)
             
             painter.drawText(x+w, y,
-            QtCore.QDate.currentDate().toString(localsettings.DATE_FORMAT))
+            QtCore.QDate.currentDate().toString(localsettings.QDATE_FORMAT))
         
             x = LeftMargin + 10
             y += serifLineHeight * 2

@@ -85,13 +85,12 @@ def all_changes(pt, pt_dbstate, changes):
                         query = '''insert into newestimates (serialno, 
 courseno, category, type, number, itemcode, description, fee, ptfee, feescale, 
 csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values 
-(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())'''
                         values = (pt.serialno, pt.courseno, est.category, 
                         est.type, est.number, est.itemcode, est.description, 
                         est.fee, est.ptfee, est.feescale, est.csetype, 
                         est.dent, est.completed, est.carriedover, 
-                        est. linked, localsettings.operator, 
-                        localsettings.timestamp())
+                        est. linked, localsettings.operator)
                         
                         sqlcommands["estimates"].append((query,values),)
                     

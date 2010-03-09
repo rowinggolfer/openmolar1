@@ -167,18 +167,10 @@ def customAdd(om_gui):
             om_gui.load_treatTrees()
 
 @localsettings.debug
-def fromFeeTable(om_gui, model_index):
+def fromFeeTable(om_gui, fee_item):
     '''
     add an item which has been selected from the fee table itself
     '''
-    fee_item = om_gui.fee_models[
-    om_gui.ui.chooseFeescale_comboBox.currentIndex()].data(
-    model_index, QtCore.Qt.UserRole)
-
-    if not fee_item: 
-        # this will be the case if a header item was double clicked
-        return
-    
     if course_module.newCourseNeeded(om_gui):
         return
     
@@ -257,7 +249,7 @@ def itemsPerTooth(tooth,props):
         #--look for pins and posts
         if re.match(".*,PR.*",item):
             #print "removing .pr"
-            treats.append((tooth,",PR"),)
+            treats.append((tooth,"PR"),)
             item=item.replace(",PR","")
         if re.match("CR.*,C[1-4].*",item):
             posts=re.findall(",C[1-4]",item)

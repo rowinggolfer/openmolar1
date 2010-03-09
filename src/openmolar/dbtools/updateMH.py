@@ -42,9 +42,10 @@ def writeHist(sno,data):
     db=connect()
     cursor = db.cursor()
     
-    for item in data:
-        query='insert into mnhist (serialno,chgdate,ix,note)'
-        query+=" values %s"%str((int(sno),localsettings.sqlToday(),item[0],item[1]))
+    for ix, note in data:
+        query = '''insert into mnhist (serialno,chgdate,ix,note) 
+        values (%s, NOW(), %s, %s)'''
+        values = (sno, ix, note)
         if localsettings.logqueries:
             print query
         cursor.execute(query)

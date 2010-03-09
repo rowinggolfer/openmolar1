@@ -17,7 +17,7 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
 CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart", "Surgical",
-"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom","Occasional")
+"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
 
 
 class TreeItem(object):
@@ -39,7 +39,7 @@ class TreeItem(object):
         return len(self.childItems)
 
     def columnCount(self):
-        return 5 + self.table.feeColCount
+        return 6 + self.table.feeColCount
         
     def data(self, column):
         showAll = self.parentItem.itemData == None       
@@ -54,13 +54,13 @@ class TreeItem(object):
                 return QtCore.QVariant(self.itemData.usercode)
         if showAll:
             if column == 2:
-                return QtCore.QVariant(self.itemData.brief_descriptions[0])
+                return QtCore.QVariant(self.itemData.description)
             if column == 3:
                 return QtCore.QVariant(self.itemData.regulations)
         if column == 4:
-            return QtCore.QVariant(self.itemData.description)
-        
-        if column > 4:
+            return QtCore.QVariant(self.itemData.brief_descriptions[self.myindex])
+             
+        if column > 4 and column < self.columnCount()-1:
             if self.table.hasPtCols:
                 if column % 2 == 0:
                     fee = localsettings.formatMoney(
@@ -125,7 +125,7 @@ class treeModel(QtCore.QAbstractItemModel):
             brush = QtGui.QBrush(QtGui.QColor("yellow"))
             return QtCore.QVariant(brush)
         if role == QtCore.Qt.TextAlignmentRole:
-            if index.column() > 5:
+            if index.column() > 4:
                 return QtCore.QVariant(QtCore.Qt.AlignRight)
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>973</width>
-    <height>549</height>
+    <width>1033</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -61,7 +61,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-82</y>
          <width>1017</width>
          <height>603</height>
         </rect>
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>8</number>
+           <number>6</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -5771,13 +5771,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                  </property>
                 </spacer>
                </item>
-               <item>
-                <widget class="QPushButton" name="adjustFeeTables_pushButton">
-                 <property name="text">
-                  <string>Adjust FeeTables</string>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </widget>
             </item>
@@ -6048,6 +6041,10 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
            </layout>
           </widget>
           <widget class="QWidget" name="tab_28">
+           <attribute name="icon">
+            <iconset resource="../resources/resources.qrc">
+             <normaloff>:/icons/wikipedia.png</normaloff>:/icons/wikipedia.png</iconset>
+           </attribute>
            <attribute name="title">
             <string>Wiki</string>
            </attribute>
@@ -6076,7 +6073,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>973</width>
+     <width>1033</width>
      <height>20</height>
     </rect>
    </property>
@@ -6114,20 +6111,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <property name="title">
      <string>Tools</string>
     </property>
-    <widget class="QMenu" name="menu_FeesScale_Options">
-     <property name="title">
-      <string>&amp;FeesScale Options</string>
-     </property>
-     <addaction name="actionShow_Geek_Column"/>
-    </widget>
     <addaction name="actionAppointment_Tools"/>
     <addaction name="actionChoose_Database"/>
-    <addaction name="actionFeeScale_Adjuster"/>
     <addaction name="actionSelect_Print_Daylists"/>
     <addaction name="actionAdvanced_Record_Management"/>
     <addaction name="separator"/>
-    <addaction name="actionCreate_Modify_database"/>
-    <addaction name="menu_FeesScale_Options"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -6190,6 +6178,12 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
    </property>
   </action>
   <action name="actionLog_queries_in_underlying_terminal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>log queries in underlying terminal</string>
    </property>

@@ -11,11 +11,10 @@ this module provides read/write tools for the daybook database table
 '''
 
 from __future__ import division
+from PyQt4.QtCore import QDate
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
-from PyQt4.QtCore import QDate
-
 
 def add(sno, cset, dent, trtid, t, fee, ptfee):
     '''
@@ -25,11 +24,11 @@ def add(sno, cset, dent, trtid, t, fee, ptfee):
     cursor = db.cursor()
     
     query = '''insert into daybook 
-    (date,serialno,coursetype,dntid,trtid,
-    diagn,perio,anaes,misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
-    values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+    (date, serialno, coursetype, dntid, trtid, diagn, perio, anaes,
+    misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
+    values (NOW(),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
    
-    values = (localsettings.sqlToday(), sno, cset, dent, trtid, t["diagn"], 
+    values = (sno, cset, dent, trtid, t["diagn"], 
     t["perio"], t["anaes"], t["misc"], t["ndu"], t["ndl"], t["odu"], 
     t["odl"], t["other"], t["chart"], fee, ptfee, 0)
     
@@ -83,13 +82,14 @@ def details(regdent, trtdent, startdate, enddate):
         if enddate < queryEndDate:
             queryEndDate = enddate
              
-        query = '''select DATE_FORMAT(date,'%s'), serialno, coursetype, dntid, trtid, 
-        diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart, feesa, 
-        feesb, feesc, id from daybook 
-        where %s %s date>=%s and date<=%s order by date'''%(
-        localsettings.OM_DATE_FORMAT, cond1, cond2, 
-        localsettings.pyDatetoSQL(queryStartDate.toPyDate()), 
-        localsettings.pyDatetoSQL(queryEndDate.toPyDate()))
+        #-- note - mysqldb doesn't play nice with DATE_FORMAT
+        #-- hence the string is formatted entirely using python formatting
+        query = '''select DATE_FORMAT(date,'%s'), serialno, coursetype, dntid, 
+        trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart, 
+        feesa, feesb, feesc, id from daybook
+        where %s %s date >= '%s' and date <= '%s' order by date'''%(
+        localsettings.OM_DATE_FORMAT, cond1, cond2,
+        queryStartDate.toPyDate(), queryEndDate.toPyDate())
 
         if localsettings.logqueries:
             print query
@@ -97,7 +97,7 @@ def details(regdent, trtdent, startdate, enddate):
             
         rows = cursor.fetchall()
         
-        odd =True
+        odd = True
         for row in rows:
             if odd:
                 retarg += '<tr bgcolor="#eeeeee">'

@@ -72,12 +72,11 @@ def saveMemo(serialno, author, type, expire, message, open):
     '''
     db=connect()
     
-    values = (serialno, author, type, localsettings.sqlToday(), 
-    expire, message, open)
+    values = (serialno, author, type, expire, message, open)
 
     query = '''insert into ptmemos 
-    (serialno,author,type,mdate,expiredate,message,open) 
-    VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+    (serialno, author, type, mdate, expiredate, message, open) 
+    VALUES (%s, %s, %s, NOW(), %s, %s, %s)'''
     if localsettings.logqueries:
         print query, values
     cursor = db.cursor()
@@ -86,6 +85,3 @@ def saveMemo(serialno, author, type, expire, message, open):
     cursor.close()
     #db.close()
     return result
-
-if __name__ == "__main__":
-    print commit(11956,"NW","surg",20090617,"hello world",True)

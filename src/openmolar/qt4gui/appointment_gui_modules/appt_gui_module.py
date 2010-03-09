@@ -866,7 +866,7 @@ def clearTodaysEmergencyTime(om_gui):
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes )
     if result == QtGui.QMessageBox.Yes:
-        number_cleared = appointments.clearEms(localsettings.sqlToday())
+        number_cleared = appointments.clearEms(localsettings.currentDay())
         om_gui.advise("Cleared %d emergency slots"% number_cleared, 1)
         if number_cleared > 0 and om_gui.ui.main_tabWidget.currentIndex() == 1:
             layout_dayView(om_gui)

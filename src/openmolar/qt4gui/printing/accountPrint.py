@@ -82,7 +82,7 @@ class document():
             painter.setFont(serifFont)
             x,y=LeftMargin,(pageRect.height()*0.35)
             painter.drawText(x+250, y, 
-            QtCore.QDate.currentDate().toString(localsettings.DATE_FORMAT))
+            QtCore.QDate.currentDate().toString(localsettings.QDATE_FORMAT))
             y += sansLineHeight
             y += serifLineHeight
             painter.drawText(x, y, "Dear %s %s," %(self.title.title(),self.sname.title()))

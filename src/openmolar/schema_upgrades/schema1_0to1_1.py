@@ -146,8 +146,6 @@ class dbUpdater(QtCore.QThread):
         '''
         insert new row types into the newestimates table
         '''
-        timestamp = localsettings.timestamp()
-        
         db = connect.connect()
         cursor = db.cursor()
         progress_var = len(rows)
@@ -155,11 +153,10 @@ class dbUpdater(QtCore.QThread):
         query='''insert into newestimates
         (serialno, courseno, category, type, number, itemcode, description, 
         fee, ptfee , csetype, feescale, dent, completed, carriedover , 
-        linked , modified_by , time_stamp) values 
-        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+        linked , modified_by , time_stamp) values (%s, %s, %s, %s, %s, %s, 
+        %s, %s, %s, %s, %s, %s, %s, %s, %s, '1_0to1_1script', NOW())'''
             
-        for row in rows:
-            values = tuple(row + ["script", timestamp])
+        for values in rows:
             cursor.execute(query, values)
             i += 1
             if i % 100 == 0:

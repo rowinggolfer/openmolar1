@@ -19,16 +19,13 @@ import subprocess
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-DEBUGMODE = False
-if "neil" in os.getcwd():
-    DEBUGMODE = True
-
 #- updated 4th Feb 2010.
 __MAJOR_VERSION__= "0.1.9"
 
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
-CLIENT_SCHEMA_VERSION = "1.6"
+CLIENT_SCHEMA_VERSION = "1.7"
+COMPATIBLE_CLIENTS = ["1.6"]
 DB_SCHEMA_VERSION = "unknown"
 ENCODING = locale.getpreferredencoding() #"latin-1" for the uk currrency??
 FEETABLES = {}
@@ -69,7 +66,7 @@ GP17_LEFT = 0
 GP17_TOP = 0
 
 def debug(func):
-    if DEBUGMODE:
+    if __debug__:
         def callf(*args, **kwargs):
             print "===="*2, currentTime(), "===="*2
             print "Calling %s:%s, %s"% (func.__name__, args, kwargs)
@@ -217,13 +214,7 @@ except AttributeError: # will happen on windows
     OM_DATE_FORMAT = r"%d/%m/%Y"
     
 #-- ditto the qt one
-DATE_FORMAT = "d, MMMM, yyyy"
-
-def timestamp():
-    d = datetime.datetime.now()
-
-    return "%04d%02d%02d%02d%02d%02d"% (
-    d.year,d.month,d.day,d.hour,d.minute,d.second)
+QDATE_FORMAT = "d, MMMM, yyyy"
 
 #-- undated at login
 operator = "unknown"
@@ -343,6 +334,14 @@ def currentTime():
     '''
     return datetime.datetime.today()
 
+def int_timestamp():
+    '''
+    returns the current time in int format
+    '''
+    d = datetime.datetime.now()
+
+    return int("%d%02d"% (d.hour,d.minute))
+
 def currentDay():
     '''
     return a python date object for the current day
@@ -350,40 +349,22 @@ def currentDay():
     d = datetime.date.today()
     return d
 
-def sqlToday():
-    '''
-    returns today's date in sql compatible format
-    eg 20091231
-    '''
-    t = currentTime()
-    return "%04d%02d%02d"% (t.year, t.month, t.day)
-
-def pyDatetoSQL(d):
-    '''
-    takes a python date type... returns a sql compatible format
-    eg 20091231
-    if fails... returns None
-    '''
-    try:
-        return "%04d%02d%02d"% (d.year, d.month, d.day)
-    except:
-        pass
-
 def formatMoney(m):
     '''
     takes an integer, returns a string
-    u"£7.30"
     '''
     try:
         retarg = locale.currency(m/100)
-        return retarg.decode(ENCODING, "ignore")
-    except:
+        return retarg.decode(ENCODING, "replace")
+    except Exception, e:
+        print "formatMoney error", e
         return "%.02f"% m/100
     
 def reverseFormatMoney(m):
     '''
-    takes a string (as from above)
-    and returns the value in pence
+    takes a string (as from above) and returns the value in pence
+    >>> reverseFormatMoney("$387.23")
+    38723
     '''
     try:
         numbers = re.findall("\d",m)
@@ -517,7 +498,10 @@ def formatDate(d):
 
 
 def wystimeToHumanTime(t):
-    '''converts a time in the format of 0830 or 1420 to "HH:MM" (string)'''
+    '''converts a time in the format of 0830 or 1420 to "HH:MM" (string)
+    >>> wystimeToHumanTime(830)
+    '8:30'
+    '''
     try:
         hour, min = int(t)//100, int(t)%100
         return "%d:%02d"% (hour, min)
@@ -525,6 +509,10 @@ def wystimeToHumanTime(t):
         return None
 
 def humanTimetoWystime(t):
+    '''reverse function to wystimeToHumanTime
+    >>> humanTimetoWystime('8:30')
+    830
+    '''
     try:
         t = t.replace(":", "")
         return int(t)
@@ -803,20 +791,25 @@ def initiate(debug = False):
         print "stylesheet =",stylesheet
         print "referralfile = ",referralfile
 
+def _test():
+    import doctest
+    doctest.testmod()    
+
 if __name__ == "__main__":
+    _test()
     #-- testing only
 
-    wkdir = determine_path()
-    sys.path.append(os.path.dirname(wkdir))
-    if os.path.exists(global_cflocation):
-        print "using global", global_cflocation
-        cflocation = global_cflocation
-    else:
-        print "using local", local_cflocation
-        cflocation = local_cflocation
-    print cflocation
-    print stylesheet
-    initiate(False)
+    #wkdir = determine_path()
+    #sys.path.append(os.path.dirname(wkdir))
+    #if os.path.exists(global_cflocation):
+    #    print "using global", global_cflocation
+    #    cflocation = global_cflocation
+    #else:
+    #    print "using local", local_cflocation
+    #    cflocation = local_cflocation
+    #print cflocation
+    #print stylesheet
+    #initiate(False)
    
     #print global_cflocation, local_cfloaction
     #updateLocalSettings("stationID","surgery3")

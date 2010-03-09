@@ -2,6 +2,7 @@
   <qresource>
     <file>icons/pencil.png</file>
     <file>icons/expand.png</file>
+    <file>icons/wikipedia.png</file>
     <file>icons/action.png</file>
     <file>icons/memos.png</file>
     <file>openmolar.svg</file>

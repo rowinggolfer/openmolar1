@@ -79,7 +79,7 @@ class receipt():
             painter.drawText(x, y, mystr)
             if not self.isDuplicate:
                 painter.drawText(x+w, y, 
-                QtCore.QDate.currentDate().toString(localsettings.DATE_FORMAT))
+                QtCore.QDate.currentDate().toString(localsettings.QDATE_FORMAT))
             else:
                 painter.drawText(x+w, y, self.dupdate)
 

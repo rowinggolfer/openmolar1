@@ -42,7 +42,6 @@ def clientCompatibility(client_schema):
         if row[0] == client_schema:
             return True
             
-
 def update(schemas, user):
     '''
     updates the schema version, 
@@ -62,15 +61,12 @@ def update(schemas, user):
     cursor.execute(query, values)
 
     print "disabling old clients"
-    query = '''delete from settings where value = "compatible_clients" 
-    and data < %s'''
-    cursor.execute(query, schemas[0])
-    for client_schema in schemas:
-        query = '''insert into settings (value, data, modified_by, time_stamp) 
-                values (%s, %s, %s, NOW())'''
-        values = ("compatible_clients", client_schema, user)
+    query = '''delete from settings where value = "compatible_clients"'''
+    cursor.execute(query)
+    for schema in schemas:
+        query = '''insert into settings (data, value,  modified_by) 
+        values ("compatible_clients", %s, 'Script')'''
+        values = (schema,)
         cursor.execute(query, values)
-        
     db.commit()
-    localsettings.CLIENT_SCHEMA_VERSION = latest_schema
     return True

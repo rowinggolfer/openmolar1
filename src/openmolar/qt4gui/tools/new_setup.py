@@ -168,7 +168,7 @@ class setup_gui(QtGui.QMainWindow):
             _("save template file"),"",
             _("openmolar template files ")+"(*.om_xml)")
             if filepath != '':
-                if not re.match(".*\.om_xml", filepath):
+                if not re.match(".*\.om_xml$", filepath):
                     filepath += ".om_xml"
                 f = open(filepath, "w")
                 f.write(self.template.toxml())

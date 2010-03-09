@@ -68,7 +68,6 @@ from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs import choose_tooth_dialog
 
 #secondary applications
-from openmolar.qt4gui.tools import fee_adjuster
 from openmolar.qt4gui.tools import new_setup
 from openmolar.qt4gui.tools import recordtools
 
@@ -631,9 +630,6 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         procedure called when user navigates the top tab
         '''
-        if localsettings.DEBUGMODE:
-            print "handling mainTab"
-
         ci=self.ui.main_tabWidget.currentIndex()
 
         if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
@@ -2193,13 +2189,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         om_printing.printGP17(self)
 
-    def feeScale_Adjuster_action(self):
-        '''
-        launch a 2nd application to adjust fees
-        '''
-        if permissions.granted():
-            fee_adjuster.main(self)
-
     def actionNewSetup(self):
         '''
         launch a 2nd application to modify the database to allow a new practice
@@ -2449,14 +2438,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         fees_module.nhsRegsPDF(self)
 
-    @localsettings.debug
-    def feeScale_doubleclicked(self, model_index):
+    def feeScale_clicked(self, model_index):
         '''
-        user has double clicked on an item in the fees_table
+        user has clicked on an item in the fees_table
         '''
-        if self.pt.serialno != 0:
-            add_tx_to_plan.fromFeeTable(self, model_index)
-
+        fees_module.table_clicked(self, model_index)
+    
     def feeScale_expanded(self, model_index):
         '''
         user has expanded an item in the fees_table
@@ -2538,6 +2525,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         add custom items to the treatment plan
         '''
         add_tx_to_plan.customAdd(self)
+
+    def feeScaleTreatAdd(self, item):
+        '''
+        add an item directly from the feescale
+        '''
+        add_tx_to_plan.fromFeeTable(self, item)
 
     def toothTreatAdd(self, tooth, properties):
         '''
@@ -3204,9 +3197,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.actionSelect_Print_Daylists,
         QtCore.SIGNAL("triggered()"), self.daylistPrintWizard)
 
-        QtCore.QObject.connect(self.ui.actionFeeScale_Adjuster,
-        QtCore.SIGNAL("triggered()"), self.feeScale_Adjuster_action)
-
         QtCore.QObject.connect(self.ui.actionAdvanced_Record_Management,
         QtCore.SIGNAL("triggered()"), self.advancedRecordTools)
 
@@ -3392,10 +3382,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         ##TODO bring this functionality back
         #QtCore.QObject.connect(self.ui.printFeescale_pushButton,
         #QtCore.SIGNAL("clicked()"), self.printFeesTable)
-
+        
         QtCore.QObject.connect(self.ui.feeScales_treeView,
-        QtCore.SIGNAL("doubleClicked (QModelIndex)"),
-        self.feeScale_doubleclicked)
+        QtCore.SIGNAL("clicked (QModelIndex)"),
+        self.feeScale_clicked)
 
         QtCore.QObject.connect(self.ui.feeScales_treeView,
         QtCore.SIGNAL("expanded (QModelIndex)"),
@@ -3419,9 +3409,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.adjustFeeTables_pushButton,
-        QtCore.SIGNAL("clicked()"), self.feeScale_Adjuster_action)
 
     def signals_charts(self):
 

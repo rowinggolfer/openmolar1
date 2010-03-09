@@ -3,14 +3,54 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. 
+# See the GNU General Public License for more details.
 
 import re, sys
 from xml.dom import minidom
 
-from openmolar.connect import connect
+from openmolar import connect
 from openmolar.settings import localsettings
 
+def getTextFromNode(node, id):
+    '''
+    get the text data from the first child of any such nodes
+    '''
+    d = node.getElementsByTagName(id)
+    value = ""
+    if d:
+        try:
+            child = d[0].childNodes
+            value = child[0].data
+        except IndexError:
+            pass
+    else:
+        print "d, id = ",d,",",id
+    return value
+
+def getBoolFromNode(node, id):
+    '''
+    get the text data from the first child of any such nodes
+    '''
+    return getTextFromNode(node, id) == "True"
+    
+def getInts(node, id):
+    '''
+    get the text data from the first child of any such nodes
+    '''
+    d = node.getElementsByTagName(id)
+    f_list = []
+    for feenode in d:
+        try:
+            child = feenode.childNodes
+            value = int(child[0].data)
+        except ValueError, e:
+            value = 0
+        f_list.append(value)
+        
+    return tuple(f_list)
+    
+    
 class feeTables():
     '''
     a wrapper class to contain as many fee tables as the user has outlined.
@@ -45,11 +85,11 @@ class feeTables():
         '''
         get the key to our tables
         '''
-        db = connect()
+        db = connect.connect()
         cursor = db.cursor() 
         
         query = ''' select tablename, categories, description, startdate, 
-        enddate, feecoltypes from feetable_key 
+        enddate, feecoltypes, data from feetable_key 
         where in_use = True order by display_order'''
 
         cursor.execute(query)
@@ -58,13 +98,14 @@ class feeTables():
         
         i = 0
         for (tablename, categories, description, startdate, endate,
-        feecoltypes) in rows:
+        feecoltypes, data) in rows:
             ft = feeTable(tablename, i)
             ft.setCategories(categories)
             ft.setTableDescription(description)
             ft.setStartDate(startdate)
             ft.setEndDate(endate)
             ft.setFeeCols(feecoltypes)
+            ft.setData(data)
             self.tables[i] = ft
             i += 1
 
@@ -90,7 +131,9 @@ class feeTable():
         self.categories = []
         self.hasPtCols = False
         self.treatmentCodes = {}
+        self.chartTreatmentCodes = {}
         self.feeColCount = 0
+        self.data = ""
         
     def __repr__(self):
         '''
@@ -124,6 +167,15 @@ class feeTable():
         '''
         self.endDate = arg
     
+    def setData(self, data):
+        '''
+        data is the xml string pulled from the database.
+        '''
+        self.data = data
+    
+    def getData(self, data):
+        return self.data
+    
     def setFeeCols(self, arg):
         '''
         arg is some xml logic to let me know what columns to query
@@ -151,61 +203,77 @@ class feeTable():
         '''
         now load the fees
         '''
-        # build a query
-        query = '''select section, code, USERCODE, regulation, description, 
-brief_description, pl_cmp, hide %s from %s''' % (
-        self.columnQuery, self.tablename)
+        dom = minidom.parseString(self.data)
+        print "loading fees for", self.tablename
         
-        db = connect()
-        cursor = db.cursor() 
-                
-        if localsettings.logqueries:
-            print query
-        cursor.execute(query)
-        rows = cursor.fetchall()
-
-        #create some blank tuples of the correct length
-        feeTup = (0,) * len(self.feeColNames)
-        ptfeeTup = (0,) * len(self.pt_feeColNames)
-
-        for row in rows:
-            (section, code, USERCODE, regulation, description, 
-            brief_description, pl_cmp, hide) = row[:8]
-            #unpack the fees into the blank tuples
-            start, end = 8, 8 + len(feeTup)
-            feeTup = row[start:end]
-            start, end = end, end + len(ptfeeTup)            
-            ptfeeTup = row[start:end]
+        items = dom.getElementsByTagName("item")
+        for item in items:
+            section = getTextFromNode(item, "section")
+            code = getTextFromNode(item, "code")
+            USERCODE = getTextFromNode(item, "USERCODE")
+            regulation = getTextFromNode(item, "regulation")
+            description = getTextFromNode(item, "description") 
+            brief_description = getTextFromNode(item, "brief_description") 
+            pl_cmp = getTextFromNode(item, "pl_cmp")
+            hide = getBoolFromNode(item, "hide")
+            
+            fees = getInts(item, "fee")
+            if self.hasPtCols:
+                ptfees = getInts(item,"pt_fee")
+            else:
+                ptfees = ()
+            
             if code != "":
                 if self.feesDict.has_key(code):
                     feeItem = self.feesDict[code] 
                 else:
                     feeItem = feeItemClass(self, code)
-                    feeItem.setCategory(section)
+                    feeItem.setCategory(int(section))
                     feeItem.setPl_Cmp_Type(pl_cmp)
                     feeItem.usercode = USERCODE
                     feeItem.description = description
                     feeItem.setRegulations(regulation)
                     self.feesDict[code] = feeItem
-                feeItem.addFees(feeTup)
-                feeItem.addPtFees(ptfeeTup)
+                feeItem.addFees(fees)
+                feeItem.addPtFees(ptfees)
                 feeItem.addBriefDescription(brief_description)
                 
+                 
             if USERCODE != "" and USERCODE != None:
                 self.treatmentCodes[USERCODE] = code
-    
-    @localsettings.debug
+                if pl_cmp == "CHART":
+                    self.chartTreatmentCodes[USERCODE] = code
+ 
+    #@localsettings.debug
     def getToothCode(self, tooth, arg):
         '''
         converts fillings into four digit codes used in the feescale
         eg "MOD" -> "1404" (both are strings)
         arg will be something like "CR,GO" or "MOD,CO"
         '''
-        #print "decrypting tooth %s code %s "%(tooth, arg)
-
-        if arg in ("PV","AP","ST","EX","EX/S1","EX/S2",",PR","DR","PX","PX+"):
+        
+        if arg in self.chartTreatmentCodes.keys(): #direct match!!
             return self.getItemCodeFromUserCode(arg)
-
+        
+        try:
+            for key in self.chartTreatmentCodes:
+                match = key == arg
+                if key.startswith("reg "):
+                    match = re.match(key[4:], tooth+arg)
+                if key.startswith("multireg "):
+                    regexes = key[9:].split(" _AND_ ")
+                    match = bool(regexes)
+                    for regex in regexes:
+                        if not re.match(regex, tooth+arg):
+                            match = False
+                            break             
+                if match:
+                    return self.chartTreatmentCodes[key]
+        except Exception, e:
+            print e
+            print key, self.chartTreatmentCodes[key]
+        '''
+        ######################################################################
         if re.match("CR,..$", arg):
             #-- CR,V1 etc....
             return self.getItemCodeFromUserCode(arg)
@@ -251,7 +319,7 @@ brief_description, pl_cmp, hide %s from %s''' % (
         else:
             material=""
 
-        if re.match("u.[4-8]",tooth):
+        if re.match("u.[4-8]", tooth):
             #--upper back tooth
             if material=="":
                 material="AM"
@@ -279,12 +347,13 @@ brief_description, pl_cmp, hide %s from %s''' % (
             #return self.getItemCodeFromUserCode("%s-%ssurf"%(material,no_of_surfaces))
             return self.getItemCodeFromUserCode(
             "%s-%ssurf"%(material, no_of_surfaces))
-        else:
-            print '''no match in %s getToothCode for %s - %s"
-            RETURNING '4001' '''% (self.tablename, tooth, arg)
-            return "4001"
+        #######################################################################
+        '''
+        print 'no match in %s getToothCode for %s - %s RETURNING 4001'% (
+        self.tablename, tooth, arg)
+        return ""
         
-    @localsettings.debug
+    #@localsettings.debug
     def getItemCodeFromUserCode(self, arg):
         '''
         the table stores it's own usercodes now.
@@ -292,14 +361,14 @@ brief_description, pl_cmp, hide %s from %s''' % (
         '''
         return self.treatmentCodes.get(arg,"4001")
     
-    @localsettings.debug
+    #@localsettings.debug
     def hasItemCode(self, arg):
         '''
         check to see if the table contains a data about itemcode "arg"
         '''
         return arg in self.feesDict.keys()
     
-    @localsettings.debug
+    #@localsettings.debug
     def getFees(self, itemcode, no_items=1, conditions=[], 
     no_already_in_estimate=0):
         '''
@@ -320,7 +389,7 @@ brief_description, pl_cmp, hide %s from %s''' % (
             print "itemcode %s not found in %s"% (itemcode, self.tablename)
             return (0,0)
     
-    @localsettings.debug
+    #@localsettings.debug
     def getItemDescription(self, itemcode):
         '''
         returns the patient readable (ie. estimate ready) description of the
@@ -345,7 +414,7 @@ brief_description, pl_cmp, hide %s from %s''' % (
         except IndexError:
             return "other"
     
-    @localsettings.debug    
+    #@localsettings.debug    
     def userCodeWizard(self, usercode, n_items=1):
         '''
         send a usercode, get a results set
@@ -358,7 +427,7 @@ brief_description, pl_cmp, hide %s from %s''' % (
     
         return (item, fee, ptfee, description)
     
-    @localsettings.debug        
+    #@localsettings.debug        
     def toothCodeWizard(self, tooth, usercode):
         '''
         send a usercode, get a results set
@@ -367,8 +436,10 @@ brief_description, pl_cmp, hide %s from %s''' % (
         '''
         item = self.getToothCode(tooth, usercode)
         fee, ptfee = self.getFees(item)
-        description = "%s - %s"% (self.getItemDescription(item), tooth)
-    
+        if item != "":
+            description = "%s - %s"% (self.getItemDescription(item), tooth)
+        else:
+            description = "invalid with this feescale"
         return (item, fee, ptfee, description)
     
     
@@ -421,7 +492,7 @@ ptFees                =  %s'''% (self.table.tablename,
             try:
                 val = int(arg[i])
             except TypeError, e:
-                #print "error in your feetable, defaulting to zero fee!"
+                print "error in your feetable, defaulting to zero fee!"
                 val =0
             
             if self.fees.has_key(i):
@@ -485,14 +556,14 @@ ptFees                =  %s'''% (self.table.tablename,
         if "no_charge" in conditions:
             return (fee, 0)
                 
-        ptFee = self.getFee(no_items,conditions, True)
+        ptFee = self.getFee(no_items, conditions, True)
         
         if ptFee == None:
             return (fee, fee)
         else:
             return (fee, ptFee)
     
-    def getFee(self, no_items=1,conditions="",patient=False):
+    def getFee(self, no_items=1, conditions="", patient=False):
         '''
         get a fee for x items of this type
         conditions allows some flexibility (eg conditions=lower premolar)
@@ -560,85 +631,51 @@ ptFees                =  %s'''% (self.table.tablename,
             return fee
 
 
-##############################################################################
-## below this line is code utilised by the adjuster.
-
-def getTableNames():
-    '''
-    get table names to load into the feescale adjuster
-    '''
-    db = connect()
-    cursor = db.cursor() 
-    
-    query = ''' select ix, tablename, categories, description, startdate, 
-    enddate, feecoltypes from feetable_key order by ix'''
-
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    cursor.close()
-    
-    return rows
-
-def getFeeDictForModification(table):
-    '''
-    a comprehensive dictionary formed from the entire table in the database
-    '''
-    
-    query = '''select column_name from information_schema.columns where  
-    table_name = "%s"'''% table
-    
-    db = connect()
-    cursor = db.cursor()
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    header = []
-    for row in rows:
-        header.append(row[0])
-
-    query = 'select * from %s'%table
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    cursor.close()
-    
-    return (header, rows)
-    
-def updateFeeTable(table, feeDict, changes, deletions):
-    '''
-    pass a feeDict, and update the existing table with it.
-    '''
-    print "applying changes to feeTable", changes
-    try:
-        db = connect()
-        cursor = db.cursor()
-        columnNo = len(feeDict[feeDict.keys()[0]])
-        valuesString = "%s," * columnNo
-        valuesString = valuesString.strip(",")
-        
-        delquery = "delete from %s"%table + " where ix = %s"
-        
-        query = "insert into %s values (%s)"% (table, valuesString)
-            
-        for key in changes:
-            cursor.execute(delquery, key)
-            print query, feeDict[key]
-            cursor.execute(query, feeDict[key])
-
-        for key in deletions:
-            cursor.execute(delquery, key)
-            
-        cursor.close()        
-        db.commit()
-        return True
-    except Exception, e:
-        print "exception",e
-        return False
-
 if __name__ == "__main__":
-    fts = feeTables()
 
+    def check_codes():
+        tx = str(dl.lineEdit.text().toAscii())
+        print "checking",tx
+        
+        dl.dec_listWidget.clear()
+        dl.adult_listWidget.clear()        
+        for tooth in decidmouth:
+            if tooth != "***":
+                code, f, p, desc = table.toothCodeWizard(tooth, tx.upper())
+                result = "%s - %s %s"% (tooth.upper(), code, desc)
+                dl.dec_listWidget.addItem(result)
+        for tooth in mouth:
+            code, f, p, desc = table.toothCodeWizard(tooth, tx.upper())
+            result = "%s - %s %s"% (tooth.upper(), code, desc)
+            dl.adult_listWidget.addItem(result)
+    
+    def reloadTables():  
+        global table 
+        fts = feeTables()
+        table = fts.tables[2]
+    
+    fts = feeTables()
+    
     for table in fts.tables.values():
         print table.tablename
-        for tx in ("CE","SP","SP+","SR F/F"):
-            print "looking up %s"%tx
-            code = table.getItemCodeFromUserCode(tx)
-            print "got code %s, fee %s"% (code, table.getFees(code))
+    
+    table = fts.tables[2]
+    for tx in ("CE","SP","SP+","SR F/F"):
+        print "looking up %s"%tx
+        code = table.getItemCodeFromUserCode(tx)
+        print "got code %s, fee %s"% (code, table.getFees(code))
+    
+    from PyQt4 import QtGui, QtCore
+    from openmolar.dbtools.patient_class import mouth, decidmouth
+    from openmolar.qt4gui.compiled_uis import Ui_codeChecker
+    app = QtGui.QApplication([])
+    Dialog = QtGui.QDialog()
+    dl = Ui_codeChecker.Ui_Dialog()
+    dl.setupUi(Dialog)
+    Dialog.connect(dl.pushButton, QtCore.SIGNAL("clicked()"), check_codes)
+    Dialog.connect(dl.lineEdit, QtCore.SIGNAL("returnPressed()"), check_codes)
+    Dialog.connect(dl.rel_pushButton, QtCore.SIGNAL("clicked()"), reloadTables)
+    
+    Dialog.exec_()
+    app.closeAllWindows()
+    

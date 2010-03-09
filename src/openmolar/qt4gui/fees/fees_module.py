@@ -21,6 +21,7 @@ from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
 patient_write_changes
 from openmolar.settings import localsettings
 from openmolar.qt4gui.fees import fee_table_model
+
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import paymentwidget
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
@@ -166,7 +167,51 @@ def loadFeesTable(om_gui):
     om_gui.ui.feescales_available_label.setText(text) 
     
     print "loaded feesTable, %d fee models in use"% n
-        
+    
+def table_clicked(om_gui, index):
+    '''
+    user has clicked an item on the feetable.
+    show the user some options (depending on whether they have a patient 
+    loaded for edit, or are in feetable adjust mode etc....
+    '''
+    fee_item = om_gui.ui.feeScales_treeView.model().data(index, 
+    QtCore.Qt.UserRole)
+    
+    if not fee_item: 
+        # this will be the case if a header item was clicked
+        return
+    
+    def edit_fee_item():
+        '''
+        user wishes to alter a fee item
+        '''
+        om_gui.advise("edit fee_item %s"% fee_item, 1)
+    
+    def apply(arg):
+        '''
+        apply the result of the QMenu generated when feetable is clicked
+        '''
+        if arg.text() == _("Adjust / edit this Item"):
+            edit_fee_item()
+        elif arg.text().startsWith(_("Add to tx plan")):
+                om_gui.feeScaleTreatAdd(fee_item)
+        else:
+            om_gui.advise(arg.text() + " not yet available", 1)
+    
+    menu = QtGui.QMenu(om_gui)
+    ptno = om_gui.pt.serialno 
+    if ptno != 0:
+        menu.addAction(_("Add to tx plan of patient")+" %d"% ptno)
+        menu.addSeparator()                
+    menu.addAction(_("Adjust / edit this Item"))
+    menu.addSeparator()
+    menu.addAction(_("Delete Item"))
+    menu.addAction(_("Insert New Item"))
+
+    choice = menu.exec_(om_gui.cursor().pos())
+    if choice:
+        apply(choice)
+
 def feeSearch(om_gui):
     '''
     user has finished editing the
@@ -272,9 +317,11 @@ def adjustTable(om_gui, index):
     tv = om_gui.ui.feeScales_treeView
     for col in range(tv.model().columnCount(index)):
         if col == 3 and not om_gui.ui.actionShow_Geek_Column.isChecked():
-            tv.setColumnWidth(3,0)
+            tv.setColumnWidth(3, 0)
         else:
             tv.resizeColumnToContents(col)
+    #usercolumn is unmanageably wide now
+    tv.setColumnWidth(1, 80)
     
 def expandFees(om_gui):
     '''

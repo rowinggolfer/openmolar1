@@ -54,9 +54,9 @@ sundries, hdp, other):
         if len(payment) > 0:
             amount =  float(payment)*100
             if amount > 0:
-                queries.append('''insert into cashbook set cbdate = "%s",
-                ref="%06d", linkid=0, descr="%s", code=%d, dntid=%d, amt=%d'''%(
-                localsettings.sqlToday(), sno, name, codes[i], dent, amount))
+                queries.append('''insert into cashbook set cbdate = NOW(),
+                ref="%06d", linkid=0, descr="%s", code=%d, dntid=%d, amt=%d
+                '''%(sno, name, codes[i], dent, amount))
         i += 1
     if queries != []:
         db = connect()
@@ -82,13 +82,18 @@ def details(dent, startdate, enddate):
     else:
         dentist = localsettings.ops_reverse[str(dent)]
         cond1 = 'dntid="%s" and'% dentist
-    query = "DATE_FORMAT(cbdate,'%s'),ref,dntid,descr,code,amt"% (
-    localsettings.OM_DATE_FORMAT)
 
-    cursor.execute('''select %s from cashbook where %s cbdate>="%s"
-    and cbdate<="%s" order by cbdate'''% (query, cond1,
-    localsettings.pyDatetoSQL(startdate.toPyDate()), 
-    localsettings.pyDatetoSQL(enddate.toPyDate())))
+
+    #-- note - mysqldb doesn't play nice with DATE_FORMAT
+    #-- hence the string is formatted entirely using python formatting
+    query = '''select DATE_FORMAT(cbdate, '%s'), ref, dntid, descr, code, amt
+    from cashbook where %s cbdate>='%s' and cbdate<='%s' order by cbdate'''%(
+    localsettings.OM_DATE_FORMAT, cond1, 
+    startdate.toPyDate(), enddate.toPyDate())
+
+    if localsettings.logqueries:
+        print query
+    cursor.execute(query)
     
     rows = cursor.fetchall()
 
@@ -159,7 +164,11 @@ def details(dent, startdate, enddate):
 cashbookCodesDict = getCashBookCodes()
 
 if __name__ == "__main__":
+    from PyQt4.QtCore import QDate
+
     localsettings.initiate()
+    localsettings.logqueries = True
+    
     print'<html><body><head>'
-    print details("*ALL*", "2008_01_01", "2008_02_01")
+    print details("*ALL*", QDate(2009,2,1), QDate(2009,2,20))
     print "</body></html>"
