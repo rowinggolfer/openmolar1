@@ -5,7 +5,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
+<<<<<<< TREE
 "POT-Creation-Date: 2010-03-10 00:20+GMT\n"
+=======
+<<<<<<< TREE
+"POT-Creation-Date: 2010-03-09 20:09+GMT\n"
+=======
+"POT-Creation-Date: 2010-03-09 23:05+GMT\n"
+>>>>>>> MERGE-SOURCE
+>>>>>>> MERGE-SOURCE
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
