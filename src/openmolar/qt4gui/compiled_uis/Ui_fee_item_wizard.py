@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/fee_item_wizard.ui'
 #
-# Created: Tue Mar  9 20:08:37 2010
+# Created: Wed Mar 10 00:12:09 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,9 +41,9 @@ class Ui_Dialog(object):
         self.label_4 = QtGui.QLabel(Dialog)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_4.addWidget(self.label_4)
-        self.comboBox = QtGui.QComboBox(Dialog)
-        self.comboBox.setObjectName("comboBox")
-        self.horizontalLayout_4.addWidget(self.comboBox)
+        self.pl_cmp_comboBox = QtGui.QComboBox(Dialog)
+        self.pl_cmp_comboBox.setObjectName("pl_cmp_comboBox")
+        self.horizontalLayout_4.addWidget(self.pl_cmp_comboBox)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -68,9 +68,9 @@ class Ui_Dialog(object):
         self.label_6 = QtGui.QLabel(Dialog)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout.addWidget(self.label_6)
-        self.lineEdit = QtGui.QLineEdit(Dialog)
-        self.lineEdit.setObjectName("lineEdit")
-        self.horizontalLayout.addWidget(self.lineEdit)
+        self.regulations_lineEdit = QtGui.QLineEdit(Dialog)
+        self.regulations_lineEdit.setObjectName("regulations_lineEdit")
+        self.horizontalLayout.addWidget(self.regulations_lineEdit)
         self.pushButton = QtGui.QPushButton(Dialog)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
@@ -82,19 +82,19 @@ class Ui_Dialog(object):
         self.label_5 = QtGui.QLabel(Dialog)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_2.addWidget(self.label_5)
-        self.usercode_lineEdit_2 = QtGui.QLineEdit(Dialog)
-        self.usercode_lineEdit_2.setObjectName("usercode_lineEdit_2")
-        self.horizontalLayout_2.addWidget(self.usercode_lineEdit_2)
+        self.description_lineEdit = QtGui.QLineEdit(Dialog)
+        self.description_lineEdit.setObjectName("description_lineEdit")
+        self.horizontalLayout_2.addWidget(self.description_lineEdit)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_9 = QtGui.QLabel(Dialog)
         self.label_9.setObjectName("label_9")
         self.horizontalLayout_3.addWidget(self.label_9)
-        self.listView = QtGui.QListView(Dialog)
-        self.listView.setMaximumSize(QtCore.QSize(16777215, 80))
-        self.listView.setObjectName("listView")
-        self.horizontalLayout_3.addWidget(self.listView)
+        self.descriptions_listWidget = QtGui.QListWidget(Dialog)
+        self.descriptions_listWidget.setMaximumSize(QtCore.QSize(16777215, 80))
+        self.descriptions_listWidget.setObjectName("descriptions_listWidget")
+        self.horizontalLayout_3.addWidget(self.descriptions_listWidget)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)

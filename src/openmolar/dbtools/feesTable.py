@@ -134,6 +134,8 @@ class feeTable():
         self.chartTreatmentCodes = {}
         self.feeColCount = 0
         self.data = ""
+        self.pl_cmp_Categories = ("other", "exam", "diagnosis", "perio", 
+        "tooth", "surgery", "prosthetics", "ortho")
         
     def __repr__(self):
         '''
@@ -409,8 +411,7 @@ class feeTable():
             i = self.feesDict[itemcode].category
         
         try:
-            return ("other","exam", "diagnosis", "perio", 
-            "tooth", "surgery", "prosthetics", "ortho") [i]
+            return self.pl_cmp_Categories[i]
         except IndexError:
             return "other"
     
@@ -464,6 +465,19 @@ class feeItemClass(object):
         self.ptFees = {}
         self.regulations = ""
         self.usercode = ""
+    
+    def getNode(self):
+        '''
+        get the xml node the feeitem represents
+        '''
+        dom = minidom.parseString(self.table.data)
+        nodeList = dom.getElementsByTagName("item")
+        for node in nodeList:
+            codes = node.getElementsByTagName("code")
+            for code in codes:
+                if code.firstChild.data == self.itemcode:
+                    return node
+            
     
     def __repr__(self):
         '''

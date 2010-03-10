@@ -21,6 +21,7 @@ from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
 patient_write_changes
 from openmolar.settings import localsettings
 from openmolar.qt4gui.fees import fee_table_model
+from openmolar.qt4gui.fees import edit_feeitem_dialog
 
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import paymentwidget
@@ -185,8 +186,13 @@ def table_clicked(om_gui, index):
         '''
         user wishes to alter a fee item
         '''
-        om_gui.advise("edit fee_item %s"% fee_item, 1)
+        
+        Dialog = QtGui.QDialog()
+        dl = edit_feeitem_dialog.editFee(fee_item, Dialog)
     
+        print dl.getInput()
+        
+        
     def apply(arg):
         '''
         apply the result of the QMenu generated when feetable is clicked

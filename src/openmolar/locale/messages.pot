@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-03-09 23:05+GMT\n"
+"POT-Creation-Date: 2010-03-10 00:20+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3320,7 +3320,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3026
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:166
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:167
 msgid "Fee Scales Available"
 msgstr ""
 
@@ -5641,64 +5641,64 @@ msgstr ""
 msgid "brief description"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:194
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:206
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:200
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:212
 msgid "Adjust / edit this Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:196
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:202
 msgid "Add to tx plan"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:204
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:210
 msgid "Add to tx plan of patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:208
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:214
 msgid "Delete Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:209
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:215
 msgid "Insert New Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:244
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:250
 msgid "Items containing"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:250
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:256
 msgid "phrase not found in feetable"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:252
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:258
 msgid "usercodes or descriptions"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:254
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:260
 msgid "usercodes"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:256
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:262
 msgid "descriptions"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:260
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:266
 msgid "nothing to search"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:261
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:267
 msgid "please select usercodes and/or descriptions then search again"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:291
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:297
 msgid "Error opening PDF file"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:301
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:307
 msgid "IN CURRENT USE"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:314
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:320
 msgid "fee table error"
 msgstr ""
 
