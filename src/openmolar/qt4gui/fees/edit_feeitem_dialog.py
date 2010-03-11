@@ -27,10 +27,12 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
     
     def loadData(self):
         
-        self.itemcode_label.setText(self.fee_item.itemcode)
+        self.itemcode_label.setText(_("Fee item") + " - " + 
+                                    self.fee_item.itemcode)
         self.category_comboBox.setCurrentIndex(self.fee_item.category)
         index = self.pl_cmp_comboBox.findText(self.fee_item.pl_cmp_type)
         self.pl_cmp_comboBox.setCurrentIndex(index)
+        
         uc = self.fee_item.usercode
         if uc.startswith("reg "):
             self.uc_reg_radioButton.setChecked(True)
@@ -39,10 +41,17 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         else:
             self.uc_radioButton.setChecked(True)
         
-        self.usercode_lineEdit.setText(uc)
-        self.regulations_lineEdit.setText(self.fee_item.regulations)
+        self.usercode_plainTextEdit.setPlainText(uc)
+
+        self.regulations_plainTextEdit.setPlainText(self.fee_item.regulations)
         self.description_lineEdit.setText(self.fee_item.description)
-        self.descriptions_listWidget.addItems(self.fee_item.brief_descriptions)
+        brief_descriptions = ""
+        for bd in self.fee_item.brief_descriptions:
+            brief_descriptions += bd + "\n"    
+        self.descriptions_plainTextEdit.setPlainText(brief_descriptions)
+        
+        self.fees_lineEdit.setText(str(self.fee_item.fees))
+        self.pt_fees_lineEdit.setText(str(self.fee_item.ptFees))
         
         self.xml_plainTextEdit.setPlainText(self.fee_item.getNode())
         ##TODO load the fees here

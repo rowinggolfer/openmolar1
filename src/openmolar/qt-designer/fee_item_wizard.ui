@@ -40,52 +40,43 @@
        <string>Wizard</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>20</number>
-       </property>
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
-         <property name="verticalSpacing">
-          <number>3</number>
-         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
             <string>UserCode</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" colspan="3">
-          <widget class="QLineEdit" name="usercode_lineEdit"/>
+         <item row="0" column="1" rowspan="4">
+          <widget class="QPlainTextEdit" name="usercode_plainTextEdit">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>80</height>
+            </size>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>UserCode Type</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
           <widget class="QRadioButton" name="uc_radioButton">
            <property name="text">
             <string>Standard</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="2" column="0">
           <widget class="QRadioButton" name="uc_reg_radioButton">
            <property name="text">
             <string>Regex</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="3">
+         <item row="3" column="0">
           <widget class="QRadioButton" name="uc_multireg_radioButton">
            <property name="text">
             <string>Multiple Regex</string>
@@ -95,18 +86,35 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
-            <string>Regulation</string>
+            <string>Regulations</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QLineEdit" name="regulations_lineEdit"/>
+         <item row="0" column="1" rowspan="2">
+          <widget class="QPlainTextEdit" name="regulations_plainTextEdit">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>80</height>
+            </size>
+           </property>
+          </widget>
          </item>
-         <item>
+         <item row="1" column="0">
           <widget class="QPushButton" name="regwizard_pushButton">
            <property name="text">
             <string>Regulation Wizard</string>
@@ -114,6 +122,13 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -126,10 +141,10 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Category</string>
+            <string>Feescale Category</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -152,7 +167,7 @@
             <string>Category for treatment Planning</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -162,32 +177,39 @@
         </layout>
        </item>
        <item>
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0" colspan="2">
+         <item row="0" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
             <string>Patient's Description</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
+         <item row="0" column="1">
           <widget class="QLineEdit" name="description_lineEdit"/>
          </item>
-         <item row="1" column="0" colspan="2">
+         <item row="1" column="0">
           <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>Clinical Descriptions</string>
+            <string>Clinical Description(s)</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
-          <widget class="QListWidget" name="descriptions_listWidget">
+         <item row="1" column="1">
+          <widget class="QPlainTextEdit" name="descriptions_plainTextEdit">
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -196,10 +218,21 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
           <widget class="QLabel" name="label_7">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -208,17 +241,17 @@
             <string>Gross Fees (csv)</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QLineEdit" name="lineEdit"/>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="fees_lineEdit"/>
          </item>
-         <item row="3" column="0" colspan="2">
+         <item row="1" column="0">
           <widget class="QLabel" name="label_8">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -227,12 +260,12 @@
             <string>Net Fees (csv)</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
-          <widget class="QLineEdit" name="lineEdit_2"/>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="pt_fees_lineEdit"/>
          </item>
         </layout>
        </item>

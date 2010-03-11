@@ -11,6 +11,7 @@ from xml.dom import minidom
 
 from openmolar import connect
 from openmolar.settings import localsettings
+from openmolar.ptModules import plan
 
 def getListFromNode(node, id):
     '''
@@ -140,8 +141,7 @@ class feeTable():
         self.chartTreatmentCodes = {}
         self.feeColCount = 0
         self.data = ""
-        self.pl_cmp_Categories = ("other", "exam", "diagnosis", "perio", 
-        "tooth", "surgery", "prosthetics", "ortho")
+        self.pl_cmp_Categories = plan.tup_Atts
         
     def __repr__(self):
         '''
@@ -685,7 +685,7 @@ if __name__ == "__main__":
         print "looking up %s"%tx
         code = table.getItemCodeFromUserCode(tx)
         print "got code %s, fee %s"% (code, table.getFees(code))
-    '''
+    
     from PyQt4 import QtGui, QtCore
     from openmolar.dbtools.patient_class import mouth, decidmouth
     from openmolar.qt4gui.compiled_uis import Ui_codeChecker
@@ -700,4 +700,4 @@ if __name__ == "__main__":
     
     Dialog.exec_()
     app.closeAllWindows()
-    '''
+    
