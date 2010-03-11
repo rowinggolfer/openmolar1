@@ -25,7 +25,6 @@ __MAJOR_VERSION__= "0.1.9"
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 CLIENT_SCHEMA_VERSION = "1.7"
-COMPATIBLE_CLIENTS = ["1.6"]
 DB_SCHEMA_VERSION = "unknown"
 ENCODING = locale.getpreferredencoding() #"latin-1" for the uk currrency??
 FEETABLES = {}
@@ -571,7 +570,7 @@ def getLocalSettings():
             print "%s location"% station
         else:
             print "unknown location"
-
+        dom.unlink()
     else:
         #-- no file found..
         #--so create a settings file.
@@ -608,6 +607,7 @@ def updateLocalSettings(setting, value):
             f = open(localSets,"w")
             f.write(dom.toxml())
             f.close()
+            dom.unlink()
             return True
 
     except Exception, e:

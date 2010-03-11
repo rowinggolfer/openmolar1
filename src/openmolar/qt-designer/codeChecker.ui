@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>581</height>
+    <width>552</width>
+    <height>599</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,6 +76,13 @@
       <widget class="QPushButton" name="rel_pushButton">
        <property name="text">
         <string>reload fees</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="xml_pushButton">
+       <property name="text">
+        <string>table xml</string>
        </property>
       </widget>
      </item>

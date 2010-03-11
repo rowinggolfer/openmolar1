@@ -12,20 +12,43 @@ from xml.dom import minidom
 from openmolar import connect
 from openmolar.settings import localsettings
 
+def getListFromNode(node, id):
+    '''
+    get the text data from the first child of any such nodes
+    '''
+    nlist = node.getElementsByTagName(id)
+    values = []
+    for n in nlist:
+        children = n.childNodes
+        for child in children:
+            values.append(child.data)
+    return values
+
+def getFeesFromNode(node, id):
+    '''
+    get the text data from the first child of any such nodes
+    '''
+    nlist = node.getElementsByTagName(id)
+    values = []
+    for n in nlist:
+        sublist=[]
+        children = n.childNodes
+        for child in children:
+            for n in child.data.split(","):
+                sublist.append(int(n))
+        values.append(tuple(sublist))
+    return tuple(values)
+
 def getTextFromNode(node, id):
     '''
     get the text data from the first child of any such nodes
     '''
-    d = node.getElementsByTagName(id)
+    nlist = node.getElementsByTagName(id)
     value = ""
-    if d:
-        try:
-            child = d[0].childNodes
-            value = child[0].data
-        except IndexError:
-            pass
-    else:
-        print "d, id = ",d,",",id
+    for n in nlist:
+        children = n.childNodes
+        for child in children:
+            value += child.data
     return value
 
 def getBoolFromNode(node, id):
@@ -33,24 +56,7 @@ def getBoolFromNode(node, id):
     get the text data from the first child of any such nodes
     '''
     return getTextFromNode(node, id) == "True"
-    
-def getInts(node, id):
-    '''
-    get the text data from the first child of any such nodes
-    '''
-    d = node.getElementsByTagName(id)
-    f_list = []
-    for feenode in d:
-        try:
-            child = feenode.childNodes
-            value = int(child[0].data)
-        except ValueError, e:
-            value = 0
-        f_list.append(value)
         
-    return tuple(f_list)
-    
-    
 class feeTables():
     '''
     a wrapper class to contain as many fee tables as the user has outlined.
@@ -201,6 +207,8 @@ class feeTable():
 
         self.hasPtCols = not(len(self.pt_feeColNames)==0)
     
+        dom.unlink()
+    
     def loadFees(self):
         '''
         now load the fees
@@ -210,42 +218,40 @@ class feeTable():
         
         items = dom.getElementsByTagName("item")
         for item in items:
+            
             section = getTextFromNode(item, "section")
             code = getTextFromNode(item, "code")
             USERCODE = getTextFromNode(item, "USERCODE")
             regulation = getTextFromNode(item, "regulation")
             description = getTextFromNode(item, "description") 
-            brief_description = getTextFromNode(item, "brief_description") 
+            brief_descriptions = getListFromNode(item, "brief_description") 
             pl_cmp = getTextFromNode(item, "pl_cmp")
             hide = getBoolFromNode(item, "hide")
             
-            fees = getInts(item, "fee")
+            fees = getFeesFromNode(item, "fee")
             if self.hasPtCols:
-                ptfees = getInts(item,"pt_fee")
+                ptfees = getFeesFromNode(item,"pt_fee")
             else:
                 ptfees = ()
             
-            if code != "":
-                if self.feesDict.has_key(code):
-                    feeItem = self.feesDict[code] 
-                else:
-                    feeItem = feeItemClass(self, code)
-                    feeItem.setCategory(int(section))
-                    feeItem.setPl_Cmp_Type(pl_cmp)
-                    feeItem.usercode = USERCODE
-                    feeItem.description = description
-                    feeItem.setRegulations(regulation)
-                    self.feesDict[code] = feeItem
-                feeItem.addFees(fees)
-                feeItem.addPtFees(ptfees)
-                feeItem.addBriefDescription(brief_description)
-                
+            feeItem = feeItemClass(self, code)
+            feeItem.setCategory(int(section))
+            feeItem.setPl_Cmp_Type(pl_cmp)
+            feeItem.usercode = USERCODE
+            feeItem.description = description
+            feeItem.setRegulations(regulation)
+            self.feesDict[code] = feeItem
+            feeItem.addFees(fees)
+            feeItem.addPtFees(ptfees)
+            for bd in brief_descriptions:
+                feeItem.addBriefDescription(bd)
                  
-            if USERCODE != "" and USERCODE != None:
+            if USERCODE != "":
                 self.treatmentCodes[USERCODE] = code
                 if pl_cmp == "CHART":
                     self.chartTreatmentCodes[USERCODE] = code
- 
+        dom.unlink()
+        
     #@localsettings.debug
     def getToothCode(self, tooth, arg):
         '''
@@ -461,8 +467,8 @@ class feeItemClass(object):
         self.pl_cmp_type = "other"
         self.description = ""
         self.brief_descriptions = ()
-        self.fees = {}
-        self.ptFees = {}
+        self.fees = ()
+        self.ptFees = ()
         self.regulations = ""
         self.usercode = ""
     
@@ -476,8 +482,10 @@ class feeItemClass(object):
             codes = node.getElementsByTagName("code")
             for code in codes:
                 if code.firstChild.data == self.itemcode:
-                    return node
-            
+                    retarg = node.toprettyxml()
+                    dom.unlink()
+                    return retarg
+                
     
     def __repr__(self):
         '''
@@ -502,33 +510,13 @@ ptFees                =  %s'''% (self.table.tablename,
         add a fee to the list of fees contained by this class
         frequently this list will have only one item
         '''
-        for i in range(len(arg)):
-            try:
-                val = int(arg[i])
-            except TypeError, e:
-                print "error in your feetable, defaulting to zero fee!"
-                val =0
-            
-            if self.fees.has_key(i):
-                self.fees[i] += (val,)
-            else:
-                self.fees[i] = (val,)
-                
+        self.fees = arg
+                        
     def addPtFees(self,arg):
         '''
         same again, but for the pt charge
         '''
-        for i in range(len(arg)):
-            try:
-                val = int(arg[i])
-            except TypeError, e:
-                #print "error in your feetable, defaulting to zero fee!"
-                val =0
-            
-            if self.ptFees.has_key(i):
-                self.ptFees[i] += (val,)
-            else:
-                self.ptFees[i] = (val,)
+        self.ptFees = arg
         
     def setCategory(self, arg):
         '''
@@ -586,61 +574,69 @@ ptFees                =  %s'''% (self.table.tablename,
         ##todo - this is a holder for when I include multi column fee dicts
         KEY = 0
 
+        def getFeeList(fees):
+            '''
+            get a list of the KEYth column of fees
+            '''
+            retarg = []
+            for feetuple in fees:
+                retarg.append(feetuple[KEY])
+            return retarg
+        
         if patient:
-            if self.ptFees == {}:
+            if self.ptFees == ():
                 return None
             else:
-                feeList=self.ptFees[KEY]
-                #print "using patient feelist=", feeList
+                feeList = getFeeList(self.ptFees)
         else:
-            feeList=self.fees[KEY]
-            #print "using feelist=", feeList
-        
-        if self.regulations=="":
-            return feeList[0]*no_items
+            feeList = getFeeList(self.fees)
+            
+        if self.regulations == "":
+            return feeList[0] * no_items
         else:
             #-- this is the "regulation" for small xrays
             #--  n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E
-            fee=0
+            fee = 0
 
             #-- check for a direct hit
-            directMatch=re.findall("n=%d:."%no_items,self.regulations)
+            directMatch = re.findall("n=%d:."%no_items,self.regulations)
             if directMatch:
-                column=directMatch[0][-1]
-                fee=feeList[ord(column)-65]
+                column = directMatch[0][-1]
+                fee = feeList[ord(column)-65]
 
             #--check for a greater than
-            greaterThan=re.findall("n>\d", self.regulations)
+            greaterThan = re.findall("n>\d", self.regulations)
             if greaterThan:
                 #print "greater than found ", greaterThan
-                limit=int(greaterThan[0][2:])
+                limit = int(greaterThan[0][2:])
                 #print "limit", limit
-                if no_items>limit:
-                    formula=re.findall("n>\d:.*,", self.regulations)[0]
-                    formula=formula.strip(greaterThan[0]+":")
-                    formula=formula.strip(",")
+                if no_items > limit:
+                    formula = re.findall("n>\d:.*,", self.regulations)[0]
+                    formula = formula.strip(greaterThan[0]+":")
+                    formula = formula.strip(",")
                     #print "formula", formula
                     #--get the base fee
-                    column=formula[0]
-                    fee=feeList[ord(column)-65]
+                    column = formula[0]
+                    fee = feeList[ord(column)-65]
                     #--add additional items fees
-                    a_items=re.findall("\(n-\d\)",formula)[0].strip("()")
-                    n_a_items=no_items-int(a_items[2:])
-                    column=formula[-1]
-                    fee+=n_a_items*feeList[ord(column)-65]
+                    a_items = re.findall("\(n-\d\)",formula)[0].strip("()")
+                    n_a_items = no_items-int(a_items[2:])
+                    column = formula[-1]
+                    fee += n_a_items*feeList[ord(column)-65]
 
             #-- if fee is still zero
-            if fee==0:
+            if fee == 0:
                 #print "returning linear fee (n* singleItem Fee)"
-                fee=feeList[0]*no_items
+                fee = feeList[0]*no_items
 
             #check for a max amount
-            max= re.findall("max=.",self.regulations)
+            max = re.findall("max=.", self.regulations)
+            
             if max:
-                column=max[0][-1:]
-                maxFee=feeList[ord(column)-65]
-                if maxFee<fee:
-                    fee=maxFee
+                column = max[0][-1:]
+                maxFee = feeList[ord(column)-65]
+                if maxFee < fee:
+                    fee = maxFee
 
             return fee
 
@@ -663,6 +659,17 @@ if __name__ == "__main__":
             result = "%s - %s %s"% (tooth.upper(), code, desc)
             dl.adult_listWidget.addItem(result)
     
+    def showTable():
+        dialog2 = QtGui.QDialog(Dialog)
+        te = QtGui.QPlainTextEdit(dialog2)
+        te.setMinimumSize(800,600)
+        
+        text = table.data.replace("</item>","</item>\n")
+        text = text.replace("<item>","\n<item>")
+        text = text.replace("><","> <")
+        te.setPlainText(text)
+        dialog2.show()
+    
     def reloadTables():  
         global table 
         fts = feeTables()
@@ -673,12 +680,12 @@ if __name__ == "__main__":
     for table in fts.tables.values():
         print table.tablename
     
-    table = fts.tables[2]
-    for tx in ("CE","SP","SP+","SR F/F"):
+    table = fts.tables[3]
+    for tx in ("CE","S", "SP","SP+","SR F/F"):
         print "looking up %s"%tx
         code = table.getItemCodeFromUserCode(tx)
         print "got code %s, fee %s"% (code, table.getFees(code))
-    
+    '''
     from PyQt4 import QtGui, QtCore
     from openmolar.dbtools.patient_class import mouth, decidmouth
     from openmolar.qt4gui.compiled_uis import Ui_codeChecker
@@ -689,7 +696,8 @@ if __name__ == "__main__":
     Dialog.connect(dl.pushButton, QtCore.SIGNAL("clicked()"), check_codes)
     Dialog.connect(dl.lineEdit, QtCore.SIGNAL("returnPressed()"), check_codes)
     Dialog.connect(dl.rel_pushButton, QtCore.SIGNAL("clicked()"), reloadTables)
+    Dialog.connect(dl.xml_pushButton, QtCore.SIGNAL("clicked()"), showTable)    
     
     Dialog.exec_()
     app.closeAllWindows()
-    
+    '''

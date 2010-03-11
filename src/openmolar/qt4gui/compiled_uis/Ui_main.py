@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Tue Mar  9 20:08:37 2010
+# Created: Wed Mar 10 12:38:53 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_MainWindow(object):
         self.scrollArea_7.setWidgetResizable(True)
         self.scrollArea_7.setObjectName("scrollArea_7")
         self.scrollAreaWidgetContents_12 = QtGui.QWidget(self.scrollArea_7)
-        self.scrollAreaWidgetContents_12.setGeometry(QtCore.QRect(0, -82, 1017, 603))
+        self.scrollAreaWidgetContents_12.setGeometry(QtCore.QRect(0, 0, 1017, 603))
         self.scrollAreaWidgetContents_12.setObjectName("scrollAreaWidgetContents_12")
         self.horizontalLayout_7 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_12)
         self.horizontalLayout_7.setSpacing(3)

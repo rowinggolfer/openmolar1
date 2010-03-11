@@ -65,19 +65,57 @@ def getAsXML(table):
     col_names, rows = getFeeDictForModification(table)
     dom = minidom.Document()
     tab = dom.createElement("table")
+    
+    itemcodeIndex = col_names.index("code")
+    currentItem = ""
+    
+    #<section>2</section> <code>0201</code> <oldcode> </oldcode> 
+    #<USERCODE>S</USERCODE> <regulation> </regulation> 
+    #<description> </description> 
+    #<brief_description>small xrays 2 films</brief_description> 
+    #<fee>551</fee> <pt_fee>0</pt_fee> <hide>0</hide> 
+    #<pl_cmp>None</pl_cmp>
     for row in rows:
-        i=0
-        item = dom.createElement("item")
+        newNode = row[itemcodeIndex] != currentItem
+        currentItem = row[itemcodeIndex]
+        if newNode:
+            item = dom.createElement("item")
+        
+        i = 0
+        fees=[]
+        ptfees=[]
         for col in col_names:
-            if col.startswith("fee"):
-                d = dom.createElement("fee")            
-            elif col.startswith("pt_fee"):
-                d = dom.createElement("pt_fee")
-            else:
+            makeNode = (col != "ix" and (newNode or not 
+            col in ("section", "code", "oldcode","USERCODE","regulation",
+            "description","hide","pl_cmp")))
+            
+            if col.startswith("fee") or col.startswith("pt_fee"):
+                makeNode = False
+                try:
+                    val = int(row[i])
+                except ValueError:
+                    val = 0
+                except TypeError:
+                    val = 0
+                if col.startswith("fee"):
+                    fees.append(val)
+                else:
+                    ptfees.append(val)
+            
+            if makeNode:                    
                 d = dom.createElement(col)
-            d.appendChild(dom.createTextNode(str(row[i])))
-            item.appendChild(d)
+                
+                d.appendChild(dom.createTextNode(str(row[i])))
+                item.appendChild(d)
             i += 1
+        
+        d = dom.createElement("fee")
+        d.appendChild(dom.createTextNode(str(fees).strip("[]")))
+        item.appendChild(d)    
+
+        d = dom.createElement("pt_fee")
+        d.appendChild(dom.createTextNode(str(ptfees).strip("[]")))
+        item.appendChild(d)    
         
         tab.appendChild(item)
     dom.appendChild(tab)

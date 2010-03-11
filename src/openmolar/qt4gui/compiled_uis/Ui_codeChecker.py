@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/codeChecker.ui'
 #
-# Created: Tue Mar  9 20:08:37 2010
+# Created: Wed Mar 10 12:38:53 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(483, 581)
+        Dialog.resize(509, 581)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.label_2 = QtGui.QLabel(Dialog)
@@ -42,6 +42,9 @@ class Ui_Dialog(object):
         self.rel_pushButton = QtGui.QPushButton(Dialog)
         self.rel_pushButton.setObjectName("rel_pushButton")
         self.horizontalLayout.addWidget(self.rel_pushButton)
+        self.xml_pushButton = QtGui.QPushButton(Dialog)
+        self.xml_pushButton.setObjectName("xml_pushButton")
+        self.horizontalLayout.addWidget(self.xml_pushButton)
         self.gridLayout.addLayout(self.horizontalLayout, 3, 0, 1, 3)
         self.label = QtGui.QLabel(Dialog)
         self.label.setObjectName("label")
@@ -56,5 +59,6 @@ class Ui_Dialog(object):
         self.label_3.setText(_( u"Tooth Code"))
         self.pushButton.setText(_( u"go"))
         self.rel_pushButton.setText(_( u"reload fees"))
+        self.xml_pushButton.setText(_( u"table xml"))
         self.label.setText(_( u"Deciduous"))
 

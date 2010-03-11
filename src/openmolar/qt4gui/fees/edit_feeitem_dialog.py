@@ -44,6 +44,7 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         self.description_lineEdit.setText(self.fee_item.description)
         self.descriptions_listWidget.addItems(self.fee_item.brief_descriptions)
         
+        self.xml_plainTextEdit.setPlainText(self.fee_item.getNode())
         ##TODO load the fees here
         
     def getInput(self):
@@ -56,7 +57,7 @@ if __name__ == "__main__":
     from openmolar.settings import localsettings
     localsettings.initiate()
     
-    item = localsettings.FEETABLES.tables[0].feesDict["0101"]
+    item = localsettings.FEETABLES.tables[1].feesDict["0201"]
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
     dl = editFee(item, Dialog)

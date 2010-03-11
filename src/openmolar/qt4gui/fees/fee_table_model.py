@@ -64,17 +64,20 @@ class TreeItem(object):
             if self.table.hasPtCols:
                 if column % 2 == 0:
                     fee = localsettings.formatMoney(
-                    self.itemData.ptFees[(column-6)/2][self.myindex])
+                    self.itemData.ptFees[self.myindex][(column-6)//2])
                     return QtCore.QVariant(fee)
                 else:
                     fee = localsettings.formatMoney(
-                    self.itemData.fees[(column-5)/2][self.myindex]) 
+                    self.itemData.fees[self.myindex][(column-5)//2]) 
                     return QtCore.QVariant(fee)
             else:
-                fee = localsettings.formatMoney(
-                self.itemData.fees[column-5][self.myindex])
-                return QtCore.QVariant(fee)
-            
+                try:
+                    fee = localsettings.formatMoney(
+                    self.itemData.fees[self.myindex][column-5])
+                    return QtCore.QVariant(fee)
+                except:
+                    print column, self.itemData.fees
+                    
         return QtCore.QVariant()
 
     def parent(self):
@@ -270,7 +273,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     localsettings.initiate()
     
-    model = treeModel(localsettings.FEETABLES.tables[0])
+    model = treeModel(localsettings.FEETABLES.tables[3])
     
     dialog = QtGui.QDialog()
 
