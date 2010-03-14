@@ -784,7 +784,7 @@ def get_pts_appts(sno, futureOnly=False):
         
     fullquery = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
     adate, atime, length, datespec FROM apr
-    WHERE serialno=%d %s ORDER BY aprix, adate'''% (sno, condition)
+    WHERE serialno=%d %s ORDER BY adate, aprix'''% (sno, condition)
 
     ## - table also contains flag0,flag1,flag2,flag3,flag4,
 

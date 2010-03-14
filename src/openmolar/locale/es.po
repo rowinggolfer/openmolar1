@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-11 00:54+0000\n"
-"PO-Revision-Date: 2010-03-11 01:01+0000\n"
+"POT-Creation-Date: 2010-03-11 12:55+0000\n"
+"PO-Revision-Date: 2010-03-11 12:57+0000\n"
 "Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-03-11 05:07+0000\n"
+"X-Launchpad-Export-Date: 2010-03-12 04:53+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:64
@@ -703,7 +703,7 @@ msgstr ""
 "Añadir una combinación de citas propuestas al diario de los pacientes"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptWizardItem.py:43
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:159
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:179
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2980
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3025
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3035
@@ -1094,7 +1094,7 @@ msgid "Please Select the tooth to which this treatment is planned"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:57
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:158
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:178
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_options.py:45
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:167
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_phraseBook.py:54
@@ -1403,7 +1403,7 @@ msgid "Exam Wizard"
 msgstr "Asistente de Exámen"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_exam_wizard.py:122
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:162
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:181
 msgid "Standard"
 msgstr "Estándar"
 
@@ -1468,60 +1468,57 @@ msgstr "Añadir elemento a la Tabla de Honorarios"
 msgid "Patient Contribution"
 msgstr "Contribución del Paciente"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:160
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:180
 msgid "UserCode"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:161
-msgid "UserCode Type"
-msgstr ""
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:163
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:182
 msgid "Regex"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:164
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:183
 msgid "Multiple Regex"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:165
-msgid "Regulation"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:184
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_model.py:155
+msgid "Regulations"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:166
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:185
 msgid "Regulation Wizard"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:167
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:186
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:664
 msgid "Category"
 msgstr "Categoría"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:168
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:187
 msgid "Category for treatment Planning"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:169
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:188
 msgid "Patient's Description"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:170
-msgid "Clinical Descriptions"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:189
+msgid "Clinical Description(s)"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:171
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:190
 msgid "Gross Fees (csv)"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:172
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:191
 msgid "Net Fees (csv)"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:173
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:192
 msgid "Wizard"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:174
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:193
 msgid "XML"
 msgstr ""
 
@@ -4945,6 +4942,10 @@ msgstr ""
 msgid "ERROR STARTING NEW COURSE, sorry"
 msgstr ""
 
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:30
+msgid "Fee item"
+msgstr ""
+
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:34
 msgid ""
 "<p>You already have a completed exam on this \n"
@@ -4983,10 +4984,6 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_model.py:151
 msgid "Usercode"
-msgstr ""
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_model.py:155
-msgid "Regulations"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_model.py:157
