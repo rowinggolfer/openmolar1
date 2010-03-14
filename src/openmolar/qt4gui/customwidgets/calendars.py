@@ -8,7 +8,7 @@ import sys
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
-from openmolar.qt4gui.compiled_uis import Ui_memoitem
+from openmolar.qt4gui.compiled_uis import Ui_memo_item
 from openmolar.qt4gui.compiled_uis import Ui_editmemos
 
 CENTRE = QtGui.QTextOption(QtCore.Qt.AlignCenter|QtCore.Qt.AlignVCenter)
@@ -117,7 +117,7 @@ class calDialogs():
                 memowidget_dict[0] = dl.lineEdit
             else:
                 widg = QtGui.QWidget()
-                memoitem = Ui_memoitem.Ui_Form()
+                memoitem = Ui_memo_item.Ui_Form()
                 memoitem.setupUi(widg)
                 memoitem.label.setText(
                 localsettings.apptix_reverse.get(dentix,"??"))
