@@ -240,9 +240,10 @@ class feeTable():
             feeItem.usercode = USERCODE
             feeItem.description = description
             feeItem.setRegulations(regulation)
-            self.feesDict[code] = feeItem
+            feeItem.hide = hide
             feeItem.addFees(fees)
             feeItem.addPtFees(ptfees)
+            feeItem.depth = len(fees)
             for bd in brief_descriptions:
                 feeItem.addBriefDescription(bd)
                  
@@ -250,6 +251,9 @@ class feeTable():
                 self.treatmentCodes[USERCODE] = code
                 if pl_cmp == "CHART":
                     self.chartTreatmentCodes[USERCODE] = code
+            
+            self.feesDict[code] = feeItem
+            
         dom.unlink()
         
     #@localsettings.debug
@@ -466,13 +470,15 @@ class feeItemClass(object):
         self.category = 0
         self.pl_cmp_type = "other"
         self.description = ""
+        self.depth = 1  # depth will be > 1 if a non-linear regulation
         self.brief_descriptions = ()
         self.fees = ()
         self.ptFees = ()
         self.regulations = ""
         self.usercode = ""
-    
-    def getNode(self):
+        self.hide = False
+        
+    def get_xml(self):
         '''
         get the xml node the feeitem represents
         '''
@@ -483,9 +489,68 @@ class feeItemClass(object):
             for code in codes:
                 if code.firstChild.data == self.itemcode:
                     retarg = node.toprettyxml()
+                    retarg = retarg.replace("\t", "    ")
                     dom.unlink()
                     return retarg
-                
+    
+    def to_xml(self):
+        dom = minidom.Document()
+        item = dom.createElement("item")
+        
+        n = dom.createElement("section")
+        n.appendChild(dom.createTextNode(str(self.category)))
+        item.appendChild(n)
+        
+        n = dom.createElement("code")
+        n.appendChild(dom.createTextNode(self.itemcode))
+        item.appendChild(n)
+        
+        n = dom.createElement("oldcode")
+        n.appendChild(dom.createTextNode("??"))
+        item.appendChild(n)
+        
+        n = dom.createElement("USERCODE")
+        n.appendChild(dom.createTextNode(self.usercode))
+        item.appendChild(n)
+        
+        n = dom.createElement("regulation")
+        n.appendChild(dom.createTextNode(self.regulations))
+        item.appendChild(n)
+        
+        n = dom.createElement("description")
+        n.appendChild(dom.createTextNode(self.description))
+        item.appendChild(n)
+        
+        for bdesc in self.brief_descriptions:
+            n = dom.createElement("brief_description")
+            n.appendChild(dom.createTextNode(bdesc))
+            item.appendChild(n)
+            
+        n = dom.createElement("hide")
+        val = "1" if self.hide else "0"
+        n.appendChild(dom.createTextNode(val))
+        item.appendChild(n)
+        
+        n = dom.createElement("pl_cmp")
+        n.appendChild(dom.createTextNode(self.pl_cmp_type))
+        item.appendChild(n)
+        
+        for fee in self.fees:
+            n = dom.createElement("fee")
+            n.appendChild(dom.createTextNode(str(fee)))
+            item.appendChild(n)
+        
+        for fee in self.ptFees:
+            n = dom.createElement("pt_fee")
+            n.appendChild(dom.createTextNode(str(fee)))
+            item.appendChild(n)
+        
+        dom.appendChild(item)
+        
+        retarg = dom.toprettyxml()
+        retarg = retarg.replace("\t", "    ")
+        dom.unlink()
+        return retarg
     
     def __repr__(self):
         '''
@@ -547,7 +612,7 @@ ptFees                =  %s'''% (self.table.tablename,
         pass a string which sets the conditions for
         applying fees to this treatment item
         '''
-        self.regulations=arg
+        self.regulations = arg
 
     def getFees(self, no_items=1, conditions=""):
         '''
