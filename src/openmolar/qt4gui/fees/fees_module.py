@@ -190,9 +190,11 @@ def table_clicked(om_gui, index):
         Dialog = QtGui.QDialog()
         dl = edit_feeitem_dialog.editFee(fee_item, Dialog)
     
-        print dl.getInput()
-        
-        
+        result, edited_item = dl.getInput()
+        if result:
+            if edited_item.table.alterItem(edited_item):
+                edited_item.table.saveDataToDB()
+            
     def apply(arg):
         '''
         apply the result of the QMenu generated when feetable is clicked

@@ -22,7 +22,7 @@ def getListFromNode(node, id):
     for n in nlist:
         children = n.childNodes
         for child in children:
-            values.append(child.data)
+            values.append(child.data.strip())
     return values
 
 def getFeesFromNode(node, id):
@@ -49,7 +49,7 @@ def getTextFromNode(node, id):
     for n in nlist:
         children = n.childNodes
         for child in children:
-            value += child.data
+            value += child.data.strip()
     return value
 
 def getBoolFromNode(node, id):
@@ -141,7 +141,7 @@ class feeTable():
         self.chartTreatmentCodes = {}
         self.feeColCount = 0
         self.data = ""
-        self.pl_cmp_Categories = plan.tup_Atts
+        self.pl_cmp_Categories = plan.tup_Atts + ("CHART",)
         
     def __repr__(self):
         '''
@@ -184,6 +184,35 @@ class feeTable():
     def getData(self, data):
         return self.data
     
+    
+    def saveDataToDB(self):
+        '''
+        if the feetable has been altered, this will save the changes
+        '''
+        db = connect.connect()
+        cursor = db.cursor()
+        query = "update feetable_key set data=%s where tablename=%s"
+        values = (self.data, self.tablename)
+        print query, values[1]
+        print cursor.execute(query, values)
+        db.commit()
+        
+    def alterItem(self, item):
+        '''
+        update an Item
+        '''
+        dom = minidom.parseString(self.data)
+        nodeList = dom.getElementsByTagName("item")
+
+        newnode = minidom.parseString(item.to_xml())
+        for node in nodeList:
+            codes = node.getElementsByTagName("code")
+            for code in codes:
+                if code.firstChild.data == item.itemcode:
+                    node.parentNode.replaceChild(newnode.firstChild, node)
+                    dom.unlink()
+                    return True
+            
     def setFeeCols(self, arg):
         '''
         arg is some xml logic to let me know what columns to query
@@ -218,39 +247,14 @@ class feeTable():
         
         items = dom.getElementsByTagName("item")
         for item in items:
-            
-            section = getTextFromNode(item, "section")
             code = getTextFromNode(item, "code")
-            USERCODE = getTextFromNode(item, "USERCODE")
-            regulation = getTextFromNode(item, "regulation")
-            description = getTextFromNode(item, "description") 
-            brief_descriptions = getListFromNode(item, "brief_description") 
-            pl_cmp = getTextFromNode(item, "pl_cmp")
-            hide = getBoolFromNode(item, "hide")
-            
-            fees = getFeesFromNode(item, "fee")
-            if self.hasPtCols:
-                ptfees = getFeesFromNode(item,"pt_fee")
-            else:
-                ptfees = ()
-            
             feeItem = feeItemClass(self, code)
-            feeItem.setCategory(int(section))
-            feeItem.setPl_Cmp_Type(pl_cmp)
-            feeItem.usercode = USERCODE
-            feeItem.description = description
-            feeItem.setRegulations(regulation)
-            feeItem.hide = hide
-            feeItem.addFees(fees)
-            feeItem.addPtFees(ptfees)
-            feeItem.depth = len(fees)
-            for bd in brief_descriptions:
-                feeItem.addBriefDescription(bd)
-                 
-            if USERCODE != "":
-                self.treatmentCodes[USERCODE] = code
-                if pl_cmp == "CHART":
-                    self.chartTreatmentCodes[USERCODE] = code
+            feeItem.from_xml(item)
+           
+            if feeItem.usercode != "":
+                self.treatmentCodes[feeItem.usercode] = code
+                if feeItem.pl_cmp_type == "CHART":
+                    self.chartTreatmentCodes[feeItem.usercode] = code
             
             self.feesDict[code] = feeItem
             
@@ -467,6 +471,7 @@ class feeItemClass(object):
         '''
         self.table = table
         self.itemcode = itemcode
+        self.oldcode = ""
         self.category = 0
         self.pl_cmp_type = "other"
         self.description = ""
@@ -478,7 +483,7 @@ class feeItemClass(object):
         self.usercode = ""
         self.hide = False
         
-    def get_xml(self):
+    def get_stored_xml(self):
         '''
         get the xml node the feeitem represents
         '''
@@ -493,7 +498,40 @@ class feeItemClass(object):
                     dom.unlink()
                     return retarg
     
-    def to_xml(self):
+    def from_xml(self, item):
+        section = getTextFromNode(item, "section")
+        oldcode = getTextFromNode(item, "oldcode")
+        USERCODE = getTextFromNode(item, "USERCODE")
+        regulation = getTextFromNode(item, "regulation")
+        description = getTextFromNode(item, "description") 
+        brief_descriptions = getListFromNode(item, "brief_description") 
+        pl_cmp = getTextFromNode(item, "pl_cmp")
+        hide = getBoolFromNode(item, "hide")
+        
+        fees = getFeesFromNode(item, "fee")
+        if self.table.hasPtCols:
+            ptfees = getFeesFromNode(item, "pt_fee")
+        else:
+            ptfees = ()
+        
+        self.setCategory(int(section))
+        self.setPl_Cmp_Type(pl_cmp)
+        self.usercode = USERCODE
+        self.oldcode = oldcode
+        self.description = description
+        self.setRegulations(regulation)
+        self.hide = hide
+        self.addFees(fees)
+        self.addPtFees(ptfees)
+        self.depth = len(fees)
+        for bd in brief_descriptions:
+            self.addBriefDescription(bd)
+             
+        
+    def to_xml(self, pretty=True):
+        '''
+        convert the current object to an xml representation
+        ''' 
         dom = minidom.Document()
         item = dom.createElement("item")
         
@@ -506,7 +544,7 @@ class feeItemClass(object):
         item.appendChild(n)
         
         n = dom.createElement("oldcode")
-        n.appendChild(dom.createTextNode("??"))
+        n.appendChild(dom.createTextNode(self.oldcode))
         item.appendChild(n)
         
         n = dom.createElement("USERCODE")
@@ -536,19 +574,24 @@ class feeItemClass(object):
         item.appendChild(n)
         
         for fee in self.fees:
+            f_string = str(fee).strip("(),")
             n = dom.createElement("fee")
-            n.appendChild(dom.createTextNode(str(fee)))
+            n.appendChild(dom.createTextNode(f_string))
             item.appendChild(n)
         
         for fee in self.ptFees:
+            f_string = str(fee).strip("(),")
             n = dom.createElement("pt_fee")
-            n.appendChild(dom.createTextNode(str(fee)))
+            n.appendChild(dom.createTextNode(f_string))
             item.appendChild(n)
         
         dom.appendChild(item)
         
-        retarg = dom.toprettyxml()
-        retarg = retarg.replace("\t", "    ")
+        if pretty:
+            retarg = dom.toprettyxml()
+            retarg = retarg.replace("\t", "    ")
+        else:
+            retarg = dom.toxml()            
         dom.unlink()
         return retarg
     

@@ -104,8 +104,8 @@ def getAsXML(table):
             
             if makeNode:                    
                 d = dom.createElement(col)
-                
-                d.appendChild(dom.createTextNode(str(row[i])))
+                if row[i]:
+                    d.appendChild(dom.createTextNode(str(row[i])))
                 item.appendChild(d)
             i += 1
         
@@ -113,9 +113,11 @@ def getAsXML(table):
         d.appendChild(dom.createTextNode(str(fees).strip("[]")))
         item.appendChild(d)    
 
-        d = dom.createElement("pt_fee")
-        d.appendChild(dom.createTextNode(str(ptfees).strip("[]")))
-        item.appendChild(d)    
+        p_fees_str = str(ptfees).strip("[]")
+        if p_fees_str:
+            d = dom.createElement("pt_fee")
+            d.appendChild(dom.createTextNode(p_fees_str))
+            item.appendChild(d)    
         
         tab.appendChild(item)
     dom.appendChild(tab)

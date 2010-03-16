@@ -27,15 +27,12 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         self.table = self.fee_item.table
         self.category_comboBox.addItems(fee_table_model.CATEGORIES)
         self.pl_cmp_comboBox.addItems(("",) + self.table.pl_cmp_Categories)
-        self.dialog.connect(self.test_pushButton, QtCore.SIGNAL("clicked()"), 
-            self.testItem)
-        self.dialog.connect(self.tabWidget, 
-            QtCore.SIGNAL("currentChanged(int)"), self.handleTab)
-        for rb in (self.uc_radioButton, self.uc_multireg_radioButton,
-        self.uc_reg_radioButton):
-            self.dialog.connect(rb, QtCore.SIGNAL("toggled(bool)"),
-                self.regex_toggle)
-    
+
+        self.signals()
+        
+        self.loadData()
+        self.initial_generatedXml = self.fee_item.to_xml()
+        
     def regex_toggle(self, arg):
         '''
         handle the regex radiobuttons
@@ -53,10 +50,39 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         the user has switched tab
         '''
         if i == 1:
-            self.apply_wizard_changes()
+            self.applyTab(0)
         else:
+            self.applyTab(1)
             self.loadData()
     
+    def applyTab(self, i):
+        '''
+        apply the current tab (ie. assume user has changed something)
+        '''
+         
+        if i == 0:
+            self.apply_wizard_changes()
+        else:
+            if self.xml_plainTextEdit.document().isModified():
+                self.reload_feeItem_from_editedXML()
+                
+    
+    def reload_feeItem_from_editedXML(self):
+        '''
+        if an advanced(?) user has edited the xml, the fee_item needs
+        to be reloaded.
+        '''
+        
+        edited_xml = unicode(self.xml_plainTextEdit.toPlainText())
+        dom = minidom.parseString(edited_xml)
+        node = dom.getElementsByTagName("item")[0]
+        
+        ## create a new instance of fee item
+        table, itemcode = self.table, self.fee_item.itemcode
+        self.fee_item = feesTable.feeItemClass(table, itemcode)   
+        self.fee_item.from_xml(node)
+        self.XML_EDITED = False
+        
     def apply_wizard_changes(self):
         '''
         check to see if user has altered anything on the form part of the 
@@ -113,19 +139,22 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
             
         self.xml_plainTextEdit.setPlainText(self.fee_item.to_xml())
         
-    def testItem(self, report = True):
+    def testItem(self, xml_to_test = None, report = True):
         '''
         test the changes won't foul up the db
         '''
-        if self.tabWidget.currentIndex() == 0:
-            self.apply_wizard_changes()
-        
+        self.applyTab(self.tabWidget.currentIndex())
+        if xml_to_test is None:
+            if self.tabWidget.currentIndex() == 0:
+                xml_to_test = self.fee_item.to_xml()
+            else:
+                xml_to_test = unicode(self.xml_plainTextEdit.toPlainText())
+            
         errors = []
         
         ## 1st test - is this valid xml??
         try:
-            text = unicode(self.xml_plainTextEdit.toPlainText())
-            dom = minidom.parseString(text)
+            dom = minidom.parseString(xml_to_test)
         except xml.parsers.expat.ExpatError, e:
             errors.append(_("Bad XML") + " %s"% e)
         
@@ -163,7 +192,6 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         
         return errorlist
         
-    
     def loadUserCode(self):
         uc = self.fee_item.usercode
         if uc.startswith("reg "):
@@ -176,7 +204,21 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         self.usercode_plainTextEdit.setPlainText(uc)
         
     def loadData(self):
-        
+        '''
+        populate the controls
+        '''
+        def strip_tup_tup(tup):
+            '''
+            takes a tuple of tuples and returns a string without 
+            the outer brackets
+
+            >>> strip_tup_tup( ((1,),(2)) ):
+            '(1,),(2,)'
+            '''
+
+            retarg = str(tup)
+            return retarg.replace("((","(").replace("))",")")
+                    
         self.itemcode_label.setText(_("Fee item") + " - " + 
                                     self.fee_item.itemcode)
         self.category_comboBox.setCurrentIndex(self.fee_item.category)
@@ -193,16 +235,46 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         self.descriptions_plainTextEdit.setPlainText(
             brief_descriptions.strip("\n"))
         
-        self.fees_lineEdit.setText(str(self.fee_item.fees))
-        self.pt_fees_lineEdit.setText(str(self.fee_item.ptFees))
+        self.fees_lineEdit.setText(strip_tup_tup(self.fee_item.fees))
+        self.pt_fees_lineEdit.setText(strip_tup_tup(self.fee_item.ptFees))
         
-        self.orig_xml_plainTextEdit.setPlainText(self.fee_item.get_xml())
-        self.xml_plainTextEdit.setPlainText(self.fee_item.get_xml())
+        self.orig_xml_plainTextEdit.setPlainText(
+        self.fee_item.get_stored_xml())
+
+    def signals(self):
+        '''
+        connect all user actions
+        '''
+        self.dialog.connect(self.test_pushButton, QtCore.SIGNAL("clicked()"), 
+        self.testItem)
+
+        self.dialog.connect(self.tabWidget, 
+            QtCore.SIGNAL("currentChanged(int)"), self.handleTab)
         
+        for rb in (self.uc_radioButton, self.uc_multireg_radioButton,
+        self.uc_reg_radioButton):
+            self.dialog.connect(rb, QtCore.SIGNAL("toggled(bool)"),
+            self.regex_toggle)
+
     def getInput(self):
-        self.loadData()
+        '''
+        execute the dialog - returns (Altered(bool), Feeitem Class (or None))
+        '''
+        self.applyTab(self.tabWidget.currentIndex())
         if self.dialog.exec_():
-            return self.fee_item
+            if self.tabWidget.currentIndex() == 0:
+                self.apply_wizard_changes()
+                newXML = self.fee_item.to_xml()
+            else:
+                newXML = str(self.xml_plainTextEdit.toPlainText())
+                
+            if self.initial_generatedXml != newXML:
+                if QtGui.QMessageBox.question(self.dialog,
+                _("Confirm"), _("Apply changes?"), 
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                    return (True, self.fee_item)
+        return (False, None)
         
 if __name__ == "__main__":
     import sys
@@ -214,5 +286,7 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
     dl = editFee(item, Dialog)
     
-    print dl.getInput()
+    result, item = dl.getInput()
 
+    if result:
+        item.table.alterItem(item)
