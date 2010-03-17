@@ -179,12 +179,15 @@ class treeModel(QtCore.QAbstractItemModel):
 
     def setupModelData(self):
         unscheduled = []
+        scheduled = []
+        ## jump through hoops to ensure "unscheduled appear at the bottom
+        ## of the model
         for appt in self.appointments:
-            if appt.date is None:
+            if appt.unscheduled:
                 unscheduled.append(appt)
-        for appt in unscheduled:
-            self.appointments.remove(appt)
-        for appt in self.appointments + unscheduled:
+            else:
+                scheduled.append(appt)
+        for appt in scheduled + unscheduled:
             if appt.past:
                 cat = 1
             #elif appt.date is None: #a seperate parent for unscheduled?
@@ -233,9 +236,12 @@ class treeModel(QtCore.QAbstractItemModel):
         get the model index of a specific appointment
         '''
         appt = None
-        for appt in self.appointments:
-            if appt.aprix == apr_ix:
-                print"found appt!"
+        print "looking for ",apr_ix
+        print self.appointments
+        for appmt in self.appointments:
+            print appmt.aprix
+            if appmt.aprix == apr_ix:
+                appt = appmt
                 break
         if appt:
             print "Searchin for ",appt, 
@@ -255,7 +261,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     localsettings.initiate()
 
-    appts = appointments.get_pts_appts(17322)
+    appts = appointments.get_pts_appts(3)
     model = treeModel(appts)
 
     dialog = QtGui.QDialog()
@@ -279,11 +285,11 @@ if __name__ == "__main__":
     QtCore.QObject.connect(tv, QtCore.SIGNAL("clicked (QModelIndex)"),
         appt_clicked)
     
-    appt = appts[-1]
-    result, index = model.findItem(appt.aprix)
-    if result:
-        print "found it!"
-        tv.setCurrentIndex(index)
+    #appt = appts[-1]
+    #result, index = model.findItem(appt.aprix)
+    #if result:
+    #    print "found it!"
+    #    tv.setCurrentIndex(index)
     dialog.exec_()
         
     app.closeAllWindows()

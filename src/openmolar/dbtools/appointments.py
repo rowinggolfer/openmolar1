@@ -48,13 +48,13 @@ class appt_class(object):
             self.today = self.date == today
             self.past = self.date < today
             if self.today:
-                self.future = self.atime > localsettings.timestamp()
+                self.future = self.atime > localsettings.int_timestamp()
             else:
                 self.future = self.date > today
 
     def __repr__(self):
-        return "%s %s scheduled=%s dent=%s ix=%s"%(self.serialno, 
-        self.date, self.unscheduled, self.dent_inits, self.aprix)
+        return "serilno=%s %s scheduled=%s dent=%s ix=%s"%(self.serialno, 
+        self.date, not self.unscheduled, self.dent_inits, self.aprix)
 
 class daySummary(object):
     '''

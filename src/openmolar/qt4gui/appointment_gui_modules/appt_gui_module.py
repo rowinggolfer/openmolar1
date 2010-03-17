@@ -686,8 +686,9 @@ def layout_ptDiary(om_gui):
     om_gui.ui.pt_diary_treeView.setModel(model)
     om_gui.ui.pt_diary_treeView.expandAll()
     index = model.parents.get(1, None)
-    if index:
-        om_gui.ui.pt_diary_treeView.collapse(model.createIndex(0,0,index))
+    #if index:
+    om_gui.ui.pt_diary_treeView.collapse(model.createIndex(0,0,index))
+    
     adjustDiaryColWidths(om_gui)
     ptDiary_selection(om_gui)
     

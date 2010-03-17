@@ -42,12 +42,58 @@ def getNotesDict(ptNotesTuple):
             notes_dict[key] = [(ntype,note,operator)]
     return notes_dict
 
-def notes(notes_dict, verbosity=0, recOnly=False, ignoreRec=False):
+def rec_notes(notes_dict):
+    '''
+    returns an html string of notes, designed to fit into the
+    reception notes panel (ie. vertical)
+    '''
+
+    retarg = '''<html><head><link rel="stylesheet"
+    href="%s" type="text/css"></head><body>'''% localsettings.stylesheet
+    keys = notes_dict.keys()
+    keys.sort()
+    
+    previousdate = "" #necessary to group notes on same day
+    divopen=False
+    for key in keys: 
+        date, op = key
+        notes = get_notes_for_date(notes_dict[key])
+        if "REC" in op:
+            d = get_date_from_date(date)
+            if d != previousdate:
+                previousdate = d
+                retarg += '<div class="recep_date">%s'% d
+                divopen = True
+            ests = get_estimate_for_date(notes_dict[key])            
+            rec = get_reception_for_date(notes_dict[key])
+            if ests or rec:
+                retarg += "<ul>"
+                if ests: 
+                    retarg += '<li class="recep_note">%s</li>'% ests
+                if rec:
+                    rec = rec.replace("<li>",'<li class="recep_note">')
+                    rec = rec.replace("PRINTED:", 
+                    '<img src=%s height="12" align="left">'% (
+                    localsettings.printer_png))
+                    rec = rec.replace("RECEIVED:", 
+                    '<img src=%s height="12" align="left">'% (
+                    localsettings.money_png))
+                    retarg += rec 
+                retarg += "</ul>"
+        if divopen:
+            retarg += "</div>"
+            divopen = False
+            
+    retarg += '</body></html>'
+    
+    return retarg 
+
+
+def notes(notes_dict, verbosity=0, ignoreRec=False):
     '''
     returns an html string of notes...
     if verbose=1 you get reception stuff too. 
     if verbose =2 you get full notes
-    if recOnly, clinicians notes are omitted
     '''
 
     retarg = '''<html><head><link rel="stylesheet"
@@ -65,10 +111,7 @@ def notes(notes_dict, verbosity=0, recOnly=False, ignoreRec=False):
         retarg += '<th class="verbose">Detailed</th>'
 
     retarg += '</tr>'
-    if recOnly:
-        wstring = "30%"
-    else:
-        wstring = "70%"
+    wstring = "70%"
     
     previousdate="" #necessary to group notes on same day
     rowspan = 1
@@ -77,8 +120,7 @@ def notes(notes_dict, verbosity=0, recOnly=False, ignoreRec=False):
         date, op = key
         notes = get_notes_for_date(notes_dict[key])
         if ("REC" in op and notes != "") or (
-        "REC" in op and not ignoreRec) or (
-        not "REC" in op and not recOnly):
+        "REC" in op and not ignoreRec) or not "REC" in op:
             newline += "<tr>"
             d = get_date_from_date(date)
             if d != previousdate:
@@ -181,26 +223,22 @@ def get_reception_for_date(line):
     was anything printed etc....
     '''
     recep = ""
-    for l in line:
-        if ("PRINT" in l[0]) or ("RECEIVED" in l[0]) or \
-        ("FINAL" in l[0]) or ("UNKNOWN" in l[0]) or \
-        ("UPDATE" in l[0]) or ("COURSE" in l[0]):
-            recep+=l[0]+l[1]+"<br />"
-    if recep=="":
-        return "-"
-    else:
-        return recep.strip("<br />")
+    for action, value, user in line:
+        value = value.replace("sundries 0.00","")
+        value = value.replace("==========","")
+        if (("PRINT" in action) or ("RECEIVED" in action) or 
+        ("FINAL" in action) or ("UNKNOWN" in action) or 
+        ("UPDATE" in action) or ("COURSE" in action)):
+            recep += "<li>%s %s</li>"% (action, value)
+    return recep
     
 def get_estimate_for_date(line):
-    est=""
+    est = ""
     for l in line:
         if "ESTIMATE" in l[0]:
-            est +="%s%s<br />"% (l[0],l[1])
-    if est=="":
-        return "-"
-    else:
-        return est.strip("<br />")
-
+            est += "%s%s"% (l[0],l[1])
+    return est
+    
 def decipher_noteline(noteline):
     '''
     returns a list.  ["type","note","operator","date"]
@@ -385,11 +423,12 @@ if __name__ == "__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=11956
+        serialno=1
     if "-v" in sys.argv:
         verbose=True
     else:
          verbose=False
     print "getting notes"
-    print notes(patient_class.patient(serialno).notes_dict)
+    print rec_notes(patient_class.patient(serialno).notes_dict)
+    
 

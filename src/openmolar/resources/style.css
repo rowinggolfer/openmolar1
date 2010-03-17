@@ -15,8 +15,12 @@ h1{text-align:center;}
 
 /*-- UNORDERED LISTS --*/
 ul{list-style:none;padding-left:0px;}
-li{list-style:none;color:blue;padding-left:0px}
+li.about{list-style:none;color:blue;padding-left:0px}
 
+li.recep_note{font-size:10pt;list-style-type:none;padding-left:0px;background-color:#ffeedd;}
+
+/* -- reception_notes -- */
+.recep_date{background-color:#eeeeee;padding-left:0px;}
 
 /*-- th and td --*/
 table{width:100%;}
@@ -31,8 +35,8 @@ table{width:100%;}
 table.yeartable{width:600pt;}
 .yearheader{font-size:16pt;background-color:#eeeeee;font-style:bold;text-align:center;}
 .bankholiday{font-size:14pt;background-color:#eeeeee;font-style:bold;font-style:italic;text-align:center;}
-.yearops{background-color:#eeeeff;font-size:13pt;text-align:center;}
-.yearmemo{background-color:#eeeeff;font-style:italic;font-size:13pt;}
+.yearops{background-color:#eeeeff;font-size:12pt;text-align:center;}
+.yearmemo{background-color:#eeeeff;font-style:italic;font-size:12pt;}
 
 th{border-style:solid;background-color:#eeeeee;}
 

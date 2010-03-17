@@ -136,7 +136,10 @@ class feeTable_treatment(Ui_addTreatment.Ui_Dialog):
                 number = itemW.spinBox.value()
                 if number != 0:
                     for n in range(number):
-                        retarg += ((itemW.usercode, itemW.itemcode, 
+                        uc = itemW.usercode
+                        if "reg " in uc or uc == "":
+                            uc = "code-%s"% itemW.itemcode
+                        retarg += ((uc, itemW.itemcode, 
                         itemW.description), )
             return retarg
         else:

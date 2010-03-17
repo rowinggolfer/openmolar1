@@ -746,9 +746,8 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.recallDate_comboBox.setCurrentIndex(0)
             self.ui.detailsBrowser.setText("")
-            self.ui.notesBrowser.setText("")
+            self.ui.notes_webView.setHtml("")
             self.ui.hiddenNotes_label.setText("")
-            self.ui.notesSummary_textBrowser.setText("")
             self.ui.bpe_groupBox.setTitle(_("BPE"))
             self.ui.bpe_textBrowser.setText("")
             self.ui.planSummary_textBrowser.setText("")
@@ -761,9 +760,9 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.summaryChartWidget):
                 chart.clear()
                 chart.update()
-            self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
-            self.ui.moneytextBrowser.setHtml("")
-            self.ui.reception_notes_textBrowser.setHtml(localsettings.message)
+            self.ui.notesSummary_webView.setHtml(localsettings.message)
+            self.ui.moneytextBrowser.setHtml(localsettings.message)
+            self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
             self.ui.pt_diary_treeView.setModel(None)
             self.ui.notesEnter_textEdit.setHtml("")
@@ -792,13 +791,26 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
 
     def load_receptionSummaryPage(self):
-        estimateHtml=estimates.toBriefHtml(self.pt)
-        self.ui.moneytextBrowser.setText(estimateHtml)
-        appt_gui_module.layout_ptDiary(self)
-        note=notes.notes(self.pt.notes_dict,1, True)
-        #--notes not verbose
-        self.ui.reception_notes_textBrowser.setHtml(note)
-        self.ui.reception_notes_textBrowser.scrollToAnchor('anchor')
+        '''
+        load the reception views
+        '''
+        if self.pt.serialno == 0:
+            self.ui.moneytextBrowser.setHtml(localsettings.message)
+        else:
+            estimateHtml = estimates.toBriefHtml(self.pt)
+            self.ui.moneytextBrowser.setText(estimateHtml)
+            appt_gui_module.layout_ptDiary(self)
+            note = notes.rec_notes(self.pt.notes_dict)
+            self.ui.recNotes_webView.setHtml(note)
+    
+    def webviewloaded(self):
+        '''
+        a notes web view has loaded..
+        scroll to the bottom
+        '''
+        wv = self.sender()
+        wf = wv.page().mainFrame() 
+        wf.setScrollBarValue(0, wf.scrollBarMaximum(0))
 
     def load_newEstPage(self):
         '''
@@ -1347,15 +1359,17 @@ class openmolarGui(QtGui.QMainWindow):
         self.getrecord(self.pt.serialno)
 
     def updateNotesPage(self):
+        
         if self.ui.notesMaximumVerbosity_radioButton.isChecked():
-            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notes_dict, 2))
-            #--2=verbose
+            note_html = notes.notes(self.pt.notes_dict, 2) #--2=verbose
         elif self.ui.notesMediumVerbosity_radioButton.isChecked():
-            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notes_dict, 1))
-        else: #self.ui.notesMinimumVerbosity_radioButton.isChecked():
-            self.ui.notesBrowser.setHtml(notes.notes(self.pt.notes_dict))
-        self.ui.notesBrowser.scrollToAnchor('anchor')
-
+            note_html = notes.notes(self.pt.notes_dict, 1)
+        elif self.ui.notesReceptionOnly_radioButton.isChecked():
+            note_html = notes.rec_notes(self.pt.notes_dict)
+        else:
+            note_html = notes.notes(self.pt.notes_dict)
+        self.ui.notes_webView.setHtml(note_html)
+        
     def loadpatient(self):
         '''
         self.pt is now a patient... time to push to the gui.
@@ -1381,9 +1395,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         note=notes.notes(self.pt.notes_dict, ignoreRec=True)
         #--notes not verbose
-        self.ui.notesSummary_textBrowser.setHtml(note)
-        self.ui.notesSummary_textBrowser.scrollToAnchor('anchor')
-        self.ui.notesBrowser.setHtml("")
+        self.ui.notesSummary_webView.setHtml(note)
+        self.ui.notes_webView.setHtml("")
         self.ui.notesEnter_textEdit.setText("")
         for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
         self.ui.completedChartWidget, self.ui.perioChartWidget,
@@ -1655,10 +1668,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
-        self.ui.moneytextBrowser.setHtml("")
-        self.ui.reception_notes_textBrowser.setHtml(localsettings.message)
-        self.ui.notesSummary_textBrowser.setHtml(localsettings.message)
-
+        self.ui.moneytextBrowser.setHtml(localsettings.message)
+        self.ui.recNotes_webView.setHtml("")
+        self.ui.notesSummary_webView.setHtml(localsettings.message)
+        
         today=QtCore.QDate().currentDate()
         self.ui.daybookEndDateEdit.setDate(today)
         self.ui.daybookStartDateEdit.setDate(today)
@@ -2012,9 +2025,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.pt.getNotesTuple()
                 #--reload the notes
                 html = notes.notes(self.pt.notes_dict, ignoreRec=True)
-                self.ui.notesSummary_textBrowser.setHtml(html)
-                self.ui.notesSummary_textBrowser.scrollToAnchor("anchor")
-
+                self.ui.notesSummary_webView.setHtml(html)
+                
                 if self.ui.tabWidget.currentIndex() == 3:
                     self.load_receptionSummaryPage()
 
@@ -2972,6 +2984,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.signals_forum()
         self.signals_history()
         self.signals_bulk_mail()
+        self.signals_notes()
 
     def signals_miscbuttons(self):
         '''
@@ -3089,6 +3102,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.printGP17_pushButton,
         QtCore.SIGNAL("clicked()"), self.printGP17_clicked)
+
+    def signals_notes(self):
+        '''
+        all the notes browsers need to send a signal when they have loaded
+        so that they can be scrolled to the end
+        '''
+        for wv in (self.ui.recNotes_webView, self.ui.notes_webView,
+        self.ui.notesSummary_webView):
+            QtCore.QObject.connect(wv,
+            QtCore.SIGNAL("loadFinished(bool)"), self.webviewloaded)
 
     def signals_printing(self):
         '''
@@ -3485,12 +3508,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                                QtCore.SIGNAL("clicked()"), self.defaultNP)
     def signals_notesPage(self):
         #notes page
-        QtCore.QObject.connect(self.ui.notesMaximumVerbosity_radioButton,
-                               QtCore.SIGNAL("clicked()"), self.updateNotesPage)
-        QtCore.QObject.connect(self.ui.notesMinimumVerbosity_radioButton,
-                               QtCore.SIGNAL("clicked()"), self.updateNotesPage)
-        QtCore.QObject.connect(self.ui.notesMediumVerbosity_radioButton,
-                               QtCore.SIGNAL("clicked()"), self.updateNotesPage)
+        for rb in (self.ui.notesReceptionOnly_radioButton,
+        self.ui.notesMaximumVerbosity_radioButton,
+        self.ui.notesMinimumVerbosity_radioButton,
+        self.ui.notesMediumVerbosity_radioButton):
+            QtCore.QObject.connect(rb,
+            QtCore.SIGNAL("clicked()"), self.updateNotesPage)
+        
     def signals_periochart(self):
 
         #periochart

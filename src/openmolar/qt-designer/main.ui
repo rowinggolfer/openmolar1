@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>2</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>748</width>
+                        <width>762</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1745,8 +1745,8 @@
                       <property name="geometry">
                        <rect>
                         <x>0</x>
-                        <y>0</y>
-                        <width>748</width>
+                        <y>-39</y>
+                        <width>762</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -1957,7 +1957,7 @@
                           <item>
                            <widget class="QTreeWidget" name="prevCorres_treeWidget">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -1985,7 +1985,7 @@
                           <item>
                            <widget class="QTreeWidget" name="importDoc_treeWidget">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -2169,7 +2169,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>777</width>
+                        <width>791</width>
                         <height>473</height>
                        </rect>
                       </property>
@@ -2339,13 +2339,27 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QTextBrowser" name="reception_notes_textBrowser">
+                          <widget class="QGroupBox" name="groupBox_13">
                            <property name="maximumSize">
                             <size>
-                             <width>200</width>
+                             <width>180</width>
                              <height>16777215</height>
                             </size>
                            </property>
+                           <property name="title">
+                            <string>Notes</string>
+                           </property>
+                           <layout class="QVBoxLayout" name="verticalLayout_34">
+                            <item>
+                             <widget class="QWebView" name="recNotes_webView">
+                              <property name="url">
+                               <url>
+                                <string>about:blank</string>
+                               </url>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
                           </widget>
                          </item>
                         </layout>
@@ -2620,7 +2634,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>769</width>
+                        <width>783</width>
                         <height>465</height>
                        </rect>
                       </property>
@@ -2655,8 +2669,29 @@
                          </property>
                         </widget>
                        </item>
+                       <item row="1" column="0" colspan="2">
+                        <widget class="QLineEdit" name="synopsis_lineEdit">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                           <weight>75</weight>
+                           <italic>true</italic>
+                           <bold>true</bold>
+                          </font>
+                         </property>
+                         <property name="maxLength">
+                          <number>140</number>
+                         </property>
+                        </widget>
+                       </item>
                        <item row="2" column="0" rowspan="2">
-                        <widget class="QTextBrowser" name="notesSummary_textBrowser"/>
+                        <widget class="QWebView" name="notesSummary_webView">
+                         <property name="url">
+                          <url>
+                           <string>about:blank</string>
+                          </url>
+                         </property>
+                        </widget>
                        </item>
                        <item row="2" column="1">
                         <widget class="QGroupBox" name="bpe_groupBox">
@@ -2819,21 +2854,6 @@
                          </item>
                         </layout>
                        </item>
-                       <item row="1" column="0" colspan="2">
-                        <widget class="QLineEdit" name="synopsis_lineEdit">
-                         <property name="font">
-                          <font>
-                           <pointsize>10</pointsize>
-                           <weight>75</weight>
-                           <italic>true</italic>
-                           <bold>true</bold>
-                          </font>
-                         </property>
-                         <property name="maxLength">
-                          <number>140</number>
-                         </property>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
                     </widget>
@@ -2866,13 +2886,20 @@
                     </widget>
                    </item>
                    <item row="0" column="2">
+                    <widget class="QRadioButton" name="notesReceptionOnly_radioButton">
+                     <property name="text">
+                      <string>reception only</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="3">
                     <widget class="QRadioButton" name="notesMinimumVerbosity_radioButton">
                      <property name="text">
                       <string>minimum</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="3">
+                   <item row="0" column="4">
                     <widget class="QRadioButton" name="notesMediumVerbosity_radioButton">
                      <property name="text">
                       <string>medium</string>
@@ -2882,15 +2909,21 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="4">
+                   <item row="0" column="5">
                     <widget class="QRadioButton" name="notesMaximumVerbosity_radioButton">
                      <property name="text">
                       <string>maximum</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0" colspan="5">
-                    <widget class="QTextBrowser" name="notesBrowser"/>
+                   <item row="1" column="0" colspan="6">
+                    <widget class="QWebView" name="notes_webView">
+                     <property name="url">
+                      <url>
+                       <string>about:blank</string>
+                      </url>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -2918,7 +2951,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>565</width>
+                        <width>579</width>
                         <height>467</height>
                        </rect>
                       </property>
@@ -3118,7 +3151,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>515</width>
+                           <width>529</width>
                            <height>207</height>
                           </rect>
                          </property>
@@ -3524,7 +3557,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>771</width>
+                        <width>785</width>
                         <height>467</height>
                        </rect>
                       </property>
@@ -3945,7 +3978,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>117</width>
+                    <width>110</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4887,8 +4920,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>287</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -6319,7 +6352,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>aptOVnextmonth</tabstop>
   <tabstop>accounts_tableWidget</tabstop>
   <tabstop>printSelectedAccounts_pushButton</tabstop>
-  <tabstop>notesBrowser</tabstop>
   <tabstop>scrollArea_4</tabstop>
   <tabstop>titleEdit</tabstop>
   <tabstop>fnameEdit</tabstop>
@@ -6348,7 +6380,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>familyNewPatient_pushButton</tabstop>
   <tabstop>printEst_pushButton</tabstop>
   <tabstop>scrollArea_6</tabstop>
-  <tabstop>notesSummary_textBrowser</tabstop>
   <tabstop>bpe_textBrowser</tabstop>
   <tabstop>newBPE_pushButton</tabstop>
   <tabstop>planSummary_textBrowser</tabstop>
