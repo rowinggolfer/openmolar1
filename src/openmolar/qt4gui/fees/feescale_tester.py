@@ -25,12 +25,10 @@ class test_dialog(Ui_codeChecker.Ui_Dialog,QtGui.QDialog):
         self.check_codes)
         QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"), 
         self.check_codes)
-        QtCore.QObject.connect(self.xml_pushButton, QtCore.SIGNAL("clicked()"), 
-        self.showTable)    
-    
+        
     def check_codes(self):
         tx = str(self.lineEdit.text().toAscii())
-        print "checking",tx
+        #print "checking",tx
         
         self.dec_listWidget.clear()
         self.adult_listWidget.clear()        
@@ -43,17 +41,6 @@ class test_dialog(Ui_codeChecker.Ui_Dialog,QtGui.QDialog):
             code, f, p, desc = self.table.toothCodeWizard(tooth, tx.upper())
             result = "%s - %s %s"% (tooth.upper(), code, desc)
             self.adult_listWidget.addItem(result)
-
-    def showTable(self):
-        dialog2 = QtGui.QDialog(self)
-        te = QtGui.QPlainTextEdit(dialog2)
-        te.setMinimumSize(800,600)
-        
-        text = self.table.data.replace("</item>","</item>\n")
-        text = text.replace("<item>","\n<item>")
-        text = text.replace("><","> <")
-        te.setPlainText(text)
-        dialog2.show()
 
 
 if __name__ == "__main__":

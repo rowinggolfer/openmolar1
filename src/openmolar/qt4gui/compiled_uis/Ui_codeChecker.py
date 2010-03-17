@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/codeChecker.ui'
 #
-# Created: Wed Mar 17 15:27:44 2010
+# Created: Wed Mar 17 23:05:53 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,9 +42,6 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.pushButton)
         spacerItem = QtGui.QSpacerItem(345, 26, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.xml_pushButton = QtGui.QPushButton(Dialog)
-        self.xml_pushButton.setObjectName("xml_pushButton")
-        self.horizontalLayout.addWidget(self.xml_pushButton)
         self.gridLayout.addLayout(self.horizontalLayout, 3, 0, 1, 3)
 
         self.retranslateUi(Dialog)
@@ -57,5 +54,4 @@ class Ui_Dialog(object):
         self.label_3.setText(_( u"Tooth Code"))
         self.lineEdit.setToolTip(_( u"Enter a filling or restoration code, and check that your feetable finds the correct itemcode"))
         self.pushButton.setText(_( u"go"))
-        self.xml_pushButton.setText(_( u"show table xml"))
 

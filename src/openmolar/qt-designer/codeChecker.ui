@@ -82,13 +82,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="QPushButton" name="xml_pushButton">
-       <property name="text">
-        <string>show table xml</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>

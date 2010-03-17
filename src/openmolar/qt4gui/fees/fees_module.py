@@ -180,6 +180,38 @@ def feetester(om_gui):
     dl = feescale_tester.test_dialog(table, Dialog)
     Dialog.exec_()
 
+def showTableXML(om_gui):
+        dialog2 = QtGui.QDialog()
+        te = QtGui.QPlainTextEdit(dialog2)
+        te.setMinimumSize(800,600)
+        
+        text = om_gui.ui.feeScales_treeView.model().table.data
+        text = text.replace("</item>","</item>\n")
+        text = text.replace("<item>","\n<item>")
+        te.setPlainText(text)
+        dialog2.show()
+        if dialog2.exec_():
+            pass
+        
+def apply_all_table_changes(om_gui):
+    '''
+    apply changes to the tables
+    '''
+    updated_tables = []
+    for table in localsettings.FEETABLES.tables.values():
+        if table.dirty:            
+            if table.saveDataToDB():
+                updated_tables.append(table.tablename)
+        
+    if updated_tables:
+        message = _("The following tables were altered")+ "<ul>"
+        for tablename in updated_tables:
+            message += "<li>%s</li>"% tablename  
+        om_gui.advise(message + "</ul>", 1)
+        return True
+    else:
+        om_gui.advise(_("No changes apllied"),1)                    
+
 def table_clicked(om_gui, index):
     '''
     user has clicked an item on the feetable.
@@ -204,10 +236,7 @@ def table_clicked(om_gui, index):
         result, edited_item = dl.getInput()
         if result:
             if edited_item.table.alterItem(edited_item):
-                if edited_item.table.saveDataToDB():
-                    om_gui.advise("Change applied",1)
-                else:
-                    om_gui.advise("Change failed",1)                    
+                om_gui.dirty_feetable()
             
     def apply(arg):
         '''
@@ -224,15 +253,19 @@ def table_clicked(om_gui, index):
     ptno = om_gui.pt.serialno 
     if ptno != 0:
         menu.addAction(_("Add to tx plan of patient")+" %d"% ptno)
-        menu.addSeparator()                
-    menu.addAction(_("Adjust / edit this Item"))
-    menu.addSeparator()
-    menu.addAction(_("Delete Item"))
-    menu.addAction(_("Insert New Item"))
+        if om_gui.ui.feescale_adjust_checkBox.isChecked():
+            menu.addSeparator()                
 
-    choice = menu.exec_(om_gui.cursor().pos())
-    if choice:
-        apply(choice)
+    if om_gui.ui.feescale_adjust_checkBox.isChecked():
+        menu.addAction(_("Adjust / edit this Item"))
+        menu.addAction(_("Delete Item"))
+        menu.addAction(_("Insert New Item"))
+
+    if not menu.isEmpty():
+        menu.setDefaultAction(menu.actions()[0])
+        choice = menu.exec_(om_gui.cursor().pos())
+        if choice:
+            apply(choice)
 
 def feeSearch(om_gui):
     '''

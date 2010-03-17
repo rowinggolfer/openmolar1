@@ -31,7 +31,7 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         self.signals()
         
         self.loadData()
-        self.initial_generatedXml = self.fee_item.to_xml()
+        self.initial_generatedXml = self.fee_item.to_xml(True)
         
     def regex_toggle(self, arg):
         '''
@@ -137,7 +137,7 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         else:
             self.fee_item.ptFees = ()
             
-        self.xml_plainTextEdit.setPlainText(self.fee_item.to_xml())
+        self.xml_plainTextEdit.setPlainText(self.fee_item.to_xml(True))
         
     def testItem(self, xml_to_test = None, report = True):
         '''
@@ -264,7 +264,7 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         if self.dialog.exec_():
             if self.tabWidget.currentIndex() == 0:
                 self.apply_wizard_changes()
-                newXML = self.fee_item.to_xml()
+                newXML = self.fee_item.to_xml(True)
             else:
                 newXML = str(self.xml_plainTextEdit.toPlainText())
                 

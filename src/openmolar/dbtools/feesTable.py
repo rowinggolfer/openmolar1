@@ -142,6 +142,8 @@ class feeTable():
         self.feeColCount = 0
         self.data = ""
         self.pl_cmp_Categories = plan.tup_Atts + ("CHART",)
+        self.dirty = False  # a boolean which indicates whether the table
+                            #is in db state
         
     def __repr__(self):
         '''
@@ -202,6 +204,8 @@ class feeTable():
         result = cursor.execute(query, values)
         if result:
             db.commit()
+        
+        self.dirty = False                
         return result
     
     def alterItem(self, item):
@@ -215,9 +219,12 @@ class feeTable():
         for node in nodeList:
             codes = node.getElementsByTagName("code")
             for code in codes:
-                if code.firstChild.data == item.itemcode:
+                if code.firstChild.data.strip() == item.itemcode:
                     node.parentNode.replaceChild(newnode.firstChild, node)
-                    self.data = dom.toxml()
+                    newdata = dom.toxml()
+                    if self.data != newdata:
+                        self.dirty = True
+                        self.data = newdata
                     dom.unlink()
                     return True
             
@@ -373,8 +380,8 @@ class feeTable():
             "%s-%ssurf"%(material, no_of_surfaces))
         #######################################################################
         '''
-        print 'no match in %s getToothCode for %s - %s RETURNING 4001'% (
-        self.tablename, tooth, arg)
+        #print 'no match in %s getToothCode for %s - %s RETURNING 4001'% (
+        #self.tablename, tooth, arg)
         return ""
         
     #@localsettings.debug
@@ -500,12 +507,13 @@ class feeItemClass(object):
         for node in nodeList:
             codes = node.getElementsByTagName("code")
             for code in codes:
-                if code.firstChild.data == self.itemcode:
+                if code.firstChild.data.strip() == self.itemcode:
                     retarg = node.toprettyxml()
                     retarg = retarg.replace("\t", "    ")
                     dom.unlink()
                     return retarg
-    
+        return _("not found")
+        
     def from_xml(self, item):
         section = getTextFromNode(item, "section")
         oldcode = getTextFromNode(item, "oldcode")
@@ -536,7 +544,7 @@ class feeItemClass(object):
             self.addBriefDescription(bd)
              
         
-    def to_xml(self, pretty=True):
+    def to_xml(self, pretty=False):
         '''
         convert the current object to an xml representation
         ''' 
@@ -808,10 +816,9 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
     dl = Ui_codeChecker.Ui_Dialog()
     dl.setupUi(Dialog)
+    Dialog.setWindowTitle(table.tablename)
     Dialog.connect(dl.pushButton, QtCore.SIGNAL("clicked()"), check_codes)
     Dialog.connect(dl.lineEdit, QtCore.SIGNAL("returnPressed()"), check_codes)
-    Dialog.connect(dl.rel_pushButton, QtCore.SIGNAL("clicked()"), reloadTables)
-    Dialog.connect(dl.xml_pushButton, QtCore.SIGNAL("clicked()"), showTable)    
     
     Dialog.exec_()
     app.closeAllWindows()

@@ -148,7 +148,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
         self.wikiloaded = False
-
+        self.ui.feescale_commit_pushButton.setEnabled(False)
+        
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -190,13 +191,23 @@ class openmolarGui(QtGui.QMainWindow):
         check for unsaved changes then politely close the app if appropriate
         '''
         print "quit called"
-        if self.okToLeaveRecord():
-            #TODO - save some settings here????
-            utilities.deleteTempFiles()
-            pass
-        else:
-            print "user overuled"
+        okToLeave = True
+        if not self.okToLeaveRecord():
             event.ignore()
+            return
+        if self.ui.feescale_commit_pushButton.isEnabled():
+            result = QtGui.QMessageBox.question(self, _("Decision Required"),
+            "<p>" + _("you have unsaved changes to your feetables") + 
+            "<br />" + _("commit now?") + "</p>",  
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No|
+            QtGui.QMessageBox.Cancel, 
+            QtGui.QMessageBox.Yes)
+            if result == QtGui.QMessageBox.Yes:
+                self.feescale_commit()
+            elif result == QtGui.QMessageBox.Cancel:
+                event.ignore()
+                return                
+        utilities.deleteTempFiles()
 
     def fullscreen(self):
         if self.ui.actionFull_Screen_Mode_Ctrl_Alt_F.isChecked():
@@ -2540,13 +2551,43 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         add custom items to the treatment plan
         '''
         add_tx_to_plan.customAdd(self)
-
+        
+    def feescale_allowed_edit(self, checked):
+        '''
+        user has toggled the option to allow feescale edit
+        requires increased privileges
+        '''
+        if not(checked and permissions.granted(self)):
+            self.ui.feescale_adjust_checkBox.setChecked(False)
+            
     def feeScaleTreatAdd(self, item):
         '''
         add an item directly from the feescale
         '''
         add_tx_to_plan.fromFeeTable(self, item)
 
+    def feescale_commit(self):
+        '''
+        user has called for db changes to be committed
+        '''
+        if fees_module.apply_all_table_changes(self):
+            self.dirty_feetable(False)
+    
+    def dirty_feetable(self, dirty=True):
+        '''
+        indicate one (or more) feetables has uncommitted changes and 
+        enable the save button
+        '''
+        self.ui.feescale_commit_pushButton.setEnabled(dirty)
+        ss = ("background-color: %s"% colours.med_warning) if dirty else ""
+        self.ui.feescale_commit_pushButton.setStyleSheet(ss)
+    
+    def feetable_xml(self):
+        '''
+        user has asked to see the feetable raw data
+        '''
+        fees_module.showTableXML(self)
+        
     def toothTreatAdd(self, tooth, properties):
         '''
         properties for tooth has changed.
@@ -3438,6 +3479,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         
         QtCore.QObject.connect(self.ui.feescale_tester_pushButton,
         QtCore.SIGNAL("clicked()"), self.feescale_tester_pushButton_clicked)
+        
+        QtCore.QObject.connect(self.ui.feetable_xml_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.feetable_xml)    
+    
+        QtCore.QObject.connect(self.ui.feescale_commit_pushButton,
+        QtCore.SIGNAL("clicked()"), self.feescale_commit)
+        
+        QtCore.QObject.connect(self.ui.feescale_adjust_checkBox,
+        QtCore.SIGNAL("stateChanged (int)"), self.feescale_allowed_edit)
 
     def signals_charts(self):
 
