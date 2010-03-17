@@ -154,9 +154,10 @@ class feeTable():
         '''
         the categories will be a list like "P", "PB" etc...
         '''
+        
         cats = arg.split(",")
         self.categories = cats
-        
+            
     def setTableDescription(self, arg):
         '''
         a user friendly description of the table
@@ -191,12 +192,18 @@ class feeTable():
         '''
         db = connect.connect()
         cursor = db.cursor()
-        query = "update feetable_key set data=%s where tablename=%s"
-        values = (self.data, self.tablename)
-        print query, values[1]
-        print cursor.execute(query, values)
-        db.commit()
+        query = "update feetable_key set data=%s where tablename = %s"
         
+        values = (self.data, self.tablename)
+        if localsettings.logqueries:
+            print query
+            print values[0][:30]
+            print values[1]
+        result = cursor.execute(query, values)
+        if result:
+            db.commit()
+        return result
+    
     def alterItem(self, item):
         '''
         update an Item
@@ -210,6 +217,7 @@ class feeTable():
             for code in codes:
                 if code.firstChild.data == item.itemcode:
                     node.parentNode.replaceChild(newnode.firstChild, node)
+                    self.data = dom.toxml()
                     dom.unlink()
                     return True
             
@@ -747,7 +755,6 @@ ptFees                =  %s'''% (self.table.tablename,
                     fee = maxFee
 
             return fee
-
 
 if __name__ == "__main__":
 

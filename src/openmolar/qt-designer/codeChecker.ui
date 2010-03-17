@@ -27,6 +27,13 @@
    <item row="2" column="2">
     <widget class="QListWidget" name="adult_listWidget"/>
    </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Deciduous</string>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -43,6 +50,9 @@
          <width>200</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Enter a filling or restoration code, and check that your feetable finds the correct itemcode</string>
        </property>
       </widget>
      </item>
@@ -73,27 +83,13 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="rel_pushButton">
-       <property name="text">
-        <string>reload fees</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="xml_pushButton">
        <property name="text">
-        <string>table xml</string>
+        <string>show table xml</string>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Deciduous</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

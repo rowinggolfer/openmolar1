@@ -2441,6 +2441,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         fees_module.feeSearch(self)
 
+    def feescale_tester_pushButton_clicked(self):
+        '''
+        show the feescale tester dialog
+        '''
+        fees_module.feetester(self)
+
     def nhsRegs_pushButton_clicked(self):
         '''
         user should be offered a PDF of the current regulations
@@ -3429,6 +3435,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
+        
+        QtCore.QObject.connect(self.ui.feescale_tester_pushButton,
+        QtCore.SIGNAL("clicked()"), self.feescale_tester_pushButton_clicked)
 
     def signals_charts(self):
 

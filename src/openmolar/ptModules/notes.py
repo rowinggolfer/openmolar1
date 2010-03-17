@@ -58,28 +58,28 @@ def rec_notes(notes_dict):
     for key in keys: 
         date, op = key
         notes = get_notes_for_date(notes_dict[key])
-        if "REC" in op:
-            d = get_date_from_date(date)
+        d = get_date_from_date(date)
+        ests = get_estimate_for_date(notes_dict[key])            
+        rec = get_reception_for_date(notes_dict[key])
+        if ests or rec:
             if d != previousdate:
                 previousdate = d
                 retarg += '<div class="recep_date">%s'% d
                 divopen = True
-            ests = get_estimate_for_date(notes_dict[key])            
-            rec = get_reception_for_date(notes_dict[key])
-            if ests or rec:
-                retarg += "<ul>"
-                if ests: 
-                    retarg += '<li class="recep_note">%s</li>'% ests
-                if rec:
-                    rec = rec.replace("<li>",'<li class="recep_note">')
-                    rec = rec.replace("PRINTED:", 
-                    '<img src=%s height="12" align="left">'% (
-                    localsettings.printer_png))
-                    rec = rec.replace("RECEIVED:", 
-                    '<img src=%s height="12" align="left">'% (
-                    localsettings.money_png))
-                    retarg += rec 
-                retarg += "</ul>"
+
+            retarg += "<ul>"
+            if ests: 
+                retarg += '<li class="recep_note">%s</li>'% ests
+            if rec:
+                rec = rec.replace("<li>",'<li class="recep_note">')
+                rec = rec.replace("PRINTED:", 
+                '<img src=%s height="12" align="left">'% (
+                localsettings.printer_png))
+                rec = rec.replace("RECEIVED:", 
+                '<img src=%s height="12" align="left">'% (
+                localsettings.money_png))
+                retarg += rec 
+            retarg += "</ul>"
         if divopen:
             retarg += "</div>"
             divopen = False

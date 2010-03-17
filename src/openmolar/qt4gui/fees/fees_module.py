@@ -22,6 +22,8 @@ patient_write_changes
 from openmolar.settings import localsettings
 from openmolar.qt4gui.fees import fee_table_model
 from openmolar.qt4gui.fees import edit_feeitem_dialog
+from openmolar.qt4gui.fees import feescale_tester
+
 
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import paymentwidget
@@ -168,7 +170,16 @@ def loadFeesTable(om_gui):
     om_gui.ui.feescales_available_label.setText(text) 
     
     print "loaded feesTable, %d fee models in use"% n
-    
+
+def feetester(om_gui):
+    '''
+    raise an app which allows a few tests of the feetable logic
+    '''
+    Dialog = QtGui.QDialog()
+    table = om_gui.ui.feeScales_treeView.model().table
+    dl = feescale_tester.test_dialog(table, Dialog)
+    Dialog.exec_()
+
 def table_clicked(om_gui, index):
     '''
     user has clicked an item on the feetable.
@@ -193,7 +204,10 @@ def table_clicked(om_gui, index):
         result, edited_item = dl.getInput()
         if result:
             if edited_item.table.alterItem(edited_item):
-                edited_item.table.saveDataToDB()
+                if edited_item.table.saveDataToDB():
+                    om_gui.advise("Change applied",1)
+                else:
+                    om_gui.advise("Change failed",1)                    
             
     def apply(arg):
         '''

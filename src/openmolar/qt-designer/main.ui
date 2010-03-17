@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>6</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>762</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1745,7 +1745,7 @@
                       <property name="geometry">
                        <rect>
                         <x>0</x>
-                        <y>-39</y>
+                        <y>0</y>
                         <width>762</width>
                         <height>504</height>
                        </rect>
@@ -2169,8 +2169,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>791</width>
-                        <height>473</height>
+                        <width>455</width>
+                        <height>403</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2634,8 +2634,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>783</width>
-                        <height>465</height>
+                        <width>608</width>
+                        <height>429</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_4">
@@ -2951,8 +2951,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>579</width>
-                        <height>467</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3151,8 +3151,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>529</width>
-                           <height>207</height>
+                           <width>98</width>
+                           <height>200</height>
                           </rect>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3184,7 +3184,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3557,8 +3557,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>785</width>
-                        <height>467</height>
+                        <width>267</width>
+                        <height>392</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -5758,6 +5758,13 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 </spacer>
                </item>
                <item>
+                <widget class="QPushButton" name="feescale_tester_pushButton">
+                 <property name="text">
+                  <string>Feesscale Tester</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QFrame" name="frame_7">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
@@ -5808,19 +5815,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </item>
                  </layout>
                 </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>162</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
               </layout>
              </widget>
