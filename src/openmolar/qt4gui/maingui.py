@@ -1482,14 +1482,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def medalert(self):
         if self.pt.MEDALERT:
-            palette = QtGui.QPalette()
-            brush = QtGui.QBrush(colours.med_warning)
-            palette.setBrush(QtGui.QPalette.Active,
-                             QtGui.QPalette.Button, brush)
-            self.ui.medNotes_pushButton.setPalette(palette)
+            self.ui.medNotes_pushButton.setStyleSheet(
+            "background-color: %s"% colours.med_warning )
         else:
-            self.ui.medNotes_pushButton.setPalette(self.palette())
-
+            self.ui.medNotes_pushButton.setStyleSheet("")
+        
         if self.pt.MH != None:
             mhdate=self.pt.MH[13]
             if mhdate == None:

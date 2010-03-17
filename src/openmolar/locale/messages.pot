@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-03-17 01:19+GMT\n"
+"POT-Creation-Date: 2010-03-17 01:28+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -408,7 +408,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/saveDiscardCancel.py:82
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:273
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:84
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3750
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3747
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:57
 msgid "Confirm"
 msgstr ""
@@ -2890,7 +2890,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2924
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1527
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1524
 msgid "Close Course"
 msgstr ""
 
@@ -3478,7 +3478,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3076
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1728
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1725
 msgid "FORUM"
 msgstr ""
 
@@ -5423,7 +5423,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:108
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1979
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1976
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:185
@@ -5891,39 +5891,39 @@ msgstr ""
 msgid "problem getting a memo %s"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1722
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1719
 msgid "NEW FORUM POSTS"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1944
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1941
 msgid "POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2004
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2001
 msgid "Sucessfully altered the following items"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2230
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2227
 msgid "no record selected"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3735
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3732
 msgid "Scrap the estimate and re-price everything?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3751
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3748
 msgid "apply an exmption to this estimate?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3756
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3753
 msgid "input needed"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3757
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3754
 msgid "maximum charge for the patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3757
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3754
 msgid "please enter the amount in pence, or leave as 0 for full exmption"
 msgstr ""
 
