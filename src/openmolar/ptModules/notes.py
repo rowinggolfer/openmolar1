@@ -159,7 +159,7 @@ def notes(notes_dict, verbosity=0, ignoreRec=False):
 
             newline += "</tr>"
     retarg += newline    
-    retarg += '</table></div>\n<a name="anchor"></a>END</body></html>'
+    retarg += '</table></div></body></html>'
     
     return retarg 
 

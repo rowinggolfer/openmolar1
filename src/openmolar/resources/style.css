@@ -17,10 +17,10 @@ h1{text-align:center;}
 ul{list-style:none;padding-left:0px;}
 li.about{list-style:none;color:blue;padding-left:0px}
 
-li.recep_note{font-size:10pt;list-style-type:none;padding-left:0px;background-color:#ffeedd;}
+li.recep_note{font-size:9pt;list-style-type:none;padding-left:0px;background-color:#ffeedd;}
 
 /* -- reception_notes -- */
-.recep_date{background-color:#eeeeee;padding-left:0px;}
+.recep_date{font-size:9pt;font-style:bold;background-color:#eeeeee;}
 
 /*-- th and td --*/
 table{width:100%;}
