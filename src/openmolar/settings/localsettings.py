@@ -111,9 +111,9 @@ wkdir = determine_path()
 referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
 appt_shortcut_file = os.path.join(wkdir, "resources",
 "appointment_shortcuts.xml")
-stylesheet = os.path.join(wkdir, "resources", "style.css")
-printer_png =  os.path.join(wkdir, "resources", "icons", "ps.png")
-money_png =  os.path.join(wkdir, "resources", "icons", "vcard.png")
+stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
+printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
+money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
 
 resources_path = os.path.join(wkdir, "resources")
 
@@ -126,14 +126,13 @@ if "win" in sys.platform:
     #-- imports for the css stuff eg... ../resources/style.css
     #-- on linux, the root is always /  on windows... ??
     os.chdir(wkdir)
-    resources_path = ("resources")
-    stylesheet = ("resources/style.css")
+    resources_path = "resources"
+    stylesheet = "resources/style.css"
     printer_png = "resources/icons/ps.png"
     money_png =  "resources/icons/vcard.png"
 
     GP17_LEFT = 15
     GP17_RIGHT = 15
-
 
 else:
     if "linux" in sys.platform:
@@ -777,8 +776,11 @@ def initiate(debug = False):
     message = '''<html><head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head><body><div align="center">
-<img src="%s/html/images/newlogo.png" width="150", height="100", align="left" />
-<img src="%s/html/images/newlogo.png" width="150",height="100", align="right" />
+<img src="file://%s/html/images/newlogo.png" 
+width="150", height="100", align="left" />
+
+<img src="file://%s/html/images/newlogo.png" 
+width="150",height="100", align="right" />
 <h1>Welcome to OpenMolar!</h1><ul><li class="about">Version %s</li>
 <li class="about">Revision %s</li></ul><br clear="all" />
 <p>Your Data is Accessible, and the server reports no issues.</p>

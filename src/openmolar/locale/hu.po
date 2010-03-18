@@ -7,18 +7,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-17 01:36+0000\n"
+"POT-Creation-Date: 2010-03-18 00:18+0000\n"
 "PO-Revision-Date: 2010-03-17 02:10+0000\n"
 "Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-03-17 04:42+0000\n"
+"X-Launchpad-Export-Date: 2010-03-18 04:36+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:64
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2900
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2918
 msgid "Exam"
 msgstr "Vizsgálat"
 
@@ -55,6 +55,10 @@ msgstr "Fogsoros munka"
 msgid "Error - unrecognised practioner- sorry"
 msgstr "Hiba - ismeretlen fogorvos - sajnálom"
 
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:515
+msgid "not found"
+msgstr ""
+
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:13
 msgid "Subject"
 msgstr "Tárgy"
@@ -74,7 +78,7 @@ msgid "Message"
 msgstr "Üzenet"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:14
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2850
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2868
 msgid "Date"
 msgstr "Dátum"
 
@@ -91,18 +95,18 @@ msgid "Serial No"
 msgstr "Sorszám"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:14
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2770
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2788
 msgid "Title"
 msgstr "Megszólítás"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:14
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2777
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2795
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:136
 msgid "First Name"
 msgstr "Keresztnév"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:14
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2779
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2797
 msgid "Surname"
 msgstr "Vezetéknév"
 
@@ -116,7 +120,7 @@ msgstr "Cím"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:16
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:601
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2797
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2815
 msgid "Town"
 msgstr "Település"
 
@@ -136,12 +140,12 @@ msgstr "Fogorvos"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:17
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:602
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2799
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2817
 msgid "County"
 msgstr "Megye"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:17
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3033
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3051
 msgid "Recall Date"
 msgstr "Visszarendelés dátuma"
 
@@ -181,7 +185,7 @@ msgstr "A biztonságosabb telepítés érdekében helyezze át a file-t"
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:130
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:172
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:54
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:165
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:166
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:37
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/new_setup.py:146
 msgid "Error"
@@ -190,7 +194,7 @@ msgstr "Hiba"
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:132
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:36
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:84
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:162
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:163
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:34
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/new_setup.py:143
 msgid "Advisory"
@@ -435,7 +439,7 @@ msgstr "TERV"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/saveDiscardCancel.py:82
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:273
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:84
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3747
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3806
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:57
 msgid "Confirm"
 msgstr "Megerősítés"
@@ -537,7 +541,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/pt_diary_treemodel.py:22
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_aslotEdit.py:87
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2798
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2816
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_showMemo.py:47
 msgid "Memo"
 msgstr "Emlékeztető"
@@ -559,9 +563,9 @@ msgid "you need to be in the static chart to change tooth state"
 msgstr "csak állapotnézetben változtatható a fog státusza"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/charts/charts_gui.py:259
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2896
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2953
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:751
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2914
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2971
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:762
 msgid "BPE"
 msgstr "CPITN"
 
@@ -653,7 +657,7 @@ msgid "Day Finish"
 msgstr "Nap vége"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:60
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3094
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3118
 msgid "Appointment Tools"
 msgstr "Berendelő eszköztár"
 
@@ -683,7 +687,7 @@ msgid "Insert regular blocks"
 msgstr "Szokásos zárolások beillesztése"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptTools.py:67
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3086
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3110
 msgid "&Quit"
 msgstr "&Kilépés"
 
@@ -697,9 +701,9 @@ msgstr "Javasolt időpontok hozzáadása a páciensnaplóhoz"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptWizardItem.py:43
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:216
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2999
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3044
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3054
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3017
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3062
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3072
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_memo_item.py:40
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:296
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_showMemo.py:48
@@ -808,8 +812,8 @@ msgstr "Többnapnyi blokkolás berendelőbe illesztése."
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py:100
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_daylist_print.py:104
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3007
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3014
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3025
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3032
 msgid "Start Date"
 msgstr "Kezdődátum"
 
@@ -1086,7 +1090,7 @@ msgstr ""
 msgid "Please Select the tooth to which this treatment is planned"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:57
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:51
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:215
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_options.py:45
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:167
@@ -1095,29 +1099,27 @@ msgstr ""
 msgid "Dialog"
 msgstr "Párbeszédablak"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:58
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:52
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:677
 msgid "Adult"
 msgstr "Felnőtt"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:59
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:53
+msgid "Deciduous"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:54
 msgid "Tooth Code"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:60
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:55
+msgid ""
+"Enter a filling or restoration code, and check that your feetable finds the "
+"correct itemcode"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:56
 msgid "go"
-msgstr ""
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:61
-msgid "reload fees"
-msgstr ""
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:62
-msgid "table xml"
-msgstr ""
-
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_codeChecker.py:63
-msgid "Deciduous"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_completeTreatment.py:41
@@ -1260,8 +1262,8 @@ msgid "Specify Dates and Practitioners for a Daylist Print Run"
 msgstr "Dátumok és hallgatók kiválasztása napi nyomtatásra"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_daylist_print.py:105
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3008
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3015
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3026
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3033
 msgid "End Date"
 msgstr "Befejező dátum"
 
@@ -1319,7 +1321,7 @@ msgstr "Kód"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estHeaderWidget.py:137
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_model.py:153
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1056
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1067
 msgid "Description"
 msgstr "Leírás"
 
@@ -1331,7 +1333,7 @@ msgstr "Kat"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estHeaderWidget.py:139
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_exam_wizard.py:121
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_hygenist_wizard.py:78
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1056
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1067
 msgid "Type"
 msgstr "Típus"
 
@@ -1344,7 +1346,7 @@ msgid "Charge"
 msgstr "Költség"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estHeaderWidget.py:143
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3041
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3059
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/bulk_mail.py:252
 msgid "Expand All"
 msgstr "Mindent listáz"
@@ -1354,7 +1356,7 @@ msgid "Split Items"
 msgstr "Tételek felosztása"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estimateItemWidget.py:140
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2856
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2874
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newBPE.py:107
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newBPE.py:113
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newBPE.py:119
@@ -1382,8 +1384,8 @@ msgid "1000.00"
 msgstr "1000.00"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estimateItemWidget.py:148
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2918
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2948
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2936
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2966
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/toothprop_fulledit.py:34
 msgid "Completed"
 msgstr "Befejezve"
@@ -1410,8 +1412,8 @@ msgid "Exam Date"
 msgstr "Vizsgálat dátuma"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_exam_wizard.py:127
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2877
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2914
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2895
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2932
 msgid "Notes"
 msgstr "Feljegyzések"
 
@@ -1518,8 +1520,8 @@ msgid "Original (read only)"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_fee_item_wizard.py:232
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2898
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2952
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2916
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2970
 msgid "New"
 msgstr "Új"
 
@@ -1647,7 +1649,7 @@ msgid "Telephone"
 msgstr "Telefon"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:605
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2784
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2802
 msgid "Fax"
 msgstr "Fax"
 
@@ -1917,644 +1919,644 @@ msgstr "Minta betöltése"
 msgid "&Save Template"
 msgstr "&Minta mentése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2754
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2772
 msgid "Open Molar - YOUR dental database application"
 msgstr "Open Molar - Az ÖN fogorvosi szoftvere"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2755
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2773
 msgid "Exit the Current Patient Record."
 msgstr "Aktuális pácienskarton bezárása."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2756
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2774
 msgid "Esc"
 msgstr "Esc"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2757
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2775
 msgid "Add a New Patient to the database."
 msgstr "Új páciens hozzáadása."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2758
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3048
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3068
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2776
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3066
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3092
 msgid "Click on this Button to search for in patient in your database."
 msgstr "A páciensadatbázisban történő kereséshez nyomja meg ezt a gombot."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2759
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3069
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2777
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3093
 msgid "Find"
 msgstr "Keresés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2760
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3049
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3070
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2778
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3067
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3094
 msgid "Ctrl+F"
 msgstr "Ctrl+F"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2761
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2779
 msgid "This cycles back through the history of records loaded today."
 msgstr "Ezzel kereshet vissza a mai napra betöltött adatok között."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2762
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2780
 msgid "Reload the patient from the database."
 msgstr "Pácienskarton újratöltése az adatbázisból."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2763
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2781
 msgid "Ctrl+R"
 msgstr "Ctrl+R"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2764
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2782
 msgid "This cycles forwards through the history of records loaded today."
 msgstr "Ezzel kereshet előre a mai napra betöltött adatok között."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2765
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2783
 msgid ""
 "Show patients who live at the same address, or who have a similar name."
 msgstr "Azonos címen élő, vagy azonos nevű páciensek keresése."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2766
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2784
 msgid "&Related"
 msgstr "&Rokon"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2767
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2785
 msgid "Ctrl+G"
 msgstr "Ctrl+G"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2768
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2786
 msgid "A drop down box of all patients who have an appointment today."
 msgstr "Az összes mai napra berendelt beteget tartalmazó lenyílóablak."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2769
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2944
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2787
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2962
 msgid "Details"
 msgstr "Részletek"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2771
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2789
 msgid "Sex"
 msgstr "Nem"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2772
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2790
 msgid "M"
 msgstr "F"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2773
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2791
 msgid "F"
 msgstr "N"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2774
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2792
 msgid "Tel (home)"
 msgstr "Tel (otthoni)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2775
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2793
 msgid "More Fields are available. Click Here to Edit."
 msgstr "További mezők érhetőek el. Szerkesztéshez kattintson ide."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2776
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2794
 msgid "More"
 msgstr "Több"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2778
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2796
 msgid "Tel (work)"
 msgstr "Tel (munkahely)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2780
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2798
 msgid "Tel (mob)"
 msgstr "Tel (mobil)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2781
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2799
 msgid "send an sms"
 msgstr "sms küldése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2782
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2800
 msgid "sms"
 msgstr "sms"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2783
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2801
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:144
 msgid "Date of Birth"
 msgstr "Születési idő"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2785
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2803
 msgid "send a fax"
 msgstr "fax küldése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2786
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2804
 msgid "fax"
 msgstr "fax"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2787
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2805
 msgid "Address1"
 msgstr "Lakcím1(Város)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2788
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2806
 msgid "email1"
 msgstr "email1"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2789
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2793
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2807
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2811
 msgid "send an email"
 msgstr "email küldése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2790
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2794
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2808
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2812
 msgid "email"
 msgstr "email"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2791
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2809
 msgid "Address2"
 msgstr "Lakcím2(Utca, házszám)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2792
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2810
 msgid "email2"
 msgstr "email2"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2795
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2813
 msgid "Address3"
 msgstr "Lakcím3 (Irányítószám)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2796
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2814
 msgid "Occupation"
 msgstr "Foglalkozás"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2800
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2818
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:149
 msgid "Postcode"
 msgstr "Irányítószám"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2801
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2819
 msgid "New Patients"
 msgstr "Új páciensek"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2802
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2820
 msgid "Use the Sname and Address details from the previous patient."
 msgstr "Előző páciens vezetéknevének és lakcímének használata"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2803
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2821
 msgid "Default Sname / Address"
 msgstr "Alapértelmezett vezetéknév és lakcím"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2804
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2822
 msgid "Not implemented yet."
 msgstr "Ez a funkció még nem működik."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2805
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2823
 msgid "Family"
 msgstr "Család"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2806
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2824
 msgid "Higlighted Fields are Mandatory for New Patients"
 msgstr "A megjelölt mezők kitöltése kötelező"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2807
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2825
 msgid "Patient Details"
 msgstr "Páciens adatok"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2808
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2826
 msgid "Pt is registered with Dentist"
 msgstr "A páciens rendelkezik körzeti fogorvossal"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2809
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2827
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newCourse.py:67
 msgid "Course Type"
 msgstr "Kezelési sorozat típusa"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2810
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2828
 msgid "Status"
 msgstr "Státusz"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2811
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2829
 msgid "Active"
 msgstr "Aktív"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2812
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2830
 msgid "Moved Away"
 msgstr "Elköltözött"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2813
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2831
 msgid "Deceased"
 msgstr "Elhunyt"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2814
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2832
 msgid "Bad Debt"
 msgstr "Adósság"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2815
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2833
 msgid "No More Appts"
 msgstr "Nincs több időpontja"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2816
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2834
 msgid "Write Off Bad Debt"
 msgstr "Adósság leróva"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2817
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2835
 msgid "This label is for displaying Private contractual stuff"
 msgstr "Ez a cimke a magánszerződés részleteit jeleníti meg"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2818
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2821
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2825
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2830
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3000
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2836
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2839
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2843
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2848
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3018
 msgid "Edit"
 msgstr "Szerkesztés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2819
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2837
 msgid "Private"
 msgstr "Magán"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2820
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2838
 msgid "This label is for displaying HDP contractual stuff"
 msgstr "Ez a cimke a HDP szerződéses részleteket jeleníti meg"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2822
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2840
 msgid "Highland Dental Plan"
 msgstr "Highland fogászati terv"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2823
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2841
 msgid "This label is for displaying NHS contractual stuff"
 msgstr "Ez a cimke az OEP szerződéses részleteket jeleníti meg"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2824
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2842
 msgid "View Claims History"
 msgstr "Követeléslista megtekintése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2826
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2844
 msgid "Exemption"
 msgstr "Díjmentesség"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2827
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2845
 msgid "Exemption Text"
 msgstr "Díjmentesség indoklása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2828
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2870
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2846
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2888
 msgid "NHS"
 msgstr "OEP"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2829
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2847
 msgid "No Details of Pt's Registered Dentist Found"
 msgstr "Nincs információ a páciens körzeti fogorvosáról"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2831
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2849
 msgid "Registered Elsewhere"
 msgstr "Máshol szerződött"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2832
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2850
 msgid "Contract"
 msgstr "Szerződés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2833
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2851
 msgid "Letters TO the patient"
 msgstr "Páciensnek küldött levelek"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2834
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2852
 msgid " Custom Letter to the patient"
 msgstr " Egyedi pácienslevél"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2835
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2853
 msgid "Recall management"
 msgstr "Visszarendelés beállításai"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2836
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2854
 msgid "Set the date for a recall to be generated automatically"
 msgstr "Visszarendelési dátum automatikus meghatározása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2837
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2855
 msgid "Date Shortcuts"
 msgstr "Dátum gyorskeresés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2838
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2856
 msgid "1 Month hence"
 msgstr "1 hónap"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2839
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2857
 msgid "3 Months hence"
 msgstr "3 hónap"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2840
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2858
 msgid "6 Months hence"
 msgstr "6 hónap"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2841
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2859
 msgid "12 Months hence"
 msgstr "1 év"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2842
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2860
 msgid "Print a recall saying the patient is due now."
 msgstr "Páciensvisszarendelő nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2843
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2861
 msgid "Print Recall Now"
 msgstr "Visszarendelő nyomtatása most"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2844
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3031
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2862
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3049
 msgid "Accounts"
 msgstr "Egyenlegek"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2845
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2863
 msgid "\"A\" letter"
 msgstr "\"A\" levél"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2846
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2864
 msgid "\"B\" letter"
 msgstr "\"B\" levél"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2847
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2865
 msgid "\"C\" letter"
 msgstr "\"C\" levél"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2848
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2866
 msgid "Print A Statement of Account"
 msgstr "Számlaegyenleg nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2849
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2867
 msgid "Duplicate Receipt"
 msgstr "Számla másolása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2851
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2869
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_raiseCharge.py:57
 msgid "Amount"
 msgstr "Összeg"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2852
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2870
 msgid "Print a receipt - useful for duplicates."
 msgstr "Recept nyomtatása - másolatokhoz használható."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2853
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2860
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2967
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3012
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3020
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2871
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2878
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2985
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3030
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3038
 msgid "Print"
 msgstr "Nyomtatás"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2854
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2872
 msgid "Previous Correspondence"
 msgstr "Előző levelezés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2855
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2873
 msgid "Generated By OpenMolar"
 msgstr "OpenMolar által generált"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2857
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2875
 msgid "Imported into database"
 msgstr "Adatbázisba importált"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2858
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2876
 msgid "Import A Document"
 msgstr "Dokumentum importálása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2859
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2877
 msgid "Referrals (Letters about the patient)"
 msgstr "Ajánlások (levelek a páciensről)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2861
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2879
 msgid "Export this record card"
 msgstr "Aktuális karton exportálása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2862
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2880
 msgid "Print a patient's static chart."
 msgstr "Páciens aktuális státuszának nyomtatása."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2863
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2881
 msgid "Print the Patient's static Chart"
 msgstr "Páciens aktuális státuszának nyomtatása."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2864
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2882
 msgid ""
 "Print a summary of the patient's notes (for them to take on). Includes No "
 "fee details."
 msgstr "Kezelési összesítés nyomtatása (elvitelre). Árakat nem tartalmaz."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2865
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2883
 msgid "Print A Summary of the Notes"
 msgstr "Feljegyzések nyomtatása összesítve"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2866
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2884
 msgid ""
 "Print a summary of the patient's notes. Includes FEE and ESTIMATE details."
 msgstr ""
 "Kezelési összesítés nyomtatása (elvitelre). KÖLTSÉG és ÁRAJÁNLAT részletezve."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2867
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2885
 msgid "Print Detailed Notes"
 msgstr "Feljegyzések részletes nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2868
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2886
 msgid "Correspondence"
 msgstr "Levelezés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2869
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2887
 msgid "Account"
 msgstr "Egyenleg"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2871
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2889
 msgid "Print A GP17"
 msgstr "GP17 nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2872
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2890
 msgid "Apply an Exemption"
 msgstr "Díjmentesség megállapítása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2873
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2891
 msgid "Custom Estimate on File"
 msgstr "Egyedi árajánlat"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2874
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2892
 msgid "Print &Estimate"
 msgstr "Árajánlat nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2875
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2893
 msgid "Print &Account"
 msgstr "Egyenleg nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2876
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2894
 msgid "Take &Payment"
 msgstr "Kivonat &Befizetés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2878
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2896
 msgid "Patient's Diary"
 msgstr "Páciensnapló"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2879
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2897
 msgid "A Wizard to select some common appointment combinations"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2880
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2898
 msgid "Appointment Shortcuts"
 msgstr "Időpont gyorskeresés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2881
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2899
 msgid "A New Appointment for this patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2882
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2900
 msgid "&New"
 msgstr "&Új"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2883
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2901
 msgid "delete or cancel the appointment"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2884
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2902
 msgid "Clear/Cancel"
 msgstr "Töröl/Mégsem"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2885
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2903
 msgid "Make the selected appointment"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2886
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2904
 msgid "Schedule"
 msgstr "Napirend"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2887
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2905
 msgid "Housekeeping - remove all past appointments from the patient's diary"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2888
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2906
 msgid "Delete All Past Appointments"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2889
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2907
 msgid "Find the appointment in the the practice appointment list"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2890
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2908
 msgid "Find in Book"
 msgstr "Keresés számlaegyenlegben"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2891
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2909
 msgid "Print out the next 5 appointments for this patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2892
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2910
 msgid "Print Card"
 msgstr "Cimke nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2893
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2911
 msgid "Allows modifcation of certain criteria for this appointment"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2894
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2912
 msgid "Modify"
 msgstr "Módosít"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2895
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2913
 msgid "Reception"
 msgstr "Recepció"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2897
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2915
 msgid "Update the Basic Perio Exam (CPITN) score"
 msgstr "CPITN értékek aktualizálása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2899
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2917
 msgid "perform a clinical exam"
 msgstr "klinikai vizsgálat végzése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2901
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2919
 msgid "add x-rays to the patient's current course."
 msgstr "röntgenek hozzáadása aktuális kezelési sorozathoz"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2902
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2920
 msgid "X-ray"
 msgstr "Röntgen"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2903
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2921
 msgid "perform common perio treatments"
 msgstr "általános periodontális kezelések elvégzése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2904
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2922
 msgid "Hyg"
 msgstr "Higiénikus"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2905
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2923
 msgid "Close This Course"
 msgstr "Kezelési sorozat lezárása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2906
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2924
 msgid "check / update the patients medical history"
 msgstr "páciens orvosi történetének ellenőrzése / frissítése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2907
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2925
 msgid "Med Notes"
 msgstr "Orvosi feljegyzések"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2908
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2926
 msgid "Clinical Summary"
 msgstr "Klinikai összefoglaló"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2909
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2927
 msgid "Verbosity Level"
 msgstr "Kommunikáció foka"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2910
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2928
 msgid "reception only"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2911
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2929
 msgid "minimum"
 msgstr "alacsony"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2912
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2930
 msgid "medium"
 msgstr "közepes"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2913
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2931
 msgid "maximum"
 msgstr "teljes"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2915
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2933
 msgid "Charts View"
 msgstr "Státsuznézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2916
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2934
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothProps.py:243
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/toothprop_fulledit.py:32
 msgid "Static"
 msgstr "Állapot"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2917
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2946
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2935
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2964
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothProps.py:251
 msgid "Plan"
 msgstr "Terv"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2919
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2937
 msgid "Charts"
 msgstr "Státuszok"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2920
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2938
 msgid "Estimate"
 msgstr "Árajánlat"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2921
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2939
 msgid "Course Management"
 msgstr "Kezelési sorozat beállításai"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2922
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2940
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newCourse.py:66
 msgid "Course Dentist"
 msgstr "Kezelő fogorvos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2923
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2941
 msgid "New Course Of Treatment"
 msgstr "Új kezelési sorozat"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2924
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1524
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2942
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1535
 msgid "Close Course"
 msgstr "Kezelési sorozat lezárása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2925
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2943
 msgid "Estimate Management"
 msgstr "Árajánlat beállításai"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2926
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2944
 msgid "Custom Estimate Letter"
 msgstr "Egyedi költséglevél"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2927
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2945
 msgid ""
 "Use this feature to re-price all items in the \"tooth\" category of "
 "treatments. i.e all those which appear on the charts.\n"
@@ -2565,137 +2567,137 @@ msgstr ""
 "státuszon ezek jelennek meg.\n"
 "Megjegyzés - Nem távolítja el a már szereplő tételeket. "
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2930
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2948
 msgid "ReCalculate Estimate"
 msgstr "Árajánlat újraszámolása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2931
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2949
 msgid "Apply Exemption"
 msgstr "Díjmentesség hozzáadása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2932
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2950
 msgid "Standard View"
 msgstr "Egyszerű nézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2933
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2951
 msgid "Expanded View"
 msgstr "Bővített nézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2934
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2952
 msgid "Plan/Completed (standard)"
 msgstr "Terv / Elvégzett (egyszerű)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2935
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2953
 msgid "Plan/Completed (expanded)"
 msgstr "Terv / Elvégzett (bővített)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2936
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2954
 msgid "Treatment Planning"
 msgstr "Kezelési terv készítése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2937
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2955
 msgid "Perform Exam"
 msgstr "Vizsgálat végrehajtása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2938
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2956
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:543
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:555
 msgid "Perio"
 msgstr "Perio"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2939
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2957
 msgid "X-Rays"
 msgstr "Rtg"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2940
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2958
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:547
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:559
 msgid "Dentures"
 msgstr "Fogpótlások"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2941
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2959
 msgid "Ortho"
 msgstr "Ortho"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2942
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2960
 msgid "Other Tx"
 msgstr "Egyéb Kezelés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2943
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2961
 msgid "Add Custom Item"
 msgstr "Egyedi tétel hozzáadása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2949
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2967
 msgid "Estimate/Plan"
 msgstr "Árajánlat / Terv"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2950
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2968
 msgid "Choose Data"
 msgstr "Válasszon állományt"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2951
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2969
 msgid "Chart Date"
 msgstr "Státusz dátuma"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2954
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2972
 msgid "Perio Charts"
 msgstr "Perio státuszok"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2955
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2973
 msgid "See all payments in the database made by this patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2956
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2974
 msgid "Past Payments"
 msgstr "Előző befizetések"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2957
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2975
 msgid "View treatments completed, by date order"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2958
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2976
 msgid "Past Treatment"
 msgstr "Előző kezelések"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2959
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2977
 msgid ""
 "View all Courses of treatment. This includes treatment that was planned but "
 "not completed."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2960
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2978
 msgid "Courses"
 msgstr "Kezelési sorozatok"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2961
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2979
 msgid "Estimate history for this patient."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2962
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2980
 msgid "Estimates"
 msgstr "Árajánlatok"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2963
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2981
 msgid "display a combination of courses and estimates."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2964
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2982
 msgid "Courses / Estimates"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2965
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2983
 msgid "NHS Claims"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2966
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2984
 msgid "Print the text displayed on this page."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2968
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2986
 msgid "Custom Options"
 msgstr "Egyedi beállítások"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2969
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2987
 msgid ""
 "Advanced options for developer use. Don't expect this to make much sense!\n"
 "\n"
@@ -2703,428 +2705,453 @@ msgid ""
 "changed will be displayed."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2972
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2990
 msgid "debug tools"
 msgstr "hibakereső eszközök"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2973
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2991
 msgid "changes only"
 msgstr "csak díjak"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2974
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2992
 msgid "History"
 msgstr "Előzmények"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2975
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2993
 msgid "Memos"
 msgstr "Emlékeztetők"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2976
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2994
 msgid "Enter Notes."
 msgstr "Írja be a feljegyzést."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2977
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2995
 msgid "Today's Notes"
 msgstr "Mai feljegyzések"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2978
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2996
 msgid "Save the changes made to this record."
 msgstr "Karton változásainak mentése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2979
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2997
 msgid "Save Changes"
 msgstr "Változtatások mentése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2980
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2998
 msgid "Ctrl+S"
 msgstr "Ctrl+S"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2981
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2996
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3005
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2999
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3014
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3023
 msgid "Tasks"
 msgstr "Tennivalók"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2982
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3000
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_saveMemo.py:84
 msgid "PhraseBook"
 msgstr "Kifejezéstár"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2983
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3001
 msgid "Ins"
 msgstr "Beilleszt"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2984
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3002
 msgid "Patient Database"
 msgstr "Páciens adatbázis"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2985
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3003
 msgid "Go To Today"
 msgstr "Mai nap"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2986
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3004
 msgid "Week"
 msgstr "Hét"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2987
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3005
 msgid "Month"
 msgstr "Hónap"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2988
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3006
 msgid "Smart Selection"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2989
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3007
 msgid "Books as selected below"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2990
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3008
 msgid "show emergency spaces"
 msgstr "sürgősségi időpontok megjelenítése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2991
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3009
 msgid "show lunch breaks"
 msgstr "ebédszünet megjelenítése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2992
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3010
 msgid "Ignore  Out-of-office"
 msgstr "Távollét figyelmen kívülhagyása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2993
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3011
 msgid "show appointments"
 msgstr "időpontok megjelenítése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2994
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3012
 msgid "Print Month View"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2995
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3013
 msgid "Year"
 msgstr "Év"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2997
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3015
 msgid "Font Size"
 msgstr "Betűméret"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2998
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3016
 msgid "View Mode"
 msgstr "Nézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3001
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3019
 msgid "Day View"
 msgstr "Napi nézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3002
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3020
 msgid "Week View"
 msgstr "Heti nézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3003
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3021
 msgid "Month View"
 msgstr "Havi nézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3004
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3022
 msgid "Year View"
 msgstr "Éves nézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3006
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3024
 msgid "Appointments / Diary"
 msgstr "Időpontok / Napló"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3009
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3016
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3027
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3034
 msgid "Registered Dentist"
 msgstr "Regisztrált fogorvos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3010
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3018
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3028
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3036
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_toothProps.py:237
 msgid "Go"
 msgstr "Ugrás"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3011
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3019
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3029
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3037
 msgid "Print the Data"
 msgstr "Adatok nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3013
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3031
 msgid "Cashbook"
 msgstr "Számlaegyenleg"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3017
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3035
 msgid "Treating Dentist / Hygenist"
 msgstr "Kezelőorvos / Higiénikus"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3021
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3039
 msgid "Daybook"
 msgstr "Mai nap"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3022
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3040
 msgid "Find Patient Records where the patient is in"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3023
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3041
 msgid "Debt"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3024
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3042
 msgid "Credit"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3025
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3043
 msgid "By More than"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3026
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3039
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3044
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3057
 msgid "Load Table"
 msgstr "Táblázat betöltése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3027
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3045
 msgid "Print Table"
 msgstr "Táblázat nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3028
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3046
 msgid "Print Selected Letters"
 msgstr "Kijelölt levelek nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3030
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3048
 msgid "TOTAL OUTSTANDING"
 msgstr "ÖSSZES FENNMARADÓ"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3032
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3050
 msgid "Find Patient Records where"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3034
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3052
 msgid "is between"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3035
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3037
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3053
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3055
 msgid "dd/MM/yyyy"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3036
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3054
 msgid "and"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3038
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3056
 msgid "(Inclusive)"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3040
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3058
 msgid "Print Letters"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3042
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3060
 msgid "Letter Options"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3043
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3061
 msgid "Bulk Mailings"
 msgstr "Csoportos levelezések"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3045
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:167
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3063
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:169
 msgid "Fee Scales Available"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3046
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3064
 msgid "Use this control to select a feescale"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3047
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3065
 msgid "Search  For an Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3050
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3068
 msgid "only search for the given phrase in the usercode column"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3051
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3069
 msgid "Search Usercodes"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3052
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3070
 msgid "search for the given phrase in description columns"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3053
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3071
 msgid "Search Descriptions"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3055
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3073
 msgid "Quickly expand all items"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3056
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3074
 msgid "Expand All Sections"
 msgstr "Teljes listanézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3057
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3075
 msgid "Quickly compress all items"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3058
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3076
 msgid "Compress All Sections"
 msgstr "Kompakt listanézet"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3059
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3077
 msgid "NHS Regulation Document"
 msgstr "OEP szabályzat"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3060
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3078
 msgid "Open A PDF of the latest NHS Regulations"
 msgstr "Legújabb OEP szabályzat megnyitása PDF-ben"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3061
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3079
 msgid "Open"
 msgstr "Megnyitás"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3062
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3080
+msgid ""
+"If checked, then the user can modify the underlying fees and fee items."
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3081
+msgid "Feescale Adjustment"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3082
+msgid "Allow Adjust FeeScales"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3083
+msgid "Commit Changes"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3084
+msgid "show table xml"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3085
+msgid "Feesscale Tester"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3086
 msgid "Feescales"
 msgstr "Díjszabások"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3064
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3088
 msgid "Reply"
 msgstr "Válaszol"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3065
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3089
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/chartwidget.py:294
 msgid "Delete"
 msgstr "Töröl"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3066
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3090
 msgid "New Topic"
 msgstr "Új téma"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3067
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3091
 msgid "Search by keyword"
 msgstr "Keresés kulcsszóra"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3071
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3095
 msgid "Show Topics for"
 msgstr "Az alábbi témák megjelenítése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3072
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3096
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/forum_gui_module.py:39
 msgid "Everyone"
 msgstr "Mindenki"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3073
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3097
 msgid "Layout Options"
 msgstr "Nézet beállításai"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3074
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3098
 msgid "Group replies"
 msgstr "Csoportos válaszok"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3075
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3099
 msgid "Split Replies"
 msgstr "Válaszok felosztása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3076
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1725
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3100
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1736
 msgid "FORUM"
 msgstr "FÓRUM"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3077
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3101
 msgid "Wiki"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3078
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3102
 msgid "&File"
 msgstr "&Fájl"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3079
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3103
 msgid "&Help"
 msgstr "&Súgó"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3080
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3104
 msgid "&Preferences"
 msgstr "&Beállítások"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3081
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3105
 msgid "Tools"
 msgstr "Eszközök"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3082
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3106
 msgid "&Export Patient to disk"
 msgstr "&Páciens mentése lemezre"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3083
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3107
 msgid "&Import Patient from disk"
 msgstr "&Páciens betöltése lemezről"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3084
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3108
 msgid "About &OpenMolar"
 msgstr "Névjegy&OpenMolar"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3085
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3109
 msgid "&About QT"
 msgstr "&Névjegy QT"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3087
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3111
 msgid "Appointment Font Size"
 msgstr "Időpont betűméret"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3088
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3112
 msgid "Table View For Charting"
 msgstr "Státusz táblázatnézetben"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3089
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3113
 msgid "Clear Today's Emergency Slots"
 msgstr "Mai sürgősségi időpontok ürítése"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3090
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3114
 msgid "Test Print an NHS Form"
 msgstr "OEP űrlap próbanyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3091
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3115
 msgid "options"
 msgstr "Beállítások"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3092
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3116
 msgid "log queries in underlying terminal"
 msgstr "Kérdések naplózása terminálon"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3093
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3117
 msgid "Set Clinician"
 msgstr "Klinikus beállítása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3095
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3119
 msgid "Choose Database"
 msgstr "Adatbázis választása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3096
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3120
 msgid "FeeScale Adjuster"
 msgstr "Díjszabás beállítása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3097
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3121
 msgid "Select && Print Daylists"
 msgstr "Napilista választása és nyomtatása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3098
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3122
 msgid "Change Language"
 msgstr "Nyelv váltása"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3099
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3123
 msgid "Full Screen Mode (Ctrl-Alt-F)"
 msgstr "Teljes képernyős üzemmód (Ctrl-Alt-F)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3100
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3124
 msgid "Ctrl+Alt+F"
 msgstr "Ctrl+Alt+F"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3101
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3125
 msgid "Create/Modify database"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3102
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3126
 msgid "Advanced Record Management"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3103
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3127
 msgid "Show Geek Column"
 msgstr "Irányelvek mutatása"
 
@@ -4763,7 +4790,7 @@ msgid "no reason for the block given"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:108
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1976
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1987
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:185
@@ -5008,64 +5035,72 @@ msgstr ""
 msgid "brief description"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:202
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:214
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:207
+msgid "The following tables were altered"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:213
+msgid "No changes apllied"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:245
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:260
 msgid "Adjust / edit this Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:204
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:247
 msgid "Add to tx plan"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:212
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:255
 msgid "Add to tx plan of patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:216
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:261
 msgid "Delete Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:217
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:262
 msgid "Insert New Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:252
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:299
 msgid "Items containing"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:258
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:305
 msgid "phrase not found in feetable"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:260
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:307
 msgid "usercodes or descriptions"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:262
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:309
 msgid "usercodes"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:264
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:311
 msgid "descriptions"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:268
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:315
 msgid "nothing to search"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:269
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:316
 msgid "please select usercodes and/or descriptions then search again"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:299
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:346
 msgid "Error opening PDF file"
 msgstr "PDF megnyitása sikertelen"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:309
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:356
 msgid "IN CURRENT USE"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:322
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:369
 msgid "fee table error"
 msgstr ""
 
@@ -5089,91 +5124,103 @@ msgstr "Törli %d hozzászólásokat?"
 msgid "Delete selected Post?"
 msgstr "Törli a kijelölt bejegyzést?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:905
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:922
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:199
+msgid "Decision Required"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:200
+msgid "you have unsaved changes to your feetables"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:201
+msgid "commit now?"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:916
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:933
 msgid "is no longer an active dentist in this practice"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:909
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:920
 msgid "unknown contract dentist - please correct this"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:927
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:938
 msgid "unknown course dentist - please correct this"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:972
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:983
 msgid "SAVE NEW PATIENT"
 msgstr "ÚJ PÁCIENS MENTÉSE"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:984
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:995
 msgid "SAVE CHANGES"
 msgstr "VÁLTOZÁSOK MENTÉSE"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1018
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1027
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1088
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1029
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1038
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1099
 msgid "Re-open"
 msgstr "Újratöltés"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1019
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1028
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1030
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1039
 msgid "Do you want to review and/or reprint this item?"
 msgstr "Átnézi és/vagy újranyomtatja ezt az tételt?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1041
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1052
 msgid "error reviewing PDF file"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1046
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1057
 msgid "No information available about this document, sorry"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1055
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1066
 msgid "Date imported"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1056
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1067
 msgid "Size"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1073
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1084
 msgid "opening"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1077
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1088
 msgid "error importing file"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1079
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1090
 msgid "no file chosen"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1089
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1100
 msgid "Do you want to open a copy of this document?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1104
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1115
 msgid "error opening document"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1113
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1124
 msgid "Today's Patients"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1116
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1127
 msgid "Today's Patients (ALL)"
 msgstr "Mai páciensek (MIND)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1244
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1255
 msgid "Reached end of the List"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1259
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1270
 msgid "Reached Start of the List"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1337
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1348
 msgid ""
 "Error populating interface\n"
 "%s"
@@ -5181,7 +5228,7 @@ msgstr ""
 "Hiba történt a %s modul\n"
 "betöltésekor"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1455
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1466
 msgid ""
 "<center>Message from %s <br />\n"
 "Dated %s<br /><br />%s</center>"
@@ -5189,43 +5236,43 @@ msgstr ""
 "<center>%s üzenetet küldött<br />\n"
 "Kelt %s<br /><br />%s</center>"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1468
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1479
 msgid "problem getting a memo %s"
 msgstr "%s emlékeztetője nem elérhető"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1719
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1730
 msgid "NEW FORUM POSTS"
 msgstr "ÚJ FÓRUM BEJEGYZÉSEK"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1941
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1952
 msgid "POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2001
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2012
 msgid "Sucessfully altered the following items"
 msgstr "Az alábbi tételeket sikeresen módosította"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2227
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2238
 msgid "no record selected"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3732
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3791
 msgid "Scrap the estimate and re-price everything?"
 msgstr "Árajánlat elvetése és minden tétel újraárazása?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3748
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3807
 msgid "apply an exmption to this estimate?"
 msgstr "díjmentesség hozzáadása az aktuális árajánlathoz?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3753
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3812
 msgid "input needed"
 msgstr "adjon meg adatot"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3754
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3813
 msgid "maximum charge for the patient"
 msgstr "páciens maximális költsége"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3754
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3813
 msgid "please enter the amount in pence, or leave as 0 for full exmption"
 msgstr "adja meg az összeget fillérben, vagy írjon 0-t (teljes díjmentesség)"
 

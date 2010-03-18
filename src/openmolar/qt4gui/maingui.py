@@ -821,7 +821,8 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         wv = self.sender()
         wf = wv.page().mainFrame() 
-        wf.setScrollBarValue(0, wf.scrollBarMaximum(0))
+        orientation = QtCore.Qt.Vertical
+        wf.setScrollBarValue(orientation, wf.scrollBarMaximum(orientation))
 
     def load_newEstPage(self):
         '''
