@@ -360,7 +360,6 @@ class monthCalendar(QtGui.QWidget, calDialogs):
                 
         rowHeight = self.height() / (self.rowNo)
         
-        
         #HEADER ROW - the month and year, highlighted
         painter.setBrush(self.palette().highlight())        
         rect = QtCore.QRectF(0, 0, self.width(), rowHeight)               
@@ -381,24 +380,29 @@ class monthCalendar(QtGui.QWidget, calDialogs):
             rowHeight)               
 
             painter.setPen(self.palette().color(self.palette().WindowText))
-            painter.setBrush(self.palette().base())
+            brush = self.palette().base()
             
             if day ==0:
                 option = CENTRE
                 my_text = _("DATE")
                 c_date = datetime.date(1900,1,1)
-                painter.setBrush(self.palette().button())                        
+                brush = self.palette().button()
+            
             else:
                 option = RIGHT
-                if day % 2 == 0:
-                    painter.setBrush(self.palette().alternateBase())                    
                 c_date = datetime.date(self.year, self.month, day)
                 my_text = "%s %2s "% (localsettings.dayName(c_date), day)
-                if c_date == self.selectedDate:
-                    painter.setBrush(self.palette().highlight())                                                
-                elif c_date == self.highlightedDate:
-                    painter.setBrush(self.mouseBrush)
                 
+                brush = self.palette().base()
+                if c_date.isoweekday() > 5:
+                    brush = self.palette().alternateBase()                   
+                if c_date == self.selectedDate:
+                    brush = self.palette().highlight()                                                
+                elif c_date == self.highlightedDate:
+                    brush = self.mouseBrush
+            
+            painter.setBrush(brush)                        
+                        
             painter.save()
             painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
             painter.drawRect(rect)
@@ -862,12 +866,12 @@ if __name__ == "__main__":
     ycal = yearCalendar()
     
     startdate = datetime.date(2010,2,1) 
-    enddate =datetime.date(2010,2,28)
+    enddate = datetime.date(2010,2,28)
     rows = appointments.getDayInfo(startdate, enddate, (4,6,7))
     data = appointments.getBankHols(startdate, enddate)
     
     cal.show()
-    for c in (mcal,):# ycal):
+    for c in (mcal, ycal):
         c.setDents((4,6,7))
         c.setData(rows)
         c.setHeadingData(data)    

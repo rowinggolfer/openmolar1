@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1033</width>
-    <height>682</height>
+    <height>632</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1033</width>
-         <height>640</height>
+         <width>1017</width>
+         <height>603</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>6</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>2</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>750</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>762</width>
+                        <width>750</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2169,8 +2169,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>650</width>
-                        <height>403</height>
+                        <width>758</width>
+                        <height>446</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2342,7 +2342,7 @@
                           <widget class="QGroupBox" name="groupBox_13">
                            <property name="maximumSize">
                             <size>
-                             <width>180</width>
+                             <width>200</width>
                              <height>16777215</height>
                             </size>
                            </property>
@@ -2375,7 +2375,7 @@
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>0</height>
+                           <height>200</height>
                           </size>
                          </property>
                          <property name="maximumSize">
@@ -2441,9 +2441,28 @@
                               </widget>
                              </item>
                              <item>
+                              <spacer name="verticalSpacer_8">
+                               <property name="orientation">
+                                <enum>Qt::Vertical</enum>
+                               </property>
+                               <property name="sizeHint" stdset="0">
+                                <size>
+                                 <width>20</width>
+                                 <height>40</height>
+                                </size>
+                               </property>
+                              </spacer>
+                             </item>
+                             <item>
                               <layout class="QGridLayout" name="gridLayout_16">
                                <item row="0" column="0">
                                 <widget class="QPushButton" name="newAppt_pushButton">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
                                  <property name="maximumSize">
                                   <size>
                                    <width>16777215</width>
@@ -2466,6 +2485,12 @@
                                 <widget class="QPushButton" name="clearAppt_pushButton">
                                  <property name="enabled">
                                   <bool>true</bool>
+                                 </property>
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
                                  </property>
                                  <property name="maximumSize">
                                   <size>
@@ -2568,6 +2593,12 @@
                                  <property name="enabled">
                                   <bool>true</bool>
                                  </property>
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
                                  <property name="maximumSize">
                                   <size>
                                    <width>16777215</width>
@@ -2590,6 +2621,12 @@
                                 <widget class="QPushButton" name="modifyAppt_pushButton">
                                  <property name="enabled">
                                   <bool>true</bool>
+                                 </property>
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
                                  </property>
                                  <property name="maximumSize">
                                   <size>
@@ -2634,8 +2671,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
-                        <height>429</height>
+                        <width>750</width>
+                        <height>489</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_4">
@@ -2644,7 +2681,7 @@
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>120</height>
+                           <height>180</height>
                           </size>
                          </property>
                          <property name="maximumSize">
@@ -2865,7 +2902,54 @@
                    <string>Notes</string>
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_6">
-                   <item row="0" column="0">
+                   <item row="2" column="3">
+                    <widget class="QLabel" name="label_35">
+                     <property name="text">
+                      <string>Verbosity Level</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="5">
+                    <widget class="QRadioButton" name="notesMinimumVerbosity_radioButton">
+                     <property name="text">
+                      <string>minimum</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="6">
+                    <widget class="QRadioButton" name="notesMediumVerbosity_radioButton">
+                     <property name="text">
+                      <string>medium</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="7">
+                    <widget class="QRadioButton" name="notesMaximumVerbosity_radioButton">
+                     <property name="text">
+                      <string>maximum</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0" colspan="8">
+                    <widget class="QWebView" name="notes_webView">
+                     <property name="url">
+                      <url>
+                       <string>about:blank</string>
+                      </url>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QRadioButton" name="notesReceptionOnly_radioButton">
+                     <property name="text">
+                      <string>reception only</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2">
                     <spacer name="horizontalSpacer_9">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
@@ -2877,53 +2961,6 @@
                       </size>
                      </property>
                     </spacer>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLabel" name="label_35">
-                     <property name="text">
-                      <string>Verbosity Level</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="2">
-                    <widget class="QRadioButton" name="notesReceptionOnly_radioButton">
-                     <property name="text">
-                      <string>reception only</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="3">
-                    <widget class="QRadioButton" name="notesMinimumVerbosity_radioButton">
-                     <property name="text">
-                      <string>minimum</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="4">
-                    <widget class="QRadioButton" name="notesMediumVerbosity_radioButton">
-                     <property name="text">
-                      <string>medium</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="5">
-                    <widget class="QRadioButton" name="notesMaximumVerbosity_radioButton">
-                     <property name="text">
-                      <string>maximum</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0" colspan="6">
-                    <widget class="QWebView" name="notes_webView">
-                     <property name="url">
-                      <url>
-                       <string>about:blank</string>
-                      </url>
-                     </property>
-                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -2951,8 +2988,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>459</width>
-                        <height>289</height>
+                        <width>567</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3151,7 +3188,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>409</width>
+                           <width>517</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3557,8 +3594,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>644</width>
-                        <height>392</height>
+                        <width>773</width>
+                        <height>430</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -3978,7 +4015,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>110</width>
+                    <width>104</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4499,7 +4536,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <x>0</x>
                     <y>0</y>
                     <width>198</width>
-                    <height>136</height>
+                    <height>99</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4862,8 +4899,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>755</width>
-                     <height>537</height>
+                     <width>739</width>
+                     <height>500</height>
                     </rect>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_30"/>
@@ -4920,8 +4957,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>287</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -5815,7 +5852,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <bool>true</bool>
                  </property>
                  <property name="toolTip">
-                  <string>If checked, then the user can modify the underlying fees and fee items.</string>
+                  <string/>
                  </property>
                  <property name="title">
                   <string>Feescale Adjustment</string>
@@ -5829,6 +5866,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                  <layout class="QVBoxLayout" name="verticalLayout_35">
                   <item>
                    <widget class="QCheckBox" name="feescale_adjust_checkBox">
+                    <property name="toolTip">
+                     <string>If checked, then the user can modify the underlying fees and fee items.</string>
+                    </property>
                     <property name="text">
                      <string>Allow Adjust FeeScales</string>
                     </property>
