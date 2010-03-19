@@ -102,7 +102,7 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         self.fee_item.brief_descriptions = brief_descriptions.split("\n")
         
         feelist = []
-        fees = re.findall(r"\b\d+\b", self.fees_lineEdit.text())
+        fees = re.findall(r"\b\d+\b", str(self.fees_lineEdit.text().toAscii()))
         colcount = self.fee_item.table.feeColCount
         if self.fee_item.table.hasPtCols:
             colcount = colcount//2
@@ -122,7 +122,9 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         if self.fee_item.table.hasPtCols:
             i = 0
             feelist = []
-            ptfees = re.findall(r"\b\d+\b", self.pt_fees_lineEdit.text())
+            ptfees = re.findall(r"\b\d+\b", 
+            str(self.pt_fees_lineEdit.text().toAscii()))
+
             for row in range(self.fee_item.depth):
                 flist = []        
                 for col in range(colcount):

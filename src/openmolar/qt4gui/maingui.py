@@ -135,13 +135,14 @@ class openmolarGui(QtGui.QMainWindow):
         self.addCustomWidgets()
         self.labels_and_tabs()
         self.ui.feescale_commit_pushButton.setEnabled(False)
-        self.show()
+        
         QtCore.QTimer.singleShot(0, self.init_part2)
 
     def init_part2(self):
         '''
         slow loading stuff goes in here
         '''
+        print "init2"
         localsettings.loadFeeTables()
         self.setValidators()
         self.letters = bulk_mail.bulkMails(self)
@@ -3837,7 +3838,7 @@ def main(app):
         sys.exit()
     localsettings.initiate()
     mainWindow = openmolarGui(app) #-- app required for polite shutdown
-    
+    mainWindow.show()
     if __name__ != "__main__":
         #--don't maximise the window for dev purposes - I like to see
         #--all the error messages in a terminal ;).

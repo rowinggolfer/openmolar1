@@ -24,8 +24,11 @@ from xml.dom import minidom
 
 ## a variable to force the first run and database update tools
 FIRST_RUN_TESTING = False
+IGNORE_SCHEMA_CHECK = False
+
 SHORTARGS = ""
-LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=",]
+LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=", 
+"ignore_schema_check"]
 ##############################################################
 
 import gettext
@@ -57,7 +60,10 @@ def proceed():
     from openmolar.dbtools import schema_version
     sv = schema_version.getVersion()
 
-    if localsettings.CLIENT_SCHEMA_VERSION > sv:
+    if IGNORE_SCHEMA_CHECK or localsettings.CLIENT_SCHEMA_VERSION > sv:
+        from openmolar.qt4gui import maingui
+        sys.exit(maingui.main(my_app))
+    elif localsettings.CLIENT_SCHEMA_VERSION > sv:
         print "schema is out of date"
         from openmolar.qt4gui import schema_updater
         sys.exit(schema_updater.main(sys.argv, my_app))
@@ -88,10 +94,7 @@ and you can continue if you wish</p>
             if result == QtGui.QMessageBox.Yes:
                 from openmolar.qt4gui import maingui
                 sys.exit(maingui.main(my_app))
-    else:
-        print "schema/client versions are correct"
-        from openmolar.qt4gui import maingui
-        sys.exit(maingui.main(my_app))
+    
     sys.exit()
 
 def main():
@@ -313,7 +316,7 @@ def run():
     '''
     the real entry point for the app
     '''
-    global FIRST_RUN_TESTING
+    global FIRST_RUN_TESTING, IGNORE_SCHEMA_CHECK
     print sys.argv
 
     try:
@@ -344,6 +347,10 @@ def run():
         if option == "--firstrun":
             FIRST_RUN_TESTING = True
 
+        if option == "--ignore_schema_check":
+            IGNORE_SCHEMA_CHECK = True
+            print "ignoring schema check"
+            
     main()
 
 if __name__ == "__main__":
