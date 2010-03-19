@@ -665,10 +665,9 @@ def initiate(debug = False):
     print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd, \
-    clinicianNo, clinicianInits, FEETABLES, WIKIURL
+    clinicianNo, clinicianInits, WIKIURL
     
     from openmolar import connect
-    from openmolar.dbtools import feesTable
     from openmolar.dbtools import db_settings
 
     #close the connection if exists - user could have been connected to a 
@@ -766,26 +765,26 @@ def initiate(debug = False):
 
     #-- majorly important class being initiated
     
-    print "loading fee and treatment logic tables"
-    FEETABLES = feesTable.feeTables()
+    
     
     getLocalSettings()
 
     WIKIURL = db_settings.getWikiUrl()
     
-    message = '''<html><head>
+    message = ('''<html><head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head><body><div align="center">
 <img src="file://%s/html/images/newlogo.png" 
 width="150", height="100", align="left" />
 
 <img src="file://%s/html/images/newlogo.png" 
-width="150",height="100", align="right" />
-<h1>Welcome to OpenMolar!</h1><ul><li class="about">Version %s</li>
-<li class="about">Revision %s</li></ul><br clear="all" />
-<p>Your Data is Accessible, and the server reports no issues.</p>
-<p>Have a great day!</p></div></body></html>'''%(
-    stylesheet, wkdir, wkdir, __MAJOR_VERSION__, __build__ )
+width="150", height="100", align="right" />
+<h1>'''% (stylesheet, wkdir, wkdir) + _("Welcome to OpenMolar!")+ '''</h1>
+<ul><li class="about">''' + _("Version") + ''' %s</li>
+<li class="about">'''% __MAJOR_VERSION__ + _("Revision") + 
+'''%s</li></ul><br clear="all" /><p>''' % __build__ +
+_("Your Data is Accessible, and the server reports no issues.") +
+'''</p><p>''' + _("Have a great day!") + '''</p></div></body></html>''')
 
     if debug:
         print "LOCALSETTINGS CALLED WITH DEBUG = TRUE"
@@ -798,6 +797,16 @@ width="150",height="100", align="right" />
         print "allowed logins =", allowed_logins
         print "stylesheet =",stylesheet
         print "referralfile = ",referralfile
+
+def loadFeeTables():
+    '''
+    load the feetables (time consuming)
+    '''
+    global FEETABLES
+    from openmolar.dbtools import feesTable
+    
+    print "loading fee and treatment logic tables"
+    FEETABLES = feesTable.feeTables()
 
 def _test():
     import doctest

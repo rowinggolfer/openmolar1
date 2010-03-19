@@ -428,8 +428,8 @@ please recheck your settings'''), True)
 
         except Exception, e:
             print "error saving settings",  e
-            QtGui.QMessageBox.warning(parent, _("FAILURE"), str(e))
-            Dialog.reject()
+            QtGui.QMessageBox.warning(self.dialog, _("FAILURE"), str(e))
+            
             
 def run():
     

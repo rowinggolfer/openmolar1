@@ -134,6 +134,15 @@ class openmolarGui(QtGui.QMainWindow):
         'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
         self.addCustomWidgets()
         self.labels_and_tabs()
+        self.ui.feescale_commit_pushButton.setEnabled(False)
+        self.show()
+        QtCore.QTimer.singleShot(0, self.init_part2)
+
+    def init_part2(self):
+        '''
+        slow loading stuff goes in here
+        '''
+        localsettings.loadFeeTables()
         self.setValidators()
         self.letters = bulk_mail.bulkMails(self)
         self.ui.bulk_mailings_treeView.setModel(self.letters.bulk_model)
@@ -148,7 +157,6 @@ class openmolarGui(QtGui.QMainWindow):
         self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
         self.wikiloaded = False
-        self.ui.feescale_commit_pushButton.setEnabled(False)
         
     def advise(self, arg, warning_level=0):
         '''
@@ -3828,15 +3836,13 @@ def main(app):
         print "unable to run... no login"
         sys.exit()
     localsettings.initiate()
-
     mainWindow = openmolarGui(app) #-- app required for polite shutdown
-    mainWindow.show()
-
+    
     if __name__ != "__main__":
         #--don't maximise the window for dev purposes - I like to see
         #--all the error messages in a terminal ;).
         mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
-
+    
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
