@@ -213,6 +213,7 @@ class openmolarGui(QtGui.QMainWindow):
             QtGui.QMessageBox.Yes)
             if result == QtGui.QMessageBox.Yes:
                 self.feescale_commit()
+                event.ignore()
             elif result == QtGui.QMessageBox.Cancel:
                 event.ignore()
                 return                
@@ -2562,13 +2563,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         add_tx_to_plan.customAdd(self)
         
-    def feescale_allowed_edit(self, checked):
+    def feescale_allowed_edit(self):
         '''
         user has toggled the option to allow feescale edit
         requires increased privileges
         '''
-        if not(checked and permissions.granted(self)):
-            self.ui.feescale_adjust_checkBox.setChecked(False)
+        self.ui.feescale_adjust_checkBox.setChecked(
+            self.ui.feescale_adjust_checkBox.isChecked() and 
+            permissions.granted(self))
             
     def feeScaleTreatAdd(self, item):
         '''
@@ -2580,9 +2582,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         user has called for db changes to be committed
         '''
-        if fees_module.apply_all_table_changes(self):
-            self.dirty_feetable(False)
-    
+        try:
+            if fees_module.apply_all_table_changes(self):
+                self.dirty_feetable(False)
+        except Exception, e:
+            self.advise(_("error commiting changes") + "<br />" + str(e), 2)
+            
     def dirty_feetable(self, dirty=True):
         '''
         indicate one (or more) feetables has uncommitted changes and 
@@ -3497,7 +3502,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.feescale_commit)
         
         QtCore.QObject.connect(self.ui.feescale_adjust_checkBox,
-        QtCore.SIGNAL("stateChanged (int)"), self.feescale_allowed_edit)
+        QtCore.SIGNAL("clicked()"), self.feescale_allowed_edit)
 
     def signals_charts(self):
 

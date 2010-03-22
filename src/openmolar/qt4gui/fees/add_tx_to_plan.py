@@ -182,8 +182,6 @@ def fromFeeTable(om_gui, fee_item):
 
         if not table:
             return
-    print "adding", fee_item, 
-    print "to the treatment plan of patient", om_gui.pt.serialno
     
     Dialog = QtGui.QDialog(om_gui)    
     items = (fee_item.itemcode, )
@@ -204,7 +202,7 @@ def fromFeeTable(om_gui, fee_item):
                 if update_charts_needed:
                     om_gui.ui.planChartWidget.setToothProps(type, 
                     om_gui.pt.__dict__[type+"pl"])
-            except AttributeError, e:
+            except KeyError, e:
                 print "patient class has no attribute '%spl'", type,
                 print "Will default to 'other'"
                 om_gui.pt.otherpl += "%s "% usercode

@@ -334,15 +334,14 @@ class patient():
                     end = localsettings.currentDay()
                 
                 if feecat in table.categories and start <= cse_accd <=end:
-                    print "using %s for fees"% table.tablename
                     self.feeTable = table
-                    return table
-                
-            #-- if no table returned, use the default.
-            print "WARNING - NO SUITABLE FEETABLE FOUND, RETURNING DEFAULT"
-            return localsettings.FEETABLES.tables[0]
-        else:
-            return self.feeTable
+            
+            if self.feeTable == None:
+                #-- no matching table found, use the default.
+                print "WARNING - NO SUITABLE FEETABLE FOUND, RETURNING DEFAULT"
+                self.feeTable = localsettings.FEETABLES.default_table
+            
+        return self.feeTable
         
     def getEsts(self):
         '''

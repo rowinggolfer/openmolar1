@@ -595,7 +595,6 @@ def updateLocalSettings(setting, value):
         print "updating local settings... %s = %s"% (setting, value)
         if os.path.exists(localSets):
             dom = minidom.parse(localSets)
-            print dom.toxml()
             nodeToChange = dom.getElementsByTagName(setting)
             if len(nodeToChange) == 0:
                 nodeToChange = dom.createElement(setting)
@@ -609,7 +608,6 @@ def updateLocalSettings(setting, value):
                 nodeToChange.removeChild(children)
             valueNode = dom.createTextNode(value)
             nodeToChange.appendChild(valueNode)
-            #print dom.toxml()
             f = open(localSets,"w")
             f.write(dom.toxml())
             f.close()

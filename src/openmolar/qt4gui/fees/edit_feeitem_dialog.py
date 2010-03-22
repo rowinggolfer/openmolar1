@@ -31,6 +31,7 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         self.signals()
         
         self.loadData()
+        self.usercode_changed = False
         self.initial_generatedXml = self.fee_item.to_xml(True)
         
     def regex_toggle(self, arg):
@@ -79,8 +80,13 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         
         ## create a new instance of fee item
         table, itemcode = self.table, self.fee_item.itemcode
-        self.fee_item = feesTable.feeItemClass(table, itemcode)   
-        self.fee_item.from_xml(node)
+        fee_item = feesTable.feeItemClass(table, itemcode)   
+        fee_item.from_xml(node)
+        
+        if fee_item.usercode != self.fee_item.usercode:
+            self.usercode_changed = True
+        
+        self.fee_item = fee_item
         self.XML_EDITED = False
         
     def apply_wizard_changes(self):
@@ -91,8 +97,11 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         self.fee_item.category = self.category_comboBox.currentIndex()
         self.fee_item.pl_cmp_type = str(self.pl_cmp_comboBox.currentText())
         
-        self.fee_item.usercode = str(self.usercode_plainTextEdit.toPlainText())
+        usercode = str(self.usercode_plainTextEdit.toPlainText())
+        if usercode != self.fee_item.usercode:
+            self.usercode_changed = True
         
+        self.fee_item.usercode = usercode
         self.fee_item.regulations = \
             str(self.regulations_plainTextEdit.toPlainText())
 
@@ -275,20 +284,32 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
                 _("Confirm"), _("Apply changes?"), 
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
-                    return (True, self.fee_item)
-        return (False, None)
+                    alterAll = False
+                    if self.usercode_changed:
+                        if QtGui.QMessageBox.question(self.dialog,
+                        _("Confirm"), 
+                        _("You have altered a usercode.") +
+        _("Do you want to apply this change accross all fee tables?"), 
+                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                        QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+                            alterAll = True
+                    return (True, self.fee_item, newXML, alterAll)
+        return (False, None, None, None)
         
 if __name__ == "__main__":
     import sys
     from openmolar.settings import localsettings
     localsettings.initiate()
+    localsettings.loadFeeTables()
     
     item = localsettings.FEETABLES.tables[1].feesDict["0201"]
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
     dl = editFee(item, Dialog)
     
-    result, item = dl.getInput()
-
+    result, item, alter_other_tables = dl.getInput()
+    dl.usercode_changed
     if result:
         item.table.alterItem(item)
+        
+    print "alter_other_tables",alter_other_tables

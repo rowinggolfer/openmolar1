@@ -30,6 +30,7 @@ def granted(parent=None):
             return True
         else:
             QtGui.QMessageBox.information(parent,"whoops","wrong password")
+    return False
 
 def resetExpireTime():
     diff=datetime.timedelta(minutes=5)

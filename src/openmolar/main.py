@@ -60,7 +60,7 @@ def proceed():
     from openmolar.dbtools import schema_version
     sv = schema_version.getVersion()
 
-    if IGNORE_SCHEMA_CHECK or localsettings.CLIENT_SCHEMA_VERSION > sv:
+    if IGNORE_SCHEMA_CHECK or localsettings.CLIENT_SCHEMA_VERSION == sv:
         from openmolar.qt4gui import maingui
         sys.exit(maingui.main(my_app))
     elif localsettings.CLIENT_SCHEMA_VERSION > sv:

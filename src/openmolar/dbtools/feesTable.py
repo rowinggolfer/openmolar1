@@ -13,6 +13,40 @@ from openmolar import connect
 from openmolar.settings import localsettings
 from openmolar.ptModules import plan
 
+def getData():
+    '''
+    connects and get the data from feetable_key
+    '''
+    db = connect.connect()
+    cursor = db.cursor() 
+    
+    query = ''' select tablename, categories, description, startdate, 
+    enddate, feecoltypes, data from feetable_key 
+    where in_use = True order by display_order'''
+
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    return rows
+
+def saveData(tablename, data):
+    '''
+    update the database with the new xml data
+    '''
+    db = connect.connect()
+    cursor = db.cursor()
+    query = "update feetable_key set data=%s where tablename = %s"
+    
+    values = (data, tablename)
+    if localsettings.logqueries:
+        print query
+        print values[0][:30]
+        print values[1]
+    result = cursor.execute(query, values)
+    if result:
+        db.commit()
+    return result
+
 def getListFromNode(node, id):
     '''
     get the text data from the first child of any such nodes
@@ -64,7 +98,9 @@ class feeTables():
     '''
     def __init__(self):
         self.tables = {}
-        self.getTables()
+        self.default_table = None
+        if self.getTables():
+            self.default_table = self.tables[0]
         self.loadTables()
         
     def __repr__(self):
@@ -92,17 +128,7 @@ class feeTables():
         '''
         get the key to our tables
         '''
-        db = connect.connect()
-        cursor = db.cursor() 
-        
-        query = ''' select tablename, categories, description, startdate, 
-        enddate, feecoltypes, data from feetable_key 
-        where in_use = True order by display_order'''
-
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        cursor.close()
-        
+        rows = getData()
         i = 0
         for (tablename, categories, description, startdate, endate,
         feecoltypes, data) in rows:
@@ -182,40 +208,32 @@ class feeTable():
         '''
         data is the xml string pulled from the database.
         '''
-        self.data = data
+        self.data = data 
     
     def getData(self, data):
         return self.data
-    
     
     def saveDataToDB(self):
         '''
         if the feetable has been altered, this will save the changes
         '''
-        db = connect.connect()
-        cursor = db.cursor()
-        query = "update feetable_key set data=%s where tablename = %s"
-        
-        values = (self.data, self.tablename)
-        if localsettings.logqueries:
-            print query
-            print values[0][:30]
-            print values[1]
-        result = cursor.execute(query, values)
+        dom = minidom.parseString(self.data)
+        newdata = dom.toxml()
+        dom.unlink()  
+              
+        result = saveData (self.tablename, newdata)
         if result:
-            db.commit()
-        
-        self.dirty = False                
+            self.dirty = False                
         return result
     
-    def alterItem(self, item):
+    def alterItem(self, item, nodexml):
         '''
         update an Item
         '''
         dom = minidom.parseString(self.data)
         nodeList = dom.getElementsByTagName("item")
 
-        newnode = minidom.parseString(item.to_xml())
+        newnode = minidom.parseString(nodexml)
         for node in nodeList:
             codes = node.getElementsByTagName("code")
             for code in codes:
@@ -227,7 +245,35 @@ class feeTable():
                         self.data = newdata
                     dom.unlink()
                     return True
-            
+    
+    def alterUserCodeOnly(self, foreign_item):
+        '''
+        the user has edited the usercode of an item with the same key
+        but from a different table
+        '''
+        dom = minidom.parseString(self.data)
+        nodeList = dom.getElementsByTagName("item")
+        result = False
+        for node in nodeList:
+            codes = node.getElementsByTagName("code")
+            for code in codes:
+                if code.firstChild.data.strip() == foreign_item.itemcode:
+                    uc_node = node.getElementsByTagName("USERCODE")[0]
+                    if uc_node.firstChild:
+                        uc_node.firstChild.replaceWholeText(
+                        foreign_item.usercode)
+                    else:
+                        uc_node.appendChild(
+                        dom.createTextNode(foreign_item.usercode))
+                    newdata = dom.toxml()
+                    if self.data != newdata:
+                        self.data = newdata
+                        self.dirty = True
+                        result = True
+                    dom.unlink()
+                    return result
+        dom.unlink()
+    
     def setFeeCols(self, arg):
         '''
         arg is some xml logic to let me know what columns to query
@@ -258,7 +304,6 @@ class feeTable():
         now load the fees
         '''
         dom = minidom.parseString(self.data)
-        print "loading fees for", self.tablename
         
         items = dom.getElementsByTagName("item")
         for item in items:
@@ -275,7 +320,6 @@ class feeTable():
             
         dom.unlink()
         
-    #@localsettings.debug
     def getToothCode(self, tooth, arg):
         '''
         converts fillings into four digit codes used in the feescale

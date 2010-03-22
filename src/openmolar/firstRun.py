@@ -43,16 +43,16 @@ blankXML = '''<?xml version="1.1" ?>
 </settings>'''
 
 
-class newsetup(Ui_newSetup.Ui_Dialog):
+class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
     '''
     a new setup - creates and saves a config file
     creates a database if required
     loads a demo set of data.
     '''
 
-    def __init__(self, dialog):
-        self.setupUi(dialog)
-        self.dialog = dialog
+    def __init__(self, parent=None):
+        super(newsetup, self).__init__(parent)
+        self.setupUi(self)
         self.stackedWidget.setCurrentIndex(0)
         self.PASSWORD = ""
         self.HOST = ""
@@ -88,28 +88,27 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         self.sysAdvice_label.setText(advice)
         
     def signals(self):
-        QtCore.QObject.connect(self.go_pushButton, 
-        QtCore.SIGNAL("clicked()"), self.next)
+        self.connect(self.go_pushButton, QtCore.SIGNAL("clicked()"), self.next)
     
-        QtCore.QObject.connect(self.back_pushButton, 
+        self.connect(self.back_pushButton, 
         QtCore.SIGNAL("clicked()"), self.back)
 
-        QtCore.QObject.connect(self.rootPassword_checkBox, QtCore.SIGNAL(
+        self.connect(self.rootPassword_checkBox, QtCore.SIGNAL(
         "stateChanged(int)"), self.rootechomode)
 
-        QtCore.QObject.connect(self.mainpassword_checkBox, QtCore.SIGNAL(
+        self.connect(self.mainpassword_checkBox, QtCore.SIGNAL(
         "stateChanged(int)"), self.echomode)
         
-        QtCore.QObject.connect(self.dbpassword_checkBox, QtCore.SIGNAL(
+        self.connect(self.dbpassword_checkBox, QtCore.SIGNAL(
         "stateChanged(int)"), self.dbechomode)
     
-        QtCore.QObject.connect(self.existingDB_radioButton, QtCore.SIGNAL(
+        self.connect(self.existingDB_radioButton, QtCore.SIGNAL(
         "toggled(bool)"),self.demo_or_existing)
         
-        QtCore.QObject.connect(self.testDB_pushButton, 
+        self.connect(self.testDB_pushButton, 
         QtCore.SIGNAL("clicked()"), self.testConnection)
         
-        QtCore.QObject.connect(self.stackedWidget, 
+        self.connect(self.stackedWidget, 
         QtCore.SIGNAL("currentChanged (int)"), self.title_label_update)
         
         for le in (self.rootPassword_lineEdit,
@@ -119,7 +118,7 @@ class newsetup(Ui_newSetup.Ui_Dialog):
                     self.repeat_password_lineEdit,
                     self.host_lineEdit,
                     self.port_lineEdit):
-            QtCore.QObject.connect(le, 
+            self.connect(le, 
             QtCore.SIGNAL("returnPressed()"), self.next)
     
     def advise(self, message, warning = False):
@@ -127,9 +126,9 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         throws up a message box
         '''
         if warning:
-            QtGui.QMessageBox.warning(self.dialog, _("Error"), message)
+            QtGui.QMessageBox.warning(self, _("Error"), message)
         else:
-            QtGui.QMessageBox.information(self.dialog, _("Advisory"), 
+            QtGui.QMessageBox.information(self, _("Advisory"), 
             message)
         
     def next(self):
@@ -167,13 +166,13 @@ class newsetup(Ui_newSetup.Ui_Dialog):
         elif i == 4:
             self.finish()
             if self.checkBox.isChecked():
-                self.dialog.accept()
+                self.accept()
             else:
-                self.dialog.reject()
+                self.reject()
         
         elif i == 5:
             self.snapshot()
-            result=QtGui.QMessageBox.question(self.dialog, 
+            result=QtGui.QMessageBox.question(self, 
             _("Create Database"),
             _("Create Demo Database now with the following settings?") +
             '''<br><ul><li>host - %s </li><li>port - %s</li>
@@ -294,7 +293,7 @@ please recheck your settings'''), True)
                 
         self.timer1 = QtCore.QTimer()        
         self.timer1.start(10) # 1/100thsecond
-        QtCore.QObject.connect(self.timer1, QtCore.SIGNAL("timeout()"),
+        self.connect(self.timer1, QtCore.SIGNAL("timeout()"),
         updatePB)
         
         try:
@@ -424,19 +423,16 @@ please recheck your settings'''), True)
                 print '...ok'
                 localsettings.cflocation = localsettings.cflocation
                 
-            self.dialog.accept()
+            self.accept()
 
         except Exception, e:
             print "error saving settings",  e
-            QtGui.QMessageBox.warning(self.dialog, _("FAILURE"), str(e))
+            QtGui.QMessageBox.warning(self, _("FAILURE"), str(e))
             
             
 def run():
-    
-    Dialog = QtGui.QDialog()
-    dl = newsetup(Dialog)
-    
-    return Dialog.exec_()
+    dl = newsetup()    
+    return dl.exec_()
 
 
 if __name__ == "__main__":

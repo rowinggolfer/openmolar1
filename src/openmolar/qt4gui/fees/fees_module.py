@@ -23,10 +23,11 @@ from openmolar.settings import localsettings
 from openmolar.qt4gui.fees import fee_table_model
 from openmolar.qt4gui.fees import edit_feeitem_dialog
 from openmolar.qt4gui.fees import feescale_tester
-
+from openmolar.qt4gui.fees import fee_table_editor
 
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import paymentwidget
+from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
 from openmolar.qt4gui.compiled_uis import Ui_raiseCharge
 
@@ -181,17 +182,15 @@ def feetester(om_gui):
     Dialog.exec_()
 
 def showTableXML(om_gui):
-        dialog2 = QtGui.QDialog()
-        te = QtGui.QPlainTextEdit(dialog2)
-        te.setMinimumSize(800,600)
-        
-        text = om_gui.ui.feeScales_treeView.model().table.data
-        text = text.replace("</item>","</item>\n")
-        text = text.replace("<item>","\n<item>")
-        te.setPlainText(text)
-        dialog2.show()
-        if dialog2.exec_():
-            pass
+    '''
+    user wants to view the full table logic!
+    '''
+    if permissions.granted(om_gui):
+        om_gui.wait(True)
+        rows = feesTable.getData()
+        mw2 = fee_table_editor.editor(rows, om_gui)
+        mw2.show()
+        om_gui.wait(False)
         
 def apply_all_table_changes(om_gui):
     '''
@@ -229,13 +228,16 @@ def table_clicked(om_gui, index):
         '''
         user wishes to alter a fee item
         '''
-        
         Dialog = QtGui.QDialog()
         dl = edit_feeitem_dialog.editFee(fee_item, Dialog)
     
-        result, edited_item = dl.getInput()
+        result, edited_item, newXml, update_others = dl.getInput()
         if result:
-            if edited_item.table.alterItem(edited_item):
+            if update_others:
+                for table in localsettings.FEETABLES.tables.values():
+                    if table != edited_item.table:
+                        table.alterUserCodeOnly(edited_item)
+            if edited_item.table.alterItem(edited_item, newXml):
                 om_gui.dirty_feetable()
             
     def apply(arg):
