@@ -115,7 +115,7 @@ appt_shortcut_file = os.path.join(wkdir, "resources",
 stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
 printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
 money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
-
+LOGOPATH = "file://" + os.path.join(wkdir,"html","images","newlogo.png")
 resources_path = os.path.join(wkdir, "resources")
 
 if "win" in sys.platform:
@@ -131,7 +131,7 @@ if "win" in sys.platform:
     stylesheet = stylesheet.replace(" ","%20").replace("\\","/")
     printer_png = printer_png.replace(" ","%20").replace("\\","/")
     money_png =  money_png.replace(" ","%20").replace("\\","/")
-
+    LOGOPATH = LOGOPATH.replace(" ","%20").replace("\\","/")
     GP17_LEFT = 15
     GP17_RIGHT = 15
 
@@ -773,12 +773,10 @@ def initiate(debug = False):
     message = ('''<html><head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head><body><div align="center">
-<img src="file://%s/html/images/newlogo.png" 
-width="150", height="100", align="left" />
-
-<img src="file://%s/html/images/newlogo.png" 
-width="150", height="100", align="right" />
-<h1>'''% (stylesheet, wkdir, wkdir) + _("Welcome to OpenMolar!")+ '''</h1>
+<img src="%s" width="150", height="100", align="left" />
+<img src="%s" width="150", height="100", align="right" />
+<h1>'''% (stylesheet, LOGOPATH, LOGOPATH) + 
+_("Welcome to OpenMolar!")+ '''</h1>
 <ul><li class="about">''' + _("Version") + ''' %s</li>
 <li class="about">'''% __MAJOR_VERSION__ + _("Revision") + 
 '''%s</li></ul><br clear="all" /><p>''' % __build__ +

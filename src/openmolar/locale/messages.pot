@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-03-23 11:02+GMT\n"
+"POT-Creation-Date: 2010-03-23 11:21+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6703,23 +6703,23 @@ msgstr ""
 msgid "Yesterday"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:781
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:779
 msgid "Welcome to OpenMolar!"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:782
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:780
 msgid "Version"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:783
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:781
 msgid "Revision"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:785
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:783
 msgid "Your Data is Accessible, and the server reports no issues."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:786
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:784
 msgid "Have a great day!"
 msgstr ""
 
