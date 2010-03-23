@@ -38,7 +38,7 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         '''
         handle the regex radiobuttons
         '''
-        uc = str(self.usercode_plainTextEdit.toPlainText())
+        uc = str(self.usercode_plainTextEdit.toPlainText().toAscii())
         uc = uc.lstrip("multireg ") #handles both cases in one foul swoop!
         if self.uc_reg_radioButton.isChecked():
             uc = "reg " + uc
@@ -74,7 +74,7 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         to be reloaded.
         '''
         
-        edited_xml = unicode(self.xml_plainTextEdit.toPlainText())
+        edited_xml = str(self.xml_plainTextEdit.toPlainText().toAscii())
         dom = minidom.parseString(edited_xml)
         node = dom.getElementsByTagName("item")[0]
         
@@ -95,23 +95,29 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
         dialog.
         '''
         self.fee_item.category = self.category_comboBox.currentIndex()
-        self.fee_item.pl_cmp_type = str(self.pl_cmp_comboBox.currentText())
+        self.fee_item.pl_cmp_type = \
+            str(self.pl_cmp_comboBox.currentText().toAscii())
         
-        usercode = str(self.usercode_plainTextEdit.toPlainText())
+        usercode = str(self.usercode_plainTextEdit.toPlainText().toAscii())
         if usercode != self.fee_item.usercode:
             self.usercode_changed = True
-        
         self.fee_item.usercode = usercode
-        self.fee_item.regulations = \
-            str(self.regulations_plainTextEdit.toPlainText())
-
-        self.fee_item.description = str(self.description_lineEdit.text())
         
-        brief_descriptions = str(self.descriptions_plainTextEdit.toPlainText())
+        self.fee_item.regulations = \
+            str(self.regulations_plainTextEdit.toPlainText().toAscii())
+
+        self.fee_item.description = \
+            str(self.description_lineEdit.text().toAscii())
+        
+        brief_descriptions = \
+            str(self.descriptions_plainTextEdit.toPlainText().toAscii())
+        
         self.fee_item.brief_descriptions = brief_descriptions.split("\n")
         
         feelist = []
-        fees = re.findall(r"\b\d+\b", str(self.fees_lineEdit.text().toAscii()))
+        fees = re.findall(r"\b\d+\b", 
+            str(self.fees_lineEdit.text().toAscii()))
+        
         colcount = self.fee_item.table.feeColCount
         if self.fee_item.table.hasPtCols:
             colcount = colcount//2
@@ -159,7 +165,8 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
             if self.tabWidget.currentIndex() == 0:
                 xml_to_test = self.fee_item.to_xml()
             else:
-                xml_to_test = unicode(self.xml_plainTextEdit.toPlainText())
+                xml_to_test = \
+                    str(self.xml_plainTextEdit.toPlainText().toAscii())
             
         errors = []
         
@@ -276,8 +283,10 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
             if self.tabWidget.currentIndex() == 0:
                 self.apply_wizard_changes()
                 newXML = self.fee_item.to_xml(True)
+                commitXML = self.fee_item.to_xml()
             else:
-                newXML = str(self.xml_plainTextEdit.toPlainText())
+                newXML = str(self.xml_plainTextEdit.toPlainText().toAscii())
+                commitXML = newXML.replace("\n","")
                 
             if self.initial_generatedXml != newXML:
                 if QtGui.QMessageBox.question(self.dialog,
@@ -307,9 +316,9 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
     dl = editFee(item, Dialog)
     
-    result, item, alter_other_tables = dl.getInput()
+    result, item, newxml, alter_other_tables = dl.getInput()
     dl.usercode_changed
     if result:
-        item.table.alterItem(item)
+        item.table.alterItem(item, newxml)
         
     print "alter_other_tables",alter_other_tables

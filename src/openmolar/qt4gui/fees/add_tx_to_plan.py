@@ -96,10 +96,12 @@ def xrayAdd(om_gui, complete=False):
             complete_tx.estwidg_complete(om_gui, est)
         
     if om_gui.ui.tabWidget.currentIndex() == 7: #estimates page
-        om_gui.load_clinicalSummaryPage()
         om_gui.load_treatTrees()
         om_gui.load_newEstPage()
-    
+    else:
+        om_gui.load_clinicalSummaryPage()
+        
+        
 @localsettings.debug
 def perioAdd(om_gui):
     '''

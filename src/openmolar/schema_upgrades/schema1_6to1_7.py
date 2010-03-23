@@ -194,12 +194,6 @@ def getAsXML(table):
     itemcodeIndex = col_names.index("code")
     currentItem = ""
     
-    #<section>2</section> <code>0201</code> <oldcode> </oldcode> 
-    #<USERCODE>S</USERCODE> <regulation> </regulation> 
-    #<description> </description> 
-    #<brief_description>small xrays 2 films</brief_description> 
-    #<fee>551</fee> <pt_fee>0</pt_fee> <hide>0</hide> 
-    #<pl_cmp>None</pl_cmp>
     for row in rows:
         newNode = row[itemcodeIndex] != currentItem
         currentItem = row[itemcodeIndex]
@@ -236,6 +230,7 @@ def getAsXML(table):
                 elif row[i]:
                     d = dom.createElement(col)
                     val = str(row[i])
+                    val = val.replace('\xbe', '3/4')
                     d.appendChild(dom.createTextNode(val))
                 item.appendChild(d)
             i += 1

@@ -18,8 +18,9 @@ from PyQt4 import QtGui, QtCore
 from openmolar.dbtools import feesTable
 
 class tableViewer(QtGui.QWidget):
-    def __init__(self, tablename, parent=None):
-        super(tableViewer, self).__init__(parent)
+    def __init__(self, tablename, mainWindow):
+        super(tableViewer, self).__init__(mainWindow)
+        self.mainWindow = mainWindow
         self.tablename = tablename
         layout = QtGui.QVBoxLayout(self)
         self.text_edit = QtGui.QPlainTextEdit()
@@ -37,11 +38,14 @@ class tableViewer(QtGui.QWidget):
         self.searchButton.setText(_("Find"))
         self.searchNextButton = QtGui.QPushButton()
         self.searchNextButton.setText(_("Find Again"))
+        self.statsButton = QtGui.QPushButton()
+        self.statsButton.setText(_("Document Statistics"))
         
         layout2.addWidget(self.saveButton)
         layout2.addWidget(self.parseButton)
         layout2.addWidget(self.searchButton)
         layout2.addWidget(self.searchNextButton)
+        layout2.addWidget(self.statsButton)
         
         self.dirty = False
         self.search_text = ""
@@ -53,12 +57,33 @@ class tableViewer(QtGui.QWidget):
         self.text_edit.setPlainText(data)
         self.dirty = False
         self.enableButtons()
+        self.connect(self.text_edit, QtCore.SIGNAL("cursorPositionChanged ()"),
+        self.navigated)
+        
+    def stats(self):
+        '''
+        show some stats about the data
+        '''
+        try:
+            doc = self.text_edit.document() 
+            message = _("Statistics")+"<ul>"
+            message += "<li>no of Lines - %s</li>"% (doc.lineCount())
+            message += "<li>no of Blocks - %s</li>"% (doc.blockCount())
+            
+            message += "<li>no of characters - %s</li><ul>"%(
+                doc.characterCount())
+        except AttributeError, e:
+            message = str(e)
+        QtGui.QMessageBox.information(self, _("Information"), message)
 
     def enableButtons(self):
         self.saveButton.setEnabled(self.dirty)
         self.searchNextButton.setEnabled(self.search_text != "")
     
     def commitChanges(self):
+        '''
+        commit the changes to the database
+        '''
         data = str(self.text_edit.toPlainText().toAscii())
         if feesTable.saveData(self.tablename, data):
             QtGui.QMessageBox.information(self, _("Sucess!"), 
@@ -73,6 +98,27 @@ class tableViewer(QtGui.QWidget):
         self.dirty = True
         self.enableButtons()
     
+    def navigated(self):
+        '''
+        called when the cursor moves
+        '''
+        cursor = self.text_edit.textCursor()
+        self.mainWindow.statusBar().showMessage("block %d character %d"% (
+            cursor.blockNumber(), cursor.position()))
+    
+    def is_data_Parseable(self):
+        '''
+        using checking to see if self.data is parseable 
+        '''
+        data = str(self.text_edit.toPlainText().toAscii())
+        result, error = feesTable.isParseable(data)
+        if result:
+            QtGui.QMessageBox.information(self, _("result"), 
+            _("data parses ok with xml.minidom"))
+        else:
+            QtGui.QMessageBox.warning(self, _("result"), 
+            _("PARSING DATA FAILED with xml.minidom")+ "<hr />" + error)
+                
     def search(self):
         '''
         search for text
@@ -102,10 +148,16 @@ class tableViewer(QtGui.QWidget):
         self.search)
         self.connect(self.searchNextButton, QtCore.SIGNAL("clicked()"),
         self.searchNext)
+        self.connect(self.parseButton, QtCore.SIGNAL("clicked()"),
+        self.is_data_Parseable)
+        self.connect(self.statsButton, QtCore.SIGNAL("clicked()"), self.stats)
+        
 
 class editor(QtGui.QMainWindow):
     def __init__(self, rows, parent=None):
         super(editor, self).__init__(parent)
+        self.setWindowTitle(_("Fee Table Editor"))
+        self.setMinimumSize(600,400)
         self.tabWidget = QtGui.QTabWidget()
         self.setCentralWidget(self.tabWidget)
         rows = rows

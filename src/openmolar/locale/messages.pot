@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-03-22 18:20+GMT\n"
+"POT-Creation-Date: 2010-03-23 00:55+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,7 +53,15 @@ msgstr ""
 msgid "Error - unrecognised practioner- sorry"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:559
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:166
+msgid "Feetable"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:167
+msgid "Failed to Load"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:578
 msgid "not found"
 msgstr ""
 
@@ -410,8 +418,8 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:252
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:266
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/saveDiscardCancel.py:82
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:284
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:290
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:293
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:299
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:84
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3821
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:57
@@ -2151,7 +2159,7 @@ msgstr ""
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2799
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3115
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:37
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:38
 msgid "Find"
 msgstr ""
 
@@ -3442,7 +3450,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3105
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:33
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:34
 msgid "Commit Changes"
 msgstr ""
 
@@ -5470,7 +5478,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:115
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:180
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:187
 msgid "error"
 msgstr ""
 
@@ -5604,8 +5612,8 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:86
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:330
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:349
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:332
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:351
 msgid "question"
 msgstr ""
 
@@ -5615,22 +5623,22 @@ msgid "Were these xrays taken today?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:331
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:333
 msgid "<p>Credit Patient %s for undoing this item?</p>"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:339
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:341
 msgid "couldn't pass on delete message - "
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:340
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:342
 msgid "badly formed est.type??? %s"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:350
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/add_tx_to_plan.py:352
 msgid "remove %s %s from the estimate?"
 msgstr ""
 
@@ -5663,42 +5671,42 @@ msgid "ERROR STARTING NEW COURSE, sorry"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:170
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:177
 msgid "Bad XML"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:182
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:189
 msgid "OK"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:183
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:190
 msgid "all tests passed"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:202
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:209
 msgid "regex error"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:233
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:240
 msgid "Fee item"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:284
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:293
 msgid "Apply changes?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:291
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:300
 msgid "You have altered a usercode."
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:292
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:301
 msgid "Do you want to apply this change accross all fee tables?"
 msgstr ""
 
@@ -5740,39 +5748,75 @@ msgid "Examination not applied"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:35
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:36
 msgid "check parseable"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:39
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:40
 msgid "Find Again"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:64
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:42
+msgid "Document Statistics"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:69
+msgid "Statistics"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:77
+msgid "Information"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:89
 msgid "Sucess!"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:65
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:90
 msgid "Database updated"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:81
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:116
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:119
+msgid "result"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:117
+msgid "data parses ok with xml.minidom"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:120
+msgid "PARSING DATA FAILED with xml.minidom"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:127
 msgid "Enter Phrase to Search for"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:81
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:93
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:127
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:139
 msgid "Search"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:94
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:140
 msgid "Phrase not Found"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:159
+msgid "Fee Table Editor"
 msgstr ""
 
 #:
@@ -6439,7 +6483,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:349
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:146
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:214
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:364
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:359
 msgid "updating stored schema version"
 msgstr ""
 
@@ -6449,7 +6493,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:351
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:148
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:216
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:366
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:361
 msgid "ALL DONE - sucessfully moved db to"
 msgstr ""
 
@@ -6464,7 +6508,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:344
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:141
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:209
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:359
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:354
 msgid "updating settings"
 msgstr ""
 
@@ -6482,14 +6526,14 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:356
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:153
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:221
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:371
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:366
 msgid "rolled back to"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:129
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:190
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:347
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:342
 msgid "executing statements"
 msgstr ""
 
@@ -6501,12 +6545,12 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:201
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:351
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:346
 msgid "inserting values"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:367
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:362
 msgid "you may now remove old feetables"
 msgstr ""
 

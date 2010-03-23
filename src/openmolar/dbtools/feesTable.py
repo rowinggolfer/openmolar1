@@ -47,6 +47,18 @@ def saveData(tablename, data):
         db.commit()
     return result
 
+def isParseable(data):
+    '''
+    takes a string, tries to parse it.
+    '''
+    try:
+        d = minidom.parseString(data)
+        d.toxml()
+        d.unlink
+    except Exception, e:
+        return (False, str(e))
+    return (True, "")
+
 def getListFromNode(node, id):
     '''
     get the text data from the first child of any such nodes
@@ -103,6 +115,7 @@ class feeTables():
             self.default_table = self.tables[0]
         self.loadTables()
         
+        
     def __repr__(self):
         '''
         a readable description of the object
@@ -147,8 +160,12 @@ class feeTables():
         iterate through the child tables, and get them loaded
         '''
         for table in self.tables.values():
-            table.loadFees()
-
+            try:
+                table.loadFees()
+            except Exception,e:
+                print (_("Feetable") + " %s "%table.tablename + 
+                _("Failed to Load") + " %s"% e)
+                
 class feeTable():
     '''
     a class to contain and allow quick access to data stored in a fee table
@@ -265,7 +282,9 @@ class feeTable():
                     else:
                         uc_node.appendChild(
                         dom.createTextNode(foreign_item.usercode))
-                    newdata = dom.toxml()
+                    
+                    newdata = dom.toxml().encode("utf-8")
+                    
                     if self.data != newdata:
                         self.data = newdata
                         self.dirty = True
