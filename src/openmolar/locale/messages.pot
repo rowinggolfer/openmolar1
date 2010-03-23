@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-03-23 00:55+GMT\n"
+"POT-Creation-Date: 2010-03-23 01:12+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -199,7 +199,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:131
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:36
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:84
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:85
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:172
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:34
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/new_setup.py:143
@@ -5542,46 +5542,51 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:31
-msgid "German"
+msgid "Danish"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:32
-msgid "Hungarian"
+msgid "German"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:33
-msgid "Italian"
+msgid "Hungarian"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:34
-msgid "Polish"
+msgid "Italian"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:35
-msgid "Portuguese"
+msgid "Polish"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:36
-msgid "Slovak"
+msgid "Portuguese"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:37
-msgid "Spanish"
+msgid "Slovak"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:38
+msgid "Spanish"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:39
 msgid "Turkish"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:82
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:83
 msgid "no translation file found for %s"
 msgstr ""
 

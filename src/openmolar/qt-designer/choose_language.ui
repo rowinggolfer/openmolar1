@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>426</width>
-    <height>375</height>
+    <height>501</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,7 +45,7 @@ p, li { white-space: pre-wrap; }
         <x>0</x>
         <y>0</y>
         <width>406</width>
-        <height>124</height>
+        <height>250</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">

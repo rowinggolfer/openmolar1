@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'choose_language.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/choose_language.ui'
 #
-# Created: Thu Nov 19 21:47:08 2009
+# Created: Tue Mar 23 01:09:19 2010
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(426, 375)
+        Dialog.resize(426, 501)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtGui.QLabel(Dialog)
@@ -24,7 +24,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 406, 124))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 406, 250))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.horizontalLayout = QtGui.QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setObjectName("horizontalLayout")

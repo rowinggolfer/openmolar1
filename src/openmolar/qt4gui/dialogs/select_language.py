@@ -28,6 +28,7 @@ def getAvailableLanguages():
     _("English (GB)") +" - en_GB", 
     _("Afrikaans") + " - af",    
     _("French") + " - fr", 
+    _("Danish") + " - da",
     _("German") + " - de",     
     _("Hungarian") + " - hu", 
     _("Italian") + " - it",

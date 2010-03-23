@@ -230,7 +230,7 @@ def getAsXML(table):
                 elif row[i]:
                     d = dom.createElement(col)
                     val = str(row[i])
-                    val = val.replace('\xbe', '3/4')
+                    val = val.replace('\xc3\xbe', '3/4')
                     d.appendChild(dom.createTextNode(val))
                 item.appendChild(d)
             i += 1
