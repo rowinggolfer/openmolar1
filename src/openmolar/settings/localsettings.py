@@ -65,8 +65,14 @@ CORRESPONDENCE_SIG = "The Academy Dental Practice"
 GP17_LEFT = 0
 GP17_TOP = 0
 
+WINDOWS = False
+
 def debug(func):
-    if __debug__:
+    '''
+    a decorator function for debugging
+    '''
+    if __debug__ and not WINDOWS:  # <--- it seems __debug__ = True
+                                   #  is default on windows :(
         def callf(*args, **kwargs):
             print "===="*2, currentTime(), "===="*2
             print "Calling %s:%s, %s"% (func.__name__, args, kwargs)
@@ -116,9 +122,11 @@ stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
 printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
 money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
 LOGOPATH = "file://" + os.path.join(wkdir,"html","images","newlogo.png")
-resources_path = os.path.join(wkdir, "resources")
+resources_path = "file://" + os.path.join(wkdir, "resources")
+
 
 if "win" in sys.platform:
+    WINDOWS = True
     print "windows settings"
     #-- sorry about this... but cross platform is a goal :(
     global_cflocation = 'C:\\Program Files\\openmolar\\openmolar.conf'
@@ -127,11 +135,16 @@ if "win" in sys.platform:
     #-- imports for the css stuff eg... ../resources/style.css
     #-- on linux, the root is always /  on windows... ??
     os.chdir(wkdir)
-    resources_path = resources_path.replace(" ","%20").replace("\\","/")
-    stylesheet = stylesheet.replace(" ","%20").replace("\\","/")
-    printer_png = printer_png.replace(" ","%20").replace("\\","/")
-    money_png =  money_png.replace(" ","%20").replace("\\","/")
-    LOGOPATH = LOGOPATH.replace(" ","%20").replace("\\","/")
+    resources_path = resources_path.replace(
+        "://",":///").replace(" ","%20").replace("\\","/")
+    stylesheet = stylesheet.replace(
+        "://",":///").replace(" ","%20").replace("\\","/")
+    printer_png = printer_png.replace(
+        "://",":///").replace(" ","%20").replace("\\","/")
+    money_png =  money_png.replace(
+        "://",":///").replace(" ","%20").replace("\\","/")
+    LOGOPATH = LOGOPATH.replace(
+        "://",":///").replace(" ","%20").replace("\\","/")
     GP17_LEFT = 15
     GP17_RIGHT = 15
 
