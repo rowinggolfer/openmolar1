@@ -127,10 +127,10 @@ if "win" in sys.platform:
     #-- imports for the css stuff eg... ../resources/style.css
     #-- on linux, the root is always /  on windows... ??
     os.chdir(wkdir)
-    resources_path = "resources"
-    #stylesheet = "resources/style.css"
-    #printer_png = "resources/icons/ps.png"
-    #money_png =  "resources/icons/vcard.png"
+    resources_path = resources_path.replace(" ","%20").replace("\\","/")
+    stylesheet = stylesheet.replace(" ","%20").replace("\\","/")
+    printer_png = printer_png.replace(" ","%20").replace("\\","/")
+    money_png =  money_png.replace(" ","%20").replace("\\","/")
 
     GP17_LEFT = 15
     GP17_RIGHT = 15
