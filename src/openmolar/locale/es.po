@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-19 11:18+0000\n"
-"PO-Revision-Date: 2010-03-19 11:46+0000\n"
+"POT-Creation-Date: 2010-03-23 01:47+0000\n"
+"PO-Revision-Date: 2010-03-22 19:19+0000\n"
 "Last-Translator: Neil Wallace <rowinggolfer@googlemail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-03-20 04:49+0000\n"
+"X-Launchpad-Export-Date: 2010-03-23 04:48+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:64
@@ -55,7 +55,15 @@ msgstr "Trabajo de Dentadura"
 msgid "Error - unrecognised practioner- sorry"
 msgstr "Error - practicante no reconocido- lo siento"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:515
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:166
+msgid "Feetable"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:167
+msgid "Failed to Load"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:578
 msgid "not found"
 msgstr ""
 
@@ -82,7 +90,7 @@ msgstr "Mensaje"
 msgid "Date"
 msgstr "Fecha"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/patient_class.py:665
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/patient_class.py:664
 msgid "Age Exemption removed"
 msgstr "Excepción de edad removida"
 
@@ -182,7 +190,7 @@ msgstr "en la línea de comandos, o elimine el archivo"
 msgid "For a more secure setup, you should move this file to"
 msgstr "Para una configuración más segura, deberia mover el archivo a"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:130
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:129
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:172
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:54
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:175
@@ -191,77 +199,77 @@ msgstr "Para una configuración más segura, deberia mover el archivo a"
 msgid "Error"
 msgstr "error"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:132
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:131
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:36
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:84
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:85
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:172
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:34
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/new_setup.py:143
 msgid "Advisory"
 msgstr "Asesoramiento"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:151
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:150
 msgid "Passwords don't match!"
 msgstr "Las contraseñas no coinciden!"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:177
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:176
 msgid "Create Database"
 msgstr "Crear Base de Datos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:178
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:177
 msgid "Create Demo Database now with the following settings?"
 msgstr "¿Crear base de datos de prueba con las siguientes configuraciones?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:189
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:188
 msgid "Database Created Sucessfully"
 msgstr "Base de datos creada satisfactoriamente"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:196
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:195
 msgid "Database NOT Created"
 msgstr "Base de datos NO creada"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:217
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:216
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:287
 msgid "Welcome to the openMolar settings wizard."
 msgstr "Bienvenido al asistente de configuraciones de openMolar"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:218
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:217
 msgid "Set the application Password"
 msgstr "Establezca la contraseña de la aplicación"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:219
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:218
 msgid "Server Location"
 msgstr "Localización del servidor"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:220
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:219
 msgid "Database Settings"
 msgstr "Configuraciones de la base de datos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:221
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:220
 msgid "Save settings and exit"
 msgstr "Guardar las configuraciones y salir"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:222
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:221
 msgid "Create a demo database"
 msgstr "Crear base de datos de prueba"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:223
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:222
 msgid "Creating Database"
 msgstr "Creando base de datos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:271
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:270
 msgid "The connection attempt threw an exception"
 msgstr "El intento de conexión produjo una excepción"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:277
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:276
 msgid "Success!"
 msgstr "¡Perfecto!"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:278
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:277
 msgid "The %s database accepted the connection."
 msgstr "La base de datos %s aceptó la conexión."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:281
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:280
 msgid ""
 "The connection attempt failed, \n"
 "please recheck your settings"
@@ -269,11 +277,11 @@ msgstr ""
 "El intento de conexión falló, \n"
 "por favor compruebe sus configuraciones"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:324
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:323
 msgid "Error Creating Database"
 msgstr "Error creando base de datos."
 
-#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:431
+#: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:430
 msgid "FAILURE"
 msgstr "ERROR"
 
@@ -442,9 +450,10 @@ msgstr "PLAN"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:252
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:266
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/saveDiscardCancel.py:82
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:275
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:293
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:299
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:84
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3816
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3821
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:57
 msgid "Confirm"
 msgstr "Confirmar"
@@ -571,7 +580,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/charts/charts_gui.py:259
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2936
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2993
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:771
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:772
 msgid "BPE"
 msgstr "BPE"
 
@@ -1330,7 +1339,7 @@ msgstr "Código"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estHeaderWidget.py:137
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_model.py:153
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1077
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1078
 msgid "Description"
 msgstr "Descripción"
 
@@ -1342,7 +1351,7 @@ msgstr "Gato"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estHeaderWidget.py:139
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_exam_wizard.py:121
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_hygenist_wizard.py:78
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1077
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1078
 msgid "Type"
 msgstr "Tipo"
 
@@ -1954,6 +1963,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2799
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3115
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:38
 msgid "Find"
 msgstr "Buscar"
 
@@ -2558,7 +2568,7 @@ msgid "New Course Of Treatment"
 msgstr "Nuevo Curso de Tratamiento"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2964
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1545
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1546
 msgid "Close Course"
 msgstr "Cerrar Curso"
 
@@ -2949,7 +2959,7 @@ msgid "Bulk Mailings"
 msgstr "Envíos Masivos"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3085
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:169
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:170
 msgid "Fee Scales Available"
 msgstr ""
 
@@ -3019,6 +3029,7 @@ msgid "Allow Adjust FeeScales"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3105
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:34
 msgid "Commit Changes"
 msgstr ""
 
@@ -3073,7 +3084,7 @@ msgid "Split Replies"
 msgstr "Dividir Respuestas"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3122
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1746
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1747
 msgid "FORUM"
 msgstr "Foro"
 
@@ -4821,7 +4832,7 @@ msgid "no reason for the block given"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:108
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1997
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1998
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:91
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:119
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:185
@@ -4834,7 +4845,7 @@ msgid "Unable to commit because"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:115
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:171
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:187
 msgid "error"
 msgstr "error"
 
@@ -4887,38 +4898,42 @@ msgid "French"
 msgstr "Francés"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:31
+msgid "Danish"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:32
 msgid "German"
 msgstr "Alemán"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:32
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:33
 msgid "Hungarian"
 msgstr "Húngaro"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:33
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:34
 msgid "Italian"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:34
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:35
 msgid "Polish"
 msgstr "Polaco"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:35
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:36
 msgid "Portuguese"
 msgstr "Portugués"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:36
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:37
 msgid "Slovak"
 msgstr "Eslovaco"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:37
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:38
 msgid "Spanish"
 msgstr "Español"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:38
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:39
 msgid "Turkish"
 msgstr "Turco"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:82
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:83
 msgid "no translation file found for %s"
 msgstr "ningún archivo de traducción para %s"
 
@@ -4991,28 +5006,36 @@ msgstr ""
 msgid "ERROR STARTING NEW COURSE, sorry"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:161
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:177
 msgid "Bad XML"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:173
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:189
 msgid "OK"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:174
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:190
 msgid "all tests passed"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:193
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:209
 msgid "regex error"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:224
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:240
 msgid "Fee item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:275
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:293
 msgid "Apply changes?"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:300
+msgid "You have altered a usercode."
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:301
+msgid "Do you want to apply this change accross all fee tables?"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:34
@@ -5051,6 +5074,64 @@ msgstr ""
 msgid "Examination not applied"
 msgstr ""
 
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:36
+msgid "check parseable"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:40
+msgid "Find Again"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:42
+msgid "Document Statistics"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:69
+msgid "Statistics"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:77
+msgid "Information"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:89
+msgid "Sucess!"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:90
+msgid "Database updated"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:116
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:119
+msgid "result"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:117
+msgid "data parses ok with xml.minidom"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:120
+msgid "PARSING DATA FAILED with xml.minidom"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:127
+msgid "Enter Phrase to Search for"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:127
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:139
+msgid "Search"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:140
+msgid "Phrase not Found"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_editor.py:159
+msgid "Fee Table Editor"
+msgstr ""
+
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fee_table_model.py:151
 msgid "Usercode"
 msgstr ""
@@ -5059,72 +5140,72 @@ msgstr ""
 msgid "brief description"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:207
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:206
 msgid "The following tables were altered"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:213
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:212
 msgid "No changes apllied"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:245
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:260
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:247
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:262
 msgid "Adjust / edit this Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:247
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:249
 msgid "Add to tx plan"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:255
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:257
 msgid "Add to tx plan of patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:261
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:263
 msgid "Delete Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:262
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:264
 msgid "Insert New Item"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:299
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:301
 msgid "Items containing"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:305
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:307
 msgid "phrase not found in feetable"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:307
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:309
 msgid "usercodes or descriptions"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:309
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:311
 msgid "usercodes"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:311
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:313
 msgid "descriptions"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:315
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:317
 msgid "nothing to search"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:316
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:318
 msgid "please select usercodes and/or descriptions then search again"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:346
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:348
 msgid "Error opening PDF file"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:356
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:358
 msgid "IN CURRENT USE"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:369
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/fees_module.py:371
 msgid "fee table error"
 msgstr ""
 
@@ -5160,139 +5241,143 @@ msgstr ""
 msgid "commit now?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:926
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:943
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:927
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:944
 msgid "is no longer an active dentist in this practice"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:930
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:931
 msgid "unknown contract dentist - please correct this"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:948
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:949
 msgid "unknown course dentist - please correct this"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:993
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:994
 msgid "SAVE NEW PATIENT"
 msgstr "GUARDAR PACIENTE NUEVO"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1005
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1006
 msgid "SAVE CHANGES"
 msgstr "GUARDAR CAMBIOS"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1039
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1048
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1109
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1040
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1049
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1110
 msgid "Re-open"
 msgstr "Reabrir"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1040
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1049
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1041
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1050
 msgid "Do you want to review and/or reprint this item?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1062
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1063
 msgid "error reviewing PDF file"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1067
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1068
 msgid "No information available about this document, sorry"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1076
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1077
 msgid "Date imported"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1077
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1078
 msgid "Size"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1094
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1095
 msgid "opening"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1098
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1099
 msgid "error importing file"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1100
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1101
 msgid "no file chosen"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1110
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1111
 msgid "Do you want to open a copy of this document?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1125
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1126
 msgid "error opening document"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1134
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1135
 msgid "Today's Patients"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1137
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1138
 msgid "Today's Patients (ALL)"
 msgstr "Pacientes del día (TODOS)"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1265
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1266
 msgid "Reached end of the List"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1280
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1281
 msgid "Reached Start of the List"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1358
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1359
 msgid ""
 "Error populating interface\n"
 "%s"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1476
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1477
 msgid ""
 "<center>Message from %s <br />\n"
 "Dated %s<br /><br />%s</center>"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1489
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1490
 msgid "problem getting a memo %s"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1740
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1741
 msgid "NEW FORUM POSTS"
 msgstr "NUEVOS MENSAJES EN EL FORO"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1962
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1963
 msgid "POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2022
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2023
 msgid "Sucessfully altered the following items"
 msgstr "Los siguientes elementos se cambiaron de forma exitosa"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2248
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2249
 msgid "no record selected"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3801
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2589
+msgid "error commiting changes"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3806
 msgid "Scrap the estimate and re-price everything?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3817
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3822
 msgid "apply an exmption to this estimate?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3822
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3827
 msgid "input needed"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3823
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3828
 msgid "maximum charge for the patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3823
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3828
 msgid "please enter the amount in pence, or leave as 0 for full exmption"
 msgstr ""
 
@@ -5668,7 +5753,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:349
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:146
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:214
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:364
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:359
 msgid "updating stored schema version"
 msgstr ""
 
@@ -5677,7 +5762,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:351
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:148
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:216
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:366
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:361
 msgid "ALL DONE - sucessfully moved db to"
 msgstr ""
 
@@ -5690,7 +5775,7 @@ msgstr "creando tablas nuevas"
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:344
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:141
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:209
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:359
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:354
 msgid "updating settings"
 msgstr "actualizando configuraciones"
 
@@ -5705,13 +5790,13 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_3to1_4.py:356
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:153
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:221
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:371
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:366
 msgid "rolled back to"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_4to1_5.py:129
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:190
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:347
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:342
 msgid "executing statements"
 msgstr ""
 
@@ -5721,11 +5806,11 @@ msgid "transfering data"
 msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_5to1_6.py:201
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:351
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:346
 msgid "inserting values"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:367
+#: /home/neil/openmolar/openmolar/src/openmolar/schema_upgrades/schema1_6to1_7.py:362
 msgid "you may now remove old feetables"
 msgstr ""
 
@@ -5873,23 +5958,23 @@ msgstr ""
 msgid "Yesterday"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:783
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:781
 msgid "Welcome to OpenMolar!"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:784
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:782
 msgid "Version"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:785
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:783
 msgid "Revision"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:787
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:785
 msgid "Your Data is Accessible, and the server reports no issues."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:788
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:786
 msgid "Have a great day!"
 msgstr ""
 

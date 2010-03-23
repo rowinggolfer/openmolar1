@@ -44,7 +44,7 @@ except:  #TypeError
     ##- an unelegant hack to get _() on the namespace for testing
     ##- main.py will normally do this for us.
     import gettext
-    gettext.install("openmolar",unicode=True)
+    gettext.install("openmolar", unicode=True)
 
 def showVersion():
     '''
@@ -128,9 +128,9 @@ if "win" in sys.platform:
     #-- on linux, the root is always /  on windows... ??
     os.chdir(wkdir)
     resources_path = "resources"
-    stylesheet = "resources/style.css"
-    printer_png = "resources/icons/ps.png"
-    money_png =  "resources/icons/vcard.png"
+    #stylesheet = "resources/style.css"
+    #printer_png = "resources/icons/ps.png"
+    #money_png =  "resources/icons/vcard.png"
 
     GP17_LEFT = 15
     GP17_RIGHT = 15
