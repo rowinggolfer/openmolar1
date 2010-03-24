@@ -122,8 +122,8 @@ stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
 printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
 money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
 LOGOPATH = "file://" + os.path.join(wkdir,"html","images","newlogo.png")
-resources_path = os.path.join(wkdir, "resources")
-
+resources_location = os.path.join(wkdir, "resources")
+resources_path = "file://" + resources_location
 
 if "win" in sys.platform:
     WINDOWS = True
@@ -135,8 +135,8 @@ if "win" in sys.platform:
     #-- imports for the css stuff eg... ../resources/style.css
     #-- on linux, the root is always /  on windows... ??
     os.chdir(wkdir)
-    #resources_path = resources_path.replace(
-    #    "://",":///").replace(" ","%20").replace("\\","/")
+    resources_path = resources_path.replace(
+        "://",":///").replace(" ","%20").replace("\\","/")
     stylesheet = stylesheet.replace(
         "://",":///").replace(" ","%20").replace("\\","/")
     printer_png = printer_png.replace(

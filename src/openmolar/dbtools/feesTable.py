@@ -111,8 +111,8 @@ class feeTables():
     def __init__(self):
         self.tables = {}
         self.default_table = None
-        if self.getTables():
-            self.default_table = self.tables[0]
+        defaulttableno = self.getTables()
+        self.default_table = self.tables[defaulttableno]
         self.loadTables()
         
         
@@ -143,17 +143,28 @@ class feeTables():
         '''
         rows = getData()
         i = 0
-        for (tablename, categories, description, startdate, endate,
+        defaulttableno = -1
+        for (tablename, categories, description, startdate, enddate,
         feecoltypes, data) in rows:
             ft = feeTable(tablename, i)
             ft.setCategories(categories)
             ft.setTableDescription(description)
             ft.setStartDate(startdate)
-            ft.setEndDate(endate)
+            ft.setEndDate(enddate)
             ft.setFeeCols(feecoltypes)
             ft.setData(data)
             self.tables[i] = ft
+            
+            if defaulttableno == -1: 
+                if ("P" in ft.categories and 
+                startdate <= localsettings.currentDay() and
+                (enddate == None or enddate > localsettings.currentDay())):
+                    defaulttableno = i
             i += 1
+        if defaulttableno == -1:
+            print "WARNING - NO DEFAULT FEE TABLE FOUND!"
+            defaulttableno = 0
+        return defaulttableno
 
     def loadTables(self):
         '''

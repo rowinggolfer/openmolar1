@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-03-24 12:14+GMT\n"
+"POT-Creation-Date: 2010-03-24 13:27+GMT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,15 +53,15 @@ msgstr ""
 msgid "Error - unrecognised practioner- sorry"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:166
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:177
 msgid "Feetable"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:167
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:178
 msgid "Failed to Load"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:578
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:589
 msgid "not found"
 msgstr ""
 
@@ -307,24 +307,24 @@ msgid ""
 "<hr /><p>Do you wish to continue?</p>"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:128
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:131
 msgid "This is not the default database - are you sure?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:131
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:134
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/new_setup.py:154
 msgid "confirm"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:145
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:148
 msgid "DEFAULT"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:147
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:150
 msgid "Chosen server"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:163
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:166
 msgid ""
 "<center><p>\n"
 "This appears to be your first running of openMolar<br />\n"
@@ -334,30 +334,30 @@ msgid ""
 "Are you ready to proceed?</center>"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:170
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:173
 msgid "First Run"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:199
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:202
 msgid "Unable to Run OpenMolar"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:200
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:203
 msgid "Good Bye!"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:281
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:289
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:284
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:292
 msgid "Login Error"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:282
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:285
 msgid ""
 "Incorrect<br />User/password<br />\n"
 "combination!<br />Please Try Again."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/main.py:285
+#: /home/neil/openmolar/openmolar/src/openmolar/main.py:288
 msgid ""
 "<p>DATABASE ERROR </p>\n"
 "<p>application cannot run</p>Error %s"
