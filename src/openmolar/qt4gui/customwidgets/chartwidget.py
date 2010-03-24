@@ -264,7 +264,13 @@ class chartWidget(QtGui.QWidget):
         
         self.emit(QtCore.SIGNAL("toothSelected"), teeth )
         
-        if teeth and event == QtGui.QMouseEvent and event.button() == 2:
+        right_click = False
+        try:
+            right_click = event.button() == 2
+        except AttributeError: #keyboard events have no attribute "button"
+            pass
+            
+        if teeth and right_click:
             tooth = teeth[0] 
                     
             menu = QtGui.QMenu(self)
