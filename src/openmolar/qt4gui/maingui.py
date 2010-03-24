@@ -256,6 +256,7 @@ class openmolarGui(QtGui.QMainWindow):
         #-summary chart
         self.ui.summaryChartWidget=chartwidget.chartWidget()
         self.ui.summaryChartWidget.setShowSelected(False)
+        self.ui.summaryChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
         hlayout=QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
         hlayout.addWidget(self.ui.summaryChartWidget)
 
@@ -266,12 +267,14 @@ class openmolarGui(QtGui.QMainWindow):
 
         #-static chart
         self.ui.staticChartWidget=chartwidget.chartWidget()
+        self.ui.staticChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
         hlayout=QtGui.QHBoxLayout(self.ui.static_groupBox)
         hlayout.addWidget(self.ui.staticChartWidget)
         self.ui.static_groupBox.setStyleSheet("border: 1px solid gray;")
 
         #-plan chart
         self.ui.planChartWidget=chartwidget.chartWidget()
+        self.ui.planChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.ui.planChartWidget.isStaticChart=False
         self.ui.planChartWidget.isPlanChart=True
         self.ui.plan_groupBox.setStyleSheet("border: 1px solid gray;")

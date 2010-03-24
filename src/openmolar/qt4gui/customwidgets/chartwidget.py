@@ -210,8 +210,6 @@ class chartWidget(QtGui.QWidget):
 
     def mousePressEvent(self, event):
         '''overrides QWidget's mouse event'''
-        ctrlClick = (event.modifiers() == QtCore.Qt.ControlModifier)
-        shiftClick = (event.modifiers() == QtCore.Qt.ShiftModifier)
         xOffset = self.width() / 16
         yOffset = self.height() / 2
         x = int(event.x() / xOffset)
@@ -219,7 +217,15 @@ class chartWidget(QtGui.QWidget):
             y = 0
         else:
             y = 1
+        self.selectEvent(x, y, event)
 
+    def selectEvent(self, x, y, event):
+        '''
+        handles stuff common to mousepress and keypress
+        '''
+        ctrlClick = (event.modifiers() == QtCore.Qt.ControlModifier)
+        shiftClick = (event.modifiers() == QtCore.Qt.ShiftModifier)
+        
         [px, py] = self.selected
         if px == -1: px=0
         if py == -1: py=0
@@ -258,7 +264,7 @@ class chartWidget(QtGui.QWidget):
         
         self.emit(QtCore.SIGNAL("toothSelected"), teeth )
         
-        if teeth and event.button() == 2:
+        if teeth and event == QtGui.QMouseEvent and event.button() == 2:
             tooth = teeth[0] 
                     
             menu = QtGui.QMenu(self)
@@ -372,32 +378,29 @@ class chartWidget(QtGui.QWidget):
         '''
         overrides QWidget's keypressEvent
         '''
-        #-- this code is largely irrelevant. the widget doesn't take focus
-        #-- in the current implementation
+        x, y = self.selected
         if event.key() == QtCore.Qt.Key_Left:
-            if self.selected[0] == 0:
-                self.selected[0] = 15
-            else:
-                self.selected[0] -= 1
+            x = 15 if x == 0 else x-1
         elif event.key() == QtCore.Qt.Key_Right:
-            if self.selected[0] == 15:
-                self.selected[0] = 0
-            else:
-                self.selected[0] += 1
+            x = 0 if x == 15 else x+1
         elif event.key() == QtCore.Qt.Key_Up:
-            if self.selected[1] == 0:
-                self.selected[1] = 1
-            else:
-                self.selected[1] -= 1
+            y = 1if y == 0 else y-1
         elif event.key() == QtCore.Qt.Key_Down:
-            if self.selected[1] == 1:
-                self.selected[1] = 0
+            y=0 if y == 1 else y+1
+        elif event.key() == QtCore.Qt.Key_Return:
+            if y==0:
+                if x == 15:
+                    y = 1
+                else:
+                    x += 1
             else:
-                self.selected[1] += 1
-
-        event.handled = True
-        self.update()
-
+                if x == 0:
+                    y = 0
+                else:
+                    x -= 1
+                        
+        self.selectEvent(x, y, event)
+               
     def paintEvent(self, event=None):
         '''
         overrides the paint event so that we can draw our grid
