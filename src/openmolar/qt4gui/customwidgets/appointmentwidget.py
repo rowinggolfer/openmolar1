@@ -3,7 +3,7 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License 
+# (at your option) any later version. See the GNU General Public License
 # for more details.
 
 '''
@@ -11,6 +11,7 @@ contains one class - the appointment widget
 '''
 
 from __future__ import division
+import pickle
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
@@ -29,31 +30,31 @@ class appointmentWidget(QtGui.QFrame):
     startTime,finishTime in format HHMM or HMM or HH:MM or H:MM
     slotDuration is the minimum slot length - typically 5 minutes
     textDetail is the number of slots to draw before writing the time text
-    parentWidget =optional        
+    parentWidget =optional
     '''
-    
+
     def __init__(self, om_gui, sTime, fTime, parent=None):
         super(appointmentWidget, self).__init__(parent)
-        
+
         self.header_frame = QtGui.QFrame(self)
         self.om_gui = om_gui
         self.printButton = QtGui.QPushButton("", self.header_frame)
         self.printButton.setMaximumWidth(50)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/ps.png"), 
+        icon.addPixmap(QtGui.QPixmap(":/ps.png"),
         QtGui.QIcon.Normal, QtGui.QIcon.Off)
 
         self.printButton.setIcon(icon)
-        
-        self.connect(self.printButton, QtCore.SIGNAL("clicked()"), 
+
+        self.connect(self.printButton, QtCore.SIGNAL("clicked()"),
         self.printme)
-        
+
         self.header_label = QtGui.QLabel("dent", self.header_frame)
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
-        
+
         font = QtGui.QFont("Sans",14,75)
         self.header_label.setFont(font)
-        
+
         self.memo_lineEdit = QtGui.QLineEdit(self)
         self.memo_lineEdit.setText("hello")
         self.memo_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
@@ -72,18 +73,18 @@ class appointmentWidget(QtGui.QFrame):
         glay.addWidget(self.header_label,0,0)
         glay.addWidget(self.memo_lineEdit,1,0,1,2)
         #self.header_frame.setLayout(glay)
-  
+
         self.scrollArea = QtGui.QScrollArea()
         self.scrollArea.setWidgetResizable(True)
-        
+
         self.canvas = appointmentCanvas(om_gui, self)
-        self.scrollArea.setWidget(self.canvas) 
-        
+        self.scrollArea.setWidget(self.canvas)
+
         self.setDayStartTime(sTime)
         self.setStartTime(sTime)
         self.setDayEndTime(fTime)
         self.setEndTime(fTime)
-        
+
         lay = QtGui.QVBoxLayout()
         lay.setSpacing(0)
         lay.addWidget(self.header_frame)
@@ -92,21 +93,21 @@ class appointmentWidget(QtGui.QFrame):
         self.setMinimumSize(self.minimumSizeHint())
         self.setMaximumSize(self.maximumSizeHint())
         self.signals()
-    
+
     def setDentist(self, apptix):
         '''
         update the dentist the widget relates to
         '''
         self.apptix = apptix
-        self.dentist = localsettings.apptix_reverse[apptix]
-     
+        self.dentist = localsettings.apptix_reverse.get(apptix, "??")
+
     def sizeHint(self):
         '''
         set an (arbitrary) size for the widget
         '''
         return QtCore.QSize(400, 700)
 
-    
+
     def minimumSizeHint(self):
         '''
         set an (arbitrary) minimum size for the widget
@@ -118,42 +119,42 @@ class appointmentWidget(QtGui.QFrame):
         widget looks daft if too wide
         '''
         return QtCore.QSize(500, 16777215)
-        
+
     def setDayStartTime(self, sTime):
         '''
         a public method to set the Practice Day Start
         '''
-        self.canvas.setDayStartTime(sTime)                                              
-        
-    
+        self.canvas.setDayStartTime(sTime)
+
+
     def setDayEndTime(self, fTime):
         '''
         a public method to set the Practice Day End
         '''
         self.canvas.setDayEndTime(fTime)
-    
-    
+
+
     def setStartTime(self, sTime):
         '''
         a public method to set the earliest appointment available
         '''
         self.canvas.setStartTime(sTime)
-        
-    
+
+
     def setEndTime(self, fTime):
         '''
         a public method to set the end of the working day
         '''
         self.canvas.setEndTime(fTime)
-    
-    
+
+
     def setCurrentTime(self, t):
         '''
         send it a value like "HHMM" or "HH:MM" to draw a marker at that time
         '''
         return self.canvas.setCurrentTime(t)
 
-    
+
     def clearAppts(self):
         '''
         resets - the widget values - DOES NOT REDRAW THE WIDGET
@@ -166,52 +167,52 @@ class appointmentWidget(QtGui.QFrame):
         '''
         emits a signal when the print button is clicked
         '''
-        self.emit(QtCore.SIGNAL("print_me"), self.apptix, 
+        self.emit(QtCore.SIGNAL("print_me"), self.apptix,
         self.om_gui.ui.calendarWidget.selectedDate())
-    
+
     def newMemo(self):
         '''
-        user has edited the memo line Edit - emit a signal so the 
+        user has edited the memo line Edit - emit a signal so the
         gui can handle it
         '''
         print "new memo"
         if not self.memo_lineEdit.hasFocus():
-            self.emit(QtCore.SIGNAL("new_memo"), 
+            self.emit(QtCore.SIGNAL("new_memo"),
             (self.dentist, str(self.memo_lineEdit.text().toAscii())))
-        
+
     def signals(self):
         '''
         set up the widget's signals and slots
         '''
-        self.connect(self.memo_lineEdit, 
+        self.connect(self.memo_lineEdit,
         QtCore.SIGNAL("editingFinished()"), self.newMemo)
 
     def update(self):
         self.canvas.update()
-    
+
     def highlightAppt(self, atime):
         '''
         highlights the appointment at the given time
         '''
         self.canvas.highlight = str(atime)
-        
+
     def setAppointment(self, app):
         '''
         adds an appointment to the widget dictionary of appointments
         typical useage is instance.setAppointment
         ("0820","0900","NAME","serialno","trt1",
-        "trt2","trt3","Memo")NOTE - this also appts to the widgets 
+        "trt2","trt3","Memo")NOTE - this also appts to the widgets
         dictionary which has
         row number as key, used for signals when appts are clicked
-    
+
         (5, 915, 930, 'MCPHERSON I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
         (5, 1100, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0)
 
         '''
-        (start, finish, name, sno, trt1, trt2, trt3, memo, flag, cset) = ( 
+        (start, finish, name, sno, trt1, trt2, trt3, memo, flag, cset) = (
         str(app[1]), str(app[2]), app[3], app[4],
         app[5], app[6], app[7], app[8], app[9], chr(app[10]))
-        
+
         startcell = self.canvas.getCell_from_time(start)
         endcell = self.canvas.getCell_from_time(finish)
         if endcell == startcell: #double and family appointments!!
@@ -229,13 +230,13 @@ class appointmentWidget(QtGui.QFrame):
             if self.canvas.rows.has_key(row):
                 self.canvas.rows[row].append(sno)
             else:
-                self.canvas.rows[row] = [sno]    
-    
+                self.canvas.rows[row] = [sno]
+
 class appointmentCanvas(QtGui.QWidget):
     '''
     the canvas for me to draw on
     '''
-    
+
     def __init__(self, om_gui, pWidget=None):
         super(appointmentCanvas, self).__init__(pWidget)
         self.setSizePolicy(QtGui.QSizePolicy(
@@ -243,8 +244,8 @@ class appointmentCanvas(QtGui.QWidget):
 
         self.setMinimumSize(self.minimumSizeHint())
         self.pWidget = pWidget
-        self.slotDuration = 5 # 5 minute slots                                                                 
-        self.textDetail = 3   # time printed every 3 slots                                                               
+        self.slotDuration = 5 # 5 minute slots
+        self.textDetail = 3   # time printed every 3 slots
         self.slotNo = 12
         self.dayEndTime=60
         self.dayStartTime=0
@@ -259,38 +260,68 @@ class appointmentCanvas(QtGui.QWidget):
         self.duplicateNo = -1 #use this for serialnos =0
         self.om_gui = om_gui
         self.highlight = None
-    
+        self.dragging = False
+        self.setAcceptDrops(True)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat("application/x-appointment"):
+            self.dragging = True
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat("application/x-appointment"):
+            event.setDropAction(QtCore.Qt.MoveAction)
+            self.update()
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragLeaveEvent(self, event):
+        self.dragging = False
+        self.update()
+
+    def dropEvent(self, event):
+        data = event.mimeData()
+        bstream = data.retrieveData("application/x-appointment",
+            QtCore.QVariant.ByteArray)
+        selected = pickle.loads(bstream.toByteArray())
+        self.dragging = False
+        print selected, "dropped succesfully"
+        event.accept()
+
     def setDayStartTime(self, sTime):
         '''
         a public method to set the Practice Day Start
         '''
-        self.dayStartTime = self.minutesPastMidnight(sTime)                                              
-        
-    
+        self.dayStartTime = self.minutesPastMidnight(sTime)
+
+
     def setDayEndTime(self, fTime):
         '''
         a public method to set the Practice Day End
         '''
         self.dayEndTime = self.minutesPastMidnight(fTime)
         self.calcSlotNo()
-        
-    
+
+
     def setStartTime(self, sTime):
         '''
         a public method to set the earliest appointment available
         '''
-        self.startTime = self.minutesPastMidnight(sTime)                                              
+        self.startTime = self.minutesPastMidnight(sTime)
         self.firstSlot = self.getCell_from_time(sTime)+1
-        
-    
+
+
     def setEndTime(self, fTime):
         '''
         a public method to set the end of the working day
         '''
         self.endTime = self.minutesPastMidnight(fTime)
         self.lastSlot = self.getCell_from_time(fTime)
-        
-    
+
+
     def calcSlotNo(self):
         '''
         work out how many 'slots' there are given the lenght of day
@@ -298,56 +329,56 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         self.slotNo = (
         self.dayEndTime - self.dayStartTime) // self.slotDuration
-    
-    
+
+
     def minutesPastMidnight(self, t):
         '''
-        converts a time in the format of 
+        converts a time in the format of
         'HHMM' or 'H:MM' (both strings) to minutes
         past midnight
         '''
         #t=t.replace(":","")
         hour, minute = int(t) // 100, int(t) % 100
         return hour * 60 + minute
-    
-    
+
+
     def humanTime(self, t):
         '''
         converts minutes past midnight(int) to format "HH:MM"
         '''
         hour, minute = t // 60, int(t) % 60
         return "%s:%02d"% (hour, minute)
-    
-    
+
+
     def setslotDuration(self, arg):
         '''
         set the slotDuration (
     default is 5 minutes
         '''
         self.slotDuration = arg
-        
-    
+
+
     def setTextDetail(self, arg):
         '''
         set the number of rows between text time slots
         '''
         self.textDetail = arg
 
-    
+
     def sizeHint(self):
         '''
         set an (arbitrary) size for the widget
         '''
         return QtCore.QSize(800, 800)
 
-    
+
     def minimumSizeHint(self):
         '''
         set an (arbitrary) minimum size for the widget
         '''
         return QtCore.QSize(150, 200)
-    
-    
+
+
     def setCurrentTime(self, t):
         '''
         send it a value like "HHMM" or "HH:MM" to draw a marker at that time
@@ -355,8 +386,8 @@ class appointmentCanvas(QtGui.QWidget):
         self.setTime = t
         if self.startTime < int(t) < self.endTime:
             return True
-    
-    
+
+
     def qTime(self, t):
         '''
         converts minutes past midnight(int) to a QTime
@@ -364,15 +395,15 @@ class appointmentCanvas(QtGui.QWidget):
         hour, minute = t // 60, int(t) % 60
         return QtCore.QTime(hour, minute)
 
-    
+
     def getCell_from_time(self, t):
         '''
         send a time - return the row number of that time
         '''
-        return int((self.minutesPastMidnight(t) - self.dayStartTime) 
+        return int((self.minutesPastMidnight(t) - self.dayStartTime)
         / self.slotDuration)
-    
-    
+
+
     def getPrev(self, arg):
         '''
         what slot is the previous appt?
@@ -384,8 +415,8 @@ class appointmentCanvas(QtGui.QWidget):
                 break
             lower -= 1
         return lower
-    
-    
+
+
     def getNext(self, arg):
         '''
         what slot is the next appt?
@@ -396,8 +427,8 @@ class appointmentCanvas(QtGui.QWidget):
                 break
             upper += 1
         return upper
-    
-    
+
+
     def getApptBounds(self, arg):
         '''
         get the start and finish of an appt
@@ -413,7 +444,7 @@ class appointmentCanvas(QtGui.QWidget):
                 if key>=upper:
                     upper=key
         return (lower,upper+1)
-    
+
     def mouseMoveEvent(self, event):
         y = event.y()
         yOffset = self.height() / self.slotNo
@@ -422,8 +453,8 @@ class appointmentCanvas(QtGui.QWidget):
             self.selected = (0, 0)
             self.update()
             QtGui.QToolTip.showText(event.globalPos(), "")
-            return 
-            
+            return
+
         if self.rows.has_key(row):
             selectedPatients = self.rows[row]
             self.selected = self.getApptBounds(selectedPatients)
@@ -451,28 +482,28 @@ class appointmentCanvas(QtGui.QWidget):
             if self.selected != newSelection:
                 self.selected = newSelection
                 self.update()
-            
+
                 start = int(self.dayStartTime + self.selected[0] * self.slotDuration)
                 finish = int(self.dayStartTime + self.selected[1] * self.slotDuration)
-                
+
                 QtGui.QToolTip.showText(event.globalPos(),
-                "SLOT %s minutes"% (finish - start))                
-                        
-    
+                "SLOT %s minutes"% (finish - start))
+
+
     def mousePressEvent(self, event):
         '''
-        catch the mouse press event - 
+        catch the mouse press event -
         and if you have clicked on an appointment, emit a signal
         the signal has a LIST as argument -
         in case there are overlapping appointments or doubles etc...
         '''
         yOffset = self.height() / self.slotNo
-        row=event.y()//yOffset        
+        row=event.y()//yOffset
         if self.rows.has_key(row):
             selectedPatients=self.rows[row]
             #ignore lunch and emergencies - serialno number is positive
-            if selectedPatients[0]>0:  
-                self.pWidget.emit(QtCore.SIGNAL("AppointmentClicked"), 
+            if selectedPatients[0]>0:
+                self.pWidget.emit(QtCore.SIGNAL("AppointmentClicked"),
                 tuple(selectedPatients))
             else:
                 start=self.humanTime(
@@ -484,7 +515,7 @@ class appointmentCanvas(QtGui.QWidget):
                 self.pWidget.emit(QtCore.SIGNAL("ClearEmergencySlot"),
                 (start,finish,localsettings.apptix.get(self.pWidget.dentist)))
         else:
-            #-- no-one in the book... 
+            #-- no-one in the book...
             if (self.firstSlot-1) < row < self.lastSlot:
                 start=self.qTime(
                 int(self.dayStartTime+self.selected[0]*self.slotDuration))
@@ -497,44 +528,44 @@ class appointmentCanvas(QtGui.QWidget):
 
                 dl.setTimes(start, finish)
                 dl.setPatient(self.om_gui.pt)
-                    
+
                 if dl.exec_():
                     adjstart = dl.start_timeEdit.time()
                     adjfinish = dl.finish_timeEdit.time()
-                        
+
                     if dl.block == True:
                         reason = str(
                         dl.comboBox.currentText().toAscii())[:30]
-                        if finish > start :                   
+                        if finish > start :
                             self.pWidget.emit(QtCore.SIGNAL("BlockEmptySlot"),
                             (start, finish, adjstart, adjfinish ,
                             localsettings.apptix.get(self.pWidget.dentist),
                             reason))
                         else:
-                            QtGui.QMessageBox.information(self, 
+                            QtGui.QMessageBox.information(self,
                             "Whoops!","Bad Time Sequence!")
                     else:
                         reason = str(dl.reason_comboBox.currentText().toAscii())
-                        
+
                         self.pWidget.emit(
                         QtCore.SIGNAL("Appointment_into_EmptySlot"),
                         (start, finish, adjstart, adjfinish ,
                         localsettings.apptix.get(self.pWidget.dentist),
                         reason, dl.patient))
-                        
+
                         print "make a %d minute appointment for patient %d at"% (
                         dl.length_spinBox.value(), dl.patient.serialno),
                         print dl.appointment_timeEdit.time(),
                         print "ending at", adjfinish
                         print "reason", dl.reason_comboBox.currentText()
-                        
-                    
-    
+
+
+
     def leaveEvent(self,event):
         self.selected=[-1,-1]
         self.update()
 
-    
+
     def paintEvent(self, event=None):
         '''
         draws the book - recalled at any point by instance.update()
@@ -543,47 +574,50 @@ class appointmentCanvas(QtGui.QWidget):
         currentSlot = 0
         myfont = QtGui.QFont(self.fontInfo().family(),
         localsettings.appointmentFontSize)
-        
+
         fm = QtGui.QFontMetrics(myfont)
         timeWidth = fm.width(" 88:88 ")
         painter.setFont(myfont)
         slotHeight = fm.height()/self.textDetail
-        
-        if self.parent() and (slotHeight * 
+
+        if self.parent() and (slotHeight *
         self.slotNo < self.parent().height()):
                 self.setMinimumHeight(self.parent().height())
                 slotHeight = self.height() / self.slotNo
         else:
             self.setMinimumHeight(slotHeight * self.slotNo)
-        
+
         #define and draw the white boundary
 
-        painter.setBrush(colours.APPT_Background)
+        if self.dragging:
+            painter.setBrush(QtGui.QColor("yellow"))
+        else:
+            painter.setBrush(colours.APPT_Background)
         painter.setPen(QtGui.QPen(colours.APPT_Background,1))
 
         top = (self.firstSlot-1) * slotHeight
         bottom = (self.lastSlot + 1 - self.firstSlot) * slotHeight
-        
+
         rect = QtCore.QRectF(timeWidth, top,self.width()-timeWidth, bottom)
-        
+
         painter.drawRect(rect)
-        
+
         # DRAW HORIZONTAL LINES AND TIMES
-        
+
         while currentSlot < self.slotNo:
-            
+
             textneeded = False
             if currentSlot%self.textDetail == 0:
                 textneeded=True
-            
+
             y = currentSlot*slotHeight
-            
+
             #- code to check if within the appointment hours
             if self.firstSlot <= currentSlot <= self.lastSlot:
                 painter.setPen(QtGui.QPen(LINECOLOR, 1))
                 painter.drawLine(timeWidth+1, y, self.width()-1, y)
             if textneeded:
-                trect=QtCore.QRect(0, y, 
+                trect=QtCore.QRect(0, y,
                 timeWidth,y + self.textDetail * slotHeight)
 
                 painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
@@ -592,17 +626,17 @@ class appointmentCanvas(QtGui.QWidget):
                 painter.drawText(trect,QtCore.Qt.AlignLeft,
                 (QtCore.QString(self.humanTime(
                 self.dayStartTime+(currentSlot*self.slotDuration)))))
-            
+
             currentSlot += 1
-        
+
         #####layout appts
         painter.save()
         painter.setPen(QtCore.Qt.black)
         option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
         option.setWrapMode(QtGui.QTextOption.WordWrap)
-        
+
         drawHighlight = False
-                
+
         for appt in self.appts:
             #-- multiple assignment
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
@@ -610,7 +644,7 @@ class appointmentCanvas(QtGui.QWidget):
 
             rect = QtCore.QRectF(timeWidth,startcell*slotHeight,
             self.width()-timeWidth, (endcell-startcell)*slotHeight)
-            
+
             if self.selected == (startcell, endcell):
                 painter.setBrush(colours.APPT_Background)
             elif APPTCOLORS.has_key(cset):
@@ -621,31 +655,31 @@ class appointmentCanvas(QtGui.QWidget):
                 painter.setBrush(APPTCOLORS["BUSY"])
             else:
                 painter.setBrush(APPTCOLORS["default"])
-            
+
             if not (sno == 0 and (
             endcell < self.firstSlot or startcell > self.lastSlot)):
                 painter.drawRect(rect)
-                mytext = "%s %s %s %s %s"% (name.title(), trt1, 
+                mytext = "%s %s %s %s %s"% (name.title(), trt1,
                 trt2, trt3 ,memo)
 
                 painter.drawText(rect, mytext, option)
-            
+
             if self.highlight == start:
                 drawHighlight = True
                 highlightRect = rect.adjusted(0,-2,0,-2)
-                
+
         for appt in self.doubleAppts:
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
             trt3,memo,flag,cset)=appt
-            
+
             rect=QtCore.QRect(self.width()-timeWidth,startcell*slotHeight,
             self.width()-timeWidth,slotHeight)
-            
+
             painter.setBrush(APPTCOLORS["DOUBLE"])
             painter.drawRect(rect)
-      
+
         painter.restore()
-        
+
         ##highlight current time
         if self.setTime!="None":
             cellno=self.getCell_from_time(self.setTime)
@@ -661,75 +695,79 @@ class appointmentCanvas(QtGui.QWidget):
             corner3=[self.width(),(cellno+0.5)*slotHeight]
             triangle=corner1+corner2+corner3
             painter.drawPolygon(QtGui.QPolygon(triangle))
-        
+
         ##user has "asked to find this appointment"
         if drawHighlight:
             painter.setPen(QtGui.QPen(QtGui.QColor("red"),3))
             painter.setBrush(QtCore.Qt.transparent)
             painter.drawRect(highlightRect)
-            
+
 
 if __name__ == "__main__":
 
     class patient():
-        
+        '''
+        a duck type for my real patient class
+        '''
         def __init__(self):
             self.serialno = 4
             self.title = "mr"
             self.sname = "john"
             self.fname = "doe"
-        
-    
+
     def clicktest_a(a):
         print "clicktest_a", a
-    
+
     def clicktest_b(a):
         print "clicktest_b",a
-    
+
     def clicktest_c(a):
         print "clicktest_c",a
-    
+
     def click(a):
         print "print me", a
-        
+
     import sys
     localsettings.initiate(False)
     app = QtGui.QApplication(sys.argv)
-    
-    #--initiate a book starttime 08:00 endtime 10:00 
+
+    #--initiate a book starttime 08:00 endtime 10:00
     #--five minute slots, text every 3 slots
-    
+
     #from openmolar.qt4gui import maingui
     #parent = maingui.openmolarGui()
     parent = QtGui.QFrame()
     parent.pt = patient()
-    
-    form = appointmentWidget(parent, "0700","1800", parent)
-    print "initiated form"
+
+    form = appointmentWidget(parent, "0800","1500", parent)
     form.setStartTime("0830")
-    form.setEndTime("1630")
-         
-    print''' 
+    form.setEndTime("1430")
+
+    print'''
     created a calendar with start %d minutes past midnight
                 1st appointment %d minutes past midnight
             appointments finish %d minutes past midnight
-                        day end %d minutes past midnight 
-    - %d %d minutes slots'''%(form.canvas.dayStartTime, form.canvas.startTime, 
-    form.canvas.endTime, form.canvas.dayEndTime, form.canvas.slotNo, 
+                        day end %d minutes past midnight
+    - %d %d minutes slots'''%(
+    form.canvas.dayStartTime,
+    form.canvas.startTime,
+    form.canvas.endTime,
+    form.canvas.dayEndTime,
+    form.canvas.slotNo,
     form.canvas.slotDuration)
-    
+
     form.setCurrentTime("945")
     form.clearAppts()
+
     for appoint in (
-    (5, 915, 930, 'MCDoNOLD I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
+    (5, 915, 930, 'MCDONALD I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
     ,(5, 1100, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0),
     (5, 1300, 1400, 'LUNCH', 0L, '', '', '', '', -128, 0, 0, 0),
     (5, 1400, 1410, 'STAFF MEETING', 0L, '', '', '', '', -128, 0, 0, 0),
-    (5, 1410, 1425, 'TAYLOR JANE', 19373L, 'EXAM', '', '', '', 1, 80, 0, 0),
-    (5, 1600, 1630, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0)
+    (5, 930, 1005, 'TAYLOR JANE', 19373L, 'FILL', '', '', '', 1, 80, 0, 0),
     ):
         form.setAppointment(appoint)
-    
+
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("AppointmentClicked"), clicktest_a)
     QtCore.QObject.connect(form,
@@ -738,13 +776,13 @@ if __name__ == "__main__":
     QtCore.SIGNAL("BlockEmptySlot"), clicktest_c)
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("print_me"), click)
-    
+
     v = QtGui.QVBoxLayout()
     v.setSpacing(0)
     v.addWidget(form)
     parent.setLayout(v)
     parent.show()
-    
+
     form.highlightAppt(915)
 
     sys.exit(app.exec_())

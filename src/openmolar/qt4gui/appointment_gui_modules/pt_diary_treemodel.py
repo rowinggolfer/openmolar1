@@ -83,12 +83,22 @@ class treeModel(QtCore.QAbstractItemModel):
     '''
     a model to display a feetables data
     '''
-    def __init__(self, appointments, parent=None):
+    def __init__(self, parent=None):
         super(QtCore.QAbstractItemModel, self).__init__(parent)
+        self.appointments = []
+        self.rootItem = TreeItem("Appointments",None, None, None)
+        self.parents = {0:self.rootItem}
+
+    def addAppointments(self, appointments):
         self.appointments = appointments
+        self.setupModelData()
+
+    def clear(self):
+        self.appointments = []
         self.rootItem = TreeItem("Appointments",None, None, None)
         self.parents = {0:self.rootItem}
         self.setupModelData()
+        self.reset()
 
     def columnCount(self, parent=None):
         if parent and parent.isValid():
@@ -105,17 +115,17 @@ class treeModel(QtCore.QAbstractItemModel):
             return item.data(index.column())
         if role == QtCore.Qt.ForegroundRole:
             if item.appointment and item.appointment.today:
-                brush = QtGui.QBrush(colours.DIARY.get("TODAY"))                    
+                brush = QtGui.QBrush(colours.DIARY.get("TODAY"))
                 return QtCore.QVariant(brush)
             if item.appointment and item.appointment.future:
-                brush = QtGui.QBrush(colours.DIARY.get("Future"))                    
+                brush = QtGui.QBrush(colours.DIARY.get("Future"))
                 return QtCore.QVariant(brush)
             if item.appointment and item.appointment.unscheduled:
-                brush = QtGui.QBrush(colours.DIARY.get("Unscheduled"))                    
-                return QtCore.QVariant(brush)            
+                brush = QtGui.QBrush(colours.DIARY.get("Unscheduled"))
+                return QtCore.QVariant(brush)
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
-            if item: 
+            if item:
                 return item.appointment
 
         return QtCore.QVariant()
@@ -158,14 +168,14 @@ class treeModel(QtCore.QAbstractItemModel):
         childItem = index.internalPointer()
         if not childItem:
             return QtCore.QModelIndex()
-        
+
         parentItem = childItem.parent()
 
         if parentItem == None:
             return QtCore.QModelIndex()
 
         return self.createIndex(parentItem.row(), 0, parentItem)
-            
+
     def rowCount(self, parent=QtCore.QModelIndex()):
         if parent.column() > 0:
             return 0
@@ -205,9 +215,9 @@ class treeModel(QtCore.QAbstractItemModel):
 
                 self.parents[cat] = parent
 
-            self.parents[cat].appendChild(TreeItem("", appt, 
+            self.parents[cat].appendChild(TreeItem("", appt,
                 self.parents[cat] ))
-    
+
     def searchModel(self, appt):
         '''
         get the modelIndex for a give appointment
@@ -225,12 +235,12 @@ class treeModel(QtCore.QAbstractItemModel):
                     print self.data(index, QtCore.Qt.UserRole)
                 if child.childCount():
                     searchNode(child)
-                
+
         for parent in self.parents.values():
             ind = searchNode(parent)
             if ind:
                 return ind
-                   
+
     def findItem(self, apr_ix):
         '''
         get the model index of a specific appointment
@@ -244,13 +254,13 @@ class treeModel(QtCore.QAbstractItemModel):
                 appt = appmt
                 break
         if appt:
-            print "Searchin for ",appt, 
+            print "Searchin for ",appt,
             index = self.searchModel(appt)
             print index
             if index:
                 return (True, index)
         return (False, False)
-            
+
 if __name__ == "__main__":
     from openmolar.dbtools import appointments
     def resize(arg=None):
@@ -262,8 +272,8 @@ if __name__ == "__main__":
     localsettings.initiate()
 
     appts = appointments.get_pts_appts(3)
-    model = treeModel(appts)
-
+    model = treeModel()
+    model.addAppointments(appts)
     dialog = QtGui.QDialog()
 
     dialog.setMinimumSize(800,300)
@@ -274,22 +284,22 @@ if __name__ == "__main__":
     tv.setAlternatingRowColors(True)
     layout.addWidget(tv)
     tv.expandAll()
-    
+
     index = model.parents.get(1, None)
     if index:
-        tv.collapse(model.createIndex(0,0,index))    
+        tv.collapse(model.createIndex(0,0,index))
     resize()
-    
-    QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"), 
+
+    QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"),
         resize)
     QtCore.QObject.connect(tv, QtCore.SIGNAL("clicked (QModelIndex)"),
         appt_clicked)
-    
+
     #appt = appts[-1]
     #result, index = model.findItem(appt.aprix)
     #if result:
     #    print "found it!"
     #    tv.setCurrentIndex(index)
     dialog.exec_()
-        
+
     app.closeAllWindows()

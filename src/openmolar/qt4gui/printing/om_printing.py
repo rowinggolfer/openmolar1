@@ -18,7 +18,6 @@ import re
 import sys
 import copy
 import datetime
-import pickle
 import subprocess
 
 from openmolar.settings import localsettings, utilities
@@ -283,7 +282,7 @@ def orthoWizard(om_gui):
     '''prints a referal letter controlled by referal.xml file'''
     desc=om_gui.ui.referralLettersComboBox.currentText()
     html=referral.getHtml(desc, om_gui.pt)
-    
+
     Dialog = QtGui.QDialog(om_gui)
     dl = Ui_ortho_ref_wizard.Ui_Dialog()
     dl.setupUi(Dialog)
@@ -425,14 +424,14 @@ def printmultiDayList(om_gui, args):
             dlist.addDaylist(arg[1], arg[0], data)
     if something_to_print:
         dlist.print_()
-        
+
 def book1print(om_gui):
     print "DEPRECATED FUNCTION CALLED - book1print"
     dent = om_gui.apptBookWidgets[0].apptix
     adate = om_gui.ui.calendarWidget.selectedDate()
     books = ((dent, adate), )
     om_gui.printdaylists(books)
-    
+
 def daylistPrintWizard(om_gui):
     def checkAll(arg):
         for cb in checkBoxes.values():
@@ -494,14 +493,14 @@ def printNotes(om_gui, detailed=False):
     myclass=notesPrint.printNotes(note)
     myclass.printpage()
     om_gui.pt.addHiddenNote("printed", "notes")
-    
-    
+
+
 def printSelectedAccounts(om_gui):
     '''
-    iterate over te accounts table, and print letters to those who 
+    iterate over te accounts table, and print letters to those who
     have been selected to get an invoice
     '''
-    
+
     if om_gui.ui.accounts_tableWidget.rowCount() == 0:
         om_gui.advise("Please load the table first", 1)
         return
@@ -548,7 +547,7 @@ def printSelectedAccounts(om_gui):
                     patient_write_changes.toNotes(sno,
                     printpt.HIDDENNOTES)
 
-                    commitPDFtoDB(om_gui, 
+                    commitPDFtoDB(om_gui,
                     "Account tone%s"%tone, printpt.serialno)
 
                     no_printed+=1

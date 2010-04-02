@@ -42,6 +42,8 @@ from openmolar.qt4gui.printing import om_printing
 
 from openmolar.qt4gui.appointment_gui_modules import appt_gui_module
 from openmolar.qt4gui.appointment_gui_modules import taskgui
+from openmolar.qt4gui.appointment_gui_modules import appointment_drag
+from openmolar.qt4gui.appointment_gui_modules import pt_diary_treemodel
 
 from openmolar.qt4gui.charts import charts_gui
 
@@ -135,14 +137,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.addCustomWidgets()
         self.labels_and_tabs()
         self.ui.feescale_commit_pushButton.setEnabled(False)
-        
-        QtCore.QTimer.singleShot(0, self.init_part2)
 
-    def init_part2(self):
-        '''
-        slow loading stuff goes in here
-        '''
-        print "init2"
         localsettings.loadFeeTables()
         self.setValidators()
         self.letters = bulk_mail.bulkMails(self)
@@ -158,7 +153,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
         self.wikiloaded = False
-        
+
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -206,17 +201,17 @@ class openmolarGui(QtGui.QMainWindow):
             return
         if self.ui.feescale_commit_pushButton.isEnabled():
             result = QtGui.QMessageBox.question(self, _("Decision Required"),
-            "<p>" + _("you have unsaved changes to your feetables") + 
-            "<br />" + _("commit now?") + "</p>",  
+            "<p>" + _("you have unsaved changes to your feetables") +
+            "<br />" + _("commit now?") + "</p>",
             QtGui.QMessageBox.Yes|QtGui.QMessageBox.No|
-            QtGui.QMessageBox.Cancel, 
+            QtGui.QMessageBox.Cancel,
             QtGui.QMessageBox.Yes)
             if result == QtGui.QMessageBox.Yes:
                 self.feescale_commit()
                 event.ignore()
             elif result == QtGui.QMessageBox.Cancel:
                 event.ignore()
-                return                
+                return
         utilities.deleteTempFiles()
 
     def fullscreen(self):
@@ -414,6 +409,19 @@ class openmolarGui(QtGui.QMainWindow):
                 column = 1
                 row+=1
 
+        #--set a model for the patients diary
+        self.pt_diary_model = pt_diary_treemodel.treeModel(self)
+        self.ui.pt_diary_treeView.setModel(self.pt_diary_model)
+        #--add a dragable listView for making appointments
+        self.ui.apt_drag_frame.setFixedHeight(0)
+        self.schedule_mode = False
+        self.ui.appointment_listView = appointment_drag.draggableList(self)
+        layout = QtGui.QHBoxLayout(self.ui.apt_drag_frame)
+        layout.setMargin(0)
+        layout.addWidget(self.ui.appointment_listView)
+        self.apt_drag_model = appointment_drag.simple_model()
+        self.ui.appointment_listView.setModel(self.apt_drag_model)
+
         #--customise the appointment widget calendar
         self.ui.calendarWidget = calendars.controlCalendar()
         hlayout=QtGui.QHBoxLayout(self.ui.apptOVcalendar_placeholder)
@@ -610,7 +618,7 @@ class openmolarGui(QtGui.QMainWindow):
         ask the user to select a tooth
         '''
         return choose_tooth_dialog.run(self)
-        
+
     def okToLeaveRecord(self, cont=False):
         '''
         leaving a pt record - has state changed?
@@ -656,7 +664,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         ci=self.ui.main_tabWidget.currentIndex()
 
-        if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
+        if ci != 1 and self.schedule_mode:
             #--making an appointment has been abandoned
             self.advise("Appointment not made", 1)
             appt_gui_module.aptOVviewMode(self, True)
@@ -673,7 +681,7 @@ class openmolarGui(QtGui.QMainWindow):
         if ci == 7:
             #--forum
             forum_gui_module.loadForum(self)
-    
+
         if ci == 8:
             #-- wiki
             if self.wikiloaded:
@@ -681,14 +689,14 @@ class openmolarGui(QtGui.QMainWindow):
             else:
                 self.ui.wiki_webView.setUrl(QtCore.QUrl(localsettings.WIKIURL))
                 self.wikiloaded = True
-            
+
     def handle_patientTab(self):
         '''
         handles navigation of patient record
         '''
         ci=self.ui.tabWidget.currentIndex()
 
-        if ci != 1 and self.ui.aptOVmode_label.text() == "Scheduling Mode":
+        if ci != 1 and self.schedule_mode:
             self.advise("Appointment not made", 1)
             appt_gui_module.aptOVviewMode(self, True)
 
@@ -788,7 +796,8 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.moneytextBrowser.setHtml(localsettings.message)
             self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
-            self.ui.pt_diary_treeView.setModel(None)
+            self.pt_diary_model.clear()
+            self.apt_drag_model.clear()
             self.ui.notesEnter_textEdit.setHtml("")
 
             #--load a blank version of the patient class
@@ -826,14 +835,14 @@ class openmolarGui(QtGui.QMainWindow):
             appt_gui_module.layout_ptDiary(self)
             note = notes.rec_notes(self.pt.notes_dict)
             self.ui.recNotes_webView.setHtml(note)
-    
+
     def webviewloaded(self):
         '''
         a notes web view has loaded..
         scroll to the bottom
         '''
         wv = self.sender()
-        wf = wv.page().mainFrame() 
+        wf = wv.page().mainFrame()
         orientation = QtCore.Qt.Vertical
         wf.setScrollBarValue(orientation, wf.scrollBarMaximum(orientation))
 
@@ -1384,7 +1393,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.getrecord(self.pt.serialno)
 
     def updateNotesPage(self):
-        
+
         if self.ui.notesMaximumVerbosity_radioButton.isChecked():
             note_html = notes.notes(self.pt.notes_dict, 2) #--2=verbose
         elif self.ui.notesMediumVerbosity_radioButton.isChecked():
@@ -1394,7 +1403,7 @@ class openmolarGui(QtGui.QMainWindow):
         else:
             note_html = notes.notes(self.pt.notes_dict)
         self.ui.notes_webView.setHtml(note_html)
-        
+
     def loadpatient(self):
         '''
         self.pt is now a patient... time to push to the gui.
@@ -1466,7 +1475,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.advise(warning, 1)
         if localsettings.station == "surgery":
             self.callXrays()
-        
+
     def getmemos(self):
         '''
         get valid memos for the patient
@@ -1511,7 +1520,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             "background-color: %s"% colours.med_warning )
         else:
             self.ui.medNotes_pushButton.setStyleSheet("")
-        
+
         if self.pt.MH != None:
             mhdate=self.pt.MH[13]
             if mhdate == None:
@@ -1693,7 +1702,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.moneytextBrowser.setHtml(localsettings.message)
         self.ui.recNotes_webView.setHtml("")
         self.ui.notesSummary_webView.setHtml(localsettings.message)
-        
+
         today=QtCore.QDate().currentDate()
         self.ui.daybookEndDateEdit.setDate(today)
         self.ui.daybookStartDateEdit.setDate(today)
@@ -1837,7 +1846,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         the print button on the bulk mail tab has been clicked
         '''
         self.letters.printViaQPainter()
-        
+
     def bulkMailLetterOptions(self):
         '''
         user has clicked on the letter option button
@@ -2048,7 +2057,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 #--reload the notes
                 html = notes.notes(self.pt.notes_dict, ignoreRec=True)
                 self.ui.notesSummary_webView.setHtml(html)
-                
+
                 if self.ui.tabWidget.currentIndex() == 3:
                     self.load_receptionSummaryPage()
 
@@ -2064,12 +2073,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         disable/enable widgets "en mass" when no patient loaded
         '''
-        self.ui.makeAppt_pushButton.hide() 
+        self.ui.makeAppt_pushButton.hide()
         self.ui.modifyAppt_pushButton.hide()
-        self.ui.clearAppt_pushButton.hide() 
-        self.ui.findAppt_pushButton.hide() 
+        self.ui.clearAppt_pushButton.hide()
+        self.ui.findAppt_pushButton.hide()
         self.ui.del_pastAppointments_pushButton.hide()
-        
+
         for widg in (
         self.ui.summaryChartWidget,
         self.ui.printEst_pushButton,
@@ -2186,7 +2195,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user about to make an appointment
         '''
         appt_gui_module.begin_makeAppt(self)
-        
+
     def del_pastAppointments(self):
         '''
         user has requested deletion of all past appointments for the patient
@@ -2278,7 +2287,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         user is asking for a different font on the appointment book
         '''
-        appt_gui_module.aptFontSize(self,i)
+        ##TODO DEPRECATED -
+        #appt_gui_module.aptFontSize(self,i)
+        pass
 
     def apptBook_appointmentClickedSignal(self, arg):
         '''
@@ -2376,7 +2387,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         handles the signals from the options checkboxes on the appt OV page
         Lunch, emergencies  etc..
         '''
-        print "checkbox"
         appt_gui_module.handle_aptOV_checkboxes(self)
 
     def apptOV_all_clinicians_checkbox_changed(self):
@@ -2483,7 +2493,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user has clicked on an item in the fees_table
         '''
         fees_module.table_clicked(self, model_index)
-    
+
     def feeScale_expanded(self, model_index):
         '''
         user has expanded an item in the fees_table
@@ -2565,16 +2575,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         add custom items to the treatment plan
         '''
         add_tx_to_plan.customAdd(self)
-        
+
     def feescale_allowed_edit(self):
         '''
         user has toggled the option to allow feescale edit
         requires increased privileges
         '''
         self.ui.feescale_adjust_checkBox.setChecked(
-            self.ui.feescale_adjust_checkBox.isChecked() and 
+            self.ui.feescale_adjust_checkBox.isChecked() and
             permissions.granted(self))
-            
+
     def feeScaleTreatAdd(self, item):
         '''
         add an item directly from the feescale
@@ -2590,22 +2600,22 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.dirty_feetable(False)
         except Exception, e:
             self.advise(_("error commiting changes") + "<br />" + str(e), 2)
-            
+
     def dirty_feetable(self, dirty=True):
         '''
-        indicate one (or more) feetables has uncommitted changes and 
+        indicate one (or more) feetables has uncommitted changes and
         enable the save button
         '''
         self.ui.feescale_commit_pushButton.setEnabled(dirty)
         ss = ("background-color: %s"% colours.med_warning) if dirty else ""
         self.ui.feescale_commit_pushButton.setStyleSheet(ss)
-    
+
     def feetable_xml(self):
         '''
         user has asked to see the feetable raw data
         '''
         fees_module.showTableXML(self)
-        
+
     def toothTreatAdd(self, tooth, properties):
         '''
         properties for tooth has changed.
@@ -3094,47 +3104,47 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #admin frame
         QtCore.QObject.connect(self.ui.home_pushButton,
         QtCore.SIGNAL("clicked()"), self.home)
-        
+
         QtCore.QObject.connect(self.ui.newPatientPushButton,
         QtCore.SIGNAL("clicked()"), self.enterNewPatient)
-        
+
         QtCore.QObject.connect(self.ui.findButton,
         QtCore.SIGNAL("clicked()"), self.find_patient)
-        
+
         QtCore.QObject.connect(self.ui.reloadButton,
         QtCore.SIGNAL("clicked()"), self.reload_patient)
-        
+
         QtCore.QObject.connect(self.ui.backButton,
         QtCore.SIGNAL("clicked()"), self.last_patient)
-        
+
         QtCore.QObject.connect(self.ui.nextButton,
         QtCore.SIGNAL("clicked()"), self.next_patient)
-        
+
         QtCore.QObject.connect(self.ui.relatedpts_pushButton,
         QtCore.SIGNAL("clicked()"), self.find_related)
-        
+
         QtCore.QObject.connect(self.ui.daylistBox,
         QtCore.SIGNAL("currentIndexChanged(int)"),self.todays_pts)
 
     def signals_reception(self):
         '''
         a function to connect all the receptionists buttons
-        '''        
-        QtCore.QObject.connect(self.ui.pt_diary_treeView, 
+        '''
+        QtCore.QObject.connect(self.ui.pt_diary_treeView,
         QtCore.SIGNAL("expanded(QModelIndex)"), self.pt_diary_expanded)
-        
-        QtCore.QObject.connect(self.ui.pt_diary_treeView, 
+
+        QtCore.QObject.connect(self.ui.pt_diary_treeView,
         QtCore.SIGNAL("clicked (QModelIndex)"), self.pt_diary_clicked)
 
         QtCore.QObject.connect(self.ui.printAccount_pushButton,
         QtCore.SIGNAL("clicked()"), self.printaccount)
-        
+
         QtCore.QObject.connect(self.ui.printEst_pushButton,
         QtCore.SIGNAL("clicked()"), self.printEstimate)
-        
+
         QtCore.QObject.connect(self.ui.printRecall_pushButton,
         QtCore.SIGNAL("clicked()"), self.printrecall)
-        
+
         QtCore.QObject.connect(self.ui.takePayment_pushButton,
         QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
 
@@ -3202,7 +3212,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.bulkMail_options_pushButton,
         QtCore.SIGNAL("clicked()"), self.bulkMailLetterOptions)
-        
+
         QtCore.QObject.connect(self.ui.bulkMailPrint_pushButton,
         QtCore.SIGNAL("clicked()"), self.bulkMailPrint)
 
@@ -3292,7 +3302,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #Estimates and course ManageMent
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
         QtCore.SIGNAL("clicked()"), self.newCourse_pushButton_clicked)
-        
+
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
         QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
 
@@ -3412,15 +3422,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #accounts
         QtCore.QObject.connect(self.ui.loadAccountsTable_pushButton,
         QtCore.SIGNAL("clicked()"), self.loadAccountsTable_clicked)
-        
+
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,
         QtCore.SIGNAL("clicked()"), self.printSelectedAccounts)
-        
+
         QtCore.QObject.connect(self.ui.printAccountsTable_pushButton,
         QtCore.SIGNAL("clicked()"), self.printAccountsTable)
 
         QtCore.QObject.connect(self.ui.accounts_tableWidget,
-        QtCore.SIGNAL("cellDoubleClicked (int,int)"), 
+        QtCore.SIGNAL("cellDoubleClicked (int,int)"),
         self.accountsTableClicked)
 
     def signals_contract(self):
@@ -3467,7 +3477,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         ##TODO bring this functionality back
         #QtCore.QObject.connect(self.ui.printFeescale_pushButton,
         #QtCore.SIGNAL("clicked()"), self.printFeesTable)
-        
+
         QtCore.QObject.connect(self.ui.feeScales_treeView,
         QtCore.SIGNAL("clicked (QModelIndex)"),
         self.feeScale_clicked)
@@ -3494,16 +3504,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.feeSearch_pushButton,
         QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
-        
+
         QtCore.QObject.connect(self.ui.feescale_tester_pushButton,
         QtCore.SIGNAL("clicked()"), self.feescale_tester_pushButton_clicked)
-        
-        QtCore.QObject.connect(self.ui.feetable_xml_pushButton, 
-        QtCore.SIGNAL("clicked()"), self.feetable_xml)    
-    
+
+        QtCore.QObject.connect(self.ui.feetable_xml_pushButton,
+        QtCore.SIGNAL("clicked()"), self.feetable_xml)
+
         QtCore.QObject.connect(self.ui.feescale_commit_pushButton,
         QtCore.SIGNAL("clicked()"), self.feescale_commit)
-        
+
         QtCore.QObject.connect(self.ui.feescale_adjust_checkBox,
         QtCore.SIGNAL("clicked()"), self.feescale_allowed_edit)
 
@@ -3588,7 +3598,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.notesMediumVerbosity_radioButton):
             QtCore.QObject.connect(rb,
             QtCore.SIGNAL("clicked()"), self.updateNotesPage)
-        
+
     def signals_periochart(self):
 
         #periochart
@@ -3632,8 +3642,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.apptNextDay_pushButton,
         QtCore.SIGNAL("clicked()"), self.apt_dayForward_clicked)
 
-        QtCore.QObject.connect(self.ui.fontSize_spinBox,
-        QtCore.SIGNAL("valueChanged (int)"), self.fontSize_spinBox_changed)
+        #QtCore.QObject.connect(self.ui.fontSize_spinBox,
+        #QtCore.SIGNAL("valueChanged (int)"), self.fontSize_spinBox_changed)
 
         QtCore.QObject.connect(self.ui.printMonth_pushButton,
         QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)
@@ -3851,7 +3861,7 @@ def main(app):
         #--don't maximise the window for dev purposes - I like to see
         #--all the error messages in a terminal ;).
         mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
-    
+
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
