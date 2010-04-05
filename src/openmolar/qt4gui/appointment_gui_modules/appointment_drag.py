@@ -45,10 +45,21 @@ class draggableList(QtGui.QListView):
     '''
     a listView whose items can be moved
     '''
-    def ___init__(self, parent=None):
+    def __init__(self, parent=None):
         super(draggableList, self).__init__(parent)
         self.setDragEnabled(True)
-
+        self.dropwidth = self.width()
+        self.pixels_per_min = 2
+        
+    def setScaling(self, width, height_per_minute):
+        '''
+        make the list aware of the scaling of the widget available for drops
+        this will differ depending on whether a day or week view is visible
+        a 20 minutes slot will be x pixels high...
+        '''
+        self.dropwidth = width
+        self.pixels_per_min = height_per_minute
+        
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
             event.setDropAction(QtCore.Qt.QMoveAction)
@@ -68,12 +79,14 @@ class draggableList(QtGui.QListView):
         bstream = cPickle.dumps(selected)
         mimeData = QtCore.QMimeData()
         mimeData.setData("application/x-appointment", bstream)
-
-        drag = QtGui.QDrag(self)
+        drag = QtGui.QDrag(self)    
+        
         drag.setMimeData(mimeData)
-
-        pixmap = QtGui.QPixmap(100, self.height()/2)
+        drag.setDragCursor(QtGui.QPixmap(), QtCore.Qt.MoveAction)
+        pixmap = QtGui.QPixmap(self.dropwidth, 
+            selected.length * self.pixels_per_min)
         pixmap.fill(QtGui.QColor("orange"))
+        
         drag.setPixmap(pixmap)
 
         drag.setHotSpot(QtCore.QPoint(pixmap.width()/2, pixmap.height()/2))
@@ -92,13 +105,17 @@ if __name__ == "__main__":
     makes life better for SPE
     '''
     from openmolar.qt4gui.customwidgets import appointmentwidget
+    from openmolar.qt4gui.customwidgets import appointment_overviewwidget
+    
     from openmolar.dbtools import appointments
-
+    from openmolar.settings import localsettings
+    localsettings.initiate()
+    
     class testDialog(QtGui.QDialog):
         def __init__(self, parent=None):
             super(testDialog, self).__init__(parent)
             self.setWindowTitle("Drag Drop Test")
-            layout = QtGui.QGridLayout(self)
+            layout = QtGui.QHBoxLayout(self)
 
             label = QtGui.QLabel("Drag Name From This List")
 
@@ -110,16 +127,51 @@ if __name__ == "__main__":
 
             self.listView = draggableList()
             self.listView.setModel(self.model)
-            self.book = appointmentwidget.appointmentWidget(self, "1000", "1200")
-            self.book.setDentist(4)
-            self.book.setStartTime(1030)
+            
+            self.book = appointmentwidget.appointmentWidget(self, "1000", 
+            "1200")
+            self.book.setDentist(1)
+            self.book.setStartTime(1015)
             self.book.setEndTime(1145)
+            for appoint in (
+            (1, 1030, 1045, 'MCDONALD I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
+            ,(1, 1115, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0)):
+                self.book.setAppointment(appoint)
+    
+            self.OVbook = appointment_overviewwidget.bookWidget(1, 
+            "1000", "1200", 15, 2, self)
+            d1 = appointments.dentistDay(1)
 
-            layout.addWidget(label, 0, 0)
-            layout.addWidget(self.listView, 1, 0)
-            layout.addWidget(self.book, 0, 1, 2, 2)
-
-
+            d1.start=1015
+            d1.end=1145
+            d1.memo="hello"
+            
+            frame = QtGui.QFrame()
+            layout2 = QtGui.QVBoxLayout(frame)
+            label = QtGui.QLabel("")
+            label.setMinimumHeight(80)
+            
+            self.OVbook.dents=[d1,]
+            self.OVbook.clear()
+            self.OVbook.init_dicts()
+            
+            self.OVbook.setStartTime(d1)
+            self.OVbook.setEndTime(d1)
+            self.OVbook.setMemo(d1)
+            self.OVbook.setFlags(d1)
+        
+            self.OVbook.freeslots[1] = ((1045, 30), )
+            self.OVbook.appts[1] = ((1030,15),)
+            self.OVbook.eTimes[1] = ((1115, 15),)
+            self.OVbook.setMinimumWidth(200)
+            
+            layout2.addWidget(label)
+            layout2.addWidget(self.OVbook)
+            
+            layout.addWidget(self.listView)
+            layout.addWidget(self.book)
+            layout.addWidget(frame)
+            
     try:
         app = QtGui.QApplication([])
         dl = testDialog()

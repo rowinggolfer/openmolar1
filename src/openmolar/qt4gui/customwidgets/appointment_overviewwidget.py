@@ -7,21 +7,17 @@
 # for more details.
 
 from __future__ import division
+import pickle
 from PyQt4 import QtGui,QtCore
 from openmolar.settings import localsettings
+from openmolar.qt4gui import colours
 
-BGCOLOR = QtCore.Qt.white
 LINECOLOR = QtGui.QColor("#dddddd")
-APPTCOLORS = {
-    "SLOT" : QtGui.QColor("#adffd1"),
-    "BUSY" : QtGui.QColor("#adb3ff"),
-    "LUNCH" : QtGui.QColor("#fffaad"),
-    "FREE" : QtCore.Qt.white,
-    "EMERGENCY" : QtGui.QColor("#ffaddc")
-    }
 TRANSPARENT = QtCore.Qt.transparent
+APPTCOLORS = colours.APPT_OV_COLORS
+BGCOLOR = APPTCOLORS["BACKGROUND"]
 
-class appointmentOverviewWidget(QtGui.QWidget):
+class bookWidget(QtGui.QWidget):
     '''a custom widget to for a dental appointment book'''
     def __init__(self, day, sTime, fTime, slotLength, 
     textDetail, parent=None):
@@ -35,7 +31,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
         I like 15minutes
         '''
         
-        super(appointmentOverviewWidget, self).__init__(parent)
+        super(bookWidget, self).__init__(parent)
 
         self.setMinimumSize(self.minimumSizeHint())
 
@@ -66,6 +62,8 @@ class appointmentOverviewWidget(QtGui.QWidget):
         self.setMouseTracking(True)
         self.clear()
         self.init_dicts()
+        self.dragging = False
+        self.setAcceptDrops(True)
         
     def clear(self):
         self.appts = {}
@@ -302,6 +300,35 @@ class appointmentOverviewWidget(QtGui.QWidget):
     def leaveEvent(self, event):
         self.highlightedRect = None
         self.update()
+    
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat("application/x-appointment"):
+            self.dragging = True
+            
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat("application/x-appointment"):
+            event.setDropAction(QtCore.Qt.MoveAction)
+            self.update()
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragLeaveEvent(self, event):
+        self.dragging = False
+        self.update()
+
+    def dropEvent(self, event):
+        data = event.mimeData()
+        bstream = data.retrieveData("application/x-appointment",
+            QtCore.QVariant.ByteArray)
+        selected = pickle.loads(bstream.toByteArray())
+        self.dragging = False
+        print selected, "dropped succesfully"
+        event.accept()
 
     def paintEvent(self, event=None):
         '''
@@ -328,6 +355,9 @@ class appointmentOverviewWidget(QtGui.QWidget):
             if columnCount == 0:
                 columnCount = 1 #avoid division by zero!!
             columnWidth = (self.width() - self.timeOffset) / columnCount
+
+            ## put the times down the side
+
             while currentSlot < self.slotCount:
                 
                 if currentSlot % self.textDetail == 0:
@@ -342,12 +372,13 @@ class appointmentOverviewWidget(QtGui.QWidget):
 
                 currentSlot += 1
                 col = 0
+                
             for dent in self.dents:
                 leftx = self.timeOffset + col * columnWidth
                 rightx = self.timeOffset + (col+1) * columnWidth
-                ###headings
+                ##headings
                 painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
-                painter.setBrush(BGCOLOR)
+                painter.setBrush(APPTCOLORS["HEADER"])
                 rect=QtCore.QRect(leftx,0,columnWidth,self.headingHeight)
                 painter.drawRect(rect)
                 initials = localsettings.apptix_reverse.get(dent.ix)
@@ -356,7 +387,7 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 painter.drawText(rect,QtCore.Qt.AlignHCenter, initials)
 
                 ##dentist start/finish
-                painter.setBrush(APPTCOLORS["FREE"])
+                painter.setBrush(BGCOLOR)
 
                 startcell = ((self.daystart[dent.ix]-self.startTime) /
                 self.slotLength)
@@ -373,7 +404,10 @@ class appointmentOverviewWidget(QtGui.QWidget):
                 
                     ###slots
                     painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
-                    painter.setBrush(APPTCOLORS["SLOT"])
+                    if self.dragging:
+                        painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                    else:
+                        painter.setBrush(APPTCOLORS["SLOT"])
                     for slot in self.freeslots[dent.ix]:
                         (slotstart, length) = slot
                         startcell = (localsettings.minutesPastMidnight(
@@ -466,7 +500,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import appointments 
     #-initiate a book starttime 08:00 
     #-endtime 10:00 five minute slots, text every 3 slots
-    form = appointmentOverviewWidget(1,"0800","1900",15,2)     
+    form = bookWidget(1,"0800","1900",15,2)     
     d1, d2 = appointments.dentistDay(4), appointments.dentistDay(5)
 
     d1.start=830

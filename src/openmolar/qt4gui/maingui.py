@@ -322,15 +322,9 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.apptoverviews=[]
 
         for day in range(5):
-            if day == 4: #friday
-                self.ui.apptoverviews.append(appointment_overviewwidget.
-                appointmentOverviewWidget(day, "0800", "1900", 15, 2))
-            elif day == 1: #Tuesday:
-                self.ui.apptoverviews.append(appointment_overviewwidget.
-                appointmentOverviewWidget(day, "0800", "1900", 15, 2))
-            else:
-                self.ui.apptoverviews.append(appointment_overviewwidget.
-                appointmentOverviewWidget(day, "0800", "1900", 15, 2))
+            bw = appointment_overviewwidget.bookWidget(day, 
+            "0800", "1900", 15, 2)
+            self.ui.apptoverviews.append(bw)
 
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
         hlayout.setMargin(2)

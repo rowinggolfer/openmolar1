@@ -741,10 +741,10 @@ def aptOVviewMode(om_gui, Viewmode=True):
         om_gui.ui.main_tabWidget.setCurrentIndex(0)
     else:
         om_gui.ui.apt_drag_frame.setFixedHeight(120)
-    for cb in (om_gui.ui.aptOV_apptscheckBox,
-    om_gui.ui.aptOV_emergencycheckBox):    #om_gui.ui.aptOV_lunchcheckBox):
-        if cb.checkState() != Viewmode:
-            cb.setChecked(Viewmode)
+    #for cb in (om_gui.ui.aptOV_apptscheckBox,
+    #om_gui.ui.aptOV_emergencycheckBox):    #om_gui.ui.aptOV_lunchcheckBox):
+    #    if cb.checkState() != Viewmode:
+    #        cb.setChecked(Viewmode)
 
 def aptOVlabelClicked(om_gui, sd):
     '''
@@ -1003,7 +1003,6 @@ def findApptButtonClicked(om_gui):
     '''
     an appointment in the patient's diary is being searched for by the user
     goes to the main appointment page for that day
-    COULD HAVE BETTER FUNCTIONALITY
     '''
     appt = om_gui.pt.selectedAppt
 
@@ -1027,8 +1026,7 @@ def findApptButtonClicked(om_gui):
     for book in om_gui.apptBookWidgets:
         if book.apptix == appt.dent:
             book.highlightAppt(appt.atime)
-            #book.update()
-
+    
 def makeDiaryVisible(om_gui):
     '''
     if called, this will take any steps necessary to show the current day's
