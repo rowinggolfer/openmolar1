@@ -315,6 +315,19 @@ class openmolarGui(QtGui.QMainWindow):
             #make these widgets accessible
             self.ui.perioGroupBoxes.append(periogb)
             self.ui.perioChartWidgets.append(pchart)
+        
+        #--set a model for the patients diary
+        self.pt_diary_model = pt_diary_treemodel.treeModel(self)
+        self.ui.pt_diary_treeView.setModel(self.pt_diary_model)
+        #--add a dragable listView for making appointments
+        self.ui.apt_drag_frame.setFixedHeight(0)
+        self.schedule_mode = False
+        self.ui.appointment_listView = appointment_drag.draggableList(self)
+        layout = QtGui.QHBoxLayout(self.ui.apt_drag_frame)
+        layout.setMargin(0)
+        layout.addWidget(self.ui.appointment_listView)
+        self.apt_drag_model = appointment_drag.simple_model()
+        self.ui.appointment_listView.setModel(self.apt_drag_model)
 
         self.apptBookWidgets=[]
 
@@ -325,7 +338,11 @@ class openmolarGui(QtGui.QMainWindow):
             bw = appointment_overviewwidget.bookWidget(day, 
             "0800", "1900", 15, 2)
             self.ui.apptoverviews.append(bw)
-
+            ## connect a signal which informs the drag/drop mechanism of the
+            ## widgets size
+            QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
+                self.ui.appointment_listView.setScaling)
+        
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
         hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[0])
@@ -402,19 +419,6 @@ class openmolarGui(QtGui.QMainWindow):
             else:
                 column = 1
                 row+=1
-
-        #--set a model for the patients diary
-        self.pt_diary_model = pt_diary_treemodel.treeModel(self)
-        self.ui.pt_diary_treeView.setModel(self.pt_diary_model)
-        #--add a dragable listView for making appointments
-        self.ui.apt_drag_frame.setFixedHeight(0)
-        self.schedule_mode = False
-        self.ui.appointment_listView = appointment_drag.draggableList(self)
-        layout = QtGui.QHBoxLayout(self.ui.apt_drag_frame)
-        layout.setMargin(0)
-        layout.addWidget(self.ui.appointment_listView)
-        self.apt_drag_model = appointment_drag.simple_model()
-        self.ui.appointment_listView.setModel(self.apt_drag_model)
 
         #--customise the appointment widget calendar
         self.ui.calendarWidget = calendars.controlCalendar()

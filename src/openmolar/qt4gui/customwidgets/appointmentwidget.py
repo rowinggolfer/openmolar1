@@ -76,7 +76,7 @@ class appointmentWidget(QtGui.QFrame):
 
         self.scrollArea = QtGui.QScrollArea()
         self.scrollArea.setWidgetResizable(True)
-
+        
         self.canvas = appointmentCanvas(om_gui, self)
         self.scrollArea.setWidget(self.canvas)
 
@@ -93,7 +93,7 @@ class appointmentWidget(QtGui.QFrame):
         self.setMinimumSize(self.minimumSizeHint())
         self.setMaximumSize(self.maximumSizeHint())
         self.signals()
-
+        
     def setDentist(self, apptix):
         '''
         update the dentist the widget relates to
@@ -189,7 +189,7 @@ class appointmentWidget(QtGui.QFrame):
 
     def update(self):
         self.canvas.update()
-
+        
     def highlightAppt(self, atime):
         '''
         highlights the appointment at the given time
@@ -237,7 +237,7 @@ class appointmentCanvas(QtGui.QWidget):
     the canvas for me to draw on
     '''
 
-    def __init__(self, om_gui, pWidget=None):
+    def __init__(self, om_gui, pWidget):
         super(appointmentCanvas, self).__init__(pWidget)
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
@@ -262,7 +262,7 @@ class appointmentCanvas(QtGui.QWidget):
         self.highlight = None
         self.dragging = False
         self.setAcceptDrops(True)
-
+        
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
             self.dragging = True
@@ -597,8 +597,10 @@ class appointmentCanvas(QtGui.QWidget):
 
         top = (self.firstSlot-1) * slotHeight
         bottom = (self.lastSlot + 1 - self.firstSlot) * slotHeight
-
-        rect = QtCore.QRectF(timeWidth, top,self.width()-timeWidth, bottom)
+        
+        colwidth = self.width()-timeWidth
+        dragScale = slotHeight / self.slotDuration
+        rect = QtCore.QRectF(timeWidth, top, colwidth, bottom)
 
         painter.drawRect(rect)
 
@@ -702,7 +704,8 @@ class appointmentCanvas(QtGui.QWidget):
             painter.setBrush(QtCore.Qt.transparent)
             painter.drawRect(highlightRect)
 
-
+        self.pWidget.emit(QtCore.SIGNAL("redrawn"), colwidth, dragScale)
+        
 if __name__ == "__main__":
 
     class patient():

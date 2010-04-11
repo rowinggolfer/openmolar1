@@ -1180,7 +1180,7 @@ def layout_weekView(om_gui):
     if om_gui.ui.main_tabWidget.currentIndex() !=1 and \
     om_gui.ui.diary_tabWidget.currentIndex() != 1:
         return
-
+    
     cal = om_gui.ui.calendarWidget
     date = cal.selectedDate()
 
@@ -1227,7 +1227,7 @@ def layout_weekView(om_gui):
                 ov.setEndTime(dent)
                 ov.setMemo(dent)
                 ov.setFlags(dent)
-
+        
     if om_gui.ui.aptOV_apptscheckBox.checkState():
         #--add appts
         for ov in om_gui.ui.apptoverviews:
@@ -1248,7 +1248,7 @@ def layout_weekView(om_gui):
             for dent in ov.dents:
                 ov.lunches[dent.ix] = appointments.getLunch(
                 ov.date.toPyDate(), dent.ix)
-
+    
     if om_gui.schedule_mode:
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
@@ -1292,6 +1292,10 @@ def layout_dayView(om_gui):
         om_gui.apptBookWidgets.append(book)
         om_gui.ui.dayView_splitter.addWidget(book)
         om_gui.signals_apptWidgets(book)
+
+        QtCore.QObject.connect(book, QtCore.SIGNAL("redrawn"),
+                om_gui.ui.appointment_listView.setScaling)
+
 
     #-- clean past links to dentists
     i = 0
@@ -1344,13 +1348,13 @@ def layout_dayView(om_gui):
     # make sure the splitter is reset (user could have hidden a widget they
     # now need)
     om_gui.ui.dayView_splitter.setSizes(book_list)
-
+    
     if i == 0:
         t = om_gui.ui.daymemo_label.text() + " - All Off Today!"
         om_gui.ui.daymemo_label.setText(t)
 
         om_gui.advise("all off today")
-
+    
 def appointment_clicked(om_gui, list_of_snos):
     if len(list_of_snos) == 1:
         sno = list_of_snos[0]

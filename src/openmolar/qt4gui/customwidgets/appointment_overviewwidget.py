@@ -37,7 +37,7 @@ class bookWidget(QtGui.QWidget):
 
         self.setSizePolicy(QtGui.QSizePolicy(
             QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding))
-
+        
         self.font = QtGui.QFont()
         self.font.setPointSize(10)
         fm = QtGui.QFontMetrics(self.font)
@@ -64,6 +64,7 @@ class bookWidget(QtGui.QWidget):
         self.init_dicts()
         self.dragging = False
         self.setAcceptDrops(True)
+        self.drag_appt = None
         
     def clear(self):
         self.appts = {}
@@ -303,17 +304,59 @@ class bookWidget(QtGui.QWidget):
     
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
-            self.dragging = True
-            
+            #self.dragging = True
+            data = event.mimeData()
+            bstream = data.retrieveData("application/x-appointment",
+            QtCore.QVariant.ByteArray)
+            self.drag_appt = pickle.loads(bstream.toByteArray())
+        
             event.accept()
         else:
             event.ignore()
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
-            event.setDropAction(QtCore.Qt.MoveAction)
-            self.update()
-            event.accept()
+            allowDrop = False
+            col = 0
+            columnCount = len(self.dents)
+            if columnCount == 0: 
+                event.ignore()
+                return #nothing to do... and division by zero errors!
+            columnWidth = (self.width() - self.timeOffset) / columnCount
+        
+            for dent in self.dents:
+                ix = dent.ix
+                leftx = self.timeOffset + (col) * columnWidth
+                rightx = self.timeOffset + (col + 1) * columnWidth
+        
+                for slot in self.freeslots[ix]:
+                    (slotstart,length) = slot
+                    startcell = (localsettings.minutesPastMidnight(slotstart)
+                    - self.startTime) / self.slotLength
+                    
+                    rect = QtCore.QRect(leftx, startcell * self.slotHeight
+                    + self.headingHeight, columnWidth, (length / self.slotLength)
+                    * self.slotHeight)
+
+                    if rect.contains(event.pos()):
+                        #self.highlightedRect = rect
+                        #feedback = '%d mins starting at %s with %s'% (length,
+                        #localsettings.wystimeToHumanTime(slotstart), 
+                        #dent.initials)
+                        
+                        #QtGui.QToolTip.showText(event.globalPos(),
+                        #QtCore.QString(feedback))
+                        allowDrop = True
+                        break
+            if allowDrop:
+                event.setDropAction(QtCore.Qt.MoveAction)
+                self.dragging = True
+                self.update()
+                event.accept()
+            else:
+                self.dragging = False
+                self.update()
+                event.ignore()
         else:
             event.ignore()
 
@@ -322,12 +365,9 @@ class bookWidget(QtGui.QWidget):
         self.update()
 
     def dropEvent(self, event):
-        data = event.mimeData()
-        bstream = data.retrieveData("application/x-appointment",
-            QtCore.QVariant.ByteArray)
-        selected = pickle.loads(bstream.toByteArray())
         self.dragging = False
-        print selected, "dropped succesfully"
+        print self.drag_appt, "dropped succesfully"
+        self.drag_appt = None
         event.accept()
 
     def paintEvent(self, event=None):
@@ -349,13 +389,15 @@ class bookWidget(QtGui.QWidget):
         
             self.slotHeight = (self.height() - self.headingHeight
             ) / self.slotCount
-
+            dragScale = self.slotHeight/self.slotLength
+        
             columnCount = len(self.dents)
 
             if columnCount == 0:
                 columnCount = 1 #avoid division by zero!!
             columnWidth = (self.width() - self.timeOffset) / columnCount
-
+            dragWidth = columnWidth
+            
             ## put the times down the side
 
             while currentSlot < self.slotCount:
@@ -367,8 +409,8 @@ class bookWidget(QtGui.QWidget):
                     painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
 
                     painter.drawText(trect, QtCore.Qt.AlignHCenter,
-                    (QtCore.QString(localsettings.humanTime(
-                    self.startTime + (currentSlot * self.slotLength)))))
+                    localsettings.humanTime(
+                    self.startTime + (currentSlot * self.slotLength)))
 
                 currentSlot += 1
                 col = 0
@@ -379,7 +421,7 @@ class bookWidget(QtGui.QWidget):
                 ##headings
                 painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
                 painter.setBrush(APPTCOLORS["HEADER"])
-                rect=QtCore.QRect(leftx,0,columnWidth,self.headingHeight)
+                rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
                 painter.drawRect(rect)
                 initials = localsettings.apptix_reverse.get(dent.ix)
                 if dent.memo != "":
@@ -392,11 +434,11 @@ class bookWidget(QtGui.QWidget):
                 startcell = ((self.daystart[dent.ix]-self.startTime) /
                 self.slotLength)
 
-                length=self.dayend[dent.ix]-self.daystart[dent.ix]
+                length = self.dayend[dent.ix] - self.daystart[dent.ix]
                 
-                startY = startcell*self.slotHeight+self.headingHeight
-                endY = (length/self.slotLength)*self.slotHeight
-                rect=QtCore.QRectF(leftx, startY, columnWidth, endY)
+                startY = startcell * self.slotHeight + self.headingHeight
+                endY = (length/self.slotLength) * self.slotHeight
+                rect = QtCore.QRectF(leftx, startY, columnWidth, endY)
                 
                 if self.flagDict[dent.ix]:
                     #don't draw a white canvas if dentist is out of office
@@ -404,15 +446,16 @@ class bookWidget(QtGui.QWidget):
                 
                     ###slots
                     painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
-                    if self.dragging:
-                        painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
-                    else:
-                        painter.setBrush(APPTCOLORS["SLOT"])
                     for slot in self.freeslots[dent.ix]:
                         (slotstart, length) = slot
                         startcell = (localsettings.minutesPastMidnight(
                         slotstart)-self.startTime)/self.slotLength
 
+                        if self.dragging:
+                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                        else:
+                            painter.setBrush(APPTCOLORS["SLOT"])
+                    
                         rect = QtCore.QRectF(leftx,
                         startcell*self.slotHeight+self.headingHeight,
                         columnWidth,(length/self.slotLength)*self.slotHeight)
@@ -486,6 +529,8 @@ class bookWidget(QtGui.QWidget):
                 painter.setBrush(TRANSPARENT)
                 painter.drawRect(self.highlightedRect)
         
+            self.emit(QtCore.SIGNAL("redrawn"), dragWidth, dragScale)
+        
         except Exception, e:
             print "error painting appointment overviewwidget", e
 
@@ -494,6 +539,8 @@ if __name__ == "__main__":
         print a
     def headerclicktest(a):
         print a
+    def redrawn(a,b):
+        print a,b
     import sys
     localsettings.initiate(False)
     app = QtGui.QApplication(sys.argv)
@@ -536,5 +583,8 @@ if __name__ == "__main__":
 
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("DentistHeading"),headerclicktest)
+    
+    QtCore.QObject.connect(form,
+    QtCore.SIGNAL("redrawn"), redrawn)
 
     sys.exit(app.exec_())

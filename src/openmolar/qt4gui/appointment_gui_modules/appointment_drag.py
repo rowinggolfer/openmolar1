@@ -22,7 +22,7 @@ class simple_model(QtCore.QAbstractListModel):
         self.list.append(app)
         self.reset()
 
-    def rowCount(self, parent=QtCore.QModelIndex()):
+    def rowCount(self, parent = QtCore.QModelIndex()):
         return len(self.list)
 
     def data(self, index, role):
@@ -59,7 +59,7 @@ class draggableList(QtGui.QListView):
         '''
         self.dropwidth = width
         self.pixels_per_min = height_per_minute
-        
+                
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
             event.setDropAction(QtCore.Qt.QMoveAction)
@@ -83,14 +83,13 @@ class draggableList(QtGui.QListView):
         
         drag.setMimeData(mimeData)
         drag.setDragCursor(QtGui.QPixmap(), QtCore.Qt.MoveAction)
-        pixmap = QtGui.QPixmap(self.dropwidth, 
-            selected.length * self.pixels_per_min)
-        pixmap.fill(QtGui.QColor("orange"))
         
-        drag.setPixmap(pixmap)
+        pmap = QtGui.QPixmap(self.dropwidth, 
+            selected.length * self.pixels_per_min)
+        pmap.fill(QtGui.QColor(127,0,0,127))
+        drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))        
+        drag.setPixmap(pmap)
 
-        drag.setHotSpot(QtCore.QPoint(pixmap.width()/2, pixmap.height()/2))
-        drag.setPixmap(pixmap)
         result = drag.start(QtCore.Qt.MoveAction)
         if result: # == QtCore.Qt.MoveAction:
             self.model().removeRow(index.row())
@@ -116,8 +115,6 @@ if __name__ == "__main__":
             super(testDialog, self).__init__(parent)
             self.setWindowTitle("Drag Drop Test")
             layout = QtGui.QHBoxLayout(self)
-
-            label = QtGui.QLabel("Drag Name From This List")
 
             self.model = simple_model()
             appts = appointments.get_pts_appts(1)
@@ -145,12 +142,7 @@ if __name__ == "__main__":
             d1.start=1015
             d1.end=1145
             d1.memo="hello"
-            
-            frame = QtGui.QFrame()
-            layout2 = QtGui.QVBoxLayout(frame)
-            label = QtGui.QLabel("")
-            label.setMinimumHeight(80)
-            
+                        
             self.OVbook.dents=[d1,]
             self.OVbook.clear()
             self.OVbook.init_dicts()
@@ -165,12 +157,24 @@ if __name__ == "__main__":
             self.OVbook.eTimes[1] = ((1115, 15),)
             self.OVbook.setMinimumWidth(200)
             
-            layout2.addWidget(label)
-            layout2.addWidget(self.OVbook)
+            self.tw = QtGui.QTabWidget(self)
+            self.tw.addTab(self.book, "day")
+            self.tw.addTab(self.OVbook, "week")
             
             layout.addWidget(self.listView)
-            layout.addWidget(self.book)
-            layout.addWidget(frame)
+            layout.addWidget(self.tw)
+            
+            #self.connect(self.tw, QtCore.SIGNAL("currentChanged (int)"),
+            #    self.tabNav)
+             
+            self.connect(self.OVbook, QtCore.SIGNAL("redrawn"), 
+                    self.listView.setScaling)
+            self.connect(self.book, QtCore.SIGNAL("redrawn"), 
+                    self.listView.setScaling)
+                       
+        #def tabNav(self, index):
+        #    widg = self.tw.currentWidget()
+        #    self.listView.setScaling(widg.dragWidth, widg.dragScale)
             
     try:
         app = QtGui.QApplication([])
