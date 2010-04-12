@@ -180,6 +180,6 @@ if __name__ == "__main__":
         app = QtGui.QApplication([])
         dl = testDialog()
         dl.exec_()
-    except Exception as e:
+    except Exception, e:
         print e
     sys.exit(app.closeAllWindows())
