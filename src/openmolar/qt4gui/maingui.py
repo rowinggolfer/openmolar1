@@ -315,7 +315,7 @@ class openmolarGui(QtGui.QMainWindow):
             #make these widgets accessible
             self.ui.perioGroupBoxes.append(periogb)
             self.ui.perioChartWidgets.append(pchart)
-        
+
         #--set a model for the patients diary
         self.pt_diary_model = pt_diary_treemodel.treeModel(self)
         self.ui.pt_diary_treeView.setModel(self.pt_diary_model)
@@ -334,15 +334,15 @@ class openmolarGui(QtGui.QMainWindow):
         #-appointment OVerview widget
         self.ui.apptoverviews=[]
 
-        for day in range(5):
-            bw = appointment_overviewwidget.bookWidget(day, 
+        for day in range(6):
+            bw = appointment_overviewwidget.bookWidget(day,
             "0800", "1900", 15, 2)
             self.ui.apptoverviews.append(bw)
             ## connect a signal which informs the drag/drop mechanism of the
             ## widgets size
             QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
                 self.ui.appointment_listView.setScaling)
-        
+
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
         hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[0])
@@ -358,11 +358,15 @@ class openmolarGui(QtGui.QMainWindow):
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame5)
         hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[4])
+        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame6)
+        hlayout.setMargin(2)
+        hlayout.addWidget(self.ui.apptoverviews[5])
 
         self.ui.apptoverviewControls=[]
 
         for widg in (self.ui.day1_frame, self.ui.day2_frame,
-        self.ui.day3_frame, self.ui.day4_frame, self.ui.day5_frame):
+        self.ui.day3_frame, self.ui.day4_frame, self.ui.day5_frame,
+        self.ui.day6_frame):
             hlayout=QtGui.QHBoxLayout(widg)
             hlayout.setMargin(0)
             control=aptOVcontrol.control()

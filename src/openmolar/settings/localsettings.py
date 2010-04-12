@@ -113,7 +113,7 @@ def setChosenServer(i):
         print "DBNAME=", DBNAME
     except IndexError:
         print "no server name.. config file is old format?"
-        
+
 wkdir = determine_path()
 referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
 appt_shortcut_file = os.path.join(wkdir, "resources",
@@ -174,7 +174,7 @@ def openPDF(filepath=TEMP_PDF):
     if not re.match(".*[.]pdf$", filepath):
         raise Exception, "%s is not a pdf file"% filepath
     openFile(filepath)
-    
+
 def openFile(filepath):
     '''
     open a File - minimal checks to ensure no malicious files have been
@@ -182,7 +182,7 @@ def openFile(filepath):
     '''
     if not os.path.exists(filepath):
         raise IOError, "%s does not exist"% filepath
-        
+
     if "win" in sys.platform:
         os.startfile(filepath)
     else:
@@ -199,7 +199,7 @@ sourcecode available at <a href="http://launchpad.net/openmolar">
 "http://launchpad.net/openmolar"</a>.
 </p>
 Thanks to <a href="http://rfquerin.org">Richard Querin</a>
-for the wonderful icon and Logo.'''%(__MAJOR_VERSION__, __build__, 
+for the wonderful icon and Logo.'''%(__MAJOR_VERSION__, __build__,
 CLIENT_SCHEMA_VERSION, DB_SCHEMA_VERSION)
 
 license = '''<hr />
@@ -230,7 +230,7 @@ try:
     OM_DATE_FORMAT = re.sub("y","Y",locale.nl_langinfo(locale.D_FMT))
 except AttributeError: # will happen on windows
     OM_DATE_FORMAT = r"%d/%m/%Y"
-    
+
 #-- ditto the qt one
 QDATE_FORMAT = "d, MMMM, yyyy"
 
@@ -377,7 +377,7 @@ def formatMoney(m):
     except Exception, e:
         print "formatMoney error", e
         return "%.02f"% m/100
-    
+
 def reverseFormatMoney(m):
     '''
     takes a string (as from above) and returns the value in pence
@@ -394,7 +394,7 @@ def reverseFormatMoney(m):
     for number in numbers:
         retarg += number
     return int(retarg)
-    
+
 def GP17formatDate(d):
     '''
     takes a python date type... formats for use on a NHS form
@@ -424,8 +424,8 @@ try:
 except AttributeError:  #WILL happen on windows - no nl_langinfo
     DAYNAMES =  (_("Monday"),_("Tuesday"),_("Wednesday"),_("Thursday"),
             _("Friday"),_("Saturday"),_("Sunday"))
-    
-        
+
+
 def dayName(d):
     '''
     expects a datetime object, returns the day
@@ -434,14 +434,14 @@ def dayName(d):
         return DAYNAMES [d.isoweekday()-1]
     except IndexError:
         return "?day?"
-    
+
 def monthName(d):
     '''
     expects a datetime object, returns the month
     '''
     try:
         try:
-            return("", 
+            return("",
             locale.nl_langinfo (locale.MON_1),
             locale.nl_langinfo (locale.MON_2),
             locale.nl_langinfo (locale.MON_3),
@@ -452,11 +452,11 @@ def monthName(d):
             locale.nl_langinfo (locale.MON_8),
             locale.nl_langinfo (locale.MON_9),
             locale.nl_langinfo (locale.MON_10),
-            locale.nl_langinfo (locale.MON_11),        
+            locale.nl_langinfo (locale.MON_11),
             locale.nl_langinfo (locale.MON_12)
             )[d.month]
         except AttributeError:  #WILL happen on windows - no nl_langinfo
-                    return("", 
+                    return("",
             _("January"),
             _("February"),
             _("March"),
@@ -484,7 +484,7 @@ def longDate(d):
         elif day[-1] == "2":
             day = day + "nd"
         elif day[-1] == "3":
-            day = day + "rd"        
+            day = day + "rd"
         else:
             day = day + "th"
         return "%s, %s %s %d"% (dayName(d), day, monthName(d), d.year)
@@ -494,7 +494,7 @@ def longDate(d):
 
 def readableDate(d):
     '''
-    takes a python date type, returns either the date, 
+    takes a python date type, returns either the date,
     or yesterday, today, tommorrow if necessary
     '''
     today = currentDay()
@@ -544,12 +544,27 @@ def minutesPastMidnighttoWystime(t):
     hour, min = t//60, int(t)%60
     return hour*100+min
 
+def minutesPastMidnightToPyTime(t):
+    '''
+    converts minutes past midnight(int) to a python datetime.time
+    '''
+    hour, min = t//60, int(t)%60
+    return datetime.time(hour, min)
+
 def minutesPastMidnight(t):
     '''
     converts a time in the format of 0830 or 1420
     to minutes past midnight (integer)
     '''
     hour, min = int(t)//100, int(t)%100
+    return hour*60+min
+
+def pyTimeToMinutesPastMidnight(t):
+    '''
+    converts a python datetime.time type
+    to minutes past midnight (integer)
+    '''
+    hour, min = t.hour, t.minute
     return hour*60+min
 
 def humanTime(t):
@@ -567,7 +582,7 @@ def setOperator(u1, u2):
         operator = u1
     else:
         operator = "%s/%s"% (u1, u2)
-    
+
 
 def getLocalSettings():
     '''
@@ -633,7 +648,7 @@ def updateLocalSettings(setting, value):
 
 def getAge(dob):
     '''
-    return the age in string form 
+    return the age in string form
     '''
     try:
         today = currentDay()
@@ -643,9 +658,9 @@ def getAge(dob):
 
         if nextbirthday > today:
             ageYears -= 1
-        
+
         return ageYears
-    
+
     except Exception, e:
         print e
         return 0
@@ -656,12 +671,12 @@ def initiateUsers():
     '''
     global allowed_logins
     from openmolar import connect
-    
+
     if connect.mainconnection != None:
         print "closing connection"
         connect.mainconnection.close()
-        reload(connect)    
-    
+        reload(connect)
+
     db = connect.connect()
     cursor = db.cursor()
     cursor.execute("select id from opid")
@@ -671,18 +686,18 @@ def initiateUsers():
     allowed_logins = []
     for row in trows:
         allowed_logins.append(row[0])
-    
+
 
 def initiate(debug = False):
     print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd, \
     clinicianNo, clinicianInits, WIKIURL
-    
+
     from openmolar import connect
     from openmolar.dbtools import db_settings
 
-    #close the connection if exists - user could have been connected to a 
+    #close the connection if exists - user could have been connected to a
     #a different db before.
     if connect.mainconnection != None:
         print "closing connection"
@@ -692,11 +707,11 @@ def initiate(debug = False):
     data = db_settings.getData("bookend")
     if data:
         bookEndVals = data[-1][0].split(",")
-        bookEnd = datetime.date(int(bookEndVals[0]), int(bookEndVals[1]), 
+        bookEnd = datetime.date(int(bookEndVals[0]), int(bookEndVals[1]),
         int(bookEndVals[2]))
-    
+
     print "bookEnd is %s"% bookEnd
-    
+
     data = db_settings.getData("supervisor_pword")
     if data:
         SUPERVISOR = data[0][0]
@@ -705,11 +720,11 @@ def initiate(debug = False):
         print "#"*30
         print "WARNING - no supervisor password is set, restting to default"
         print "#"*30
-        db_settings.updateData("supervisor_pword", SUPERVISOR, 
-        "not found reset") 
+        db_settings.updateData("supervisor_pword", SUPERVISOR,
+        "not found reset")
     db = connect.connect()
     cursor = db.cursor()
-    
+
     #set up four lists with key/value pairs reversedto make for easy referencing
 
     #first"ops" which is all practitioners
@@ -727,7 +742,7 @@ def initiate(debug = False):
         else:
             ops[0] = "NONE"
             ops_reverse["NONE"] = 0
-    
+
     try:
         ##correspondence details for NHS forms
         query = "select id,inits,name,formalname,fpcno,quals "
@@ -776,22 +791,22 @@ def initiate(debug = False):
         print "no clinician!"
 
     #-- majorly important class being initiated
-    
-    
-    
+
+
+
     getLocalSettings()
 
     WIKIURL = db_settings.getWikiUrl()
-    
+
     message = ('''<html><head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head><body><div align="center">
 <img src="%s" width="150", height="100", align="left" />
 <img src="%s" width="150", height="100", align="right" />
-<h1>'''% (stylesheet, LOGOPATH, LOGOPATH) + 
+<h1>'''% (stylesheet, LOGOPATH, LOGOPATH) +
 _("Welcome to OpenMolar!")+ '''</h1>
 <ul><li class="about">''' + _("Version") + ''' %s</li>
-<li class="about">'''% __MAJOR_VERSION__ + _("Revision") + 
+<li class="about">'''% __MAJOR_VERSION__ + _("Revision") +
 '''%s</li></ul><br clear="all" /><p>''' % __build__ +
 _("Your Data is Accessible, and the server reports no issues.") +
 '''</p><p>''' + _("Have a great day!") + '''</p></div></body></html>''')
@@ -814,13 +829,13 @@ def loadFeeTables():
     '''
     global FEETABLES
     from openmolar.dbtools import feesTable
-    
+
     print "loading fee and treatment logic tables"
     FEETABLES = feesTable.feeTables()
 
 def _test():
     import doctest
-    doctest.testmod()    
+    doctest.testmod()
 
 if __name__ == "__main__":
     _test()
@@ -837,7 +852,7 @@ if __name__ == "__main__":
     #print cflocation
     #print stylesheet
     #initiate(False)
-   
+
     #print global_cflocation, local_cfloaction
     #updateLocalSettings("stationID","surgery3")
 

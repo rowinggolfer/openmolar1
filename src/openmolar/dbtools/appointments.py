@@ -10,6 +10,15 @@ import datetime
 from openmolar.connect import connect, omSQLresult, ProgrammingError
 from openmolar.settings import localsettings
 
+class freeSlot(object):
+    '''
+    a custom data object to represent a slot (ie. a free space in dentists book)
+    '''
+    def __init__(self, date_time=None, dent=0, length=0):
+        self.dent = dent
+        self.date_time = date_time
+        self.length = length
+
 class appt_class(object):
     '''
     a class to hold data about a patient's appointment
@@ -36,7 +45,7 @@ class appt_class(object):
     @property
     def dent_inits(self):
         return localsettings.apptix_reverse.get(self.dent,"?")
-    
+
     def past_or_present(self):
         '''
         perform logic to decide if past/present future
@@ -53,7 +62,7 @@ class appt_class(object):
                 self.future = self.date > today
 
     def __repr__(self):
-        return "serilno=%s %s scheduled=%s dent=%s ix=%s"%(self.serialno, 
+        return "serilno=%s %s scheduled=%s dent=%s ix=%s"%(self.serialno,
         self.date, not self.unscheduled, self.dent_inits, self.aprix)
 
 class daySummary(object):
@@ -779,9 +788,9 @@ def get_pts_appts(sno, futureOnly=False):
     '''
     db = connect()
     cursor = db.cursor()
-    
+
     condition = " and adate>=NOW() " if futureOnly else ""
-        
+
     fullquery = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
     adate, atime, length, datespec FROM apr
     WHERE serialno=%d %s ORDER BY adate, aprix'''% (sno, condition)
@@ -946,7 +955,7 @@ def made_appt_to_proposed(appt):
     cursor = db.cursor()
     result = False
     try:
-        query = '''UPDATE apr SET adate=NULL, atime=NULL 
+        query = '''UPDATE apr SET adate=NULL, atime=NULL
         WHERE serialno=%s AND aprix=%s'''
         values = (appt.serialno, appt.aprix)
         if localsettings.logqueries:
@@ -956,7 +965,7 @@ def made_appt_to_proposed(appt):
     except Exception, ex:
         print "exception in appointments.made_appt_to_proposed ", ex
     cursor.close()
-    
+
     return result
 
 def make_appt(make_date, apptix, start, end, name, serialno, code0, code1,
@@ -1097,7 +1106,7 @@ def delete_appt_from_apr(appt):
     db = connect()
     cursor = db.cursor()
     result = False
-        
+
     try:
         query = 'DELETE FROM apr WHERE serialno=%d AND aprix=%d'% (
         appt.serialno, appt.aprix)
@@ -1138,7 +1147,7 @@ def delete_appt_from_aslot(appt):
     except Exception, ex:
         print "exception in appointments.delete_appt_from_aslot ", ex
     cursor.close()
-    
+
     return result
 
 def daysSlots(adate, dent):
@@ -1177,11 +1186,11 @@ def daysSlots(adate, dent):
         #--day not used or no slots
         return()
 
-def slots(start, apdata, fin, slotlength=1):
+def slots(adate, apptix, start, apdata, fin):
     '''
     takes data like  830 ((830, 845), (900, 915), (1115, 1130), (1300, 1400),
     (1400, 1420), (1600, 1630)) 1800
-    and returns a tuple of results like ((845,15),(915,120)........)
+    and returns a tuple of results like (freeSlot, freeSlot, ....)
     '''
     #--slotlength is required appt  length, in minutes
 
@@ -1189,28 +1198,36 @@ def slots(start, apdata, fin, slotlength=1):
     #-- start may be later than any first appointment in that book
     #-- this facilitates having lunch etc.. already in place for a non used
     #-- day.
-
     aptstart = localsettings.minutesPastMidnight(start)
     dayfin = localsettings.minutesPastMidnight(fin)
+    if dayfin <= aptstart:
+        return ()
     results = []
     for ap in apdata:
         sMin = localsettings.minutesPastMidnight(ap[0])
         fMin = localsettings.minutesPastMidnight(ap[1])
-        if sMin-aptstart >= slotlength:
-            results.append(
-            (localsettings.minutesPastMidnighttoWystime(aptstart),
-            sMin-aptstart))
+        slength = sMin-aptstart
+        if  slength > 0:
+            date_time = datetime.datetime.combine(adate,
+            localsettings.minutesPastMidnightToPyTime(aptstart))
+
+            slot = freeSlot(date_time, apptix, slength)
+            results.append(slot)
+
         if fMin > aptstart:
             aptstart = fMin
         if aptstart >= dayfin:
             break
+    slength = dayfin-aptstart
+    if slength > 0:
+        date_time = datetime.datetime.combine(adate,
+        localsettings.minutesPastMidnightToPyTime(aptstart))
 
-    if dayfin-aptstart >= slotlength:
-        results.append((localsettings.minutesPastMidnighttoWystime(aptstart),
-        dayfin-aptstart))
+        slot = freeSlot(date_time, apptix, slength)
+        results.append(slot)
     return tuple(results)
 
-def future_slots(length, startdate, enddate, dents, override_emergencies=False):
+def future_slots(startdate, enddate, dents, override_emergencies=False):
     '''
     get a list of possible appointment positions
     (between startdate and enddate) that can be offered to the
@@ -1218,47 +1235,47 @@ def future_slots(length, startdate, enddate, dents, override_emergencies=False):
     '''
     db = connect()
     cursor = db.cursor()
+    values = [startdate, enddate]
     if dents != ():
         mystr = " and ("
         for dent in dents:
-            mystr += "apptix=%d or "% dent
+            mystr += "apptix=%s or "
+            values.append(dent)
         mystr = mystr[0:mystr.rindex(" or")]+")"
     else:
         mystr = ""
-    fullquery = '''SELECT adate,apptix,start,end FROM aday
-    WHERE adate>="%s" AND adate<="%s" AND (flag=1 OR flag= 2) %s
-    ORDER BY adate'''% (startdate, enddate, mystr)
+    fullquery = '''SELECT adate, apptix, start, end FROM aday
+    WHERE adate>=%%s AND adate<=%%s AND (flag=1 OR flag= 2) %s
+    ORDER BY adate'''% mystr
 
     if localsettings.logqueries:
-        print fullquery
+        print fullquery, values
 
-    cursor.execute(fullquery)
+    cursor.execute(fullquery, values)
 
     possible_days = cursor.fetchall()
     #--get days when a suitable appointment is possible
     query = ""
-    retlist = []
+    retlist = ()
     #--now get data for those days so that we can find slots within
     for day in possible_days:
-        query = ' adate = "%s" and apptix = %d '% (day[0], day[1])
-        fullquery = '''select start,end from aslot
-        where %s and flag0!=72 order by start'''% query
+        adate, apptix, daystart, dayfin = day
+        values = (adate, apptix)
+        query = '''select start,end from aslot
+        where adate = %s and apptix = %s and flag0!=72 order by start'''
 
         #--flag0!=72 necessary to avoid zero length apps like pain/double/fam
 
         if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
+            print query, values
+        cursor.execute(query, values)
 
         results = cursor.fetchall()
-        daystart = day[2]
-        dayfin = day[3]
-        s = slots(daystart,results,dayfin,length)
-        if s != ():
-            retlist.append((day[0], day[1], s))
+        s = slots(adate, apptix, daystart, results, dayfin)
+        retlist = (s)
     cursor.close()
     #db.close()
-    return tuple(retlist)
+    return retlist
 
 if __name__ == "__main__":
     '''test procedures......'''

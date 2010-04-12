@@ -292,6 +292,16 @@ def clearApptButtonClicked(om_gui):
                 return
             layout_ptDiary(om_gui)
 
+def getLengthySlots(slots, length):
+    '''
+    sort through the list of slots, and filter out those with inadequate length
+    '''
+    retlist = []
+    for slot in slots:
+        if slot.length >= length:
+            retlist.append(slot)
+    return retlist
+
 def modifyAppt(om_gui):
     '''
     user is changing an appointment
@@ -496,24 +506,26 @@ def offerAppt(om_gui, firstRun=False):
         sunday = weekdates[6]     #--sunday
 
         #--check for suitable apts in the selected WEEK!
-        possibleAppts = appointments.future_slots(int(length),
-        startday.toPyDate(), sunday.toPyDate(), tuple(dents))
+        slots = appointments.future_slots(startday.toPyDate(),
+        sunday.toPyDate(), tuple(dents))
 
-        if possibleAppts != ():
-            #--found some
-            for day in weekdates:
-                for apt in possibleAppts:
-                    if apt[0] == day.toPyDate():
-                        om_gui.ui.apptoverviews[weekdates.index(day)].\
-                        freeslots[apt[1]] = apt[2]
+        possibleAppts = getLengthySlots(slots, int(length))
 
-        else:
-            om_gui.advise("no slots available for selected week")
+        if possibleAppts == ():
+            om_gui.advise("no long enough slots available for selected week")
             if firstRun:
-                #--we reached this proc to offer 1st appointmentm but
+                #--we reached this proc to offer 1st appointment but
                 #--haven't found it
                 aptOV_weekForward(om_gui)
                 offerAppt(om_gui, True)
+        else:
+            #--found some
+            for day in weekdates:
+                i = weekdates.index(day)
+                for slot in possibleAppts:
+                    if slot.date_time.date() == day.toPyDate():
+                        om_gui.ui.apptoverviews[i].addSlot(slot)
+
 
 def makeAppt(om_gui, arg):
     '''
@@ -1026,7 +1038,7 @@ def findApptButtonClicked(om_gui):
     for book in om_gui.apptBookWidgets:
         if book.apptix == appt.dent:
             book.highlightAppt(appt.atime)
-    
+
 def makeDiaryVisible(om_gui):
     '''
     if called, this will take any steps necessary to show the current day's
@@ -1180,7 +1192,7 @@ def layout_weekView(om_gui):
     if om_gui.ui.main_tabWidget.currentIndex() !=1 and \
     om_gui.ui.diary_tabWidget.currentIndex() != 1:
         return
-    
+
     cal = om_gui.ui.calendarWidget
     date = cal.selectedDate()
 
@@ -1188,7 +1200,7 @@ def layout_weekView(om_gui):
     weekdates = []
     #--(monday to friday) #prevMonday = date.addDays(1-dayno),
     #--prevTuesday = date.addDays(2-dayno)
-    for day in range(1, 6):
+    for day in range(1, 7):
         weekday = (date.addDays(day - dayno))
         weekdates.append(weekday)
         header = om_gui.ui.apptoverviewControls[day-1]
@@ -1227,7 +1239,7 @@ def layout_weekView(om_gui):
                 ov.setEndTime(dent)
                 ov.setMemo(dent)
                 ov.setFlags(dent)
-        
+
     if om_gui.ui.aptOV_apptscheckBox.checkState():
         #--add appts
         for ov in om_gui.ui.apptoverviews:
@@ -1248,7 +1260,7 @@ def layout_weekView(om_gui):
             for dent in ov.dents:
                 ov.lunches[dent.ix] = appointments.getLunch(
                 ov.date.toPyDate(), dent.ix)
-    
+
     if om_gui.schedule_mode:
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
@@ -1348,13 +1360,13 @@ def layout_dayView(om_gui):
     # make sure the splitter is reset (user could have hidden a widget they
     # now need)
     om_gui.ui.dayView_splitter.setSizes(book_list)
-    
+
     if i == 0:
         t = om_gui.ui.daymemo_label.text() + " - All Off Today!"
         om_gui.ui.daymemo_label.setText(t)
 
         om_gui.advise("all off today")
-    
+
 def appointment_clicked(om_gui, list_of_snos):
     if len(list_of_snos) == 1:
         sno = list_of_snos[0]

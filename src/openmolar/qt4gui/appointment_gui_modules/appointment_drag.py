@@ -50,7 +50,7 @@ class draggableList(QtGui.QListView):
         self.setDragEnabled(True)
         self.dropwidth = self.width()
         self.pixels_per_min = 2
-        
+
     def setScaling(self, width, height_per_minute):
         '''
         make the list aware of the scaling of the widget available for drops
@@ -59,7 +59,7 @@ class draggableList(QtGui.QListView):
         '''
         self.dropwidth = width
         self.pixels_per_min = height_per_minute
-                
+
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
             event.setDropAction(QtCore.Qt.QMoveAction)
@@ -79,15 +79,15 @@ class draggableList(QtGui.QListView):
         bstream = cPickle.dumps(selected)
         mimeData = QtCore.QMimeData()
         mimeData.setData("application/x-appointment", bstream)
-        drag = QtGui.QDrag(self)    
-        
+        drag = QtGui.QDrag(self)
+
         drag.setMimeData(mimeData)
         drag.setDragCursor(QtGui.QPixmap(), QtCore.Qt.MoveAction)
-        
-        pmap = QtGui.QPixmap(self.dropwidth, 
+
+        pmap = QtGui.QPixmap(self.dropwidth,
             selected.length * self.pixels_per_min)
         pmap.fill(QtGui.QColor(127,0,0,127))
-        drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))        
+        drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))
         drag.setPixmap(pmap)
 
         result = drag.start(QtCore.Qt.MoveAction)
@@ -105,11 +105,11 @@ if __name__ == "__main__":
     '''
     from openmolar.qt4gui.customwidgets import appointmentwidget
     from openmolar.qt4gui.customwidgets import appointment_overviewwidget
-    
+
     from openmolar.dbtools import appointments
     from openmolar.settings import localsettings
     localsettings.initiate()
-    
+
     class testDialog(QtGui.QDialog):
         def __init__(self, parent=None):
             super(testDialog, self).__init__(parent)
@@ -124,8 +124,8 @@ if __name__ == "__main__":
 
             self.listView = draggableList()
             self.listView.setModel(self.model)
-            
-            self.book = appointmentwidget.appointmentWidget(self, "1000", 
+
+            self.book = appointmentwidget.appointmentWidget(self, "1000",
             "1200")
             self.book.setDentist(1)
             self.book.setStartTime(1015)
@@ -134,48 +134,48 @@ if __name__ == "__main__":
             (1, 1030, 1045, 'MCDONALD I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
             ,(1, 1115, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0)):
                 self.book.setAppointment(appoint)
-    
-            self.OVbook = appointment_overviewwidget.bookWidget(1, 
+
+            self.OVbook = appointment_overviewwidget.bookWidget(1,
             "1000", "1200", 15, 2, self)
             d1 = appointments.dentistDay(1)
 
             d1.start=1015
             d1.end=1145
             d1.memo="hello"
-                        
+
             self.OVbook.dents=[d1,]
             self.OVbook.clear()
             self.OVbook.init_dicts()
-            
+
             self.OVbook.setStartTime(d1)
             self.OVbook.setEndTime(d1)
             self.OVbook.setMemo(d1)
             self.OVbook.setFlags(d1)
-        
-            self.OVbook.freeslots[1] = ((1045, 30), )
+
+            self.OVbook.freeslots[1] = ((1045, 20),(1105, 10))
             self.OVbook.appts[1] = ((1030,15),)
             self.OVbook.eTimes[1] = ((1115, 15),)
             self.OVbook.setMinimumWidth(200)
-            
+
             self.tw = QtGui.QTabWidget(self)
             self.tw.addTab(self.book, "day")
             self.tw.addTab(self.OVbook, "week")
-            
+
             layout.addWidget(self.listView)
             layout.addWidget(self.tw)
-            
+
             #self.connect(self.tw, QtCore.SIGNAL("currentChanged (int)"),
             #    self.tabNav)
-             
-            self.connect(self.OVbook, QtCore.SIGNAL("redrawn"), 
+
+            self.connect(self.OVbook, QtCore.SIGNAL("redrawn"),
                     self.listView.setScaling)
-            self.connect(self.book, QtCore.SIGNAL("redrawn"), 
+            self.connect(self.book, QtCore.SIGNAL("redrawn"),
                     self.listView.setScaling)
-                       
+
         #def tabNav(self, index):
         #    widg = self.tw.currentWidget()
         #    self.listView.setScaling(widg.dragWidth, widg.dragScale)
-            
+
     try:
         app = QtGui.QApplication([])
         dl = testDialog()
