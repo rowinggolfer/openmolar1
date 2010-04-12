@@ -494,7 +494,7 @@ def offerAppt(om_gui, firstRun=False):
         return
 
     else:
-        #--select mon-saturday of the selected day
+        #--select the week which includes the selected day
         dayno = seldate.dayOfWeek()
         weekdates = []
         for day in range(1, 8):
@@ -508,9 +508,8 @@ def offerAppt(om_gui, firstRun=False):
         #--check for suitable apts in the selected WEEK!
         slots = appointments.future_slots(startday.toPyDate(),
         sunday.toPyDate(), tuple(dents))
-
+        
         possibleAppts = getLengthySlots(slots, int(length))
-
         if possibleAppts == ():
             om_gui.advise("no long enough slots available for selected week")
             if firstRun:
@@ -522,10 +521,14 @@ def offerAppt(om_gui, firstRun=False):
             #--found some
             for day in weekdates:
                 i = weekdates.index(day)
+                try:
+                    om_gui.ui.apptoverviews[i].clearSlots()
+                except IndexError:
+                    pass
+                    #print "attempted to clear Sunday's slots!"
                 for slot in possibleAppts:
                     if slot.date_time.date() == day.toPyDate():
                         om_gui.ui.apptoverviews[i].addSlot(slot)
-
 
 def makeAppt(om_gui, arg):
     '''

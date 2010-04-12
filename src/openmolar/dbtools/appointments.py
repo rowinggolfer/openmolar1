@@ -18,7 +18,13 @@ class freeSlot(object):
         self.dent = dent
         self.date_time = date_time
         self.length = length
-
+    def __cmp__(self, other):
+        if (self.date_time == other.date_time and
+        self.dent == other.dent and self.length == other.length):
+            return 1
+        else:
+            return 0
+        
 class appt_class(object):
     '''
     a class to hold data about a patient's appointment
@@ -1006,10 +1012,20 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     block_length = localsettings.minutesPastMidnight(end) - \
     localsettings.minutesPastMidnight(start)
 
-    slots = future_slots(block_length, bldate, bldate, (apptix,))
+    slots = future_slots(bldate, bldate, (apptix,))
+    
+    date_time = datetime.datetime.combine(bldate,
+        localsettings.minutesPastMidnightToPyTime(start))
 
-    if not (slots and (start, block_length) in slots[0][2]):
-        #-- block no longer available!!
+    this_slot = freeSlot(date_time, apptix, block_length)
+    
+    #-- check block still available!!    
+    found = False
+    for slot in slots:
+        if slot == this_slot:
+            found = True
+            break
+    if not found:
         return False
 
     name = "%s %s *"% (pt.fname, pt.sname)
@@ -1037,12 +1053,22 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     block_length = localsettings.minutesPastMidnight(end) - \
     localsettings.minutesPastMidnight(start)
 
-    slots = future_slots(block_length, bldate, bldate, (apptix,))
+    slots = future_slots(bldate, bldate, (apptix,))
+    
+    date_time = datetime.datetime.combine(bldate,
+        localsettings.minutesPastMidnightToPyTime(start))
 
-    if not (slots and (start, block_length) in slots[0][2]):
-        #-- block no longer available!!
+    this_slot = freeSlot(date_time, apptix, block_length)
+    
+    #-- check block still available!!    
+    found = False
+    for slot in slots:
+        if slot == this_slot:
+            found = True
+            break
+    if not found:
         return False
-
+    
     db = connect()
     cursor = db.cursor()
     query = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
@@ -1225,13 +1251,12 @@ def slots(adate, apptix, start, apdata, fin):
 
         slot = freeSlot(date_time, apptix, slength)
         results.append(slot)
-    return tuple(results)
+    return results
 
 def future_slots(startdate, enddate, dents, override_emergencies=False):
     '''
     get a list of possible appointment positions
-    (between startdate and enddate) that can be offered to the
-    patient (longer than length)
+    (between startdate and enddate) that can be offered to the patient
     '''
     db = connect()
     cursor = db.cursor()
@@ -1256,7 +1281,7 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
     possible_days = cursor.fetchall()
     #--get days when a suitable appointment is possible
     query = ""
-    retlist = ()
+    slotlist = []
     #--now get data for those days so that we can find slots within
     for day in possible_days:
         adate, apptix, daystart, dayfin = day
@@ -1271,11 +1296,10 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
         cursor.execute(query, values)
 
         results = cursor.fetchall()
-        s = slots(adate, apptix, daystart, results, dayfin)
-        retlist = (s)
+        slotlist += slots(adate, apptix, daystart, results, dayfin)
     cursor.close()
     #db.close()
-    return retlist
+    return slotlist
 
 if __name__ == "__main__":
     '''test procedures......'''

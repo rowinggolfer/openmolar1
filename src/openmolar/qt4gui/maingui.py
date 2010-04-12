@@ -3734,14 +3734,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.connectAptOVdentcbs()
         self.connectAptOVhygcbs()
 
-        for i in range(5):
-            self.connect(self.ui.apptoverviewControls[i],
+        for control in self.ui.apptoverviewControls:
+            self.connect(control,
             QtCore.SIGNAL("clicked"), self.aptOVlabel_clicked)
 
-            self.connect(self.ui.apptoverviewControls[i],
+            self.connect(control,
             QtCore.SIGNAL("right-clicked"), self.aptOVlabel_rightClicked)
-
-    ##TODO - create a class for this widget and it's bloated functionality!!
 
     def connectAllClinicians(self, con=True):
         '''

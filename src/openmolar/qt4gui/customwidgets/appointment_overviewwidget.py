@@ -72,6 +72,10 @@ class bookWidget(QtGui.QWidget):
         self.eTimes = {}
         self.freeslots = {}
         self.lunches = {}
+        
+    def clearSlots(self):
+        for dent in self.dents:
+            self.freeslots[dent.ix] = []        
 
     def init_dicts(self):
         for dent in self.dents:
@@ -132,8 +136,7 @@ class bookWidget(QtGui.QWidget):
                 if rect.contains(event.pos()):
                     self.highlightedRect = rect
                     feedback = '%d mins starting at %s with %s'% (slot.length,
-                    localsettings.wystimeToHumanTime(slotstart),
-                    dent.initials)
+                    slot.date_time.strftime ("%H:%M"), dent.initials)
 
                     QtGui.QToolTip.showText(event.globalPos(),
                     QtCore.QString(feedback))
@@ -206,9 +209,10 @@ class bookWidget(QtGui.QWidget):
                 return
             if event.button() == 1: #left click
                 for slot in self.freeslots[dent.ix]:
-                    slotstart = slot.date_time.time()
-                    startcell = (localsettings.minutesPastMidnight(
-                    slotstart) - self.startTime) / self.slotLength
+                    slotstart = localsettings.pyTimeToMinutesPastMidnight(
+                        slot.date_time.time())
+                    startcell = (
+                        slotstart - self.startTime)/self.slotLength
 
                     rect=QtCore.QRect(leftx,
                     startcell * self.slotHeight + self.headingHeight,
@@ -226,9 +230,10 @@ class bookWidget(QtGui.QWidget):
                 rightx = self.timeOffset + (col+1) * columnWidth
 
                 for slot in self.freeslots[dent.ix]:
-                    slotstart = slot.date_time.time()
-                    startcell = (localsettings.minutesPastMidnight(
-                    slotstart) - self.startTime) / self.slotLength
+                    slotstart = localsettings.pyTimeToMinutesPastMidnight(
+                        slot.date_time.time())
+                    startcell = (
+                        slotstart - self.startTime)/self.slotLength
 
                     rect = QtCore.QRect(leftx,
                     startcell * self.slotHeight + self.headingHeight,
@@ -464,7 +469,8 @@ class bookWidget(QtGui.QWidget):
                         columnWidth,
                         (slot.length/self.slotLength)*self.slotHeight)
 
-                        if self.dragging and rect.contains(self.dropPos.x(), self.dropPos.y()):
+                        if self.dragging and rect.contains(self.dropPos.x(), 
+                        self.dropPos.y()):
                             painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
                         else:
                             painter.setBrush(APPTCOLORS["SLOT"])
@@ -473,7 +479,7 @@ class bookWidget(QtGui.QWidget):
                         painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
 
                         painter.drawText(rect,QtCore.Qt.AlignHCenter,
-                        localsettings.wystimeToHumanTime(slotstart))
+                        slot.date_time.strftime("%H:%M"))
 
                     painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
 

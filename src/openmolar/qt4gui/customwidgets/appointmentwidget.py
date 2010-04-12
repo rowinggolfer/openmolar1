@@ -536,7 +536,7 @@ class appointmentCanvas(QtGui.QWidget):
                     if dl.block == True:
                         reason = str(
                         dl.comboBox.currentText().toAscii())[:30]
-                        if finish > start :
+                        if finish > start :                            
                             self.pWidget.emit(QtCore.SIGNAL("BlockEmptySlot"),
                             (start, finish, adjstart, adjfinish ,
                             localsettings.apptix.get(self.pWidget.dentist),
