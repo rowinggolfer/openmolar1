@@ -116,6 +116,7 @@ from openmolar.qt4gui.customwidgets import estimateWidget
 from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import calendars
 from openmolar.qt4gui.customwidgets import notification_widget
+from openmolar.qt4gui.customwidgets import dent_hyg_selector
 
 class openmolarGui(QtGui.QMainWindow):
 
@@ -370,58 +371,19 @@ class openmolarGui(QtGui.QMainWindow):
             control=aptOVcontrol.control()
             self.ui.apptoverviewControls.append(control)
             hlayout.addWidget(control)
-
-        self.ui.aptOVdent_checkBoxes={}
-        self.ui.aptOVhyg_checkBoxes={}
-
-        glayout = QtGui.QGridLayout(self.ui.aptOVdents_frame)
-        glayout.setSpacing(0)
-        self.ui.aptOV_everybody_checkBox = QtGui.QCheckBox("All Clinicians")
-        self.ui.aptOV_everybody_checkBox.setChecked(True)
-        row=0
-        glayout.addWidget(self.ui.aptOV_everybody_checkBox, row, 0, 1, -1)
-
-        hl=QtGui.QFrame(self.ui.aptOVdents_frame)
-        hl.setFrameShape(QtGui.QFrame.HLine)
-        hl.setFrameShadow(QtGui.QFrame.Sunken)
-        row+=1
-        glayout.addWidget(hl, row, 0, 1, -1)
-
-        self.ui.aptOV_alldentscheckBox = QtGui.QCheckBox("All Dentists")
-        self.ui.aptOV_alldentscheckBox.setChecked(True)
-        row += 1
-        glayout.addWidget(self.ui.aptOV_alldentscheckBox, row, 0, 1, -1)
-        row += 1
-        column = 1
-        for dent in localsettings.activedents:
-            cb=QtGui.QCheckBox(QtCore.QString(dent))
-            cb.setChecked(True)
-            self.ui.aptOVdent_checkBoxes[localsettings.apptix[dent]]=cb
-            glayout.addWidget(cb, row, column)
-            if column == 1:
-                column = 2
-            else:
-                column = 1
-                row += 1
-        if column == 2:
-            row += 1
-        self.ui.aptOV_allhygscheckBox= QtGui.QCheckBox("All Hygenists")
-        self.ui.aptOV_allhygscheckBox.setChecked(True)
-
-        glayout.addWidget(self.ui.aptOV_allhygscheckBox, row, 0, 1, -1)
-        row += 1
-        column = 1
-        for hyg in localsettings.activehygs:
-            cb=QtGui.QCheckBox(QtCore.QString(hyg))
-            cb.setChecked(True)
-            self.ui.aptOVhyg_checkBoxes[localsettings.apptix[hyg]]=cb
-            glayout.addWidget(cb, row, column)
-            if column == 1:
-                column = 2
-            else:
-                column = 1
-                row+=1
-
+    
+        self.dayClinicianSelector = dent_hyg_selector.dentHygSelector(
+            localsettings.activedents, localsettings.activehygs)
+        layout = QtGui.QHBoxLayout(self.ui.day_clinician_selector_frame)
+        layout.setMargin(0)
+        layout.addWidget(self.dayClinicianSelector)
+        
+        self.weekClinicianSelector = dent_hyg_selector.dentHygSelector(
+            localsettings.activedents, localsettings.activehygs)
+        layout = QtGui.QHBoxLayout(self.ui.week_clinician_selector_frame)
+        layout.setMargin(0)
+        layout.addWidget(self.weekClinicianSelector)
+        
         #--customise the appointment widget calendar
         self.ui.dayCalendar = calendars.controlCalendar()
         hlayout = QtGui.QHBoxLayout(self.ui.dayCalendar_frame)
@@ -3725,6 +3687,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.weekView_outOfOffice_checkBox):
             QtCore.QObject.connect(widg, QtCore.SIGNAL("stateChanged(int)"),
             self.aptOV_checkboxes_changed)
+        
+        QtCore.QObject.connect(self.weekClinicianSelector, 
+        QtCore.SIGNAL("selectionChanged"), self.aptOV_checkboxes_changed)
+
+        QtCore.QObject.connect(self.dayClinicianSelector, 
+        QtCore.SIGNAL("selectionChanged"), self.dayView_radiobutton_toggled)
 
         for widg in ( self.ui.dayView_smart_radioButton,
         self.ui.dayView_selectedBooks_radioButton):
@@ -3741,87 +3709,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             widg.connect(widg, QtCore.SIGNAL("DentistHeading"),
             self.apptOVwidget_header_clicked)
 
-        self.connectAllClinicians()
-        self.connectAllDents()
-        self.connectAllHygs()
-        self.connectAptOVdentcbs()
-        self.connectAptOVhygcbs()
-
         for control in self.ui.apptoverviewControls:
             self.connect(control,
             QtCore.SIGNAL("clicked"), self.aptOVlabel_clicked)
 
             self.connect(control,
             QtCore.SIGNAL("right-clicked"), self.aptOVlabel_rightClicked)
-
-    def connectAllClinicians(self, con=True):
-        '''
-        connect the allClinicians checkbox to it's slot
-        '''
-        if con:
-            QtCore.QObject.connect(self.ui.aptOV_everybody_checkBox,
-            QtCore.SIGNAL("stateChanged(int)"),
-            self.apptOV_all_clinicians_checkbox_changed)
-        else:
-            QtCore.QObject.disconnect(self.ui.aptOV_everybody_checkBox,
-            QtCore.SIGNAL("stateChanged(int)"),
-            self.apptOV_all_clinicians_checkbox_changed)
-
-    def connectAllDents(self, con=True):
-        '''
-        connect the allDents checkbox to it's slot
-        '''
-        if con:
-            QtCore.QObject.connect(self.ui.aptOV_alldentscheckBox,
-            QtCore.SIGNAL("stateChanged(int)"),
-            self.apptOV_all_dentists_checkbox_changed)
-        else:
-            QtCore.QObject.disconnect(self.ui.aptOV_alldentscheckBox,
-            QtCore.SIGNAL("stateChanged(int)"),
-            self.apptOV_all_dentists_checkbox_changed)
-
-    def connectAllHygs(self, con=True):
-        '''
-        connect the allDents checkbox to it's slot
-        '''
-        if con:
-            QtCore.QObject.connect(self.ui.aptOV_allhygscheckBox,
-            QtCore.SIGNAL("stateChanged(int)"),
-            self.apptOV_all_hygenists_checkbox_changed)
-        else:
-            QtCore.QObject.disconnect(self.ui.aptOV_allhygscheckBox,
-            QtCore.SIGNAL("stateChanged(int)"),
-            self.apptOV_all_hygenists_checkbox_changed)
-
-    def connectAptOVdentcbs(self, con=True):
-        '''
-        iterate through the collection of aptOVdent_checkBoxes
-        and connect or disconnect their signals
-        '''
-        for cb in self.ui.aptOVdent_checkBoxes.values():
-            if con:
-                QtCore.QObject.connect(cb,
-                QtCore.SIGNAL("stateChanged(int)"),
-                self.dent_appt_checkbox_changed)
-            else:
-                QtCore.QObject.disconnect(cb,
-                QtCore.SIGNAL("stateChanged(int)"),
-                self.dent_appt_checkbox_changed)
-
-    def connectAptOVhygcbs(self, con=True):
-        '''
-        iterate through the collection of aptOVhyg_checkBoxes
-        and connect or disconnect their signals
-        '''
-        for cb in self.ui.aptOVhyg_checkBoxes.values():
-            if con:
-                QtCore.QObject.connect(cb,
-                QtCore.SIGNAL("stateChanged(int)"),
-                self.hyg_appt_checkbox_changed)
-            else:
-                QtCore.QObject.disconnect(cb,
-                QtCore.SIGNAL("stateChanged(int)"),
-                self.hyg_appt_checkbox_changed)
 
     def recalculateEstimate(self):
         '''

@@ -4229,6 +4229,22 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     </widget>
                    </item>
                    <item>
+                    <widget class="QFrame" name="day_clinician_selector_frame">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
                     <widget class="QFrame" name="schedule_frame">
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
@@ -4249,59 +4265,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                       <property name="bottomMargin">
                        <number>2</number>
                       </property>
-                      <item>
-                       <widget class="QScrollArea" name="aptOVdentscrollArea">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>100</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>16777215</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="widgetResizable">
-                         <bool>true</bool>
-                        </property>
-                        <widget class="QWidget" name="scrollAreaWidgetContents">
-                         <property name="geometry">
-                          <rect>
-                           <x>0</x>
-                           <y>0</y>
-                           <width>198</width>
-                           <height>98</height>
-                          </rect>
-                         </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_3">
-                          <property name="spacing">
-                           <number>2</number>
-                          </property>
-                          <property name="margin">
-                           <number>2</number>
-                          </property>
-                          <item>
-                           <widget class="QFrame" name="aptOVdents_frame">
-                            <property name="sizePolicy">
-                             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                              <horstretch>0</horstretch>
-                              <verstretch>0</verstretch>
-                             </sizepolicy>
-                            </property>
-                            <property name="frameShape">
-                             <enum>QFrame::StyledPanel</enum>
-                            </property>
-                            <property name="frameShadow">
-                             <enum>QFrame::Raised</enum>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </widget>
-                      </item>
                       <item>
                        <widget class="QCheckBox" name="schedule_checkBox">
                         <property name="text">
@@ -4484,56 +4447,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                         </widget>
                        </item>
                        <item>
-                        <widget class="QScrollArea" name="aptOVdentscrollArea_2">
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>100</height>
-                          </size>
+                        <widget class="QFrame" name="week_clinician_selector_frame">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
                          </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>16777215</height>
-                          </size>
+                         <property name="frameShape">
+                          <enum>QFrame::StyledPanel</enum>
                          </property>
-                         <property name="widgetResizable">
-                          <bool>true</bool>
+                         <property name="frameShadow">
+                          <enum>QFrame::Raised</enum>
                          </property>
-                         <widget class="QWidget" name="scrollAreaWidgetContents_15">
-                          <property name="geometry">
-                           <rect>
-                            <x>0</x>
-                            <y>0</y>
-                            <width>198</width>
-                            <height>111</height>
-                           </rect>
-                          </property>
-                          <layout class="QVBoxLayout" name="verticalLayout_4">
-                           <property name="spacing">
-                            <number>2</number>
-                           </property>
-                           <property name="margin">
-                            <number>2</number>
-                           </property>
-                           <item>
-                            <widget class="QFrame" name="aptOVdents_frame_2">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="frameShape">
-                              <enum>QFrame::StyledPanel</enum>
-                             </property>
-                             <property name="frameShadow">
-                              <enum>QFrame::Raised</enum>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
                         </widget>
                        </item>
                        <item>
@@ -4848,8 +4774,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>965</width>
-                     <height>459</height>
+                     <width>663</width>
+                     <height>254</height>
                     </rect>
                    </property>
                   </widget>
@@ -5076,8 +5002,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>965</width>
-                     <height>492</height>
+                     <width>663</width>
+                     <height>287</height>
                     </rect>
                    </property>
                   </widget>

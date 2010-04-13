@@ -1145,19 +1145,17 @@ def layout_yearHeader(om_gui):
 
     om_gui.ui.year_textBrowser.setText(headerText)
 
-def getUserCheckedClinicians(om_gui):
+def getUserCheckedClinicians(om_gui, week=False):
     '''
     checks the gui to see which dentists, hygienists are checked.
     returns a list
     '''
-    retarg=[]
-    for dent in om_gui.ui.aptOVdent_checkBoxes.keys():
-        if om_gui.ui.aptOVdent_checkBoxes[dent].checkState():
-            retarg.append(dent)
-    for hyg in om_gui.ui.aptOVhyg_checkBoxes.keys():
-        if om_gui.ui.aptOVhyg_checkBoxes[hyg].checkState():
-            retarg.append(hyg)
-    return retarg
+    widg = om_gui.weekClinicianSelector if week else om_gui.dayClinicianSelector
+    
+    retlist = []
+    for dent in widg.getActiveClinicians():
+        retlist.append(localsettings.apptix.get(dent))
+    return retlist
 
 def layout_weekView(om_gui):
     '''
@@ -1192,7 +1190,7 @@ def layout_weekView(om_gui):
     thisWeek = QtCore.QDate.currentDate() in weekdates
     om_gui.ui.goTodayPushButton.setEnabled(thisWeek)
 
-    userCheckedClinicians = getUserCheckedClinicians(om_gui)
+    userCheckedClinicians = getUserCheckedClinicians(om_gui, week=True)
 
     for ov in om_gui.ui.apptoverviews:
         #--reset
