@@ -426,8 +426,7 @@ def begin_makeAppt(om_gui):
         localsettings.readableDate(appt.date)), 1)
         return
     #--sets "schedule mode" - user is now adding an appointment
-    aptOVviewMode(om_gui, False)
-
+    om_gui.ui.schedule_checkBox.setChecked(True)
     #--deselect ALL dentists and hygenists so only one "book" is viewable
     om_gui.ui.aptOV_alldentscheckBox.setChecked(False)
     om_gui.ui.aptOV_allhygscheckBox.setChecked(False)
@@ -459,7 +458,6 @@ def begin_makeAppt(om_gui):
 
 def offerAppt(om_gui, firstRun=False):
     '''offer an appointment'''
-    appt = om_gui.pt.selectedAppt
     dents = []
     for dent in om_gui.ui.aptOVdent_checkBoxes.keys():
         if om_gui.ui.aptOVdent_checkBoxes[dent].checkState():
@@ -467,13 +465,12 @@ def offerAppt(om_gui, firstRun=False):
     for hyg in om_gui.ui.aptOVhyg_checkBoxes.keys():
         if om_gui.ui.aptOVhyg_checkBoxes[hyg].checkState():
             dents.append(hyg)
-    start = appt.atime
-    length = appt.length
-    trt1 = appt.trt1
-    trt2 = appt.trt2
-    trt3 = appt.trt3
-    memo = appt.memo
-
+    
+    appt = om_gui.pt.selectedAppt
+    if appt:    
+        length = appt.length
+    else:
+        length = 0
     #-- om_gui.ui.calendarWidget date originally set when user
     #--clicked the make button
     seldate = om_gui.ui.calendarWidget.selectedDate()
@@ -484,15 +481,12 @@ def offerAppt(om_gui, firstRun=False):
         #-- change the calendar programatically (this will call THIS
         #--procedure again!)
         om_gui.ui.calendarWidget.setSelectedDate(today)
-        return
     elif seldate.toPyDate() > localsettings.bookEnd:
         om_gui.advise('''Reached %s<br />
         No suitable appointments found<br />
         Is the appointment very long?<br />
         If so, Perhaps cancel some emergency time?
         '''% localsettings.longDate(localsettings.bookEnd), 1)
-        return
-
     else:
         #--select the week which includes the selected day
         dayno = seldate.dayOfWeek()
@@ -509,7 +503,7 @@ def offerAppt(om_gui, firstRun=False):
         slots = appointments.future_slots(startday.toPyDate(),
         sunday.toPyDate(), tuple(dents))
         
-        possibleAppts = getLengthySlots(slots, int(length))
+        possibleAppts = getLengthySlots(slots, length)
         if possibleAppts == ():
             om_gui.advise("no long enough slots available for selected week")
             if firstRun:
@@ -746,21 +740,16 @@ def aptFontSize(om_gui, e):
     om_gui.ui.yearView.update()
 
 @localsettings.debug
-def aptOVviewMode(om_gui, Viewmode=True):
+def aptOVviewMode(om_gui):
     '''
     toggle between "scheduling" and "viewing modes"
     '''
-    om_gui.schedule_mode = not Viewmode
-    if Viewmode:
-        om_gui.ui.apt_drag_frame.setFixedHeight(0)
-        om_gui.ui.main_tabWidget.setCurrentIndex(0)
+    scheduling = om_gui.ui.schedule_checkBox.isChecked()
+    if not scheduling:
+        om_gui.ui.schedule_tabWidget.hide()
     else:
-        om_gui.ui.apt_drag_frame.setFixedHeight(120)
-    #for cb in (om_gui.ui.aptOV_apptscheckBox,
-    #om_gui.ui.aptOV_emergencycheckBox):    #om_gui.ui.aptOV_lunchcheckBox):
-    #    if cb.checkState() != Viewmode:
-    #        cb.setChecked(Viewmode)
-
+        om_gui.ui.schedule_tabWidget.show()
+    
 def aptOVlabelClicked(om_gui, sd):
     '''
     go to the appointment book for the date on the label
@@ -947,7 +936,7 @@ def apptOVclinicians(om_gui):
     apptOVdents(om_gui, False)
     apptOVhygs(om_gui, False)
 
-    handle_calendar_signal(om_gui, newDate=False)
+    handle_calendar_signal(om_gui)
 
 def apptOVhygs(om_gui, byUser=True):
     '''
@@ -965,7 +954,7 @@ def apptOVhygs(om_gui, byUser=True):
 
     if byUser:
         change_allclinicianscb(om_gui)
-        handle_calendar_signal(om_gui, newDate=False)
+        handle_calendar_signal(om_gui)
 
 def apptOVdents(om_gui, byUser=True):
     '''
@@ -984,7 +973,7 @@ def apptOVdents(om_gui, byUser=True):
 
     if byUser:
         change_allclinicianscb(om_gui)
-        handle_calendar_signal(om_gui, newDate=False)
+        handle_calendar_signal(om_gui)
 
 def dentToggled(om_gui):
     '''
@@ -994,7 +983,7 @@ def dentToggled(om_gui):
     for cb in om_gui.ui.aptOVdent_checkBoxes.values():
         dentstate = dentstate and cb.checkState()
     change_alldentscb(om_gui, dentstate)
-    handle_calendar_signal(om_gui, newDate=False)
+    handle_calendar_signal(om_gui)
 
 def hygToggled(om_gui):
     '''
@@ -1005,14 +994,14 @@ def hygToggled(om_gui):
         hygstate = hygstate and cb.checkState()
     change_allhygscb(om_gui, hygstate)
 
-    handle_calendar_signal(om_gui, newDate=False)
+    handle_calendar_signal(om_gui)
 
 def handle_aptOV_checkboxes(om_gui):
     '''
     user has altered one of the checkboxes on the appointment options
     emergency, lunch etc..
     '''
-    handle_calendar_signal(om_gui, newDate=False)
+    handle_calendar_signal(om_gui)
 
 def findApptButtonClicked(om_gui):
     '''
@@ -1056,7 +1045,7 @@ def makeDiaryVisible(om_gui):
     else:
         handle_calendar_signal(om_gui)
 
-def handle_calendar_signal(om_gui, newDate=True):
+def handle_calendar_signal(om_gui):
     '''
     slot to catch a date change from the custom mont/year widgets emitting
     a date signal
@@ -1264,7 +1253,7 @@ def layout_weekView(om_gui):
                 ov.lunches[dent.ix] = appointments.getLunch(
                 ov.date.toPyDate(), dent.ix)
 
-    if om_gui.schedule_mode:
+    if om_gui.ui.schedule_checkBox.isChecked():
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
         offerAppt(om_gui)

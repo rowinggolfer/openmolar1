@@ -84,9 +84,9 @@ class draggableList(QtGui.QListView):
         drag.setMimeData(mimeData)
         drag.setDragCursor(QtGui.QPixmap(), QtCore.Qt.MoveAction)
 
-        pmap = QtGui.QPixmap(self.dropwidth,
+        pmap = QtGui.QPixmap(100,
             selected.length * self.pixels_per_min)
-        pmap.fill(QtGui.QColor(127,0,0,127))
+        pmap.fill(QtGui.QColor(127,0,0))
         drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))
         drag.setPixmap(pmap)
 
@@ -152,7 +152,11 @@ if __name__ == "__main__":
             self.OVbook.setMemo(d1)
             self.OVbook.setFlags(d1)
 
-            self.OVbook.freeslots[1] = ((1045, 20),(1105, 10))
+            slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,45),1,20)
+            slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),1,10)
+            self.OVbook.addSlot(slot)
+            self.OVbook.addSlot(slot2)
+            
             self.OVbook.appts[1] = ((1030,15),)
             self.OVbook.eTimes[1] = ((1115, 15),)
             self.OVbook.setMinimumWidth(200)

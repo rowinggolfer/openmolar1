@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>997</width>
-         <height>568</height>
+         <width>1017</width>
+         <height>644</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>471</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>539</width>
+                        <width>558</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2169,8 +2169,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>738</width>
-                        <height>446</height>
+                        <width>779</width>
+                        <height>477</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2671,7 +2671,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>601</width>
+                        <width>608</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -2988,8 +2988,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>288</width>
-                        <height>222</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3188,7 +3188,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>238</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3221,7 +3221,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3594,7 +3594,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>473</width>
+                        <width>267</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4015,7 +4015,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>94</width>
+                    <width>104</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4340,13 +4340,75 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 </layout>
                </item>
                <item>
-                <widget class="QFrame" name="apt_drag_frame">
+                <widget class="QFrame" name="schedule_frame">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_36">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <widget class="QCheckBox" name="schedule_checkBox">
+                    <property name="text">
+                     <string>schedule appointments</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QTabWidget" name="schedule_tabWidget">
+                    <property name="currentIndex">
+                     <number>0</number>
+                    </property>
+                    <widget class="QWidget" name="tab_29">
+                     <attribute name="title">
+                      <string>Current Patient</string>
+                     </attribute>
+                     <layout class="QVBoxLayout" name="verticalLayout_37">
+                      <item>
+                       <widget class="QFrame" name="apt_drag_frame">
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="tab_30">
+                     <attribute name="title">
+                      <string>Blocks etc..</string>
+                     </attribute>
+                     <layout class="QVBoxLayout" name="verticalLayout_38">
+                      <item>
+                       <widget class="QFrame" name="block_drag_frame">
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
@@ -4546,7 +4608,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <x>0</x>
                     <y>0</y>
                     <width>198</width>
-                    <height>99</height>
+                    <height>98</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -4870,8 +4932,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>719</width>
-                     <height>465</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_30"/>
@@ -4928,8 +4990,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>492</width>
-                     <height>220</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>

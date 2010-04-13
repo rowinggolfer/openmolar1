@@ -320,8 +320,6 @@ class openmolarGui(QtGui.QMainWindow):
         self.pt_diary_model = pt_diary_treemodel.treeModel(self)
         self.ui.pt_diary_treeView.setModel(self.pt_diary_model)
         #--add a dragable listView for making appointments
-        self.ui.apt_drag_frame.setFixedHeight(0)
-        self.schedule_mode = False
         self.ui.appointment_listView = appointment_drag.draggableList(self)
         layout = QtGui.QHBoxLayout(self.ui.apt_drag_frame)
         layout.setMargin(0)
@@ -666,10 +664,10 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         ci=self.ui.main_tabWidget.currentIndex()
 
-        if ci != 1 and self.schedule_mode:
-            #--making an appointment has been abandoned
-            self.advise("Appointment not made", 1)
-            appt_gui_module.aptOVviewMode(self, True)
+        #if ci != 1 and self.schedule_mode:
+        #    #--making an appointment has been abandoned
+        #    #self.advise("Appointment not made", 1)
+        #    appt_gui_module.aptOVviewMode(self, True)
         if ci == 1:
             #--user is viewing appointment book
             appt_gui_module.makeDiaryVisible(self)
@@ -698,9 +696,9 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         ci=self.ui.tabWidget.currentIndex()
 
-        if ci != 1 and self.schedule_mode:
-            self.advise("Appointment not made", 1)
-            appt_gui_module.aptOVviewMode(self, True)
+        #if ci != 1 and self.schedule_mode:
+        #    self.advise("Appointment not made", 1)
+        #    appt_gui_module.aptOVviewMode(self, True)
 
         if ci != 6:
             if self.ui.tabWidget.isTabEnabled(6) and \
@@ -741,6 +739,18 @@ class openmolarGui(QtGui.QMainWindow):
         if ci == 7:  #-- estimate/plan page.
             self.load_newEstPage()
             self.load_treatTrees()
+
+    def schedule_mode_state(self, i):
+        '''
+        handles the state signal from the scheduling checkbox
+        '''
+        appt_gui_module.aptOVviewMode(self)
+    
+    def schedule_mode_clicked(self):
+        '''
+        handles scheduling checkbox clicked
+        '''
+        appt_gui_module.handle_calendar_signal(self)
 
     def diary_tabWidget_nav(self, i):
         '''
@@ -1727,7 +1737,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         localsettings.allowed_logins)
 
         self.addHistoryMenu()
-
+        appt_gui_module.aptOVviewMode(self)
+        self.ui.schedule_tabWidget.setCurrentIndex(0)
 
     def addHistoryMenu(self):
         '''
@@ -2409,8 +2420,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         radiobutton toggling who's book to show on the appointment
         '''
-        print "radiobuttontoggled"
-        appt_gui_module.handle_calendar_signal(self, False)
+        appt_gui_module.handle_calendar_signal(self)
 
     def dent_appt_checkbox_changed(self):
         '''
@@ -2438,8 +2448,18 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user has been offered a slot, and accepted it.
         the argument provides the required details
         '''
+        print "aptOVwidget_userHasChosen_appoinmtent"
+        print "sender", self.sender
+        print "args", arg
+        print "slot", dir(arg[1])
         appt_gui_module.makeAppt(self, arg)
-
+    
+    def aptOVwidget_dropped_appointment(self, appt, slot, offset):
+        '''
+        user has dropped an appointment into a free slot on a week view widget
+        '''
+        print appt, "dropped succesfully into", slot, "with offset of %d minutes"% offset
+        
     def apptOVwidget_header_clicked(self, arg):
         '''
         user has clicked on the header of a apptOV widget.
@@ -3644,6 +3664,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.apptNextDay_pushButton,
         QtCore.SIGNAL("clicked()"), self.apt_dayForward_clicked)
 
+        QtCore.QObject.connect(self.ui.schedule_checkBox,
+        QtCore.SIGNAL("stateChanged(int)"), self.schedule_mode_state)
+        
+        QtCore.QObject.connect(self.ui.schedule_checkBox,
+        QtCore.SIGNAL("clicked()"), self.schedule_mode_clicked)
+
         #QtCore.QObject.connect(self.ui.fontSize_spinBox,
         #QtCore.SIGNAL("valueChanged (int)"), self.fontSize_spinBox_changed)
 
@@ -3653,7 +3679,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
     def signals_apptWidgets(self, book):
 
         book.connect(book, QtCore.SIGNAL("print_me"), self.bookPrint)
-
 
         book.connect(book, QtCore.SIGNAL("new_memo"),
         self.bookmemo_Edited)
@@ -3722,8 +3747,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.dayView_radiobutton_toggled)
 
         for widg in self.ui.apptoverviews:
-            widg.connect(widg, QtCore.SIGNAL("AppointmentClicked"),
+            widg.connect(widg, QtCore.SIGNAL("SlotClicked"),
             self.aptOVwidget_userHasChosen_appointment)
+            
+            widg.connect(widg, QtCore.SIGNAL("ApptDropped"),
+            self.aptOVwidget_dropped_appointment)
 
             widg.connect(widg, QtCore.SIGNAL("DentistHeading"),
             self.apptOVwidget_header_clicked)

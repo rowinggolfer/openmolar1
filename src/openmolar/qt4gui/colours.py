@@ -56,10 +56,10 @@ APPT_OV_COLORS = {
     "HEADER" : QtCore.Qt.white,
     "BACKGROUND" : QtCore.Qt.white,
     "BACKGROUND_" : QtGui.QPalette().dark(),
-    "SLOT" : QtGui.QColor("#ffffd9"),
+    "SLOT" : QtGui.QColor("#ffffbb"),
     "ACTIVE_SLOT" : QtGui.QColor("yellow"),
     "BUSY" : QtGui.QColor("#d9d9ff"),
-    "LUNCH" : QtGui.QColor("#d9ffec"),
+    "LUNCH" : QtGui.QPalette().dark(),
     "FREE" : QtCore.Qt.white,
     "EMERGENCY" : QtGui.QColor("#ffd9ec")
     }

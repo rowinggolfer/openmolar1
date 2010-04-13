@@ -66,6 +66,8 @@ class bookWidget(QtGui.QWidget):
         self.setAcceptDrops(True)
         self.drag_appt = None
         self.dropPos = None
+        self.dropSlot = None
+        self.dropOffset = 0
 
     def clear(self):
         self.appts = {}
@@ -220,8 +222,7 @@ class bookWidget(QtGui.QWidget):
                     (slot.length / self.slotLength) * self.slotHeight)
 
                     if rect.contains(event.pos()):
-                        self.emit(QtCore.SIGNAL("AppointmentClicked"),
-                        (self.day, slot, dent.ix))
+                        self.emit(QtCore.SIGNAL("SlotClicked"), slot)
 
                         break
 
@@ -356,7 +357,12 @@ class bookWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         allowDrop = True
+                        self.dropSlot = slot
                         self.dropPos = event.pos()
+                        ## TODO - set self.dropOffset here...
+                        ## currently alway zero
+                        ## dropOffset is the number of minutes into the slot
+                        ## the drop will occurr
                         break
                 col+=1
 
@@ -367,6 +373,8 @@ class bookWidget(QtGui.QWidget):
                 event.accept()
             else:
                 self.dragging = False
+                self.dropSlot = None
+                self.dropOffset = 0
                 self.update()
                 event.ignore()
         else:
@@ -374,12 +382,17 @@ class bookWidget(QtGui.QWidget):
 
     def dragLeaveEvent(self, event):
         self.dragging = False
+        self.dropSlot = None
+        self.dropOffset = 0
         self.update()
+        event.accept()
 
     def dropEvent(self, event):
         self.dragging = False
-        print self.drag_appt, "dropped succesfully"
+        self.emit(QtCore.SIGNAL("ApptDropped"), self.drag_appt, self.dropSlot, 
+            self.dropOffset)
         self.drag_appt = None
+        self.dropOffset = 0
         event.accept()
 
     def paintEvent(self, event=None):
@@ -469,6 +482,10 @@ class bookWidget(QtGui.QWidget):
                         columnWidth,
                         (slot.length/self.slotLength)*self.slotHeight)
 
+                        ### this may be easier with 
+                        ### if slot == self.dropSlot??
+                        #if slot == self.dropSlot:
+                        
                         if self.dragging and rect.contains(self.dropPos.x(), 
                         self.dropPos.y()):
                             painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
@@ -587,7 +604,8 @@ if __name__ == "__main__":
 
     slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,15),4,30)
     slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,17,35),4,20)
-    form.freeslots[4] = (slot, slot2)
+    form.addSlot(slot)
+    form.addSlot(slot2)
     form.appts[4] = ((900,40),(1000,15))
     form.eTimes[4] = ((1115, 15), (1300, 60), (1600, 30))
     form.lunches[4] = ((1300,60),)
