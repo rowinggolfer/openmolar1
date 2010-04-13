@@ -423,10 +423,16 @@ class openmolarGui(QtGui.QMainWindow):
                 row+=1
 
         #--customise the appointment widget calendar
-        self.ui.calendarWidget = calendars.controlCalendar()
-        hlayout=QtGui.QHBoxLayout(self.ui.apptOVcalendar_placeholder)
+        self.ui.dayCalendar = calendars.controlCalendar()
+        hlayout = QtGui.QHBoxLayout(self.ui.dayCalendar_frame)
         hlayout.setMargin(0)
-        hlayout.addWidget(self.ui.calendarWidget)
+        hlayout.addWidget(self.ui.dayCalendar)
+
+        self.ui.weekCalendar = calendars.weekCalendar()
+        hlayout = QtGui.QHBoxLayout(self.ui.weekCalendar_frame)
+        hlayout.setMargin(0)
+        hlayout.addWidget(self.ui.weekCalendar)
+        
         #--add a month view
         self.ui.monthView = calendars.monthCalendar()
         #hlayout=QtGui.QHBoxLayout(self.ui.monthView_frame)
@@ -744,6 +750,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         handles the state signal from the scheduling checkbox
         '''
+        self.ui.schedule_checkBox_2.setChecked(i)
         appt_gui_module.aptOVviewMode(self)
     
     def schedule_mode_clicked(self):
@@ -756,9 +763,6 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         catches a signal that the diary tab widget has been moved
         '''
-        self.ui.diary_stackedWidget.setCurrentIndex(i)
-        self.ui.calendarWidget.setHighlightWeek(i==1)
-        self.ui.calendarWidget.setHighlightMonth(i==2)
         if self.ui.diary_tabWidget.isVisible():
             appt_gui_module.handle_calendar_signal(self)
 
@@ -2333,18 +2337,18 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.fillEmptySlot(self, arg)
 
-    def calendarWidget_changed(self):
+    def dayCalendar_changed(self):
         '''
         the calendar on the appointments overview page has changed.
         time to re-layout the appointment overview
         '''
         appt_gui_module.handle_calendar_signal(self)
-
+        
     def customDateSignal(self, d):
         '''
-        either the custom year or month view calendar has emitted a date signal
+        either the custom year or month calendar has emitted a date signal
         '''
-        self.ui.calendarWidget.setSelectedDate(d)
+        self.ui.dayCalendar.setSelectedDate(d)
 
     def addCalendarMemo(self, memos):
         '''
@@ -2357,20 +2361,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         a public holiday needs to be added to a day
         '''
         appt_gui_module.addpubHol(self, arg)
-
-    def aptOV_weekBack_clicked(self):
-        '''
-        handles a request to move back a week in the appointment overview page
-        '''
-        appt_gui_module.aptOV_weekBack(self)
-
-    def aptOV_weekForward_clicked(self):
-        '''
-        handles a request to move forward a week in the appointment overview
-        page
-        '''
-        appt_gui_module.aptOV_weekForward(self)
-
+    
     def aptOV_monthBack_clicked(self):
         '''
         handles a request to move back a month in the appointments page
@@ -3026,7 +3017,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         apptix = localsettings.apptix[dentist]
         if self.appointmentData.getMemo(apptix) != memo:
             appointments.setMemos(
-            self.ui.calendarWidget.selectedDate().toPyDate(),
+            self.ui.dayCalendar.selectedDate().toPyDate(),
             ((apptix, memo),))
             self.advise("adding day memo - %s %s"% (dentist, memo))
 
@@ -3658,11 +3649,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.goTodayPushButton,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
 
-        QtCore.QObject.connect(self.ui.apptPrevDay_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apt_dayBack_clicked)
-
-        QtCore.QObject.connect(self.ui.apptNextDay_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apt_dayForward_clicked)
+        QtCore.QObject.connect(self.ui.goto_current_week_PushButton,
+        QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
 
         QtCore.QObject.connect(self.ui.schedule_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.schedule_mode_state)
@@ -3698,8 +3686,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_appointmentOVTab(self):
         #appointment overview tab
-        QtCore.QObject.connect(self.ui.calendarWidget,
-        QtCore.SIGNAL("selectionChanged()"), self.calendarWidget_changed)
+        QtCore.QObject.connect(self.ui.dayCalendar,
+        QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
+
+        QtCore.QObject.connect(self.ui.weekCalendar,
+        QtCore.SIGNAL("weekChanged(date)"), self.customDateSignal)
 
         QtCore.QObject.connect(self.ui.yearView,
         QtCore.SIGNAL("selectedDate"), self.customDateSignal)
@@ -3715,12 +3706,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.yearView,
         QtCore.SIGNAL("add_pub_hol"), self.addCalendarPubHol)
-
-        QtCore.QObject.connect(self.ui.aptOVprevweek,
-        QtCore.SIGNAL("clicked()"), self.aptOV_weekBack_clicked)
-
-        QtCore.QObject.connect(self.ui.aptOVnextweek,
-        QtCore.SIGNAL("clicked()"), self.aptOV_weekForward_clicked)
 
         QtCore.QObject.connect(self.ui.aptOVprevmonth,
         QtCore.SIGNAL("clicked()"), self.aptOV_monthBack_clicked)

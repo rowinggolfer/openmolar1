@@ -168,7 +168,7 @@ class appointmentWidget(QtGui.QFrame):
         emits a signal when the print button is clicked
         '''
         self.emit(QtCore.SIGNAL("print_me"), self.apptix,
-        self.om_gui.ui.calendarWidget.selectedDate())
+        self.om_gui.ui.dayCalendar.selectedDate())
 
     def newMemo(self):
         '''

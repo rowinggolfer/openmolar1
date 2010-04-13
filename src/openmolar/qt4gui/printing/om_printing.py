@@ -428,7 +428,7 @@ def printmultiDayList(om_gui, args):
 def book1print(om_gui):
     print "DEPRECATED FUNCTION CALLED - book1print"
     dent = om_gui.apptBookWidgets[0].apptix
-    adate = om_gui.ui.calendarWidget.selectedDate()
+    adate = om_gui.ui.dayCalendar.selectedDate()
     books = ((dent, adate), )
     om_gui.printdaylists(books)
 

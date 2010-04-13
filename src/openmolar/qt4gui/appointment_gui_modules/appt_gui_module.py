@@ -442,8 +442,7 @@ def begin_makeAppt(om_gui):
         om_gui.ui.aptOVhyg_checkBoxes[appt.dent].setChecked(True)
 
     #--compute first available appointment
-    om_gui.ui.calendarWidget.setSelectedDate(
-    QtCore.QDate.currentDate())
+    om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
     #--show the appointment overview tab
     om_gui.signals_tabs(False) #disconnect slots
     om_gui.ui.main_tabWidget.setCurrentIndex(1)
@@ -471,16 +470,16 @@ def offerAppt(om_gui, firstRun=False):
         length = appt.length
     else:
         length = 0
-    #-- om_gui.ui.calendarWidget date originally set when user
+    #-- om_gui.ui.dayCalendar date originally set when user
     #--clicked the make button
-    seldate = om_gui.ui.calendarWidget.selectedDate()
+    seldate = om_gui.ui.dayCalendar.selectedDate()
     today = QtCore.QDate.currentDate()
 
     if seldate < today:
         om_gui.advise("can't schedule an appointment in the past", 1)
         #-- change the calendar programatically (this will call THIS
         #--procedure again!)
-        om_gui.ui.calendarWidget.setSelectedDate(today)
+        om_gui.ui.dayCalendar.setSelectedDate(today)
     elif seldate.toPyDate() > localsettings.bookEnd:
         om_gui.advise('''Reached %s<br />
         No suitable appointments found<br />
@@ -537,7 +536,7 @@ def makeAppt(om_gui, arg):
     om_gui.advise("offer appointment for %s %s"% (day, str(arg[1])))
 
     appt = om_gui.pt.selectedAppt
-    caldate = om_gui.ui.calendarWidget.selectedDate()
+    caldate = om_gui.ui.dayCalendar.selectedDate()
     appointment_made = False
     dayno = caldate.dayOfWeek()
     selecteddate = caldate.addDays(1 -dayno + arg[0])
@@ -716,7 +715,7 @@ def triangles(om_gui, call_update=True):
     if om_gui.ui.main_tabWidget.currentIndex() == 1 and \
     om_gui.ui.diary_tabWidget.currentIndex()==0:
         currenttime = "%02d%02d"%(time.localtime()[3], time.localtime()[4])
-        d = om_gui.ui.calendarWidget.selectedDate()
+        d = om_gui.ui.dayCalendar.selectedDate()
         if d == QtCore.QDate.currentDate():
             for book in om_gui.apptBookWidgets:
                 if book.setCurrentTime(currenttime) and call_update:
@@ -725,7 +724,7 @@ def triangles(om_gui, call_update=True):
 def calendar(om_gui, sd):
     '''comes from click proceedures'''
     #om_gui.ui.main_tabWidget.setCurrentIndex(1)
-    om_gui.ui.calendarWidget.setSelectedDate(sd)
+    om_gui.ui.dayCalendar.setSelectedDate(sd)
 
 def aptFontSize(om_gui, e):
     '''
@@ -757,68 +756,52 @@ def aptOVlabelClicked(om_gui, sd):
     calendar(om_gui, sd)
     om_gui.ui.diary_tabWidget.setCurrentIndex(0)
 
-def gotoCurWeek(om_gui):
-    '''
-    appointment Overview page - change the calendar date,
-    and let it's event handler do the rest
-    '''
-    om_gui.ui.calendarWidget.setSelectedDate(
-    QtCore.QDate.currentDate())
-
-def aptOV_weekBack(om_gui):
-    '''
-    appointment Overview page - change the calendar date,
-    and let it's event handler do the rest
-    '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(-7))
-
 def aptOV_weekForward(om_gui):
     '''
     appointment Overview page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(7))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addDays(7))
 
 def aptOV_monthBack(om_gui):
     '''
     appointment Overview page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(-1))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addMonths(-1))
 
 def aptOV_monthForward(om_gui):
     '''
     appointment Overview page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(1))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addMonths(1))
 
 def aptOV_yearBack(om_gui):
     '''
     appointment Overview page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addYears(-1))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addYears(-1))
 
 def aptOV_yearForward(om_gui):
     '''
     appointment Overview page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addYears(1))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addYears(1))
 
 def gotoToday(om_gui):
     '''
     appointment page - change the calendar date,
     and let it's event handler do the rest
     '''
-    om_gui.ui.calendarWidget.setSelectedDate(
+    om_gui.ui.dayCalendar.setSelectedDate(
     QtCore.QDate.currentDate())
 
 def apt_dayBack(om_gui):
@@ -826,48 +809,48 @@ def apt_dayBack(om_gui):
     appointment page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(-1))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addDays(-1))
 
 def apt_dayForward(om_gui):
     '''
     appointment page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(1))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addDays(1))
 
 def apt_weekBack(om_gui):
     '''
     appointment page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(-7))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addDays(-7))
 
 def apt_weekForward(om_gui):
     '''
     appointment page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addDays(7))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addDays(7))
 
 def apt_monthBack(om_gui):
     '''
     appointment page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(-1))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addMonths(-1))
 
 def apt_monthForward(om_gui):
     '''
     appointment page - change the calendar date,
     and let it's event handler do the rest
     '''
-    date = om_gui.ui.calendarWidget.selectedDate()
-    om_gui.ui.calendarWidget.setSelectedDate(date.addMonths(1))
+    date = om_gui.ui.dayCalendar.selectedDate()
+    om_gui.ui.dayCalendar.setSelectedDate(date.addMonths(1))
 
 def clearTodaysEmergencyTime(om_gui):
     '''
@@ -1014,7 +997,7 @@ def findApptButtonClicked(om_gui):
     QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
     om_gui.connectAllClinicians(False)
 
-    om_gui.ui.calendarWidget.setSelectedDate(appt.date)
+    om_gui.ui.dayCalendar.setSelectedDate(appt.date)
     om_gui.ui.diary_tabWidget.setCurrentIndex(0)
     om_gui.ui.main_tabWidget.setCurrentIndex(1)
     if appt.dent in om_gui.ui.aptOVdent_checkBoxes.keys():
@@ -1040,8 +1023,8 @@ def makeDiaryVisible(om_gui):
     today=QtCore.QDate.currentDate()
     if om_gui.ui.diary_tabWidget.currentIndex() != 0:
         om_gui.ui.diary_tabWidget.setCurrentIndex(0)
-    if om_gui.ui.calendarWidget.selectedDate() != today:
-        om_gui.ui.calendarWidget.setSelectedDate(today)
+    if om_gui.ui.dayCalendar.selectedDate() != today:
+        om_gui.ui.dayCalendar.setSelectedDate(today)
     else:
         handle_calendar_signal(om_gui)
 
@@ -1053,7 +1036,8 @@ def handle_calendar_signal(om_gui):
     OR the checkboxes have been tweaked
     OR a memo has been added
     '''
-    d = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
+    om_gui.ui.weekCalendar.setSelectedDate(d)
     om_gui.ui.monthView.setSelectedDate(d)
     om_gui.ui.yearView.setSelectedDate(d)
     om_gui.ui.goTodayPushButton.setEnabled(d != localsettings.currentDay)
@@ -1077,7 +1061,7 @@ def updateDayMemos(om_gui, memos):
     '''
     user has added some memos
     '''
-    d = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     appointments.setMemos(d, memos)
     handle_calendar_signal(om_gui)
 
@@ -1085,7 +1069,7 @@ def addpubHol(om_gui, details):
     '''
     user has update/added a pub holiday
     '''
-    d = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     appointments.setPubHol(d, details)
     handle_calendar_signal(om_gui)
 
@@ -1093,7 +1077,7 @@ def layout_month(om_gui):
     '''
     grab month memos
     '''
-    qdate = om_gui.ui.calendarWidget.selectedDate()
+    qdate = om_gui.ui.dayCalendar.selectedDate()
     startdate = datetime.date(qdate.year(), qdate.month(), 1)
 
     qdate = qdate.addMonths(1)
@@ -1114,7 +1098,7 @@ def layout_year(om_gui):
     '''
     grab year memos
     '''
-    year = om_gui.ui.calendarWidget.selectedDate().year()
+    year = om_gui.ui.dayCalendar.selectedDate().year()
     startdate = datetime.date(year, 1, 1)
     enddate = datetime.date(year+1, 1, 1)
     dents = tuple(getUserCheckedClinicians(om_gui))
@@ -1185,7 +1169,7 @@ def layout_weekView(om_gui):
     om_gui.ui.diary_tabWidget.currentIndex() != 1:
         return
 
-    cal = om_gui.ui.calendarWidget
+    cal = om_gui.ui.dayCalendar
     date = cal.selectedDate()
 
     dayno = date.dayOfWeek()
@@ -1275,7 +1259,7 @@ def layout_dayView(om_gui):
         book.setTime = "None"
         book.highlightAppt(None)
 
-    d = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False
     if om_gui.ui.dayView_smart_radioButton.isChecked():
         workingOnly = True
@@ -1383,7 +1367,7 @@ def clearEmergencySlot(om_gui, arg):
     only question is... do they want to free it?
     it expects an arg like ('8:50', '11:00', 4)
     '''
-    adate = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     message = _("Do you want to unblock the selected slot?")
     message += "<br />%s - %s <br />"% (arg[0], arg[1])
     message += "%s<br />"% localsettings.readableDate(adate)
@@ -1403,7 +1387,7 @@ def blockEmptySlot(om_gui, tup):
     '''
     block the empty slot
     '''
-    adate = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
     end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
     adjstart = localsettings.humanTimetoWystime(tup[2].toString("h:mm"))
@@ -1422,7 +1406,7 @@ def fillEmptySlot(om_gui, tup):
     fill the empty slot - this is called via the appointment widget.
     '''
     print "fillEmptySlot", tup
-    adate = om_gui.ui.calendarWidget.selectedDate().toPyDate()
+    adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
     end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
     adjstart = localsettings.humanTimetoWystime(tup[2].toString("h:mm"))

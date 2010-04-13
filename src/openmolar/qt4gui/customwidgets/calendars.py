@@ -27,7 +27,8 @@ class dayData(object):
 
 class controlCalendar(QtGui.QCalendarWidget):
     '''
-    a calendar which has capabilities for highlighting weeks and months
+    a customised QCalendarWidget, overriding the defeault behaviour of the 
+    month foreward and back buttons
     '''
     def __init__(self, *args):
         QtGui.QCalendarWidget.__init__(self, *args)
@@ -36,30 +37,46 @@ class controlCalendar(QtGui.QCalendarWidget):
         self.setHorizontalHeaderFormat(QtGui.QCalendarWidget.SingleLetterDayNames)
         self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(True)
-        self.highlightWeek = False
-        self.highlightMonth = False
-        self.color = QtGui.QColor(self.palette().color(QtGui.QPalette.Highlight))
-        self.color.setAlpha(64)
-        self.connect(self, QtCore.SIGNAL("selectionChanged ()"), 
-                self.updateCells)
+        self.connect(self, QtCore.SIGNAL("currentPageChanged (int,int)"),
+            self.jumpMonth)
         
-    def setHighlightWeek(self, arg):
-        self.highlightWeek = arg
+    def jumpMonth(self, year, month):
+        '''
+        a customisation so that the arrow buttons actually change the date
+        jump through hoops to ensure that a null date isn't chosen
+        eg february 30th
+                
+        '''
+        cur_date = self.selectedDate()
+        d = QtCore.QDate()
+        day = cur_date.day()
+        while day and not d.setDate(year, month, day):
+            day -= 1
+            
+        if d != cur_date:
+            self.setSelectedDate(d)
+        
+class weekCalendar(controlCalendar):
+    def __init__(self, *args):
+        controlCalendar.__init__(self, *args)
+        self.color = self.palette().color(QtGui.QPalette.Highlight)
+        self.color.setAlpha(64)
+        
+        self.weekNo = self.selectedDate().weekNumber()
+        self.connect(self, QtCore.SIGNAL("selectionChanged ()"), 
+            self.update)
+
+    def update(self):
+        weekNo = self.selectedDate().weekNumber() 
+        if weekNo != self.weekNo:
+            self.emit(QtCore.SIGNAL("weekChanged(date)"), self.selectedDate())
+            self.weekNo = weekNo 
         self.updateCells()
-    
-    def setHighlightMonth(self, arg):
-        self.highlightMonth = arg
-        self.updateCells()    
-    
+        
     def paintCell(self, painter, rect, date):    
         QtGui.QCalendarWidget.paintCell(self, painter, rect, date)
         
-        if self.highlightWeek and \
-        date.weekNumber()[0] == self.selectedDate().weekNumber()[0]:
-            painter.fillRect(rect, self.color)
-
-        if self.highlightMonth and \
-        date.month() == self.selectedDate().month():
+        if date.weekNumber()[0] == self.selectedDate().weekNumber()[0]:
             painter.fillRect(rect, self.color)
 
 class calDialogs():
@@ -858,25 +875,36 @@ class yearCalendar(QtGui.QWidget, calDialogs):
 
         
 if __name__ == "__main__":
-    localsettings.initiate()
-    from openmolar.dbtools import appointments
+    def signal_trap(arg=None):
+        print cal.selectedDate(),
+        print wcal.selectedDate()
+        
     app = QtGui.QApplication(sys.argv)
     cal = controlCalendar()
+    wcal = weekCalendar()
     mcal = monthCalendar()
     ycal = yearCalendar()
-    
-    startdate = datetime.date(2010,2,1) 
-    enddate = datetime.date(2010,2,28)
-    rows = appointments.getDayInfo(startdate, enddate, (4,6,7))
-    data = appointments.getBankHols(startdate, enddate)
-    
     cal.show()
-    for c in (mcal, ycal):
-        c.setDents((4,6,7))
-        c.setData(rows)
-        c.setHeadingData(data)    
-
-        c.show()
+    wcal.move(cal.width(),0)
+    wcal.show()
+    QtCore.QObject.connect(cal, QtCore.SIGNAL("selectionChanged()"), 
+        signal_trap)
+    QtCore.QObject.connect(wcal, QtCore.SIGNAL("weekChanged(date)"), 
+        signal_trap)
+        
     
+    if False:
+        localsettings.initiate()
+        from openmolar.dbtools import appointments    
+        startdate = datetime.date(2010,2,1) 
+        enddate = datetime.date(2010,2,28)
+        rows = appointments.getDayInfo(startdate, enddate, (4,6,7))
+        data = appointments.getBankHols(startdate, enddate)
+        for c in (mcal, ycal):
+            c.setDents((4,6,7))
+            c.setData(rows)
+            c.setHeadingData(data)    
+
+            c.show()
     sys.exit(app.exec_())
     
