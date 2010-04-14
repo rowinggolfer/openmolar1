@@ -2378,6 +2378,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         handles the signals from the options checkboxes on the appt OV page
         Lunch, emergencies  etc..
         '''
+        if self.weekClinicianSelector.allChecked():
+            self.ui.weekClinicians_checkBox.setChecked(True)
         appt_gui_module.handle_aptOV_checkboxes(self)
 
     def manage_dayView_clinicians(self, *args):
@@ -2394,7 +2396,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         self.ui.week_clinician_selector_frame.setVisible(
             not self.ui.weekClinicians_checkBox.isChecked())
-        appt_gui_module.handle_calendar_signal(self)
+        self.weekClinicianSelector.checkAll()
+        #appt_gui_module.handle_calendar_signal(self)
     
     def manage_month_and_year_View_clinicians(self):
         '''

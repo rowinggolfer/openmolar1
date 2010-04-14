@@ -72,8 +72,7 @@ class appointmentWidget(QtGui.QFrame):
         glay.addWidget(self.printButton,0,1)
         glay.addWidget(self.header_label,0,0)
         glay.addWidget(self.memo_lineEdit,1,0,1,2)
-        #self.header_frame.setLayout(glay)
-
+        
         self.scrollArea = QtGui.QScrollArea()
         self.scrollArea.setWidgetResizable(True)
         
@@ -84,16 +83,36 @@ class appointmentWidget(QtGui.QFrame):
         self.setStartTime(sTime)
         self.setDayEndTime(fTime)
         self.setEndTime(fTime)
-
-        lay = QtGui.QVBoxLayout()
+        
+        self.OOlabel = QtGui.QLabel(_("Out Of Office"))
+        self.OOlabel.setWordWrap(True)
+        self.OOlabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.OOlabel.setSizePolicy(QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+        
+        
+        lay = QtGui.QVBoxLayout(self)
         lay.setSpacing(0)
+        lay.setMargin(2)
         lay.addWidget(self.header_frame)
+        lay.addWidget(self.OOlabel)
         lay.addWidget(self.scrollArea)
-        self.setLayout(lay)
+        
+        self.outofoffice = False
+        self.setOutOfOffice(False)
+        
         self.setMinimumSize(self.minimumSizeHint())
         self.setMaximumSize(self.maximumSizeHint())
         self.signals()
         
+    def setOutOfOffice(self, val):
+        '''
+        toggle out of office
+        '''
+        self.outofoffice = val
+        self.OOlabel.setVisible(val)
+        self.scrollArea.setVisible(not val)
+            
     def setDentist(self, apptix):
         '''
         update the dentist the widget relates to
@@ -107,12 +126,11 @@ class appointmentWidget(QtGui.QFrame):
         '''
         return QtCore.QSize(400, 700)
 
-
     def minimumSizeHint(self):
         '''
         set an (arbitrary) minimum size for the widget
         '''
-        return QtCore.QSize(150, 300)
+        return QtCore.QSize(120, 300)
 
     def maximumSizeHint(self):
         '''
@@ -126,13 +144,11 @@ class appointmentWidget(QtGui.QFrame):
         '''
         self.canvas.setDayStartTime(sTime)
 
-
     def setDayEndTime(self, fTime):
         '''
         a public method to set the Practice Day End
         '''
         self.canvas.setDayEndTime(fTime)
-
 
     def setStartTime(self, sTime):
         '''
@@ -140,20 +156,17 @@ class appointmentWidget(QtGui.QFrame):
         '''
         self.canvas.setStartTime(sTime)
 
-
     def setEndTime(self, fTime):
         '''
         a public method to set the end of the working day
         '''
         self.canvas.setEndTime(fTime)
 
-
     def setCurrentTime(self, t):
         '''
         send it a value like "HHMM" or "HH:MM" to draw a marker at that time
         '''
         return self.canvas.setCurrentTime(t)
-
 
     def clearAppts(self):
         '''
@@ -175,7 +188,6 @@ class appointmentWidget(QtGui.QFrame):
         user has edited the memo line Edit - emit a signal so the
         gui can handle it
         '''
-        print "new memo"
         if not self.memo_lineEdit.hasFocus():
             self.emit(QtCore.SIGNAL("new_memo"),
             (self.dentist, str(self.memo_lineEdit.text().toAscii())))
@@ -188,7 +200,8 @@ class appointmentWidget(QtGui.QFrame):
         QtCore.SIGNAL("editingFinished()"), self.newMemo)
 
     def update(self):
-        self.canvas.update()
+        if not self.outofoffice:
+            self.canvas.update()
         
     def highlightAppt(self, atime):
         '''
@@ -238,7 +251,7 @@ class appointmentCanvas(QtGui.QWidget):
     '''
 
     def __init__(self, om_gui, pWidget):
-        super(appointmentCanvas, self).__init__(pWidget)
+        super(appointmentCanvas, self).__init__()
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
 
@@ -297,14 +310,12 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         self.dayStartTime = self.minutesPastMidnight(sTime)
 
-
     def setDayEndTime(self, fTime):
         '''
         a public method to set the Practice Day End
         '''
         self.dayEndTime = self.minutesPastMidnight(fTime)
         self.calcSlotNo()
-
 
     def setStartTime(self, sTime):
         '''
@@ -313,14 +324,12 @@ class appointmentCanvas(QtGui.QWidget):
         self.startTime = self.minutesPastMidnight(sTime)
         self.firstSlot = self.getCell_from_time(sTime)+1
 
-
     def setEndTime(self, fTime):
         '''
         a public method to set the end of the working day
         '''
         self.endTime = self.minutesPastMidnight(fTime)
         self.lastSlot = self.getCell_from_time(fTime)
-
 
     def calcSlotNo(self):
         '''
@@ -329,7 +338,6 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         self.slotNo = (
         self.dayEndTime - self.dayStartTime) // self.slotDuration
-
 
     def minutesPastMidnight(self, t):
         '''
@@ -341,7 +349,6 @@ class appointmentCanvas(QtGui.QWidget):
         hour, minute = int(t) // 100, int(t) % 100
         return hour * 60 + minute
 
-
     def humanTime(self, t):
         '''
         converts minutes past midnight(int) to format "HH:MM"
@@ -349,14 +356,11 @@ class appointmentCanvas(QtGui.QWidget):
         hour, minute = t // 60, int(t) % 60
         return "%s:%02d"% (hour, minute)
 
-
     def setslotDuration(self, arg):
         '''
-        set the slotDuration (
-    default is 5 minutes
+        set the slotDuration (default is 5 minutes)
         '''
         self.slotDuration = arg
-
 
     def setTextDetail(self, arg):
         '''
@@ -364,20 +368,17 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         self.textDetail = arg
 
-
     def sizeHint(self):
         '''
         set an (arbitrary) size for the widget
         '''
         return QtCore.QSize(800, 800)
 
-
     def minimumSizeHint(self):
         '''
         set an (arbitrary) minimum size for the widget
         '''
-        return QtCore.QSize(150, 200)
-
+        return QtCore.QSize(100, 200)
 
     def setCurrentTime(self, t):
         '''
@@ -387,7 +388,6 @@ class appointmentCanvas(QtGui.QWidget):
         if self.startTime < int(t) < self.endTime:
             return True
 
-
     def qTime(self, t):
         '''
         converts minutes past midnight(int) to a QTime
@@ -395,14 +395,12 @@ class appointmentCanvas(QtGui.QWidget):
         hour, minute = t // 60, int(t) % 60
         return QtCore.QTime(hour, minute)
 
-
     def getCell_from_time(self, t):
         '''
         send a time - return the row number of that time
         '''
         return int((self.minutesPastMidnight(t) - self.dayStartTime)
         / self.slotDuration)
-
 
     def getPrev(self, arg):
         '''
@@ -416,7 +414,6 @@ class appointmentCanvas(QtGui.QWidget):
             lower -= 1
         return lower
 
-
     def getNext(self, arg):
         '''
         what slot is the next appt?
@@ -427,7 +424,6 @@ class appointmentCanvas(QtGui.QWidget):
                 break
             upper += 1
         return upper
-
 
     def getApptBounds(self, arg):
         '''
@@ -488,7 +484,6 @@ class appointmentCanvas(QtGui.QWidget):
 
                 QtGui.QToolTip.showText(event.globalPos(),
                 "SLOT %s minutes"% (finish - start))
-
 
     def mousePressEvent(self, event):
         '''
@@ -560,11 +555,9 @@ class appointmentCanvas(QtGui.QWidget):
                         print "reason", dl.reason_comboBox.currentText()
 
 
-
     def leaveEvent(self,event):
         self.selected=[-1,-1]
         self.update()
-
 
     def paintEvent(self, event=None):
         '''
@@ -770,7 +763,7 @@ if __name__ == "__main__":
     (5, 930, 1005, 'TAYLOR JANE', 19373L, 'FILL', '', '', '', 1, 80, 0, 0),
     ):
         form.setAppointment(appoint)
-
+        
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("AppointmentClicked"), clicktest_a)
     QtCore.QObject.connect(form,

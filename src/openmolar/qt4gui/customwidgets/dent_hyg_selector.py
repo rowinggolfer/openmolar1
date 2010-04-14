@@ -50,7 +50,8 @@ class dentHygSelector(QtGui.QTreeWidget):
             QtCore.SIGNAL("itemChanged (QTreeWidgetItem *,int)"), 
             self.interact)
 
-    def checkAll(self, checkstate, ignoreHygs=False, ignoreDents=False):
+    def checkAll(self, checkstate=QtCore.Qt.Checked, 
+    ignoreHygs=False, ignoreDents=False):
         if not ignoreHygs:
             for hyg in self.hyg_cbs.values():
                 hyg.setCheckState(0, checkstate)
@@ -100,7 +101,7 @@ class dentHygSelector(QtGui.QTreeWidget):
         self.signals(True)
         
         self.emit(QtCore.SIGNAL("selectionChanged"))
-
+            
     def getActiveDents(self):
         return self.activeDents
 

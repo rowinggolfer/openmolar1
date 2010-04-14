@@ -855,7 +855,7 @@ def handle_aptOV_checkboxes(om_gui):
     user has altered one of the checkboxes on the appointment options
     emergency, lunch etc..
     '''
-    handle_calendar_signal(om_gui)
+    handle_calendar_signal(om_gui)    
 
 def findApptButtonClicked(om_gui):
     '''
@@ -1185,8 +1185,9 @@ def layout_dayView(om_gui):
 
         book.setStartTime(bookstart)
         book.setEndTime(bookend)
-        if not om_gui.appointmentData.inOffice.get(dent, False):
-            book.scrollArea.hide()
+        out = not om_gui.appointmentData.inOffice.get(dent, False)
+        book.setOutOfOffice(out)
+        
         book.header_label.setText(localsettings.apptix_reverse[dent])
 
         book.memo_lineEdit.setText(om_gui.appointmentData.getMemo(dent))
