@@ -68,6 +68,7 @@ from openmolar.qt4gui.dialogs import save_pttask
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs import choose_tooth_dialog
+from openmolar.qt4gui.dialogs import choose_clinicians
 
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
@@ -320,13 +321,21 @@ class openmolarGui(QtGui.QMainWindow):
         #--set a model for the patients diary
         self.pt_diary_model = pt_diary_treemodel.treeModel(self)
         self.ui.pt_diary_treeView.setModel(self.pt_diary_model)
+        
         #--add a dragable listView for making appointments
-        self.ui.appointment_listView = appointment_drag.draggableList(self)
-        layout = QtGui.QHBoxLayout(self.ui.apt_drag_frame)
+        self.ui.day_appointment_listView = appointment_drag.draggableList(self)
+        layout = QtGui.QHBoxLayout(self.ui.day_apt_drag_frame)
         layout.setMargin(0)
-        layout.addWidget(self.ui.appointment_listView)
+        layout.addWidget(self.ui.day_appointment_listView)
+        
+        self.ui.week_appointment_listView = appointment_drag.draggableList(self)
+        layout = QtGui.QHBoxLayout(self.ui.week_apt_drag_frame)
+        layout.setMargin(0)
+        layout.addWidget(self.ui.week_appointment_listView)
+
         self.apt_drag_model = appointment_drag.simple_model()
-        self.ui.appointment_listView.setModel(self.apt_drag_model)
+        self.ui.day_appointment_listView.setModel(self.apt_drag_model)
+        self.ui.week_appointment_listView.setModel(self.apt_drag_model)
 
         self.apptBookWidgets=[]
 
@@ -340,7 +349,7 @@ class openmolarGui(QtGui.QMainWindow):
             ## connect a signal which informs the drag/drop mechanism of the
             ## widgets size
             QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
-                self.ui.appointment_listView.setScaling)
+                self.ui.week_appointment_listView.setScaling)
 
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
         hlayout.setMargin(2)
@@ -372,6 +381,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.apptoverviewControls.append(control)
             hlayout.addWidget(control)
     
+       
         self.dayClinicianSelector = dent_hyg_selector.dentHygSelector(
             localsettings.activedents, localsettings.activehygs)
         layout = QtGui.QHBoxLayout(self.ui.day_clinician_selector_frame)
@@ -383,6 +393,9 @@ class openmolarGui(QtGui.QMainWindow):
         layout = QtGui.QHBoxLayout(self.ui.week_clinician_selector_frame)
         layout.setMargin(0)
         layout.addWidget(self.weekClinicianSelector)
+        
+        self.monthClinicianSelector = dent_hyg_selector.dentHygSelector(
+            localsettings.activedents, localsettings.activehygs)
         
         #--customise the appointment widget calendar
         self.ui.dayCalendar = calendars.controlCalendar()
@@ -708,12 +721,20 @@ class openmolarGui(QtGui.QMainWindow):
             self.load_newEstPage()
             self.load_treatTrees()
 
-    def schedule_mode_state(self, i):
+    def day_schedule_mode_state(self, i):
         '''
-        handles the state signal from the scheduling checkbox
+        handles the state signal from the day_scheduling checkbox
         '''
-        self.ui.schedule_checkBox_2.setChecked(i)
+        self.ui.week_schedule_checkBox.setChecked(i)
         appt_gui_module.aptOVviewMode(self)
+    
+    def week_schedule_mode_state(self, i):
+        '''
+        handles the state signal from the week_scheduling checkbox
+        '''
+        self.ui.day_schedule_checkBox.setChecked(i)
+        appt_gui_module.aptOVviewMode(self)
+    
     
     def schedule_mode_clicked(self):
         '''
@@ -1704,7 +1725,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.addHistoryMenu()
         appt_gui_module.aptOVviewMode(self)
-        self.ui.schedule_tabWidget.setCurrentIndex(0)
+        self.ui.day_schedule_tabWidget.setCurrentIndex(0)
+        self.ui.week_schedule_tabWidget.setCurrentIndex(0)
+        
+        self.ui.day_clinician_selector_frame.hide()
+        self.ui.week_clinician_selector_frame.hide()
 
     def addHistoryMenu(self):
         '''
@@ -2355,47 +2380,33 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.handle_aptOV_checkboxes(self)
 
-    def apptOV_all_clinicians_checkbox_changed(self):
-        '''
-        checkbox toggleing who's book to show on the appointment overpage has
-        changed state
-        '''
-        appt_gui_module.apptOVclinicians(self)
-
-    def apptOV_all_dentists_checkbox_changed(self):
-        '''
-        checkbox toggleing who's book to show on the appointment overpage has
-        changed state
-        '''
-        appt_gui_module.apptOVdents(self)
-
-    def dayView_radiobutton_toggled(self):
+    def manage_dayView_clinicians(self, *args):
         '''
         radiobutton toggling who's book to show on the appointment
         '''
+        self.ui.day_clinician_selector_frame.setVisible(
+            not self.ui.dayView_smartSelection_checkBox.isChecked())
         appt_gui_module.handle_calendar_signal(self)
 
-    def dent_appt_checkbox_changed(self):
+    def manage_weekView_clinicians(self, *args):
         '''
-        checkbox toggleing who's book to show on the appointment overpage has
-        changed state
+        radiobutton toggling who's book to show on the appointment
         '''
-        appt_gui_module.dentToggled(self)
-
-    def hyg_appt_checkbox_changed(self):
+        self.ui.week_clinician_selector_frame.setVisible(
+            not self.ui.weekClinicians_checkBox.isChecked())
+        appt_gui_module.handle_calendar_signal(self)
+    
+    def manage_month_and_year_View_clinicians(self):
         '''
-        checkbox toggleing who's book to show on the appointment overpage has
-        changed state
+        radiobutton toggling who's book to show on the appointment
         '''
-        appt_gui_module.hygToggled(self)
-
-    def apptOV_all_hygenists_checkbox_changed(self):
-        '''
-        checkbox toggleing who's book to show on the appointment overpage has
-        changed state
-        '''
-        appt_gui_module.apptOVhygs(self)
-
+        self.dl = choose_clinicians.dialog(self.monthClinicianSelector, self)
+        self.dl.exec_()
+        val = self.monthClinicianSelector.allChecked()
+        self.ui.monthClinicians_checkBox.setChecked(val)
+        self.ui.yearClinicians_checkBox.setChecked(val)        
+        appt_gui_module.handle_calendar_signal(self)
+    
     def aptOVwidget_userHasChosen_appointment(self, arg):
         '''
         user has been offered a slot, and accepted it.
@@ -3613,11 +3624,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.goto_current_week_PushButton,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
-
-        QtCore.QObject.connect(self.ui.schedule_checkBox,
-        QtCore.SIGNAL("stateChanged(int)"), self.schedule_mode_state)
+    
+        QtCore.QObject.connect(self.ui.week_schedule_checkBox,
+        QtCore.SIGNAL("stateChanged(int)"), self.week_schedule_mode_state)
         
-        QtCore.QObject.connect(self.ui.schedule_checkBox,
+        QtCore.QObject.connect(self.ui.day_schedule_checkBox,
+        QtCore.SIGNAL("stateChanged(int)"), self.day_schedule_mode_state)
+        
+        QtCore.QObject.connect(self.ui.day_schedule_checkBox,
         QtCore.SIGNAL("clicked()"), self.schedule_mode_clicked)
 
         #QtCore.QObject.connect(self.ui.fontSize_spinBox,
@@ -3691,13 +3705,20 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.weekClinicianSelector, 
         QtCore.SIGNAL("selectionChanged"), self.aptOV_checkboxes_changed)
 
-        QtCore.QObject.connect(self.dayClinicianSelector, 
-        QtCore.SIGNAL("selectionChanged"), self.dayView_radiobutton_toggled)
+        QtCore.QObject.connect(self.ui.weekClinicians_checkBox,
+        QtCore.SIGNAL("stateChanged(int)"), self.manage_weekView_clinicians)
 
-        for widg in ( self.ui.dayView_smart_radioButton,
-        self.ui.dayView_selectedBooks_radioButton):
-            QtCore.QObject.connect(widg, QtCore.SIGNAL("clicked()"),
-            self.dayView_radiobutton_toggled)
+        QtCore.QObject.connect(self.dayClinicianSelector, 
+        QtCore.SIGNAL("selectionChanged"), self.manage_dayView_clinicians)
+
+        QtCore.QObject.connect(self.ui.dayView_smartSelection_checkBox, 
+        QtCore.SIGNAL("stateChanged(int)"), self.manage_dayView_clinicians)
+
+        QtCore.QObject.connect(self.ui.monthView_clinicians_pushButton,
+        QtCore.SIGNAL("clicked()"), self.manage_month_and_year_View_clinicians)
+        
+        QtCore.QObject.connect(self.ui.yearView_clinicians_pushButton,
+        QtCore.SIGNAL("clicked()"), self.manage_month_and_year_View_clinicians)
 
         for widg in self.ui.apptoverviews:
             widg.connect(widg, QtCore.SIGNAL("SlotClicked"),

@@ -35,7 +35,7 @@ class control(QtGui.QLabel):
         self.updateLabels()
         
     def updateLabels(self):
-        day = localsettings.longDate(self.date.toPyDate()).replace(
+        day = localsettings.readableDate(self.date.toPyDate()).replace(
         ",","<br />")
         if self.memo != "":
             str="<center><b>%s</b><br />%s</center>"%(day, self.memo)

@@ -107,6 +107,8 @@ class dentHygSelector(QtGui.QTreeWidget):
     def getActiveClinicians(self):
         return self.activeDents + self.activeHygs
     
+    def allChecked(self):
+        return self.root.checkState(0) == 2
                                 
 if __name__ == "__main__":
     app = QtGui.QApplication([])

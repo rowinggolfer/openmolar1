@@ -45,7 +45,7 @@ class controlCalendar(QtGui.QCalendarWidget):
         self.setDateEditEnabled(True)
         self.connect(self, QtCore.SIGNAL("currentPageChanged (int,int)"),
             self.jumpMonth)
-        
+
     def jumpMonth(self, year, month):
         '''
         a customisation so that the arrow buttons actually change the date
@@ -73,10 +73,14 @@ class weekCalendar(controlCalendar):
             self.update)
 
     def update(self):
+        '''
+        emit a signal indicating the chosen week has changed 
+        '''
         weekNo = self.selectedDate().weekNumber() 
         if weekNo != self.weekNo:
             self.emit(QtCore.SIGNAL("weekChanged(date)"), self.selectedDate())
-            self.weekNo = weekNo 
+            self.weekNo = weekNo
+        
         self.updateCells()
         
     def paintCell(self, painter, rect, date):    
@@ -895,6 +899,7 @@ if __name__ == "__main__":
     wcal.show()
     QtCore.QObject.connect(cal, QtCore.SIGNAL("selectionChanged()"), 
         signal_trap)
+        
     QtCore.QObject.connect(wcal, QtCore.SIGNAL("weekChanged(date)"), 
         signal_trap)
         

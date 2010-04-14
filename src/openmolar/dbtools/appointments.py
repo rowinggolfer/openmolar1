@@ -97,7 +97,7 @@ class daySummary(object):
         self.endTimes = {}
         self.earliest_start = 2359
         self.latest_end = 0
-        self.memo = "%s %s"% (localsettings.longDate(date), self.header())
+        self.memo = "%s %s"% (localsettings.readableDate(date), self.header())
 
         for dent in getWorkingDents(self.date):
             self.memos[dent.ix] = dent.memo

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>959</width>
+    <width>1025</width>
     <height>658</height>
    </rect>
   </property>
@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1017</width>
-         <height>595</height>
+         <width>1025</width>
+         <height>616</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -2169,8 +2169,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>758</width>
-                        <height>446</height>
+                        <width>787</width>
+                        <height>449</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -4015,7 +4015,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>104</width>
+                    <width>108</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4212,16 +4212,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     </widget>
                    </item>
                    <item>
-                    <widget class="QRadioButton" name="dayView_selectedBooks_radioButton">
+                    <widget class="QCheckBox" name="dayView_smartSelection_checkBox">
                      <property name="text">
-                      <string>Books as selected below</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="dayView_smart_radioButton">
-                     <property name="text">
-                      <string>Smart Selection</string>
+                      <string>Automatic selection of clinicians</string>
                      </property>
                      <property name="checked">
                       <bool>true</bool>
@@ -4266,14 +4259,14 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <number>2</number>
                       </property>
                       <item>
-                       <widget class="QCheckBox" name="schedule_checkBox">
+                       <widget class="QCheckBox" name="day_schedule_checkBox">
                         <property name="text">
                          <string>schedule appointments</string>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QTabWidget" name="schedule_tabWidget">
+                       <widget class="QTabWidget" name="day_schedule_tabWidget">
                         <property name="currentIndex">
                          <number>0</number>
                         </property>
@@ -4283,7 +4276,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                          </attribute>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
                           <item>
-                           <widget class="QFrame" name="apt_drag_frame">
+                           <widget class="QFrame" name="day_apt_drag_frame">
                             <property name="frameShape">
                              <enum>QFrame::StyledPanel</enum>
                             </property>
@@ -4312,6 +4305,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                          </layout>
                         </widget>
                        </widget>
+                      </item>
+                      <item>
+                       <spacer name="verticalSpacer_13">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
                       </item>
                      </layout>
                     </widget>
@@ -4388,7 +4394,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>220</width>
-                     <height>492</height>
+                     <height>513</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -4447,6 +4453,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                         </widget>
                        </item>
                        <item>
+                        <widget class="QCheckBox" name="weekClinicians_checkBox">
+                         <property name="text">
+                          <string>View All Clinicians</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
                         <widget class="QFrame" name="week_clinician_selector_frame">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -4463,14 +4479,14 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                         </widget>
                        </item>
                        <item>
-                        <widget class="QCheckBox" name="schedule_checkBox_2">
+                        <widget class="QCheckBox" name="week_schedule_checkBox">
                          <property name="text">
                           <string>schedule appointments</string>
                          </property>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QTabWidget" name="schedule_tabWidget_2">
+                        <widget class="QTabWidget" name="week_schedule_tabWidget">
                          <property name="currentIndex">
                           <number>0</number>
                          </property>
@@ -4480,7 +4496,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                           </attribute>
                           <layout class="QHBoxLayout" name="horizontalLayout_17">
                            <item>
-                            <widget class="QFrame" name="apt_drag_frame_2">
+                            <widget class="QFrame" name="week_apt_drag_frame">
                              <property name="frameShape">
                               <enum>QFrame::StyledPanel</enum>
                              </property>
@@ -4509,6 +4525,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                           </layout>
                          </widget>
                         </widget>
+                       </item>
+                       <item>
+                        <spacer name="verticalSpacer_15">
+                         <property name="orientation">
+                          <enum>Qt::Vertical</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>20</width>
+                           <height>40</height>
+                          </size>
+                         </property>
+                        </spacer>
                        </item>
                       </layout>
                      </widget>
@@ -4764,7 +4793,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <string>Month View</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_5">
-                <item row="0" column="0" colspan="2">
+                <item row="0" column="0" colspan="4">
                  <widget class="QScrollArea" name="monthView_scrollArea">
                   <property name="widgetResizable">
                    <bool>true</bool>
@@ -4774,14 +4803,14 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>254</height>
+                     <width>973</width>
+                     <height>480</height>
                     </rect>
                    </property>
                   </widget>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="1" column="2">
                  <layout class="QHBoxLayout" name="horizontalLayout_22">
                   <item>
                    <spacer name="horizontalSpacer_13">
@@ -4861,7 +4890,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </item>
                  </layout>
                 </item>
-                <item row="1" column="1">
+                <item row="1" column="3">
                  <widget class="QPushButton" name="printMonth_pushButton">
                   <property name="text">
                    <string>Print Month View</string>
@@ -4872,14 +4901,31 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="monthClinicians_checkBox">
+                  <property name="text">
+                   <string>All Clinicians</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="monthView_clinicians_pushButton">
+                  <property name="text">
+                   <string>Select Clinicians</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </widget>
               <widget class="QWidget" name="tab_13">
                <attribute name="title">
                 <string>Year View</string>
                </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_19">
-                <item>
+               <layout class="QGridLayout" name="gridLayout_22">
+                <item row="0" column="0" colspan="3">
                  <widget class="QTextBrowser" name="year_textBrowser">
                   <property name="maximumSize">
                    <size>
@@ -4889,7 +4935,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item>
+                <item row="1" column="0" colspan="3">
                  <widget class="QFrame" name="yearView_frame">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -4905,7 +4951,24 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item>
+                <item row="2" column="0">
+                 <widget class="QCheckBox" name="yearClinicians_checkBox">
+                  <property name="text">
+                   <string>All Clinicians</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="yearView_clinicians_pushButton">
+                  <property name="text">
+                   <string>Select Clinicians</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
                  <layout class="QHBoxLayout" name="horizontalLayout_2">
                   <item>
                    <spacer name="horizontalSpacer_10">
@@ -6245,7 +6308,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>959</width>
+     <width>1025</width>
      <height>20</height>
     </rect>
    </property>

@@ -426,21 +426,9 @@ def begin_makeAppt(om_gui):
         localsettings.readableDate(appt.date)), 1)
         return
     #--sets "schedule mode" - user is now adding an appointment
-    om_gui.ui.schedule_checkBox.setChecked(True)
-    #--deselect ALL dentists and hygenists so only one "book" is viewable
-    om_gui.ui.aptOV_alldentscheckBox.setChecked(False)
-    om_gui.ui.aptOV_allhygscheckBox.setChecked(False)
-    #--if previous 2 lines didn't CHANGE the state,
-    #--these slots have to be fired manually
-    apptOVdents(om_gui)
-    apptOVhygs(om_gui)
-    try:
-        #--SELECT the appointment dentist
-        om_gui.ui.aptOVdent_checkBoxes[appt.dent].setChecked(True)
-    except KeyError:
-        #--oops.. maybe it's a hygenist?
-        om_gui.ui.aptOVhyg_checkBoxes[appt.dent].setChecked(True)
-
+    om_gui.ui.day_schedule_checkBox.setChecked(True)
+    om_gui.ui.week_schedule_checkBox.setChecked(True)
+    
     #--compute first available appointment
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
     #--show the appointment overview tab
@@ -457,13 +445,10 @@ def begin_makeAppt(om_gui):
 
 def offerAppt(om_gui, firstRun=False):
     '''offer an appointment'''
-    dents = []
-    for dent in om_gui.ui.aptOVdent_checkBoxes.keys():
-        if om_gui.ui.aptOVdent_checkBoxes[dent].checkState():
-            dents.append(dent)
-    for hyg in om_gui.ui.aptOVhyg_checkBoxes.keys():
-        if om_gui.ui.aptOVhyg_checkBoxes[hyg].checkState():
-            dents.append(hyg)
+    
+    #### need to review this!!
+    
+    dents = om_gui.weekClinicianSelector.getActiveClinicians()
     
     appt = om_gui.pt.selectedAppt
     if appt:    
@@ -738,16 +723,14 @@ def aptFontSize(om_gui, e):
     om_gui.ui.monthView.update()
     om_gui.ui.yearView.update()
 
-@localsettings.debug
 def aptOVviewMode(om_gui):
     '''
     toggle between "scheduling" and "viewing modes"
     '''
-    scheduling = om_gui.ui.schedule_checkBox.isChecked()
-    if not scheduling:
-        om_gui.ui.schedule_tabWidget.hide()
-    else:
-        om_gui.ui.schedule_tabWidget.show()
+    val = om_gui.ui.day_schedule_checkBox.isChecked()
+    
+    om_gui.ui.day_schedule_tabWidget.setVisible(val)
+    om_gui.ui.week_schedule_tabWidget.setVisible(val)
     
 def aptOVlabelClicked(om_gui, sd):
     '''
@@ -867,118 +850,6 @@ def clearTodaysEmergencyTime(om_gui):
         if number_cleared > 0 and om_gui.ui.main_tabWidget.currentIndex() == 1:
             layout_dayView(om_gui)
 
-def change_allclinicianscb(om_gui):
-    '''
-    check (and change if necessary) the all clnicians checkbox
-    '''
-
-    state = om_gui.ui.aptOV_alldentscheckBox.checkState() and \
-    om_gui.ui.aptOV_allhygscheckBox.checkState()
-
-    if om_gui.ui.aptOV_everybody_checkBox.checkState != (state):
-        om_gui.connectAllClinicians(False)
-        om_gui.ui.aptOV_everybody_checkBox.setChecked(state)
-        om_gui.connectAllClinicians()
-
-def change_alldentscb(om_gui, state):
-    '''
-    change the all dentists checkbox without firing the signals
-    '''
-    #print "checking all dentscb...",
-    if om_gui.ui.aptOV_alldentscheckBox.checkState() != state:
-        #print "changing state"
-        om_gui.connectAllDents(False)
-        om_gui.ui.aptOV_alldentscheckBox.setChecked(state)
-        om_gui.connectAllDents()
-        change_allclinicianscb(om_gui)
-
-def change_allhygscb(om_gui, state):
-    '''
-    change the all hygenists checkbox without firing the signals
-    '''
-    #print "checking all hygscb...",
-    if om_gui.ui.aptOV_allhygscheckBox.checkState() != state:
-        #print "changing state"
-        om_gui.connectAllHygs(False)
-        om_gui.ui.aptOV_allhygscheckBox.setChecked(state)
-        om_gui.connectAllHygs()
-
-        change_allclinicianscb(om_gui)
-
-def apptOVclinicians(om_gui):
-    '''
-    user has checked/unchecked the button to toggle ALL clinicians
-    everybody's book to be viewed
-    '''
-    #print "all clinicians toggled by user"
-    state = om_gui.ui.aptOV_everybody_checkBox.checkState()
-
-    change_alldentscb(om_gui, state)
-    change_allhygscb(om_gui, state)
-
-    apptOVdents(om_gui, False)
-    apptOVhygs(om_gui, False)
-
-    handle_calendar_signal(om_gui)
-
-def apptOVhygs(om_gui, byUser=True):
-    '''
-    called by checking the all hygenists checkbox on the apptov tab
-    this diconnects the hygenist checkboxes from their slots,
-    alters their state, then reconnects
-    (if byUser = False, the allclinicians box started this)
-    '''
-    om_gui.connectAptOVhygcbs(False)
-    state = om_gui.ui.aptOV_allhygscheckBox.checkState()
-    for cb in om_gui.ui.aptOVhyg_checkBoxes.values():
-        if cb.checkState() != state:
-            cb.setCheckState(state)
-    om_gui.connectAptOVhygcbs()
-
-    if byUser:
-        change_allclinicianscb(om_gui)
-        handle_calendar_signal(om_gui)
-
-def apptOVdents(om_gui, byUser=True):
-    '''
-    called by checking the all dentists checkbox on the apptov tab
-    this diconnects the dentist checkboxes from their slots,
-    alters their state, then reconnects
-    (if byUser = False, the allclinicians box started this)
-    '''
-    om_gui.connectAptOVdentcbs(False)
-
-    state = om_gui.ui.aptOV_alldentscheckBox.checkState()
-    for cb in om_gui.ui.aptOVdent_checkBoxes.values():
-        if cb.checkState() != state:
-            cb.setCheckState(state)
-    om_gui.connectAptOVdentcbs()
-
-    if byUser:
-        change_allclinicianscb(om_gui)
-        handle_calendar_signal(om_gui)
-
-def dentToggled(om_gui):
-    '''
-    a dentist checkbox has been toggled by user action
-    '''
-    dentstate = True
-    for cb in om_gui.ui.aptOVdent_checkBoxes.values():
-        dentstate = dentstate and cb.checkState()
-    change_alldentscb(om_gui, dentstate)
-    handle_calendar_signal(om_gui)
-
-def hygToggled(om_gui):
-    '''
-    a hygenist checkbox has been toggled by user action
-    '''
-    hygstate = True
-    for cb in om_gui.ui.aptOVhyg_checkBoxes.values():
-        hygstate = hygstate and cb.checkState()
-    change_allhygscb(om_gui, hygstate)
-
-    handle_calendar_signal(om_gui)
-
 def handle_aptOV_checkboxes(om_gui):
     '''
     user has altered one of the checkboxes on the appointment options
@@ -1036,12 +907,15 @@ def handle_calendar_signal(om_gui):
     OR the checkboxes have been tweaked
     OR a memo has been added
     '''
-    d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
+    d = om_gui.ui.dayCalendar.selectedDate()#.toPyDate()
     om_gui.ui.weekCalendar.setSelectedDate(d)
-    om_gui.ui.monthView.setSelectedDate(d)
-    om_gui.ui.yearView.setSelectedDate(d)
-    om_gui.ui.goTodayPushButton.setEnabled(d != localsettings.currentDay)
-
+    om_gui.ui.monthView.setSelectedDate(d.toPyDate())
+    om_gui.ui.yearView.setSelectedDate(d.toPyDate())
+    today = QtCore.QDate.currentDate()
+    om_gui.ui.goTodayPushButton.setEnabled(d != today)
+    om_gui.ui.goto_current_week_PushButton.setEnabled(
+        d.weekNumber() != today.weekNumber())
+    
     if om_gui.ui.main_tabWidget.currentIndex() == 1:
         i = om_gui.ui.diary_tabWidget.currentIndex()
 
@@ -1083,7 +957,7 @@ def layout_month(om_gui):
     qdate = qdate.addMonths(1)
     enddate = datetime.date(qdate.year(), qdate.month(), 1)
 
-    dents = tuple(getUserCheckedClinicians(om_gui))
+    dents = tuple(getUserCheckedClinicians(om_gui, "month"))
 
     om_gui.ui.monthView.setDents(dents)
 
@@ -1101,7 +975,7 @@ def layout_year(om_gui):
     year = om_gui.ui.dayCalendar.selectedDate().year()
     startdate = datetime.date(year, 1, 1)
     enddate = datetime.date(year+1, 1, 1)
-    dents = tuple(getUserCheckedClinicians(om_gui))
+    dents = tuple(getUserCheckedClinicians(om_gui, "year"))
     om_gui.ui.yearView.setDents(dents)
     data = appointments.getDayInfo(startdate, enddate, dents)
     om_gui.ui.yearView.setData(data)
@@ -1145,12 +1019,17 @@ def layout_yearHeader(om_gui):
 
     om_gui.ui.year_textBrowser.setText(headerText)
 
-def getUserCheckedClinicians(om_gui, week=False):
+def getUserCheckedClinicians(om_gui, view="day"):
     '''
     checks the gui to see which dentists, hygienists are checked.
     returns a list
     '''
-    widg = om_gui.weekClinicianSelector if week else om_gui.dayClinicianSelector
+    if view == "week":
+        widg = om_gui.weekClinicianSelector
+    elif view in ("month", "year"):
+        widg = om_gui.monthClinicianSelector
+    else:
+        widg = om_gui.dayClinicianSelector
     
     retlist = []
     for dent in widg.getActiveClinicians():
@@ -1190,7 +1069,7 @@ def layout_weekView(om_gui):
     thisWeek = QtCore.QDate.currentDate() in weekdates
     om_gui.ui.goTodayPushButton.setEnabled(thisWeek)
 
-    userCheckedClinicians = getUserCheckedClinicians(om_gui, week=True)
+    userCheckedClinicians = getUserCheckedClinicians(om_gui, "week")
 
     for ov in om_gui.ui.apptoverviews:
         #--reset
@@ -1235,7 +1114,7 @@ def layout_weekView(om_gui):
                 ov.lunches[dent.ix] = appointments.getLunch(
                 ov.date.toPyDate(), dent.ix)
 
-    if om_gui.ui.schedule_checkBox.isChecked():
+    if om_gui.ui.day_schedule_checkBox.isChecked():
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
         offerAppt(om_gui)
@@ -1259,10 +1138,10 @@ def layout_dayView(om_gui):
 
     d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False
-    if om_gui.ui.dayView_smart_radioButton.isChecked():
+    if om_gui.ui.dayView_smartSelection_checkBox.isChecked():
         workingOnly = True
         dents = "ALL"
-    else:  #om_gui.ui.dayView_selectedBooks_radioButton.isChecked():
+    else:
         dents = tuple(getUserCheckedClinicians(om_gui))
 
     om_gui.appointmentData.setDate(d)
@@ -1280,8 +1159,7 @@ def layout_dayView(om_gui):
         om_gui.signals_apptWidgets(book)
 
         QtCore.QObject.connect(book, QtCore.SIGNAL("redrawn"),
-                om_gui.ui.appointment_listView.setScaling)
-
+                om_gui.ui.day_appointment_listView.setScaling)
 
     #-- clean past links to dentists
     i = 0
@@ -1336,7 +1214,7 @@ def layout_dayView(om_gui):
     om_gui.ui.dayView_splitter.setSizes(book_list)
 
     if i == 0:
-        t = om_gui.ui.daymemo_label.text() + " - All Off Today!"
+        t = om_gui.ui.daymemo_label.text() + " - " + _("Nothing to show!")
         om_gui.ui.daymemo_label.setText(t)
 
         om_gui.advise("all off today")
