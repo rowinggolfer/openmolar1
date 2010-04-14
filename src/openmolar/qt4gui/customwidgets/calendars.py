@@ -65,7 +65,8 @@ class controlCalendar(QtGui.QCalendarWidget):
 class weekCalendar(controlCalendar):
     def __init__(self, *args):
         controlCalendar.__init__(self, *args)
-        self.color = self.palette().color(QtGui.QPalette.Highlight)
+        self.color = QtGui.QColor(
+            self.palette().color(QtGui.QPalette.Highlight))
         self.color.setAlpha(64)
         
         self.weekNo = self.selectedDate().weekNumber()
