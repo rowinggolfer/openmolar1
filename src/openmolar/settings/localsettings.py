@@ -790,10 +790,6 @@ def initiate(debug = False):
     else:
         print "no clinician!"
 
-    #-- majorly important class being initiated
-
-
-
     getLocalSettings()
 
     WIKIURL = db_settings.getWikiUrl()

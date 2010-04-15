@@ -89,8 +89,7 @@ class appointmentWidget(QtGui.QFrame):
         self.OOlabel.setAlignment(QtCore.Qt.AlignCenter)
         self.OOlabel.setSizePolicy(QtGui.QSizePolicy(
             QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
-        
-        
+                
         lay = QtGui.QVBoxLayout(self)
         lay.setSpacing(0)
         lay.setMargin(2)

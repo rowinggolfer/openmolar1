@@ -447,8 +447,8 @@ def offerAppt(om_gui, firstRun=False):
     '''offer an appointment'''
     
     #### need to review this!!
-    
-    dents = om_gui.weekClinicianSelector.getActiveClinicians()
+    view = "day" if om_gui.ui.diary_tabWidget.currentIndex()==0 else "week"
+    dents = getUserCheckedClinicians(om_gui, view)
     
     appt = om_gui.pt.selectedAppt
     if appt:    
@@ -1078,7 +1078,7 @@ def layout_weekView(om_gui):
         if userCheckedClinicians != []:
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
             tuple(userCheckedClinicians),
-            not om_gui.ui.weekView_outOfOffice_checkBox.isChecked())
+            not om_gui.ui.weekClinicians_checkBox.isChecked())
             #-- tuple like
             #-- ((4, 840, 1900,"memo", 0) , (5, 830, 1400, "memo", 1))
 

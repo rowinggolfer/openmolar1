@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>558</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2169,8 +2169,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>787</width>
-                        <height>449</height>
+                        <width>455</width>
+                        <height>446</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2671,7 +2671,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>608</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -2988,8 +2988,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>459</width>
-                        <height>289</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3188,7 +3188,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>409</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3221,7 +3221,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3594,7 +3594,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>644</width>
+                        <width>267</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4015,8 +4015,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>108</width>
-                    <height>58</height>
+                    <width>98</width>
+                    <height>28</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4213,8 +4213,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    </item>
                    <item>
                     <widget class="QCheckBox" name="dayView_smartSelection_checkBox">
+                     <property name="toolTip">
+                      <string>if checked, openmolar will show only the diaries of clinicians who are working on this day</string>
+                     </property>
                      <property name="text">
-                      <string>Automatic selection of clinicians</string>
+                      <string>Automatic clinicians</string>
                      </property>
                      <property name="checked">
                       <bool>true</bool>
@@ -4433,8 +4436,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    </item>
                    <item>
                     <widget class="QCheckBox" name="weekClinicians_checkBox">
+                     <property name="toolTip">
+                      <string>if checked, openmolar will show only the diaries of clinicians who are working this week</string>
+                     </property>
                      <property name="text">
-                      <string>View All Clinicians</string>
+                      <string>Automatic clinicians</string>
                      </property>
                      <property name="checked">
                       <bool>true</bool>
@@ -4695,8 +4701,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <property name="frameShadow">
                    <enum>QFrame::Sunken</enum>
                   </property>
-                  <zorder>appt_OV_Frame6</zorder>
-                  <zorder>appt_OV_Frame6</zorder>
                  </widget>
                 </item>
                 <item row="1" column="6">
@@ -4750,16 +4754,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <item row="4" column="1" colspan="6">
                  <layout class="QHBoxLayout" name="horizontalLayout_6">
                   <item>
-                   <widget class="QCheckBox" name="weekView_outOfOffice_checkBox">
-                    <property name="text">
-                     <string>Ignore  Out-of-office</string>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
                    <widget class="QCheckBox" name="aptOV_apptscheckBox">
                     <property name="text">
                      <string>show appointments</string>
@@ -4808,8 +4802,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>254</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -5070,8 +5064,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>663</width>
-                     <height>287</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>

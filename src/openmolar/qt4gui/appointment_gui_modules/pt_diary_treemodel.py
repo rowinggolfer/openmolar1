@@ -246,17 +246,12 @@ class treeModel(QtCore.QAbstractItemModel):
         get the model index of a specific appointment
         '''
         appt = None
-        print "looking for ",apr_ix
-        print self.appointments
         for appmt in self.appointments:
-            print appmt.aprix
             if appmt.aprix == apr_ix:
                 appt = appmt
                 break
         if appt:
-            print "Searchin for ",appt,
             index = self.searchModel(appt)
-            print index
             if index:
                 return (True, index)
         return (False, False)

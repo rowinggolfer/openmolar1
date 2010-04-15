@@ -2381,8 +2381,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         handles the signals from the options checkboxes on the appt OV page
         Lunch, emergencies  etc..
         '''
-        if self.weekClinicianSelector.allChecked():
-            self.ui.weekClinicians_checkBox.setChecked(True)
         appt_gui_module.handle_aptOV_checkboxes(self)
 
     def manage_dayView_clinicians(self):
@@ -2397,9 +2395,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         radiobutton toggling who's book to show on the appointment
         '''
+        appt_gui_module.layout_weekView(self)
         self.ui.week_clinician_selector_frame.setVisible(
             not self.ui.weekClinicians_checkBox.isChecked())
-        self.weekClinicianSelector.checkAll()
         
     def manage_month_and_year_View_clinicians(self):
         '''
@@ -2420,7 +2418,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         print "aptOVwidget_userHasChosen_appoinmtent"
         print "sender", self.sender
         print "args", arg
-        print "slot", dir(arg[1])
         appt_gui_module.makeAppt(self, arg)
     
     def aptOVwidget_dropped_appointment(self, appt, slot, offset):
@@ -3633,6 +3630,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.week_schedule_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.week_schedule_mode_state)
         
+        QtCore.QObject.connect(self.ui.week_schedule_checkBox,
+        QtCore.SIGNAL("clicked()"), self.aptOV_checkboxes_changed)
+        
         QtCore.QObject.connect(self.ui.day_schedule_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.day_schedule_mode_state)
         
@@ -3671,7 +3671,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
 
         QtCore.QObject.connect(self.ui.weekCalendar,
-        QtCore.SIGNAL("weekChanged(date)"), self.customDateSignal)
+        QtCore.SIGNAL("weekChanged"), self.customDateSignal)
 
         QtCore.QObject.connect(self.ui.yearView,
         QtCore.SIGNAL("selectedDate"), self.customDateSignal)
@@ -3702,8 +3702,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         #--next 4 signals connect to the same slot
         for widg in (self.ui.aptOV_apptscheckBox,
-        self.ui.aptOV_emergencycheckBox, self.ui.aptOV_lunchcheckBox,
-        self.ui.weekView_outOfOffice_checkBox):
+        self.ui.aptOV_emergencycheckBox, self.ui.aptOV_lunchcheckBox):
             QtCore.QObject.connect(widg, QtCore.SIGNAL("stateChanged(int)"),
             self.aptOV_checkboxes_changed)
         

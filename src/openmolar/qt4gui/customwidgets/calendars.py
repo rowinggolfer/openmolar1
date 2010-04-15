@@ -79,7 +79,7 @@ class weekCalendar(controlCalendar):
         '''
         weekNo = self.selectedDate().weekNumber() 
         if weekNo != self.weekNo:
-            self.emit(QtCore.SIGNAL("weekChanged(date)"), self.selectedDate())
+            self.emit(QtCore.SIGNAL("weekChanged"), self.selectedDate())
             self.weekNo = weekNo
         
         self.updateCells()
@@ -901,7 +901,7 @@ if __name__ == "__main__":
     QtCore.QObject.connect(cal, QtCore.SIGNAL("selectionChanged()"), 
         signal_trap)
         
-    QtCore.QObject.connect(wcal, QtCore.SIGNAL("weekChanged(date)"), 
+    QtCore.QObject.connect(wcal, QtCore.SIGNAL("weekChanged"), 
         signal_trap)
         
     
