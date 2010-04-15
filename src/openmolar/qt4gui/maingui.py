@@ -342,7 +342,7 @@ class openmolarGui(QtGui.QMainWindow):
         #-appointment OVerview widget
         self.ui.apptoverviews=[]
 
-        for day in range(6):
+        for day in range(7):
             bw = appointment_overviewwidget.bookWidget(day,
             "0800", "1900", 15, 2)
             self.ui.apptoverviews.append(bw)
@@ -369,12 +369,15 @@ class openmolarGui(QtGui.QMainWindow):
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame6)
         hlayout.setMargin(2)
         hlayout.addWidget(self.ui.apptoverviews[5])
+        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame7)
+        hlayout.setMargin(2)
+        hlayout.addWidget(self.ui.apptoverviews[6])
 
         self.ui.apptoverviewControls=[]
 
         for widg in (self.ui.day1_frame, self.ui.day2_frame,
         self.ui.day3_frame, self.ui.day4_frame, self.ui.day5_frame,
-        self.ui.day6_frame):
+        self.ui.day6_frame, self.ui.day7_frame):
             hlayout=QtGui.QHBoxLayout(widg)
             hlayout.setMargin(0)
             control=aptOVcontrol.control()
@@ -2164,7 +2167,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def apptTicker(self):
         '''
-        ran in a thread, moves signals down the appointment books
+        called by a timer, moves signals down the appointment books
         '''
         appt_gui_module.triangles(self)
 
@@ -2382,14 +2385,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.ui.weekClinicians_checkBox.setChecked(True)
         appt_gui_module.handle_aptOV_checkboxes(self)
 
-    def manage_dayView_clinicians(self, *args):
+    def manage_dayView_clinicians(self):
         '''
         radiobutton toggling who's book to show on the appointment
         '''
+        appt_gui_module.layout_dayView(self)
         self.ui.day_clinician_selector_frame.setVisible(
             not self.ui.dayView_smartSelection_checkBox.isChecked())
-        appt_gui_module.handle_calendar_signal(self)
-
+        
     def manage_weekView_clinicians(self, *args):
         '''
         radiobutton toggling who's book to show on the appointment
@@ -2397,8 +2400,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.week_clinician_selector_frame.setVisible(
             not self.ui.weekClinicians_checkBox.isChecked())
         self.weekClinicianSelector.checkAll()
-        #appt_gui_module.handle_calendar_signal(self)
-    
+        
     def manage_month_and_year_View_clinicians(self):
         '''
         radiobutton toggling who's book to show on the appointment
@@ -2699,7 +2701,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def checkForNewForumPosts(self):
         '''
-        ran in a thread - checks for messages
+        called by a timer - checks for messages
         '''
         forum_gui_module.checkForNewForumPosts(self)
 

@@ -99,7 +99,6 @@ class dentHygSelector(QtGui.QTreeWidget):
         self.root.setCheckState(0, allClinicians)
 
         self.signals(True)
-        
         self.emit(QtCore.SIGNAL("selectionChanged"))
             
     def getActiveDents(self):

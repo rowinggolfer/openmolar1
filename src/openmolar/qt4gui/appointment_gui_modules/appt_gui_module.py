@@ -693,9 +693,7 @@ def layout_ptDiary(om_gui):
 
 def triangles(om_gui, call_update=True):
     ''''
-    this moves a
-    red line down the appointment books -
-    note needs to run in a thread!
+    this moves a red line down the appointment books
     '''
     if om_gui.ui.main_tabWidget.currentIndex() == 1 and \
     om_gui.ui.diary_tabWidget.currentIndex()==0:
@@ -907,7 +905,7 @@ def handle_calendar_signal(om_gui):
     OR the checkboxes have been tweaked
     OR a memo has been added
     '''
-    d = om_gui.ui.dayCalendar.selectedDate()#.toPyDate()
+    d = om_gui.ui.dayCalendar.selectedDate()
     om_gui.ui.weekCalendar.setSelectedDate(d)
     om_gui.ui.monthView.setSelectedDate(d.toPyDate())
     om_gui.ui.yearView.setSelectedDate(d.toPyDate())
@@ -1053,10 +1051,10 @@ def layout_weekView(om_gui):
     weekdates = []
     #--(monday to friday) #prevMonday = date.addDays(1-dayno),
     #--prevTuesday = date.addDays(2-dayno)
-    for day in range(1, 7):
-        weekday = (date.addDays(day - dayno))
+    for day in range(7):
+        weekday = (date.addDays(day + 1 - dayno))
         weekdates.append(weekday)
-        header = om_gui.ui.apptoverviewControls[day-1]
+        header = om_gui.ui.apptoverviewControls[day]
         header.setDate(weekday)
         pydate = weekday.toPyDate()
         memo = appointments.getBankHol(pydate)
