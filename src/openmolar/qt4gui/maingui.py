@@ -651,7 +651,6 @@ class openmolarGui(QtGui.QMainWindow):
         #if ci != 1 and self.schedule_mode:
         #    #--making an appointment has been abandoned
         #    #self.advise("Appointment not made", 1)
-        #    appt_gui_module.aptOVviewMode(self, True)
         if ci == 1:
             #--user is viewing appointment book
             appt_gui_module.makeDiaryVisible(self)
@@ -682,8 +681,7 @@ class openmolarGui(QtGui.QMainWindow):
 
         #if ci != 1 and self.schedule_mode:
         #    self.advise("Appointment not made", 1)
-        #    appt_gui_module.aptOVviewMode(self, True)
-
+        
         if ci != 6:
             if self.ui.tabWidget.isTabEnabled(6) and \
             not charts_gui.checkPreviousEntry(self):
@@ -2410,6 +2408,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.yearClinicians_checkBox.setChecked(val)        
         appt_gui_module.handle_calendar_signal(self)
     
+    def month_and_year_All_clinicians(self):
+        '''
+        checkbox has been clicked, if True, then checkAll
+        '''
+        if self.sender().isChecked():
+            self.monthClinicianSelector.checkAll()
+        else:
+            self.monthClinicianSelector.checkAll(QtCore.Qt.Unchecked)
+        appt_gui_module.handle_calendar_signal(self)
+            
     def aptOVwidget_userHasChosen_appointment(self, arg):
         '''
         user has been offered a slot, and accepted it.
@@ -3723,6 +3731,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         
         QtCore.QObject.connect(self.ui.yearView_clinicians_pushButton,
         QtCore.SIGNAL("clicked()"), self.manage_month_and_year_View_clinicians)
+
+        QtCore.QObject.connect(self.ui.monthClinicians_checkBox,
+        QtCore.SIGNAL("clicked()"), self.month_and_year_All_clinicians)        
+        
+        QtCore.QObject.connect(self.ui.yearClinicians_checkBox,
+        QtCore.SIGNAL("clicked()"), self.month_and_year_All_clinicians)        
 
         for widg in self.ui.apptoverviews:
             widg.connect(widg, QtCore.SIGNAL("SlotClicked"),

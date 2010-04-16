@@ -514,7 +514,6 @@ def formatDate(d):
         retarg = ""
     return retarg
 
-
 def wystimeToHumanTime(t):
     '''converts a time in the format of 0830 or 1420 to "HH:MM" (string)
     >>> wystimeToHumanTime(830)
@@ -540,35 +539,64 @@ def humanTimetoWystime(t):
 def minutesPastMidnighttoWystime(t):
     '''
     converts minutes past midnight(int) to format HHMM  (integer)
+    >>> minutesPastMidnighttoWystime(100)
+    140
     '''
     hour, min = t//60, int(t)%60
+    return hour*100+min
+
+def pyTimetoWystime(t):
+    '''
+    converts python datetime.time to minutes past midnight(int) to a wystime
+    >>> pyTimetoWystime(datetime.time(14,20))
+    1420
+    '''
+    hour, min = t.hour, t.minute
     return hour*100+min
 
 def minutesPastMidnightToPyTime(t):
     '''
     converts minutes past midnight(int) to a python datetime.time
+    >>> minutesPastMidnightToPyTime(100)
+    datetime.time(1, 40)
     '''
     hour, min = t//60, int(t)%60
     return datetime.time(hour, min)
+
+def pyTimeToMinutesPastMidnight(t):
+    '''
+    converts python datetime.time to minutes past midnight(int) to a
+    >>> pyTimeToMinutesPastMidnight(datetime.time(1, 40))
+    100
+    '''
+    return t.hour*60 + t.minute
 
 def minutesPastMidnight(t):
     '''
     converts a time in the format of 0830 or 1420
     to minutes past midnight (integer)
+    >>> minutesPastMidnight(140)
+    100
     '''
     hour, min = int(t)//100, int(t)%100
     return hour*60+min
 
-def pyTimeToMinutesPastMidnight(t):
+def minutesPastMidnighttoPytime(t):
     '''
-    converts a python datetime.time type
-    to minutes past midnight (integer)
+    converts an integer representing elapsed minutes past midnight to a
+    python datetime.time object
+    >>> minutesPastMidnighttoPytime(100)
+    datetime.time(1, 40)
     '''
-    hour, min = t.hour, t.minute
-    return hour*60+min
+    hour, min = t//60, t%60
+    return datetime.time(hour, min)
 
 def humanTime(t):
-    '''converts minutes past midnight(int) to format 'HH:MM' (string)'''
+    '''
+    converts minutes past midnight(int) to format 'HH:MM' (string)
+    >>> humanTime(100)
+    '1:40'
+    '''
     hour, min = t//60, int(t)%60
     return "%s:%02d"% (hour, min)
 

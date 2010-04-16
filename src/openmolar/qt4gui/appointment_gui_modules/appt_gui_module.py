@@ -508,31 +508,34 @@ def offerAppt(om_gui, firstRun=False):
                     if slot.date_time.date() == day.toPyDate():
                         om_gui.ui.apptoverviews[i].addSlot(slot)
 
-def makeAppt(om_gui, arg):
+def makeAppt(om_gui, slot):
     '''
     called by a click on my custom overview slot -
     user has selected an offered appointment
     '''
-    #--the pysig arg is in the format (1, (910, 20), 4)
-    #-- where 1=monday, 910 = start, 20=length, dentist=4'''
-    day = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
-    "Saturday")[arg[0]]
-
-    om_gui.advise("offer appointment for %s %s"% (day, str(arg[1])))
+    
+    #day = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+    #"Saturday")[arg[0]]
 
     appt = om_gui.pt.selectedAppt
-    caldate = om_gui.ui.dayCalendar.selectedDate()
+    if not appt:
+        om_gui.advise(
+        _("Please select an appointment to place here"), 1)
+        return
+    if appt.date:
+        om_gui.advise(
+        _("Please choose another appointment - this one is made already!"), 1)
+        return
+        
     appointment_made = False
-    dayno = caldate.dayOfWeek()
-    selecteddate = caldate.addDays(1 -dayno + arg[0])
-    selectedtime = arg[1][0]
-    slotlength = arg[1][1]
-    selectedDent = localsettings.apptix_reverse[arg[2]]
-    if selectedDent != appt.dent_inits:
+    selectedtime = localsettings.pyTimetoWystime(slot.time())
+    slotlength = slot.length
+    selectedDent = slot.dent
+    if selectedDent != appt.dent:
         #--the user has selected a slot with a different dentist
         #--raise a dialog to check this was intentional!!
         message = '''You have chosen an appointment with %s<br />
-        Is this correct?'''% selectedDent
+        Is this correct?'''% localsettings.apptix_reverse[selectedDent]
         result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
         QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
 
@@ -543,14 +546,13 @@ def makeAppt(om_gui, arg):
     if slotlength > appt.length:
         #--the slot selected is bigger than the appointment length so
         #--fire up a dialog to allow for fine tuning
-        Dialog = QtGui.QDialog(om_gui)
-        dl = finalise_appt_time.ftDialog(Dialog, selectedtime,
-        slotlength, appt.length)
+        dl = finalise_appt_time.ftDialog(slot.time(), slotlength, 
+            appt.length, om_gui)
 
-        if Dialog.exec_():
+        if dl.exec_():
             #--dialog accepted
-            selectedtime = dl.selectedtime
-            slotlength = appt.length
+            selectedtime = localsettings.pyTimetoWystime(dl.selectedTime)
+            slotlength = appt.length #satisfies the next conditional code
         else:
             #--dialog cancelled
             return
@@ -558,7 +560,8 @@ def makeAppt(om_gui, arg):
         #--ok... suitable appointment found
         message = "Confirm Make appointment at %s on %s with %s"% (
         localsettings.wystimeToHumanTime(selectedtime),
-        localsettings.longDate(selecteddate.toPyDate()), selectedDent)
+        localsettings.readableDate(slot.date()), 
+        localsettings.apptix_reverse.get(selectedDent,"??"))
 
         #--get final confirmation
         result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
@@ -567,10 +570,7 @@ def makeAppt(om_gui, arg):
         if result == QtGui.QMessageBox.No:
             #dialog rejected
             return
-
-        endtime = localsettings.minutesPastMidnighttoWystime(
-        localsettings.minutesPastMidnight(selectedtime) + appt.length)
-
+        
         name = om_gui.pt.fname + " " + om_gui.pt.sname
 
         #--make name conform to the 30 character sql limitation
@@ -582,18 +582,19 @@ def makeAppt(om_gui, arg):
         else:
             cst = ord(om_gui.pt.cset[0])
 
+        endtime = localsettings.minutesPastMidnighttoWystime(
+            localsettings.minutesPastMidnight(selectedtime) + appt.length)
+
         #-- make appointment
         if appointments.make_appt(
-            selecteddate.toPyDate(),
-            localsettings.apptix[selectedDent],
+            slot.date(), selectedDent,
             selectedtime, endtime, name, appt.serialno, appt.trt1, appt.trt2,
             appt.trt3, appt.memo, 1, cst, 0, 0):
 
             ##TODO use these flags for family and double appointments
 
             if appointments.pt_appt_made(om_gui.pt.serialno, appt.aprix,
-            selecteddate.toPyDate(), selectedtime,
-            localsettings.apptix[selectedDent]):
+            slot.date(), selectedtime, selectedDent):
                 #-- proc returned True so....update the patient apr table
                 layout_ptDiary(om_gui)
                 #== and offer an appointment card
@@ -608,9 +609,7 @@ def makeAppt(om_gui, arg):
                 om_gui.advise("Error putting appointment back onto patient " +
                 "record - it may be in the appointment book though?", 2)
 
-            #--#cancel scheduling mode
-            aptOVviewMode(om_gui, True)
-
+            handle_calendar_signal(om_gui)
         else:
             om_gui.advise("Error making appointment - sorry!", 2)
     else:
@@ -683,13 +682,14 @@ def layout_ptDiary(om_gui):
     om_gui.ui.pt_diary_treeView.collapse(past_index)
 
     adjustDiaryColWidths(om_gui)
-    ptDiary_selection(om_gui)
-
+    
     ## now layout unscheduled appointments
     om_gui.apt_drag_model.clear()
     for appt in appts:
-        if appt.unscheduled:
+        if not appt.past: #if appt.unscheduled:
             om_gui.apt_drag_model.addAppointment(appt)
+    
+    ptDiary_selection(om_gui)
 
 def triangles(om_gui, call_update=True):
     ''''
@@ -956,14 +956,14 @@ def layout_month(om_gui):
     enddate = datetime.date(qdate.year(), qdate.month(), 1)
 
     dents = tuple(getUserCheckedClinicians(om_gui, "month"))
-
     om_gui.ui.monthView.setDents(dents)
 
-    rows = appointments.getDayInfo(startdate, enddate, dents)
+    data = appointments.getDayInfo(startdate, enddate, dents)
+    om_gui.ui.monthView.setData(data)
 
-    om_gui.ui.monthView.setData(rows)
     data = appointments.getBankHols(startdate, enddate)
     om_gui.ui.monthView.setHeadingData(data)
+
     om_gui.ui.monthView.update()
 
 def layout_year(om_gui):
@@ -973,12 +973,16 @@ def layout_year(om_gui):
     year = om_gui.ui.dayCalendar.selectedDate().year()
     startdate = datetime.date(year, 1, 1)
     enddate = datetime.date(year+1, 1, 1)
+    
     dents = tuple(getUserCheckedClinicians(om_gui, "year"))
     om_gui.ui.yearView.setDents(dents)
+
     data = appointments.getDayInfo(startdate, enddate, dents)
     om_gui.ui.yearView.setData(data)
+
     data = appointments.getBankHols(startdate, enddate)
     om_gui.ui.yearView.setHeadingData(data)
+
     om_gui.ui.yearView.update()
 
 def layout_yearHeader(om_gui):
@@ -1079,11 +1083,12 @@ def layout_weekView(om_gui):
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
             tuple(userCheckedClinicians),
             not om_gui.ui.weekClinicians_checkBox.isChecked())
-            #-- tuple like
-            #-- ((4, 840, 1900,"memo", 0) , (5, 830, 1400, "memo", 1))
-
-            for dent in workingdents:
-                ov.dents.append(dent)
+            
+            for clinician in userCheckedClinicians: #workingdents:
+                for dent in workingdents:
+                    if dent.ix == clinician:
+                        ov.dents.append(dent)
+                        break
             ov.init_dicts()
             for dent in workingdents:
                 ov.setStartTime(dent)

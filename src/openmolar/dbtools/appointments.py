@@ -18,6 +18,12 @@ class freeSlot(object):
         self.dent = dent
         self.date_time = date_time
         self.length = length
+        
+    def date(self):
+        return self.date_time.date()
+    def time(self):
+        return self.date_time.time()
+    
     def __cmp__(self, other):
         if (self.date_time == other.date_time and
         self.dent == other.dent and self.length == other.length):
@@ -51,6 +57,14 @@ class appt_class(object):
     @property
     def dent_inits(self):
         return localsettings.apptix_reverse.get(self.dent,"?")
+    
+    @property
+    def readableDate(self):
+        return localsettings.readableDate(self.date)
+    
+    @property
+    def readableTime(self):
+        return localsettings.humanTime(self.atime)
 
     def past_or_present(self):
         '''

@@ -8,10 +8,14 @@ from PyQt4 import QtGui, QtCore
 class simple_model(QtCore.QAbstractListModel):
     def __init__(self, parent=None):
         super(simple_model, self).__init__(parent)
+        self.unscheduledList = []
+        self.scheduledList = []
         self.list = []
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
 
     def clear(self):
+        self.unscheduledList = []
+        self.scheduledList = []
         self.list = []
         self.reset()
 
@@ -19,20 +23,31 @@ class simple_model(QtCore.QAbstractListModel):
         '''
         add an appointment to this list - arg is of type dragAppointment
         '''
-        self.list.append(app)
+        if app.unscheduled:
+            self.unscheduledList.append(app)
+        else:
+            self.scheduledList.append(app)            
+        self.list = self.scheduledList + self.unscheduledList
+                
         self.reset()
 
     def rowCount(self, parent = QtCore.QModelIndex()):
         return len(self.list)
 
     def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole: #show just the name
-            app = self.list[index.row()]
-            info = "%s mins %s with %s"% (
+        app = self.list[index.row()]
+        if role == QtCore.Qt.DisplayRole:
+            if app.unscheduled:
+                info = "%s mins %s with %s"% (
                     app.length, app.trt1, app.dent_inits)
+            else:
+                info = "%s %s with %s"% (app.readableDate, 
+                    app.readableTime, app.dent_inits)
             return QtCore.QVariant(info)
+        elif role == QtCore.Qt.ForegroundRole:
+            if app.unscheduled:
+                return QtCore.QVariant(QtGui.QBrush(QtGui.QColor("red")))
         elif role == QtCore.Qt.UserRole:  #return the whole python object
-            app = self.list[index.row()]
             return app
         return QtCore.QVariant()
 
