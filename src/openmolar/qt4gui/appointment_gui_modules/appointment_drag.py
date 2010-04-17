@@ -4,6 +4,7 @@ import pickle
 import sys
 
 from PyQt4 import QtGui, QtCore
+from openmolar.dbtools.appointments import appt_class
 
 class simple_model(QtCore.QAbstractListModel):
     def __init__(self, parent=None):
@@ -55,6 +56,25 @@ class simple_model(QtCore.QAbstractListModel):
         self.list = self.list[:position] + self.list[position+1:]
         self.reset()
 
+class blockModel(simple_model):
+    '''
+    customise the above model just for blocks
+    '''
+    def __init__(self, parent=None):
+        super(blockModel, self).__init__(parent)
+        self.list = []
+        for val, length in (
+        (_("Lunch"), 60), 
+        (_("Emergency"), 30),
+        (_("Out of Office"), 30)):
+            block = appt_class()
+            block.trt1 = val
+            block.unscheduled = True
+            block.length = length
+            self.list.append(block)
+    
+    def reset(self):
+        pass
 
 class draggableList(QtGui.QListView):
     '''
@@ -88,10 +108,13 @@ class draggableList(QtGui.QListView):
             return
 
         ## selected is the relevant person object
-        selected = self.model().data(index,QtCore.Qt.UserRole)
+        selectedApp = self.model().data(index,QtCore.Qt.UserRole)
 
+        if not selectedApp.unscheduled:
+            return
+        
         ## convert to  a bytestream
-        bstream = cPickle.dumps(selected)
+        bstream = cPickle.dumps(selectedApp)
         mimeData = QtCore.QMimeData()
         mimeData.setData("application/x-appointment", bstream)
         drag = QtGui.QDrag(self)
@@ -99,11 +122,11 @@ class draggableList(QtGui.QListView):
         drag.setMimeData(mimeData)
         drag.setDragCursor(QtGui.QPixmap(), QtCore.Qt.MoveAction)
 
-        pmap = QtGui.QPixmap(100,
-            selected.length * self.pixels_per_min)
-        pmap.fill(QtGui.QColor(127,0,0))
-        drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))
-        drag.setPixmap(pmap)
+        #pmap = QtGui.QPixmap(100,
+        #    selectedApp.length * self.pixels_per_min)
+        #pmap.fill(QtGui.QColor(127,0,0))
+        #drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))
+        #drag.setPixmap(pmap)
 
         result = drag.start(QtCore.Qt.MoveAction)
         if result: # == QtCore.Qt.MoveAction:

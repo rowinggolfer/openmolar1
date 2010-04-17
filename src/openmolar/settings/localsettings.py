@@ -497,6 +497,8 @@ def readableDate(d):
     takes a python date type, returns either the date,
     or yesterday, today, tommorrow if necessary
     '''
+    if not d:
+        return _("None")
     today = currentDay()
     if d == today:
         return _("Today")

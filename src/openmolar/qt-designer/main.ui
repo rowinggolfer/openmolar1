@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>2</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>558</width>
+                        <width>758</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -1910,6 +1910,9 @@
                                  <width>81</width>
                                  <height>16777215</height>
                                 </size>
+                               </property>
+                               <property name="maximum">
+                                <double>2000.000000000000000</double>
                                </property>
                               </widget>
                              </item>
@@ -4015,8 +4018,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>98</width>
-                    <height>28</height>
+                    <width>108</width>
+                    <height>58</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4271,13 +4274,20 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                       <item>
                        <widget class="QTabWidget" name="day_schedule_tabWidget">
                         <property name="currentIndex">
-                         <number>0</number>
+                         <number>1</number>
                         </property>
                         <widget class="QWidget" name="tab_29">
                          <attribute name="title">
                           <string>Current Patient</string>
                          </attribute>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
+                          <item>
+                           <widget class="QLabel" name="dayPatient_label">
+                            <property name="text">
+                             <string>TextLabel</string>
+                            </property>
+                           </widget>
+                          </item>
                           <item>
                            <widget class="QFrame" name="day_apt_drag_frame">
                             <property name="frameShape">
@@ -4473,13 +4483,20 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <item>
                     <widget class="QTabWidget" name="week_schedule_tabWidget">
                      <property name="currentIndex">
-                      <number>0</number>
+                      <number>1</number>
                      </property>
                      <widget class="QWidget" name="tab_31">
                       <attribute name="title">
                        <string>Current Patient</string>
                       </attribute>
-                      <layout class="QHBoxLayout" name="horizontalLayout_17">
+                      <layout class="QVBoxLayout" name="verticalLayout_4">
+                       <item>
+                        <widget class="QLabel" name="weekPatient_label">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
                        <item>
                         <widget class="QFrame" name="week_apt_drag_frame">
                          <property name="frameShape">
@@ -4498,7 +4515,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                       </attribute>
                       <layout class="QVBoxLayout" name="verticalLayout_40">
                        <item>
-                        <widget class="QFrame" name="block_drag_frame_2">
+                        <widget class="QFrame" name="week_block_drag_frame">
                          <property name="frameShape">
                           <enum>QFrame::StyledPanel</enum>
                          </property>

@@ -332,11 +332,25 @@ class openmolarGui(QtGui.QMainWindow):
         layout = QtGui.QHBoxLayout(self.ui.week_apt_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.week_appointment_listView)
-
+        
+        self.ui.day_block_listView = appointment_drag.draggableList(self)
+        layout = QtGui.QHBoxLayout(self.ui.block_drag_frame)
+        layout.setMargin(0)
+        layout.addWidget(self.ui.day_block_listView)
+        
+        self.ui.week_block_listView = appointment_drag.draggableList(self)
+        layout = QtGui.QHBoxLayout(self.ui.week_block_drag_frame)
+        layout.setMargin(0)
+        layout.addWidget(self.ui.week_block_listView)
+        
         self.apt_drag_model = appointment_drag.simple_model()
         self.ui.day_appointment_listView.setModel(self.apt_drag_model)
         self.ui.week_appointment_listView.setModel(self.apt_drag_model)
 
+        block_model = appointment_drag.blockModel()
+        self.ui.day_block_listView.setModel(block_model)
+        self.ui.week_block_listView.setModel(block_model)
+        
         self.apptBookWidgets=[]
 
         #-appointment OVerview widget
@@ -799,11 +813,15 @@ class openmolarGui(QtGui.QMainWindow):
             self.pt_diary_model.clear()
             self.apt_drag_model.clear()
             self.ui.notesEnter_textEdit.setHtml("")
-
+            self.ui.dayPatient_label.setText(_("None"))
+            self.ui.weekPatient_label.setText(_("None"))
+            
+            self.ui.medNotes_pushButton.setStyleSheet("")
+            
             #--load a blank version of the patient class
-            self.pt_dbstate=patient_class.patient(0)
+            self.pt_dbstate = patient_class.patient(0)
             #--and have the comparison copy identical (to check for changes)
-            self.pt=copy.deepcopy(self.pt_dbstate)
+            self.pt = copy.deepcopy(self.pt_dbstate)
             self.loadedPatient_label.setText("No Patient Loaded")
 
             if self.editPageVisited:
@@ -1462,9 +1480,14 @@ class openmolarGui(QtGui.QMainWindow):
         self.pt.pcde, self.pt.tel1)
 
         labeltext = "currently editing  %s %s %s - (%s)"% (
-        self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
+            self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
         self.loadedPatient_label.setText(labeltext)
         self.ui.hiddenNotes_label.setText("")
+        
+        self.ui.dayPatient_label.setText("%s %s"% (
+            self.pt.fname, self.pt.sname))
+        self.ui.weekPatient_label.setText("%s %s"% (
+            self.pt.fname, self.pt.sname))
 
         if self.ui.tabWidget.currentIndex() == 4:  #clinical summary
             self.ui.summaryChartWidget.update()
@@ -1731,7 +1754,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         
         self.ui.day_clinician_selector_frame.hide()
         self.ui.week_clinician_selector_frame.hide()
-
+        self.ui.dayPatient_label.setText("")
+        self.ui.weekPatient_label.setText("")
+    
     def addHistoryMenu(self):
         '''
         add items to a toolbutton for trawling the database
