@@ -343,11 +343,11 @@ class openmolarGui(QtGui.QMainWindow):
         layout.setMargin(0)
         layout.addWidget(self.ui.week_block_listView)
         
-        self.apt_drag_model = appointment_drag.simple_model()
+        self.apt_drag_model = appointment_drag.simple_model(self)
         self.ui.day_appointment_listView.setModel(self.apt_drag_model)
         self.ui.week_appointment_listView.setModel(self.apt_drag_model)
 
-        block_model = appointment_drag.blockModel()
+        block_model = appointment_drag.blockModel(self)
         self.ui.day_block_listView.setModel(block_model)
         self.ui.week_block_listView.setModel(block_model)
         

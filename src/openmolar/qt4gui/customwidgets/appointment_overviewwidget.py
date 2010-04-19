@@ -373,7 +373,7 @@ class bookWidget(QtGui.QWidget):
         '''
         draws the widget - recalled at any point by instance.update()
         '''
-        if True:#try:
+        try:
             if len(self.dents) == 0:
                 return  #blank widget if no dents working
             painter = QtGui.QPainter(self)
@@ -541,7 +541,7 @@ class bookWidget(QtGui.QWidget):
 
             self.emit(QtCore.SIGNAL("redrawn"), dragWidth, dragScale)
 
-        else: #except Exception, e:
+        except Exception, e:
             print "error painting appointment overviewwidget", e
 
 if __name__ == "__main__":

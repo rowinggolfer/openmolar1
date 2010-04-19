@@ -68,9 +68,10 @@ class blockModel(simple_model):
         for val, length in (
         (_("Lunch"), 60), 
         (_("Lunch"), 30),
-        (_("Emergency"), 15),
-        (_("Emergency"), 20),
-        (_("Emergency"), 30),        
+        (_("staff meeting"), 10),
+        (_("emergency"), 15),
+        (_("emergency"), 20),
+        (_("emergency"), 30),        
         (_("Out of Office"), 30)):
             block = appt_class()
             block.name = val
