@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>476</width>
+                        <width>642</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -2172,7 +2172,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>455</width>
+                        <width>650</width>
                         <height>446</height>
                        </rect>
                       </property>
@@ -2674,7 +2674,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>608</width>
+                        <width>642</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -2991,8 +2991,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>459</width>
+                        <height>289</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3191,7 +3191,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>409</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3224,7 +3224,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>197</width>
+                        <width>217</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3597,7 +3597,7 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
+                        <width>644</width>
                         <height>392</height>
                        </rect>
                       </property>
@@ -4771,14 +4771,34 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <item row="4" column="1" colspan="6">
                  <layout class="QHBoxLayout" name="horizontalLayout_6">
                   <item>
-                   <widget class="QCheckBox" name="aptOV_apptscheckBox">
+                   <widget class="QRadioButton" name="all_appts_radioButton">
                     <property name="text">
-                     <string>show appointments</string>
+                     <string>show All appointments</string>
                     </property>
                     <property name="checked">
                      <bool>true</bool>
                     </property>
                    </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="cp_only_radioButton">
+                    <property name="text">
+                     <string>current patient Only</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
                   </item>
                   <item>
                    <widget class="QCheckBox" name="aptOV_lunchcheckBox">
@@ -4819,8 +4839,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>663</width>
+                     <height>254</height>
                     </rect>
                    </property>
                   </widget>
@@ -5081,8 +5101,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>663</width>
+                     <height>287</height>
                     </rect>
                    </property>
                   </widget>

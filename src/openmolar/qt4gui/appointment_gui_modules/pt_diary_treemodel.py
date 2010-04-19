@@ -256,8 +256,16 @@ class treeModel(QtCore.QAbstractItemModel):
                 return (True, index)
         return (False, False)
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     from openmolar.dbtools import appointments
+
+    class duckPt(object):
+        def __init__(self):
+            self.serialno = 1
+            self.sname = "Neil"
+            self.fname = "Wallace"
+            self.cset = "P"
+
     def resize(arg=None):
         for col in range(model.columnCount(arg)):
             tv.resizeColumnToContents(col)
@@ -266,7 +274,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     localsettings.initiate()
 
-    appts = appointments.get_pts_appts(3)
+    appts = appointments.get_pts_appts(duckPt())
     model = treeModel()
     model.addAppointments(appts)
     dialog = QtGui.QDialog()

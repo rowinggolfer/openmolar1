@@ -31,6 +31,18 @@ class freeSlot(object):
         else:
             return 0
         
+class aowAppt(object):
+    '''
+    a custom data object to contain data relevant to the painting of
+    the appointment_overviewwidget
+    '''        
+    def __init__(self):
+        self.mpm = 0
+        self.length = 0
+        self.serialno = 0
+        self.isBlock = False
+        self.reason = ""
+        
 class appt_class(object):
     '''
     a class to hold data about a patient's appointment
@@ -39,8 +51,9 @@ class appt_class(object):
         self.serialno = 0
         self.aprix = 0
         self.dent = 0
-
+        self.name = ""
         self.date = None
+        self.cset = ""
         self.atime = 0
         self.length = 0
         self.today = False
@@ -53,6 +66,7 @@ class appt_class(object):
         self.trt2 = ""
         self.trt3 = ""
         self.datespec = ""
+        self.flag = 1
 
     @property
     def dent_inits(self):
@@ -60,11 +74,12 @@ class appt_class(object):
     
     @property
     def readableDate(self):
-        return localsettings.readableDate(self.date)
-    
+        #return localsettings.readableDate(self.date)
+        return localsettings.formatDate(self.date)
+        
     @property
     def readableTime(self):
-        return localsettings.humanTime(self.atime)
+        return localsettings.wystimeToHumanTime(self.atime)
 
     def past_or_present(self):
         '''
@@ -82,7 +97,7 @@ class appt_class(object):
                 self.future = self.date > today
 
     def __repr__(self):
-        return "serilno=%s %s scheduled=%s dent=%s ix=%s"%(self.serialno,
+        return "serialno=%s %s scheduled=%s dent=%s ix=%s"%(self.serialno,
         self.date, not self.unscheduled, self.dent_inits, self.aprix)
 
 class daySummary(object):
@@ -616,17 +631,28 @@ def allAppointmentData(adate, dents=()):
 
     return data
 
-def convertResults(appointments):
+def convertResults(results, inc_snos=False, inc_reason=False, isBlock=False):
     '''
-    changes (830,845) to (830,15)
-    ie start,end to start,length
+    changes 
+    (830, 845) OR 
+    (830, 845, serialno) or
+    (1300,1400, "LUNCH")
+    to and aowAppt object
     '''
     aptlist = []
-    for appt in appointments:
-        #change times to minutes past midnight and do simple subtraction
-        time2 = localsettings.minutesPastMidnight(appt[1])
-        time1 = localsettings.minutesPastMidnight(appt[0])
-        aptlist.append((appt[0], time2 - time1))
+    for appt in results:
+        aow = aowAppt()
+        aow.mpm = localsettings.minutesPastMidnight(appt[0])
+        aow.length = localsettings.minutesPastMidnight(appt[1]) - aow.mpm
+        if inc_snos:
+            aow.serialno = appt[2]
+            if inc_reason:
+                aow.reason = appt[3]
+        elif inc_reason:
+            aow.reason = appt[2]
+        
+        aow.isBlock = isBlock
+        aptlist.append(aow)
 
     return tuple(aptlist)
 
@@ -694,7 +720,7 @@ def printableDaylistData(adate, dent):
     #db.close()
     return retlist
 
-def daysummary(adate, dent):
+def day_summary(adate, dent, serialno=0):
     '''
     gets start,finish and booked appointments for this date
     returned as (start,fin,appts)
@@ -703,7 +729,7 @@ def daysummary(adate, dent):
     cursor = db.cursor()
 
     #--fist get start date and end date
-    query = '''SELECT start,end FROM aday
+    query = '''SELECT start, end FROM aday
     WHERE adate=%s and (flag=1 or flag=2) and apptix=%s'''
     values = (adate, dent)
     if localsettings.logqueries:
@@ -711,18 +737,20 @@ def daysummary(adate, dent):
     cursor.execute(query, values)
 
     daydata = cursor.fetchall()
-    query = ""
+    cond = ""
     retarg = ()
     #--now get data for those days so that we can find slots within
+    if serialno !=0:
+        cond = "and serialno=%d"% serialno
     if daydata != ():
-        query = '''SELECT start,end FROM aslot
-        WHERE adate = %s and apptix = %s AND flag0!=-128 ORDER BY start'''
+        query = '''SELECT start, end, serialno FROM aslot
+WHERE adate = %%s and apptix = %%s AND flag0!=-128 %s ORDER BY start'''% cond
         if localsettings.logqueries:
             print query, values
         cursor.execute(query, values)
 
         results = cursor.fetchall()
-        retarg = convertResults(results)
+        retarg = convertResults(results, inc_snos=True)
     cursor.close()
     return retarg
 
@@ -745,7 +773,7 @@ def getBlocks(adate, dent):
 
     query = ""
     if retarg != ():
-        query = '''SELECT start,end FROM aslot
+        query = '''SELECT start,end, name FROM aslot
         WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH"
         ORDER BY start'''
         if localsettings.logqueries:
@@ -753,7 +781,7 @@ def getBlocks(adate, dent):
         cursor.execute(query, values)
 
         results = cursor.fetchall()
-        retarg = convertResults(results)
+        retarg = convertResults(results, isBlock=True, inc_reason=True)
     cursor.close()
     return retarg
 
@@ -766,7 +794,7 @@ def getLunch(gbdate, dent):
 
     query = ""
     query = ' adate = "%s" and apptix = %d '% (gbdate, dent)
-    fullquery = '''SELECT start,end FROM aslot
+    fullquery = '''SELECT start, end FROM aslot
     WHERE %s AND name="LUNCH" '''% query
     if localsettings.logqueries:
         print fullquery
@@ -775,7 +803,7 @@ def getLunch(gbdate, dent):
     results = cursor.fetchall()
     cursor.close()
     #db.close()
-    return convertResults(results)
+    return convertResults(results, isBlock=True)
 
 def clearEms(cedate):
     '''
@@ -801,11 +829,13 @@ def clearEms(cedate):
     #db.close()
     return number
 
-def get_pts_appts(sno, futureOnly=False):
+def get_pts_appts(pt, futureOnly=False):
     '''
     gets appointments from the apr table which stores appointments from
     patients perspective (including appts which have yet to be scheduled)
     '''
+    sno = pt.serialno
+    name = pt.fname + " " + pt.sname
     db = connect()
     cursor = db.cursor()
 
@@ -829,6 +859,8 @@ def get_pts_appts(sno, futureOnly=False):
         appt = appt_class()
         appt.serialno = row[0]
         appt.aprix = row[1]
+        appt.name = name
+        appt.cset = pt.cset
         appt.dent = row[2]
         appt.date = row[7]
         appt.atime = row[8]
@@ -1317,6 +1349,15 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
 
 if __name__ == "__main__":
     '''test procedures......'''
+    
+    class duckPt(object):
+        def __init__(self):
+            self.serialno = 1
+            self.sname = "Neil"
+            self.fname = "Wallace"
+            self.cset = "P"
+
+    pt = duckPt()
     #testdate = "2009_08_10"
     #testdate1 = "2009_08_10"
     #localsettings.initiate(False)
@@ -1338,4 +1379,4 @@ if __name__ == "__main__":
     #print daysSlots("2009_2_02","NW")
     #delete_appt(420,2)
     #print dentistDay()
-    print get_pts_appts(1)
+    print get_pts_appts(pt)

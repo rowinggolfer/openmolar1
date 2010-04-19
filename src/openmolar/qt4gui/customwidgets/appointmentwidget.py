@@ -7,7 +7,8 @@
 # for more details.
 
 '''
-contains one class - the appointment widget
+provides one class - the appointment widget
+the canvas is a subclass of this
 '''
 
 from __future__ import division
@@ -201,13 +202,7 @@ class appointmentWidget(QtGui.QFrame):
     def update(self):
         if not self.outofoffice:
             self.canvas.update()
-        
-    def highlightAppt(self, atime):
-        '''
-        highlights the appointment at the given time
-        '''
-        self.canvas.highlight = str(atime)
-
+    
     def setAppointment(self, app):
         '''
         adds an appointment to the widget dictionary of appointments
@@ -271,7 +266,6 @@ class appointmentCanvas(QtGui.QWidget):
         self.setMouseTracking(True)
         self.duplicateNo = -1 #use this for serialnos =0
         self.om_gui = om_gui
-        self.highlight = None
         self.dragging = False
         self.setAcceptDrops(True)
         
@@ -574,8 +568,8 @@ class appointmentCanvas(QtGui.QWidget):
 
         if self.parent() and (slotHeight *
         self.slotNo < self.parent().height()):
-                self.setMinimumHeight(self.parent().height())
-                slotHeight = self.height() / self.slotNo
+            self.setMinimumHeight(self.parent().height())
+            slotHeight = self.height() / self.slotNo
         else:
             self.setMinimumHeight(slotHeight * self.slotNo)
 
@@ -629,8 +623,6 @@ class appointmentCanvas(QtGui.QWidget):
         option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
         option.setWrapMode(QtGui.QTextOption.WordWrap)
 
-        drawHighlight = False
-
         for appt in self.appts:
             #-- multiple assignment
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
@@ -639,7 +631,9 @@ class appointmentCanvas(QtGui.QWidget):
             rect = QtCore.QRectF(timeWidth,startcell*slotHeight,
             self.width()-timeWidth, (endcell-startcell)*slotHeight)
 
-            if self.selected == (startcell, endcell):
+            if sno !=0 and sno == self.om_gui.pt.serialno:
+                painter.setBrush(QtGui.QColor("orange"))                
+            elif self.selected == (startcell, endcell):
                 painter.setBrush(colours.APPT_Background)
             elif APPTCOLORS.has_key(cset):
                 painter.setBrush(APPTCOLORS[cset])
@@ -658,10 +652,6 @@ class appointmentCanvas(QtGui.QWidget):
 
                 painter.drawText(rect, mytext, option)
 
-            if self.highlight == start:
-                drawHighlight = True
-                highlightRect = rect.adjusted(0,-2,0,-2)
-
         for appt in self.doubleAppts:
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
             trt3,memo,flag,cset)=appt
@@ -675,26 +665,20 @@ class appointmentCanvas(QtGui.QWidget):
         painter.restore()
 
         ##highlight current time
-        if self.setTime!="None":
-            cellno=self.getCell_from_time(self.setTime)
+        if self.setTime != "None":
+            cellno = self.getCell_from_time(self.setTime)
             painter.setPen(QtGui.QPen(QtCore.Qt.red,2))
             painter.setBrush(QtCore.Qt.red)
-            corner1=[timeWidth*1.2,cellno*slotHeight]
-            corner2=[timeWidth,(cellno-0.5)*slotHeight]
-            corner3=[timeWidth,(cellno+0.5)*slotHeight]
-            triangle=corner1+corner2+corner3
+            corner1 = [timeWidth*1.2,cellno*slotHeight]
+            corner2 = [timeWidth,(cellno-0.5)*slotHeight]
+            corner3 = [timeWidth,(cellno+0.5)*slotHeight]
+            triangle = corner1+corner2+corner3
             painter.drawPolygon(QtGui.QPolygon(triangle))
-            corner1=[self.width()-timeWidth*0.2,cellno*slotHeight]
-            corner2=[self.width(),(cellno-0.5)*slotHeight]
-            corner3=[self.width(),(cellno+0.5)*slotHeight]
-            triangle=corner1+corner2+corner3
+            corner1 = [self.width()-timeWidth*0.2,cellno*slotHeight]
+            corner2 = [self.width(),(cellno-0.5)*slotHeight]
+            corner3 = [self.width(),(cellno+0.5)*slotHeight]
+            triangle = corner1+corner2+corner3
             painter.drawPolygon(QtGui.QPolygon(triangle))
-
-        ##user has "asked to find this appointment"
-        if drawHighlight:
-            painter.setPen(QtGui.QPen(QtGui.QColor("red"),3))
-            painter.setBrush(QtCore.Qt.transparent)
-            painter.drawRect(highlightRect)
 
         self.pWidget.emit(QtCore.SIGNAL("redrawn"), colwidth, dragScale)
         
@@ -777,7 +761,5 @@ if __name__ == "__main__":
     v.addWidget(form)
     parent.setLayout(v)
     parent.show()
-
-    form.highlightAppt(915)
 
     sys.exit(app.exec_())

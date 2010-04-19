@@ -358,12 +358,14 @@ class openmolarGui(QtGui.QMainWindow):
 
         for day in range(7):
             bw = appointment_overviewwidget.bookWidget(day,
-            "0800", "1900", 15, 2)
+            "0800", "1900", 15, 2, self)
             self.ui.apptoverviews.append(bw)
             ## connect a signal which informs the drag/drop mechanism of the
             ## widgets size
-            QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
-                self.ui.week_appointment_listView.setScaling)
+            ## ignore weekends for this..... they are smaller
+            if day < 5:
+                QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
+                    self.ui.week_appointment_listView.setScaling)
 
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
         hlayout.setMargin(2)
@@ -749,8 +751,21 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         self.ui.day_schedule_checkBox.setChecked(i)
         appt_gui_module.aptOVviewMode(self)
-    
-    
+        
+    def dayLV_appointmentSelected(self, appt):
+        '''
+        user has selected appt on the day_selected ListView
+        '''
+        if appt.date:
+            self.ui.dayCalendar.setSelectedDate(appt.date)
+        
+    def weekLV_appointmentSelected(self, appt):
+        '''
+        user has selected appt on the week_selected ListView
+        '''
+        if appt.date:
+            self.ui.weekCalendar.setSelectedDate(appt.date)
+        
     def schedule_mode_clicked(self):
         '''
         handles scheduling checkbox clicked
@@ -2443,21 +2458,18 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.monthClinicianSelector.checkAll(QtCore.Qt.Unchecked)
         appt_gui_module.handle_calendar_signal(self)
             
-    def aptOVwidget_userHasChosen_appointment(self, arg):
+    def aptOVwidget_userHasChosen_appointment(self, slot):
         '''
         user has been offered a slot, and accepted it.
         the argument provides the required details
         '''
-        print "aptOVwidget_userHasChosen_appoinmtent"
-        print "sender", self.sender
-        print "args", arg
-        appt_gui_module.makeAppt(self, arg)
+        appt_gui_module.makeAppt(self, self.pt.selectedAppt, slot, 0)
     
-    def aptOVwidget_dropped_appointment(self, appt, slot, offset):
+    def aptOVwidget_dropped_appointment(self, appt, slot, offset=0):
         '''
         user has dropped an appointment into a free slot on a week view widget
         '''
-        print appt, "dropped succesfully into", slot, "with offset of %d minutes"% offset
+        appt_gui_module.makeAppt(self, appt, slot, offset)
         
     def apptOVwidget_header_clicked(self, arg):
         '''
@@ -2477,7 +2489,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user has right clicked on the label situated above the aptOV widgets
         '''
         appt_gui_module.aptOVlabelRightClicked(self, arg)
-
 
     def takePayment_pushButton_clicked(self):
         '''
@@ -3734,10 +3745,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.aptOV_yearForward_clicked)
 
         #--next 4 signals connect to the same slot
-        for widg in (self.ui.aptOV_apptscheckBox,
-        self.ui.aptOV_emergencycheckBox, self.ui.aptOV_lunchcheckBox):
+        for widg in (self.ui.aptOV_emergencycheckBox, 
+        self.ui.aptOV_lunchcheckBox):
             QtCore.QObject.connect(widg, QtCore.SIGNAL("stateChanged(int)"),
             self.aptOV_checkboxes_changed)
+
+        QtCore.QObject.connect(self.ui.all_appts_radioButton,
+        QtCore.SIGNAL("toggled (bool)"), self.aptOV_checkboxes_changed)
         
         QtCore.QObject.connect(self.weekClinicianSelector, 
         QtCore.SIGNAL("selectionChanged"), self.aptOV_checkboxes_changed)
@@ -3779,6 +3793,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
             self.connect(control,
             QtCore.SIGNAL("right-clicked"), self.aptOVlabel_rightClicked)
+
+        QtCore.QObject.connect(self.ui.week_appointment_listView,
+        QtCore.SIGNAL("appointmentSelected"), self.weekLV_appointmentSelected)
+        
+        QtCore.QObject.connect(self.ui.day_appointment_listView,
+        QtCore.SIGNAL("appointmentSelected"), self.dayLV_appointmentSelected)
 
     def recalculateEstimate(self):
         '''

@@ -314,7 +314,13 @@ class patient():
         except Exception, e:
             print "error calculating patient's age", e
             return (0,0,False)
-            
+    
+    def setSelectedAppt(self, appt):
+        if appt:
+            appt.name = self.fname+" " + self.sname
+            appt.cset = self.cset
+        self.selectedAppt = appt
+    
     def getFeeTable(self):
         '''
         logic to determine which feeTable should be used for standard items

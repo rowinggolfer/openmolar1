@@ -409,7 +409,7 @@ def modifyAppt(om_gui):
                 if not appointments.modify_aslot_appt(appt.date, practix,
                 appt.atime, appt.serialno, code0, code1, code2, note, cst,
                 0, 0, 0):
-                    om_gui.advise("Error putting into dentists book", 2)
+                    om_gui.advise(_("Error putting into dentist's book"), 2)
 
 def begin_makeAppt(om_gui):
     '''
@@ -419,10 +419,10 @@ def begin_makeAppt(om_gui):
     appt = om_gui.pt.selectedAppt
 
     if appt == None:
-        om_gui.advise("Please select an appointment to schedule", 1)
+        om_gui.advise(_("Please select an appointment to schedule"), 1)
         return
     if appt.date:
-        om_gui.advise("appointment already scheduled for %s"%(
+        om_gui.advise(_("appointment already scheduled for") + " %s"%(
         localsettings.readableDate(appt.date)), 1)
         return
     #--sets "schedule mode" - user is now adding an appointment
@@ -503,21 +503,16 @@ def offerAppt(om_gui, firstRun=False):
                     om_gui.ui.apptoverviews[i].clearSlots()
                 except IndexError:
                     pass
-                    #print "attempted to clear Sunday's slots!"
                 for slot in possibleAppts:
                     if slot.date_time.date() == day.toPyDate():
                         om_gui.ui.apptoverviews[i].addSlot(slot)
 
-def makeAppt(om_gui, slot):
+def makeAppt(om_gui, appt, slot, offset):
     '''
     called by a click on my custom overview slot -
     user has selected an offered appointment
     '''
     
-    #day = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
-    #"Saturday")[arg[0]]
-
-    appt = om_gui.pt.selectedAppt
     if not appt:
         om_gui.advise(
         _("Please select an appointment to place here"), 1)
@@ -531,11 +526,13 @@ def makeAppt(om_gui, slot):
     selectedtime = localsettings.pyTimetoWystime(slot.time())
     slotlength = slot.length
     selectedDent = slot.dent
-    if selectedDent != appt.dent:
+    if appt.dent and selectedDent != appt.dent:
         #--the user has selected a slot with a different dentist
         #--raise a dialog to check this was intentional!!
-        message = '''You have chosen an appointment with %s<br />
-        Is this correct?'''% localsettings.apptix_reverse[selectedDent]
+        message = _('You have chosen an appointment with') + " %s<br />"% (
+        localsettings.apptix_reverse[selectedDent])
+        message += _("Is this correct?")
+        
         result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
         QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
 
@@ -558,9 +555,11 @@ def makeAppt(om_gui, slot):
             return
     if slotlength == appt.length:
         #--ok... suitable appointment found
-        message = "Confirm Make appointment at %s on %s with %s"% (
+        message = "%s %s %s %s %s %s %s"% (
+        _("Confirm Make appointment for"),
+        appt.name, _("at"),
         localsettings.wystimeToHumanTime(selectedtime),
-        localsettings.readableDate(slot.date()), 
+        _("on"), localsettings.readableDate(slot.date()), 
         localsettings.apptix_reverse.get(selectedDent,"??"))
 
         #--get final confirmation
@@ -571,47 +570,48 @@ def makeAppt(om_gui, slot):
             #dialog rejected
             return
         
-        name = om_gui.pt.fname + " " + om_gui.pt.sname
-
         #--make name conform to the 30 character sql limitation
         #--on this field.
-        name = name[:30]
+        name = appt.name[:30]
         #--don't throw an exception with ord("")
-        if om_gui.pt.cset == "":
-            cst = 32
-        else:
-            cst = ord(om_gui.pt.cset[0])
-
+        cst = 0
+        try:
+            cst = ord(appt.cset[0])
+        except TypeError:
+            pass
+        except IndexError:
+            pass
+        
         endtime = localsettings.minutesPastMidnighttoWystime(
             localsettings.minutesPastMidnight(selectedtime) + appt.length)
 
         #-- make appointment
         if appointments.make_appt(
             slot.date(), selectedDent,
-            selectedtime, endtime, name, appt.serialno, appt.trt1, appt.trt2,
-            appt.trt3, appt.memo, 1, cst, 0, 0):
+            selectedtime, endtime, appt.name[:30], appt.serialno, appt.trt1, 
+            appt.trt2, appt.trt3, appt.memo, appt.flag, cst, 0, 0):
 
-            ##TODO use these flags for family and double appointments
-
-            if appointments.pt_appt_made(om_gui.pt.serialno, appt.aprix,
-            slot.date(), selectedtime, selectedDent):
-                #-- proc returned True so....update the patient apr table
-                layout_ptDiary(om_gui)
-                #== and offer an appointment card
-                result = QtGui.QMessageBox.question(om_gui,
-                "Confirm",
-                "Print Appointment Card?",
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes )
-                if result == QtGui.QMessageBox.Yes:
-                    printApptCard(om_gui)
-            else:
-                om_gui.advise("Error putting appointment back onto patient " +
-                "record - it may be in the appointment book though?", 2)
-
+            if appt.serialno !=0:
+                if appointments.pt_appt_made(appt.serialno, appt.aprix,
+                slot.date(), selectedtime, selectedDent):
+                    #-- proc returned True so....update the patient apr table
+                    layout_ptDiary(om_gui)
+                    #== and offer an appointment card
+                    
+                    result = QtGui.QMessageBox.question(om_gui,
+                    "Confirm",
+                    "Print Appointment Card?",
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                    QtGui.QMessageBox.Yes )
+                    if result == QtGui.QMessageBox.Yes:
+                        printApptCard(om_gui)
+                else:
+                    om_gui.advise(
+                    _("Error putting appointment back into patient diary"))
+                    
             handle_calendar_signal(om_gui)
         else:
-            om_gui.advise("Error making appointment - sorry!", 2)
+            om_gui.advise(_("Error making appointment - sorry!"), 2)
     else:
         #Hopefully this should never happen!!!!
         om_gui.advise(
@@ -637,7 +637,7 @@ def ptDiary_selection(om_gui, index=None):
         appt = om_gui.ui.pt_diary_treeView.model().data(index,
         QtCore.Qt.UserRole)
 
-    om_gui.pt.selectedAppt = appt
+    om_gui.pt.setSelectedAppt(appt)
 
     if not appt:
         if index:
@@ -673,7 +673,8 @@ def layout_ptDiary(om_gui):
     populates the patient's diary
     '''
     om_gui.pt_diary_model.clear()
-    appts = appointments.get_pts_appts(om_gui.pt.serialno)
+    name = om_gui.pt.fname + " " + om_gui.pt.sname
+    appts = appointments.get_pts_appts(om_gui.pt)
     om_gui.pt_diary_model.addAppointments(appts)
     om_gui.ui.pt_diary_treeView.expandAll()
     index = om_gui.pt_diary_model.parents.get(1, None)
@@ -726,7 +727,10 @@ def aptOVviewMode(om_gui):
     toggle between "scheduling" and "viewing modes"
     '''
     val = om_gui.ui.day_schedule_checkBox.isChecked()
-    
+    if val:
+        om_gui.ui.cp_only_radioButton.setChecked(True)
+    else:
+        om_gui.ui.all_appts_radioButton.setChecked(False)
     om_gui.ui.day_schedule_tabWidget.setVisible(val)
     om_gui.ui.week_schedule_tabWidget.setVisible(val)
     
@@ -864,25 +868,15 @@ def findApptButtonClicked(om_gui):
 
     QtCore.QObject.disconnect(om_gui.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
-    om_gui.connectAllClinicians(False)
-
+    
     om_gui.ui.dayCalendar.setSelectedDate(appt.date)
     om_gui.ui.diary_tabWidget.setCurrentIndex(0)
     om_gui.ui.main_tabWidget.setCurrentIndex(1)
-    if appt.dent in om_gui.ui.aptOVdent_checkBoxes.keys():
-        om_gui.ui.aptOVdent_checkBoxes[appt.dent].setChecked(True)
-    if appt.dent in om_gui.ui.aptOVhyg_checkBoxes.keys():
-        om_gui.ui.aptOVhyg_checkBoxes[appt.dent].setChecked(True)
-
+    
     QtCore.QObject.connect(om_gui.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
     layout_dayView(om_gui)
-    om_gui.connectAllClinicians(True)
-
-    for book in om_gui.apptBookWidgets:
-        if book.apptix == appt.dent:
-            book.highlightAppt(appt.atime)
-
+    
 def makeDiaryVisible(om_gui):
     '''
     if called, this will take any steps necessary to show the current day's
@@ -1096,12 +1090,17 @@ def layout_weekView(om_gui):
                 ov.setMemo(dent)
                 ov.setFlags(dent)
 
-    if om_gui.ui.aptOV_apptscheckBox.checkState():
+    if om_gui.ui.all_appts_radioButton.isChecked():
         #--add appts
         for ov in om_gui.ui.apptoverviews:
             for dent in ov.dents:
-                ov.appts[dent.ix] = appointments.daysummary(
+                ov.appts[dent.ix] = appointments.day_summary(
                 ov.date.toPyDate(), dent.ix)
+    elif om_gui.pt.serialno != 0:
+        for ov in om_gui.ui.apptoverviews:
+            for dent in ov.dents:
+                ov.appts[dent.ix] = appointments.day_summary(
+                ov.date.toPyDate(), dent.ix, om_gui.pt.serialno)        
 
     if om_gui.ui.aptOV_emergencycheckBox.checkState():
         #--add emergencies
@@ -1137,7 +1136,6 @@ def layout_dayView(om_gui):
     for book in om_gui.apptBookWidgets:
         book.clearAppts()
         book.setTime = "None"
-        book.highlightAppt(None)
 
     d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False
@@ -1319,7 +1317,7 @@ def printApptCard(om_gui):
     '''
     print an appointment card
     '''
-    appts = appointments.get_pts_appts(om_gui.pt.serialno, True)
+    appts = appointments.get_pts_appts(om_gui.pt, True)
 
     futureAppts = []
     for appt in appts:

@@ -38,9 +38,11 @@ class simple_model(QtCore.QAbstractListModel):
     def data(self, index, role):
         app = self.list[index.row()]
         if role == QtCore.Qt.DisplayRole:
-            if app.unscheduled:
-                info = "%s mins %s with %s"% (
-                    app.length, app.trt1, app.dent_inits)
+            if app.flag == -128:
+                info = "%s (%s %s)"% (app.name, app.length, _("mins"))
+            elif app.unscheduled:
+                info = "%s %s %s %s %s"% (app.length, _("mins"), 
+                    app.trt1, _("with"), app.dent_inits)
             else:
                 info = "%s %s with %s"% (app.readableDate, 
                     app.readableTime, app.dent_inits)
@@ -65,14 +67,18 @@ class blockModel(simple_model):
         self.list = []
         for val, length in (
         (_("Lunch"), 60), 
-        (_("Emergency"), 30),
+        (_("Lunch"), 30),
+        (_("Emergency"), 15),
+        (_("Emergency"), 20),
+        (_("Emergency"), 30),        
         (_("Out of Office"), 30)):
             block = appt_class()
-            block.trt1 = val
+            block.name = val
             block.unscheduled = True
             block.length = length
+            block.flag = -128
             self.list.append(block)
-    
+            
     def reset(self):
         pass
 
@@ -85,7 +91,7 @@ class draggableList(QtGui.QListView):
         self.setDragEnabled(True)
         self.dropwidth = self.width()
         self.pixels_per_min = 2
-
+    
     def setScaling(self, width, height_per_minute):
         '''
         make the list aware of the scaling of the widget available for drops
@@ -127,14 +133,29 @@ class draggableList(QtGui.QListView):
         #pmap.fill(QtGui.QColor(127,0,0))
         #drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))
         #drag.setPixmap(pmap)
-
-        result = drag.start(QtCore.Qt.MoveAction)
-        if result: # == QtCore.Qt.MoveAction:
-            self.model().removeRow(index.row())
-
+        
+        if selectedApp.serialno !=0:
+            result = drag.start(QtCore.Qt.MoveAction)
+            if result: # == QtCore.Qt.MoveAction:
+                self.model().removeRow(index.row())
+        else:
+            result = drag.start(QtCore.Qt.CopyAction)
+            if result:
+                pass
+                        
     def mouseMoveEvent(self, event):
         self.startDrag(event)
 
+    def selectionChanged (self, selectedRange, deselected):
+        '''
+        the user has selected an appointment (or range of appointments!)
+        from the list
+        
+        currently, the model is a single selection
+        '''
+        selected = selectedRange.first().topLeft()
+        selectedApp = self.model().data(selected,QtCore.Qt.UserRole)
+        self.emit(QtCore.SIGNAL("appointmentSelected"), selectedApp)
 
 if __name__ == "__main__":
     '''
@@ -147,15 +168,24 @@ if __name__ == "__main__":
     from openmolar.dbtools import appointments
     from openmolar.settings import localsettings
     localsettings.initiate()
+    
+    class duckPt(object):
+        def __init__(self):
+            self.serialno = 1
+            self.sname = "Neil"
+            self.fname = "Wallace"
+            self.cset = "P"
 
     class testDialog(QtGui.QDialog):
         def __init__(self, parent=None):
             super(testDialog, self).__init__(parent)
             self.setWindowTitle("Drag Drop Test")
+            self.pt = duckPt()
+            
             layout = QtGui.QHBoxLayout(self)
 
             self.model = simple_model()
-            appts = appointments.get_pts_appts(1)
+            appts = appointments.get_pts_appts(duckPt())
             for appt in appts:
                 if appt.unscheduled:
                     self.model.addAppointment(appt)
@@ -195,7 +225,7 @@ if __name__ == "__main__":
             self.OVbook.addSlot(slot)
             self.OVbook.addSlot(slot2)
             
-            self.OVbook.appts[1] = ((1030,15),)
+            self.OVbook.appts[1] = ((2,1030,15),)
             self.OVbook.eTimes[1] = ((1115, 15),)
             self.OVbook.setMinimumWidth(200)
 
