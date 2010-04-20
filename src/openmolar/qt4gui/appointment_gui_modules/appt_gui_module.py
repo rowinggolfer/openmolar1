@@ -1032,9 +1032,19 @@ def getUserCheckedClinicians(om_gui, view="day"):
         widg = om_gui.dayClinicianSelector
     
     retlist = []
-    for dent in widg.getActiveClinicians():
+    for dent in widg.getSelectedClinicians():
         retlist.append(localsettings.apptix.get(dent))
     return retlist
+
+def getAllClinicians():
+    '''
+    returns a numeric version of 
+    localsettings.activedents + localsettings.activehygs
+    '''
+    retlist = []
+    for dent in localsettings.activedents + localsettings.activehygs:
+        retlist.append(localsettings.apptix.get(dent))
+    return retlist    
 
 def layout_weekView(om_gui):
     '''
@@ -1067,32 +1077,37 @@ def layout_weekView(om_gui):
         header.setMemo(memo)
 
     thisWeek = QtCore.QDate.currentDate() in weekdates
-    om_gui.ui.goTodayPushButton.setEnabled(thisWeek)
-
-    userCheckedClinicians = getUserCheckedClinicians(om_gui, "week")
-
+    om_gui.ui.goto_current_week_PushButton.setEnabled(not thisWeek)
+    
     for ov in om_gui.ui.apptoverviews:
-        #--reset
-        ov.dents = []
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
         ov.clear()
 
-        if userCheckedClinicians != []:
+        if om_gui.ui.weekClinicians_checkBox.isChecked():
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
-            tuple(userCheckedClinicians),
-            not om_gui.ui.weekClinicians_checkBox.isChecked())
-            
-            for clinician in userCheckedClinicians: #workingdents:
-                for dent in workingdents:
-                    if dent.ix == clinician:
-                        ov.dents.append(dent)
-                        break
-            ov.init_dicts()
+            include_non_working=False)
+        else:
+            userCheckedClinicians = getUserCheckedClinicians(om_gui, "week")
+            if userCheckedClinicians == []:
+                workingdents = ()
+            else:
+                workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
+                tuple(userCheckedClinicians), True)
+        
+        #--reset
+        ov.dents = []
+        
+        for clinician in getAllClinicians():
             for dent in workingdents:
-                ov.setStartTime(dent)
-                ov.setEndTime(dent)
-                ov.setMemo(dent)
-                ov.setFlags(dent)
+                if dent.ix == clinician:
+                    ov.dents.append(dent)
+                    break
+        ov.init_dicts()
+        for dent in workingdents:
+            ov.setStartTime(dent)
+            ov.setEndTime(dent)
+            ov.setMemo(dent)
+            ov.setFlags(dent)
 
     if om_gui.ui.all_appts_radioButton.isChecked():
         #--add appts
