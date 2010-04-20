@@ -316,6 +316,7 @@ class patient():
             return (0,0,False)
     
     def setSelectedAppt(self, appt):
+        print "setting selected appt as ",appt
         if appt:
             appt.name = self.fname+" " + self.sname
             appt.cset = self.cset

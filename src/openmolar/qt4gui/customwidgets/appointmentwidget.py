@@ -463,7 +463,7 @@ class appointmentCanvas(QtGui.QWidget):
                         feedback += "<hr />"
             if feedback != "<center>":
                 feedback = feedback[:feedback.rindex("<hr />")] + "<center>"
-                QtGui.QToolTip.showText(event.globalPos(), feedback)
+                self.setToolTip(feedback)
             else:
                 QtGui.QToolTip.showText(event.globalPos(), "")
         else:

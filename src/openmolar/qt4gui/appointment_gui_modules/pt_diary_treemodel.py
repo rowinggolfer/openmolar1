@@ -90,8 +90,10 @@ class treeModel(QtCore.QAbstractItemModel):
         self.parents = {0:self.rootItem}
 
     def addAppointments(self, appointments):
-        self.appointments = appointments
-        self.setupModelData()
+        if appointments != self.appointments:
+            self.clear()
+            self.appointments = appointments
+            self.setupModelData()
 
     def clear(self):
         self.appointments = []
@@ -231,8 +233,6 @@ class treeModel(QtCore.QAbstractItemModel):
                 index = self.createIndex(0, 0, child)
                 if appt == self.data(index, QtCore.Qt.UserRole):
                     return index
-                else:
-                    print self.data(index, QtCore.Qt.UserRole)
                 if child.childCount():
                     searchNode(child)
 

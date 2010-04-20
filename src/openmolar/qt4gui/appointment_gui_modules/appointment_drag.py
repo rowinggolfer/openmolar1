@@ -104,7 +104,7 @@ class draggableList(QtGui.QListView):
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
-            event.setDropAction(QtCore.Qt.QMoveAction)
+            event.setDropAction(QtCore.Qt.QCopyAction)
             event.accept()
         else:
             event.ignore()
@@ -118,6 +118,7 @@ class draggableList(QtGui.QListView):
         selectedApp = self.model().data(index,QtCore.Qt.UserRole)
 
         if not selectedApp.unscheduled:
+            event.ignore()
             return
         
         ## convert to  a bytestream
@@ -129,20 +130,12 @@ class draggableList(QtGui.QListView):
         drag.setMimeData(mimeData)
         drag.setDragCursor(QtGui.QPixmap(), QtCore.Qt.MoveAction)
 
-        #pmap = QtGui.QPixmap(100,
-        #    selectedApp.length * self.pixels_per_min)
-        #pmap.fill(QtGui.QColor(127,0,0))
-        #drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))
-        #drag.setPixmap(pmap)
+        pmap = QtGui.QPixmap(50 , selectedApp.length * self.pixels_per_min)
+        pmap.fill(QtGui.QColor(127,0,0))
+        drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))
+        drag.setPixmap(pmap)
         
-        if selectedApp.serialno !=0:
-            result = drag.start(QtCore.Qt.MoveAction)
-            if result: # == QtCore.Qt.MoveAction:
-                self.model().removeRow(index.row())
-        else:
-            result = drag.start(QtCore.Qt.CopyAction)
-            if result:
-                pass
+        drag.start(QtCore.Qt.CopyAction)
                         
     def mouseMoveEvent(self, event):
         self.startDrag(event)
@@ -226,8 +219,17 @@ if __name__ == "__main__":
             self.OVbook.addSlot(slot)
             self.OVbook.addSlot(slot2)
             
-            self.OVbook.appts[1] = ((2,1030,15),)
-            self.OVbook.eTimes[1] = ((1115, 15),)
+
+            appt = appointments.aowAppt()
+            appt.mpm = 10*60+30
+            appt.length = 15
+            appt.dent = 1
+            self.OVbook.appts[1] = (appt,)
+            emerg = appointments.aowAppt()
+            emerg.mpm = 11*60+15
+            emerg.length = 15
+            emerg.reason = "emergency"
+            self.OVbook.eTimes[1] = (emerg,)
             self.OVbook.setMinimumWidth(200)
 
             self.tw = QtGui.QTabWidget(self)

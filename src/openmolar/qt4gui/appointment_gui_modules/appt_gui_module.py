@@ -240,6 +240,7 @@ def clearApptButtonClicked(om_gui):
         if appointments.delete_appt_from_apr(appt):
             om_gui.advise(_("Sucessfully removed appointment"))
             layout_ptDiary(om_gui)
+            return True
         else:
             om_gui.advise(_("Error removing proposed appointment"), 2)
     appt = om_gui.pt.selectedAppt
@@ -427,7 +428,6 @@ def begin_makeAppt(om_gui):
         return
     #--sets "schedule mode" - user is now adding an appointment
     om_gui.ui.day_schedule_checkBox.setChecked(True)
-    om_gui.ui.week_schedule_checkBox.setChecked(True)
     
     #--compute first available appointment
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
@@ -488,7 +488,7 @@ def offerAppt(om_gui, firstRun=False):
         sunday.toPyDate(), tuple(dents))
         
         possibleAppts = getLengthySlots(slots, length)
-        if possibleAppts == ():
+        if possibleAppts == []:
             om_gui.advise("no long enough slots available for selected week")
             if firstRun:
                 #--we reached this proc to offer 1st appointment but
@@ -627,6 +627,7 @@ def apptOVheaderclick(om_gui, arg):
         apptix, adate = arg
         om_gui.bookPrint(apptix, adate)
 
+@localsettings.debug
 def ptDiary_selection(om_gui, index=None):
     '''
     called when the user selects an item from the pt's diary
@@ -660,7 +661,7 @@ def ptDiary_selection(om_gui, index=None):
     else:
         om_gui.ui.makeAppt_pushButton.hide()
         om_gui.ui.findAppt_pushButton.show()
-
+    
 def adjustDiaryColWidths(om_gui, arg=None):
     '''
     adjusts the width of the diary columns to fit the current display
@@ -668,11 +669,11 @@ def adjustDiaryColWidths(om_gui, arg=None):
     for col in range(om_gui.ui.pt_diary_treeView.model().columnCount(arg)):
         om_gui.ui.pt_diary_treeView.resizeColumnToContents(col)
 
+@localsettings.debug
 def layout_ptDiary(om_gui):
     '''
     populates the patient's diary
     '''
-    om_gui.pt_diary_model.clear()
     name = om_gui.pt.fname + " " + om_gui.pt.sname
     appts = appointments.get_pts_appts(om_gui.pt)
     om_gui.pt_diary_model.addAppointments(appts)
@@ -681,16 +682,16 @@ def layout_ptDiary(om_gui):
     ##collapse past appointments
     past_index = om_gui.pt_diary_model.createIndex(0,0,index)
     om_gui.ui.pt_diary_treeView.collapse(past_index)
-
+    
     adjustDiaryColWidths(om_gui)
     
-    ## now layout unscheduled appointments
+    ## now update the models for drag/drop
     om_gui.apt_drag_model.clear()
     for appt in appts:
         if not appt.past: #if appt.unscheduled:
             om_gui.apt_drag_model.addAppointment(appt)
     
-    ptDiary_selection(om_gui)
+    #ptDiary_selection(om_gui)
 
 def triangles(om_gui, call_update=True):
     ''''
@@ -728,7 +729,10 @@ def aptOVviewMode(om_gui):
     '''
     val = om_gui.ui.day_schedule_checkBox.isChecked()
     if val:
+        layout_ptDiary(om_gui)
         om_gui.ui.cp_only_radioButton.setChecked(True)
+        if om_gui.pt.serialno != 0:
+            om_gui.ui.day_schedule_tabWidget.setCurrentIndex(0)
     else:
         om_gui.ui.all_appts_radioButton.setChecked(False)
     om_gui.ui.day_schedule_tabWidget.setVisible(val)
@@ -1160,7 +1164,9 @@ def layout_dayView(om_gui):
         om_gui.signals_apptWidgets(book)
 
         QtCore.QObject.connect(book, QtCore.SIGNAL("redrawn"),
-                om_gui.ui.day_appointment_listView.setScaling)
+            om_gui.ui.day_appointment_listView.setScaling)
+        QtCore.QObject.connect(book, QtCore.SIGNAL("redrawn"),
+            om_gui.ui.day_block_listView.setScaling)
 
     #-- clean past links to dentists
     i = 0

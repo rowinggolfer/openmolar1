@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>2</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>758</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -2172,8 +2172,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>650</width>
-                        <height>446</height>
+                        <width>787</width>
+                        <height>449</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2674,7 +2674,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>642</width>
+                        <width>758</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -2991,8 +2991,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>459</width>
-                        <height>289</height>
+                        <width>575</width>
+                        <height>443</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3191,7 +3191,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>409</width>
+                           <width>525</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3597,8 +3597,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>644</width>
-                        <height>392</height>
+                        <width>781</width>
+                        <height>443</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4274,13 +4274,13 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                       <item>
                        <widget class="QTabWidget" name="day_schedule_tabWidget">
                         <property name="currentIndex">
-                         <number>1</number>
+                         <number>0</number>
                         </property>
                         <widget class="QWidget" name="tab_29">
                          <attribute name="title">
                           <string>Current Patient</string>
                          </attribute>
-                         <layout class="QVBoxLayout" name="verticalLayout_37">
+                         <layout class="QVBoxLayout" name="verticalLayout_19">
                           <item>
                            <widget class="QLabel" name="dayPatient_label">
                             <property name="text">
@@ -4295,6 +4295,17 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                             </property>
                             <property name="frameShadow">
                              <enum>QFrame::Raised</enum>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="day_newAppt_pushButton">
+                            <property name="text">
+                             <string>New Appointment</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="../resources/resources.qrc">
+                              <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
                             </property>
                            </widget>
                           </item>
@@ -4483,7 +4494,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <item>
                     <widget class="QTabWidget" name="week_schedule_tabWidget">
                      <property name="currentIndex">
-                      <number>1</number>
+                      <number>0</number>
                      </property>
                      <widget class="QWidget" name="tab_31">
                       <attribute name="title">
@@ -4504,6 +4515,13 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                          </property>
                          <property name="frameShadow">
                           <enum>QFrame::Raised</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="week_newAppt_pushButton">
+                         <property name="text">
+                          <string>New Appointment</string>
                          </property>
                         </widget>
                        </item>

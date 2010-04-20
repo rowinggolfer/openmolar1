@@ -475,7 +475,6 @@ class bookWidget(QtGui.QWidget):
                     painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
 
                     ###emergencies
-                    painter.setBrush(APPTCOLORS["EMERGENCY"])
                     for appt in self.eTimes[dent.ix]:
                         if (self.daystart[dent.ix] <= appt.mpm < 
                         self.dayend[dent.ix]):
@@ -486,7 +485,10 @@ class bookWidget(QtGui.QWidget):
                             startcell * self.slotHeight + self.headingHeight,
                             columnWidth,
                             (appt.length/self.slotLength) * self.slotHeight)
-
+                            if appt.isEmergency:
+                                painter.setBrush(APPTCOLORS["EMERGENCY"])
+                            else:
+                                painter.setBrush(APPTCOLORS["default"])                                
                             painter.drawRect(rect)
                             painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
 

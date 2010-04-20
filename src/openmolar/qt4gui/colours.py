@@ -61,7 +61,8 @@ APPT_OV_COLORS = {
     "BUSY" : QtGui.QColor("#d9d9ff"),
     "LUNCH" : QtGui.QPalette().dark(),
     "FREE" : QtCore.Qt.white,
-    "EMERGENCY" : QtGui.QColor("#ffd9ec")
+    "EMERGENCY" : QtGui.QColor("#ffd9ec"),
+    "default":QtGui.QColor("#eeeeee"),
     }
 
 

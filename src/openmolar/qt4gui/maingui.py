@@ -366,6 +366,9 @@ class openmolarGui(QtGui.QMainWindow):
             if day < 5:
                 QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
                     self.ui.week_appointment_listView.setScaling)
+                QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
+                    self.ui.week_block_listView.setScaling)
+                    
 
         hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
         hlayout.setMargin(2)
@@ -664,12 +667,13 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         ci=self.ui.main_tabWidget.currentIndex()
 
-        #if ci != 1 and self.schedule_mode:
-        #    #--making an appointment has been abandoned
-        #    #self.advise("Appointment not made", 1)
-        if ci == 1:
+        if ci !=1 :
+            self.ui.day_schedule_checkBox.setChecked(False)
+            self.ui.all_appts_radioButton.setChecked(True)
+        else:
             #--user is viewing appointment book
             appt_gui_module.makeDiaryVisible(self)
+        
         if ci == 6:
             #--user is viewing the feetable
             if not self.feestableLoaded:
@@ -683,9 +687,7 @@ class openmolarGui(QtGui.QMainWindow):
 
         if ci == 8:
             #-- wiki
-            if self.wikiloaded:
-                self.ui.wiki_webView.reload()
-            else:
+            if not self.wikiloaded:
                 self.ui.wiki_webView.setUrl(QtCore.QUrl(localsettings.WIKIURL))
                 self.wikiloaded = True
 
@@ -745,10 +747,23 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.week_schedule_checkBox.setChecked(i)
         appt_gui_module.aptOVviewMode(self)
     
-    def week_schedule_mode_state(self, i):
+    def sync_week_schedule_tabWidgets(self, i):
+        '''
+        called when day_scedule_tabWidget is nav'd
+        '''
+        self.ui.week_schedule_tabWidget.setCurrentIndex(i)
+    
+    def sync_day_schedule_tabWidgets(self, i):
+        '''
+        called when week_scedule_tabWidget is nav'd
+        '''
+        self.ui.day_schedule_tabWidget.setCurrentIndex(i)
+    
+    def week_schedule_mode_clicked(self):
         '''
         handles the state signal from the week_scheduling checkbox
         '''
+        i = self.ui.week_schedule_checkBox.isChecked()
         self.ui.day_schedule_checkBox.setChecked(i)
         appt_gui_module.aptOVviewMode(self)
         
@@ -758,6 +773,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         if appt.date:
             self.ui.dayCalendar.setSelectedDate(appt.date)
+        appt_gui_module.select_apr_ix(self, appt.aprix)
         
     def weekLV_appointmentSelected(self, appt):
         '''
@@ -765,6 +781,8 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         if appt.date:
             self.ui.weekCalendar.setSelectedDate(appt.date)
+        appt_gui_module.select_apr_ix(self, appt.aprix)
+        appt_gui_module.offerAppt(self)
         
     def schedule_mode_clicked(self):
         '''
@@ -3183,9 +3201,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.apptWizard_pushButton,
         QtCore.SIGNAL("clicked()"), self.apptWizard_pushButton_clicked)
 
-        QtCore.QObject.connect(self.ui.newAppt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.newAppt_pushButton_clicked)
-
+        for but in (self.ui.newAppt_pushButton,
+        self.ui.week_newAppt_pushButton, 
+        self.ui.day_newAppt_pushButton):
+            QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"), 
+            self.newAppt_pushButton_clicked)
+        
         QtCore.QObject.connect(self.ui.makeAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.makeApptButton_clicked)
 
@@ -3672,16 +3693,21 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
     
         QtCore.QObject.connect(self.ui.week_schedule_checkBox,
-        QtCore.SIGNAL("stateChanged(int)"), self.week_schedule_mode_state)
-        
-        QtCore.QObject.connect(self.ui.week_schedule_checkBox,
-        QtCore.SIGNAL("clicked()"), self.aptOV_checkboxes_changed)
-        
+        QtCore.SIGNAL("clicked()"), self.week_schedule_mode_clicked)
+    
         QtCore.QObject.connect(self.ui.day_schedule_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.day_schedule_mode_state)
         
         QtCore.QObject.connect(self.ui.day_schedule_checkBox,
         QtCore.SIGNAL("clicked()"), self.schedule_mode_clicked)
+        
+        QtCore.QObject.connect(self.ui.day_schedule_tabWidget,
+        QtCore.SIGNAL("currentChanged(int)"), 
+        self.sync_week_schedule_tabWidgets)
+        
+        QtCore.QObject.connect(self.ui.week_schedule_tabWidget,
+        QtCore.SIGNAL("currentChanged(int)"), 
+        self.sync_day_schedule_tabWidgets)
 
         #QtCore.QObject.connect(self.ui.fontSize_spinBox,
         #QtCore.SIGNAL("valueChanged (int)"), self.fontSize_spinBox_changed)

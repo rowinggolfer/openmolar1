@@ -42,6 +42,7 @@ class aowAppt(object):
         self.serialno = 0
         self.isBlock = False
         self.reason = ""
+        self.isEmergency = False
         
 class appt_class(object):
     '''
@@ -650,7 +651,8 @@ def convertResults(results, inc_snos=False, inc_reason=False, isBlock=False):
                 aow.reason = appt[3]
         elif inc_reason:
             aow.reason = appt[2]
-        
+        if isBlock and aow.reason.lower() == _("emergency").lower():
+            aow.isEmergency = True
         aow.isBlock = isBlock
         aptlist.append(aow)
 
