@@ -35,13 +35,16 @@ class simple_model(QtCore.QAbstractListModel):
         '''
         add an appointment to this list - arg is of type dragAppointment
         '''
+        currentClinicians = self.involvedClinicians
         if app.unscheduled:
             self.unscheduledList.append(app)
         else:
             self.scheduledList.append(app)            
         self.list = self.scheduledList + self.unscheduledList
-                
         self.reset()
+        
+        if app.dent not in currentClinicians:
+            self.emit(QtCore.SIGNAL("clinicianListChanged"))
 
     def rowCount(self, parent = QtCore.QModelIndex()):
         return len(self.list)

@@ -778,13 +778,14 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         user has selected appt on the week_selected ListView
         '''
+        appt_gui_module.select_apr_ix(self, appt.aprix)
         if appt.date:
             self.ui.weekCalendar.setSelectedDate(appt.date)
-        appt_gui_module.select_apr_ix(self, appt.aprix)
-        appt_gui_module.offerAppt(self)
-        for book in self.ui.apptoverviews:
-            book.update()
-        
+        else:
+            appt_gui_module.offerAppt(self, True)
+            for book in self.ui.apptoverviews:
+                book.update()
+            
     def schedule_mode_clicked(self):
         '''
         handles scheduling checkbox clicked
@@ -3780,6 +3781,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.all_appts_radioButton,
         QtCore.SIGNAL("toggled (bool)"), self.aptOV_checkboxes_changed)
+        
+        QtCore.QObject.connect(self.apt_drag_model,         
+        QtCore.SIGNAL("clinicianListChanged"), self.aptOV_checkboxes_changed)
         
         QtCore.QObject.connect(self.weekClinicianSelector, 
         QtCore.SIGNAL("selectionChanged"), self.aptOV_checkboxes_changed)

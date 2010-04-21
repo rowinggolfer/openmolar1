@@ -688,11 +688,9 @@ def layout_ptDiary(om_gui):
     ## now update the models for drag/drop
     om_gui.apt_drag_model.clear()
     for appt in appts:
-        if not appt.past: #if appt.unscheduled:
+        if not appt.past: 
             om_gui.apt_drag_model.addAppointment(appt)
     
-    #ptDiary_selection(om_gui)
-
 def triangles(om_gui, call_update=True):
     ''''
     this moves a red line down the appointment books
@@ -736,6 +734,8 @@ def aptOVviewMode(om_gui):
         if om_gui.pt.serialno != 0:
             om_gui.ui.day_schedule_tabWidget.setCurrentIndex(0)
     else:
+        om_gui.ui.weekView_smartSelection_checkBox.setCheckState(
+            QtCore.Qt.Checked)            
         om_gui.ui.all_appts_radioButton.setChecked(False)
     om_gui.ui.day_schedule_tabWidget.setVisible(val)
     om_gui.ui.week_schedule_tabWidget.setVisible(val)
