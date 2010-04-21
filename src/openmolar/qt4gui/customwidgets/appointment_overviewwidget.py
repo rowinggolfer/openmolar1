@@ -76,6 +76,7 @@ class bookWidget(QtGui.QWidget):
         self.lunches = {}
         
     def clearSlots(self):
+        self.freeslots = {}        
         for dent in self.dents:
             self.freeslots[dent.ix] = []        
 

@@ -336,7 +336,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         selectedTooth will be 'ur8' etc..
         selectedChart will be 'st' or 'pl' or 'cmp'
         '''
-        print "toothProps.setTooth called with args",selectedTooth, selectedChart
         self.setSelectedChart(selectedChart)
         
         self.selectedTooth = selectedTooth

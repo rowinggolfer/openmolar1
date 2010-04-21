@@ -15,6 +15,8 @@ import os
 import locale
 import re
 import subprocess
+import inspect
+            
 
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
@@ -72,7 +74,7 @@ def debug(func):
     '''
     a decorator function for debugging
     '''
-    if DEBUGGING:
+    if False:#DEBUGGING:
         def callf(*args, **kwargs):
             print "===="*2, currentTime(), "===="*2
             print "Calling %s:%s, %s"% (func.__name__, args, kwargs)
@@ -83,6 +85,21 @@ def debug(func):
         return callf
     else:
         return func
+
+def monitor(func):
+    if DEBUGGING:
+        def callf(*args, **kwargs):
+            print "==MONITOR=="*2, currentTime(), "===="*2
+            print "    Function %s"% (func.__name__)
+            print "    Called by ",
+            print inspect.getframeinfo(inspect.currentframe().f_back)[2]
+            
+            r = func(*args, **kwargs)
+            return r
+        return callf
+    else:
+        return func
+        
 
 def determine_path ():
     '''
@@ -110,7 +127,7 @@ def setChosenServer(i):
     chosenserver = i
     try:
         DBNAME = server_names[i]
-        print "DBNAME=", DBNAME
+        #print "DBNAME=", DBNAME
     except IndexError:
         print "no server name.. config file is old format?"
 
@@ -149,9 +166,7 @@ if "win" in sys.platform:
     GP17_RIGHT = 15
 
 else:
-    if "linux" in sys.platform:
-        print "linux settings"
-    else:
+    if not "linux" in sys.platform:
         print "unknown system platform (mac?) - defaulting to linux settings"
     global_cflocation = '/etc/openmolar/openmolar.conf'
     localFileDirectory = os.path.join(os.environ.get("HOME"),".openmolar")
@@ -527,6 +542,17 @@ def wystimeToHumanTime(t):
     except:
         return None
 
+def wystimeToPyTime(t):
+    '''converts a time in the format of 0830 or 1420 to "HH:MM" (string)
+    >>> wystimeToPyTime(830)
+    datetime.time(8, 30)
+    '''
+    try:
+        hour, min = t//100, t%100
+        return datetime.time(hour, min)
+    except:
+        return None
+
 def humanTimetoWystime(t):
     '''reverse function to wystimeToHumanTime
     >>> humanTimetoWystime('8:30')
@@ -626,7 +652,6 @@ def getLocalSettings():
 
     localSets = os.path.join(localFileDirectory, "localsettings.conf")
     if os.path.exists(localSets):
-        print "local user level settings file found...."
         dom = minidom.parse(localSets)
         node = dom.getElementsByTagName("surgeryno")
         if node and node[0].hasChildNodes():
@@ -719,7 +744,7 @@ def initiateUsers():
 
 
 def initiate(debug = False):
-    print "initiating settings"
+    #print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd, \
     clinicianNo, clinicianInits, WIKIURL
@@ -740,12 +765,11 @@ def initiate(debug = False):
         bookEnd = datetime.date(int(bookEndVals[0]), int(bookEndVals[1]),
         int(bookEndVals[2]))
 
-    print "bookEnd is %s"% bookEnd
+    #print "bookEnd is %s"% bookEnd
 
     data = db_settings.getData("supervisor_pword")
     if data:
         SUPERVISOR = data[0][0]
-        print "supervisor password installed"
     else:
         print "#"*30
         print "WARNING - no supervisor password is set, restting to default"

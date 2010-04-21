@@ -486,7 +486,6 @@ self.serialno, self.courseno0))
         grid=""
         for quad in (self.dent1,self.dent0,self.dent3,self.dent2):
             grid+=dec_perm.fromSignedByte(quad)
-        print grid
         for pos in mouth:
             if grid[mouth.index(pos)]=="0":
                 self.chartgrid[pos]=pos

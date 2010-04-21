@@ -20,6 +20,17 @@ class simple_model(QtCore.QAbstractListModel):
         self.list = []
         self.reset()
 
+    @property
+    def involvedClinicians(self):
+        '''
+        returns a set containing all clinicians referred to by the lists 
+        within
+        '''
+        retarg = set()
+        for app in self.list:
+            retarg.add(app.dent)
+        return tuple(retarg)
+
     def addAppointment(self, app):
         '''
         add an appointment to this list - arg is of type dragAppointment

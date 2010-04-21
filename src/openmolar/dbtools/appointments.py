@@ -1063,7 +1063,7 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     slots = future_slots(bldate, bldate, (apptix,))
     
     date_time = datetime.datetime.combine(bldate,
-        localsettings.minutesPastMidnightToPyTime(start))
+        localsettings.wystimeToPyTime(start))
 
     this_slot = freeSlot(date_time, apptix, block_length)
     
@@ -1093,6 +1093,7 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     print "adjust pt diary"
     return pt_appt_made(pt.serialno, aprix, bldate, bl_start, apptix)
 
+@localsettings.debug
 def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     '''
     put a block in the book, with text set as reason
@@ -1104,7 +1105,7 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     slots = future_slots(bldate, bldate, (apptix,))
     
     date_time = datetime.datetime.combine(bldate,
-        localsettings.minutesPastMidnightToPyTime(start))
+        localsettings.wystimeToPyTime(start))
 
     this_slot = freeSlot(date_time, apptix, block_length)
     
@@ -1300,23 +1301,25 @@ def slots(adate, apptix, start, apdata, fin):
         slot = freeSlot(date_time, apptix, slength)
         results.append(slot)
     return results
-
+@localsettings.debug
 def future_slots(startdate, enddate, dents, override_emergencies=False):
     '''
     get a list of possible appointment positions
     (between startdate and enddate) that can be offered to the patient
     '''
+    if dents == ():
+        return ()
+
     db = connect()
     cursor = db.cursor()
     values = [startdate, enddate]
-    if dents != ():
-        mystr = " and ("
-        for dent in dents:
-            mystr += "apptix=%s or "
-            values.append(dent)
-        mystr = mystr[0:mystr.rindex(" or")]+")"
-    else:
-        mystr = ""
+
+    mystr = " and ("
+    for dent in dents:
+        mystr += "apptix=%s or "
+        values.append(dent)
+    mystr = mystr[0:mystr.rindex(" or")]+")"
+    
     fullquery = '''SELECT adate, apptix, start, end FROM aday
     WHERE adate>=%%s AND adate<=%%s AND (flag=1 OR flag= 2) %s
     ORDER BY adate'''% mystr

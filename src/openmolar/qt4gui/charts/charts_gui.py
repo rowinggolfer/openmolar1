@@ -159,7 +159,8 @@ def chartTableNav(om_gui, row, col, row1, col1):
     charts table has been navigated
     '''
     if localsettings.debug:
-        print "UNUSED chartTableNav", row,col,row1,col1
+        #print "UNUSED chartTableNav", row,col,row1,col1
+        pass
 
 def chartNavigation(om_gui, teeth, callerIsTable=False):
     '''
@@ -313,7 +314,10 @@ def chartsTable(om_gui):
         #--sets the tooth numbering
     row=0
 
-    for tooth in om_gui.grid:
+    for tooth in ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
+        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8',
+        "lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
+        'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'):
         item1=QtGui.QTableWidgetItem(tooth)
         static_text=om_gui.pt.__dict__[tooth+"st"]
         staticitem=QtGui.QTableWidgetItem(static_text)

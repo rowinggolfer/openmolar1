@@ -447,13 +447,14 @@ def offerAppt(om_gui, firstRun=False):
     '''offer an appointment'''
     
     #### need to review this!!
-    view = "day" if om_gui.ui.diary_tabWidget.currentIndex()==0 else "week"
-    dents = getUserCheckedClinicians(om_gui, view)
+    if om_gui.ui.diary_tabWidget.currentIndex()!=1:
+        return
     
     appt = om_gui.pt.selectedAppt
     if appt:    
         length = appt.length
     else:
+        print "NO APPT SELECTED, USING 0 for slotlength"
         length = 0
     #-- om_gui.ui.dayCalendar date originally set when user
     #--clicked the make button
@@ -483,10 +484,12 @@ def offerAppt(om_gui, firstRun=False):
             startday = weekdates[0] #--monday
         sunday = weekdates[6]     #--sunday
 
+        dents = om_gui.current_weekViewClinicians 
+        #a set containing all the dents currently viewed on the weekview
+
         #--check for suitable apts in the selected WEEK!
         slots = appointments.future_slots(startday.toPyDate(),
         sunday.toPyDate(), tuple(dents))
-        
         possibleAppts = getLengthySlots(slots, length)
         if possibleAppts == []:
             om_gui.advise("no long enough slots available for selected week")
@@ -499,10 +502,8 @@ def offerAppt(om_gui, firstRun=False):
             #--found some
             for day in weekdates:
                 i = weekdates.index(day)
-                try:
-                    om_gui.ui.apptoverviews[i].clearSlots()
-                except IndexError:
-                    pass
+                
+                om_gui.ui.apptoverviews[i].clearSlots()
                 for slot in possibleAppts:
                     if slot.date_time.date() == day.toPyDate():
                         om_gui.ui.apptoverviews[i].addSlot(slot)
@@ -627,7 +628,6 @@ def apptOVheaderclick(om_gui, arg):
         apptix, adate = arg
         om_gui.bookPrint(apptix, adate)
 
-@localsettings.debug
 def ptDiary_selection(om_gui, index=None):
     '''
     called when the user selects an item from the pt's diary
@@ -669,7 +669,7 @@ def adjustDiaryColWidths(om_gui, arg=None):
     for col in range(om_gui.ui.pt_diary_treeView.model().columnCount(arg)):
         om_gui.ui.pt_diary_treeView.resizeColumnToContents(col)
 
-@localsettings.debug
+@localsettings.monitor
 def layout_ptDiary(om_gui):
     '''
     populates the patient's diary
@@ -729,8 +729,10 @@ def aptOVviewMode(om_gui):
     '''
     val = om_gui.ui.day_schedule_checkBox.isChecked()
     if val:
-        layout_ptDiary(om_gui)
-        om_gui.ui.cp_only_radioButton.setChecked(True)
+        layout_ptDiary(om_gui)    
+        om_gui.ui.weekView_smartSelection_checkBox.setCheckState(
+            QtCore.Qt.PartiallyChecked)    
+        om_gui.ui.cp_only_radioButton.setChecked(True) # current pt only
         if om_gui.pt.serialno != 0:
             om_gui.ui.day_schedule_tabWidget.setCurrentIndex(0)
     else:
@@ -856,13 +858,14 @@ def clearTodaysEmergencyTime(om_gui):
         if number_cleared > 0 and om_gui.ui.main_tabWidget.currentIndex() == 1:
             layout_dayView(om_gui)
 
+@localsettings.monitor
 def handle_aptOV_checkboxes(om_gui):
     '''
     user has altered one of the checkboxes on the appointment options
     emergency, lunch etc..
     '''
-    handle_calendar_signal(om_gui)    
-
+    layout_weekView(om_gui)    
+    
 def findApptButtonClicked(om_gui):
     '''
     an appointment in the patient's diary is being searched for by the user
@@ -880,7 +883,7 @@ def findApptButtonClicked(om_gui):
     QtCore.QObject.connect(om_gui.ui.main_tabWidget,
     QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
     layout_dayView(om_gui)
-    
+
 def makeDiaryVisible(om_gui):
     '''
     if called, this will take any steps necessary to show the current day's
@@ -943,6 +946,7 @@ def addpubHol(om_gui, details):
     appointments.setPubHol(d, details)
     handle_calendar_signal(om_gui)
 
+@localsettings.monitor
 def layout_month(om_gui):
     '''
     grab month memos
@@ -964,6 +968,7 @@ def layout_month(om_gui):
 
     om_gui.ui.monthView.update()
 
+@localsettings.monitor
 def layout_year(om_gui):
     '''
     grab year memos
@@ -1046,6 +1051,7 @@ def getAllClinicians():
         retlist.append(localsettings.apptix.get(dent))
     return retlist    
 
+@localsettings.monitor
 def layout_weekView(om_gui):
     '''
     lay out the week view widget
@@ -1055,7 +1061,7 @@ def layout_weekView(om_gui):
     if om_gui.ui.main_tabWidget.currentIndex() !=1 and \
     om_gui.ui.diary_tabWidget.currentIndex() != 1:
         return
-
+    om_gui.current_weekViewClinicians = set()
     cal = om_gui.ui.dayCalendar
     date = cal.selectedDate()
 
@@ -1083,9 +1089,15 @@ def layout_weekView(om_gui):
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
         ov.clear()
 
-        if om_gui.ui.weekClinicians_checkBox.isChecked():
+        if (om_gui.ui.weekView_smartSelection_checkBox.checkState() == 
+        QtCore.Qt.Checked):
             workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
             include_non_working=False)
+        elif (om_gui.ui.weekView_smartSelection_checkBox.checkState() == 
+        QtCore.Qt.PartiallyChecked):
+            chkset = om_gui.apt_drag_model.involvedClinicians 
+            workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
+            chkset, include_non_working=False)
         else:
             userCheckedClinicians = getUserCheckedClinicians(om_gui, "week")
             if userCheckedClinicians == []:
@@ -1101,6 +1113,7 @@ def layout_weekView(om_gui):
             for dent in workingdents:
                 if dent.ix == clinician:
                     ov.dents.append(dent)
+                    om_gui.current_weekViewClinicians.add(dent.ix)
                     break
         ov.init_dicts()
         for dent in workingdents:
@@ -1144,6 +1157,7 @@ def layout_weekView(om_gui):
         #--repaint widgets
         ov.update()
 
+@localsettings.monitor
 def layout_dayView(om_gui):
     '''
     this populates the appointment book widgets (on maintab, pageindex 1)

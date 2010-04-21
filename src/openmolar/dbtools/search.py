@@ -72,7 +72,6 @@ similar_fname, pcde):
         
         query = "select %s from patients where %s order by sname, fname"% (
         fields, query[0 : query.rindex("and")])
-        print query, tuple(values)
         if localsettings.logqueries:
             print query, values
         db = connect()

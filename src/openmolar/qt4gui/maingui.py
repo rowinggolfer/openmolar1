@@ -128,14 +128,11 @@ class openmolarGui(QtGui.QMainWindow):
         self.app = app
         #--initiate a blank version of the patient class this
         #--is used to check for state.
-        self.pt_dbstate=patient_class.patient(0)
         #--make a deep copy to check for changes
-        self.pt=copy.deepcopy(self.pt_dbstate)
+        self.pt_dbstate = patient_class.patient(0)
+        self.pt = copy.deepcopy(self.pt_dbstate)
+        
         self.selectedChartWidget = "st" #other values are "pl" or "cmp"
-        self.grid = ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
-        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8',
-        "lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
-        'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
         self.addCustomWidgets()
         self.labels_and_tabs()
         self.ui.feescale_commit_pushButton.setEnabled(False)
@@ -146,15 +143,16 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.bulk_mailings_treeView.setModel(self.letters.bulk_model)
         self.setupSignals()
         self.loadDentistComboboxes()
-        self.feestableLoaded=False
+        self.feestableLoaded = False
 
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()
-        self.editPageVisited=False
+        self.editPageVisited = False
         self.forum_notified = False
         self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
         self.wikiloaded = False
+        self.current_weekViewClinicians = ()
 
     def advise(self, arg, warning_level=0):
         '''
@@ -251,37 +249,37 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.statusbar.addPermanentWidget(self.statusbar_frame)
 
         #-summary chart
-        self.ui.summaryChartWidget=chartwidget.chartWidget()
+        self.ui.summaryChartWidget = chartwidget.chartWidget()
         self.ui.summaryChartWidget.setShowSelected(False)
         self.ui.summaryChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
         hlayout=QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
         hlayout.addWidget(self.ui.summaryChartWidget)
 
         #-perio chart
-        self.ui.perioChartWidget=chartwidget.chartWidget()
+        self.ui.perioChartWidget = chartwidget.chartWidget()
         hlayout=QtGui.QHBoxLayout(self.ui.perioChart_frame)
         hlayout.addWidget(self.ui.perioChartWidget)
 
         #-static chart
-        self.ui.staticChartWidget=chartwidget.chartWidget()
+        self.ui.staticChartWidget = chartwidget.chartWidget()
         self.ui.staticChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
-        hlayout=QtGui.QHBoxLayout(self.ui.static_groupBox)
+        hlayout = QtGui.QHBoxLayout(self.ui.static_groupBox)
         hlayout.addWidget(self.ui.staticChartWidget)
         self.ui.static_groupBox.setStyleSheet("border: 1px solid gray;")
 
         #-plan chart
-        self.ui.planChartWidget=chartwidget.chartWidget()
+        self.ui.planChartWidget = chartwidget.chartWidget()
         self.ui.planChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.ui.planChartWidget.isStaticChart=False
-        self.ui.planChartWidget.isPlanChart=True
+        self.ui.planChartWidget.isStaticChart = False
+        self.ui.planChartWidget.isPlanChart = True
         self.ui.plan_groupBox.setStyleSheet("border: 1px solid gray;")
-        hlayout=QtGui.QHBoxLayout(self.ui.plan_groupBox)
+        hlayout = QtGui.QHBoxLayout(self.ui.plan_groupBox)
         hlayout.addWidget(self.ui.planChartWidget)
 
         #-completed chart
-        self.ui.completedChartWidget=chartwidget.chartWidget()
-        self.ui.completedChartWidget.isStaticChart=False
-        hlayout=QtGui.QHBoxLayout(self.ui.completed_groupBox)
+        self.ui.completedChartWidget = chartwidget.chartWidget()
+        self.ui.completedChartWidget.isStaticChart = False
+        hlayout = QtGui.QHBoxLayout(self.ui.completed_groupBox)
         hlayout.addWidget(self.ui.completedChartWidget)
         self.ui.completed_groupBox.setStyleSheet("border: 1px solid gray;")
 
@@ -292,24 +290,25 @@ class openmolarGui(QtGui.QMainWindow):
         hlayout.addWidget(self.ui.toothPropsWidget)
 
         #-PERIOPROPS
-        self.ui.perioToothPropsWidget=perioToothProps.tpWidget()
-        hlayout=QtGui.QHBoxLayout(self.ui.perioToothProps_frame)
+        self.ui.perioToothPropsWidget = perioToothProps.tpWidget()
+        hlayout = QtGui.QHBoxLayout(self.ui.perioToothProps_frame)
         hlayout.addWidget(self.ui.perioToothPropsWidget)
 
-        self.ui.perioChartWidgets=[]
-        self.ui.perioGroupBoxes=[]
-        hlayout=QtGui.QVBoxLayout(self.ui.perioChartData_frame)
+        self.ui.perioChartWidgets = []
+        self.ui.perioGroupBoxes = []
+        hlayout = QtGui.QVBoxLayout(self.ui.perioChartData_frame)
         hlayout.setMargin(2)
         for i in range(8):
-            gbtitle=("Recession", "Pocketing", "Plaque", "Bleeding",
-            "Other", "Suppuration", "Furcation", "Mobility")[i]
-            periogb=QtGui.QGroupBox(gbtitle)
+            gbtitle = (_("Recession"), _("Pocketing"), _("Plaque"), 
+            _("Bleeding"), _("Other"), _("Suppuration"), _("Furcation"), 
+            _("Mobility"))[i]
+            periogb = QtGui.QGroupBox(gbtitle)
             periogb.setCheckable(True)
             periogb.setChecked(True)
             #periogb.setMinimumSize(0, 120)
-            pchart=perioChartWidget.chartWidget()
-            pchart.type=gbtitle
-            gblayout=QtGui.QVBoxLayout(periogb)
+            pchart = perioChartWidget.chartWidget()
+            pchart.type = gbtitle
+            gblayout = QtGui.QVBoxLayout(periogb)
             gblayout.setMargin(2)
             gblayout.addWidget(pchart)
             hlayout.addWidget(periogb)
@@ -783,6 +782,8 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.weekCalendar.setSelectedDate(appt.date)
         appt_gui_module.select_apr_ix(self, appt.aprix)
         appt_gui_module.offerAppt(self)
+        for book in self.ui.apptoverviews:
+            book.update()
         
     def schedule_mode_clicked(self):
         '''
@@ -1462,7 +1463,6 @@ class openmolarGui(QtGui.QMainWindow):
         #-- don't load a patient if you are entering a new one.
         if self.enteringNewPatient():
             return
-        print "loading patient"
         self.advise("loading patient")
         self.editPageVisited=False
         self.ui.main_tabWidget.setCurrentIndex(0)
@@ -1738,6 +1738,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         initialise a few labels
         '''
         self.ui.main_tabWidget.setCurrentIndex(0)
+        self.ui.main_tabWidget.setCurrentIndex(0)
+        
         if localsettings.clinicianNo == 0:
             if localsettings.station == "surgery":
                 op_text = " <b>NO CLINICIAN SET</b> - "
@@ -1768,7 +1770,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.recallend_dateEdit.setDate(today)
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.dupReceiptDate_lineEdit.setText(today.toString(
-        "dd'/'MM'/'yyyy"))
+            "dd'/'MM'/'yyyy"))
         brush = QtGui.QBrush(colours.LINEEDIT)
         palette = QtGui.QPalette()
         palette.setBrush(QtGui.QPalette.Base, brush)
@@ -2453,7 +2455,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.layout_weekView(self)
         self.ui.week_clinician_selector_frame.setVisible(
-            not self.ui.weekClinicians_checkBox.isChecked())
+            not self.ui.weekView_smartSelection_checkBox.isChecked())
         
     def manage_month_and_year_View_clinicians(self):
         '''
@@ -3782,7 +3784,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.weekClinicianSelector, 
         QtCore.SIGNAL("selectionChanged"), self.aptOV_checkboxes_changed)
 
-        QtCore.QObject.connect(self.ui.weekClinicians_checkBox,
+        QtCore.QObject.connect(self.ui.weekView_smartSelection_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.manage_weekView_clinicians)
 
         QtCore.QObject.connect(self.dayClinicianSelector, 

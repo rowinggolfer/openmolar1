@@ -43,6 +43,7 @@ class controlCalendar(QtGui.QCalendarWidget):
         self.setHorizontalHeaderFormat(QtGui.QCalendarWidget.SingleLetterDayNames)
         self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(True)
+        self.setSelectedDate(QtCore.QDate.currentDate())
         self.connect(self, QtCore.SIGNAL("currentPageChanged (int,int)"),
             self.jumpMonth)
 
