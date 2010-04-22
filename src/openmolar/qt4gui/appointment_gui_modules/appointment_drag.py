@@ -106,7 +106,9 @@ class draggableList(QtGui.QListView):
         self.setDragEnabled(True)
         self.dropwidth = self.width()
         self.pixels_per_min = 2
-    
+        #self.setMouseTracking(True)
+        #self.mouseDown = False
+        
     def setScaling(self, width, height_per_minute):
         '''
         make the list aware of the scaling of the widget available for drops
@@ -115,13 +117,6 @@ class draggableList(QtGui.QListView):
         '''
         self.dropwidth = width
         self.pixels_per_min = height_per_minute
-
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasFormat("application/x-appointment"):
-            event.setDropAction(QtCore.Qt.QCopyAction)
-            event.accept()
-        else:
-            event.ignore()
 
     def startDrag(self, event):
         index = self.indexAt(event.pos())
@@ -150,9 +145,23 @@ class draggableList(QtGui.QListView):
         drag.setPixmap(pmap)
         
         drag.start(QtCore.Qt.CopyAction)
-                        
+
+    ##I was experimenting with mouse tracking to get a tool tip to show up
+
+    #def mousePressEvent(self, event):
+    #    self.mouseDown = True
+        
+    #def mouseReleaseEvent(self, event):
+    #    self.mouseDown = False
+    
+    #def leaveEvent(self, event):
+    #    self.mouseDown = False
+        
     def mouseMoveEvent(self, event):
         self.startDrag(event)
+        #if self.mouseDown:
+        #    self.startDrag(event)
+        #    self.mouseDown = False
 
     def selectionChanged (self, selectedRange, deselected):
         '''

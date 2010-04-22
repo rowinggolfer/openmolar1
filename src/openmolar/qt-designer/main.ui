@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -387,7 +387,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="daylistBox">
+                <widget class="QComboBox" name="dayList_comboBox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>476</width>
+                        <width>758</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>568</width>
+                        <width>758</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2516,7 +2516,7 @@
                                <item row="0" column="2" rowspan="2">
                                 <layout class="QVBoxLayout" name="verticalLayout_31">
                                  <item>
-                                  <widget class="QPushButton" name="makeAppt_pushButton">
+                                  <widget class="QPushButton" name="scheduleAppt_pushButton">
                                    <property name="enabled">
                                     <bool>true</bool>
                                    </property>
@@ -2674,7 +2674,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>608</width>
+                        <width>758</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -2991,8 +2991,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>575</width>
+                        <height>443</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3191,7 +3191,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>525</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3224,7 +3224,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>197</width>
+                        <width>217</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3597,8 +3597,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
-                        <height>392</height>
+                        <width>781</width>
+                        <height>443</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -6554,7 +6554,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>saveButton</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>debugBrowser</tabstop>
-  <tabstop>daylistBox</tabstop>
+  <tabstop>dayList_comboBox</tabstop>
   <tabstop>detailsBrowser</tabstop>
   <tabstop>cashbookGoPushButton</tabstop>
   <tabstop>cashbookPrintButton</tabstop>
@@ -6572,7 +6572,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>moneytextBrowser</tabstop>
   <tabstop>printAccount_pushButton</tabstop>
   <tabstop>takePayment_pushButton</tabstop>
-  <tabstop>makeAppt_pushButton</tabstop>
+  <tabstop>scheduleAppt_pushButton</tabstop>
   <tabstop>findAppt_pushButton</tabstop>
   <tabstop>printAppt_pushButton</tabstop>
   <tabstop>notesMinimumVerbosity_radioButton</tabstop>

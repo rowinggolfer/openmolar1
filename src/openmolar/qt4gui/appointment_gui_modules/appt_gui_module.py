@@ -298,8 +298,9 @@ def getLengthySlots(slots, length):
     sort through the list of slots, and filter out those with inadequate length
     '''
     retlist = []
+    now = datetime.datetime.now()
     for slot in slots:
-        if slot.length >= length:
+        if slot.length >= length and slot.date_time > now:
             retlist.append(slot)
     return retlist
 
@@ -418,7 +419,7 @@ def begin_makeAppt(om_gui):
     appointment overview to show possible appointments
     '''
     appt = om_gui.pt.selectedAppt
-
+    
     if appt == None:
         om_gui.advise(_("Please select an appointment to schedule"), 1)
         return
@@ -428,6 +429,7 @@ def begin_makeAppt(om_gui):
         return
     #--sets "schedule mode" - user is now adding an appointment
     om_gui.ui.day_schedule_checkBox.setChecked(True)
+    weekView_setScheduleMode(om_gui, True)
     
     #--compute first available appointment
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
@@ -441,43 +443,33 @@ def begin_makeAppt(om_gui):
         om_gui.ui.diary_tabWidget.setCurrentIndex(1)
     else:
         layout_weekView(om_gui)
-    offerAppt(om_gui, True)
+    addWeekViewAvailableSlots(om_gui, appt.length, True)
 
-def offerAppt(om_gui, firstRun=False):
-    '''offer an appointment'''
+def addWeekViewAvailableSlots(om_gui, minlength=None, moveOnToNextWeek=False):
+    '''
+    show slots on the appt oveview widgets
+    '''
     
-    #### need to review this!!
     if om_gui.ui.diary_tabWidget.currentIndex()!=1:
         return
+    if not minlength:    
+        minlength = 0
+    om_gui.min_week_slotlength = minlength
     
-    appt = om_gui.pt.selectedAppt
-    if appt:    
-        length = appt.length
-    else:
-        print "NO APPT SELECTED, USING 0 for slotlength"
-        length = 0
-    #-- om_gui.ui.dayCalendar date originally set when user
-    #--clicked the make button
     seldate = om_gui.ui.dayCalendar.selectedDate()
-    today = QtCore.QDate.currentDate()
-
-    if seldate < today:
-        om_gui.advise("can't schedule an appointment in the past", 1)
-        #-- change the calendar programatically (this will call THIS
-        #--procedure again!)
-        om_gui.ui.dayCalendar.setSelectedDate(today)
-    elif seldate.toPyDate() > localsettings.bookEnd:
+    
+    if seldate.toPyDate() > localsettings.bookEnd:
         om_gui.advise('''Reached %s<br />
         No suitable appointments found<br />
         Is the appointment very long?<br />
         If so, Perhaps cancel some emergency time?
         '''% localsettings.longDate(localsettings.bookEnd), 1)
     else:
-        #--select the week which includes the selected day
         dayno = seldate.dayOfWeek()
         weekdates = []
         for day in range(1, 8):
             weekdates.append(seldate.addDays(day-dayno))
+        today = QtCore.QDate.currentDate()
         if today in weekdates:
             startday = today
         else:
@@ -489,25 +481,23 @@ def offerAppt(om_gui, firstRun=False):
 
         #--check for suitable apts in the selected WEEK!
         slots = appointments.future_slots(startday.toPyDate(),
-        sunday.toPyDate(), tuple(dents))
-        possibleAppts = getLengthySlots(slots, length)
+            sunday.toPyDate(), tuple(dents))
+        possibleAppts = getLengthySlots(slots, minlength)
         if possibleAppts == []:
-            om_gui.advise("no long enough slots available for selected week")
-            if firstRun:
-                #--we reached this proc to offer 1st appointment but
-                #--haven't found it
+            if moveOnToNextWeek:
                 aptOV_weekForward(om_gui)
-                offerAppt(om_gui, True)
-        else:
-            #--found some
-            for day in weekdates:
-                i = weekdates.index(day)
+                addWeekViewAvailableSlots(om_gui, minlength, True)
+                return
+            else:
+                om_gui.advise(
+    "no slots of %d minutes or more available for selected week"% minlength)
                 
-                om_gui.ui.apptoverviews[i].clearSlots()
-                for slot in possibleAppts:
-                    if slot.date_time.date() == day.toPyDate():
-                        om_gui.ui.apptoverviews[i].addSlot(slot)
-
+        for ov in om_gui.ui.apptoverviews:
+            ov.clearSlots()
+            for slot in possibleAppts:
+                if slot.date_time.date() == ov.date.toPyDate():
+                    ov.addSlot(slot)
+                
 def makeAppt(om_gui, appt, slot, offset):
     '''
     called by a click on my custom overview slot -
@@ -645,7 +635,7 @@ def ptDiary_selection(om_gui, index=None):
             om_gui.ui.del_pastAppointments_pushButton.show()
         else:
             om_gui.ui.del_pastAppointments_pushButton.hide()
-        om_gui.ui.makeAppt_pushButton.hide()
+        om_gui.ui.scheduleAppt_pushButton.hide()
         om_gui.ui.modifyAppt_pushButton.hide()
         om_gui.ui.clearAppt_pushButton.hide()
         om_gui.ui.findAppt_pushButton.hide()
@@ -656,10 +646,10 @@ def ptDiary_selection(om_gui, index=None):
     om_gui.ui.clearAppt_pushButton.show()
 
     if appt.unscheduled:
-        om_gui.ui.makeAppt_pushButton.show()
+        om_gui.ui.scheduleAppt_pushButton.show()
         om_gui.ui.findAppt_pushButton.hide()
     else:
-        om_gui.ui.makeAppt_pushButton.hide()
+        om_gui.ui.scheduleAppt_pushButton.hide()
         om_gui.ui.findAppt_pushButton.show()
     
 def adjustDiaryColWidths(om_gui, arg=None):
@@ -705,8 +695,9 @@ def triangles(om_gui, call_update=True):
                     book.update()
 
 def calendar(om_gui, sd):
-    '''comes from click proceedures'''
-    #om_gui.ui.main_tabWidget.setCurrentIndex(1)
+    '''
+    comes from click proceedures
+    '''
     om_gui.ui.dayCalendar.setSelectedDate(sd)
 
 def aptFontSize(om_gui, e):
@@ -721,24 +712,22 @@ def aptFontSize(om_gui, e):
     om_gui.ui.monthView.update()
     om_gui.ui.yearView.update()
 
-def aptOVviewMode(om_gui):
+@localsettings.monitor
+def weekView_setScheduleMode(om_gui, scheduling=True):
     '''
     toggle between "scheduling" and "viewing modes"
     '''
-    val = om_gui.ui.day_schedule_checkBox.isChecked()
-    if val:
+    om_gui.ui.week_schedule_checkBox.setChecked(scheduling)
+    if scheduling:
+        om_gui.ui.cp_only_radioButton.setChecked(True) # current pt only
         layout_ptDiary(om_gui)    
         om_gui.ui.weekView_smartSelection_checkBox.setCheckState(
             QtCore.Qt.PartiallyChecked)    
-        om_gui.ui.cp_only_radioButton.setChecked(True) # current pt only
-        if om_gui.pt.serialno != 0:
-            om_gui.ui.day_schedule_tabWidget.setCurrentIndex(0)
     else:
+        om_gui.ui.all_appts_radioButton.setChecked(True) 
         om_gui.ui.weekView_smartSelection_checkBox.setCheckState(
-            QtCore.Qt.Checked)            
-        om_gui.ui.all_appts_radioButton.setChecked(False)
-    om_gui.ui.day_schedule_tabWidget.setVisible(val)
-    om_gui.ui.week_schedule_tabWidget.setVisible(val)
+            QtCore.Qt.Checked)           
+    om_gui.ui.week_schedule_tabWidget.setVisible(scheduling)
     
 def aptOVlabelClicked(om_gui, sd):
     '''
@@ -873,15 +862,14 @@ def findApptButtonClicked(om_gui):
     '''
     appt = om_gui.pt.selectedAppt
 
-    QtCore.QObject.disconnect(om_gui.ui.main_tabWidget,
-    QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
+    om_gui.signals_tabs(False) #disconnect slots
     
     om_gui.ui.dayCalendar.setSelectedDate(appt.date)
     om_gui.ui.diary_tabWidget.setCurrentIndex(0)
     om_gui.ui.main_tabWidget.setCurrentIndex(1)
     
-    QtCore.QObject.connect(om_gui.ui.main_tabWidget,
-    QtCore.SIGNAL("currentChanged(int)"), om_gui.handle_mainTab)
+    om_gui.signals_tabs()
+    
     layout_dayView(om_gui)
 
 def makeDiaryVisible(om_gui):
@@ -1151,10 +1139,9 @@ def layout_weekView(om_gui):
     if om_gui.ui.day_schedule_checkBox.isChecked():
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
-        offerAppt(om_gui)
+        addWeekViewAvailableSlots(om_gui, om_gui.min_week_slotlength)
 
     for ov in om_gui.ui.apptoverviews:
-        #--repaint widgets
         ov.update()
 
 @localsettings.monitor

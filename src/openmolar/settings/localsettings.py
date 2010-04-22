@@ -88,17 +88,12 @@ def debug(func):
 
 def monitor(func):
     if DEBUGGING:
-        def callf(*args, **kwargs):
-            print "==MONITOR=="*2, currentTime(), "===="*2
-            print "    Function %s"% (func.__name__)
-            print "    Called by ",
-            print inspect.getframeinfo(inspect.currentframe().f_back)[2]
-            
-            r = func(*args, **kwargs)
-            return r
-        return callf
-    else:
-        return func
+        print "==MONITOR==", 
+        print "    Function %s"% (func.__name__),
+        print currentTime()
+        #print "    Called by ",
+        #print inspect.getframeinfo(inspect.currentframe().f_back)[2]
+    return func
         
 
 def determine_path ():
