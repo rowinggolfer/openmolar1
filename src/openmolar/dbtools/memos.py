@@ -20,8 +20,8 @@ class memo():
         self.open=False
     def setMessage(self, arg):
         try:
-            self.message = unicode(arg,encoding=localsettings.ENCODING,
-            errors="replace")
+            self.message = unicode(arg, encoding=localsettings.ENCODING,
+            errors = "replace")
         except:
             print "unicode error with ",arg
 
@@ -30,7 +30,8 @@ def getMemos(serialno):
     db=connect()
 
     query = '''select ix,serialno,author,type,mdate,message from ptmemos 
-    where serialno=%d and open=1 and expiredate>=curdate()''' %serialno
+    where serialno=%d and open=1 and 
+    (expiredate is NULL or expiredate >= curdate())''' %serialno
     
     if localsettings.station == "surgery":
         query += ' and (type ="surg" or type = "all")'

@@ -659,7 +659,6 @@ def adjustDiaryColWidths(om_gui, arg=None):
     for col in range(om_gui.ui.pt_diary_treeView.model().columnCount(arg)):
         om_gui.ui.pt_diary_treeView.resizeColumnToContents(col)
 
-@localsettings.monitor
 def layout_ptDiary(om_gui):
     '''
     populates the patient's diary
@@ -667,7 +666,9 @@ def layout_ptDiary(om_gui):
     name = om_gui.pt.fname + " " + om_gui.pt.sname
     appts = appointments.get_pts_appts(om_gui.pt)
     om_gui.pt_diary_model.addAppointments(appts)
+    om_gui.ui.pt_diary_treeView.clearSelection()
     om_gui.ui.pt_diary_treeView.expandAll()
+    om_gui.pt.setSelectedAppt(None)
     index = om_gui.pt_diary_model.parents.get(1, None)
     ##collapse past appointments
     past_index = om_gui.pt_diary_model.createIndex(0,0,index)
@@ -680,6 +681,8 @@ def layout_ptDiary(om_gui):
     for appt in appts:
         if not appt.past: 
             om_gui.apt_drag_model.addAppointment(appt)
+    
+    
     
 def triangles(om_gui, call_update=True):
     ''''
@@ -712,7 +715,6 @@ def aptFontSize(om_gui, e):
     om_gui.ui.monthView.update()
     om_gui.ui.yearView.update()
 
-@localsettings.monitor
 def weekView_setScheduleMode(om_gui, scheduling=True):
     '''
     toggle between "scheduling" and "viewing modes"
@@ -847,7 +849,6 @@ def clearTodaysEmergencyTime(om_gui):
         if number_cleared > 0 and om_gui.ui.main_tabWidget.currentIndex() == 1:
             layout_dayView(om_gui)
 
-@localsettings.monitor
 def handle_aptOV_checkboxes(om_gui):
     '''
     user has altered one of the checkboxes on the appointment options
@@ -934,7 +935,6 @@ def addpubHol(om_gui, details):
     appointments.setPubHol(d, details)
     handle_calendar_signal(om_gui)
 
-@localsettings.monitor
 def layout_month(om_gui):
     '''
     grab month memos
@@ -956,7 +956,6 @@ def layout_month(om_gui):
 
     om_gui.ui.monthView.update()
 
-@localsettings.monitor
 def layout_year(om_gui):
     '''
     grab year memos
@@ -1039,7 +1038,6 @@ def getAllClinicians():
         retlist.append(localsettings.apptix.get(dent))
     return retlist    
 
-@localsettings.monitor
 def layout_weekView(om_gui):
     '''
     lay out the week view widget
@@ -1136,7 +1134,7 @@ def layout_weekView(om_gui):
                 ov.lunches[dent.ix] = appointments.getLunch(
                 ov.date.toPyDate(), dent.ix)
 
-    if om_gui.ui.day_schedule_checkBox.isChecked():
+    if om_gui.ui.week_schedule_checkBox.isChecked():
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
         addWeekViewAvailableSlots(om_gui, om_gui.min_week_slotlength)
@@ -1144,7 +1142,6 @@ def layout_weekView(om_gui):
     for ov in om_gui.ui.apptoverviews:
         ov.update()
 
-@localsettings.monitor
 def layout_dayView(om_gui):
     '''
     this populates the appointment book widgets (on maintab, pageindex 1)

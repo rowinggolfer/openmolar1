@@ -661,7 +661,6 @@ class openmolarGui(QtGui.QMainWindow):
                 return False
         return True
 
-    @localsettings.monitor
     def handle_mainTab(self):
         '''
         procedure called when user navigates the top tab
@@ -690,7 +689,6 @@ class openmolarGui(QtGui.QMainWindow):
                 self.ui.wiki_webView.setUrl(QtCore.QUrl(localsettings.WIKIURL))
                 self.wikiloaded = True
 
-    @localsettings.monitor
     def handle_patientTab(self):
         '''
         handles navigation of patient record
@@ -740,21 +738,18 @@ class openmolarGui(QtGui.QMainWindow):
             self.load_newEstPage()
             self.load_treatTrees()
 
-    @localsettings.monitor
     def day_schedule_checkBox_state(self, i):
         '''
         handles the state signal from the day_scheduling checkbox
         '''
         self.ui.week_schedule_checkBox.setChecked(i)
     
-    @localsettings.monitor    
     def day_schedule_tabWidget_changed(self, i):
         '''
         called when day_scedule_tabWidget is nav'd
         '''
         self.ui.week_schedule_tabWidget.setCurrentIndex(i)
     
-    @localsettings.monitor        
     def week_schedule_tabWidget_changed(self, i):
         '''
         called when week_scedule_tabWidget is nav'd
@@ -1890,7 +1885,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.advise("no file chosen", 1)
         self.loadpatient()
 
-    @localsettings.monitor
     def recallDate(self, arg):
         '''
         receives a signal when the date changes in the recall date edit
@@ -1901,7 +1895,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.pt.recd = newdate
             self.updateDetails()
 
-    @localsettings.monitor
     def recallDate_shortcuts(self, arg):
         '''
         receives a signal when the date shortcut combobox is triggered
@@ -2257,7 +2250,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.ptDiary_selection(self, index)
 
-    @localsettings.monitor
     def pt_diary_expanded(self, arg):
         '''
         user has expanded an item in the patient's diary.
@@ -2408,7 +2400,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.fillEmptySlot(self, arg)
 
-    @localsettings.monitor
     def dayCalendar_changed(self):
         '''
         the calendar on the appointments overview page has changed.
@@ -2416,7 +2407,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.handle_calendar_signal(self)
           
-    @localsettings.monitor
     def customDateSignal(self, d):
         '''
         either the custom year or month calendar has emitted a date signal
@@ -2798,7 +2788,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         forum_gui_module.loadForum(self)
     
-    @localsettings.monitor
     def contractTab_navigated(self,i):
         '''
         the contract tab is changing
