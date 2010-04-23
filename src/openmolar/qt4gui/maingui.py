@@ -668,6 +668,7 @@ class openmolarGui(QtGui.QMainWindow):
         ci = self.ui.main_tabWidget.currentIndex()
 
         if ci ==1 :     #--user is viewing appointment book
+            appt_gui_module.dayView_setScheduleMode(self, False)
             appt_gui_module.makeDiaryVisible(self)
         else:
             appt_gui_module.weekView_setScheduleMode(self, False)
@@ -744,11 +745,25 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         self.ui.week_schedule_checkBox.setChecked(i)
     
+    def week_schedule_checkBox_state(self, i):
+        '''
+        handles the state signal from the week_scheduling checkbox
+        '''
+        self.ui.day_schedule_checkBox.setChecked(i)
+    
     def day_schedule_tabWidget_changed(self, i):
         '''
         called when day_scedule_tabWidget is nav'd
         '''
-        self.ui.week_schedule_tabWidget.setCurrentIndex(i)
+        if self.ui.day_schedule_tabWidget.isVisible():
+            self.ui.week_schedule_tabWidget.setCurrentIndex(i)            
+            if i == 1:
+                if (self.ui.dayView_smartSelection_checkBox.checkState() == 
+                    QtCore.Qt.PartiallyChecked):
+                    self.ui.dayView_smartSelection_checkBox.setChecked(True)
+            else:
+                self.ui.dayView_smartSelection_checkBox.setCheckState(
+                    QtCore.Qt.PartiallyChecked)
     
     def week_schedule_tabWidget_changed(self, i):
         '''
@@ -763,7 +778,14 @@ class openmolarGui(QtGui.QMainWindow):
             else:
                 self.ui.weekView_smartSelection_checkBox.setCheckState(
                     QtCore.Qt.PartiallyChecked)
-            
+    
+    def day_schedule_mode_clicked(self):
+        '''
+        handles scheduling checkbox clicked
+        '''
+        i = self.ui.day_schedule_checkBox.isChecked()
+        appt_gui_module.dayView_setScheduleMode(self, i)
+        
     def week_schedule_mode_clicked(self):
         '''
         handles the state signal from the week_scheduling checkbox
@@ -800,12 +822,6 @@ class openmolarGui(QtGui.QMainWindow):
         for book in self.ui.apptoverviews:
             book.update()
         
-    def schedule_mode_clicked(self):
-        '''
-        handles scheduling checkbox clicked
-        '''
-        appt_gui_module.handle_calendar_signal(self)
-
     def diary_tabWidget_nav(self, i):
         '''
         catches a signal that the diary tab widget has been moved
@@ -3711,6 +3727,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.goto_current_week_PushButton,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
+        
+        QtCore.QObject.connect(self.ui.week_schedule_checkBox,
+        QtCore.SIGNAL("stateChanged(int)"), self.week_schedule_checkBox_state)
     
         QtCore.QObject.connect(self.ui.week_schedule_checkBox,
         QtCore.SIGNAL("clicked()"), self.week_schedule_mode_clicked)
@@ -3719,7 +3738,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("stateChanged(int)"), self.day_schedule_checkBox_state)
         
         QtCore.QObject.connect(self.ui.day_schedule_checkBox,
-        QtCore.SIGNAL("clicked()"), self.schedule_mode_clicked)
+        QtCore.SIGNAL("clicked()"), self.day_schedule_mode_clicked)
         
         QtCore.QObject.connect(self.ui.day_schedule_tabWidget,
         QtCore.SIGNAL("currentChanged(int)"), 

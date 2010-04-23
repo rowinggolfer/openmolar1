@@ -715,6 +715,20 @@ def aptFontSize(om_gui, e):
     om_gui.ui.monthView.update()
     om_gui.ui.yearView.update()
 
+def dayView_setScheduleMode(om_gui, scheduling=True):
+    '''
+    toggle between "scheduling" and "viewing modes"
+    '''
+    om_gui.ui.day_schedule_checkBox.setChecked(scheduling)
+    if scheduling:
+        layout_ptDiary(om_gui)    
+        om_gui.ui.dayView_smartSelection_checkBox.setCheckState(
+            QtCore.Qt.PartiallyChecked)    
+    else:
+        om_gui.ui.dayView_smartSelection_checkBox.setCheckState(
+            QtCore.Qt.Checked)           
+    om_gui.ui.day_schedule_tabWidget.setVisible(scheduling)
+
 def weekView_setScheduleMode(om_gui, scheduling=True):
     '''
     toggle between "scheduling" and "viewing modes"

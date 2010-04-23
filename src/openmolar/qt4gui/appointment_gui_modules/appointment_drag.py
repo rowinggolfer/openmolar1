@@ -189,6 +189,7 @@ if __name__ == "__main__":
     class duckPt(object):
         def __init__(self):
             self.serialno = 1
+            self.title = "Mr"
             self.sname = "Neil"
             self.fname = "Wallace"
             self.cset = "P"

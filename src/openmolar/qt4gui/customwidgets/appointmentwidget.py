@@ -267,10 +267,17 @@ class appointmentCanvas(QtGui.QWidget):
         self.duplicateNo = -1 #use this for serialnos =0
         self.om_gui = om_gui
         self.dragging = False
+        self.drag_appt = None
         self.setAcceptDrops(True)
         
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
+            data = event.mimeData()
+            bstream = data.retrieveData("application/x-appointment",
+            QtCore.QVariant.ByteArray)
+            self.drag_appt = pickle.loads(bstream.toByteArray())
+
+            #event.setDropAction(QtCore.Qt.MoveAction)
             self.dragging = True
             event.accept()
         else:
@@ -278,7 +285,13 @@ class appointmentCanvas(QtGui.QWidget):
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
-            event.setDropAction(QtCore.Qt.MoveAction)
+            y = event.pos().y()
+            yOffset = self.height() / self.slotNo
+            row = int(y//yOffset)
+            if not self.rows.has_key(row):
+                self.dragging = True
+            else:
+                self.dragging = False                
             self.update()
             event.accept()
         else:
@@ -289,13 +302,16 @@ class appointmentCanvas(QtGui.QWidget):
         self.update()
 
     def dropEvent(self, event):
-        data = event.mimeData()
-        bstream = data.retrieveData("application/x-appointment",
-            QtCore.QVariant.ByteArray)
-        selected = pickle.loads(bstream.toByteArray())
-        self.dragging = False
-        print selected, "dropped succesfully"
-        event.accept()
+        print "drop event"
+        if self.dragging:
+            y = event.pos().y()
+            yOffset = self.height() / self.slotNo
+            row = int(y//yOffset)
+            
+            print self.drag_appt, "dropped succesfully"
+            event.accept()
+        else:
+            event.ignore()
 
     def setDayStartTime(self, sTime):
         '''

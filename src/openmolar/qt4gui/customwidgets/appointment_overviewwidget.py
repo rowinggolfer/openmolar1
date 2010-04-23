@@ -293,7 +293,6 @@ class bookWidget(QtGui.QWidget):
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
-            #self.dragging = True
             data = event.mimeData()
             bstream = data.retrieveData("application/x-appointment",
             QtCore.QVariant.ByteArray)
@@ -342,7 +341,6 @@ class bookWidget(QtGui.QWidget):
                 col+=1
 
             if allowDrop:
-                event.setDropAction(QtCore.Qt.MoveAction)
                 self.dragging = True
                 self.update()
                 event.accept()
