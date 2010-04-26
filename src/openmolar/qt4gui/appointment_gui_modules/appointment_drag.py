@@ -141,7 +141,7 @@ class draggableList(QtGui.QListView):
 
         pmap = QtGui.QPixmap(50 , selectedApp.length * self.pixels_per_min)
         pmap.fill(QtGui.QColor(127,0,0))
-        drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2))
+        drag.setHotSpot(QtCore.QPoint(-10,0)) #QtCore.QPoint(pmap.width()/2, pmap.height()/2))
         drag.setPixmap(pmap)
         
         drag.start(QtCore.Qt.CopyAction)
@@ -223,32 +223,39 @@ if __name__ == "__main__":
 
             self.OVbook = appointment_overviewwidget.bookWidget(1,
             "1000", "1200", 15, 2, self)
+            
             d1 = appointments.dentistDay(1)
-
             d1.start=1015
             d1.end=1145
             d1.memo="hello"
-
-            self.OVbook.dents=[d1,]
+            
+            d2 = appointments.dentistDay(4)
+            d2.start=1015
+            d2.end=1145
+            
+            self.OVbook.dents=[d1,d2]
             self.OVbook.clear()
             self.OVbook.init_dicts()
 
-            self.OVbook.setStartTime(d1)
-            self.OVbook.setEndTime(d1)
-            self.OVbook.setMemo(d1)
-            self.OVbook.setFlags(d1)
+            for d in (d1,d2):
+                self.OVbook.setStartTime(d)
+                self.OVbook.setEndTime(d)
+                self.OVbook.setMemo(d)
+                self.OVbook.setFlags(d)
 
             slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,45),1,20)
-            slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),1,10)
+            #slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),1,10)
+            slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),4,60)
+            
             self.OVbook.addSlot(slot)
             self.OVbook.addSlot(slot2)
             
-
             appt = appointments.aowAppt()
             appt.mpm = 10*60+30
             appt.length = 15
             appt.dent = 1
             self.OVbook.appts[1] = (appt,)
+
             emerg = appointments.aowAppt()
             emerg.mpm = 11*60+15
             emerg.length = 15
@@ -262,18 +269,12 @@ if __name__ == "__main__":
 
             layout.addWidget(self.listView)
             layout.addWidget(self.tw)
-
-            #self.connect(self.tw, QtCore.SIGNAL("currentChanged (int)"),
-            #    self.tabNav)
+            self.tw.setCurrentIndex(1)
 
             self.connect(self.OVbook, QtCore.SIGNAL("redrawn"),
                     self.listView.setScaling)
             self.connect(self.book, QtCore.SIGNAL("redrawn"),
                     self.listView.setScaling)
-
-        #def tabNav(self, index):
-        #    widg = self.tw.currentWidget()
-        #    self.listView.setScaling(widg.dragWidth, widg.dragScale)
 
     try:
         app = QtGui.QApplication([])

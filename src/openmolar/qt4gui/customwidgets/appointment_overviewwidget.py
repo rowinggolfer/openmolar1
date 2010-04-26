@@ -304,14 +304,14 @@ class bookWidget(QtGui.QWidget):
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
-            allowDrop = False
             col = 0
             columnCount = len(self.dents)
             if columnCount == 0:
                 event.ignore()
                 return #nothing to do... and division by zero errors!
             columnWidth = (self.width() - self.timeOffset) / columnCount
-
+            
+            allowDrop = False            
             for dent in self.dents:
                 if allowDrop:
                     break
@@ -325,18 +325,31 @@ class bookWidget(QtGui.QWidget):
                     startcell = (
                         slotstart - self.startTime)/self.slotLength
 
-                    rect = QtCore.QRect(leftx, startcell * self.slotHeight
-                    + self.headingHeight, columnWidth,
+                    top_line = startcell * self.slotHeight + self.headingHeight
+                    rect = QtCore.QRect(leftx, top_line, columnWidth,
                     (slot.length / self.slotLength) * self.slotHeight)
 
                     if rect.contains(event.pos()):
                         allowDrop = True
                         self.dropSlot = slot
-                        self.dropPos = event.pos()
-                        ## TODO - set self.dropOffset here...
-                        ## currently alway zero
-                        ## dropOffset is the number of minutes into the slot
-                        ## the drop will occurr
+                        
+                        pixel_offset = event.pos().y() - top_line 
+                        minutes = (pixel_offset/self.slotHeight * self.slotLength)
+                        offset = minutes - minutes%5
+                        if offset > 0:
+                            self.dropOffset = offset 
+                        else:
+                            self.dropOffset = 0
+                        if (self.dropOffset + self.drag_appt.length > 
+                        slot.length):
+                            self.dropOffset = slot.length - self.drag_appt.length
+                        
+                        #self.dropPos = QtCore.QPoint(leftx,
+                        #self.dropPos = event.pos()
+                        dropcell = (self.dropOffset+slotstart - 
+                            self.startTime)/self.slotLength
+                        dropY =  dropcell * self.slotHeight + self.headingHeight
+                        self.dropPos = QtCore.QPoint(event.pos().x(), dropY)
                         break
                 col+=1
 
@@ -378,6 +391,11 @@ class bookWidget(QtGui.QWidget):
             painter = QtGui.QPainter(self)
             painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
             painter.setBrush(BGCOLOR)
+            
+            red_pen = QtGui.QPen(QtCore.Qt.red,2)
+            grey_pen = QtGui.QPen(QtCore.Qt.gray,1)
+            black_pen = QtGui.QPen(QtCore.Qt.black, 1)
+            
             currentSlot = 0
             self.font.setPointSize(localsettings.appointmentFontSize)
             fm = QtGui.QFontMetrics(self.font)
@@ -417,7 +435,7 @@ class bookWidget(QtGui.QWidget):
                 leftx = self.timeOffset + col * columnWidth
                 rightx = self.timeOffset + (col+1) * columnWidth
                 ##headings
-                painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
+                painter.setPen(black_pen)
                 painter.setBrush(APPTCOLORS["HEADER"])
                 rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
                 painter.drawRect(rect)
@@ -443,7 +461,7 @@ class bookWidget(QtGui.QWidget):
                     painter.drawRect(rect)
 
                     ###slots
-                    painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
+                    painter.setPen(grey_pen)
                     for slot in self.freeslots[dent.ix]:
                         slotstart = localsettings.pyTimeToMinutesPastMidnight(
                             slot.date_time.time())
@@ -455,23 +473,34 @@ class bookWidget(QtGui.QWidget):
                         columnWidth,
                         (slot.length/self.slotLength)*self.slotHeight)
 
-                        ### this may be easier with 
-                        ### if slot == self.dropSlot??
-                        #if slot == self.dropSlot:
-                        
+                        #if self.dragging and slot == self.dropSlot:
+                        ## ^ didn't work as anticipated :(
                         if self.dragging and rect.contains(self.dropPos.x(), 
-                        self.dropPos.y()):
-                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
-                        else:
+                            self.dropPos.y()):
                             painter.setBrush(APPTCOLORS["SLOT"])
+                            painter.drawRect(rect)
 
-                        painter.drawRect(rect)
-                        painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
+                            painter.save()
+                            painter.setPen(red_pen)
+                            
+                            rect = QtCore.QRectF(leftx,
+                            self.dropPos.y(), columnWidth,
+                            (self.drag_appt.length/self.slotLength)*self.slotHeight)
+                            painter.drawRect(rect)
+                                                
+                            painter.drawLine(0, self.dropPos.y(),
+                                self.timeOffset, self.dropPos.y())
+                            painter.restore()
+                                                
+                        else:
+                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                            painter.drawRect(rect)
+                            
+                            painter.setPen(black_pen)
+                            painter.drawText(rect,QtCore.Qt.AlignHCenter,
+                                slot.date_time.strftime("%H:%M"))
 
-                        painter.drawText(rect,QtCore.Qt.AlignHCenter,
-                        slot.date_time.strftime("%H:%M"))
-
-                    painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
+                    painter.setPen(grey_pen)
 
                     ###emergencies
                     for appt in self.eTimes[dent.ix]:
@@ -489,12 +518,12 @@ class bookWidget(QtGui.QWidget):
                             else:
                                 painter.setBrush(APPTCOLORS["default"])                                
                             painter.drawRect(rect)
-                            painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
+                            painter.setPen(black_pen)
 
                             painter.drawText(rect,QtCore.Qt.AlignLeft,
                                 appt.reason)
 
-                    painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
+                    painter.setPen(grey_pen)
 
                     painter.setBrush(APPTCOLORS["LUNCH"])
                     for appt in self.lunches[dent.ix]:
@@ -509,12 +538,12 @@ class bookWidget(QtGui.QWidget):
                             (appt.length/self.slotLength) * self.slotHeight)
 
                             painter.drawRect(rect)
-                            painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
+                            painter.setPen(black_pen)
 
                             painter.drawText(rect,QtCore.Qt.AlignCenter,
                             "Lunch")
 
-                painter.setPen(QtGui.QPen(QtCore.Qt.gray,1))
+                painter.setPen(grey_pen)
 
                 ###appts
                 for appt in self.appts[dent.ix]:
@@ -530,13 +559,13 @@ class bookWidget(QtGui.QWidget):
                     columnWidth,(appt.length/self.slotLength)*self.slotHeight)
                     painter.drawRect(rect)
 
-                painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
+                painter.setPen(black_pen)
                 if col>0:
                     painter.drawLine(leftx,0,leftx,self.height())
                 col+=1
 
             if self.highlightedRect!=None:
-                painter.setPen(QtGui.QPen(QtCore.Qt.red,2))
+                painter.setPen(red_pen)
                 painter.setBrush(TRANSPARENT)
                 painter.drawRect(self.highlightedRect)
 
@@ -553,6 +582,7 @@ if __name__ == "__main__":
         print a
     def redrawn(a,b):
         print a,b
+        
     import sys
     localsettings.initiate(False)
     app = QtGui.QApplication(sys.argv)
@@ -585,12 +615,33 @@ if __name__ == "__main__":
     slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,17,35),4,20)
     form.addSlot(slot)
     form.addSlot(slot2)
-    form.appts[4] = ((2,900,40),(2,1000,15))
-    form.eTimes[4] = ((1115, 15), (1300, 60), (1600, 30))
-    form.lunches[4] = ((1300,60),)
-    form.appts[5] = ((2,1400,15),)
-    form.eTimes[5] = ((1115, 15), (1300, 60), (1600, 30))
-    form.lunches[5] = ((1300,60),)
+    
+    appt1 = appointments.aowAppt()
+    appt1.mpm = 9*60
+    appt1.length = 40
+    appt1.dent = 4
+    
+    appt2 = appointments.aowAppt()
+    appt2.mpm = 10*60
+    appt2.length = 15
+    appt2.dent = 4
+    
+    form.appts[4] = (appt1, appt2)
+    slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,45),4,20)
+    slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),4,10)
+    form.addSlot(slot)
+    form.addSlot(slot2)
+          
+    emerg = appointments.aowAppt()
+    emerg.mpm = 11*60+15
+    emerg.length = 15
+    emerg.reason = "emergency"
+    form.eTimes[4] = (emerg,)                   
+                  
+    #form.lunches[4] = ((1300,60),)
+    #form.appts[5] = ((2,1400,15),)
+    #form.eTimes[5] = ((1115, 15), (1300, 60), (1600, 30))
+    #form.lunches[5] = ((1300,60),)
 
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("AppointmentClicked"),clicktest)

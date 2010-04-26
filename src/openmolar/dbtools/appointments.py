@@ -25,11 +25,13 @@ class freeSlot(object):
         return self.date_time.time()
     
     def __cmp__(self, other):
-        if (self.date_time == other.date_time and
-        self.dent == other.dent and self.length == other.length):
-            return 1
-        else:
-            return 0
+        try:
+            if (self.date_time == other.date_time and
+            self.dent == other.dent and self.length == other.length):
+                return 1
+        except AttributeError:
+            pass
+        return 0
         
 class aowAppt(object):
     '''

@@ -498,7 +498,7 @@ def addWeekViewAvailableSlots(om_gui, minlength=None, moveOnToNextWeek=False):
                 if slot.date_time.date() == ov.date.toPyDate():
                     ov.addSlot(slot)
                 
-def makeAppt(om_gui, appt, slot, offset):
+def makeAppt(om_gui, appt, slot, offset=None):
     '''
     called by a click on my custom overview slot -
     user has selected an offered appointment
@@ -532,18 +532,25 @@ def makeAppt(om_gui, appt, slot, offset):
             return
 
     if slotlength > appt.length:
-        #--the slot selected is bigger than the appointment length so
-        #--fire up a dialog to allow for fine tuning
-        dl = finalise_appt_time.ftDialog(slot.time(), slotlength, 
-            appt.length, om_gui)
+        if offset==None:
+            #--the slot selected is bigger than the appointment length so
+            #--fire up a dialog to allow for fine tuning
+            dl = finalise_appt_time.ftDialog(slot.time(), slotlength, 
+                appt.length, om_gui)
 
-        if dl.exec_():
-            #--dialog accepted
-            selectedtime = localsettings.pyTimetoWystime(dl.selectedTime)
-            slotlength = appt.length #satisfies the next conditional code
+            if dl.exec_():
+                #--dialog accepted
+                selectedtime = localsettings.pyTimetoWystime(dl.selectedTime)
+                slotlength = appt.length #satisfies the next conditional code
+            else:
+                #--dialog cancelled
+                return
         else:
-            #--dialog cancelled
-            return
+            sel_mpm = localsettings.pyTimeToMinutesPastMidnight(slot.time())
+            selectedtime = localsettings.minutesPastMidnighttoWystime(
+                sel_mpm + offset)
+            slotlength = appt.length #satisfies the next conditional code
+            
     if slotlength == appt.length:
         #--ok... suitable appointment found
         message = "%s %s %s %s %s %s %s"% (
@@ -622,6 +629,7 @@ def ptDiary_selection(om_gui, index=None):
     '''
     called when the user selects an item from the pt's diary
     '''
+    print "ptDiary_selection"
     if index is None:
         appt = None
     else:
@@ -663,7 +671,7 @@ def layout_ptDiary(om_gui):
     '''
     populates the patient's diary
     '''
-    name = om_gui.pt.fname + " " + om_gui.pt.sname
+    print "layout_ptDiary"
     appts = appointments.get_pts_appts(om_gui.pt)
     om_gui.pt_diary_model.addAppointments(appts)
     om_gui.ui.pt_diary_treeView.clearSelection()
@@ -671,7 +679,7 @@ def layout_ptDiary(om_gui):
     om_gui.pt.setSelectedAppt(None)
     index = om_gui.pt_diary_model.parents.get(1, None)
     ##collapse past appointments
-    past_index = om_gui.pt_diary_model.createIndex(0,0,index)
+    past_index = om_gui.pt_diary_model.createIndex(0, 0, index)
     om_gui.ui.pt_diary_treeView.collapse(past_index)
     
     adjustDiaryColWidths(om_gui)
@@ -681,8 +689,6 @@ def layout_ptDiary(om_gui):
     for appt in appts:
         if not appt.past: 
             om_gui.apt_drag_model.addAppointment(appt)
-    
-    
     
 def triangles(om_gui, call_update=True):
     ''''
@@ -715,31 +721,37 @@ def aptFontSize(om_gui, e):
     om_gui.ui.monthView.update()
     om_gui.ui.yearView.update()
 
-def dayView_setScheduleMode(om_gui, scheduling=True):
+def dayView_setScheduleMode(om_gui, scheduling=True, visible=True):
     '''
     toggle between "scheduling" and "viewing modes"
+    if visible is False, then this function has been called simply to 
+    syncronise the state with another scehduling page (weekview)
     '''
-    om_gui.ui.day_schedule_checkBox.setChecked(scheduling)
     if scheduling:
-        layout_ptDiary(om_gui)    
+        if visible:
+            layout_ptDiary(om_gui)    
         om_gui.ui.dayView_smartSelection_checkBox.setCheckState(
             QtCore.Qt.PartiallyChecked)    
     else:
+        om_gui.ui.day_schedule_checkBox.setChecked(False)
         om_gui.ui.dayView_smartSelection_checkBox.setCheckState(
             QtCore.Qt.Checked)           
     om_gui.ui.day_schedule_tabWidget.setVisible(scheduling)
 
-def weekView_setScheduleMode(om_gui, scheduling=True):
+def weekView_setScheduleMode(om_gui, scheduling=True, visible=True):
     '''
     toggle between "scheduling" and "viewing modes"
+    if visible is False, then this function has been called simply to 
+    syncronise the state with another scehduling page (dayview)
     '''
-    om_gui.ui.week_schedule_checkBox.setChecked(scheduling)
     if scheduling:
         om_gui.ui.cp_only_radioButton.setChecked(True) # current pt only
-        layout_ptDiary(om_gui)    
+        if visible:
+            layout_ptDiary(om_gui)    
         om_gui.ui.weekView_smartSelection_checkBox.setCheckState(
             QtCore.Qt.PartiallyChecked)    
     else:
+        om_gui.ui.week_schedule_checkBox.setChecked(False)
         om_gui.ui.all_appts_radioButton.setChecked(True) 
         om_gui.ui.weekView_smartSelection_checkBox.setCheckState(
             QtCore.Qt.Checked)           
@@ -1170,12 +1182,18 @@ def layout_dayView(om_gui):
 
     d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False
-    if om_gui.ui.dayView_smartSelection_checkBox.isChecked():
+    
+    if (om_gui.ui.dayView_smartSelection_checkBox.checkState() == 
+    QtCore.Qt.Checked):
         workingOnly = True
-        dents = "ALL"
+        dents="ALL"
+    elif (om_gui.ui.dayView_smartSelection_checkBox.checkState() == 
+    QtCore.Qt.PartiallyChecked):
+        dents = om_gui.apt_drag_model.involvedClinicians 
     else:
-        dents = tuple(getUserCheckedClinicians(om_gui))
+        dents = tuple(getUserCheckedClinicians(om_gui, "day"))
 
+    print "dents=",dents
     om_gui.appointmentData.setDate(d)
     om_gui.appointmentData.getAppointments(workingOnly, dents)
 

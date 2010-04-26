@@ -739,18 +739,6 @@ class openmolarGui(QtGui.QMainWindow):
             self.load_newEstPage()
             self.load_treatTrees()
 
-    def day_schedule_checkBox_state(self, i):
-        '''
-        handles the state signal from the day_scheduling checkbox
-        '''
-        self.ui.week_schedule_checkBox.setChecked(i)
-    
-    def week_schedule_checkBox_state(self, i):
-        '''
-        handles the state signal from the week_scheduling checkbox
-        '''
-        self.ui.day_schedule_checkBox.setChecked(i)
-    
     def day_schedule_tabWidget_changed(self, i):
         '''
         called when day_scedule_tabWidget is nav'd
@@ -792,6 +780,20 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         i = self.ui.week_schedule_checkBox.isChecked()
         appt_gui_module.weekView_setScheduleMode(self, i)
+        
+    def day_schedule_checkBox_state(self, i):
+        '''
+        handles the state signal from the day_scheduling checkbox
+        '''
+        self.ui.week_schedule_checkBox.setChecked(i)
+        appt_gui_module.weekView_setScheduleMode(self, i, False)
+        
+    def week_schedule_checkBox_state(self, i):
+        '''
+        handles the state signal from the week_scheduling checkbox
+        '''
+        self.ui.day_schedule_checkBox.setChecked(i)
+        appt_gui_module.dayView_setScheduleMode(self, i, False)
         
     def dayLV_appointmentSelected(self, appt):
         '''
@@ -2515,9 +2517,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user has been offered a slot, and accepted it.
         the argument provides the required details
         '''
-        appt_gui_module.makeAppt(self, self.pt.selectedAppt, slot, 0)
+        appt_gui_module.makeAppt(self, self.pt.selectedAppt, slot)
     
-    def aptOVwidget_dropped_appointment(self, appt, slot, offset=0):
+    def aptOVwidget_dropped_appointment(self, appt, slot, offset):
         '''
         user has dropped an appointment into a free slot on a week view widget
         '''
