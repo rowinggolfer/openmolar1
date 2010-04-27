@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_10">
            <attribute name="icon">
@@ -472,7 +472,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>758</width>
+                        <width>476</width>
                         <height>469</height>
                        </rect>
                       </property>
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>758</width>
+                        <width>568</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2674,7 +2674,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>758</width>
+                        <width>608</width>
                         <height>489</height>
                        </rect>
                       </property>
@@ -2991,8 +2991,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>575</width>
-                        <height>443</height>
+                        <width>109</width>
+                        <height>134</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3191,7 +3191,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>525</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3224,7 +3224,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>197</width>
                         <height>544</height>
                        </rect>
                       </property>
@@ -3597,8 +3597,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>781</width>
-                        <height>443</height>
+                        <width>267</width>
+                        <height>392</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4144,7 +4144,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>1</number>
+               <number>4</number>
               </property>
               <widget class="QWidget" name="tab_26">
                <attribute name="title">
@@ -5112,11 +5112,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </widget>
               <widget class="QWidget" name="tab_27">
                <attribute name="title">
-                <string>Tasks</string>
+                <string>Staff Diaries</string>
                </attribute>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <item>
-                 <widget class="QScrollArea" name="tasks_scrollArea">
+                 <widget class="QScrollArea" name="diaries_scrollArea">
                   <property name="widgetResizable">
                    <bool>true</bool>
                   </property>
@@ -5125,8 +5125,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>973</width>
+                     <height>513</height>
                     </rect>
                    </property>
                   </widget>

@@ -943,8 +943,9 @@ def handle_calendar_signal(om_gui):
             layout_year(om_gui)
             layout_yearHeader(om_gui)
         elif i==4:
-            om_gui.taskView.layoutTasks()
-
+            #om_gui.taskView.layoutTasks()
+            pass
+            
 def updateDayMemos(om_gui, memos):
     '''
     user has added some memos

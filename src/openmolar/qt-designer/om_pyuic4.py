@@ -17,7 +17,7 @@ def compile_ui(ui_fname, outdir=""):
     outname = "Ui_%s.py"% name.rstrip(".ui")
     pyfile = os.path.join(outdir, outname)
 
-    makeEx = False  ## can be switched to make executable ui files
+    makeEx = False ## can be switched to make executable ui files
 
     f = open(pyfile,"w")
     uic.compileUi(ui_fname, f, execute=makeEx)

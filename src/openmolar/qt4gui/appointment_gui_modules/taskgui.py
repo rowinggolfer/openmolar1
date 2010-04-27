@@ -10,6 +10,11 @@
 a module housing all appointment functions that act on the gui
 '''
 
+
+
+############DEPRECATED################
+
+
 import datetime
 
 from PyQt4 import QtCore, QtGui
@@ -85,7 +90,7 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication(sys.argv)
 
-    localsettings.initiate()
+    localsettings.initiateUsers()
     print localsettings.allowed_logins
     form = taskViewer()
     form.layoutTasks()

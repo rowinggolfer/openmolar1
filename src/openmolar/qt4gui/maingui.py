@@ -41,7 +41,6 @@ from openmolar.qt4gui import new_patient_gui
 from openmolar.qt4gui.printing import om_printing
 
 from openmolar.qt4gui.appointment_gui_modules import appt_gui_module
-from openmolar.qt4gui.appointment_gui_modules import taskgui
 from openmolar.qt4gui.appointment_gui_modules import appointment_drag
 from openmolar.qt4gui.appointment_gui_modules import pt_diary_treemodel
 
@@ -118,6 +117,7 @@ from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import calendars
 from openmolar.qt4gui.customwidgets import notification_widget
 from openmolar.qt4gui.customwidgets import dent_hyg_selector
+from openmolar.qt4gui.customwidgets import staff_diaries
 
 class openmolarGui(QtGui.QMainWindow):
 
@@ -464,8 +464,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.estWidget=estimateWidget.estWidget()
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
-        self.taskView = taskgui.taskViewer()
-        self.ui.tasks_scrollArea.setWidget(self.taskView)
+        self.staffDiary = staff_diaries.Diary()
+        self.ui.diaries_scrollArea.setWidget(self.staffDiary)
 
         #--history
         self.addHistoryMenu()

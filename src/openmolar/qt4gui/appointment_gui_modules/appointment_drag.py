@@ -139,10 +139,10 @@ class draggableList(QtGui.QListView):
         drag.setMimeData(mimeData)
         drag.setDragCursor(QtGui.QPixmap(), QtCore.Qt.MoveAction)
 
-        pmap = QtGui.QPixmap(50 , selectedApp.length * self.pixels_per_min)
-        pmap.fill(QtGui.QColor(127,0,0))
+        #pmap = QtGui.QPixmap(50 , selectedApp.length * self.pixels_per_min)
+        #pmap.fill(QtGui.QColor(127,0,0))
         drag.setHotSpot(QtCore.QPoint(-10,0)) #QtCore.QPoint(pmap.width()/2, pmap.height()/2))
-        drag.setPixmap(pmap)
+        #drag.setPixmap(pmap)
         
         drag.start(QtCore.Qt.CopyAction)
 

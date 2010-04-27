@@ -473,10 +473,12 @@ class bookWidget(QtGui.QWidget):
                         columnWidth,
                         (slot.length/self.slotLength)*self.slotHeight)
 
-                        #if self.dragging and slot == self.dropSlot:
-                        ## ^ didn't work as anticipated :(
-                        if self.dragging and rect.contains(self.dropPos.x(), 
-                            self.dropPos.y()):
+                        if self.dragging and slot is self.dropSlot:
+                            #print "DROPSLOT"
+                            ## ^ didn't work as anticipated :(
+                            #if self.dragging and rect.contains(self.dropPos.x(), 
+                            #self.dropPos.y()):
+                            
                             painter.setBrush(APPTCOLORS["SLOT"])
                             painter.drawRect(rect)
 
