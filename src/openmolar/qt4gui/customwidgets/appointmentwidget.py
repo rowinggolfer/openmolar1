@@ -268,6 +268,7 @@ class appointmentCanvas(QtGui.QWidget):
         self.om_gui = om_gui
         self.dragging = False
         self.drag_appt = None
+        self.drop_time = None
         self.setAcceptDrops(True)
         
     def dragEnterEvent(self, event):
@@ -277,41 +278,54 @@ class appointmentCanvas(QtGui.QWidget):
             QtCore.QVariant.ByteArray)
             self.drag_appt = pickle.loads(bstream.toByteArray())
 
-            #event.setDropAction(QtCore.Qt.MoveAction)
-            self.dragging = True
             event.accept()
         else:
             event.ignore()
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
+            allowDrop = True            
+        
             y = event.pos().y()
             yOffset = self.height() / self.slotNo
-            row = int(y//yOffset)
-            if not self.rows.has_key(row):
-                self.dragging = True
+            self.drag_startrow = int(y//yOffset)
+            if self.drag_startrow < self.firstSlot-1:
+                allowDrop = False
             else:
-                self.dragging = False                
+                n_rows = self.drag_appt.length // self.slotDuration
+                self.drag_endrow = self.drag_startrow+n_rows
+                
+                for row in range(self.drag_startrow, self.drag_endrow):
+                    if self.rows.has_key(row) or row >= self.lastSlot:
+                        allowDrop = False
+                        break
+
+            if allowDrop:
+                self.dragging = True
+                self.drop_time = self.getTime_from_Cell(self.drag_startrow)
+                self.update()
+                event.accept()
+            else:
+                self.dragging = False
+                self.update()
+                event.ignore()
+        else:
             self.update()
             event.accept()
-        else:
-            event.ignore()
-
+    
     def dragLeaveEvent(self, event):
         self.dragging = False
         self.update()
+        event.accept()
 
     def dropEvent(self, event):
-        print "drop event"
-        if self.dragging:
-            y = event.pos().y()
-            yOffset = self.height() / self.slotNo
-            row = int(y//yOffset)
+        self.dragging = False
+        self.emit(QtCore.SIGNAL("ApptDropped"), self.drag_appt, 
+            self.drop_time, self.pWidget.apptix)
+        self.drag_appt = None
+        self.dropOffset = 0
+        event.accept()            
             
-            print self.drag_appt, "dropped succesfully"
-            event.accept()
-        else:
-            event.ignore()
 
     def setDayStartTime(self, sTime):
         '''
@@ -410,6 +424,13 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         return int((self.minutesPastMidnight(t) - self.dayStartTime)
         / self.slotDuration)
+
+    def getTime_from_Cell(self, row):
+        '''
+        you know the row.. what time is that
+        '''
+        mpm = self.slotDuration * row + self.dayStartTime
+        return localsettings.minutesPastMidnightToPyTime(mpm)
 
     def getPrev(self, arg):
         '''
@@ -572,6 +593,8 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         draws the book - recalled at any point by instance.update()
         '''
+        red_pen = QtGui.QPen(QtCore.Qt.red,2)
+        
         painter = QtGui.QPainter(self)
         currentSlot = 0
         myfont = QtGui.QFont(self.fontInfo().family(),
@@ -591,10 +614,7 @@ class appointmentCanvas(QtGui.QWidget):
 
         #define and draw the white boundary
 
-        if self.dragging:
-            painter.setBrush(QtGui.QColor("yellow"))
-        else:
-            painter.setBrush(colours.APPT_Background)
+        painter.setBrush(colours.APPT_Background)
         painter.setPen(QtGui.QPen(colours.APPT_Background,1))
 
         top = (self.firstSlot-1) * slotHeight
@@ -621,7 +641,7 @@ class appointmentCanvas(QtGui.QWidget):
                 painter.setPen(QtGui.QPen(LINECOLOR, 1))
                 painter.drawLine(timeWidth+1, y, self.width()-1, y)
             if textneeded:
-                trect=QtCore.QRect(0, y,
+                trect=QtCore.QRectF(0, y,
                 timeWidth,y + self.textDetail * slotHeight)
 
                 painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
@@ -672,7 +692,7 @@ class appointmentCanvas(QtGui.QWidget):
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
             trt3,memo,flag,cset)=appt
 
-            rect=QtCore.QRect(self.width()-timeWidth,startcell*slotHeight,
+            rect=QtCore.QRectF(self.width()-timeWidth,startcell*slotHeight,
             self.width()-timeWidth,slotHeight)
 
             painter.setBrush(APPTCOLORS["DOUBLE"])
@@ -683,7 +703,7 @@ class appointmentCanvas(QtGui.QWidget):
         ##highlight current time
         if self.setTime != "None":
             cellno = self.getCell_from_time(self.setTime)
-            painter.setPen(QtGui.QPen(QtCore.Qt.red,2))
+            painter.setPen(red_pen)
             painter.setBrush(QtCore.Qt.red)
             corner1 = [timeWidth*1.2,cellno*slotHeight]
             corner2 = [timeWidth,(cellno-0.5)*slotHeight]
@@ -695,6 +715,22 @@ class appointmentCanvas(QtGui.QWidget):
             corner3 = [self.width(),(cellno+0.5)*slotHeight]
             triangle = corner1+corner2+corner3
             painter.drawPolygon(QtGui.QPolygon(triangle))
+            
+        if self.dragging:
+            painter.setPen(red_pen)
+            y = self.drag_startrow *slotHeight
+            y2 = self.drag_endrow * slotHeight
+            painter.drawLine(0, y, self.width(), y)
+            painter.setBrush(QtGui.QColor("yellow"))
+        
+        
+            trect = QtCore.QRectF(timeWidth, y, self.width()-timeWidth, y2-y) 
+            painter.drawRect(trect)
+            
+            droptime = self.drop_time.strftime("%H:%M")
+            trect = QtCore.QRectF(0, y, timeWidth, y2-y)                
+            painter.drawRect(trect)
+            painter.drawText(trect, QtCore.Qt.AlignHCenter, droptime)
 
         self.pWidget.emit(QtCore.SIGNAL("redrawn"), colwidth, dragScale)
         

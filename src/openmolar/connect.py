@@ -32,7 +32,7 @@ if sslnode and sslnode[0].firstChild.data=="True":
     #-- to enable ssl... add <ssl>True</ssl> to the conf file
     print "using ssl"
     #-- note, dictionary could have up to 5 params.
-    #--ca, cert, key, capath and cipher
+    #-- ca, cert, key, capath and cipher
     #-- however, IIUC, just using ca will encrypt the data
     ssl_settings = {'ca': '/etc/mysql/ca-cert.pem'}
 else:

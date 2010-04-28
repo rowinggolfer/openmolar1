@@ -2418,6 +2418,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.fillEmptySlot(self, arg)
 
+    def apptBook_apptDropped(self, appt, droptime, dent):
+        '''
+        a custom widget (dentist diary) has sent a signal that an
+        appointment has been dropped into it
+        '''
+        appt_gui_module.appt_dropped_onto_daywidget(self, appt, droptime, dent)       
+        
     def dayCalendar_changed(self):
         '''
         the calendar on the appointments overview page has changed.
@@ -3775,6 +3782,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         book.connect(book, QtCore.SIGNAL("Appointment_into_EmptySlot"),
         self.apptBook_fillSlotSignal)
 
+        book.connect(book.canvas, QtCore.SIGNAL("ApptDropped"),
+        self.apptBook_apptDropped)
 
     def signals_appointmentOVTab(self):
         #appointment overview tab

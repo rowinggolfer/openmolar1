@@ -690,6 +690,7 @@ def layout_ptDiary(om_gui):
     for appt in appts:
         if not appt.past: 
             om_gui.apt_drag_model.addAppointment(appt)
+    print "involved clinicians = ", om_gui.apt_drag_model.involvedClinicians
     
 def triangles(om_gui, call_update=True):
     ''''
@@ -1353,6 +1354,28 @@ def fillEmptySlot(om_gui, tup):
     layout_dayView(om_gui)
     if pt.serialno == om_gui.pt.serialno:
         layout_ptDiary(om_gui)
+        
+def appt_dropped_onto_daywidget(om_gui, appt, droptime, dent):
+    '''
+    appointment has been dropped onto a daybook widget
+    appt is of type openmolar.dbtools.appointments.appt_class
+    droptime is a pytime
+    dent = numeric representation of dentist who's book was involved
+    '''
+    print "appointment_dropped_onto_daywidget", appt, droptime, dent
+    if appt.dent and appt.dent != dent:
+        #--the user has selected a slot with a different dentist
+        #--raise a dialog to check this was intentional!!
+        message = _('You have chosen an appointment with') + " %s<br />"% (
+        localsettings.apptix_reverse[dent])
+        message += _("Is this correct?")
+        
+        result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
+        QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
+
+        if result == QtGui.QMessageBox.Cancel:
+            #dialog rejected
+            return
 
 def aptOVlabelRightClicked(om_gui, d):
     '''

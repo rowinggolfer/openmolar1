@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-04-28 02:33+BST\n"
+"POT-Creation-Date: 2010-04-28 12:09+BST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -460,7 +460,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:293
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:299
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:84
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3890
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3899
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:57
 msgid "Confirm"
 msgstr ""
@@ -556,11 +556,13 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:523
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1369
 msgid "You have chosen an appointment with"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:525
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1371
 msgid "Is this correct?"
 msgstr ""
 
@@ -580,22 +582,22 @@ msgid "Error making appointment - sorry!"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1272
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1273
 msgid "Nothing to show!"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1302
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1303
 msgid "Do you want to unblock the selected slot?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1332
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1333
 msgid "unable to block - has the book been altered elsewhere?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1351
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1352
 msgid "unable to make appointment - has the book been altered elsewhere?"
 msgstr ""
 
@@ -6219,27 +6221,27 @@ msgstr ""
 msgid "no record selected"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2688
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2695
 msgid "error commiting changes"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3875
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3884
 msgid "Scrap the estimate and re-price everything?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3891
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3900
 msgid "apply an exmption to this estimate?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3896
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3905
 msgid "input needed"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3897
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3906
 msgid "maximum charge for the patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3897
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3906
 msgid "please enter the amount in pence, or leave as 0 for full exmption"
 msgstr ""
 

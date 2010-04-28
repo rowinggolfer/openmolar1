@@ -269,7 +269,7 @@ if __name__ == "__main__":
 
             layout.addWidget(self.listView)
             layout.addWidget(self.tw)
-            self.tw.setCurrentIndex(1)
+            #self.tw.setCurrentIndex(1)
 
             self.connect(self.OVbook, QtCore.SIGNAL("redrawn"),
                     self.listView.setScaling)
