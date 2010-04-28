@@ -344,8 +344,6 @@ class bookWidget(QtGui.QWidget):
                         slot.length):
                             self.dropOffset = slot.length - self.drag_appt.length
                         
-                        #self.dropPos = QtCore.QPoint(leftx,
-                        #self.dropPos = event.pos()
                         dropcell = (self.dropOffset+slotstart - 
                             self.startTime)/self.slotLength
                         dropY =  dropcell * self.slotHeight + self.headingHeight
@@ -388,6 +386,7 @@ class bookWidget(QtGui.QWidget):
         try:
             if len(self.dents) == 0:
                 return  #blank widget if no dents working
+            self.dragLine = None
             painter = QtGui.QPainter(self)
             painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
             painter.setBrush(BGCOLOR)
@@ -422,7 +421,7 @@ class bookWidget(QtGui.QWidget):
                     trect = QtCore.QRect(0,
                     0.8 * self.headingHeight + currentSlot * self.slotHeight,
                     self.timeOffset, self.textDetail * self.slotHeight)
-                    painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
+                    painter.setPen(black_pen)
 
                     painter.drawText(trect, QtCore.Qt.AlignHCenter,
                     localsettings.humanTime(
@@ -459,48 +458,6 @@ class bookWidget(QtGui.QWidget):
                 if self.flagDict[dent.ix]:
                     #don't draw a white canvas if dentist is out of office
                     painter.drawRect(rect)
-
-                    ###slots
-                    painter.setPen(grey_pen)
-                    for slot in self.freeslots[dent.ix]:
-                        slotstart = localsettings.pyTimeToMinutesPastMidnight(
-                            slot.date_time.time())
-                        startcell = (
-                        slotstart - self.startTime)/self.slotLength
-
-                        rect = QtCore.QRectF(leftx,
-                        startcell*self.slotHeight+self.headingHeight,
-                        columnWidth,
-                        (slot.length/self.slotLength)*self.slotHeight)
-
-                        if self.dragging and slot is self.dropSlot:
-                            #print "DROPSLOT"
-                            ## ^ didn't work as anticipated :(
-                            #if self.dragging and rect.contains(self.dropPos.x(), 
-                            #self.dropPos.y()):
-                            
-                            painter.setBrush(APPTCOLORS["SLOT"])
-                            painter.drawRect(rect)
-
-                            painter.save()
-                            painter.setPen(red_pen)
-                            
-                            rect = QtCore.QRectF(leftx,
-                            self.dropPos.y(), columnWidth,
-                            (self.drag_appt.length/self.slotLength)*self.slotHeight)
-                            painter.drawRect(rect)
-                                                
-                            painter.drawLine(0, self.dropPos.y(),
-                                self.timeOffset, self.dropPos.y())
-                            painter.restore()
-                                                
-                        else:
-                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
-                            painter.drawRect(rect)
-                            
-                            painter.setPen(black_pen)
-                            painter.drawText(rect,QtCore.Qt.AlignHCenter,
-                                slot.date_time.strftime("%H:%M"))
 
                     painter.setPen(grey_pen)
 
@@ -545,21 +502,72 @@ class bookWidget(QtGui.QWidget):
                             painter.drawText(rect,QtCore.Qt.AlignCenter,
                             "Lunch")
 
-                painter.setPen(grey_pen)
+                    painter.setPen(grey_pen)
 
-                ###appts
-                for appt in self.appts[dent.ix]:
-                    if appt.serialno == self.om_gui.pt.serialno:
-                        painter.setBrush(QtGui.QColor("orange"))                
-                    else:
-                        painter.setBrush(APPTCOLORS["BUSY"])
-                
-                    startcell = (appt.mpm - self.startTime) / self.slotLength
+                    ###appts
+                    for appt in self.appts[dent.ix]:
+                        if appt.serialno == self.om_gui.pt.serialno:
+                            painter.setBrush(QtGui.QColor("orange"))                
+                        else:
+                            painter.setBrush(APPTCOLORS["BUSY"])
+                    
+                        startcell = (appt.mpm - self.startTime) / self.slotLength
 
-                    rect = QtCore.QRectF(leftx,
-                    startcell*self.slotHeight+self.headingHeight,
-                    columnWidth,(appt.length/self.slotLength)*self.slotHeight)
-                    painter.drawRect(rect)
+                        rect = QtCore.QRectF(leftx,
+                        startcell*self.slotHeight+self.headingHeight,
+                        columnWidth,(appt.length/self.slotLength)*self.slotHeight)
+                        painter.drawRect(rect)
+
+                    ###slots
+                    painter.setPen(grey_pen)
+                    for slot in self.freeslots[dent.ix]:
+                        slotstart = localsettings.pyTimeToMinutesPastMidnight(
+                            slot.date_time.time())
+                        startcell = (
+                        slotstart - self.startTime)/self.slotLength
+
+                        rect = QtCore.QRectF(leftx,
+                        startcell*self.slotHeight+self.headingHeight,
+                        columnWidth,
+                        (slot.length/self.slotLength)*self.slotHeight)
+
+                        if self.dragging and slot is self.dropSlot:
+                            painter.setBrush(APPTCOLORS["SLOT"])
+                            painter.drawRect(rect)
+
+                            painter.save()
+                            painter.setPen(red_pen)
+                            
+                            height = (self.drag_appt.length/self.slotLength) \
+                                *self.slotHeight
+                        
+                            rect = QtCore.QRectF(leftx,
+                            self.dropPos.y(), columnWidth-1, height)
+                            painter.drawRect(rect)
+                            
+                            self.dragLine = QtCore.QLine(0, self.dropPos.y(),
+                                self.width(), self.dropPos.y())
+                            
+                            trect = QtCore.QRectF(0,
+                            self.dropPos.y(), self.timeOffset, height)
+                            
+                            droptime = localsettings.humanTime(
+                            (slot.mpm() + self.dropOffset))
+                            
+                            painter.drawRect(trect)
+                            painter.drawText(trect, QtCore.Qt.AlignHCenter,
+                                droptime)
+                            
+                            painter.restore()
+                            
+                        else:
+                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                            painter.drawRect(rect)
+                            
+                            painter.setPen(black_pen)
+                            painter.drawText(rect,QtCore.Qt.AlignHCenter,
+                                "%s mins"% slot.length)
+                                #slot.date_time.strftime("%H:%M"))
 
                 painter.setPen(black_pen)
                 if col>0:
@@ -570,6 +578,9 @@ class bookWidget(QtGui.QWidget):
                 painter.setPen(red_pen)
                 painter.setBrush(TRANSPARENT)
                 painter.drawRect(self.highlightedRect)
+            if self.dragLine:
+                painter.setPen(red_pen)
+                painter.drawLine(self.dragLine)
 
             self.emit(QtCore.SIGNAL("redrawn"), dragWidth, dragScale)
 

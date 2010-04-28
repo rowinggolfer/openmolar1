@@ -553,11 +553,12 @@ def makeAppt(om_gui, appt, slot, offset=None):
             
     if slotlength == appt.length:
         #--ok... suitable appointment found
-        message = "%s %s %s %s %s %s %s"% (
+        message = '''<center>%s<br />%s<br /><b>%s<br />%s
+        <br />%s</b></center>'''% (
         _("Confirm Make appointment for"),
-        appt.name, _("at"),
+        appt.name,
         localsettings.wystimeToHumanTime(selectedtime),
-        _("on"), localsettings.readableDate(slot.date()), 
+        localsettings.readableDate(slot.date()), 
         localsettings.apptix_reverse.get(selectedDent,"??"))
 
         #--get final confirmation

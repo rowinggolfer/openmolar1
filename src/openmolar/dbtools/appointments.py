@@ -23,6 +23,8 @@ class freeSlot(object):
         return self.date_time.date()
     def time(self):
         return self.date_time.time()
+    def mpm(self):
+        return localsettings.pyTimeToMinutesPastMidnight(self.time())
     
     def __cmp__(self, other):
         try:

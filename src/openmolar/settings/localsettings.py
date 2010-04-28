@@ -621,7 +621,7 @@ def humanTime(t):
     '1:40'
     '''
     hour, min = t//60, int(t)%60
-    return "%s:%02d"% (hour, min)
+    return "%d:%02d"% (hour, min)
 
 def setlogqueries():
     global logqueries
