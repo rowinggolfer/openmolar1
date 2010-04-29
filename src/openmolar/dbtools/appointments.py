@@ -21,10 +21,17 @@ class freeSlot(object):
         
     def date(self):
         return self.date_time.date()
+    
     def time(self):
         return self.date_time.time()
+
+    @property
     def mpm(self):
         return localsettings.pyTimeToMinutesPastMidnight(self.time())
+    
+    @property
+    def mpm_end(self):
+        return self.mpm + self.length
     
     def __cmp__(self, other):
         try:
@@ -1055,6 +1062,47 @@ code2, note, flag0, flag1, flag2, flag3):
     #db.close()
     return result
 
+def daydrop_appt(adate, appt, droptime, apptix):
+    '''
+    this is the procedure called when an appointment is dropped onto the 
+    day widget
+    '''
+    slots = future_slots(adate, adate, (apptix,), appt.length)
+    
+    date_time = datetime.datetime.combine(adate, droptime)
+
+    this_slot = freeSlot(date_time, apptix, appt.length)
+    
+    #-- check block still available!!    
+    found = False
+    for slot in slots:
+        if slot.mpm <= this_slot.mpm and slot.mpm_end >= this_slot.mpm_end:
+            found = True
+            break
+    
+    if not found:
+        print "slot doesn't fit"
+        return (False, True)
+    
+    try:
+        cset = ord(appt.cset[0])
+    except:
+        cset = 0
+
+    start_mpm = localsettings.pyTimeToMinutesPastMidnight(droptime)
+    
+    bl_start = localsettings.pyTimetoWystime(droptime)
+    bl_end = localsettings.minutesPastMidnighttoWystime(start_mpm+appt.length)
+    
+    print "making appointment"
+    result1 = make_appt(adate, apptix, bl_start, bl_end, appt.name, 
+    appt.serialno, appt.trt1, appt.trt2, appt.trt3, appt.memo, 1, cset , 0, 0)
+    
+    result2 = False
+    if result1:
+        result2 = pt_appt_made(appt.serialno, appt.aprix, adate, bl_start, apptix)
+    return (result1, result2)
+
 def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     '''
     this is the procedure called when makingan appointment via clicking on a
@@ -1082,7 +1130,7 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
 
     name = "%s %s *"% (pt.fname, pt.sname)
     try:
-        cset = ord(pt.cset)
+        cset = ord(pt.cset[0])
     except:
         cset = 0
 
@@ -1097,7 +1145,6 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     print "adjust pt diary"
     return pt_appt_made(pt.serialno, aprix, bldate, bl_start, apptix)
 
-@localsettings.debug
 def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     '''
     put a block in the book, with text set as reason
