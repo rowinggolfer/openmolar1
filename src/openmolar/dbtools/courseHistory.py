@@ -64,11 +64,16 @@ class txCourse():
                     _("Exam"), bgcolor, exam_details)
                     rows.append(cells)
 
-            for att in (_("perio"), _('xray'), _('anaes'), 
-            _('other'), _("custom")):
+            for att, con_att in (
+                ("perio",_("perio")),
+                ("xray",_('xray')), 
+                ("anaes",_('anaes')), 
+                ("other",_('other')), 
+                ("custom",_("custom"))
+                ):
                 if self.__dict__[att+planned] != "":
                     cells = "<th%s>%s</th><td%s>%s</td>"% (bgcolor, 
-                    att, bgcolor, self.__dict__[att+planned])
+                    con_att, bgcolor, self.__dict__[att+planned])
                     rows.append(cells)
 
             dentureWork = ""

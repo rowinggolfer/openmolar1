@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-04-29 09:31+BST\n"
+"POT-Creation-Date: 2010-05-03 11:43+BST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,32 +28,32 @@ msgstr ""
 msgid "Exam"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:67
-msgid "anaes"
-msgstr ""
-
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:67
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:68
 msgid "perio"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:67
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:69
 msgid "xray"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:68
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:70
+msgid "anaes"
+msgstr ""
+
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:71
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:545
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:557
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_specify_appointment.py:167
 msgid "other"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:68
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:72
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:546
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:558
 msgid "custom"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:81
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:86
 msgid "Denture Work"
 msgstr ""
 
