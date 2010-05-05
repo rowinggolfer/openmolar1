@@ -208,13 +208,13 @@ def select_apr_ix(om_gui, apr_ix):
     '''
     select the row of the model of the patient's diary where the appt is
     '''
+    print "select_apr_ix",
     result, index = om_gui.ui.pt_diary_treeView.model().findItem(apr_ix)
     if result:
         ptDiary_selection(om_gui, index)
-        om_gui.ui.pt_diary_treeView.setCurrentIndex(index)
     else:
-        print "select_apr_ix was unsucessful"
-
+        om_gui.ui.pt_diary_treeView.clearSelection()
+        
 def deletePastAppointments(om_gui):
     '''
     user has selected delete all past appointments for a patient
@@ -630,13 +630,15 @@ def ptDiary_selection(om_gui, index=None):
     '''
     called when the user selects an item from the pt's diary
     '''
-    print "ptDiary_selection"
+    print "ptDiary_selection", index
     if index is None:
         appt = None
+        om_gui.ui.pt_diary_treeView.clearSelection()
     else:
         appt = om_gui.ui.pt_diary_treeView.model().data(index,
         QtCore.Qt.UserRole)
-
+        om_gui.ui.pt_diary_treeView.setCurrentIndex(index)
+        
     om_gui.pt.setSelectedAppt(appt)
 
     if not appt:
@@ -677,7 +679,6 @@ def layout_ptDiary(om_gui):
     om_gui.pt_diary_model.addAppointments(appts)
     om_gui.ui.pt_diary_treeView.clearSelection()
     om_gui.ui.pt_diary_treeView.expandAll()
-    om_gui.pt.setSelectedAppt(None)
     index = om_gui.pt_diary_model.parents.get(1, None)
     ##collapse past appointments
     past_index = om_gui.pt_diary_model.createIndex(0, 0, index)
@@ -685,13 +686,15 @@ def layout_ptDiary(om_gui):
 
     adjustDiaryColWidths(om_gui)
 
+    if om_gui.pt.selectedAppt:
+        select_apr_ix(om_gui, om_gui.pt.selectedAppt.aprix)
+
     ## now update the models for drag/drop
     om_gui.apt_drag_model.clear()
     for appt in appts:
         if not appt.past:
             om_gui.apt_drag_model.addAppointment(appt)
-    print "involved clinicians = ", om_gui.apt_drag_model.involvedClinicians
-
+    
 def triangles(om_gui, call_update=True):
     ''''
     this moves a red line down the appointment books

@@ -74,7 +74,7 @@ def debug(func):
     '''
     a decorator function for debugging
     '''
-    if False:#DEBUGGING:
+    if DEBUGGING:
         def callf(*args, **kwargs):
             print "===="*2, currentTime(), "===="*2
             print "Calling %s:%s, %s"% (func.__name__, args, kwargs)

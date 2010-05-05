@@ -272,7 +272,7 @@ if __name__ == "__main__":
                 
     app = QtGui.QApplication([])
     localsettings.initiate()
-    
+    localsettings.loadFeeTables()
     model = treeModel(localsettings.FEETABLES.tables[3])
     
     dialog = QtGui.QDialog()

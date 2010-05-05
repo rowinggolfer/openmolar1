@@ -2275,6 +2275,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         user has selected an appointment in the patient's diary
         '''
+        print "pt_diary_clicked", index
         appt_gui_module.ptDiary_selection(self, index)
 
     def pt_diary_expanded(self, arg):

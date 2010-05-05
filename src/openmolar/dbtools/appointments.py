@@ -109,8 +109,9 @@ class appt_class(object):
                 self.future = self.date > today
 
     def __repr__(self):
-        return "serialno=%s %s scheduled=%s dent=%s ix=%s"%(self.serialno,
-        self.date, not self.unscheduled, self.dent_inits, self.aprix)
+        return "serialno=%s %s scheduled=%s dent=%s trt=%s ix=%s"%(
+        self.serialno, self.date, not self.unscheduled, self.dent_inits, 
+        self.trt1, self.aprix)
 
 class daySummary(object):
     '''

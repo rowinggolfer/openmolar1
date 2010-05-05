@@ -19,7 +19,7 @@ import datetime
 
 CATEGORIES = ("", _("View Past Appointments") ,_("Unscheduled"))
 HORIZONTAL_HEADERS = (_("Date & Time"), _("Practitioner"), _("Length"),
-_("Treatment"), _("Memo"))#, "ix")
+_("Treatment"), "ix", _("Memo"))
 
 class TreeItem(object):
     def __init__(self, category, appointment, parent=None, index=0):
@@ -31,7 +31,7 @@ class TreeItem(object):
                 localsettings.wystimeToHumanTime(appointment.atime) + "\t" +
                 localsettings.readableDate(appointment.date))
             else:
-                self.headerCol = ""  ## used to be "TBA"
+                self.headerCol = "TBA"  ## used to be "TBA"
         except AttributeError:
             self.headerCol = category
             self.isAppointment = False
@@ -64,10 +64,10 @@ class TreeItem(object):
             trt = "%s %s %s"% (self.appointment.trt1,
             self.appointment.trt2, self.appointment.trt3)
             return QtCore.QVariant(trt)
-        if column == 4:
+        if column == 5:
             return QtCore.QVariant(self.appointment.memo)
-        #if column == 5:
-        #    return QtCore.QVariant(self.appointment.aprix)
+        if column == 4:
+            return QtCore.QVariant(self.appointment.aprix)
 
         return QtCore.QVariant()
 
@@ -84,10 +84,10 @@ class treeModel(QtCore.QAbstractItemModel):
     a model to display a feetables data
     '''
     def __init__(self, parent=None):
-        super(QtCore.QAbstractItemModel, self).__init__(parent)
+        super(treeModel, self).__init__(parent)
         self.appointments = []
         self.rootItem = TreeItem("Appointments",None, None, None)
-        self.parents = {0:self.rootItem}
+        self.parents = {0 : self.rootItem}
 
     def addAppointments(self, appointments):
         if appointments != self.appointments:
@@ -98,7 +98,7 @@ class treeModel(QtCore.QAbstractItemModel):
     def clear(self):
         self.appointments = []
         self.rootItem = TreeItem("Appointments",None, None, None)
-        self.parents = {0:self.rootItem}
+        self.parents = {0 : self.rootItem}
         self.setupModelData()
         self.reset()
 
@@ -170,7 +170,7 @@ class treeModel(QtCore.QAbstractItemModel):
         childItem = index.internalPointer()
         if not childItem:
             return QtCore.QModelIndex()
-
+        
         parentItem = childItem.parent()
 
         if parentItem == None:
@@ -217,30 +217,32 @@ class treeModel(QtCore.QAbstractItemModel):
 
                 self.parents[cat] = parent
 
-            self.parents[cat].appendChild(TreeItem("", appt,
-                self.parents[cat] ))
+            self.parents[cat].appendChild(TreeItem("", appt, 
+                self.parents[cat]))
 
     def searchModel(self, appt):
         '''
-        get the modelIndex for a give appointment
+        get the modelIndex for a given appointment
         '''
-        matchflags = QtCore.Qt.MatchFlags(QtCore.Qt.MatchExactly)
         def searchNode(node):
             '''
             a function called recursively, looking at all nodes beneath node
             '''
+            
             for child in node.childItems:
-                index = self.createIndex(0, 0, child)
-                if appt == self.data(index, QtCore.Qt.UserRole):
+                data = child.appointment
+                if appt == data:
+                    index = self.createIndex(child.row(), 0, child)
                     return index
-                if child.childCount():
-                    searchNode(child)
-
-        for parent in self.parents.values():
-            ind = searchNode(parent)
-            if ind:
-                return ind
-
+                    
+                if child.childCount() > 0:
+                    result = searchNode(child)
+                    if result:
+                        return result
+        
+        return searchNode(self.parents[0])
+            
+        
     def findItem(self, apr_ix):
         '''
         get the model index of a specific appointment
@@ -252,16 +254,15 @@ class treeModel(QtCore.QAbstractItemModel):
                 break
         if appt:
             index = self.searchModel(appt)
-            if index:
-                return (True, index)
-        return (False, False)
+            return (True, index)            
+        return (False, None)
 
 if __name__ == "__main__":    
     from openmolar.dbtools import appointments
 
     class duckPt(object):
         def __init__(self):
-            self.serialno = 1
+            self.serialno = 707
             self.sname = "Neil"
             self.fname = "Wallace"
             self.cset = "P"
@@ -270,23 +271,46 @@ if __name__ == "__main__":
         for col in range(model.columnCount(arg)):
             tv.resizeColumnToContents(col)
     def appt_clicked(index):
+        print index, 
         print tv.model().data(index, QtCore.Qt.UserRole)
+        
+    def but_clicked():
+        appoint_number = int(dialog.sender().text())
+        result, index = model.findItem(appoint_number)
+        if result:
+            if index:
+                tv.setCurrentIndex(index)
+                return
+        tv.clearSelection()
+    
     app = QtGui.QApplication([])
     localsettings.initiate()
 
     appts = appointments.get_pts_appts(duckPt())
+    
     model = treeModel()
     model.addAppointments(appts)
     dialog = QtGui.QDialog()
 
     dialog.setMinimumSize(800,300)
-    layout = QtGui.QHBoxLayout(dialog)
+    layout = QtGui.QVBoxLayout(dialog)
 
     tv = QtGui.QTreeView(dialog)
     tv.setModel(model)
     tv.setAlternatingRowColors(True)
     layout.addWidget(tv)
     tv.expandAll()
+
+    buts = []
+    frame = QtGui.QFrame(dialog)
+    layout2 = QtGui.QHBoxLayout(frame)
+    for appt in appts:
+        but = QtGui.QPushButton(str(appt.aprix), frame)
+        buts.append(but)
+        layout2.addWidget(but)
+        QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"), but_clicked)
+        
+    layout.addWidget(frame)
 
     index = model.parents.get(1, None)
     if index:
@@ -298,11 +322,19 @@ if __name__ == "__main__":
     QtCore.QObject.connect(tv, QtCore.SIGNAL("clicked (QModelIndex)"),
         appt_clicked)
 
-    #appt = appts[-1]
-    #result, index = model.findItem(appt.aprix)
-    #if result:
-    #    print "found it!"
-    #    tv.setCurrentIndex(index)
     dialog.exec_()
 
+    
+    but = QtGui.QPushButton("Clear Selection")
+    layout.addWidget(but)
+    QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"), tv.clearSelection)
+
+
+    dialog.exec_()
     app.closeAllWindows()
+    
+    
+    
+    
+    
+    

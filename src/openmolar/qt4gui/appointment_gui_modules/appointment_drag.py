@@ -12,12 +12,14 @@ class simple_model(QtCore.QAbstractListModel):
         self.unscheduledList = []
         self.scheduledList = []
         self.list = []
+        self.selectedList = []
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
 
     def clear(self):
         self.unscheduledList = []
         self.scheduledList = []
         self.list = []
+        self.selectedList = []
         self.reset()
 
     @property
