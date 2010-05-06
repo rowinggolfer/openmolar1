@@ -208,12 +208,12 @@ def select_apr_ix(om_gui, apr_ix):
     '''
     select the row of the model of the patient's diary where the appt is
     '''
-    print "select_apr_ix",
-    result, index = om_gui.ui.pt_diary_treeView.model().findItem(apr_ix)
+    print "select_apr_ix"
+    result, index = om_gui.pt_diary_model.findItem(apr_ix)
     if result:
         ptDiary_selection(om_gui, index)
     else:
-        om_gui.ui.pt_diary_treeView.clearSelection()
+        ptDiary_selection(om_gui, None)
         
 def deletePastAppointments(om_gui):
     '''
@@ -243,7 +243,7 @@ def clearApptButtonClicked(om_gui):
             return True
         else:
             om_gui.advise(_("Error removing proposed appointment"), 2)
-    appt = om_gui.pt.selectedAppt
+    appt = om_gui.pt_diary_model.selectedAppt
     if appt == None:
         om_gui.advise(_("No appointment selected"), 1)
         return
@@ -309,7 +309,7 @@ def modifyAppt(om_gui):
     user is changing an appointment
     much of this code is a duplicate of make new appt
     '''
-    appt = om_gui.pt.selectedAppt
+    appt = om_gui.pt_diary_model.selectedAppt
 
     def makeNow():
         dl.makeNow = True
@@ -418,8 +418,8 @@ def begin_makeAppt(om_gui):
     make an appointment - switch user to "scheduling mode" and present the
     appointment overview to show possible appointments
     '''
-    appt = om_gui.pt.selectedAppt
-
+    appt = om_gui.pt_diary_model.selectedAppt
+    
     if appt == None:
         om_gui.advise(_("Please select an appointment to schedule"), 1)
         return
@@ -525,9 +525,9 @@ def makeAppt(om_gui, appt, slot, offset=None):
         message += _("Is this correct?")
 
         result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
-        QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
+        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
-        if result == QtGui.QMessageBox.Cancel:
+        if result == QtGui.QMessageBox.No:
             #dialog rejected
             return
 
@@ -630,7 +630,6 @@ def ptDiary_selection(om_gui, index=None):
     '''
     called when the user selects an item from the pt's diary
     '''
-    print "ptDiary_selection", index
     if index is None:
         appt = None
         om_gui.ui.pt_diary_treeView.clearSelection()
@@ -639,7 +638,7 @@ def ptDiary_selection(om_gui, index=None):
         QtCore.Qt.UserRole)
         om_gui.ui.pt_diary_treeView.setCurrentIndex(index)
         
-    om_gui.pt.setSelectedAppt(appt)
+    om_gui.pt_diary_model.setSelectedAppt(appt)
 
     if not appt:
         if index:
@@ -674,7 +673,6 @@ def layout_ptDiary(om_gui):
     '''
     populates the patient's diary
     '''
-    print "layout_ptDiary"
     appts = appointments.get_pts_appts(om_gui.pt)
     om_gui.pt_diary_model.addAppointments(appts)
     om_gui.ui.pt_diary_treeView.clearSelection()
@@ -684,10 +682,10 @@ def layout_ptDiary(om_gui):
     past_index = om_gui.pt_diary_model.createIndex(0, 0, index)
     om_gui.ui.pt_diary_treeView.collapse(past_index)
 
+    if om_gui.pt_diary_model.selectedAppt != None:
+        select_apr_ix(om_gui, om_gui.pt_diary_model.selectedAppt.aprix)
+    
     adjustDiaryColWidths(om_gui)
-
-    if om_gui.pt.selectedAppt:
-        select_apr_ix(om_gui, om_gui.pt.selectedAppt.aprix)
 
     ## now update the models for drag/drop
     om_gui.apt_drag_model.clear()
@@ -892,7 +890,7 @@ def findApptButtonClicked(om_gui):
     an appointment in the patient's diary is being searched for by the user
     goes to the main appointment page for that day
     '''
-    appt = om_gui.pt.selectedAppt
+    appt = om_gui.pt_diary_model.selectedAppt
 
     om_gui.signals_tabs(False) #disconnect slots
 
@@ -939,7 +937,6 @@ def handle_calendar_signal(om_gui):
         i = om_gui.ui.diary_tabWidget.currentIndex()
 
         if i==0:
-            print "tab widget call"
             layout_dayView(om_gui)
         elif i==1:
             layout_weekView(om_gui)
@@ -1376,10 +1373,9 @@ def appt_dropped_onto_daywidget(om_gui, appt, droptime, dent):
         message += _("Is this correct?")
 
         result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
-        QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
+        QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
-        if result == QtGui.QMessageBox.Cancel:
-            #dialog rejected
+        if result == QtGui.QMessageBox.No:
             return
     adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     

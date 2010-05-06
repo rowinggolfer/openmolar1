@@ -68,7 +68,7 @@ GP17_LEFT = 0
 GP17_TOP = 0
 
 WINDOWS = False
-DEBUGGING = "/home/neil" in os.getcwd()
+DEBUGGING = False #"/home/neil" in os.getcwd()
 
 def debug(func):
     '''

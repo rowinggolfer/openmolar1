@@ -2275,7 +2275,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         user has selected an appointment in the patient's diary
         '''
-        print "pt_diary_clicked", index
         appt_gui_module.ptDiary_selection(self, index)
 
     def pt_diary_expanded(self, arg):
@@ -2528,12 +2527,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.monthClinicianSelector.checkAll(QtCore.Qt.Unchecked)
         appt_gui_module.handle_calendar_signal(self)
 
-    def aptOVwidget_userHasChosen_appointment(self, slot):
+    def aptOVwidget_userHasChosen_slot(self, slot):
         '''
         user has been offered a slot, and accepted it.
         the argument provides the required details
         '''
-        appt_gui_module.makeAppt(self, self.pt.selectedAppt, slot)
+        appt_gui_module.makeAppt(self, self.pt_diary_model.selectedAppt, slot)
 
     def aptOVwidget_dropped_appointment(self, appt, slot, offset):
         '''
@@ -3887,7 +3886,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         for widg in self.ui.apptoverviews:
             widg.connect(widg, QtCore.SIGNAL("SlotClicked"),
-            self.aptOVwidget_userHasChosen_appointment)
+            self.aptOVwidget_userHasChosen_slot)
 
             widg.connect(widg, QtCore.SIGNAL("ApptDropped"),
             self.aptOVwidget_dropped_appointment)

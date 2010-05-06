@@ -88,13 +88,22 @@ class treeModel(QtCore.QAbstractItemModel):
         self.appointments = []
         self.rootItem = TreeItem("Appointments",None, None, None)
         self.parents = {0 : self.rootItem}
-
+        self.om_gui = parent
+        self.selectedAppt = None
+        
     def addAppointments(self, appointments):
         if appointments != self.appointments:
             self.clear()
             self.appointments = appointments
             self.setupModelData()
 
+    def setSelectedAppt(self, appt):
+        if appt and self.om_gui:
+            pt = self.om_gui.pt
+            appt.name = pt.fname + " " + pt.sname
+            appt.cset = pt.cset
+        self.selectedAppt = appt
+        
     def clear(self):
         self.appointments = []
         self.rootItem = TreeItem("Appointments",None, None, None)
