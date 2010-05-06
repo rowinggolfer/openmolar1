@@ -14,7 +14,7 @@ class simple_model(QtCore.QAbstractListModel):
         self.list = []
         self.selectedList = []
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
-
+        
     def clear(self):
         self.unscheduledList = []
         self.scheduledList = []
@@ -33,21 +33,36 @@ class simple_model(QtCore.QAbstractListModel):
             retarg.add(app.dent)
         return tuple(retarg)
 
-    def addAppointment(self, app):
+    def setAppointments(self, apps, selectedApp = None):
         '''
         add an appointment to this list - arg is of type dragAppointment
         '''
+        self.unscheduledList = []
+        self.scheduledList = []
+        self.list = []
+        self.selectedList = []
+            
         currentClinicians = self.involvedClinicians
-        if app.unscheduled:
-            self.unscheduledList.append(app)
-        else:
-            self.scheduledList.append(app)            
+        changedClinicians = True
+        
+        for app in apps:
+            if app.unscheduled:
+                self.unscheduledList.append(app)
+            else:
+                self.scheduledList.append(app)            
+            if app.dent not in currentClinicians:
+                changedClinicians = True
         self.list = self.scheduledList + self.unscheduledList
         self.reset()
-        
-        if app.dent not in currentClinicians:
+
+        if changedClinicians:
             self.emit(QtCore.SIGNAL("clinicianListChanged"))
 
+        if selectedApp in apps:
+            self.setSelectedAppt(selectedApp)
+        else:
+            self.setSelectedAppt(None)        
+        
     def rowCount(self, parent = QtCore.QModelIndex()):
         return len(self.list)
 
@@ -74,6 +89,14 @@ class simple_model(QtCore.QAbstractListModel):
         self.list = self.list[:position] + self.list[position+1:]
         self.reset()
 
+    def setSelectedAppt(self, appt):
+        try:
+            index = self.index(self.list.index(appt))
+            self.emit(QtCore.SIGNAL("selectedAppt"), index)
+        except ValueError:
+            self.emit(QtCore.SIGNAL("selectedAppt"), QtCore.QModelIndex())
+            
+    
 class blockModel(simple_model):
     '''
     customise the above model just for blocks
@@ -172,10 +195,11 @@ class draggableList(QtGui.QListView):
         
         currently, the model is a single selection
         '''
-        selected = selectedRange.first().topLeft()
-        selectedApp = self.model().data(selected,QtCore.Qt.UserRole)
+        index = selectedRange.first().topLeft()
+        selectedApp = self.model().data(index, QtCore.Qt.UserRole)
+        #self.model().setSelectedAppt(selectedApp)
         self.emit(QtCore.SIGNAL("appointmentSelected"), selectedApp)
-
+        
 if __name__ == "__main__":
     '''
     the try catch here is to ensure that the app exits cleanly no matter what
@@ -206,9 +230,8 @@ if __name__ == "__main__":
 
             self.model = simple_model()
             appts = appointments.get_pts_appts(duckPt())
-            for appt in appts:
-                if appt.unscheduled:
-                    self.model.addAppointment(appt)
+            
+            self.model.setAppointments(appts)
 
             self.listView = draggableList()
             self.listView.setModel(self.model)

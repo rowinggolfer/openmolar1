@@ -103,6 +103,7 @@ class treeModel(QtCore.QAbstractItemModel):
             appt.name = pt.fname + " " + pt.sname
             appt.cset = pt.cset
         self.selectedAppt = appt
+        self.emit(QtCore.SIGNAL("selectedAppt"),appt)
         
     def clear(self):
         self.appointments = []

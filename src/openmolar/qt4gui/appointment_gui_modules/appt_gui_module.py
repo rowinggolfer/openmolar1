@@ -208,7 +208,6 @@ def select_apr_ix(om_gui, apr_ix):
     '''
     select the row of the model of the patient's diary where the appt is
     '''
-    print "select_apr_ix"
     result, index = om_gui.pt_diary_model.findItem(apr_ix)
     if result:
         ptDiary_selection(om_gui, index)
@@ -688,10 +687,12 @@ def layout_ptDiary(om_gui):
     adjustDiaryColWidths(om_gui)
 
     ## now update the models for drag/drop
-    om_gui.apt_drag_model.clear()
     for appt in appts:
-        if not appt.past:
-            om_gui.apt_drag_model.addAppointment(appt)
+        if appt.past:
+            appts.remove(appt)
+    
+    om_gui.apt_drag_model.setAppointments(appts, 
+        om_gui.pt_diary_model.selectedAppt)
     
 def triangles(om_gui, call_update=True):
     ''''
@@ -1180,7 +1181,6 @@ def layout_dayView(om_gui):
     om_gui.ui.diary_tabWidget.currentIndex() != 0):
         return
 
-    print "layout_dayView"
     for book in om_gui.apptBookWidgets:
         book.clearAppts()
         book.setTime = "None"
@@ -1198,14 +1198,12 @@ def layout_dayView(om_gui):
     else:
         dents = tuple(getUserCheckedClinicians(om_gui, "day"))
 
-    print "dayview dents=",dents
     om_gui.appointmentData.setDate(d)
     om_gui.appointmentData.getAppointments(workingOnly, dents)
 
     om_gui.ui.daymemo_label.setText(om_gui.appointmentData.memo)
 
     todaysDents = om_gui.appointmentData.workingDents
-    print "todays dents", todaysDents
     number_of_books = len(todaysDents)
     while number_of_books > len(om_gui.apptBookWidgets):
         book = appointmentwidget.appointmentWidget(om_gui, "0800", "1900")

@@ -7,20 +7,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-05-03 14:27+0000\n"
-"PO-Revision-Date: 2010-05-03 15:02+0000\n"
+"POT-Creation-Date: 2010-05-06 02:45+0000\n"
+"PO-Revision-Date: 2010-05-05 17:45+0000\n"
 "Last-Translator: germana <germanaoliveirab@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-04 03:44+0000\n"
+"X-Launchpad-Export-Date: 2010-05-06 04:05+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/appointments.py:665
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:86
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:87
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/appointments.py:666
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:88
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:89
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:90
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/block_wizard.py:25
 msgid "emergency"
 msgstr "emergencia"
@@ -98,7 +98,7 @@ msgstr "Mensaje"
 msgid "Date"
 msgstr "Fecha"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/patient_class.py:670
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/patient_class.py:652
 msgid "Age Exemption removed"
 msgstr "Excepción de edad removida"
 
@@ -454,28 +454,28 @@ msgstr "COMPLETADO"
 msgid "PLAN"
 msgstr "PLAN"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:56
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:58
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:60
 msgid "mins"
 msgstr "minutos"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:59
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:61
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:264
 msgid "with"
 msgstr "con"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:83
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:84
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:85
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:86
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:154
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
 msgid "Lunch"
 msgstr "Almuerzo"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:85
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:87
 msgid "staff meeting"
 msgstr "reunión de personal"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:89
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:91
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
 msgid "Out of Office"
 msgstr "Fuera de la Oficina"
@@ -600,11 +600,11 @@ msgid "unable to block - has the book been altered elsewhere?"
 msgstr "no se puede bloquear - ¿se ha alterado el libro en otro lugar?"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1354
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1387
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1386
 msgid "unable to make appointment - has the book been altered elsewhere?"
 msgstr "no se puede hacer la cita - ¿se ha alterado el libro en otro lugar?"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1391
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1390
 msgid "unable to make make changes to the patient diary!"
 msgstr "No se pudieron hacer cambios al diario del paciente."
 

@@ -803,7 +803,23 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.day_schedule_checkBox.setChecked(i)
         appt_gui_module.dayView_setScheduleMode(self, i, False)
         self.signals_apptStateWidgets(True)
+    
+    def update_apt_drag_model(self, appt):
+        '''
+        receives a signal from the patient diary _model_ that the selected appt 
+        has changed.. pass this to the other models
+        '''
+        #self.apt_drag_model.setSelectedAppt(appt)
+        print "UNUSED update_apt_drag_model", appt
         
+    def update_appt_listViews(self, index):
+        '''
+        receives a signal from the model underlying both day and week drag 
+        listViews
+        '''
+        self.ui.day_appointment_listView.setCurrentIndex(index)
+        self.ui.week_appointment_listView.setCurrentIndex(index)
+            
     def dayLV_appointmentSelected(self, appt):
         '''
         user has selected appt on the day_selected ListView
@@ -3756,6 +3772,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.printMonth_pushButton,
         QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)
+        
+        QtCore.QObject.connect(self.pt_diary_model, 
+        QtCore.SIGNAL("selectedAppt"), self.update_apt_drag_model)
+        
+        QtCore.QObject.connect(self.apt_drag_model,
+        QtCore.SIGNAL("selectedAppt"), self.update_appt_listViews)
 
         self.signals_apptStateWidgets()
 
