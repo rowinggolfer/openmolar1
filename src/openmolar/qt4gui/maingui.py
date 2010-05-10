@@ -761,13 +761,8 @@ class openmolarGui(QtGui.QMainWindow):
         if self.ui.week_schedule_tabWidget.isVisible():
             self.ui.day_schedule_tabWidget.setCurrentIndex(i)
             if i == 1:
-                if (self.ui.weekView_smartSelection_checkBox.checkState() ==
-                    QtCore.Qt.PartiallyChecked):
-                    self.ui.weekView_smartSelection_checkBox.setChecked(True)
-            else:
-                self.ui.weekView_smartSelection_checkBox.setCheckState(
-                    QtCore.Qt.PartiallyChecked)
-
+                self.ui.weekView_smartSelection_checkBox.setChecked(True)
+            
     def day_schedule_mode_clicked(self):
         '''
         handles scheduling checkbox clicked
@@ -780,9 +775,9 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         handles the state signal from the week_scheduling checkbox
         '''
-        print "week sched clicked"
         i = self.ui.week_schedule_checkBox.isChecked()
         appt_gui_module.weekView_setScheduleMode(self, i)
+        appt_gui_module.handle_calendar_signal(self)
 
     def day_schedule_checkBox_state(self, i):
         '''
@@ -836,10 +831,7 @@ class openmolarGui(QtGui.QMainWindow):
         if appt.date:
             self.ui.weekCalendar.setSelectedDate(appt.date)
         else:
-            appt_gui_module.addWeekViewAvailableSlots(self,
-                appt.length, True)
-            for book in self.ui.apptoverviews:
-                book.update()
+            appt_gui_module.handle_calendar_signal(self)
 
     def weekLV_blockSelected(self, block):
         '''
@@ -848,6 +840,12 @@ class openmolarGui(QtGui.QMainWindow):
         appt_gui_module.addWeekViewAvailableSlots(self, block.length, False)
         for book in self.ui.apptoverviews:
             book.update()
+
+    def week_clinicianSelection_comboBox_activate(self, i):
+        '''
+        user has altered the choice of single, multi or all available
+        '''
+        appt_gui_module.handle_calendar_signal(self)
 
     def diary_tabWidget_nav(self, i):
         '''
@@ -3844,6 +3842,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_appointmentOVTab(self):
         #appointment overview tab
+        
+        ##temporary signal???
+        QtCore.QObject.connect(self.ui.week_refresh,
+        QtCore.SIGNAL("clicked()"), self.dayCalendar_changed)
+        
         QtCore.QObject.connect(self.ui.dayCalendar,
         QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
 
@@ -3888,6 +3891,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.weekView_smartSelection_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.manage_weekView_clinicians)
 
+        QtCore.QObject.connect(self.ui.week_clinicianSelection_comboBox,
+        QtCore.SIGNAL("activated(int)"),
+        self.week_clinicianSelection_comboBox_activate)
+        
         QtCore.QObject.connect(self.dayClinicianSelector,
         QtCore.SIGNAL("selectionChanged"), self.manage_dayView_clinicians)
 

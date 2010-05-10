@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1025</width>
-    <height>658</height>
+    <width>1061</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1025</width>
-         <height>616</height>
+         <width>1061</width>
+         <height>604</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -472,8 +472,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>476</width>
-                        <height>469</height>
+                        <width>482</width>
+                        <height>472</height>
                        </rect>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -1746,7 +1746,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>568</width>
+                        <width>582</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2172,8 +2172,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>787</width>
-                        <height>449</height>
+                        <width>458</width>
+                        <height>446</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2674,8 +2674,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>608</width>
-                        <height>489</height>
+                        <width>609</width>
+                        <height>493</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_4">
@@ -2991,8 +2991,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>109</width>
-                        <height>134</height>
+                        <width>111</width>
+                        <height>137</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3191,7 +3191,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>28</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3224,8 +3224,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>197</width>
-                        <height>544</height>
+                        <width>238</width>
+                        <height>542</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3540,6 +3540,9 @@ Note - this will not remove items which are currently there. </string>
                         <attribute name="headerShowSortIndicator" stdset="0">
                          <bool>false</bool>
                         </attribute>
+                        <attribute name="headerShowSortIndicator" stdset="0">
+                         <bool>false</bool>
+                        </attribute>
                         <column>
                          <property name="text">
                           <string>Plan</string>
@@ -3564,6 +3567,9 @@ Note - this will not remove items which are currently there. </string>
                         <property name="animated">
                          <bool>true</bool>
                         </property>
+                        <attribute name="headerShowSortIndicator" stdset="0">
+                         <bool>false</bool>
+                        </attribute>
                         <attribute name="headerShowSortIndicator" stdset="0">
                          <bool>false</bool>
                         </attribute>
@@ -3597,8 +3603,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>267</width>
-                        <height>392</height>
+                        <width>270</width>
+                        <height>394</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4018,8 +4024,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>108</width>
-                    <height>58</height>
+                    <width>74</width>
+                    <height>16</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4144,7 +4150,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>4</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_26">
                <attribute name="title">
@@ -4470,7 +4476,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                       <bool>true</bool>
                      </property>
                      <property name="tristate">
-                      <bool>true</bool>
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -4522,6 +4528,25 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                          <property name="frameShadow">
                           <enum>QFrame::Raised</enum>
                          </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QComboBox" name="week_clinicianSelection_comboBox">
+                         <item>
+                          <property name="text">
+                           <string>Selected Clinician Only</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>All Listed Clinicians</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>All Available Clinicians</string>
+                          </property>
+                         </item>
                         </widget>
                        </item>
                        <item>
@@ -4812,6 +4837,13 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    </widget>
                   </item>
                   <item>
+                   <widget class="QPushButton" name="week_refresh">
+                    <property name="text">
+                     <string>refresh</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
                    <spacer name="horizontalSpacer_2">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -4863,8 +4895,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>80</width>
+                     <height>16</height>
                     </rect>
                    </property>
                   </widget>
@@ -5125,8 +5157,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>973</width>
-                     <height>513</height>
+                     <width>80</width>
+                     <height>16</height>
                     </rect>
                    </property>
                   </widget>
@@ -6101,6 +6133,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <attribute name="headerShowSortIndicator" stdset="0">
                  <bool>true</bool>
                 </attribute>
+                <attribute name="headerShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
                 <column>
                  <property name="text">
                   <string notr="true">1</string>
@@ -6368,7 +6403,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1025</width>
+     <width>1061</width>
      <height>20</height>
     </rect>
    </property>

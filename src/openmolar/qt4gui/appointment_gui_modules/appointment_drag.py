@@ -12,14 +12,12 @@ class simple_model(QtCore.QAbstractListModel):
         self.unscheduledList = []
         self.scheduledList = []
         self.list = []
-        self.selectedList = []
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
         
     def clear(self):
         self.unscheduledList = []
         self.scheduledList = []
         self.list = []
-        self.selectedList = []
         self.reset()
 
     @property
@@ -33,33 +31,36 @@ class simple_model(QtCore.QAbstractListModel):
             retarg.add(app.dent)
         return tuple(retarg)
 
-    def setAppointments(self, apps, selectedApp = None):
+    def setAppointments(self, appts, selectedAppt = None):
         '''
         add an appointment to this list - arg is of type dragAppointment
         '''
         self.unscheduledList = []
         self.scheduledList = []
         self.list = []
-        self.selectedList = []
             
         currentClinicians = self.involvedClinicians
         changedClinicians = True
         
-        for app in apps:
-            if app.unscheduled:
-                self.unscheduledList.append(app)
+        for appt in appts:
+            if appt.past:
+                pass
+            elif appt.unscheduled:
+                self.unscheduledList.append(appt)
             else:
-                self.scheduledList.append(app)            
-            if app.dent not in currentClinicians:
+                self.scheduledList.append(appt)            
+            
+            if not appt.past and not (appt.dent in currentClinicians):
                 changedClinicians = True
+                
         self.list = self.scheduledList + self.unscheduledList
         self.reset()
 
         if changedClinicians:
             self.emit(QtCore.SIGNAL("clinicianListChanged"))
 
-        if selectedApp in apps:
-            self.setSelectedAppt(selectedApp)
+        if selectedAppt in appts:
+            self.setSelectedAppt(selectedAppt)
         else:
             self.setSelectedAppt(None)        
         
@@ -84,10 +85,6 @@ class simple_model(QtCore.QAbstractListModel):
         elif role == QtCore.Qt.UserRole:  #return the whole python object
             return app
         return QtCore.QVariant()
-
-    def removeRow(self, position):
-        self.list = self.list[:position] + self.list[position+1:]
-        self.reset()
 
     def setSelectedAppt(self, appt):
         try:
@@ -214,7 +211,7 @@ if __name__ == "__main__":
     
     class duckPt(object):
         def __init__(self):
-            self.serialno = 1
+            self.serialno = 17322
             self.title = "Mr"
             self.sname = "Neil"
             self.fname = "Wallace"

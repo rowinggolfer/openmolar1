@@ -670,13 +670,14 @@ def adjustDiaryColWidths(om_gui, arg=None):
 
 def layout_ptDiary(om_gui):
     '''
-    populates the patient's diary
+    populates the patient's diary model
     '''
     appts = appointments.get_pts_appts(om_gui.pt)
     om_gui.pt_diary_model.addAppointments(appts)
     om_gui.ui.pt_diary_treeView.clearSelection()
     om_gui.ui.pt_diary_treeView.expandAll()
     index = om_gui.pt_diary_model.parents.get(1, None)
+    
     ##collapse past appointments
     past_index = om_gui.pt_diary_model.createIndex(0, 0, index)
     om_gui.ui.pt_diary_treeView.collapse(past_index)
@@ -687,10 +688,6 @@ def layout_ptDiary(om_gui):
     adjustDiaryColWidths(om_gui)
 
     ## now update the models for drag/drop
-    for appt in appts:
-        if appt.past:
-            appts.remove(appt)
-    
     om_gui.apt_drag_model.setAppointments(appts, 
         om_gui.pt_diary_model.selectedAppt)
     
@@ -752,13 +749,12 @@ def weekView_setScheduleMode(om_gui, scheduling=True, visible=True):
         om_gui.ui.cp_only_radioButton.setChecked(True) # current pt only
         if visible:
             layout_ptDiary(om_gui)
-        om_gui.ui.weekView_smartSelection_checkBox.setCheckState(
-            QtCore.Qt.PartiallyChecked)
     else:
+        om_gui.ui.week_clinicianSelection_comboBox.setCurrentIndex(0)
         om_gui.ui.week_schedule_checkBox.setChecked(False)
         om_gui.ui.all_appts_radioButton.setChecked(True)
-        om_gui.ui.weekView_smartSelection_checkBox.setCheckState(
-            QtCore.Qt.Checked)
+
+    om_gui.ui.weekView_smartSelection_checkBox.setChecked(True)
     om_gui.ui.week_schedule_tabWidget.setVisible(scheduling)
 
 def aptOVlabelClicked(om_gui, sd):
@@ -1106,15 +1102,23 @@ def layout_weekView(om_gui):
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
         ov.clear()
 
-        if (om_gui.ui.weekView_smartSelection_checkBox.checkState() ==
-        QtCore.Qt.Checked):
-            workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
-            include_non_working=False)
-        elif (om_gui.ui.weekView_smartSelection_checkBox.checkState() ==
-        QtCore.Qt.PartiallyChecked):
-            chkset = om_gui.apt_drag_model.involvedClinicians
-            workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
-            chkset, include_non_working=False)
+        if om_gui.ui.weekView_smartSelection_checkBox.isChecked():
+            i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
+            # 0 = single only, 1 = all with appointment, 2 = all
+            if i == 0:
+                if om_gui.pt_diary_model.selectedAppt:
+                    chkset = (om_gui.pt_diary_model.selectedAppt.dent,)
+                    workingdents = appointments.getWorkingDents(
+                        ov.date.toPyDate(), chkset, include_non_working=False)
+                else:
+                    workingdents = ()
+            elif i == 1:
+                chkset = om_gui.apt_drag_model.involvedClinicians
+                workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
+                    chkset, include_non_working=False)
+            else:
+                workingdents = appointments.getWorkingDents(
+                    ov.date.toPyDate(), include_non_working=False)
         else:
             userCheckedClinicians = getUserCheckedClinicians(om_gui, "week")
             if userCheckedClinicians == []:
