@@ -2172,7 +2172,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>458</width>
+                        <width>784</width>
                         <height>446</height>
                        </rect>
                       </property>
@@ -3191,7 +3191,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>28</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3224,7 +3224,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>238</width>
+                        <width>199</width>
                         <height>542</height>
                        </rect>
                       </property>
@@ -4024,8 +4024,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>74</width>
-                    <height>16</height>
+                    <width>117</width>
+                    <height>58</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4150,7 +4150,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_26">
                <attribute name="title">
@@ -4232,7 +4232,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                       <bool>true</bool>
                      </property>
                      <property name="tristate">
-                      <bool>true</bool>
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -4305,6 +4305,20 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                             <property name="frameShadow">
                              <enum>QFrame::Raised</enum>
                             </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QComboBox" name="day_clinicianSelection_comboBox">
+                            <item>
+                             <property name="text">
+                              <string>All Listed Clinicians</string>
+                             </property>
+                            </item>
+                            <item>
+                             <property name="text">
+                              <string>All Available Clinicians</string>
+                             </property>
+                            </item>
                            </widget>
                           </item>
                           <item>
@@ -4895,8 +4909,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>80</width>
-                     <height>16</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -5157,8 +5171,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>80</width>
-                     <height>16</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>

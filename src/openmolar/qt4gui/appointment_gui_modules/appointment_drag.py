@@ -12,12 +12,14 @@ class simple_model(QtCore.QAbstractListModel):
         self.unscheduledList = []
         self.scheduledList = []
         self.list = []
+        self.min_slot_length = 0
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
         
     def clear(self):
         self.unscheduledList = []
         self.scheduledList = []
         self.list = []
+        self.min_slot_length = 0
         self.reset()
 
     @property
@@ -89,6 +91,7 @@ class simple_model(QtCore.QAbstractListModel):
     def setSelectedAppt(self, appt):
         try:
             index = self.index(self.list.index(appt))
+            self.min_slot_length = appt.length
             self.emit(QtCore.SIGNAL("selectedAppt"), index)
         except ValueError:
             self.emit(QtCore.SIGNAL("selectedAppt"), QtCore.QModelIndex())
@@ -194,7 +197,7 @@ class draggableList(QtGui.QListView):
         '''
         index = selectedRange.first().topLeft()
         selectedApp = self.model().data(index, QtCore.Qt.UserRole)
-        #self.model().setSelectedAppt(selectedApp)
+        self.model().setSelectedAppt(selectedApp)
         self.emit(QtCore.SIGNAL("appointmentSelected"), selectedApp)
         
 if __name__ == "__main__":

@@ -452,9 +452,8 @@ def addWeekViewAvailableSlots(om_gui, minlength=None, moveOnToNextWeek=False):
     if om_gui.ui.diary_tabWidget.currentIndex()!=1:
         return
     if not minlength:
-        minlength = 0
-    om_gui.min_week_slotlength = minlength
-
+        minlength = om_gui.apt_drag_model.min_slot_length
+    
     seldate = om_gui.ui.dayCalendar.selectedDate()
 
     if seldate.toPyDate() > localsettings.bookEnd:
@@ -731,12 +730,9 @@ def dayView_setScheduleMode(om_gui, scheduling=True, visible=True):
     if scheduling:
         if visible:
             layout_ptDiary(om_gui)
-        om_gui.ui.dayView_smartSelection_checkBox.setCheckState(
-            QtCore.Qt.PartiallyChecked)
     else:
         om_gui.ui.day_schedule_checkBox.setChecked(False)
-        om_gui.ui.dayView_smartSelection_checkBox.setCheckState(
-            QtCore.Qt.Checked)
+    om_gui.ui.dayView_smartSelection_checkBox.setChecked(True)
     om_gui.ui.day_schedule_tabWidget.setVisible(scheduling)
 
 def weekView_setScheduleMode(om_gui, scheduling=True, visible=True):
@@ -1071,8 +1067,8 @@ def layout_weekView(om_gui):
     called by checking a dentist checkbox on apptov tab
     or by changeing the date on the appt OV calendar
     '''
-    if om_gui.ui.main_tabWidget.currentIndex() !=1 and \
-    om_gui.ui.diary_tabWidget.currentIndex() != 1:
+    if (om_gui.ui.main_tabWidget.currentIndex() !=1 and 
+    om_gui.ui.diary_tabWidget.currentIndex() != 1):
         return
     om_gui.current_weekViewClinicians = set()
     cal = om_gui.ui.dayCalendar
@@ -1105,27 +1101,29 @@ def layout_weekView(om_gui):
         if om_gui.ui.weekView_smartSelection_checkBox.isChecked():
             i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
             # 0 = single only, 1 = all with appointment, 2 = all
-            if i == 0:
+            if (not om_gui.ui.week_clinicianSelection_comboBox.isVisible() 
+            or i==2):
+                workingdents = appointments.getWorkingDents(
+                  ov.date.toPyDate(), include_non_working=False)                        
+            elif i == 0:
                 if om_gui.pt_diary_model.selectedAppt:
                     chkset = (om_gui.pt_diary_model.selectedAppt.dent,)
                     workingdents = appointments.getWorkingDents(
-                        ov.date.toPyDate(), chkset, include_non_working=False)
+                      ov.date.toPyDate(), chkset, include_non_working=False)
                 else:
                     workingdents = ()
-            elif i == 1:
+            else: #if i == 1:
                 chkset = om_gui.apt_drag_model.involvedClinicians
                 workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
-                    chkset, include_non_working=False)
-            else:
-                workingdents = appointments.getWorkingDents(
-                    ov.date.toPyDate(), include_non_working=False)
+                  chkset, include_non_working=False)
+            
         else:
             userCheckedClinicians = getUserCheckedClinicians(om_gui, "week")
             if userCheckedClinicians == []:
                 workingdents = ()
             else:
                 workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
-                tuple(userCheckedClinicians), True)
+                  tuple(userCheckedClinicians), True)
 
         #--reset
         ov.dents = []
@@ -1172,8 +1170,8 @@ def layout_weekView(om_gui):
     if om_gui.ui.week_schedule_checkBox.isChecked():
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
-        addWeekViewAvailableSlots(om_gui, om_gui.min_week_slotlength)
-
+        addWeekViewAvailableSlots(om_gui) 
+          
     for ov in om_gui.ui.apptoverviews:
         ov.update()
 
@@ -1192,13 +1190,15 @@ def layout_dayView(om_gui):
     d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False
 
-    if (om_gui.ui.dayView_smartSelection_checkBox.checkState() ==
-    QtCore.Qt.Checked):
-        workingOnly = True
-        dents="ALL"
-    elif (om_gui.ui.dayView_smartSelection_checkBox.checkState() ==
-    QtCore.Qt.PartiallyChecked):
-        dents = om_gui.apt_drag_model.involvedClinicians
+    if om_gui.ui.dayView_smartSelection_checkBox.isChecked():
+        i = om_gui.ui.day_clinicianSelection_comboBox.currentIndex()
+        # 0 = single only, 1 = all with appointment, 2 = all
+        if (not om_gui.ui.day_clinicianSelection_comboBox.isVisible() 
+        or i==1):
+            workingOnly = True
+            dents="ALL"
+        else: #if i == 1:
+            dents = om_gui.apt_drag_model.involvedClinicians
     else:
         dents = tuple(getUserCheckedClinicians(om_gui, "day"))
 
@@ -1207,8 +1207,8 @@ def layout_dayView(om_gui):
 
     om_gui.ui.daymemo_label.setText(om_gui.appointmentData.memo)
 
-    todaysDents = om_gui.appointmentData.workingDents
-    number_of_books = len(todaysDents)
+    workingDents = om_gui.appointmentData.workingDents
+    number_of_books = len(workingDents)
     while number_of_books > len(om_gui.apptBookWidgets):
         book = appointmentwidget.appointmentWidget(om_gui, "0800", "1900")
         om_gui.apptBookWidgets.append(book)
@@ -1231,7 +1231,7 @@ def layout_dayView(om_gui):
     abs_end = om_gui.appointmentData.latest_end
 
     i = 0
-    for dent in todaysDents:
+    for dent in workingDents:
         book = om_gui.apptBookWidgets[i]
 
         book.setDentist(dent)

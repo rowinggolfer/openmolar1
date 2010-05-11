@@ -153,8 +153,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.fee_models = []
         self.wikiloaded = False
         self.current_weekViewClinicians = ()
-        self.min_week_slotlength = 0
-
+        
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -1796,6 +1795,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.main_tabWidget.setCurrentIndex(0)
         self.ui.tabWidget.setCurrentIndex(0)
         self.ui.diary_tabWidget.setCurrentIndex(0)
+        self.ui.day_schedule_tabWidget.setCurrentIndex(0)
+        self.ui.week_schedule_tabWidget.setCurrentIndex(0)
 
         if localsettings.clinicianNo == 0:
             if localsettings.station == "surgery":
