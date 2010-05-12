@@ -293,16 +293,16 @@ class editFee(Ui_fee_item_wizard.Ui_Dialog):
                 _("Confirm"), _("Apply changes?"), 
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
-                    alterAll = False
+                    alterOtherTables = False
                     if self.usercode_changed:
                         if QtGui.QMessageBox.question(self.dialog,
                         _("Confirm"), 
                         _("You have altered a usercode.") +
-        _("Do you want to apply this change accross all fee tables?"), 
+        _("Do you want to apply this change to selected other fee tables?"), 
                         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                         QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
-                            alterAll = True
-                    return (True, self.fee_item, newXML, alterAll)
+                            alterOtherTables = True
+                    return (True, self.fee_item, newXML, alterOtherTables)
         return (False, None, None, None)
         
 if __name__ == "__main__":

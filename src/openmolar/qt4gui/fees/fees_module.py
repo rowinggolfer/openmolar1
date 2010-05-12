@@ -211,6 +211,55 @@ def apply_all_table_changes(om_gui):
     else:
         om_gui.advise(_("No changes apllied"),1)                    
 
+def getSelectedTables(om_gui, excludedTable):
+    def select_all(val):
+        for cb in table_dict.keys():
+            cb.setChecked(val)
+            
+    dl = QtGui.QDialog(om_gui)
+    layout = QtGui.QVBoxLayout(dl)
+    
+    dl.setWindowTitle(_("Make Selection"))
+    label = QtGui.QLabel(_("Choose other tables to alter"))
+    layout.addWidget(label)
+    
+    cb = QtGui.QCheckBox(dl)
+    cb.setText(_("Select All"))
+
+    QtCore.QObject.connect(cb, QtCore.SIGNAL("stateChanged(int)"), select_all)
+    
+    layout.addWidget(cb)
+    line = QtGui.QFrame(dl)
+    line.setFrameShape(QtGui.QFrame.HLine)
+    line.setFrameShadow(QtGui.QFrame.Sunken)
+    layout.addWidget(line)
+    table_dict = {}
+
+    for table in localsettings.FEETABLES.tables.values():
+        cb = QtGui.QCheckBox(dl)
+        cb.setText(table.tablename)
+        if table == excludedTable:
+            cb.setChecked(True)
+            cb.setEnabled(False)
+        else:
+            table_dict[cb] = table
+        layout.addWidget(cb)        
+    
+    buttonBox = QtGui.QDialogButtonBox(dl)
+    buttonBox.setOrientation(QtCore.Qt.Horizontal)
+    buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok)
+    buttonBox.setCenterButtons(True)
+    layout.addWidget(buttonBox)
+    QtCore.QObject.connect(buttonBox, QtCore.SIGNAL("accepted()"), 
+        dl.accept)
+    
+    dl.exec_()
+    tables = []
+    for cb in table_dict.keys():
+        if cb.isChecked():
+            tables.append(table_dict[cb])
+    return tables
+
 def table_clicked(om_gui, index):
     '''
     user has clicked an item on the feetable.
@@ -234,12 +283,11 @@ def table_clicked(om_gui, index):
         result, edited_item, newXml, update_others = dl.getInput()
         if result:
             if update_others:
-                for table in localsettings.FEETABLES.tables.values():
-                    if table != edited_item.table:
-                        table.alterUserCodeOnly(edited_item)
+                for table in getSelectedTables(om_gui, edited_item.table):
+                    table.alterUserCodeOnly(edited_item)
             if edited_item.table.alterItem(edited_item, newXml):
                 om_gui.dirty_feetable()
-            
+    
     def apply(arg):
         '''
         apply the result of the QMenu generated when feetable is clicked
@@ -466,3 +514,10 @@ def populateAccountsTable(om_gui):
     for i in range(om_gui.ui.accounts_tableWidget.columnCount()):
         om_gui.ui.accounts_tableWidget.resizeColumnToContents(i)
     om_gui.ui.accountsTotal_doubleSpinBox.setValue(total / 100)
+    
+
+if __name__ == "__main__":
+    localsettings.loadFeeTables()
+    app = QtGui.QApplication([])
+    print getSelectedTables(None, localsettings.FEETABLES.tables[0])
+    app.closeAllWindows()
