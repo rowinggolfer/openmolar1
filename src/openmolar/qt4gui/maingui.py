@@ -746,12 +746,7 @@ class openmolarGui(QtGui.QMainWindow):
         if self.ui.day_schedule_tabWidget.isVisible():
             self.ui.week_schedule_tabWidget.setCurrentIndex(i)
             if i == 1:
-                if (self.ui.dayView_smartSelection_checkBox.checkState() ==
-                    QtCore.Qt.PartiallyChecked):
-                    self.ui.dayView_smartSelection_checkBox.setChecked(True)
-            else:
-                self.ui.dayView_smartSelection_checkBox.setCheckState(
-                    QtCore.Qt.PartiallyChecked)
+                self.ui.dayView_smartSelection_checkBox.setChecked(True)
 
     def week_schedule_tabWidget_changed(self, i):
         '''
@@ -769,6 +764,7 @@ class openmolarGui(QtGui.QMainWindow):
         print "day sched clicked"
         i = self.ui.day_schedule_checkBox.isChecked()
         appt_gui_module.dayView_setScheduleMode(self, i)
+        appt_gui_module.handle_calendar_signal(self)
 
     def week_schedule_mode_clicked(self):
         '''
@@ -797,14 +793,6 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.day_schedule_checkBox.setChecked(i)
         appt_gui_module.dayView_setScheduleMode(self, i, False)
         self.signals_apptStateWidgets(True)
-    
-    def update_apt_drag_model(self, appt):
-        '''
-        receives a signal from the patient diary _model_ that the selected appt 
-        has changed.. pass this to the other models
-        '''
-        #self.apt_drag_model.setSelectedAppt(appt)
-        print "UNUSED update_apt_drag_model", appt
         
     def update_appt_listViews(self, index):
         '''
@@ -840,9 +828,10 @@ class openmolarGui(QtGui.QMainWindow):
         for book in self.ui.apptoverviews:
             book.update()
 
-    def week_clinicianSelection_comboBox_activate(self, i):
+    def clinicianSelection_comboBoxes_activate(self, i):
         '''
         user has altered the choice of single, multi or all available
+        on either the week or dayview page
         '''
         appt_gui_module.handle_calendar_signal(self)
 
@@ -3761,9 +3750,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.printMonth_pushButton,
         QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)
         
-        QtCore.QObject.connect(self.pt_diary_model, 
-        QtCore.SIGNAL("selectedAppt"), self.update_apt_drag_model)
-        
         QtCore.QObject.connect(self.apt_drag_model,
         QtCore.SIGNAL("selectedAppt"), self.update_appt_listViews)
 
@@ -3881,9 +3867,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.weekView_smartSelection_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.manage_weekView_clinicians)
 
-        QtCore.QObject.connect(self.ui.week_clinicianSelection_comboBox,
-        QtCore.SIGNAL("activated(int)"),
-        self.week_clinicianSelection_comboBox_activate)
+
+        for cb in (self.ui.week_clinicianSelection_comboBox,
+        self.ui.day_clinicianSelection_comboBox):
+            QtCore.QObject.connect(cb, QtCore.SIGNAL("activated(int)"),
+            self.clinicianSelection_comboBoxes_activate)
         
         QtCore.QObject.connect(self.dayClinicianSelector,
         QtCore.SIGNAL("selectionChanged"), self.manage_dayView_clinicians)

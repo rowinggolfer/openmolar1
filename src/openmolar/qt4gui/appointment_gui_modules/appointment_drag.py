@@ -92,10 +92,8 @@ class simple_model(QtCore.QAbstractListModel):
         try:
             index = self.index(self.list.index(appt))
             self.min_slot_length = appt.length
-            self.emit(QtCore.SIGNAL("selectedAppt"), index)
         except ValueError:
-            self.emit(QtCore.SIGNAL("selectedAppt"), QtCore.QModelIndex())
-            
+            pass
     
 class blockModel(simple_model):
     '''
@@ -129,18 +127,16 @@ class draggableList(QtGui.QListView):
     def __init__(self, parent=None):
         super(draggableList, self).__init__(parent)
         self.setDragEnabled(True)
-        self.dropwidth = self.width()
         self.pixels_per_min = 2
         #self.setMouseTracking(True)
         #self.mouseDown = False
         
-    def setScaling(self, width, height_per_minute):
+    def setScaling(self, height_per_minute):
         '''
         make the list aware of the scaling of the widget available for drops
         this will differ depending on whether a day or week view is visible
         a 20 minutes slot will be x pixels high...
         '''
-        self.dropwidth = width
         self.pixels_per_min = height_per_minute
 
     def startDrag(self, event):

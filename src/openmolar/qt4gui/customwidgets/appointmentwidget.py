@@ -284,24 +284,36 @@ class appointmentCanvas(QtGui.QWidget):
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
-            allowDrop = True            
-        
+            
             y = event.pos().y()
             yOffset = self.height() / self.slotNo
             self.drag_startrow = int(y//yOffset)
-            if self.drag_startrow < self.firstSlot-1:
+            
+            if (self.drag_startrow < self.firstSlot-1 or 
+            self.drag_startrow >= self.lastSlot or
+            self.rows.has_key(self.drag_startrow)):
                 allowDrop = False
             else:
                 n_rows = self.drag_appt.length // self.slotDuration
-                self.drag_endrow = self.drag_startrow+n_rows
-                
+                self.drag_endrow = self.drag_startrow + n_rows
+                #see if there's a long enough slot either side of the selected 
+                #row
+                allowDrop = True
                 for row in range(self.drag_startrow, self.drag_endrow):
-                    if self.rows.has_key(row) or row >= self.lastSlot:
+                    if self.rows.has_key(row):
                         allowDrop = False
                         break
-
+                if not allowDrop:
+                    allowDrop = True
+                    self.drag_startrow = row - n_rows
+                    self.drag_endrow = row
+                    for row in range(self.drag_startrow, row):
+                        if self.rows.has_key(row):
+                            allowDrop = False
+                            break
+                                    
             if allowDrop:
-                self.dragging = True
+                self.dragging = True 
                 self.drop_time = self.getTime_from_Cell(self.drag_startrow)
                 self.update()
                 event.accept()
@@ -485,22 +497,24 @@ class appointmentCanvas(QtGui.QWidget):
             selectedPatients = self.rows[row]
             self.selected = self.getApptBounds(selectedPatients)
             self.update()
-            feedback = "<center>"
+            feedback = "<html>"
             for patient in selectedPatients:
                 for appt in self.appts + self.doubleAppts:
                     if appt[5] == patient:
-                        feedback += '''%s<br />%s %s-%s'''%(
-                        appt[4], self.pWidget.dentist, appt[2], appt[3])
-
+                        feedback += '''%s<br /><b>%s - %s</b>'''%(
+                            appt[4], appt[2], appt[3])
                         for val in (appt[6], appt[7], appt[8]):
                             if val != "":
-                                feedback += "<br />%s"% val
+                                feedback += '''
+                                <br /><font color="red">%s</font>'''% val
                         if appt[9] != "":
                             feedback += "<br /><i>%s</i>"% appt[9]
                         feedback += "<hr />"
-            if feedback != "<center>":
-                feedback = feedback[:feedback.rindex("<hr />")] + "</center>"
-                QtGui.QToolTip.showText(event.globalPos(),feedback)
+            if feedback != "<html>":
+                feedback = feedback[:feedback.rindex("<hr />")] + "</html>"
+                x_pos = self.mapToGlobal(self.pos()).x()
+                pos = QtCore.QPoint(x_pos, event.globalPos().y())
+                QtGui.QToolTip.showText(pos, feedback)
             else:
                 QtGui.QToolTip.showText(event.globalPos(), "")
         else:
@@ -732,7 +746,7 @@ class appointmentCanvas(QtGui.QWidget):
             painter.drawRect(trect)
             painter.drawText(trect, QtCore.Qt.AlignHCenter, droptime)
 
-        self.pWidget.emit(QtCore.SIGNAL("redrawn"), colwidth, dragScale)
+        self.pWidget.emit(QtCore.SIGNAL("redrawn"), dragScale)
         
 if __name__ == "__main__":
 

@@ -219,8 +219,9 @@ class bookWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.highlightedRect = rect
-                        feedback = '%d mins starting at %s with %s'% (length,
-                        localsettings.wystimeToHumanTime(slotstart),
+                        feedback = '%d mins starting at %s with %s'% (
+                        slot.length,
+                        localsettings.humanTime(slotstart),
                         dent.initials)
 
                         QtGui.QMessageBox.information(self, "Info",
@@ -582,19 +583,20 @@ class bookWidget(QtGui.QWidget):
                 painter.setPen(red_pen)
                 painter.drawLine(self.dragLine)
 
-            self.emit(QtCore.SIGNAL("redrawn"), dragWidth, dragScale)
+            self.emit(QtCore.SIGNAL("redrawn"), dragScale)
 
         except Exception, e:
             print "error painting appointment overviewwidget", e
 
 if __name__ == "__main__":
+            
     import datetime
     def clicktest(a):
         print a
     def headerclicktest(a):
         print a
-    def redrawn(a,b):
-        print a,b
+    def redrawn(b):
+        print b
 
     import sys
     localsettings.initiate(False)
@@ -602,7 +604,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import appointments
     #-initiate a book starttime 08:00
     #-endtime 10:00 five minute slots, text every 3 slots
-    form = bookWidget(1,"0800","1900",15,2)
+    form = bookWidget(1,"0800","1900",15, 2)
     d1, d2 = appointments.dentistDay(4), appointments.dentistDay(5)
 
     d1.start=830
@@ -665,4 +667,5 @@ if __name__ == "__main__":
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("redrawn"), redrawn)
     form.show()
+    
     sys.exit(app.exec_())
