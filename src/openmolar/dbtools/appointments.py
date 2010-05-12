@@ -333,21 +333,22 @@ class printableAppt():
         return "%s %s %s %s %s %s %s %s"% (self.start, self.end, self.name,
         self.serialno, self.treat, self.note, self.cset, self.length())
 
-@localsettings.debug
 def updateAday(uddate, arg):
     '''
     takes an instance of the workingDay class
     and updates the database
     returns an omSQLresult
     '''
-    print "updating ", arg
     db = connect()
     cursor = db.cursor()
     result = omSQLresult()
-    query = '''update aday set start=%s, end=%s, flag=%s, memo=%s
-where adate=%s and apptix=%s'''
-    values = (arg.sqlStart(), arg.sqlFinish(), arg.active, arg.memo,
-    uddate, arg.apptix)
+    query = '''insert into aday (memo, adate, apptix, start, end, flag) 
+    values (%s,%s, %s, %s, %s, %s)
+    on duplicate key 
+    update memo=%s, adate=%s, apptix=%s, start=%s, end=%s, flag=%s'''
+
+    values = (arg.memo, uddate, arg.apptix, arg.sqlStart(), arg.sqlFinish(),
+    arg.active)*2
 
     if localsettings.logqueries:
         print query, values
@@ -364,6 +365,7 @@ def alterDay(arg):
     returns an omSQLresult
     '''
     #-- this method is called from the apptOpenDay Dialog, which is deprecated!!
+    print "DEPRECATED FUNCTION CALLED alterDay"
     db = connect()
     cursor = db.cursor()
     result = omSQLresult()
@@ -589,11 +591,14 @@ def setMemos(adate, memos):
     print "setting memos", memos
     db = connect()
     cursor = db.cursor()
-    query = '''insert into aday (memo, adate, apptix) values (%s,%s,%s)
+    query = '''insert into aday (memo, adate, apptix, start, end) 
+    values (%s,%s, %s, %s, %s)
     on duplicate key update memo=%s'''
 
+    start = localsettings.pyTimetoWystime(localsettings.earliestStart)
+    end = localsettings.pyTimetoWystime(localsettings.latestFinish)
     for apptix, memo in memos:
-        values = (memo, adate, apptix, memo)
+        values = (memo, adate, apptix, start, end, memo)
         if localsettings.logqueries:
             print query, values
         cursor.execute(query, values)
