@@ -427,8 +427,8 @@ def begin_makeAppt(om_gui):
         localsettings.readableDate(appt.date)), 1)
         return
     #--sets "schedule mode" - user is now adding an appointment
-    om_gui.ui.day_schedule_checkBox.setChecked(True)
     weekView_setScheduleMode(om_gui, True)
+    dayView_setScheduleMode(om_gui, True)
 
     #--compute first available appointment
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())

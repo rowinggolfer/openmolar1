@@ -6,46 +6,36 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>898</width>
+    <width>815</width>
     <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Related Patients</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <widget class="QLabel" name="thisPatient_label">
      <property name="text">
       <string>This Patient</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="maximumSize">
-      <size>
-       <width>21</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>F
-A
-M
-I
-L
-Y</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Known Family Members</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QTableWidget" name="family_tableWidget">
      <property name="editTriggers">
       <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
@@ -58,32 +48,14 @@ Y</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item>
     <widget class="QLabel" name="label_2">
-     <property name="maximumSize">
-      <size>
-       <width>21</width>
-       <height>16777215</height>
-      </size>
-     </property>
      <property name="text">
-      <string>A
-D
-D
-R
-E
-S
-S</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
+      <string>Address Matches</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item>
     <widget class="QTableWidget" name="address_tableWidget">
      <property name="alternatingRowColors">
       <bool>true</bool>
@@ -93,42 +65,7 @@ S</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="maximumSize">
-      <size>
-       <width>21</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>S
-I
-M
-I
-L
-A
-R</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QTableWidget" name="soundex_tableWidget">
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
-     <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

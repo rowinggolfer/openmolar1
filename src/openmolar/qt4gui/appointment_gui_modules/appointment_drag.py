@@ -166,28 +166,18 @@ class draggableList(QtGui.QListView):
 
         #pmap = QtGui.QPixmap(50 , selectedApp.length * self.pixels_per_min)
         #pmap.fill(QtGui.QColor(127,0,0))
-        drag.setHotSpot(QtCore.QPoint(-10,0)) #QtCore.QPoint(pmap.width()/2, pmap.height()/2))
-        #drag.setPixmap(pmap)
+        #drag.setHotSpot(QtCore.QPoint(pmap.width()/2, pmap.height()/2)
+                
+        pixmap = QtGui.QPixmap()
+        pixmap = pixmap.grabWidget(self, self.rectForIndex(index))
+        drag.setPixmap(pixmap)
+        drag.setHotSpot(QtCore.QPoint(-10,0)) 
         
         drag.start(QtCore.Qt.CopyAction)
-
-    ##I was experimenting with mouse tracking to get a tool tip to show up
-
-    #def mousePressEvent(self, event):
-    #    self.mouseDown = True
-        
-    #def mouseReleaseEvent(self, event):
-    #    self.mouseDown = False
     
-    #def leaveEvent(self, event):
-    #    self.mouseDown = False
-        
     def mouseMoveEvent(self, event):
         self.startDrag(event)
-        #if self.mouseDown:
-        #    self.startDrag(event)
-        #    self.mouseDown = False
-
+    
     def selectionChanged (self, selectedRange, deselected):
         '''
         the user has selected an appointment (or range of appointments!)

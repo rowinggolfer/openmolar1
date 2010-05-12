@@ -9,7 +9,7 @@ from openmolar.settings import localsettings
 
 mainconnection, forumconnection = None, None
 
-print "parsing the global settings file"
+if localsettings.VERBOSE: print "parsing the global settings file"
 dom = minidom.parse(localsettings.cflocation)
 
 settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
@@ -30,13 +30,13 @@ myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
 if sslnode and sslnode[0].firstChild.data=="True":
     #-- to enable ssl... add <ssl>True</ssl> to the conf file
-    print "using ssl"
+    if localsettings.VERBOSE: print "using ssl"
     #-- note, dictionary could have up to 5 params.
     #-- ca, cert, key, capath and cipher
     #-- however, IIUC, just using ca will encrypt the data
     ssl_settings = {'ca': '/etc/mysql/ca-cert.pem'}
 else:
-    print "not using ssl (you really should!)"
+    if localsettings.VERBOSE: print "not using ssl (you really should!)"
     ssl_settings = {}
 
 dom.unlink()
@@ -80,28 +80,6 @@ class omSQLresult():
         get the number of rows grabbed by the result
         '''
         return self.number
-
-def forumConnect():
-    '''
-    this returns a connection for use by the forum thread
-    '''
-    global forumconnection
-    try:
-        if not (forumconnection and forumconnection.open):
-            print "New connection needed"
-            print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
-            forumconnection = MySQLdb.connect(host = myHost, port = myPort,
-            user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
-            forumconnection.autocommit(True)
-        else:
-            forumconnection.commit()
-        return forumconnection
-    except MySQLdb.Error, e:
-        print "Error %d: %s" % (e.args[0], e.args[1])
-        raise localsettings.omDBerror(e)
-    except MySQLdb.ProgrammingError, e:
-        print "Error %d: %s" % (e.args[0], e.args[1])
-        raise localsettings.omDBerror(e)
 
 def connect():
     '''

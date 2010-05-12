@@ -91,44 +91,39 @@ def getsimilar(serialno,addr,sname,family):
     fields='serialno,sname,fname,dob,addr1,addr2,pcde'
     
     if family>0:
-        query = '''select %s from patients where serialno != %d 
-        and familyno=%d order by dob'''% (fields,serialno,family)
+        query = '''select %s from patients 
+        where serialno != %%s and familyno=%%s'''% fields
+        
+        values = (serialno, family)
 
         if localsettings.logqueries:
-            print query
+            print query, values
 
-        cursor.execute(query)
+        cursor.execute(query, values)
         families = cursor.fetchall()
     else:
         families=()
 
     if addr!='':
-        query='(ADDR1 like "%%%s%%" or ADDR2 like "%%%s%%")'% (addr,addr)
-        query='''select %s from patients where serialno != %d
-        and %s order by fname,sname'''% (fields,serialno,query)
+        query='''select %s from patients where serialno != %%s 
+        and (ADDR1 like %%s or ADDR2 like %%s)'''% fields
+        
         if "demo" in localsettings.DBNAME:
             #demo db uses the same name and address for everyone!
             query += " limit 10"
-
+        
+        values =  (serialno, "%"+addr+"%", "%"+addr+"%")        
         if localsettings.logqueries:
-            print query
+            print query, values
 
-        cursor.execute(query)
+        cursor.execute(query, values)
         addresses = cursor.fetchall()
     else:
         addresses=()
-    query = '''select %s from patients where serialno != %d and 
-    sname sounds like "%s" order by fname,sname'''% (fields,serialno,sname)
-    
-    if localsettings.logqueries:
-            print query
-
-    cursor.execute(query)
-    snames = cursor.fetchall()
 
     cursor.close()
     #db.close()
-    return (families,addresses,snames)
+    return (families, addresses)
 
 def getcandidates_from_serialnos(list_of_snos):
     query=""

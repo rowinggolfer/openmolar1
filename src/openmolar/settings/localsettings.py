@@ -39,10 +39,13 @@ locale.setlocale(locale.LC_ALL, '')
 #--this is a hack to get the correct bzr number. it will always be one up.
 __build__= int(_version.version_info.get("revno"))+1
 
+VERBOSE = False
+
 try:
-    print _("translation tools are installed sucessfully")
+    s = _("translation tools are installed sucessfully")
+    if VERBOSE:
+        print s
 except:  #TypeError
-    print "installing gettext"
     ##- an unelegant hack to get _() on the namespace for testing
     ##- main.py will normally do this for us.
     import gettext
@@ -54,7 +57,8 @@ def showVersion():
     '''
     print "Version %s\nBzr Revision No. %s"% (__MAJOR_VERSION__, __build__)
 
-showVersion()
+if VERBOSE:
+    showVersion()
 
 APPOINTMENT_CARD_HEADER =\
 "The Academy Dental Practice, 19 Union Street\nInverness. tel 01463 232423"
@@ -110,9 +114,8 @@ def determine_path ():
         return retarg
     except:
         #-- this shouldn't happen!
-        print "no __file__ found !!!!"
+        print "no __file__ variable found !!!!"
         return os.path.dirname(os.getcwd())
-
 
 server_names = []
 chosenserver = 0
@@ -122,14 +125,16 @@ def setChosenServer(i):
     chosenserver = i
     try:
         DBNAME = server_names[i]
-        #print "DBNAME=", DBNAME
+        if VERBOSE:
+            print "DBNAME=", DBNAME
     except IndexError:
-        print "no server name.. config file is old format?"
+        if VERBOSE:
+            print "no server name.. config file is old format?"
 
 wkdir = determine_path()
 referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
 appt_shortcut_file = os.path.join(wkdir, "resources",
-"appointment_shortcuts.xml")
+  "appointment_shortcuts.xml")
 stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
 printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
 money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
@@ -651,9 +656,9 @@ def getLocalSettings():
         node = dom.getElementsByTagName("surgeryno")
         if node and node[0].hasChildNodes():
             surgeryno = int(node[0].firstChild.data)
-            print "%s location"% station
+            if VERBOSE: print "%s location"% station
         else:
-            print "unknown location"
+            if VERBOSE: print "unknown location"
         dom.unlink()
     else:
         #-- no file found..
@@ -670,7 +675,7 @@ def updateLocalSettings(setting, value):
     '''
     try:
         localSets = os.path.join(localFileDirectory, "localsettings.conf")
-        print "updating local settings... %s = %s"% (setting, value)
+        if VERBOSE: print "updating local settings... %s = %s"% (setting, value)
         if os.path.exists(localSets):
             dom = minidom.parse(localSets)
             nodeToChange = dom.getElementsByTagName(setting)
@@ -837,7 +842,7 @@ def initiate(debug = False):
         clinicianNo = ops_reverse.get(u1)
         clinicianInits = u1
     else:
-        print "no clinician!"
+        if VERBOSE: print "no clinician!"
 
     getLocalSettings()
 

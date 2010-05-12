@@ -1303,9 +1303,6 @@ class openmolarGui(QtGui.QMainWindow):
         def address_navigated():
             dl.selected = dl.address_tableWidget.item(
             dl.address_tableWidget.currentRow(), 0).text()
-        def soundex_navigated():
-            dl.selected = dl.soundex_tableWidget.item(
-            dl.soundex_tableWidget.currentRow(), 0).text()
         def DoubleClick():
             Dialog.accept()
 
@@ -1322,12 +1319,10 @@ class openmolarGui(QtGui.QMainWindow):
             "Possible Matches for patient - %d - %s %s - %s"%(
             self.pt.serialno, self.pt.fname, self.pt.sname, self.pt.addr1))
 
-            Dialog.setFixedSize(self.width()-50, self.height()-50)
             headers=['Serialno', 'Surname', 'Forename', 'dob', 'Address1',
             'Address2', 'POSTCODE']
             tableNo=0
-            for table in (dl.family_tableWidget, dl.address_tableWidget,
-            dl.soundex_tableWidget):
+            for table in (dl.family_tableWidget, dl.address_tableWidget):
                 table.clear()
                 table.setSortingEnabled(False)
                 #--good practice to disable this while loading
@@ -1349,6 +1344,7 @@ class openmolarGui(QtGui.QMainWindow):
                     row+=1
                 table.resizeColumnsToContents()
                 table.setSortingEnabled(True)
+                table.sortItems(1)
                 #--allow user to sort pt attributes
                 tableNo+=1
             QtCore.QObject.connect(dl.family_tableWidget, QtCore.SIGNAL(
@@ -1359,12 +1355,6 @@ class openmolarGui(QtGui.QMainWindow):
             QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
             "itemSelectionChanged()"), address_navigated)
             QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
-            "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
-
-
-            QtCore.QObject.connect(dl.soundex_tableWidget, QtCore.SIGNAL(
-            "itemSelectionChanged()"), soundex_navigated)
-            QtCore.QObject.connect(dl.soundex_tableWidget, QtCore.SIGNAL(
             "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
 
             if Dialog.exec_():
@@ -2273,7 +2263,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             connect.myUser=str(dl.user_lineEdit.text())
             try:
                 connect.mainconnection.close()
-                connect.forumconnection.close()
                 self.advise("Applying changes", 1)
                 localsettings.initiate()
             except Exception, e:

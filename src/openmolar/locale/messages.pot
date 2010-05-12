@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-05-11 13:53+BST\n"
+"POT-Creation-Date: 2010-05-12 09:11+BST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -460,7 +460,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:293
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:299
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/examdialog.py:84
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3964
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3953
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:57
 msgid "Confirm"
 msgstr ""
@@ -2068,44 +2068,44 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:655
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:435
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:440
 msgid "Monday"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:656
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:435
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:440
 msgid "Tuesday"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:657
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/calendars.py:376
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:435
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:440
 msgid "Wednesday"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:658
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:435
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:440
 msgid "Thursday"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:659
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:436
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:441
 msgid "Friday"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:660
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:436
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:441
 msgid "Saturday"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:661
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:436
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:441
 msgid "Sunday"
 msgstr ""
 
@@ -2171,7 +2171,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_ortho_ref_wizard.py:175
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:905
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:906
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:511
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:516
 msgid "None"
 msgstr ""
 
@@ -2999,7 +2999,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3058
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1669
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1659
 msgid "Close Course"
 msgstr ""
 
@@ -3675,7 +3675,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3234
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1881
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1871
 msgid "FORUM"
 msgstr ""
 
@@ -4750,48 +4750,23 @@ msgid "Hidden Notes"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:73
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:59
 msgid "Related Patients"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:74
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:60
 msgid "This Patient"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:75
-msgid ""
-"F\n"
-"A\n"
-"M\n"
-"I\n"
-"L\n"
-"Y"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:61
+msgid "Known Family Members"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:81
-msgid ""
-"A\n"
-"D\n"
-"D\n"
-"R\n"
-"E\n"
-"S\n"
-"S"
-msgstr ""
-
-#:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:88
-msgid ""
-"S\n"
-"I\n"
-"M\n"
-"I\n"
-"L\n"
-"A\n"
-"R"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py:62
+msgid "Address Matches"
 msgstr ""
 
 #:
@@ -5658,7 +5633,7 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:108
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2132
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2122
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:90
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:118
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:184
@@ -6209,67 +6184,67 @@ msgstr ""
 msgid "Today's Patients (ALL)"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1385
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1375
 msgid "Reached end of the List"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1400
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1390
 msgid "Reached Start of the List"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1478
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1468
 msgid ""
 "Error populating interface\n"
 "%s"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1600
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1590
 msgid ""
 "<center>Message from %s <br />\n"
 "Dated %s<br /><br />%s</center>"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1613
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1603
 msgid "problem getting a memo %s"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1875
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:1865
 msgid "NEW FORUM POSTS"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2097
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2087
 msgid "POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2157
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2147
 msgid "Sucessfully altered the following items"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2383
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2372
 msgid "no record selected"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2718
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2707
 msgid "error commiting changes"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3949
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3938
 msgid "Scrap the estimate and re-price everything?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3965
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3954
 msgid "apply an exmption to this estimate?"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3970
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3959
 msgid "input needed"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3971
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3960
 msgid "maximum charge for the patient"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3971
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:3960
 msgid "please enter the amount in pence, or leave as 0 for full exmption"
 msgstr ""
 
@@ -6754,167 +6729,167 @@ msgstr ""
 msgid "you may now remove old feetables"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:43
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:45
 msgid "translation tools are installed sucessfully"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:62
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:66
 msgid "Please try and give at least 24 hours notice"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:63
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:67
 msgid "if you need to change an appointment."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:292
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:297
 msgid "EXAM"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:293
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:298
 msgid "BITE"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:294
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:299
 msgid "BT"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:295
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:300
 msgid "FAMILY"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:296
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:301
 msgid "FILL"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:297
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:302
 msgid "FIT"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:298
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:303
 msgid "HYG"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:299
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:304
 msgid "IMPS"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:300
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:305
 msgid "LF"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:301
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:306
 msgid "ORTHO"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:302
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:307
 msgid "PAIN"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:303
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:308
 msgid "PREP"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:304
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:309
 msgid "RCT"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:305
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:310
 msgid "RECEMENT"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:306
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:311
 msgid "REVIEW"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:307
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:312
 msgid "SP"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:308
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:313
 msgid "TRY"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:309
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:314
 msgid "XLA"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:470
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:475
 msgid "January"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:471
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:476
 msgid "February"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:472
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:477
 msgid "March"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:473
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:478
 msgid "April"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:474
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:479
 msgid "May"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:475
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:480
 msgid "June"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:476
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:481
 msgid "July"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:477
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:482
 msgid "August"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:478
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:483
 msgid "September"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:479
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:484
 msgid "October"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:480
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:485
 msgid "November"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:481
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:486
 msgid "December"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:514
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:519
 msgid "Today"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:516
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:521
 msgid "Tomorrow"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:518
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:523
 msgid "Yesterday"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:852
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:857
 msgid "Welcome to OpenMolar!"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:853
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:858
 msgid "Version"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:854
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:859
 msgid "Revision"
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:856
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:861
 msgid "Your Data is Accessible, and the server reports no issues."
 msgstr ""
 
-#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:857
+#: /home/neil/openmolar/openmolar/src/openmolar/settings/localsettings.py:862
 msgid "Have a great day!"
 msgstr ""
 

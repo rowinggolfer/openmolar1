@@ -241,7 +241,7 @@ class dentistDay():
     '''
     a small class to store data about a dentist's day
     '''
-    def __init__(self,apptix=0):
+    def __init__(self, apptix=0):
         self.date = datetime.date.today()
         self.start = 830
         self.end = 1800
