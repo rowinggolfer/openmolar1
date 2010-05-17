@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1061</width>
-         <height>604</height>
+         <width>1040</width>
+         <height>612</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -455,7 +455,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>4</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -2172,7 +2172,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>784</width>
+                        <width>458</width>
                         <height>446</height>
                        </rect>
                       </property>
@@ -2674,7 +2674,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>609</width>
+                        <width>765</width>
                         <height>493</height>
                        </rect>
                       </property>
@@ -2718,6 +2718,12 @@
                            <italic>true</italic>
                            <bold>true</bold>
                           </font>
+                         </property>
+                         <property name="whatsThis">
+                          <string/>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color:red</string>
                          </property>
                          <property name="maxLength">
                           <number>140</number>
@@ -4024,7 +4030,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>117</width>
+                    <width>112</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4150,7 +4156,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_26">
                <attribute name="title">
@@ -4299,6 +4305,12 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                           </item>
                           <item>
                            <widget class="QFrame" name="day_apt_drag_frame">
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>100</height>
+                             </size>
+                            </property>
                             <property name="frameShape">
                              <enum>QFrame::StyledPanel</enum>
                             </property>
@@ -4519,6 +4531,12 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    </item>
                    <item>
                     <widget class="QTabWidget" name="week_schedule_tabWidget">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>200</height>
+                      </size>
+                     </property>
                      <property name="currentIndex">
                       <number>0</number>
                      </property>
@@ -4536,6 +4554,12 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        </item>
                        <item>
                         <widget class="QFrame" name="week_apt_drag_frame">
+                         <property name="maximumSize">
+                          <size>
+                           <width>16777215</width>
+                           <height>100</height>
+                          </size>
+                         </property>
                          <property name="frameShape">
                           <enum>QFrame::StyledPanel</enum>
                          </property>
@@ -4562,6 +4586,42 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                           </property>
                          </item>
                         </widget>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_17">
+                         <item>
+                          <widget class="QPushButton" name="week_1st_appt_pushButton">
+                           <property name="toolTip">
+                            <string>Find the First Suitable Appointment. </string>
+                           </property>
+                           <property name="text">
+                            <string>1st</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="week_prev_appt_pushButton">
+                           <property name="toolTip">
+                            <string>Find the Previous Appointment
+F5</string>
+                           </property>
+                           <property name="text">
+                            <string>Prev</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="week_next_appt_pushButton">
+                           <property name="toolTip">
+                            <string>Find the Next Available Appointment.
+F6</string>
+                           </property>
+                           <property name="text">
+                            <string>Next</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </item>
                        <item>
                         <widget class="QPushButton" name="week_newAppt_pushButton">
@@ -4847,13 +4907,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <widget class="QRadioButton" name="cp_only_radioButton">
                     <property name="text">
                      <string>current patient Only</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="week_refresh">
-                    <property name="text">
-                     <string>refresh</string>
                     </property>
                    </widget>
                   </item>

@@ -315,6 +315,13 @@ def usage():
 --setup   \ttakes you to the admin page
 --version \tshow the versioning and exit'''
 
+def version():
+    '''
+    show the version on the command line
+    '''
+    from openmolar.settings import localsettings
+    localsettings.showVersion()
+
 def run():
     '''
     the real entry point for the app
@@ -337,11 +344,12 @@ def run():
         opts.append(("--firstrun",""))
 
     for option, arg in opts:
-        print option, arg
-        if option in ("--help", "--version"):
+        if option == "--help":
             usage()
             sys.exit()
-
+        if option == "--version":
+            version()
+            sys.exit()
         if option == "--setup":
             print "setup found"
             setup(sys.argv)

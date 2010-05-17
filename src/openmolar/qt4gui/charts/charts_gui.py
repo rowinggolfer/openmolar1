@@ -295,8 +295,6 @@ def chartsTable(om_gui):
     '''
     update the charts table
     '''
-    #print "filling chartsTable"
-    om_gui.advise("filling charts table")
     om_gui.ui.chartsTableWidget.clear()
     om_gui.ui.chartsTableWidget.setSortingEnabled(False)
     om_gui.ui.chartsTableWidget.setRowCount(32)

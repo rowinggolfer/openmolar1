@@ -133,6 +133,14 @@ class openmolarGui(QtGui.QMainWindow):
         self.pt = copy.deepcopy(self.pt_dbstate)
 
         self.selectedChartWidget = "st" #other values are "pl" or "cmp"
+        self.editPageVisited = False
+        self.forum_notified = False
+        self.appointmentData = appointments.dayAppointmentData()
+        self.fee_models = []
+        self.wikiloaded = False
+        self.current_weekViewClinicians = set()
+        self.scheduling_mode = False
+
         self.addCustomWidgets()
         self.labels_and_tabs()
         self.ui.feescale_commit_pushButton.setEnabled(False)
@@ -147,13 +155,8 @@ class openmolarGui(QtGui.QMainWindow):
 
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()
-        self.editPageVisited = False
-        self.forum_notified = False
-        self.appointmentData = appointments.dayAppointmentData()
-        self.fee_models = []
-        self.wikiloaded = False
-        self.current_weekViewClinicians = ()
         
+
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -162,7 +165,11 @@ class openmolarGui(QtGui.QMainWindow):
         warning level 2 critical (and logged)
         '''
         if warning_level == 0:
-            self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
+            m = QtGui.QMessageBox(self)
+            m.setText(arg)
+            QtCore.QTimer.singleShot(2*1000, m.accept)
+            m.show()
+            #self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
         elif warning_level == 1:
             QtGui.QMessageBox.information(self, _("Advisory"), arg)
         elif warning_level == 2:
@@ -225,7 +232,7 @@ class openmolarGui(QtGui.QMainWindow):
         called by menu - help - about openmolar
         '''
         self.advise('''<p>%s</p><p>%s</p>'''%(localsettings.about(),
-        localsettings.license), 1)
+            localsettings.license), 1)
 
     def addCustomWidgets(self):
         '''
@@ -666,11 +673,13 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         ci = self.ui.main_tabWidget.currentIndex()
 
+        if ci != 1 and self.scheduling_mode:
+            self.advise(_("Switching off appointment mode"))
+            self.scheduling_mode = False
+
         if ci ==1 :     #--user is viewing appointment book
-            di = self.ui.diary_tabWidget.currentIndex()
-            if di == 1:
-                appt_gui_module.weekView_setScheduleMode(self, False)
-            appt_gui_module.dayView_setScheduleMode(self, False)
+            appt_gui_module.weekView_setScheduleMode(self)
+            appt_gui_module.dayView_setScheduleMode(self)
             appt_gui_module.makeDiaryVisible(self)
 
         if ci == 6:
@@ -680,6 +689,7 @@ class openmolarGui(QtGui.QMainWindow):
             if self.pt.serialno !=0:
                 self.ui.chooseFeescale_comboBox.setCurrentIndex(
                 self.pt.getFeeTable().index)
+                
         if ci == 7:
             #--forum
             forum_gui_module.loadForum(self)
@@ -745,8 +755,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         if self.ui.day_schedule_tabWidget.isVisible():
             self.ui.week_schedule_tabWidget.setCurrentIndex(i)
-            if i == 1:
-                self.ui.dayView_smartSelection_checkBox.setChecked(True)
+            appt_gui_module.handle_calendar_signal(self)
 
     def week_schedule_tabWidget_changed(self, i):
         '''
@@ -754,24 +763,22 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         if self.ui.week_schedule_tabWidget.isVisible():
             self.ui.day_schedule_tabWidget.setCurrentIndex(i)
-            if i == 1:
-                self.ui.weekView_smartSelection_checkBox.setChecked(True)
-            
+            appt_gui_module.handle_calendar_signal(self)
+    
     def day_schedule_mode_clicked(self):
         '''
         handles scheduling checkbox clicked
         '''
-        print "day sched clicked"
-        i = self.ui.day_schedule_checkBox.isChecked()
-        appt_gui_module.dayView_setScheduleMode(self, i)
+        self.scheduling_mode = self.ui.day_schedule_checkBox.isChecked()
+        appt_gui_module.dayView_setScheduleMode(self)
         appt_gui_module.handle_calendar_signal(self)
-
+        
     def week_schedule_mode_clicked(self):
         '''
         handles the state signal from the week_scheduling checkbox
         '''
-        i = self.ui.week_schedule_checkBox.isChecked()
-        appt_gui_module.weekView_setScheduleMode(self, i)
+        self.scheduling_mode = self.ui.week_schedule_checkBox.isChecked()
+        appt_gui_module.weekView_setScheduleMode(self)
         appt_gui_module.handle_calendar_signal(self)
 
     def day_schedule_checkBox_state(self, i):
@@ -780,8 +787,7 @@ class openmolarGui(QtGui.QMainWindow):
         temporarily diconnects the slots
         '''
         self.signals_apptStateWidgets(False)
-        self.ui.week_schedule_checkBox.setChecked(i)
-        appt_gui_module.weekView_setScheduleMode(self, i, False)
+        appt_gui_module.weekView_setScheduleMode(self)
         self.signals_apptStateWidgets(True)
         
     def week_schedule_checkBox_state(self, i):
@@ -790,8 +796,7 @@ class openmolarGui(QtGui.QMainWindow):
         temporarily diconnects the slots
         '''
         self.signals_apptStateWidgets(False)
-        self.ui.day_schedule_checkBox.setChecked(i)
-        appt_gui_module.dayView_setScheduleMode(self, i, False)
+        appt_gui_module.dayView_setScheduleMode(self)
         self.signals_apptStateWidgets(True)
         
     def update_appt_listViews(self, index):
@@ -801,7 +806,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         self.ui.day_appointment_listView.setCurrentIndex(index)
         self.ui.week_appointment_listView.setCurrentIndex(index)
-            
+    
     def dayLV_appointmentSelected(self, appt):
         '''
         user has selected appt on the day_selected ListView
@@ -827,7 +832,28 @@ class openmolarGui(QtGui.QMainWindow):
         appt_gui_module.addWeekViewAvailableSlots(self, block.length, False)
         for book in self.ui.apptoverviews:
             book.update()
+    
+    def week_1st_appt(self):
+        '''
+        find the 1st avaiable appointment for the chosen criteria
+        '''
+        appt_gui_module.begin_makeAppt(self)
+        
+    def week_prev_appt(self):
+        '''
+        find the prev appointment for the chosen criteria
+        '''
+        print "week_prev_appt"
 
+    def week_next_appt(self):
+        '''
+        find the next appointment for the chosen criteria
+        '''
+        self.signals_calendar(False)
+        appt_gui_module.aptOV_weekForward(self)
+        self.signals_calendar()
+        appt_gui_module.layout_weekView(self, True)
+        
     def clinicianSelection_comboBoxes_activate(self, i):
         '''
         user has altered the choice of single, multi or all available
@@ -840,6 +866,8 @@ class openmolarGui(QtGui.QMainWindow):
         catches a signal that the diary tab widget has been moved
         '''
         if self.ui.diary_tabWidget.isVisible():
+            appt_gui_module.weekView_setScheduleMode(self)
+            appt_gui_module.dayView_setScheduleMode(self)
             appt_gui_module.handle_calendar_signal(self)
 
     def home(self):
@@ -1438,8 +1466,6 @@ class openmolarGui(QtGui.QMainWindow):
                 localsettings.recent_sno_index = len(
                 localsettings.recent_snos) - 1
 
-            self.advise("connecting to database to get patient details..")
-
             try:
                 #--work on a copy only, so that changes can be tested for later
                 #--has to be a deep copy, as opposed to shallow
@@ -1458,8 +1484,8 @@ class openmolarGui(QtGui.QMainWindow):
 
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
-                self.advise ("error getting serialno %d"%serialno+
-                              "- please check this number is correct?", 1)
+                self.advise (_("error getting serialno")+ " %d - " % serialno +
+                              _("please check this number is correct?"), 1)
                 return
             except Exception, e:
                 print "#"*20
@@ -1497,7 +1523,6 @@ class openmolarGui(QtGui.QMainWindow):
         #-- don't load a patient if you are entering a new one.
         if self.enteringNewPatient():
             return
-        self.advise("loading patient")
         self.editPageVisited=False
         self.ui.main_tabWidget.setCurrentIndex(0)
         if localsettings.station == "surgery":
@@ -1764,9 +1789,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                             self.getrecord(int(sno), True)
                     else:
                         self.getrecord(int(candidates[0][0]), True)
-        else:
-            self.advise("dialog rejected")
-
+        
     def labels_and_tabs(self):
         '''
         initialise a few labels
@@ -1820,7 +1843,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         localsettings.allowed_logins)
 
         self.addHistoryMenu()
-        appt_gui_module.weekView_setScheduleMode(self, False)
+        appt_gui_module.weekView_setScheduleMode(self)
         self.ui.day_schedule_tabWidget.setCurrentIndex(0)
 
         self.ui.day_clinician_selector_frame.hide()
@@ -1886,24 +1909,23 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             return
         if not self.okToLeaveRecord():
             print "not loading"
-            self.advise("Not loading patient")
+            self.advise(_("Not loading patient"))
             return
-        self.advise("opening patient file")
         filename = QtGui.QFileDialog.getOpenFileName()
         if filename != '':
-            self.advise("opening patient file")
+            self.advise(_("opening patient file"))
             try:
-                f=open(filename, "r")
-                loadedpt=pickle.loads(f.read())
+                f = open(filename, "r")
+                loadedpt = pickle.loads(f.read())
                 if loadedpt.serialno != self.pt.serialno:
-                    self.pt_dbstate=patient_class.patient(0)
-                    self.pt_dbstate.serialno=loadedpt.serialno
-                self.pt=loadedpt
+                    self.pt_dbstate = patient_class.patient(0)
+                    self.pt_dbstate.serialno = loadedpt.serialno
+                self.pt = loadedpt
                 f.close()
             except Exception, e:
                 self.advise("error loading patient file - %s"% e, 2)
         else:
-            self.advise("no file chosen", 1)
+            self.advise(_("no file chosen"), 1)
         self.loadpatient()
 
     def recallDate(self, arg):
@@ -3816,16 +3838,18 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         book.connect(book.canvas, QtCore.SIGNAL("ApptDropped"),
         self.apptBook_apptDropped)
 
-    def signals_appointmentOVTab(self):
-        #appointment overview tab
-        
-        ##temporary signal???
-        QtCore.QObject.connect(self.ui.week_refresh,
-        QtCore.SIGNAL("clicked()"), self.dayCalendar_changed)
-        
-        QtCore.QObject.connect(self.ui.dayCalendar,
-        QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
+    def signals_calendar(self, connect=True):
+        if connect:
+            QtCore.QObject.connect(self.ui.dayCalendar,
+            QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
+        else:
+            QtCore.QObject.disconnect(self.ui.dayCalendar,
+            QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)            
 
+    def signals_appointmentOVTab(self):
+
+        self.signals_calendar()
+        
         QtCore.QObject.connect(self.ui.weekCalendar,
         QtCore.SIGNAL("weekChanged"), self.customDateSignal)
 
@@ -3850,6 +3874,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.aptOVnextyear,
         QtCore.SIGNAL("clicked()"), self.aptOV_yearForward_clicked)
 
+        QtCore.QObject.connect(self.ui.week_1st_appt_pushButton,
+        QtCore.SIGNAL("clicked()"), self.week_1st_appt)
+        
+        QtCore.QObject.connect(self.ui.week_prev_appt_pushButton,
+        QtCore.SIGNAL("clicked()"), self.week_prev_appt)
+
+        QtCore.QObject.connect(self.ui.week_next_appt_pushButton,
+        QtCore.SIGNAL("clicked()"), self.week_next_appt)
+
         for widg in (
         self.ui.aptOV_emergencycheckBox,
         self.ui.aptOV_lunchcheckBox,
@@ -3866,7 +3899,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.weekView_smartSelection_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.manage_weekView_clinicians)
-
 
         for cb in (self.ui.week_clinicianSelection_comboBox,
         self.ui.day_clinicianSelection_comboBox):

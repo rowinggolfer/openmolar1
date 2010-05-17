@@ -62,6 +62,18 @@ class controlCalendar(QtGui.QCalendarWidget):
             
         if d != cur_date:
             self.setSelectedDate(d)
+    
+    def changeDate(self, d):
+        '''
+        and alternative to setSelectedDate in that it will return False if no 
+        change has been made
+        this is necessary as the ui relies on a signal from this widget 
+        '''
+        if self.selectedDate() == d:
+            return False
+        else:
+            self.setSelectedDate(d) 
+            return True
         
 class weekCalendar(controlCalendar):
     def __init__(self, *args):
@@ -72,9 +84,9 @@ class weekCalendar(controlCalendar):
         
         self.weekNo = self.selectedDate().weekNumber()
         self.connect(self, QtCore.SIGNAL("selectionChanged ()"), 
-            self.update)
+            self.update_)
 
-    def update(self):
+    def update_(self):
         '''
         emit a signal indicating the chosen week has changed 
         '''

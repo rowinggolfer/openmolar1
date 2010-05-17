@@ -92,9 +92,10 @@ class simple_model(QtCore.QAbstractListModel):
         try:
             index = self.index(self.list.index(appt))
             self.min_slot_length = appt.length
+            self.emit(QtCore.SIGNAL("selectedAppt"), index)
         except ValueError:
-            pass
-    
+            self.emit(QtCore.SIGNAL("selectedAppt"), QtCore.QModelIndex())
+        
 class blockModel(simple_model):
     '''
     customise the above model just for blocks
@@ -128,8 +129,6 @@ class draggableList(QtGui.QListView):
         super(draggableList, self).__init__(parent)
         self.setDragEnabled(True)
         self.pixels_per_min = 2
-        #self.setMouseTracking(True)
-        #self.mouseDown = False
         
     def setScaling(self, height_per_minute):
         '''
