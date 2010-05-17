@@ -33,7 +33,9 @@ class Diary(QtGui.QWidget):
                 self.ops.append(op)
         self.diaries = {}
         layout = QtGui.QHBoxLayout(self)
+        layout.setMargin(0)
         self.mainTabWidget = QtGui.QTabWidget(self)
+        self.mainTabWidget.setTabPosition(QtGui.QTabWidget.South)        
         layout.addWidget(self.mainTabWidget)
         self.layoutTabs()
         
@@ -41,6 +43,7 @@ class Diary(QtGui.QWidget):
         '''
         lay out some task widgets
         '''
+        icon = QtGui.QIcon(":/vcalendar.png")
         for op in self.ops:
             widg = QtGui.QWidget()
             diary = Ui_staff_diary.Ui_Form()
@@ -59,9 +62,7 @@ class Diary(QtGui.QWidget):
             tw.setupUi(diary.task_frame)
             tw.label.setText(op)
             
-            self.mainTabWidget.addTab(widg, op)
-            
-            
+            self.mainTabWidget.addTab(widg, icon, op)
 
 if __name__ == "__main__":
     import sys

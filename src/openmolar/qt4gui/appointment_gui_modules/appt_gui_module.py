@@ -480,7 +480,7 @@ def addWeekViewAvailableSlots(om_gui, minlength=None):
         dents = om_gui.current_weekViewClinicians
         #a set containing all the dents currently viewed on the weekview
         if not dents:
-            message = _("No books selected")
+            message = _("No clinicians selected")
             return (False, message, ())        
 
         #--check for suitable apts in the selected WEEK!
@@ -493,15 +493,6 @@ def addWeekViewAvailableSlots(om_gui, minlength=None):
             _("minutes or more available for selected week"))
 
         return (True, message, valid_slots)
-
-def prompt_moveOnToNextWeek(parent = None):
-    '''
-    ask a question, return a value
-    '''
-    return QtGui.QMessageBox.question(parent, _("Confirm"),
-        _("No appointments this week, search forward?"),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes
 
 def makeAppt(om_gui, appt, slot, offset=None):
     '''
@@ -572,6 +563,8 @@ def makeAppt(om_gui, appt, slot, offset=None):
         QtGui.QMessageBox.Yes )
         if result == QtGui.QMessageBox.No:
             #dialog rejected
+            for widg in om_gui.ui.apptoverviews:
+                widg.update()
             return
 
         #--make name conform to the 30 character sql limitation
@@ -749,8 +742,8 @@ def weekView_setScheduleMode(om_gui):
     else:
         om_gui.ui.week_clinicianSelection_comboBox.setCurrentIndex(0)
         om_gui.ui.all_appts_radioButton.setChecked(True)
-    om_gui.ui.week_schedule_checkBox.setChecked(om_gui.scheduling_mode)
-    om_gui.ui.weekView_smartSelection_checkBox.setChecked(True)
+    om_gui.ui.week_schedule_groupBox.setChecked(om_gui.scheduling_mode)
+    om_gui.ui.weekView_manualClinicians_checkBox.setChecked(False)
     om_gui.ui.week_schedule_tabWidget.setVisible(om_gui.scheduling_mode)
 
 def aptOVlabelClicked(om_gui, sd):
@@ -1098,7 +1091,7 @@ def layout_weekView(om_gui, moveOnToNextWeek=False):
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
         ov.clear()
 
-        if om_gui.ui.weekView_smartSelection_checkBox.isChecked():
+        if not om_gui.ui.weekView_manualClinicians_checkBox.isChecked():
             i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
             # 0 = single only, 1 = all with appointment, 2 = all
             if (not om_gui.ui.week_clinicianSelection_comboBox.isVisible() 
@@ -1150,8 +1143,6 @@ def layout_weekView(om_gui, moveOnToNextWeek=False):
             return
         else:
             if slots == []:
-                if not moveOnToNextWeek:
-                    moveOnToNextWeek = prompt_moveOnToNextWeek(om_gui)
                 if moveOnToNextWeek:
                     om_gui.signals_calendar(False)
                     aptOV_weekForward(om_gui)
@@ -1178,20 +1169,14 @@ def layout_weekView(om_gui, moveOnToNextWeek=False):
                 ov.appts[dent.ix] = appointments.day_summary(
                 ov.date.toPyDate(), dent.ix, om_gui.pt.serialno)
 
-    if om_gui.ui.aptOV_emergencycheckBox.checkState():
-        #--add emergencies
-        for ov in om_gui.ui.apptoverviews:
-            for dent in ov.dents:
-                ov.eTimes[dent.ix] = appointments.getBlocks(
-                ov.date.toPyDate(), dent.ix)
+    #add lunches and blocks
+    for ov in om_gui.ui.apptoverviews:
+        for dent in ov.dents:
+            ov.eTimes[dent.ix] = appointments.getBlocks(
+            ov.date.toPyDate(), dent.ix)
 
-    if om_gui.ui.aptOV_lunchcheckBox.checkState():
-        #--add lunches
-        for ov in om_gui.ui.apptoverviews:
-            for dent in ov.dents:
-                ov.lunches[dent.ix] = appointments.getLunch(
-                ov.date.toPyDate(), dent.ix)
-
+            ov.lunches[dent.ix] = appointments.getLunch(
+            ov.date.toPyDate(), dent.ix)
           
     for ov in om_gui.ui.apptoverviews:
         ov.update()

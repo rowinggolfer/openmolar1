@@ -167,9 +167,12 @@ class openmolarGui(QtGui.QMainWindow):
         if warning_level == 0:
             m = QtGui.QMessageBox(self)
             m.setText(arg)
-            QtCore.QTimer.singleShot(2*1000, m.accept)
+            m.setStandardButtons(QtGui.QMessageBox.NoButton)
+            m.setWindowTitle("")
+            m.setModal(False)
+            QtCore.QTimer.singleShot(3*1000, m.accept)
             m.show()
-            #self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
+            self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
         elif warning_level == 1:
             QtGui.QMessageBox.information(self, _("Advisory"), arg)
         elif warning_level == 2:
@@ -375,29 +378,16 @@ class openmolarGui(QtGui.QMainWindow):
                 QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
                     self.ui.week_block_listView.setScaling)
 
-
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame1)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[0])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame2)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[1])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame3)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[2])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame4)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[3])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame5)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[4])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame6)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[5])
-        hlayout=QtGui.QHBoxLayout(self.ui.appt_OV_Frame7)
-        hlayout.setMargin(2)
-        hlayout.addWidget(self.ui.apptoverviews[6])
-
+        i = 0
+        for frame in (self.ui.appt_OV_Frame1,
+        self.ui.appt_OV_Frame2, self.ui.appt_OV_Frame3,
+        self.ui.appt_OV_Frame4, self.ui.appt_OV_Frame5,
+        self.ui.appt_OV_Frame6, self.ui.appt_OV_Frame7):
+            hlayout=QtGui.QHBoxLayout(frame)
+            hlayout.setMargin(2)
+            hlayout.addWidget(self.ui.apptoverviews[i])
+            i += 1
+        
         self.ui.apptoverviewControls=[]
 
         for widg in (self.ui.day1_frame, self.ui.day2_frame,
@@ -409,6 +399,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.apptoverviewControls.append(control)
             hlayout.addWidget(control)
 
+        self.ui.weekView_splitter.setSizes([600,10])
 
         self.dayClinicianSelector = dent_hyg_selector.dentHygSelector(
             localsettings.activedents, localsettings.activehygs)
@@ -706,9 +697,6 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         ci=self.ui.tabWidget.currentIndex()
 
-        #if ci != 1 and self.schedule_mode:
-        #    self.advise("Appointment not made", 1)
-
         if ci != 6:
             if self.ui.tabWidget.isTabEnabled(6) and \
             not charts_gui.checkPreviousEntry(self):
@@ -777,7 +765,9 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         handles the state signal from the week_scheduling checkbox
         '''
-        self.scheduling_mode = self.ui.week_schedule_checkBox.isChecked()
+        self.scheduling_mode = self.ui.week_schedule_groupBox.isChecked()
+        if self.scheduling_mode:
+            appt_gui_module.layout_ptDiary(self)
         appt_gui_module.weekView_setScheduleMode(self)
         appt_gui_module.handle_calendar_signal(self)
 
@@ -790,7 +780,7 @@ class openmolarGui(QtGui.QMainWindow):
         appt_gui_module.weekView_setScheduleMode(self)
         self.signals_apptStateWidgets(True)
         
-    def week_schedule_checkBox_state(self, i):
+    def week_schedule_groupBox_state(self, i):
         '''
         handles the state signal from the week_scheduling checkbox
         temporarily diconnects the slots
@@ -2519,7 +2509,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.layout_weekView(self)
         self.ui.week_clinician_selector_frame.setVisible(
-            not self.ui.weekView_smartSelection_checkBox.isChecked())
+            self.ui.weekView_manualClinicians_checkBox.isChecked())
 
     def manage_month_and_year_View_clinicians(self):
         '''
@@ -3760,7 +3750,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.goto_current_week_PushButton,
         QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
 
-        QtCore.QObject.connect(self.ui.week_schedule_checkBox,
+        QtCore.QObject.connect(self.ui.week_schedule_groupBox,
         QtCore.SIGNAL("clicked()"), self.week_schedule_mode_clicked)
 
         QtCore.QObject.connect(self.ui.day_schedule_checkBox,
@@ -3783,9 +3773,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         disconnected
         '''
         if connect:
-            QtCore.QObject.connect(self.ui.week_schedule_checkBox,
+            QtCore.QObject.connect(self.ui.week_schedule_groupBox,
             QtCore.SIGNAL("stateChanged(int)"), 
-            self.week_schedule_checkBox_state)
+            self.week_schedule_groupBox_state)
 
             QtCore.QObject.connect(self.ui.day_schedule_checkBox,
             QtCore.SIGNAL("stateChanged(int)"), 
@@ -3799,9 +3789,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.SIGNAL("currentChanged(int)"),
             self.week_schedule_tabWidget_changed)
         else:
-            QtCore.QObject.disconnect(self.ui.week_schedule_checkBox,
+            QtCore.QObject.disconnect(self.ui.week_schedule_groupBox,
             QtCore.SIGNAL("stateChanged(int)"), 
-            self.week_schedule_checkBox_state)
+            self.week_schedule_groupBox_state)
 
             QtCore.QObject.disconnect(self.ui.day_schedule_checkBox,
             QtCore.SIGNAL("stateChanged(int)"), 
@@ -3883,10 +3873,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.week_next_appt_pushButton,
         QtCore.SIGNAL("clicked()"), self.week_next_appt)
 
-        for widg in (
-        self.ui.aptOV_emergencycheckBox,
-        self.ui.aptOV_lunchcheckBox,
-        self.ui.all_appts_radioButton,
+        for widg in (self.ui.all_appts_radioButton, 
         self.ui.cp_only_radioButton):
             QtCore.QObject.connect(widg, QtCore.SIGNAL("released()"),
             self.aptOV_checkboxes_changed)
@@ -3897,7 +3884,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.weekClinicianSelector,
         QtCore.SIGNAL("selectionChanged"), self.aptOV_checkboxes_changed)
 
-        QtCore.QObject.connect(self.ui.weekView_smartSelection_checkBox,
+        QtCore.QObject.connect(self.ui.weekView_manualClinicians_checkBox,
         QtCore.SIGNAL("stateChanged(int)"), self.manage_weekView_clinicians)
 
         for cb in (self.ui.week_clinicianSelection_comboBox,

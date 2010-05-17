@@ -19,7 +19,8 @@ def handle_ContractTab(om_gui):
     '''
     i = om_gui.ui.contract_tabWidget.currentIndex()
     if i == 0:
-        om_gui.advise("Private contract tab selected")
+        pass
+        #om_gui.advise("Private contract tab selected")
     if i == 1:
         om_gui.ui.contractHDP_label.setText(
         planDetails.toHtml(om_gui.pt.plandata))
@@ -31,7 +32,8 @@ def handle_ContractTab(om_gui):
         om_gui.ui.exempttext_lineEdit.setText(om_gui.pt.exempttext)
 
     if i == 3:
-        om_gui.advise("Other Dentist tab selected")
+        pass
+        #om_gui.advise("Other Dentist tab selected")
 
 def changeContractedDentist(om_gui, inits):
     '''
