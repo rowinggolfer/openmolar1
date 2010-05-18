@@ -137,7 +137,7 @@ class document():
     
 if __name__ == "__main__":
     import sys
-    localsettings.initiate(False)
+    localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     account=document('TITLE', 'FNAME', 'SNAME', ("MY STREET", 'MY VILLAGE', '', '', 'Inverness-shire'),'IV2 222',"80.00")
     account.setTone("B")

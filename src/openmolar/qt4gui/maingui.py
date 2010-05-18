@@ -145,7 +145,6 @@ class openmolarGui(QtGui.QMainWindow):
         self.labels_and_tabs()
         self.ui.feescale_commit_pushButton.setEnabled(False)
 
-        localsettings.loadFeeTables()
         self.setValidators()
         self.letters = bulk_mail.bulkMails(self)
         self.ui.bulk_mailings_treeView.setModel(self.letters.bulk_model)

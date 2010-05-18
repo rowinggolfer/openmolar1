@@ -8,16 +8,14 @@
 
 from __future__ import division
 
-import MySQLdb
 import sys
 import datetime
 import os
 import locale
 import re
 import subprocess
-import inspect
+#import inspect
             
-
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
@@ -26,9 +24,10 @@ __MAJOR_VERSION__= "0.1.9"
 
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
-CLIENT_SCHEMA_VERSION = "1.7"
 
+CLIENT_SCHEMA_VERSION = "1.7"
 DB_SCHEMA_VERSION = "unknown"
+
 ENCODING = locale.getpreferredencoding()
 FEETABLES = {}
 
@@ -37,7 +36,7 @@ WIKIURL = ""
 locale.setlocale(locale.LC_ALL, '')
 
 #--this is a hack to get the correct bzr number. it will always be one up.
-__build__= int(_version.version_info.get("revno"))+1
+__build__ = int(_version.version_info.get("revno")) + 1
 
 VERBOSE = False
 
@@ -99,7 +98,6 @@ def monitor(func):
         #print inspect.getframeinfo(inspect.currentframe().f_back)[2]
     return func
         
-
 def determine_path ():
     '''
     returns the true working directory, regardless of any symlinks.
@@ -249,7 +247,7 @@ except AttributeError: # will happen on windows
 #-- ditto the qt one
 QDATE_FORMAT = "d, MMMM, yyyy"
 
-#-- undated at login
+#-- updated at login
 operator = "unknown"
 allowed_logins = []
 
@@ -259,7 +257,7 @@ recent_sno_index = 0
 
 #-- update whenever a manual search is made
 #-- sname,fname dob... etc
-lastsearch = ("","",datetime.date(1900,1,1),"","","")
+lastsearch = ("", "", datetime.date(1900,1,1), "", "", "")
 
 #-- used to load combobboxes etc....
 activedents = []
@@ -328,7 +326,6 @@ surgeryno = -1
 #-- pt's are "private, independent, NHS etc...."
 csetypes = ["P","I","N","N OR","N O"]
 
-
 #--for debugging purposes... set this to true.- not yet implemented throughout.
 logqueries = False
 #-- if you want an additional box showing saved changes when a record is saved
@@ -337,9 +334,6 @@ showSaveChanges = False
 practiceAddress = ("The Academy Dental Practice","19 Union Street",
 "Inverness","IV1 1PP")
 
-#--localsettings.defaultNewPatientDetails=(pt.sname,
-#--pt.addr1,pt.addr2,pt.addr3,pt.town,
-#--pt.county,pt.pcde,pt.tel1)
 defaultNewPatientDetails = ("",)*8
 
 #-- 1 less dialog box for these lucky people
@@ -720,14 +714,14 @@ def getAge(dob):
         print e
         return 0
 
-def initiateUsers():
+def initiateUsers(changedServer = False):
     '''
     just grab user names. necessary because the db schema could be OOD here
     '''
     global allowed_logins
     from openmolar import connect
 
-    if connect.mainconnection != None:
+    if changedServer:
         print "closing connection"
         connect.mainconnection.close()
         reload(connect)
@@ -743,7 +737,7 @@ def initiateUsers():
         allowed_logins.append(row[0])
 
 
-def initiate(debug = False):
+def initiate(changedServer= False, debug = False):
     #print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd, \
@@ -752,9 +746,7 @@ def initiate(debug = False):
     from openmolar import connect
     from openmolar.dbtools import db_settings
 
-    #close the connection if exists - user could have been connected to a
-    #a different db before.
-    if connect.mainconnection != None:
+    if changedServer:
         print "closing connection"
         connect.mainconnection.close()
         reload(connect)
@@ -901,7 +893,7 @@ if __name__ == "__main__":
     #    cflocation = local_cflocation
     #print cflocation
     #print stylesheet
-    #initiate(False)
+    #initiate(debug = True)
 
     #print global_cflocation, local_cfloaction
     #updateLocalSettings("stationID","surgery3")

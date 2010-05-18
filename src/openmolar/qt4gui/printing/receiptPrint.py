@@ -116,7 +116,7 @@ class receipt():
     
 if __name__ == "__main__":
     import sys
-    localsettings.initiate(False)
+    localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     myreceipt=receipt()
     myreceipt.title="tit"

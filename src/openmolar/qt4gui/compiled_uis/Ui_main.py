@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Tue May 18 01:39:20 2010
+# Created: Tue May 18 23:54:48 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -219,7 +219,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName("scrollArea_4")
         self.scrollAreaWidgetContents_7 = QtGui.QWidget(self.scrollArea_4)
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 786, 472))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 482, 472))
         self.scrollAreaWidgetContents_7.setObjectName("scrollAreaWidgetContents_7")
         self.horizontalLayout_10 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_7)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
@@ -1313,7 +1313,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName("estimate_scrollArea")
         self.scrollAreaWidgetContents_11 = QtGui.QWidget(self.estimate_scrollArea)
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 28, 200))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 98, 200))
         self.scrollAreaWidgetContents_11.setObjectName("scrollAreaWidgetContents_11")
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
@@ -1330,7 +1330,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_4 = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 217, 542))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 199, 542))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1667,7 +1667,7 @@ class Ui_MainWindow(object):
         self.scrollArea_8.setWidgetResizable(True)
         self.scrollArea_8.setObjectName("scrollArea_8")
         self.scrollAreaWidgetContents_13 = QtGui.QWidget(self.scrollArea_8)
-        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 118, 58))
+        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents_13.setObjectName("scrollAreaWidgetContents_13")
         self.verticalLayout_20 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_13)
         self.verticalLayout_20.setSpacing(0)
@@ -2089,16 +2089,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.week_1st_appt_pushButton = QtGui.QPushButton(self.tab_weekview)
-        self.week_1st_appt_pushButton.setEnabled(False)
+        self.week_1st_appt_pushButton.setEnabled(True)
         self.week_1st_appt_pushButton.setObjectName("week_1st_appt_pushButton")
         self.horizontalLayout_6.addWidget(self.week_1st_appt_pushButton)
         self.week_prev_appt_pushButton = QtGui.QPushButton(self.tab_weekview)
-        self.week_prev_appt_pushButton.setEnabled(False)
+        self.week_prev_appt_pushButton.setEnabled(True)
         self.week_prev_appt_pushButton.setIcon(icon4)
         self.week_prev_appt_pushButton.setObjectName("week_prev_appt_pushButton")
         self.horizontalLayout_6.addWidget(self.week_prev_appt_pushButton)
         self.week_next_appt_pushButton = QtGui.QPushButton(self.tab_weekview)
-        self.week_next_appt_pushButton.setEnabled(False)
+        self.week_next_appt_pushButton.setEnabled(True)
         self.week_next_appt_pushButton.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.week_next_appt_pushButton.setIcon(icon6)
         self.week_next_appt_pushButton.setObjectName("week_next_appt_pushButton")
@@ -2125,7 +2125,7 @@ class Ui_MainWindow(object):
         self.monthView_scrollArea.setWidgetResizable(True)
         self.monthView_scrollArea.setObjectName("monthView_scrollArea")
         self.scrollAreaWidgetContents_14 = QtGui.QWidget(self.monthView_scrollArea)
-        self.scrollAreaWidgetContents_14.setGeometry(QtCore.QRect(0, 0, 71, 16))
+        self.scrollAreaWidgetContents_14.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents_14.setObjectName("scrollAreaWidgetContents_14")
         self.monthView_scrollArea.setWidget(self.scrollAreaWidgetContents_14)
         self.gridLayout_5.addWidget(self.monthView_scrollArea, 0, 0, 1, 4)

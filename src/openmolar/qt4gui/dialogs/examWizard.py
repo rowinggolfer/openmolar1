@@ -61,7 +61,7 @@ class Ui_Dialog(Ui_exam_wizard.Ui_Dialog):
         return tuple(notes)
     
 if __name__ == "__main__":
-    localsettings.initiate(False)
+    localsettings.initiate()
     import sys
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()

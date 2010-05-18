@@ -599,7 +599,7 @@ if __name__ == "__main__":
         print b
 
     import sys
-    localsettings.initiate(False)
+    localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     from openmolar.dbtools import appointments
     #-initiate a book starttime 08:00

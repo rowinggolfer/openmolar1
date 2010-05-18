@@ -419,7 +419,7 @@ class gp17():
             
 if __name__ == "__main__":
     import sys
-    localsettings.initiate(False)
+    localsettings.initiate()
     from openmolar.dbtools import patient_class
     
     app = QtGui.QApplication(sys.argv)

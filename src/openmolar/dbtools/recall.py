@@ -131,5 +131,5 @@ def getpatients(startdate, enddate):
     return patients
 
 if __name__ == "__main__":
-    localsettings.initiate(False)
+    localsettings.initiate()
     print getpatients(date(2009,1,1), date(2009,1,31))

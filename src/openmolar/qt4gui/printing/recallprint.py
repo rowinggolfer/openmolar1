@@ -94,7 +94,7 @@ class printRecall():
 
 if __name__ == "__main__":
     import sys
-    localsettings.initiate(False)
+    localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     pts=(('TITLE', 'FNAME', 'SNAME', 6, 1809L, "6 ST MARY'S ROAD", 'KIRKHILL', '', '', '', 'IV5 7NX'),)
     printRecall(pts)

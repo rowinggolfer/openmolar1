@@ -1422,7 +1422,7 @@ if __name__ == "__main__":
     pt = duckPt()
     #testdate = "2009_08_10"
     #testdate1 = "2009_08_10"
-    #localsettings.initiate(False)
+    #localsettings.initiate()
     #localsettings.logqueries = True
     #print printableDaylistData("20090921", 4)
 

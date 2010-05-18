@@ -134,7 +134,7 @@ def details(pt, Saved=True):
         return "error displaying details, sorry <br />%s"% ex
 
 if __name__ == '__main__':
-    localsettings.initiate(False)
+    localsettings.initiate()
     try:
         serialno = int(sys.argv[len(sys.argv)-1])
     except:

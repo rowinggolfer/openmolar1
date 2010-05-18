@@ -7,7 +7,7 @@ import base64
 from xml.dom import minidom
 from openmolar.settings import localsettings
 
-mainconnection, forumconnection = None, None
+mainconnection = None
 
 if localsettings.VERBOSE: print "parsing the global settings file"
 dom = minidom.parse(localsettings.cflocation)
@@ -54,27 +54,32 @@ class omSQLresult():
         self.message = ""
         self.number = 0
         self.result = False
+    
     def __nonzero__(self):
         '''
         used in case the class is used thus
         if omSQLresult:
         '''
         return self.result
+
     def setMessage(self, arg):
         '''
         set the message associated with the result
         '''
         self.message = arg
+
     def getMessage(self):
         '''
         get the message associated with the result
         '''
         return self.message
+
     def setNumber(self, arg):
         '''
         set the number of rows grabbed by the result
         '''
         self.number = arg
+
     def getNumber(self):
         '''
         get the number of rows grabbed by the result

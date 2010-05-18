@@ -121,7 +121,7 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
         QtCore.SIGNAL("clicked()"), self.blocks)
     
 if __name__ == "__main__":
-    localsettings.initiate(False)
+    localsettings.initiate()
     import sys
     app = QtGui.QApplication(sys.argv)
     MainWindow = QtGui.QMainWindow()

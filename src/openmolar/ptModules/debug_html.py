@@ -63,7 +63,7 @@ def toHtml(p1,p2,tableCalled,changesOnly=False):
 if __name__ == "__main__":
     from openmolar.settings import localsettings
     import sys
-    localsettings.initiate(False)
+    localsettings.initiate()
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:

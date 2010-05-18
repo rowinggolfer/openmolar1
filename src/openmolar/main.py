@@ -57,20 +57,25 @@ def proceed():
     check db schema, and proceed if all is well
     '''
     print "checking schema version...",
+    
     from openmolar.dbtools import schema_version
     sv = schema_version.getVersion()
     
     run_main = False
+
     if IGNORE_SCHEMA_CHECK or localsettings.CLIENT_SCHEMA_VERSION == sv:
         run_main = True
+
     elif localsettings.CLIENT_SCHEMA_VERSION > sv:
         print "schema is out of date"
         from openmolar.qt4gui import schema_updater
         sys.exit(schema_updater.main(sys.argv, my_app))
+
     elif localsettings.CLIENT_SCHEMA_VERSION < sv:
         print "client is out of date....."
         compatible  = schema_version.clientCompatibility(
             localsettings.CLIENT_SCHEMA_VERSION)
+
         if not compatible:
             QtGui.QMessageBox.warning(None, _("Update Client"),
             _('''<p>Sorry, you cannot run this version of the openMolar client
@@ -95,6 +100,7 @@ and you can continue if you wish</p>
                 run_main = True
     
     if run_main:
+        localsettings.loadFeeTables()
         from openmolar.qt4gui import maingui
         maingui.main(my_app)
     else:
@@ -195,8 +201,10 @@ Are you ready to proceed?</center>''')
             nameDict = server.attributes
             if nameDict.has_key("name"):
                 localsettings.server_names.append(nameDict["name"].value)
+        
         if localsettings.server_names == []:
             localsettings.server_names.append("")
+
     except IOError, e:
         print "still no settings... %s\nquitting politely"% e
         QtGui.QMessageBox.information(None, _("Unable to Run OpenMolar"),
@@ -256,7 +264,7 @@ Are you ready to proceed?</center>''')
                     #-- won't see the mysql password until this point
                     #-- this could and should possibly still be improved upon
                     #-- maybe by using an ssl connection to the server.
-                    localsettings.initiateUsers()
+                    localsettings.initiateUsers(changedServer)
                     uninitiated = False
 
                 u1_qstring = dl.user1_lineEdit.text().toUpper()

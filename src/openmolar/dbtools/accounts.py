@@ -50,5 +50,5 @@ def bad_debts():
     return rows
 
 if __name__ == "__main__":
-    localsettings.initiate(False)
+    localsettings.initiate()
     print details()

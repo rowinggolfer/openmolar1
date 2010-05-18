@@ -326,7 +326,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         self.dialog.exec_()
     
 if __name__ == "__main__":
-    localsettings.initiate(False)
+    localsettings.initiate()
     import sys
     from openmolar.qt4gui import maingui
     app = QtGui.QApplication(sys.argv)

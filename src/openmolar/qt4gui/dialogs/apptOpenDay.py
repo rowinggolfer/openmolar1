@@ -198,7 +198,7 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
     
     
 if __name__ == "__main__":
-    localsettings.initiate(False)
+    localsettings.initiate()
     import sys
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()

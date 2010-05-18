@@ -269,7 +269,7 @@ def toBriefHtml(pt):
 
 if __name__ == "__main__":
     from openmolar.dbtools import patient_class
-    localsettings.initiate(False)
+    localsettings.initiate()
     try:
         serialno = int(sys.argv[len(sys.argv)-1])
     except:
