@@ -17,6 +17,7 @@ class control(QtGui.QLabel):
         super(control,self).__init__(parent)
         self.setMinimumSize(80,40)
         self.memo=""
+        self.setWordWrap(True)
         self.date = QtCore.QDate(1900,1,1)
 
     def setDate(self,arg):

@@ -168,7 +168,7 @@ class openmolarGui(QtGui.QMainWindow):
             m = QtGui.QMessageBox(self)
             m.setText(arg)
             m.setStandardButtons(QtGui.QMessageBox.NoButton)
-            m.setWindowTitle("")
+            m.setWindowTitle(_("advisory"))
             m.setModal(False)
             QtCore.QTimer.singleShot(3*1000, m.accept)
             m.show()
@@ -3805,7 +3805,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.SIGNAL("currentChanged(int)"),
             self.week_schedule_tabWidget_changed)
 
-
     def signals_apptWidgets(self, book):
 
         book.connect(book, QtCore.SIGNAL("print_me"), self.bookPrint)
@@ -3873,10 +3872,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.week_next_appt_pushButton,
         QtCore.SIGNAL("clicked()"), self.week_next_appt)
 
-        for widg in (self.ui.all_appts_radioButton, 
-        self.ui.cp_only_radioButton):
-            QtCore.QObject.connect(widg, QtCore.SIGNAL("released()"),
-            self.aptOV_checkboxes_changed)
+        QtCore.QObject.connect(self.ui.all_appts_checkBox, 
+        QtCore.SIGNAL("released()"), self.aptOV_checkboxes_changed)
 
         QtCore.QObject.connect(self.apt_drag_model,
         QtCore.SIGNAL("clinicianListChanged"), self.aptOV_checkboxes_changed)
@@ -3958,14 +3955,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         applies a max fee chargeable
         '''
         result=QtGui.QMessageBox.question(self, _("Confirm"),
-        _("apply an exmption to this estimate?"),
+        _("apply an exemption to this estimate?"),
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.No )
         if result == QtGui.QMessageBox.No:
             return
         max, result = QtGui.QInputDialog.getInteger(self, _("input needed"),
         _("maximum charge for the patient")+"<br />"+_(
-        "please enter the amount in pence, or leave as 0 for full exmption"))
+        "please enter the amount in pence, or leave as 0 for full exemption"))
 
         if result and estimates.apply_exemption(self.pt, max):
             self.handle_patientTab()

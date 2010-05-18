@@ -44,6 +44,12 @@
      <height>27</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Discard|QDialogButtonBox::Save</set>
    </property>
@@ -54,9 +60,9 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>421</x>
+     <x>322</x>
      <y>128</y>
-     <width>122</width>
+     <width>221</width>
      <height>27</height>
     </rect>
    </property>

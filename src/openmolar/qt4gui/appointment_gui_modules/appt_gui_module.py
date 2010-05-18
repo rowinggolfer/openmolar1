@@ -737,11 +737,9 @@ def weekView_setScheduleMode(om_gui):
     if visible is False, then this function has been called simply to
     syncronise the state with another scehduling page (dayview)
     '''
-    if om_gui.scheduling_mode:
-        om_gui.ui.cp_only_radioButton.setChecked(True) # current pt only
-    else:
+    if not om_gui.scheduling_mode:
         om_gui.ui.week_clinicianSelection_comboBox.setCurrentIndex(0)
-        om_gui.ui.all_appts_radioButton.setChecked(True)
+    om_gui.ui.all_appts_checkBox.setChecked(not om_gui.scheduling_mode)
     om_gui.ui.week_schedule_groupBox.setChecked(om_gui.scheduling_mode)
     om_gui.ui.weekView_manualClinicians_checkBox.setChecked(False)
     om_gui.ui.week_schedule_tabWidget.setVisible(om_gui.scheduling_mode)
@@ -1157,7 +1155,7 @@ def layout_weekView(om_gui, moveOnToNextWeek=False):
                         if slot.date_time.date() == ov.date.toPyDate():
                             ov.addSlot(slot)
                 
-    if om_gui.ui.all_appts_radioButton.isChecked():
+    if om_gui.ui.all_appts_checkBox.isChecked():
         #--add appts
         for ov in om_gui.ui.apptoverviews:
             for dent in ov.dents:

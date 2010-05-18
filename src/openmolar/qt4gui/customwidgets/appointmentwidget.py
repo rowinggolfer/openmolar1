@@ -526,8 +526,10 @@ class appointmentCanvas(QtGui.QWidget):
                 start = int(self.dayStartTime + self.selected[0] * self.slotDuration)
                 finish = int(self.dayStartTime + self.selected[1] * self.slotDuration)
 
-                QtGui.QToolTip.showText(event.globalPos(),
-                "SLOT %s minutes"% (finish - start))
+                x_pos = self.mapToGlobal(self.pos()).x()
+                pos = QtCore.QPoint(x_pos, event.globalPos().y())
+                QtGui.QToolTip.showText(pos, 
+                    "SLOT %s minutes"% (finish - start))
 
     def mousePressEvent(self, event):
         '''

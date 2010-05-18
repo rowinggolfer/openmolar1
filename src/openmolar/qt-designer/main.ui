@@ -1749,7 +1749,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>780</width>
+                        <width>582</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2175,8 +2175,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>821</width>
-                        <height>454</height>
+                        <width>458</width>
+                        <height>446</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2677,7 +2677,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>780</width>
+                        <width>609</width>
                         <height>493</height>
                        </rect>
                       </property>
@@ -3000,8 +3000,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>597</width>
-                        <height>436</height>
+                        <width>111</width>
+                        <height>137</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3200,7 +3200,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>547</width>
+                           <width>28</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3612,8 +3612,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>803</width>
-                        <height>436</height>
+                        <width>270</width>
+                        <height>394</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4271,6 +4271,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     </widget>
                    </item>
                    <item>
+                    <spacer name="verticalSpacer_13">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
                     <widget class="QFrame" name="schedule_frame">
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
@@ -4376,19 +4389,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                          </layout>
                         </widget>
                        </widget>
-                      </item>
-                      <item>
-                       <spacer name="verticalSpacer_13">
-                        <property name="orientation">
-                         <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>20</width>
-                          <height>40</height>
-                         </size>
-                        </property>
-                       </spacer>
                       </item>
                      </layout>
                     </widget>
@@ -4528,6 +4528,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     </widget>
                    </item>
                    <item>
+                    <spacer name="verticalSpacer_15">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
                     <widget class="QGroupBox" name="week_schedule_groupBox">
                      <property name="title">
                       <string>Schedule appointments</string>
@@ -4661,19 +4674,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      </layout>
                     </widget>
                    </item>
-                   <item>
-                    <spacer name="verticalSpacer_15">
-                     <property name="orientation">
-                      <enum>Qt::Vertical</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>20</width>
-                       <height>40</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -4688,7 +4688,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
-                  <widget class="QWidget" name="">
+                  <widget class="QWidget" name="layoutWidget">
                    <layout class="QGridLayout" name="gridLayout">
                     <item row="0" column="0">
                      <widget class="QFrame" name="day1_frame">
@@ -4800,7 +4800,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                       <property name="frameShadow">
                        <enum>QFrame::Sunken</enum>
                       </property>
-                      <zorder>appt_OV_Frame3</zorder>
                      </widget>
                     </item>
                     <item row="1" column="2">
@@ -4853,7 +4852,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     </item>
                    </layout>
                   </widget>
-                  <widget class="QWidget" name="">
+                  <widget class="QWidget" name="layoutWidget">
                    <layout class="QVBoxLayout" name="verticalLayout_23">
                     <item>
                      <widget class="QFrame" name="day6_frame">
@@ -4945,6 +4944,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                   <item>
                    <widget class="QPushButton" name="week_1st_appt_pushButton">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="toolTip">
                      <string>Find the First Suitable Appointment. </string>
                     </property>
@@ -4955,6 +4957,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </item>
                   <item>
                    <widget class="QPushButton" name="week_prev_appt_pushButton">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="toolTip">
                      <string>Find the Previous Appointment
 F5</string>
@@ -4962,16 +4967,30 @@ F5</string>
                     <property name="text">
                      <string>Prev</string>
                     </property>
+                    <property name="icon">
+                     <iconset resource="../resources/resources.qrc">
+                      <normaloff>:/back.png</normaloff>:/back.png</iconset>
+                    </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QPushButton" name="week_next_appt_pushButton">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="toolTip">
                      <string>Find the Next Available Appointment.
 F6</string>
                     </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::RightToLeft</enum>
+                    </property>
                     <property name="text">
                      <string>Next</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../resources/resources.qrc">
+                      <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
                     </property>
                    </widget>
                   </item>
@@ -5005,19 +5024,12 @@ F6</string>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="all_appts_radioButton">
+                   <widget class="QCheckBox" name="all_appts_checkBox">
                     <property name="text">
                      <string>show All appointments</string>
                     </property>
                     <property name="checked">
                      <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="cp_only_radioButton">
-                    <property name="text">
-                     <string>current patient Only</string>
                     </property>
                    </widget>
                   </item>
@@ -5043,8 +5055,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>1021</width>
-                     <height>479</height>
+                     <width>71</width>
+                     <height>16</height>
                     </rect>
                    </property>
                   </widget>
@@ -5317,8 +5329,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>1041</width>
-                     <height>532</height>
+                     <width>100</width>
+                     <height>30</height>
                     </rect>
                    </property>
                   </widget>

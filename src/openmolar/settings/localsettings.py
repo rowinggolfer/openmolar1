@@ -857,7 +857,7 @@ def initiate(debug = False):
 _("Welcome to OpenMolar!")+ '''</h1>
 <ul><li class="about">''' + _("Version") + ''' %s</li>
 <li class="about">'''% __MAJOR_VERSION__ + _("Revision") +
-'''%s</li></ul><br clear="all" /><p>''' % __build__ +
+''' %s</li></ul><br clear="all" /><p>''' % __build__ +
 _("Your Data is Accessible, and the server reports no issues.") +
 '''</p><p>''' + _("Have a great day!") + '''</p></div></body></html>''')
 
