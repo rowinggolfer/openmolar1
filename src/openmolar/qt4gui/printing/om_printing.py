@@ -137,45 +137,43 @@ def printAccountsTable(om_gui):
     print the table
     '''
     #-- set a pointer for readability
-    table=om_gui.ui.accounts_tableWidget
-    rowno=table.rowCount()
-    colno=table.columnCount()
+    table = om_gui.ui.accounts_tableWidget
+    rowno = table.rowCount()
+    colno = table.columnCount()
     if rowno == 0:
         om_gui.advise(_("Nothing to print - have you loaded the table?"), 1)
         return()
-    total=0.0
-    html='<html><body><table border="1">'
-    html+=_('''<tr><th>Dent</th><th>SerialNo</th><th>Cset</th>
+    total = 0
+    html = '<html><body><table border="1">'
+    html += _('''<tr><th>Dent</th><th>SerialNo</th><th>Cset</th>
 <th>FName</th><th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>
 <th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>
 <th>Amount</th></tr>''')
     for row in range(rowno):
         if row%2 == 0:
-            html+='<tr bgcolor="#eeeeee">'
+            html += '<tr bgcolor="#eeeeee">'
         else:
-            html+='<tr>'
+            html += '<tr>'
         for col in range(13):
-            item=table.item(row, col)
+            item = table.item(row, col)
             if item:
                 if col == 1:
-                    html+='<td align="right">%s</td>'%item.text()
+                    html+='<td align="right">%s</td>'% item.text()
                 elif col == 12:
-                    html+='<td align="right">&pound;%s</td>'%item.text()
-                    total+=float(item.text())
+                    money = int(float(item.text()) * 100)
+                    money_str = localsettings.formatMoney(money)
+                    html += '<td align="right">%s</td>'% money_str
+                    total += money
                 else:
-                    html+='<td>%s</td>'%item.text()
+                    html += '<td>%s</td>'%item.text()
             else:
-                html+='<td> </td>'
-        html+='</tr>\n'
+                html += '<td> </td>'
+        html += '</tr>\n'
 
-    html += _('''<tr><td colspan="11"></td><td><b>TOTAL</b></td>
-<td align="right"><b>&pound; %.02f</b></td></tr>
-</table></body></html>''')%total
+    html += '<tr><td colspan="11"></td><td><b>' + _('TOTAL') + '''</b></td>
+        <td align="right"><b>%s</b></td></tr></table></body></html>'''% (
+        localsettings.formatMoney(total))
 
-    #--test code
-    #f=open("/home/neil/Desktop/accounts.html", "w")
-    #f.write(html)
-    #f.close()
     myclass=letterprint.letter(html)
     myclass.printpage()
 

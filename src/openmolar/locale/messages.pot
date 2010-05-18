@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-05-18 01:44+BST\n"
+"POT-Creation-Date: 2010-05-18 19:13+BST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -505,7 +505,7 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:276
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_quick_daylist_print.py:50
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_surgeryNumber.py:48
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:374
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:372
 msgid "Question"
 msgstr ""
 
@@ -5688,8 +5688,8 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2123
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:90
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:118
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:184
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:203
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:182
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:201
 msgid "no patient selected"
 msgstr ""
 
@@ -6538,39 +6538,36 @@ msgid ""
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:171
-msgid ""
-"<tr><td colspan=\"11\"></td><td><b>TOTAL</b></td>\n"
-"<td align=\"right\"><b>&pound; %.02f</b></td></tr>\n"
-"</table></body></html>"
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:173
+msgid "TOTAL"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:208
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:206
 msgid "Estimate for your current course of treatment."
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:228
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:226
 msgid ""
 "<tr><td></td><td><b>TOTAL</b></td>\n"
 "<td align=\"right\">%s</td></tr>"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:232
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:230
 msgid ""
 "<p><i>Please note, this estimate may be subject\n"
 "to change if clinical circumstances dictate.</i></p>"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:356
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:354
 msgid "Previous Course (%s - %s)"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:375
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:373
 msgid "Print an NHS form now?"
 msgstr ""
 

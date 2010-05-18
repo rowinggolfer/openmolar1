@@ -57,22 +57,27 @@ def details(sno):
             retarg+='<td>%s</td>'%treatment.strip("\x00")
         else:
             retarg+='<td>??</td>'
-        fee=row[7]/100
-        retarg+='<td align="right">&pound;%.02F</td>'%fee
-        ptfee=row[8]/100
-        retarg+='<td align="right">&pound;%.02F</td>'%ptfee
         
-        fee_total+=fee
-        ptfee_total+=ptfee
+        fee = row[7]
+        retarg += '<td align="right">%s</td>'% (
+            localsettings.formatMoney(fee))
+
+        ptfee = row[8]
+        retarg += '<td align="right">%s</td>'% (
+            localsettings.formatMoney(ptfee))
+        
+        fee_total += fee
+        ptfee_total += ptfee
         retarg+='</tr>\n'
+
     retarg+='''<tr><td colspan="5"></td>
-    <td><b>TOTALS</b></td><td align="right"><b>&pound; %.02f</b></td>
-    <td align="right"><b>&pound; %.02f</b></td></tr>'''%(fee_total,ptfee_total)
+    <td><b>TOTALS</b></td><td align="right"><b>%s</b></td>
+    <td align="right"><b>%s</b></td></tr>'''% (
+        localsettings.formatMoney(fee_total), 
+        localsettings.formatMoney(ptfee_total))
     
-    retarg+='</table>'
-    print retarg
+    retarg += '</table>'
     
-    #db.close()
     return retarg
 
 if __name__ == "__main__":

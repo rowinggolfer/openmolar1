@@ -56,11 +56,11 @@ class est():
         return '''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
         <td>%s</td><td>%s</td><td>%s</td>
         <td>%s</td><td>%s</td><td>%s</td></tr>'''%(
-        localsettings.ops.get(self.dent),self.number,self.itemcode,
+        localsettings.ops.get(self.dent), self.number, self.itemcode,
         self.category, self.type,
-        self.description,localsettings.formatMoney(self.fee),
+        self.description, localsettings.formatMoney(self.fee),
         localsettings.formatMoney(self.ptfee),self.feescale,
-        self.csetype,self.completed)
+        self.csetype, self.completed)
 
     def htmlHeader(self):
         return '''<tr><th>Dentist</th><th>number</th><th>code</th>

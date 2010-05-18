@@ -22,12 +22,12 @@ def toHtml(plandata):
     '''
     retarg+="<tr><td>PLAN TYPE</td><td>%s</td></tr>"%plandata.plantype
     retarg+="<tr><td>BAND</td><td>%s</td></tr>"%plandata.band 
-    retarg+="<tr><td>GROSS CHARGE</td><td>&pound;%.02f</td></tr>"%(
-    plandata.grosschg/100) 
+    retarg+="<tr><td>GROSS CHARGE</td><td>%s</td></tr>"%(
+    localsettings.formatMoney(plandata.grosschg)) 
     
     retarg+="<tr><td>DISCOUNT</td><td>%s&#37;</td></tr>"%plandata.discount 
-    retarg+="<tr><td>NET CHARGE</td><td>&pound;%.02f</td></tr>"%(
-    plandata.netchg/100)
+    retarg+="<tr><td>NET CHARGE</td><td>%s</td></tr>"%(
+    localsettings.formatMoney(plandata.netchg))
 
     retarg+="<tr><td>CATEGORY</td><td>%s</td></tr>"%plandata.catcode 
     retarg+="<tr><td>DATE JOINED</td><td>%s</td></tr>"%plandata.planjoin 

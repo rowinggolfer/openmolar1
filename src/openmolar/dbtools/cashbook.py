@@ -123,37 +123,43 @@ def details(dent, startdate, enddate):
         retarg += '<td>%s</td>'% row[3]
         CODE = cashbookCodesDict.get(row[4])
         retarg += '<td>%s</td>'% CODE
-        amt = row[5]/100
+        amt = row[5]
+        amt_str = localsettings.formatMoney(amt)
+            
         if "CASH" in CODE:
-            retarg += '<td align="right">&pound;%.02F</td>'% amt
+            retarg += '<td align="right">%s</td>'% amt_str
             cashTOT += amt
             retarg += "<td> </td>" * 3
         elif "CHEQUE" in CODE:
-            retarg += '<td> </td><td align="right">&pound;%.02F</td>'% amt
+            retarg += '<td> </td><td align="right">%s</td>'% amt_str
             chequeTOT += amt
             retarg += "<td> </td>" * 2
         elif "CARD" in CODE:
             retarg += "<td> </td>" * 2
-            retarg += '<td align="right">&pound;%.02F</td>'% amt
+            retarg += '<td align="right">%s</td>'% amt_str
             cardTOT += amt
             retarg += "<td> </td>"
         else:
             retarg += "<td> </td>" * 3
-            retarg += '<td align="right">&pound;%.02F</td>'% amt
+            retarg += '<td align="right">%s</td>'% amt_str
             otherTOT += amt
 
-        retarg += '<td align="right">&pound;%.02f</td>'% amt
+        retarg += '<td align="right">%s</td>'% amt_str
         retarg += '</tr>\n'
         total += amt
 
     retarg += '''<tr><td colspan="4"></td>
     <td><b>TOTAL</b></td>
-    <td align="right"><b>&pound; %.02f</b></td>
-    <td align="right"><b>&pound; %.02f</b></td>
-    <td align="right"><b>&pound; %.02f</b></td>
-    <td align="right"><b>&pound; %.02f</b></td>
-    <td align="right"><b>&pound; %.02f</b></td></tr>'''% (
-    cashTOT, chequeTOT, cardTOT, otherTOT, total)
+    <td align="right"><b>%s</b></td>
+    <td align="right"><b>%s</b></td>
+    <td align="right"><b>%s</b></td>
+    <td align="right"><b>%s</b></td>
+    <td align="right"><b>%s</b></td></tr>'''% (
+    localsettings.formatMoney(cashTOT), 
+    localsettings.formatMoney(chequeTOT), 
+    localsettings.formatMoney(cardTOT), 
+    localsettings.formatMoney(otherTOT), 
+    localsettings.formatMoney(total))
 
     retarg += '</table>'
     cursor.close()

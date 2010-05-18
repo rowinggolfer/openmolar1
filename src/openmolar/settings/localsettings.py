@@ -29,7 +29,7 @@ DBNAME = "default"
 CLIENT_SCHEMA_VERSION = "1.7"
 
 DB_SCHEMA_VERSION = "unknown"
-ENCODING = locale.getpreferredencoding() #"latin-1" for the uk currrency??
+ENCODING = locale.getpreferredencoding()
 FEETABLES = {}
 
 WIKIURL = ""

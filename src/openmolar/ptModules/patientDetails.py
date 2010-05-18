@@ -119,11 +119,11 @@ def details(pt, Saved=True):
         else:
             alert = ""
         if pt.fees > 0:
-            amount = "&pound;%.02f"% (pt.fees / 100)
+            amount = localsettings.formatMoney(pt.fees)
             retarg += '<hr /><h3 class="debt">Account = %s %s</h3>'% (
             amount, alert)
         if pt.fees < 0:
-            amount = "&pound;%.02f"% (-pt.fees/100)
+            amount = localsettings.formatMoney(-pt.fees)
             retarg += '<hr /><h3>%s in credit %s</h3>'% (amount, alert)
 
         if pt.underTreatment:

@@ -33,7 +33,7 @@ class Ui_Dialog(Ui_saveMemo.Ui_Dialog):
         
         open = True
         
-        message=str(self.textEdit.toPlainText().toAscii())
+        message = self.textEdit.toPlainText().toAscii()
         
         if self.viewSurgery_radioButton.isChecked():
             type = "surg"
@@ -43,7 +43,7 @@ class Ui_Dialog(Ui_saveMemo.Ui_Dialog):
             type = "all"
         
         return memos.saveMemo(self.serialno, author, type, exdate, 
-        message, open) 
+            message, open) 
     
 if __name__ == "__main__":
     localsettings.initiate(False)

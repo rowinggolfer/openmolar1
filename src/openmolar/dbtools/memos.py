@@ -19,11 +19,7 @@ class memo():
         self.message=None
         self.open=False
     def setMessage(self, arg):
-        try:
-            self.message = unicode(arg, encoding=localsettings.ENCODING,
-            errors = "replace")
-        except:
-            print "unicode error with ",arg
+        self.message = arg
 
 def getMemos(serialno):
     retarg=[]
