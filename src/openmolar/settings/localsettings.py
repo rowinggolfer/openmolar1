@@ -721,7 +721,7 @@ def initiateUsers(changedServer = False):
     global allowed_logins
     from openmolar import connect
 
-    if changedServer:
+    if changedServer and connect.mainconnection:
         print "closing connection"
         connect.mainconnection.close()
         reload(connect)
@@ -746,7 +746,7 @@ def initiate(changedServer= False, debug = False):
     from openmolar import connect
     from openmolar.dbtools import db_settings
 
-    if changedServer:
+    if changedServer and connect.mainconnection:
         print "closing connection"
         connect.mainconnection.close()
         reload(connect)

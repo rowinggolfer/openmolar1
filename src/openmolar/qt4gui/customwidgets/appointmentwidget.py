@@ -775,7 +775,7 @@ if __name__ == "__main__":
         print "print me", a
 
     import sys
-    localsettings.initiate(False)
+    localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
 
     #--initiate a book starttime 08:00 endtime 10:00

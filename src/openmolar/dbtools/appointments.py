@@ -41,6 +41,63 @@ class freeSlot(object):
         except AttributeError:
             pass
         return 0
+    
+    def __repr__(self):
+        return "SLOT %s , dent %s, %s mins"% (self.date_time, self.dent, 
+            self.length)
+    
+def getLengthySlots(slots, length):
+    '''
+    sort through the list of slots, and filter out those with inadequate length
+    '''
+    retlist = []
+    now = datetime.datetime.now()
+    for slot in slots:
+        if slot.length >= length and slot.date_time > now:
+            retlist.append(slot)
+    return retlist
+
+def slots(adate, apptix, start, apdata, fin):
+    '''
+    takes data like  830 ((830, 845), (900, 915), (1115, 1130), (1300, 1400),
+    (1400, 1420), (1600, 1630)) 1800
+    and returns a tuple of results like (freeSlot, freeSlot, ....)
+    '''
+    #--slotlength is required appt  length, in minutes
+
+    #-- modified this on 18_11_2009, for the situation when a clinician's day
+    #-- start may be later than any first appointment in that book
+    #-- this facilitates having lunch etc.. already in place for a non used
+    #-- day.
+    aptstart = localsettings.minutesPastMidnight(start)
+    dayfin = localsettings.minutesPastMidnight(fin)
+    if dayfin <= aptstart:
+        return ()
+    results = []
+    for ap in apdata:
+        sMin = localsettings.minutesPastMidnight(ap[0])
+        fMin = localsettings.minutesPastMidnight(ap[1])
+        slength = sMin-aptstart
+        if  slength > 0:
+            date_time = datetime.datetime.combine(adate,
+            localsettings.minutesPastMidnightToPyTime(aptstart))
+
+            slot = freeSlot(date_time, apptix, slength)
+            results.append(slot)
+
+        if fMin > aptstart:
+            aptstart = fMin
+        if aptstart >= dayfin:
+            break
+    slength = dayfin-aptstart
+    if slength > 0:
+        date_time = datetime.datetime.combine(adate,
+        localsettings.minutesPastMidnightToPyTime(aptstart))
+
+        slot = freeSlot(date_time, apptix, slength)
+        results.append(slot)
+    return results
+
         
 class aowAppt(object):
     '''
@@ -160,13 +217,6 @@ class dayAppointmentData(daySummary):
     '''
     def __init__(self):
         daySummary.__init__(self)
-        #self.date = datetime.date(1900,1,1)
-        #self.earliest_start = 2359
-        #self.latest_end = 0
-        #self.workingDents = ()
-        #self.inOffice = {}
-        #self.memo = "today"
-        #self.memos = {}
         self.appointments = ()
 
     def header(self):
@@ -236,6 +286,22 @@ class dayAppointmentData(daySummary):
             if app[0] == dent:
                 retList.append(app)
         return retList
+
+    def slots(self, minlength):
+        '''
+        return slots for this day
+        '''
+        slotlist = []
+        dents = self.workingDents
+        for dent in self.workingDents:
+            if self.inOffice.get(dent, False):
+                appt_times_list = []
+                for app in self.dentAppointments(dent):
+                    appt_times_list.append((app[1], app[2]))
+                if appt_times_list:
+                    slotlist += slots(self.date, dent, self.getStart(dent), 
+                        appt_times_list, self.getEnd(dent))
+        return getLengthySlots(slotlist, minlength)
 
 class dentistDay():
     '''
@@ -1318,47 +1384,6 @@ def daysSlots(adate, dent):
         #--day not used or no slots
         return()
 
-def slots(adate, apptix, start, apdata, fin):
-    '''
-    takes data like  830 ((830, 845), (900, 915), (1115, 1130), (1300, 1400),
-    (1400, 1420), (1600, 1630)) 1800
-    and returns a tuple of results like (freeSlot, freeSlot, ....)
-    '''
-    #--slotlength is required appt  length, in minutes
-
-    #-- modified this on 18_11_2009, for the situation when a clinician's day
-    #-- start may be later than any first appointment in that book
-    #-- this facilitates having lunch etc.. already in place for a non used
-    #-- day.
-    aptstart = localsettings.minutesPastMidnight(start)
-    dayfin = localsettings.minutesPastMidnight(fin)
-    if dayfin <= aptstart:
-        return ()
-    results = []
-    for ap in apdata:
-        sMin = localsettings.minutesPastMidnight(ap[0])
-        fMin = localsettings.minutesPastMidnight(ap[1])
-        slength = sMin-aptstart
-        if  slength > 0:
-            date_time = datetime.datetime.combine(adate,
-            localsettings.minutesPastMidnightToPyTime(aptstart))
-
-            slot = freeSlot(date_time, apptix, slength)
-            results.append(slot)
-
-        if fMin > aptstart:
-            aptstart = fMin
-        if aptstart >= dayfin:
-            break
-    slength = dayfin-aptstart
-    if slength > 0:
-        date_time = datetime.datetime.combine(adate,
-        localsettings.minutesPastMidnightToPyTime(aptstart))
-
-        slot = freeSlot(date_time, apptix, slength)
-        results.append(slot)
-    return results
-@localsettings.debug
 def future_slots(startdate, enddate, dents, override_emergencies=False):
     '''
     get a list of possible appointment positions
@@ -1419,26 +1444,17 @@ if __name__ == "__main__":
             self.fname = "Wallace"
             self.cset = "P"
 
-    pt = duckPt()
-    #testdate = "2009_08_10"
-    #testdate1 = "2009_08_10"
+    #pt = duckPt()
     #localsettings.initiate()
-    #localsettings.logqueries = True
-    #print printableDaylistData("20090921", 4)
+    #print get_pts_appts(pt)
 
-    #print todays_patients()
-    #print todays_patients(("NW","BW"))
-    #dents= getWorkingDents(edate)
+    testdate = datetime.date(2010,5,19)
+    #dents = getWorkingDents(testdate)
     #print dents
-    #print allAppointmentData(testdate,dents)
-    #print add_pt_appt(11956,5,15,"exam")
-    #print future_slots(5,testdate,testdate1,(4,))
-    #print future_slots(30,testdate,testdate1,(4,13))
-    #print slots(830,((830, 845), (900, 915), (1115, 1130),
-    #                  (1300, 1400), (1400, 1420), (1600, 1630)),1800,30)
-    #print daysummary(testdate,4)
-    #print getBlocks(testdate,4)
-    #print daysSlots("2009_2_02","NW")
-    #delete_appt(420,2)
-    #print dentistDay()
-    print get_pts_appts(pt)
+    
+    d_a_d = dayAppointmentData()
+    d_a_d.setDate(testdate)
+    d_a_d.getAppointments()
+    print d_a_d.slots()
+    
+    

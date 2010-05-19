@@ -756,7 +756,9 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         handles scheduling checkbox clicked
         '''
-        self.scheduling_mode = self.ui.day_schedule_checkBox.isChecked()
+        self.scheduling_mode = self.ui.day_schedule_groupBox.isChecked()
+        if self.scheduling_mode:
+            appt_gui_module.layout_ptDiary(self)
         appt_gui_module.dayView_setScheduleMode(self)
         appt_gui_module.handle_calendar_signal(self)
         
@@ -832,16 +834,24 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         find the prev appointment for the chosen criteria
         '''
-        print "week_prev_appt"
+        if self.scheduling_mode:
+            self.signals_calendar(False)
+            past = appt_gui_module.aptOV_weekBack(self)
+            self.signals_calendar()
+            if past:
+                appt_gui_module.layout_weekView(self, find_prev_appt=True)
+            else:
+                self.advise(_("You can't schedule an appointment in the past"))
 
     def week_next_appt(self):
         '''
         find the next appointment for the chosen criteria
         '''
-        self.signals_calendar(False)
-        appt_gui_module.aptOV_weekForward(self)
-        self.signals_calendar()
-        appt_gui_module.layout_weekView(self, True)
+        if self.scheduling_mode:
+            self.signals_calendar(False)
+            appt_gui_module.aptOV_weekForward(self)
+            self.signals_calendar()
+            appt_gui_module.layout_weekView(self, find_next_appt=True)
         
     def clinicianSelection_comboBoxes_activate(self, i):
         '''
@@ -2180,7 +2190,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.advise("error writing notes to database... sorry!", 2)
         self.updateDetails()
 
-    @localsettings.debug
     def enableEdit(self, arg=True):
         '''
         disable/enable widgets "en mass" when no patient loaded
@@ -2382,18 +2391,35 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.gotoToday(self)
 
-    def apt_dayBack_clicked(self):
+    def day_1st_appt(self):
         '''
-        handles a request to move back a day in the appointments page
+        handles a request to find the 1st appointment in dayViewMode
         '''
-        appt_gui_module.apt_dayBack(self)
+        appt_gui_module.begin_makeAppt(self, dayView=True)
+        
+    def day_prev_appt(self):
+        '''
+        handles a request to find previous slot on appointments page
+        '''
+        if self.scheduling_mode:
+            self.signals_calendar(False)
+            past = appt_gui_module.apt_dayBack(self)
+            self.signals_calendar()
+            if past:
+                appt_gui_module.layout_dayView(self, find_prev_appt=True)
+            else:
+                self.advise(_("You can't schedule an appointment in the past"))
 
-    def apt_dayForward_clicked(self):
+    def day_next_appt(self):
         '''
-        handles a request to move forward a day in the appointments page
+        handles a request to find next slot on the appointments page
         '''
-        appt_gui_module.apt_dayForward(self)
-
+        if self.scheduling_mode:
+            self.signals_calendar(False)
+            appt_gui_module.apt_dayForward(self)
+            self.signals_calendar()
+            appt_gui_module.layout_dayView(self, find_next_appt=True)
+        
     def fontSize_spinBox_changed(self,i):
         '''
         user is asking for a different font on the appointment book
@@ -3752,7 +3778,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.week_schedule_groupBox,
         QtCore.SIGNAL("clicked()"), self.week_schedule_mode_clicked)
 
-        QtCore.QObject.connect(self.ui.day_schedule_checkBox,
+        QtCore.QObject.connect(self.ui.day_schedule_groupBox,
         QtCore.SIGNAL("clicked()"), self.day_schedule_mode_clicked)
 
         #QtCore.QObject.connect(self.ui.fontSize_spinBox,
@@ -3776,7 +3802,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.SIGNAL("stateChanged(int)"), 
             self.week_schedule_groupBox_state)
 
-            QtCore.QObject.connect(self.ui.day_schedule_checkBox,
+            QtCore.QObject.connect(self.ui.day_schedule_groupBox,
             QtCore.SIGNAL("stateChanged(int)"), 
             self.day_schedule_checkBox_state)
 
@@ -3792,7 +3818,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.SIGNAL("stateChanged(int)"), 
             self.week_schedule_groupBox_state)
 
-            QtCore.QObject.disconnect(self.ui.day_schedule_checkBox,
+            QtCore.QObject.disconnect(self.ui.day_schedule_groupBox,
             QtCore.SIGNAL("stateChanged(int)"), 
             self.day_schedule_checkBox_state)
 
@@ -3870,6 +3896,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.week_next_appt_pushButton,
         QtCore.SIGNAL("clicked()"), self.week_next_appt)
+
+        QtCore.QObject.connect(self.ui.day_1st_appt_pushButton,
+        QtCore.SIGNAL("clicked()"), self.day_1st_appt)
+        
+        QtCore.QObject.connect(self.ui.day_prev_appt_pushButton,
+        QtCore.SIGNAL("clicked()"), self.day_prev_appt)
+
+        QtCore.QObject.connect(self.ui.day_next_appt_pushButton,
+        QtCore.SIGNAL("clicked()"), self.day_next_appt)
 
         QtCore.QObject.connect(self.ui.all_appts_checkBox, 
         QtCore.SIGNAL("released()"), self.aptOV_checkboxes_changed)
@@ -3995,5 +4030,5 @@ if __name__ == "__main__":
     print "Qt Version: ", QtCore.QT_VERSION_STR
     print "PyQt Version: ", QtCore.PYQT_VERSION_STR
     newapp = QtGui.QApplication(sys.argv)
-
+    localsettings.loadFeeTables()
     main(newapp)
