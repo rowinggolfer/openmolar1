@@ -180,7 +180,7 @@ class openmolarGui(QtGui.QMainWindow):
             #--for logging purposes
             print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
 
-    def wait(self, waiting):
+    def wait(self, waiting=True):
         if waiting:
             self.app.setOverrideCursor(QtCore.Qt.WaitCursor)
         else:
@@ -661,6 +661,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         procedure called when user navigates the top tab
         '''
+        self.wait()
         ci = self.ui.main_tabWidget.currentIndex()
 
         if ci != 1 and self.scheduling_mode:
@@ -689,11 +690,13 @@ class openmolarGui(QtGui.QMainWindow):
             if not self.wikiloaded:
                 self.ui.wiki_webView.setUrl(QtCore.QUrl(localsettings.WIKIURL))
                 self.wikiloaded = True
+        self.wait(False)
 
     def handle_patientTab(self):
         '''
         handles navigation of patient record
         '''
+        self.wait()
         ci=self.ui.tabWidget.currentIndex()
 
         if ci != 6:
@@ -735,6 +738,8 @@ class openmolarGui(QtGui.QMainWindow):
         if ci == 7:  #-- estimate/plan page.
             self.load_newEstPage()
             self.load_treatTrees()
+
+        self.wait(False)
 
     def day_schedule_tabWidget_changed(self, i):
         '''
@@ -915,7 +920,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.moneytextBrowser.setHtml(localsettings.message)
             self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
-            self.pt_diary_model.clear()
+            self.pt_diary_model.clear(True)
             self.apt_drag_model.clear()
             self.ui.notesEnter_textEdit.setHtml("")
             self.ui.dayPatient_label.setText(_("None"))
@@ -1447,7 +1452,6 @@ class openmolarGui(QtGui.QMainWindow):
         sno = self.ui.accounts_tableWidget.item(row, 1).text()
         self.getrecord(int(sno))
 
-    @localsettings.debug
     def getrecord(self, serialno, checkedNeedToLeaveAlready=False,
     addToRecentSnos=True):
         '''
@@ -1522,7 +1526,8 @@ class openmolarGui(QtGui.QMainWindow):
         #-- don't load a patient if you are entering a new one.
         if self.enteringNewPatient():
             return
-        self.editPageVisited=False
+        self.editPageVisited = False
+        self.pt_diary_model.clear(True)
         self.ui.main_tabWidget.setCurrentIndex(0)
         if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)

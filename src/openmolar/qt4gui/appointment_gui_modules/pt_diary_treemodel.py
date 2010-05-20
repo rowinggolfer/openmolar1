@@ -96,7 +96,7 @@ class treeModel(QtCore.QAbstractItemModel):
             self.clear()
             self.appointments = appointments
             self.setupModelData()
-
+        
     def setSelectedAppt(self, appt):
         if appt and self.om_gui:
             pt = self.om_gui.pt
@@ -105,7 +105,9 @@ class treeModel(QtCore.QAbstractItemModel):
         self.selectedAppt = appt
         self.emit(QtCore.SIGNAL("selectedAppt"),appt)
         
-    def clear(self):
+    def clear(self, resetSelectedAppt=False):
+        if resetSelectedAppt:
+            self.selectedAppt = None
         self.appointments = []
         self.rootItem = TreeItem("Appointments",None, None, None)
         self.parents = {0 : self.rootItem}

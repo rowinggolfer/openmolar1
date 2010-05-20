@@ -170,6 +170,12 @@ class appt_class(object):
         self.serialno, self.date, not self.unscheduled, self.dent_inits, 
         self.trt1, self.aprix)
 
+    def __cmp__(self, other):
+        if str(self) == str(other):
+            return 0
+        else:
+            return 1
+
 class daySummary(object):
     '''
     a data structure to hold just summary data for a day

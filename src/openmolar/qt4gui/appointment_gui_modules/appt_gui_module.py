@@ -434,7 +434,7 @@ def begin_makeAppt(om_gui, dayView=False):
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
     om_gui.ui.weekCalendar.setSelectedDate(QtCore.QDate.currentDate())
     om_gui.signals_calendar()
-    om_gui.advise(_("Searching for 1st available appointment"))
+    #om_gui.advise(_("Searching for 1st available appointment"))
     if dayView:
         layout_dayView(om_gui, True)
     else:

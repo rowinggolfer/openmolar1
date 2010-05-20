@@ -543,7 +543,7 @@ class feeTable():
         if item != "":
             description = "%s - %s"% (self.getItemDescription(item), tooth)
         else:
-            description = "invalid with this feescale"
+            description = "other treatment"
         return (item, fee, ptfee, description)
     
     
