@@ -3,6 +3,7 @@ using 3rd party MySQLdb module'''
 
 import MySQLdb
 import sys
+import time
 import base64
 from xml.dom import minidom
 from openmolar.settings import localsettings
@@ -92,21 +93,27 @@ def connect():
     settings file
     '''
     global mainconnection
-    try:
-        if not (mainconnection and mainconnection.open):
-            print "New connection needed"
-            print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
-            mainconnection = MySQLdb.connect(host = myHost, port = myPort,
-            user = myUser, passwd = myPassword, db = myDb, ssl = ssl_settings)
-            mainconnection.autocommit(True)
-        else:
-            mainconnection.commit()
+    attempts = 0
+    while attempts < 150:
+        try:
+            if not (mainconnection and mainconnection.open):
+                print "New connection needed"
+                print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
+                mainconnection = MySQLdb.connect(host = myHost, port = myPort,
+                user = myUser, passwd = myPassword, db = myDb, 
+                ssl = ssl_settings)
+                mainconnection.autocommit(True)
+            else:
+                mainconnection.commit()
 
-        return mainconnection
-    except MySQLdb.Error, e:
-        print "Error %d: %s" % (e.args[0], e.args[1])
-        raise localsettings.omDBerror(e)
-
+            return mainconnection
+        except MySQLdb.Error, e:
+            print e.args[1]
+            print "will attempt re-connect in 2 seconds..."
+            mainconnection = None
+        time.sleep(2)
+        
+    raise localsettings.omDBerror(e)
 
 if __name__ == "__main__":
     from openmolar.settings import localsettings

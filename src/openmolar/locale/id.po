@@ -1,4 +1,4 @@
-# English (Australia) translation for openmolar
+# Indonesian translation for openmolar
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the openmolar package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
@@ -8,9 +8,9 @@ msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-05-19 10:45+0000\n"
-"PO-Revision-Date: 2010-05-09 12:23+0000\n"
-"Last-Translator: MoLE <Unknown>\n"
-"Language-Team: English (Australia) <en_AU@li.org>\n"
+"PO-Revision-Date: 2010-05-07 07:43+0000\n"
+"Last-Translator: dadanhrn <dadanhrn@gmail.com>\n"
+"Language-Team: Indonesian <id@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -23,180 +23,180 @@ msgstr ""
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:112
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/block_wizard.py:25
 msgid "emergency"
-msgstr "emergency"
+msgstr "darurat"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:64
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3122
 msgid "Exam"
-msgstr "Exam"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:68
 msgid "perio"
-msgstr "Perio"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:69
 msgid "xray"
-msgstr "Xray"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:70
 msgid "anaes"
-msgstr "Anaes"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:71
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:545
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:557
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_specify_appointment.py:167
 msgid "other"
-msgstr "other"
+msgstr "lainnya"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:72
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:546
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py:558
 msgid "custom"
-msgstr "custom"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/courseHistory.py:86
 msgid "Denture Work"
-msgstr "Denture Work"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/daybook.py:53
 msgid "Error - unrecognised practioner- sorry"
-msgstr "Error - unrecognised practitioner- sorry"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:177
 msgid "Feetable"
-msgstr "Fee_table"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:178
 msgid "Failed to Load"
-msgstr "Failed to Load"
+msgstr "Gagal memuat"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/feesTable.py:589
 msgid "not found"
-msgstr "not found"
+msgstr "tidak ditemukan"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:13
 msgid "Subject"
-msgstr "Subject"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:13
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_forumPost.py:81
 msgid "To"
-msgstr "To"
+msgstr "Ke"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:13
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_forumPost.py:84
 msgid "From"
-msgstr "From"
+msgstr "Dari"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:14
 msgid "Message"
-msgstr "Message"
+msgstr "Pesan"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/forum.py:14
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3072
 msgid "Date"
-msgstr "Date"
+msgstr "Tanggal"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/patient_class.py:652
 msgid "Age Exemption removed"
-msgstr "Age Exemption removed"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:14
 msgid "Letter No"
-msgstr "Letter No"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:14
 msgid "Serial No"
-msgstr "Serial No"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:14
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2992
 msgid "Title"
-msgstr "Title"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:14
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:2999
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_patient_finder.py:136
 msgid "First Name"
-msgstr "First Name"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:14
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3001
 msgid "Surname"
-msgstr "Surname"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:15
 msgid "Age"
-msgstr "Age"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:16
 msgid "Address"
-msgstr "Address"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:16
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:601
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3019
 msgid "Town"
-msgstr "Town"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:17
 msgid "Family No"
-msgstr "Family No"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:17
 msgid "PostCode"
-msgstr "PostCode"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:17
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_exam_wizard.py:126
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:622
 msgid "Dentist"
-msgstr "Dentist"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:17
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_initialise.py:602
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3021
 msgid "County"
-msgstr "County"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/recall.py:17
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_main.py:3285
 msgid "Recall Date"
-msgstr "Recall Date"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:74
 msgid "If you ever need to run this again, "
-msgstr "If you ever need to run this again, "
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:75
 msgid "delete the openmolar.conf file in "
-msgstr "delete the openmolar.conf file in "
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:78
 msgid "If you ever need to run this wizard again, "
-msgstr "If you ever need to run this wizard again, "
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:79
 msgid "Eg. if your server location changes, "
-msgstr "Eg. if your server location changes, "
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:80
 msgid "or you require a new password"
-msgstr "or you require a new password"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:81
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_estimateItemWidget.py:144
 msgid "type"
-msgstr "type"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:82
 msgid "on the command line, or delete the file"
-msgstr "on the command line, or delete the file"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:84
 msgid "For a more secure setup, you should move this file to"
-msgstr "For a more secure setup, you should move this file to"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:129
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/blockslot.py:172
@@ -205,7 +205,7 @@ msgstr "For a more secure setup, you should move this file to"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:37
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/new_setup.py:146
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:131
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:36
@@ -214,88 +214,86 @@ msgstr "Error"
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:34
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/new_setup.py:143
 msgid "Advisory"
-msgstr "Advisory"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:150
 msgid "Passwords don't match!"
-msgstr "Passwords don't match!"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:176
 msgid "Create Database"
-msgstr "Create Database"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:177
 msgid "Create Demo Database now with the following settings?"
-msgstr "Create Demo Database now with the following settings?"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:188
 msgid "Database Created Sucessfully"
-msgstr "Database Created Sucessfully"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:195
 msgid "Database NOT Created"
-msgstr "Database NOT Created"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:216
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_newSetup.py:287
 msgid "Welcome to the openMolar settings wizard."
-msgstr "Welcome to the openMolar settings wizard."
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:217
 msgid "Set the application Password"
-msgstr "Set the application Password"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:218
 msgid "Server Location"
-msgstr "Server Location"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:219
 msgid "Database Settings"
-msgstr "Database Settings"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:220
 msgid "Save settings and exit"
-msgstr "Save settings and exit"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:221
 msgid "Create a demo database"
-msgstr "Create a demo database"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:222
 msgid "Creating Database"
-msgstr "Creating Database"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:270
 msgid "The connection attempt threw an exception"
-msgstr "The connection attempt threw an exception"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:276
 msgid "Success!"
-msgstr "Success!"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:277
 msgid "The %s database accepted the connection."
-msgstr "The %s database accepted the connection."
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:280
 msgid ""
 "The connection attempt failed, \n"
 "please recheck your settings"
 msgstr ""
-"The connection attempt failed, \n"
-"please recheck your settings"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:323
 msgid "Error Creating Database"
-msgstr "Error Creating Database"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:430
 msgid "FAILURE"
-msgstr "FAILURE"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/main.py:80
 msgid "Update Client"
-msgstr "Update Client"
+msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/main.py:81
 msgid ""
