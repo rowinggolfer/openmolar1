@@ -112,6 +112,7 @@ def connect():
             print "will attempt re-connect in 2 seconds..."
             mainconnection = None
         time.sleep(2)
+        attempts += 1
         
     raise localsettings.omDBerror(e)
 
