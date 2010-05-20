@@ -287,6 +287,9 @@ class patient():
             self.updateFees()
             #self.setCurrentEstimate()
 
+    def __repr__(self):
+        return "'Patient_class instance - serialno %d'"% self.serialno
+
     def getAge(self):
         '''
         return the age in form (year(int), months(int), isToday(bool))

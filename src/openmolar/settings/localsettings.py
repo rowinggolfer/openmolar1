@@ -576,6 +576,12 @@ def pyTimetoWystime(t):
     hour, min = t.hour, t.minute
     return hour*100+min
 
+def pyTimeToHumantime(t):
+    '''
+    converts a python datetime.time to format HH:MM
+    '''
+    return t.strftime("%H:%M")
+
 def minutesPastMidnightToPyTime(t):
     '''
     converts minutes past midnight(int) to a python datetime.time

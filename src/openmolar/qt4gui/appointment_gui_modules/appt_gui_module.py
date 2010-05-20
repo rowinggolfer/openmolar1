@@ -1342,11 +1342,10 @@ def blockEmptySlot(om_gui, tup):
     block the empty slot
     '''
     adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
-    start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
-    end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
-    adjstart = localsettings.humanTimetoWystime(tup[2].toString("h:mm"))
-    adjend = localsettings.humanTimetoWystime(tup[3].toString("h:mm"))
-
+    start = tup[0].toPyTime()
+    end = tup[1].toPyTime()
+    adjstart = tup[2].toPyTime()
+    adjend = tup[3].toPyTime()
     dent = tup[4]
     reason = tup[5]
     if not appointments.block_appt(adate, dent, start, end,
@@ -1359,12 +1358,11 @@ def fillEmptySlot(om_gui, tup):
     '''
     fill the empty slot - this is called via the appointment widget.
     '''
-    print "fillEmptySlot", tup
     adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
-    start = localsettings.humanTimetoWystime(tup[0].toString("h:mm"))
-    end = localsettings.humanTimetoWystime(tup[1].toString("h:mm"))
-    adjstart = localsettings.humanTimetoWystime(tup[2].toString("h:mm"))
-    adjend = localsettings.humanTimetoWystime(tup[3].toString("h:mm"))
+    start = tup[0].toPyTime()
+    end = tup[1].toPyTime()
+    adjstart = tup[2].toPyTime()
+    adjend = tup[3].toPyTime()
     pt = tup[6]
     dent = tup[4]
     reason = tup[5]

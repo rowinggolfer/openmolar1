@@ -37,10 +37,10 @@ class freeSlot(object):
         try:
             if (self.date_time == other.date_time and
             self.dent == other.dent and self.length == other.length):
-                return 1
-        except AttributeError:
+                return 0
+        except AttributeError, e:
             pass
-        return 0
+        return 1
     
     def __repr__(self):
         return "SLOT %s , dent %s, %s mins"% (self.date_time, self.dent, 
@@ -704,7 +704,8 @@ def allAppointmentData(adate, dents=()):
     db = connect()
     cursor = db.cursor()
     query = '''select apptix,start,end,name,serialno,code0,
-    code1,code2,note,flag0,flag1,flag2,flag3 from aslot where adate=%s'''
+    code1,code2,note,flag0,flag1,flag2,flag3, timestamp from aslot 
+    where adate=%s'''
     query += " %s order by apptix, start"% cond
     if localsettings.logqueries:
         print query
@@ -1181,13 +1182,12 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     free slot in a DAY view.
     '''
     #- 1st check the block is free
-    block_length = localsettings.minutesPastMidnight(end) - \
-    localsettings.minutesPastMidnight(start)
-
     slots = future_slots(bldate, bldate, (apptix,))
     
-    date_time = datetime.datetime.combine(bldate,
-        localsettings.wystimeToPyTime(start))
+    date_time = datetime.datetime.combine(bldate,start)
+
+    block_length = (localsettings.pyTimeToMinutesPastMidnight(end) - 
+        localsettings.pyTimeToMinutesPastMidnight(start))
 
     this_slot = freeSlot(date_time, apptix, block_length)
     
@@ -1206,32 +1206,31 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     except:
         cset = 0
 
-    print "making appointment"
-    make_appt(bldate, apptix, bl_start, bl_end, name,
+    make_appt(bldate, apptix, localsettings.pyTimetoWystime(bl_start), 
+    localsettings.pyTimetoWystime(bl_end), name,
     pt.serialno, reason, "", "", "", 1, cset, 0, 0)
 
-    block_length = localsettings.minutesPastMidnight(bl_end) - \
-    localsettings.minutesPastMidnight(bl_start)
-    print "putting into pt diary"
+    block_length = (localsettings.pyTimeToMinutesPastMidnight(bl_end) - 
+        localsettings.pyTimeToMinutesPastMidnight(bl_start))
     aprix = add_pt_appt(pt.serialno, apptix, block_length, reason)
+    
     print "adjust pt diary"
-    return pt_appt_made(pt.serialno, aprix, bldate, bl_start, apptix)
+    return pt_appt_made(pt.serialno, aprix, 
+        bldate, localsettings.pyTimetoWystime(bl_start), apptix)
 
 def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     '''
     put a block in the book, with text set as reason
     '''
     #- 1st check the block is free
-    block_length = localsettings.minutesPastMidnight(end) - \
-    localsettings.minutesPastMidnight(start)
-
     slots = future_slots(bldate, bldate, (apptix,))
-    
-    date_time = datetime.datetime.combine(bldate,
-        localsettings.wystimeToPyTime(start))
+
+    date_time = datetime.datetime.combine(bldate,start)
+
+    block_length = (localsettings.pyTimeToMinutesPastMidnight(end) - 
+        localsettings.pyTimeToMinutesPastMidnight(start))
 
     this_slot = freeSlot(date_time, apptix, block_length)
-    
     #-- check block still available!!    
     found = False
     for slot in slots:
@@ -1243,11 +1242,12 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     
     db = connect()
     cursor = db.cursor()
-    query = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
-    code0,code1,code2,note,flag0,flag1,flag2,flag3)
+    query = '''INSERT INTO aslot (adate, apptix, start, end, name, serialno,
+    code0, code1, code2, note, flag0, flag1, flag2, flag3)
     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
-    values = (bldate, apptix, bl_start, bl_end, reason, 0, "", "", "", "",
+    values = (bldate, apptix, localsettings.pyTimetoWystime(bl_start), 
+    localsettings.pyTimetoWystime(bl_end), reason, 0, "", "", "", "",
     -128, 0, 0, 0)
 
     if localsettings.logqueries:

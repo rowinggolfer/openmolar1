@@ -227,8 +227,11 @@ if __name__ == "__main__":
             self.book.setStartTime(1015)
             self.book.setEndTime(1145)
             for appoint in (
-            (1, 1030, 1045, 'MCDONALD I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
-            ,(1, 1115, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0)):
+            (1, 1030, 1045, 'MCDONALD I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 
+            0, datetime.datetime.now())
+
+            ,(1, 1115, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 
+            0, datetime.datetime.now())):
                 self.book.setAppointment(appoint)
 
             self.OVbook = appointment_overviewwidget.bookWidget(1,

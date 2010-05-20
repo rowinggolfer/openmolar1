@@ -208,17 +208,19 @@ class appointmentWidget(QtGui.QFrame):
         adds an appointment to the widget dictionary of appointments
         typical useage is instance.setAppointment
         ("0820","0900","NAME","serialno","trt1",
-        "trt2","trt3","Memo")NOTE - this also appts to the widgets
+        "trt2","trt3","Memo", modtime)
+        NOTE - this also appts to the widgets
         dictionary which has
         row number as key, used for signals when appts are clicked
 
-        (5, 915, 930, 'MCPHERSON I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
-        (5, 1100, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0)
-
+        (5, 915, 930, 'MCPHERSON I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0, 
+        timestamp)
+        (5, 1100, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0, 
+        timestamp)
         '''
-        (start, finish, name, sno, trt1, trt2, trt3, memo, flag, cset) = (
-        str(app[1]), str(app[2]), app[3], app[4],
-        app[5], app[6], app[7], app[8], app[9], chr(app[10]))
+        (start, finish, name, sno, trt1, trt2, trt3, memo, flag, cset, 
+        modtime) = (str(app[1]), str(app[2]), app[3], app[4],
+        app[5], app[6], app[7], app[8], app[9], chr(app[10]), app[13])
 
         startcell = self.canvas.getCell_from_time(start)
         endcell = self.canvas.getCell_from_time(finish)
@@ -226,10 +228,10 @@ class appointmentWidget(QtGui.QFrame):
             endcell += 1
 
             self.canvas.doubleAppts.append((startcell, endcell, start, finish,
-            name, sno, trt1, trt2, trt3, memo, flag, cset))
+            name, sno, trt1, trt2, trt3, memo, flag, cset, modtime))
         else:
             self.canvas.appts.append((startcell, endcell, start, finish,
-            name, sno, trt1, trt2, trt3, memo, flag, cset))
+            name, sno, trt1, trt2, trt3, memo, flag, cset, modtime))
         if sno == 0:
             sno = self.canvas.duplicateNo
             self.canvas.duplicateNo -= 1
@@ -509,7 +511,14 @@ class appointmentCanvas(QtGui.QWidget):
                                 <br /><font color="red">%s</font>'''% val
                         if appt[9] != "":
                             feedback += "<br /><i>%s</i>"% appt[9]
-                        feedback += "<hr />"
+                        timestamp = appt[12]
+                        datestamp = timestamp.date()
+                        moddate = localsettings.readableDate(datestamp)
+                        if datestamp == localsettings.currentDay():
+                            moddate += " at %s"% localsettings.pyTimeToHumantime(
+                            timestamp)
+                        feedback += "<br /><i>Made on<br />%s</i><hr />"% moddate
+                        
             if feedback != "<html>":
                 feedback = feedback[:feedback.rindex("<hr />")] + "</html>"
                 x_pos = self.mapToGlobal(self.pos()).x()
@@ -573,32 +582,25 @@ class appointmentCanvas(QtGui.QWidget):
                 if dl.exec_():
                     adjstart = dl.start_timeEdit.time()
                     adjfinish = dl.finish_timeEdit.time()
+                    if finish < start :                            
+                        QtGui.QMessageBox.information(self,
+                        _("Whoops!"), _("Bad Time Sequence!"))
 
-                    if dl.block == True:
+                    if dl.block == True:                        
                         reason = str(
                         dl.comboBox.currentText().toAscii())[:30]
-                        if finish > start :                            
-                            self.pWidget.emit(QtCore.SIGNAL("BlockEmptySlot"),
-                            (start, finish, adjstart, adjfinish ,
-                            localsettings.apptix.get(self.pWidget.dentist),
-                            reason))
-                        else:
-                            QtGui.QMessageBox.information(self,
-                            "Whoops!","Bad Time Sequence!")
+                    
+                        self.pWidget.emit(QtCore.SIGNAL("BlockEmptySlot"),
+                        (start, finish, adjstart, adjfinish ,
+                        localsettings.apptix.get(self.pWidget.dentist),
+                        reason))
                     else:
-                        reason = str(dl.reason_comboBox.currentText().toAscii())
-
+                        reason = dl.reason_comboBox.currentText().toAscii()
                         self.pWidget.emit(
                         QtCore.SIGNAL("Appointment_into_EmptySlot"),
                         (start, finish, adjstart, adjfinish ,
                         localsettings.apptix.get(self.pWidget.dentist),
                         reason, dl.patient))
-
-                        print "make a %d minute appointment for patient %d at"% (
-                        dl.length_spinBox.value(), dl.patient.serialno),
-                        print dl.appointment_timeEdit.time(),
-                        print "ending at", adjfinish
-                        print "reason", dl.reason_comboBox.currentText()
 
 
     def leaveEvent(self,event):
@@ -676,9 +678,8 @@ class appointmentCanvas(QtGui.QWidget):
         option.setWrapMode(QtGui.QTextOption.WordWrap)
 
         for appt in self.appts:
-            #-- multiple assignment
-            (startcell,endcell,start,fin,name,sno, trt1,trt2,
-            trt3,memo,flag,cset) = appt
+            (startcell, endcell, start, fin, name, sno, trt1, trt2,
+            trt3, memo, flag, cset, modtime) = appt
 
             rect = QtCore.QRectF(timeWidth,startcell*slotHeight,
             self.width()-timeWidth, (endcell-startcell)*slotHeight)
@@ -704,9 +705,20 @@ class appointmentCanvas(QtGui.QWidget):
 
                 painter.drawText(rect, mytext, option)
 
+                ##highlight any appointments booked today
+                if modtime and modtime.date() == localsettings.currentDay():
+                    rect = QtCore.QRectF(self.width()-timeWidth,
+                    startcell*slotHeight, timeWidth,rect.height())
+                    
+                    painter.save()
+                    painter.setPen(colours.GOLD)
+                    painter.setBrush(colours.GOLD)
+                    painter.drawEllipse(rect)
+                    painter.restore()
+
         for appt in self.doubleAppts:
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
-            trt3,memo,flag,cset)=appt
+            trt3,memo,flag,cset, modtime)=appt
 
             rect=QtCore.QRectF(self.width()-timeWidth,startcell*slotHeight,
             self.width()-timeWidth,slotHeight)
@@ -751,7 +763,7 @@ class appointmentCanvas(QtGui.QWidget):
         self.pWidget.emit(QtCore.SIGNAL("redrawn"), dragScale)
         
 if __name__ == "__main__":
-
+    import datetime
     class patient():
         '''
         a duck type for my real patient class
@@ -806,12 +818,13 @@ if __name__ == "__main__":
     form.setCurrentTime("945")
     form.clearAppts()
 
+    dt = datetime.datetime.now()
     for appoint in (
-    (5, 915, 930, 'MCDONALD I', 6155L, 'EXAM', '', '', '', 1, 73, 0, 0)
-    ,(5, 1100, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0),
-    (5, 1300, 1400, 'LUNCH', 0L, '', '', '', '', -128, 0, 0, 0),
-    (5, 1400, 1410, 'STAFF MEETING', 0L, '', '', '', '', -128, 0, 0, 0),
-    (5, 930, 1005, 'TAYLOR JANE', 19373L, 'FILL', '', '', '', 1, 80, 0, 0),
+    (5, 915, 930, 'MCDONALD I', 6155, 'EXAM', '', '', '', 1, 73, 0, 0, dt )
+    ,(5, 1100, 1130, 'EMERGENCY', 0, '', '', '', '', -128, 0, 0, 0, dt),
+    (5, 1300, 1400, 'LUNCH', 0, '', '', '', '', -128, 0, 0, 0, dt),
+    (5, 1400, 1410, 'STAFF MEETING', 0, '', '', '', '', -128, 0, 0, 0, dt),
+    (5, 930, 1005, 'TAYLOR JANE', 19373, 'FILL', '', '', '', 1, 80, 0, 0, dt),
     ):
         form.setAppointment(appoint)
         
@@ -823,6 +836,8 @@ if __name__ == "__main__":
     QtCore.SIGNAL("BlockEmptySlot"), clicktest_c)
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("print_me"), click)
+    QtCore.QObject.connect(form,
+    QtCore.SIGNAL("Appointment_into_EmptySlot"), clicktest_c)
 
     v = QtGui.QVBoxLayout()
     v.setSpacing(0)
