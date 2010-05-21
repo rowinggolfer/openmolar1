@@ -730,7 +730,7 @@ def dayView_setScheduleMode(om_gui):
     syncronise the state with another scehduling page (weekview)
     '''
     om_gui.ui.day_schedule_groupBox.setChecked(om_gui.scheduling_mode)
-    om_gui.ui.dayView_smartSelection_checkBox.setChecked(True)
+    om_gui.ui.day_clinician_selector_groupBox.setChecked(False)
     om_gui.ui.day_schedule_tabWidget.setVisible(om_gui.scheduling_mode)
 
 def weekView_setScheduleMode(om_gui):
@@ -743,7 +743,7 @@ def weekView_setScheduleMode(om_gui):
         om_gui.ui.week_clinicianSelection_comboBox.setCurrentIndex(0)
     om_gui.ui.all_appts_checkBox.setChecked(not om_gui.scheduling_mode)
     om_gui.ui.week_schedule_groupBox.setChecked(om_gui.scheduling_mode)
-    om_gui.ui.weekView_manualClinicians_checkBox.setChecked(False)
+    om_gui.ui.week_clinician_selector_groupBox.setChecked(False)
     om_gui.ui.week_schedule_tabWidget.setVisible(om_gui.scheduling_mode)
 
 def aptOVlabelClicked(om_gui, sd):
@@ -856,7 +856,9 @@ def handle_aptOV_checkboxes(om_gui):
     user has altered one of the checkboxes on the appointment options
     emergency, lunch etc..
     '''
-    layout_weekView(om_gui)
+    if (om_gui.ui.main_tabWidget.currentIndex() == 1 and 
+    om_gui.ui.diary_tabWidget.currentIndex() == 1): 
+        layout_weekView(om_gui)
 
 def findApptButtonClicked(om_gui):
     '''
@@ -1078,7 +1080,7 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
         ov.clear()
 
-        if not om_gui.ui.weekView_manualClinicians_checkBox.isChecked():
+        if not om_gui.ui.week_clinician_selector_groupBox.isChecked():
             i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
             # 0 = single only, 1 = all with appointment, 2 = all
             if (not om_gui.ui.week_clinicianSelection_comboBox.isVisible() 
@@ -1192,7 +1194,7 @@ def layout_dayView(om_gui, find_next_appt=False, find_prev_appt=False):
     d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False
 
-    if om_gui.ui.dayView_smartSelection_checkBox.isChecked():
+    if not om_gui.ui.day_clinician_selector_groupBox.isChecked():
         i = om_gui.ui.day_clinicianSelection_comboBox.currentIndex()
         # 0 = single only, 1 = all with appointment, 2 = all
         if (not om_gui.ui.day_clinicianSelection_comboBox.isVisible() 

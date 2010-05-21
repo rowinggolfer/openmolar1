@@ -402,13 +402,13 @@ class openmolarGui(QtGui.QMainWindow):
 
         self.dayClinicianSelector = dent_hyg_selector.dentHygSelector(
             localsettings.activedents, localsettings.activehygs)
-        layout = QtGui.QHBoxLayout(self.ui.day_clinician_selector_frame)
+        layout = QtGui.QHBoxLayout(self.ui.day_clinician_selector_groupBox)
         layout.setMargin(0)
         layout.addWidget(self.dayClinicianSelector)
 
         self.weekClinicianSelector = dent_hyg_selector.dentHygSelector(
             localsettings.activedents, localsettings.activehygs)
-        layout = QtGui.QHBoxLayout(self.ui.week_clinician_selector_frame)
+        layout = QtGui.QHBoxLayout(self.ui.week_clinician_selector_groupBox)
         layout.setMargin(0)
         layout.addWidget(self.weekClinicianSelector)
 
@@ -815,20 +815,25 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         user has selected appt on the week_appointment_listView
         '''
-        appt_gui_module.select_apr_ix(self, appt.aprix)
-        if appt.date:
-            self.ui.weekCalendar.setSelectedDate(appt.date)
-        else:
-            appt_gui_module.handle_calendar_signal(self)
+        if (self.ui.main_tabWidget.currentIndex() == 1 
+        and self.ui.diary_tabWidget.currentIndex() == 1):        
+            appt_gui_module.select_apr_ix(self, appt.aprix)
+            if appt.date:
+                self.ui.weekCalendar.setSelectedDate(appt.date)
+            else:
+                appt_gui_module.handle_calendar_signal(self)
 
     def weekLV_blockSelected(self, block):
         '''
         user has selected block on the week_block_listView
         '''
-        appt_gui_module.addWeekViewAvailableSlots(self, block.length, False)
-        for book in self.ui.apptoverviews:
-            book.update()
-    
+        if (self.ui.main_tabWidget.currentIndex() == 1 
+        and self.ui.diary_tabWidget.currentIndex() == 1):
+            appt_gui_module.addWeekViewAvailableSlots(self, block.length, 
+            False)
+            for book in self.ui.apptoverviews:
+                book.update()
+        
     def week_1st_appt(self):
         '''
         find the 1st avaiable appointment for the chosen criteria
@@ -1850,8 +1855,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         appt_gui_module.weekView_setScheduleMode(self)
         self.ui.day_schedule_tabWidget.setCurrentIndex(0)
 
-        self.ui.day_clinician_selector_frame.hide()
-        self.ui.week_clinician_selector_frame.hide()
+        self.dayClinicianSelector.hide()
+        self.weekClinicianSelector.hide()
         self.ui.dayPatient_label.setText("")
         self.ui.weekPatient_label.setText("")
 
@@ -2530,16 +2535,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         radiobutton toggling who's book to show on the appointment
         '''
         appt_gui_module.layout_dayView(self)
-        self.ui.day_clinician_selector_frame.setVisible(
-            not self.ui.dayView_smartSelection_checkBox.isChecked())
+        self.dayClinicianSelector.setVisible(
+            self.ui.day_clinician_selector_groupBox.isChecked())
 
     def manage_weekView_clinicians(self):
         '''
         radiobutton toggling who's book to show on the appointment
         '''
         appt_gui_module.layout_weekView(self)
-        self.ui.week_clinician_selector_frame.setVisible(
-            self.ui.weekView_manualClinicians_checkBox.isChecked())
+        self.weekClinicianSelector.setVisible(
+            self.ui.week_clinician_selector_groupBox.isChecked())
 
     def manage_month_and_year_View_clinicians(self):
         '''
@@ -3920,8 +3925,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.weekClinicianSelector,
         QtCore.SIGNAL("selectionChanged"), self.aptOV_checkboxes_changed)
 
-        QtCore.QObject.connect(self.ui.weekView_manualClinicians_checkBox,
-        QtCore.SIGNAL("stateChanged(int)"), self.manage_weekView_clinicians)
+        QtCore.QObject.connect(self.ui.week_clinician_selector_groupBox,
+        QtCore.SIGNAL("toggled (bool)"), self.manage_weekView_clinicians)
 
         for cb in (self.ui.week_clinicianSelection_comboBox,
         self.ui.day_clinicianSelection_comboBox):
@@ -3931,8 +3936,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.dayClinicianSelector,
         QtCore.SIGNAL("selectionChanged"), self.manage_dayView_clinicians)
 
-        QtCore.QObject.connect(self.ui.dayView_smartSelection_checkBox,
-        QtCore.SIGNAL("stateChanged(int)"), self.manage_dayView_clinicians)
+        QtCore.QObject.connect(self.ui.day_clinician_selector_groupBox,
+        QtCore.SIGNAL("toggled (bool)"), self.manage_dayView_clinicians)
 
         QtCore.QObject.connect(self.ui.monthView_clinicians_pushButton,
         QtCore.SIGNAL("clicked()"), self.manage_month_and_year_View_clinicians)
