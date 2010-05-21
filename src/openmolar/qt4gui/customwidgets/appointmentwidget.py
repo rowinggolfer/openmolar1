@@ -511,13 +511,21 @@ class appointmentCanvas(QtGui.QWidget):
                                 <br /><font color="red">%s</font>'''% val
                         if appt[9] != "":
                             feedback += "<br /><i>%s</i>"% appt[9]
-                        timestamp = appt[12]
-                        datestamp = timestamp.date()
-                        moddate = localsettings.readableDate(datestamp)
-                        if datestamp == localsettings.currentDay():
-                            moddate += " at %s"% localsettings.pyTimeToHumantime(
-                            timestamp)
-                        feedback += "<br /><i>Made on<br />%s</i><hr />"% moddate
+                        try:
+                            timestamp = appt[12]
+                            datestamp = timestamp.date()
+                            moddate = localsettings.readableDate(datestamp)
+                            if datestamp == localsettings.currentDay():
+                                feedback += "<br /><i>%s %s %s</i><hr />"% (
+                                _("Made"), moddate, _("at"), 
+                                localsettings.pyTimeToHumantime(timestamp))
+                            else:
+                                feedback += "<br /><i>%s<br />%s</i><hr />"% (
+                                _("Made on"), moddate)
+                        
+                        except AttributeError:
+                            feedback +="<hr />"
+                            pass
                         
             if feedback != "<html>":
                 feedback = feedback[:feedback.rindex("<hr />")] + "</html>"

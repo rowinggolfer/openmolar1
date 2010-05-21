@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-05-21 10:06+BST\n"
+"POT-Creation-Date: 2010-05-21 16:40+BST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -207,7 +207,7 @@ msgstr ""
 
 #: /home/neil/openmolar/openmolar/src/openmolar/firstRun.py:131
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/newCourse.py:36
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:85
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:87
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:176
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/apptTools.py:34
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/tools/new_setup.py:143
@@ -5389,12 +5389,27 @@ msgid "Out Of Office"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/appointmentwidget.py:587
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/appointmentwidget.py:520
+msgid "Made"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/appointmentwidget.py:520
+msgid "at"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/appointmentwidget.py:524
+msgid "Made on"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/appointmentwidget.py:595
 msgid "Bad Time Sequence!"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/appointmentwidget.py:587
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/customwidgets/appointmentwidget.py:595
 msgid "Whoops!"
 msgstr ""
 
@@ -5770,66 +5785,76 @@ msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:28
-msgid "English (GB)"
+msgid "English (United Kingdom)"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:29
-msgid "Afrikaans"
+msgid "English (Australia)"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:30
-msgid "French"
+msgid "Afrikaans"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:31
-msgid "Danish"
+msgid "French"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:32
-msgid "German"
+msgid "Danish"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:33
-msgid "Hungarian"
+msgid "German"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:34
-msgid "Italian"
+msgid "Hungarian"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:35
-msgid "Polish"
+msgid "Indonesian"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:36
-msgid "Portuguese"
+msgid "Italian"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:37
-msgid "Slovak"
+msgid "Polish"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:38
-msgid "Spanish"
+msgid "Portuguese"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:39
+msgid "Slovak"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:40
+msgid "Spanish"
+msgstr ""
+
+#:
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:41
 msgid "Turkish"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:83
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/select_language.py:85
 msgid "no translation file found for %s"
 msgstr ""
 

@@ -25,12 +25,14 @@ def getAvailableLanguages():
     return a list of installed languages - I do this manually at the moment :(
     '''
     return [
-    _("English (GB)") +" - en_GB", 
+    _("English (United Kingdom)") +" - en_GB", 
+    _("English (Australia)") +" - en_AUS",     
     _("Afrikaans") + " - af",    
     _("French") + " - fr", 
     _("Danish") + " - da",
     _("German") + " - de",     
     _("Hungarian") + " - hu", 
+    _("Indonesian") + " - id",
     _("Italian") + " - it",
     _("Polish") + " - pl",
     _("Portuguese") + " - pt",
