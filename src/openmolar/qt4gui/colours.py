@@ -36,6 +36,8 @@ DIARY = {
 "Future":QtGui.QColor("#3b4a8c")
 }
 
+BOOKED_TODAY = QtCore.Qt.red
+
 APPTCOLORS = {
     "N":QtGui.QColor("#d9d9ff"),
     "I":QtGui.QColor("#d9ffec"),

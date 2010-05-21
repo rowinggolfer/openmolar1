@@ -700,6 +700,10 @@ def triangles(om_gui, call_update=True):
             for book in om_gui.apptBookWidgets:
                 if book.setCurrentTime(currenttime) and call_update:
                     book.update()
+        else:
+            for book in om_gui.apptBookWidgets:
+                book.setCurrentTime(None)
+                        
 
 def calendar(om_gui, sd):
     '''
@@ -1183,7 +1187,7 @@ def layout_dayView(om_gui, find_next_appt=False, find_prev_appt=False):
 
     for book in om_gui.apptBookWidgets:
         book.clearAppts()
-        book.setTime = "None"
+        book.setTime = None
 
     d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False

@@ -422,7 +422,7 @@ class appointmentCanvas(QtGui.QWidget):
         send it a value like "HHMM" or "HH:MM" to draw a marker at that time
         '''
         self.setTime = t
-        if self.startTime < int(t) < self.endTime:
+        if t and self.startTime < int(t) < self.endTime:
             return True
 
     def qTime(self, t):
@@ -611,7 +611,8 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         draws the book - recalled at any point by instance.update()
         '''
-        red_pen = QtGui.QPen(QtCore.Qt.red,2)
+        red_pen = QtGui.QPen(QtCore.Qt.red, 2)
+        blue_pen = QtGui.QPen(QtCore.Qt.blue, 2)
         
         painter = QtGui.QPainter(self)
         currentSlot = 0
@@ -708,11 +709,12 @@ class appointmentCanvas(QtGui.QWidget):
                 ##highlight any appointments booked today
                 if modtime and modtime.date() == localsettings.currentDay():
                     rect = QtCore.QRectF(self.width()-timeWidth,
-                    startcell*slotHeight, timeWidth,rect.height())
+                    startcell*slotHeight, timeWidth,rect.height()).adjusted(
+                    2,2,-2,-2)
                     
                     painter.save()
-                    painter.setPen(colours.GOLD)
-                    painter.setBrush(colours.GOLD)
+                    painter.setPen(colours.BOOKED_TODAY)
+                    painter.setBrush(colours.BOOKED_TODAY)
                     painter.drawEllipse(rect)
                     painter.restore()
 
@@ -729,18 +731,18 @@ class appointmentCanvas(QtGui.QWidget):
         painter.restore()
 
         ##highlight current time
-        if self.setTime != "None":
+        if self.setTime:
             cellno = self.getCell_from_time(self.setTime)
-            painter.setPen(red_pen)
-            painter.setBrush(QtCore.Qt.red)
-            corner1 = [timeWidth*1.2,cellno*slotHeight]
-            corner2 = [timeWidth,(cellno-0.5)*slotHeight]
-            corner3 = [timeWidth,(cellno+0.5)*slotHeight]
+            painter.setPen(blue_pen)
+            painter.setBrush(QtCore.Qt.blue)
+            corner1 = [timeWidth*1.4, cellno*slotHeight]
+            corner2 = [timeWidth, (cellno-0.5)*slotHeight]
+            corner3 = [timeWidth, (cellno+0.5)*slotHeight]
             triangle = corner1+corner2+corner3
             painter.drawPolygon(QtGui.QPolygon(triangle))
-            corner1 = [self.width()-timeWidth*0.2,cellno*slotHeight]
-            corner2 = [self.width(),(cellno-0.5)*slotHeight]
-            corner3 = [self.width(),(cellno+0.5)*slotHeight]
+            corner1 = [self.width()-timeWidth*0.4, cellno*slotHeight]
+            corner2 = [self.width(), (cellno-0.5)*slotHeight]
+            corner3 = [self.width(), (cellno+0.5)*slotHeight]
             triangle = corner1+corner2+corner3
             painter.drawPolygon(QtGui.QPolygon(triangle))
             
