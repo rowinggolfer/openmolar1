@@ -516,7 +516,7 @@ class appointmentCanvas(QtGui.QWidget):
                             datestamp = timestamp.date()
                             moddate = localsettings.readableDate(datestamp)
                             if datestamp == localsettings.currentDay():
-                                feedback += "<br /><i>%s %s %s</i><hr />"% (
+                                feedback += "<br /><i>%s %s %s %s</i><hr />"% (
                                 _("Made"), moddate, _("at"), 
                                 localsettings.pyTimeToHumantime(timestamp))
                             else:
