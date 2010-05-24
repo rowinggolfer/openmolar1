@@ -166,9 +166,9 @@ class appt_class(object):
                 self.future = self.date > today
 
     def __repr__(self):
-        return "serialno=%s %s scheduled=%s dent=%s trt=%s ix=%s"%(
+        return "serialno=%s %s scheduled=%s dent=%s trt=%s length= %s ix=%s"%(
         self.serialno, self.date, not self.unscheduled, self.dent_inits, 
-        self.trt1, self.aprix)
+        self.trt1, self.length, self.aprix)
 
     def __cmp__(self, other):
         if str(self) == str(other):

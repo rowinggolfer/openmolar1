@@ -331,34 +331,46 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.pt_diary_treeView.setModel(self.pt_diary_model)
 
         #--add a dragable listView for making appointments
-        self.ui.day_appointment_listView = appointment_drag.draggableList(self)
+        self.ui.day_appointment_listView = \
+            appointment_drag.draggableList(True, self)
         layout = QtGui.QHBoxLayout(self.ui.day_apt_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.day_appointment_listView)
 
-        self.ui.week_appointment_listView = appointment_drag.draggableList(self)
+        self.ui.week_appointment_listView = \
+            appointment_drag.draggableList(True,self)
         layout = QtGui.QHBoxLayout(self.ui.week_apt_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.week_appointment_listView)
 
-        self.ui.day_block_listView = appointment_drag.draggableList(self)
+        self.ui.day_block_listView = \
+            appointment_drag.draggableList(False, self)
         layout = QtGui.QHBoxLayout(self.ui.block_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.day_block_listView)
 
-        self.ui.week_block_listView = appointment_drag.draggableList(self)
+        self.ui.week_block_listView = \
+            appointment_drag.draggableList(False, self)
         layout = QtGui.QHBoxLayout(self.ui.week_block_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.week_block_listView)
 
         self.apt_drag_model = appointment_drag.simple_model(self)
         self.ui.day_appointment_listView.setModel(self.apt_drag_model)
+        self.ui.day_appointment_listView.setSelectionModel(
+            self.apt_drag_model.selection_model)
         self.ui.week_appointment_listView.setModel(self.apt_drag_model)
+        #sync the selections
+        self.ui.week_appointment_listView.setSelectionModel(
+            self.ui.day_appointment_listView.selectionModel())
 
         block_model = appointment_drag.blockModel(self)
         self.ui.day_block_listView.setModel(block_model)
         self.ui.week_block_listView.setModel(block_model)
-
+        #sync the selections
+        self.ui.week_block_listView.setSelectionModel(
+            self.ui.day_block_listView.selectionModel())
+        
         self.apptBookWidgets=[]
 
         #-appointment OVerview widget
@@ -794,35 +806,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.signals_apptStateWidgets(False)
         appt_gui_module.dayView_setScheduleMode(self)
         self.signals_apptStateWidgets(True)
-        
-    def update_appt_listViews(self, index):
-        '''
-        receives a signal from the model underlying both day and week drag 
-        listViews
-        '''
-        self.ui.day_appointment_listView.setCurrentIndex(index)
-        self.ui.week_appointment_listView.setCurrentIndex(index)
     
-    def dayLV_appointmentSelected(self, appt):
-        '''
-        user has selected appt on the day_selected ListView
-        '''
-        if appt.date:
-            self.ui.dayCalendar.setSelectedDate(appt.date)
-        appt_gui_module.select_apr_ix(self, appt.aprix)
-
-    def weekLV_appointmentSelected(self, appt):
-        '''
-        user has selected appt on the week_appointment_listView
-        '''
-        if (self.ui.main_tabWidget.currentIndex() == 1 
-        and self.ui.diary_tabWidget.currentIndex() == 1):        
-            appt_gui_module.select_apr_ix(self, appt.aprix)
-            if appt.date:
-                self.ui.weekCalendar.setSelectedDate(appt.date)
-            else:
-                appt_gui_module.handle_calendar_signal(self)
-
     def weekLV_blockSelected(self, block):
         '''
         user has selected block on the week_block_listView
@@ -3797,9 +3781,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.printMonth_pushButton,
         QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)
         
-        QtCore.QObject.connect(self.apt_drag_model,
-        QtCore.SIGNAL("selectedAppt"), self.update_appt_listViews)
-
         self.signals_apptStateWidgets()
 
     def signals_apptStateWidgets(self, connect=True):
@@ -3968,14 +3949,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.connect(control,
             QtCore.SIGNAL("right-clicked"), self.aptOVlabel_rightClicked)
 
-        QtCore.QObject.connect(self.ui.week_appointment_listView,
-        QtCore.SIGNAL("appointmentSelected"), self.weekLV_appointmentSelected)
+        #QtCore.QObject.connect(self.ui.week_appointment_listView,
+        #QtCore.SIGNAL("appointmentSelected"), self.weekLV_appointmentSelected)
 
-        QtCore.QObject.connect(self.ui.week_block_listView,
-        QtCore.SIGNAL("appointmentSelected"), self.weekLV_blockSelected)
+        #QtCore.QObject.connect(self.ui.week_block_listView,
+        #QtCore.SIGNAL("appointmentSelected"), self.weekLV_blockSelected)
 
-        QtCore.QObject.connect(self.ui.day_appointment_listView,
-        QtCore.SIGNAL("appointmentSelected"), self.dayLV_appointmentSelected)
+        #QtCore.QObject.connect(self.ui.day_appointment_listView,
+        #QtCore.SIGNAL("appointmentSelected"), self.dayLV_appointmentSelected)
 
     def recalculateEstimate(self):
         '''

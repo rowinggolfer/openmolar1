@@ -334,8 +334,6 @@ if __name__ == "__main__":
     QtCore.QObject.connect(tv, QtCore.SIGNAL("clicked (QModelIndex)"),
         appt_clicked)
 
-    dialog.exec_()
-
     
     but = QtGui.QPushButton("Clear Selection")
     layout.addWidget(but)

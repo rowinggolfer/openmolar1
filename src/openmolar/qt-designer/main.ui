@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1061</width>
-    <height>701</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -63,7 +63,7 @@
          <x>0</x>
          <y>0</y>
          <width>1061</width>
-         <height>659</height>
+         <height>558</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -475,8 +475,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>807</width>
-                        <height>495</height>
+                        <width>786</width>
+                        <height>472</height>
                        </rect>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -3200,7 +3200,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>28</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3233,7 +3233,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>199</width>
                         <height>542</height>
                        </rect>
                       </property>
@@ -4162,7 +4162,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_dayview">
                <attribute name="title">
@@ -4254,9 +4254,15 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>212</width>
-                        <height>357</height>
+                        <width>191</width>
+                        <height>279</height>
                        </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>180</width>
+                        <height>0</height>
+                       </size>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_37" stretch="0,0">
                        <property name="spacing">
@@ -4627,9 +4633,15 @@ F6</string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>212</width>
-                        <height>357</height>
+                        <width>191</width>
+                        <height>298</height>
                        </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>180</width>
+                        <height>0</height>
+                       </size>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_36">
                        <property name="spacing">
@@ -5163,8 +5175,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>71</width>
-                     <height>16</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>

@@ -14,7 +14,8 @@ class simple_model(QtCore.QAbstractListModel):
         self.list = []
         self.min_slot_length = 0
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
-        
+        self.selection_model = QtGui.QItemSelectionModel(self)
+    
     def clear(self):
         self.unscheduledList = []
         self.scheduledList = []
@@ -70,6 +71,8 @@ class simple_model(QtCore.QAbstractListModel):
         return len(self.list)
 
     def data(self, index, role):
+        if not index.isValid():
+            return QtCore.QVariant()
         app = self.list[index.row()]
         if role == QtCore.Qt.DisplayRole:
             if app.flag == -128:
@@ -88,14 +91,27 @@ class simple_model(QtCore.QAbstractListModel):
             return app
         return QtCore.QVariant()
 
+    def setSelectedIndexes(self, indexes, selected):
+        self.min_slot_length = 0
+        appt = None
+        if selected in indexes:
+            appt = self.data(selected, QtCore.Qt.UserRole)
+            self.min_slot_length = appt.length
+        elif indexes != []:
+            appt = self.data(indexes[0], QtCore.Qt.UserRole)
+            self.min_slot_length = appt.length
+        self.emit(QtCore.SIGNAL("selectedAppointment"), appt)
+
     def setSelectedAppt(self, appt):
         try:
             index = self.index(self.list.index(appt))
             self.min_slot_length = appt.length
-            self.emit(QtCore.SIGNAL("selectedAppt"), index)
+            self.selection_model.select(index, 
+                QtGui.QItemSelectionModel.SelectCurrent)
         except ValueError:
-            self.emit(QtCore.SIGNAL("selectedAppt"), QtCore.QModelIndex())
-        
+            self.selection_model.clear()
+            
+
 class blockModel(simple_model):
     '''
     customise the above model just for blocks
@@ -125,10 +141,12 @@ class draggableList(QtGui.QListView):
     '''
     a listView whose items can be moved
     '''
-    def __init__(self, parent=None):
+    def __init__(self, multiSelect, parent=None):
         super(draggableList, self).__init__(parent)
         self.setDragEnabled(True)
-        self.pixels_per_min = 2
+        if multiSelect:
+            self.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
+        self.pixels_per_min = 2    
         
     def setScaling(self, height_per_minute):
         '''
@@ -180,10 +198,13 @@ class draggableList(QtGui.QListView):
         
         currently, the model is a single selection
         '''
-        index = selectedRange.first().topLeft()
-        selectedApp = self.model().data(index, QtCore.Qt.UserRole)
-        self.model().setSelectedAppt(selectedApp)
-        self.emit(QtCore.SIGNAL("appointmentSelected"), selectedApp)
+        if selectedRange.count():
+            selected = selectedRange.indexes()[0]
+        else:
+            selected = None
+        rows = self.selectionModel().selectedRows()
+        self.model().setSelectedIndexes(rows, selected)
+        
         
 if __name__ == "__main__":
     '''
@@ -197,9 +218,12 @@ if __name__ == "__main__":
     from openmolar.settings import localsettings
     localsettings.initiate()
     
+    def slot_catcher(arg):
+        print arg
+    
     class duckPt(object):
         def __init__(self):
-            self.serialno = 17322
+            self.serialno = 707
             self.title = "Mr"
             self.sname = "Neil"
             self.fname = "Wallace"
@@ -211,16 +235,27 @@ if __name__ == "__main__":
             self.setWindowTitle("Drag Drop Test")
             self.pt = duckPt()
             
-            layout = QtGui.QHBoxLayout(self)
+            layout = QtGui.QGridLayout(self)
 
             self.model = simple_model()
+    
             appts = appointments.get_pts_appts(duckPt())
+    
+            self.model.setAppointments(appts, appts[2])
+
+            self.daylistView = draggableList(True)
+            self.daylistView.setModel(self.model)
+            self.daylistView.setSelectionModel(self.model.selection_model)
             
-            self.model.setAppointments(appts)
-
-            self.listView = draggableList()
-            self.listView.setModel(self.model)
-
+            self.weeklistView = draggableList(True)
+            self.weeklistView.setModel(self.model)
+            self.weeklistView.setSelectionModel(
+                self.daylistView.selectionModel())
+    
+            self.block_model = blockModel()
+            self.blockView = draggableList(False)
+            self.blockView.setModel(self.block_model)
+            
             self.book = appointmentwidget.appointmentWidget(self, "1000",
             "1200")
             self.book.setDentist(1)
@@ -256,9 +291,10 @@ if __name__ == "__main__":
                 self.OVbook.setMemo(d)
                 self.OVbook.setFlags(d)
 
-            slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,45),1,20)
-            #slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),1,10)
-            slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),4,60)
+            slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,45),
+                1,20)
+            slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),
+                4,60)
             
             self.OVbook.addSlot(slot)
             self.OVbook.addSlot(slot2)
@@ -280,14 +316,20 @@ if __name__ == "__main__":
             self.tw.addTab(self.book, "day")
             self.tw.addTab(self.OVbook, "week")
 
-            layout.addWidget(self.listView)
-            layout.addWidget(self.tw)
+            layout.addWidget(self.daylistView,0,0)
+            layout.addWidget(self.weeklistView,1,0)
+            layout.addWidget(self.blockView,2,0)
+            
+            layout.addWidget(self.tw,0,1,3,1)
             #self.tw.setCurrentIndex(1)
 
+            self.connect(self.model, QtCore.SIGNAL("selectedAppointment"),
+                slot_catcher)
+
             self.connect(self.OVbook, QtCore.SIGNAL("redrawn"),
-                    self.listView.setScaling)
+                    self.weeklistView.setScaling)
             self.connect(self.book, QtCore.SIGNAL("redrawn"),
-                    self.listView.setScaling)
+                    self.daylistView.setScaling)
 
     try:
         app = QtGui.QApplication([])

@@ -263,7 +263,7 @@ class appointmentCanvas(QtGui.QWidget):
         self.appts = []
         self.doubleAppts = []
         self.rows = {}
-        self.setTime = "None"
+        self.setTime = None
         self.selected = (0,0)
         self.setMouseTracking(True)
         self.duplicateNo = -1 #use this for serialnos =0
@@ -382,7 +382,6 @@ class appointmentCanvas(QtGui.QWidget):
         'HHMM' or 'H:MM' (both strings) to minutes
         past midnight
         '''
-        #t=t.replace(":","")
         hour, minute = int(t) // 100, int(t) % 100
         return hour * 60 + minute
 
@@ -437,7 +436,7 @@ class appointmentCanvas(QtGui.QWidget):
         send a time - return the row number of that time
         '''
         return int((self.minutesPastMidnight(t) - self.dayStartTime)
-        / self.slotDuration)
+            / self.slotDuration)
 
     def getTime_from_Cell(self, row):
         '''
