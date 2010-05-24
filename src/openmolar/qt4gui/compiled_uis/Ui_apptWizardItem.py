@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'apptWizardItem.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/apptWizardItem.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:21 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'toothPerioProps.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/toothPerioProps.ui'
 #
-# Created: Thu Nov 19 21:47:04 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:22 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -72,6 +72,7 @@ class Ui_Form(object):
         self.clear_pushButton.setSizePolicy(sizePolicy)
         self.clear_pushButton.setMinimumSize(QtCore.QSize(0, 20))
         self.clear_pushButton.setMaximumSize(QtCore.QSize(40, 28))
+        self.clear_pushButton.setText("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/eraser.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.clear_pushButton.setIcon(icon)
@@ -82,6 +83,7 @@ class Ui_Form(object):
         self.leftTooth_pushButton = QtGui.QPushButton(Form)
         self.leftTooth_pushButton.setMinimumSize(QtCore.QSize(24, 24))
         self.leftTooth_pushButton.setMaximumSize(QtCore.QSize(24, 24))
+        self.leftTooth_pushButton.setText("")
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/back.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.leftTooth_pushButton.setIcon(icon1)
@@ -97,6 +99,7 @@ class Ui_Form(object):
         self.rightTooth_pushButton = QtGui.QPushButton(Form)
         self.rightTooth_pushButton.setMinimumSize(QtCore.QSize(24, 24))
         self.rightTooth_pushButton.setMaximumSize(QtCore.QSize(24, 24))
+        self.rightTooth_pushButton.setText("")
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(":/forward.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.rightTooth_pushButton.setIcon(icon2)
@@ -138,4 +141,4 @@ class Ui_Form(object):
         self.mobilitycomboBox.setItemText(2, _( u"II"))
         self.mobilitycomboBox.setItemText(3, _( u"III"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

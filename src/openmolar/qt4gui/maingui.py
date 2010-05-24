@@ -2290,7 +2290,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         this will resize columns (if necessary)
         '''
         appt_gui_module.adjustDiaryColWidths(self, arg)
-
+    
+    def update_pt_diary_selection(self, appt):
+        '''
+        the drag model selected appointment has changed... pass this on
+        '''
+        self.pt_diary_model.setSelectedAppt(appt)
+        aprix = 0 if appt == None else appt.aprix
+        appt_gui_module.select_apr_ix(self, aprix)
+        
     def newAppt_pushButton_clicked(self):
         '''
         user has asked for a new appointment
@@ -3276,11 +3284,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.apptWizard_pushButton,
         QtCore.SIGNAL("clicked()"), self.apptWizard_pushButton_clicked)
 
-        for but in (self.ui.newAppt_pushButton,
-        self.ui.week_newAppt_pushButton,
-        self.ui.day_newAppt_pushButton):
-            QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"),
-            self.newAppt_pushButton_clicked)
+        QtCore.QObject.connect(self.ui.newAppt_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.newAppt_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.scheduleAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.scheduleAppt_pushButton_clicked)
@@ -3781,6 +3786,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.printMonth_pushButton,
         QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)
         
+        QtCore.QObject.connect(self.apt_drag_model,
+        QtCore.SIGNAL("selectedAppointment"), self.update_pt_diary_selection)
+
         self.signals_apptStateWidgets()
 
     def signals_apptStateWidgets(self, connect=True):

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'estHeaderWidget.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/estHeaderWidget.ui'
 #
-# Created: Tue Dec 22 11:05:58 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:20 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -142,4 +142,4 @@ class Ui_Form(object):
         self.label_6.setText(_( u"Charge"))
         self.expand_pushButton.setText(_( u"Expand All"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

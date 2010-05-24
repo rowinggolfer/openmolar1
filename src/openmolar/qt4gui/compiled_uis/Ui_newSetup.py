@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'newSetup.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/newSetup.ui'
 #
-# Created: Thu Nov 19 21:47:04 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:21 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -61,6 +61,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.label_5, 1, 0, 1, 1)
         self.main_password_lineEdit = QtGui.QLineEdit(self.page_2)
         self.main_password_lineEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.main_password_lineEdit.setText("")
         self.main_password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         self.main_password_lineEdit.setObjectName("main_password_lineEdit")
         self.gridLayout.addWidget(self.main_password_lineEdit, 1, 1, 1, 1)
@@ -73,6 +74,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.label_8, 2, 0, 1, 1)
         self.repeat_password_lineEdit = QtGui.QLineEdit(self.page_2)
         self.repeat_password_lineEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.repeat_password_lineEdit.setText("")
         self.repeat_password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         self.repeat_password_lineEdit.setObjectName("repeat_password_lineEdit")
         self.gridLayout.addWidget(self.repeat_password_lineEdit, 2, 1, 1, 1)
@@ -234,6 +236,7 @@ class Ui_Dialog(object):
         self.gridLayout_4.addItem(spacerItem6, 4, 1, 1, 1)
         self.rootPassword_lineEdit = QtGui.QLineEdit(self.page_6)
         self.rootPassword_lineEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.rootPassword_lineEdit.setText("")
         self.rootPassword_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
         self.rootPassword_lineEdit.setObjectName("rootPassword_lineEdit")
         self.gridLayout_4.addWidget(self.rootPassword_lineEdit, 3, 0, 1, 1)

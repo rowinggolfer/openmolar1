@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'toothProps.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/toothProps.ui'
 #
-# Created: Thu Nov 19 21:47:05 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:21 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -23,6 +23,7 @@ class Ui_Form(object):
         self.edit_pushButton = QtGui.QPushButton(Form)
         self.edit_pushButton.setMinimumSize(QtCore.QSize(0, 20))
         self.edit_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.edit_pushButton.setText("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/pencil.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.edit_pushButton.setIcon(icon)
@@ -34,6 +35,7 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(14)
         self.tooth_label.setFont(font)
+        self.tooth_label.setText("")
         self.tooth_label.setAlignment(QtCore.Qt.AlignCenter)
         self.tooth_label.setObjectName("tooth_label")
         self.horizontalLayout.addWidget(self.tooth_label)
@@ -45,6 +47,7 @@ class Ui_Form(object):
         self.clear_pushButton.setSizePolicy(sizePolicy)
         self.clear_pushButton.setMinimumSize(QtCore.QSize(0, 20))
         self.clear_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.clear_pushButton.setText("")
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/eraser.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.clear_pushButton.setIcon(icon1)
@@ -130,6 +133,7 @@ class Ui_Form(object):
         self.leftTooth_pushButton = QtGui.QPushButton(Form)
         self.leftTooth_pushButton.setMinimumSize(QtCore.QSize(32, 24))
         self.leftTooth_pushButton.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.leftTooth_pushButton.setText("")
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(":/back.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.leftTooth_pushButton.setIcon(icon2)
@@ -147,6 +151,7 @@ class Ui_Form(object):
         self.rightTooth_pushButton = QtGui.QPushButton(Form)
         self.rightTooth_pushButton.setMinimumSize(QtCore.QSize(32, 24))
         self.rightTooth_pushButton.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.rightTooth_pushButton.setText("")
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/forward.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.rightTooth_pushButton.setIcon(icon3)
@@ -258,4 +263,4 @@ class Ui_Form(object):
         self.comp_pushButton.setToolTip(_( u"Toggle between static and plan"))
         self.comp_pushButton.setText(_( u"Comp"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

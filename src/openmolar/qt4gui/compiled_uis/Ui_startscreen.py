@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'startscreen.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/startscreen.ui'
 #
-# Created: Fri Feb 19 13:57:42 2010
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:20 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -61,6 +61,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.user1_lineEdit = QtGui.QLineEdit(Dialog)
         self.user1_lineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.user1_lineEdit.setText("")
         self.user1_lineEdit.setMaxLength(6)
         self.user1_lineEdit.setObjectName("user1_lineEdit")
         self.gridLayout.addWidget(self.user1_lineEdit, 0, 1, 1, 1)
@@ -136,4 +137,4 @@ class Ui_Dialog(object):
         self.chosenServer_label.setText(_( u"TextLabel"))
         self.advanced_toolButton.setText(_( u"change"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

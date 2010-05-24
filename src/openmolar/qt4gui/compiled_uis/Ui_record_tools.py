@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'record_tools.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/record_tools.ui'
 #
-# Created: Tue Feb 16 20:11:16 2010
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:22 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -566,4 +566,4 @@ class Ui_Dialog(object):
         self.hidden_notes_pushButton.setText(_( u"Apply Changes"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _( u"Miscellaneous"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

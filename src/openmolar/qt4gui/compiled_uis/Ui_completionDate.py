@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'completionDate.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/completionDate.ui'
 #
-# Created: Sat Jan  2 16:05:28 2010
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:23 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 

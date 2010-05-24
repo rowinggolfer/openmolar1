@@ -27,13 +27,18 @@ def compile_ui(ui_fname, outdir=""):
     data = f.read()
     f.close()
 
+    #(QtGui.QApplication.translate("Dialog", "Language Selector", None, QtGui.QApplication.UnicodeUTF8)
+
     newdata = data.replace(", None, QtGui.QApplication.UnicodeUTF8", "")
     newdata = re.sub('QtGui.QApplication.translate\(".*", ', "_( u", newdata)
+    
+    newdata = newdata.replace("import resources_rc", 
+        "from openmolar.qt4gui import resources_rc")
 
     #some hacks for 4.5/4.6 compatibility
     newdata = newdata.replace('setShowSortIndicator',"setSortIndicatorShown")
 
-    #turn stuff like
+    # turn stuff like
     # spinBox.setProperty("values", 8)
     # to
     # spinBox.setProperty("values", QtCore.QVariant(8))
@@ -48,6 +53,7 @@ def compile_ui(ui_fname, outdir=""):
         f = open(pyfile,"w")
         f.write(newdata)
         f.close()
+        pass
     return pyfile
 
 def get_changed_ui_files():
@@ -58,8 +64,16 @@ def get_changed_ui_files():
         if re.match(".*.ui$", change[0]):
             yield change[0]
 
+def get_all_ui_files():
+    for ui_file in os.listdir(os.getcwd()):
+        if re.match(".*.ui$", ui_file):
+            yield ui_file
+        
 if __name__ == "__main__":
     root = os.getcwd()
+    
+    ## change the commented line if you want all redone!!
+    #for ui_file in get_all_ui_files(): 
     for ui_file in get_changed_ui_files():
         name = os.path.basename(ui_file)
         path = os.path.join(root, name)

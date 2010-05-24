@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'estimateItemWidget.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/estimateItemWidget.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:21 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -124,6 +124,7 @@ class Ui_Form(object):
         self.delete_pushButton.setSizePolicy(sizePolicy)
         self.delete_pushButton.setMinimumSize(QtCore.QSize(0, 0))
         self.delete_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.delete_pushButton.setText("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/eraser.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.delete_pushButton.setIcon(icon)
@@ -147,4 +148,4 @@ class Ui_Form(object):
         self.ptFee_lineEdit.setText(_( u"1000.00"))
         self.completed_checkBox.setText(_( u"Completed"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

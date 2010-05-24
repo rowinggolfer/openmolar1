@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'apptTools.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/apptTools.ui'
 #
-# Created: Thu Nov 19 21:47:05 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:18 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -22,6 +22,7 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtGui.QLabel(self.centralwidget)
         self.label.setFrameShape(QtGui.QFrame.NoFrame)
+        self.label.setText("")
         self.label.setPixmap(QtGui.QPixmap(":/appt_ov.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
@@ -66,4 +67,4 @@ class Ui_MainWindow(object):
         self.blocks_pushButton.setText(_( u"Insert regular blocks"))
         self.menu_Quit.setTitle(_( u"&Quit"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

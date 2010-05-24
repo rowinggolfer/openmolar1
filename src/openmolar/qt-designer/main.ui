@@ -458,7 +458,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -475,7 +475,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>786</width>
+                        <width>482</width>
                         <height>472</height>
                        </rect>
                       </property>
@@ -2175,7 +2175,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>458</width>
+                        <width>794</width>
                         <height>446</height>
                        </rect>
                       </property>
@@ -4162,7 +4162,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <item>
              <widget class="QTabWidget" name="diary_tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_dayview">
                <attribute name="title">
@@ -4386,20 +4386,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                                   <string>All Available Clinicians</string>
                                  </property>
                                 </item>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QPushButton" name="day_newAppt_pushButton">
-                                <property name="enabled">
-                                 <bool>true</bool>
-                                </property>
-                                <property name="text">
-                                 <string>New Appointment</string>
-                                </property>
-                                <property name="icon">
-                                 <iconset resource="../resources/resources.qrc">
-                                  <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
-                                </property>
                                </widget>
                               </item>
                               <item>
@@ -4789,13 +4775,6 @@ F6</string>
                                   <string>All Available Clinicians</string>
                                  </property>
                                 </item>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QPushButton" name="week_newAppt_pushButton">
-                                <property name="text">
-                                 <string>New Appointment</string>
-                                </property>
                                </widget>
                               </item>
                               <item>

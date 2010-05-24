@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'block_wizard.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/block_wizard.ui'
 #
-# Created: Thu Nov 19 21:47:04 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:19 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -82,6 +82,7 @@ class Ui_Dialog(object):
         spacerItem5 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem5, 11, 0, 1, 1)
         self.progress_label = QtGui.QLabel(Dialog)
+        self.progress_label.setText("")
         self.progress_label.setObjectName("progress_label")
         self.gridLayout_2.addWidget(self.progress_label, 9, 0, 1, 4)
         self.progressBar = QtGui.QProgressBar(Dialog)

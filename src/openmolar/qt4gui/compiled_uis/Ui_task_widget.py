@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'task_widget.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/task_widget.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:22 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -52,4 +52,4 @@ class Ui_Form(object):
         self.pushButton_4.setText(_( u"Edit Selected Task"))
         self.pushButton.setText(_( u"Add a New Task"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/fee_item_wizard.ui'
 #
-# Created: Sun Mar 14 22:33:02 2010
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:23 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Sun May 23 09:11:20 2010
+# Created: Mon May 24 23:31:01 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -219,7 +219,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName("scrollArea_4")
         self.scrollAreaWidgetContents_7 = QtGui.QWidget(self.scrollArea_4)
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 786, 472))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 482, 472))
         self.scrollAreaWidgetContents_7.setObjectName("scrollAreaWidgetContents_7")
         self.horizontalLayout_10 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_7)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
@@ -872,7 +872,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_5 = QtGui.QWidget(self.scrollArea_2)
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 458, 446))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 794, 446))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.verticalLayout_32 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_5)
         self.verticalLayout_32.setObjectName("verticalLayout_32")
@@ -1817,11 +1817,6 @@ class Ui_MainWindow(object):
         self.day_clinicianSelection_comboBox.addItem("")
         self.day_clinicianSelection_comboBox.addItem("")
         self.verticalLayout_19.addWidget(self.day_clinicianSelection_comboBox)
-        self.day_newAppt_pushButton = QtGui.QPushButton(self.tab_29)
-        self.day_newAppt_pushButton.setEnabled(True)
-        self.day_newAppt_pushButton.setIcon(icon2)
-        self.day_newAppt_pushButton.setObjectName("day_newAppt_pushButton")
-        self.verticalLayout_19.addWidget(self.day_newAppt_pushButton)
         self.gridLayout_31 = QtGui.QGridLayout()
         self.gridLayout_31.setObjectName("gridLayout_31")
         self.day_1st_appt_pushButton = QtGui.QPushButton(self.tab_29)
@@ -1987,9 +1982,6 @@ class Ui_MainWindow(object):
         self.week_clinicianSelection_comboBox.addItem("")
         self.week_clinicianSelection_comboBox.addItem("")
         self.verticalLayout_4.addWidget(self.week_clinicianSelection_comboBox)
-        self.week_newAppt_pushButton = QtGui.QPushButton(self.tab_31)
-        self.week_newAppt_pushButton.setObjectName("week_newAppt_pushButton")
-        self.verticalLayout_4.addWidget(self.week_newAppt_pushButton)
         self.gridLayout_28 = QtGui.QGridLayout()
         self.gridLayout_28.setObjectName("gridLayout_28")
         self.week_1st_appt_pushButton = QtGui.QPushButton(self.tab_31)
@@ -2902,10 +2894,10 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.main_tabWidget.setCurrentIndex(1)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
-        self.diary_tabWidget.setCurrentIndex(0)
+        self.diary_tabWidget.setCurrentIndex(1)
         self.day_schedule_tabWidget.setCurrentIndex(0)
         self.week_schedule_tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -3240,7 +3232,6 @@ class Ui_MainWindow(object):
         self.dayPatient_label.setText(_( u"TextLabel"))
         self.day_clinicianSelection_comboBox.setItemText(0, _( u"All Listed Clinicians"))
         self.day_clinicianSelection_comboBox.setItemText(1, _( u"All Available Clinicians"))
-        self.day_newAppt_pushButton.setText(_( u"New Appointment"))
         self.day_1st_appt_pushButton.setToolTip(_( u"Find the First Suitable Appointment. "))
         self.day_1st_appt_pushButton.setText(_( u"1st Available"))
         self.day_prev_appt_pushButton.setToolTip(_( u"Find the Previous Appointment\n"
@@ -3261,7 +3252,6 @@ class Ui_MainWindow(object):
         self.week_clinicianSelection_comboBox.setItemText(0, _( u"Selected Clinician Only"))
         self.week_clinicianSelection_comboBox.setItemText(1, _( u"All Listed Clinicians"))
         self.week_clinicianSelection_comboBox.setItemText(2, _( u"All Available Clinicians"))
-        self.week_newAppt_pushButton.setText(_( u"New Appointment"))
         self.week_1st_appt_pushButton.setToolTip(_( u"Find the First Suitable Appointment. "))
         self.week_1st_appt_pushButton.setText(_( u"1st Available"))
         self.week_prev_appt_pushButton.setToolTip(_( u"Find the Previous Appointment\n"
@@ -3389,4 +3379,4 @@ class Ui_MainWindow(object):
         self.actionShow_Geek_Column.setText(_( u"Show Geek Column"))
 
 from PyQt4 import QtWebKit
-import resources_rc
+from openmolar.qt4gui import resources_rc

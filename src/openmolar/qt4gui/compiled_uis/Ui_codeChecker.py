@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/codeChecker.ui'
 #
-# Created: Wed Mar 17 23:05:53 2010
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:23 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 

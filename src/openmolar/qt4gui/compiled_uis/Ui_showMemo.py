@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'showMemo.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/showMemo.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:21 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -16,6 +16,7 @@ class Ui_Dialog(object):
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtGui.QLabel(Dialog)
+        self.label.setText("")
         self.label.setPixmap(QtGui.QPixmap(":/newlogo_launchpadSize.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
@@ -48,4 +49,4 @@ class Ui_Dialog(object):
         self.message_label.setText(_( u"TextLabel"))
         self.checkBox.setText(_( u"Delete this memo when I close this"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

@@ -15,7 +15,14 @@ class simple_model(QtCore.QAbstractListModel):
         self.min_slot_length = 0
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
         self.selection_model = QtGui.QItemSelectionModel(self)
-    
+        self.selectedAppt = None
+        self.normal_icon = QtGui.QIcon()
+        self.normal_icon.addPixmap(QtGui.QPixmap(":/schedule.png"),
+                QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.selected_icon = QtGui.QIcon()
+        self.selected_icon.addPixmap(
+            QtGui.QPixmap(":/icons/schedule_active.png"))
+        
     def clear(self):
         self.unscheduledList = []
         self.scheduledList = []
@@ -87,22 +94,28 @@ class simple_model(QtCore.QAbstractListModel):
         elif role == QtCore.Qt.ForegroundRole:
             if app.unscheduled:
                 return QtCore.QVariant(QtGui.QBrush(QtGui.QColor("red")))
+        elif role == QtCore.Qt.DecorationRole:
+            if app.unscheduled:
+                if app == self.selectedAppt:
+                    return QtCore.QVariant(self.selected_icon)
+                return QtCore.QVariant(self.normal_icon)
         elif role == QtCore.Qt.UserRole:  #return the whole python object
             return app
         return QtCore.QVariant()
 
     def setSelectedIndexes(self, indexes, selected):
         self.min_slot_length = 0
-        appt = None
+        self.selectedAppt = None
         if selected in indexes:
-            appt = self.data(selected, QtCore.Qt.UserRole)
-            self.min_slot_length = appt.length
+            self.selectedAppt = self.data(selected, QtCore.Qt.UserRole)
+            self.min_slot_length = self.selectedAppt.length
         elif indexes != []:
-            appt = self.data(indexes[0], QtCore.Qt.UserRole)
-            self.min_slot_length = appt.length
-        self.emit(QtCore.SIGNAL("selectedAppointment"), appt)
+            self.selectedAppt = self.data(indexes[0], QtCore.Qt.UserRole)
+            self.min_slot_length = self.selectedAppt.length
+        self.emit(QtCore.SIGNAL("selectedAppointment"), self.selectedAppt)
 
     def setSelectedAppt(self, appt):
+        self.selectedAppt = appt
         try:
             index = self.index(self.list.index(appt))
             self.min_slot_length = appt.length
@@ -147,6 +160,7 @@ class draggableList(QtGui.QListView):
         if multiSelect:
             self.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
         self.pixels_per_min = 2    
+        self.setMinimumHeight(150)
         
     def setScaling(self, height_per_minute):
         '''
@@ -205,6 +219,7 @@ class draggableList(QtGui.QListView):
         rows = self.selectionModel().selectedRows()
         self.model().setSelectedIndexes(rows, selected)
         
+        self.doItemsLayout()
         
 if __name__ == "__main__":
     '''
@@ -330,7 +345,7 @@ if __name__ == "__main__":
                     self.weeklistView.setScaling)
             self.connect(self.book, QtCore.SIGNAL("redrawn"),
                     self.daylistView.setScaling)
-
+            
     try:
         app = QtGui.QApplication([])
         dl = testDialog()

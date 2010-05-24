@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/saveDiscardCancel.ui'
 #
-# Created: Tue May 18 01:39:21 2010
+# Created: Mon May 24 22:45:19 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -60,4 +60,4 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_( u"Confirmation Required"))
         self.pushButton.setText(_( u"What\'s Changed?"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'patient_finder.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/patient_finder.ui'
 #
-# Created: Thu Nov 19 21:47:06 2009
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:19 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -44,6 +44,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.sname, 3, 1, 1, 1)
         self.snameSoundex_checkBox = QtGui.QCheckBox(Dialog)
         self.snameSoundex_checkBox.setMaximumSize(QtCore.QSize(60, 24))
+        self.snameSoundex_checkBox.setText("")
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(":/speaker.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.snameSoundex_checkBox.setIcon(icon2)
@@ -59,6 +60,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.fname, 4, 1, 1, 1)
         self.fnameSoundex_checkBox = QtGui.QCheckBox(Dialog)
         self.fnameSoundex_checkBox.setMaximumSize(QtCore.QSize(60, 24))
+        self.fnameSoundex_checkBox.setText("")
         self.fnameSoundex_checkBox.setIcon(icon2)
         self.fnameSoundex_checkBox.setObjectName("fnameSoundex_checkBox")
         self.gridLayout.addWidget(self.fnameSoundex_checkBox, 4, 2, 1, 1)
@@ -149,4 +151,4 @@ class Ui_Dialog(object):
         self.label_9.setText(_( u"Postcode"))
         self.pcde.setToolTip(_( u"search for a postcode"))
 
-import resources_rc
+from openmolar.qt4gui import resources_rc

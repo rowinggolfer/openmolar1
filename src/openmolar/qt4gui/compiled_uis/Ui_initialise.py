@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'initialise.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/initialise.ui'
 #
-# Created: Sat Jan 16 23:28:03 2010
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon May 24 22:45:20 2010
+#      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -76,6 +76,7 @@ class Ui_MainWindow(object):
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.gridLayout.addWidget(self.lineEdit_2, 1, 1, 1, 1)
         self.label_22 = QtGui.QLabel(self.practice_frame)
+        self.label_22.setText("")
         self.label_22.setObjectName("label_22")
         self.gridLayout.addWidget(self.label_22, 1, 2, 1, 1)
         self.label_3 = QtGui.QLabel(self.practice_frame)
@@ -85,6 +86,7 @@ class Ui_MainWindow(object):
         self.lineEdit_3.setObjectName("lineEdit_3")
         self.gridLayout.addWidget(self.lineEdit_3, 2, 1, 1, 1)
         self.label_23 = QtGui.QLabel(self.practice_frame)
+        self.label_23.setText("")
         self.label_23.setObjectName("label_23")
         self.gridLayout.addWidget(self.label_23, 2, 2, 1, 1)
         self.label_4 = QtGui.QLabel(self.practice_frame)
@@ -94,6 +96,7 @@ class Ui_MainWindow(object):
         self.lineEdit_4.setObjectName("lineEdit_4")
         self.gridLayout.addWidget(self.lineEdit_4, 3, 1, 1, 1)
         self.label_27 = QtGui.QLabel(self.practice_frame)
+        self.label_27.setText("")
         self.label_27.setObjectName("label_27")
         self.gridLayout.addWidget(self.label_27, 3, 2, 1, 1)
         self.label_5 = QtGui.QLabel(self.practice_frame)
@@ -103,6 +106,7 @@ class Ui_MainWindow(object):
         self.lineEdit_5.setObjectName("lineEdit_5")
         self.gridLayout.addWidget(self.lineEdit_5, 4, 1, 1, 1)
         self.label_19 = QtGui.QLabel(self.practice_frame)
+        self.label_19.setText("")
         self.label_19.setObjectName("label_19")
         self.gridLayout.addWidget(self.label_19, 4, 2, 1, 1)
         self.label_6 = QtGui.QLabel(self.practice_frame)
@@ -112,6 +116,7 @@ class Ui_MainWindow(object):
         self.lineEdit_6.setObjectName("lineEdit_6")
         self.gridLayout.addWidget(self.lineEdit_6, 5, 1, 1, 1)
         self.label_28 = QtGui.QLabel(self.practice_frame)
+        self.label_28.setText("")
         self.label_28.setObjectName("label_28")
         self.gridLayout.addWidget(self.label_28, 5, 2, 1, 1)
         self.label_7 = QtGui.QLabel(self.practice_frame)
@@ -121,6 +126,7 @@ class Ui_MainWindow(object):
         self.lineEdit_7.setObjectName("lineEdit_7")
         self.gridLayout.addWidget(self.lineEdit_7, 6, 1, 1, 1)
         self.label_25 = QtGui.QLabel(self.practice_frame)
+        self.label_25.setText("")
         self.label_25.setObjectName("label_25")
         self.gridLayout.addWidget(self.label_25, 6, 2, 1, 1)
         self.label_8 = QtGui.QLabel(self.practice_frame)
@@ -130,6 +136,7 @@ class Ui_MainWindow(object):
         self.lineEdit_8.setObjectName("lineEdit_8")
         self.gridLayout.addWidget(self.lineEdit_8, 7, 1, 1, 1)
         self.label_26 = QtGui.QLabel(self.practice_frame)
+        self.label_26.setText("")
         self.label_26.setObjectName("label_26")
         self.gridLayout.addWidget(self.label_26, 7, 2, 1, 1)
         self.label_9 = QtGui.QLabel(self.practice_frame)
@@ -139,6 +146,7 @@ class Ui_MainWindow(object):
         self.lineEdit_9.setObjectName("lineEdit_9")
         self.gridLayout.addWidget(self.lineEdit_9, 8, 1, 1, 1)
         self.label_24 = QtGui.QLabel(self.practice_frame)
+        self.label_24.setText("")
         self.label_24.setObjectName("label_24")
         self.gridLayout.addWidget(self.label_24, 8, 2, 1, 1)
         self.label_10 = QtGui.QLabel(self.practice_frame)
@@ -148,6 +156,7 @@ class Ui_MainWindow(object):
         self.lineEdit_10.setObjectName("lineEdit_10")
         self.gridLayout.addWidget(self.lineEdit_10, 9, 1, 1, 1)
         self.label_21 = QtGui.QLabel(self.practice_frame)
+        self.label_21.setText("")
         self.label_21.setObjectName("label_21")
         self.gridLayout.addWidget(self.label_21, 9, 2, 1, 1)
         self.label_11 = QtGui.QLabel(self.practice_frame)
@@ -157,6 +166,7 @@ class Ui_MainWindow(object):
         self.lineEdit_11.setObjectName("lineEdit_11")
         self.gridLayout.addWidget(self.lineEdit_11, 10, 1, 1, 1)
         self.label_20 = QtGui.QLabel(self.practice_frame)
+        self.label_20.setText("")
         self.label_20.setObjectName("label_20")
         self.gridLayout.addWidget(self.label_20, 10, 2, 1, 1)
         self.verticalLayout_3.addWidget(self.practice_frame)
@@ -296,6 +306,7 @@ class Ui_MainWindow(object):
         self.label_45.setObjectName("label_45")
         self.gridLayout_4.addWidget(self.label_45, 2, 0, 1, 1)
         self.lineEdit_21 = QtGui.QLineEdit(self.frame_3)
+        self.lineEdit_21.setText("")
         self.lineEdit_21.setObjectName("lineEdit_21")
         self.gridLayout_4.addWidget(self.lineEdit_21, 2, 1, 1, 1)
         self.verticalLayout_7.addLayout(self.gridLayout_4)
@@ -359,6 +370,7 @@ class Ui_MainWindow(object):
         self.label_46.setObjectName("label_46")
         self.gridLayout_5.addWidget(self.label_46, 2, 0, 1, 1)
         self.lineEdit_22 = QtGui.QLineEdit(self.frame_4)
+        self.lineEdit_22.setText("")
         self.lineEdit_22.setObjectName("lineEdit_22")
         self.gridLayout_5.addWidget(self.lineEdit_22, 2, 1, 1, 1)
         self.verticalLayout_8.addLayout(self.gridLayout_5)
@@ -555,6 +567,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.xml_label = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.xml_label.setText("")
         self.xml_label.setTextFormat(QtCore.Qt.PlainText)
         self.xml_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.xml_label.setWordWrap(True)
@@ -686,14 +699,4 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_( u"File"))
         self.actionLoad_Template.setText(_( u"L&oad Template"))
         self.action_Save_Template.setText(_( u"&Save Template"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 
