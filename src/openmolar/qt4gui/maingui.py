@@ -3500,8 +3500,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("currentIndexChanged (const QString&)"),
         self.forumViewFilterChanged)
 
-        QtCore.QObject.connect(self.ui.group_replies_radioButton,
-        QtCore.SIGNAL("toggled (bool)"), self.forum_radioButtons)
+        for widg in (self.ui.group_replies_radioButton,
+        self.ui.forum_deletedposts_checkBox):
+            QtCore.QObject.connect(widg,
+            QtCore.SIGNAL("toggled (bool)"), self.forum_radioButtons)
 
     def signals_history(self):
         QtCore.QObject.connect(self.pastDataMenu,

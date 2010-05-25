@@ -18,28 +18,29 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import forum
 from openmolar.qt4gui.compiled_uis import Ui_forumPost
 
-def checkForNewForumPosts(parent):
+def checkForNewForumPosts(om_gui):
     '''
     checks for new forum posts every few minutes
     '''
-    parent.showForumActivity(forum.newPosts())
+    om_gui.showForumActivity(forum.newPosts())
 
-def loadForum(parent):
+def loadForum(om_gui):
     '''
     loads the forum
     '''
-    twidg = parent.ui.forum_treeWidget
+    twidg = om_gui.ui.forum_treeWidget
     twidg.clear()
-    chosen = parent.ui.forumViewFilter_comboBox.currentText()
-    GROUP_TOPICS = parent.ui.group_replies_radioButton.isChecked()
+    chosen = om_gui.ui.forumViewFilter_comboBox.currentText()
+    GROUP_TOPICS = om_gui.ui.group_replies_radioButton.isChecked()
     #-- set the column headers (stored in another module)
     headers = forum.headers
     twidg.setHeaderLabels(headers)
     #-- get the posts
+    show_closed = om_gui.ui.forum_deletedposts_checkBox.isChecked()
     if chosen != _("Everyone"):
-        posts = forum.getPosts(chosen)
+        posts = forum.getPosts(chosen, show_closed)
     else:
-        posts = forum.getPosts()
+        posts = forum.getPosts(None, show_closed)
 
     parentItems = {None : twidg}
 
@@ -47,12 +48,12 @@ def loadForum(parent):
     highlighted = True
     for post in posts:
         if GROUP_TOPICS:
-            parentItem = parentItems.get(post.parent_ix)
+            parentItem = parentItems.get(post.parent_ix, twidg)
         else:
             parentItem = twidg
         item = QtGui.QTreeWidgetItem(parentItem)
         item.setText(0, post.topic)
-        item.setText(1, str(post.ix))
+        item.setData(1, QtCore.Qt.DisplayRole, post.ix)
         item.setText(2, post.inits)
         if post.recipient:
             item.setText(3, post.recipient)
@@ -64,8 +65,7 @@ def loadForum(parent):
 
         item.setText(5, post.comment)
         item.setText(6, post.briefcomment)
-        item.setData(7,  QtCore.Qt.UserRole,
-        QtCore.QVariant(post.parent_ix))
+        item.setData(7, QtCore.Qt.DisplayRole, post.parent_ix)
 
         if parentItem == twidg:
             highlighted = not highlighted
@@ -98,20 +98,20 @@ def loadForum(parent):
 
     for i in range(twidg.columnCount()):
         twidg.resizeColumnToContents(i)
-    twidg.setColumnWidth(1, 0)
+    #twidg.setColumnWidth(1, 0)
     twidg.setColumnWidth(5, 0)
-    twidg.setColumnWidth(7, 0)
+    #twidg.setColumnWidth(7, 0)
 
 
-    parent.ui.forumDelete_pushButton.setEnabled(False)
-    parent.ui.forumReply_pushButton.setEnabled(False)
+    om_gui.ui.forumDelete_pushButton.setEnabled(False)
+    om_gui.ui.forumReply_pushButton.setEnabled(False)
     #-- turn the tab red.
 
-def forumItemSelected(parent):
+def forumItemSelected(om_gui):
     '''
     user has selected an item in the forum
     '''
-    item = parent.ui.forum_treeWidget.currentItem()
+    item = om_gui.ui.forum_treeWidget.currentItem()
     datetext = item.data(4,
     QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
 
@@ -120,16 +120,16 @@ def forumItemSelected(parent):
     heading += "To:\t%s<br />"% item.text(3)
     heading += "Date:\t%s</b>"% datetext
     message = item.text(5)
-    parent.ui.forum_label.setText(heading)
-    parent.ui.forum_textBrowser.setPlainText(message)
-    parent.ui.forumDelete_pushButton.setEnabled(True)
-    parent.ui.forumReply_pushButton.setEnabled(True)
+    om_gui.ui.forum_label.setText(heading)
+    om_gui.ui.forum_textBrowser.setPlainText(message)
+    om_gui.ui.forumDelete_pushButton.setEnabled(True)
+    om_gui.ui.forumReply_pushButton.setEnabled(True)
 
-def forumNewTopic(parent):
+def forumNewTopic(om_gui):
     '''
     create a new post
     '''
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.from_comboBox.addItems([localsettings.operator, "Anon"] +
@@ -140,7 +140,7 @@ def forumNewTopic(parent):
     while True:
         if Dialog.exec_():
             if dl.topic_lineEdit.text() == "":
-                parent.advise("Please set a topic", 1)
+                om_gui.advise("Please set a topic", 1)
             else:
                 break
         else:
@@ -153,17 +153,17 @@ def forumNewTopic(parent):
     if dl.to_comboBox.currentIndex !=0:
         post.recipient = dl.to_comboBox.currentText()
     forum.commitPost(post)
-    loadForum(parent)
+    loadForum(om_gui)
 
 
-def forumDeleteItem(parent):
+def forumDeleteItem(om_gui):
     '''
     delete a forum posting
     '''
-    items = parent.ui.forum_treeWidget.selectedItems()
+    items = om_gui.ui.forum_treeWidget.selectedItems()
     number = len(items)
     if number >1:
-        result = QtGui.QMessageBox.question(parent, "Confirm",
+        result = QtGui.QMessageBox.question(om_gui, "Confirm",
         _("Delete %d Posts?")% number,
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes )
@@ -172,10 +172,10 @@ def forumDeleteItem(parent):
                 ix = int(item.text(1))
                 forum.deletePost(ix)
     else:
-        item = parent.ui.forum_treeWidget.currentItem()
+        item = om_gui.ui.forum_treeWidget.currentItem()
         heading = item.text(0)
 
-        result = QtGui.QMessageBox.question(parent, "Confirm",
+        result = QtGui.QMessageBox.question(om_gui, "Confirm",
         _("Delete selected Post?")+"<br />'%s'"% heading,
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes )
@@ -183,17 +183,17 @@ def forumDeleteItem(parent):
             ix = int(item.text(1))
             forum.deletePost(ix)
 
-    loadForum(parent)
+    loadForum(om_gui)
 
-def forumReply(parent):
+def forumReply(om_gui):
     '''
     reply to an item
     '''
-    item = parent.ui.forum_treeWidget.currentItem()
+    item = om_gui.ui.forum_treeWidget.currentItem()
     heading = item.text(0)
     if heading[:2] != "re":
         heading = "re. "+heading
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.topic_lineEdit.setText(heading)
@@ -210,8 +210,8 @@ def forumReply(parent):
         post.inits = dl.from_comboBox.currentText()
         post.receipient = dl.to_comboBox.currentText()
         forum.commitPost(post)
-    loadForum(parent)
+    loadForum(om_gui)
 
-def viewFilterChanged(parent, chosen):
+def viewFilterChanged(om_gui, chosen):
     print "viewFilterChanged", chosen
-    loadForum(parent)
+    loadForum(om_gui)

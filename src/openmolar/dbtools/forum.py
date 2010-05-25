@@ -11,7 +11,7 @@ from openmolar import connect
 from openmolar.settings import localsettings
 
 headers=[_("Subject"),"db_index",_("From"), _("To"),
-_("Date"),_("Message")]
+_("Date"),_("Message"), _("Message"), "parent"]
 
 HIGHESTID = 0
 
@@ -46,28 +46,15 @@ def commitPost(post):
     db.commit()
     #db.close()
     
-def deletePost(ix,table="forum"):
+def deletePost(ix):
     db=connect.connect()
     cursor=db.cursor()
-    query="select parent_ix from %s where ix=%d"%(table,ix)
+    query="update forum set open=False where ix=%s"
     if localsettings.logqueries:
-        print query
-    parent=None
-    if cursor.execute(query):
-        parent=cursor.fetchone()[0]
-    print parent
-    if parent==None:parent='Null'
-    
-    query="update %s set open=False where ix=%d"%(table,ix)
-    query2='update %s set parent_ix=%s where parent_ix=%d'%(table,parent,ix)
-    if True or localsettings.logqueries:
-        print query
-        print query2
-    cursor.execute(query2)
-    cursor.execute(query)    
+        print query, (ix,)
+    cursor.execute(query, (ix,))    
     db.commit()
     cursor.close()
-    #db.close()
     
 def newPosts():
     result = False
@@ -107,26 +94,32 @@ def updateReadHistory():
     cursor.close()
         
 
-def getPosts(user=None):
+def getPosts(user=None, include_closed=False):
     '''
     gets all active rows from a forum table
     '''
     global HIGHESTID
-    filter=""
+    filter = ""
+    if not include_closed:
+        filter += ' open ' 
     if user:
-        filter = 'and recipient = "%s"'%user
-    db=connect.connect()
-    cursor=db.cursor()
-    query='''select ix, parent_ix,topic,inits,fdate, recipient, comment 
-    from forum where open %s order by parent_ix,ix'''%filter
+        if filter == "":
+            filter += "and"
+        filter += ' recipient = ' + user
+    if filter != "":
+        filter = "where " + filter
+    db = connect.connect()
+    cursor = db.cursor()
+    query = '''select ix, parent_ix, topic, inits, fdate, recipient, comment 
+    from forum %s order by parent_ix, ix''' % filter
 
     if localsettings.logqueries:
         print query
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
-    #db.close()
-    retarg=[]
+    
+    retarg = []
     update = False
     for row in rows:
         newpost = post()
@@ -140,9 +133,9 @@ def getPosts(user=None):
         newpost.date = row[4]
         newpost.recipient = row[5]
         newpost.comment = row[6]
-        newpost.briefcomment=row[6][:40]
-        if newpost.comment!=newpost.briefcomment:
-            newpost.briefcomment+="...."
+        newpost.briefcomment = row[6][:40]
+        if newpost.comment != newpost.briefcomment:
+            newpost.briefcomment += "...."
         retarg.append(newpost)
 
     if update:

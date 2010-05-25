@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Mon May 24 23:31:01 2010
+# Created: Tue May 25 10:30:03 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -1760,7 +1760,7 @@ class Ui_MainWindow(object):
         self.scrollArea_9.setWidgetResizable(True)
         self.scrollArea_9.setObjectName("scrollArea_9")
         self.scrollAreaWidgetContents_15 = QtGui.QWidget(self.scrollArea_9)
-        self.scrollAreaWidgetContents_15.setGeometry(QtCore.QRect(0, 0, 191, 279))
+        self.scrollAreaWidgetContents_15.setGeometry(QtCore.QRect(0, 0, 180, 279))
         self.scrollAreaWidgetContents_15.setMinimumSize(QtCore.QSize(180, 0))
         self.scrollAreaWidgetContents_15.setObjectName("scrollAreaWidgetContents_15")
         self.verticalLayout_37 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_15)
@@ -2767,6 +2767,9 @@ class Ui_MainWindow(object):
         self.split_replies_radioButton.setObjectName("split_replies_radioButton")
         self.horizontalLayout_26.addWidget(self.split_replies_radioButton)
         self.verticalLayout_11.addWidget(self.groupBox_10)
+        self.forum_deletedposts_checkBox = QtGui.QCheckBox(self.frame_20)
+        self.forum_deletedposts_checkBox.setObjectName("forum_deletedposts_checkBox")
+        self.verticalLayout_11.addWidget(self.forum_deletedposts_checkBox)
         self.horizontalLayout_20.addWidget(self.splitter_3)
         self.main_tabWidget.addTab(self.tab_forum, "")
         self.tab_wiki = QtGui.QWidget()
@@ -2893,7 +2896,7 @@ class Ui_MainWindow(object):
         self.label_6.setBuddy(self.pcdeEdit)
 
         self.retranslateUi(MainWindow)
-        self.main_tabWidget.setCurrentIndex(1)
+        self.main_tabWidget.setCurrentIndex(7)
         self.tabWidget.setCurrentIndex(3)
         self.contract_tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(1)
@@ -3349,6 +3352,7 @@ class Ui_MainWindow(object):
         self.groupBox_10.setTitle(_( u"Layout Options"))
         self.group_replies_radioButton.setText(_( u"Group replies"))
         self.split_replies_radioButton.setText(_( u"Split Replies"))
+        self.forum_deletedposts_checkBox.setText(_( u"Include Deleted Posts"))
         self.main_tabWidget.setTabText(self.main_tabWidget.indexOf(self.tab_forum), _( u"FORUM"))
         self.main_tabWidget.setTabText(self.main_tabWidget.indexOf(self.tab_wiki), _( u"Wiki"))
         self.menuMenu.setTitle(_( u"&File"))

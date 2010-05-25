@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>7</number>
           </property>
           <widget class="QWidget" name="tab_patient">
            <attribute name="icon">
@@ -4254,7 +4254,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>191</width>
+                        <width>180</width>
                         <height>279</height>
                        </rect>
                       </property>
@@ -6639,6 +6639,13 @@ F6</string>
                     </widget>
                    </item>
                   </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="forum_deletedposts_checkBox">
+                  <property name="text">
+                   <string>Include Deleted Posts</string>
+                  </property>
                  </widget>
                 </item>
                </layout>
