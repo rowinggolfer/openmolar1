@@ -146,7 +146,8 @@ class treeModel(QtCore.QAbstractItemModel):
         elif role == QtCore.Qt.DecorationRole:
             if (index.column() == 0 and
             item.appointment and item.appointment.unscheduled):
-                if self.selectedAppt and item.appointment.aprix == self.selectedAppt.aprix:
+                if (self.selectedAppt and 
+                item.appointment.aprix == self.selectedAppt.aprix):
                     return QtCore.QVariant(self.selected_icon)
                 return QtCore.QVariant(self.normal_icon)
         if role == QtCore.Qt.UserRole:

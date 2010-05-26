@@ -242,12 +242,12 @@ def clearApptButtonClicked(om_gui):
             return True
         else:
             om_gui.advise(_("Error removing proposed appointment"), 2)
-
-    appt = om_gui.pt_diary_model.selectedAppt
-    if appt == None:
+    
+    if om_gui.pt_diary_model.selectedAppt == None:
         om_gui.advise(_("No appointment selected"))
         return
-
+    appt = om_gui.pt_diary_model.selectedAppt
+    
     if appt.date == None:
         if QtGui.QMessageBox.question(om_gui, _("Confirm"),
          _("Delete Unscheduled Appointment?"),
@@ -298,7 +298,6 @@ def modifyAppt(om_gui):
     user is changing an appointment
     much of this code is a duplicate of make new appt
     '''
-    appt = om_gui.pt_diary_model.selectedAppt
 
     def makeNow():
         dl.makeNow = True
@@ -315,10 +314,11 @@ def modifyAppt(om_gui):
 
                 QtCore.QObject.connect(dl.apptlength_comboBox,
                 QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
-
-    if appt == None:
+    
+    if om_gui.pt_diary_model.selectedAppt == None:
         om_gui.advise(_("No appointment selected"), 1)
     else:
+        appt = om_gui.pt_diary_model.selectedAppt
         Dialog = QtGui.QDialog(om_gui)
         dl = Ui_specify_appointment.Ui_Dialog()
         dl.setupUi(Dialog)
@@ -411,11 +411,11 @@ def begin_makeAppt(om_gui, dayView=False):
     also handles both 1st appointment buttons
     '''
     layout_ptDiary(om_gui)
-    appt = om_gui.pt_diary_model.selectedAppt
-
-    if appt == None:
+    
+    if om_gui.pt_diary_model.selectedAppt == None:
         om_gui.advise(_("Please select an appointment to schedule"), 1)
         return
+    appt = om_gui.pt_diary_model.selectedAppt
     if appt.date:
         om_gui.advise(_("appointment already scheduled for") + " %s"%(
         localsettings.readableDate(appt.date)), 1)
@@ -683,14 +683,14 @@ def layout_ptDiary(om_gui):
     past_index = om_gui.pt_diary_model.createIndex(0, 0, index)
     om_gui.ui.pt_diary_treeView.collapse(past_index)
 
-    if om_gui.pt_diary_model.selectedAppt != None:
-        select_apr_ix(om_gui, om_gui.pt_diary_model.selectedAppt.aprix)
+    appt = om_gui.pt_diary_model.selectedAppt
+    if appt != None:
+        select_apr_ix(om_gui, appt.aprix)
 
     adjustDiaryColWidths(om_gui)
 
     ## now update the models for drag/drop
-    om_gui.apt_drag_model.setAppointments(appts,
-        om_gui.pt_diary_model.selectedAppt)
+    om_gui.apt_drag_model.setAppointments(appts, appt)
 
 def triangles(om_gui, call_update=True):
     ''''

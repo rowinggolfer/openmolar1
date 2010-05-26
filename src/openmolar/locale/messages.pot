@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-05-26 11:09+BST\n"
+"POT-Creation-Date: 2010-05-26 21:57+BST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,10 +15,10 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/appointments.py:745
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:203
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:204
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:205
+#: /home/neil/openmolar/openmolar/src/openmolar/dbtools/appointments.py:751
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:220
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:221
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:222
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/block_wizard.py:25
 msgid "emergency"
 msgstr ""
@@ -459,40 +459,40 @@ msgid "Everyone"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:150
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:152
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:156
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:158
 msgid "mins"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:153
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:263
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:159
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:264
 msgid "with"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:200
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:201
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:217
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:218
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:154
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
 msgid "Lunch"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:202
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:219
 msgid "staff meeting"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:206
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:223
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
 msgid "Out of Office"
 msgstr ""
 
 #:
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:224
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:251
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:265
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:252
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:266
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/saveDiscardCancel.py:82
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:293
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/fees/edit_feeitem_dialog.py:299
@@ -529,17 +529,17 @@ msgid "No appointment selected"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:252
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:253
 msgid "Delete Unscheduled Appointment?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:259
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:260
 msgid "Confirm Delete appointment at"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:276
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:277
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_quick_daylist_print.py:50
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_surgeryNumber.py:48
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/printing/om_printing.py:372
@@ -547,143 +547,143 @@ msgid "Question"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:277
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:278
 msgid "Removed from appointment book - keep for rescheduling?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:282
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:283
 msgid "Error converting appointment"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:286
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:287
 msgid "Error removing from patient diary"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:291
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:292
 msgid "Error Removing from Appointment Book"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:402
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:403
 msgid "Error putting into dentist's book"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:414
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:416
 msgid "Please select an appointment to schedule"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:417
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:420
 msgid "appointment already scheduled for"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:459
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:462
 msgid "Reached"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:461
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:464
 msgid "which is specified as the book end point"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:481
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:484
 msgid "No clinicians selected"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:490
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:493
 msgid "no appointments of"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:491
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:494
 msgid "minutes or more available for selected week"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:503
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:506
 msgid "Please select an appointment to place here"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:507
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:510
 msgid "Please choose another appointment - this one is made already!"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:517
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1403
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:520
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1407
 msgid "You have chosen an appointment with"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:519
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1405
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:522
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1409
 msgid "Is this correct?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:552
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:555
 msgid "Confirm Make appointment for"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:605
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:608
 msgid "Error putting appointment back into patient diary"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:609
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:612
 msgid "Error making appointment - sorry!"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1123
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1218
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1127
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1222
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:845
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/maingui.py:2428
 msgid "You can't schedule an appointment in the past"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1143
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1147
 msgid "showing current week"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1235
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1239
 msgid "showing current day"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1309
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1313
 msgid "Nothing to show!"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1339
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1343
 msgid "Do you want to unblock the selected slot?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1368
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1372
 msgid "unable to block - has the book been altered elsewhere?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1386
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1418
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1390
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1422
 msgid "unable to make appointment - has the book been altered elsewhere?"
 msgstr ""
 
 #:
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1422
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appt_gui_module.py:1426
 msgid "unable to make make changes to the patient diary!"
 msgstr ""
 

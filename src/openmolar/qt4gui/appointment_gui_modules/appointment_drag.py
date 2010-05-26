@@ -67,7 +67,8 @@ class simple_model(QtCore.QAbstractListModel):
         self.min_slot_length = 0
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
         self.selection_model = QtGui.QItemSelectionModel(self)
-        self.selectedAppt = None
+        self.currentAppt = None
+        self.selectedAppts = []
         self.normal_icon = QtGui.QIcon()
         self.normal_icon.addPixmap(QtGui.QPixmap(":/schedule.png"),
                 QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -105,9 +106,10 @@ class simple_model(QtCore.QAbstractListModel):
             retarg.add(app.dent)
         return tuple(retarg)
 
-    def setAppointments(self, appts, selectedAppt = None):
+    def setAppointments(self, appts, selectedAppt):
         '''
-        add an appointment to this list - arg is of type dragAppointment
+        add an appointments, and highlight the selectedAppt (which is the 
+        highlighted one in the pt diary
         '''
         self.unscheduledList = []
         self.scheduledList = []
@@ -128,16 +130,20 @@ class simple_model(QtCore.QAbstractListModel):
                 changedClinicians = True
 
         self.list = self.scheduledList + self.unscheduledList
-        self.reset()
-
+        
         if changedClinicians:
             self.emit(QtCore.SIGNAL("clinicianListChanged"))
+        
+        self.reset()
+
+        for appt in self.selectedAppts:
+            self.setcurrentAppt(appt)            
 
         if selectedAppt in appts:
-            self.setSelectedAppt(selectedAppt)
+            self.setcurrentAppt(selectedAppt)
         else:
-            self.setSelectedAppt(None)
-
+            self.setcurrentAppt(None)        
+        
     def rowCount(self, parent = QtCore.QModelIndex()):
         return len(self.list)
 
@@ -159,8 +165,9 @@ class simple_model(QtCore.QAbstractListModel):
             if app.unscheduled:
                 return QtCore.QVariant(QtGui.QBrush(QtGui.QColor("red")))
         elif role == QtCore.Qt.DecorationRole:
+            #if app in self.selectedAppts: #
             if app.unscheduled:
-                if app == self.selectedAppt:
+                if app == self.currentAppt:
                     return QtCore.QVariant(self.selected_icon)
                 return QtCore.QVariant(self.normal_icon)
         elif role == QtCore.Qt.UserRole:  #return the whole python object
@@ -169,24 +176,34 @@ class simple_model(QtCore.QAbstractListModel):
 
     def setSelectedIndexes(self, indexes, selected):
         self.min_slot_length = 0
-        self.selectedAppt = None
+        self.currentAppt = None
+        self.selectedAppts = []
+        for index in indexes:
+            appt = self.data(index, QtCore.Qt.UserRole)
+            self.selectedAppts.append(appt)
+        
         if selected in indexes:
-            self.selectedAppt = self.data(selected, QtCore.Qt.UserRole)
-            self.min_slot_length = self.selectedAppt.length
-        elif indexes != []:
-            self.selectedAppt = self.data(indexes[0], QtCore.Qt.UserRole)
-            self.min_slot_length = self.selectedAppt.length
-        self.emit(QtCore.SIGNAL("selectedAppointment"), self.selectedAppt)
+            self.currentAppt = self.data(selected, QtCore.Qt.UserRole)
+            self.min_slot_length = self.currentAppt.length
+        elif self.selectedAppts != []:
+            self.currentAppt = self.selectedAppts[0]
+            self.min_slot_length = self.currentAppt.length
+        
+        self.emit(QtCore.SIGNAL("selectedAppointment"), self.currentAppt)
 
-    def setSelectedAppt(self, appt):
-        self.selectedAppt = appt
-        try:
-            index = self.index(self.list.index(appt))
-            self.min_slot_length = appt.length
-            self.selection_model.select(index,
-                QtGui.QItemSelectionModel.SelectCurrent)
-        except ValueError:
+    def setcurrentAppt(self, appt):
+        self.currentAppt = appt
+        if appt == None:
             self.selection_model.clear()
+            self.min_slot_length = 0
+        else:
+            try:
+                index = self.index(self.list.index(appt))
+                self.min_slot_length = appt.length
+                self.selection_model.select(index,
+                    QtGui.QItemSelectionModel.Select)
+            except ValueError:
+                pass
 
 
 class blockModel(simple_model):
@@ -245,7 +262,7 @@ class draggableList(QtGui.QListView):
         if not selectedApp.unscheduled:
             event.ignore()
             return
-        if not self.currentIndex() == index:
+        if index not in self.selectedIndexes():
             self.setCurrentIndex(index)
 
         ## convert to  a bytestream
