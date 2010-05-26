@@ -18,21 +18,21 @@ class freeSlot(object):
         self.dent = dent
         self.date_time = date_time
         self.length = length
-        
+
     def date(self):
         return self.date_time.date()
-    
+
     def time(self):
         return self.date_time.time()
 
     @property
     def mpm(self):
         return localsettings.pyTimeToMinutesPastMidnight(self.time())
-    
+
     @property
     def mpm_end(self):
         return self.mpm + self.length
-    
+
     def __cmp__(self, other):
         try:
             if (self.date_time == other.date_time and
@@ -41,11 +41,11 @@ class freeSlot(object):
         except AttributeError, e:
             pass
         return 1
-    
+
     def __repr__(self):
-        return "SLOT %s , dent %s, %s mins"% (self.date_time, self.dent, 
+        return "SLOT %s , dent %s, %s mins"% (self.date_time, self.dent,
             self.length)
-    
+
 def getLengthySlots(slots, length):
     '''
     sort through the list of slots, and filter out those with inadequate length
@@ -98,12 +98,12 @@ def slots(adate, apptix, start, apdata, fin):
         results.append(slot)
     return results
 
-        
+
 class aowAppt(object):
     '''
     a custom data object to contain data relevant to the painting of
     the appointment_overviewwidget
-    '''        
+    '''
     def __init__(self):
         self.mpm = 0
         self.length = 0
@@ -111,7 +111,7 @@ class aowAppt(object):
         self.isBlock = False
         self.reason = ""
         self.isEmergency = False
-        
+
 class appt_class(object):
     '''
     a class to hold data about a patient's appointment
@@ -140,12 +140,12 @@ class appt_class(object):
     @property
     def dent_inits(self):
         return localsettings.apptix_reverse.get(self.dent,"?")
-    
+
     @property
     def readableDate(self):
         #return localsettings.readableDate(self.date)
         return localsettings.formatDate(self.date)
-        
+
     @property
     def readableTime(self):
         return localsettings.wystimeToHumanTime(self.atime)
@@ -167,11 +167,17 @@ class appt_class(object):
 
     def __repr__(self):
         return "serialno=%s %s scheduled=%s dent=%s trt=%s length= %s ix=%s"%(
-        self.serialno, self.date, not self.unscheduled, self.dent_inits, 
+        self.serialno, self.date, not self.unscheduled, self.dent_inits,
         self.trt1, self.length, self.aprix)
 
     def __cmp__(self, other):
-        if str(self) == str(other):
+        eq = type(self) == type(other)
+        if eq:
+            for key in self.__dict__.keys():
+                if self.__dict__[key] != other.__dict__[key]:
+                    eq = False
+                    break
+        if eq:
             return 0
         else:
             return 1
@@ -305,7 +311,7 @@ class dayAppointmentData(daySummary):
                 for app in self.dentAppointments(dent):
                     appt_times_list.append((app[1], app[2]))
                 if appt_times_list:
-                    slotlist += slots(self.date, dent, self.getStart(dent), 
+                    slotlist += slots(self.date, dent, self.getStart(dent),
                         appt_times_list, self.getEnd(dent))
         return getLengthySlots(slotlist, minlength)
 
@@ -414,9 +420,9 @@ def updateAday(uddate, arg):
     db = connect()
     cursor = db.cursor()
     result = omSQLresult()
-    query = '''insert into aday (memo, adate, apptix, start, end, flag) 
+    query = '''insert into aday (memo, adate, apptix, start, end, flag)
     values (%s,%s, %s, %s, %s, %s)
-    on duplicate key 
+    on duplicate key
     update memo=%s, adate=%s, apptix=%s, start=%s, end=%s, flag=%s'''
 
     values = (arg.memo, uddate, arg.apptix, arg.sqlStart(), arg.sqlFinish(),
@@ -664,7 +670,7 @@ def setMemos(adate, memos):
     print "setting memos", memos
     db = connect()
     cursor = db.cursor()
-    query = '''insert into aday (memo, adate, apptix, start, end) 
+    query = '''insert into aday (memo, adate, apptix, start, end)
     values (%s,%s, %s, %s, %s)
     on duplicate key update memo=%s'''
 
@@ -711,7 +717,7 @@ def allAppointmentData(adate, dents=()):
     db = connect()
     cursor = db.cursor()
     query = '''select apptix,start,end,name,serialno,code0,
-    code1,code2,note,flag0,flag1,flag2,flag3, timestamp from aslot 
+    code1,code2,note,flag0,flag1,flag2,flag3, timestamp from aslot
     where adate=%s'''
     query += " %s order by apptix, start"% cond
     if localsettings.logqueries:
@@ -725,8 +731,8 @@ def allAppointmentData(adate, dents=()):
 
 def convertResults(results, inc_snos=False, inc_reason=False, isBlock=False):
     '''
-    changes 
-    (830, 845) OR 
+    changes
+    (830, 845) OR
     (830, 845, serialno) or
     (1300,1400, "LUNCH")
     to and aowAppt object
@@ -922,6 +928,7 @@ def clearEms(cedate):
     #db.close()
     return number
 
+@localsettings.debug
 def get_pts_appts(pt, futureOnly=False):
     '''
     gets appointments from the apr table which stores appointments from
@@ -1144,40 +1151,40 @@ code2, note, flag0, flag1, flag2, flag3):
 
 def daydrop_appt(adate, appt, droptime, apptix):
     '''
-    this is the procedure called when an appointment is dropped onto the 
+    this is the procedure called when an appointment is dropped onto the
     day widget
     '''
     slots = future_slots(adate, adate, (apptix,), appt.length)
-    
+
     date_time = datetime.datetime.combine(adate, droptime)
 
     this_slot = freeSlot(date_time, apptix, appt.length)
-    
-    #-- check block still available!!    
+
+    #-- check block still available!!
     found = False
     for slot in slots:
         if slot.mpm <= this_slot.mpm and slot.mpm_end >= this_slot.mpm_end:
             found = True
             break
-    
+
     if not found:
         print "slot doesn't fit"
         return (False, True)
-    
+
     try:
         cset = ord(appt.cset[0])
     except:
         cset = 0
 
     start_mpm = localsettings.pyTimeToMinutesPastMidnight(droptime)
-    
+
     bl_start = localsettings.pyTimetoWystime(droptime)
     bl_end = localsettings.minutesPastMidnighttoWystime(start_mpm+appt.length)
-    
+
     print "making appointment"
-    result1 = make_appt(adate, apptix, bl_start, bl_end, appt.name, 
+    result1 = make_appt(adate, apptix, bl_start, bl_end, appt.name,
     appt.serialno, appt.trt1, appt.trt2, appt.trt3, appt.memo, 1, cset , 0, 0)
-    
+
     result2 = False
     if result1:
         result2 = pt_appt_made(appt.serialno, appt.aprix, adate, bl_start, apptix)
@@ -1190,15 +1197,15 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     '''
     #- 1st check the block is free
     slots = future_slots(bldate, bldate, (apptix,))
-    
+
     date_time = datetime.datetime.combine(bldate,start)
 
-    block_length = (localsettings.pyTimeToMinutesPastMidnight(end) - 
+    block_length = (localsettings.pyTimeToMinutesPastMidnight(end) -
         localsettings.pyTimeToMinutesPastMidnight(start))
 
     this_slot = freeSlot(date_time, apptix, block_length)
-    
-    #-- check block still available!!    
+
+    #-- check block still available!!
     found = False
     for slot in slots:
         if slot == this_slot:
@@ -1213,16 +1220,16 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     except:
         cset = 0
 
-    make_appt(bldate, apptix, localsettings.pyTimetoWystime(bl_start), 
+    make_appt(bldate, apptix, localsettings.pyTimetoWystime(bl_start),
     localsettings.pyTimetoWystime(bl_end), name,
     pt.serialno, reason, "", "", "", 1, cset, 0, 0)
 
-    block_length = (localsettings.pyTimeToMinutesPastMidnight(bl_end) - 
+    block_length = (localsettings.pyTimeToMinutesPastMidnight(bl_end) -
         localsettings.pyTimeToMinutesPastMidnight(bl_start))
     aprix = add_pt_appt(pt.serialno, apptix, block_length, reason)
-    
+
     print "adjust pt diary"
-    return pt_appt_made(pt.serialno, aprix, 
+    return pt_appt_made(pt.serialno, aprix,
         bldate, localsettings.pyTimetoWystime(bl_start), apptix)
 
 def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
@@ -1234,11 +1241,11 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
 
     date_time = datetime.datetime.combine(bldate,start)
 
-    block_length = (localsettings.pyTimeToMinutesPastMidnight(end) - 
+    block_length = (localsettings.pyTimeToMinutesPastMidnight(end) -
         localsettings.pyTimeToMinutesPastMidnight(start))
 
     this_slot = freeSlot(date_time, apptix, block_length)
-    #-- check block still available!!    
+    #-- check block still available!!
     found = False
     for slot in slots:
         if slot == this_slot:
@@ -1246,14 +1253,14 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
             break
     if not found:
         return False
-    
+
     db = connect()
     cursor = db.cursor()
     query = '''INSERT INTO aslot (adate, apptix, start, end, name, serialno,
     code0, code1, code2, note, flag0, flag1, flag2, flag3)
     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
-    values = (bldate, apptix, localsettings.pyTimetoWystime(bl_start), 
+    values = (bldate, apptix, localsettings.pyTimetoWystime(bl_start),
     localsettings.pyTimetoWystime(bl_end), reason, 0, "", "", "", "",
     -128, 0, 0, 0)
 
@@ -1408,7 +1415,7 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
         mystr += "apptix=%s or "
         values.append(dent)
     mystr = mystr[0:mystr.rindex(" or")]+")"
-    
+
     fullquery = '''SELECT adate, apptix, start, end FROM aday
     WHERE adate>=%%s AND adate<=%%s AND (flag=1 OR flag= 2) %s
     ORDER BY adate'''% mystr
@@ -1443,7 +1450,7 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
 
 if __name__ == "__main__":
     '''test procedures......'''
-    
+
     class duckPt(object):
         def __init__(self):
             self.serialno = 1
@@ -1458,10 +1465,9 @@ if __name__ == "__main__":
     testdate = datetime.date(2010,5,19)
     #dents = getWorkingDents(testdate)
     #print dents
-    
+
     d_a_d = dayAppointmentData()
     d_a_d.setDate(testdate)
     d_a_d.getAppointments()
     print d_a_d.slots()
-    
-    
+

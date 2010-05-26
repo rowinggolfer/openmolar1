@@ -269,7 +269,6 @@ class draggableList(QtGui.QListView):
         drag.start(QtCore.Qt.CopyAction)
 
     def mouseMoveEvent(self, event):
-        print "mouse move"
         self.startDrag(event)
 
     def mousePressEvent(self, event):
