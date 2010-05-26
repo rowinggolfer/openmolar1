@@ -90,6 +90,12 @@ class treeModel(QtCore.QAbstractItemModel):
         self.parents = {0 : self.rootItem}
         self.om_gui = parent
         self.selectedAppt = None
+        self.normal_icon = QtGui.QIcon()
+        self.normal_icon.addPixmap(QtGui.QPixmap(":/schedule.png"),
+                QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.selected_icon = QtGui.QIcon()
+        self.selected_icon.addPixmap(
+            QtGui.QPixmap(":/icons/schedule_active.png"))
         
     def addAppointments(self, appointments):
         if appointments != self.appointments:
@@ -137,6 +143,12 @@ class treeModel(QtCore.QAbstractItemModel):
             if item.appointment and item.appointment.unscheduled:
                 brush = QtGui.QBrush(colours.DIARY.get("Unscheduled"))
                 return QtCore.QVariant(brush)
+        elif role == QtCore.Qt.DecorationRole:
+            if (index.column() == 0 and
+            item.appointment and item.appointment.unscheduled):
+                if self.selectedAppt and item.appointment.aprix == self.selectedAppt.aprix:
+                    return QtCore.QVariant(self.selected_icon)
+                return QtCore.QVariant(self.normal_icon)
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
             if item:
@@ -271,7 +283,8 @@ class treeModel(QtCore.QAbstractItemModel):
 
 if __name__ == "__main__":    
     from openmolar.dbtools import appointments
-
+    from openmolar.qt4gui import resources_rc
+    
     class duckPt(object):
         def __init__(self):
             self.serialno = 707

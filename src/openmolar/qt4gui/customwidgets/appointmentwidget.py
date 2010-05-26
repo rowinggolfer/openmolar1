@@ -713,17 +713,18 @@ class appointmentCanvas(QtGui.QWidget):
 
                 painter.drawText(rect, mytext, option)
 
-                ##highlight any appointments booked today
-                if modtime and modtime.date() == localsettings.currentDay():
-                    rect = QtCore.QRectF(self.width()-timeWidth,
-                    startcell*slotHeight, timeWidth,rect.height()).adjusted(
-                    2,2,-2,-2)
-                    
-                    painter.save()
-                    painter.setPen(colours.BOOKED_TODAY)
-                    painter.setBrush(colours.BOOKED_TODAY)
-                    painter.drawEllipse(rect)
-                    painter.restore()
+            ##highlight any appointments booked today
+            if (sno !=0 and 
+            modtime and modtime.date() == localsettings.currentDay()):
+                rect = QtCore.QRectF(self.width()-timeWidth/2,
+                startcell*slotHeight, timeWidth/2,rect.height()).adjusted(
+                2,2,-2,-2)
+                
+                painter.save()
+                painter.setPen(colours.BOOKED_TODAY)
+                painter.setBrush(colours.BOOKED_TODAY)
+                painter.drawEllipse(rect)
+                painter.restore()
 
         for appt in self.doubleAppts:
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
@@ -769,7 +770,8 @@ class appointmentCanvas(QtGui.QWidget):
             painter.drawRect(trect)
             painter.drawText(trect, QtCore.Qt.AlignHCenter, droptime)
 
-        self.pWidget.emit(QtCore.SIGNAL("redrawn"), dragScale)
+        ## SIGNAL NO LONGER USED
+        #self.pWidget.emit(QtCore.SIGNAL("redrawn"), dragScale)
         
 if __name__ == "__main__":
     import datetime

@@ -729,6 +729,8 @@ def dayView_setScheduleMode(om_gui):
     if visible is False, then this function has been called simply to
     syncronise the state with another scehduling page (weekview)
     '''
+    if not om_gui.scheduling_mode:
+        om_gui.ui.day_clinicianSelection_comboBox.setCurrentIndex(0)
     om_gui.ui.day_schedule_groupBox.setChecked(om_gui.scheduling_mode)
     om_gui.ui.day_clinician_selector_groupBox.setChecked(False)
     om_gui.ui.day_schedule_tabWidget.setVisible(om_gui.scheduling_mode)
@@ -1055,7 +1057,7 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
     om_gui.current_weekViewClinicians = set()
     cal = om_gui.ui.dayCalendar
     date = cal.selectedDate()
-        
+    
     dayno = date.dayOfWeek()
     weekdates = []
     #--(monday to friday) #prevMonday = date.addDays(1-dayno),
@@ -1079,27 +1081,18 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
     for ov in om_gui.ui.apptoverviews:
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
         ov.clear()
-
-        if not om_gui.ui.week_clinician_selector_groupBox.isChecked():
-            i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
-            # 0 = single only, 1 = all with appointment, 2 = all
-            if (not om_gui.ui.week_clinicianSelection_comboBox.isVisible() 
-            or i==2):
+        manual =  om_gui.ui.week_clinician_selector_groupBox.isChecked()
+        if not manual:
+            if not om_gui.ui.week_clinicianSelection_comboBox.isVisible():
                 workingdents = appointments.getWorkingDents(
                   ov.date.toPyDate(), include_non_working=False)                        
-            elif i == 0:
-                if om_gui.pt_diary_model.selectedAppt:
-                    chkset = (om_gui.pt_diary_model.selectedAppt.dent,)
-                    workingdents = appointments.getWorkingDents(
-                      ov.date.toPyDate(), chkset, include_non_working=False)
-                else:
-                    workingdents = ()
-            else: #if i == 1:
-                chkset = om_gui.apt_drag_model.involvedClinicians
-                workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
-                  chkset, include_non_working=False)
-            
-        else:
+            else:
+                i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
+                model = om_gui.ui.week_clinicianSelection_comboBox.model()
+                workingdents = model.clinician_list(i, ov.date.toPyDate())
+                if workingdents == False:
+                    manual = True
+        if manual:
             userCheckedClinicians = getUserCheckedClinicians(om_gui, "week")
             if userCheckedClinicians == []:
                 workingdents = ()
@@ -1126,6 +1119,10 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
     if om_gui.scheduling_mode:
         #--user is scheduling an appointment so show 'slots'
         #--which match the apptointment being arranged
+        if date < QtCore.QDate.currentDate() and not thisWeek:
+            om_gui.advise(_("You can't schedule an appointment in the past"))
+            om_gui.ui.weekCalendar.setSelectedDate(localsettings.currentDay())
+            return
         result, message, slots = addWeekViewAvailableSlots(om_gui) 
         if not result:
             om_gui.advise(message)
@@ -1194,22 +1191,33 @@ def layout_dayView(om_gui, find_next_appt=False, find_prev_appt=False):
     d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False
 
-    if not om_gui.ui.day_clinician_selector_groupBox.isChecked():
-        i = om_gui.ui.day_clinicianSelection_comboBox.currentIndex()
-        # 0 = single only, 1 = all with appointment, 2 = all
-        if (not om_gui.ui.day_clinicianSelection_comboBox.isVisible() 
-        or i==1):
+    manual = om_gui.ui.day_clinician_selector_groupBox.isChecked()
+    if not manual:
+        if not om_gui.ui.day_clinicianSelection_comboBox.isVisible():
             workingOnly = True
-            dents="ALL"
-        else: #if i == 1:
-            dents = om_gui.apt_drag_model.involvedClinicians
-    else:
+            dents = "ALL"
+        else:
+            i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
+            model = om_gui.ui.week_clinicianSelection_comboBox.model()
+            workingdents = model.clinician_list(i, d)
+            if workingdents == False:
+                manual = True
+            else:
+                dent_list = []
+                for dent in workingdents:
+                    dent_list.append(dent.ix)
+                dents = tuple(dent_list)
+    if manual:
         dents = tuple(getUserCheckedClinicians(om_gui, "day"))
 
     om_gui.appointmentData.setDate(d)
     om_gui.appointmentData.getAppointments(workingOnly, dents)
 
     if om_gui.scheduling_mode:
+        if d < localsettings.currentDay():
+            om_gui.advise(_("You can't schedule an appointment in the past"))
+            om_gui.ui.dayCalendar.setSelectedDate(localsettings.currentDay())
+            return
         minlength = om_gui.apt_drag_model.min_slot_length
         available_slots = om_gui.appointmentData.slots(minlength)
         if available_slots == []:
@@ -1301,7 +1309,7 @@ def layout_dayView(om_gui, find_next_appt=False, find_prev_appt=False):
         t = om_gui.ui.daymemo_label.text() + " - " + _("Nothing to show!")
         om_gui.ui.daymemo_label.setText(t)
 
-        om_gui.advise("all off today")
+        #om_gui.advise("all off today")
 
 def appointment_clicked(om_gui, list_of_snos):
     if len(list_of_snos) == 1:

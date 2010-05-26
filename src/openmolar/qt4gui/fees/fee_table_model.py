@@ -250,7 +250,7 @@ class treeModel(QtCore.QAbstractItemModel):
             if child.childCount():
                 self.searchNode(child, columns)
     
-    @localsettings.debug
+    #@localsettings.debug
     def search(self, search_phrase, columns=()):
         self.foundItems = []
         self.search_phrase = search_phrase

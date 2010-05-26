@@ -4,8 +4,60 @@ import pickle
 import sys
 
 from PyQt4 import QtGui, QtCore
-from openmolar.dbtools.appointments import appt_class
+from openmolar.dbtools import appointments 
+from openmolar.settings import localsettings
+        
 
+class clinicianSelectModel(QtCore.QAbstractListModel):
+    def __init__(self, om_gui):
+        super(clinicianSelectModel, self).__init__(om_gui)
+
+        self.options_list = [_("Selected Book(s)"), _("Relevant Books"),
+        _("Available Dentists"), _("Available Hygenists"),
+        _("Available Clinicians"), _("Everyone"), _("Manual Selection")]
+        
+        self.om_gui = om_gui
+        #if localsettings.activehygs == []:
+        #    self.options_list.remove(_("Available Hygenists"))
+        
+        self.manual_index = 6 #used if manual is called by another widget
+        
+    def rowCount(self, parent = QtCore.QModelIndex()):
+        return len(self.options_list)
+
+    def data(self, index, role):
+        if not index.isValid():
+            return QtCore.QVariant()
+        if role == QtCore.Qt.DisplayRole:
+            option = self.options_list[index.row()]
+            return QtCore.QVariant(option)
+        return QtCore.QVariant()
+    
+    def clinician_list(self, row, date):
+        if row == 0:
+            chkset = self.om_gui.apt_drag_model.selectedClinicians
+            return appointments.getWorkingDents(date, chkset, 
+                include_non_working = True)
+        if row == 1:
+            chkset = self.om_gui.apt_drag_model.involvedClinicians
+            return appointments.getWorkingDents(date, chkset, 
+                include_non_working = True)
+        elif row == 2:
+            chkset = localsettings.activedent_ixs
+            return appointments.getWorkingDents(date, chkset, 
+                include_non_working=False)            
+        elif row == 3:
+            chkset = localsettings.activehyg_ixs
+            return appointments.getWorkingDents(date, chkset, 
+                include_non_working=False)            
+        elif row == 4:
+            return appointments.getWorkingDents(date, 
+                include_non_working=False)                        
+        elif row == 5:
+            return appointments.getWorkingDents(date)
+        elif row == 6:
+            return False
+    
 class simple_model(QtCore.QAbstractListModel):
     def __init__(self, parent=None):
         super(simple_model, self).__init__(parent)
@@ -38,6 +90,18 @@ class simple_model(QtCore.QAbstractListModel):
         '''
         retarg = set()
         for app in self.list:
+            retarg.add(app.dent)
+        return tuple(retarg)
+    
+    @property
+    def selectedClinicians(self):
+        '''
+        returns a set containing all clinicians whose appointments have been
+        highlighted
+        '''
+        retarg = set()
+        for index in self.selection_model.selectedRows():
+            app = self.list[index.row()]
             retarg.add(app.dent)
         return tuple(retarg)
 
@@ -140,7 +204,7 @@ class blockModel(simple_model):
         (_("emergency"), 20),
         (_("emergency"), 30),        
         (_("Out of Office"), 30)):
-            block = appt_class()
+            block = appointments.appt_class()
             block.name = val
             block.unscheduled = True
             block.length = length
@@ -176,11 +240,12 @@ class draggableList(QtGui.QListView):
             return
 
         ## selected is the relevant person object
-        selectedApp = self.model().data(index,QtCore.Qt.UserRole)
+        selectedApp = self.model().data(index, QtCore.Qt.UserRole)
 
         if not selectedApp.unscheduled:
             event.ignore()
             return
+        self.setCurrentIndex(index)
         
         ## convert to  a bytestream
         bstream = cPickle.dumps(selectedApp)
@@ -205,6 +270,18 @@ class draggableList(QtGui.QListView):
     def mouseMoveEvent(self, event):
         self.startDrag(event)
     
+
+    ##TODO
+    #
+    #def mousePressEvent(self, event):
+    #    print "mousePress"
+    #    event.ignore()
+    #    
+    #def mouseReleaseEvent(self, event):
+    #    print "mouseRelease"
+    #    event = QtGui.QMouseEvent(event)
+    #    QtGui.QListView.mousePressEvent(self, event)
+        
     def selectionChanged (self, selectedRange, deselected):
         '''
         the user has selected an appointment (or range of appointments!)

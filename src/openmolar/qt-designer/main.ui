@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>7</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_patient">
            <attribute name="icon">
@@ -4254,7 +4254,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>180</width>
+                        <width>191</width>
                         <height>279</height>
                        </rect>
                       </property>
@@ -4375,18 +4375,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                                </widget>
                               </item>
                               <item>
-                               <widget class="QComboBox" name="day_clinicianSelection_comboBox">
-                                <item>
-                                 <property name="text">
-                                  <string>All Listed Clinicians</string>
-                                 </property>
-                                </item>
-                                <item>
-                                 <property name="text">
-                                  <string>All Available Clinicians</string>
-                                 </property>
-                                </item>
-                               </widget>
+                               <widget class="QComboBox" name="day_clinicianSelection_comboBox"/>
                               </item>
                               <item>
                                <layout class="QGridLayout" name="gridLayout_31">
@@ -4759,23 +4748,7 @@ F6</string>
                                </widget>
                               </item>
                               <item>
-                               <widget class="QComboBox" name="week_clinicianSelection_comboBox">
-                                <item>
-                                 <property name="text">
-                                  <string>Selected Clinician Only</string>
-                                 </property>
-                                </item>
-                                <item>
-                                 <property name="text">
-                                  <string>All Listed Clinicians</string>
-                                 </property>
-                                </item>
-                                <item>
-                                 <property name="text">
-                                  <string>All Available Clinicians</string>
-                                 </property>
-                                </item>
-                               </widget>
+                               <widget class="QComboBox" name="week_clinicianSelection_comboBox"/>
                               </item>
                               <item>
                                <layout class="QGridLayout" name="gridLayout_28">

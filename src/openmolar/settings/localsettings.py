@@ -71,7 +71,7 @@ GP17_LEFT = 0
 GP17_TOP = 0
 
 WINDOWS = False
-DEBUGGING = False #"/home/neil" in os.getcwd()
+DEBUGGING = "/home/neil" in os.getcwd()
 
 def debug(func):
     '''
@@ -262,6 +262,8 @@ lastsearch = ("", "", datetime.date(1900,1,1), "", "", "")
 #-- used to load combobboxes etc....
 activedents = []
 activehygs = []
+activedent_ixs = ()
+activehyg_ixs = ()
 clinicianNo = 0
 clinicianInits = ""
 
@@ -746,8 +748,8 @@ def initiateUsers(changedServer = False):
 def initiate(changedServer= False, debug = False):
     #print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
-    ops_reverse, activedents, activehygs, apptix, apptix_reverse, bookEnd, \
-    clinicianNo, clinicianInits, WIKIURL
+    ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
+    apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, WIKIURL
 
     from openmolar import connect
     from openmolar.dbtools import db_settings
@@ -817,20 +819,27 @@ def initiate(changedServer= False, debug = False):
         for practitioner in practitioners:
             if practitioner[0] != 0 and practitioner[0] != None: #apptix
                 apptix[practitioner[1]] = practitioner[0]
+        
         cursor.execute(
-        "select inits from practitioners where flag3=1 and flag0=1")
+        "select apptix, inits from practitioners where flag3=1 and flag0=1")
         #dentists where appts active
-        activedents = []
+        ixs, activedents = [], []
         practitioners = cursor.fetchall()
-        for practitioner in practitioners:
-            activedents.append(practitioner[0])
+        for ix, inits in practitioners:
+            ixs.append(ix)
+            activedents.append(inits)
+        activedent_ixs = tuple(ixs)
+        
         cursor.execute(
-        "select inits from practitioners where flag3=1 and flag0=0")
+        "select apptix, inits from practitioners where flag3=1 and flag0=0")
         #hygenists where appts active
         practitioners = cursor.fetchall()
-        activehygs = []
-        for practitioner in practitioners:
-            activehygs.append(practitioner[0])
+        ixs, activehygs = [], []
+        for ix, inits in practitioners:
+            ixs.append(ix)
+            activehygs.append(inits)
+        activehyg_ixs = tuple(ixs)
+
     except:
         print "error loading practitioners"
 

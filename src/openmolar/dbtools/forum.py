@@ -44,7 +44,6 @@ def commitPost(post):
         print query,values
     cursor.execute(query,values)
     db.commit()
-    #db.close()
     
 def deletePost(ix):
     db=connect.connect()

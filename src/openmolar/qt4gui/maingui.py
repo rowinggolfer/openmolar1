@@ -371,6 +371,13 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.week_block_listView.setSelectionModel(
             self.ui.day_block_listView.selectionModel())
         
+        self.clinician_select_model = \
+            appointment_drag.clinicianSelectModel(self)
+        self.ui.day_clinicianSelection_comboBox.setModel(
+            self.clinician_select_model)
+        self.ui.week_clinicianSelection_comboBox.setModel(
+            self.clinician_select_model)
+        
         self.apptBookWidgets=[]
 
         #-appointment OVerview widget
@@ -852,6 +859,12 @@ class openmolarGui(QtGui.QMainWindow):
         user has altered the choice of single, multi or all available
         on either the week or dayview page
         '''
+        self.ui.week_clinicianSelection_comboBox.setCurrentIndex(i)
+        self.ui.day_clinicianSelection_comboBox.setCurrentIndex(i)  
+        if i == self.clinician_select_model.manual_index:
+            self.ui.day_clinician_selector_groupBox.setChecked(True)
+            self.ui.week_clinician_selector_groupBox.setChecked(True)
+                  
         appt_gui_module.handle_calendar_signal(self)
 
     def diary_tabWidget_nav(self, i):
@@ -2256,8 +2269,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         Dialog = QtGui.QDialog(self)
         dl = Ui_changeDatabase.Ui_Dialog()
         dl.setupUi(Dialog)
-        QtCore.QObject.connect(dl.checkBox, QtCore.SIGNAL("stateChanged(int)"),
-                                                                togglePassword)
+        QtCore.QObject.connect(dl.checkBox, 
+        QtCore.SIGNAL("stateChanged(int)"), togglePassword)
+        
         if Dialog.exec_():
             from openmolar import connect
             connect.myDb=str(dl.database_lineEdit.text())
@@ -2298,6 +2312,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.pt_diary_model.setSelectedAppt(appt)
         aprix = 0 if appt == None else appt.aprix
         appt_gui_module.select_apr_ix(self, aprix)
+        appt_gui_module.handle_calendar_signal(self)
         
     def newAppt_pushButton_clicked(self):
         '''
@@ -2522,22 +2537,28 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.handle_aptOV_checkboxes(self)
 
-    def manage_dayView_clinicians(self):
+    def manage_dayView_clinicians(self, toggled=None):
         '''
         radiobutton toggling who's book to show on the appointment
         '''
         appt_gui_module.layout_dayView(self)
-        self.dayClinicianSelector.setVisible(
-            self.ui.day_clinician_selector_groupBox.isChecked())
-
-    def manage_weekView_clinicians(self):
+        if toggled == None:
+            toggled = self.ui.day_clinician_selector_groupBox.isChecked()
+        self.dayClinicianSelector.setVisible(toggled)
+        if toggled:
+            i = self.clinician_select_model.manual_index
+            self.ui.day_clinicianSelection_comboBox.setCurrentIndex(i)
+    
+    def manage_weekView_clinicians(self, toggled):
         '''
         radiobutton toggling who's book to show on the appointment
         '''
         appt_gui_module.layout_weekView(self)
-        self.weekClinicianSelector.setVisible(
-            self.ui.week_clinician_selector_groupBox.isChecked())
-
+        self.weekClinicianSelector.setVisible(toggled)
+        if toggled:
+            i = self.clinician_select_model.manual_index
+            self.ui.week_clinicianSelection_comboBox.setCurrentIndex(i)
+    
     def manage_month_and_year_View_clinicians(self):
         '''
         radiobutton toggling who's book to show on the appointment
@@ -3919,10 +3940,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.week_clinician_selector_groupBox,
         QtCore.SIGNAL("toggled (bool)"), self.manage_weekView_clinicians)
 
-        for cb in (self.ui.week_clinicianSelection_comboBox,
-        self.ui.day_clinicianSelection_comboBox):
-            QtCore.QObject.connect(cb, QtCore.SIGNAL("activated(int)"),
-            self.clinicianSelection_comboBoxes_activate)
+        QtCore.QObject.connect(self.ui.day_clinicianSelection_comboBox, 
+        QtCore.SIGNAL("activated(int)"),
+        self.clinicianSelection_comboBoxes_activate)
+
+        QtCore.QObject.connect(self.ui.week_clinicianSelection_comboBox, 
+        QtCore.SIGNAL("activated(int)"),
+        self.clinicianSelection_comboBoxes_activate)
         
         QtCore.QObject.connect(self.dayClinicianSelector,
         QtCore.SIGNAL("selectionChanged"), self.manage_dayView_clinicians)

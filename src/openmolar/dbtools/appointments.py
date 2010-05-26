@@ -264,7 +264,7 @@ class dayAppointmentData(daySummary):
             return self.endTimes[dent]
         except KeyError:
             return 1200
-
+    @localsettings.debug
     def getAppointments(self, workingOnly=True, dents="ALL"):
         '''
         get the appointments for the date.
@@ -500,6 +500,7 @@ def todays_patients(dents):
     cursor.close()
     return rows
 
+#@localsettings.debug
 def getWorkingDents(adate, dents=(0,), include_non_working=True):
     '''
     dentists are part time, or take holidays...this proc takes a date,

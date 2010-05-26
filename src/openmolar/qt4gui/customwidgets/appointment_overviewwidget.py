@@ -583,7 +583,8 @@ class bookWidget(QtGui.QWidget):
                 painter.setPen(red_pen)
                 painter.drawLine(self.dragLine)
 
-            self.emit(QtCore.SIGNAL("redrawn"), dragScale)
+            ## SIGNAL NO LONGER USED
+            #self.emit(QtCore.SIGNAL("redrawn"), dragScale)
 
         except Exception, e:
             print "error painting appointment overviewwidget", e
