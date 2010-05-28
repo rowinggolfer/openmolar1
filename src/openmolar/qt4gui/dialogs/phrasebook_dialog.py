@@ -7,6 +7,7 @@
 # for more details.
 
 from PyQt4 import QtGui, QtCore
+import types
 from openmolar.settings import localsettings
 from xml.dom import minidom
 
@@ -22,14 +23,20 @@ class shadePicker(QtGui.QFrame):
         self.comboBox = QtGui.QComboBox(self)
         self.comboBox.addItems(["A1","A2","A3","A4","B1","B2","B3","B4",
         "C1","C2","C3","C4","D1","D2","D3","D4"])
+        self.comboBox.setCurrentIndex(-1)
         
         layout.addWidget(self.cb)
         layout.addWidget(self.comboBox)
         spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, 
             QtGui.QSizePolicy.Minimum)
         layout.addItem(spacerItem)
+        
+        QtCore.QObject.connect(self.comboBox,
+            QtCore.SIGNAL("currentIndexChanged(int)"), self.slot)
 
-    @property
+    def slot(self, index):
+        self.cb.setChecked(True)
+
     def result(self):
         return _("Shade") + " - " + self.comboBox.currentText()
 
@@ -55,7 +62,7 @@ class phraseBook(QtGui.QDialog):
 
         self.xml = minidom.parseString(localsettings.PHRASEBOOK)
         sections = self.xml.getElementsByTagName("section")
-        icon = QtGui.QIcon(":icons/home.png")
+        icon = QtGui.QIcon(":icons/expand.png")
         i = 0
         for section in sections:
             header = section.getElementsByTagName("header")
@@ -88,6 +95,8 @@ class phraseBook(QtGui.QDialog):
         for key in self.dict:
             cb , text = self.dict[key]
             if cb.isChecked():
+                if type(text) == types.MethodType:
+                    text = text() 
                 retlist.append(text)
         return retlist
         

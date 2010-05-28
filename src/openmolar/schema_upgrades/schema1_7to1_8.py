@@ -28,6 +28,14 @@ clinician_id int unsigned NOT NULL,
 phrases text,
 PRIMARY KEY (clinician_id) )
 ''',
+'''
+CREATE TABLE if not exists forumread (
+ ix int(10) unsigned not NULL auto_increment,
+id int(10) unsigned  not NULL,
+op  char(8) not NULL ,
+readdate | datetime,
+PRIMARy KEY (ix) )
+''',
 ]
 
 EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
@@ -63,7 +71,7 @@ EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
     <widget>choose_tooth</widget>
     <phrase>1st Stage RCT, irrigated and dried, dressed ledermix and coltosol</phrase>
     <phrase>1st Stage RCT, irrigated and dried, dressed hypocal and coltosol</phrase>
-    <phrase>Final Stage RCT, irrigated and dried, Sealed with tubliseal and tempbond.</phrase>
+    <phrase>Final Stage RCT, irrigated and dried, Sealed with tubliseal and gutta percha.</phrase>
 </section>    
 </phrasebook>'''
 

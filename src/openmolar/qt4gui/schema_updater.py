@@ -24,7 +24,8 @@ def proceed(app):
     '''
     on to the main gui.
     '''
-    from openmolar.qt4gui import maingui                
+    from openmolar.qt4gui import maingui     
+    localsettings.loadFeeTables()           
     sys.exit(maingui.main(app))
 
 def logInAgainMessage():
@@ -45,9 +46,19 @@ def main(arg, app):
         app.processEvents()
         
     def completed(sucess, message):
-        pb.hide()
+        def accept():
+            m.accept()
+            pb.hide()
         if sucess:
-            QtGui.QMessageBox.information(pb, "Sucess", message)  
+            m = QtGui.QMessageBox()
+            m.setText(message)
+            m.setStandardButtons(QtGui.QMessageBox.NoButton)
+            m.setWindowTitle(_("OpenMolar"))
+            m.setModal(False)
+            QtCore.QTimer.singleShot(3*1000, accept)
+            m.show()
+            m.move(0, 0)
+            #QtGui.QMessageBox.information(pb, "Sucess", message)  
         else:
             print "failure -",message
             QtGui.QMessageBox.warning(pb, "Failure", message )

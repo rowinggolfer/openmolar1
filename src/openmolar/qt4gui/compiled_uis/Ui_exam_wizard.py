@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/exam_wizard.ui'
 #
-# Created: Mon May 24 22:45:22 2010
+# Created: Fri May 28 14:05:20 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(332, 320)
+        Dialog.resize(346, 372)
         self.gridLayout_2 = QtGui.QGridLayout(Dialog)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -95,6 +95,7 @@ class Ui_Dialog(object):
         self.co_comboBox.addItem("")
         self.co_comboBox.addItem("")
         self.co_comboBox.addItem("")
+        self.co_comboBox.addItem("")
         self.gridLayout_2.addWidget(self.co_comboBox, 4, 1, 1, 4)
         self.softTissues_checkBox = QtGui.QCheckBox(Dialog)
         self.softTissues_checkBox.setObjectName("softTissues_checkBox")
@@ -108,8 +109,11 @@ class Ui_Dialog(object):
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName("buttonBox")
-        self.gridLayout_2.addWidget(self.buttonBox, 8, 0, 1, 5)
+        self.gridLayout_2.addWidget(self.buttonBox, 9, 0, 1, 5)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem, 8, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
@@ -128,9 +132,10 @@ class Ui_Dialog(object):
         self.checkBox.setText(_( u"Pt c/o"))
         self.co_comboBox.setItemText(0, _( u"nil"))
         self.co_comboBox.setItemText(1, _( u"Broken Tooth"))
-        self.co_comboBox.setItemText(2, _( u"Pain"))
-        self.co_comboBox.setItemText(3, _( u"Denture Problems"))
-        self.co_comboBox.setItemText(4, _( u"Sensitive Teeth"))
+        self.co_comboBox.setItemText(2, _( u"Denture Problems"))
+        self.co_comboBox.setItemText(3, _( u"Lost Filling"))
+        self.co_comboBox.setItemText(4, _( u"Pain"))
+        self.co_comboBox.setItemText(5, _( u"Sensitive Teeth"))
         self.softTissues_checkBox.setText(_( u"Soft Tissues Checked"))
         self.oh_checkBox.setText(_( u"OHI given"))
         self.canines_checkBox.setText(_( u"Palpated for upper canines - NAD"))

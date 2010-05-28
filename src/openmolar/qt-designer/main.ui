@@ -458,7 +458,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>4</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -1749,7 +1749,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>786</width>
+                        <width>582</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2175,7 +2175,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>794</width>
+                        <width>458</width>
                         <height>446</height>
                        </rect>
                       </property>
@@ -3000,8 +3000,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>603</width>
-                        <height>396</height>
+                        <width>111</width>
+                        <height>137</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3200,7 +3200,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>553</width>
+                           <width>98</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3233,7 +3233,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>217</width>
+                        <width>199</width>
                         <height>542</height>
                        </rect>
                       </property>
@@ -3612,8 +3612,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>809</width>
-                        <height>396</height>
+                        <width>270</width>
+                        <height>394</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4608,7 +4608,7 @@ F6</string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>191</width>
+                        <width>180</width>
                         <height>298</height>
                        </rect>
                       </property>

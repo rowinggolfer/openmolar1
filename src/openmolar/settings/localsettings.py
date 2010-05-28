@@ -45,7 +45,7 @@ try:
     s = _("translation tools are installed sucessfully")
     if VERBOSE:
         print s
-except:  #TypeError
+except NameError:
     ##- an unelegant hack to get _() on the namespace for testing
     ##- main.py will normally do this for us.
     import gettext
