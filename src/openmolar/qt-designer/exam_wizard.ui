@@ -168,12 +168,17 @@
      </item>
      <item>
       <property name="text">
-       <string>Pain</string>
+       <string>Denture Problems</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Denture Problems</string>
+       <string>Lost Filling</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Pain</string>
       </property>
      </item>
      <item>

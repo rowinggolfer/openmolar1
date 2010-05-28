@@ -79,7 +79,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_patient">
            <attribute name="icon">
@@ -458,7 +458,7 @@
                <item row="0" column="0" colspan="7">
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -475,7 +475,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>482</width>
+                        <width>786</width>
                         <height>472</height>
                        </rect>
                       </property>
@@ -1749,7 +1749,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>582</width>
+                        <width>786</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2677,7 +2677,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>609</width>
+                        <width>786</width>
                         <height>493</height>
                        </rect>
                       </property>
@@ -3000,8 +3000,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>111</width>
-                        <height>137</height>
+                        <width>603</width>
+                        <height>396</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3200,7 +3200,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>553</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3233,7 +3233,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>199</width>
+                        <width>217</width>
                         <height>542</height>
                        </rect>
                       </property>
@@ -3612,8 +3612,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>270</width>
-                        <height>394</height>
+                        <width>809</width>
+                        <height>396</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4254,7 +4254,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>191</width>
+                        <width>180</width>
                         <height>279</height>
                        </rect>
                       </property>
@@ -6433,33 +6433,60 @@ F6</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="forumReply_pushButton">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string>Reply</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="forumDelete_pushButton">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string>Delete</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../resources/resources.qrc">
-                    <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
-                  </property>
-                 </widget>
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <item>
+                   <widget class="QPushButton" name="forumReply_pushButton">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string>Reply</string>
+                    </property>
+                    <property name="shortcut">
+                     <string>Alt+R</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="forumDelete_pushButton">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string>Delete</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../resources/resources.qrc">
+                      <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
+                    </property>
+                    <property name="shortcut">
+                     <string>Del, Backspace</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="forumParent_pushButton">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string>&amp;set parent</string>
+                    </property>
+                    <property name="shortcut">
+                     <string>Alt+S</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item>
                  <widget class="QPushButton" name="forumNewTopic_pushButton">
                   <property name="text">
                    <string>New Topic</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../resources/resources.qrc">
+                    <normaloff>:/icons/mail_new.png</normaloff>:/icons/mail_new.png</iconset>
                   </property>
                  </widget>
                 </item>
@@ -6582,26 +6609,17 @@ F6</string>
                 <item>
                  <widget class="QGroupBox" name="groupBox_10">
                   <property name="title">
-                   <string>Layout Options</string>
+                   <string>Options</string>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_26">
-                   <property name="spacing">
-                    <number>2</number>
-                   </property>
-                   <property name="margin">
-                    <number>2</number>
-                   </property>
-                   <item>
-                    <widget class="QRadioButton" name="group_replies_radioButton">
+                  <layout class="QGridLayout" name="gridLayout_32">
+                   <item row="0" column="0" colspan="2">
+                    <widget class="QCheckBox" name="forum_deletedposts_checkBox">
                      <property name="text">
-                      <string>Group replies</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
+                      <string>Include Deleted Posts</string>
                      </property>
                     </widget>
                    </item>
-                   <item>
+                   <item row="1" column="0">
                     <widget class="QRadioButton" name="split_replies_radioButton">
                      <property name="text">
                       <string>Split Replies</string>
@@ -6611,14 +6629,31 @@ F6</string>
                      </property>
                     </widget>
                    </item>
+                   <item row="1" column="1">
+                    <widget class="QRadioButton" name="group_replies_radioButton">
+                     <property name="text">
+                      <string>Group replies</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QPushButton" name="forumCollapse_pushButton">
+                     <property name="text">
+                      <string>&amp;Collapse Replies</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QPushButton" name="forumExpand_pushButton">
+                     <property name="text">
+                      <string>&amp;Expand Replies</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="forum_deletedposts_checkBox">
-                  <property name="text">
-                   <string>Include Deleted Posts</string>
-                  </property>
                  </widget>
                 </item>
                </layout>
@@ -6687,13 +6722,24 @@ F6</string>
     <property name="title">
      <string>&amp;Preferences</string>
     </property>
+    <widget class="QMenu" name="menuView">
+     <property name="title">
+      <string>View</string>
+     </property>
+     <addaction name="actionFull_Screen_Mode_Ctrl_Alt_F"/>
+     <addaction name="actionTable_View_For_Charting"/>
+    </widget>
+    <widget class="QMenu" name="menuAppointments">
+     <property name="title">
+      <string>Appointments</string>
+     </property>
+     <addaction name="actionSet_Font_Size"/>
+    </widget>
     <addaction name="actionChange_Language"/>
-    <addaction name="actionFull_Screen_Mode_Ctrl_Alt_F"/>
-    <addaction name="actionTable_View_For_Charting"/>
-    <addaction name="actionClear_Today_s_Emergency_Slots"/>
-    <addaction name="actionTest_Print_an_NHS_Form"/>
+    <addaction name="menuView"/>
+    <addaction name="menuAppointments"/>
+    <addaction name="actionForum"/>
     <addaction name="actionOptions"/>
-    <addaction name="actionLog_queries_in_underlying_terminal"/>
     <addaction name="separator"/>
     <addaction name="actionSet_Clinician"/>
    </widget>
@@ -6701,10 +6747,13 @@ F6</string>
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionClear_Today_s_Emergency_Slots"/>
     <addaction name="actionAppointment_Tools"/>
     <addaction name="actionChoose_Database"/>
     <addaction name="actionSelect_Print_Daylists"/>
     <addaction name="actionAdvanced_Record_Management"/>
+    <addaction name="actionTest_Print_an_NHS_Form"/>
+    <addaction name="actionLog_queries_in_underlying_terminal"/>
     <addaction name="separator"/>
    </widget>
    <addaction name="menuMenu"/>
@@ -6835,6 +6884,34 @@ F6</string>
    </property>
    <property name="text">
     <string>Show Geek Column</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>test</string>
+   </property>
+  </action>
+  <action name="actionT">
+   <property name="text">
+    <string>t</string>
+   </property>
+  </action>
+  <action name="actionOptions_2">
+   <property name="text">
+    <string>options</string>
+   </property>
+  </action>
+  <action name="actionSet_Font_Size">
+   <property name="text">
+    <string>Font Size</string>
+   </property>
+  </action>
+  <action name="actionForum">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Forum - show adavanced options</string>
    </property>
   </action>
  </widget>

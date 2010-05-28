@@ -153,10 +153,10 @@ class simple_model(QtCore.QAbstractListModel):
         app = self.list[index.row()]
         if role == QtCore.Qt.DisplayRole:
             if app.flag == -128:
-                info = "%s (%s %s)"% (app.name, app.length, _("mins"))
+                info = "%s (%s)"% (app.name, app.length)
             elif app.unscheduled:
-                info = "%s %s %s %s %s"% (app.length, _("mins"),
-                    app.trt1, _("with"), app.dent_inits)
+                info = "%s %s - %s"% (app.length,
+                    app.trt1, app.dent_inits)
             else:
                 info = "%s %s with %s"% (app.readableDate,
                     app.readableTime, app.dent_inits)

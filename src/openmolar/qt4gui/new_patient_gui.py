@@ -43,6 +43,7 @@ def enterNewPatient(om_gui):
 
     #--set default sex ;)
     om_gui.ui.sexEdit.setCurrentIndex(0)
+    om_gui.ui.titleEdit.setFocus()
 
     #--give some help
     om_gui.ui.detailsBrowser.setHtml(_('''<div align="center">
@@ -71,11 +72,10 @@ def checkNewPatient(om_gui):
 
         if saveNewPatient(om_gui):
             #--sucessful save
-            om_gui.ui.newPatientPushButton.setEnabled(True)
             #--reset the gui
             finishedNewPatientInput(om_gui)
             #--reload the patient from the db.
-            om_gui.reload_patient()
+            om_gui.getrecord(om_gui.pt.serialno, newPatientReload=True)
         else:
             om_gui.advise(_("Error saving new patient, sorry!"), 2)
     else:

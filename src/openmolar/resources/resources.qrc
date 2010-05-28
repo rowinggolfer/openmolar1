@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>icons/mail_new.png</file>
     <file>icons/schedule_active.png</file>
     <file>icons/pencil.png</file>
     <file>icons/expand.png</file>

@@ -11,7 +11,7 @@ from openmolar import connect
 from openmolar.settings import localsettings
 
 headers=[_("Subject"),"db_index",_("From"), _("To"),
-_("Date"),_("Message"), _("Message"), "parent"]
+_("Date"),_("Message"), _("Message")] #, "parent"]
 
 HIGHESTID = 0
 
@@ -52,6 +52,16 @@ def deletePost(ix):
     if localsettings.logqueries:
         print query, (ix,)
     cursor.execute(query, (ix,))    
+    db.commit()
+    cursor.close()
+    
+def setParent(ix, parent_ix):
+    db = connect.connect()
+    cursor = db.cursor()
+    query = "update forum set parent_ix=%s where ix=%s"
+    if localsettings.logqueries:
+        print query, (parent_ix, ix)
+    cursor.execute(query, (parent_ix, ix))    
     db.commit()
     cursor.close()
     

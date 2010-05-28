@@ -30,6 +30,7 @@ def loadForum(om_gui):
     '''
     twidg = om_gui.ui.forum_treeWidget
     twidg.clear()
+    twidg.setSortingEnabled(False)
     chosen = om_gui.ui.forumViewFilter_comboBox.currentText()
     GROUP_TOPICS = om_gui.ui.group_replies_radioButton.isChecked()
     #-- set the column headers (stored in another module)
@@ -65,22 +66,26 @@ def loadForum(om_gui):
 
         item.setText(5, post.comment)
         item.setText(6, post.briefcomment)
-        item.setData(7, QtCore.Qt.DisplayRole, post.parent_ix)
+        #item.setData(7, QtCore.Qt.DisplayRole, post.parent_ix)
+
+        #if parentItem == twidg:
+        #    highlighted = not highlighted
+        #    if highlighted:
+        #        bcolour = twidg.palette().base()
+        #    else:
+        #        bcolour = twidg.palette().alternateBase()
+        #else:
+        #    bcolour = QtGui.QColor("red")#parentItem.background(0)
 
         if parentItem == twidg:
-            highlighted = not highlighted
-            if highlighted:
-                bcolour = twidg.palette().base()
-            else:
-                bcolour = twidg.palette().alternateBase()
-        else:
-            bcolour = parentItem.background(0)
+            item.setIcon(0, om_gui.ui.forumNewTopic_pushButton.icon())
 
         for i in range(item.columnCount()):
-            item.setBackground(i,bcolour)
+            #item.setBackground(i,bcolour)
             if i == 4: #date
                 if post.date > (localsettings.currentTime() -
-                datetime.timedelta(hours = 24)):
+                datetime.timedelta(hours = 36)):
+                    item.setIcon(i, om_gui.ui.forumNewTopic_pushButton.icon())
                     item.setTextColor(i, QtGui.QColor("orange"))
                 ##TODO - put in some code to set the text for "today"
                 ##or yesterday etc...
@@ -88,8 +93,7 @@ def loadForum(om_gui):
             parentItems[post.ix] = item
 
     twidg.expandAll()
-    ##TODO - I would like the user to be able to sort the table
-    ##but this doesn't work as expected :(
+    
     twidg.setSortingEnabled(True)
     #if GROUP_TOPICS:
     #    twidg.sortByColumn(7)
@@ -98,13 +102,14 @@ def loadForum(om_gui):
 
     for i in range(twidg.columnCount()):
         twidg.resizeColumnToContents(i)
-    #twidg.setColumnWidth(1, 0)
+    twidg.setColumnWidth(1, 0)
     twidg.setColumnWidth(5, 0)
     #twidg.setColumnWidth(7, 0)
-
-
+    
     om_gui.ui.forumDelete_pushButton.setEnabled(False)
     om_gui.ui.forumReply_pushButton.setEnabled(False)
+    om_gui.ui.forumParent_pushButton.setEnabled(False)
+
     #-- turn the tab red.
 
 def forumItemSelected(om_gui):
@@ -112,6 +117,7 @@ def forumItemSelected(om_gui):
     user has selected an item in the forum
     '''
     item = om_gui.ui.forum_treeWidget.currentItem()
+        
     datetext = item.data(4,
     QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
 
@@ -124,7 +130,16 @@ def forumItemSelected(om_gui):
     om_gui.ui.forum_textBrowser.setPlainText(message)
     om_gui.ui.forumDelete_pushButton.setEnabled(True)
     om_gui.ui.forumReply_pushButton.setEnabled(True)
+    om_gui.ui.forumParent_pushButton.setEnabled(True)
 
+    if om_gui.forum_parenting_mode[0]:
+        parentix = int(item.text(1))
+        forum.setParent(om_gui.forum_parenting_mode[1], parentix) 
+        om_gui.forum_parenting_mode = (False, None)
+        om_gui.ui.forumParent_pushButton.setStyleSheet("")
+        loadForum(om_gui)
+    
+        
 def forumNewTopic(om_gui):
     '''
     create a new post
@@ -198,7 +213,7 @@ def forumReply(om_gui):
     dl.setupUi(Dialog)
     dl.topic_lineEdit.setText(heading)
     dl.from_comboBox.addItems([localsettings.operator, "Anon"] +
-    localsettings.allowed_logins)
+        localsettings.allowed_logins)
     dl.to_comboBox.addItems(["ALL"] + localsettings.allowed_logins)
 
     if Dialog.exec_():
@@ -208,10 +223,27 @@ def forumReply(om_gui):
         post.topic = dl.topic_lineEdit.text().toAscii()
         post.comment = dl.comment_textEdit.toPlainText().toAscii()[:255]
         post.inits = dl.from_comboBox.currentText()
-        post.receipient = dl.to_comboBox.currentText()
+        post.recipient = dl.to_comboBox.currentText()
         forum.commitPost(post)
     loadForum(om_gui)
 
+def forumParent(om_gui):
+    '''
+    set a parent for the current post
+    '''
+    item = om_gui.ui.forum_treeWidget.currentItem()
+    ix = int(item.text(1))
+    if om_gui.forum_parenting_mode[0]:
+        om_gui.forum_parenting_mode = (False, None)
+        om_gui.advise(_("Parenting Cancelled"))
+        om_gui.ui.forumParent_pushButton.setStyleSheet("")
+        return
+        
+    om_gui.ui.forumParent_pushButton.setStyleSheet("background-color: red")
+    om_gui.advise(_("Click on the Parent Item"))
+    om_gui.forum_parenting_mode = (True, ix)
+    
 def viewFilterChanged(om_gui, chosen):
-    print "viewFilterChanged", chosen
+    #print "viewFilterChanged", chosen
     loadForum(om_gui)
+

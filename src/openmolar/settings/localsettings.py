@@ -19,19 +19,20 @@ import subprocess
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 4th Feb 2010.
-__MAJOR_VERSION__= "0.1.9"
+#- updated 28th May 2010.
+__MAJOR_VERSION__= "0.2.0"
 
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 
-CLIENT_SCHEMA_VERSION = "1.7"
+CLIENT_SCHEMA_VERSION = "1.8"
 DB_SCHEMA_VERSION = "unknown"
 
 ENCODING = locale.getpreferredencoding()
 FEETABLES = {}
 
 WIKIURL = ""
+PHRASEBOOK = '<?xml version="1.0" ?><phrasebook />'
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -749,7 +750,8 @@ def initiate(changedServer= False, debug = False):
     #print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
-    apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, WIKIURL
+    apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, WIKIURL, \
+    PHRASEBOOK
 
     from openmolar import connect
     from openmolar.dbtools import db_settings
@@ -764,9 +766,7 @@ def initiate(changedServer= False, debug = False):
         bookEndVals = data[-1][0].split(",")
         bookEnd = datetime.date(int(bookEndVals[0]), int(bookEndVals[1]),
         int(bookEndVals[2]))
-
-    #print "bookEnd is %s"% bookEnd
-
+    
     data = db_settings.getData("supervisor_pword")
     if data:
         SUPERVISOR = data[0][0]
@@ -776,8 +776,14 @@ def initiate(changedServer= False, debug = False):
         print "#"*30
         db_settings.updateData("supervisor_pword", SUPERVISOR,
         "not found reset")
+    
     db = connect.connect()
     cursor = db.cursor()
+
+    query = "select phrases from phrasebook where clinician_id=0"
+    cursor.execute(query)
+    rows = cursor.fetchone()
+    PHRASEBOOK = rows[0] 
 
     #set up four lists with key/value pairs reversedto make for easy referencing
 

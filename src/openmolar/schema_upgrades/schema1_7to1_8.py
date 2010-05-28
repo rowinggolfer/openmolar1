@@ -8,10 +8,7 @@
 
 '''
 This module provides a function 'run' which will move data 
-from the patients table 
-in schema 1_4 to a new exemptions table in schema 1_5
-also, remove the key for calendar, it makes more sense to have the date
-as the primary key. (cleaner code for updates)
+to schema 1_8
 '''
 import sys
 from openmolar.settings import localsettings 
@@ -21,20 +18,54 @@ from openmolar import connect
 from PyQt4 import QtGui, QtCore
 
 SQLSTRINGS = [
-'alter table clinical_memos add column synopsis text',
-'alter table calendar drop column ix',
-'alter table calendar add primary key(adate)',
 '''
-CREATE TABLE if not exists exemptions (
-ix int(10) unsigned NOT NULL auto_increment ,
-serialno int(11) unsigned NOT NULL ,
-exemption varchar(10),
-exempttext varchar(50),
-datestamp DATETIME NOT NULL default '0000-00-00 00:00:00',
-PRIMARY KEY (ix),
-key (serialno))
+alter table aslot 
+add column timestamp timestamp not null default CURRENT_TIMESTAMP
+''',
 '''
+CREATE TABLE if not exists phrasebook (
+clinician_id int unsigned NOT NULL,
+phrases text,
+PRIMARY KEY (clinician_id) )
+''',
 ]
+
+EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
+<phrasebook>
+<section>
+    <header>Anaesthetics</header>
+    <phrase>No LA.</phrase>
+    <phrase>Anaesthetic Used - Citanest</phrase>
+    <phrase>Anaesthetic Used - Scandonest Plain</phrase>
+    <phrase>Anaesthetic Used - Septonest + 1:100,000 Adrenaline (Gold)</phrase>
+    <phrase>Anaesthetic Used - Septonest + 1:200,000 Adrenaline (Green)</phrase>
+    <phrase>Anaesthetic Used - Lignocaine + 1:80,000 Adrenaline</phrase>
+</section>
+<section>
+    <header>Restorations</header>
+    <widget>choose_tooth</widget>
+    <phrase>Restored using Fuji Ix</phrase>
+    <phrase>Restored using Etch/bond/Tetric Composite</phrase>
+    <phrase>Restored using Etch/bond/Venus-Diamond Composite</phrase>
+    <phrase>Restored using Etch/bond/Synergy Composite</phrase>
+</section>
+<section>
+    <header>Preparation</header>
+    <widget>choose_tooth</widget>
+    <phrase>Crown Preparation, Pentamix Impression, Alginate of opposing arch. Temporised with Quick Temp and tempbond</phrase>
+    <phrase>Bridge Preparation, Pentamix Impression, Alginate of opposing arch. Temporised with Quick Temp and tempbond</phrase>
+    <phrase>Crown Preparation, Pentamix Impression in triple tray. Temporised with Quick Temp and tempbond</phrase>
+    <phrase>Bridge Preparation, Afinis Impression in triple tray. Temporised with Quick Temp and tempbond</phrase>
+    <widget>choose_shade</widget> 
+</section>
+<section>
+    <header>Endodontics</header>
+    <widget>choose_tooth</widget>
+    <phrase>1st Stage RCT, irrigated and dried, dressed ledermix and coltosol</phrase>
+    <phrase>1st Stage RCT, irrigated and dried, dressed hypocal and coltosol</phrase>
+    <phrase>Final Stage RCT, irrigated and dried, Sealed with tubliseal and tempbond.</phrase>
+</section>    
+</phrasebook>'''
 
 
 class UpdateException(Exception):
@@ -91,66 +122,53 @@ class dbUpdater(QtCore.QThread):
         else:
             raise UpdateException("couldn't execute all statements!")
     
-    def transferData(self):
+    def insertValues(self):
         '''
-        move data into the new tables
-        ''' 
+        insert the demo phrasebook
+        '''
+                                 
         db = connect.connect()
         cursor=db.cursor()
-        cursor.execute('lock tables patients read, exemptions write')
-            
-        cursor.execute('select serialno, exmpt, exempttext from patients')
-        rows=cursor.fetchall()
-            
-        query = '''insert into exemptions (serialno, exemption, exempttext) 
-        values (%s, %s, %s)'''
         
-        values = []
-        for row in rows:
-            if row[1] != "" or row[2] != "":
-                values.append(row)
-
-        cursor.executemany(query, values)
-
+        query = "insert into phrasebook values (%s, %s)"
+        values = (0, EXAMPLE_PHRASEBOOK)
+        cursor.execute(query, values)
         db.commit()
-        cursor.execute("unlock tables")
         
         cursor.close()
         db.close()
         return True
-
+        
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
                 
     def run(self):
-        print "running script to convert from schema 1.4 to 1.5"
+        print "running script to convert from schema 1.7 to 1.8"
         try:
             #- execute the SQL commands
             self.progressSig(20, _("executing statements"))
             self.create_alter_tables()
-
-            #- transfer data between tables
-            self.progressSig(50, _('transfering data'))
-            
-            print "transfering data to new table, ...",
-            if self.transferData():
+            self.progressSig(60, _('inserting values'))
+                
+            print "inserting values"
+            if self.insertValues():
                 print "ok"
             else:
-                print "FAILED!!!!!"
+                print "FAILED!!!!!"            
 
             self.progressSig(90, _('updating settings'))
             print "update database settings..." 
             
-            schema_version.update(("1.5",), "1_4 to 1_5 script")
+            schema_version.update(("1.8",), "1_7 to 1_8 script")
             
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
-            + " 1.5")
+            + " 1.8")
         
         except UpdateException, e:
-            localsettings.CLIENT_SCHEMA_VERSION = "1.4"
-            self.completeSig(_("rolled back to") + " 1.4")
+            localsettings.CLIENT_SCHEMA_VERSION = "1.7"
+            self.completeSig(_("rolled back to") + " 1.7")
             
         except Exception, e:
             print "Exception caught",e

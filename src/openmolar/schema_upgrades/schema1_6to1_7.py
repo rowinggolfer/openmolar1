@@ -362,8 +362,8 @@ class dbUpdater(QtCore.QThread):
             + " 1.7" + _("you may now remove old feetables"))
         
         except UpdateException, e:
-            localsettings.CLIENT_SCHEMA_VERSION = " 1.6"
-            self.completeSig(_("rolled back to") + "1.6")
+            localsettings.CLIENT_SCHEMA_VERSION = "1.6"
+            self.completeSig(_("rolled back to") + " 1.6")
 
         return self.completed
 

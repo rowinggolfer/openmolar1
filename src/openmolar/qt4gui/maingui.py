@@ -50,7 +50,6 @@ from openmolar.qt4gui.charts import charts_gui
 from openmolar.qt4gui.compiled_uis import Ui_main
 from openmolar.qt4gui.compiled_uis import Ui_patient_finder
 from openmolar.qt4gui.compiled_uis import Ui_select_patient
-from openmolar.qt4gui.compiled_uis import Ui_phraseBook
 from openmolar.qt4gui.compiled_uis import Ui_changeDatabase
 from openmolar.qt4gui.compiled_uis import Ui_related_patients
 from openmolar.qt4gui.compiled_uis import Ui_options
@@ -68,6 +67,7 @@ from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs import choose_tooth_dialog
 from openmolar.qt4gui.dialogs import choose_clinicians
+from openmolar.qt4gui.dialogs import phrasebook_dialog
 
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
@@ -151,6 +151,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.setupSignals()
         self.loadDentistComboboxes()
         self.feestableLoaded = False
+        self.forum_parenting_mode = (False, None)
 
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()
@@ -1056,7 +1057,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.ui.occupationEdit.setText(self.pt.occup)
         return True
 
-    def load_dentComboBoxes(self):
+    def load_dentComboBoxes(self, newpatient = False):
         #print "loading dnt comboboxes."
         inits = localsettings.ops.get(self.pt.dnt1, "")
         if inits in localsettings.activedents:
@@ -1064,14 +1065,16 @@ class openmolarGui(QtGui.QMainWindow):
             localsettings.activedents.index(inits))
         else:
             self.ui.dnt1comboBox.setCurrentIndex(-1)
-            print "dnt1 error - record %d"% self.pt.serialno
-            if not inits in ("", "NONE"):
-                message = "%s "% inits + _(
-                "is no longer an active dentist in this practice")
-            else:
-                print "unknown dentist number", self.pt.dnt1
-                message = _("unknown contract dentist - please correct this")
-            self.advise(message, 2)
+            if not newpatient:
+                print "dnt1 error - record %d"% self.pt.serialno
+                if not inits in ("", "NONE"):
+                    message = "%s "% inits + _(
+                    "is no longer an active dentist in this practice")
+                else:
+                    print "unknown dentist number", self.pt.dnt1
+                    message = _(
+                    "unknown contract dentist - please correct this")
+                self.advise(message, 2)
 
         inits = localsettings.ops.get(self.pt.dnt2, "")
         if inits in localsettings.activedents:
@@ -1079,7 +1082,6 @@ class openmolarGui(QtGui.QMainWindow):
             localsettings.activedents.index(inits))
         else:
             self.ui.dnt2comboBox.setCurrentIndex(-1)
-            print "dnt2 error - record %d"% self.pt.serialno
             if self.pt.dnt1 == self.pt.dnt2:
                 pass
             elif not inits in ("", "NONE"):
@@ -1455,7 +1457,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.getrecord(int(sno))
 
     def getrecord(self, serialno, checkedNeedToLeaveAlready=False,
-    addToRecentSnos=True):
+    addToRecentSnos=True, newPatientReload=False):
         '''
         a record has been called byone of several means
         '''
@@ -1482,7 +1484,7 @@ class openmolarGui(QtGui.QMainWindow):
                 #-- this next line is to prevent a "not saved warning"
                 #self.pt_dbstate.fees = self.pt.fees
                 try:
-                    self.loadpatient()
+                    self.loadpatient(newPatientReload=newPatientReload)
                 except Exception, e:
                     self.advise(
                     _("Error populating interface\n%s")% e, 2)
@@ -1521,7 +1523,7 @@ class openmolarGui(QtGui.QMainWindow):
             note_html = notes.notes(self.pt.notes_dict)
         self.ui.notes_webView.setHtml(note_html)
 
-    def loadpatient(self):
+    def loadpatient(self, newPatientReload=False):
         '''
         self.pt is now a patient... time to push to the gui.
         '''
@@ -1537,7 +1539,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.tabWidget.setCurrentIndex(3)
             self.load_receptionSummaryPage()
         #--populate dnt1 and dnt2 comboboxes
-        self.load_dentComboBoxes()
+        self.load_dentComboBoxes(newPatientReload)
         self.ui.recallDate_comboBox.setCurrentIndex(0)
         self.pt.checkExemption()
         self.updateDetails()
@@ -1566,8 +1568,9 @@ class openmolarGui(QtGui.QMainWindow):
         try:
             pos=localsettings.csetypes.index(self.pt.cset)
         except ValueError:
-            QtGui.QMessageBox.information(self, "Advisory",
-            "Please set a Valid Course Type for this patient")
+            if not newPatientReload:
+                QtGui.QMessageBox.information(self, "Advisory",
+                "Please set a Valid Course Type for this patient")
             pos=-1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         self.ui.contract_tabWidget.setCurrentIndex(pos)
@@ -1805,6 +1808,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.diary_tabWidget.setCurrentIndex(0)
         self.ui.day_schedule_tabWidget.setCurrentIndex(0)
         self.ui.week_schedule_tabWidget.setCurrentIndex(0)
+        c_list = QtGui.QCompleter([_("Mr"), _("Mrs"), _("Ms"), _("Miss"), 
+        _("Master"), _("Dr"), _("Professor")])
+        self.ui.titleEdit.setCompleter(c_list)
 
         if localsettings.clinicianNo == 0:
             if localsettings.station == "surgery":
@@ -1847,7 +1853,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
         self.ui.forumViewFilter_comboBox.addItems(
         localsettings.allowed_logins)
-
+        self.forum_mode()
         self.addHistoryMenu()
         appt_gui_module.weekView_setScheduleMode(self)
         self.ui.day_schedule_tabWidget.setCurrentIndex(0)
@@ -2007,15 +2013,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if self.pt.serialno == 0:
             self.advise("no patient selected", 1)
             return
-        Dialog = QtGui.QDialog(self.ui.notesEnter_textEdit)
-        dl = Ui_phraseBook.Ui_Dialog()
-        dl.setupUi(Dialog)
-        if Dialog.exec_():
-            newNotes=""
-            for cb in (dl.checkBox, dl.checkBox_2, dl.checkBox_3, dl.checkBox_4,
-            dl.checkBox_5, dl.checkBox_6, dl.checkBox_7, dl.checkBox_8):
-                if cb.checkState():
-                    newNotes += cb.text()+"\n"
+        dl = phrasebook_dialog.phraseBook(self)
+        newNotes = ""
+        if dl.exec_():
+            for phrase in dl.selectedPhrases: 
+                newNotes +=  phrase + "\n"
             if newNotes != "":
                 self.addNewNote(newNotes)
 
@@ -2437,14 +2439,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.signals_calendar()
             appt_gui_module.layout_dayView(self, find_next_appt=True)
 
-    def fontSize_spinBox_changed(self,i):
+    def apptBook_fontSize(self):
         '''
         user is asking for a different font on the appointment book
         '''
-        ##TODO DEPRECATED -
-        #appt_gui_module.aptFontSize(self,i)
-        pass
-
+        i, result = QtGui.QInputDialog.getInteger(self, _("FontSize"), 
+        _("Enter your preferred font size for appointment book") , 8,6,16)
+        if result:
+            appt_gui_module.aptFontSize(self, i)
+        
     def apptBook_appointmentClickedSignal(self, arg):
         '''
         a custom widget (dentist diary) has sent a signal that an
@@ -2832,6 +2835,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         fees_module.populateAccountsTable(self)
 
+    def forum_mode(self):
+        '''
+        forum has an advanced mode, disabled by default
+        '''
+        advanced_mode = self.ui.actionForum.isChecked()
+        self.ui.forumParent_pushButton.setVisible(advanced_mode)
+        self.ui.forum_deletedposts_checkBox.setVisible(advanced_mode)
+        self.ui.forumExpand_pushButton.setVisible(advanced_mode)
+        self.ui.forumCollapse_pushButton.setVisible(advanced_mode)
+
     def forum_treeWidget_selectionChanged(self):
         '''
         user has selected an item in the forum
@@ -2843,6 +2856,18 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user has changed the filter for who's posts to show
         '''
         forum_gui_module.viewFilterChanged(self, chosen)
+    
+    def forumCollapse(self):
+        '''
+        user has pressed the collapse button
+        '''
+        self.ui.forum_treeWidget.collapseAll()
+        
+    def forumExpand(self):
+        '''
+        user has pressed the expand button
+        '''
+        self.ui.forum_treeWidget.expandAll()
 
     def forumNewTopic_clicked(self):
         '''
@@ -2861,6 +2886,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user is replying to an existing topic
         '''
         forum_gui_module.forumReply(self)
+
+    def forumParent_clicked(self):
+        '''
+        user is setting a parent for an item
+        '''
+        forum_gui_module.forumParent(self)
 
     def checkForNewForumPosts(self):
         '''
@@ -3508,6 +3539,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("itemSelectionChanged ()"),
         self.forum_treeWidget_selectionChanged)
 
+        QtCore.QObject.connect(self.ui.actionForum,
+        QtCore.SIGNAL("triggered ()"), self.forum_mode)        
+        
         QtCore.QObject.connect(self.ui.forumDelete_pushButton,
         QtCore.SIGNAL("clicked()"), self.forumDeleteItem_clicked)
 
@@ -3517,9 +3551,18 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.forumNewTopic_pushButton,
         QtCore.SIGNAL("clicked()"), self.forumNewTopic_clicked)
 
+        QtCore.QObject.connect(self.ui.forumParent_pushButton,
+        QtCore.SIGNAL("clicked()"), self.forumParent_clicked)
+
         QtCore.QObject.connect(self.ui.forumViewFilter_comboBox,
         QtCore.SIGNAL("currentIndexChanged (const QString&)"),
         self.forumViewFilterChanged)
+        
+        QtCore.QObject.connect(self.ui.forumCollapse_pushButton,
+        QtCore.SIGNAL("clicked()"), self.forumCollapse)
+        
+        QtCore.QObject.connect(self.ui.forumExpand_pushButton,
+        QtCore.SIGNAL("clicked()"), self.forumExpand)
 
         for widg in (self.ui.group_replies_radioButton,
         self.ui.forum_deletedposts_checkBox):
@@ -3803,8 +3846,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.day_schedule_groupBox,
         QtCore.SIGNAL("clicked()"), self.day_schedule_mode_clicked)
 
-        #QtCore.QObject.connect(self.ui.fontSize_spinBox,
-        #QtCore.SIGNAL("valueChanged (int)"), self.fontSize_spinBox_changed)
+        QtCore.QObject.connect(self.ui.actionSet_Font_Size,
+        QtCore.SIGNAL("triggered ()"), self.apptBook_fontSize)
 
         QtCore.QObject.connect(self.ui.printMonth_pushButton,
         QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)

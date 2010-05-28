@@ -217,8 +217,8 @@ class dbUpdater(QtCore.QThread):
             + " 1.6")
         
         except UpdateException, e:
-            localsettings.CLIENT_SCHEMA_VERSION = " 1.5"
-            self.completeSig(_("rolled back to") + "1.5")
+            localsettings.CLIENT_SCHEMA_VERSION = "1.5"
+            self.completeSig(_("rolled back to") + " 1.5")
             
         except Exception, e:
             print "Exception caught",e

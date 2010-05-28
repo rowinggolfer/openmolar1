@@ -302,7 +302,7 @@ class appointmentCanvas(QtGui.QWidget):
                 #row
                 allowDrop = True
                 for row in range(self.drag_startrow, self.drag_endrow):
-                    if self.rows.has_key(row):
+                    if self.rows.has_key(row) or row >= self.lastSlot:
                         allowDrop = False
                         break
                 if not allowDrop:
@@ -310,7 +310,7 @@ class appointmentCanvas(QtGui.QWidget):
                     self.drag_startrow = row - n_rows
                     self.drag_endrow = row
                     for row in range(self.drag_startrow, row):
-                        if self.rows.has_key(row):
+                        if self.rows.has_key(row) or row < self.firstSlot-1:
                             allowDrop = False
                             break
                                     

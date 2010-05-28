@@ -352,8 +352,8 @@ regulation, description, brief_description, fee'''
             + " 1.4")
         
         except UpdateException, e:
-            localsettings.CLIENT_SCHEMA_VERSION = " 1.3"
-            self.completeSig(_("rolled back to") + "1.3")
+            localsettings.CLIENT_SCHEMA_VERSION = "1.3"
+            self.completeSig(_("rolled back to") + " 1.3")
             
         except Exception, e:
             print "Exception caught",e

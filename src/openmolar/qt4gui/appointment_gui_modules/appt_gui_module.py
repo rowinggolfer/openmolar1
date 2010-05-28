@@ -167,43 +167,52 @@ def newAppt(om_gui):
     QtCore.QObject.connect(dl.scheduleNow_pushButton,
     QtCore.SIGNAL("clicked()"), makeNow)
 
-    if Dialog.exec_():
-        #--practitioner
-        py_inits = str(dl.practix_comboBox.currentText())
-        practix = localsettings.apptix[py_inits]
-        #--length
-        lengthText = str(dl.apptlength_comboBox.currentText())
-        if "hour" in lengthText and not "hours " in lengthText:
-            lengthText = lengthText.replace("hour", "hours ")
-        if "hour" in lengthText:
-            hour_index = lengthText.index("hour")
-            length = 60 * int(lengthText[:hour_index])
-            lengthText = lengthText[lengthText.index(" ", hour_index):]
+    inputting = True
+    while inputting:
+        result = Dialog.exec_()
+        if result:
+            #--practitioner
+            py_inits = str(dl.practix_comboBox.currentText())
+            practix = localsettings.apptix.get(py_inits)
+            if not practix:
+                om_gui.advise(_("Please specify a clinician"), 1)
+            else:    
+                #--length
+                lengthText = str(dl.apptlength_comboBox.currentText())
+                if "hour" in lengthText and not "hours " in lengthText:
+                    lengthText = lengthText.replace("hour", "hours ")
+                if "hour" in lengthText:
+                    hour_index = lengthText.index("hour")
+                    length = 60 * int(lengthText[:hour_index])
+                    lengthText = lengthText[lengthText.index(" ", hour_index):]
+                else:
+                    length = 0
+                if "minute" in lengthText:
+                    length += int(lengthText[:lengthText.index("minute")])
+                #--treatments
+                code0 = dl.trt1_comboBox.currentText()
+                code1 = dl.trt2_comboBox.currentText()
+                code2 = dl.trt3_comboBox.currentText()
+                #--memo
+                note = str(dl.lineEdit.text().toAscii())
+
+                ##TODO - add datespec and joint appointment options
+
+                #--attempt WRITE appointement to DATABASE
+                apr_ix = appointments.add_pt_appt(om_gui.pt.serialno, practix, length,
+                code0, -1, code1, code2, note, "", om_gui.pt.cset)
+                if apr_ix:
+                    layout_ptDiary(om_gui)
+                    select_apr_ix(om_gui, apr_ix)
+                    if dl.makeNow:
+                        begin_makeAppt(om_gui)
+                else:
+                    #--commit failed
+                    om_gui.advise("Error saving appointment", 2)
+                inputting = False
         else:
-            length = 0
-        if "minute" in lengthText:
-            length += int(lengthText[:lengthText.index("minute")])
-        #--treatments
-        code0 = dl.trt1_comboBox.currentText()
-        code1 = dl.trt2_comboBox.currentText()
-        code2 = dl.trt3_comboBox.currentText()
-        #--memo
-        note = str(dl.lineEdit.text().toAscii())
-
-        ##TODO - add datespec and joint appointment options
-
-        #--attempt WRITE appointement to DATABASE
-        apr_ix = appointments.add_pt_appt(om_gui.pt.serialno, practix, length,
-        code0, -1, code1, code2, note, "", om_gui.pt.cset)
-        if apr_ix:
-            layout_ptDiary(om_gui)
-            select_apr_ix(om_gui, apr_ix)
-            if dl.makeNow:
-                begin_makeAppt(om_gui)
-        else:
-            #--commit failed
-            om_gui.advise("Error saving appointment", 2)
-
+            break
+        
 def select_apr_ix(om_gui, apr_ix):
     '''
     select the row of the model of the patient's diary where the appt is
@@ -427,12 +436,12 @@ def begin_makeAppt(om_gui, dayView=False):
     om_gui.ui.main_tabWidget.setCurrentIndex(1)
     if dayView:
         om_gui.ui.diary_tabWidget.setCurrentIndex(0)
+        dayView_setScheduleMode(om_gui)
     else:
         om_gui.ui.diary_tabWidget.setCurrentIndex(1)
-
+        weekView_setScheduleMode(om_gui)
     om_gui.signals_tabs() #reconnect
-    weekView_setScheduleMode(om_gui)
-
+    
     om_gui.signals_calendar(False)
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
     om_gui.ui.weekCalendar.setSelectedDate(QtCore.QDate.currentDate())
@@ -482,7 +491,7 @@ def addWeekViewAvailableSlots(om_gui, minlength=None):
         #a set containing all the dents currently viewed on the weekview
         if not dents:
             message = _("No clinicians selected")
-            return (True, message, ())
+            return (False, message, ())
 
         #--check for suitable apts in the selected WEEK!
         slots = appointments.future_slots(startday.toPyDate(),
