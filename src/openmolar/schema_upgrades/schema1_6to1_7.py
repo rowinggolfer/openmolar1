@@ -359,7 +359,7 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
-            + " 1.7" + _("you may now remove old feetables"))
+            + " 1.7 " + _("you may now remove old feetables"))
         
         except UpdateException, e:
             localsettings.CLIENT_SCHEMA_VERSION = "1.6"

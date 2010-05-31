@@ -62,9 +62,9 @@ def update(schemas, user):
 
     print "disabling old clients"
     query = '''delete from settings where value = "compatible_clients"'''
-    cursor.execute(query)
+    db.commit()
     for schema in schemas:
-        query = '''insert into settings (data, value,  modified_by) 
+        query = '''insert into settings (value, data, modified_by) 
         values ("compatible_clients", %s, 'Script')'''
         values = (schema,)
         cursor.execute(query, values)

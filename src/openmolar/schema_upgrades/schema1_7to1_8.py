@@ -22,20 +22,20 @@ SQLSTRINGS = [
 alter table aslot 
 add column timestamp timestamp not null default CURRENT_TIMESTAMP
 ''',
+'DROP TABLE if exists phrasebook',
 '''
 CREATE TABLE if not exists phrasebook (
 clinician_id int unsigned NOT NULL,
 phrases text,
 PRIMARY KEY (clinician_id) )
 ''',
-'''
-CREATE TABLE if not exists forumread (
- ix int(10) unsigned not NULL auto_increment,
-id int(10) unsigned  not NULL,
-op  char(8) not NULL ,
-readdate | datetime,
-PRIMARy KEY (ix) )
-''',
+'drop table if exists feetable_HDP',
+'drop table if exists feetable_Private_2009',
+'drop table if exists feetable_Private_2010',
+'drop table if exists feetable_scotNHS_08_Adult',
+'drop table if exists feetable_scotNHS_08_Child',
+'drop table if exists feetable_scotNHS_09_Adult',
+'drop table if exists feetable_scotNHS_09_Child',
 ]
 
 EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>

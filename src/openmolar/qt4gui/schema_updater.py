@@ -56,7 +56,7 @@ def main(arg, app):
             m.setWindowTitle(_("OpenMolar"))
             m.setModal(False)
             QtCore.QTimer.singleShot(3*1000, accept)
-            m.show()
+            m.exec_()
             m.move(0, 0)
             #QtGui.QMessageBox.information(pb, "Sucess", message)  
         else:
