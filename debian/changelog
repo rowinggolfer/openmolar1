@@ -1,9 +1,24 @@
+<<<<<<< TREE
+openmolar (0.2.0-intrepid0) intrepid; urgency=low
+
+  * as per bzr version 706 see https://launchpad.net/openmolar for details
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 01 June 2010 00:53:04 +0100
+
 openmolar (0.2.0~intrepid0) intrepid; urgency=low
 
   * as per bzr version 639 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 24 Mar 2010 13:27:53 +0000
 
+=======
+openmolar (0.2.0~intrepid0) intrepid; urgency=low
+
+  * as per bzr version 639 see https://launchpad.net/openmolar for details
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 24 Mar 2010 13:27:53 +0000
+
+>>>>>>> MERGE-SOURCE
 openmolar (0.1.9-17~intrepid1) intrepid; urgency=low
 
   * as per bzr version 639 see https://launchpad.net/openmolar for details
