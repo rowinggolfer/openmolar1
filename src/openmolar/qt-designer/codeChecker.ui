@@ -14,32 +14,32 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="2">
+   <item row="1" column="2">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Adult</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QListWidget" name="dec_listWidget"/>
    </item>
-   <item row="2" column="2">
+   <item row="3" column="2">
     <widget class="QListWidget" name="adult_listWidget"/>
    </item>
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Deciduous</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="3">
+   <item row="4" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Tooth Code</string>
+        <string>Enter a Restoration Code (eg. MOD) to test your fee scale logic</string>
        </property>
       </widget>
      </item>
@@ -69,20 +69,10 @@
        </property>
       </widget>
      </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>345</width>
-         <height>26</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QComboBox" name="comboBox"/>
    </item>
   </layout>
  </widget>

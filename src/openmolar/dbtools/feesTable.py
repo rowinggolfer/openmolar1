@@ -870,18 +870,27 @@ if __name__ == "__main__":
     def reloadTables():  
         global table 
         fts = feeTables()
-        table = fts.tables[2]
+        table = fts.tables[dl.comboBox.currentIndex()]
+    
+    def change_table(i):
+        global table     
+        table = fts.tables[i]
+        print "changed to ", table.tablename
+        check_codes()
     
     fts = feeTables()
     
+    table_list = []
     for table in fts.tables.values():
         print table.tablename
+        table_list.append(table.tablename)
     
-    table = fts.tables[3]
-    for tx in ("CE","S", "SP","SP+","SR F/F"):
-        print "looking up %s"%tx
-        code = table.getItemCodeFromUserCode(tx)
-        print "got code %s, fee %s"% (code, table.getFees(code))
+    def checkCommonItems():
+        ## not called
+        for tx in ("CE","S", "SP","SP+","SR F/F"):
+            print "looking up %s"%tx
+            code = table.getItemCodeFromUserCode(tx)
+            print "got code %s, fee %s"% (code, table.getFees(code))
     
     from PyQt4 import QtGui, QtCore
     from openmolar.dbtools.patient_class import mouth, decidmouth
@@ -890,9 +899,15 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
     dl = Ui_codeChecker.Ui_Dialog()
     dl.setupUi(Dialog)
+    dl.comboBox.addItems(table_list)
+
+    table = fts.tables[dl.comboBox.currentIndex()]
+
     Dialog.setWindowTitle(table.tablename)
     Dialog.connect(dl.pushButton, QtCore.SIGNAL("clicked()"), check_codes)
     Dialog.connect(dl.lineEdit, QtCore.SIGNAL("returnPressed()"), check_codes)
+    Dialog.connect(dl.comboBox, QtCore.SIGNAL("currentIndexChanged (int)"), 
+        change_table)    
     
     Dialog.exec_()
     app.closeAllWindows()

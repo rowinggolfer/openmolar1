@@ -176,11 +176,23 @@ def feetester(om_gui):
     '''
     raise an app which allows a few tests of the feetable logic
     '''
-    Dialog = QtGui.QDialog()
-    table = om_gui.ui.feeScales_treeView.model().table
-    dl = feescale_tester.test_dialog(table, Dialog)
-    Dialog.exec_()
-
+    if not om_gui.feetesterdl:
+        tables = localsettings.FEETABLES.tables
+        dl = feescale_tester.test_dialog(tables)
+        dl.show()
+        dl.lineEdit.setText("MOD")
+        QtCore.QObject.connect(om_gui.ui.chooseFeescale_comboBox, 
+            QtCore.SIGNAL("currentIndexChanged (int)"), dl.change_table)        
+        QtCore.QObject.connect(om_gui, QtCore.SIGNAL("closed"), dl.accept)
+        
+        i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
+        dl.comboBox.setCurrentIndex(i)
+        
+        om_gui.feetesterdl = dl
+    else:
+        om_gui.feetesterdl.raise_()
+    
+        
 def showTableXML(om_gui):
     '''
     user wants to view the full table logic!

@@ -1,115 +1,112 @@
-<<<<<<< TREE
-openmolar (0.2.0-intrepid0) intrepid; urgency=low
+openmolar (0.2.0-2~jaunty1) jaunty; urgency=low
 
-  * as per bzr version 706 see https://launchpad.net/openmolar for details
+  * as per bzr version 707 see https://launchpad.net/openmolar for details
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 01 June 2010 00:53:04 +0100
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 01 June 2010 01:23:12 +0100
 
-openmolar (0.2.0~intrepid0) intrepid; urgency=low
+openmolar (0.2.0-1~jaunty1) jaunty; urgency=low
 
-  * as per bzr version 639 see https://launchpad.net/openmolar for details
+  * as per bzr version 707 see https://launchpad.net/openmolar for details
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 24 Mar 2010 13:27:53 +0000
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 01 June 2010 01:23:12 +0100
 
-=======
-openmolar (0.2.0~intrepid0) intrepid; urgency=low
+openmolar (0.2.0-0~jaunty1) jaunty; urgency=low
 
-  * as per bzr version 639 see https://launchpad.net/openmolar for details
+  * as per bzr version 707 see https://launchpad.net/openmolar for details
 
- -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 24 Mar 2010 13:27:53 +0000
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 01 June 2010 01:23:12 +0100
 
->>>>>>> MERGE-SOURCE
-openmolar (0.1.9-17~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-17~jaunty1) jaunty; urgency=low
 
   * as per bzr version 639 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 24 Mar 2010 13:27:53 +0000
 
-openmolar (0.1.9-16~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-16~jaunty1) jaunty; urgency=low
 
   * as per bzr version 637 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 24 Mar 2010 11:44:04 +0000
 
-openmolar (0.1.9-15~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-15~jaunty1) jaunty; urgency=low
 
   * as per bzr version 635 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 23 Mar 2010 14:19:28 +0000
 
-openmolar (0.1.9-14~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-14~jaunty1) jaunty; urgency=low
 
   * as per bzr version 635 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 23 Mar 2010 14:19:28 +0000
 
-openmolar (0.1.9-13~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-13~jaunty1) jaunty; urgency=low
 
   * as per bzr version 631 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 23 Mar 2010 01:12:50 +0000
 
-openmolar (0.1.9-12~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-12~jaunty1) jaunty; urgency=low
 
   * as per bzr version 604 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 02 Mar 2010 15:00:37 +0000
 
-openmolar (0.1.9-11~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-11~jaunty1) jaunty; urgency=low
 
   * as per bzr version 604 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 02 Mar 2010 15:00:37 +0000
 
-openmolar (0.1.9-10~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-10~jaunty1) jaunty; urgency=low
 
   * as per bzr version 604 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 02 Mar 2010 15:00:37 +0000
 
-openmolar (0.1.9-9~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-9~jaunty1) jaunty; urgency=low
 
   * as per bzr version 600 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Sun, 28 Feb 2010 11:10:34 +0000
 
-openmolar (0.1.9-8~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-8~jaunty1) jaunty; urgency=low
 
   * as per bzr version 600 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Sun, 28 Feb 2010 11:10:34 +0000
 
-openmolar (0.1.9-7~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-7~jaunty1) jaunty; urgency=low
 
   * as per bzr version 600 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Sun, 28 Feb 2010 11:10:34 +0000
 
-openmolar (0.1.9-6~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-6~jaunty1) jaunty; urgency=low
 
   * as per bzr version 597 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 26 Feb 2010 02:12:25 +0000
 
-openmolar (0.1.9-5~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-5~jaunty1) jaunty; urgency=low
 
   * as per bzr version 589 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 17 Feb 2010 03:10:27 +0000
 
-openmolar (0.1.9-4~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-4~jaunty1) jaunty; urgency=low
 
   * as per bzr version 589 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 17 Feb 2010 03:10:27 +0000
 
-openmolar (0.1.9-3~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-3~jaunty1) jaunty; urgency=low
 
   * as per bzr version 580 see https://launchpad.net/openmolar for details
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Thu, 11 Feb 2010 13:22:02 +0000
 
-openmolar (0.1.9-2~intrepid1) intrepid; urgency=low
+openmolar (0.1.9-2~jaunty1) jaunty; urgency=low
 
   * as per bzr version 575 see https://launchpad.net/openmolar for details
 

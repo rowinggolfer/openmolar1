@@ -118,19 +118,25 @@ def printLetter(om_gui):
         om_gui.advise(_("no patient selected"), 1)
         return
     html=standardletter.getHtml(om_gui.pt)
-    Dialog = QtGui.QDialog(om_gui)
+    Dialog = QtGui.QDialog()
     dl = Ui_enter_letter_text.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.textEdit.setHtml(html)
+    referred_pt = om_gui.pt
+    Dialog.show()
+    
     if Dialog.exec_():
         html=dl.textEdit.toHtml()
         myclass=letterprint.letter(html)
         myclass.printpage()
         html=str(html.toAscii())
-        docsprinted.add(om_gui.pt.serialno, "std letter (html)", html)
-        om_gui.pt.addHiddenNote("printed", "std letter")
-        if om_gui.ui.prevCorres_treeWidget.isVisible():
-            om_gui.docsPrintedInit()
+        docsprinted.add(referred_pt.serialno, "std letter (html)", html)
+        referred_pt.addHiddenNote("printed", "std letter")
+        if referred_pt == om_gui.pt:
+            if om_gui.ui.prevCorres_treeWidget.isVisible():
+                om_gui.docsPrintedInit()
+        else:
+            referred_pt.toNotes(referred_pt.serialno, referred_pt.HIDDENNOTES)
 
 def printAccountsTable(om_gui):
     '''

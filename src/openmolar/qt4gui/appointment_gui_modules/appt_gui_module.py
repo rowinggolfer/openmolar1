@@ -441,6 +441,11 @@ def begin_makeAppt(om_gui, dayView=False):
         om_gui.ui.diary_tabWidget.setCurrentIndex(1)
         weekView_setScheduleMode(om_gui)
     om_gui.signals_tabs() #reconnect
+        
+    om_gui.signals_apptStateWidgets(False)    
+    om_gui.ui.day_schedule_tabWidget.setCurrentIndex(0)
+    om_gui.ui.week_schedule_tabWidget.setCurrentIndex(0)
+    om_gui.signals_apptStateWidgets()    
     
     om_gui.signals_calendar(False)
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
@@ -1139,6 +1144,8 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
         result, message, slots = addWeekViewAvailableSlots(om_gui)
         if not result:
             om_gui.advise(message)
+            for ov in om_gui.ui.apptoverviews:
+                ov.update()
             return
         else:
             if slots == []:

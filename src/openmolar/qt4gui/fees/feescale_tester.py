@@ -14,17 +14,27 @@ from openmolar.dbtools.patient_class import mouth, decidmouth
 from openmolar.qt4gui.compiled_uis import Ui_codeChecker
 #from openmolar.dbtools import feesTable
 
-class test_dialog(Ui_codeChecker.Ui_Dialog,QtGui.QDialog):
-    def __init__(self, table, parent = None):
+class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
+    def __init__(self, tables, parent = None):
         super (test_dialog, self).__init__(parent)
-        self.setupUi(parent)
-        self.table = table
+        self.setupUi(self)
+        self.table_list = []
+        tablenames = []
+        for table in tables.values():
+            self.table_list.append(table)
+            tablenames.append(table.tablename)
+        self.comboBox.addItems(tablenames)
+
+        self.table = self.table_list[self.comboBox.currentIndex()]
+        self.setWindowTitle(self.table.tablename)
         
-        parent.setWindowTitle(self.table.tablename)
+        self.connect(self.comboBox, QtCore.SIGNAL("currentIndexChanged (int)"), 
+            self.change_table)    
+    
         QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL("clicked()"), 
-        self.check_codes)
+            self.check_codes)
         QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"), 
-        self.check_codes)
+            self.check_codes)
         
     def check_codes(self):
         tx = str(self.lineEdit.text().toAscii())
@@ -42,23 +52,19 @@ class test_dialog(Ui_codeChecker.Ui_Dialog,QtGui.QDialog):
             result = "%s - %s %s"% (tooth.upper(), code, desc)
             self.adult_listWidget.addItem(result)
 
-
+    def change_table(self, i):
+        self.table = self.table_list[i]
+        self.setWindowTitle(self.table.tablename)
+        
+        self.check_codes()
+        
 if __name__ == "__main__":
     localsettings.initiate()
-    fts = localsettings.FEETABLES.tables
-
-    for table in fts.values():
-        print table.tablename
-
-    table = fts[0]
-    for tx in ("CE","S", "SP","SP+","SR F/F"):
-        print "looking up %s"%tx
-        code = table.getItemCodeFromUserCode(tx)
-        print "got code %s, fee %s"% (code, table.getFees(code))
-
+    localsettings.loadFeeTables()
+    tables = localsettings.FEETABLES.tables
+    
     app = QtGui.QApplication([])
-    Dialog = QtGui.QDialog()
-    dl = test_dialog(table, Dialog)
-    Dialog.exec_()
+    dl = test_dialog(tables)
+    dl.exec_()
     app.closeAllWindows()
     

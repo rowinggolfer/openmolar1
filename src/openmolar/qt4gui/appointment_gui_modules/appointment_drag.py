@@ -116,7 +116,7 @@ class simple_model(QtCore.QAbstractListModel):
         self.list = []
 
         currentClinicians = self.involvedClinicians
-        changedClinicians = True
+        changedClinicians = False
 
         for appt in appts:
             if appt.past:

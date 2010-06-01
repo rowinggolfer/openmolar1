@@ -152,7 +152,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.loadDentistComboboxes()
         self.feestableLoaded = False
         self.forum_parenting_mode = (False, None)
-
+        self.feetesterdl = None
         #--adds items to the daylist comboBox
         self.load_todays_patients_combobox()
 
@@ -223,7 +223,8 @@ class openmolarGui(QtGui.QMainWindow):
                 event.ignore()
                 return
         utilities.deleteTempFiles()
-
+        self.emit(QtCore.SIGNAL("closed")) #close the feescale tester
+        
     def fullscreen(self):
         if self.ui.actionFull_Screen_Mode_Ctrl_Alt_F.isChecked():
             self.setWindowState(QtCore.Qt.WindowFullScreen)
