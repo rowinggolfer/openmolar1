@@ -43,7 +43,7 @@ if os.path.isfile("MANIFEST"):
 
 setup(
     name = 'openmolar',
-    version = '0.1.9',
+    version = '0.2.0',
     description = 'Open Source Dental Practice Management Software',
     author = 'Neil Wallace',
     author_email = 'rowinggolfer@googlemail.com',
