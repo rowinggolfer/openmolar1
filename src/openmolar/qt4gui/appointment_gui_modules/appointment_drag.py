@@ -67,6 +67,7 @@ class simple_model(QtCore.QAbstractListModel):
         self.min_slot_length = 0
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
         self.selection_model = QtGui.QItemSelectionModel(self)
+        
         self.currentAppt = None
         self.selectedAppts = []
         self.normal_icon = QtGui.QIcon()
@@ -238,11 +239,15 @@ class draggableList(QtGui.QListView):
     def __init__(self, multiSelect, parent=None):
         super(draggableList, self).__init__(parent)
         self.setDragEnabled(True)
-        if multiSelect:
-            self.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
+        self.multiSelect = multiSelect
         self.pixels_per_min = 2
         self.setMinimumHeight(150)
 
+    def setSelectionModel(self, model):
+        QtGui.QListView.setSelectionModel(self, model)
+        if self.multiSelect:
+            self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        
     def setScaling(self, height_per_minute):
         '''
         make the list aware of the scaling of the widget available for drops
@@ -288,21 +293,19 @@ class draggableList(QtGui.QListView):
     def mouseMoveEvent(self, event):
         self.startDrag(event)
 
-    def mousePressEvent(self, event):
-        ##set this to ignore, and use mouse Release instead
-        event.ignore()
-
-    def mouseReleaseEvent(self, event):
-        event = QtGui.QMouseEvent(QtCore.QEvent.MouseButtonPress, event.pos(),
-            event.button(), event.buttons(), QtCore.Qt.NoModifier)
-        QtGui.QListView.mousePressEvent(self, event)
-
-    def selectionChanged (self, selectedRange, deselected):
+    #def mousePressEvent(self, event):
+    #    ##set this to ignore, and use mouse Release instead
+    #    event.ignore()
+    #    
+    #def mouseReleaseEvent(self, event):
+    #    event = QtGui.QMouseEvent(QtCore.QEvent.MouseButtonPress, event.pos(),
+    #        event.button(), event.buttons(), event.modifiers())
+    #    QtGui.QListView.mousePressEvent(self, event)
+        
+    def selectionChanged(self, selectedRange, deselected):
         '''
         the user has selected an appointment (or range of appointments!)
         from the list
-
-        currently, the model is a single selection
         '''
         if selectedRange.count():
             selected = selectedRange.indexes()[0]
@@ -330,7 +333,7 @@ if __name__ == "__main__":
 
     class duckPt(object):
         def __init__(self):
-            self.serialno = 707
+            self.serialno = 11956
             self.title = "Mr"
             self.sname = "Neil"
             self.fname = "Wallace"
@@ -348,7 +351,7 @@ if __name__ == "__main__":
 
             appts = appointments.get_pts_appts(duckPt())
 
-            self.model.setAppointments(appts, appts[2])
+            self.model.setAppointments(appts, appts[1])
 
             self.daylistView = draggableList(True)
             self.daylistView.setModel(self.model)
