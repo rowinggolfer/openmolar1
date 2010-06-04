@@ -67,6 +67,7 @@ from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs import choose_tooth_dialog
 from openmolar.qt4gui.dialogs import choose_clinicians
+from openmolar.qt4gui.dialogs import clinician_select_dialog
 from openmolar.qt4gui.dialogs import phrasebook_dialog
 
 #secondary applications
@@ -154,9 +155,9 @@ class openmolarGui(QtGui.QMainWindow):
         self.forum_parenting_mode = (False, None)
         self.feetesterdl = None
         #--adds items to the daylist comboBox
-        self.load_todays_patients_combobox()
-
-
+        QtCore.QTimer.singleShot(1*1000, self.set_operator_label)
+        QtCore.QTimer.singleShot(1*1000, self.load_todays_patients_combobox)
+        
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -495,8 +496,12 @@ class openmolarGui(QtGui.QMainWindow):
         vlayout.addWidget(self.ui.notificationWidget)
 
     def setClinician(self):
-        self.advise("To change practitioner, please login again", 1)
-
+        result, selected = clinician_select_dialog.Dialog(self).result()
+        if result:
+            self.advise(_("changed clinician to") + " " + selected)
+            self.load_todays_patients_combobox()
+            self.set_operator_label()
+        
     def saveButtonClicked(self):
         self.okToLeaveRecord(cont = True)
 
@@ -1276,19 +1281,20 @@ class openmolarGui(QtGui.QMainWindow):
         patients - if a list(tuple) of dentists is passed eg ,(("NW"),)
         then only pt's of that dentist show up
         '''
+        self.ui.dayList_comboBox.clear()
+        
         if localsettings.clinicianNo != 0:
-            visibleItem = _("Today's Patients")+ \
+            header = _("Today's Patients")+ \
             " (%s)"%localsettings.clinicianInits
         else:
-            visibleItem  =_("Today's Patients (ALL)")
+            header  =_("Today's Patients (ALL)")
 
         dents = (localsettings.clinicianNo, )
         ptList = appointments.todays_patients(dents)
-        if len(ptList) ==0:
-            self.ui.dayList_comboBox.hide()
-            return
+        
+        self.ui.dayList_comboBox.setVisible(len(ptList) != 0)
 
-        self.ui.dayList_comboBox.addItem(visibleItem)
+        self.ui.dayList_comboBox.addItem(header)
 
         for pt in ptList:
             val = "%s -- %s"%(pt[1],pt[0])
@@ -1800,6 +1806,24 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                     else:
                         self.getrecord(int(candidates[0][0]), True)
 
+    def set_operator_label(self):
+        if localsettings.clinicianNo == 0:
+            if localsettings.station == "surgery":
+                op_text = " <b>" + _("NO CLINICIAN SET") + "</b> - "
+                self.advise(_("you are in surgery mode without a clinician"),1)
+            else:
+                op_text = ""
+        else:
+            op_text = (" <b>" + _("CLINICIAN") + "(" + 
+            localsettings.clinicianInits + ")</b> - ")
+                
+        if "/" in localsettings.operator:
+            op_text += " " + _("team") + " "
+        op_text += (" " + localsettings.operator + " " + _("using") + " " +
+        localsettings.station + " " + _("mode"))
+        
+        self.operator_label.setText(op_text)    
+    
     def labels_and_tabs(self):
         '''
         initialise a few labels
@@ -1813,19 +1837,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         _("Master"), _("Dr"), _("Professor")])
         self.ui.titleEdit.setCompleter(c_list)
 
-        if localsettings.clinicianNo == 0:
-            if localsettings.station == "surgery":
-                op_text = " <b>NO CLINICIAN SET</b> - "
-            else:
-                op_text = ""
-        else:
-            op_text = " <b>CLINICIAN (%s)</b> - "% \
-            localsettings.clinicianInits
-        if "/" in localsettings.operator:
-            op_text += " team "
-        op_text += " %s using %s mode. "%(localsettings.operator,
-        localsettings.station)
-        self.operator_label.setText(op_text)
+        
         if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)
         else:

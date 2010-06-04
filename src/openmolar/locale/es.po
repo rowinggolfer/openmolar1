@@ -7,20 +7,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmolar\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-06-01 21:48+0000\n"
-"PO-Revision-Date: 2010-06-01 22:06+0000\n"
+"POT-Creation-Date: 2010-06-03 19:42+0000\n"
+"PO-Revision-Date: 2010-06-03 20:15+0000\n"
 "Last-Translator: Jonay <jonay.santana@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-06-03 03:36+0000\n"
+"X-Launchpad-Export-Date: 2010-06-04 03:46+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: /home/neil/openmolar/openmolar/src/openmolar/dbtools/appointments.py:751
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:220
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:221
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:222
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:223
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/dialogs/block_wizard.py:25
 msgid "emergency"
 msgstr "emergencia"
@@ -484,18 +484,18 @@ msgstr "Selección manual"
 msgid "Everyone"
 msgstr "Cualquiera"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:217
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:218
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:219
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_apptOpenDay.py:154
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:142
 msgid "Lunch"
 msgstr "Almuerzo"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:219
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:220
 msgid "staff meeting"
 msgstr "reunión de personal"
 
-#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:223
+#: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/appointment_gui_modules/appointment_drag.py:224
 #: /home/neil/openmolar/openmolar/src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py:141
 msgid "Out of Office"
 msgstr "Fuera de la Oficina"

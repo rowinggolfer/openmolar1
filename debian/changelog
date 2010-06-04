@@ -1,3 +1,9 @@
+openmolar (0.2.0-4~jaunty1) jaunty; urgency=low
+
+  * as per bzr version 711 see https://launchpad.net/openmolar for details
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Thu, 03 June 2010 20:37:03 +0100
+
 openmolar (0.2.0-3~jaunty1) jaunty; urgency=low
 
   * as per bzr version 710 see https://launchpad.net/openmolar for details
