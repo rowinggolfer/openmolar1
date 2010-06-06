@@ -29,7 +29,6 @@ IGNORE_SCHEMA_CHECK = False
 SHORTARGS = ""
 LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=", 
 "ignore_schema_check"]
-##############################################################
 
 import gettext
 lang = os.environ.get("LANG")
@@ -115,6 +114,7 @@ def main():
 
     from openmolar.settings import localsettings
     from openmolar.qt4gui.compiled_uis import Ui_startscreen
+    localsettings.showVersion()
 
     uninitiated = True
 
@@ -194,8 +194,9 @@ Are you ready to proceed?</center>''')
 
     try:
         dom = minidom.parse(localsettings.cflocation)
-        sys_password = dom.getElementsByTagName("system_password")[0].\
-        firstChild.data
+        sys_password = dom.getElementsByTagName(
+            "system_password")[0].firstChild.data
+        
         servernames = dom.getElementsByTagName("connection")
         for server in servernames:
             nameDict = server.attributes
@@ -211,7 +212,7 @@ Are you ready to proceed?</center>''')
         _("Good Bye!"))
 
         my_app.closeAllWindows()
-        sys.exit("unable to run - openMolar needs a settings file")
+        sys.exit("unable to run - openMolar couldn't find a settings file")
 
     my_dialog = QtGui.QDialog()
     dl = Ui_startscreen.Ui_Dialog()
@@ -258,24 +259,25 @@ Are you ready to proceed?</center>''')
                     raise LoginError
 
                 if uninitiated or changedServer:
-                    #-- user has entered the correct password
-                    #-- so now we connect to the mysql database for the 1st time
-                    #-- I do it this way so that anyone sniffing the network
-                    #-- won't see the mysql password until this point
-                    #-- this could and should possibly still be improved upon
-                    #-- maybe by using an ssl connection to the server.
+                    #- user has entered the correct password
+                    #- so now we connect to the mysql database 
+                    #- for the 1st time
+                    #- I do it this way so that anyone sniffing the network
+                    #- won't see the mysql password until this point
+                    #- this could and should possibly still be improved upon
+                    #- maybe by using an ssl connection to the server.
                     localsettings.initiateUsers(changedServer)
                     uninitiated = False
 
-                u1_qstring = dl.user1_lineEdit.text().toUpper()
-                #-- toUpper is a method of QString
-                u2_qstring = dl.user2_lineEdit.text().toUpper()
+                u1_qstring = dl.user1_lineEdit.text().toAscii().toUpper()
+                u2_qstring = dl.user2_lineEdit.text().toAscii().toUpper()
+                
                 #-- localsettings module now has user variables.
                 #-- allowed_logins in a list of practice staff.
                 if not u1_qstring in localsettings.allowed_logins:
                     raise LoginError
-                if u2_qstring !="" and \
-                not u2_qstring in localsettings.allowed_logins:
+                if (u2_qstring !="" and 
+                not u2_qstring in localsettings.allowed_logins):
                     raise LoginError
 
                 #-- set a variable to allow the main program to run
@@ -335,8 +337,7 @@ def run():
     the real entry point for the app
     '''
     global FIRST_RUN_TESTING, IGNORE_SCHEMA_CHECK
-    print sys.argv
-
+    
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], SHORTARGS, LONGARGS)
     except getopt.GetoptError, err:

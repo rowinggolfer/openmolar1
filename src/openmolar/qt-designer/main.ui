@@ -475,7 +475,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>786</width>
+                        <width>482</width>
                         <height>472</height>
                        </rect>
                       </property>
@@ -6742,6 +6742,7 @@ F6</string>
     <addaction name="actionOptions"/>
     <addaction name="separator"/>
     <addaction name="actionSet_Clinician"/>
+    <addaction name="actionSet_Assistant"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -6912,6 +6913,11 @@ F6</string>
    </property>
    <property name="text">
     <string>Forum - show adavanced options</string>
+   </property>
+  </action>
+  <action name="actionSet_Assistant">
+   <property name="text">
+    <string>Set Assistant</string>
    </property>
   </action>
  </widget>

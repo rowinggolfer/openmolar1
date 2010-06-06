@@ -14,7 +14,7 @@ from xml.dom import minidom
 class Dialog(QtGui.QDialog):
     def __init__(self, parent=None):
         super(Dialog, self).__init__(parent)
-        self.setWindowTitle(_("Select a Clinician"))
+        self.setWindowTitle(_("Select an Assitant"))
         
         layout = QtGui.QVBoxLayout(self)
         self.listwidget = QtGui.QListWidget()
@@ -23,15 +23,10 @@ class Dialog(QtGui.QDialog):
         self.listwidget.setSelectionMode(
             QtGui.QAbstractItemView.SingleSelection)
         
-        clinicians = [_("NONE")] + localsettings.activedents + \
-            localsettings.activehygs
-        self.listwidget.addItems(clinicians)
+        assistants = [_("NONE")] + localsettings.allowed_logins
+        self.listwidget.addItems(assistants)
         
-        try:
-            i = clinicians.index(localsettings.clinicianInits)
-        except ValueError:
-            i = 0
-        self.listwidget.setCurrentRow(i)
+        self.listwidget.setCurrentRow(0)
         
         self.buttonBox = QtGui.QDialogButtonBox(self)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -47,36 +42,21 @@ class Dialog(QtGui.QDialog):
         
         
     @property
-    def selectedClinician(self):
+    def selectedAssistant(self):
         if self.listwidget.currentRow() == 0:
             return ""
         return str(self.listwidget.currentItem().text().toAscii())
     
     def result(self):
         if self.exec_():
-            chosen = self.selectedClinician
-            change_needed = chosen != localsettings.clinicianInits
-            localsettings.clinicianInits = chosen
-            localsettings.clinicianNo = localsettings.ops_reverse.get(
-                chosen, 0)
-            curr_operator = localsettings.operator.split("/")
-            u2 = curr_operator[-1]
-            if u2 == chosen:
-                u2 = ""
-            if u2:
-                input = QtGui.QMessageBox.question(self, _("Confirm"), 
-                _("Set assistant as") + " %s?"% u2,
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes )
-                if input == QtGui.QMessageBox.No:
-                    u2 = ""
-            localsettings.setOperator(chosen, u2)
-            return (change_needed, chosen)
+            u2 = self.selectedAssistant
+            localsettings.setOperator(localsettings.clinicianInits, u2)
+            return (True, u2)
         return (False, None)
     
 if __name__ == "__main__":
     from openmolar.qt4gui import resources_rc
-    localsettings.initiate()
+    localsettings.initiateUsers()
     app = QtGui.QApplication([])    
     ui = Dialog()
     print ui.result()

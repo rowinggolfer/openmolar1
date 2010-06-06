@@ -68,6 +68,7 @@ from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs import choose_tooth_dialog
 from openmolar.qt4gui.dialogs import choose_clinicians
 from openmolar.qt4gui.dialogs import clinician_select_dialog
+from openmolar.qt4gui.dialogs import assistant_select_dialog
 from openmolar.qt4gui.dialogs import phrasebook_dialog
 
 #secondary applications
@@ -501,6 +502,12 @@ class openmolarGui(QtGui.QMainWindow):
             self.advise(_("changed clinician to") + " " + selected)
             self.load_todays_patients_combobox()
             self.set_operator_label()
+        
+    def setAssistant(self):
+        result, selected = assistant_select_dialog.Dialog(self).result()
+        if result:
+            self.advise(_("changed assistant to") + " " + selected)
+            self.set_operator_label()        
         
     def saveButtonClicked(self):
         self.okToLeaveRecord(cont = True)
@@ -3448,6 +3455,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.actionSet_Clinician,
         QtCore.SIGNAL("triggered()"), self.setClinician)
+        
+        QtCore.QObject.connect(self.ui.actionSet_Assistant,
+        QtCore.SIGNAL("triggered()"), self.setAssistant)
 
         QtCore.QObject.connect(self.ui.actionChange_Language,
         QtCore.SIGNAL("triggered()"), self.changeLanguage)

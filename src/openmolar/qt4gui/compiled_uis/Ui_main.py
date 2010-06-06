@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Fri May 28 14:05:20 2010
+# Created: Sun Jun  6 10:20:01 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -219,7 +219,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName("scrollArea_4")
         self.scrollAreaWidgetContents_7 = QtGui.QWidget(self.scrollArea_4)
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 786, 472))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 482, 472))
         self.scrollAreaWidgetContents_7.setObjectName("scrollAreaWidgetContents_7")
         self.horizontalLayout_10 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_7)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
@@ -2876,6 +2876,8 @@ class Ui_MainWindow(object):
         self.actionForum = QtGui.QAction(MainWindow)
         self.actionForum.setCheckable(True)
         self.actionForum.setObjectName("actionForum")
+        self.actionSet_Assistant = QtGui.QAction(MainWindow)
+        self.actionSet_Assistant.setObjectName("actionSet_Assistant")
         self.menuMenu.addAction(self.action_save_patient)
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addSeparator()
@@ -2892,6 +2894,7 @@ class Ui_MainWindow(object):
         self.menu_Prefences.addAction(self.actionOptions)
         self.menu_Prefences.addSeparator()
         self.menu_Prefences.addAction(self.actionSet_Clinician)
+        self.menu_Prefences.addAction(self.actionSet_Assistant)
         self.menuTools.addAction(self.actionClear_Today_s_Emergency_Slots)
         self.menuTools.addAction(self.actionAppointment_Tools)
         self.menuTools.addAction(self.actionChoose_Database)
@@ -3417,6 +3420,7 @@ class Ui_MainWindow(object):
         self.actionOptions_2.setText(_( u"options"))
         self.actionSet_Font_Size.setText(_( u"Font Size"))
         self.actionForum.setText(_( u"Forum - show adavanced options"))
+        self.actionSet_Assistant.setText(_( u"Set Assistant"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc

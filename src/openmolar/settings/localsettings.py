@@ -55,7 +55,8 @@ def showVersion():
     '''
     push version details to std out
     '''
-    print "Version %s\nBzr Revision No. %s"% (__MAJOR_VERSION__, __build__)
+    print "OpenMolar\n - Version %s\n - Bzr Revision No. %s"% (
+    __MAJOR_VERSION__, __build__)
 
 if VERBOSE:
     showVersion()
