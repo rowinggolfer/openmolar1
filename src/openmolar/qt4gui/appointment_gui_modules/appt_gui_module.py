@@ -1449,10 +1449,8 @@ def aptOVlabelRightClicked(om_gui, d):
     user wants to change appointment overview properties for date d
     '''
     if permissions.granted(om_gui):
-        Dialog = QtGui.QDialog(om_gui)
-        dl = alterAday.alterDay(Dialog)
-        dl.setDate(d)
-
+        dl = alterAday.alterDay(om_gui, d)
+        
         if dl.getInput():
             layout_weekView(om_gui)
 

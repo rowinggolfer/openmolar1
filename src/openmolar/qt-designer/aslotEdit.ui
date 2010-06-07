@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Clinicians - DATE</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="4">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -24,13 +24,13 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="leftMargin">
-       <number>30</number>
+       <number>40</number>
       </property>
       <property name="topMargin">
        <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>30</number>
+       <number>40</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
@@ -121,7 +121,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0" colspan="4">
     <widget class="QScrollArea" name="scrollArea">
      <property name="minimumSize">
       <size>
@@ -159,7 +159,30 @@
      </widget>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="copy_pushButton">
+     <property name="toolTip">
+      <string>If you copy this day's setup to the clipboard, you can create a &quot;clone&quot; of this day when no data is set. This is useful when extending books.</string>
+     </property>
+     <property name="text">
+      <string>Copy To Clipboard</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>188</width>
+       <height>24</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="3">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -169,6 +192,16 @@
      </property>
      <property name="centerButtons">
       <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="paste_pushButton">
+     <property name="toolTip">
+      <string>Paste the saved values.</string>
+     </property>
+     <property name="text">
+      <string>Paste</string>
      </property>
     </widget>
    </item>

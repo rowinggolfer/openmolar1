@@ -6912,7 +6912,7 @@ F6</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Forum - show adavanced options</string>
+    <string>Forum - show advanced options</string>
    </property>
   </action>
   <action name="actionSet_Assistant">

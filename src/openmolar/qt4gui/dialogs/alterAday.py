@@ -58,6 +58,13 @@ class adayData():
         return"%s %s %s %s %s %s"%(
         self.apptix,self.dent,self.active,self.start,self.finish,self.memo)
 
+    def __cmp__(self, other):
+        eq = 0
+        if (self.active != other.active or self.start != other.start or 
+        self.finish != other.finish or self.memo != other.memo):
+            eq = 1
+        return eq
+
 
 class dentWidget(Ui_activeDentStartFinish.Ui_Form):
     '''
@@ -96,6 +103,7 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         '''
         set the data with an instance of adayData
         '''
+        self.dent = arg.dent
         self.checkBox.setText(arg.dent)
         self.checkBox.setChecked(arg.active)
         self.start_timeEdit.setEnabled(arg.active)
@@ -109,18 +117,52 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
     a custom dialog to enter the start dates, end dates and availability
     of a clinician
     '''
-    def __init__(self,dialog):
-        self.setupUi(dialog)
-        self.dialog = dialog
-        self.clinicians = []
+    def __init__(self, om_gui, date):
+        #date passed in is a QDate
+        self.dialog = QtGui.QDialog(om_gui)
+        self.om_gui = om_gui
+        self.setupUi(self.dialog)
+        self.data_list = []
+        self.date = date
+        self.dialog.setWindowTitle(_("Clinician Times") + 
+            " - %s"%date.toString())
+        self.loadData()
+        self.showItems()
+        
+        QtCore.QObject.connect(self.copy_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.copy_to_clipboard)
+        
+        self.pastebutton_orig_text = self.paste_pushButton.text()
+        if om_gui.alterAday_clipboard_date:
+            self.setPasteButtonText()
+        else:
+            self.paste_pushButton.setEnabled(False)
+        
+        QtCore.QObject.connect(self.paste_pushButton, 
+        QtCore.SIGNAL("clicked()"), self.paste)
 
-    def setDate(self,d):
-        '''
-        d should be a QDate
-        '''
-        self.date = d
-        self.dialog.setWindowTitle("Clinician Times - %s"%d.toString())
-
+    def setPasteButtonText(self):
+        text = self.pastebutton_orig_text
+        
+        self.paste_pushButton.setText(text + " " + _("values from") + 
+        " " + self.om_gui.alterAday_clipboard_date.toString())
+        
+    def copy_to_clipboard(self):
+        self.om_gui.alterAday_clipboard_date = self.date
+        self.om_gui.alterAday_clipboard = self.current_list
+        self.paste_pushButton.setEnabled(True)
+        self.setPasteButtonText()
+        
+    def paste(self):
+        i=0
+        for clinician in self.om_gui.alterAday_clipboard:
+            dw = self.dentWidgets[i]
+            dw.checkBox.setChecked(clinician.active)
+            dw.start_timeEdit.setTime(clinician.start)
+            dw.finish_timeEdit.setTime(clinician.finish)
+            dw.lineEdit.setText(clinician.memo)
+            i += 1
+        
     def showItems(self):
         '''
         load the dentWidgets into the gui
@@ -128,7 +170,7 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
         self.dentWidgets = []
         vlayout = QtGui.QVBoxLayout(self.frame_2)
         vlayout.setSpacing(0)
-        for clinician in self.clinicians:
+        for clinician in self.data_list:
             iw = QtGui.QWidget()
             dw = dentWidget(iw)
             dw.setData(clinician)
@@ -147,7 +189,19 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
                     startData.setFinish(dent.end)
                     startData.setMemo(dent.memo)
                     startData.active = dent.flag
-            self.clinicians.append(startData)
+            self.data_list.append(startData)
+
+    @property
+    def current_list(self):
+        retlist = []
+        for dw in self.dentWidgets:
+            alteredClinician = adayData(dw.dent)
+            alteredClinician.active = dw.checkBox.isChecked()
+            alteredClinician.start = dw.start_timeEdit.time()
+            alteredClinician.finish = dw.finish_timeEdit.time()
+            alteredClinician.memo = str(dw.lineEdit.text().toAscii())
+            retlist.append(alteredClinician)
+        return retlist
 
     def checkForChanges(self):
         retarg = []
@@ -155,19 +209,11 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
         #-- iterate through the initial values, and compare with the
         #-- inputted values
         #-- make a list of changes
-        for clinician in self.clinicians:
-            dw = self.dentWidgets[i]
-            alteredClinician = adayData(clinician.dent)
-            alteredClinician.active = dw.checkBox.isChecked()
-            alteredClinician.start = dw.start_timeEdit.time()
-            alteredClinician.finish = dw.finish_timeEdit.time()
-            alteredClinician.memo = str(dw.lineEdit.text().toAscii())
-
-            if alteredClinician.active!=clinician.active or \
-            alteredClinician.start!=clinician.start or \
-            alteredClinician.finish!=clinician.finish or\
-            alteredClinician.memo!=clinician.memo:
-
+        
+        updated_vals = self.current_list
+        for clinician in self.data_list:
+            alteredClinician = updated_vals[i]
+            if alteredClinician != clinician:
                 retarg.append(alteredClinician)
             i+=1
         return retarg
@@ -181,8 +227,6 @@ class alterDay(Ui_aslotEdit.Ui_Dialog):
         return changed
 
     def getInput(self):
-        self.loadData()
-        self.showItems()
         if self.dialog.exec_():
             changes = self.checkForChanges()
             return self.applyChanges(changes)
@@ -191,10 +235,10 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
-    Dialog = QtGui.QDialog()
-    dl = alterDay(Dialog)
+    from openmolar.qt4gui import maingui
+    om_gui = maingui.openmolarGui(app)
     date = QtCore.QDate.currentDate()
-    dl.setDate(date)
+    dl = alterDay(om_gui, date)
 
     print dl.getInput()
 

@@ -155,7 +155,10 @@ class openmolarGui(QtGui.QMainWindow):
         self.feestableLoaded = False
         self.forum_parenting_mode = (False, None)
         self.feetesterdl = None
-        #--adds items to the daylist comboBox
+        
+        self.alterAday_clipboard = [] #clipboard used by the alterAday dialog 
+        self.alterAday_clipboard_date = None
+        
         QtCore.QTimer.singleShot(1*1000, self.set_operator_label)
         QtCore.QTimer.singleShot(1*1000, self.load_todays_patients_combobox)
         

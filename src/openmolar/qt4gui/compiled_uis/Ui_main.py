@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Sun Jun  6 10:20:01 2010
+# Created: Mon Jun  7 11:23:50 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -3419,7 +3419,7 @@ class Ui_MainWindow(object):
         self.actionT.setText(_( u"t"))
         self.actionOptions_2.setText(_( u"options"))
         self.actionSet_Font_Size.setText(_( u"Font Size"))
-        self.actionForum.setText(_( u"Forum - show adavanced options"))
+        self.actionForum.setText(_( u"Forum - show advanced options"))
         self.actionSet_Assistant.setText(_( u"Set Assistant"))
 
 from PyQt4 import QtWebKit

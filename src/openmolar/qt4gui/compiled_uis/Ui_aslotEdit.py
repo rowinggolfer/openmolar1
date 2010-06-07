@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/aslotEdit.ui'
 #
-# Created: Mon May 24 22:45:18 2010
+# Created: Mon Jun  7 11:23:50 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,14 +13,14 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(602, 457)
-        self.verticalLayout = QtGui.QVBoxLayout(Dialog)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.gridLayout = QtGui.QGridLayout(Dialog)
+        self.gridLayout.setObjectName("gridLayout")
         self.frame = QtGui.QFrame(Dialog)
         self.frame.setFrameShape(QtGui.QFrame.NoFrame)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.horizontalLayout = QtGui.QHBoxLayout(self.frame)
-        self.horizontalLayout.setContentsMargins(30, 0, 30, 0)
+        self.horizontalLayout.setContentsMargins(40, 0, 40, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtGui.QLabel(self.frame)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
@@ -49,7 +49,7 @@ class Ui_Dialog(object):
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout.addWidget(self.label_2)
-        self.verticalLayout.addWidget(self.frame)
+        self.gridLayout.addWidget(self.frame, 0, 0, 1, 4)
         self.scrollArea = QtGui.QScrollArea(Dialog)
         self.scrollArea.setMinimumSize(QtCore.QSize(346, 0))
         self.scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
@@ -66,13 +66,21 @@ class Ui_Dialog(object):
         self.frame_2.setObjectName("frame_2")
         self.verticalLayout_2.addWidget(self.frame_2)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.verticalLayout.addWidget(self.scrollArea)
+        self.gridLayout.addWidget(self.scrollArea, 1, 0, 1, 4)
+        self.copy_pushButton = QtGui.QPushButton(Dialog)
+        self.copy_pushButton.setObjectName("copy_pushButton")
+        self.gridLayout.addWidget(self.copy_pushButton, 2, 0, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(188, 24, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem1, 2, 2, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(False)
         self.buttonBox.setObjectName("buttonBox")
-        self.verticalLayout.addWidget(self.buttonBox)
+        self.gridLayout.addWidget(self.buttonBox, 2, 3, 1, 1)
+        self.paste_pushButton = QtGui.QPushButton(Dialog)
+        self.paste_pushButton.setObjectName("paste_pushButton")
+        self.gridLayout.addWidget(self.paste_pushButton, 2, 1, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
@@ -85,4 +93,8 @@ class Ui_Dialog(object):
         self.label_3.setText(_( u"Start"))
         self.label_4.setText(_( u"Finish"))
         self.label_2.setText(_( u"Memo"))
+        self.copy_pushButton.setToolTip(_( u"If you copy this day\'s setup to the clipboard, you can create a \"clone\" of this day when no data is set. This is useful when extending books."))
+        self.copy_pushButton.setText(_( u"Copy To Clipboard"))
+        self.paste_pushButton.setToolTip(_( u"Paste the saved values."))
+        self.paste_pushButton.setText(_( u"Paste"))
 
