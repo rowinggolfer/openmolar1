@@ -89,26 +89,24 @@ def printReceipt(om_gui, valDict, duplicate=False, dupdate=""):
     if om_gui.pt.serialno == 0:
         om_gui.advise(_("no patient selected"), 1)
         return
-    myreceipt=receiptPrint.receipt(om_gui)
+    myreceipt = receiptPrint.receipt(om_gui)
 
     myreceipt.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
     om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3, om_gui.pt.town,
     om_gui.pt.county, om_gui.pt.pcde)
 
-    myreceipt.receivedDict=valDict
+    myreceipt.receivedDict = valDict
     if duplicate:
-        myreceipt.isDuplicate=duplicate
-        myreceipt.dupdate=dupdate
-        om_gui.pt.addHiddenNote("printed", "dup receipt")
-    else:
-        om_gui.pt.addHiddenNote("printed", "receipt")
+        myreceipt.isDuplicate = duplicate
+        myreceipt.dupdate = dupdate
 
     if myreceipt.print_():
         if duplicate:
             commitPDFtoDB(om_gui, "dup receipt")
+            om_gui.pt.addHiddenNote("printed", "dup receipt")
         else:
             commitPDFtoDB(om_gui, "receipt")
-
+            om_gui.pt.addHiddenNote("printed", "receipt")
 
 def printLetter(om_gui):
     '''
@@ -124,7 +122,7 @@ def printLetter(om_gui):
     dl.textEdit.setHtml(html)
     referred_pt = om_gui.pt
     Dialog.show()
-    
+
     if Dialog.exec_():
         html=dl.textEdit.toHtml()
         myclass=letterprint.letter(html)

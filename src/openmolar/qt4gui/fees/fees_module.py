@@ -57,9 +57,9 @@ def raiseACharge(om_gui):
 
         om_gui.pt.addHiddenNote("fee", "%.02f"% fee)
         om_gui.updateHiddenNotesLabel()
-            
+
     ################################################
-    
+
 def applyFeeNow(om_gui, arg, cset=None):
     '''
     updates the patients outstanding money
@@ -75,7 +75,7 @@ def updateFees(om_gui):
     if om_gui.pt.serialno != 0:
         om_gui.pt.updateFees()
         om_gui.updateDetails()
-        
+
 def getFeesFromEst(om_gui, tooth, treat):
     '''
     iterate through the ests... find this item
@@ -116,38 +116,46 @@ def takePayment(om_gui):
         else:
             dent = paymentPt.dnt1
 
+        print "TAKING PAYMENT", paymentPt.serialno
         if cashbook.paymenttaken(paymentPt.serialno, name, dent,
         paymentPt.cset, cash, cheque, debit, credit, sundries, hdp, other):
-            paymentPt.addHiddenNote("payment", 
-            " treatment %.02f sundries %.02f"% (dl.paymentsForTreatment, 
+            print "ADDING NOTE"
+            paymentPt.addHiddenNote("payment",
+            " treatment %.02f sundries %.02f"% (dl.paymentsForTreatment,
             dl.otherPayments))
 
+            print "CHECKING SERIALNO of loaded patient",
             if om_gui.pt.serialno != 0:
+                print "loaded patient == payment patient"
                 om_printing.printReceipt(om_gui,{
-                "Professional Services" : dl.paymentsForTreatment * 100, 
+                "Professional Services" : dl.paymentsForTreatment * 100,
                 "Other Items" : dl.otherPayments * 100})
 
                 #-- always refer to money in terms of pence
-
+                print "adjusting money"
                 if om_gui.pt.cset[:1] == "N":
                     om_gui.pt.money2 += int(dl.paymentsForTreatment*100)
                 else:
                     om_gui.pt.money3 += int(dl.paymentsForTreatment*100)
+                print "recalculating outstanding fees"
                 om_gui.pt.updateFees()
+            else:
+                print "loaded patient is NOT the payment patient!!"
 
             patient_write_changes.toNotes(paymentPt.serialno,
                                           paymentPt.HIDDENNOTES)
 
+            print "writing to notes"
             if patient_write_changes.discreet_changes(paymentPt,
             ("money2", "money3")) and om_gui.pt.serialno != 0:
-
+                print "updating stored values"
                 om_gui.pt_dbstate.money2 = om_gui.pt.money2
                 om_gui.pt_dbstate.money3 = om_gui.pt.money3
 
             paymentPt.clearHiddenNotes()
             om_gui.updateDetails()
             om_gui.updateHiddenNotesLabel()
-            
+            print "PAYMENT ALL DONE!"
         else:
             om_gui.advise("error applying payment.... sorry!<br />"\
             +"Please write this down and tell Neil what happened", 2)
@@ -157,19 +165,19 @@ def loadFeesTable(om_gui):
     loads the fee table
     '''
     om_gui.feestableLoaded = True
-    
+
     tableKeys = localsettings.FEETABLES.tables.keys()
     tableKeys.sort()
     for key in tableKeys:
         table = localsettings.FEETABLES.tables[key]
         model = fee_table_model.treeModel(table)
-        om_gui.fee_models.append(model)  
+        om_gui.fee_models.append(model)
         om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
-    
+
     n = len(om_gui.fee_models)
     text = "%d "%n + _("Fee Scales Available")
-    om_gui.ui.feescales_available_label.setText(text) 
-    
+    om_gui.ui.feescales_available_label.setText(text)
+
     print "loaded feesTable, %d fee models in use"% n
 
 def feetester(om_gui):
@@ -181,18 +189,18 @@ def feetester(om_gui):
         dl = feescale_tester.test_dialog(tables)
         dl.show()
         dl.lineEdit.setText("MOD")
-        QtCore.QObject.connect(om_gui.ui.chooseFeescale_comboBox, 
-            QtCore.SIGNAL("currentIndexChanged (int)"), dl.change_table)        
+        QtCore.QObject.connect(om_gui.ui.chooseFeescale_comboBox,
+            QtCore.SIGNAL("currentIndexChanged (int)"), dl.change_table)
         QtCore.QObject.connect(om_gui, QtCore.SIGNAL("closed"), dl.accept)
-        
+
         i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
         dl.comboBox.setCurrentIndex(i)
-        
+
         om_gui.feetesterdl = dl
     else:
         om_gui.feetesterdl.raise_()
-    
-        
+
+
 def showTableXML(om_gui):
     '''
     user wants to view the full table logic!
@@ -203,43 +211,43 @@ def showTableXML(om_gui):
         mw2 = fee_table_editor.editor(rows, om_gui)
         mw2.show()
         om_gui.wait(False)
-        
+
 def apply_all_table_changes(om_gui):
     '''
     apply changes to the tables
     '''
     updated_tables = []
     for table in localsettings.FEETABLES.tables.values():
-        if table.dirty:            
+        if table.dirty:
             if table.saveDataToDB():
                 updated_tables.append(table.tablename)
-        
+
     if updated_tables:
         message = _("The following tables were altered")+ "<ul>"
         for tablename in updated_tables:
-            message += "<li>%s</li>"% tablename  
+            message += "<li>%s</li>"% tablename
         om_gui.advise(message + "</ul>", 1)
         return True
     else:
-        om_gui.advise(_("No changes apllied"),1)                    
+        om_gui.advise(_("No changes apllied"),1)
 
 def getSelectedTables(om_gui, excludedTable):
     def select_all(val):
         for cb in table_dict.keys():
             cb.setChecked(val)
-            
+
     dl = QtGui.QDialog(om_gui)
     layout = QtGui.QVBoxLayout(dl)
-    
+
     dl.setWindowTitle(_("Make Selection"))
     label = QtGui.QLabel(_("Choose other tables to alter"))
     layout.addWidget(label)
-    
+
     cb = QtGui.QCheckBox(dl)
     cb.setText(_("Select All"))
 
     QtCore.QObject.connect(cb, QtCore.SIGNAL("stateChanged(int)"), select_all)
-    
+
     layout.addWidget(cb)
     line = QtGui.QFrame(dl)
     line.setFrameShape(QtGui.QFrame.HLine)
@@ -255,16 +263,16 @@ def getSelectedTables(om_gui, excludedTable):
             cb.setEnabled(False)
         else:
             table_dict[cb] = table
-        layout.addWidget(cb)        
-    
+        layout.addWidget(cb)
+
     buttonBox = QtGui.QDialogButtonBox(dl)
     buttonBox.setOrientation(QtCore.Qt.Horizontal)
     buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok)
     buttonBox.setCenterButtons(True)
     layout.addWidget(buttonBox)
-    QtCore.QObject.connect(buttonBox, QtCore.SIGNAL("accepted()"), 
+    QtCore.QObject.connect(buttonBox, QtCore.SIGNAL("accepted()"),
         dl.accept)
-    
+
     dl.exec_()
     tables = []
     for cb in table_dict.keys():
@@ -275,23 +283,23 @@ def getSelectedTables(om_gui, excludedTable):
 def table_clicked(om_gui, index):
     '''
     user has clicked an item on the feetable.
-    show the user some options (depending on whether they have a patient 
+    show the user some options (depending on whether they have a patient
     loaded for edit, or are in feetable adjust mode etc....
     '''
-    fee_item = om_gui.ui.feeScales_treeView.model().data(index, 
+    fee_item = om_gui.ui.feeScales_treeView.model().data(index,
     QtCore.Qt.UserRole)
-    
-    if not fee_item: 
+
+    if not fee_item:
         # this will be the case if a header item was clicked
         return
-    
+
     def edit_fee_item():
         '''
         user wishes to alter a fee item
         '''
         Dialog = QtGui.QDialog()
         dl = edit_feeitem_dialog.editFee(fee_item, Dialog)
-    
+
         result, edited_item, newXml, update_others = dl.getInput()
         if result:
             if update_others:
@@ -299,7 +307,7 @@ def table_clicked(om_gui, index):
                     table.alterUserCodeOnly(edited_item)
             if edited_item.table.alterItem(edited_item, newXml):
                 om_gui.dirty_feetable()
-    
+
     def apply(arg):
         '''
         apply the result of the QMenu generated when feetable is clicked
@@ -310,13 +318,13 @@ def table_clicked(om_gui, index):
                 om_gui.feeScaleTreatAdd(fee_item)
         else:
             om_gui.advise(arg.text() + " not yet available", 1)
-    
+
     menu = QtGui.QMenu(om_gui)
-    ptno = om_gui.pt.serialno 
+    ptno = om_gui.pt.serialno
     if ptno != 0:
         menu.addAction(_("Add to tx plan of patient")+" %d"% ptno)
         if om_gui.ui.feescale_adjust_checkBox.isChecked():
-            menu.addSeparator()                
+            menu.addSeparator()
 
     if om_gui.ui.feescale_adjust_checkBox.isChecked():
         menu.addAction(_("Adjust / edit this Item"))
@@ -339,8 +347,8 @@ def feeSearch(om_gui):
         parentIndex = model.parent(index)
         om_gui.ui.feeScales_treeView.setExpanded(parentIndex, True)
         if parentIndex.internalPointer() != None:
-            ensureVisible(parentIndex)        
-        
+            ensureVisible(parentIndex)
+
     search_phrase = om_gui.ui.feeSearch_lineEdit.text()
     model = om_gui.fee_models[
     om_gui.ui.chooseFeescale_comboBox.currentIndex()]
@@ -354,9 +362,9 @@ def feeSearch(om_gui):
     if columns:
         om_gui.wait(True)
         if model.search(search_phrase, columns):
-            om_gui.ui.feeScales_treeView.collapseAll()        
+            om_gui.ui.feeScales_treeView.collapseAll()
             indexes = model.foundItems
-            
+
             om_gui.ui.feesearch_results_label.setText(
             "%d %s %s"%(len(indexes), _("Items containing"), search_phrase))
             for index in indexes:
@@ -366,17 +374,17 @@ def feeSearch(om_gui):
             om_gui.wait(False)
             message = _("phrase not found in feetable")
             if 1 in columns and 4 in columns:
-                message += " " + _("usercodes or descriptions")            
+                message += " " + _("usercodes or descriptions")
             elif 1 in columns:
                 message += " " + _("usercodes")
             elif 4 in columns:
                 message += " " + _("descriptions")
             om_gui.advise(message, 1)
-        
+
     else:
         om_gui.advise(_("nothing to search")+ "<br />" +
         _("please select usercodes and/or descriptions then search again"), 1)
-        
+
 def nhsRegsPDF(om_gui):
     '''
     I have some stored PDF documents
@@ -388,18 +396,18 @@ def nhsRegsPDF(om_gui):
     if Dialog.exec_():
         if dl.tabWidget.currentIndex()==0:
             if dl.info_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources', 
+                doc = os.path.join(localsettings.wkdir, 'resources',
                 "Dental_Information_Guide_2008_v4.pdf")
             else:
-                doc = os.path.join(localsettings.wkdir, 'resources', 
+                doc = os.path.join(localsettings.wkdir, 'resources',
                 "scotNHSremuneration08.pdf")
         else:
             if dl.info2009_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources', 
+                doc = os.path.join(localsettings.wkdir, 'resources',
                 "Dental_Information_Guide_2009.pdf")
             else:
-                doc = os.path.join(localsettings.wkdir, 'resources', 
-                "scotNHSremuneration09.pdf")            
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "scotNHSremuneration09.pdf")
         try:
             print "opening %s"% doc
             localsettings.openPDF(doc)
@@ -417,15 +425,15 @@ def chooseFeescale(om_gui, i):
     if table.endDate == None:
         end = _("IN CURRENT USE")
     else:
-        end = localsettings.formatDate(table.endDate) 
+        end = localsettings.formatDate(table.endDate)
     om_gui.ui.feeScale_label.setText("<b>%s</b> %s - %s"% (
-    table.description, 
-    localsettings.formatDate(table.startDate), end)) 
-    
+    table.description,
+    localsettings.formatDate(table.startDate), end))
+
     om_gui.ui.feesearch_results_label.setText("")
-            
+
     try:
-        om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i]) 
+        om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i])
     except IndexError:
         print i, len(om_gui.fee_models)
         om_gui.advise(_("fee table error"),2)
@@ -439,7 +447,7 @@ def adjustTable(om_gui, index):
             tv.resizeColumnToContents(col)
     #usercolumn is unmanageably wide now
     tv.setColumnWidth(1, 80)
-    
+
 def expandFees(om_gui):
     '''
     expands/contracts the fees treewidget
@@ -451,7 +459,7 @@ def expandFees(om_gui):
             om_gui.ui.feeScales_treeView.setColumnWidth(3, 0)
     else:
         om_gui.ui.feeScales_treeView.collapseAll()
-    
+
 def makeBadDebt(om_gui):
     '''
     write off the debt (stops cluttering up the accounts table)
@@ -526,7 +534,7 @@ def populateAccountsTable(om_gui):
     for i in range(om_gui.ui.accounts_tableWidget.columnCount()):
         om_gui.ui.accounts_tableWidget.resizeColumnToContents(i)
     om_gui.ui.accountsTotal_doubleSpinBox.setValue(total / 100)
-    
+
 
 if __name__ == "__main__":
     localsettings.loadFeeTables()
