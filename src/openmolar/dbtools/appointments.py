@@ -939,7 +939,7 @@ def get_pts_appts(pt, futureOnly=False):
     db = connect()
     cursor = db.cursor()
 
-    condition = " and adate>=NOW() " if futureOnly else ""
+    condition = " and adate>=date(NOW()) " if futureOnly else ""
 
     fullquery = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
     adate, atime, length, datespec FROM apr
