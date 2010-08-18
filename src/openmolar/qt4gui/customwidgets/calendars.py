@@ -44,8 +44,8 @@ class controlCalendar(QtGui.QCalendarWidget):
         self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(True)
         self.setSelectedDate(QtCore.QDate.currentDate())
-        self.connect(self, QtCore.SIGNAL("currentPageChanged (int,int)"),
-            self.jumpMonth)
+        #self.connect(self, QtCore.SIGNAL("currentPageChanged (int,int)"),
+        #    self.jumpMonth)
 
     def jumpMonth(self, year, month):
         '''
