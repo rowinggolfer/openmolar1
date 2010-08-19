@@ -24,8 +24,8 @@
 </referral>
 <referral>
 <description>Oral Surgery - Raigmore</description>
-<surgeon_postal>Dr Duncan Railton</surgeon_postal>
-<surgeon_greeting>Dear Dr Railton</surgeon_greeting>
+<surgeon_postal>Dr Adrian Faroe</surgeon_postal>
+<surgeon_greeting>Dr Faroe</surgeon_greeting>
 <address>
 <line>The Acting Consultant</line>
 <line>Oral Surgery</line>
@@ -89,6 +89,7 @@
 <line>Restorative Consultant</line>
 <line>Dental Department</line>
 <line>Raigmore Hospital</line>
+<line>Old Perth Road</line>
 <line>Inverness</line>
 </address>
 </referral>
