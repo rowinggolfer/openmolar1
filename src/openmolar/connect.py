@@ -18,18 +18,17 @@ settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
 sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
 
 xmlnode = dom.getElementsByTagName("server")[localsettings.chosenserver]
-commands = xmlnode.getElementsByTagName("command")
-if commands:
+command_nodes = xmlnode.getElementsByTagName("command")
+for command_node in command_nodes:
     print "commands found"
-    command_list = commands.getElementsByTagName("str")
-    c_list = []
-    for command in command_list:
-        c_list.append(command.firstChild.data)
-    if c_list:
-        print "executing" c_list
-        subprocess.Popen(c_list)
-else:
-    print "no commands for this server"
+    commands = command_node.getElementsByTagName("str")
+    command_list = []
+    for command in commands:
+        command_list.append(command.firstChild.data)
+    if command_list:
+        print "executing", command_list
+        subprocess.Popen(command_list)
+
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
 myPort = int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
 sslnode = xmlnode.getElementsByTagName("ssl")

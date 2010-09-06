@@ -393,5 +393,5 @@ if __name__ == "__main__":
             sys.exit ()
 
     wkdir = determine_path()
-    sys.path.append(os.path.dirname(wkdir))
+    sys.path.insert(0, os.path.dirname(wkdir))
     run()
