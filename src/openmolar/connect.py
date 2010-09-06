@@ -5,6 +5,7 @@ import MySQLdb
 import sys
 import time
 import base64
+import subprocess
 from xml.dom import minidom
 from openmolar.settings import localsettings
 
@@ -17,6 +18,18 @@ settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
 sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
 
 xmlnode = dom.getElementsByTagName("server")[localsettings.chosenserver]
+commands = xmlnode.getElementsByTagName("command")
+if commands:
+    print "commands found"
+    command_list = commands.getElementsByTagName("str")
+    c_list = []
+    for command in command_list:
+        c_list.append(command.firstChild.data)
+    if c_list:
+        print "executing" c_list
+        subprocess.Popen(c_list)
+else:
+    print "no commands for this server"
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
 myPort = int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
 sslnode = xmlnode.getElementsByTagName("ssl")
