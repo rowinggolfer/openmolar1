@@ -368,7 +368,7 @@ class bulkMails(object):
         TOP = 120
         RECT_WIDTH = pageRect.width() - (2 * LEFT)
         ADDRESS_HEIGHT = 120
-        FOOTER_HEIGHT = 120
+        FOOTER_HEIGHT = 180
         BODY_HEIGHT = pageRect.height() - TOP - ADDRESS_HEIGHT - FOOTER_HEIGHT
         
         addressRect = QtCore.QRectF(LEFT, TOP, RECT_WIDTH, ADDRESS_HEIGHT)
