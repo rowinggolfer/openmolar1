@@ -225,7 +225,7 @@ class bulkMails(object):
             '''
             dl.dateEdit.setEnabled(checked)
         dialog = QtGui.QDialog(self.om_gui)
-        dl = ui_bulkmail_options.Ui_Dialog()
+        dl = Ui_bulkmail_options.Ui_Dialog()
         dl.setupUi(dialog)
         dl.dateEdit.setDate(localsettings.currentDay())
         dialog.connect(dl.custDate_radioButton, 
