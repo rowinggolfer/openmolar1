@@ -19,7 +19,7 @@ try:
         localsettings.localFileDirectory, "recall_footer.txt"), "r")
     RECALL_FOOTER = f.read()
     f.close()
-except OSError:
+except IOError:
     print "no recall footer found"
     RECALL_FOOTER = ""
 
