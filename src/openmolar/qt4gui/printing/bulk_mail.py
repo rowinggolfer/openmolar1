@@ -6,13 +6,23 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import math
-import sys
+import os, sys
 from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
-from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
+from openmolar.qt4gui.compiled_uis import ui_bulkmail_options
 
 DATE_FORMAT = "MMMM, yyyy"
+
+try:
+    f = open(os.path.join(
+        localsettings.localFileDirectory, "recall_footer.txt"), "r")
+    RECALL_FOOTER = f.read()
+    f.close()
+except OSError:
+    print "no recall footer found"
+    RECALL_FOOTER = ""
+
 
 class omLetter(object):
     def __init__(self):
@@ -36,8 +46,9 @@ _("Yours sincerely,"))
         
         self.signature = localsettings.CORRESPONDENCE_SIG
 
-        self.footer = _('''* If you already have a future appointment with us -
-please accept our apologies and ignore this letter.''')
+        self.footer = u"%s\n%s" %(
+_('''* If you already have a future appointment with us -
+please accept our apologies and ignore this letter.'''), RECALL_FOOTER)
 
 class TreeItem(object):
     def __init__(self, data, parent=None):
@@ -214,7 +225,7 @@ class bulkMails(object):
             '''
             dl.dateEdit.setEnabled(checked)
         dialog = QtGui.QDialog(self.om_gui)
-        dl = Ui_bulkmail_options.Ui_Dialog()
+        dl = ui_bulkmail_options.Ui_Dialog()
         dl.setupUi(dialog)
         dl.dateEdit.setDate(localsettings.currentDay())
         dialog.connect(dl.custDate_radioButton, 
@@ -446,7 +457,7 @@ if __name__ == "__main__":
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall
     
-    om_gui = maingui.openmolarGui(app)
+    om_gui = maingui.openmolarGui()
     start = datetime.date(2009,2,1)
     end = datetime.date(2009,2,1)
     
