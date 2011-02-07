@@ -10,7 +10,7 @@ import os, sys
 from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
-from openmolar.qt4gui.compiled_uis import ui_bulkmail_options
+from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
 
 DATE_FORMAT = "MMMM, yyyy"
 
