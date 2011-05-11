@@ -15,7 +15,7 @@ from openmolar import connect
 from openmolar.ptModules import perio,dec_perm,estimates, notes
 from openmolar.settings import localsettings
 
-dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6", 
+dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6",
 "pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
 "recd", "billdate", "enrolled", "initaccept", "lastreaccept", "lastclaim",
 "expiry", "transfer", "chartdate", "accd", "cmpd", "examd", "bpedate")
@@ -98,12 +98,12 @@ decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA',
 '***','***','***','lrE','lrD','lrC','lrB','lrA',
 'llA','llB','llC','llD','llE','***','***','***']
 
-planDBAtts=("serialno", "plantype","band", "grosschg","discount","netchg", 
+planDBAtts=("serialno", "plantype","band", "grosschg","discount","netchg",
 "catcode", "planjoin","regno")
 
 clinical_memos = ("synopsis",)
 
-## important tuple here - these are the values which are checked for user 
+## important tuple here - these are the values which are checked for user
 ## changes
 ATTRIBS_TO_CHECK = patientTableAtts + exemptionTableAtts + bpeTableAtts + \
 currtrtmtTableAtts + mnhistTableAtts + perioTableAtts + planDBAtts + \
@@ -124,20 +124,20 @@ class planData():
         self.catcode = None
         self.planjoin = None
         self.regno = None
-        #-- a variable to indicate if getFromDbhas been run 
-        self.retrieved=False 
-    
+        #-- a variable to indicate if getFromDbhas been run
+        self.retrieved=False
+
     def __repr__(self):
         return "%d,%s,%s,%s,%s,%s,%s,%s,%s"%(
         self.serialno, self.plantype, self.band, self.grosschg, self.discount,
         self.netchg, self.catcode, self.planjoin,self.regno)
-        
+
     def getFromDB(self):
         try:
             db=connect.connect()
             cursor=db.cursor()
-            
-            query='''SELECT %s,%s,%s,%s,%s,%s,%s,%s from plandata 
+
+            query='''SELECT %s,%s,%s,%s,%s,%s,%s,%s from plandata
             where serialno=%s'''%(planDBAtts[1:]+(self.serialno,))
             if localsettings.logqueries:
                 print query
@@ -156,8 +156,8 @@ class planData():
                     i+=1
             self.retrieved=True
         except Exception,e:
-            print "error loading from plandata",e    
-    
+            print "error loading from plandata",e
+
 class patient():
     def __init__(self, sno):
         '''
@@ -170,7 +170,7 @@ class patient():
         for att in patientTableAtts:
             self.__dict__[att] = patientTableVals[i]
             i += 1
-        
+
         ######TABLE 'mnhist'#######
         self.chgdate = nullDate   # date 	YES 	 	None
         self.ix = 0               #tinyint(3) unsigned 	YES 	 	None
@@ -202,12 +202,12 @@ class patient():
         self.underTreatment = False
         self.feeTable = None
         self.synopsis = ""
-        
+
         if self.serialno != 0:
             #load stuff from the database
             db = connect.connect()
             cursor = db.cursor()
-            
+
             self.getSynopsis()
 
             fields = patientTableAtts
@@ -217,7 +217,7 @@ class patient():
 
             query = 'SELECT %s from patients where serialno ='% (
             query.strip(","))
-            
+
             cursor.execute(query + "%s", self.serialno)
             values= cursor.fetchall()
 
@@ -230,10 +230,10 @@ class patient():
                     self.__dict__[field]=values[0][i]
                 i += 1
 
-            query = '''select exemption, exempttext from exemptions 
+            query = '''select exemption, exempttext from exemptions
             where serialno=%s'''
             cursor.execute(query, self.serialno)
-            
+
             values = cursor.fetchall()
 
             for value in values:
@@ -241,7 +241,7 @@ class patient():
 
             query = 'select bpedate, bpe from bpe where serialno=%s'
             cursor.execute(query, self.serialno)
-            
+
             values = cursor.fetchall()
 
             for value in values:
@@ -250,20 +250,20 @@ class patient():
             if self.courseno0 != 0:
                 self.getCurrtrt()
                 self.getEsts()
-           
+
             self.getNotesTuple()
 
             query = 'select chartdate,chartdata from perio where serialno=%s'
             cursor.execute(query, self.serialno)
             perioData=cursor.fetchall()
-            
+
             for data in perioData:
                 self.perioData[localsettings.formatDate(data[0])] = (
                 perio.get_perioData(data[1]))
                 #--perioData is
                 #--a dictionary (keys=dates) of dictionaries with keys
                 #--like "ur8" and containing 7 tuples of data
-            
+
             query = 'select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,'+\
             'liver,kidney,bleed,anaes,other,alert,chkdate from mednotes'+\
             ' where serialno=%s'
@@ -272,17 +272,17 @@ class patient():
             self.MH=cursor.fetchone()
             if self.MH!=None:
                 self.MEDALERT=self.MH[12]
-                    
+
             query = 'select date, trtid, chart from daybook where serialno=%s'
             cursor.execute(query, self.serialno)
             self.dayBookHistory=cursor.fetchall()
-            
+
             cursor.close()
             #db.close()
-            
+
             #-- load from plandata
             self.plandata.getFromDB()
-            
+
             self.updateChartgrid()
             self.updateFees()
             #self.setCurrentEstimate()
@@ -296,8 +296,16 @@ class patient():
         '''
         try:
             today = localsettings.currentDay()
-            nextbirthday = datetime.date(today.year, self.dob.month, 
-            self.dob.day)
+
+            day = self.dob.day
+
+            try:
+                nextbirthday = datetime.date(today.year, self.dob.month,
+                self.dob.day)
+            except ValueError:
+                #catch leap years!!
+                nextbirthday = datetime.date(today.year, self.dob.month,
+                self.dob.day-1)
 
             ageYears = today.year - self.dob.year
 
@@ -308,21 +316,21 @@ class patient():
                 months = today.month - self.dob.month
             if self.dob.day > today.day:
                 months -= 1
-            
+
             isToday =  nextbirthday == today
-            
+
             return (ageYears, months, isToday)
-        
+
         except Exception, e:
             print "error calculating patient's age", e
             return (0,0,False)
-    
+
     def getFeeTable(self):
         '''
         logic to determine which feeTable should be used for standard items
         '''
         if self.feeTable == None:
-            feecat = self.cset       
+            feecat = self.cset
             if self.cset == "N":
                 if self.getAge()[0] < 18:
                     feecat = "C"
@@ -334,17 +342,17 @@ class patient():
                 start, end = table.startDate, table.endDate
                 if end == None:
                     end = localsettings.currentDay()
-                
+
                 if feecat in table.categories and start <= cse_accd <=end:
                     self.feeTable = table
-            
+
             if self.feeTable == None:
                 #-- no matching table found, use the default.
                 print "WARNING - NO SUITABLE FEETABLE FOUND, RETURNING DEFAULT"
                 self.feeTable = localsettings.FEETABLES.default_table
-            
+
         return self.feeTable
-        
+
     def getEsts(self):
         '''
         get estimate data
@@ -378,7 +386,7 @@ self.serialno, self.courseno0))
             self.estimates.append(est)
 
         cursor.close()
-        
+
     def blankCurrtrt(self):
         for att in currtrtmtTableAtts:
             if att == 'courseno':
@@ -398,13 +406,13 @@ self.serialno, self.courseno0))
         query=query.strip(",")
         try:
             if cursor.execute(
-            'SELECT %s from clinical_memos where serialno=%d'% ( query, 
+            'SELECT %s from clinical_memos where serialno=%d'% ( query,
             self.serialno)):
                 self.synopsis = cursor.fetchall()[-1][0]
         except connect.OperationalError, e:
             'necessary because the column is missing is db schema 1.4'
-            print "WARNING -", e            
-            
+            print "WARNING -", e
+
     def getCurrtrt(self):
         db=connect.connect()
         cursor=db.cursor()
@@ -424,7 +432,7 @@ self.serialno, self.courseno0))
                 i+=1
         if not self.accd in ("", None) and self.cmpd in ("", None):
             self.underTreatment = True
-                
+
         cursor.close()
 
     def getNotesTuple(self):
@@ -435,14 +443,14 @@ self.serialno, self.courseno0))
         '''
         db = connect.connect()
         cursor = db.cursor()
-        cursor.execute('''SELECT line from notes where serialno = %s 
+        cursor.execute('''SELECT line from notes where serialno = %s
         order by lineno''', self.serialno)
-        
+
         notestuple = cursor.fetchall()
-        
+
         cursor.close()
         self.notes_dict = notes.getNotesDict(notestuple)
-        
+
     def flipDec_Perm(self,tooth):
         '''
         switches a deciduous tooth to a permanent one,
@@ -474,7 +482,7 @@ self.serialno, self.courseno0))
         else: #lr
             self.dent3=dec_perm.toSignedByte(existing)
         self.updateChartgrid()
-    
+
     def updateChartgrid(self):
         grid=""
         for quad in (self.dent1,self.dent0,self.dent3,self.dent2):
@@ -506,13 +514,13 @@ self.serialno, self.courseno0))
         set the acceptance date (with a pydate)
         '''
         self.accd = accd
-    
+
     def setCmpd(self, cmpd):
         '''
         set the completion date (with a pydate)
         '''
         self.cmpd = cmpd
-    
+
     def resetAllMonies(self):
         '''
         zero's everything except money11 (bad debt)
@@ -524,15 +532,15 @@ self.serialno, self.courseno0))
         self.money2=0
         self.money3=0
         self.money8=0
-            
+
         self.updateFees()
-        
+
     def removeKnownEstimate(self, est):
         try:
             self.estimates.remove(est)
             return True
         except ValueError:
-            print "unable to find known est in estimates" 
+            print "unable to find known est in estimates"
 
     def removeFromEstimate(self, tooth, item):
         if item !="":
@@ -542,8 +550,8 @@ self.serialno, self.courseno0))
                 est.type==item and est.completed==False:
                     self.estimates.remove(est)
                     break #-- only remove 1 occurrence??
-    
-    def addToEstimate(self, number, itemcode, dent, csetype="", 
+
+    def addToEstimate(self, number, itemcode, dent, csetype="",
     category="", type="", descr=None, fee=None, ptfee=None,
     completed=False, feescale=None, carriedover=False):
         '''
@@ -557,17 +565,17 @@ self.serialno, self.courseno0))
         est.courseno = self.courseno0
         est.number = number
         est.itemcode = itemcode
-        
+
         if feescale == None:
             table = self.getFeeTable()
         else:
             table = localsettings.FEETABLES.tables[feescale]
-        
+
         est.feescale = table.index
         if csetype == "":
             csetype = table.categories[0]
         est.csetype = csetype
-        
+
         #handle the case where there are more than one item of the same code
         existing_no = 0
         for existing_est in self.estimates:
@@ -579,7 +587,7 @@ self.serialno, self.courseno0))
             if existing_est.itemcode == est.itemcode:
                 existing_est.linked = linked
         est.linked = linked
-        
+
         est.type = type
         if descr == None:
             est.description = table.getItemDescription(itemcode)
@@ -590,20 +598,20 @@ self.serialno, self.courseno0))
             itemcode, number, no_already_in_estimate=existing_no)
         else:
             est.fee, est.ptfee = fee, ptfee
-        
+
         if category != "":
             est.category = category
         else:
             est.category = table.getTxCategory(itemcode)
-                
+
         est.dent = dent
         est.completed = completed
         est.carriedover = carriedover
-        
+
         self.estimates.append(est)
-            
+
         return est
-        
+
     def addHiddenNote(self,notetype,note="",deleteIfPossible=False):
         HN=""
         if notetype=="payment":
@@ -623,7 +631,7 @@ self.serialno, self.courseno0))
             pass #- should this be something???
         if notetype=="fee":
             HN=chr(3)+chr(131)+note
-            
+
         if HN=="":
             return
         if deleteIfPossible:
@@ -642,13 +650,13 @@ self.serialno, self.courseno0))
         self.billdate=localsettings.currentDay()
         self.billct+=1
         self.billtype=tone
-        
+
     def treatmentOutstanding(self):
         for att in currtrtmtTableAtts:
             if att[-2:] == "pl":
                 if self.__dict__[att] != "":
                     return True
-    
+
     def checkExemption(self):
         if self.exemption == "A" and self.getAge()[0] > 17:
             self.exemption = ""
