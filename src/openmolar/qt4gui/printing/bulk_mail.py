@@ -9,19 +9,23 @@ import math
 import os, sys
 from PyQt4 import QtCore, QtGui
 
+if __name__ == "__main__":
+
+    sys.path.insert(0, os.path.abspath("../../../"))
+
 from openmolar.settings import localsettings
-from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
+from openmolar.qt4gui.compiled_uis import ui_bulkmail_options
 
 DATE_FORMAT = "MMMM, yyyy"
 
 try:
     f = open(os.path.join(
         localsettings.localFileDirectory, "recall_footer.txt"), "r")
-    RECALL_FOOTER = f.read()
+    PROMO_TEXT = f.read()
     f.close()
-except IOError:
+except OSError:
     print "no recall footer found"
-    RECALL_FOOTER = ""
+    PROMO_TEXT= ""
 
 
 class omLetter(object):
@@ -31,24 +35,24 @@ class omLetter(object):
         self.patients = ""
         self.address = ""
         self.recd = None
-        self.body = '''%s <<SALUTATION>>,
-\n<<NAMES>>\n\n%s\n\n%s\n\n%s\n\n\n%s'''% (_("Dear"),
+        self.body = '''\n\n%s <<SALUTATION>>,
+\n<<NAMES>>\n\n%s\n\n%s\n\n%s'''% (_("Dear"),
 _("We are writing to inform you that your dental examination is now due."),
 _("Please contact the surgery to arrange an appointment. *"),
-_("We look forward to seeing you in the near future."),
-_("Yours sincerely,"))
-        self.bodyfamily = '''%s,\n\n<<NAMES>>\n%s\n\n%s\n%s\n\n%s'''%(
+_("We look forward to seeing you in the near future."))
+        self.bodyfamily = '''\n\n%s,\n\n<<NAMES>>\n%s\n\n%s\n%s'''%(
 _("Dear Patients"),
 _("We are writing to inform you that your dental examinations are now due."),
 _("Please contact the surgery to arrange suitable appointments. *"),
-_("We look forward to seeing you in the near future."),
-_("Yours sincerely,"))
-        
+_("We look forward to seeing you in the near future."))
+
+        self.sign_off = _("Yours sincerely,")
+
+        self.promo_text = PROMO_TEXT
         self.signature = localsettings.CORRESPONDENCE_SIG
 
-        self.footer = u"%s\n%s" %(
-_('''* If you already have a future appointment with us -
-please accept our apologies and ignore this letter.'''), RECALL_FOOTER)
+        self.footer = _('''* If you already have a future appointment with us -
+please accept our apologies and ignore this letter.''')
 
 class TreeItem(object):
     def __init__(self, data, parent=None):
@@ -91,7 +95,7 @@ class treeModel(QtCore.QAbstractItemModel):
 
         self.rootItem = TreeItem(header)
         self.setupModelData(mydata, self.rootItem)
-    
+
     def columnCount(self, parent):
         if parent.isValid():
             return parent.internalPointer().columnCount()
@@ -113,16 +117,16 @@ class treeModel(QtCore.QAbstractItemModel):
                 if item.itemData.letterno % 2:
                     brush = QtGui.QBrush(QtGui.QColor(190, 190, 190))
                 else:
-                    brush = QtGui.QBrush(QtGui.QColor(160, 160, 160))                    
+                    brush = QtGui.QBrush(QtGui.QColor(160, 160, 160))
                 return QtCore.QVariant(brush)
             else:
                 return QtCore.QVariant()
         elif role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
-            return item.itemData   
-        
+            return item.itemData
+
         return QtCore.QVariant()
-        
+
     def flags(self, index):
         if not index.isValid():
             return QtCore.Qt.NoItemFlags
@@ -130,7 +134,7 @@ class treeModel(QtCore.QAbstractItemModel):
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
 
     def headerData(self, section, orientation, role):
-        if (orientation == QtCore.Qt.Horizontal and 
+        if (orientation == QtCore.Qt.Horizontal and
         role == QtCore.Qt.DisplayRole):
             return self.rootItem.data(section)
 
@@ -180,14 +184,14 @@ class treeModel(QtCore.QAbstractItemModel):
 
         number = 0
         letterNo = 0
-        
+
         for lineData in lines:
             position = 0
-            
+
             if lineData[0] == letterNo:
                 position = 1
             letterNo = lineData[0]
-            
+
             if position > indentations[-1]:
                 if parents[-1].childCount() > 0:
                     parents.append(
@@ -205,7 +209,7 @@ class bulkMails(object):
     def __init__(self, om_gui):
         self.om_gui = om_gui
         self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A5)
+        self.printer.setPageSize(QtGui.QPrinter.A4)
         self.headers = (_("no data loaded"),)
         self.recipients = ()
         self.bulk_model = treeModel(self.headers, self.recipients)
@@ -213,7 +217,7 @@ class bulkMails(object):
         self.expanded = False
         self.use_given_recall_date = False
         self.LONGDATE = True
-        
+
     def showOptions(self):
         '''
         user is wishing to change some default setting
@@ -225,10 +229,10 @@ class bulkMails(object):
             '''
             dl.dateEdit.setEnabled(checked)
         dialog = QtGui.QDialog(self.om_gui)
-        dl = Ui_bulkmail_options.Ui_Dialog()
+        dl = ui_bulkmail_options.Ui_Dialog()
         dl.setupUi(dialog)
         dl.dateEdit.setDate(localsettings.currentDay())
-        dialog.connect(dl.custDate_radioButton, 
+        dialog.connect(dl.custDate_radioButton,
         QtCore.SIGNAL("toggled (bool)"), enableDate)
         if dialog.exec_():
             if dl.custDate_radioButton.isChecked():
@@ -237,9 +241,9 @@ class bulkMails(object):
                 self.adate = localsettings.currentDay()
             self.use_given_recall_date = dl.recd_radioButton.isChecked()
             self.LONGDATE = dl.fullDate_radioButton.isChecked()
-            
+
             self.om_gui.advise(_("options set"), 1)
-                
+
     def expand_contract(self):
         '''
         change the expansion state
@@ -250,7 +254,7 @@ class bulkMails(object):
         else:
             self.om_gui.ui.bulk_mailings_treeView.collapseAll()
         self.update_expand_ButtonText()
-    
+
     def update_expand_ButtonText(self):
         '''
         make sure the expand / collapse button text is correct
@@ -261,7 +265,7 @@ class bulkMails(object):
         else:
             self.om_gui.ui.bulk_mail_expand_pushButton.setText(
             _("Expand All"))
-        
+
     def setData(self, headers, recipients):
         '''
         load the recipient data
@@ -273,7 +277,7 @@ class bulkMails(object):
         self.update_expand_ButtonText()
         for i in range(len(self.headers)):
             self.om_gui.ui.bulk_mailings_treeView.resizeColumnToContents(i)
-        
+
     def populateTree(self):
         '''
         load the bulk mailing tree view
@@ -296,10 +300,10 @@ class bulkMails(object):
             recipients = letters[key]
             head = recipients[0]
             address = '%s\n%s\n%s\n%s\n%s\n%s'% (
-            head.addr1.title(), head.addr2.title(), 
-            head.addr3.title(), head.town, 
+            head.addr1.title(), head.addr2.title(),
+            head.addr3.title(), head.town,
             head.county, head.pcde)
-            
+
             letter = omLetter()
             while "\n\n" in address:
                 address = address.replace("\n\n","\n")
@@ -310,19 +314,19 @@ class bulkMails(object):
             for r in recipients:
                 letter.names += "        %s %s %s - %s %s\n"% (
                 r.title, r.fname, r.sname, _("our ref"), r.serialno)
-            
-            letter.address_topline = "%s %s %s"% (head.title, 
+
+            letter.address_topline = "%s %s %s"% (head.title,
             head.fname.strip(), head.sname.strip())
-                
+
             if head.age < 18:
                 letter.salutation = head.fname
             else:
                 letter.salutation = "%s %s"% (head.title, head.sname.strip())
-            
+
             for r in recipients[1:]:
                 if r.age > 18:
-                    letter.address_topline += "\n%s %s %s"% (r.title, 
-                    r.fname, r.sname) 
+                    letter.address_topline += "\n%s %s %s"% (r.title,
+                    r.fname, r.sname)
                 else:
                     letter.address_topline += ", %s"% (r.fname)
 
@@ -330,10 +334,10 @@ class bulkMails(object):
                 i = letter.address_topline.rindex(", ")
                 letter.address_topline = "%s and%s"% (
                 letter.address_topline[:i], letter.address_topline[i+1:])
-            
+
             isFamily = len(recipients)>1
             isLastLetter = key == sorted(letters)[-1]
-            
+
             yield letter, isFamily, isLastLetter
 
     def selected(self, index):
@@ -348,51 +352,55 @@ class bulkMails(object):
 
         except IndexError:
             print "selected bulk mail out of range"
-            
+
     def printViaQPainter(self, showRects = False):
         dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
         if not dialog.exec_():
             return
-        
-        sansFont = QtGui.QFont("Helvetica", 9)
+
+        sansFont = QtGui.QFont("Helvetica", 10)
         sansLineHeight = QtGui.QFontMetrics(sansFont).height()
-        serifFont = QtGui.QFont("Times", 10)
+        serifFont = QtGui.QFont("Times", 11)
         serifLineHeight = QtGui.QFontMetrics(serifFont).height()
-        sigFont = QtGui.QFont("Lucida Handwriting",12)
+        sigFont = QtGui.QFont("Lucida Handwriting",13)
         fm = QtGui.QFontMetrics(serifFont)
         datewidth = fm.width("Wednesday September 2999 ")
         dateheight = fm.height()
         pageRect = self.printer.pageRect()
-        
+
         LEFT = 50
-        TOP = 120
+        TOP = 150
         RECT_WIDTH = pageRect.width() - (2 * LEFT)
-        ADDRESS_HEIGHT = 120
-        FOOTER_HEIGHT = 180
+        ADDRESS_HEIGHT = 150
+        FOOTER_HEIGHT = 150
         BODY_HEIGHT = pageRect.height() - TOP - ADDRESS_HEIGHT - FOOTER_HEIGHT
-        
+
         addressRect = QtCore.QRectF(LEFT, TOP, RECT_WIDTH, ADDRESS_HEIGHT)
 
-        dateRect = QtCore.QRectF(LEFT + RECT_WIDTH - datewidth, 
+        dateRect = QtCore.QRectF(LEFT + RECT_WIDTH - datewidth,
         TOP + ADDRESS_HEIGHT, datewidth, dateheight)
 
         bodyRect = QtCore.QRectF(LEFT, TOP + ADDRESS_HEIGHT + dateheight,
         RECT_WIDTH, BODY_HEIGHT)
 
-        footerRect = QtCore.QRectF(LEFT, 
-        pageRect.height() - FOOTER_HEIGHT, 
+        promoRect = bodyRect.adjusted(0, BODY_HEIGHT*.5, 0, 0)
+
+        sigRect = bodyRect.adjusted(0,bodyRect.height()*.75,0,0)
+
+        footerRect = QtCore.QRectF(LEFT,
+        pageRect.height() - FOOTER_HEIGHT,
         RECT_WIDTH, FOOTER_HEIGHT)
-        
+
         painter = QtGui.QPainter(self.printer)
-        
+
         page = 1
-        for letter, FamilyLetter, lastpage in self.iterate_letters():        
+        for letter, FamilyLetter, lastpage in self.iterate_letters():
             painter.save()
             painter.setPen(QtCore.Qt.black)
-            
+
             option = QtGui.QTextOption(QtCore.Qt.AlignLeft)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
-            
+
             ##address
             painter.drawText(addressRect, "%s\n%s"% (
             letter.address_topline, letter.address), option)
@@ -404,63 +412,81 @@ class bulkMails(object):
                 pdate = letter.recd
             else:
                 pdate = self.adate
-                
+
             if self.LONGDATE:
                 pdate_str = localsettings.longDate(pdate)
             else:
-                pdate_str = "%s %s"% (localsettings.monthName(pdate), 
+                pdate_str = "%s %s"% (localsettings.monthName(pdate),
                 pdate.year)
-            
+
             painter.drawText(dateRect, pdate_str)
             if showRects:
                 painter.drawRect(dateRect)
-            
+
             ##body
             if FamilyLetter:
                 painter.drawText(bodyRect, letter.bodyfamily.replace(
-                "<<NAMES>>",letter.names), option)                
+                "<<NAMES>>",letter.names), option)
             else:
                 body = letter.body.replace(
                 "<<SALUTATION>>",letter.salutation)
                 body = body.replace("<<NAMES>>",letter.names)
                 painter.drawText(bodyRect, body, option)
-
-            painter.setFont(sigFont)
-            painter.drawText(bodyRect.adjusted(0,bodyRect.height()*.75,0,0), 
-            letter.signature, option)
             if showRects:
                 painter.drawRect(bodyRect)
-            
+
+            ##promo
+            font = painter.font()
+            font.setItalic(True)
+            painter.setFont(font)
+            painter.drawText(promoRect, letter.promo_text, option)
+            if showRects:
+                painter.drawRect(bodyRect)
+            font.setItalic(False)
+            painter.setFont(font)
+
+
+
+            ##signature
+            painter.drawText(sigRect, letter.sign_off, option)
+
+            painter.setFont(sigFont)
+            painter.drawText(sigRect. adjusted(0, 40,0,0),
+                letter.signature, option)
+            if showRects:
+                painter.drawRect(sigRect)
+
+
             ##footer
             painter.drawLine(footerRect.topLeft(), footerRect.topRight())
             font = QtGui.QFont("Helvetica", 7)
             font.setItalic(True)
             painter.setFont(font)
-            
+
             option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
-            
-            painter.drawText(footerRect, letter.footer, option) 
+
+            painter.drawText(footerRect, letter.footer, option)
             if showRects:
                 painter.drawRect(footerRect)
-            
+
             page += 1
             if not lastpage:
                 self.printer.newPage()
             painter.restore()
 
 if __name__ == "__main__":
-    
+
     app = QtGui.QApplication([])
     import datetime,os
     os.chdir("/home/neil")
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall
-    
+
     om_gui = maingui.openmolarGui()
     start = datetime.date(2009,2,1)
     end = datetime.date(2009,2,1)
-    
+
     letters = bulkMails(om_gui)
     letters.showOptions()
     letters.setData(recall.HEADERS, recall.getpatients(start, end))
