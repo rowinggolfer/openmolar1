@@ -14,7 +14,7 @@ if __name__ == "__main__":
     sys.path.insert(0, os.path.abspath("../../../"))
 
 from openmolar.settings import localsettings
-from openmolar.qt4gui.compiled_uis import ui_bulkmail_options
+from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
 
 DATE_FORMAT = "MMMM, yyyy"
 
