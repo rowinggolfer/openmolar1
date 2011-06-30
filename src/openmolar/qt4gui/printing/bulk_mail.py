@@ -392,9 +392,18 @@ class bulkMails(object):
         RECT_WIDTH, FOOTER_HEIGHT)
 
         painter = QtGui.QPainter(self.printer)
-
-        page = 1
+        
+        if dialog.printRange() == dialog.PageRange:
+            page = dialog.fromPage()
+        else:
+            page = 1
+        
         for letter, FamilyLetter, lastpage in self.iterate_letters():
+            if dialog.toPage() != 0 and page > dialog.toPage():
+                continue 
+            if page < dialog.fromPage():
+                continue
+                
             painter.save()
             painter.setPen(QtCore.Qt.black)
 
@@ -483,7 +492,7 @@ if __name__ == "__main__":
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall
 
-    om_gui = maingui.openmolarGui()
+    om_gui = maingui.openmolarGui(app)
     start = datetime.date(2009,2,1)
     end = datetime.date(2009,2,1)
 
