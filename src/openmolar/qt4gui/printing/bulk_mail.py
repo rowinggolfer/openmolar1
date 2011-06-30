@@ -3,9 +3,11 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version. 
+# See the GNU General Public License for more details.
 
-import math
+from __future__ import division
+
 import os, sys
 from PyQt4 import QtCore, QtGui
 
@@ -40,11 +42,11 @@ class omLetter(object):
 _("We are writing to inform you that your dental examination is now due."),
 _("Please contact the surgery to arrange an appointment. *"),
 _("We look forward to seeing you in the near future."))
-        self.bodyfamily = '''\n\n%s,\n\n<<NAMES>>\n%s\n\n%s\n%s'''%(
+        self.bodyfamily = '''\n\n%s,\n\n<<NAMES>>\n%s\n\n%s\n\n%s'''%(
 _("Dear Patients"),
 _("We are writing to inform you that your dental examinations are now due."),
 _("Please contact the surgery to arrange suitable appointments. *"),
-_("We look forward to seeing you in the near future."))
+_("We look forward to seeing you all in the near future."))
 
         self.sign_off = _("Yours sincerely,")
 
@@ -336,9 +338,8 @@ class bulkMails(object):
                 letter.address_topline[:i], letter.address_topline[i+1:])
 
             isFamily = len(recipients)>1
-            isLastLetter = key == sorted(letters)[-1]
-
-            yield letter, isFamily, isLastLetter
+            
+            yield letter, isFamily
 
     def selected(self, index):
         '''
@@ -358,7 +359,7 @@ class bulkMails(object):
         if not dialog.exec_():
             return
 
-        sansFont = QtGui.QFont("Helvetica", 10)
+        sansFont = QtGui.QFont("Helvetica", 11)
         sansLineHeight = QtGui.QFontMetrics(sansFont).height()
         serifFont = QtGui.QFont("Times", 11)
         serifLineHeight = QtGui.QFontMetrics(serifFont).height()
@@ -371,11 +372,14 @@ class bulkMails(object):
         LEFT = 50
         TOP = 150
         RECT_WIDTH = pageRect.width() - (2 * LEFT)
-        ADDRESS_HEIGHT = 150
+        
+        ADDRESS_LEFT = LEFT + 50
+        ADDRESS_HEIGHT = 180
         FOOTER_HEIGHT = 150
         BODY_HEIGHT = pageRect.height() - TOP - ADDRESS_HEIGHT - FOOTER_HEIGHT
 
-        addressRect = QtCore.QRectF(LEFT, TOP, RECT_WIDTH, ADDRESS_HEIGHT)
+        addressRect = QtCore.QRectF(ADDRESS_LEFT, TOP, 
+                                    300, ADDRESS_HEIGHT)
 
         dateRect = QtCore.QRectF(LEFT + RECT_WIDTH - datewidth,
         TOP + ADDRESS_HEIGHT, datewidth, dateheight)
@@ -388,23 +392,29 @@ class bulkMails(object):
         sigRect = bodyRect.adjusted(0,bodyRect.height()*.75,0,0)
 
         footerRect = QtCore.QRectF(LEFT,
-        pageRect.height() - FOOTER_HEIGHT,
-        RECT_WIDTH, FOOTER_HEIGHT)
+                            pageRect.height() - FOOTER_HEIGHT,
+                            RECT_WIDTH, FOOTER_HEIGHT)
 
         painter = QtGui.QPainter(self.printer)
         
-        if dialog.printRange() == dialog.PageRange:
-            page = dialog.fromPage()
-        else:
-            page = 1
+        first_page = True
+        page_no = 0
         
-        for letter, FamilyLetter, lastpage in self.iterate_letters():
-            if dialog.toPage() != 0 and page > dialog.toPage():
-                continue 
-            if page < dialog.fromPage():
-                continue
+        for letter, FamilyLetter in self.iterate_letters():
+            page_no += 1
+        
+            if dialog.printRange() == dialog.PageRange:
+                if page_no < dialog.fromPage():
+                    continue
+                if dialog.toPage() != 0 and page_no > dialog.toPage():
+                    continue 
+            
+            if not first_page:
+                self.printer.newPage()
+            first_page = False
                 
             painter.save()
+            painter.setFont(serifFont)
             painter.setPen(QtCore.Qt.black)
 
             option = QtGui.QTextOption(QtCore.Qt.AlignLeft)
@@ -479,16 +489,22 @@ class bulkMails(object):
             if showRects:
                 painter.drawRect(footerRect)
 
-            page += 1
-            if not lastpage:
-                self.printer.newPage()
+
+            ##fold marks
+            top_fold_y = pageRect.height()/3
+            painter.drawLine(0, top_fold_y, 10, top_fold_y)
+            
+            top_fold_y = pageRect.height()*2/3
+            painter.drawLine(0, top_fold_y, 10, top_fold_y)
+            
+
             painter.restore()
 
 if __name__ == "__main__":
 
     app = QtGui.QApplication([])
-    import datetime,os
-    os.chdir("/home/neil")
+    import datetime
+    os.chdir(os.environ.get("HOME", "."))
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall
 
