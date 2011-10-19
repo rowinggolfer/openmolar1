@@ -356,11 +356,16 @@ class gp17():
             if len(self.pt.addr2)>i:
                 painter.drawText(rect,self.pt.addr2[i],option)
             i+=1
+        
+        line3 = self.pt.addr3
+        if line3 == "":
+            line3 = self.pt.town
+        
         i=0
         for rect in self.address3Boxes.values():
             if self.testingMode : painter.drawRect(rect)
-            if len(self.pt.addr3)>i:
-                painter.drawText(rect,self.pt.addr3[i],option)
+            if len(line3)>i:
+                painter.drawText(rect, line3[i],option)
             i+=1
         
         pcde=self.pt.pcde.strip()
