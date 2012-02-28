@@ -1469,7 +1469,7 @@ def printApptCard(om_gui):
         _("include today's appointment(s)?"),
         QtGui.QMessageBox.No|QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
-            for appt in appts:
+            for appt in appts[:]:
                 if appt.today:
                     appts.remove(appt)
 
