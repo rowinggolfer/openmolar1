@@ -32,14 +32,14 @@ class Card(object):
         pageRect = self.printer.pageRect()
         painter.setPen(QtCore.Qt.black)
 
-        font = QtGui.QFont("Times", 12)
+        font = QtGui.QFont("Times", 11)
         fm = QtGui.QFontMetrics(font)
         fontLineHeight = fm.height()
 
         painter.setFont(font)
 
-        rect = QtCore.QRectF(pageRect.width()/5, pageRect.height()/5,
-            pageRect.width()*4/5, pageRect.height()/3)
+        rect = QtCore.QRectF(pageRect.width()/6, pageRect.height()/20,
+            pageRect.width()*5/6, pageRect.height()/3)
 
         text = "%s %s %s\n%s\n"%(
             self.pt.title, self.pt.fname, self.pt.sname, self.pt.address)
@@ -52,11 +52,15 @@ class Card(object):
         y = pageRect.height()/3
         painter.drawLine(0,int(y),int(pageRect.width()),int(y))
 
-        y += fontLineHeight*3
+        y += fontLineHeight*1.5
 
+        font.setBold(True)
+        painter.setFont(font)
         rect = QtCore.QRectF(0, y, pageRect.width(), fontLineHeight*1.5)
         painter.drawText(rect, "You have the following appointments with us",
             option)
+        font.setBold(False)
+        painter.setFont(font)
 
         for appt in self.appts:
             y += fontLineHeight*1.5

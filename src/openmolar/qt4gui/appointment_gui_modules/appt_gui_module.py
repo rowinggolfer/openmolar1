@@ -1460,6 +1460,19 @@ def printApptCard(om_gui):
     '''
     appts = appointments.get_pts_appts(om_gui.pt, True)
 
+    today_dialog = False
+    for appt in appts:
+        today_dialog = today_dialog or appt.today
+
+    if today_dialog:
+        if QtGui.QMessageBox.question(om_gui, _("confirm"),
+        _("include today's appointment(s)?"),
+        QtGui.QMessageBox.No|QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+            for appt in appts:
+                if appt.today:
+                    appts.remove(appt)
+
     card = apptcardPrint.Card()
     card.setProps(om_gui.pt, appts)
 
