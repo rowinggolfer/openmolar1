@@ -939,17 +939,18 @@ def get_pts_appts(pt, futureOnly=False):
     db = connect()
     cursor = db.cursor()
 
-    condition = " and adate>=date(NOW()) " if futureOnly else ""
-
     fullquery = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
-    adate, atime, length, datespec FROM apr
-    WHERE serialno=%d %s ORDER BY adate, aprix'''% (sno, condition)
+    adate, atime, length, datespec FROM apr WHERE serialno=%s ORDER BY aprix'''
+
+    if futureOnly:
+        fullquery = fullquery.replace("ORDER BY aprix",
+        "and adate>=date(NOW()) ORDER BY concat(atime, adate)")
 
     ## - table also contains flag0,flag1,flag2,flag3,flag4,
 
     if localsettings.logqueries:
         print fullquery
-    cursor.execute(fullquery)
+    cursor.execute(fullquery, sno)
 
     rows = cursor.fetchall()
     #return rows

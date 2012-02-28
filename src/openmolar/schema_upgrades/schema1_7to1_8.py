@@ -7,11 +7,11 @@
 # See the GNU General Public License for more details.
 
 '''
-This module provides a function 'run' which will move data 
+This module provides a function 'run' which will move data
 to schema 1_8
 '''
 import sys
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar import connect
 
@@ -19,7 +19,7 @@ from PyQt4 import QtGui, QtCore
 
 SQLSTRINGS = [
 '''
-alter table aslot 
+alter table aslot
 add column timestamp timestamp not null default CURRENT_TIMESTAMP
 ''',
 'DROP TABLE if exists phrasebook',
@@ -45,6 +45,7 @@ EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
     <phrase>No LA.</phrase>
     <phrase>Anaesthetic Used - Citanest</phrase>
     <phrase>Anaesthetic Used - Scandonest Plain</phrase>
+    <phrase>Anaesthetic Used - Scandonest Special</phrase>
     <phrase>Anaesthetic Used - Septonest + 1:100,000 Adrenaline (Gold)</phrase>
     <phrase>Anaesthetic Used - Septonest + 1:200,000 Adrenaline (Green)</phrase>
     <phrase>Anaesthetic Used - Lignocaine + 1:80,000 Adrenaline</phrase>
@@ -52,6 +53,7 @@ EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
 <section>
     <header>Restorations</header>
     <widget>choose_tooth</widget>
+    <phrase>Restored using Amalgam</phrase>
     <phrase>Restored using Fuji Ix</phrase>
     <phrase>Restored using Etch/bond/Tetric Composite</phrase>
     <phrase>Restored using Etch/bond/Venus-Diamond Composite</phrase>
@@ -64,7 +66,7 @@ EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
     <phrase>Bridge Preparation, Pentamix Impression, Alginate of opposing arch. Temporised with Quick Temp and tempbond</phrase>
     <phrase>Crown Preparation, Pentamix Impression in triple tray. Temporised with Quick Temp and tempbond</phrase>
     <phrase>Bridge Preparation, Afinis Impression in triple tray. Temporised with Quick Temp and tempbond</phrase>
-    <widget>choose_shade</widget> 
+    <widget>choose_shade</widget>
 </section>
 <section>
     <header>Endodontics</header>
@@ -72,7 +74,7 @@ EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
     <phrase>1st Stage RCT, irrigated and dried, dressed ledermix and coltosol</phrase>
     <phrase>1st Stage RCT, irrigated and dried, dressed hypocal and coltosol</phrase>
     <phrase>Final Stage RCT, irrigated and dried, Sealed with tubliseal and gutta percha.</phrase>
-</section>    
+</section>
 </phrasebook>'''
 
 
@@ -81,7 +83,7 @@ class UpdateException(Exception):
     A custom exception. If this is thrown the db will be rolled back
     '''
     pass
-    
+
 class dbUpdater(QtCore.QThread):
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
@@ -89,7 +91,7 @@ class dbUpdater(QtCore.QThread):
         self.path = None
         self.completed = False
         self.MESSAGE = "upating database"
-    
+
     def progressSig(self, val, message=""):
         '''
         emits a signal showhing how we are proceeding.
@@ -102,7 +104,7 @@ class dbUpdater(QtCore.QThread):
     def create_alter_tables(self):
         '''
         execute the above commands
-        NOTE - this function may fail depending on the mysql permissions 
+        NOTE - this function may fail depending on the mysql permissions
         in place
         '''
         db = connect.connect()
@@ -129,27 +131,27 @@ class dbUpdater(QtCore.QThread):
             db.autocommit(True)
         else:
             raise UpdateException("couldn't execute all statements!")
-    
+
     def insertValues(self):
         '''
         insert the demo phrasebook
         '''
-                                 
+
         db = connect.connect()
         cursor=db.cursor()
-        
+
         query = "insert into phrasebook values (%s, %s)"
         values = (0, EXAMPLE_PHRASEBOOK)
         cursor.execute(query, values)
         db.commit()
-        
+
         cursor.close()
         db.close()
         return True
-        
+
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
-                
+
     def run(self):
         print "running script to convert from schema 1.7 to 1.8"
         try:
@@ -157,27 +159,27 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(20, _("executing statements"))
             self.create_alter_tables()
             self.progressSig(60, _('inserting values'))
-                
+
             print "inserting values"
             if self.insertValues():
                 print "ok"
             else:
-                print "FAILED!!!!!"            
+                print "FAILED!!!!!"
 
             self.progressSig(90, _('updating settings'))
-            print "update database settings..." 
-            
+            print "update database settings..."
+
             schema_version.update(("1.8",), "1_7 to 1_8 script")
-            
+
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
             + " 1.8")
-        
+
         except UpdateException, e:
             localsettings.CLIENT_SCHEMA_VERSION = "1.7"
             self.completeSig(_("rolled back to") + " 1.7")
-            
+
         except Exception, e:
             print "Exception caught",e
             self.completeSig(str(e))

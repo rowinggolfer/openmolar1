@@ -14,23 +14,23 @@ from xml.dom import minidom
 class shadePicker(QtGui.QFrame):
     def __init__(self, parent=None):
         super(shadePicker, self).__init__(parent)
-        
+
         layout = QtGui.QHBoxLayout(self)
-        
+
         self.cb = QtGui.QCheckBox(self)
         self.cb.setText(_("Shade"))
-        
+
         self.comboBox = QtGui.QComboBox(self)
-        self.comboBox.addItems(["A1","A2","A3","A4","B1","B2","B3","B4",
+        self.comboBox.addItems(["A1","A2","A3","A3.5","A4","B1","B2","B3","B4",
         "C1","C2","C3","C4","D1","D2","D3","D4"])
         self.comboBox.setCurrentIndex(-1)
-        
+
         layout.addWidget(self.cb)
         layout.addWidget(self.comboBox)
-        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, 
+        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
         layout.addItem(spacerItem)
-        
+
         QtCore.QObject.connect(self.comboBox,
             QtCore.SIGNAL("currentIndexChanged(int)"), self.slot)
 
@@ -44,7 +44,7 @@ class phraseBook(QtGui.QDialog):
     def __init__(self, parent=None):
         super(phraseBook, self).__init__(parent)
         self.setWindowTitle(_("Phrase Book"))
-        
+
         layout = QtGui.QVBoxLayout(self)
         self.tabWidget = QtGui.QTabWidget()
         self.buttonBox = QtGui.QDialogButtonBox(self)
@@ -54,7 +54,7 @@ class phraseBook(QtGui.QDialog):
         self.buttonBox.setCenterButtons(True)
         self.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.accept)
         self.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.reject)
-        
+
         layout.addWidget(self.tabWidget)
         layout.addWidget(self.buttonBox)
 
@@ -83,12 +83,12 @@ class phraseBook(QtGui.QDialog):
                     layout.addWidget(sp)
                     self.dict[i] = (sp.cb, sp.result)
                     i += 1
-            spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, 
+            spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
             layout.addItem(spacerItem)
 
             self.tabWidget.addTab(page, icon, header[0].firstChild.data)
-        
+
     @property
     def selectedPhrases(self):
         retlist = []
@@ -96,14 +96,14 @@ class phraseBook(QtGui.QDialog):
             cb , text = self.dict[key]
             if cb.isChecked():
                 if type(text) == types.MethodType:
-                    text = text() 
+                    text = text()
                 retlist.append(text)
         return retlist
-        
+
 if __name__ == "__main__":
     from openmolar.qt4gui import resources_rc
     localsettings.initiate()
-    app = QtGui.QApplication([])    
+    app = QtGui.QApplication([])
     ui = phraseBook()
     if ui.exec_():
         print ui.selectedPhrases

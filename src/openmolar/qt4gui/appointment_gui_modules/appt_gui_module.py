@@ -176,7 +176,7 @@ def newAppt(om_gui):
             practix = localsettings.apptix.get(py_inits)
             if not practix:
                 om_gui.advise(_("Please specify a clinician"), 1)
-            else:    
+            else:
                 #--length
                 lengthText = str(dl.apptlength_comboBox.currentText())
                 if "hour" in lengthText and not "hours " in lengthText:
@@ -212,7 +212,7 @@ def newAppt(om_gui):
                 inputting = False
         else:
             break
-        
+
 def select_apr_ix(om_gui, apr_ix):
     '''
     select the row of the model of the patient's diary where the appt is
@@ -251,12 +251,12 @@ def clearApptButtonClicked(om_gui):
             return True
         else:
             om_gui.advise(_("Error removing proposed appointment"), 2)
-    
+
     if om_gui.pt_diary_model.selectedAppt == None:
         om_gui.advise(_("No appointment selected"))
         return
     appt = om_gui.pt_diary_model.selectedAppt
-    
+
     if appt.date == None:
         if QtGui.QMessageBox.question(om_gui, _("Confirm"),
          _("Delete Unscheduled Appointment?"),
@@ -323,7 +323,7 @@ def modifyAppt(om_gui):
 
                 QtCore.QObject.connect(dl.apptlength_comboBox,
                 QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
-    
+
     if om_gui.pt_diary_model.selectedAppt == None:
         om_gui.advise(_("No appointment selected"), 1)
     else:
@@ -420,7 +420,7 @@ def begin_makeAppt(om_gui, dayView=False):
     also handles both 1st appointment buttons
     '''
     layout_ptDiary(om_gui)
-    
+
     if om_gui.pt_diary_model.selectedAppt == None:
         om_gui.advise(_("Please select an appointment to schedule"), 1)
         return
@@ -441,12 +441,12 @@ def begin_makeAppt(om_gui, dayView=False):
         om_gui.ui.diary_tabWidget.setCurrentIndex(1)
         weekView_setScheduleMode(om_gui)
     om_gui.signals_tabs() #reconnect
-        
-    om_gui.signals_apptStateWidgets(False)    
+
+    om_gui.signals_apptStateWidgets(False)
     om_gui.ui.day_schedule_tabWidget.setCurrentIndex(0)
     om_gui.ui.week_schedule_tabWidget.setCurrentIndex(0)
-    om_gui.signals_apptStateWidgets()    
-    
+    om_gui.signals_apptStateWidgets()
+
     om_gui.signals_calendar(False)
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
     om_gui.ui.weekCalendar.setSelectedDate(QtCore.QDate.currentDate())
@@ -1450,7 +1450,7 @@ def aptOVlabelRightClicked(om_gui, d):
     '''
     if permissions.granted(om_gui):
         dl = alterAday.alterDay(om_gui, d)
-        
+
         if dl.getInput():
             layout_weekView(om_gui)
 
@@ -1460,13 +1460,8 @@ def printApptCard(om_gui):
     '''
     appts = appointments.get_pts_appts(om_gui.pt, True)
 
-    futureAppts = []
-    for appt in appts:
-        if appt.future:
-            futureAppts.append(appt)
-
-    card = apptcardPrint.card()
-    card.setProps(om_gui.pt, futureAppts)
+    card = apptcardPrint.Card()
+    card.setProps(om_gui.pt, appts)
 
     card.print_()
     om_gui.pt.addHiddenNote("printed", "appt card")

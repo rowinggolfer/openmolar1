@@ -3,7 +3,7 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. 
+# (at your option) any later version.
 # See the GNU General Public License for more details.
 
 from __future__ import division
@@ -25,7 +25,7 @@ try:
         localsettings.localFileDirectory, "recall_footer.txt"), "r")
     PROMO_TEXT = f.read()
     f.close()
-except OSError:
+except IOError:
     print "no recall footer found"
     PROMO_TEXT= ""
 
@@ -338,7 +338,7 @@ class bulkMails(object):
                 letter.address_topline[:i], letter.address_topline[i+1:])
 
             isFamily = len(recipients)>1
-            
+
             yield letter, isFamily
 
     def selected(self, index):
@@ -372,13 +372,13 @@ class bulkMails(object):
         LEFT = 50
         TOP = 150
         RECT_WIDTH = pageRect.width() - (2 * LEFT)
-        
+
         ADDRESS_LEFT = LEFT + 50
         ADDRESS_HEIGHT = 180
         FOOTER_HEIGHT = 150
         BODY_HEIGHT = pageRect.height() - TOP - ADDRESS_HEIGHT - FOOTER_HEIGHT
 
-        addressRect = QtCore.QRectF(ADDRESS_LEFT, TOP, 
+        addressRect = QtCore.QRectF(ADDRESS_LEFT, TOP,
                                     300, ADDRESS_HEIGHT)
 
         dateRect = QtCore.QRectF(LEFT + RECT_WIDTH - datewidth,
@@ -396,23 +396,23 @@ class bulkMails(object):
                             RECT_WIDTH, FOOTER_HEIGHT)
 
         painter = QtGui.QPainter(self.printer)
-        
+
         first_page = True
         page_no = 0
-        
+
         for letter, FamilyLetter in self.iterate_letters():
             page_no += 1
-        
+
             if dialog.printRange() == dialog.PageRange:
                 if page_no < dialog.fromPage():
                     continue
                 if dialog.toPage() != 0 and page_no > dialog.toPage():
-                    continue 
-            
+                    continue
+
             if not first_page:
                 self.printer.newPage()
             first_page = False
-                
+
             painter.save()
             painter.setFont(serifFont)
             painter.setPen(QtCore.Qt.black)
@@ -493,10 +493,10 @@ class bulkMails(object):
             ##fold marks
             top_fold_y = pageRect.height()/3
             painter.drawLine(0, top_fold_y, 10, top_fold_y)
-            
+
             top_fold_y = pageRect.height()*2/3
             painter.drawLine(0, top_fold_y, 10, top_fold_y)
-            
+
 
             painter.restore()
 

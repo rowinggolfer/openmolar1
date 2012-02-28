@@ -77,7 +77,7 @@ def plannedItems(pt):
                     #check for deciduous
                     toothName = str(pt.chartgrid.get(attrib)).upper()
                     plannedList.append((toothName, item),)
-                else:    
+                else:
                     plannedList.append((attrib, item), )
     return plannedList
 
@@ -92,10 +92,10 @@ def completedItems(pt, teethOnly=False):
                     item = item.decode("latin-1")
                     if re.match("[ul][lr][0-8]",tooth):
                         compList.append((tooth, item),)
-    else:    
+    else:
         if pt.examt!="" and pt.examd:
             compList.append(("Exam", pt.examt),)
-            
+
         for attrib in tup_Atts+tup_toothAtts:
             tx = pt.__dict__[attrib+"cmp"]
             if not tx in ("",None):
@@ -106,7 +106,7 @@ def completedItems(pt, teethOnly=False):
                         #check for deciduous
                         toothName = str(pt.chartgrid.get(attrib)).upper()
                         compList.append((toothName, item),)
-                    else:    
+                    else:
                         if not teethOnly:
                             compList.append((attrib, item), )
     return compList
@@ -122,10 +122,10 @@ def summary(pt):
     if not pt.underTreatment:
         retarg += "<H4>%s</H4>"% _("Previous Course")
     if pt.accd != None:
-        retarg += '%s %s<br />'% ( _("Start"), 
+        retarg += '%s %s<br />'% ( _("Start"),
         localsettings.formatDate(pt.accd))
     if pt.cmpd != None:
-        retarg += '%s %s<br />'% (_('End'), 
+        retarg += '%s %s<br />'% (_('End'),
         localsettings.formatDate(pt.cmpd))
     plan = u""
     for item in plannedItems(pt):
@@ -160,10 +160,10 @@ def completedFillsToStatic(pt):
                 new = new.replace("  "," ")
                 #34 characters is a database limit.
                 while len(new) > 34:
-                    new = new[new.index(" "):]
+                    new = new[new.index(" ")+1:]
                 pt.__dict__["%sst"% tooth] = new
-            
-            print "updating static"    
+
+            print "updating static"
             #print "comp to static '%s','%s','%s','%s'"% (
             #tooth, prop, existing, new)
     else:#except Exception, e:

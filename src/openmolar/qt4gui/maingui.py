@@ -16,6 +16,7 @@ from PyQt4 import QtGui, QtCore
 import os
 import re
 import sys
+import traceback
 import copy
 import datetime
 import pickle
@@ -155,13 +156,13 @@ class openmolarGui(QtGui.QMainWindow):
         self.feestableLoaded = False
         self.forum_parenting_mode = (False, None)
         self.feetesterdl = None
-        
-        self.alterAday_clipboard = [] #clipboard used by the alterAday dialog 
+
+        self.alterAday_clipboard = [] #clipboard used by the alterAday dialog
         self.alterAday_clipboard_date = None
-        
+
         QtCore.QTimer.singleShot(1*1000, self.set_operator_label)
         QtCore.QTimer.singleShot(1*1000, self.load_todays_patients_combobox)
-        
+
     def advise(self, arg, warning_level=0):
         '''
         inform the user of events -
@@ -229,7 +230,7 @@ class openmolarGui(QtGui.QMainWindow):
                 return
         utilities.deleteTempFiles()
         self.emit(QtCore.SIGNAL("closed")) #close the feescale tester
-        
+
     def fullscreen(self):
         if self.ui.actionFull_Screen_Mode_Ctrl_Alt_F.isChecked():
             self.setWindowState(QtCore.Qt.WindowFullScreen)
@@ -505,13 +506,13 @@ class openmolarGui(QtGui.QMainWindow):
             self.advise(_("changed clinician to") + " " + selected)
             self.load_todays_patients_combobox()
             self.set_operator_label()
-        
+
     def setAssistant(self):
         result, selected = assistant_select_dialog.Dialog(self).result()
         if result:
             self.advise(_("changed assistant to") + " " + selected)
-            self.set_operator_label()        
-        
+            self.set_operator_label()
+
     def saveButtonClicked(self):
         self.okToLeaveRecord(cont = True)
 
@@ -1292,7 +1293,7 @@ class openmolarGui(QtGui.QMainWindow):
         then only pt's of that dentist show up
         '''
         self.ui.dayList_comboBox.clear()
-        
+
         if localsettings.clinicianNo != 0:
             header = _("Today's Patients")+ \
             " (%s)"%localsettings.clinicianInits
@@ -1301,7 +1302,7 @@ class openmolarGui(QtGui.QMainWindow):
 
         dents = (localsettings.clinicianNo, )
         ptList = appointments.todays_patients(dents)
-        
+
         self.ui.dayList_comboBox.setVisible(len(ptList) != 0)
 
         self.ui.dayList_comboBox.addItem(header)
@@ -1824,16 +1825,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             else:
                 op_text = ""
         else:
-            op_text = (" <b>" + _("CLINICIAN") + "(" + 
+            op_text = (" <b>" + _("CLINICIAN") + "(" +
             localsettings.clinicianInits + ")</b> - ")
-                
+
         if "/" in localsettings.operator:
             op_text += " " + _("team") + " "
         op_text += (" " + localsettings.operator + " " + _("using") + " " +
         localsettings.station + " " + _("mode"))
-        
-        self.operator_label.setText(op_text)    
-    
+
+        self.operator_label.setText(op_text)
+
     def labels_and_tabs(self):
         '''
         initialise a few labels
@@ -1843,11 +1844,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.diary_tabWidget.setCurrentIndex(0)
         self.ui.day_schedule_tabWidget.setCurrentIndex(0)
         self.ui.week_schedule_tabWidget.setCurrentIndex(0)
-        c_list = QtGui.QCompleter([_("Mr"), _("Mrs"), _("Ms"), _("Miss"), 
+        c_list = QtGui.QCompleter([_("Mr"), _("Mrs"), _("Ms"), _("Miss"),
         _("Master"), _("Dr"), _("Professor")])
         self.ui.titleEdit.setCompleter(c_list)
 
-        
+
         if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)
         else:
@@ -2039,7 +2040,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         dl = phrasebook_dialog.phraseBook(self)
         newNotes = ""
         if dl.exec_():
-            for phrase in dl.selectedPhrases: 
+            for phrase in dl.selectedPhrases:
                 newNotes +=  phrase + "\n"
             if newNotes != "":
                 self.addNewNote(newNotes)
@@ -2466,11 +2467,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         user is asking for a different font on the appointment book
         '''
-        i, result = QtGui.QInputDialog.getInteger(self, _("FontSize"), 
+        i, result = QtGui.QInputDialog.getInteger(self, _("FontSize"),
         _("Enter your preferred font size for appointment book") , 8,6,16)
         if result:
             appt_gui_module.aptFontSize(self, i)
-        
+
     def apptBook_appointmentClickedSignal(self, arg):
         '''
         a custom widget (dentist diary) has sent a signal that an
@@ -2879,13 +2880,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user has changed the filter for who's posts to show
         '''
         forum_gui_module.viewFilterChanged(self, chosen)
-    
+
     def forumCollapse(self):
         '''
         user has pressed the collapse button
         '''
         self.ui.forum_treeWidget.collapseAll()
-        
+
     def forumExpand(self):
         '''
         user has pressed the expand button
@@ -3458,7 +3459,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.actionSet_Clinician,
         QtCore.SIGNAL("triggered()"), self.setClinician)
-        
+
         QtCore.QObject.connect(self.ui.actionSet_Assistant,
         QtCore.SIGNAL("triggered()"), self.setAssistant)
 
@@ -3566,8 +3567,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.forum_treeWidget_selectionChanged)
 
         QtCore.QObject.connect(self.ui.actionForum,
-        QtCore.SIGNAL("triggered ()"), self.forum_mode)        
-        
+        QtCore.SIGNAL("triggered ()"), self.forum_mode)
+
         QtCore.QObject.connect(self.ui.forumDelete_pushButton,
         QtCore.SIGNAL("clicked()"), self.forumDeleteItem_clicked)
 
@@ -3583,10 +3584,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.forumViewFilter_comboBox,
         QtCore.SIGNAL("currentIndexChanged (const QString&)"),
         self.forumViewFilterChanged)
-        
+
         QtCore.QObject.connect(self.ui.forumCollapse_pushButton,
         QtCore.SIGNAL("clicked()"), self.forumCollapse)
-        
+
         QtCore.QObject.connect(self.ui.forumExpand_pushButton,
         QtCore.SIGNAL("clicked()"), self.forumExpand)
 
@@ -4096,6 +4097,17 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.handle_patientTab()
             self.updateDetails()
 
+    def excepthook(self, exc_type, exc_val, tracebackobj):
+        '''
+        PyQt4 prints unhandled exceptions to stdout and carries on regardless
+        I don't want this to happen.
+        so sys.excepthook is passed to this
+        '''
+        message = ""
+        for l in traceback.format_exception(exc_type, exc_val, tracebackobj):
+            message += l
+        self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s'% message, 2)
+
 
 def main(app):
     '''
@@ -4106,7 +4118,8 @@ def main(app):
         print "unable to run... no login"
         sys.exit()
     localsettings.initiate()
-    mainWindow = openmolarGui(app) #-- app required for polite shutdown
+    mainWindow = openmolarGui(app)
+    sys.excepthook = mainWindow.excepthook
     mainWindow.show()
     if __name__ != "__main__":
         #--don't maximise the window for dev purposes - I like to see

@@ -290,6 +290,18 @@ class patient():
     def __repr__(self):
         return "'Patient_class instance - serialno %d'"% self.serialno
 
+    @property
+    def address(self):
+        '''
+        a printable address
+        '''
+        address = ""
+        for line in (self.addr1, self.addr2, self.addr3,
+        self.town, self.county, self.pcde):
+            if line.strip(" ") != "":
+                address += "%s\n"% line.strip(" ")
+        return address
+
     def getAge(self):
         '''
         return the age in form (year(int), months(int), isToday(bool))

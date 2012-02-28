@@ -1,36 +1,16 @@
 <?xml version="1.0"?>
 <referrals>
 <referral>
-<description>Michael Gough</description>
-<surgeon_postal>Dr. Michael Gough</surgeon_postal>
-<surgeon_greeting>Michael</surgeon_greeting>
-<address>
-<line>Southside Dental Practice</line> 
-<line>28 Southside Road</line>
-<line>Inverness</line>
-</address>
-</referral>
-
-<referral>
-<description>Inverness Dental Centre (GA kids..)</description>
-<surgeon_postal>The Community Dental Officer</surgeon_postal>
-<surgeon_greeting>Sir/Madam</surgeon_greeting>
-<address> 
-<line>Inverness Dental Centre</line>
-<line>Centre For Health Science</line>
-<line>Old Perth Road</line>
-<line>Inverness IV2 3JH.</line>
-</address>
-</referral>
-<referral>
 <description>Oral Surgery - Raigmore</description>
-<surgeon_postal>Dr Adrian Faroe</surgeon_postal>
-<surgeon_greeting>Dr Faroe</surgeon_greeting>
+<surgeon_postal>Dr Adrian Farrow</surgeon_postal>
+<surgeon_greeting>Dr Farrow</surgeon_greeting>
 <address>
-<line>The Acting Consultant</line>
+<line>The Consultant</line>
 <line>Oral Surgery</line>
 <line>Raigmore Hospital</line>
+<line>Old Perth Road</line>
 <line>Inverness</line>
+<line>IV2 3JH.</line>
 </address>
 </referral>
 
@@ -42,9 +22,27 @@
 <line>Consultant Orthodontist</line>
 <line>Department of Orthodontics</line>
 <line>Raigmore Hospital</line>
+<line>Old Perth Road</line>
 <line>Inverness</line>
+<line>IV2 3JH.</line>
 </address>
 </referral>
+
+<referral>
+<description>Restorative - Raigmore</description>
+<surgeon_postal>Dr M.A. Donachie</surgeon_postal>
+<surgeon_greeting>Dr Donachie</surgeon_greeting>
+<address>
+<line>Restorative Consultant</line>
+<line>Dental Department</line>
+<line>Raigmore Hospital</line>
+<line>Old Perth Road</line>
+<line>Inverness</line>
+<line>IV2 3JH.</line>
+</address>
+</referral>
+
+
 <referral>
 <description>Dr. Chris Buchanan - Highland Ortho</description>
 <surgeon_postal>Dr. Chris Buchanan</surgeon_postal>
@@ -54,6 +52,43 @@
 <line>67 Kenneth Street</line>
 <line>Inverness</line>
 <line>IV3 5QF</line>
+</address>
+</referral>
+
+<referral>
+<description>Michael Gough</description>
+<surgeon_postal>Dr. Michael Gough</surgeon_postal>
+<surgeon_greeting>Michael</surgeon_greeting>
+<address>
+<line>Southside Dental Practice</line> 
+<line>28 Southside Road</line>
+<line>Inverness</line>
+</address>
+</referral>
+
+<referral>
+<description>Andrew Huntington</description>
+<surgeon_postal>Dr. Andrew Huntington</surgeon_postal>
+<surgeon_greeting>Andy</surgeon_greeting>
+<address>
+<line>Dingwall Dental and Implant Centre</line> 
+<line>Lockhart House</line>
+<line>Tulloch Street</line>
+<line>Dingwall</line>
+<line>IV15 9JY.</line>
+</address>
+</referral>
+
+<referral>
+<description>Inverness Dental Centre (GA kids..)</description>
+<surgeon_postal>The Community Dental Officer</surgeon_postal>
+<surgeon_greeting>Sir/Madam</surgeon_greeting>
+<address> 
+<line>Inverness Dental Centre</line>
+<line>Centre For Health Science</line>
+<line>Old Perth Road</line>
+<line>Inverness</line>
+<line>IV2 3JH.</line>
 </address>
 </referral>
 
@@ -76,21 +111,8 @@
 <address>
 <line>Department of Oral Surgery</line>
 <line>Dundee Dental Hospital</line>
-<line>University of Dundee</line>
+<line>Park Place</line>
 <line>Dundee</line>
-</address>
-</referral>
-
-<referral>
-<description>Raigmore Restorative</description>
-<surgeon_postal>Dr M.A. Donachie</surgeon_postal>
-<surgeon_greeting>Dr Donachie</surgeon_greeting>
-<address>
-<line>Restorative Consultant</line>
-<line>Dental Department</line>
-<line>Raigmore Hospital</line>
-<line>Old Perth Road</line>
-<line>Inverness</line>
 </address>
 </referral>
 
@@ -101,7 +123,9 @@
 <address>
 <line>Department of Oral Surgery</line>
 <line>Glasgow Dental Hospital</line>
+<line>378 Sauchiehall Street</line>
 <line>Glasgow</line>
+<line>G2 3JZ.</line>
 </address>
 </referral>
 
