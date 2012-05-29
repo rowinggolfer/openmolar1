@@ -139,7 +139,7 @@ def toothTreatDict(pt):
     #print "returning ",treats
     return treats
 
-@localsettings.debug
+
 def apply_exemption(pt, maxCharge=0):
     '''
     apply an exemption
@@ -162,7 +162,7 @@ def apply_exemption(pt, maxCharge=0):
             pt.applyFee(est.ptfee)
     return True
         
-@localsettings.debug
+
 def recalculate_estimate(pt):
     '''
     look up all the itemcodes in the patients feetable 

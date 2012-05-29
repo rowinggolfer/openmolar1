@@ -12,6 +12,7 @@ has one class, a custom widget which inherits from QWidget
 
 from __future__ import division
 
+import logging
 import re
 import sys
 from PyQt4 import QtGui, QtCore
@@ -41,7 +42,7 @@ class chartWidget(QtGui.QWidget):
         self.showLeftRight = True
         self.showSelected = False
         self.setMouseTracking(True)
-        
+
     def clear(self, keepSelection=False):
         '''
         clears all fillings etc from the chart
@@ -73,14 +74,14 @@ class chartWidget(QtGui.QWidget):
 
         #-- select the ur8
         if keepSelection:
-            print "keeping existing selections"
+            logging.debug("keeping existing chart selection(s)")
         else:
             self.showSelected = False
             self.selected = [0, 0]
             self.multiSelection = []
             self.highlighted = [-1, -1]
         self.update()
-        
+
     def sizeHint(self):
         '''
         set an arbitrary size
@@ -114,13 +115,13 @@ class chartWidget(QtGui.QWidget):
         if self.selected == [-1,-1]:
             return True
         if self.selected in self.multiSelection:
-            while self.selected in self.multiSelection: 
+            while self.selected in self.multiSelection:
                 self.multiSelection.remove(self.selected)
             return False
         if not self.selected in self.multiSelection:
             self.multiSelection.append(self.selected)
             return True
-        
+
     def multiSelectCLEAR(self):
         '''
         select just one tooth
@@ -144,13 +145,13 @@ class chartWidget(QtGui.QWidget):
         if self.selected != [x, y]:
             self.selected = [x, y]
             updateRequired = True
-            
+
         if self.showSelected != showSelection:
             self.showSelected = showSelection
             updateRequired = True
         if updateRequired:
             self.update()
-       
+
     def setToothProps(self, tooth, props):
         '''
         adds fillings and comments to a tooth
@@ -159,7 +160,7 @@ class chartWidget(QtGui.QWidget):
                 self.commentedTeeth.remove(tooth)
         if "!" in props:
             self.commentedTeeth.append(tooth)
-        
+
         proplist = props.split(" ")
         self.__dict__[tooth] = []
         for prop in proplist:
@@ -225,7 +226,7 @@ class chartWidget(QtGui.QWidget):
         '''
         ctrlClick = (event.modifiers() == QtCore.Qt.ControlModifier)
         shiftClick = (event.modifiers() == QtCore.Qt.ShiftModifier)
-        
+
         [px, py] = self.selected
         if px == -1: px=0
         if py == -1: py=0
@@ -234,14 +235,14 @@ class chartWidget(QtGui.QWidget):
             lowx,highx = px,x
         else:
             lowx,highx = x,px
-                
+
         if shiftClick:
             for row in set((py,y)):
                 for column in range(lowx, highx+1):
                     if not [column, row] in self.multiSelection:
                         self.multiSelection.append([column,row])
         self.setSelected(x, y, showSelection = True)
-            
+
         if ctrlClick:
             if [px,py] not in self.multiSelection:
                 self.multiSelection.append([px,py])
@@ -254,84 +255,84 @@ class chartWidget(QtGui.QWidget):
         else:
             if not shiftClick:
                 self.multiSelectCLEAR()
-        
+
         teeth = []
         if x != -1:
             teeth.append(self.grid[y][x])
         for (a,b) in self.multiSelection:
             if (a,b) != (x,y):
                 teeth.append(self.grid[b][a])
-        
+
         self.emit(QtCore.SIGNAL("toothSelected"), teeth )
-        
+
         right_click = False
         try:
             right_click = event.button() == 2
         except AttributeError: #keyboard events have no attribute "button"
             pass
-            
+
         if teeth and right_click:
-            tooth = teeth[0] 
-                    
+            tooth = teeth[0]
+
             menu = QtGui.QMenu(self)
             if self.isStaticChart:
                 menu.addAction(_("Toggle Deciduous State"))
                 menu.addSeparator()
-            
+
             fillList = self.__dict__[tooth]
-            if fillList:                            
+            if fillList:
                 if self.isPlanChart:
                     menu.addAction(_("Complete Treatments"))
-                    for fill in fillList:   
+                    for fill in fillList:
                         if not re.match("!.*", fill):
                             fill = fill.upper()
-                        menu.addAction(_("Complete") + " - %s"% fill)           
+                        menu.addAction(_("Complete") + " - %s"% fill)
                     menu.addSeparator()
                 for fill in fillList:
-                    fill = fill.upper() 
+                    fill = fill.upper()
                     if re.match("CR,.*", fill):
                         menu.addAction(
-                        _("Change Crown Type") + " - %s"% fill)           
-                      
+                        _("Change Crown Type") + " - %s"% fill)
+
                     elif re.match("[MODBPIL]{1,5},?([COAMGOL]{2,2})? $", fill):
                         menu.addAction(
-                        _("Change Material of") + " - %s"% fill)           
+                        _("Change Material of") + " - %s"% fill)
                 menu.addSeparator()
-                
+
                 if len(fillList) > 1:
                     menu.addAction(_("Delete All Restorations"))
-                for fill in fillList:   
+                for fill in fillList:
                     if not re.match("!.*", fill):
                         fill = fill.upper()
-                    menu.addAction(_("Delete") + " - %s"% fill)            
+                    menu.addAction(_("Delete") + " - %s"% fill)
             if self.isStaticChart:
                 menu.addSeparator()
-                menu.addAction(_("ADD COMMENTS"))                            
+                menu.addAction(_("ADD COMMENTS"))
                 menu.addAction(_("Show History"))
-            
+
             self.rightClickMenuResult(tooth, menu.exec_(event.globalPos()))
-            
+
     def rightClickMenuResult(self, tooth, result):
         if not result:
             return
 
         if result.text() == _("Toggle Deciduous State"):
             self.emit(QtCore.SIGNAL("FlipDeciduousState"))
-        
+
         elif _("Change Crown Type") in result.text():
             reg = re.search(" - (.*) ", str(result.text().toAscii()))
             if reg:
                 prop = reg.groups()[0]
                 self.emit(QtCore.SIGNAL("change_crown"), prop)
                 self.update()
-        
+
         elif _("Change Material of") in result.text():
             reg = re.search(" - (.*) ", str(result.text().toAscii()))
             if reg:
                 prop = reg.groups()[0]
                 self.emit(QtCore.SIGNAL("change_material"), prop)
                 self.update()
-            
+
         elif result.text() == _("Delete All Restorations"):
             self.emit(QtCore.SIGNAL("delete_all"))
             self.update()
@@ -342,10 +343,10 @@ class chartWidget(QtGui.QWidget):
                 prop = reg.groups()[0]
                 self.emit(QtCore.SIGNAL("delete_prop"), prop)
                 self.update()
-                
+
         elif result.text() == _("Show History"):
             self.emit(QtCore.SIGNAL("showHistory"), tooth)
-        
+
         elif result.text() == _("Complete Treatments"):
             self.signal_treatment_completed()
 
@@ -354,8 +355,8 @@ class chartWidget(QtGui.QWidget):
 
         else:
             print "right click on chart widget ",result.text()
-            
-    
+
+
     def mouseDoubleClickEvent(self, event):
         '''
         overrides QWidget's mouse double click event
@@ -363,12 +364,12 @@ class chartWidget(QtGui.QWidget):
         if a static chart - deciduous mode is toggled
         if plan chart, treatment is completed.
         '''
-        
+
         if self.isStaticChart:
-            self.emit(QtCore.SIGNAL("FlipDeciduousState"))        
+            self.emit(QtCore.SIGNAL("FlipDeciduousState"))
         elif self.isPlanChart:
             self.signal_treatment_completed()
-    
+
     def signal_treatment_completed(self):
         '''
         either a double click or default right click on the plan chart
@@ -404,9 +405,9 @@ class chartWidget(QtGui.QWidget):
                     y = 0
                 else:
                     x -= 1
-                        
+
         self.selectEvent(x, y, event)
-               
+
     def paintEvent(self, event=None):
         '''
         overrides the paint event so that we can draw our grid
@@ -457,13 +458,13 @@ class chartWidget(QtGui.QWidget):
                     #-- these conditions mean that the tooth needs to be
                     #--highlighted draw a rectangle around the selected tooth,
                     #--but don't overwrite the centre
-                    
+
                     if [x, y] == self.selected:
                         painter.setPen(QtGui.QPen(QtCore.Qt.darkBlue, 2))
                         painter.setBrush(colours.TRANSPARENT)
                         painter.drawRect(rect.adjusted(1, 1, -1, -1))
 
-                    elif [x, y] in self.multiSelection: 
+                    elif [x, y] in self.multiSelection:
                         painter.setPen(QtGui.QPen(QtCore.Qt.blue, 2))
                         painter.setBrush(colours.TRANSPARENT)
                         painter.drawRect(rect.adjusted(1, 1, -1, -1))
@@ -558,7 +559,7 @@ class chartWidget(QtGui.QWidget):
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
             painter.drawText(comRect, QtCore.Qt.AlignCenter, "!")
             painter.restore()
-        for prop in ("rt ", "ap ", "-m,1 ", "-m,2 ", 
+        for prop in ("rt ", "ap ", "-m,1 ", "-m,2 ",
         "+p ", "+s ", "oe", "px", "px+"):
             #-- these properties are written in... not drawn
             if prop in props:
@@ -572,7 +573,7 @@ class chartWidget(QtGui.QWidget):
                 painter.drawText(comRect, QtCore.Qt.AlignCenter,
                 prop.upper())
                 painter.restore()
-                
+
         toothS = toothSurfaces(self, toothRect, toothid, self.isStaticChart)
         toothS.setProps(props)
         toothS.draw(self, painter)
@@ -601,7 +602,7 @@ class toothSurfaces():
 
         self.quadrant = ident[0:2]
         self.isUpper = ident[0] == "u"
-        
+
         #--the occlusal surface (for backteeth)
         #--or incisal edge for front teeth..
         #-- is given a width here.
@@ -669,7 +670,7 @@ class toothSurfaces():
             self.painter.setPen(erase_color)
             self.painter.setBrush(erase_color)
             self.painter.drawRect(self.rect)
-        
+
         #--set variables for fill draw points
         #--this are NOT static as the widget is resizable
         ##TODO I could probably get performance improvement here.
@@ -825,7 +826,8 @@ class toothSurfaces():
                 #--set filling color
                 if material == "co":
                     self.painter.setBrush(colours.COMP)
-                elif material in ("pj", "ot", "pi", "a1", "v1", "v2"):
+                elif material in ("pj", "ot", "pi", "a1", "v1", "v2", "opal",
+                "opalite", "lava"):
                     self.painter.setBrush(colours.PORC)
                 elif material == "gl":
                     self.painter.setBrush(colours.GI)
@@ -841,7 +843,8 @@ class toothSurfaces():
                     self.painter.setPen(QtGui.QPen(colours.FISSURE, 1))
                     self.painter.setBrush(colours.FISSURE)
                 else:
-                    print "unhanded material colour", self.toothtext, prop, material
+                    logging.debug("unhandled material colour %s %s %s"% (
+                        self.toothtext, prop, material))
 
                 if self.quadrant[1] == "l" and prop != "dr":
                     #-- left hand side - reverse fills
@@ -914,7 +917,7 @@ class toothSurfaces():
                     self.rect.bottomLeft())
 
                     self.painter.restore()
-                
+
                 #IGNORE LIST
                 if prop in ("px", "oe"):
                     prop=""

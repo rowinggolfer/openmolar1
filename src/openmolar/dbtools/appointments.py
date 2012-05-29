@@ -270,7 +270,7 @@ class dayAppointmentData(daySummary):
             return self.endTimes[dent]
         except KeyError:
             return 1200
-    @localsettings.debug
+    
     def getAppointments(self, workingOnly=True, dents="ALL"):
         '''
         get the appointments for the date.
@@ -460,7 +460,7 @@ def alterDay(arg):
         values = (arg.start, arg.end, arg.flag, arg.memo, arg.date,
         arg.ix)
 
-        if True: #localsettings.logqueries:
+        if localsettings.logqueries:
             print query, values
         result.setNumber(cursor.execute(query,values))
 
@@ -506,7 +506,7 @@ def todays_patients(dents):
     cursor.close()
     return rows
 
-#@localsettings.debug
+
 def getWorkingDents(adate, dents=(0,), include_non_working=True):
     '''
     dentists are part time, or take holidays...this proc takes a date,
@@ -928,8 +928,8 @@ def clearEms(cedate):
     #db.close()
     return number
 
-@localsettings.debug
-def get_pts_appts(pt, futureOnly=False):
+
+def get_pts_appts(pt, printing=False):
     '''
     gets appointments from the apr table which stores appointments from
     patients perspective (including appts which have yet to be scheduled)
@@ -940,12 +940,14 @@ def get_pts_appts(pt, futureOnly=False):
     cursor = db.cursor()
 
     fullquery = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
-    adate, atime, length, datespec FROM apr WHERE serialno=%s ORDER BY aprix'''
+        adate, atime, length, datespec FROM apr WHERE serialno=%s '''
 
-    if futureOnly:
-        fullquery = fullquery.replace("ORDER BY aprix",
-        "and adate>=date(NOW()) ORDER BY concat(atime, adate)")
+    if printing:
+        fullquery += "and adate>=date(NOW()) ORDER BY concat(adate, atime)"
+    else:
+	fullquery += "ORDER BY aprix"
 
+    
     ## - table also contains flag0,flag1,flag2,flag3,flag4,
 
     if localsettings.logqueries:

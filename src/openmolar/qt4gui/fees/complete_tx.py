@@ -109,7 +109,6 @@ def estwidg_complete(om_gui, item):
     reponds to a signal when the user completes an item of treatment by
     checking a checkbox on the estwidget
     '''
-    print "estwidg_complete called with arg", item
     try:
         treat = item.type + " "
         
@@ -158,7 +157,6 @@ def estwidg_unComplete(om_gui, item):
     reponds to a signal when the user "uncompletes" an item of treatment by
     unchecking a checkbox on the estwidget
     '''
-    print "estwidg_unComplete called with arg", item
         
     try:
         treat = item.type + " "

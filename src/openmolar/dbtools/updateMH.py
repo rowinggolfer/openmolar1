@@ -23,7 +23,7 @@ def write(sno,data):
         query+=",chkdate) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         values=(int(sno),)+data[:13]+(dateToWrite,)
         print values
-    if True or localsettings.logqueries:
+    if localsettings.logqueries:
         print len(query),len(values)
         print query,values
     try:
@@ -41,14 +41,14 @@ def write(sno,data):
 def writeHist(sno,data):
     db=connect()
     cursor = db.cursor()
-    
+
     for ix, note in data:
-        query = '''insert into mnhist (serialno,chgdate,ix,note) 
+        query = '''insert into mnhist (serialno,chgdate,ix,note)
         values (%s, NOW(), %s, %s)'''
         values = (sno, ix, note)
         if localsettings.logqueries:
             print query
-        cursor.execute(query)
+        cursor.execute(query, values)
     db.commit()
     cursor.close()
     #db.close()
@@ -61,4 +61,3 @@ if __name__ == "__main__":
     "ops","other",True,datetime.date.today())
     write(11956,newdata)
     writeHist(11956,((140,"new doctor"),))
-    

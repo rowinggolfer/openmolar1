@@ -31,7 +31,7 @@ def performExam(om_gui):
     if course_module.newCourseNeeded(om_gui):
         return
     if om_gui.pt.examt != "" and om_gui.pt.examd:
-        om_gui.advise(_('''<p>You already have a completed exam on this 
+        om_gui.advise(_('''<p>You already have a completed exam on this
 course of treatment</p>Unable to perform exam'''), 1)
         return
 
@@ -56,7 +56,7 @@ course of treatment</p>Unable to perform exam'''), 1)
                     #--no dnt2
                     APPLIED = True
                 else:
-                    message = _('''<p>%s is now both the registered and 
+                    message = _('''<p>%s is now both the registered and
 course dentist.<br />Is this correct?<br />
 <i>confirming this will remove reference to %s</i></p>''')% (
                     examdent, localsettings.ops.get(om_gui.pt.dnt2))
@@ -75,7 +75,7 @@ course dentist.<br />Is this correct?<br />
                 message = '''%s performed this exam<br />
                 Is this correct?'''% examdent
                 if result[2] != localsettings.ops.get(om_gui.pt.dnt2):
-                    message += _('''<<br /><i>confirming this will change the 
+                    message += _('''<<br /><i>confirming this will change the
 course dentist, but not the registered dentist</i>''')
                 else:
                     message += _(
@@ -104,34 +104,29 @@ course dentist, but not the registered dentist</i>''')
 
                 newnotes = \
                 str(om_gui.ui.notesEnter_textEdit.toPlainText().toAscii())
-                
+
                 newnotes += _("%s examination performed by %s\n")% (
                 examtype, examdent)
 
                 om_gui.pt.addHiddenNote("exam", "%s"% examtype)
 
-                #new code for v 0.1.9
-                item, fee, ptfee, item_description = \
+                item, item_description = \
                 om_gui.pt.getFeeTable().userCodeWizard(examtype)
-                
+
                 foundInEsts = False
                 for est in om_gui.pt.estimates:
                     if est.itemcode == item and est.completed == False:
                         if est.number == 1:
                             est.completed = True
                             foundInEsts = True
-                            if est.ptfee != ptfee:
-                                parent.advise(
-_("different (outdated?) fee found in estimate - please check"), 1)
                             break
-                
-                if not foundInEsts:
-                    om_gui.pt.addToEstimate(1, item, 
-                    localsettings.ops_reverse[examdent], om_gui.pt.cset,
-                    "exam", examtype,  item_description, fee,
-                    ptfee,True)
 
-                fees_module.applyFeeNow(om_gui, ptfee)
+                if not foundInEsts:
+                    est = om_gui.pt.addToEstimate(1, item,
+                    localsettings.ops_reverse[examdent], om_gui.pt.cset,
+                    "exam", examtype,  item_description, completed=True)
+
+                fees_module.applyFeeNow(om_gui, est.ptfee)
 
                 for note in result[3]:
                     newnotes += note + ", "

@@ -3,7 +3,7 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. 
+# (at your option) any later version.
 # See the GNU General Public License for more details.
 
 import re, sys
@@ -27,44 +27,43 @@ class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
 
         self.table = self.table_list[self.comboBox.currentIndex()]
         self.setWindowTitle(self.table.tablename)
-        
-        self.connect(self.comboBox, QtCore.SIGNAL("currentIndexChanged (int)"), 
-            self.change_table)    
-    
-        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL("clicked()"), 
+
+        self.connect(self.comboBox, QtCore.SIGNAL("currentIndexChanged (int)"),
+            self.change_table)
+
+        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL("clicked()"),
             self.check_codes)
-        QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"), 
+        QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"),
             self.check_codes)
-        
+
     def check_codes(self):
         tx = str(self.lineEdit.text().toAscii())
         #print "checking",tx
-        
+
         self.dec_listWidget.clear()
-        self.adult_listWidget.clear()        
+        self.adult_listWidget.clear()
         for tooth in decidmouth:
             if tooth != "***":
-                code, f, p, desc = self.table.toothCodeWizard(tooth, tx.upper())
+                code, desc = self.table.toothCodeWizard(tooth, tx.upper())
                 result = "%s - %s %s"% (tooth.upper(), code, desc)
                 self.dec_listWidget.addItem(result)
         for tooth in mouth:
-            code, f, p, desc = self.table.toothCodeWizard(tooth, tx.upper())
+            code, desc = self.table.toothCodeWizard(tooth, tx.upper())
             result = "%s - %s %s"% (tooth.upper(), code, desc)
             self.adult_listWidget.addItem(result)
 
     def change_table(self, i):
         self.table = self.table_list[i]
         self.setWindowTitle(self.table.tablename)
-        
+
         self.check_codes()
-        
+
 if __name__ == "__main__":
     localsettings.initiate()
     localsettings.loadFeeTables()
     tables = localsettings.FEETABLES.tables
-    
+
     app = QtGui.QApplication([])
     dl = test_dialog(tables)
     dl.exec_()
     app.closeAllWindows()
-    

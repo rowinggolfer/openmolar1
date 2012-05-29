@@ -682,7 +682,7 @@ def adjustDiaryColWidths(om_gui, arg=None):
     for col in range(om_gui.ui.pt_diary_treeView.model().columnCount(arg)):
         om_gui.ui.pt_diary_treeView.resizeColumnToContents(col)
 
-@localsettings.debug
+
 def layout_ptDiary(om_gui):
     '''
     populates the patient's diary model

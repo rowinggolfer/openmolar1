@@ -28,7 +28,7 @@ from openmolar.qt4gui.fees import complete_tx
 
 from openmolar.qt4gui.charts import charts_gui
 
-@localsettings.debug
+
 def offerTreatmentItems(om_gui, arg, completedItems=False):
     '''
     offers treatment items passed by argument like ((1,"SP"),)
@@ -40,7 +40,7 @@ def offerTreatmentItems(om_gui, arg, completedItems=False):
     result =  dl.getInput()
     return result
 
-@localsettings.debug
+
 def offerSpecificTreatmentItems(om_gui, arg):
     '''
     offers treatment items passed by argument like
@@ -51,7 +51,7 @@ def offerSpecificTreatmentItems(om_gui, arg):
     result =  dl.getInput()
     return result
 
-@localsettings.debug
+
 def xrayAdd(om_gui, complete=False):
     '''
     add xray items
@@ -62,7 +62,7 @@ def xrayAdd(om_gui, complete=False):
     chosenTreatments = offerTreatmentItems(om_gui, mylist, complete)
     if chosenTreatments == ():
         return
-    
+
     added = []
     for usercode, itemcode, description in chosenTreatments:
         foundInEsts = False
@@ -73,15 +73,15 @@ def xrayAdd(om_gui, complete=False):
                     foundInEsts = True
                     added.append(est)
                     break
-        
+
         if not foundInEsts:
             om_gui.pt.xraypl += "%s "% usercode
 
-            est = om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+            est = om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
             om_gui.pt.cset, "xray", usercode, completed=False)
-        
+
             added.append(est)
-    
+
     if not complete:
         input = QtGui.QMessageBox.question(om_gui, _("question"),
         _("Were these xrays taken today?"),
@@ -89,20 +89,20 @@ def xrayAdd(om_gui, complete=False):
         QtGui.QMessageBox.No )
         if input == QtGui.QMessageBox.Yes:
             complete = True
-    
+
     if complete:
         for est in added:
             est.completed = True
             complete_tx.estwidg_complete(om_gui, est)
-        
+
     if om_gui.ui.tabWidget.currentIndex() == 7: #estimates page
         om_gui.load_treatTrees()
         om_gui.load_newEstPage()
     else:
         om_gui.load_clinicalSummaryPage()
-        
-        
-@localsettings.debug
+
+
+
 def perioAdd(om_gui):
     '''
     add perio items
@@ -111,16 +111,16 @@ def perioAdd(om_gui):
         if "N" in om_gui.pt.cset:
             mylist = ((0, "SP"), (0, "SP+"))
         else:
-            mylist = ((0, "SP-"), (0, "SP"), (0, "SP+"))            
+            mylist = ((0, "SP-"), (0, "SP"), (0, "SP+"))
         chosenTreatments = offerTreatmentItems(om_gui, mylist)
         for usercode, itemcode, description in chosenTreatments:
             om_gui.pt.periopl += "%s "% usercode
-            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
             om_gui.pt.cset, "perio", usercode)
         om_gui.load_treatTrees()
         om_gui.load_newEstPage()
 
-@localsettings.debug
+
 def otherAdd(om_gui):
     '''
     add 'other' items
@@ -133,17 +133,17 @@ def otherAdd(om_gui):
 
         for usercode in usercodes:
             mylist += ((0, usercode), )
-        
+
         chosenTreatments = offerTreatmentItems(om_gui, mylist)
         for usercode, itemcode, description in chosenTreatments:
             om_gui.pt.otherpl += "%s "% usercode
-            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
             om_gui.pt.cset, "other", usercode)
-            
+
         om_gui.load_newEstPage()
         om_gui.load_treatTrees()
 
-@localsettings.debug
+
 def customAdd(om_gui):
     '''
     add 'custom' items
@@ -155,71 +155,71 @@ def customAdd(om_gui):
         if Dialog.exec_():
             no = dl.number_spinBox.value()
             descr = unicode(dl.description_lineEdit.text(),"ascii","ignore")
-            
+
             if descr == "":
                 descr = "??"
             usercode = str (descr.replace(" ", "_"))[:12]
-            
+
             fee = int(dl.fee_doubleSpinBox.value() * 100)
-            
+
             om_gui.pt.custompl += "%s "% usercode
-            om_gui.pt.addToEstimate(no, "4002", om_gui.pt.dnt1, 
+            om_gui.pt.addToEstimate(no, "4002", om_gui.pt.dnt1,
             "P", "custom", usercode, descr, fee, fee, )
             om_gui.load_newEstPage()
             om_gui.load_treatTrees()
 
-@localsettings.debug
+
 def fromFeeTable(om_gui, fee_item):
     '''
     add an item which has been selected from the fee table itself
     '''
     if course_module.newCourseNeeded(om_gui):
         return
-    
+
     table = om_gui.pt.getFeeTable()
-        
+
     if fee_item.table != table:
-        table = confirmWrongFeeTable(om_gui, fee_item.table.index, 
+        table = confirmWrongFeeTable(om_gui, fee_item.table.index,
         table.index)
 
         if not table:
             return
-    
-    Dialog = QtGui.QDialog(om_gui)    
+
+    Dialog = QtGui.QDialog(om_gui)
     items = (fee_item.itemcode, )
     type = fee_item.pl_cmp_type
     if "CHART" in type:
         update_charts_needed = True
         types = om_gui.chooseTooth()
     else:
-        update_charts_needed = False        
+        update_charts_needed = False
         types = [type]
     dl = addTreat.feeTable_treatment(Dialog, table, items)
-    
+
     chosenTreatments = dl.getInput()
     for usercode, itemcode, description in chosenTreatments:
         for type in types:
-            try:        
+            try:
                 om_gui.pt.__dict__[type+"pl"] += "%s "% usercode
                 if update_charts_needed:
-                    om_gui.ui.planChartWidget.setToothProps(type, 
+                    om_gui.ui.planChartWidget.setToothProps(type,
                     om_gui.pt.__dict__[type+"pl"])
             except KeyError, e:
                 print "patient class has no attribute '%spl'", type,
                 print "Will default to 'other'"
                 om_gui.pt.otherpl += "%s "% usercode
-            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1, 
+            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
             category = type, type=usercode, feescale=table.index)
-        
+
     if om_gui.ui.tabWidget.currentIndex() != 7:
         om_gui.ui.tabWidget.setCurrentIndex(7)
     else:
         om_gui.load_newEstPage()
         om_gui.load_treatTrees()
-        
+
 def confirmWrongFeeTable(om_gui, suggested, current):
     '''
-    check that the user is happy to use the suggested table, not the current 
+    check that the user is happy to use the suggested table, not the current
     one. returns the selected table, or None to keep the current.
     '''
     suggestedTable = localsettings.FEETABLES.tables.get(suggested)
@@ -235,9 +235,9 @@ def confirmWrongFeeTable(om_gui, suggested, current):
             QtGui.QMessageBox.No )
     if input == QtGui.QMessageBox.Yes:
         return suggestedTable
-            
 
-@localsettings.debug
+
+
 def itemsPerTooth(tooth,props):
     '''
     usage itemsPerTooth("ul7","MOD,CO,PR ")
@@ -261,8 +261,8 @@ def itemsPerTooth(tooth,props):
         treats.append((tooth, item), )
     return treats
 
-    
-@localsettings.debug
+
+
 def chartAdd(om_gui, tooth, properties):
     '''
     add treatment to a toothtreatment to a tooth
@@ -288,7 +288,7 @@ def chartAdd(om_gui, tooth, properties):
     updatedItems = itemsPerTooth(tooth, properties)
 
     #check to see if treatments have been removed
-    
+
     for item in existingItems:
         if item in updatedItems:
             updatedItems.remove(item)
@@ -300,18 +300,17 @@ def chartAdd(om_gui, tooth, properties):
                 om_gui.advise("removed %s from estimate"% item[1], 1)
     #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
     for tooth, usercode in updatedItems:
-        
+
         #--tooth may be deciduous
         toothname = om_gui.pt.chartgrid.get(tooth)
-        
-        item, fee, ptfee, item_description = \
-        om_gui.pt.getFeeTable().toothCodeWizard(toothname, usercode)
-        
-        om_gui.pt.addToEstimate(1, item, 
-        om_gui.pt.dnt1, om_gui.pt.cset, toothname, usercode, 
-        item_description, fee, ptfee,)
 
-@localsettings.debug
+        item, item_description = om_gui.pt.getFeeTable().toothCodeWizard(
+            toothname, usercode)
+
+        om_gui.pt.addToEstimate(1, item, om_gui.pt.dnt1,
+            om_gui.pt.cset, toothname, usercode, item_description)
+
+
 def pass_on_estimate_delete(om_gui, est):
     '''
     the est has been deleted...
@@ -321,12 +320,12 @@ def pass_on_estimate_delete(om_gui, est):
         pl_cmp = "pl"
     else:
         pl_cmp = "cmp"
-    
+
     try:
-        #-- format the treatment into the notation used in the 
+        #-- format the treatment into the notation used in the
         #-- plan tree widget
         txtype = "%s - %s"% (est.category,est.type)
-        deleteTxItem(om_gui, pl_cmp, txtype, passedOn=True) 
+        deleteTxItem(om_gui, pl_cmp, txtype, passedOn=True)
 
         if est.completed and est.ptfee != 0:
             result = QtGui.QMessageBox.question(om_gui, _("question"),
@@ -336,12 +335,12 @@ def pass_on_estimate_delete(om_gui, est):
             QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
                 fees_module.applyFeeNow(om_gui, -1 * est.ptfee, est.csetype)
-        
+
     except ValueError:
         om_gui.advise (_("couldn't pass on delete message - ") +
         _('badly formed est.type??? %s')% est.type, 1)
 
-@localsettings.debug
+
 def estimate_item_delete(om_gui, pl_cmp, category, ttype):
     '''
     delete an estimate item when user has removed an item of treatment
@@ -365,8 +364,8 @@ def estimate_item_delete(om_gui, pl_cmp, category, ttype):
             category, ttype), 1)
         else:
             om_gui.load_newEstPage()
-           
-@localsettings.debug
+
+
 def deleteTxItem(om_gui, pl_cmp, txtype, passedOn=False):
     '''
     delete an item of treatment (called by clicking on the treewidget)
@@ -401,9 +400,9 @@ def deleteTxItem(om_gui, pl_cmp, txtype, passedOn=False):
                     #om_gui.pt.__dict__[att+"pl"]=plan
                     completed = om_gui.pt.__dict__[att + "cmp"].replace(
                     treat, "", 1) #-- only remove 1 occurrence
-                    
+
                     om_gui.pt.__dict__[att + "cmp"] = completed
-                
+
                 #-- now update the charts
                 if re.search("[ul][lr][1-8]", att):
                     charts_gui.updateChartsAfterTreatment(om_gui, att, plan,
@@ -429,8 +428,8 @@ if __name__ == "__main__":
     #disable the functions called
     mw.load_treatTrees = lambda : None
     mw.load_newEstPage = lambda : None
-    
-    xrayAdd(mw)     
-    perioAdd(mw)   
+
+    xrayAdd(mw)
+    perioAdd(mw)
     otherAdd(mw)
     customAdd(mw)

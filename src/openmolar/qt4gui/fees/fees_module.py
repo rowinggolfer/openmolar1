@@ -394,20 +394,28 @@ def nhsRegsPDF(om_gui):
     dl = Ui_chooseDocument.Ui_Dialog()
     dl.setupUi(Dialog)
     if Dialog.exec_():
-        if dl.tabWidget.currentIndex()==0:
+        if dl.tabWidget.currentIndex() == 0:
             if dl.info_radioButton.isChecked():
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "Dental_Information_Guide_2008_v4.pdf")
             else:
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "scotNHSremuneration08.pdf")
-        else:
+        elif dl.tabWidget.currentIndex() == 1:
             if dl.info2009_radioButton.isChecked():
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "Dental_Information_Guide_2009.pdf")
             else:
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "scotNHSremuneration09.pdf")
+        else:
+            if dl.info2010_radioButton.isChecked():
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "information_guide_2010_v2.pdf")
+            else:
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "scotNHSremuneration10.pdf")
+
         try:
             print "opening %s"% doc
             localsettings.openPDF(doc)

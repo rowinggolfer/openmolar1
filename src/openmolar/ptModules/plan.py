@@ -6,7 +6,10 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 
-import sys,re
+import logging
+import re
+import sys
+
 from openmolar.settings import localsettings
 
 treatmentTypeHeaders = {
@@ -147,7 +150,7 @@ def completedFillsToStatic(pt):
     '''
     take completed items, and update the static chart
     '''
-    if True: #try:
+    try:
         items = completedItems(pt, teethOnly=True)
         for tooth, prop in items:
             tooth = tooth.lower()
@@ -163,12 +166,9 @@ def completedFillsToStatic(pt):
                     new = new[new.index(" ")+1:]
                 pt.__dict__["%sst"% tooth] = new
 
-            print "updating static"
-            #print "comp to static '%s','%s','%s','%s'"% (
-            #tooth, prop, existing, new)
-    else:#except Exception, e:
+    except Exception, e:
         #shouldn't happen, but safety first.
-        print "FAILED TO TRANSFER FILLS TO STATIC", e
+        logging.exception("FAILED TO TRANSFER FILLS TO STATIC")
 
 
 if __name__ == "__main__":

@@ -81,12 +81,12 @@ CR_OPTIONS,
 BR_RE_OPTIONS,
 BR_PO_OPTIONS,
 ENDO_OPTIONS,
-SURGICAL_OPTIONS, 
+SURGICAL_OPTIONS,
 )
 
 
 class chartLineEdit(QtGui.QLineEdit):
-    ''' 
+    '''
     A custom line edit that accepts only BLOCK LETTERS
     and is self aware when verification is needed
     override the keypress event for up and down arrow keys.
@@ -95,7 +95,7 @@ class chartLineEdit(QtGui.QLineEdit):
         super(chartLineEdit,self).__init__(parent)
         self.parent = parent
         self.originalPropList = []
-    
+
     def unsavedChanges(self):
         '''
         checks for unsaved changes
@@ -117,12 +117,12 @@ class chartLineEdit(QtGui.QLineEdit):
         newProps = self.propListFromText()
         newProps.remove(prop)
         self.updateFromPropList(newProps)
-        
+
     def finishedEdit(self):
         '''
-        we have finished editing the text.. let the main gui know by 
+        we have finished editing the text.. let the main gui know by
         means of a signal
-        '''        
+        '''
         props = str(self.text().toAscii())
         if props != "" or (props == "" and self.originalPropList != []):
             if not re.match ("..* $", props):
@@ -139,7 +139,7 @@ class chartLineEdit(QtGui.QLineEdit):
             self.parent.tooth.clear()
             self.parent.tooth.update()
             self.finishedEdit()
-        
+
     def propListFromText(self):
         '''
         returns the current property list
@@ -250,7 +250,7 @@ class chartLineEdit(QtGui.QLineEdit):
         if allowedCode:
             print "accepting new entry", prop
         return allowedCode
-    
+
     def specialKeyPressed(self, arg):
         '''
         handles the events when a user hits space, up, down or return
@@ -259,7 +259,7 @@ class chartLineEdit(QtGui.QLineEdit):
             self.emit(QtCore.SIGNAL("NavKeyPressed"),(arg))
         else:
             self.additional()
-            
+
     def keyPressEvent(self, event):
         '''overrudes QWidget's keypressEvent'''
         if event.key() == QtCore.Qt.Key_Up:
@@ -267,8 +267,8 @@ class chartLineEdit(QtGui.QLineEdit):
         elif event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Down):
             self.specialKeyPressed("down")
         elif event.key() == QtCore.Qt.Key_Space:
-            QtGui.QLineEdit.keyPressEvent(self,event)            
-            self.specialKeyPressed("space")            
+            QtGui.QLineEdit.keyPressEvent(self,event)
+            self.specialKeyPressed("space")
         else:
             inputT = event.text().toAscii()
             if re.match("[a-z]", inputT):
@@ -298,23 +298,23 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
 
         self.co_pushButton.setStyleSheet(
         "background-color: %s"% colours.COMP_ )
-        
+
         self.gl_pushButton.setStyleSheet(
         "background-color: %s"% colours.GI_ )
-        
+
         self.gold_pushButton.setStyleSheet(
         "background-color: %s"% colours.GOLD_ )
 
         self.porc_pushButton.setStyleSheet(
         "background-color: %s"% colours.PORC_ )
-        
+
         self.is_Static = False
         self.selectedChart = ""
         self.selectedTooth = ""
         self.comboboxes = []
         self.populateComboBoxes()
         self.signals()
-        
+
     def populateComboBoxes(self):
         vlayout = QtGui.QVBoxLayout(self.cb_scrollArea)
         vlayout.setMargin(0)
@@ -326,7 +326,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
                 cb.addItem(val)
             vlayout.addWidget(cb)
             self.comboboxes.append(cb)
-        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, 
+        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum,
         QtGui.QSizePolicy.Expanding)
         vlayout.addItem(spacerItem)
 
@@ -337,7 +337,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         selectedChart will be 'st' or 'pl' or 'cmp'
         '''
         self.setSelectedChart(selectedChart)
-        
+
         self.selectedTooth = selectedTooth
 
         self.tooth.setBacktooth(int(selectedTooth[2])>3)
@@ -352,7 +352,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
 
         self.isStatic(selectedChart == "st")
         self.setExistingProps(self.parent.pt.__dict__[selectedTooth+selectedChart])
-    
+
     def setSelectedChart(self, arg):
         '''
         make the widget aware which chart it is linked to
@@ -516,20 +516,17 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             self.nextTooth()
 
     def prevTooth(self):
-        print "prevTooth"
         if self.lineEdit.verifyProps():
             self.lineEdit.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("up"))
 
     def nextTooth(self):
-        print "nextTooth"
         if self.lineEdit.verifyProps():
             self.lineEdit.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("down"))
 
     def dec_perm(self):
         self.emit(QtCore.SIGNAL("FlipDeciduousState"))
-        #self.nextTooth()
 
     def at(self):
         self.lineEdit.addItem("AT")
@@ -546,7 +543,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
     def rt(self):
         self.lineEdit.addItem("RT")
         self.lineEdit.additional()
-        
+
     def crown(self):
         def gold():
             self.lineEdit.addItem("CR,GO")
@@ -555,13 +552,22 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             self.lineEdit.addItem("CR,PJ")
             Dialog.accept()
         def resin():
-            self.lineEdit.addItem("CR,OT")
+            self.lineEdit.addItem("CR,SR")
             Dialog.accept()
         def lava():
-            self.lineEdit.addItem("CR,PJ")
+            self.lineEdit.addItem("CR,LAVA")
+            Dialog.accept()
+        def opalite():
+            self.lineEdit.addItem("CR,OPAL")
+            Dialog.accept()
+        def everest():
+            self.lineEdit.addItem("CR,EVEREST")
+            Dialog.accept()
+        def emax():
+            self.lineEdit.addItem("CR,EMAX")
             Dialog.accept()
         def fortress():
-            self.lineEdit.addItem("CR,PJ")
+            self.lineEdit.addItem("CR,FO")
             Dialog.accept()
         def temp():
             self.lineEdit.addItem("CR,T1")
@@ -579,15 +585,18 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         Dialog = QtGui.QDialog(self)
         ccwidg = Ui_crownChoice.Ui_Dialog()
         ccwidg.setupUi(Dialog)
-        ccwidg.gold.connect(ccwidg.gold,QtCore.SIGNAL("clicked()"), gold)
-        ccwidg.gold.connect(ccwidg.pjc,QtCore.SIGNAL("clicked()"), pjc)
-        ccwidg.gold.connect(ccwidg.other,QtCore.SIGNAL("clicked()"), other)
-        ccwidg.gold.connect(ccwidg.lava,QtCore.SIGNAL("clicked()"), lava)
-        ccwidg.gold.connect(ccwidg.fortress,QtCore.SIGNAL("clicked()"), fortress)
-        ccwidg.gold.connect(ccwidg.bonded,QtCore.SIGNAL("clicked()"), bonded)
-        ccwidg.gold.connect(ccwidg.temp,QtCore.SIGNAL("clicked()"), temp)
-        ccwidg.gold.connect(ccwidg.resin,QtCore.SIGNAL("clicked()"), resin)
-        ccwidg.gold.connect(ccwidg.recement,QtCore.SIGNAL("clicked()"), recem)
+        ccwidg.gold.clicked.connect(gold)
+        ccwidg.pjc.clicked.connect(pjc)
+        ccwidg.other.clicked.connect(other)
+        ccwidg.lava.clicked.connect(lava)
+        ccwidg.opalite.clicked.connect(opalite)
+        ccwidg.everest.clicked.connect(everest)
+        ccwidg.emax.clicked.connect(emax)
+        ccwidg.fortress.clicked.connect(fortress)
+        ccwidg.bonded.clicked.connect(bonded)
+        ccwidg.temp.clicked.connect(temp)
+        ccwidg.resin.clicked.connect(resin)
+        ccwidg.recement.clicked.connect(recem)
 
         if Dialog.exec_():
             self.nextTooth()
@@ -601,7 +610,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
                 for key in combobox_dict.keys():
                     if combobox_dict[key] == arg:
                         self.lineEdit.addItem(key)
-                
+
     def staticButPressed(self):
         self.emit(QtCore.SIGNAL("static"))
     def planButPressed(self):
@@ -679,7 +688,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
 
         for cb in self.comboboxes:
             QtCore.QObject.connect(cb,
-            QtCore.SIGNAL("currentIndexChanged (const QString&)"), 
+            QtCore.SIGNAL("currentIndexChanged (const QString&)"),
             self.cb_treat)
 
 class tooth(QtGui.QWidget):

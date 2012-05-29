@@ -13,7 +13,9 @@ backToothCodes=( "+P", "+S", "AP", "AT", "B", "B,AM",
 "B,CO", "B,CO,CT", "B,CO,PR", "B,CT", "B,CT,CO", "B,GL", "BD", "BDLOM,CO,PR",
 "BM", "BM,CO", "BMO", "BMODP", "BMOL,CO", "BO", "BO,AM", "BO,CO",
 "BO,GL", "BOL", "BOM", "BR/CR,A1", "BR/CR,A2", "BR/CR,OT", "BR/CR,V1", "BR/CR,V1,PR",
-"BR/P,A2", "BR/P,OT", "BR/P,V1", "CR,A1", "CR,A1,C4", "CR,A1,PR", "CR,A2", "CR,GO",
+"BR/P,A2", "BR/P,OT", "BR/P,V1", "CR,OPAL", "CR,OPALITE",
+"CR,LAVA", "CR,EMAX", "CR,EVEREST", "CR,FORT",
+"CR,A1", "CR,A1,C4", "CR,A1,PR", "CR,A2", "CR,GO",
 "CR,GO,PR", "CR,OT", "CR,OT,C4", "CR,P1", "CR,P1,C3", "CR,PJ", "CR,V1", "CR,V1,C1",
 "CR,V1,C2", "CR,V1,C3", "CR,V1,PR", "CR,V2", "CR/MODB,GO", "CR/MODL,GO", "CR/MODP,GO", "D",
 "D,AM", "D,CO", "D,GL", "DB", "DB,AM", "DB,CO", "DB,CT,CO", "DB,GL",
@@ -89,7 +91,9 @@ frontToothCodes=( "+P", "+S", "-D,2", "-M,1", "-M,2", "AP", "AP,RR",
 "PD,GL", "PDB", "PDB,GL", "PDI", "PE", "PI", "PI,GL", "PI/B",
 "PI/MBDL", "PI/MBPD", "PI/MDBL", "PI/MDBP", "PI/MDLB", "PI/MDPB", "PI/MIDB", "PIB",
 "PID,CO", "PIM", "PM", "PM,GL", "PMB", "PMI", "PMID", "PV",
- "RI", "RP", "RT", "ST", "TM", "UE", "VP", )
+ "RI", "RP", "RT", "ST", "TM", "UE", "VP",
+"CR,OPAL", "CR,OPALITE",
+"CR,LAVA", "CR,EMAX", "CR,EVEREST", "CR,FORT",)
 
 treatment_only=("EX","EX/S1","EX/S2","CR,RC","PX","PX+")  #not exhaustive
 

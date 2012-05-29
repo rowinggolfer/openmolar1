@@ -11,7 +11,9 @@ provides some logic functions for the charts within openmolar gui.
 '''
 
 from __future__ import division
+
 import copy
+import logging
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
@@ -90,8 +92,6 @@ def updateCharts(om_gui, arg):
         om_gui.ui.chartsTableWidget.currentRow(), 0).text())
     except AttributeError:
         return
-    #print "update charts called with arg '%s'"% arg,
-    #print "tooth is ",tooth
     if om_gui.selectedChartWidget == "st":
         om_gui.pt.__dict__[tooth + om_gui.selectedChartWidget] = arg
         #--update the patient!!
@@ -158,9 +158,7 @@ def chartTableNav(om_gui, row, col, row1, col1):
     '''
     charts table has been navigated
     '''
-    if localsettings.debug:
-        #print "UNUSED chartTableNav", row,col,row1,col1
-        pass
+    logging.debug("UNUSED chartTableNav row %s, col %s, row %s, col %s"% (row,col,row1,col1))
 
 def chartNavigation(om_gui, teeth, callerIsTable=False):
     '''

@@ -21,62 +21,58 @@ from openmolar.qt4gui.dialogs import hygTreatWizard
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module, fees_module
 
-def performPerio(parent):
-    if parent.pt.serialno == 0:
-        parent.advise("no patient selected", 1)
+def performPerio(om_gui):
+    if om_gui.pt.serialno == 0:
+        om_gui.advise("no patient selected", 1)
         return
-    if course_module.newCourseNeeded(parent):
+    if course_module.newCourseNeeded(om_gui):
         return
-    Dialog = QtGui.QDialog(parent)
+    Dialog = QtGui.QDialog(om_gui)
     dl = hygTreatWizard.Ui_Dialog(Dialog)
     dl.setPractitioner(localsettings.clinicianNo)
-    if "N" in parent.pt.cset:
+    if "N" in om_gui.pt.cset:
         dl.db_radioButton.setEnabled(False)
     result = dl.getInput()
 
     if result:
-        parent.pt.addHiddenNote("treatment", "%s"% dl.trt)
-        parent.updateHiddenNotesLabel()
+        om_gui.pt.addHiddenNote("treatment", "%s"% dl.trt)
+        om_gui.updateHiddenNotesLabel()
 
         ##update values in case user has selected a different code/fee
-        item, fee, ptfee, item_description = \
-        parent.pt.getFeeTable().userCodeWizard(dl.trt)
-      
+        item, item_description = om_gui.pt.getFeeTable().userCodeWizard(dl.trt)
+
         foundInEsts = False
-        for est in parent.pt.estimates:
+        for est in om_gui.pt.estimates:
             if est.itemcode == item and est.completed == False:
                 if est.number == 1:
                     est.completed = True
                     foundInEsts = True
-                    if est.ptfee != ptfee:
-                        parent.advise(
-        _("different (outdated?) fee found in estimate - please check"), 1)
                     break
                 else:
-                    parent.advise("need to split a multi unit perio item", 1)
+                    om_gui.advise("need to split a multi unit perio item", 1)
         if not foundInEsts:
-            parent.pt.addToEstimate(1, item, parent.pt.dnt1, parent.pt.cset,
-            "perio", dl.trt, item_description, fee, ptfee, True)
-        if ptfee > 0:
-            fees_module.applyFeeNow(parent, ptfee)
+            est = om_gui.pt.addToEstimate(1, item, om_gui.pt.dnt1,
+            om_gui.pt.cset, "perio", dl.trt, item_description, completed=True)
+
+        fees_module.applyFeeNow(om_gui, est.ptfee)
 
         treatmentCode = "%s "% dl.trt
-        if treatmentCode in parent.pt.periopl:
-            parent.pt.periopl = parent.pt.periopl.replace(
+        if treatmentCode in om_gui.pt.periopl:
+            om_gui.pt.periopl = om_gui.pt.periopl.replace(
             treatmentCode, "", 1)
-        parent.pt.periocmp += treatmentCode
-        
-        if parent.ui.tabWidget.currentIndex() == 7:
+        om_gui.pt.periocmp += treatmentCode
+
+        if om_gui.ui.tabWidget.currentIndex() == 7:
             #-- it won't be ;)
-            parent.load_newEstPage()
-            parent.load_treatTrees()
+            om_gui.load_newEstPage()
+            om_gui.load_treatTrees()
         else:
-            parent.load_clinicalSummaryPage()
-        
-        newnotes = str(parent.ui.notesEnter_textEdit.toPlainText().toAscii())
+            om_gui.load_clinicalSummaryPage()
+
+        newnotes = str(om_gui.ui.notesEnter_textEdit.toPlainText().toAscii())
         newnotes += "%s %s %s\n"%(dl.trt,_("performed by"), dl.dent)
-        parent.ui.notesEnter_textEdit.setText(newnotes)
+        om_gui.ui.notesEnter_textEdit.setText(newnotes)
     else:
-        parent.advise("Hyg Treatment not applied", 2)
-        
+        om_gui.advise("Hyg Treatment not applied", 2)
+
 

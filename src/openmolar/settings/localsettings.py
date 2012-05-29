@@ -19,8 +19,8 @@ import subprocess
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 28th May 2010.
-__MAJOR_VERSION__= "0.2.0"
+#- updated 30th May 2012.
+__MAJOR_VERSION__= "0.2.1"
 
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
@@ -73,32 +73,6 @@ GP17_LEFT = 0
 GP17_TOP = 0
 
 WINDOWS = False
-DEBUGGING = "/home/neil" in os.getcwd()
-
-def debug(func):
-    '''
-    a decorator function for debugging
-    '''
-    if DEBUGGING:
-        def callf(*args, **kwargs):
-            print "===="*2, currentTime(), "===="*2
-            print "Calling %s:%s, %s"% (func.__name__, args, kwargs)
-            r = func(*args, **kwargs)
-            print "%s returned %s"% (func.__name__, r)
-            print "===="*20
-            return r
-        return callf
-    else:
-        return func
-
-def monitor(func):
-    if DEBUGGING:
-        print "==MONITOR==", 
-        print "    Function %s"% (func.__name__),
-        print currentTime()
-        #print "    Called by ",
-        #print inspect.getframeinfo(inspect.currentframe().f_back)[2]
-    return func
         
 def determine_path ():
     '''

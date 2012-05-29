@@ -204,7 +204,7 @@ csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
         #db.close()
     return result
 
-@localsettings.debug
+
 def toNotes(serialno, newnotes):
     print "write changes - toNotes for patient %d"%serialno
     #print "writing to db",serialno,newnotes
