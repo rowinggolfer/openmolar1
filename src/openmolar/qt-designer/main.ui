@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1061</width>
-         <height>558</height>
+         <width>1047</width>
+         <height>559</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -475,8 +475,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>482</width>
-                        <height>472</height>
+                        <width>778</width>
+                        <height>473</height>
                        </rect>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -1749,7 +1749,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>582</width>
+                        <width>778</width>
                         <height>504</height>
                        </rect>
                       </property>
@@ -2175,8 +2175,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>458</width>
-                        <height>446</height>
+                        <width>786</width>
+                        <height>467</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2677,8 +2677,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>786</width>
-                        <height>493</height>
+                        <width>778</width>
+                        <height>482</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_4">
@@ -3000,8 +3000,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>111</width>
-                        <height>137</height>
+                        <width>592</width>
+                        <height>384</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3200,7 +3200,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
+                           <width>542</width>
                            <height>200</height>
                           </rect>
                          </property>
@@ -3233,8 +3233,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>199</width>
-                        <height>542</height>
+                        <width>220</width>
+                        <height>512</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3323,30 +3323,6 @@ Note - this will not remove items which are currently there. </string>
                             <property name="text">
                              <string>Apply Exemption</string>
                             </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QComboBox" name="estView_comboBox">
-                            <item>
-                             <property name="text">
-                              <string>Standard View</string>
-                             </property>
-                            </item>
-                            <item>
-                             <property name="text">
-                              <string>Expanded View</string>
-                             </property>
-                            </item>
-                            <item>
-                             <property name="text">
-                              <string>Plan/Completed (standard)</string>
-                             </property>
-                            </item>
-                            <item>
-                             <property name="text">
-                              <string>Plan/Completed (expanded)</string>
-                             </property>
-                            </item>
                            </widget>
                           </item>
                          </layout>
@@ -3549,9 +3525,6 @@ Note - this will not remove items which are currently there. </string>
                         <attribute name="headerShowSortIndicator" stdset="0">
                          <bool>false</bool>
                         </attribute>
-                        <attribute name="headerShowSortIndicator" stdset="0">
-                         <bool>false</bool>
-                        </attribute>
                         <column>
                          <property name="text">
                           <string>Plan</string>
@@ -3576,9 +3549,6 @@ Note - this will not remove items which are currently there. </string>
                         <property name="animated">
                          <bool>true</bool>
                         </property>
-                        <attribute name="headerShowSortIndicator" stdset="0">
-                         <bool>false</bool>
-                        </attribute>
                         <attribute name="headerShowSortIndicator" stdset="0">
                          <bool>false</bool>
                         </attribute>
@@ -3612,8 +3582,8 @@ Note - this will not remove items which are currently there. </string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>270</width>
-                        <height>394</height>
+                        <width>780</width>
+                        <height>385</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_15">
@@ -4033,7 +4003,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>118</width>
+                    <width>117</width>
                     <height>58</height>
                    </rect>
                   </property>
@@ -4608,7 +4578,7 @@ F6</string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>180</width>
+                        <width>194</width>
                         <height>298</height>
                        </rect>
                       </property>
@@ -6383,9 +6353,6 @@ F6</string>
                 <attribute name="headerShowSortIndicator" stdset="0">
                  <bool>true</bool>
                 </attribute>
-                <attribute name="headerShowSortIndicator" stdset="0">
-                 <bool>true</bool>
-                </attribute>
                 <column>
                  <property name="text">
                   <string notr="true">1</string>
@@ -6699,7 +6666,7 @@ F6</string>
      <x>0</x>
      <y>0</y>
      <width>1061</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

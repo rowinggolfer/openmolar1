@@ -26,8 +26,8 @@ from xml.dom import minidom
 FIRST_RUN_TESTING = False
 IGNORE_SCHEMA_CHECK = False
 
-SHORTARGS = ""
-LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=", 
+SHORTARGS = "v"
+LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=",
 "ignore_schema_check"]
 
 import gettext
@@ -56,10 +56,10 @@ def proceed():
     check db schema, and proceed if all is well
     '''
     print "checking schema version...",
-    
+
     from openmolar.dbtools import schema_version
     sv = schema_version.getVersion()
-    
+
     run_main = False
 
     if IGNORE_SCHEMA_CHECK or localsettings.CLIENT_SCHEMA_VERSION == sv:
@@ -97,10 +97,10 @@ and you can continue if you wish</p>
 
             if result == QtGui.QMessageBox.Yes:
                 run_main = True
-    
+
     if run_main:
         localsettings.loadFeeTables()
-        from openmolar.qt4gui import maingui        
+        from openmolar.qt4gui import maingui
         maingui.main(my_app)
     else:
         sys.exit()
@@ -196,13 +196,13 @@ Are you ready to proceed?</center>''')
         dom = minidom.parse(localsettings.cflocation)
         sys_password = dom.getElementsByTagName(
             "system_password")[0].firstChild.data
-        
+
         servernames = dom.getElementsByTagName("connection")
         for server in servernames:
             nameDict = server.attributes
             if nameDict.has_key("name"):
                 localsettings.server_names.append(nameDict["name"].value)
-        
+
         if localsettings.server_names == []:
             localsettings.server_names.append("")
 
@@ -260,7 +260,7 @@ Are you ready to proceed?</center>''')
 
                 if uninitiated or changedServer:
                     #- user has entered the correct password
-                    #- so now we connect to the mysql database 
+                    #- so now we connect to the mysql database
                     #- for the 1st time
                     #- I do it this way so that anyone sniffing the network
                     #- won't see the mysql password until this point
@@ -271,12 +271,12 @@ Are you ready to proceed?</center>''')
 
                 u1_qstring = dl.user1_lineEdit.text().toAscii().toUpper()
                 u2_qstring = dl.user2_lineEdit.text().toAscii().toUpper()
-                
+
                 #-- localsettings module now has user variables.
                 #-- allowed_logins in a list of practice staff.
                 if not u1_qstring in localsettings.allowed_logins:
                     raise LoginError
-                if (u2_qstring !="" and 
+                if (u2_qstring !="" and
                 not u2_qstring in localsettings.allowed_logins):
                     raise LoginError
 
@@ -337,7 +337,7 @@ def run():
     the real entry point for the app
     '''
     global FIRST_RUN_TESTING, IGNORE_SCHEMA_CHECK
-    
+
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], SHORTARGS, LONGARGS)
     except getopt.GetoptError, err:
@@ -370,7 +370,7 @@ def run():
         if option == "--ignore_schema_check":
             IGNORE_SCHEMA_CHECK = True
             print "ignoring schema check"
-            
+
     main()
 
 if __name__ == "__main__":

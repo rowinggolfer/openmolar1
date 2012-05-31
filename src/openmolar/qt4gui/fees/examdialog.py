@@ -38,7 +38,6 @@ course of treatment</p>Unable to perform exam'''), 1)
     Dialog = QtGui.QDialog(om_gui)
     dl = examWizard.Ui_Dialog(Dialog, localsettings.clinicianNo)
 
-    ####TODO - set dentist correctly in this dialog
     APPLIED = False
     while not APPLIED:
         result = dl.getInput()

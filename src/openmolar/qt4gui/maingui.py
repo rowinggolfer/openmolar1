@@ -12,14 +12,16 @@ provides the main class which is my gui
 
 from __future__ import division
 
-from PyQt4 import QtGui, QtCore
+import copy
+import datetime
+import logging
 import os
+import pickle
 import re
 import sys
 import traceback
-import copy
-import datetime
-import pickle
+
+from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import colours
@@ -1000,6 +1002,7 @@ class openmolarGui(QtGui.QMainWindow):
         this is probably quite computationally expensive
         so should only be done if the widget is visible
         '''
+        logging.debug("load_newEstPage called")
         self.ui.estWidget.setEstimate(self.pt.estimates)
 
     def load_treatTrees(self):

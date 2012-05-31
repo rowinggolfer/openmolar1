@@ -10,17 +10,25 @@ from __future__ import division
 
 import sys
 import datetime
+import logging
 import os
 import locale
 import re
 import subprocess
 #import inspect
-            
+
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
 #- updated 30th May 2012.
 __MAJOR_VERSION__= "0.2.1"
+
+
+if "-v" in sys.argv:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.INFO)
+
 
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
@@ -73,7 +81,7 @@ GP17_LEFT = 0
 GP17_TOP = 0
 
 WINDOWS = False
-        
+
 def determine_path ():
     '''
     returns the true working directory, regardless of any symlinks.
@@ -741,7 +749,7 @@ def initiate(changedServer= False, debug = False):
         bookEndVals = data[-1][0].split(",")
         bookEnd = datetime.date(int(bookEndVals[0]), int(bookEndVals[1]),
         int(bookEndVals[2]))
-    
+
     data = db_settings.getData("supervisor_pword")
     if data:
         SUPERVISOR = data[0][0]
@@ -751,14 +759,14 @@ def initiate(changedServer= False, debug = False):
         print "#"*30
         db_settings.updateData("supervisor_pword", SUPERVISOR,
         "not found reset")
-    
+
     db = connect.connect()
     cursor = db.cursor()
 
     query = "select phrases from phrasebook where clinician_id=0"
     cursor.execute(query)
     rows = cursor.fetchone()
-    PHRASEBOOK = rows[0] 
+    PHRASEBOOK = rows[0]
 
     #set up four lists with key/value pairs reversedto make for easy referencing
 
@@ -800,7 +808,7 @@ def initiate(changedServer= False, debug = False):
         for practitioner in practitioners:
             if practitioner[0] != 0 and practitioner[0] != None: #apptix
                 apptix[practitioner[1]] = practitioner[0]
-        
+
         cursor.execute(
         "select apptix, inits from practitioners where flag3=1 and flag0=1")
         #dentists where appts active
@@ -810,7 +818,7 @@ def initiate(changedServer= False, debug = False):
             ixs.append(ix)
             activedents.append(inits)
         activedent_ixs = tuple(ixs)
-        
+
         cursor.execute(
         "select apptix, inits from practitioners where flag3=1 and flag0=0")
         #hygenists where appts active

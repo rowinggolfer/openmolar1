@@ -410,6 +410,9 @@ class feeTable():
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
+        logging.debug('''looking up a fee for %d item(s) of code %s
+where conditions are %s and %s similar items already in the estimate'''% (
+        no_items, itemcode, conditions, no_already_in_estimate))
 
         if no_already_in_estimate is None:
             logging.warning("deprecated call to getFees")
@@ -736,12 +739,13 @@ ptFees                =  %s'''% (self.table.tablename,
             #--and here is the new one for the 2012 feescale
             #-- n=1:A,n=2:B,n=3:C,n>4:E
 
-            regulations = self.regulations.split(',')
 
+            logging.debug("checking fee regulations '%s'"% self.regulations)
+
+            regulations = self.regulations.split(',')
             max_fee = None
             found = False
             for regulation in regulations:
-                logging.debug("checking regulation '%s'"% regulation)
 
                 m = re.match("max=([A-Z])", regulation)
                 if m:
@@ -758,6 +762,7 @@ ptFees                =  %s'''% (self.table.tablename,
                     logic = logic.replace("=", "==")
 
                 if eval(logic.replace("n", str(no_items))):
+                    logging.debug("match found with %s"% logic)
                     if re.match("[A-Z]$", value):
                         fee = feeList[ord(value)-65]
                     else:
@@ -766,21 +771,21 @@ ptFees                =  %s'''% (self.table.tablename,
                             eval_string = eval_string.replace(
                                 cap, str(feeList[ord(cap)-65]))
 
-                        logging.debug("Using fee logic %s"% value)
-                        logging.debug("evaluating %s"% eval_string)
+                        logging.debug("Fee logic is '%s', evaluating '%s'"% (
+                            value, eval_string))
                         fee = eval(eval_string)
 
                     found = True
 
             if not found:
-                logging.warning("Unable to apply fee regulation"
-                    " - returning linear fee (n* singleItem Fee)")
-                fee = feeList[0]*no_items
+                logging.warning(
+                    "no match for fee regulations '%s'"% self.regulations)
+                fee = feeList[0] * no_items
 
             if max_fee and max_fee < fee:
-                logging.debug("max no of items reached for this fee code")
+                logging.info("max fee reached for this fee code")
                 fee = max_fee
-
+            logging.debug("returning a fee of %s"% fee)
             return fee
 
 if __name__ == "__main__":
@@ -835,7 +840,8 @@ if __name__ == "__main__":
         for tx in ("CE","S", "SP","SP+","SR F/F"):
             print "looking up %s"%tx
             code = table.getItemCodeFromUserCode(tx)
-            print "got code %s, fee %s"% (code, table.getFees(code))
+            print "got code %s, fee %s"% (
+                code, table.getFees(code, no_already_in_estimate=0))
 
     checkCommonItems()
 
