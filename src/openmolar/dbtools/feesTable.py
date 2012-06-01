@@ -419,9 +419,10 @@ where conditions are %s and %s similar items already in the estimate'''% (
             caller = inspect.stack()[1]
             logging.debug("module %s line %s\n   function %s\n    %s"% (
                 caller[1], caller[2], caller[3], caller[4][0]))
-
+            no_already_in_estimate = 0
+            
         if self.hasItemCode(itemcode):
-            if no_already_in_estimate is None:
+            if no_already_in_estimate ==0 :
                 return self.feesDict[itemcode].getFees(no_items, conditions)
             else:
                 fee, ptfee = self.feesDict[itemcode].getFees(
@@ -506,6 +507,7 @@ class feeItemClass(object):
         self.brief_descriptions = ()
         self.fees = ()
         self.ptFees = ()
+        self.multiples = False # is there complex fee logic behind this item?
         self.regulations = ""
         self.usercode = ""
         self.hide = False
@@ -520,8 +522,7 @@ class feeItemClass(object):
             codes = node.getElementsByTagName("code")
             for code in codes:
                 if code.firstChild.data.strip() == self.itemcode:
-                    retarg = node.toprettyxml()
-                    retarg = retarg.replace("\t", "    ")
+                    retarg = node.toxml()
                     dom.unlink()
                     return retarg
         return _("not found")
@@ -530,7 +531,12 @@ class feeItemClass(object):
         section = getTextFromNode(item, "section")
         oldcode = getTextFromNode(item, "oldcode")
         USERCODE = getTextFromNode(item, "USERCODE")
-        regulation = getTextFromNode(item, "regulation")
+        
+        for reg in item.getElementsByTagName("regulation"):
+            self.multiples = reg.getAttribute("type")=="multiple"
+            regulation = getTextFromNode(item, "regulation")
+            self.setRegulations(regulation)
+        
         description = getTextFromNode(item, "description")
         brief_descriptions = getListFromNode(item, "brief_description")
         pl_cmp = getTextFromNode(item, "pl_cmp")
@@ -547,7 +553,6 @@ class feeItemClass(object):
         self.usercode = USERCODE
         self.oldcode = oldcode
         self.description = description
-        self.setRegulations(regulation)
         self.hide = hide
         self.addFees(fees)
         self.addPtFees(ptfees)
@@ -729,64 +734,68 @@ ptFees                =  %s'''% (self.table.tablename,
         else:
             feeList = getFeeList(self.fees)
 
-        if self.regulations == "":
+        if self.regulations and not self.multiples:
+            logging.warning(
+            "TODO - apply regulation '%s'"% self.regulations)
+
+        if not self.multiples:
             #linear charging x items = x * fee.
             return feeList[0] * no_items
-        else:
-            #-- this is the "regulation" for small xrays
-            #--  n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E
+        
 
-            #--and here is the new one for the 2012 feescale
-            #-- n=1:A,n=2:B,n=3:C,n>4:E
+        #-- this is the "regulation" for small xrays
+        #--  n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E
 
+        #--and here is the new one for the 2012 feescale
+        #-- n=1:A,n=2:B,n=3:C,n>4:E
 
-            logging.debug("checking fee regulations '%s'"% self.regulations)
+        logging.debug("applying multiple regulation '%s'"% self.regulations)
 
-            regulations = self.regulations.split(',')
-            max_fee = None
-            found = False
-            for regulation in regulations:
+        regulations = self.regulations.split(',')
+        max_fee = None
+        found = False
+        for regulation in regulations:
 
-                m = re.match("max=([A-Z])", regulation)
-                if m:
-                    max_fee = feeList[ord(m.groups()[0])-65]
-                    continue
+            m = re.match("max=([A-Z])", regulation)
+            if m:
+                max_fee = feeList[ord(m.groups()[0])-65]
+                continue
 
-                if found:
-                    continue
+            if found:
+                continue
 
-                logic, value = regulation.split(":")
+            logic, value = regulation.split(":")
 
-                if re.search("[^>^<]=[^=]", logic):
-                    #can't simply use eval because n=5 is not n==5
-                    logic = logic.replace("=", "==")
+            if re.search("[^>^<]=[^=]", logic):
+                #can't simply use eval because n=5 is not n==5
+                logic = logic.replace("=", "==")
 
-                if eval(logic.replace("n", str(no_items))):
-                    logging.debug("match found with %s"% logic)
-                    if re.match("[A-Z]$", value):
-                        fee = feeList[ord(value)-65]
-                    else:
-                        eval_string = value.replace("n", str(no_items))
-                        for cap in re.findall("[A-Z]", value):
-                            eval_string = eval_string.replace(
-                                cap, str(feeList[ord(cap)-65]))
+            if eval(logic.replace("n", str(no_items))):
+                logging.debug("match found with %s"% logic)
+                if re.match("[A-Z]$", value):
+                    fee = feeList[ord(value)-65]
+                else:
+                    eval_string = value.replace("n", str(no_items))
+                    for cap in re.findall("[A-Z]", value):
+                        eval_string = eval_string.replace(
+                            cap, str(feeList[ord(cap)-65]))
 
-                        logging.debug("Fee logic is '%s', evaluating '%s'"% (
-                            value, eval_string))
-                        fee = eval(eval_string)
+                    logging.debug("Fee logic is '%s', evaluating '%s'"% (
+                        value, eval_string))
+                    fee = eval(eval_string)
 
-                    found = True
+                found = True
 
-            if not found:
-                logging.warning(
-                    "no match for fee regulations '%s'"% self.regulations)
-                fee = feeList[0] * no_items
+        if not found:
+            logging.warning(
+                "no match for fee regulations '%s'"% self.regulations)
+            fee = feeList[0] * no_items
 
-            if max_fee and max_fee < fee:
-                logging.info("max fee reached for this fee code")
-                fee = max_fee
-            logging.debug("returning a fee of %s"% fee)
-            return fee
+        if max_fee and max_fee < fee:
+            logging.info("max fee reached for this fee code")
+            fee = max_fee
+        logging.debug("returning a fee of %s"% fee)
+        return fee
 
 if __name__ == "__main__":
 
