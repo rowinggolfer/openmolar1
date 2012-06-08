@@ -1,3 +1,10 @@
+openmolar (0.2.1+bzr0745-0~__DIST__0) __DIST__; urgency=low
+
+  * new upstream version
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 08 Jun 2012 09:34:30 +0100
+
+
 openmolar (0.2.1+bzr0744-2~__DIST__2) __DIST__; urgency=low
 
   * new build script envoking pbuilder

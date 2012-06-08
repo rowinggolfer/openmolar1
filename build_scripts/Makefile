@@ -168,6 +168,7 @@ debsigns:
 		make debsign DIST=$(dist) ;\
 	) 
 	
+	
 notes:
 	#pdebuild --architecture <i386|amd64>  --buildresult /tmp --pbuilderroot "sudo DIST=<unstable|stable|testing|hardy|lucid|natty|oneiric|precise> ARCH=<i386|amd64>"
 	
@@ -184,6 +185,14 @@ debs:
 	
 	#make debsign DIST=<unstable|testing|stable|precise|lucid> 
 	$(foreach var,$(DISTS), make debsign DIST=$(var);) 
+	
+pushdebs:
+	@echo "updating the local repo"
+	$(foreach dist,$(DEBDISTS), \
+		cd ~/www/repos/apt/debian ;\
+		reprepro include $(dist) $(HEAD)builds/debs/$(dist)/*.changes ; \
+	) 
+	
 	
 test:
 	@echo "chosen package $(PACKAGE)"
