@@ -30,6 +30,8 @@ class InstallData(install_data):
     def _compile_po_files(self):
         print "COMPILING PO FILES"
         i18nfiles = []
+        if not os.path.isdir("src/openmolar/locale/"):
+            print "WARNING - language files are missing!"
         for po in glob.glob("src/openmolar/locale/*.po"):
             directory, file = os.path.split(po)
             lang = file.replace(".po","")            

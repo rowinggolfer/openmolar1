@@ -5,11 +5,12 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
-from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.compiled_uis import Ui_choose_language
 import gettext
 import os
+import logging
 
+from PyQt4 import QtGui, QtCore
+from openmolar.qt4gui.compiled_uis import Ui_choose_language
 
 def getCurrentLanguage():
     '''
@@ -39,7 +40,9 @@ def getAvailableLanguages():
     _("Portuguese") + " - pt",
     _("Slovak") + " - sk",
     _("Spanish") + " - es",
-    _("Turkish") + " -tr",
+    _("Turkish") + " - tr",
+    _("Romanian") + " - ro",
+    _("Greek") + " - el",
     ]
     available.sort()
     return available
@@ -55,7 +58,7 @@ def setLanguage(lang):
         lang1 = gettext.translation('openmolar', languages=[lang,])
         lang1.install(unicode=True)
     except IOError:    
-        print "%s not found, sorry"% lang1
+        logging.exception("%s not found, sorry"% lang1)
         gettext.install('openmolar', unicode=True)
 
 class language_dialog(Ui_choose_language.Ui_Dialog):
@@ -84,7 +87,7 @@ class language_dialog(Ui_choose_language.Ui_Dialog):
                         print "ok"
                         return True
                     except IOError:
-                        print "unable to find translation file"
+                        logging.exception("unable to find translation file")
                         message = _("no translation file found for %s")% lang 
                         QtGui.QMessageBox.information(self.dialog,
                         _("Advisory"), message)
@@ -99,6 +102,8 @@ def run(parent=None):
         
 if __name__ == "__main__":
     import sys
+    logging.basicConfig()
+    
     app = QtGui.QApplication(sys.argv)
     gettext.install('openmolar')
     print run()   
