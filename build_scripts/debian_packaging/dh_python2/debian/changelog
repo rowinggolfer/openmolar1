@@ -1,0 +1,19 @@
+openmolar (0.2.1+bzr0744-2~__DIST__2) __DIST__; urgency=low
+
+  * new build script envoking pbuilder
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 06 Jun 2012 13:56:37 +0100
+
+
+openmolar (0.2.1+bzr0744-1~__DIST__1) __DIST__; urgency=low
+
+  * trial build with new pbuilder environment
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 06 Jun 2012 10:46:47 +0100
+
+
+openmolar (0.2.1+bzr0744-0~__DIST__0) __DIST__; urgency=low
+
+  * trial build
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 01 Jun 2012 15:30:44 +0100

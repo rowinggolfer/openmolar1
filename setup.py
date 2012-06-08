@@ -9,6 +9,19 @@ import glob
 import os
 import re
 
+def get_version():
+    '''
+    returns a string with in the format X.Y.Z+bzr04d
+    '''
+    version = "0.2.1"
+    try:
+        from bzrlib import branch
+        revno = branch.Branch.open(".").revno()
+        return "%s+bzr%04d"% (version, revno)
+    except Exception as exc:
+        print ("Warning - unable to get bzr number")
+    return version
+
 class InstallData(install_data):
     def run(self):
         self.data_files.extend(self._compile_po_files())
@@ -43,7 +56,7 @@ if os.path.isfile("MANIFEST"):
 
 setup(
     name = 'openmolar',
-    version = '0.2.1',
+    version = get_version(),
     description = 'Open Source Dental Practice Management Software',
     author = 'Neil Wallace',
     author_email = 'rowinggolfer@googlemail.com',

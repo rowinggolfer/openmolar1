@@ -2,17 +2,17 @@ Source: openmolar
 Section: misc
 Priority: extra
 Maintainer: Neil Wallace <rowinggolfer@googlemail.com>
-Build-Depends: cdbs (>=0.4.49), debhelper (>= 5), python-central (>=0.5.6), python
-XS-Python-Version: >=2.5
-Standards-Version: 3.8.0
-Homepage: https://launchpad.net/openmolar
+Build-Depends: python, debhelper (>= 7)
+Homepage: http://www.openmolar.com
+Vcs-browser: https://code.launchpad.net/openmolar
+Standards-Version: 3.9.3
 
-Package: openmolar
+Package: openmolar-orig
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}, python-qt4 (>=4.4.0), python-mysqldb, xdg-utils
+Replaces: openmolar
 XB-Python-Version: ${python:Versions}
 Description: Dental Practice Management Software
  see https://launchpad.net/openmolar for project description and links
  .
  irc channel (for devs and users) is #openmolar on freenode.net
-
