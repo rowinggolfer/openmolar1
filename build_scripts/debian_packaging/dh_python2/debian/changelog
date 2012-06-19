@@ -1,3 +1,10 @@
+openmolar (0.2.1+bzr0746-0~__DIST__0) __DIST__; urgency=low
+
+  * new upstream version (fixes the translation problem)
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 08 Jun 2012 13:36:36 +0100
+
+
 openmolar (0.2.1+bzr0745-0~__DIST__0) __DIST__; urgency=low
 
   * new upstream version

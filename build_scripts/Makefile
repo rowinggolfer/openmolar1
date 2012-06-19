@@ -90,7 +90,7 @@ TMP_DIR=$(HEAD)tmp/
 DEB_CONF_DIR=$(HEAD)build_scripts/debian_packaging/$(DEBHELPER)/debian/
 DEB_BUILDS_DIR=$(BUILDS_DIR)debs/$(DIST)/
 
-DISTS = unstable testing stable precise lucid
+DEBDISTS = unstable testing stable precise lucid
 DEBHELPERS= py_central dh_python2
 
 #                                                                              #
@@ -179,12 +179,12 @@ debs:
 	$(foreach var,$(DEBHELPERS), make changelog DEBHELPER=$(var);)
 	
 	#make deb DIST=<unstable|testing|stable|precise|lucid> NEW_CHANGELOG=False 
-	$(foreach dist,$(DISTS), \
+	$(foreach dist,$(DEBDISTS), \
 		make deb DIST=$(dist) NEW_CHANGELOG=False;\
 	) 
 	
 	#make debsign DIST=<unstable|testing|stable|precise|lucid> 
-	$(foreach var,$(DISTS), make debsign DIST=$(var);) 
+	$(foreach var,$(DEBDISTS), make debsign DIST=$(var);) 
 	
 pushdebs:
 	@echo "updating the local repo"

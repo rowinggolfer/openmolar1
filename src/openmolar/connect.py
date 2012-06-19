@@ -41,17 +41,25 @@ if settingsversion == "1.1":
 
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
+kwargs = {
+    "host":myHost, 
+    "port":myPort,
+    "user":myUser, 
+    "passwd":myPassword,
+    "db":myDb
+    }
+
 if sslnode and sslnode[0].firstChild.data=="True":
     #-- to enable ssl... add <ssl>True</ssl> to the conf file
     if localsettings.VERBOSE: print "using ssl"
     #-- note, dictionary could have up to 5 params.
     #-- ca, cert, key, capath and cipher
     #-- however, IIUC, just using ca will encrypt the data
-    ssl_settings = {'ca': '/etc/mysql/ca-cert.pem'}
+    kwargs["ssl_settings"] = {'ca': '/etc/mysql/ca-cert.pem'}
 else:
-    if localsettings.VERBOSE: print "not using ssl (you really should!)"
-    ssl_settings = {}
-
+    if localsettings.VERBOSE: 
+        print "not using ssl (you really should!)"
+    
 dom.unlink()
 
 GeneralError = MySQLdb.Error
@@ -106,27 +114,26 @@ def connect():
     '''
     global mainconnection
     attempts = 0
-    while attempts < 150:
+    while attempts < 60:
         try:
             if not (mainconnection and mainconnection.open):
                 print "New connection needed"
                 print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
-                mainconnection = MySQLdb.connect(host = myHost, port = myPort,
-                user = myUser, passwd = myPassword, db = myDb, 
-                ssl = ssl_settings)
+                
+                mainconnection = MySQLdb.connect(**kwargs)
                 mainconnection.autocommit(True)
             else:
                 mainconnection.commit()
 
             return mainconnection
-        except MySQLdb.Error, e:
-            print e.args[1]
+        except MySQLdb.Error as exc:
+            print exc
             print "will attempt re-connect in 2 seconds..."
             mainconnection = None
         time.sleep(2)
         attempts += 1
         
-    raise localsettings.omDBerror(e)
+    raise exc #localsettings.omDBerror(exc)
 
 if __name__ == "__main__":
     from openmolar.settings import localsettings

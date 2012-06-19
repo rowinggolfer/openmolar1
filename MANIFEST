@@ -99,6 +99,7 @@ src/openmolar/locale/fr.po
 src/openmolar/locale/hu.po
 src/openmolar/locale/id.po
 src/openmolar/locale/it.po
+src/openmolar/locale/messages.pot
 src/openmolar/locale/oc.po
 src/openmolar/locale/pl.po
 src/openmolar/locale/pt.po
