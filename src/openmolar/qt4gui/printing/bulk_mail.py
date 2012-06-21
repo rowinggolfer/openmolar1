@@ -503,17 +503,19 @@ class bulkMails(object):
 if __name__ == "__main__":
 
     app = QtGui.QApplication([])
-    import datetime
+    from datetime import date
     os.chdir(os.environ.get("HOME", "."))
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall
 
     om_gui = maingui.openmolarGui(app)
-    start = datetime.date(2009,2,1)
-    end = datetime.date(2009,2,1)
+
+    conditions = "recd>=%s and recd<=%s and dnt1=%s"
+    values = date(2012,7,1), date(2012,7,31), 6
+    patients = recall.getpatients(conditions, values)
 
     letters = bulkMails(om_gui)
     letters.showOptions()
-    letters.setData(recall.HEADERS, recall.getpatients(start, end))
+    letters.setData(recall.HEADERS, patients)
     letters.printViaQPainter(True)
     app.closeAllWindows()

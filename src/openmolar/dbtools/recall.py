@@ -6,6 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import sys
+import types
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 from datetime import date
@@ -96,16 +97,23 @@ class recalled_patient(object):
         '''
         return "%s %s %s"% (self.serialno, self.sname, self.fname)
 
-def getpatients(startdate, enddate):
+def getpatients(conditions="", values=()):
     '''
     returns patients with a recall between the two dates
     '''
-    
+    assert type(conditions) == types.StringType, "conditions must be a string"
+    assert type(values) == types.TupleType, "conditions must be a string"
     query = '''
     select serialno, title, fname, sname, dnt1, familyno, dob,
     addr1, addr2, addr3, town, county, pcde, recd from patients 
-    where recd>=%s and recd<=%s order by familyno DESC, addr1, dob,fname,sname'''
-    values = (startdate, enddate)
+    where CONDITIONS 
+    order by familyno DESC, addr1, dob,fname,sname'''
+
+    
+    query = query.replace("CONDITIONS", conditions)
+
+    #conditions = "recd>=%s and recd<=%s"
+    #values = (startdate, enddate)
     
     db = connect()
     cursor = db.cursor()
@@ -132,4 +140,8 @@ def getpatients(startdate, enddate):
 
 if __name__ == "__main__":
     localsettings.initiate()
-    print getpatients(date(2009,1,1), date(2009,1,31))
+    conditions = "recd>=%s and recd<=%s and dnt1=%s"
+    values = date(2012,7,1), date(2012,7,31), 6
+    patients = getpatients(conditions, values)
+    print patients
+    

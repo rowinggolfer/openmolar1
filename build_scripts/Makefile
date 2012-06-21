@@ -190,7 +190,7 @@ pushdebs:
 	@echo "updating the local repo"
 	$(foreach dist,$(DEBDISTS), \
 		cd ~/www/repos/apt/debian ;\
-		reprepro include $(dist) $(HEAD)builds/debs/$(dist)/*.changes ; \
+		reprepro include $(dist) $(HEAD)builds/debs/$(dist)/*$(VERSION)*.changes ; \
 	) 
 	
 	

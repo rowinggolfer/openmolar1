@@ -1,3 +1,10 @@
+openmolar (0.2.1+bzr0748-0~__DIST__0) __DIST__; urgency=low
+
+  * new upstream version (uses **kwargs for connection, thus avoiding passing a blank dict in for ssl_settings)
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 19 Jun 2012 23:36:24 +0100
+
+
 openmolar (0.2.1+bzr0746-0~__DIST__0) __DIST__; urgency=low
 
   * new upstream version (fixes the translation problem)

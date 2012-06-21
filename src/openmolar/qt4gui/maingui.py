@@ -73,6 +73,7 @@ from openmolar.qt4gui.dialogs import choose_clinicians
 from openmolar.qt4gui.dialogs import clinician_select_dialog
 from openmolar.qt4gui.dialogs import assistant_select_dialog
 from openmolar.qt4gui.dialogs import phrasebook_dialog
+from openmolar.qt4gui.dialogs.recall_dialog import RecallDialog
 
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
@@ -1865,8 +1866,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.daybookStartDateEdit.setDate(today)
         self.ui.cashbookStartDateEdit.setDate(today)
         self.ui.cashbookEndDateEdit.setDate(today)
-        self.ui.recallstart_dateEdit.setDate(today)
-        self.ui.recallend_dateEdit.setDate(today)
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.dupReceiptDate_lineEdit.setText(today.toString(
             "dd'/'MM'/'yyyy"))
@@ -1992,10 +1991,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         gets patients who have the recall date stipulated
         by the ui.recallDateEdit value
         '''
-        start = self.ui.recallstart_dateEdit.date().toPyDate()
-        end = self.ui.recallend_dateEdit.date().toPyDate()
-
-        self.letters.setData(recall.HEADERS, recall.getpatients(start, end))
+        dl = RecallDialog(self)
+        if dl.exec_():
+            patients = recall.getpatients(dl.conditions, dl.values)
+            self.letters.setData(recall.HEADERS, patients)
 
     def bulkMailExpand(self):
         '''
