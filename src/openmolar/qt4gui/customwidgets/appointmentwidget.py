@@ -245,7 +245,6 @@ class appointmentCanvas(QtGui.QWidget):
     '''
     the canvas for me to draw on
     '''
-
     def __init__(self, om_gui, pWidget):
         super(appointmentCanvas, self).__init__()
         self.setSizePolicy(QtGui.QSizePolicy(
@@ -272,74 +271,6 @@ class appointmentCanvas(QtGui.QWidget):
         self.drag_appt = None
         self.drop_time = None
         self.setAcceptDrops(True)
-        
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasFormat("application/x-appointment"):
-            data = event.mimeData()
-            bstream = data.retrieveData("application/x-appointment",
-            QtCore.QVariant.ByteArray)
-            self.drag_appt = pickle.loads(bstream.toByteArray())
-
-            event.accept()
-        else:
-            event.ignore()
-
-    def dragMoveEvent(self, event):
-        if event.mimeData().hasFormat("application/x-appointment"):
-            
-            y = event.pos().y()
-            yOffset = self.height() / self.slotNo
-            self.drag_startrow = int(y//yOffset)
-            
-            if (self.drag_startrow < self.firstSlot-1 or 
-            self.drag_startrow >= self.lastSlot or
-            self.rows.has_key(self.drag_startrow)):
-                allowDrop = False
-            else:
-                n_rows = self.drag_appt.length // self.slotDuration
-                self.drag_endrow = self.drag_startrow + n_rows
-                #see if there's a long enough slot either side of the selected 
-                #row
-                allowDrop = True
-                for row in range(self.drag_startrow, self.drag_endrow):
-                    if self.rows.has_key(row) or row >= self.lastSlot:
-                        allowDrop = False
-                        break
-                if not allowDrop:
-                    allowDrop = True
-                    self.drag_startrow = row - n_rows
-                    self.drag_endrow = row
-                    for row in range(self.drag_startrow, row):
-                        if self.rows.has_key(row) or row < self.firstSlot-1:
-                            allowDrop = False
-                            break
-                                    
-            if allowDrop:
-                self.dragging = True 
-                self.drop_time = self.getTime_from_Cell(self.drag_startrow)
-                self.update()
-                event.accept()
-            else:
-                self.dragging = False
-                self.update()
-                event.ignore()
-        else:
-            self.update()
-            event.accept()
-    
-    def dragLeaveEvent(self, event):
-        self.dragging = False
-        self.update()
-        event.accept()
-
-    def dropEvent(self, event):
-        self.dragging = False
-        self.emit(QtCore.SIGNAL("ApptDropped"), self.drag_appt, 
-            self.drop_time, self.pWidget.apptix)
-        self.drag_appt = None
-        self.dropOffset = 0
-        event.accept()            
-            
 
     def setDayStartTime(self, sTime):
         '''
@@ -484,6 +415,73 @@ class appointmentCanvas(QtGui.QWidget):
                     upper=key
         return (lower,upper+1)
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat("application/x-appointment"):
+            data = event.mimeData()
+            bstream = data.retrieveData("application/x-appointment",
+            QtCore.QVariant.ByteArray)
+            self.drag_appt = pickle.loads(bstream.toByteArray())
+
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat("application/x-appointment"):
+            
+            y = event.pos().y()
+            yOffset = self.height() / self.slotNo
+            self.drag_startrow = int(y//yOffset)
+            
+            if (self.drag_startrow < self.firstSlot-1 or 
+            self.drag_startrow >= self.lastSlot or
+            self.rows.has_key(self.drag_startrow)):
+                allowDrop = False
+            else:
+                n_rows = self.drag_appt.length // self.slotDuration
+                self.drag_endrow = self.drag_startrow + n_rows
+                #see if there's a long enough slot either side of the selected 
+                #row
+                allowDrop = True
+                for row in range(self.drag_startrow, self.drag_endrow):
+                    if self.rows.has_key(row) or row >= self.lastSlot:
+                        allowDrop = False
+                        break
+                if not allowDrop:
+                    allowDrop = True
+                    self.drag_startrow = row - n_rows
+                    self.drag_endrow = row
+                    for row in range(self.drag_startrow, row):
+                        if self.rows.has_key(row) or row < self.firstSlot-1:
+                            allowDrop = False
+                            break
+                                    
+            if allowDrop:
+                self.dragging = True 
+                self.drop_time = self.getTime_from_Cell(self.drag_startrow)
+                self.update()
+                event.accept()
+            else:
+                self.dragging = False
+                self.update()
+                event.ignore()
+        else:
+            self.update()
+            event.accept()
+    
+    def dragLeaveEvent(self, event):
+        self.dragging = False
+        self.update()
+        event.accept()
+
+    def dropEvent(self, event):
+        self.dragging = False
+        self.emit(QtCore.SIGNAL("ApptDropped"), self.drag_appt, 
+            self.drop_time, self.pWidget.apptix)
+        self.drag_appt = None
+        self.dropOffset = 0
+        event.accept()            
+
     def mouseMoveEvent(self, event):
         y = event.y()
         yOffset = self.height() / self.slotNo
@@ -547,70 +545,107 @@ class appointmentCanvas(QtGui.QWidget):
                 QtGui.QToolTip.showText(pos, 
                     "SLOT %s minutes"% (finish - start))
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self,event):
+        pass
+        
+    def mouseReleaseEvent(self, event):
         '''
         catch the mouse press event -
         and if you have clicked on an appointment, emit a signal
         the signal has a LIST as argument -
         in case there are overlapping appointments or doubles etc...
         '''
+        
+        def rightClickMenuResult(result):
+            if not result:
+                return
+            dent = localsettings.apptix.get(self.pWidget.dentist)
+            if result.text() == _("Load Patient"):
+                self.pWidget.emit(QtCore.SIGNAL("AppointmentClicked"),
+                    tuple(selectedPatients))
+            elif result.text() == _("Cancel Appointment"):
+                self.pWidget.emit(QtCore.SIGNAL("AppointmentCancel"),
+                    tuple(selectedPatients), start, dent)
+
+            elif result.text() == _("Clear Block"):
+                self.pWidget.emit(QtCore.SIGNAL("ClearEmergencySlot"),
+                (start, finish, dent))
+
+            elif result.text() == _("Block or use this space"):
+                self.block_use_space(qstart, qfinish)
+    
         yOffset = self.height() / self.slotNo
         row=event.y()//yOffset
+                
+        actions = []
+
         if self.rows.has_key(row):
+            start=self.humanTime(
+            int(self.dayStartTime+self.selected[0]*self.slotDuration))
+
+            finish=self.humanTime(
+            int(self.dayStartTime+self.selected[1]*self.slotDuration))
+            
             selectedPatients=self.rows[row]
             #ignore lunch and emergencies - serialno number is positive
+            
             if selectedPatients[0]>0:
-                self.pWidget.emit(QtCore.SIGNAL("AppointmentClicked"),
-                tuple(selectedPatients))
+                actions.append(_("Load Patient"))
+                actions.append(_("Cancel Appointment"))
             else:
-                start=self.humanTime(
-                int(self.dayStartTime+self.selected[0]*self.slotDuration))
-
-                finish=self.humanTime(
-                int(self.dayStartTime+self.selected[1]*self.slotDuration))
-
-                self.pWidget.emit(QtCore.SIGNAL("ClearEmergencySlot"),
-                (start,finish,localsettings.apptix.get(self.pWidget.dentist)))
+                actions.append(_("Clear Block"))
+        
         else:
             #-- no-one in the book...
+            qstart=self.qTime(
+            int(self.dayStartTime+self.selected[0]*self.slotDuration))
+
+            qfinish=self.qTime(
+            int(self.dayStartTime+self.selected[1]*self.slotDuration))
+            
             if (self.firstSlot-1) < row < self.lastSlot:
-                start=self.qTime(
-                int(self.dayStartTime+self.selected[0]*self.slotDuration))
+                actions.append(_("Block or use this space"))
 
-                finish=self.qTime(
-                int(self.dayStartTime+self.selected[1]*self.slotDuration))
+        menu = QtGui.QMenu(self)
+        for i, action in enumerate(actions):
+            q_act = menu.addAction(action)
+            if i == 0:
+                menu.setDefaultAction(q_act)
+        
+        rightClickMenuResult(menu.exec_(event.globalPos()))
+        
+    def block_use_space(self, start, finish):
+        Dialog=QtGui.QDialog(self)
+        dl = blockslot.blockDialog(Dialog, self.om_gui)
 
-                Dialog=QtGui.QDialog(self)
-                dl=blockslot.blockDialog(Dialog, self.om_gui)
+        dl.setTimes(start, finish)
+        dl.setPatient(self.om_gui.pt)
 
-                dl.setTimes(start, finish)
-                dl.setPatient(self.om_gui.pt)
+        if dl.exec_():
+            adjstart = dl.start_timeEdit.time()
+            adjfinish = dl.finish_timeEdit.time()
+            if finish < start :                            
+                QtGui.QMessageBox.information(self,
+                _("Whoops!"), _("Bad Time Sequence!"))
 
-                if dl.exec_():
-                    adjstart = dl.start_timeEdit.time()
-                    adjfinish = dl.finish_timeEdit.time()
-                    if finish < start :                            
-                        QtGui.QMessageBox.information(self,
-                        _("Whoops!"), _("Bad Time Sequence!"))
-
-                    if dl.block == True:                        
-                        reason = str(
-                        dl.comboBox.currentText().toAscii())[:30]
-                    
-                        self.pWidget.emit(QtCore.SIGNAL("BlockEmptySlot"),
-                        (start, finish, adjstart, adjfinish ,
-                        localsettings.apptix.get(self.pWidget.dentist),
-                        reason))
-                    else:
-                        reason = dl.reason_comboBox.currentText().toAscii()
-                        self.pWidget.emit(
-                        QtCore.SIGNAL("Appointment_into_EmptySlot"),
-                        (start, finish, adjstart, adjfinish ,
-                        localsettings.apptix.get(self.pWidget.dentist),
-                        reason, dl.patient))
-
+            if dl.block == True:                        
+                reason = str(
+                dl.comboBox.currentText().toAscii())[:30]
+            
+                self.pWidget.emit(QtCore.SIGNAL("BlockEmptySlot"),
+                (start, finish, adjstart, adjfinish ,
+                localsettings.apptix.get(self.pWidget.dentist),
+                reason))
+            else:
+                reason = dl.reason_comboBox.currentText().toAscii()
+                self.pWidget.emit(
+                QtCore.SIGNAL("Appointment_into_EmptySlot"),
+                (start, finish, adjstart, adjfinish ,
+                localsettings.apptix.get(self.pWidget.dentist),
+                reason, dl.patient))
 
     def leaveEvent(self,event):
+        self.mouse_down = False
         self.selected=[-1,-1]
         self.update()
 

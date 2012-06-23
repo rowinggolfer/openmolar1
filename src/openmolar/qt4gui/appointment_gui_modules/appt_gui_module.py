@@ -267,7 +267,7 @@ def clearApptButtonClicked(om_gui):
         delete_appt()
     else:
         message = _("Confirm Delete appointment at")
-        message += "%s %s"% (appt.atime,
+        message += " %s %s "% (appt.atime,
         localsettings.readableDate(appt.date))
 
         message += _("with") + " %s?"% appt.dent_inits
@@ -609,14 +609,12 @@ def makeAppt(om_gui, appt, slot, offset=None):
                     #-- proc returned True so....update the patient apr table
                     layout_ptDiary(om_gui)
                     #== and offer an appointment card
-
-                    result = QtGui.QMessageBox.question(om_gui,
-                    "Confirm",
-                    "Print Appointment Card?",
-                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                    QtGui.QMessageBox.Yes )
-                    if result == QtGui.QMessageBox.Yes:
-                        printApptCard(om_gui)
+                    if appointments.has_unscheduled(appt.serialno):
+                        om_gui.advise(_("more appointments to schedule"))
+                    else:
+                        offer_appointment_card(om_gui)
+                        om_gui.ui.main_tabWidget.setCurrentIndex(0)
+                    
                 else:
                     om_gui.advise(
                     _("Error putting appointment back into patient diary"))
@@ -638,6 +636,15 @@ def apptOVheaderclick(om_gui, arg):
     if result == QtGui.QMessageBox.Ok:
         apptix, adate = arg
         om_gui.bookPrint(apptix, adate)
+
+def offer_appointment_card(om_gui):
+    result = QtGui.QMessageBox.question(om_gui,
+    "Confirm",
+    "Print Appointment Card?",
+    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes )
+    if result == QtGui.QMessageBox.Yes:
+        printApptCard(om_gui)
 
 def ptDiary_selection(om_gui, index=None):
     '''
@@ -1348,6 +1355,66 @@ def appointment_clicked(om_gui, list_of_snos):
             om_gui.advise("getting record %s"% sno)
             om_gui.getrecord(serialno)
 
+def appointment_cancel(om_gui, list_of_snos, start, dentist):
+    if len(list_of_snos) != 1:
+        om_gui.advise("multiple appointments selected, unable to delete", 2)
+        return
+    
+    sno = list_of_snos[0]    
+    serialno = int(sno)
+    adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
+
+    #om_gui.advise("cancelling appointment %s on %s at %s"% (sno, adate, start))
+    
+    message = _("Confirm Delete appointment at")
+    message += " %s %s "% (start, localsettings.readableDate(adate))
+
+    message += _("with") + " %s?"% localsettings.apptix_reverse.get(dentist)
+    
+    if QtGui.QMessageBox.question(om_gui, _("Confirm"), message,
+    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+
+        appt = appointments.ApptClass()
+        appt.atime = int(start.replace(":",""))
+        appt.dent = dentist
+        appt.date = adate
+        appt.serialno = serialno
+        appt.aprix = "UNKNOWN"
+
+        if appointments.delete_appt_from_aslot(appt):
+            ##todo - if we deleted from the appt book,
+            ##we should add to notes
+            print "future appointment deleted - add to notes!!"
+
+            #--keep in the patient's diary?
+
+            if QtGui.QMessageBox.question(om_gui, _("Question"),
+            _("Removed from appointment book - keep for rescheduling?"),
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.No ) == QtGui.QMessageBox.Yes:
+                #appointment "POSTPONED" - not totally cancelled
+                if not appointments.made_appt_to_proposed(appt):
+                    om_gui.advise(_("Error converting appointment"), 2)
+            else:
+                #remove from the patients diary
+                if appointments.delete_appt_from_apr(appt):
+                    om_gui.advise(_("Sucessfully removed appointment"))
+                    layout_ptDiary(om_gui)        
+                else:
+                    om_gui.advise(_("Error removing from patient diary"),2)
+                                
+                                
+        else:
+            #--aslot proc has returned False!
+            #let the user know, and go no further
+            om_gui.advise(_("Error Removing from Appointment Book"), 2)
+            return
+        layout_ptDiary(om_gui)
+    
+    layout_dayView(om_gui)
+
+
 def clearEmergencySlot(om_gui, arg):
     '''
     this function is the slot for a signal invoked when the user clicks
@@ -1364,7 +1431,7 @@ def clearEmergencySlot(om_gui, arg):
     if QtGui.QMessageBox.question(om_gui, "Confirm", message,
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
-        appt = appointments.appt_class()
+        appt = appointments.ApptClass()
         appt.atime = localsettings.humanTimetoWystime(arg[0])
         appt.date = adate
         appt.dent = arg[2]
@@ -1412,7 +1479,7 @@ def fillEmptySlot(om_gui, tup):
 def appt_dropped_onto_daywidget(om_gui, appt, droptime, dent):
     '''
     appointment has been dropped onto a daybook widget
-    appt is of type openmolar.dbtools.appointments.appt_class
+    appt is of type openmolar.dbtools.appointments.ApptClass
     droptime is a pytime
     dent = numeric representation of dentist who's book was involved
     '''

@@ -343,25 +343,25 @@ class openmolarGui(QtGui.QMainWindow):
 
         #--add a dragable listView for making appointments
         self.ui.day_appointment_listView = \
-            appointment_drag.draggableList(True, self)
+            appointment_drag.DraggableList(True, self)
         layout = QtGui.QHBoxLayout(self.ui.day_apt_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.day_appointment_listView)
 
         self.ui.week_appointment_listView = \
-            appointment_drag.draggableList(True,self)
+            appointment_drag.DraggableList(True,self)
         layout = QtGui.QHBoxLayout(self.ui.week_apt_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.week_appointment_listView)
 
         self.ui.day_block_listView = \
-            appointment_drag.draggableList(False, self)
+            appointment_drag.DraggableList(False, self)
         layout = QtGui.QHBoxLayout(self.ui.block_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.day_block_listView)
 
         self.ui.week_block_listView = \
-            appointment_drag.draggableList(False, self)
+            appointment_drag.DraggableList(False, self)
         layout = QtGui.QHBoxLayout(self.ui.week_block_drag_frame)
         layout.setMargin(0)
         layout.addWidget(self.ui.week_block_listView)
@@ -2360,7 +2360,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user about to make an appointment
         '''
         appt_gui_module.begin_makeAppt(self)
-
+        
     def del_pastAppointments(self):
         '''
         user has requested deletion of all past appointments for the patient
@@ -2481,6 +2481,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         the arg is a list of serial numbers
         '''
         appt_gui_module.appointment_clicked(self, arg)
+        
+    def apptBook_appointmentCancelSignal(self, *args):
+        '''
+        a custom widget (dentist diary) has sent a signal that an
+        appointment has been selected.
+        the arg is a list of serial numbers
+        '''
+        appt_gui_module.appointment_cancel(self, *args)
 
     def apptBook_emergencySlotSignal(self, arg):
         '''
@@ -3933,6 +3941,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
         self.apptBook_appointmentClickedSignal)
+        
+        book.connect(book, QtCore.SIGNAL("AppointmentCancel"),
+        self.apptBook_appointmentCancelSignal)
 
         book.connect(book, QtCore.SIGNAL("ClearEmergencySlot"),
         self.apptBook_emergencySlotSignal)

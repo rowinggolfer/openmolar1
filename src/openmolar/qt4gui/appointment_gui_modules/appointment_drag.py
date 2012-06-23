@@ -7,7 +7,6 @@ from PyQt4 import QtGui, QtCore
 from openmolar.dbtools import appointments
 from openmolar.settings import localsettings
 
-
 class clinicianSelectModel(QtCore.QAbstractListModel):
     def __init__(self, om_gui):
         super(clinicianSelectModel, self).__init__(om_gui)
@@ -222,7 +221,7 @@ class blockModel(simple_model):
         (_("emergency"), 20),
         (_("emergency"), 30),
         (_("Out of Office"), 30)):
-            block = appointments.appt_class()
+            block = appointments.ApptClass()
             block.name = val
             block.unscheduled = True
             block.length = length
@@ -232,12 +231,12 @@ class blockModel(simple_model):
     def reset(self):
         pass
 
-class draggableList(QtGui.QListView):
+class DraggableList(QtGui.QListView):
     '''
     a listView whose items can be moved
     '''
     def __init__(self, multiSelect, parent=None):
-        super(draggableList, self).__init__(parent)
+        super(DraggableList, self).__init__(parent)
         self.setDragEnabled(True)
         self.multiSelect = multiSelect
         self.pixels_per_min = 2
@@ -353,17 +352,17 @@ if __name__ == "__main__":
 
             self.model.setAppointments(appts, appts[1])
 
-            self.daylistView = draggableList(True)
+            self.daylistView = DraggableList(True)
             self.daylistView.setModel(self.model)
             self.daylistView.setSelectionModel(self.model.selection_model)
 
-            self.weeklistView = draggableList(True)
+            self.weeklistView = DraggableList(True)
             self.weeklistView.setModel(self.model)
             self.weeklistView.setSelectionModel(
                 self.daylistView.selectionModel())
 
             self.block_model = blockModel()
-            self.blockView = draggableList(False)
+            self.blockView = DraggableList(False)
             self.blockView.setModel(self.block_model)
 
             self.book = appointmentwidget.appointmentWidget(self, "1000",
@@ -441,10 +440,8 @@ if __name__ == "__main__":
             self.connect(self.book, QtCore.SIGNAL("redrawn"),
                     self.daylistView.setScaling)
 
-    try:
-        app = QtGui.QApplication([])
-        dl = testDialog()
-        dl.exec_()
-    except Exception, e:
-        print e
-    sys.exit(app.closeAllWindows())
+    app = QtGui.QApplication([])
+    dl = testDialog()
+    dl.exec_()
+    
+    

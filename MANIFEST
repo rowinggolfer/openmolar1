@@ -241,6 +241,7 @@ src/openmolar/qt4gui/dialogs/newCourse.py
 src/openmolar/qt4gui/dialogs/paymentwidget.py
 src/openmolar/qt4gui/dialogs/permissions.py
 src/openmolar/qt4gui/dialogs/phrasebook_dialog.py
+src/openmolar/qt4gui/dialogs/recall_dialog.py
 src/openmolar/qt4gui/dialogs/saveDiscardCancel.py
 src/openmolar/qt4gui/dialogs/saveMemo.py
 src/openmolar/qt4gui/dialogs/save_pttask.py

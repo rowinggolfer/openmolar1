@@ -112,7 +112,7 @@ class aowAppt(object):
         self.reason = ""
         self.isEmergency = False
 
-class appt_class(object):
+class ApptClass(object):
     '''
     a class to hold data about a patient's appointment
     '''
@@ -945,8 +945,7 @@ def get_pts_appts(pt, printing=False):
     if printing:
         fullquery += "and adate>=date(NOW()) ORDER BY concat(adate, atime)"
     else:
-	fullquery += "ORDER BY aprix"
-
+        fullquery += "ORDER BY aprix"
     
     ## - table also contains flag0,flag1,flag2,flag3,flag4,
 
@@ -959,7 +958,7 @@ def get_pts_appts(pt, printing=False):
     data = []
     cursor.close()
     for row in rows:
-        appt = appt_class()
+        appt = ApptClass()
         appt.serialno = row[0]
         appt.aprix = row[1]
         appt.name = name
@@ -978,6 +977,21 @@ def get_pts_appts(pt, printing=False):
         data.append(appt)
 
     return data
+
+def has_unscheduled(serialno):
+    '''
+    return a boolean as to whether the patient has unscheduled appointments
+    '''
+    db = connect()
+    cursor = db.cursor()
+    query = "select count(*) from apr where serialno=%s and adate is NULL"
+    cursor.execute(query, (serialno,))
+    rows = cursor.fetchall()
+    cursor.close()
+    result = rows[0][0] != 0
+    print "has_unscheduled is returning ", result
+    return result
+    
 
 def deletePastAppts(serialno):
     '''
@@ -1099,28 +1113,6 @@ def pt_appt_made(serialno, aprix, date, time, dent):
         result = False
     cursor.close()
     #db.close()
-    return result
-
-def made_appt_to_proposed(appt):
-    '''
-    modifies the apr table, when an appointment has been postponed,
-    but not totally cancelled
-    '''
-    db = connect()
-    cursor = db.cursor()
-    result = False
-    try:
-        query = '''UPDATE apr SET adate=NULL, atime=NULL
-        WHERE serialno=%s AND aprix=%s'''
-        values = (appt.serialno, appt.aprix)
-        if localsettings.logqueries:
-            print query, values
-        result = cursor.execute(query, values)
-        db.commit()
-    except Exception, ex:
-        print "exception in appointments.made_appt_to_proposed ", ex
-    cursor.close()
-
     return result
 
 def make_appt(make_date, apptix, start, end, name, serialno, code0, code1,
@@ -1321,29 +1313,59 @@ def delete_appt_from_apr(appt):
     db = connect()
     cursor = db.cursor()
     result = False
-
+    query = '''DELETE FROM apr WHERE serialno=%s AND practix=%s'''
+    values = [appt.serialno, appt.dent]
+    if appt.aprix != "UNKNOWN":
+        query += 'AND aprix=%s'
+        values.append(appt.aprix)
+    if appt.date == None:
+        query += ' and adate is NULL'
+    else:
+        query += ' and adate =%s'
+        values.append(appt.date)
+    if appt.atime == None:
+        query += ' and atime is NULL'
+    else:
+        query += ' and atime =%s'
+        values.append(appt.atime)
+        
     try:
-        query = 'DELETE FROM apr WHERE serialno=%d AND aprix=%d'% (
-        appt.serialno, appt.aprix)
-        if appt.date == None:
-            query += ' and adate is NULL'
-        else:
-            query += ' and adate ="%s"'% appt.date
-        if appt.atime == None:
-            query += ' and atime is NULL'
-        else:
-            query += ' and atime =%d'% appt.atime
         if localsettings.logqueries:
-            print query,"....",
-        result = cursor.execute(query)
-        if localsettings.logqueries:
-            print result
+            print query, values
+        result = cursor.execute(query, tuple(values))
         db.commit()
     except Exception, ex:
         print "exception in appointments.delete_appt_from_apr ", ex
     cursor.close()
 
     return result
+
+def made_appt_to_proposed(appt):
+    '''
+    modifies the apr table, when an appointment has been postponed,
+    but not totally cancelled
+    '''
+    db = connect()
+    cursor = db.cursor()
+    result = False
+    query = '''UPDATE apr SET adate=NULL, atime=NULL WHERE serialno=%s AND 
+        adate=%s and practix=%s and atime=%s'''
+    values = [appt.serialno, appt.date, appt.dent, appt.atime]
+    if appt.aprix != "UNKNOWN":
+        query += 'AND aprix=%s'
+        values.append(appt.aprix)
+
+    try:
+        if localsettings.logqueries:
+            print query, values
+        result = cursor.execute(query, tuple(values))
+        db.commit()
+    except Exception, ex:
+        print "exception in appointments.made_appt_to_proposed ", ex
+    cursor.close()
+
+    return result
+
 
 def delete_appt_from_aslot(appt):
     #--delete from the appointment book proper
