@@ -545,8 +545,8 @@ class appointmentCanvas(QtGui.QWidget):
                 QtGui.QToolTip.showText(pos, 
                     "SLOT %s minutes"% (finish - start))
 
-    def mousePressEvent(self,event):
-        pass
+    def mouseDoubleClickEvent(self,event):
+        self.mouseReleaseEvent(event)
         
     def mouseReleaseEvent(self, event):
         '''
@@ -612,7 +612,10 @@ class appointmentCanvas(QtGui.QWidget):
             if i == 0:
                 menu.setDefaultAction(q_act)
         
-        rightClickMenuResult(menu.exec_(event.globalPos()))
+        if event == QtCore.QEvent.MouseButtonDblClick:
+            rightClickMenuResult(menu.defaultAction())
+        else:
+            rightClickMenuResult(menu.exec_(event.globalPos()))
         
     def block_use_space(self, start, finish):
         Dialog=QtGui.QDialog(self)

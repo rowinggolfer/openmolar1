@@ -159,7 +159,7 @@ deb:
 	make debsigns
 	
 debsign:
-	debsign $(DEB_BUILDS_DIR)*.changes -kF230408E 
+	debsign $(DEB_BUILDS_DIR)*$(VERSION)*.changes -kF230408E 
 	
 debsigns:
 	#make debsign DIST=<unstable|testing|stable|precise|lucid> 
