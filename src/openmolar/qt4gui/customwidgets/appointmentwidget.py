@@ -271,6 +271,7 @@ class appointmentCanvas(QtGui.QWidget):
         self.drag_appt = None
         self.drop_time = None
         self.setAcceptDrops(True)
+        self.qmenu = None
 
     def setDayStartTime(self, sTime):
         '''
@@ -546,16 +547,15 @@ class appointmentCanvas(QtGui.QWidget):
                     "SLOT %s minutes"% (finish - start))
 
     def mouseDoubleClickEvent(self,event):
-        self.mouseReleaseEvent(event)
-        
-    def mouseReleaseEvent(self, event):
+        self.mousePressEvent(event)
+                
+    def mousePressEvent(self, event):
         '''
         catch the mouse press event -
         and if you have clicked on an appointment, emit a signal
         the signal has a LIST as argument -
         in case there are overlapping appointments or doubles etc...
         '''        
-        
         def rightClickMenuResult(result):
             if not result:
                 return
@@ -573,7 +573,7 @@ class appointmentCanvas(QtGui.QWidget):
 
             elif result.text() == _("Block or use this space"):
                 self.block_use_space(qstart, qfinish)
-    
+        
         yOffset = self.height() / self.slotNo
         row=event.y()//yOffset
                 
@@ -606,16 +606,18 @@ class appointmentCanvas(QtGui.QWidget):
             if (self.firstSlot-1) < row < self.lastSlot:
                 actions.append(_("Block or use this space"))
 
-        menu = QtGui.QMenu(self)
+        if self.qmenu and event.type() == QtCore.QEvent.MouseButtonDblClick:
+            rightClickMenuResult(self.qmenu.defaultAction())
+            self.qmenu.clear()
+            return
+
+        self.qmenu = QtGui.QMenu(self)
         for i, action in enumerate(actions):
-            q_act = menu.addAction(action)
+            q_act = self.qmenu.addAction(action)
             if i == 0:
-                menu.setDefaultAction(q_act)
-        
-        if event.type() == QtCore.QEvent.MouseButtonDblClick:
-            rightClickMenuResult(menu.defaultAction())
-        else:
-            rightClickMenuResult(menu.exec_(event.globalPos()))
+                self.qmenu.setDefaultAction(q_act)
+        if event.button() == QtCore.Qt.RightButton:
+            rightClickMenuResult(self.qmenu.exec_(event.globalPos()))
         
     def block_use_space(self, start, finish):
         Dialog=QtGui.QDialog(self)
