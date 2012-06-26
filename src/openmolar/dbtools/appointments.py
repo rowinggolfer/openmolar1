@@ -1313,7 +1313,7 @@ def delete_appt_from_apr(appt):
     db = connect()
     cursor = db.cursor()
     result = False
-    query = '''DELETE FROM apr WHERE serialno=%s AND practix=%s'''
+    query = '''DELETE FROM apr WHERE serialno=%s AND practix=%s '''
     values = [appt.serialno, appt.dent]
     if appt.aprix != "UNKNOWN":
         query += 'AND aprix=%s'
@@ -1349,7 +1349,7 @@ def made_appt_to_proposed(appt):
     cursor = db.cursor()
     result = False
     query = '''UPDATE apr SET adate=NULL, atime=NULL WHERE serialno=%s AND 
-        adate=%s and practix=%s and atime=%s'''
+        adate=%s and practix=%s and atime=%s '''
     values = [appt.serialno, appt.date, appt.dent, appt.atime]
     if appt.aprix != "UNKNOWN":
         query += 'AND aprix=%s'
