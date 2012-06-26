@@ -546,7 +546,7 @@ class appointmentCanvas(QtGui.QWidget):
                     "SLOT %s minutes"% (finish - start))
 
     def mouseDoubleClickEvent(self,event):
-        self.mousePressEvent(event)
+        self.mouseReleaseEvent(event)
         
     def mouseReleaseEvent(self, event):
         '''
