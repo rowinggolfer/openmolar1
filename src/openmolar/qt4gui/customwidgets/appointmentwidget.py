@@ -546,7 +546,7 @@ class appointmentCanvas(QtGui.QWidget):
                     "SLOT %s minutes"% (finish - start))
 
     def mouseDoubleClickEvent(self,event):
-        self.mouseReleaseEvent(event)
+        self.mousePressEvent(event)
         
     def mouseReleaseEvent(self, event):
         '''
@@ -554,7 +554,7 @@ class appointmentCanvas(QtGui.QWidget):
         and if you have clicked on an appointment, emit a signal
         the signal has a LIST as argument -
         in case there are overlapping appointments or doubles etc...
-        '''
+        '''        
         
         def rightClickMenuResult(result):
             if not result:
@@ -612,7 +612,7 @@ class appointmentCanvas(QtGui.QWidget):
             if i == 0:
                 menu.setDefaultAction(q_act)
         
-        if event == QtCore.QEvent.MouseButtonDblClick:
+        if event.type() == QtCore.QEvent.MouseButtonDblClick:
             rightClickMenuResult(menu.defaultAction())
         else:
             rightClickMenuResult(menu.exec_(event.globalPos()))
@@ -733,7 +733,7 @@ class appointmentCanvas(QtGui.QWidget):
             if sno !=0 and sno == self.om_gui.pt.serialno:
                 painter.setBrush(QtGui.QColor("orange"))                
             elif self.selected == (startcell, endcell):
-                painter.setBrush(colours.APPT_Background)
+                painter.setBrush(QtGui.QColor("#AAAAAA"))
             elif APPTCOLORS.has_key(cset):
                 painter.setBrush(APPTCOLORS[cset])
             elif APPTCOLORS.has_key(name.upper()):

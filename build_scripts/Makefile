@@ -93,6 +93,9 @@ DEB_BUILDS_DIR=$(BUILDS_DIR)debs/$(DIST)/
 DEBDISTS = unstable testing stable precise lucid
 DEBHELPERS= py_central dh_python2
 
+CHANGE_FILES=`ls -t $(DEB_BUILDS_DIR) | grep changes | head -n1`
+CHANGES_FILE = $(CHANGE_FILES)
+
 #                                                                              #
 ##################  Debian packaging ends  #####################################
 
@@ -186,13 +189,16 @@ debs:
 	#make debsign DIST=<unstable|testing|stable|precise|lucid> 
 	$(foreach var,$(DEBDISTS), make debsign DIST=$(var);) 
 	
+pushdeb:
+	cd ~/www/repos/apt/debian ;\
+	reprepro include $(DIST) $(HEAD)builds/debs/$(DIST)/$(CHANGES_FILE) ; \
+	
 pushdebs:
 	@echo "updating the local repo"
 	$(foreach dist,$(DEBDISTS), \
-		cd ~/www/repos/apt/debian ;\
-		reprepro include $(dist) $(HEAD)builds/debs/$(dist)/*$(VERSION)*.changes ; \
-	) 
-	
+		make DIST=$(dist) pushdeb; \
+	)
+	 
 	
 test:
 	@echo "chosen package $(PACKAGE)"
