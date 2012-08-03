@@ -192,7 +192,6 @@ class patient():
         self.bpe = []
         self.bpedate = nullDate
         self.chartdate = nullDate
-        self.fees = 0
         self.notes_dict = {}
         self.MH = ()
         self.MEDALERT = False
@@ -284,7 +283,6 @@ class patient():
             self.plandata.getFromDB()
 
             self.updateChartgrid()
-            self.updateFees()
             #self.setCurrentEstimate()
 
     def __repr__(self):
@@ -515,10 +513,10 @@ self.serialno, self.courseno0))
             self.money0 += arg
         else:
             self.money1 += arg
-        self.updateFees()
-
-    def updateFees(self):
-        self.fees=(self.money0 + self.money1 + self.money9 + self.money10 +
+    
+    @property
+    def fees(self):
+        return int(self.money0 + self.money1 + self.money9 + self.money10 +
         self.money11 - self.money2 - self.money3 - self.money8)
 
     def setAccd(self, accd):
@@ -544,8 +542,6 @@ self.serialno, self.courseno0))
         self.money2=0
         self.money3=0
         self.money8=0
-
-        self.updateFees()
 
     def removeKnownEstimate(self, est):
         try:

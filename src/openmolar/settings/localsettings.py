@@ -16,6 +16,7 @@ import locale
 import re
 import subprocess
 #import inspect
+import types
 
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
@@ -366,12 +367,20 @@ def formatMoney(m):
     '''
     takes an integer, returns a string
     '''
-    try:
-        retarg = locale.currency(m/100)
-        return retarg.decode(ENCODING, "replace")
-    except Exception, e:
-        print "formatMoney error", e
-        return "%.02f"% m/100
+    if type(m) == types.StringType:
+        try:
+            retarg = locale.currency(float(m))
+            return retarg.decode(ENCODING, "replace")
+        except Exception, e:
+            print "formatMoney error", e
+            return "%s"% m
+    else:
+        try:
+            retarg = locale.currency(m/100)
+            return retarg.decode(ENCODING, "replace")
+        except Exception, e:
+            print "formatMoney error", e
+            return "%.02f"% m/100
 
 def reverseFormatMoney(m):
     '''

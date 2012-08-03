@@ -78,11 +78,11 @@ def printDupReceipt(om_gui):
     '''
     dupdate=om_gui.ui.dupReceiptDate_lineEdit.text()
     amount=om_gui.ui.receiptDoubleSpinBox.value()*100
-    printReceipt(om_gui, {_("Professional Services"):amount}, True, dupdate)
+    printReceipt(om_gui, {_("Professional Services"):amount}, total=amount, duplicate=True, dupdate=dupdate)
     om_gui.pt.addHiddenNote("printed",
     _("duplicate receipt for %.02f")% amount)
 
-def printReceipt(om_gui, valDict, duplicate=False, dupdate=""):
+def printReceipt(om_gui, valDict, total="0.00", duplicate=False, dupdate=""):
     '''
     print a receipt
     '''
@@ -94,6 +94,8 @@ def printReceipt(om_gui, valDict, duplicate=False, dupdate=""):
     myreceipt.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
     om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3, om_gui.pt.town,
     om_gui.pt.county, om_gui.pt.pcde)
+
+    myreceipt.total = total
 
     myreceipt.receivedDict = valDict
     if duplicate:

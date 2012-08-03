@@ -80,7 +80,6 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         self.om_gui.pt.money10 = self.money10_spinBox.value()
         self.om_gui.pt.money11 = self.money11_spinBox.value()
         
-        self.om_gui.pt.updateFees()
         self.om_gui.updateDetails()
         self.om_gui.advise(_("money changes applied"), 1)
     

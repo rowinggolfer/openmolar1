@@ -33,31 +33,23 @@ def getCashBookCodes():
         cursor.close()
     return myDict
 
-def paymenttaken(sno, name, dent, csetyp, cash, cheque, debit, credit,
-sundries, hdp, other):
+def paymenttaken(sno, name, dent, csetyp, cash, cheque, card,
+sundry_cash, sundry_cheque, sundry_card, hdp, other):
     '''
     called when a payment has been taken at the desk
     '''
-    if sno == 0:
-        ##TODO this is ADP only - Mr Other Payments
-        print "sundries sale - allocating to ?"
-        sno = 22963
-        dent = 4
-        csetyp = "P"
     if csetyp[:1] == "N":
-        codes = (1, 3, 7, 5, 18, 21, 24)
+        codes = (1, 3, 5, 14, 15, 17, 21, 24)
     else:
-        codes = (2, 4, 8, 6, 18, 21, 24)
+        codes = (2, 4, 6, 14, 15, 17, 21, 24)
     i = 0
     queries = []
-    for payment in (cash, cheque, debit, credit, sundries, hdp, other):
-        if len(payment) > 0:
-            amount =  float(payment)*100
-            if amount > 0:
-                queries.append('''
-                insert into cashbook set cbdate = date(NOW()),
-                ref="%06d", linkid=0, descr="%s", code=%d, dntid=%d, amt=%d
-                '''%(sno, name, codes[i], dent, amount))
+    for amount in (cash, cheque, card, sundry_cash, sundry_cheque, sundry_card, hdp, other):
+        if amount != 0:
+            queries.append('''
+            insert into cashbook set cbdate = date(NOW()),
+            ref="%06d", linkid=0, descr="%s", code=%d, dntid=%d, amt=%d
+            '''%(sno, name, codes[i], dent, amount))
         i += 1
     if queries != []:
         db = connect()
@@ -70,8 +62,13 @@ sundries, hdp, other):
         #db.close()
         return dbOK
 
-def details(dent, startdate, enddate):
-    '''returns an html set showing pt name etc...'''
+def details(dent, startdate, enddate, 
+    treatment_only=False, sundries_only=False):
+    
+    '''
+    returns an html set showing pt name etc...
+    '''
+
     db = connect()
     cursor = db.cursor()
     headers = ("cbdate", "Serial NO", "Dentist", "Patient", "code", "cash",
@@ -82,8 +79,16 @@ def details(dent, startdate, enddate):
         dentist = "All Dentists"
     else:
         dentist = localsettings.ops_reverse[str(dent)]
-        cond1 = 'dntid="%s" and'% dentist
+        cond1 = 'dntid="%s" and '% dentist
 
+    restriction_header = ""
+    if treatment_only:
+        cond1 += "code < 9 and "
+        restriction_header = "TREATMENT ONLY"
+    elif sundries_only:
+        cond1 += "code >=14  and  code <= 18 and "
+        restriction_header = "SUNDRIES ONLY"
+        
 
     #-- note - mysqldb doesn't play nice with DATE_FORMAT
     #-- hence the string is formatted entirely using python formatting
@@ -99,9 +104,10 @@ def details(dent, startdate, enddate):
     rows = cursor.fetchall()
 
     retarg = "<h3>Cashbook - "
-    retarg += "%s - %s - %s (inclusive)</h3>"% (dentist,
+    retarg += "%s - %s - %s (inclusive) - %s</h3>"% (dentist,
     localsettings.formatDate(startdate.toPyDate()),
-    localsettings.formatDate(enddate.toPyDate()))
+    localsettings.formatDate(enddate.toPyDate()),
+    restriction_header)
 
     retarg += '<table width="100%" border="1"> <tr>'
     for header in headers:

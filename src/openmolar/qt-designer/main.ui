@@ -3233,7 +3233,7 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>238</width>
+                        <width>220</width>
                         <height>512</height>
                        </rect>
                       </property>
@@ -5097,7 +5097,7 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>92</width>
+                     <width>74</width>
                      <height>16</height>
                     </rect>
                    </property>
@@ -5393,6 +5393,19 @@ F6</string>
             <string>Cashbook</string>
            </attribute>
            <layout class="QGridLayout">
+            <item row="2" column="5">
+             <spacer>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>389</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item row="0" column="0">
              <widget class="QLabel" name="label_34">
               <property name="text">
@@ -5414,7 +5427,7 @@ F6</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="3" rowspan="2">
+            <item row="0" column="3" rowspan="3">
              <widget class="QPushButton" name="cashbookGoPushButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -5437,7 +5450,7 @@ F6</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="4" rowspan="2">
+            <item row="0" column="4" rowspan="3">
              <widget class="QPushButton" name="cashbookPrintButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -5469,20 +5482,7 @@ F6</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="5" rowspan="2">
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>389</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="1" column="0">
+            <item row="2" column="0">
              <widget class="QDateEdit" name="cashbookStartDateEdit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -5501,7 +5501,7 @@ F6</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="2" column="1">
              <widget class="QDateEdit" name="cashbookEndDateEdit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -5520,11 +5520,35 @@ F6</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
+            <item row="2" column="2">
              <widget class="QComboBox" name="cashbookDentComboBox"/>
             </item>
-            <item row="2" column="0" colspan="6">
+            <item row="3" column="0" colspan="10">
              <widget class="QTextBrowser" name="cashbookTextBrowser"/>
+            </item>
+            <item row="2" column="7">
+             <widget class="QRadioButton" name="sundries_only_radioButton">
+              <property name="text">
+               <string>Sundries_only</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="8">
+             <widget class="QRadioButton" name="treatment_only_radioButton">
+              <property name="text">
+               <string>Treatment_only</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="6">
+             <widget class="QRadioButton" name="all_payments_radioButton">
+              <property name="text">
+               <string>All payments</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

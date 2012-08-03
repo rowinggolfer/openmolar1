@@ -12,6 +12,7 @@ from openmolar.settings import localsettings
 import datetime
 
 class receipt():
+
     def __init__(self,parent=None):
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A5)
@@ -21,6 +22,7 @@ class receipt():
         self.receivedDict={}
         self.isDuplicate=False
         self.dupdate=""
+        
     def setProps(self,tit="",fn="",sn="",ad1="",ad2="",ad3="",ad4="",ad5="",pcd="",p="",n="",s="",t=""):
         self.title=tit
         self.fname=fn
@@ -88,23 +90,23 @@ class receipt():
 
             painter.drawText(x, y, QtCore.QString('relating to:-'))
             y += serifLineHeight
-            total=0
+            
             for key in self.receivedDict.keys():
                 amount=self.receivedDict[key]
-                if amount !=0:
+                if float(amount) != 0:
                     painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString(key))
                     painter.drawText(QtCore.QRectF(x+180, y,100,serifLineHeight),\
                     QtCore.QString(localsettings.formatMoney(amount)),alignRight)
 
                     y += serifLineHeight
-                    total+=amount
+                    
 
             y += serifLineHeight
             painter.drawLine(int(x),int(y),int(x)+280,int(y))#130+150=280
             y += serifLineHeight*1.5
             painter.drawText(QtCore.QRectF(x,y,180,serifLineHeight),QtCore.QString("TOTAL"))
             painter.drawText(QtCore.QRectF(x+180, y,100,serifLineHeight),\
-            QtCore.QString(localsettings.formatMoney(total)),alignRight)
+            QtCore.QString(localsettings.formatMoney(self.total)),alignRight)
 
             y += serifLineHeight*4
 
@@ -128,7 +130,8 @@ if __name__ == "__main__":
     myreceipt.town="addr4"
     myreceipt.county="addr5"
     myreceipt.pcde="PCDE"
-    myreceipt.receivedDict={"Private Treatment":1000,"NHS Treatment":20,"Sundry Items":30}
+    myreceipt.receivedDict={"Private Treatment":"10.00","NHS Treatment":"20.00","Sundry Items":"30.00"}
+    myreceipt.total = "60.00"
     myreceipt.isDuplicate=True
     myreceipt.dupdate="2nd March 2009"
     myreceipt.print_()

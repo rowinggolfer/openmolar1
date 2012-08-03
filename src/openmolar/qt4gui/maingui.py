@@ -3639,17 +3639,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_daybook(self):
         #daybook - cashbook
-        QtCore.QObject.connect(self.ui.daybookGoPushButton,
-        QtCore.SIGNAL("clicked()"), self.daybookView)
 
-        QtCore.QObject.connect(self.ui.cashbookGoPushButton,
-        QtCore.SIGNAL("clicked()"), self.cashbookView)
+        self.ui.daybookGoPushButton.clicked.connect(self.daybookView)
+        self.ui.daybookPrintButton.clicked.connect(self.daybookPrint)
 
-        QtCore.QObject.connect(self.ui.cashbookPrintButton,
-        QtCore.SIGNAL("clicked()"), self.cashbookPrint)
-
-        QtCore.QObject.connect(self.ui.daybookPrintButton,
-        QtCore.SIGNAL("clicked()"), self.daybookPrint)
+        self.ui.cashbookGoPushButton.clicked.connect(self.cashbookView)
+        self.ui.cashbookPrintButton.clicked.connect(self.cashbookPrint)
+        self.ui.sundries_only_radioButton.clicked.connect(self.cashbookView)
+        self.ui.treatment_only_radioButton.clicked.connect(self.cashbookView)
+        self.ui.all_payments_radioButton.clicked.connect(self.cashbookView)
+        
 
     def signals_accounts(self):
         #accounts

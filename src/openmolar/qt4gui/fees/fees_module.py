@@ -28,37 +28,10 @@ from openmolar.qt4gui.fees import fee_table_editor
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import paymentwidget
 from openmolar.qt4gui.dialogs import permissions
+from openmolar.qt4gui.dialogs.payment_dialog import PaymentDialog
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
 from openmolar.qt4gui.compiled_uis import Ui_raiseCharge
 
-def raiseACharge(om_gui):
-    '''
-    this is called by the "raise a charge" button on the
-    clinical summary page
-    '''
-    ##TODO
-    ###obsolete code
-    print "WARNING - obsolete code executed fees_module.raiseACharge"
-    if om_gui.pt.serialno == 0:
-        om_gui.advise("No patient Selected", 1)
-        return
-    Dialog = QtGui.QDialog(om_gui)
-    dl = Ui_raiseCharge.Ui_Dialog()
-    dl.setupUi(Dialog)
-    if Dialog.exec_():
-        fee = dl.doubleSpinBox.value()
-        if om_gui.pt.cset[:1] == "N":
-            om_gui.pt.money0 += int(fee*100)
-        else:
-            om_gui.pt.money1 += int(fee*100)
-        updateFees(om_gui)
-        om_gui.pt.addHiddenNote("treatment", " %s"%
-        str(dl.lineEdit.text().toAscii()))
-
-        om_gui.pt.addHiddenNote("fee", "%.02f"% fee)
-        om_gui.updateHiddenNotesLabel()
-
-    ################################################
 
 def applyFeeNow(om_gui, arg, cset=None):
     '''
@@ -73,7 +46,6 @@ def updateFees(om_gui):
     update the details down the left hand side
     '''
     if om_gui.pt.serialno != 0:
-        om_gui.pt.updateFees()
         om_gui.updateDetails()
 
 def getFeesFromEst(om_gui, tooth, treat):
@@ -88,7 +60,7 @@ def getFeesFromEst(om_gui, tooth, treat):
             break
     return retarg
 
-def takePayment(om_gui):
+def OLDtakePayment(om_gui):
     '''
     raise a dialog, and take some money
     '''
@@ -137,8 +109,7 @@ def takePayment(om_gui):
                     om_gui.pt.money2 += int(dl.paymentsForTreatment*100)
                 else:
                     om_gui.pt.money3 += int(dl.paymentsForTreatment*100)
-                print "recalculating outstanding fees"
-                om_gui.pt.updateFees()
+                
             else:
                 print "loaded patient is NOT the payment patient!!"
 
@@ -159,6 +130,82 @@ def takePayment(om_gui):
         else:
             om_gui.advise("error applying payment.... sorry!<br />"\
             +"Please write this down and tell Neil what happened", 2)
+
+def takePayment(om_gui):
+    '''
+    raise a dialog, and take some money
+    '''
+    if om_gui.pt.serialno == 0:
+        om_gui.advise("No patient Selected <br />Monies will be "+ \
+        "allocated to Other Payments, and no receipt offered")
+    dl = PaymentDialog(om_gui)
+    dl.set_treatment_default_amount(om_gui.pt.fees)
+    dl.hide_treatment(om_gui.pt.serialno == 0)
+    if dl.exec_():
+        if om_gui.pt.serialno == 0:
+            paymentPt = patient_class.patient(22963)
+        else:
+            paymentPt = om_gui.pt
+            
+        ##TODO 
+        
+        hdp = 0
+        other = 0
+        #hdp = dl.annualHDP_lineEdit.text()
+        #other = dl.misc_lineEdit.text()
+        
+        name = "%s %s"% (paymentPt.sname, paymentPt.fname[:1])
+        if paymentPt.dnt2 != 0:
+            dent = paymentPt.dnt2
+        else:
+            dent = paymentPt.dnt1
+
+        print "TAKING PAYMENT", paymentPt.serialno
+        
+        if cashbook.paymenttaken(paymentPt.serialno, name, dent,paymentPt.cset, 
+        dl.tx_cash, dl.tx_cheque, dl.tx_card, 
+        dl.sundry_cash, dl.sundry_cheque, dl.sundry_card, hdp, other):
+        
+            print "ADDING NOTE"
+            paymentPt.addHiddenNote("payment",
+            " treatment %s sundries %s"% (dl.tx_total_text, dl.sundry_total_text))
+
+            print "CHECKING SERIALNO of loaded patient",
+            if om_gui.pt.serialno != 0:
+                print "loaded patient == payment patient"
+                om_printing.printReceipt(om_gui,{
+                "Treatments and Services" : dl.tx_total_text,
+                "Sundry Items" : dl.sundry_total_text},
+                total=dl.grand_total_text)
+
+                #-- always refer to money in terms of pence
+                print "adjusting money"
+                if om_gui.pt.cset[:1] == "N":
+                    om_gui.pt.money2 += dl.tx_total
+                else:
+                    om_gui.pt.money3 += dl.tx_total
+                
+            else:
+                print "No patient loaded. skipping receipt offer."
+
+            patient_write_changes.toNotes(paymentPt.serialno,
+                                          paymentPt.HIDDENNOTES)
+
+            print "writing to notes"
+            if patient_write_changes.discreet_changes(paymentPt,
+            ("money2", "money3")) and om_gui.pt.serialno != 0:
+                print "updating stored values"
+                om_gui.pt_dbstate.money2 = om_gui.pt.money2
+                om_gui.pt_dbstate.money3 = om_gui.pt.money3
+
+            paymentPt.clearHiddenNotes()
+            om_gui.updateDetails()
+            om_gui.updateHiddenNotesLabel()
+            print "PAYMENT ALL DONE!"
+        else:
+            om_gui.advise("error applying payment.... sorry!<br />"\
+            +"Please write this down and tell Neil what happened", 2)
+
 
 def loadFeesTable(om_gui):
     '''
