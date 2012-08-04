@@ -209,9 +209,11 @@ src/openmolar/qt4gui/customwidgets/aptOVcontrol.py
 src/openmolar/qt4gui/customwidgets/calendars.py
 src/openmolar/qt4gui/customwidgets/chainLabel.py
 src/openmolar/qt4gui/customwidgets/chartwidget.py
+src/openmolar/qt4gui/customwidgets/currency_label.py
 src/openmolar/qt4gui/customwidgets/dent_hyg_selector.py
 src/openmolar/qt4gui/customwidgets/estimateWidget.py
 src/openmolar/qt4gui/customwidgets/fiveminutetimeedit.py
+src/openmolar/qt4gui/customwidgets/money_line_edit.py
 src/openmolar/qt4gui/customwidgets/notification_widget.py
 src/openmolar/qt4gui/customwidgets/perioChartWidget.py
 src/openmolar/qt4gui/customwidgets/perioToothProps.py
@@ -238,7 +240,7 @@ src/openmolar/qt4gui/dialogs/hygTreatWizard.py
 src/openmolar/qt4gui/dialogs/medNotes.py
 src/openmolar/qt4gui/dialogs/newBPE.py
 src/openmolar/qt4gui/dialogs/newCourse.py
-src/openmolar/qt4gui/dialogs/paymentwidget.py
+src/openmolar/qt4gui/dialogs/payment_dialog.py
 src/openmolar/qt4gui/dialogs/permissions.py
 src/openmolar/qt4gui/dialogs/phrasebook_dialog.py
 src/openmolar/qt4gui/dialogs/recall_dialog.py

@@ -13,7 +13,7 @@ def get_version():
     '''
     returns a string with in the format X.Y.Z+bzr04d
     '''
-    version = "0.2.1"
+    version = "0.2.2"
     try:
         from bzrlib import branch
         revno = branch.Branch.open(".").revno()
