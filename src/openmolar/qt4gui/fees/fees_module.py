@@ -26,7 +26,6 @@ from openmolar.qt4gui.fees import feescale_tester
 from openmolar.qt4gui.fees import fee_table_editor
 
 from openmolar.qt4gui.printing import om_printing
-from openmolar.qt4gui.dialogs import paymentwidget
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs.payment_dialog import PaymentDialog
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
