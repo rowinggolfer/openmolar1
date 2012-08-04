@@ -60,77 +60,6 @@ def getFeesFromEst(om_gui, tooth, treat):
             break
     return retarg
 
-def OLDtakePayment(om_gui):
-    '''
-    raise a dialog, and take some money
-    '''
-    if om_gui.pt.serialno == 0:
-        om_gui.advise("No patient Selected <br />Monies will be "+ \
-        "allocated to Other Payments, and no receipt offered", 1)
-    dl = paymentwidget.paymentWidget(om_gui)
-    dl.setDefaultAmount(om_gui.pt.fees)
-    if dl.exec_():
-        if om_gui.pt.serialno == 0:
-            paymentPt = patient_class.patient(18222)
-        else:
-            paymentPt = om_gui.pt
-        cash = dl.cash_lineEdit.text()
-        cheque = dl.cheque_lineEdit.text()
-        debit = dl.debitCard_lineEdit.text()
-        credit = dl.creditCard_lineEdit.text()
-        sundries = dl.sundries_lineEdit.text()
-        hdp = dl.annualHDP_lineEdit.text()
-        other = dl.misc_lineEdit.text()
-        total = dl.total_doubleSpinBox.value()
-        name = "%s %s"% (paymentPt.sname, paymentPt.fname[:1])
-        if paymentPt.dnt2 != 0:
-            dent = paymentPt.dnt2
-        else:
-            dent = paymentPt.dnt1
-
-        print "TAKING PAYMENT", paymentPt.serialno
-        if cashbook.paymenttaken(paymentPt.serialno, name, dent,
-        paymentPt.cset, cash, cheque, debit, credit, sundries, hdp, other):
-            print "ADDING NOTE"
-            paymentPt.addHiddenNote("payment",
-            " treatment %.02f sundries %.02f"% (dl.paymentsForTreatment,
-            dl.otherPayments))
-
-            print "CHECKING SERIALNO of loaded patient",
-            if om_gui.pt.serialno != 0:
-                print "loaded patient == payment patient"
-                om_printing.printReceipt(om_gui,{
-                "Professional Services" : dl.paymentsForTreatment * 100,
-                "Other Items" : dl.otherPayments * 100})
-
-                #-- always refer to money in terms of pence
-                print "adjusting money"
-                if om_gui.pt.cset[:1] == "N":
-                    om_gui.pt.money2 += int(dl.paymentsForTreatment*100)
-                else:
-                    om_gui.pt.money3 += int(dl.paymentsForTreatment*100)
-                
-            else:
-                print "loaded patient is NOT the payment patient!!"
-
-            patient_write_changes.toNotes(paymentPt.serialno,
-                                          paymentPt.HIDDENNOTES)
-
-            print "writing to notes"
-            if patient_write_changes.discreet_changes(paymentPt,
-            ("money2", "money3")) and om_gui.pt.serialno != 0:
-                print "updating stored values"
-                om_gui.pt_dbstate.money2 = om_gui.pt.money2
-                om_gui.pt_dbstate.money3 = om_gui.pt.money3
-
-            paymentPt.clearHiddenNotes()
-            om_gui.updateDetails()
-            om_gui.updateHiddenNotesLabel()
-            print "PAYMENT ALL DONE!"
-        else:
-            om_gui.advise("error applying payment.... sorry!<br />"\
-            +"Please write this down and tell Neil what happened", 2)
-
 def takePayment(om_gui):
     '''
     raise a dialog, and take some money
@@ -146,13 +75,6 @@ def takePayment(om_gui):
             paymentPt = patient_class.patient(22963)
         else:
             paymentPt = om_gui.pt
-            
-        ##TODO 
-        
-        hdp = 0
-        other = 0
-        #hdp = dl.annualHDP_lineEdit.text()
-        #other = dl.misc_lineEdit.text()
         
         name = "%s %s"% (paymentPt.sname, paymentPt.fname[:1])
         if paymentPt.dnt2 != 0:
@@ -164,7 +86,7 @@ def takePayment(om_gui):
         
         if cashbook.paymenttaken(paymentPt.serialno, name, dent,paymentPt.cset, 
         dl.tx_cash, dl.tx_cheque, dl.tx_card, 
-        dl.sundry_cash, dl.sundry_cheque, dl.sundry_card, hdp, other):
+        dl.sundry_cash, dl.sundry_cheque, dl.sundry_card, dl.hdp, dl.other):
         
             print "ADDING NOTE"
             paymentPt.addHiddenNote("payment",

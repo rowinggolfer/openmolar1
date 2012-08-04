@@ -33,7 +33,7 @@ class MoneyLineEdit(QtGui.QLineEdit):
     '''
     def __init__(self, parent=None):
         QtGui.QLineEdit.__init__(self, parent)
-        self.setAlignment(QtCore.Qt.AlignRight)
+        self.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
         
     @property
     def pence_value(self):
