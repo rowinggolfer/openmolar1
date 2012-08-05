@@ -1697,6 +1697,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         sets the patient information into the left column
         '''
+        if self.pt.serialno == 0:
+            self.ui.detailsBrowser.setText("")
+            return
+        
         Saved = (self.pt_dbstate.fees == self.pt.fees)
         details = patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setText(details)
