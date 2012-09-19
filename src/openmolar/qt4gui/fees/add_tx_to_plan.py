@@ -158,7 +158,7 @@ def customAdd(om_gui):
 
             if descr == "":
                 descr = "??"
-            usercode = str (descr.replace(" ", "_"))[:12]
+            usercode = str (descr.replace(" ", "_"))[:40]
 
             fee = int(dl.fee_doubleSpinBox.value() * 100)
 

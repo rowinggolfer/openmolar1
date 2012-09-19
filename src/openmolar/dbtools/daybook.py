@@ -2,8 +2,8 @@
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or 
-# (at your option) any later version. See the GNU General Public License 
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version. See the GNU General Public License
 # for more details.
 
 '''
@@ -22,19 +22,19 @@ def add(sno, cset, dent, trtid, t, fee, ptfee):
     '''
     db = connect()
     cursor = db.cursor()
-    
-    query = '''insert into daybook 
+
+    query = '''insert into daybook
     (date, serialno, coursetype, dntid, trtid, diagn, perio, anaes,
     misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
-    values (NOW(),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-   
-    values = (sno, cset, dent, trtid, t["diagn"], 
-    t["perio"], t["anaes"], t["misc"], t["ndu"], t["ndl"], t["odu"], 
+    values (DATE(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+
+    values = (sno, cset, dent, trtid, t["diagn"],
+    t["perio"], t["anaes"], t["misc"], t["ndu"], t["ndl"], t["odu"],
     t["odl"], t["other"], t["chart"], fee, ptfee, 0)
-    
+
     print query
     print values
-    print cursor.execute(query, values) 
+    print cursor.execute(query, values)
 
     cursor.close()
 
@@ -51,20 +51,20 @@ def details(regdent, trtdent, startdate, enddate):
     except KeyError:
         print "Key Error - %s or %s unregconised"% (regdent, trtdent)
         return '<html><body>%s</body></html>'% _(
-        "Error - unrecognised practioner- sorry") 
-    
+        "Error - unrecognised practioner- sorry")
+
     total, nettotal = 0, 0
-    
+
     iterDate = QDate(startdate.year(), startdate.month(), 1)
-    
+
     db = connect()
     cursor = db.cursor()
     retarg = '''<html><body>
     <h3>Patients of %s treated by %s between %s and %s (inclusive)</h3>'''% (
-    regdent, trtdent,  
-    localsettings.formatDate(startdate.toPyDate()), 
+    regdent, trtdent,
+    localsettings.formatDate(startdate.toPyDate()),
     localsettings.formatDate(enddate.toPyDate()))
-    
+
     retarg += '''<table width="100%" border="1"><tr><th>DATE</th>
     <th>Dents</th><th>Serial Number</th><th>Name</th>
     <th>Pt Type</th><th>Treatment</th><th>Gross Fee</th><th>Net Fee</th>'''
@@ -77,15 +77,15 @@ def details(regdent, trtdent, startdate, enddate):
             queryStartDate = startdate
         else:
             queryStartDate = iterDate
-        
+
         queryEndDate = iterDate.addMonths(1).addDays(-1)
         if enddate < queryEndDate:
             queryEndDate = enddate
-             
+
         #-- note - mysqldb doesn't play nice with DATE_FORMAT
         #-- hence the string is formatted entirely using python formatting
-        query = '''select DATE_FORMAT(date,'%s'), serialno, coursetype, dntid, 
-        trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart, 
+        query = '''select DATE_FORMAT(date,'%s'), serialno, coursetype, dntid,
+        trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
         feesa, feesb, feesc, id from daybook
         where %s %s date >= '%s' and date <= '%s' order by date'''%(
         localsettings.OM_DATE_FORMAT, cond1, cond2,
@@ -94,9 +94,9 @@ def details(regdent, trtdent, startdate, enddate):
         if localsettings.logqueries:
             print query
         cursor.execute(query)
-            
+
         rows = cursor.fetchall()
-        
+
         odd = True
         for row in rows:
             if odd:
@@ -110,44 +110,44 @@ def details(regdent, trtdent, startdate, enddate):
                 retarg += '<td> %s / '% localsettings.ops[row[3]]
             except KeyError:
                 retarg += "<td>?? / "
-            try:        
+            try:
                 retarg += localsettings.ops[row[4]]
             except KeyError:
                 retarg += "??"
-            
+
             retarg += '</td><td>%s</td>'% row[1]
-            
+
             cursor.execute(
             'select fname,sname from patients where serialno=%s'% row[1])
 
             names = cursor.fetchall()
             if names != ():
-                name = names[0] 
+                name = names[0]
                 retarg += '<td>%s %s</td>'% (name[0].title(),name[1].title())
             else:
                 retarg += "<td>NOT FOUND</td>"
             retarg += '<td>%s</td>'% row[2]
-            
+
             tx = ""
             for item in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14):
                 if row[item] != None and row[item] != "":
                     tx += "%s "% row[item]
-            
+
             retarg += '''<td>%s</td><td align="right">%s</td>
             <td align="right">%s</td></tr>'''% (tx.strip("%s "% chr(0)),
-            localsettings.formatMoney(row[15]), 
+            localsettings.formatMoney(row[15]),
             localsettings.formatMoney(row[16]))
-            
+
             total += int(row[15])
             monthtotal += int(row[15])
-            
+
             nettotal += int(row[16])
             monthnettotal += int(row[16])
         retarg += '''<tr><td colspan="5"></td><td><b>%s TOTAL</b></td>
         <td align="right"><b>%s</b></td>
         <td align="right"><b>%s</b></td></tr>'''% (
         localsettings.monthName(iterDate.toPyDate()),
-        localsettings.formatMoney(monthtotal), 
+        localsettings.formatMoney(monthtotal),
         localsettings.formatMoney(monthnettotal))
         iterDate = iterDate.addMonths(1)
     cursor.close()

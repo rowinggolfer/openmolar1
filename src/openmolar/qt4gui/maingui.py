@@ -74,6 +74,7 @@ from openmolar.qt4gui.dialogs import clinician_select_dialog
 from openmolar.qt4gui.dialogs import assistant_select_dialog
 from openmolar.qt4gui.dialogs import phrasebook_dialog
 from openmolar.qt4gui.dialogs.recall_dialog import RecallDialog
+from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
 
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
@@ -131,6 +132,7 @@ class openmolarGui(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
+        self.ui.splitter_patient.setSizes([80,20])
         self.app = app
         #--initiate a blank version of the patient class this
         #--is used to check for state.
@@ -1700,7 +1702,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if self.pt.serialno == 0:
             self.ui.detailsBrowser.setText("")
             return
-        
+
         Saved = (self.pt_dbstate.fees == self.pt.fees)
         details = patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setText(details)
@@ -2255,7 +2257,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.notesEnter_textEdit,
         self.ui.synopsis_lineEdit,
         self.ui.memos_pushButton,
-        self.ui.appt_buttons_frame):
+        self.ui.appt_buttons_frame,
+        self.ui.childsmile_button):
 
             widg.setEnabled(arg)
 
@@ -2267,8 +2270,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if arg == True and "N" in self.pt.cset:
             #-- show NHS form printing button
             self.ui.NHSadmin_groupBox.show()
+            if self.pt.under_18:
+                self.ui.childsmile_button.show()
         else:
             self.ui.NHSadmin_groupBox.hide()
+            self.ui.childsmile_button.hide()
 
         if not arg:
             self.ui.medNotes_pushButton.setText("MedNotes")
@@ -2364,7 +2370,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         user about to make an appointment
         '''
         appt_gui_module.begin_makeAppt(self)
-        
+
     def del_pastAppointments(self):
         '''
         user has requested deletion of all past appointments for the patient
@@ -2485,7 +2491,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         the arg is a list of serial numbers
         '''
         appt_gui_module.appointment_clicked(self, arg)
-        
+
     def apptBook_appointmentCancelSignal(self, *args):
         '''
         a custom widget (dentist diary) has sent a signal that an
@@ -3255,6 +3261,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         om_printing.printNotes(self, detailed)
 
+    def childsmile_button_clicked(self):
+        '''
+        A function to implement NHS Scotland's Childsmile.
+        '''
+        dl = ChildSmileDialog(self)
+        dl.exec_()
+
     def setupSignals(self):
         '''
         a function to call other functions (to keep the code clean)
@@ -3319,9 +3332,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.tasks_pushButton,
         QtCore.SIGNAL("clicked()"), self.newPtTask)
 
-        #QtCore.QObject.connect(self.ui.mdiArea,
-        #QtCore.SIGNAL("subWindowActivated (QMdiSubWindow *)"),
-        #self.subWindowManager)
+        QtCore.QObject.connect(self.ui.childsmile_button,
+        QtCore.SIGNAL("clicked()"), self.childsmile_button_clicked)
 
     def signals_admin(self):
         #admin frame
@@ -3652,7 +3664,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.sundries_only_radioButton.clicked.connect(self.cashbookView)
         self.ui.treatment_only_radioButton.clicked.connect(self.cashbookView)
         self.ui.all_payments_radioButton.clicked.connect(self.cashbookView)
-        
+
 
     def signals_accounts(self):
         #accounts
@@ -3944,7 +3956,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
         self.apptBook_appointmentClickedSignal)
-        
+
         book.connect(book, QtCore.SIGNAL("AppointmentCancel"),
         self.apptBook_appointmentCancelSignal)
 

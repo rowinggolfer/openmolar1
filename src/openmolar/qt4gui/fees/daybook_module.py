@@ -28,7 +28,7 @@ def perioDates(om_gui, arg):
 def xrayDates(om_gui, arg):
     '''
     update the patient's "last xray" dates
-    '''    
+    '''
     if "M" in arg or "S" in arg:
         om_gui.pt.pd9 = localsettings.currentDay()
     if "P" in arg:
@@ -67,13 +67,14 @@ def updateDaybook(om_gui):
                     key = "exam"
                 else:
                     key = att.rstrip("cmp")
+                    ## WHOOPS - this removes the final m from "custom"
 
                 if key in daybookdict.keys():
                     daybookdict[key] += "%s "% treatment
                 elif key == "xray" or key == "exam":
                     daybookdict["diagn"] += "%s "% treatment
-                elif key == "custom":
-                    daybookdict["other"] += "%s "% treatment
+                elif key == "custo": #see above
+                    daybookdict["other"] += "CUSTOM:%s "% treatment
                 else:
                     #--tooth include the key ie ul7 etc...
                     daybookdict["chart"] += "%s %s "% (key.upper(), treatment)

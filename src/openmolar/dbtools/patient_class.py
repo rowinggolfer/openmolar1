@@ -110,7 +110,7 @@ currtrtmtTableAtts + mnhistTableAtts + perioTableAtts + planDBAtts + \
 clinical_memos + ("estimates",)
 
 #################### sub classes ##############################################
-class planData():
+class planData(object):
     '''
     a custom class to hold data about the patient's maintenance plan
     '''
@@ -158,7 +158,7 @@ class planData():
         except Exception,e:
             print "error loading from plandata",e
 
-class patient():
+class patient(object):
     def __init__(self, sno):
         '''
         initiate the class with default variables, then load from database
@@ -334,6 +334,13 @@ class patient():
         except Exception, e:
             print "error calculating patient's age", e
             return (0,0,False)
+
+    @property
+    def under_18(self):
+        '''
+        returns a bool "is patient under 18?".
+        '''
+        return self.getAge()[0] < 18
 
     def getFeeTable(self):
         '''
@@ -513,7 +520,7 @@ self.serialno, self.courseno0))
             self.money0 += arg
         else:
             self.money1 += arg
-    
+
     @property
     def fees(self):
         return int(self.money0 + self.money1 + self.money9 + self.money10 +
