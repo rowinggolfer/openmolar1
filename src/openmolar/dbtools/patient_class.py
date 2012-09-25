@@ -202,6 +202,8 @@ class patient(object):
         self.feeTable = None
         self.synopsis = ""
 
+        self._dayBookHistory = None
+
         if self.serialno != 0:
             #load stuff from the database
             db = connect.connect()
@@ -272,9 +274,6 @@ class patient(object):
             if self.MH!=None:
                 self.MEDALERT=self.MH[12]
 
-            query = 'select date, trtid, chart from daybook where serialno=%s'
-            cursor.execute(query, self.serialno)
-            self.dayBookHistory=cursor.fetchall()
 
             cursor.close()
             #db.close()
@@ -284,6 +283,17 @@ class patient(object):
 
             self.updateChartgrid()
             #self.setCurrentEstimate()
+
+    @property
+    def dayBookHistory(self):
+        if self._dayBookHistory is None:
+            db = connect.connect()
+            cursor = db.cursor()
+            query = 'select date, trtid, chart from daybook where serialno=%s'
+            cursor.execute(query, self.serialno)
+            self._dayBookHistory=cursor.fetchall()
+            cursor.close()
+        return self._dayBookHistory
 
     def __repr__(self):
         return "'Patient_class instance - serialno %d'"% self.serialno

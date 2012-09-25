@@ -12,16 +12,16 @@ from openmolar.settings import localsettings
 def getHistory(pt, tooth):
     '''
     get daybook history for this tooth
-    ''' 
+    '''
     tooth = tooth.upper()
     hist = ""
     for tdate, apptix, item in pt.dayBookHistory:
-        regex = "%s ([^ ]*) "% tooth
-        m = re.search(regex, item)
+        regex = "%s (.*)\n?"% tooth
+        m = re.search(regex, item.replace("  ","\n"))
         if m:
             for group in m.groups():
                 hist += "<li>%s - %s - %s</li>"%(
-                localsettings.formatDate(tdate), 
+                localsettings.formatDate(tdate),
                 localsettings.ops.get(int(apptix)),
                 group)
     if hist == "":
@@ -29,7 +29,7 @@ def getHistory(pt, tooth):
     else:
         hist = "<ul>%s</ul>"% hist
     return "History for %s<hr />%s"% (tooth, hist)
-    
+
 if __name__ == "__main__":
     import sys
     from openmolar.dbtools import patient_class
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=1
+        serialno=11283
     pt=patient_class.patient(serialno)
     print pt.dayBookHistory
-    print getHistory(pt, "ll7")
+    print getHistory(pt, "lr5")

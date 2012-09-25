@@ -23,7 +23,7 @@ def details(sno):
     cursor.execute('select %s from daybook where serialno=%d order by date desc'%(query,sno))
     rows = cursor.fetchall()
     cursor.close()
-    
+
     claimNo=len(rows)
     retarg="<h2>Past Treatments - %d rows found</h2>"%claimNo
     if claimNo==0:
@@ -43,7 +43,7 @@ def details(sno):
         else:
             retarg+='<tr>'
             odd=True
-            
+
         retarg+='<td>%s</td><td>%s</td>'%(row[0],row[1])
         retarg+='<td>%s</td><td>%s</td>'%(
         localsettings.ops.get(row[2]),localsettings.ops.get(row[3]))
@@ -53,11 +53,8 @@ def details(sno):
             treatment+=row[5]
         retarg+='<td>%s</td>'%treatment
         treatment=row[6]
-        if treatment:
-            retarg+='<td>%s</td>'%treatment.strip("\x00")
-        else:
-            retarg+='<td>??</td>'
-        
+        retarg+='<td>%s</td>'%treatment.strip("\x00")
+
         fee = row[7]
         retarg += '<td align="right">%s</td>'% (
             localsettings.formatMoney(fee))
@@ -65,7 +62,7 @@ def details(sno):
         ptfee = row[8]
         retarg += '<td align="right">%s</td>'% (
             localsettings.formatMoney(ptfee))
-        
+
         fee_total += fee
         ptfee_total += ptfee
         retarg+='</tr>\n'
@@ -73,11 +70,11 @@ def details(sno):
     retarg+='''<tr><td colspan="5"></td>
     <td><b>TOTALS</b></td><td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td></tr>'''% (
-        localsettings.formatMoney(fee_total), 
+        localsettings.formatMoney(fee_total),
         localsettings.formatMoney(ptfee_total))
-    
+
     retarg += '</table>'
-    
+
     return retarg
 
 if __name__ == "__main__":

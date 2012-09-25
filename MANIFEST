@@ -227,9 +227,11 @@ src/openmolar/qt4gui/dialogs/alterAday.py
 src/openmolar/qt4gui/dialogs/apptOpenDay.py
 src/openmolar/qt4gui/dialogs/appt_wizard_dialog.py
 src/openmolar/qt4gui/dialogs/assistant_select_dialog.py
+src/openmolar/qt4gui/dialogs/base_dialogs.py
 src/openmolar/qt4gui/dialogs/block_wizard.py
 src/openmolar/qt4gui/dialogs/blockslot.py
 src/openmolar/qt4gui/dialogs/bridge_denture.py
+src/openmolar/qt4gui/dialogs/child_smile_dialog.py
 src/openmolar/qt4gui/dialogs/choose_clinicians.py
 src/openmolar/qt4gui/dialogs/choose_tooth_dialog.py
 src/openmolar/qt4gui/dialogs/clinician_select_dialog.py
