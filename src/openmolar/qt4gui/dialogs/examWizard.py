@@ -15,51 +15,40 @@ class Ui_Dialog(Ui_exam_wizard.Ui_Dialog):
         self.setupUi(dialog)
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         self.dents_comboBox.addItems(localsettings.activedents)
-        
+
         if localsettings.apptix_reverse.has_key(performingDent):
             if localsettings.apptix_reverse[performingDent] in localsettings.activedents:
-                pos=localsettings.activedents.index(localsettings.apptix_reverse[performingDent])                                      
+                pos=localsettings.activedents.index(localsettings.apptix_reverse[performingDent])
                 self.dents_comboBox.setCurrentIndex(pos)
         else:
             self.dents_comboBox.setCurrentIndex(-1)
-    
+
     def getInput(self):
-        result=True
-        while result==True:
-            result=self.dialog.exec_()
+        result = True
+        while result == True:
+            result = self.dialog.exec_()
             if self.examA_radioButton.isChecked():
-                exam="CE"
+                exam = "CE"
             elif self.examB_radioButton.isChecked():
-                exam="ECE"
+                exam = "ECE"
             else:
-                exam="FCA"
-            dent=str(self.dents_comboBox.currentText())
-            if dent!="":
-                retarg=[exam,dent]
+                exam = "FCA"
+            dent = str(self.dents_comboBox.currentText())
+            if dent != "":
+                retarg = [exam,dent]
                 retarg.append(self.dateEdit.date())
-                retarg.append(self.getNotes())
                 break
             else:
-                message="Please enter the examining Dentist"
-                QtGui.QMessageBox.information(self.dialog,"Whoops",message)   
+                message = "Please enter the examining Dentist"
+                QtGui.QMessageBox.information(self.dialog, "Whoops", message)
 
         if result:
             return retarg
         else:
             return()
-            
-    def getNotes(self):
-        notes=[]
-        if self.checkBox.checkState():
-            notes.append("pt c/o %s"%str(self.co_comboBox.currentText()))
-        if self.softTissues_checkBox.checkState():
-            notes.append("Soft Tissues Checked - NAD")
-        if self.oh_checkBox.checkState():
-            notes.append("OHI instruction given")
-        if self.canines_checkBox.checkState():
-            notes.append("Palpated for upper canines - NAD")
-        return tuple(notes)
-    
+
+
+
 if __name__ == "__main__":
     localsettings.initiate()
     import sys

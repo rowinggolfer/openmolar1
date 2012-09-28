@@ -2270,7 +2270,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if arg == True and "N" in self.pt.cset:
             #-- show NHS form printing button
             self.ui.NHSadmin_groupBox.show()
-            if self.pt.under_18:
+            if self.pt.under_6:
                 self.ui.childsmile_button.show()
         else:
             self.ui.NHSadmin_groupBox.hide()

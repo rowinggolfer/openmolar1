@@ -89,6 +89,9 @@ class phraseBook(QtGui.QDialog):
 
             self.tabWidget.addTab(page, icon, header[0].firstChild.data)
 
+    def sizeHint(self):
+        return QtCore.QSize(800,400)
+
     @property
     def selectedPhrases(self):
         retlist = []

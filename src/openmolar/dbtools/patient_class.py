@@ -197,7 +197,6 @@ class patient(object):
         self.MEDALERT = False
         self.HIDDENNOTES = []
         self.chartgrid = {}
-        self.dayBookHistory = ()
         self.underTreatment = False
         self.feeTable = None
         self.synopsis = ""
@@ -344,6 +343,13 @@ class patient(object):
         except Exception, e:
             print "error calculating patient's age", e
             return (0,0,False)
+
+    @property
+    def under_6(self):
+        '''
+        returns a bool "is patient under 6?".
+        '''
+        return self.getAge()[0] < 6
 
     @property
     def under_18(self):

@@ -127,10 +127,6 @@ course dentist, but not the registered dentist</i>''')
 
                 fees_module.applyFeeNow(om_gui, est.ptfee)
 
-                for note in result[3]:
-                    newnotes += note + ", "
-                om_gui.ui.notesEnter_textEdit.setText(newnotes.strip(", "))
-
                 if om_gui.ui.tabWidget.currentIndex() == 7:
                     om_gui.load_newEstPage()
                     om_gui.load_treatTrees()
