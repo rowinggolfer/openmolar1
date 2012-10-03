@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or 
+# by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import copy
@@ -26,7 +26,7 @@ def enterNewPatient(om_gui):
     #--DO NOT CHANGE THIS LINE
     om_gui.ui.newPatientPushButton.setEnabled(False)
 
-    #--disable the tabs which are normalyy enabled by default
+    #--disable the tabs which are normally enabled by default
     om_gui.ui.tabWidget.setTabEnabled(4, False)
     om_gui.ui.tabWidget.setTabEnabled(3, False)
 
@@ -38,6 +38,7 @@ def enterNewPatient(om_gui):
     om_gui.changeSaveButtonforNewPatient()
 
     #--move to the edit patient details page
+    om_gui.ui.tabWidget.setTabEnabled(0, True)
     om_gui.ui.tabWidget.setCurrentIndex(0)
     om_gui.ui.patientEdit_groupBox.setTitle("Enter New Patient")
 
@@ -132,7 +133,7 @@ def abortNewPatientEntry(om_gui):
     _("New Patient not saved. Abandon Changes?"),
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes )
-    
+
     if result == QtGui.QMessageBox.Yes:
         finishedNewPatientInput(om_gui)
         return True

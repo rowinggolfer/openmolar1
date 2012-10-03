@@ -614,7 +614,7 @@ def makeAppt(om_gui, appt, slot, offset=None):
                     else:
                         offer_appointment_card(om_gui)
                         om_gui.ui.main_tabWidget.setCurrentIndex(0)
-                    
+
                 else:
                     om_gui.advise(
                     _("Error putting appointment back into patient diary"))
@@ -1355,22 +1355,42 @@ def appointment_clicked(om_gui, list_of_snos):
             om_gui.advise("getting record %s"% sno)
             om_gui.getrecord(serialno)
 
+def edit_appointment_memo_clicked(om_gui, list_of_snos, start, dentist):
+    if len(list_of_snos) != 1:
+        om_gui.advise("multiple appointments selected, unable to delete", 2)
+        return
+    sno = list_of_snos[0]
+    serialno = int(sno)
+    adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
+    atime = int(start.replace(":",""))
+    note, result = appointments.get_appt_note(sno, adate, atime, dentist)
+    if not result:
+        om_gui.advise("unable to locate appointment memo, sorry", 2)
+    else:
+        new_note, result = QtGui.QInputDialog.getText(om_gui,
+        "New Memo", "Please enter Memo for this appointment", text=note)
+        if result and new_note != note:
+            appointments.set_appt_note(sno, adate, atime, dentist, new_note)
+
+    layout_ptDiary(om_gui)
+    layout_dayView(om_gui)
+
 def appointment_cancel(om_gui, list_of_snos, start, dentist):
     if len(list_of_snos) != 1:
         om_gui.advise("multiple appointments selected, unable to delete", 2)
         return
-    
-    sno = list_of_snos[0]    
+
+    sno = list_of_snos[0]
     serialno = int(sno)
     adate = om_gui.ui.dayCalendar.selectedDate().toPyDate()
 
     #om_gui.advise("cancelling appointment %s on %s at %s"% (sno, adate, start))
-    
+
     message = _("Confirm Delete appointment at")
     message += " %s %s "% (start, localsettings.readableDate(adate))
 
     message += _("with") + " %s?"% localsettings.apptix_reverse.get(dentist)
-    
+
     if QtGui.QMessageBox.question(om_gui, _("Confirm"), message,
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
@@ -1400,18 +1420,17 @@ def appointment_cancel(om_gui, list_of_snos, start, dentist):
                 #remove from the patients diary
                 if appointments.delete_appt_from_apr(appt):
                     om_gui.advise(_("Sucessfully removed appointment"))
-                    layout_ptDiary(om_gui)        
                 else:
                     om_gui.advise(_("Error removing from patient diary"),2)
-                                
-                                
+
+
         else:
             #--aslot proc has returned False!
             #let the user know, and go no further
             om_gui.advise(_("Error Removing from Appointment Book"), 2)
             return
-        layout_ptDiary(om_gui)
-    
+
+    layout_ptDiary(om_gui)
     layout_dayView(om_gui)
 
 

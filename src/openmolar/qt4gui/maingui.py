@@ -2492,6 +2492,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         appt_gui_module.appointment_clicked(self, arg)
 
+    def apptBook_editAppointmentMemoClickedSignal(self, *args):
+        '''
+        a custom widget (dentist diary) has sent a signal that an
+        appointment has been selected to have it's memo edited.
+        '''
+        appt_gui_module.edit_appointment_memo_clicked(self, *args)
+
     def apptBook_appointmentCancelSignal(self, *args):
         '''
         a custom widget (dentist diary) has sent a signal that an
@@ -3956,6 +3963,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
         self.apptBook_appointmentClickedSignal)
+
+        book.connect(book, QtCore.SIGNAL("EditAppointmentMemo"),
+        self.apptBook_editAppointmentMemoClickedSignal)
 
         book.connect(book, QtCore.SIGNAL("AppointmentCancel"),
         self.apptBook_appointmentCancelSignal)

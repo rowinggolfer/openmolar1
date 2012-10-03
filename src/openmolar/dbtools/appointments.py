@@ -270,7 +270,7 @@ class dayAppointmentData(daySummary):
             return self.endTimes[dent]
         except KeyError:
             return 1200
-    
+
     def getAppointments(self, workingOnly=True, dents="ALL"):
         '''
         get the appointments for the date.
@@ -683,6 +683,34 @@ def setMemos(adate, memos):
         cursor.execute(query, values)
     cursor.close()
 
+def get_appt_note(sno, adate, atime, dentist):
+    db = connect()
+    cursor = db.cursor()
+    query = '''select note from aslot
+    where serialno=%s and adate=%s and apptix=%s and start=%s'''
+    values = (sno, adate, dentist, atime)
+    cursor.execute(query, values)
+    rows = cursor.fetchall()
+    cursor.close()
+
+    if not len(rows) == 1:
+        return ("", False)
+    note = rows[0][0]
+    return (note, True)
+
+def set_appt_note(sno, adate, atime, dentist, note):
+    db = connect()
+    cursor = db.cursor()
+    query = '''update aslot set note=%s
+    where serialno=%s and adate=%s and apptix=%s and start=%s'''
+    values = (note, sno, adate, dentist, atime)
+    cursor.execute(query, values)
+    query = '''update apr set note=%s
+    where serialno=%s and adate=%s and practix=%s and atime=%s'''
+    cursor.execute(query, values)
+    cursor.close()
+    db.commit()
+
 def setPubHol(adate, arg):
     '''
     updates the aday table with memos
@@ -946,7 +974,7 @@ def get_pts_appts(pt, printing=False):
         fullquery += "and adate>=date(NOW()) ORDER BY concat(adate, atime)"
     else:
         fullquery += "ORDER BY aprix"
-    
+
     ## - table also contains flag0,flag1,flag2,flag3,flag4,
 
     if localsettings.logqueries:
@@ -991,7 +1019,7 @@ def has_unscheduled(serialno):
     result = rows[0][0] != 0
     print "has_unscheduled is returning ", result
     return result
-    
+
 
 def deletePastAppts(serialno):
     '''
@@ -1328,7 +1356,7 @@ def delete_appt_from_apr(appt):
     else:
         query += ' and atime =%s'
         values.append(appt.atime)
-        
+
     try:
         if localsettings.logqueries:
             print query, values
@@ -1348,7 +1376,7 @@ def made_appt_to_proposed(appt):
     db = connect()
     cursor = db.cursor()
     result = False
-    query = '''UPDATE apr SET adate=NULL, atime=NULL WHERE serialno=%s AND 
+    query = '''UPDATE apr SET adate=NULL, atime=NULL WHERE serialno=%s AND
         adate=%s and practix=%s and atime=%s '''
     values = [appt.serialno, appt.date, appt.dent, appt.atime]
     if appt.aprix != "UNKNOWN":
