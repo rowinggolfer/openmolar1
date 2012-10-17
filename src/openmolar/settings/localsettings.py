@@ -22,7 +22,7 @@ from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
 #- updated 4th Aug 2012.
-__MAJOR_VERSION__= "0.2.2"
+__MAJOR_VERSION__= "0.2.3"
 
 
 if "-v" in sys.argv:
@@ -34,7 +34,7 @@ else:
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 
-CLIENT_SCHEMA_VERSION = "1.8"
+CLIENT_SCHEMA_VERSION = "1.9"
 DB_SCHEMA_VERSION = "unknown"
 
 ENCODING = locale.getpreferredencoding()

@@ -2675,7 +2675,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>765</width>
+                      <width>747</width>
                       <height>464</height>
                      </rect>
                     </property>
@@ -3025,7 +3025,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>547</width>
-                      <height>452</height>
+                      <height>404</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3607,7 +3607,7 @@ Note - this will not remove items which are currently there. </string>
                       <x>0</x>
                       <y>0</y>
                       <width>753</width>
-                      <height>452</height>
+                      <height>404</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -4065,7 +4065,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>78</height>
+                     <height>126</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4325,7 +4325,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>194</width>
+                        <width>180</width>
                         <height>279</height>
                        </rect>
                       </property>
@@ -5198,8 +5198,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>74</width>
-                     <height>16</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -6745,6 +6745,7 @@ F6</string>
      </property>
      <addaction name="actionFull_Screen_Mode_Ctrl_Alt_F"/>
      <addaction name="actionTable_View_For_Charting"/>
+     <addaction name="actionDaybook_in_notes"/>
     </widget>
     <widget class="QMenu" name="menuAppointments">
      <property name="title">
@@ -6935,6 +6936,14 @@ F6</string>
   <action name="actionSet_Assistant">
    <property name="text">
     <string>Set Assistant</string>
+   </property>
+  </action>
+  <action name="actionDaybook_in_notes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Daybook in notes</string>
    </property>
   </action>
  </widget>

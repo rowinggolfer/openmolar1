@@ -5,32 +5,42 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
+'''
+This module is deprecated with schema version 1.9
+
+It is, however, legacy code required for the upgrade schema process
+'''
+
+
 import datetime
 import re, sys
 from openmolar.settings import localsettings
 
-CHART = { 
-136:"UR8", 135:"UR7", 134:"UR6", 133:"UR5", 
-132:"UR4", 131:"UR3", 130:"UR2", 129:"UR1", 
-144:"UL1", 145:"UL2", 146:"UL3", 147:"UL4", 
-148:"UL5", 149:"UL6", 150:"UL7", 151:"UL8", 
-166:"LL8", 165:"LL7", 164:"LL6", 163:"LL5", 
-162:"LL4", 161:"LL3", 160:"LL2", 159:"LL1", 
-174:"LR1", 175:"LR2", 176:"LR3", 177:"LR4", 
-178:"LR5", 179:"LR6", 180:"LR7", 181:"LR8", 
-142:"URE", 141:"URD", 140:"URC", 139:"URB", 
-138:"URA", 153:"ULA", 154:"ULB", 155:"ULC", 
-156:"ULD", 157:"ULE", 172:"LLE", 171:"LLD", 
-170:"LLC", 169:"LLB", 168:"LLA", 183:"LRA", 
+CHART = {
+136:"UR8", 135:"UR7", 134:"UR6", 133:"UR5",
+132:"UR4", 131:"UR3", 130:"UR2", 129:"UR1",
+144:"UL1", 145:"UL2", 146:"UL3", 147:"UL4",
+148:"UL5", 149:"UL6", 150:"UL7", 151:"UL8",
+166:"LL8", 165:"LL7", 164:"LL6", 163:"LL5",
+162:"LL4", 161:"LL3", 160:"LL2", 159:"LL1",
+174:"LR1", 175:"LR2", 176:"LR3", 177:"LR4",
+178:"LR5", 179:"LR6", 180:"LR7", 181:"LR8",
+142:"URE", 141:"URD", 140:"URC", 139:"URB",
+138:"URA", 153:"ULA", 154:"ULB", 155:"ULC",
+156:"ULD", 157:"ULE", 172:"LLE", 171:"LLD",
+170:"LLC", 169:"LLB", 168:"LLA", 183:"LRA",
 184:"LRB", 185:"LRC", 186:"LRD", 187:"LRE"}
 
 def getNotesDict(ptNotesTuple):
+    '''
+    deprecated with schema version 1.9
+    '''
     notes_dict = {}
     ndate, op = "", ""
-    
+
     #a line is like ('\x01REC\x0c\x08m\x0c\x08m\n\x08',)
     for line in ptNotesTuple:
-        ntype, note, operator, date2 = decipher_noteline(line[0]) 
+        ntype, note, operator, date2 = decipher_noteline(line[0])
         if date2 != "":
             ndate = date2
         if operator != "":
@@ -52,14 +62,14 @@ def rec_notes(notes_dict):
     href="%s" type="text/css"></head><body>'''% localsettings.stylesheet
     keys = notes_dict.keys()
     keys.sort()
-    
+
     previousdate = "" #necessary to group notes on same day
     divopen=False
-    for key in keys: 
+    for key in keys:
         date, op = key
         notes = get_notes_for_date(notes_dict[key])
         d = get_date_from_date(date)
-        ests = get_estimate_for_date(notes_dict[key])            
+        ests = get_estimate_for_date(notes_dict[key])
         rec = get_reception_for_date(notes_dict[key])
         if ests or rec:
             if d != previousdate:
@@ -68,31 +78,31 @@ def rec_notes(notes_dict):
                 divopen = True
 
             retarg += "<ul>"
-            if ests: 
+            if ests:
                 retarg += '<li class="recep_note">%s</li>'% ests
             if rec:
                 rec = rec.replace("<li>",'<li class="recep_note">')
-                rec = rec.replace("PRINTED:", 
+                rec = rec.replace("PRINTED:",
                 '<img src=%s height="12" align="left">'% (
                 localsettings.printer_png))
-                rec = rec.replace("RECEIVED:", 
+                rec = rec.replace("RECEIVED:",
                 '<img src=%s height="12" align="left">'% (
                 localsettings.money_png))
-                retarg += rec 
+                retarg += rec
             retarg += "</ul>"
         if divopen:
             retarg += "</div>"
             divopen = False
-            
+
     retarg += '</body></html>'
-    
-    return retarg 
+
+    return retarg
 
 
 def notes(notes_dict, verbosity=0, ignoreRec=False):
     '''
     returns an html string of notes...
-    if verbose=1 you get reception stuff too. 
+    if verbose=1 you get reception stuff too.
     if verbose =2 you get full notes
     '''
 
@@ -103,20 +113,20 @@ def notes(notes_dict, verbosity=0, ignoreRec=False):
     retarg += '''<table width = "100%">
     <tr><th class = "date">Date</th><th class = "ops">ops</th>
     <th class = "tx">Tx</th><th class = "notes">Notes</th>'''
-    
+
     if verbosity > 0:
         retarg += '<th class="reception">reception</th>'
-    
+
     if verbosity == 2: #this is for development/debugging purposes
         retarg += '<th class="verbose">Detailed</th>'
 
     retarg += '</tr>'
     wstring = "70%"
-    
+
     previousdate="" #necessary to group notes on same day
     rowspan = 1
     newline = ""
-    for key in keys: 
+    for key in keys:
         date, op = key
         notes = get_notes_for_date(notes_dict[key])
         if ("REC" in op and notes != "") or (
@@ -134,7 +144,7 @@ def notes(notes_dict, verbosity=0, ignoreRec=False):
                 newline = re.sub(
                 'class="date"( rowspan="\d")*',
                 'class="date" rowspan="%d"'% rowspan, newline)
-                
+
             newline += '''<td class="ops">%s</td>
             <td class="tx">%s</td><td width="%s" class="notes">%s</td>'''% (
             op, get_codes_for_date(notes_dict[key]),
@@ -150,7 +160,7 @@ def notes(notes_dict, verbosity=0, ignoreRec=False):
                     newline += '%s</td>'% ests
                 else:
                     newline += "%s<br />%s</td>"% (ests, rec)
-                
+
             if verbosity == 2:
                 text = ""
                 for item in notes_dict[key]:
@@ -158,10 +168,10 @@ def notes(notes_dict, verbosity=0, ignoreRec=False):
                 newline += "<td class=verbose>%s</td>"% text
 
             newline += "</tr>"
-    retarg += newline    
+    retarg += newline
     retarg += '</table></div></body></html>'
-    
-    return retarg 
+
+    return retarg
 
 def get_date_from_date(key):
     '''
@@ -176,7 +186,7 @@ def get_date_from_date(key):
         return "IndexERROR converting date %s" %key
     except ValueError:
         return "TypeERROR converting date %s" %key
-        
+
 def get_op_for_date(line, recOnly=False):
     '''
     parse the line for an operator
@@ -184,8 +194,8 @@ def get_op_for_date(line, recOnly=False):
     op = ""
     for l in line:
         if l[2] != "" and not l[2] in op:
-            op += "%s<br />"% l[2] 
-    
+            op += "%s<br />"% l[2]
+
     return op.strip("<br />")
 
 def get_codes_for_date(line):
@@ -203,7 +213,7 @@ def get_codes_for_date(line):
         return "-"
     else:
         return code
-    
+
 def get_notes_for_date(line):
     '''
     this is the actual user entered stuff!
@@ -215,7 +225,7 @@ def get_notes_for_date(line):
             note += "%s "% mytext
     match = re.search(r"[\n ]*$", note)
     if match:
-        note = note[:note.rindex(match.group())] 
+        note = note[:note.rindex(match.group())]
     return note.replace("\n","<br />")
 
 def get_reception_for_date(line):
@@ -226,25 +236,25 @@ def get_reception_for_date(line):
     for action, value, user in line:
         value = value.replace("sundries 0.00","")
         value = value.replace("==========","")
-        if (("PRINT" in action) or ("RECEIVED" in action) or 
-        ("FINAL" in action) or ("UNKNOWN" in action) or 
+        if (("PRINT" in action) or ("RECEIVED" in action) or
+        ("FINAL" in action) or ("UNKNOWN" in action) or
         ("UPDATE" in action) or ("COURSE" in action)):
             recep += "<li>%s %s</li>"% (action, value)
     return recep
-    
+
 def get_estimate_for_date(line):
     est = ""
     for l in line:
         if "ESTIMATE" in l[0]:
             est += "%s%s"% (l[0],l[1])
     return est
-    
+
 def decipher_noteline(noteline):
     '''
     returns a list.  ["type","note","operator","date"]
-    '''        
+    '''
     retarg=["","","",""]
-    
+
     if len(noteline) == 0:  #sometimes a line is blank
        return retarg
 
@@ -259,25 +269,25 @@ def decipher_noteline(noteline):
 
         ## arghh!!! 2 character year field!!!!!!
         workingdate = "%s_%02d_%02d"% (
-        1900+char(noteline[i+2]),char(noteline[i+1]),char(noteline[i]))                                                                      
+        1900+char(noteline[i+2]),char(noteline[i+1]),char(noteline[i]))
 
         retarg[2] = operator
         retarg[3] = workingdate
         try:
             systemdate = "%s/%s/%s"% (
-            char(noteline[i+3]), char(noteline[i+4]), 
+            char(noteline[i+3]), char(noteline[i+4]),
             1900 + char(noteline[i+5]))
 
             #systemdate includes time
             systemdate += " %02d:%02d"% (
-            char(noteline[i+6]), char(noteline[i+7])) 
+            char(noteline[i+6]), char(noteline[i+7]))
 
             retarg[1] += "System date - %s"% systemdate
 
         except IndexError, e:
             print "error getting system date for patient notes - %s", e
             retarg[1] += "System date - ERROR!!!!!"
-            
+
     elif noteline[0] == "\x02":   #
         retarg[0] = "closed"
         operator = ""
@@ -286,15 +296,15 @@ def decipher_noteline(noteline):
             operator += noteline[i]
             i += 1
         systemdate = "%s/%s/%s"%(
-        char(noteline[i]), char(noteline[i+1]), 
+        char(noteline[i]), char(noteline[i+1]),
         1900+char(noteline[i+2]))
 
-        systemdate+=" %02d:%02d"%( 
+        systemdate+=" %02d:%02d"%(
         char(noteline[i+3]),char(noteline[i+4]))
 
         retarg[1] += "%s %s"% (operator, systemdate)
-    
-    elif noteline[0] == chr(3):        
+
+    elif noteline[0] == chr(3):
         #-- hidden nodes start with chr(3) then another character
         if noteline[1]==chr(97):
             retarg[0]="COURSE CLOSED"
@@ -387,16 +397,17 @@ def decipher_noteline(noteline):
                 retarg[1]+="'%s' "%str(char(ch))
         if "TC" in retarg[0]:
             retarg[1]="%s"%retarg[1]
-    elif noteline[0]=="\t":                                                                     
+
+    elif noteline[0]=="\t":
         #this is the first character of any REAL line of old (pre MYSQL) notes
         retarg[0]= "oldNOTE"
         retarg[1]="%s"%noteline[1:]
     else:
         #new note lines don't have the tab
-        retarg[0]="newNOTE"                                                                     
+        retarg[0]="newNOTE"
         retarg[1]+="%s"%noteline
     return retarg
-       
+
 def char(c):
     i=0
     while i < 256:
@@ -428,7 +439,7 @@ if __name__ == "__main__":
         verbose=True
     else:
          verbose=False
-    print "getting notes"
-    print rec_notes(patient_class.patient(serialno).notes_dict)
-    
+    #print "getting notes"
+    #print rec_notes(patient_class.patient(serialno).notes_dict)
+    print notes(patient_class.patient(serialno).notes_dict, verbose)
 

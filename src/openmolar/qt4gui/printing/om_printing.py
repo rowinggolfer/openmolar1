@@ -236,6 +236,13 @@ def customEstimate(om_gui, html="", version=0):
         html+= _('''<p><i>Please note, this estimate may be subject
 to change if clinical circumstances dictate.</i></p>''')
 
+    if htmlEditor(om_gui, type="cust Estimate", html="", version=0):
+        om_gui.pt.addHiddenNote("printed", "cust estimate")
+
+def htmlEditor(om_gui, type="", html="", version=0):
+    '''
+    raise a dialog to print an html editor
+    '''
     Dialog = QtGui.QDialog(om_gui)
     dl = Ui_enter_letter_text.Ui_Dialog()
     dl.setupUi(Dialog)
@@ -248,9 +255,8 @@ to change if clinical circumstances dictate.</i></p>''')
         html=str(dl.textEdit.toHtml().toAscii())
 
         docsprinted.add(om_gui.pt.serialno,
-        "cust estimate (html)", html, version+1)
-
-        om_gui.pt.addHiddenNote("printed", "cust estimate")
+        "%s (html)"% type, html, version+1)
+        return True
 
 def printReferral(om_gui):
     '''prints a referal letter controlled by referal.xml file'''

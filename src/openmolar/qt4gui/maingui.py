@@ -100,7 +100,7 @@ from openmolar.dbtools import estimatesHistory
 
 #--modules which act upon the pt class type (and subclasses)
 from openmolar.ptModules import patientDetails
-from openmolar.ptModules import notes
+from openmolar.ptModules import formatted_notes
 from openmolar.ptModules import plan
 from openmolar.ptModules import referral
 from openmolar.ptModules import debug_html
@@ -986,7 +986,7 @@ class openmolarGui(QtGui.QMainWindow):
             estimateHtml = estimates.toBriefHtml(self.pt)
             self.ui.moneytextBrowser.setText(estimateHtml)
             appt_gui_module.layout_ptDiary(self)
-            note = notes.rec_notes(self.pt.notes_dict)
+            note = formatted_notes.rec_notes(self.pt.notes_dict)
             self.ui.recNotes_webView.setHtml(note)
 
     def webviewloaded(self):
@@ -1183,6 +1183,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         load the docsprinted listWidget
         '''
+        print "(re)loading docs printed"
         self.ui.prevCorres_treeWidget.clear()
         self.ui.prevCorres_treeWidget.setHeaderLabels(
         ["Date", "Type", "Version", "Index"])
@@ -1203,14 +1204,16 @@ class openmolarGui(QtGui.QMainWindow):
         called by a double click on the documents listview
         '''
         ix = int(item.text(3))
-        if "html" in item.text(1):
+        if "(html)" in item.text(1):
             result = QtGui.QMessageBox.question(self, _("Re-open"),
             _("Do you want to review and/or reprint this item?"),
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.Yes:
                 html, version=docsprinted.getData(ix)
-                om_printing.customEstimate(self, html, version)
+                type = item.text(1).replace("(html)","")
+                if om_printing.htmlEditor(self, type, html, version):
+                    om_gui.docsPrintedInit()
 
         elif "pdf" in item.text(1):
             result = QtGui.QMessageBox.question(self, _("Re-open"),
@@ -1538,13 +1541,13 @@ class openmolarGui(QtGui.QMainWindow):
     def updateNotesPage(self):
 
         if self.ui.notesMaximumVerbosity_radioButton.isChecked():
-            note_html = notes.notes(self.pt.notes_dict, 2) #--2=verbose
+            note_html = formatted_notes.notes(self.pt.notes_dict, 2) #--2=verbose
         elif self.ui.notesMediumVerbosity_radioButton.isChecked():
-            note_html = notes.notes(self.pt.notes_dict, 1)
+            note_html = formatted_notes.notes(self.pt.notes_dict, 1)
         elif self.ui.notesReceptionOnly_radioButton.isChecked():
-            note_html = notes.rec_notes(self.pt.notes_dict)
+            note_html = formatted_notes.rec_notes(self.pt.notes_dict)
         else:
-            note_html = notes.notes(self.pt.notes_dict)
+            note_html = formatted_notes.notes(self.pt.notes_dict)
         self.ui.notes_webView.setHtml(note_html)
 
     def loadpatient(self, newPatientReload=False):
@@ -1569,7 +1572,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-        note=notes.notes(self.pt.notes_dict, ignoreRec=True)
+        note = formatted_notes.notes(self.pt.notes_dict, ignoreRec=True)
         #--notes not verbose
         self.ui.notesSummary_webView.setHtml(note)
         self.ui.notes_webView.setHtml("")
@@ -2218,7 +2221,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.ui.hiddenNotes_label.setText("")
                 self.pt.getNotesTuple()
                 #--reload the notes
-                html = notes.notes(self.pt.notes_dict, ignoreRec=True)
+                html = formatted_notes.notes(self.pt.notes_dict, ignoreRec=True)
                 self.ui.notesSummary_webView.setHtml(html)
 
                 if self.ui.tabWidget.currentIndex() == 3:

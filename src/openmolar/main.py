@@ -28,7 +28,7 @@ IGNORE_SCHEMA_CHECK = False
 
 SHORTARGS = "v"
 LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=",
-"ignore_schema_check"]
+"ignore-schema-check"]
 
 import gettext
 lang = os.environ.get("LANG")
@@ -367,7 +367,7 @@ def run():
         if option == "--firstrun":
             FIRST_RUN_TESTING = True
 
-        if option == "--ignore_schema_check":
+        if option == "--ignore-schema-check":
             IGNORE_SCHEMA_CHECK = True
             print "ignoring schema check"
 

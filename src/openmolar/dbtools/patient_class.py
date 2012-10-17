@@ -12,7 +12,7 @@ import re
 import sys
 import time
 from openmolar import connect
-from openmolar.ptModules import perio,dec_perm,estimates, notes
+from openmolar.ptModules import perio,dec_perm,estimates, notes, formatted_notes
 from openmolar.settings import localsettings
 
 dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6",
@@ -468,11 +468,9 @@ self.serialno, self.courseno0))
 
         cursor.close()
 
-    def getNotesTuple(self):
+    def OLDgetNotesTuple(self):
         '''
-        this is either called when the class is initiated (when cursor will
-        be an active db cursor) or to refresh the notes.
-        in the latter case, a new cursor needs to be initiated here.
+        deprecated with schema 1.9
         '''
         db = connect.connect()
         cursor = db.cursor()
@@ -483,6 +481,21 @@ self.serialno, self.courseno0))
 
         cursor.close()
         self.notes_dict = notes.getNotesDict(notestuple)
+
+    def getNotesTuple(self):
+        '''
+        connect and poll the formatted_notes table
+        '''
+        db = connect.connect()
+        cursor = db.cursor()
+        cursor.execute('''SELECT ndate, op1, op2, ntype, note
+        from formatted_notes where serialno = %s
+        order by ndate, ix''', self.serialno)
+
+        results = cursor.fetchall()
+
+        cursor.close()
+        self.notes_dict = formatted_notes.get_notes_dict(results)
 
     def flipDec_Perm(self,tooth):
         '''
