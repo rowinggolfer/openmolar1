@@ -34,7 +34,7 @@ class InstallData(install_data):
             print "WARNING - language files are missing!"
         for po in glob.glob("src/openmolar/locale/*.po"):
             directory, file = os.path.split(po)
-            lang = file.replace(".po","")            
+            lang = file.replace(".po","")
             mo = os.path.join(directory, lang)
             try:
             	os.mkdir(mo)
@@ -46,10 +46,10 @@ class InstallData(install_data):
                 info ('compiling %s -> %s' % (po, mo))
                 if os.system(cmd) != 0:
                     info('Error while running msgfmt on %s'% po)
-            
-            destdir = os.path.join ("/usr","share", "locale", lang, 
+
+            destdir = os.path.join ("/usr","share", "locale", lang,
             "LC_MESSAGES")
-            
+
             i18nfiles.append((destdir, [mo]))
         return i18nfiles
 
@@ -66,12 +66,13 @@ setup(
     license = 'GPL v3',
     package_dir = {'openmolar' : 'src/openmolar'},
     packages = ['openmolar',
+                'openmolar.backports',
                 'openmolar.dbtools',
                 'openmolar.schema_upgrades',
                 'openmolar.qt4gui',
                 'openmolar.qt4gui.dialogs',
                 'openmolar.qt4gui.appointment_gui_modules',
-                'openmolar.qt4gui.charts',                
+                'openmolar.qt4gui.charts',
                 'openmolar.qt4gui.compiled_uis',
                 'openmolar.qt4gui.customwidgets',
                 'openmolar.qt4gui.dialogs',

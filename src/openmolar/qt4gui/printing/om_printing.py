@@ -81,6 +81,7 @@ def printDupReceipt(om_gui):
     printReceipt(om_gui, {_("Professional Services"):amount}, total=amount, duplicate=True, dupdate=dupdate)
     om_gui.pt.addHiddenNote("printed",
     _("duplicate receipt for %.02f")% amount)
+    om_gui.updateHiddenNotesLabel()
 
 def printReceipt(om_gui, valDict, total="0.00", duplicate=False, dupdate=""):
     '''
@@ -109,6 +110,7 @@ def printReceipt(om_gui, valDict, total="0.00", duplicate=False, dupdate=""):
         else:
             commitPDFtoDB(om_gui, "receipt")
             om_gui.pt.addHiddenNote("printed", "receipt")
+        om_gui.updateHiddenNotesLabel()
 
 def printLetter(om_gui):
     '''
@@ -187,6 +189,7 @@ def printEstimate(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise(_("no patient selected"), 1)
         return
+
     est=estimatePrint.estimate()
 
     est.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
@@ -197,7 +200,7 @@ def printEstimate(om_gui):
     if est.print_():
         commitPDFtoDB(om_gui, "auto estimate")
         om_gui.pt.addHiddenNote("printed", "estimate")
-
+        om_gui.updateHiddenNotesLabel()
 
 def customEstimate(om_gui, html="", version=0):
     '''
@@ -213,31 +216,50 @@ def customEstimate(om_gui, html="", version=0):
         "Estimate for your current course of treatment.")
         ehtml+="<br />"*4
         ehtml+='<table width=400>'
-        for est in estimates.sorted(om_gui.pt.estimates):
-            pt_total+=est.ptfee
-            number=est.number
-            item=est.description
-            amount=est.ptfee
-            mult=""
-            if number>1:
-                mult="s"
-            item=item.replace("*", mult)
-            if "^" in item:
-                item=item.replace("^", "")
 
-            ehtml+=u'''<tr><td>%s</td><td>%s</td>
-<td align="right">%s</td></tr>'''%(
-            number, item, localsettings.formatMoney(amount))
+
+        #separate into NHS and non-NHS items.
+        sorted_ests = {"N":[],"P":[]}
+
+        for est in estimates.sorted(om_gui.pt.estimates):
+            if "N" in est.csetype:
+                sorted_ests["N"].append(est)
+            else:
+                sorted_ests["P"].append(est)
+
+        for type_, description in (
+            ("N", _("NHS items")),
+            ("P", _("Private items"))
+            ):
+            if sorted_ests[type_]:
+                ehtml += u'<tr><td rowspan = "3"><b>%s</b></td></tr>'% (
+                    description)
+            for est in sorted_ests[type_]:
+                pt_total+=est.ptfee
+                number=est.number
+                item=est.description
+                amount=est.ptfee
+                mult=""
+                if number>1:
+                    mult="s"
+                item=item.replace("*", mult)
+                if "^" in item:
+                    item=item.replace("^", "")
+
+                ehtml+=u'''<tr><td>%s</td><td>%s</td>
+    <td align="right">%s</td></tr>'''%(
+                number, item, localsettings.formatMoney(amount))
 
         ehtml += _('''<tr><td></td><td><b>TOTAL</b></td>
-<td align="right">%s</td></tr>''')% localsettings.formatMoney(pt_total)
+<td align="right"><b>%s</b></td></tr>''')% localsettings.formatMoney(pt_total)
         ehtml +="</table>" + "<br />"*4
         html = html.replace("<br />"*(12), ehtml)
         html+= _('''<p><i>Please note, this estimate may be subject
 to change if clinical circumstances dictate.</i></p>''')
 
-    if htmlEditor(om_gui, type="cust Estimate", html="", version=0):
+    if htmlEditor(om_gui, type="cust Estimate", html=html, version=0):
         om_gui.pt.addHiddenNote("printed", "cust estimate")
+        om_gui.updateHiddenNotesLabel()
 
 def htmlEditor(om_gui, type="", html="", version=0):
     '''
@@ -282,6 +304,8 @@ def printReferral(om_gui):
         myclass.printpage()
         docsprinted.add(referred_pt.serialno, "referral (html)", html)
         referred_pt.addHiddenNote("printed", "referral")
+        om_gui.updateHiddenNotesLabel()
+
         if referred_pt == om_gui.pt:
             if om_gui.ui.prevCorres_treeWidget.isVisible():
                 om_gui.docsPrintedInit()
@@ -305,6 +329,7 @@ def orthoWizard(om_gui):
         om_gui.pt.addHiddenNote("printed", "referral")
         if om_gui.ui.prevCorres_treeWidget.isVisible():
             om_gui.docsPrintedInit()
+        om_gui.updateHiddenNotesLabel()
 
 def printChart(om_gui):
     if om_gui.pt.serialno == 0:
@@ -315,6 +340,8 @@ def printChart(om_gui):
     myclass=chartPrint.printChart(staticimage)
     myclass.printpage()
     om_gui.pt.addHiddenNote("printed", "static chart")
+    om_gui.updateHiddenNotesLabel()
+
 
 def printMonth(om_gui):
     temp = om_gui.ui.monthView.selectedDate
@@ -343,6 +370,7 @@ def printaccount(om_gui, tone="A"):
             om_gui.pt.addHiddenNote("printed", "account - tone %s"%tone)
             om_gui.addNewNote("Account Printed")
             commitPDFtoDB(om_gui, "Account tone%s"%tone)
+            om_gui.updateHiddenNotesLabel()
 
 def testGP17(om_gui):
     printGP17(om_gui, True)
@@ -398,6 +426,7 @@ def printGP17(om_gui, test=False, known_course=False):
         form.print_()
         if not test:
             om_gui.pt.addHiddenNote("printed", "GP17 %s"% chosenDent)
+            om_gui.updateHiddenNotesLabel()
 
 def accountButton2Clicked(om_gui):
     if om_gui.ui.accountB_radioButton.isChecked():
@@ -489,6 +518,7 @@ def printrecall(om_gui):
 
         recallprint.printRecall(args)
         om_gui.pt.addHiddenNote("printed", "recall - non batch")
+        om_gui.updateHiddenNotesLabel()
 
 def printNotesV(om_gui):
     '''verbose notes print'''
@@ -503,7 +533,7 @@ def printNotes(om_gui, detailed=False):
     myclass=notesPrint.printNotes(note)
     myclass.printpage()
     om_gui.pt.addHiddenNote("printed", "notes")
-
+    om_gui.updateHiddenNotesLabel()
 
 def printSelectedAccounts(om_gui):
     '''
@@ -555,7 +585,7 @@ def printSelectedAccounts(om_gui):
                     "billct", "billdate", "billtype"))
 
                     patient_write_changes.toNotes(sno,
-                    printpt.HIDDENNOTES)
+                        printpt.HIDDENNOTES)
 
                     commitPDFtoDB(om_gui,
                     "Account tone%s"%tone, printpt.serialno)

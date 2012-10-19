@@ -42,14 +42,14 @@ def showDialog(Dialog,pt):
             item+=1
         alert=data[12]
         chkdate=data[13]
-        
+
     if chkdate:
         dl.dateEdit.setDate(chkdate)
     else:
         dl.date_label.hide()
         dl.dateEdit.hide()
     dl.checkBox.setChecked(alert)
-    
+
     if Dialog.exec_():
         newdata=[]
         for lineEdit in (
@@ -79,9 +79,9 @@ def showDialog(Dialog,pt):
             updateMH.write(pt.serialno,result)
             pt.MH=result
             pt.MEDALERT=result[12]
-                
+
             pt.addHiddenNote("mednotes")
-            
+
             mnhistChanges=[]
             if data!=None:
                 for a in range(11):
@@ -89,13 +89,11 @@ def showDialog(Dialog,pt):
                         mnhistChanges.append((a+140,data[a]))
             if mnhistChanges!=[]:
                 updateMH.writeHist(pt.serialno,mnhistChanges)
-            
-            pt.addHiddenNote("mednotes","saved previous")
-                    
+                pt.addHiddenNote("mednotes","saved previous")
             return True
         else:
             print "unchanged"
-    
+
 
 if __name__=="__main__":
     app=QtGui.QApplication([])
@@ -106,4 +104,3 @@ if __name__=="__main__":
         showDialog(Dialog,pt)
     except localsettings.PatientNotFoundError:
         print "no such pt in THIS database"
-        

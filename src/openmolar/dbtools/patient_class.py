@@ -468,20 +468,6 @@ self.serialno, self.courseno0))
 
         cursor.close()
 
-    def OLDgetNotesTuple(self):
-        '''
-        deprecated with schema 1.9
-        '''
-        db = connect.connect()
-        cursor = db.cursor()
-        cursor.execute('''SELECT line from notes where serialno = %s
-        order by lineno''', self.serialno)
-
-        notestuple = cursor.fetchall()
-
-        cursor.close()
-        self.notes_dict = notes.getNotesDict(notestuple)
-
     def getNotesTuple(self):
         '''
         connect and poll the formatted_notes table
@@ -656,44 +642,50 @@ self.serialno, self.courseno0))
 
         return est
 
-    def addHiddenNote(self,notetype,note="",deleteIfPossible=False):
-        HN=""
-        if notetype=="payment":
-            HN=chr(3)+chr(119)+note
-        if notetype=="printed":
-            HN=chr(3)+"v"+note
-        if notetype=="exam":               #other treatment
-            HN=chr(3)+chr(112)+note
-        if notetype=="treatment":               #other treatment
-            HN=chr(3)+chr(107)+note
-        if notetype=="mednotes":               #other treatment
-            HN=chr(3)+chr(100)+note
-        if notetype=="close_course":
-            HN=chr(3)+chr(97)
-        if notetype=="open_course":
-            print "course opened - tried to add a note", note
-            pass #- should this be something???
-        if notetype=="fee":
-            HN=chr(3)+chr(131)+note
 
-        if HN=="":
+    def addHiddenNote(self,ntype,note="",deleteIfPossible=False):
+        '''
+        re-written for schema 1.9
+        '''
+        HN = ()
+        if ntype=="payment":
+            HN=("RECEIVED: ", note)
+        if ntype=="printed":
+            HN=("PRINTED: ", note)
+        if ntype=="exam":
+            HN=("TC: EXAM", note)
+        if ntype=="treatment":
+            HN=("TC: OTHER", note)
+        if ntype=="mednotes":               #other treatment
+            HN=("UPDATED:Medical Notes", note)
+        if ntype=="close_course":
+            HN=("COURSE CLOSED", "="*10)
+        if ntype=="open_course":
+            HN=("COURSE OPENED", "= "*5)
+        if ntype=="resume_course":
+            HN=("COURSE RE-OPENED", "= "*5)
+        if ntype=="fee":
+            HN=("INTERIM: ", note)
+        if not HN:
+            print "unable to add Hidden Note notetype '%s' not found"% ntype
             return
         if deleteIfPossible:
             if HN in self.HIDDENNOTES:
                 self.HIDDENNOTES.remove(HN)
             else:
-                self.HIDDENNOTES.append("%s {%s}"%(HN[:2],note))
+                self.HIDDENNOTES.append(
+                    ("UNCOMPLETED", "{%s, %s}"% (ntype,note)))
         else:
             self.HIDDENNOTES.append(HN)
-        print self.HIDDENNOTES
+        #print self.HIDDENNOTES
 
     def clearHiddenNotes(self):
         self.HIDDENNOTES=[]
 
     def updateBilling(self,tone):
-        self.billdate=localsettings.currentDay()
-        self.billct+=1
-        self.billtype=tone
+        self.billdate = localsettings.currentDay()
+        self.billct += 1
+        self.billtype = tone
 
     def treatmentOutstanding(self):
         for att in currtrtmtTableAtts:

@@ -42,12 +42,6 @@ def write(sno,dnt,accd):
             print query
         cursor.execute(query)
 
-        ##OBSOLETE OLD CODE
-        #query="INSERT INTO prvfees set serialno=%d,courseno=%s,"%(sno,cno)
-        #query+="dent=%d,esta=%d,acta=%d,estb=%d,actb=%d,data=''"%(dnt,0, 0,0,0)
-        #if localsettings.logqueries:
-        #    print query
-        #cursor.execute(query)
     except Exception,e:
         print e
         result=False

@@ -12,10 +12,10 @@ from openmolar.settings import localsettings
 def toHtml(pt):
     '''
     return the patient HiddenNotes in a readable form
-    ''' 
+    '''
     retarg = ""
-    for note in pt.HIDDENNOTES:
-        retarg +="%s<br />"% note[2:]
+    for ntype, note in pt.HIDDENNOTES:
+        retarg +="%s<br />"% note
     return retarg
 
 if __name__ == "__main__":

@@ -20,6 +20,9 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 
+class UserQuit(Exception):
+    pass
+
 def proceed(app):
     '''
     on to the main gui.
@@ -32,12 +35,16 @@ def logInAgainMessage():
     QtGui.QMessageBox.information(None, "Update Schema",
     "Success - Now please log in again to start openmolar")
 
+def user_quit():
+    raise UserQuit, "user has quit the update"
+
 def main(arg, app):
     '''
     main function
     '''
     #app = QtGui.QApplication(arg)
     pb = QtGui.QProgressDialog()
+    pb.canceled.connect(user_quit)
 
     def updateProgress(arg, message):
         print message
@@ -294,6 +301,9 @@ please let the developers of openmolar know ASAP.</p>'''))
 
             pb.destroy()
             proceed(app)
+
+        except UserQuit:
+            completed(False, "Schema Upgrade Halted")
 
         except Exception, e:
             #fatal error!

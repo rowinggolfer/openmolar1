@@ -16,7 +16,7 @@ from openmolar.ptModules import plan
 
 import struct
 
-class est():
+class est(object):
     '''
     this class has attributes suitable for storing in the estimates table
     '''
@@ -37,10 +37,10 @@ class est():
         self.completed = None
         self.carriedover = None
         self.linked = False
-    
+
     def __repr__(self):
         return self.__str__()
-    
+
     def __str__(self):
         retarg=u"("
         for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
@@ -66,17 +66,17 @@ class est():
         return '''<tr><th>Dentist</th><th>number</th><th>code</th>
         <th colspan="2">Type</th><th>Description</th><th>fee</th>
         <th>pt fee</th><th>feescale</th><th>cset</th><th>completed</th></tr>'''
-        
+
     def filteredDescription(self):
         '''
         removes {1 of 3} from the description
         '''
         retarg = copy.copy(self.description)
-        gunks = re.findall(" {.*}", retarg)        
+        gunks = re.findall(" {.*}", retarg)
         for gunk in gunks:
-            retarg = retarg.replace(gunk, "") 
+            retarg = retarg.replace(gunk, "")
         return retarg
-    
+
 
 def strip_curlies(description):
     '''
@@ -87,12 +87,12 @@ def strip_curlies(description):
         return description[:description.index("{")]
     else:
         return description
-    
+
 def sorted(ests):
     '''
     compresses a list of estimates down into number*itemcode
     '''
-    def cmp1(a, b): 
+    def cmp1(a, b):
         'define how ests are sorted'
         return cmp(a.itemcode, b.itemcode)
 
@@ -114,9 +114,9 @@ def sorted(ests):
             ce.description = strip_curlies(ce.description)
             sortedEsts.append(ce)
     sortedEsts.sort(cmp1)
-    
+
     return sortedEsts
-    
+
 def toothTreatDict(pt):
     '''
     cycles through the patient attriubutes,
@@ -148,7 +148,7 @@ def apply_exemption(pt, maxCharge=0):
     for est in pt.estimates:
         if est.completed:
             pt.applyFee(est.ptfee * -1)
-        
+
         if maxCharge - total >= est.ptfee:
             pass
         else:
@@ -157,28 +157,28 @@ def apply_exemption(pt, maxCharge=0):
             else:
                 est.ptfee = 0
         total += est.ptfee
-        
+
         if est.completed:
             pt.applyFee(est.ptfee)
     return True
-        
+
 
 def recalculate_estimate(pt):
     '''
-    look up all the itemcodes in the patients feetable 
+    look up all the itemcodes in the patients feetable
     (which could have changed), and apply new fees
     '''
     dent = pt.dnt1
     if pt.dnt2 and pt.dnt2 != "":
         dent = pt.dnt2
-        
+
     codeList=[]
     for est in pt.estimates:
-        codeList.append((est.number, est.itemcode, est.csetype, 
+        codeList.append((est.number, est.itemcode, est.csetype,
         est.category, est.type, est.description , est.completed))
         if est.completed:
             pt.applyFee(est.ptfee * -1)
-    
+
     pt.estimates = []
     for number, itemcode, cset, category, type, descrpt, complete \
     in codeList:
@@ -186,12 +186,12 @@ def recalculate_estimate(pt):
         descr = descrpt, completed=complete)
         if est.completed:
             pt.applyFee(est.ptfee)
-    
+
     return True
-    
+
 def estimateFromPlan(pt):
     '''
-    the idea here is that this iterates through the plan and completed    
+    the idea here is that this iterates through the plan and completed
     and gets new itemcodes for estimates....
     '''
     planned = plan.plannedDict(pt)
@@ -200,13 +200,13 @@ def estimateFromPlan(pt):
         dent = pt.dnt2
     else:
         dent = pt.dnt1
-    
+
     for key in planned.keys():
         print key,planned[key]
     for key in completed.keys():
         print key,completed[key]
-        
-        
+
+
     #pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
     #                        dent, self.pt.cset, treat[0])
 
@@ -220,11 +220,11 @@ def toBriefHtml(pt):
         retarg += _("<h1>Under Treatment - Current Estimate</h1>")
     else:
         retarg += _("<h1>Estimate from previous course</h1>")
-        
+
     if not pt.estimates:
         retarg += _('No estimate data found</body></html>')
         return retarg
-    
+
     retarg += _('''<table width ="100%" border="1">
     <tr><td colspan="7"><h3>ESTIMATE</h3></td></tr>
     <tr><th>No.</th><th>Description</th><th>Category</th>
@@ -236,7 +236,7 @@ def toBriefHtml(pt):
         total+=est.fee
         pt_total+=est.ptfee
         retarg+='<tr><td>%s</td><td>%s</td>'%(est.number ,est.description)
-        retarg+='<td align="center">%s</td>'%est.category        
+        retarg+='<td align="center">%s</td>'%est.category
         retarg+='<td align="center">%s</td>'%est.type
         if est.csetype==None:
             retarg+='<td align="center">?</td>'
@@ -245,10 +245,10 @@ def toBriefHtml(pt):
 
         retarg+='<td align="right">%s</td>'% (
         localsettings.formatMoney(est.fee))
-        
+
         retarg+='<td align="right"><b>%s</b></td>'%(
         localsettings.formatMoney(est.ptfee))
-        
+
         retarg+='<td align="center">'
         if est.completed:
             retarg+='YES'
@@ -260,7 +260,7 @@ def toBriefHtml(pt):
     retarg+='<td align="right">%s</td>'% localsettings.formatMoney(total)
     retarg+='<td align="right"><b>%s</b></td>'% (
     localsettings.formatMoney(pt_total))
-    
+
     retarg+='<td></td></tr>'
 
     retarg+='</table></body></htsml>'
@@ -280,5 +280,5 @@ if __name__ == "__main__":
     #print toHtml(pt.estimates,pt.tsfees)
 
     #print toBriefHtml(pt.estimates)
-    
+
     #recalculate_estimate(pt)

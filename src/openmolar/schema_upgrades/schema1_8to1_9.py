@@ -23,6 +23,9 @@ SQLSTRINGS = [
 create table formatted_notes (ix serial, serialno int(11),
 ndate date, op1 varchar(8), op2 varchar(8), ntype varchar(32),
 note varchar(80), timestamp timestamp default NOW());
+''',
+'''
+create index formatted_notes_serialno_index on formatted_notes(serialno);
 '''
 ]
 
@@ -86,17 +89,16 @@ class dbUpdater(QtCore.QThread):
         '''
         from openmolar.schema_upgrades import formatted_notes1_9
         max_sno = formatted_notes1_9.get_max_sno()
-        sno = 1
+        sno = 0
         print "max_sno in notes = %s "% max_sno
-        step = max_sno // 20
-        step += 1
 
         while sno < max_sno:
-            formatted_notes1_9.transfer(sno, sno+step)
-            sno += step
-            progress = int(max_sno/sno * 80)
-            self.progressSig(progress + 15, "%s %s"% (
+            sno += 1
+            formatted_notes1_9.transfer(sno)
+            progress = int(sno/max_sno * 95)+3
+            self.progressSig(progress, "%s %s"% (
                 _('converting note'), sno))
+            QtGui.QApplication.instance().processEvents()
 
         return True
 
@@ -107,9 +109,9 @@ class dbUpdater(QtCore.QThread):
         print "running script to convert from schema 1.8 to 1.9"
         try:
             #- execute the SQL commands
-            self.progressSig(10, _("executing statements"))
+            self.progressSig(2, _("executing statements"))
             self.create_alter_tables()
-            self.progressSig(15, _('inserting values'))
+            self.progressSig(3, _('inserting values'))
 
             print "inserting values"
             if self.insertValues():
@@ -117,7 +119,7 @@ class dbUpdater(QtCore.QThread):
             else:
                 print "FAILED!!!!!"
 
-            self.progressSig(95, _('updating settings'))
+            self.progressSig(99, _('updating settings'))
             print "update database settings..."
 
             schema_version.update(("1.9",), "1_8 to 1_9 script")

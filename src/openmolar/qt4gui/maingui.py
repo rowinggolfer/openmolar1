@@ -2211,11 +2211,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if "New Notes" in uc:
             newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
 
-            notelines = newnote.split("\n")
-            result = patient_write_changes.toNotes(self.pt.serialno,
-            newnote.split("\n"))
+            notetuplets = []
+            for noteline in newnote.split("\n"):
+                notetuplets.append(("newNOTE", noteline))
+
+            result = patient_write_changes.toNotes(
+                self.pt.serialno, notetuplets)
+
             #--sucessful write to db?
-            if result != -1:
+            if result:
                 #--result will be a "line number" or -1 if unsucessful write
                 self.ui.notesEnter_textEdit.setText("")
                 self.ui.hiddenNotes_label.setText("")

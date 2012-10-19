@@ -40,9 +40,9 @@ def checkEstBox(om_gui, tooth, treat):
         om_gui.advise('''<p>couldn't locate '%s' in estimate</p>
         Please complete manually'''% completed, 1)
 
-def chartComplete(om_gui, arg):   
+def chartComplete(om_gui, arg):
     '''
-    complete tooth treatment 
+    complete tooth treatment
     the arg is a list - ["ul5","MOD","RT",]
     '''
     if localsettings.clinicianNo != 0:
@@ -54,7 +54,7 @@ def chartComplete(om_gui, arg):
     if dent == None:
         dent = ""
     #--tooth may be deciduous
-        
+
     adultTooth = arg[0]
     toothName = om_gui.pt.chartgrid.get(arg[0])
     arg[0] = toothName # change the list
@@ -64,19 +64,19 @@ def chartComplete(om_gui, arg):
         feeTup = fees_module.getFeesFromEst(om_gui, toothName, treatItem)
         fee += feeTup[0]
         ptfee += feeTup[1]
-        
+
     if len(arg) == 2:
         # only 1 treatment item, no dialog required
         treatmentItems = (arg[1],)
-    else: 
+    else:
         # multiple treatments, does user want to complete them all?
         Dialog = QtGui.QDialog(om_gui)
         dl = completeTreat.treatment(Dialog, arg)
         treatmentItems = dl.getInput()
         #-- results will be a tuple of treatments which have been selected
         #-- eg, ("MOD","RT")
-    
-    
+
+
     for treatmentItem in treatmentItems:
         planATT = "%spl"% adultTooth
         completedATT = "%scmp"% adultTooth
@@ -87,9 +87,9 @@ def chartComplete(om_gui, arg):
             om_gui.pt.__dict__[planATT] = newplan
             existingcompleted = om_gui.pt.__dict__[completedATT]
             newcompleted = existingcompleted + treatmentItem
-            
+
             om_gui.pt.__dict__[completedATT] = newcompleted
-            charts_gui.updateChartsAfterTreatment(om_gui, adultTooth, newplan, 
+            charts_gui.updateChartsAfterTreatment(om_gui, adultTooth, newplan,
             newcompleted)
 
             checkEstBox(om_gui, toothName, treatmentItem)
@@ -100,10 +100,10 @@ def chartComplete(om_gui, arg):
             om_gui.pt.addHiddenNote("treatment",
             "%s %s"% (toothName.upper(), treatmentItem))
             om_gui.updateHiddenNotesLabel()
-            
+
         else:
-            print "%s not found in plan!"% treatmentItem 
-                
+            print "%s not found in plan!"% treatmentItem
+
 def estwidg_complete(om_gui, item):
     '''
     reponds to a signal when the user completes an item of treatment by
@@ -111,17 +111,17 @@ def estwidg_complete(om_gui, item):
     '''
     try:
         treat = item.type + " "
-        
+
         att = item.category
         if re.match("[ul][lr][A-E]", att): #deciduous tooth
-            number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
+            number = ["", "A", "B", "C", "D", "E"].index(att[2])
             att = "%s%d"% (att[:2], number)
-            
+
         if att == "exam":
             om_gui.pt.examt = item.type
             om_gui.pt.examd = localsettings.currentDay()
             om_gui.pt.addHiddenNote("exam", item.type)
-            
+
         else:
             plan = om_gui.pt.__dict__[att + "pl"].replace(treat, "", 1)
             om_gui.pt.__dict__[att + "pl"] = plan
@@ -129,10 +129,10 @@ def estwidg_complete(om_gui, item):
             om_gui.pt.__dict__[att + "cmp"] = completed
 
             if re.findall("[ul][lr][1-8]", att):
-                charts_gui.updateChartsAfterTreatment(om_gui, att, plan, 
+                charts_gui.updateChartsAfterTreatment(om_gui, att, plan,
                 completed)
                 toothName = om_gui.pt.chartgrid.get(att)
-    
+
                 om_gui.pt.addHiddenNote(
                 "treatment", "%s %s"% (toothName.upper(), treat))
             else:
@@ -144,27 +144,27 @@ def estwidg_complete(om_gui, item):
         </p>Please complete manually'''% completed, 1)
         print "UNABLE TO COMPLETE %s"% item
         print e
-    
-    finally:        
+
+    finally:
         fees_module.applyFeeNow(om_gui, item.ptfee, item.csetype)
         om_gui.updateHiddenNotesLabel()
-            
+
         om_gui.load_treatTrees()
 
-    
+
 def estwidg_unComplete(om_gui, item):
     '''
     reponds to a signal when the user "uncompletes" an item of treatment by
     unchecking a checkbox on the estwidget
     '''
-        
+
     try:
         treat = item.type + " "
         att = item.category
         if re.match("[ul][lr][A-E]", att): #deciduous tooth
-            number = ["", "A", "B", "C", "D", "E"].index(att[2]) 
+            number = ["", "A", "B", "C", "D", "E"].index(att[2])
             att = "%s%d"% (att[:2], number)
-                    
+
         if att =="exam":
             #om_gui.pt.examt = ""
             om_gui.pt.examd = None
@@ -176,30 +176,31 @@ def estwidg_unComplete(om_gui, item):
             om_gui.pt.__dict__[att + "cmp"] = completed
 
             if re.findall("[ul][lr][1-8]", att):
-                charts_gui.updateChartsAfterTreatment(om_gui, att, plan, 
+                charts_gui.updateChartsAfterTreatment(om_gui, att, plan,
                 completed)
                 toothName = om_gui.pt.chartgrid.get(att)
-    
+
                 om_gui.pt.addHiddenNote(
                 "treatment", "%s %s"% (toothName.upper(), treat), True)
             else:
                 om_gui.pt.addHiddenNote("treatment", item.type, True)
-                
+
         fees_module.applyFeeNow(om_gui, -1 * item.ptfee, item.csetype)
         om_gui.load_treatTrees()
 
     except Exception, e:
         print e
-        completed = "%s - %s"% (item.category, item.type)        
+        completed = "%s - %s"% (item.category, item.type)
         om_gui.advise('''<p>Error moving %s from completed to plan
         </p>Please complete manually'''% completed, 1)
         print "UNABLE TO UNCOMPLETE %s"% item
         print e
+    om_gui.updateHiddenNotesLabel()
 
 
-def planTreeWidgetComplete(om_gui, txtype):   
+def planTreeWidgetComplete(om_gui, txtype):
     '''
-    complete any treatment itemised in the tree widget 
+    complete any treatment itemised in the tree widget
     the arg is a list - ["ul5","MOD","RT",]
     '''
     if localsettings.clinicianNo != 0:
@@ -211,7 +212,7 @@ def planTreeWidgetComplete(om_gui, txtype):
     if dent == None:
         dent = ""
     #--tooth may be deciduous
-    
+
     print "TREE WIDGET COMPLETE", txtype
     tup = txtype.split(" - ")
     try:
@@ -229,15 +230,14 @@ def planTreeWidgetComplete(om_gui, txtype):
             plan = om_gui.pt.__dict__[att + "pl"].replace(
             treat, "", 1)#-- only remove 1 occurrence
             om_gui.pt.__dict__[att + "pl"] = plan
-            
-            completed = om_gui.pt.__dict__[att + "cmp"] 
+
+            completed = om_gui.pt.__dict__[att + "cmp"]
             om_gui.pt.__dict__[att + "cmp"] = completed + treat
-            
+
             checkEstBox(om_gui, att, treat)
-            
+
         om_gui.load_treatTrees()
         om_gui.load_newEstPage()
-        
+
     except Exception, e:
         om_gui.advise("Error completing %s, sorry"% txtype, 1)
-        

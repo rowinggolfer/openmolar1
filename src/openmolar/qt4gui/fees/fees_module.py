@@ -74,7 +74,7 @@ def takePayment(om_gui):
             paymentPt = patient_class.patient(22963)
         else:
             paymentPt = om_gui.pt
-        
+
         name = "%s %s"% (paymentPt.sname, paymentPt.fname[:1])
         if paymentPt.dnt2 != 0:
             dent = paymentPt.dnt2
@@ -82,14 +82,15 @@ def takePayment(om_gui):
             dent = paymentPt.dnt1
 
         print "TAKING PAYMENT", paymentPt.serialno
-        
-        if cashbook.paymenttaken(paymentPt.serialno, name, dent,paymentPt.cset, 
-        dl.tx_cash, dl.tx_cheque, dl.tx_card, 
+
+        if cashbook.paymenttaken(paymentPt.serialno, name, dent,paymentPt.cset,
+        dl.tx_cash, dl.tx_cheque, dl.tx_card,
         dl.sundry_cash, dl.sundry_cheque, dl.sundry_card, dl.hdp, dl.other):
-        
+
             print "ADDING NOTE"
             paymentPt.addHiddenNote("payment",
             " treatment %s sundries %s"% (dl.tx_total_text, dl.sundry_total_text))
+            om_gui.updateHiddenNotesLabel()
 
             print "CHECKING SERIALNO of loaded patient",
             if om_gui.pt.serialno != 0:
@@ -105,7 +106,7 @@ def takePayment(om_gui):
                     om_gui.pt.money2 += dl.tx_total
                 else:
                     om_gui.pt.money3 += dl.tx_total
-                
+
             else:
                 print "No patient loaded. skipping receipt offer."
 

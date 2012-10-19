@@ -12,14 +12,14 @@ def getVersion():
     try:
         db = connect.connect()
         cursor = db.cursor()
-        query = 'select data from settings where value = "Schema_Version"' 
+        query = 'select data from settings where value = "Schema_Version"'
         cursor.execute(query)
         rows = cursor.fetchall()
     except connect.ProgrammingError, ex:
         print "no settings table!",ex
         print "schema assumed to be 1.0"
         return "1.0"
-    
+
     version = ""
     for row in rows:
         data = row[0]
@@ -27,13 +27,13 @@ def getVersion():
             version = data
     localsettings.DB_SCHEMA_VERSION = version
     return version
-    
+
 def clientCompatibility(client_schema):
     rows = ()
     try:
         db = connect.connect()
         cursor = db.cursor()
-        query = 'select data from settings where value = "compatible_clients"' 
+        query = 'select data from settings where value = "compatible_clients"'
         cursor.execute(query)
         rows = cursor.fetchall()
     except connect.ProgrammingError, ex:
@@ -41,31 +41,32 @@ def clientCompatibility(client_schema):
     for row in rows:
         if row[0] == client_schema:
             return True
-            
+
 def update(schemas, user):
     '''
-    updates the schema version, 
+    updates the schema version,
     pass a list of compatible clients version and a user
     eg. updateSchemaVersion (("1.1","1.2"), "admin script")
-    the first in the list is the minimum allowed, 
+    the first in the list is the minimum allowed,
     the last is the current schema
     '''
     latest_schema = schemas[-1]
     db = connect.connect()
     cursor = db.cursor()
-    query = '''insert into settings (value,data,modified_by,time_stamp) 
+    query = '''insert into settings (value,data,modified_by,time_stamp)
             values (%s, %s, %s, NOW())'''
     values = ("Schema_Version", latest_schema, user)
-    
+
     print "making the db aware of it's schema version"
     cursor.execute(query, values)
 
     print "disabling old clients"
     query = '''delete from settings where value = "compatible_clients"'''
+    cursor.execute(query)
     db.commit()
     for schema in schemas:
-        query = '''insert into settings (value, data, modified_by) 
-        values ("compatible_clients", %s, 'Script')'''
+        query = '''insert into settings (value, data, modified_by, time_stamp)
+        values ("compatible_clients", %s, 'Update script', NOW())'''
         values = (schema,)
         cursor.execute(query, values)
     db.commit()

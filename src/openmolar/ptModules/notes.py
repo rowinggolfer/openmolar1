@@ -321,6 +321,9 @@ def decipher_noteline(noteline):
         elif noteline[1]==chr(105):
             retarg[0]="TC: PERIO"
             retarg[1]=noteline[2:]
+        elif noteline[1]==chr(106):
+            retarg[0]="TC: ANAES"
+            retarg[1]=noteline[2:]
         elif noteline[1]==chr(107):
             retarg[0]="TC: OTHER"
             retarg[1]=noteline[2:]
@@ -343,7 +346,7 @@ def decipher_noteline(noteline):
             retarg[0]="TC:"
             retarg[1]=tooth(noteline[2:])
         elif noteline[1]==chr(114):
-            retarg[0]="STATIC: "                                    #(1st line):"
+            retarg[0]="STATIC: "                                 #(1st line):"
             retarg[1]=tooth(noteline[2:])
         elif noteline[1]==chr(115):
             retarg[0]="PRINTED: "
@@ -361,7 +364,7 @@ def decipher_noteline(noteline):
             retarg[0]="REVERSE PAYMENT:"
             retarg[1]=noteline[2:]
         elif noteline[1]==chr(121):
-            retarg[0]="STATIC: "                                                                #(additional Line):"
+            retarg[0]="STATIC: "                          #(additional Line):"
             retarg[1]=tooth(noteline[2:])
         elif noteline[1]==chr(123):
             retarg[0]="PRINTED: "
@@ -390,11 +393,24 @@ def decipher_noteline(noteline):
         elif noteline[1]=="v":
             retarg[0]="PRINTED: "
             retarg[1]=noteline[2:]
+
+
+        elif noteline[1]==chr(125):
+            retarg[0]="PRINTED: "
+            retarg[1]="GP17RA"
+
+        elif noteline[1]==chr(98):
+            retarg[0]="WYSDOM ERROR: "
+            retarg[1]="PREVIOUS NOTES LOST"
+
         else:
-            retarg[0]='<font color="red">UNKNOWN LINE</font> '
+            retarg[0]='UNKNOWN LINE: '
             retarg[1]+="%s  |  "%noteline[1:]
             for ch in noteline[1:]:
                 retarg[1]+="'%s' "%str(char(ch))
+
+
+
         if "TC" in retarg[0]:
             retarg[1]="%s"%retarg[1]
 
