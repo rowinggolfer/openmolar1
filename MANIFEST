@@ -11,6 +11,8 @@ src/openmolar/connect.py
 src/openmolar/createdemodatabase.py
 src/openmolar/firstRun.py
 src/openmolar/main.py
+src/openmolar/backports/__init__.py
+src/openmolar/backports/ordered_dict.py
 src/openmolar/dbtools/__init__.py
 src/openmolar/dbtools/accounts.py
 src/openmolar/dbtools/appointments.py
@@ -110,6 +112,7 @@ src/openmolar/ptModules/__init__.py
 src/openmolar/ptModules/debug_html.py
 src/openmolar/ptModules/dec_perm.py
 src/openmolar/ptModules/estimates.py
+src/openmolar/ptModules/formatted_notes.py
 src/openmolar/ptModules/hidden_notes.py
 src/openmolar/ptModules/nhsDetails.py
 src/openmolar/ptModules/notes.py
@@ -377,6 +380,7 @@ src/openmolar/resources/teeth/lr7.svg
 src/openmolar/resources/teeth/lr8.png
 src/openmolar/resources/teeth/lr8.svg
 src/openmolar/schema_upgrades/__init__.py
+src/openmolar/schema_upgrades/formatted_notes1_9.py
 src/openmolar/schema_upgrades/schema1_0to1_1.py
 src/openmolar/schema_upgrades/schema1_1to1_2.py
 src/openmolar/schema_upgrades/schema1_2to1_3.py
@@ -385,6 +389,7 @@ src/openmolar/schema_upgrades/schema1_4to1_5.py
 src/openmolar/schema_upgrades/schema1_5to1_6.py
 src/openmolar/schema_upgrades/schema1_6to1_7.py
 src/openmolar/schema_upgrades/schema1_7to1_8.py
+src/openmolar/schema_upgrades/schema1_8to1_9.py
 src/openmolar/settings/__init__.py
 src/openmolar/settings/_version.py
 src/openmolar/settings/allowed.py
