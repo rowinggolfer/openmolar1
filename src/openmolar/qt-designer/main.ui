@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
-    <height>672</height>
+    <width>948</width>
+    <height>649</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>977</width>
-         <height>629</height>
+         <width>948</width>
+         <height>606</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -464,7 +464,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>733</width>
+                      <width>704</width>
                       <height>473</height>
                      </rect>
                     </property>
@@ -1738,7 +1738,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>733</width>
+                      <width>704</width>
                       <height>504</height>
                      </rect>
                     </property>
@@ -2146,10 +2146,10 @@
                 </attribute>
                 <layout class="QVBoxLayout" name="verticalLayout_24">
                  <property name="spacing">
-                  <number>4</number>
+                  <number>0</number>
                  </property>
                  <property name="margin">
-                  <number>6</number>
+                  <number>0</number>
                  </property>
                  <item>
                   <widget class="QScrollArea" name="scrollArea_2">
@@ -2164,15 +2164,228 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>741</width>
-                      <height>467</height>
+                      <width>724</width>
+                      <height>487</height>
                      </rect>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_32">
+                    <layout class="QHBoxLayout" name="horizontalLayout_26">
                      <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_34">
+                      <layout class="QVBoxLayout" name="verticalLayout_32">
+                       <property name="spacing">
+                        <number>3</number>
+                       </property>
                        <item>
-                        <widget class="QGroupBox" name="adminAccount_groupBox">
+                        <widget class="QSplitter" name="splitter_2">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <widget class="QGroupBox" name="adminAccount_groupBox">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>0</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="title">
+                           <string>Account</string>
+                          </property>
+                          <layout class="QHBoxLayout" name="horizontalLayout_32">
+                           <property name="spacing">
+                            <number>3</number>
+                           </property>
+                           <property name="margin">
+                            <number>3</number>
+                           </property>
+                           <item>
+                            <layout class="QGridLayout" name="gridLayout_3">
+                             <item row="1" column="1">
+                              <widget class="QGroupBox" name="NHSadmin_groupBox">
+                               <property name="title">
+                                <string>NHS</string>
+                               </property>
+                               <layout class="QVBoxLayout" name="verticalLayout_27">
+                                <property name="spacing">
+                                 <number>3</number>
+                                </property>
+                                <property name="margin">
+                                 <number>3</number>
+                                </property>
+                                <item>
+                                 <widget class="QPushButton" name="printGP17_pushButton">
+                                  <property name="text">
+                                   <string>Print A GP17</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QPushButton" name="rec_apply_exemption_pushButton">
+                                  <property name="text">
+                                   <string>Apply an Exemption</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                               </layout>
+                              </widget>
+                             </item>
+                             <item row="3" column="1">
+                              <widget class="QCheckBox" name="customEst_checkBox">
+                               <property name="text">
+                                <string>Custom Estimate on File</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="5" column="1">
+                              <widget class="QPushButton" name="printAccount_pushButton">
+                               <property name="maximumSize">
+                                <size>
+                                 <width>16777215</width>
+                                 <height>16777215</height>
+                                </size>
+                               </property>
+                               <property name="text">
+                                <string>Print &amp;Account</string>
+                               </property>
+                               <property name="icon">
+                                <iconset resource="../resources/resources.qrc">
+                                 <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="6" column="1">
+                              <widget class="QPushButton" name="takePayment_pushButton">
+                               <property name="maximumSize">
+                                <size>
+                                 <width>16777215</width>
+                                 <height>16777215</height>
+                                </size>
+                               </property>
+                               <property name="text">
+                                <string>Take &amp;Payment</string>
+                               </property>
+                               <property name="icon">
+                                <iconset resource="../resources/resources.qrc">
+                                 <normaloff>:/vcard.png</normaloff>:/vcard.png</iconset>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="0" column="0" rowspan="7">
+                              <widget class="QTextBrowser" name="moneytextBrowser">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="minimumSize">
+                                <size>
+                                 <width>0</width>
+                                 <height>0</height>
+                                </size>
+                               </property>
+                               <property name="maximumSize">
+                                <size>
+                                 <width>16777215</width>
+                                 <height>16777215</height>
+                                </size>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="4" column="1">
+                              <widget class="QPushButton" name="printEst_pushButton">
+                               <property name="maximumSize">
+                                <size>
+                                 <width>16777215</width>
+                                 <height>16777215</height>
+                                </size>
+                               </property>
+                               <property name="text">
+                                <string>Print &amp;Estimate</string>
+                               </property>
+                               <property name="icon">
+                                <iconset resource="../resources/resources.qrc">
+                                 <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="2" column="1">
+                              <spacer name="verticalSpacer">
+                               <property name="orientation">
+                                <enum>Qt::Vertical</enum>
+                               </property>
+                               <property name="sizeHint" stdset="0">
+                                <size>
+                                 <width>20</width>
+                                 <height>40</height>
+                                </size>
+                               </property>
+                              </spacer>
+                             </item>
+                            </layout>
+                           </item>
+                          </layout>
+                         </widget>
+                         <widget class="QGroupBox" name="groupBox_recnotes">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>300</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="title">
+                           <string>Notes</string>
+                          </property>
+                          <layout class="QHBoxLayout" name="horizontalLayout_30">
+                           <property name="spacing">
+                            <number>3</number>
+                           </property>
+                           <property name="margin">
+                            <number>3</number>
+                           </property>
+                           <item>
+                            <widget class="QWebView" name="recNotes_webView">
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <property name="maximumSize">
+                              <size>
+                               <width>16777215</width>
+                               <height>16777215</height>
+                              </size>
+                             </property>
+                             <property name="url">
+                              <url>
+                               <string>about:blank</string>
+                              </url>
+                             </property>
+                            </widget>
+                           </item>
+                          </layout>
+                         </widget>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QGroupBox" name="groupBox">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                            <horstretch>0</horstretch>
@@ -2182,66 +2395,46 @@
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>0</height>
+                           <height>200</height>
                           </size>
                          </property>
                          <property name="maximumSize">
                           <size>
                            <width>16777215</width>
-                           <height>16777215</height>
+                           <height>200</height>
                           </size>
                          </property>
                          <property name="title">
-                          <string>Account</string>
+                          <string>Patient's Diary</string>
                          </property>
-                         <layout class="QGridLayout" name="gridLayout_3">
-                          <property name="margin">
-                           <number>3</number>
-                          </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_34">
                           <property name="spacing">
                            <number>3</number>
                           </property>
-                          <item row="0" column="0" rowspan="6">
-                           <widget class="QTextBrowser" name="moneytextBrowser">
-                            <property name="sizePolicy">
-                             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                              <horstretch>0</horstretch>
-                              <verstretch>0</verstretch>
-                             </sizepolicy>
+                          <property name="margin">
+                           <number>6</number>
+                          </property>
+                          <item>
+                           <widget class="QTreeView" name="pt_diary_treeView"/>
+                          </item>
+                          <item>
+                           <widget class="QFrame" name="appt_buttons_frame">
+                            <property name="enabled">
+                             <bool>true</bool>
                             </property>
                             <property name="minimumSize">
                              <size>
-                              <width>0</width>
+                              <width>330</width>
                               <height>0</height>
                              </size>
                             </property>
-                            <property name="maximumSize">
-                             <size>
-                              <width>16777215</width>
-                              <height>16777215</height>
-                             </size>
+                            <property name="frameShape">
+                             <enum>QFrame::NoFrame</enum>
                             </property>
-                           </widget>
-                          </item>
-                          <item row="0" column="1">
-                           <spacer name="verticalSpacer">
-                            <property name="orientation">
-                             <enum>Qt::Vertical</enum>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
                             </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>20</width>
-                              <height>82</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
-                          <item row="1" column="1">
-                           <widget class="QGroupBox" name="NHSadmin_groupBox">
-                            <property name="title">
-                             <string>NHS</string>
-                            </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_27">
+                            <layout class="QVBoxLayout" name="verticalLayout_33">
                              <property name="spacing">
                               <number>3</number>
                              </property>
@@ -2249,401 +2442,235 @@
                               <number>3</number>
                              </property>
                              <item>
-                              <widget class="QPushButton" name="printGP17_pushButton">
+                              <widget class="QPushButton" name="apptWizard_pushButton">
+                               <property name="enabled">
+                                <bool>true</bool>
+                               </property>
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="toolTip">
+                                <string>A Wizard to select some common appointment combinations</string>
+                               </property>
                                <property name="text">
-                                <string>Print A GP17</string>
+                                <string>Appointment Shortcuts</string>
                                </property>
                               </widget>
                              </item>
                              <item>
-                              <widget class="QPushButton" name="rec_apply_exemption_pushButton">
-                               <property name="text">
-                                <string>Apply an Exemption</string>
+                              <spacer name="verticalSpacer_8">
+                               <property name="orientation">
+                                <enum>Qt::Vertical</enum>
                                </property>
-                              </widget>
+                               <property name="sizeHint" stdset="0">
+                                <size>
+                                 <width>20</width>
+                                 <height>40</height>
+                                </size>
+                               </property>
+                              </spacer>
+                             </item>
+                             <item>
+                              <layout class="QGridLayout" name="gridLayout_16">
+                               <item row="0" column="0">
+                                <widget class="QPushButton" name="newAppt_pushButton">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>16777215</width>
+                                   <height>16777215</height>
+                                  </size>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>A New Appointment for this patient</string>
+                                 </property>
+                                 <property name="text">
+                                  <string>&amp;New</string>
+                                 </property>
+                                 <property name="icon">
+                                  <iconset resource="../resources/resources.qrc">
+                                   <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item row="0" column="1">
+                                <widget class="QPushButton" name="clearAppt_pushButton">
+                                 <property name="enabled">
+                                  <bool>true</bool>
+                                 </property>
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>16777215</width>
+                                   <height>16777215</height>
+                                  </size>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>delete or cancel the appointment</string>
+                                 </property>
+                                 <property name="text">
+                                  <string>Clear/Cancel</string>
+                                 </property>
+                                 <property name="icon">
+                                  <iconset resource="../resources/resources.qrc">
+                                   <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item row="0" column="2" rowspan="2">
+                                <layout class="QVBoxLayout" name="verticalLayout_31">
+                                 <item>
+                                  <widget class="QPushButton" name="scheduleAppt_pushButton">
+                                   <property name="enabled">
+                                    <bool>true</bool>
+                                   </property>
+                                   <property name="sizePolicy">
+                                    <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                     <horstretch>0</horstretch>
+                                     <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                   </property>
+                                   <property name="maximumSize">
+                                    <size>
+                                     <width>16777215</width>
+                                     <height>16777215</height>
+                                    </size>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Make the selected appointment</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>Schedule</string>
+                                   </property>
+                                   <property name="icon">
+                                    <iconset resource="../resources/resources.qrc">
+                                     <normaloff>:/month.png</normaloff>:/month.png</iconset>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item>
+                                  <widget class="QPushButton" name="del_pastAppointments_pushButton">
+                                   <property name="sizePolicy">
+                                    <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                     <horstretch>0</horstretch>
+                                     <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Housekeeping - remove all past appointments from the patient's diary</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>Delete All Past Appointments</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item>
+                                  <widget class="QPushButton" name="findAppt_pushButton">
+                                   <property name="enabled">
+                                    <bool>true</bool>
+                                   </property>
+                                   <property name="sizePolicy">
+                                    <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                     <horstretch>0</horstretch>
+                                     <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                   </property>
+                                   <property name="maximumSize">
+                                    <size>
+                                     <width>16777215</width>
+                                     <height>16777215</height>
+                                    </size>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Find the appointment in the the practice appointment list</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>Find in Book</string>
+                                   </property>
+                                   <property name="icon">
+                                    <iconset resource="../resources/resources.qrc">
+                                     <normaloff>:/schedule.png</normaloff>:/schedule.png</iconset>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                </layout>
+                               </item>
+                               <item row="1" column="0">
+                                <widget class="QPushButton" name="printAppt_pushButton">
+                                 <property name="enabled">
+                                  <bool>true</bool>
+                                 </property>
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>16777215</width>
+                                   <height>16777215</height>
+                                  </size>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>Print out the next 5 appointments for this patient</string>
+                                 </property>
+                                 <property name="text">
+                                  <string>Print Card</string>
+                                 </property>
+                                 <property name="icon">
+                                  <iconset resource="../resources/resources.qrc">
+                                   <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item row="1" column="1">
+                                <widget class="QPushButton" name="modifyAppt_pushButton">
+                                 <property name="enabled">
+                                  <bool>true</bool>
+                                 </property>
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>16777215</width>
+                                   <height>16777215</height>
+                                  </size>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>Allows modifcation of certain criteria for this appointment</string>
+                                 </property>
+                                 <property name="text">
+                                  <string>Modify</string>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
                              </item>
                             </layout>
-                           </widget>
-                          </item>
-                          <item row="2" column="1">
-                           <widget class="QCheckBox" name="customEst_checkBox">
-                            <property name="text">
-                             <string>Custom Estimate on File</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="3" column="1">
-                           <widget class="QPushButton" name="printEst_pushButton">
-                            <property name="maximumSize">
-                             <size>
-                              <width>16777215</width>
-                              <height>16777215</height>
-                             </size>
-                            </property>
-                            <property name="text">
-                             <string>Print &amp;Estimate</string>
-                            </property>
-                            <property name="icon">
-                             <iconset resource="../resources/resources.qrc">
-                              <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="4" column="1">
-                           <widget class="QPushButton" name="printAccount_pushButton">
-                            <property name="maximumSize">
-                             <size>
-                              <width>16777215</width>
-                              <height>16777215</height>
-                             </size>
-                            </property>
-                            <property name="text">
-                             <string>Print &amp;Account</string>
-                            </property>
-                            <property name="icon">
-                             <iconset resource="../resources/resources.qrc">
-                              <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="5" column="1">
-                           <widget class="QPushButton" name="takePayment_pushButton">
-                            <property name="maximumSize">
-                             <size>
-                              <width>16777215</width>
-                              <height>16777215</height>
-                             </size>
-                            </property>
-                            <property name="text">
-                             <string>Take &amp;Payment</string>
-                            </property>
-                            <property name="icon">
-                             <iconset resource="../resources/resources.qrc">
-                              <normaloff>:/vcard.png</normaloff>:/vcard.png</iconset>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="Line" name="line_5">
-                         <property name="orientation">
-                          <enum>Qt::Vertical</enum>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QGroupBox" name="groupBox_13">
-                         <property name="maximumSize">
-                          <size>
-                           <width>200</width>
-                           <height>16777215</height>
-                          </size>
-                         </property>
-                         <property name="title">
-                          <string>Notes</string>
-                         </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_34">
-                          <item>
-                           <widget class="QWebView" name="recNotes_webView">
-                            <property name="url">
-                             <url>
-                              <string>about:blank</string>
-                             </url>
-                            </property>
                            </widget>
                           </item>
                          </layout>
                         </widget>
                        </item>
                       </layout>
-                     </item>
-                     <item>
-                      <widget class="QGroupBox" name="groupBox">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>200</height>
-                        </size>
-                       </property>
-                       <property name="maximumSize">
-                        <size>
-                         <width>16777215</width>
-                         <height>200</height>
-                        </size>
-                       </property>
-                       <property name="title">
-                        <string>Patient's Diary</string>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_32">
-                        <property name="spacing">
-                         <number>3</number>
-                        </property>
-                        <property name="margin">
-                         <number>3</number>
-                        </property>
-                        <item>
-                         <widget class="QTreeView" name="pt_diary_treeView"/>
-                        </item>
-                        <item>
-                         <widget class="QFrame" name="appt_buttons_frame">
-                          <property name="enabled">
-                           <bool>true</bool>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>330</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                          <property name="frameShape">
-                           <enum>QFrame::NoFrame</enum>
-                          </property>
-                          <property name="frameShadow">
-                           <enum>QFrame::Raised</enum>
-                          </property>
-                          <layout class="QVBoxLayout" name="verticalLayout_33">
-                           <property name="spacing">
-                            <number>3</number>
-                           </property>
-                           <property name="margin">
-                            <number>3</number>
-                           </property>
-                           <item>
-                            <widget class="QPushButton" name="apptWizard_pushButton">
-                             <property name="enabled">
-                              <bool>true</bool>
-                             </property>
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="toolTip">
-                              <string>A Wizard to select some common appointment combinations</string>
-                             </property>
-                             <property name="text">
-                              <string>Appointment Shortcuts</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <spacer name="verticalSpacer_8">
-                             <property name="orientation">
-                              <enum>Qt::Vertical</enum>
-                             </property>
-                             <property name="sizeHint" stdset="0">
-                              <size>
-                               <width>20</width>
-                               <height>40</height>
-                              </size>
-                             </property>
-                            </spacer>
-                           </item>
-                           <item>
-                            <layout class="QGridLayout" name="gridLayout_16">
-                             <item row="0" column="0">
-                              <widget class="QPushButton" name="newAppt_pushButton">
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="maximumSize">
-                                <size>
-                                 <width>16777215</width>
-                                 <height>16777215</height>
-                                </size>
-                               </property>
-                               <property name="toolTip">
-                                <string>A New Appointment for this patient</string>
-                               </property>
-                               <property name="text">
-                                <string>&amp;New</string>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="../resources/resources.qrc">
-                                 <normaloff>:/add_user.png</normaloff>:/add_user.png</iconset>
-                               </property>
-                              </widget>
-                             </item>
-                             <item row="0" column="1">
-                              <widget class="QPushButton" name="clearAppt_pushButton">
-                               <property name="enabled">
-                                <bool>true</bool>
-                               </property>
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="maximumSize">
-                                <size>
-                                 <width>16777215</width>
-                                 <height>16777215</height>
-                                </size>
-                               </property>
-                               <property name="toolTip">
-                                <string>delete or cancel the appointment</string>
-                               </property>
-                               <property name="text">
-                                <string>Clear/Cancel</string>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="../resources/resources.qrc">
-                                 <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
-                               </property>
-                              </widget>
-                             </item>
-                             <item row="0" column="2" rowspan="2">
-                              <layout class="QVBoxLayout" name="verticalLayout_31">
-                               <item>
-                                <widget class="QPushButton" name="scheduleAppt_pushButton">
-                                 <property name="enabled">
-                                  <bool>true</bool>
-                                 </property>
-                                 <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                                   <horstretch>0</horstretch>
-                                   <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                 </property>
-                                 <property name="maximumSize">
-                                  <size>
-                                   <width>16777215</width>
-                                   <height>16777215</height>
-                                  </size>
-                                 </property>
-                                 <property name="toolTip">
-                                  <string>Make the selected appointment</string>
-                                 </property>
-                                 <property name="text">
-                                  <string>Schedule</string>
-                                 </property>
-                                 <property name="icon">
-                                  <iconset resource="../resources/resources.qrc">
-                                   <normaloff>:/month.png</normaloff>:/month.png</iconset>
-                                 </property>
-                                </widget>
-                               </item>
-                               <item>
-                                <widget class="QPushButton" name="del_pastAppointments_pushButton">
-                                 <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                                   <horstretch>0</horstretch>
-                                   <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                 </property>
-                                 <property name="toolTip">
-                                  <string>Housekeeping - remove all past appointments from the patient's diary</string>
-                                 </property>
-                                 <property name="text">
-                                  <string>Delete All Past Appointments</string>
-                                 </property>
-                                </widget>
-                               </item>
-                               <item>
-                                <widget class="QPushButton" name="findAppt_pushButton">
-                                 <property name="enabled">
-                                  <bool>true</bool>
-                                 </property>
-                                 <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                                   <horstretch>0</horstretch>
-                                   <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                 </property>
-                                 <property name="maximumSize">
-                                  <size>
-                                   <width>16777215</width>
-                                   <height>16777215</height>
-                                  </size>
-                                 </property>
-                                 <property name="toolTip">
-                                  <string>Find the appointment in the the practice appointment list</string>
-                                 </property>
-                                 <property name="text">
-                                  <string>Find in Book</string>
-                                 </property>
-                                 <property name="icon">
-                                  <iconset resource="../resources/resources.qrc">
-                                   <normaloff>:/schedule.png</normaloff>:/schedule.png</iconset>
-                                 </property>
-                                </widget>
-                               </item>
-                              </layout>
-                             </item>
-                             <item row="1" column="0">
-                              <widget class="QPushButton" name="printAppt_pushButton">
-                               <property name="enabled">
-                                <bool>true</bool>
-                               </property>
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="maximumSize">
-                                <size>
-                                 <width>16777215</width>
-                                 <height>16777215</height>
-                                </size>
-                               </property>
-                               <property name="toolTip">
-                                <string>Print out the next 5 appointments for this patient</string>
-                               </property>
-                               <property name="text">
-                                <string>Print Card</string>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="../resources/resources.qrc">
-                                 <normaloff>:/ps.png</normaloff>:/ps.png</iconset>
-                               </property>
-                              </widget>
-                             </item>
-                             <item row="1" column="1">
-                              <widget class="QPushButton" name="modifyAppt_pushButton">
-                               <property name="enabled">
-                                <bool>true</bool>
-                               </property>
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="maximumSize">
-                                <size>
-                                 <width>16777215</width>
-                                 <height>16777215</height>
-                                </size>
-                               </property>
-                               <property name="toolTip">
-                                <string>Allows modifcation of certain criteria for this appointment</string>
-                               </property>
-                               <property name="text">
-                                <string>Modify</string>
-                               </property>
-                              </widget>
-                             </item>
-                            </layout>
-                           </item>
-                          </layout>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
                      </item>
                     </layout>
                    </widget>
@@ -2675,7 +2702,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>747</width>
+                      <width>718</width>
                       <height>464</height>
                      </rect>
                     </property>
@@ -2938,38 +2965,7 @@
                  <string>Notes</string>
                 </attribute>
                 <layout class="QGridLayout" name="gridLayout_6">
-                 <item row="2" column="3">
-                  <widget class="QLabel" name="label_35">
-                   <property name="text">
-                    <string>Verbosity Level</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="5">
-                  <widget class="QRadioButton" name="notesMinimumVerbosity_radioButton">
-                   <property name="text">
-                    <string>minimum</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="6">
-                  <widget class="QRadioButton" name="notesMediumVerbosity_radioButton">
-                   <property name="text">
-                    <string>medium</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="7">
-                  <widget class="QRadioButton" name="notesMaximumVerbosity_radioButton">
-                   <property name="text">
-                    <string>maximum</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0" colspan="8">
+                 <item row="0" column="0" colspan="2">
                   <widget class="QWebView" name="notes_webView">
                    <property name="url">
                     <url>
@@ -2978,25 +2974,56 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1">
-                  <widget class="QRadioButton" name="notesReceptionOnly_radioButton">
-                   <property name="text">
-                    <string>reception only</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="2">
+                 <item row="1" column="0">
                   <spacer name="horizontalSpacer_9">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>205</width>
+                     <width>402</width>
                      <height>20</height>
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item row="1" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout_35">
+                   <item>
+                    <widget class="QLabel" name="label_35">
+                     <property name="text">
+                      <string>Include</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="notes_includePrinting_checkBox">
+                     <property name="text">
+                      <string>Printing Notes</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="notes_includePayments_checkBox">
+                     <property name="text">
+                      <string>Payments</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="notes_includeTimestamps_checkBox">
+                     <property name="text">
+                      <string>timestamps</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </widget>
@@ -3024,8 +3051,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>547</width>
-                      <height>404</height>
+                      <width>518</width>
+                      <height>382</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3038,42 +3065,16 @@
                      <item>
                       <widget class="QStackedWidget" name="stackedWidget">
                        <property name="currentIndex">
-                        <number>1</number>
+                        <number>0</number>
                        </property>
                        <widget class="QWidget" name="table">
                         <layout class="QGridLayout" name="gridLayout_8">
-                         <item row="0" column="0">
-                          <spacer>
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>381</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                          </spacer>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QPushButton" name="chartsview_pushButton">
-                           <property name="maximumSize">
-                            <size>
-                             <width>16777215</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                           <property name="text">
-                            <string>Charts View</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="0" colspan="2">
+                         <item row="0" column="0" colspan="2">
                           <widget class="QTableWidget" name="chartsTableWidget">
                            <property name="maximumSize">
                             <size>
                              <width>16777215</width>
-                             <height>16777215</height>
+                             <height>500</height>
                             </size>
                            </property>
                            <property name="alternatingRowColors">
@@ -3143,14 +3144,17 @@
                     </size>
                    </property>
                    <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
+                    <enum>QFrame::NoFrame</enum>
                    </property>
                    <property name="frameShadow">
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_14">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
                     <property name="margin">
-                     <number>6</number>
+                     <number>0</number>
                     </property>
                     <item>
                      <widget class="QFrame" name="toothProps_frame">
@@ -3224,7 +3228,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>497</width>
+                         <width>468</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -3606,8 +3610,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>753</width>
-                      <height>404</height>
+                      <width>706</width>
+                      <height>385</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -4065,7 +4069,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>126</height>
+                     <height>125</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4325,7 +4329,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>180</width>
+                        <width>194</width>
                         <height>279</height>
                        </rect>
                       </property>
@@ -4680,7 +4684,7 @@ F6</string>
                         <x>0</x>
                         <y>0</y>
                         <width>212</width>
-                        <height>332</height>
+                        <height>309</height>
                        </rect>
                       </property>
                       <property name="minimumSize">
@@ -5198,8 +5202,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>74</width>
+                     <height>16</height>
                     </rect>
                    </property>
                   </widget>
@@ -6715,7 +6719,7 @@ F6</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>977</width>
+     <width>948</width>
      <height>21</height>
     </rect>
    </property>
@@ -6725,6 +6729,8 @@ F6</string>
     </property>
     <addaction name="action_save_patient"/>
     <addaction name="action_Open_Patient"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrint_Daylists"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
@@ -6744,8 +6750,7 @@ F6</string>
       <string>View</string>
      </property>
      <addaction name="actionFull_Screen_Mode_Ctrl_Alt_F"/>
-     <addaction name="actionTable_View_For_Charting"/>
-     <addaction name="actionDaybook_in_notes"/>
+     <addaction name="separator"/>
     </widget>
     <widget class="QMenu" name="menuAppointments">
      <property name="title">
@@ -6753,14 +6758,40 @@ F6</string>
      </property>
      <addaction name="actionSet_Font_Size"/>
     </widget>
+    <widget class="QMenu" name="menuPrinting">
+     <property name="title">
+      <string>Printing</string>
+     </property>
+     <addaction name="actionNHS_Form_Settings"/>
+     <addaction name="actionTest_Print_a_GP17"/>
+    </widget>
+    <widget class="QMenu" name="menuForum">
+     <property name="title">
+      <string>Forum</string>
+     </property>
+     <addaction name="action_forum_show_advanced_options"/>
+    </widget>
+    <widget class="QMenu" name="menuCharts">
+     <property name="title">
+      <string>Charts</string>
+     </property>
+     <addaction name="actionTable_View_For_Charting"/>
+    </widget>
+    <widget class="QMenu" name="menuMode">
+     <property name="title">
+      <string>Mode (reception or surgery)</string>
+     </property>
+     <addaction name="actionSurgery_Mode"/>
+    </widget>
     <addaction name="actionChange_Language"/>
-    <addaction name="menuView"/>
-    <addaction name="menuAppointments"/>
-    <addaction name="actionForum"/>
-    <addaction name="actionOptions"/>
     <addaction name="separator"/>
-    <addaction name="actionSet_Clinician"/>
-    <addaction name="actionSet_Assistant"/>
+    <addaction name="menuView"/>
+    <addaction name="menuCharts"/>
+    <addaction name="menuAppointments"/>
+    <addaction name="menuForum"/>
+    <addaction name="menuPrinting"/>
+    <addaction name="separator"/>
+    <addaction name="menuMode"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -6768,12 +6799,10 @@ F6</string>
     </property>
     <addaction name="actionClear_Today_s_Emergency_Slots"/>
     <addaction name="actionAppointment_Tools"/>
-    <addaction name="actionChoose_Database"/>
-    <addaction name="actionSelect_Print_Daylists"/>
     <addaction name="actionAdvanced_Record_Management"/>
-    <addaction name="actionTest_Print_an_NHS_Form"/>
-    <addaction name="actionLog_queries_in_underlying_terminal"/>
     <addaction name="separator"/>
+    <addaction name="actionSet_Clinician"/>
+    <addaction name="actionSet_Assistant"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -6810,45 +6839,9 @@ F6</string>
     <string>&amp;Quit</string>
    </property>
   </action>
-  <action name="actionAppointment_Font_Size">
-   <property name="text">
-    <string>Appointment Font Size</string>
-   </property>
-  </action>
-  <action name="actionTable_View_For_Charting">
-   <property name="text">
-    <string>Table View For Charting</string>
-   </property>
-  </action>
   <action name="actionClear_Today_s_Emergency_Slots">
    <property name="text">
     <string>Clear Today's Emergency Slots</string>
-   </property>
-  </action>
-  <action name="actionTest_Print_an_NHS_Form">
-   <property name="text">
-    <string>Test Print an NHS Form</string>
-   </property>
-  </action>
-  <action name="actionOptions">
-   <property name="text">
-    <string>options</string>
-   </property>
-  </action>
-  <action name="actionLog_queries_in_underlying_terminal">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>log queries in underlying terminal</string>
-   </property>
-  </action>
-  <action name="actionSet_Clinician">
-   <property name="text">
-    <string>Set Clinician</string>
    </property>
   </action>
   <action name="actionAppointment_Tools">
@@ -6856,24 +6849,9 @@ F6</string>
     <string>Appointment Tools</string>
    </property>
   </action>
-  <action name="actionChoose_Database">
-   <property name="text">
-    <string>Choose Database</string>
-   </property>
-  </action>
-  <action name="actionFeeScale_Adjuster">
-   <property name="text">
-    <string>FeeScale Adjuster</string>
-   </property>
-  </action>
-  <action name="actionSelect_Print_Daylists">
-   <property name="text">
-    <string>Select &amp;&amp; Print Daylists</string>
-   </property>
-  </action>
   <action name="actionChange_Language">
    <property name="text">
-    <string>Change Language</string>
+    <string>Select Interface Language</string>
    </property>
   </action>
   <action name="actionFull_Screen_Mode_Ctrl_Alt_F">
@@ -6887,50 +6865,45 @@ F6</string>
     <string>Ctrl+Alt+F</string>
    </property>
   </action>
-  <action name="actionCreate_Modify_database">
-   <property name="text">
-    <string>Create/Modify database</string>
-   </property>
-  </action>
-  <action name="actionAdvanced_Record_Management">
-   <property name="text">
-    <string>Advanced Record Management</string>
-   </property>
-  </action>
-  <action name="actionShow_Geek_Column">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show Geek Column</string>
-   </property>
-  </action>
-  <action name="actionTest">
-   <property name="text">
-    <string>test</string>
-   </property>
-  </action>
-  <action name="actionT">
-   <property name="text">
-    <string>t</string>
-   </property>
-  </action>
-  <action name="actionOptions_2">
-   <property name="text">
-    <string>options</string>
-   </property>
-  </action>
   <action name="actionSet_Font_Size">
    <property name="text">
     <string>Font Size</string>
    </property>
   </action>
-  <action name="actionForum">
+  <action name="action_forum_show_advanced_options">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Forum - show advanced options</string>
+    <string>Show Advanced Options</string>
+   </property>
+  </action>
+  <action name="actionTable_View_For_Charting">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Table View For Charting</string>
+   </property>
+  </action>
+  <action name="actionNHS_Form_Settings">
+   <property name="text">
+    <string>NHS Form Settings</string>
+   </property>
+  </action>
+  <action name="actionTest_Print_a_GP17">
+   <property name="text">
+    <string>Test Print a GP17</string>
+   </property>
+  </action>
+  <action name="actionPrint_Daylists">
+   <property name="text">
+    <string>Print Daylists</string>
+   </property>
+  </action>
+  <action name="actionSet_Clinician">
+   <property name="text">
+    <string>Set Clinician</string>
    </property>
   </action>
   <action name="actionSet_Assistant">
@@ -6938,12 +6911,17 @@ F6</string>
     <string>Set Assistant</string>
    </property>
   </action>
-  <action name="actionDaybook_in_notes">
+  <action name="actionSurgery_Mode">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Daybook in notes</string>
+    <string>Surgery Mode</string>
+   </property>
+  </action>
+  <action name="actionAdvanced_Record_Management">
+   <property name="text">
+    <string>Advanced Record Management</string>
    </property>
   </action>
  </widget>
@@ -6977,11 +6955,7 @@ F6</string>
   <tabstop>scheduleAppt_pushButton</tabstop>
   <tabstop>findAppt_pushButton</tabstop>
   <tabstop>printAppt_pushButton</tabstop>
-  <tabstop>notesMinimumVerbosity_radioButton</tabstop>
-  <tabstop>notesMediumVerbosity_radioButton</tabstop>
-  <tabstop>notesMaximumVerbosity_radioButton</tabstop>
   <tabstop>scrollArea_3</tabstop>
-  <tabstop>chartsview_pushButton</tabstop>
   <tabstop>chartsTableWidget</tabstop>
   <tabstop>perioChartDateComboBox</tabstop>
   <tabstop>dnt1comboBox</tabstop>

@@ -1,3 +1,17 @@
+openmolar (0.2.3+bzr0769-0~__DIST__0) __DIST__; urgency=low
+
+  * upstream tweak
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 19 Oct 2012 17:52:37 +0100
+
+
+openmolar (0.2.3+bzr0768-0~__DIST__0) __DIST__; urgency=low
+
+  * new upstream version with a significant schema change
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Fri, 19 Oct 2012 17:36:59 +0100
+
+
 openmolar (0.2.2+bzr0766-0~__DIST__0) __DIST__; urgency=low
 
   * new upstream version

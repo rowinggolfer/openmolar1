@@ -53,7 +53,7 @@ from openmolar.qt4gui.charts import charts_gui
 from openmolar.qt4gui.compiled_uis import Ui_main
 from openmolar.qt4gui.compiled_uis import Ui_patient_finder
 from openmolar.qt4gui.compiled_uis import Ui_select_patient
-from openmolar.qt4gui.compiled_uis import Ui_changeDatabase
+
 from openmolar.qt4gui.compiled_uis import Ui_related_patients
 from openmolar.qt4gui.compiled_uis import Ui_options
 from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
@@ -156,6 +156,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.setValidators()
         self.letters = bulk_mail.bulkMails(self)
         self.ui.bulk_mailings_treeView.setModel(self.letters.bulk_model)
+        self.ui.actionSurgery_Mode.setChecked(
+            localsettings.station == "surgery")
         self.setupSignals()
         self.loadDentistComboboxes()
         self.feestableLoaded = False
@@ -165,8 +167,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.alterAday_clipboard = [] #clipboard used by the alterAday dialog
         self.alterAday_clipboard_date = None
 
-        QtCore.QTimer.singleShot(1*1000, self.set_operator_label)
-        QtCore.QTimer.singleShot(1*1000, self.load_todays_patients_combobox)
+        QtCore.QTimer.singleShot(1000, self.set_operator_label)
+        QtCore.QTimer.singleShot(1000, self.load_todays_patients_combobox)
 
     def advise(self, arg, warning_level=0):
         '''
@@ -1539,15 +1541,14 @@ class openmolarGui(QtGui.QMainWindow):
         self.getrecord(self.pt.serialno)
 
     def updateNotesPage(self):
+        formatted_notes.show_printed = \
+            self.ui.notes_includePrinting_checkBox.isChecked()
+        formatted_notes.show_payments = \
+            self.ui.notes_includePayments_checkBox.isChecked()
+        formatted_notes.show_timestamps = \
+            self.ui.notes_includeTimestamps_checkBox.isChecked()
 
-        if self.ui.notesMaximumVerbosity_radioButton.isChecked():
-            note_html = formatted_notes.notes(self.pt.notes_dict, 2) #--2=verbose
-        elif self.ui.notesMediumVerbosity_radioButton.isChecked():
-            note_html = formatted_notes.notes(self.pt.notes_dict, 1)
-        elif self.ui.notesReceptionOnly_radioButton.isChecked():
-            note_html = formatted_notes.rec_notes(self.pt.notes_dict)
-        else:
-            note_html = formatted_notes.notes(self.pt.notes_dict)
+        note_html = formatted_notes.notes(self.pt.notes_dict)
         self.ui.notes_webView.setHtml(note_html)
 
     def loadpatient(self, newPatientReload=False):
@@ -1572,7 +1573,7 @@ class openmolarGui(QtGui.QMainWindow):
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-        note = formatted_notes.notes(self.pt.notes_dict, ignoreRec=True)
+        note = formatted_notes.notes(self.pt.notes_dict)
         #--notes not verbose
         self.ui.notesSummary_webView.setHtml(note)
         self.ui.notes_webView.setHtml("")
@@ -1830,6 +1831,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                     else:
                         self.getrecord(int(candidates[0][0]), True)
 
+    def set_surgery_mode(self, surgery):
+        localsettings.station = "surgery" if surgery else "reception"
+        self.set_operator_label()
+        self.gotoDefaultTab()
+
     def set_operator_label(self):
         if localsettings.clinicianNo == 0:
             if localsettings.station == "surgery":
@@ -2029,17 +2035,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         self.getrecord(self.letters.selected(index))
 
-    def showChartTable(self):
+    def showChartTable(self, charts):
         '''
         flips a stackedwidget to display the table underlying the charts
         '''
-        self.ui.stackedWidget.setCurrentIndex(0)
-
-    def showChartCharts(self):
-        '''
-        flips a stackedwidget to show the charts (default)
-        '''
-        self.ui.stackedWidget.setCurrentIndex(1)
+        if charts:
+            self.ui.stackedWidget.setCurrentIndex(0)
+        else:
+            self.ui.stackedWidget.setCurrentIndex(1)
 
     def phraseBookDialog(self):
         '''
@@ -2225,7 +2228,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.ui.hiddenNotes_label.setText("")
                 self.pt.getNotesTuple()
                 #--reload the notes
-                html = formatted_notes.notes(self.pt.notes_dict, ignoreRec=True)
+                html = formatted_notes.notes(self.pt.notes_dict)
                 self.ui.notesSummary_webView.setHtml(html)
 
                 if self.ui.tabWidget.currentIndex() == 3:
@@ -2298,38 +2301,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         if select_language.run(self):
             self.ui.retranslateUi(self)
-
-    def changeDB(self):
-        '''
-        a dialog to user a different database (or backup server etc...)
-        '''
-        if not permissions.granted(self):
-            return
-
-        def togglePassword(e):
-            if not dl.checkBox.checkState():
-                dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
-            else:
-                dl.password_lineEdit.setEchoMode(QtGui.QLineEdit.Normal)
-        Dialog = QtGui.QDialog(self)
-        dl = Ui_changeDatabase.Ui_Dialog()
-        dl.setupUi(Dialog)
-        QtCore.QObject.connect(dl.checkBox,
-        QtCore.SIGNAL("stateChanged(int)"), togglePassword)
-
-        if Dialog.exec_():
-            from openmolar import connect
-            connect.myDb=str(dl.database_lineEdit.text())
-            connect.myHost=str(dl.host_lineEdit.text())
-            connect.myPassword=str(dl.password_lineEdit.text())
-            connect.myUser=str(dl.user_lineEdit.text())
-            try:
-                connect.mainconnection.close()
-                self.advise("Applying changes", 1)
-                localsettings.initiate()
-            except Exception, e:
-                print "unable to close existing connection!"
-                print e
 
     def apptTicker(self):
         '''
@@ -2413,15 +2384,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         print a GP17
         '''
         om_printing.printGP17(self)
-
-    def actionNewSetup(self):
-        '''
-        launch a 2nd application to modify the database to allow a new practice
-        note - probably not the way to launch this action
-        '''
-        if permissions.granted():
-            self.ui2 = new_setup.setup_gui(self.app)
-            self.ui2.show()
 
     def clearTodaysEmergencyTime_action(self):
         '''
@@ -2897,7 +2859,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         forum has an advanced mode, disabled by default
         '''
-        advanced_mode = self.ui.actionForum.isChecked()
+        advanced_mode = self.ui.action_forum_show_advanced_options.isChecked()
         self.ui.forumParent_pushButton.setVisible(advanced_mode)
         self.ui.forum_deletedposts_checkBox.setVisible(advanced_mode)
         self.ui.forumExpand_pushButton.setVisible(advanced_mode)
@@ -3348,6 +3310,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.childsmile_button,
         QtCore.SIGNAL("clicked()"), self.childsmile_button_clicked)
+        
+        self.ui.actionSurgery_Mode.toggled.connect(self.set_surgery_mode)
 
     def signals_admin(self):
         #admin frame
@@ -3506,9 +3470,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.actionChange_Language,
         QtCore.SIGNAL("triggered()"), self.changeLanguage)
 
-        QtCore.QObject.connect(self.ui.actionChoose_Database,
-        QtCore.SIGNAL("triggered()"), self.changeDB)
-
         QtCore.QObject.connect(self.ui.action_About,
         QtCore.SIGNAL("triggered()"), self.aboutOM)
 
@@ -3521,34 +3482,28 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.actionFull_Screen_Mode_Ctrl_Alt_F,
         QtCore.SIGNAL("triggered()"), self.fullscreen)
 
-        QtCore.QObject.connect(self.ui.actionTable_View_For_Charting,
-        QtCore.SIGNAL("triggered()"), self.showChartTable)
+        self.ui.actionTable_View_For_Charting.toggled.connect(
+            self.showChartTable)
 
         QtCore.QObject.connect(self.ui.actionClear_Today_s_Emergency_Slots,
         QtCore.SIGNAL("triggered()"), self.clearTodaysEmergencyTime_action)
 
-        QtCore.QObject.connect(self.ui.actionTest_Print_an_NHS_Form,
+        QtCore.QObject.connect(self.ui.actionTest_Print_a_GP17,
         QtCore.SIGNAL("triggered()"), self.testGP17)
 
-        QtCore.QObject.connect(self.ui.actionOptions,
+        QtCore.QObject.connect(self.ui.actionNHS_Form_Settings,
         QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
-
-        QtCore.QObject.connect(
-        self.ui.actionLog_queries_in_underlying_terminal,
-        QtCore.SIGNAL("triggered()"), localsettings.setlogqueries)
 
         QtCore.QObject.connect(self.ui.actionAppointment_Tools,
         QtCore.SIGNAL("triggered()"), self.appointmentTools_action)
 
-        QtCore.QObject.connect(self.ui.actionSelect_Print_Daylists,
+        QtCore.QObject.connect(self.ui.actionPrint_Daylists,
         QtCore.SIGNAL("triggered()"), self.daylistPrintWizard)
 
         QtCore.QObject.connect(self.ui.actionAdvanced_Record_Management,
         QtCore.SIGNAL("triggered()"), self.advancedRecordTools)
 
-        QtCore.QObject.connect(self.ui.actionCreate_Modify_database,
-        QtCore.SIGNAL("triggered()"), self.actionNewSetup)
-
+        
     def signals_estimates(self):
         #Estimates and course ManageMent
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
@@ -3606,8 +3561,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("itemSelectionChanged ()"),
         self.forum_treeWidget_selectionChanged)
 
-        QtCore.QObject.connect(self.ui.actionForum,
-        QtCore.SIGNAL("triggered ()"), self.forum_mode)
+        self.ui.action_forum_show_advanced_options.triggered.connect(
+        self.forum_mode)
 
         QtCore.QObject.connect(self.ui.forumDelete_pushButton,
         QtCore.SIGNAL("clicked()"), self.forumDeleteItem_clicked)
@@ -3779,10 +3734,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_charts(self):
 
-        #charts (including underlying table)
-        QtCore.QObject.connect(self.ui.chartsview_pushButton,
-        QtCore.SIGNAL("clicked()"), self.showChartCharts)
-
         for chart in (self.ui.summaryChartWidget, self.ui.staticChartWidget):
             QtCore.QObject.connect(chart, QtCore.SIGNAL("showHistory"),
             self.toothHistory)
@@ -3855,12 +3806,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_notesPage(self):
         #notes page
-        for rb in (self.ui.notesReceptionOnly_radioButton,
-        self.ui.notesMaximumVerbosity_radioButton,
-        self.ui.notesMinimumVerbosity_radioButton,
-        self.ui.notesMediumVerbosity_radioButton):
-            QtCore.QObject.connect(rb,
-            QtCore.SIGNAL("clicked()"), self.updateNotesPage)
+        for rb in (self.ui.notes_includePrinting_checkBox,
+        self.ui.notes_includePayments_checkBox,
+        self.ui.notes_includeTimestamps_checkBox):
+            rb.toggled.connect(self.updateNotesPage)
 
     def signals_periochart(self):
 

@@ -20,6 +20,12 @@ except ImportError:
     print "using openmolar.backports for OrderedDict"
     from openmolar.backports import OrderedDict
 
+## some user variables which determine the verbosity of the notes
+
+show_printed = False
+show_payments =  False
+show_timestamps = False
+
 
 def get_notes_dict(results_tuple):
     '''
@@ -49,6 +55,12 @@ def get_notes_for_date(lines):
         else:
             if "TC" in ntype:
                 tx += "<b>%s</b><br />"% noteline
+            elif show_payments and "RECEIVED" in ntype:
+                note += "%s %s<br />"% (ntype, noteline)
+            elif show_printed and "PRINT" in ntype:
+                note += "%s %s<br />"% (ntype, noteline)
+            elif show_timestamps and "COURSE" in ntype:
+                note += "%s %s<br />"% (ntype, noteline)
             else:
                 metadata += "<b>%s</b>%s<br />"% (ntype, noteline)
 
@@ -98,10 +110,9 @@ def rec_notes(notes_dict):
     return retarg
 
 
-def notes(notes_dict, verbose=0, ignoreRec=False):
+def notes(notes_dict):
     '''
     returns an html string of notes...
-    if verbose=1 you get reception stuff too.
     '''
 
     retarg = '''<html><head><link rel="stylesheet"
@@ -112,11 +123,11 @@ def notes(notes_dict, verbose=0, ignoreRec=False):
         <tr>
             <th class = "date">Date</th>
             <th class = "ops">ops</th>
-            <th class = "metadata">Tx</th>
+            <th class = "tx">Tx</th>
             <th class = "notes">Notes</th>
     '''
 
-    if verbose:
+    if show_timestamps:
         retarg += '<th class="reception">metadata</th>'
 
     retarg += '</tr>'
@@ -128,31 +139,29 @@ def notes(notes_dict, verbose=0, ignoreRec=False):
         date, op = key
         data = notes_dict[key]
         tx, notes, metadata = get_notes_for_date(data)
-        if ("REC" in op and notes != "") or (
-        "REC" in op and not ignoreRec) or not "REC" in op:
-            newline += "<tr>"
-            if date != previousdate:
-                previousdate = date
-                rowspan = 1
-                retarg += newline
-                newline = '<td class="date">%s</td>'% (
-                    localsettings.readableDate(date))
-            else:
-                #alter the previous html, so that the rows are spanned
-                rowspan += 1
-                newline = re.sub(
-                'class="date"( rowspan="\d")*',
-                'class="date" rowspan="%d"'% rowspan, newline)
+        newline += "<tr>"
+        if date != previousdate:
+            previousdate = date
+            rowspan = 1
+            retarg += newline
+            newline = '<td class="date">%s</td>'% (
+                localsettings.readableDate(date))
+        else:
+            #alter the previous html, so that the rows are spanned
+            rowspan += 1
+            newline = re.sub(
+            'class="date"( rowspan="\d")*',
+            'class="date" rowspan="%d"'% rowspan, newline)
 
-            newline += '''<td class="ops">%s</td>
-            <td class="tx">%s</td>
-            <td width="70%%" class="notes">%s</td>'''% (
-            op, tx, notes)
+        newline += '''<td class="ops">%s</td>
+        <td class="tx">%s</td>
+        <td width="70%%" class="notes">%s</td>'''% (
+        op, tx, notes)
 
-            if verbose:
-                newline += '<td class="reception">%s</td></tr>'% metadata
-            else:
-                newline += '</tr>'
+        if show_timestamps:
+            newline += '<td class="reception">%s</td></tr>'% metadata
+        else:
+            newline += '</tr>'
     retarg += newline
     retarg += '</table></div></body></html>'
 

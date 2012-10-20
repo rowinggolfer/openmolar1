@@ -159,7 +159,7 @@ deb:
 	sed -i s/__DIST__/$(DIST)/g debian/changelog ;\
 	sudo pdebuild --buildresult $(DEB_BUILDS_DIR) --pbuilderroot "sudo DIST=$(DIST)"
 	
-	make debsigns
+	#make debsign
 	
 debsign:
 	debsign $(DEB_BUILDS_DIR)*$(VERSION)*.changes -kF230408E 
@@ -188,6 +188,9 @@ debs:
 	
 	#make debsign DIST=<unstable|testing|stable|precise|lucid> 
 	$(foreach var,$(DEBDISTS), make debsign DIST=$(var);) 
+	
+	#make debsigns
+	
 	
 pushdeb:
 	cd ~/www/repos/apt/debian ;\

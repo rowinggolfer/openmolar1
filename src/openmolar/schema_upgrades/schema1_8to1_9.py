@@ -26,6 +26,9 @@ note varchar(80), timestamp timestamp default NOW());
 ''',
 '''
 create index formatted_notes_serialno_index on formatted_notes(serialno);
+''',
+'''
+create index newdocsprinted_serialno_index on newdocsprinted(serialno);
 '''
 ]
 
