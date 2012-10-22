@@ -40,9 +40,9 @@ class shadePicker(QtGui.QFrame):
     def result(self):
         return _("Shade") + " - " + self.comboBox.currentText()
 
-class phraseBook(QtGui.QDialog):
+class PhraseBookDialog(QtGui.QDialog):
     def __init__(self, parent=None):
-        super(phraseBook, self).__init__(parent)
+        QtGui.QDialog.__init__(self, parent)
         self.setWindowTitle(_("Phrase Book"))
 
         layout = QtGui.QVBoxLayout(self)

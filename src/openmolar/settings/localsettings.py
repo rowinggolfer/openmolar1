@@ -360,8 +360,7 @@ def currentDay():
     '''
     return a python date object for the current day
     '''
-    d = datetime.date.today()
-    return d
+    return datetime.date.today()
 
 def formatMoney(m):
     '''

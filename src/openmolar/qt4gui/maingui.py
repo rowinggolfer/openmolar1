@@ -72,9 +72,11 @@ from openmolar.qt4gui.dialogs import choose_tooth_dialog
 from openmolar.qt4gui.dialogs import choose_clinicians
 from openmolar.qt4gui.dialogs import clinician_select_dialog
 from openmolar.qt4gui.dialogs import assistant_select_dialog
-from openmolar.qt4gui.dialogs import phrasebook_dialog
+from openmolar.qt4gui.dialogs.phrasebook_dialog import PhraseBookDialog
 from openmolar.qt4gui.dialogs.recall_dialog import RecallDialog
 from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
+from openmolar.qt4gui.dialogs.alter_todays_notes import \
+    AlterTodaysNotesDialog
 
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
@@ -1550,6 +1552,16 @@ class openmolarGui(QtGui.QMainWindow):
 
         note_html = formatted_notes.notes(self.pt.notes_dict)
         self.ui.notes_webView.setHtml(note_html)
+        self.ui.notes_webView.page().setLinkDelegationPolicy(
+            self.ui.notes_webView.page().DelegateAllLinks)
+        self.load_notes_summary()
+
+    def load_notes_summary(self):
+        print "loading notes summary"
+        note_html = formatted_notes.notes(self.pt.notes_dict)
+        self.ui.notesSummary_webView.setHtml(note_html)
+        self.ui.notesSummary_webView.page().setLinkDelegationPolicy(
+            self.ui.notesSummary_webView.page().DelegateAllLinks)
 
     def loadpatient(self, newPatientReload=False):
         '''
@@ -1573,9 +1585,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-        note = formatted_notes.notes(self.pt.notes_dict)
-        #--notes not verbose
-        self.ui.notesSummary_webView.setHtml(note)
+        self.load_notes_summary()
+
         self.ui.notes_webView.setHtml("")
         self.ui.notesEnter_textEdit.setText("")
         for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
@@ -2044,14 +2055,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         else:
             self.ui.stackedWidget.setCurrentIndex(1)
 
-    def phraseBookDialog(self):
+    def show_phrase_book_dialog(self):
         '''
         show the phraseBook
         '''
         if self.pt.serialno == 0:
             self.advise("no patient selected", 1)
             return
-        dl = phrasebook_dialog.phraseBook(self)
+        dl = PhraseBookDialog(self)
         newNotes = ""
         if dl.exec_():
             for phrase in dl.selectedPhrases:
@@ -3244,6 +3255,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         dl = ChildSmileDialog(self)
         dl.exec_()
 
+    def notes_link_clicked(self, url):
+        if url.toString()=="edit_todays_notes":
+            dl = AlterTodaysNotesDialog(self.pt.serialno, self)
+            if dl.exec_():
+                self.pt.getNotesTuple()
+                self.updateNotesPage()
+
     def setupSignals(self):
         '''
         a function to call other functions (to keep the code clean)
@@ -3300,7 +3318,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.showMedNotes)
 
         QtCore.QObject.connect(self.ui.phraseBook_pushButton,
-        QtCore.SIGNAL("clicked()"), self.phraseBookDialog)
+        QtCore.SIGNAL("clicked()"), self.show_phrase_book_dialog)
 
         QtCore.QObject.connect(self.ui.memos_pushButton,
         QtCore.SIGNAL("clicked()"), self.newCustomMemo)
@@ -3310,7 +3328,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.childsmile_button,
         QtCore.SIGNAL("clicked()"), self.childsmile_button_clicked)
-        
+
         self.ui.actionSurgery_Mode.toggled.connect(self.set_surgery_mode)
 
     def signals_admin(self):
@@ -3397,6 +3415,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.notesSummary_webView):
             QtCore.QObject.connect(wv,
             QtCore.SIGNAL("loadFinished(bool)"), self.webviewloaded)
+
+        for wv in (self.ui.notes_webView,self.ui.notesSummary_webView):
+            wv.linkClicked.connect(self.notes_link_clicked)
+
 
     def signals_printing(self):
         '''
@@ -3503,7 +3525,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.actionAdvanced_Record_Management,
         QtCore.SIGNAL("triggered()"), self.advancedRecordTools)
 
-        
+
     def signals_estimates(self):
         #Estimates and course ManageMent
         QtCore.QObject.connect(self.ui.newCourse_pushButton,
@@ -4078,7 +4100,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         applies a max fee chargeable
         '''
         result=QtGui.QMessageBox.question(self, _("Confirm"),
-        _("apply an exemption to this estimate?"),
+        _("apply an exemption to the NHS items on this estimate?"),
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.No )
         if result == QtGui.QMessageBox.No:

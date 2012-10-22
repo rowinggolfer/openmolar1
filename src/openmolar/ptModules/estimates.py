@@ -146,6 +146,8 @@ def apply_exemption(pt, maxCharge=0):
     '''
     total = 0
     for est in pt.estimates:
+        if not "N" in est.csetype:
+            continue
         if est.completed:
             pt.applyFee(est.ptfee * -1)
 

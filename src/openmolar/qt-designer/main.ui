@@ -464,7 +464,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>704</width>
+                      <width>495</width>
                       <height>473</height>
                      </rect>
                     </property>
@@ -1738,7 +1738,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>704</width>
+                      <width>619</width>
                       <height>504</height>
                      </rect>
                     </property>
@@ -2164,7 +2164,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>724</width>
+                      <width>457</width>
                       <height>487</height>
                      </rect>
                     </property>
@@ -3051,8 +3051,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>518</width>
-                      <height>382</height>
+                      <width>102</width>
+                      <height>102</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3228,7 +3228,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>468</width>
+                         <width>98</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -3261,7 +3261,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>220</width>
+                      <width>191</width>
                       <height>512</height>
                      </rect>
                     </property>
@@ -3610,7 +3610,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>706</width>
+                      <width>261</width>
                       <height>385</height>
                      </rect>
                     </property>
@@ -4069,7 +4069,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>125</height>
+                     <height>121</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4329,7 +4329,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>194</width>
+                        <width>180</width>
                         <height>279</height>
                        </rect>
                       </property>
@@ -4683,8 +4683,8 @@ F6</string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>212</width>
-                        <height>309</height>
+                        <width>180</width>
+                        <height>298</height>
                        </rect>
                       </property>
                       <property name="minimumSize">
@@ -5202,8 +5202,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>74</width>
-                     <height>16</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>
@@ -6783,12 +6783,19 @@ F6</string>
      </property>
      <addaction name="actionSurgery_Mode"/>
     </widget>
+    <widget class="QMenu" name="menuFeescales">
+     <property name="title">
+      <string>Feescales</string>
+     </property>
+     <addaction name="actionShow_Geek_Column"/>
+    </widget>
     <addaction name="actionChange_Language"/>
     <addaction name="separator"/>
     <addaction name="menuView"/>
     <addaction name="menuCharts"/>
     <addaction name="menuAppointments"/>
     <addaction name="menuForum"/>
+    <addaction name="menuFeescales"/>
     <addaction name="menuPrinting"/>
     <addaction name="separator"/>
     <addaction name="menuMode"/>
@@ -6922,6 +6929,14 @@ F6</string>
   <action name="actionAdvanced_Record_Management">
    <property name="text">
     <string>Advanced Record Management</string>
+   </property>
+  </action>
+  <action name="actionShow_Geek_Column">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Geek Column</string>
    </property>
   </action>
  </widget>

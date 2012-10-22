@@ -144,8 +144,13 @@ def notes(notes_dict):
             previousdate = date
             rowspan = 1
             retarg += newline
-            newline = '<td class="date">%s</td>'% (
-                localsettings.readableDate(date))
+            link = ""
+            if (op == localsettings.operator and
+            date == localsettings.currentDay()):
+                link = '<a href="edit_todays_notes">%s</a>'% _("Edit")
+
+            newline = '<td class="date">%s %s</td>'% (
+                localsettings.readableDate(date), link)
         else:
             #alter the previous html, so that the rows are spanned
             rowspan += 1

@@ -75,7 +75,7 @@ class dbUpdater(QtCore.QThread):
                     print "erroneous statement was ",sql_string
                     if 1060 in e.args:
                         print "continuing, as column already exists issue"
-                self.progressSig(10+70*i/commandNo,sql_string[:20]+"...")
+                self.progressSig(2+70*i/commandNo,sql_string[:40]+"...")
             sucess = True
         except Exception, e:
             print "FAILURE in executing sql statements",  e
@@ -98,7 +98,7 @@ class dbUpdater(QtCore.QThread):
         while sno < max_sno:
             sno += 1
             formatted_notes1_9.transfer(sno)
-            progress = int(sno/max_sno * 95)+3
+            progress = int(sno/max_sno * 90)+8
             self.progressSig(progress, "%s %s"% (
                 _('converting note'), sno))
             QtGui.QApplication.instance().processEvents()
@@ -114,7 +114,7 @@ class dbUpdater(QtCore.QThread):
             #- execute the SQL commands
             self.progressSig(2, _("executing statements"))
             self.create_alter_tables()
-            self.progressSig(3, _('inserting values'))
+            self.progressSig(8, _('inserting values'))
 
             print "inserting values"
             if self.insertValues():
