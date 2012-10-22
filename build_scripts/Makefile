@@ -195,6 +195,7 @@ debs:
 pushdeb:
 	cd ~/www/repos/apt/debian ;\
 	reprepro include $(DIST) $(HEAD)builds/debs/$(DIST)/$(CHANGES_FILE) ; \
+	reprepro export
 	
 pushdebs:
 	@echo "updating the local repo"

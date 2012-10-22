@@ -282,6 +282,10 @@ def toNotes(serialno, newnotes):
     VALUES (%s, DATE(NOW()), %s, %s, %s, %s)
     '''
     notetuplets = []
+
+    tstamp = localsettings.currentTime().strftime("%d/%m/%Y %T")
+    notetuplets.append(
+        ("opened", "System date - %s"% tstamp))
     for ntype, note in newnotes:
         while len(note)>79:
             if " " in note[:79]:
@@ -297,6 +301,8 @@ def toNotes(serialno, newnotes):
             note = note[pos+1:]
 
         notetuplets.append((ntype, note+"\n"))
+    notetuplets.append(
+        ("closed", "%s %s"% (localsettings.operator,tstamp)))
 
     values = []
     ops = localsettings.operator.split("/")

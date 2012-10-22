@@ -149,7 +149,6 @@ src/openmolar/qt4gui/compiled_uis/Ui_blockSlot.py
 src/openmolar/qt4gui/compiled_uis/Ui_block_wizard.py
 src/openmolar/qt4gui/compiled_uis/Ui_bridge_denture.py
 src/openmolar/qt4gui/compiled_uis/Ui_bulkmail_options.py
-src/openmolar/qt4gui/compiled_uis/Ui_changeDatabase.py
 src/openmolar/qt4gui/compiled_uis/Ui_chooseDocument.py
 src/openmolar/qt4gui/compiled_uis/Ui_choose_clinicians.py
 src/openmolar/qt4gui/compiled_uis/Ui_choose_language.py
