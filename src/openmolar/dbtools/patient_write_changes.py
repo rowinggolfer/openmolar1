@@ -318,11 +318,14 @@ def toNotes(serialno, newnotes):
     if values:
         db=connect()
         cursor = db.cursor()
-        rows = cursor.executemany(query, tuple(values))
+
+        #rows = cursor.executemany(query, tuple(values))
+        for value in values:
+            cursor.execute(query, value)
         cursor.close()
         db.commit()
-
-    return rows > 0
+        return True
+    #return rows > 0
 
 
 def discreet_changes(pt_changed,changes):

@@ -93,7 +93,8 @@ def rec_notes(notes_dict):
     '''
 
     retarg = '''<html><head><link rel="stylesheet"
-    href="%s" type="text/css"></head><body><table border="1">'''% localsettings.stylesheet
+    href="%s" type="text/css"></head><body><table border="1">
+    '''% localsettings.stylesheet
     keys = notes_dict.keys()
     #keys.sort()
 
@@ -145,8 +146,7 @@ def notes(notes_dict):
             rowspan = 1
             retarg += newline
             link = ""
-            if (op == localsettings.operator and
-            date == localsettings.currentDay()):
+            if date == localsettings.currentDay():
                 link = '<a href="edit_todays_notes">%s</a>'% _("Edit")
 
             newline = '<td class="date">%s %s</td>'% (

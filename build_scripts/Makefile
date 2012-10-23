@@ -90,7 +90,7 @@ TMP_DIR=$(HEAD)tmp/
 DEB_CONF_DIR=$(HEAD)build_scripts/debian_packaging/$(DEBHELPER)/debian/
 DEB_BUILDS_DIR=$(BUILDS_DIR)debs/$(DIST)/
 
-DEBDISTS = unstable testing stable precise lucid
+DEBDISTS = unstable testing stable quantal precise lucid
 DEBHELPERS= py_central dh_python2
 
 CHANGE_FILES=`ls -t $(DEB_BUILDS_DIR) | grep changes | head -n1`

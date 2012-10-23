@@ -226,6 +226,7 @@ src/openmolar/qt4gui/customwidgets/toothProps.py
 src/openmolar/qt4gui/dialogs/__init__.py
 src/openmolar/qt4gui/dialogs/addTreat.py
 src/openmolar/qt4gui/dialogs/alterAday.py
+src/openmolar/qt4gui/dialogs/alter_todays_notes.py
 src/openmolar/qt4gui/dialogs/apptOpenDay.py
 src/openmolar/qt4gui/dialogs/appt_wizard_dialog.py
 src/openmolar/qt4gui/dialogs/assistant_select_dialog.py
