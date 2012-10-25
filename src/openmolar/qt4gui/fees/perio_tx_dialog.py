@@ -35,7 +35,7 @@ def performPerio(om_gui):
     result = dl.getInput()
 
     if result:
-        om_gui.pt.addHiddenNote("treatment", "%s"% dl.trt)
+        om_gui.pt.addHiddenNote("perio_treatment", "%s"% dl.trt)
         om_gui.updateHiddenNotesLabel()
 
         ##update values in case user has selected a different code/fee

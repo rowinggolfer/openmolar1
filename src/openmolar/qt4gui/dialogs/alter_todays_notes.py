@@ -49,8 +49,8 @@ class AlterTodaysNotesDialog(BaseDialog):
 
         self.insertWidget(self.text_edit)
         self.insertWidget(phrasebook_button)
-        self.text_edit.setLineWrapMode(self.text_edit.FixedColumnWidth)
-        self.text_edit.setLineWrapColumnOrWidth(80)
+        #self.text_edit.setLineWrapMode(self.text_edit.FixedColumnWidth)
+        #self.text_edit.setLineWrapColumnOrWidth(80)
 
     def sizeHint(self):
         return QtCore.QSize(800,200)
@@ -101,12 +101,28 @@ class AlterTodaysNotesDialog(BaseDialog):
 
     def apply_changed(self):
         lines = (unicode(self.text_edit.toPlainText())).split("\n")
+        short_lines = []
+        for note in lines:
+            while len(note)>79:
+                if " " in note[:79]:
+                    pos = note[:79].rindex(" ")
+                    #--try to split nicely
+                elif "," in note[:79]:
+                    pos = note[:79].rindex(",")
+                    #--try to split nicely
+                else:
+                    pos = 79
+                    #--ok, no option (unlikely to happen though)
+                short_lines.append(note[:pos])
+                note = note[pos+1:]
+            short_lines.append(note+"\n")
+
         values = []
         i = 0
         for ix, note in self.notes:
             try:
-                values.append((lines[i]+"\n", ix))
-            except IndexError:
+                values.append((short_lines[i], ix))
+            except IndexError: #a line has been deleted.
                 values.append(("", ix))
             i += 1
 
@@ -117,21 +133,21 @@ class AlterTodaysNotesDialog(BaseDialog):
         cursor.executemany(query, tuple(values))
         cursor.close()
 
-        if len(lines) > i:
+        if len(short_lines) > i:
             patient_write_changes.toNotes(self.sno,
-                [("newNOTE", n) for n in lines[i:]])
+                [("newNOTE", n) for n in short_lines[i:]])
 
 
     def exec_(self):
         if BaseDialog.exec_(self):
             self.apply_changed()
-            print "updated notes"
             return True
 
 if __name__ == "__main__":
 
     localsettings.initiate()
+    localsettings.operator="NW"
     app = QtGui.QApplication([])
 
-    dl = AlterTodaysNotesDialog(26184, None)
+    dl = AlterTodaysNotesDialog(11956, None)
     dl.exec_()

@@ -464,7 +464,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>495</width>
+                      <width>704</width>
                       <height>473</height>
                      </rect>
                     </property>
@@ -1738,7 +1738,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>619</width>
+                      <width>704</width>
                       <height>504</height>
                      </rect>
                     </property>
@@ -2164,7 +2164,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>457</width>
+                      <width>724</width>
                       <height>487</height>
                      </rect>
                     </property>
@@ -2965,7 +2965,7 @@
                  <string>Notes</string>
                 </attribute>
                 <layout class="QGridLayout" name="gridLayout_6">
-                 <item row="0" column="0" colspan="2">
+                 <item row="0" column="0" colspan="3">
                   <widget class="QWebView" name="notes_webView">
                    <property name="url">
                     <url>
@@ -2974,20 +2974,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <spacer name="horizontalSpacer_9">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>402</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="1" column="1">
+                 <item row="3" column="0">
                   <layout class="QHBoxLayout" name="horizontalLayout_35">
                    <item>
                     <widget class="QLabel" name="label_35">
@@ -3019,11 +3006,41 @@
                    <item>
                     <widget class="QCheckBox" name="notes_includeTimestamps_checkBox">
                      <property name="text">
-                      <string>timestamps</string>
+                      <string>Timestamps</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="notes_includeMetadata_checkBox">
+                     <property name="text">
+                      <string>Metadata</string>
                      </property>
                     </widget>
                    </item>
                   </layout>
+                 </item>
+                 <item row="3" column="1">
+                  <spacer name="horizontalSpacer_9">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="3" column="2">
+                  <widget class="QCheckBox" name="summary_notes_checkBox">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use these settings for the clinical summary notes also.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string>clinical summary</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -3051,8 +3068,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>102</width>
-                      <height>102</height>
+                      <width>518</width>
+                      <height>386</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3228,7 +3245,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
+                         <width>468</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -3261,7 +3278,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>191</width>
+                      <width>220</width>
                       <height>512</height>
                      </rect>
                     </property>
@@ -3610,8 +3627,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>261</width>
-                      <height>385</height>
+                      <width>724</width>
+                      <height>386</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -4329,7 +4346,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>180</width>
+                        <width>194</width>
                         <height>279</height>
                        </rect>
                       </property>
@@ -4683,8 +4700,8 @@ F6</string>
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>180</width>
-                        <height>298</height>
+                        <width>212</width>
+                        <height>309</height>
                        </rect>
                       </property>
                       <property name="minimumSize">
@@ -5202,8 +5219,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>74</width>
+                     <height>16</height>
                     </rect>
                    </property>
                   </widget>

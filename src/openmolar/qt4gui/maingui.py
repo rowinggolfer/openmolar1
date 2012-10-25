@@ -1542,23 +1542,29 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         self.getrecord(self.pt.serialno)
 
-    def updateNotesPage(self):
+    def set_note_preferences(self):
         formatted_notes.show_printed = \
             self.ui.notes_includePrinting_checkBox.isChecked()
         formatted_notes.show_payments = \
             self.ui.notes_includePayments_checkBox.isChecked()
         formatted_notes.show_timestamps = \
             self.ui.notes_includeTimestamps_checkBox.isChecked()
+        formatted_notes.show_metadata = \
+            self.ui.notes_includeMetadata_checkBox.isChecked()
 
+        formatted_notes.same_for_clinical = \
+            self.ui.summary_notes_checkBox.isChecked()
+
+    def updateNotesPage(self):
+        self.set_note_preferences()
         note_html = formatted_notes.notes(self.pt.notes_dict)
         self.ui.notes_webView.setHtml(note_html)
         self.ui.notes_webView.page().setLinkDelegationPolicy(
             self.ui.notes_webView.page().DelegateAllLinks)
-        self.load_notes_summary()
 
     def load_notes_summary(self):
-        print "loading notes summary"
-        note_html = formatted_notes.notes(self.pt.notes_dict)
+        self.set_note_preferences()
+        note_html = formatted_notes.summary_notes(self.pt.notes_dict)
         self.ui.notesSummary_webView.setHtml(note_html)
         self.ui.notesSummary_webView.page().setLinkDelegationPolicy(
             self.ui.notesSummary_webView.page().DelegateAllLinks)
@@ -3261,6 +3267,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             if dl.exec_():
                 self.pt.getNotesTuple()
                 self.updateNotesPage()
+                self.load_notes_summary()
 
     def setupSignals(self):
         '''
@@ -3416,7 +3423,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.QObject.connect(wv,
             QtCore.SIGNAL("loadFinished(bool)"), self.webviewloaded)
 
-        for wv in (self.ui.notes_webView,self.ui.notesSummary_webView):
+        for wv in (self.ui.notes_webView, self.ui.notesSummary_webView):
             wv.linkClicked.connect(self.notes_link_clicked)
 
 
@@ -3830,8 +3837,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #notes page
         for rb in (self.ui.notes_includePrinting_checkBox,
         self.ui.notes_includePayments_checkBox,
-        self.ui.notes_includeTimestamps_checkBox):
+        self.ui.notes_includeTimestamps_checkBox,
+        self.ui.notes_includeMetadata_checkBox,
+        self.ui.summary_notes_checkBox):
             rb.toggled.connect(self.updateNotesPage)
+            rb.toggled.connect(self.load_notes_summary)
 
     def signals_periochart(self):
 

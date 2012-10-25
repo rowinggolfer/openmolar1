@@ -97,7 +97,7 @@ def chartComplete(om_gui, arg):
             print "CHART COMPLETE adding hidden note - %s %s"% (
             toothName.upper(), treatmentItem)
 
-            om_gui.pt.addHiddenNote("treatment",
+            om_gui.pt.addHiddenNote("chart_treatment",
             "%s %s"% (toothName.upper(), treatmentItem))
             om_gui.updateHiddenNotesLabel()
 
@@ -123,6 +123,8 @@ def estwidg_complete(om_gui, item):
             om_gui.pt.addHiddenNote("exam", item.type)
 
         else:
+            print "estimate completing", item
+
             plan = om_gui.pt.__dict__[att + "pl"].replace(treat, "", 1)
             om_gui.pt.__dict__[att + "pl"] = plan
             completed = om_gui.pt.__dict__[att + "cmp"] + treat
@@ -134,7 +136,9 @@ def estwidg_complete(om_gui, item):
                 toothName = om_gui.pt.chartgrid.get(att)
 
                 om_gui.pt.addHiddenNote(
-                "treatment", "%s %s"% (toothName.upper(), treat))
+                "chart_treatment", "%s %s"% (toothName.upper(), treat))
+            elif att in ("xray", "perio"):
+                om_gui.pt.addHiddenNote("%s_treatment"%att, item.type)
             else:
                 om_gui.pt.addHiddenNote("treatment", item.type)
 
@@ -179,11 +183,16 @@ def estwidg_unComplete(om_gui, item):
                 charts_gui.updateChartsAfterTreatment(om_gui, att, plan,
                 completed)
                 toothName = om_gui.pt.chartgrid.get(att)
+                om_gui.pt.addHiddenNote("chart_treatment", "%s %s"% (
+                toothName.upper(), treat), deleteIfPossible=True)
 
-                om_gui.pt.addHiddenNote(
-                "treatment", "%s %s"% (toothName.upper(), treat), True)
+            elif att in ("xray", "perio"):
+                om_gui.pt.addHiddenNote("%s_treatment"%att, item.type,
+                deleteIfPossible=True)
+
             else:
-                om_gui.pt.addHiddenNote("treatment", item.type, True)
+                om_gui.pt.addHiddenNote("treatment", item.type,
+                deleteIfPossible=True)
 
         fees_module.applyFeeNow(om_gui, -1 * item.ptfee, item.csetype)
         om_gui.load_treatTrees()
@@ -213,7 +222,7 @@ def planTreeWidgetComplete(om_gui, txtype):
         dent = ""
     #--tooth may be deciduous
 
-    print "TREE WIDGET COMPLETE", txtype
+    #print "TREE WIDGET COMPLETE", txtype
     tup = txtype.split(" - ")
     try:
         att = tup[0]

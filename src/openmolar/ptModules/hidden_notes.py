@@ -29,6 +29,6 @@ if __name__ == "__main__":
     pt=patient_class.patient(serialno)
 
     pt.addHiddenNote("exam","CE")
-    pt.addHiddenNote("treatment","Perio SP")
+    pt.addHiddenNote("perio_treatment","SP")
     pt.addHiddenNote("printed", "appt card")
     print toHtml(pt)

@@ -319,13 +319,15 @@ def toNotes(serialno, newnotes):
         db=connect()
         cursor = db.cursor()
 
+        #this (superior code?) didn't work on older MySQLdb versions.
         #rows = cursor.executemany(query, tuple(values))
         for value in values:
-            cursor.execute(query, value)
+            rows += cursor.execute(query, value)
+
         cursor.close()
         db.commit()
-        return True
-    #return rows > 0
+
+    return rows > 0
 
 
 def discreet_changes(pt_changed,changes):

@@ -25,6 +25,10 @@ except ImportError:
 show_printed = False
 show_payments =  False
 show_timestamps = False
+show_metadata = False
+
+# use these variables for the summary notes also?
+same_for_clinical = False
 
 
 def get_notes_dict(results_tuple):
@@ -44,29 +48,41 @@ def get_notes_dict(results_tuple):
             notes_dict[key] = [(ntype,note)]
     return notes_dict
 
-def get_notes_for_date(lines):
+def s_t_l(note):
+    '''
+    strip trailing linebreaks
+    '''
+    return re.sub("(<br /> ?)*$", "", note)
+
+
+def get_notes_for_date(lines, full_notes=False):
     '''
     this is the actual user clinically relevant stuff!
     '''
     tx, note, metadata = "", "", ""
     for ntype, noteline in lines:
-        if "NOTE" in ntype:
-            note += "%s "% noteline.replace("<","&lt;").replace(">","&gt;")
+        if "NOTE" in ntype and noteline != "":
+            note += "%s "% noteline.replace(
+                "<","&lt;").replace(">","&gt;")
         else:
             if "TC" in ntype:
                 tx += "<b>%s</b><br />"% noteline
-            elif show_payments and "RECEIVED" in ntype:
-                note += "%s %s<br />"% (ntype, noteline)
-            elif show_printed and "PRINT" in ntype:
-                note += "%s %s<br />"% (ntype, noteline)
-            elif show_timestamps and "COURSE" in ntype:
-                note += "%s %s<br />"% (ntype, noteline)
-            else:
-                metadata += "<b>%s</b>%s<br />"% (ntype, noteline)
+            elif full_notes:
+                if "RECEIVED" in ntype:
+                    if show_payments:
+                        note += "%s %s<br />"% (ntype, noteline)
+                elif "PRINT" in ntype:
+                    if show_printed:
+                        note += "%s %s<br />"% (ntype, noteline)
+                elif ntype in ("opened", "closed"):
+                    if show_timestamps:
+                        note += "<i>%s %s</i><br />"% (ntype, noteline)
+                elif show_metadata:
+                    metadata += "<b>%s</b>%s<br />"% (ntype, noteline)
 
-    note = note.rstrip("\n")
+    note = note.replace("\n","<br />")
 
-    return tx, note.replace("\n","<br />"), metadata
+    return s_t_l(tx), s_t_l(note), s_t_l(metadata)
 
 def get_rec_summary(lines):
     '''
@@ -83,7 +99,7 @@ def get_rec_summary(lines):
             note += '<img src=%s height="12" align="right"> %s<br />'% (
                 localsettings.money_png, noteline)
 
-    return re.sub("(<br />)*$", "", note)
+    return s_t_l(note)
 
 
 def rec_notes(notes_dict):
@@ -111,7 +127,10 @@ def rec_notes(notes_dict):
     return retarg
 
 
-def notes(notes_dict):
+def summary_notes(notes_dict):
+    return notes(notes_dict, same_for_clinical)
+
+def notes(notes_dict, full_notes=True):
     '''
     returns an html string of notes...
     '''
@@ -128,7 +147,7 @@ def notes(notes_dict):
             <th class = "notes">Notes</th>
     '''
 
-    if show_timestamps:
+    if full_notes and show_metadata:
         retarg += '<th class="reception">metadata</th>'
 
     retarg += '</tr>'
@@ -139,15 +158,13 @@ def notes(notes_dict):
     for key in keys:
         date, op = key
         data = notes_dict[key]
-        tx, notes, metadata = get_notes_for_date(data)
+        tx, notes, metadata = get_notes_for_date(data, full_notes)
         newline += "<tr>"
         if date != previousdate:
             previousdate = date
             rowspan = 1
             retarg += newline
             link = ""
-            if date == localsettings.currentDay():
-                link = '<a href="edit_todays_notes">%s</a>'% _("Edit")
 
             newline = '<td class="date">%s %s</td>'% (
                 localsettings.readableDate(date), link)
@@ -158,12 +175,17 @@ def notes(notes_dict):
             'class="date"( rowspan="\d")*',
             'class="date" rowspan="%d"'% rowspan, newline)
 
-        newline += '''<td class="ops">%s</td>
-        <td class="tx">%s</td>
-        <td width="70%%" class="notes">%s</td>'''% (
-        op, tx, notes)
+        subline = '<td class="ops">%s'% op
 
-        if show_timestamps:
+        if (date == localsettings.currentDay() and
+        op == localsettings.operator):
+            subline += '<br /><a href="edit_todays_notes">%s</a>'% _("Edit")
+
+        newline += '''%s</td>
+        <td class="tx">%s</td>
+        <td width="70%%" class="notes">%s</td>'''% (subline, tx, notes)
+
+        if show_metadata:
             newline += '<td class="reception">%s</td></tr>'% metadata
         else:
             newline += '</tr>'
@@ -183,9 +205,7 @@ if __name__ == "__main__":
         verbose=True
     else:
          verbose=False
-    #print "getting notes"
-    #print patient_class.patient(serialno).notes_dict
 
     #print rec_notes(patient_class.patient(serialno).notes_dict)
-    print notes(patient_class.patient(serialno).notes_dict, verbose)
+    print notes(patient_class.patient(serialno).notes_dict)
 

@@ -1,3 +1,10 @@
+openmolar (0.3.0+bzr0773-0~__DIST__0) __DIST__; urgency=low
+
+  * python2.6 fix (cursor.executemany is broken?)
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 23 Oct 2012 14:31:05 +0100
+
+
 openmolar (0.3.0+bzr0772-0~__DIST__0) __DIST__; urgency=low
 
   * ability to edit today's notes

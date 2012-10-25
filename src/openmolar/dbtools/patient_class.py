@@ -650,25 +650,33 @@ self.serialno, self.courseno0))
         HN = ()
         if ntype=="payment":
             HN=("RECEIVED: ", note)
-        if ntype=="printed":
+        elif ntype=="printed":
             HN=("PRINTED: ", note)
-        if ntype=="exam":
+        elif ntype=="exam":
             HN=("TC: EXAM", note)
-        if ntype=="treatment":
+        elif ntype=="chart_treatment":
+            HN=("TC:", note)
+        elif ntype=="perio_treatment":
+            HN=("TC: PERIO", note)
+        elif ntype=="xray_treatment":
+            HN=("TC: XRAY", note)
+        elif ntype=="treatment":
             HN=("TC: OTHER", note)
-        if ntype=="mednotes":               #other treatment
+        elif ntype=="mednotes":               #other treatment
             HN=("UPDATED:Medical Notes", note)
-        if ntype=="close_course":
+        elif ntype=="close_course":
             HN=("COURSE CLOSED", "="*10)
-        if ntype=="open_course":
+        elif ntype=="open_course":
             HN=("COURSE OPENED", "= "*5)
-        if ntype=="resume_course":
+        elif ntype=="resume_course":
             HN=("COURSE RE-OPENED", "= "*5)
-        if ntype=="fee":
+        elif ntype=="fee":
             HN=("INTERIM: ", note)
+
         if not HN:
             print "unable to add Hidden Note notetype '%s' not found"% ntype
             return
+
         if deleteIfPossible:
             if HN in self.HIDDENNOTES:
                 self.HIDDENNOTES.remove(HN)
