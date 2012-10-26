@@ -69,11 +69,13 @@ def get_notes_for_date(lines, full_notes=False):
                 tx += "<b>%s</b><br />"% noteline
             elif full_notes:
                 if "RECEIVED" in ntype:
+                    receipt_text = noteline.replace("sundries 0.00", "")
+                    receipt_text = receipt_text.replace("treatment 0.00", "")
                     if show_payments:
-                        note += "%s %s<br />"% (ntype, noteline)
+                        tx += "%s %s<br />"% (ntype, receipt_text)
                 elif "PRINT" in ntype:
                     if show_printed:
-                        note += "%s %s<br />"% (ntype, noteline)
+                        tx += "%s %s<br />"% (ntype, noteline)
                 elif ntype in ("opened", "closed"):
                     if show_timestamps:
                         note += "<i>%s %s</i><br />"% (ntype, noteline)
