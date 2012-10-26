@@ -511,6 +511,19 @@ def readableDate(d):
        return _("Yesterday")
     return longDate(d)
 
+def notesDate(d):
+    '''
+    takes a python date type, returns either the date,
+    or yesterday, today, tommorrow if necessary
+    '''
+    rd = readableDate(d)
+    if rd in (_("None"), _("Today"), _("Yesterday")):
+        return rd
+    try:
+        return rd[rd.index(",")+1:]
+    except Exception as exc:
+        return "error getting date"
+
 def formatDate(d):
     '''takes a date, returns a formatted date string'''
     try:

@@ -167,7 +167,7 @@ def notes(notes_dict, full_notes=True):
             link = ""
 
             newline = '<td class="date">%s %s</td>'% (
-                localsettings.readableDate(date), link)
+                localsettings.notesDate(date), link)
         else:
             #alter the previous html, so that the rows are spanned
             rowspan += 1
