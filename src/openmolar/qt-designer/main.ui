@@ -82,7 +82,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="documentMode">
            <bool>false</bool>
@@ -464,7 +464,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>704</width>
+                      <width>495</width>
                       <height>473</height>
                      </rect>
                     </property>
@@ -1738,7 +1738,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>704</width>
+                      <width>619</width>
                       <height>504</height>
                      </rect>
                     </property>
@@ -2164,7 +2164,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>724</width>
+                      <width>457</width>
                       <height>487</height>
                      </rect>
                     </property>
@@ -3068,8 +3068,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>518</width>
-                      <height>386</height>
+                      <width>102</width>
+                      <height>102</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -3245,7 +3245,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>468</width>
+                         <width>98</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -3278,7 +3278,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>220</width>
+                      <width>191</width>
                       <height>512</height>
                      </rect>
                     </property>
@@ -3627,8 +3627,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>724</width>
-                      <height>386</height>
+                      <width>261</width>
+                      <height>385</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -4346,8 +4346,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>194</width>
-                        <height>279</height>
+                        <width>212</width>
+                        <height>309</height>
                        </rect>
                       </property>
                       <property name="minimumSize">
@@ -4717,16 +4717,6 @@ F6</string>
                        <property name="margin">
                         <number>0</number>
                        </property>
-                       <item>
-                        <widget class="QCheckBox" name="all_appts_checkBox">
-                         <property name="text">
-                          <string>show All appointments</string>
-                         </property>
-                         <property name="checked">
-                          <bool>true</bool>
-                         </property>
-                        </widget>
-                       </item>
                        <item>
                         <widget class="QGroupBox" name="week_clinician_selector_groupBox">
                          <property name="sizePolicy">
@@ -5219,8 +5209,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>74</width>
-                     <height>16</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                   </widget>

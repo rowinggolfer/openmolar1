@@ -768,7 +768,6 @@ def weekView_setScheduleMode(om_gui):
     '''
     if not om_gui.scheduling_mode:
         om_gui.ui.week_clinicianSelection_comboBox.setCurrentIndex(0)
-    om_gui.ui.all_appts_checkBox.setChecked(not om_gui.scheduling_mode)
     om_gui.ui.week_schedule_groupBox.setChecked(om_gui.scheduling_mode)
     om_gui.ui.week_clinician_selector_groupBox.setChecked(False)
     om_gui.ui.week_schedule_tabWidget.setVisible(om_gui.scheduling_mode)
@@ -1179,17 +1178,10 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
                         if slot.date_time.date() == ov.date.toPyDate():
                             ov.addSlot(slot)
 
-    if om_gui.ui.all_appts_checkBox.isChecked():
-        #--add appts
-        for ov in om_gui.ui.apptoverviews:
-            for dent in ov.dents:
-                ov.appts[dent.ix] = appointments.day_summary(
-                ov.date.toPyDate(), dent.ix)
-    elif om_gui.pt.serialno != 0:
-        for ov in om_gui.ui.apptoverviews:
-            for dent in ov.dents:
-                ov.appts[dent.ix] = appointments.day_summary(
-                ov.date.toPyDate(), dent.ix, om_gui.pt.serialno)
+    for ov in om_gui.ui.apptoverviews:
+        for dent in ov.dents:
+            ov.appts[dent.ix] = appointments.day_summary(
+            ov.date.toPyDate(), dent.ix)
 
     #add lunches and blocks
     for ov in om_gui.ui.apptoverviews:

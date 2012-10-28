@@ -847,7 +847,7 @@ def printableDaylistData(adate, dent):
     #db.close()
     return retlist
 
-def day_summary(adate, dent, serialno=0):
+def day_summary(adate, dent):
     '''
     gets start,finish and booked appointments for this date
     returned as (start,fin,appts)
@@ -864,18 +864,15 @@ def day_summary(adate, dent, serialno=0):
     cursor.execute(query, values)
 
     daydata = cursor.fetchall()
-    cond = ""
     retarg = ()
     #--now get data for those days so that we can find slots within
-    if serialno !=0:
-        cond = "and serialno=%d"% serialno
     if daydata != ():
-        query = '''SELECT start, end, serialno FROM aslot
-WHERE adate = %%s and apptix = %%s AND flag0!=-128 %s ORDER BY start'''% cond
-        if localsettings.logqueries:
-            print query, values
-        cursor.execute(query, values)
+        query = '''
+SELECT start, end, serialno FROM aslot
+WHERE adate = %s and apptix = %s AND flag0!=-128
+ORDER BY start'''
 
+        cursor.execute(query, values)
         results = cursor.fetchall()
         retarg = convertResults(results, inc_snos=True)
     cursor.close()

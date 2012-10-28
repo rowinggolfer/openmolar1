@@ -4024,9 +4024,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.day_next_appt_pushButton,
         QtCore.SIGNAL("clicked()"), self.day_next_appt)
 
-        QtCore.QObject.connect(self.ui.all_appts_checkBox,
-        QtCore.SIGNAL("released()"), self.aptOV_checkboxes_changed)
-
         QtCore.QObject.connect(self.apt_drag_model,
         QtCore.SIGNAL("clinicianListChanged"), self.aptOV_checkboxes_changed)
 
