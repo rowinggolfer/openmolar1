@@ -117,29 +117,6 @@ def sorted(ests):
 
     return sortedEsts
 
-def toothTreatDict(pt):
-    '''
-    cycles through the patient attriubutes,
-    and brings up planned / completed treatment on teeth only
-    '''
-    treats={"pl":[], "cmp":[]}
-    for quadrant in ("ur","ul", "ll", "lr"):
-        if "r" in quadrant:
-            order = (8, 7, 6, 5, 4, 3, 2, 1)
-        else:
-            order = (1, 2, 3, 4, 5, 6, 7, 8)
-        for tooth in order:
-            for type in ("pl", "cmp"):
-                att="%s%s%s"%(quadrant, tooth,type)
-                if pt.__dict__[att] != "":
-                    items=pt.__dict__[att].strip(" ").split(" ")
-                    for item in items:
-                        treats[type].append(("%s%s"%(quadrant, tooth), item), )
-    #print "toothTreatDict"
-    #print "returning ",treats
-    return treats
-
-
 def apply_exemption(pt, maxCharge=0):
     '''
     apply an exemption
@@ -190,28 +167,6 @@ def recalculate_estimate(pt):
             pt.applyFee(est.ptfee)
 
     return True
-
-def estimateFromPlan(pt):
-    '''
-    the idea here is that this iterates through the plan and completed
-    and gets new itemcodes for estimates....
-    '''
-    planned = plan.plannedDict(pt)
-    completed = plan.completedDict(pt)
-    if pt.dnt2 != 0:
-        dent = pt.dnt2
-    else:
-        dent = pt.dnt1
-
-    for key in planned.keys():
-        print key,planned[key]
-    for key in completed.keys():
-        print key,completed[key]
-
-
-    #pt.addToEstimate(1, treat[1], treat[2], treat[3], treat[4],
-    #                        dent, self.pt.cset, treat[0])
-
 
 def toBriefHtml(pt):
     '''

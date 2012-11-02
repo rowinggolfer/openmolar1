@@ -413,13 +413,20 @@ def modifyAppt(om_gui):
     layout_ptDiary(om_gui)
 
 
-def begin_makeAppt(om_gui, dayView=False):
+def begin_makeAppt(om_gui):
     '''
     make an appointment - switch user to "scheduling mode" and present the
     appointment overview to show possible appointments
     also handles both 1st appointment buttons
     '''
     layout_ptDiary(om_gui)
+
+    om_gui.ui.appt_notes_webView.setVisible(
+        om_gui.appt_mode == om_gui.NOTES_MODE)
+    om_gui.day_week_block_listView.setVisible(
+        om_gui.appt_mode == om_gui.BLOCKING_MODE)
+    om_gui.day_week_appt_listView.setVisible(
+        om_gui.appt_mode == om_gui.SCHEDULING_MODE)
 
     if om_gui.pt_diary_model.selectedAppt == None:
         om_gui.advise(_("Please select an appointment to schedule"), 1)
@@ -430,32 +437,20 @@ def begin_makeAppt(om_gui, dayView=False):
         localsettings.readableDate(appt.date)), 1)
         return
 
-    om_gui.scheduling_mode = True
+    om_gui.signals_tabs(False) #disconnect signals fired by tabwidget changes
 
-    om_gui.signals_tabs(False) #disconnect slots
-    om_gui.ui.main_tabWidget.setCurrentIndex(1)
-    if dayView:
-        om_gui.ui.diary_tabWidget.setCurrentIndex(0)
-        dayView_setScheduleMode(om_gui)
-    else:
-        om_gui.ui.diary_tabWidget.setCurrentIndex(1)
-        weekView_setScheduleMode(om_gui)
+    om_gui.ui.main_tabWidget.setCurrentIndex(1)  #appointments
+    om_gui.ui.diary_tabWidget.setCurrentIndex(1) #day view
+
     om_gui.signals_tabs() #reconnect
-
-    om_gui.signals_apptStateWidgets(False)
-    om_gui.ui.day_schedule_tabWidget.setCurrentIndex(0)
-    om_gui.ui.week_schedule_tabWidget.setCurrentIndex(0)
-    om_gui.signals_apptStateWidgets()
 
     om_gui.signals_calendar(False)
     om_gui.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
     om_gui.ui.weekCalendar.setSelectedDate(QtCore.QDate.currentDate())
     om_gui.signals_calendar()
+
     #om_gui.advise(_("Searching for 1st available appointment"))
-    if dayView:
-        layout_dayView(om_gui, True)
-    else:
-        layout_weekView(om_gui, True)
+    layout_weekView(om_gui, True)
 
 def addWeekViewAvailableSlots(om_gui, minlength=None):
     '''
@@ -748,30 +743,6 @@ def aptFontSize(om_gui, e):
     om_gui.ui.monthView.update()
     om_gui.ui.yearView.update()
 
-def dayView_setScheduleMode(om_gui):
-    '''
-    toggle between "scheduling" and "viewing modes"
-    if visible is False, then this function has been called simply to
-    syncronise the state with another scehduling page (weekview)
-    '''
-    if not om_gui.scheduling_mode:
-        om_gui.ui.day_clinicianSelection_comboBox.setCurrentIndex(0)
-    om_gui.ui.day_schedule_groupBox.setChecked(om_gui.scheduling_mode)
-    om_gui.ui.day_clinician_selector_groupBox.setChecked(False)
-    om_gui.ui.day_schedule_tabWidget.setVisible(om_gui.scheduling_mode)
-
-def weekView_setScheduleMode(om_gui):
-    '''
-    toggle between "scheduling" and "viewing modes"
-    if visible is False, then this function has been called simply to
-    syncronise the state with another scehduling page (dayview)
-    '''
-    if not om_gui.scheduling_mode:
-        om_gui.ui.week_clinicianSelection_comboBox.setCurrentIndex(0)
-    om_gui.ui.week_schedule_groupBox.setChecked(om_gui.scheduling_mode)
-    om_gui.ui.week_clinician_selector_groupBox.setChecked(False)
-    om_gui.ui.week_schedule_tabWidget.setVisible(om_gui.scheduling_mode)
-
 def aptOVlabelClicked(om_gui, sd):
     '''
     go to the appointment book for the date on the label
@@ -908,7 +879,6 @@ def makeDiaryVisible(om_gui):
     if called, this will take any steps necessary to show the current day's
     appointments
     '''
-    #print "appt_gui_module.book makeDiaryVisible() called"
     today=QtCore.QDate.currentDate()
     if om_gui.ui.diary_tabWidget.currentIndex() != 0:
         om_gui.ui.diary_tabWidget.setCurrentIndex(0)
@@ -933,6 +903,13 @@ def handle_calendar_signal(om_gui):
     om_gui.ui.goTodayPushButton.setEnabled(d != today)
     om_gui.ui.goto_current_week_PushButton.setEnabled(
         d.weekNumber() != today.weekNumber())
+
+    om_gui.ui.appt_notes_webView.setVisible(
+        om_gui.appt_mode == om_gui.NOTES_MODE)
+    om_gui.day_week_block_listView.setVisible(
+        om_gui.appt_mode == om_gui.BLOCKING_MODE)
+    om_gui.day_week_appt_listView.setVisible(
+        om_gui.appt_mode == om_gui.SCHEDULING_MODE)
 
     if om_gui.ui.main_tabWidget.currentIndex() == 1:
         i = om_gui.ui.diary_tabWidget.currentIndex()
@@ -1047,12 +1024,12 @@ def getUserCheckedClinicians(om_gui, view="day"):
     checks the gui to see which dentists, hygienists are checked.
     returns a list
     '''
-    if view == "week":
-        widg = om_gui.weekClinicianSelector
+    if view == "day":
+        widg = om_gui.appt_clinician_selector
     elif view in ("month", "year"):
         widg = om_gui.monthClinicianSelector
     else:
-        widg = om_gui.dayClinicianSelector
+        raise IndexError("Bad view chosen '%s'"% view)
 
     retlist = []
     for dent in widg.getSelectedClinicians():
@@ -1078,6 +1055,8 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
     if (om_gui.ui.main_tabWidget.currentIndex() !=1 and
     om_gui.ui.diary_tabWidget.currentIndex() != 1):
         return
+    om_gui.ui.week_view_control_frame.setLayout(om_gui.appt_mode_layout)
+
     om_gui.current_weekViewClinicians = set()
     cal = om_gui.ui.dayCalendar
     date = cal.selectedDate()
@@ -1105,17 +1084,7 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
     for ov in om_gui.ui.apptoverviews:
         ov.date = weekdates[om_gui.ui.apptoverviews.index(ov)]
         ov.clear()
-        manual =  om_gui.ui.week_clinician_selector_groupBox.isChecked()
-        if not manual:
-            if not om_gui.ui.week_clinicianSelection_comboBox.isVisible():
-                workingdents = appointments.getWorkingDents(
-                  ov.date.toPyDate(), include_non_working=False)
-            else:
-                i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
-                model = om_gui.ui.week_clinicianSelection_comboBox.model()
-                workingdents = model.clinician_list(i, ov.date.toPyDate())
-                if workingdents == False:
-                    manual = True
+        manual =  False
         if manual:
             userCheckedClinicians = getUserCheckedClinicians(om_gui, "week")
             if userCheckedClinicians == []:
@@ -1123,6 +1092,16 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
             else:
                 workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
                   tuple(userCheckedClinicians), True)
+        else:
+            if not om_gui.appt_clinicianSelection_comboBox.isVisible():
+                workingdents = appointments.getWorkingDents(
+                  ov.date.toPyDate(), include_non_working=False)
+            else:
+                i = om_gui.appt_clinicianSelection_comboBox.currentIndex()
+                model = om_gui.appt_clinicianSelection_comboBox.model()
+                workingdents = model.clinician_list(i, ov.date.toPyDate())
+                if workingdents == False:
+                    manual = True
 
         #--reset
         ov.dents = []
@@ -1140,43 +1119,40 @@ def layout_weekView(om_gui, find_next_appt=False, find_prev_appt=False):
             ov.setMemo(dent)
             ov.setFlags(dent)
 
-    if om_gui.scheduling_mode:
-        #--user is scheduling an appointment so show 'slots'
-        #--which match the apptointment being arranged
-        if date < QtCore.QDate.currentDate() and not thisWeek:
-            om_gui.advise(_("You can't schedule an appointment in the past"))
-            om_gui.ui.weekCalendar.setSelectedDate(localsettings.currentDay())
-            return
-        result, message, slots = addWeekViewAvailableSlots(om_gui)
-        if not result:
-            om_gui.advise(message)
-            for ov in om_gui.ui.apptoverviews:
-                ov.update()
-            return
-        else:
-            if slots == []:
-                if find_next_appt:
-                    om_gui.signals_calendar(False)
-                    aptOV_weekForward(om_gui)
-                    om_gui.signals_calendar()
-                    layout_weekView(om_gui, find_next_appt=True)
-                    return
-                elif find_prev_appt:
-                    om_gui.signals_calendar(False)
-                    moved_back = aptOV_weekBack(om_gui)
-                    om_gui.signals_calendar()
-                    if not moved_back:
-                        om_gui.advise(_("showing current week"))
-                    else:
-                        layout_weekView(om_gui, find_prev_appt=True)
-                        return
+    if date < QtCore.QDate.currentDate() and not thisWeek:
+        om_gui.advise(_("You are now in the past!"))
+        om_gui.ui.weekCalendar.setSelectedDate(localsettings.currentDay())
+        return
+    result, message, slots = addWeekViewAvailableSlots(om_gui)
+    if not result:
+        om_gui.advise(message)
+        for ov in om_gui.ui.apptoverviews:
+            ov.update()
+        return
+    else:
+        if slots == []:
+            if find_next_appt:
+                om_gui.signals_calendar(False)
+                aptOV_weekForward(om_gui)
+                om_gui.signals_calendar()
+                layout_weekView(om_gui, find_next_appt=True)
+                return
+            elif find_prev_appt:
+                om_gui.signals_calendar(False)
+                moved_back = aptOV_weekBack(om_gui)
+                om_gui.signals_calendar()
+                if not moved_back:
+                    om_gui.advise(_("showing current week"))
                 else:
-                    om_gui.advise(message)
+                    layout_weekView(om_gui, find_prev_appt=True)
+                    return
             else:
-                for ov in om_gui.ui.apptoverviews:
-                    for slot in slots:
-                        if slot.date_time.date() == ov.date.toPyDate():
-                            ov.addSlot(slot)
+                om_gui.advise(message)
+        else:
+            for ov in om_gui.ui.apptoverviews:
+                for slot in slots:
+                    if slot.date_time.date() == ov.date.toPyDate():
+                        ov.addSlot(slot)
 
     for ov in om_gui.ui.apptoverviews:
         for dent in ov.dents:
@@ -1202,6 +1178,7 @@ def layout_dayView(om_gui, find_next_appt=False, find_prev_appt=False):
     if (om_gui.ui.main_tabWidget.currentIndex() !=1 and
     om_gui.ui.diary_tabWidget.currentIndex() != 0):
         return
+    om_gui.ui.day_view_control_frame.setLayout(om_gui.appt_mode_layout)
 
     for book in om_gui.apptBookWidgets:
         book.clearAppts()
@@ -1210,29 +1187,26 @@ def layout_dayView(om_gui, find_next_appt=False, find_prev_appt=False):
     d = om_gui.ui.dayCalendar.selectedDate().toPyDate()
     workingOnly = False
 
-    manual = om_gui.ui.day_clinician_selector_groupBox.isChecked()
-    if not manual:
-        if not om_gui.ui.day_clinicianSelection_comboBox.isVisible():
-            workingOnly = True
-            dents = "ALL"
-        else:
-            i = om_gui.ui.week_clinicianSelection_comboBox.currentIndex()
-            model = om_gui.ui.week_clinicianSelection_comboBox.model()
-            workingdents = model.clinician_list(i, d)
-            if workingdents == False:
-                manual = True
-            else:
-                dent_list = []
-                for dent in workingdents:
-                    dent_list.append(dent.ix)
-                dents = tuple(dent_list)
+    ##TODO 29oct
+    manual = False #om_gui.ui.day_clinician_selector_groupBox.isChecked()
     if manual:
         dents = tuple(getUserCheckedClinicians(om_gui, "day"))
+    else:
+        i = om_gui.appt_clinicianSelection_comboBox.currentIndex()
+        model = om_gui.appt_clinicianSelection_comboBox.model()
+        workingdents = model.clinician_list(i, d)
+        if workingdents == False:
+            manual = tuple(getUserCheckedClinicians(om_gui, "day"))
+        else:
+            dent_list = []
+            for dent in workingdents:
+                dent_list.append(dent.ix)
+            dents = tuple(dent_list)
 
     om_gui.appointmentData.setDate(d)
     om_gui.appointmentData.getAppointments(workingOnly, dents)
 
-    if om_gui.scheduling_mode:
+    if om_gui.appt_mode == om_gui.SCHEDULING_MODE:
         if d < localsettings.currentDay():
             om_gui.advise(_("You can't schedule an appointment in the past"))
             om_gui.ui.dayCalendar.setSelectedDate(localsettings.currentDay())
@@ -1261,15 +1235,15 @@ def layout_dayView(om_gui, find_next_appt=False, find_prev_appt=False):
     workingDents = om_gui.appointmentData.workingDents
     number_of_books = len(workingDents)
     while number_of_books > len(om_gui.apptBookWidgets):
-        book = appointmentwidget.appointmentWidget(om_gui, "0800", "1900")
+        book = appointmentwidget.AppointmentWidget("0800", "1900", om_gui)
         om_gui.apptBookWidgets.append(book)
         om_gui.ui.dayView_splitter.addWidget(book)
         om_gui.signals_apptWidgets(book)
 
         QtCore.QObject.connect(book, QtCore.SIGNAL("redrawn"),
-            om_gui.ui.day_appointment_listView.setScaling)
+            om_gui.day_week_appt_listView.setScaling)
         QtCore.QObject.connect(book, QtCore.SIGNAL("redrawn"),
-            om_gui.ui.day_block_listView.setScaling)
+            om_gui.day_week_block_listView.setScaling)
 
     #-- clean past links to dentists
     i = 0

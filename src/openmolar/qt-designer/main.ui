@@ -447,7 +447,7 @@
               </property>
               <widget class="QTabWidget" name="tabWidget">
                <property name="currentIndex">
-                <number>4</number>
+                <number>9</number>
                </property>
                <widget class="QWidget" name="tab_4">
                 <attribute name="title">
@@ -2702,7 +2702,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>718</width>
+                      <width>695</width>
                       <height>464</height>
                      </rect>
                     </property>
@@ -3245,7 +3245,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
+                         <width>28</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -3278,7 +3278,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>191</width>
+                      <width>238</width>
                       <height>512</height>
                      </rect>
                     </property>
@@ -4264,7 +4264,10 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <property name="margin">
                  <number>3</number>
                 </property>
-                <item row="0" column="0" rowspan="2">
+                <property name="spacing">
+                 <number>3</number>
+                </property>
+                <item row="0" column="0" rowspan="4">
                  <widget class="QFrame" name="frame_18">
                   <property name="minimumSize">
                    <size>
@@ -4284,7 +4287,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_22">
+                  <layout class="QVBoxLayout" name="verticalLayout_19">
                    <property name="margin">
                     <number>3</number>
                    </property>
@@ -4331,239 +4334,22 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     </widget>
                    </item>
                    <item>
-                    <widget class="QScrollArea" name="scrollArea_9">
+                    <widget class="QFrame" name="day_view_control_frame">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
                      </property>
-                     <property name="horizontalScrollBarPolicy">
-                      <enum>Qt::ScrollBarAlwaysOff</enum>
+                     <property name="frameShadow">
+                      <enum>QFrame::Plain</enum>
                      </property>
-                     <property name="widgetResizable">
-                      <bool>true</bool>
+                     <property name="lineWidth">
+                      <number>0</number>
                      </property>
-                     <widget class="QWidget" name="scrollAreaWidgetContents_15">
-                      <property name="geometry">
-                       <rect>
-                        <x>0</x>
-                        <y>0</y>
-                        <width>212</width>
-                        <height>309</height>
-                       </rect>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>180</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_37" stretch="0,0">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
-                       <property name="margin">
-                        <number>0</number>
-                       </property>
-                       <item>
-                        <widget class="QGroupBox" name="day_clinician_selector_groupBox">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="title">
-                          <string>Manual Clinicians</string>
-                         </property>
-                         <property name="checkable">
-                          <bool>true</bool>
-                         </property>
-                         <property name="checked">
-                          <bool>false</bool>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QGroupBox" name="day_schedule_groupBox">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>250</height>
-                          </size>
-                         </property>
-                         <property name="title">
-                          <string>Schedule Appointments</string>
-                         </property>
-                         <property name="checkable">
-                          <bool>true</bool>
-                         </property>
-                         <property name="checked">
-                          <bool>true</bool>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_17">
-                          <property name="leftMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="topMargin">
-                           <number>3</number>
-                          </property>
-                          <property name="rightMargin">
-                           <number>3</number>
-                          </property>
-                          <property name="bottomMargin">
-                           <number>0</number>
-                          </property>
-                          <item>
-                           <widget class="QTabWidget" name="day_schedule_tabWidget">
-                            <property name="minimumSize">
-                             <size>
-                              <width>0</width>
-                              <height>0</height>
-                             </size>
-                            </property>
-                            <property name="currentIndex">
-                             <number>0</number>
-                            </property>
-                            <widget class="QWidget" name="tab_29">
-                             <attribute name="title">
-                              <string>Current Patient</string>
-                             </attribute>
-                             <layout class="QVBoxLayout" name="verticalLayout_19">
-                              <item>
-                               <widget class="QLabel" name="dayPatient_label">
-                                <property name="text">
-                                 <string>TextLabel</string>
-                                </property>
-                                <property name="alignment">
-                                 <set>Qt::AlignCenter</set>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QFrame" name="day_apt_drag_frame">
-                                <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                                  <horstretch>0</horstretch>
-                                  <verstretch>0</verstretch>
-                                 </sizepolicy>
-                                </property>
-                                <property name="maximumSize">
-                                 <size>
-                                  <width>16777215</width>
-                                  <height>100</height>
-                                 </size>
-                                </property>
-                                <property name="frameShape">
-                                 <enum>QFrame::StyledPanel</enum>
-                                </property>
-                                <property name="frameShadow">
-                                 <enum>QFrame::Raised</enum>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QComboBox" name="day_clinicianSelection_comboBox"/>
-                              </item>
-                              <item>
-                               <layout class="QGridLayout" name="gridLayout_31">
-                                <item row="0" column="0" colspan="2">
-                                 <widget class="QPushButton" name="day_1st_appt_pushButton">
-                                  <property name="enabled">
-                                   <bool>true</bool>
-                                  </property>
-                                  <property name="toolTip">
-                                   <string>Find the First Suitable Appointment. </string>
-                                  </property>
-                                  <property name="text">
-                                   <string>1st Available</string>
-                                  </property>
-                                 </widget>
-                                </item>
-                                <item row="1" column="0">
-                                 <widget class="QPushButton" name="day_prev_appt_pushButton">
-                                  <property name="enabled">
-                                   <bool>true</bool>
-                                  </property>
-                                  <property name="toolTip">
-                                   <string>Find the Previous Appointment
-F5</string>
-                                  </property>
-                                  <property name="text">
-                                   <string>Prev</string>
-                                  </property>
-                                  <property name="icon">
-                                   <iconset resource="../resources/resources.qrc">
-                                    <normaloff>:/back.png</normaloff>:/back.png</iconset>
-                                  </property>
-                                 </widget>
-                                </item>
-                                <item row="1" column="1">
-                                 <widget class="QPushButton" name="day_next_appt_pushButton">
-                                  <property name="enabled">
-                                   <bool>true</bool>
-                                  </property>
-                                  <property name="toolTip">
-                                   <string>Find the Next Available Appointment.
-F6</string>
-                                  </property>
-                                  <property name="layoutDirection">
-                                   <enum>Qt::RightToLeft</enum>
-                                  </property>
-                                  <property name="text">
-                                   <string>Next</string>
-                                  </property>
-                                  <property name="icon">
-                                   <iconset resource="../resources/resources.qrc">
-                                    <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-                                  </property>
-                                 </widget>
-                                </item>
-                               </layout>
-                              </item>
-                              <item>
-                               <spacer name="verticalSpacer_13">
-                                <property name="orientation">
-                                 <enum>Qt::Vertical</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>20</width>
-                                  <height>40</height>
-                                 </size>
-                                </property>
-                               </spacer>
-                              </item>
-                             </layout>
-                            </widget>
-                            <widget class="QWidget" name="tab_30">
-                             <attribute name="title">
-                              <string>Blocks etc..</string>
-                             </attribute>
-                             <layout class="QVBoxLayout" name="verticalLayout_38">
-                              <item>
-                               <widget class="QFrame" name="block_drag_frame">
-                                <property name="frameShape">
-                                 <enum>QFrame::StyledPanel</enum>
-                                </property>
-                                <property name="frameShadow">
-                                 <enum>QFrame::Raised</enum>
-                                </property>
-                               </widget>
-                              </item>
-                             </layout>
-                            </widget>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
                     </widget>
                    </item>
                   </layout>
@@ -4600,8 +4386,35 @@ F6</string>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>300</height>
+                   </size>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QWebView" name="appt_notes_webView">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>150</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>200</height>
+                   </size>
+                  </property>
+                  <property name="url">
+                   <url>
+                    <string>about:blank</string>
+                   </url>
                   </property>
                  </widget>
                 </item>
@@ -4685,248 +4498,22 @@ F6</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QScrollArea" name="scrollArea_7">
+                    <widget class="QFrame" name="week_view_control_frame">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
                      </property>
-                     <property name="horizontalScrollBarPolicy">
-                      <enum>Qt::ScrollBarAlwaysOff</enum>
+                     <property name="frameShadow">
+                      <enum>QFrame::Plain</enum>
                      </property>
-                     <property name="widgetResizable">
-                      <bool>true</bool>
+                     <property name="lineWidth">
+                      <number>0</number>
                      </property>
-                     <widget class="QWidget" name="scrollAreaWidgetContents">
-                      <property name="geometry">
-                       <rect>
-                        <x>0</x>
-                        <y>0</y>
-                        <width>212</width>
-                        <height>309</height>
-                       </rect>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>180</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_36">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
-                       <property name="margin">
-                        <number>0</number>
-                       </property>
-                       <item>
-                        <widget class="QGroupBox" name="week_clinician_selector_groupBox">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="title">
-                          <string>Manually Select Clinicians</string>
-                         </property>
-                         <property name="checkable">
-                          <bool>true</bool>
-                         </property>
-                         <property name="checked">
-                          <bool>false</bool>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QGroupBox" name="week_schedule_groupBox">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>250</height>
-                          </size>
-                         </property>
-                         <property name="title">
-                          <string>Schedule appointments</string>
-                         </property>
-                         <property name="checkable">
-                          <bool>true</bool>
-                         </property>
-                         <property name="checked">
-                          <bool>true</bool>
-                         </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_28">
-                          <property name="spacing">
-                           <number>6</number>
-                          </property>
-                          <property name="leftMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="topMargin">
-                           <number>3</number>
-                          </property>
-                          <property name="rightMargin">
-                           <number>3</number>
-                          </property>
-                          <property name="bottomMargin">
-                           <number>0</number>
-                          </property>
-                          <item>
-                           <widget class="QTabWidget" name="week_schedule_tabWidget">
-                            <property name="minimumSize">
-                             <size>
-                              <width>0</width>
-                              <height>200</height>
-                             </size>
-                            </property>
-                            <property name="currentIndex">
-                             <number>0</number>
-                            </property>
-                            <widget class="QWidget" name="tab_31">
-                             <attribute name="title">
-                              <string>Current Patient</string>
-                             </attribute>
-                             <layout class="QVBoxLayout" name="verticalLayout_4">
-                              <item>
-                               <widget class="QLabel" name="weekPatient_label">
-                                <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                                  <horstretch>0</horstretch>
-                                  <verstretch>0</verstretch>
-                                 </sizepolicy>
-                                </property>
-                                <property name="text">
-                                 <string>TextLabel</string>
-                                </property>
-                                <property name="alignment">
-                                 <set>Qt::AlignCenter</set>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QFrame" name="week_apt_drag_frame">
-                                <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                                  <horstretch>0</horstretch>
-                                  <verstretch>0</verstretch>
-                                 </sizepolicy>
-                                </property>
-                                <property name="maximumSize">
-                                 <size>
-                                  <width>16777215</width>
-                                  <height>16777215</height>
-                                 </size>
-                                </property>
-                                <property name="frameShape">
-                                 <enum>QFrame::StyledPanel</enum>
-                                </property>
-                                <property name="frameShadow">
-                                 <enum>QFrame::Raised</enum>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QComboBox" name="week_clinicianSelection_comboBox"/>
-                              </item>
-                              <item>
-                               <layout class="QGridLayout" name="gridLayout_28">
-                                <item row="0" column="0" colspan="2">
-                                 <widget class="QPushButton" name="week_1st_appt_pushButton">
-                                  <property name="enabled">
-                                   <bool>true</bool>
-                                  </property>
-                                  <property name="toolTip">
-                                   <string>Find the First Suitable Appointment. </string>
-                                  </property>
-                                  <property name="text">
-                                   <string>1st Available</string>
-                                  </property>
-                                 </widget>
-                                </item>
-                                <item row="1" column="0">
-                                 <widget class="QPushButton" name="week_prev_appt_pushButton">
-                                  <property name="enabled">
-                                   <bool>true</bool>
-                                  </property>
-                                  <property name="toolTip">
-                                   <string>Find the Previous Appointment
-F5</string>
-                                  </property>
-                                  <property name="text">
-                                   <string>Prev</string>
-                                  </property>
-                                  <property name="icon">
-                                   <iconset resource="../resources/resources.qrc">
-                                    <normaloff>:/back.png</normaloff>:/back.png</iconset>
-                                  </property>
-                                 </widget>
-                                </item>
-                                <item row="1" column="1">
-                                 <widget class="QPushButton" name="week_next_appt_pushButton">
-                                  <property name="enabled">
-                                   <bool>true</bool>
-                                  </property>
-                                  <property name="toolTip">
-                                   <string>Find the Next Available Appointment.
-F6</string>
-                                  </property>
-                                  <property name="layoutDirection">
-                                   <enum>Qt::RightToLeft</enum>
-                                  </property>
-                                  <property name="text">
-                                   <string>Next</string>
-                                  </property>
-                                  <property name="icon">
-                                   <iconset resource="../resources/resources.qrc">
-                                    <normaloff>:/forward.png</normaloff>:/forward.png</iconset>
-                                  </property>
-                                 </widget>
-                                </item>
-                               </layout>
-                              </item>
-                              <item>
-                               <spacer name="verticalSpacer_15">
-                                <property name="orientation">
-                                 <enum>Qt::Vertical</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>20</width>
-                                  <height>40</height>
-                                 </size>
-                                </property>
-                               </spacer>
-                              </item>
-                             </layout>
-                            </widget>
-                            <widget class="QWidget" name="tab_32">
-                             <attribute name="title">
-                              <string>Blocks etc..</string>
-                             </attribute>
-                             <layout class="QVBoxLayout" name="verticalLayout_40">
-                              <item>
-                               <widget class="QFrame" name="week_block_drag_frame">
-                                <property name="frameShape">
-                                 <enum>QFrame::StyledPanel</enum>
-                                </property>
-                                <property name="frameShadow">
-                                 <enum>QFrame::Raised</enum>
-                                </property>
-                               </widget>
-                              </item>
-                             </layout>
-                            </widget>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
                     </widget>
                    </item>
                   </layout>
@@ -5209,8 +4796,8 @@ F6</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>92</width>
+                     <height>16</height>
                     </rect>
                    </property>
                   </widget>

@@ -5,12 +5,6 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
-def mirrored(val):
-    '''a complete opposite of the toSignedByte proc'''
-    l=list(val)
-    l.reverse()
-    return toSignedByte(l)
-
 
 def toSignedByte(val):
     lav=list(val)

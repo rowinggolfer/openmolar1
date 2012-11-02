@@ -31,24 +31,6 @@ def details():
     #db.close()
     return rows
 
-def bad_debts():
-    '''
-    get all patients owing money including money11
-    '''
-    db = connect()
-    cursor = db.cursor()
-    query = '''select dnt1,serialno ,cset, fname,sname,dob,memo,pd4,billdate,
-    billtype,billct,courseno0,
-    (money0 + money1 + money9 + money10 +money11 - money2 - money3 - money8)
-    as fees from patients where
-    (money0 + money1 + money9 + money10 +money11 - money2 - money3 - money8) > 0
-    order by pd4 desc'''
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    cursor.close()
-    #db.close()
-    return rows
-
 if __name__ == "__main__":
     localsettings.initiate()
     print details()

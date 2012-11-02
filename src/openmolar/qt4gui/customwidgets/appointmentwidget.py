@@ -24,7 +24,7 @@ LINECOLOR = colours.APPT_LINECOLOUR
 APPTCOLORS = colours.APPTCOLORS
 TRANSPARENT = colours.TRANSPARENT
 
-class appointmentWidget(QtGui.QFrame):
+class AppointmentWidget(QtGui.QFrame):
     '''
     a custom widget to for a dental appointment book
     useage is (startTime,finishTime, parentWidget - optional)
@@ -34,8 +34,8 @@ class appointmentWidget(QtGui.QFrame):
     parentWidget =optional
     '''
 
-    def __init__(self, om_gui, sTime, fTime, parent=None):
-        super(appointmentWidget, self).__init__(parent)
+    def __init__(self, sTime, fTime, om_gui):
+        QtGui.QFrame.__init__(self, om_gui)
 
         self.header_frame = QtGui.QFrame(self)
         self.om_gui = om_gui
@@ -597,6 +597,9 @@ class appointmentCanvas(QtGui.QWidget):
                 actions.append(None)
                 actions.append(_("Add/Edit Memo"))
                 actions.append(_("Cancel Appointment"))
+
+                self.pWidget.emit(QtCore.SIGNAL("PatientClicked"),
+                    tuple(selectedPatients))
             else:
                 actions.append(_("Clear Block"))
 
@@ -857,7 +860,7 @@ if __name__ == "__main__":
     parent = QtGui.QFrame()
     parent.pt = patient()
 
-    form = appointmentWidget(parent, "0800","1500", parent)
+    form = AppointmentWidget("0800","1500", parent)
     form.setStartTime("0830")
     form.setEndTime("1430")
 

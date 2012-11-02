@@ -40,18 +40,6 @@ def offerTreatmentItems(om_gui, arg, completedItems=False):
     result =  dl.getInput()
     return result
 
-
-def offerSpecificTreatmentItems(om_gui, arg):
-    '''
-    offers treatment items passed by argument like
-    ((1,"SP,"Scale and Polish", 2600, 2400),)
-    '''
-    Dialog = QtGui.QDialog(om_gui)
-    dl = addTreat.customTreatment(Dialog, arg, om_gui.pt)
-    result =  dl.getInput()
-    return result
-
-
 def xrayAdd(om_gui, complete=False):
     '''
     add xray items

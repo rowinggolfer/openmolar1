@@ -57,15 +57,6 @@ def planItemOptions(om_gui, trtmtType, performDefault=False):
     cu = QtGui.QCursor()
     processResult(menu.exec_(cu.pos()))
 
-def planItemDoubleClicked(om_gui, treeWidgetItem):
-    '''
-    user has double clicked on a planned item in the treewidget 
-    '''
-    if treeWidgetItem.parent() != None:
-        trtmtType = str(treeWidgetItem.text(0).toAscii())
-        
-        planItemOptions(om_gui, trtmtType, performDefault=True)
-
 def cmpItemChosen(om_gui, treeWidgetItem):
     '''
     user has clicked on a completed treatment item in the treewidget 

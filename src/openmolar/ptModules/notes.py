@@ -31,27 +31,6 @@ CHART = {
 170:"LLC", 169:"LLB", 168:"LLA", 183:"LRA",
 184:"LRB", 185:"LRC", 186:"LRD", 187:"LRE"}
 
-def getNotesDict(ptNotesTuple):
-    '''
-    deprecated with schema version 1.9
-    '''
-    notes_dict = {}
-    ndate, op = "", ""
-
-    #a line is like ('\x01REC\x0c\x08m\x0c\x08m\n\x08',)
-    for line in ptNotesTuple:
-        ntype, note, operator, date2 = decipher_noteline(line[0])
-        if date2 != "":
-            ndate = date2
-        if operator != "":
-            op = operator
-        key = (ndate, op)
-        if notes_dict.has_key(key):
-            notes_dict[key].append((ntype,note,operator))
-        else:
-            notes_dict[key] = [(ntype,note,operator)]
-    return notes_dict
-
 def rec_notes(notes_dict):
     '''
     returns an html string of notes, designed to fit into the
@@ -186,17 +165,6 @@ def get_date_from_date(key):
         return "IndexERROR converting date %s" %key
     except ValueError:
         return "TypeERROR converting date %s" %key
-
-def get_op_for_date(line, recOnly=False):
-    '''
-    parse the line for an operator
-    '''
-    op = ""
-    for l in line:
-        if l[2] != "" and not l[2] in op:
-            op += "%s<br />"% l[2]
-
-    return op.strip("<br />")
 
 def get_codes_for_date(line):
     code=""

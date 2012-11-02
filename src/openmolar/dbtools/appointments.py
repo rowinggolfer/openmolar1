@@ -1201,9 +1201,11 @@ def daydrop_appt(adate, appt, droptime, apptix):
     bl_start = localsettings.pyTimetoWystime(droptime)
     bl_end = localsettings.minutesPastMidnighttoWystime(start_mpm+appt.length)
 
-    print "making appointment"
+    flag_0 = -128 if appt.name == "emergency" else 1
+
     result1 = make_appt(adate, apptix, bl_start, bl_end, appt.name,
-    appt.serialno, appt.trt1, appt.trt2, appt.trt3, appt.memo, 1, cset , 0, 0)
+        appt.serialno, appt.trt1, appt.trt2, appt.trt3, appt.memo, flag_0,
+        cset , 0, 0)
 
     result2 = False
     if result1:
@@ -1212,7 +1214,7 @@ def daydrop_appt(adate, appt, droptime, apptix):
 
 def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     '''
-    this is the procedure called when makingan appointment via clicking on a
+    this is the procedure called when making an appointment via clicking on a
     free slot in a DAY view.
     '''
     #- 1st check the block is free
@@ -1412,41 +1414,6 @@ def delete_appt_from_aslot(appt):
 
     return result
 
-def daysSlots(adate, dent):
-    '''get emergencies and blocked bits'''
-    db = connect()
-    cursor = db.cursor()
-    if dent == "*":
-        apptix = ""
-    else:
-        apptix = "and apptix=%d"% localsettings.apptix.get(dent)
-        ##TODO - need to avoid passing dents by their initials
-    query = '''SELECT start,end FROM aday WHERE adate="%s"
-    and (flag=1 or flag=2) %s'''% (adate, apptix)
-
-    if localsettings.logqueries:
-        print query
-    cursor.execute(query)
-
-    daydata = cursor.fetchall()
-    #--now get data for those days so that we can find slots within
-    query = ""
-    if daydata != ():
-        query = ' adate = "%s" and apptix = %d '% (
-        adate,localsettings.apptix.get(dent))
-
-        fullquery = 'SELECT start,end FROM aslot WHERE %s ORDER BY start'% query
-        if localsettings.logqueries:
-            print fullquery
-        cursor.execute(fullquery)
-
-        results = cursor.fetchall()
-        cursor.close()
-        #db.close()
-        return slots(daydata[0][0], results, daydata[0][1])
-    else:
-        #--day not used or no slots
-        return()
 
 def future_slots(startdate, enddate, dents, override_emergencies=False):
     '''

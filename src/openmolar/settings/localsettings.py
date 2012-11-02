@@ -21,8 +21,8 @@ import types
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 4th Aug 2012.
-__MAJOR_VERSION__= "0.3.1"
+#- updated 29th Oct 2012.
+__MAJOR_VERSION__= "0.3.2"
 
 
 if "-v" in sys.argv:
@@ -407,15 +407,6 @@ def GP17formatDate(d):
     except AttributeError:
         return " "*8
 
-def getNHSFeescale(d):
-    '''
-    points to the dictionary of values in use on date d
-    '''
-    if d < datetime.date(2009,9,1):
-        return FeesDict["NF08"]
-    else:
-        return FeesDict["NF09"]
-
 try:
     DAYNAMES = (locale.nl_langinfo (locale.DAY_2),
             locale.nl_langinfo (locale.DAY_3),
@@ -634,10 +625,6 @@ def humanTime(t):
     '''
     hour, min = t//60, int(t)%60
     return "%d:%02d"% (hour, min)
-
-def setlogqueries():
-    global logqueries
-    logqueries = True
 
 def setOperator(u1, u2):
     global operator

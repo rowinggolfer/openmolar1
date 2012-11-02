@@ -128,8 +128,8 @@ def closeCourse(om_gui, leaving=False):
         cmpd = my_dialog.dateEdit.date().toPyDate()
         om_gui.pt.setCmpd(cmpd)
         om_gui.pt.underTreatment = False
-        om_gui.updateDetails()
         om_gui.pt.addHiddenNote("close_course")
+        om_gui.updateDetails()
         om_gui.updateHiddenNotesLabel()
         offerFinalPaperWork(om_gui)
         plan.completedFillsToStatic(om_gui.pt)
@@ -150,7 +150,7 @@ def resumeCourse(om_gui):
     '''
     resume the previous treatment course
     '''
-    message = "Resume the previous course of treatment?"
+    message = _("Resume the previous course of treatment?")
     result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
     QtGui.QMessageBox.Yes )
@@ -161,4 +161,5 @@ def resumeCourse(om_gui):
         om_gui.updateDetails()
         om_gui.pt.addHiddenNote("resume_course")
         om_gui.updateHiddenNotesLabel()
+
         return True

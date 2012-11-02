@@ -41,27 +41,27 @@ BOOKED_TODAY = QtCore.Qt.red
 APPTCOLORS = {
     "N":QtGui.QColor("#d9d9ff"),
     "I":QtGui.QColor("#d9ffec"),
-    "P":QtGui.QColor("#ffffd9"),    
+    "P":QtGui.QColor("#ffffd9"),
     "BUSY":QtGui.QColor("#eeeeee"),
     "RESERVED CLINICAL TIME":QtGui.QColor("#ffcc99"),
-    "LUNCH":QtGui.QPalette().dark(),
+    "LUNCH":QtGui.QColor("#dddddd"),
     "FREE":QtCore.Qt.transparent,
     "EMERGENCY":QtGui.QColor("#ffd9ec"),
     "default":QtGui.QColor("#adb3ff"),
     "//BLOCKED//":QtCore.Qt.transparent,
-    "DOUBLE":QtCore.Qt.blue
+    "DOUBLE":QtCore.Qt.blue,
+    "SLOT" : QtGui.QColor("#ffff99"),
+
 }
 
-##"SLOT" : QtGui.QColor("#adffd1"),
-    
 APPT_OV_COLORS = {
     "HEADER" : QtCore.Qt.white,
     "BACKGROUND" : QtCore.Qt.white,
-    "BACKGROUND_" : QtGui.QPalette().dark(),
-    "SLOT" : QtGui.QColor("#ffffbb"),
+    "BACKGROUND_" : QtGui.QColor("#dddddd"),
+    "SLOT" : QtGui.QColor("#ffff99"),
     "ACTIVE_SLOT" : QtGui.QColor("yellow"),
     "BUSY" : QtGui.QColor("#d9d9ff"),
-    "LUNCH" : QtGui.QPalette().dark(),
+    "LUNCH":QtGui.QColor("#dddddd"),
     "FREE" : QtCore.Qt.white,
     "EMERGENCY" : QtGui.QColor("#ffd9ec"),
     "default":QtGui.QColor("#eeeeee"),

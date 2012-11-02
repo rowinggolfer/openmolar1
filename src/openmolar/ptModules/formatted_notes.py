@@ -12,6 +12,9 @@ This module replaces notes.py with schema version 1.9
 import re
 import sys
 from openmolar.settings import localsettings
+from openmolar.dbtools import db_notes
+from openmolar.dbtools import db_patients
+
 
 try:
     from collections import OrderedDict
@@ -30,10 +33,18 @@ show_metadata = False
 # use these variables for the summary notes also?
 same_for_clinical = False
 
+HEADER ='''<html>
+<head>
+<link rel="stylesheet" href="%s" type="text/css">
+</head>
+<body>
+<!HEADER>'''% localsettings.stylesheet
 
-def get_notes_dict(results_tuple):
+def get_notes_dict(serialno, today_only=False):
     '''
     '''
+    results_tuple = db_notes.notes(serialno, today_only)
+
     notes_dict = OrderedDict()
     for ndate, op1, op2, ntype, note in results_tuple:
 
@@ -110,9 +121,8 @@ def rec_notes(notes_dict):
     reception notes panel (ie. vertical)
     '''
 
-    retarg = '''<html><head><link rel="stylesheet"
-    href="%s" type="text/css"></head><body><table border="1">
-    '''% localsettings.stylesheet
+    retarg = HEADER + '<table border="1">'
+
     keys = notes_dict.keys()
     #keys.sort()
 
@@ -137,17 +147,16 @@ def notes(notes_dict, full_notes=True):
     returns an html string of notes...
     '''
 
-    retarg = '''<html><head><link rel="stylesheet"
-    href="%s" type="text/css"></head><body>'''% localsettings.stylesheet
+    retarg = HEADER + '''
+        <table width = "100%">
+            <tr>
+                <th class = "date">Date</th>
+                <th class = "ops">ops</th>
+                <th class = "tx">Tx</th>
+                <th class = "notes">Notes</th>
+        '''
+
     keys = notes_dict.keys()
-    #keys.sort()
-    retarg += '''<table width = "100%">
-        <tr>
-            <th class = "date">Date</th>
-            <th class = "ops">ops</th>
-            <th class = "tx">Tx</th>
-            <th class = "notes">Notes</th>
-    '''
 
     if full_notes and show_metadata:
         retarg += '<th class="reception">metadata</th>'
@@ -181,7 +190,7 @@ def notes(notes_dict, full_notes=True):
 
         if (date == localsettings.currentDay() and
         op == localsettings.operator):
-            subline += '<br /><a href="edit_todays_notes">%s</a>'% _("Edit")
+            subline += '<br /><a href="edit_notes?||SNO||">%s</a>'% _("Edit")
 
         newline += '''%s</td>
         <td class="tx">%s</td>
@@ -195,6 +204,20 @@ def notes(notes_dict, full_notes=True):
     retarg += '</table></div></body></html>'
 
     return retarg
+
+def todays_notes(serialno):
+    html = notes(get_notes_dict(serialno, True))
+    if not _("Today") in html:
+        html = HEADER
+        html += "%s <a href='edit_notes?%s'>%s</a></body></html>"% (
+            _("No notes found"), serialno, _("Add a note"))
+
+    name = db_patients.name(serialno)
+    header = "<h3>%s %s</h3>"% (_("Todays notes for"), name)
+    html = html.replace("<!HEADER>", header)
+    html = html.replace("||SNO||", str(serialno))
+
+    return html
 
 if __name__ == "__main__":
     sys.path.insert(1, "/home/neil/openmolar/openmolar/src")

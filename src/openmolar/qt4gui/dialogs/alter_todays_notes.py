@@ -32,9 +32,11 @@ from openmolar.qt4gui.dialogs.phrasebook_dialog import PhraseBookDialog
 
 from openmolar import connect
 from openmolar.dbtools import patient_write_changes
+from openmolar.dbtools import db_patients
 
 class AlterTodaysNotesDialog(BaseDialog):
     result = ""
+    patient_loaded = True
     def __init__(self, sno, parent):
         BaseDialog.__init__(self, parent)
         self.sno = sno
@@ -44,16 +46,27 @@ class AlterTodaysNotesDialog(BaseDialog):
         QtCore.QTimer.singleShot(0, self.get_todays_notes)
         self.text_edit = QtGui.QTextEdit(self)
 
+        self.patient_label = QtGui.QLabel("searching for patient...")
+
         phrasebook_button = QtGui.QPushButton(_("Open Phrasebook"))
         phrasebook_button.clicked.connect(self.show_phrasebook)
 
+        self.insertWidget(self.patient_label)
         self.insertWidget(self.text_edit)
         self.insertWidget(phrasebook_button)
         #self.text_edit.setLineWrapMode(self.text_edit.FixedColumnWidth)
         #self.text_edit.setLineWrapColumnOrWidth(80)
 
+        QtCore.QTimer.singleShot(0, self.get_patient_name)
+
     def sizeHint(self):
         return QtCore.QSize(800,200)
+
+    def get_patient_name(self):
+        try:
+            self.patient_label.setText(db_patients.name(self.sno))
+        except localsettings.PatientNotFoundError as exc:
+            QtGui.QMessageBox.warning(self, "Error", exc.message)
 
     def show_phrasebook(self):
         dl = PhraseBookDialog(self)
@@ -81,7 +94,7 @@ class AlterTodaysNotesDialog(BaseDialog):
         rows = cursor.fetchall()
         cursor.close()
 
-        if not count:
+        if self.patient_loaded and not count:
             QtGui.QMessageBox.information(self, "message",
             "No notes found for today!")
             return

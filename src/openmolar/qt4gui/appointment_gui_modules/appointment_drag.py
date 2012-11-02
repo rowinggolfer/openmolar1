@@ -11,9 +11,15 @@ class clinicianSelectModel(QtCore.QAbstractListModel):
     def __init__(self, om_gui):
         super(clinicianSelectModel, self).__init__(om_gui)
 
-        self.options_list = [_("Selected Book(s)"), _("Relevant Books"),
-        _("Available Dentists"), _("Available Hygenists"),
-        _("Available Clinicians"), _("Everyone"), _("Manual Selection")]
+        self.options_list = [
+            _("Everyone"),
+            _("Selected Book(s)"),
+            _("Relevant Books"),
+            _("Available Dentists"),
+            _("Available Hygenists"),
+            _("Available Clinicians"),
+            _("Manual Selection")
+            ]
 
         self.om_gui = om_gui
         #if localsettings.activehygs == []:
@@ -34,27 +40,27 @@ class clinicianSelectModel(QtCore.QAbstractListModel):
 
     def clinician_list(self, row, date):
         if row == 0:
+            return appointments.getWorkingDents(date)
+        elif row == 1:
             chkset = self.om_gui.apt_drag_model.selectedClinicians
             return appointments.getWorkingDents(date, chkset,
                 include_non_working = True)
-        if row == 1:
+        elif row == 2:
             chkset = self.om_gui.apt_drag_model.involvedClinicians
             return appointments.getWorkingDents(date, chkset,
                 include_non_working = True)
-        elif row == 2:
+        elif row == 3:
             chkset = localsettings.activedent_ixs
             return appointments.getWorkingDents(date, chkset,
                 include_non_working=False)
-        elif row == 3:
+        elif row == 4:
             chkset = localsettings.activehyg_ixs
             return appointments.getWorkingDents(date, chkset,
                 include_non_working=False)
-        elif row == 4:
+        elif row == 5:
             return appointments.getWorkingDents(date,
                 include_non_working=False)
-        elif row == 5:
-            return appointments.getWorkingDents(date)
-        elif row == 6:
+        else: #manual
             return False
 
 class simple_model(QtCore.QAbstractListModel):
@@ -66,7 +72,7 @@ class simple_model(QtCore.QAbstractListModel):
         self.min_slot_length = 0
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
         self.selection_model = QtGui.QItemSelectionModel(self)
-        
+
         self.currentAppt = None
         self.selectedAppts = []
         self.normal_icon = QtGui.QIcon()
@@ -108,7 +114,7 @@ class simple_model(QtCore.QAbstractListModel):
 
     def setAppointments(self, appts, selectedAppt):
         '''
-        add an appointments, and highlight the selectedAppt (which is the 
+        add an appointments, and highlight the selectedAppt (which is the
         highlighted one in the pt diary
         '''
         self.unscheduledList = []
@@ -130,20 +136,20 @@ class simple_model(QtCore.QAbstractListModel):
                 changedClinicians = True
 
         self.list = self.scheduledList + self.unscheduledList
-        
+
         if changedClinicians:
             self.emit(QtCore.SIGNAL("clinicianListChanged"))
-        
+
         self.reset()
 
         for appt in self.selectedAppts:
-            self.setcurrentAppt(appt)            
+            self.setcurrentAppt(appt)
 
         if selectedAppt in appts:
             self.setcurrentAppt(selectedAppt)
         else:
-            self.setcurrentAppt(None)        
-        
+            self.setcurrentAppt(None)
+
     def rowCount(self, parent = QtCore.QModelIndex()):
         return len(self.list)
 
@@ -181,14 +187,14 @@ class simple_model(QtCore.QAbstractListModel):
         for index in indexes:
             appt = self.data(index, QtCore.Qt.UserRole)
             self.selectedAppts.append(appt)
-        
+
         if selected in indexes:
             self.currentAppt = self.data(selected, QtCore.Qt.UserRole)
             self.min_slot_length = self.currentAppt.length
         elif self.selectedAppts != []:
             self.currentAppt = self.selectedAppts[0]
             self.min_slot_length = self.currentAppt.length
-        
+
         self.emit(QtCore.SIGNAL("selectedAppointment"), self.currentAppt)
 
     def setcurrentAppt(self, appt):
@@ -246,7 +252,7 @@ class DraggableList(QtGui.QListView):
         QtGui.QListView.setSelectionModel(self, model)
         if self.multiSelect:
             self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-        
+
     def setScaling(self, height_per_minute):
         '''
         make the list aware of the scaling of the widget available for drops
@@ -295,12 +301,12 @@ class DraggableList(QtGui.QListView):
     #def mousePressEvent(self, event):
     #    ##set this to ignore, and use mouse Release instead
     #    event.ignore()
-    #    
+    #
     #def mouseReleaseEvent(self, event):
     #    event = QtGui.QMouseEvent(QtCore.QEvent.MouseButtonPress, event.pos(),
     #        event.button(), event.buttons(), event.modifiers())
     #    QtGui.QListView.mousePressEvent(self, event)
-        
+
     def selectionChanged(self, selectedRange, deselected):
         '''
         the user has selected an appointment (or range of appointments!)
@@ -321,7 +327,8 @@ if __name__ == "__main__":
     makes life better for SPE
     '''
     from openmolar.qt4gui.customwidgets import appointmentwidget
-    from openmolar.qt4gui.customwidgets import appointment_overviewwidget
+    from openmolar.qt4gui.customwidgets.appointment_overviewwidget \
+         import AppointmentOverviewWidget
 
     from openmolar.dbtools import appointments
     from openmolar.settings import localsettings
@@ -365,8 +372,7 @@ if __name__ == "__main__":
             self.blockView = DraggableList(False)
             self.blockView.setModel(self.block_model)
 
-            self.book = appointmentwidget.appointmentWidget(self, "1000",
-            "1200")
+            self.book = appointmentwidget.AppointmentWidget("1000", "1200", self)
             self.book.setDentist(1)
             self.book.setStartTime(1015)
             self.book.setEndTime(1145)
@@ -378,8 +384,7 @@ if __name__ == "__main__":
             0, datetime.datetime.now())):
                 self.book.setAppointment(appoint)
 
-            self.OVbook = appointment_overviewwidget.bookWidget(1,
-            "1000", "1200", 15, 2, self)
+            self.OVbook = AppointmentOverviewWidget("1000", "1200", 15, 2, self)
 
             d1 = appointments.dentistDay(1)
             d1.start=1015
@@ -443,5 +448,4 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     dl = testDialog()
     dl.exec_()
-    
-    
+

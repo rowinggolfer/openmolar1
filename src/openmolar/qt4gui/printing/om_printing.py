@@ -468,13 +468,6 @@ def printmultiDayList(om_gui, args):
     if something_to_print:
         dlist.print_()
 
-def book1print(om_gui):
-    print "DEPRECATED FUNCTION CALLED - book1print"
-    dent = om_gui.apptBookWidgets[0].apptix
-    adate = om_gui.ui.dayCalendar.selectedDate()
-    books = ((dent, adate), )
-    om_gui.printdaylists(books)
-
 def daylistPrintWizard(om_gui):
     def checkAll(arg):
         for cb in checkBoxes.values():

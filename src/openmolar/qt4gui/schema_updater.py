@@ -31,10 +31,6 @@ def proceed(app):
     localsettings.loadFeeTables()
     sys.exit(maingui.main(app))
 
-def logInAgainMessage():
-    QtGui.QMessageBox.information(None, "Update Schema",
-    "Success - Now please log in again to start openmolar")
-
 def user_quit():
     raise UserQuit, "user has quit the update"
 

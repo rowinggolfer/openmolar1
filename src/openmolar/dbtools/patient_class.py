@@ -472,16 +472,7 @@ self.serialno, self.courseno0))
         '''
         connect and poll the formatted_notes table
         '''
-        db = connect.connect()
-        cursor = db.cursor()
-        cursor.execute('''SELECT ndate, op1, op2, ntype, note
-        from formatted_notes where serialno = %s
-        order by ndate, ix''', self.serialno)
-
-        results = cursor.fetchall()
-
-        cursor.close()
-        self.notes_dict = formatted_notes.get_notes_dict(results)
+        self.notes_dict = formatted_notes.get_notes_dict(self.serialno)
 
     def flipDec_Perm(self,tooth):
         '''

@@ -17,12 +17,11 @@ TRANSPARENT = QtCore.Qt.transparent
 APPTCOLORS = colours.APPT_OV_COLORS
 BGCOLOR = APPTCOLORS["BACKGROUND"]
 
-class bookWidget(QtGui.QWidget):
+class AppointmentOverviewWidget(QtGui.QWidget):
     '''a custom widget to for a dental appointment book'''
-    def __init__(self, day, sTime, fTime, slotLength,
-    textDetail, om_gui=None):
+    def __init__(self, sTime, fTime, slotLength, textDetail, om_gui):
         '''
-        useage is (startTime,finishTime,slotLength, textDetail, parentWidget)
+        useage is (day, startTime,finishTime,slotLength, textDetail, parent)
         startTime,finishTime in format HHMM or HMM or HH:MM or H:MM
         slotLength is the minimum slot length - typically 5 minutes
         textDetail is the number of slots to draw before writing the time text
@@ -31,7 +30,7 @@ class bookWidget(QtGui.QWidget):
         I like 15minutes
         '''
 
-        super(bookWidget, self).__init__(om_gui)
+        super(AppointmentOverviewWidget, self).__init__(om_gui)
         self.om_gui = om_gui
         self.setMinimumSize(self.minimumSizeHint())
 
@@ -51,7 +50,7 @@ class bookWidget(QtGui.QWidget):
         self.slotHeight = ((self.height() - self.headingHeight) /
                             self.slotCount)
         self.textDetail = textDetail
-        self.day = day
+
         self.date = None
         self.dents = []
         self.daystart = {}
@@ -533,7 +532,7 @@ class bookWidget(QtGui.QWidget):
                         (slot.length/self.slotLength)*self.slotHeight)
 
                         if self.dragging and slot is self.dropSlot:
-                            painter.setBrush(APPTCOLORS["SLOT"])
+                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
                             painter.drawRect(rect)
 
                             painter.save()
@@ -562,7 +561,7 @@ class bookWidget(QtGui.QWidget):
                             painter.restore()
 
                         else:
-                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                            painter.setBrush(APPTCOLORS["SLOT"])
                             painter.drawRect(rect)
 
                             painter.setPen(black_pen)
@@ -590,7 +589,7 @@ class bookWidget(QtGui.QWidget):
             print "error painting appointment overviewwidget", e
 
 if __name__ == "__main__":
-            
+
     import datetime
     def clicktest(a):
         print a
@@ -605,7 +604,21 @@ if __name__ == "__main__":
     from openmolar.dbtools import appointments
     #-initiate a book starttime 08:00
     #-endtime 10:00 five minute slots, text every 3 slots
-    form = bookWidget(1,"0800","1900",15, 2)
+
+    class DuckPatient(object):
+        serialno = 1
+
+    class DuckMainWindow(QtGui.QMainWindow):
+        pt = DuckPatient()
+        def sizeHint(self):
+            return QtCore.QSize(400,400)
+
+    duck_gui = DuckMainWindow()
+    form = AppointmentOverviewWidget("0800","1900",15, 2, duck_gui)
+    duck_gui.setCentralWidget(form)
+    duck_gui.show()
+
+
     d1, d2 = appointments.dentistDay(4), appointments.dentistDay(5)
 
     d1.start=830
@@ -668,5 +681,5 @@ if __name__ == "__main__":
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("redrawn"), redrawn)
     form.show()
-    
+
     sys.exit(app.exec_())
