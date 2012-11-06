@@ -79,7 +79,7 @@ def printDupReceipt(om_gui):
     dupdate = om_gui.ui.dupReceiptDate_lineEdit.text()
     amount = om_gui.ui.receiptDoubleSpinBox.value()
 
-    printReceipt(om_gui, {_("Professional Services"):amount},
+    printReceipt(om_gui, {_("Professional Services"):amount*100},
         total=amount*100, duplicate=True, dupdate=dupdate)
 
     om_gui.pt.addHiddenNote("printed", "%s %.02f"% (
@@ -110,7 +110,6 @@ def printReceipt(om_gui, valDict, total="0.00", duplicate=False, dupdate=""):
     if myreceipt.print_():
         if duplicate:
             commitPDFtoDB(om_gui, "dup receipt")
-            om_gui.pt.addHiddenNote("printed", "dup receipt")
         else:
             commitPDFtoDB(om_gui, "receipt")
             om_gui.pt.addHiddenNote("printed", "receipt")
@@ -219,7 +218,7 @@ def customEstimate(om_gui, html="", version=0):
         ehtml = "<br />%s"% _(
         "Estimate for your current course of treatment.")
         ehtml+="<br />"*4
-        ehtml+='<table width=400>'
+        ehtml+='<table width="400">'
 
 
         #separate into NHS and non-NHS items.
@@ -236,7 +235,7 @@ def customEstimate(om_gui, html="", version=0):
             ("P", _("Private items"))
             ):
             if sorted_ests[type_]:
-                ehtml += u'<tr><td rowspan = "3"><b>%s</b></td></tr>'% (
+                ehtml += u'<tr><td colspan = "3"><b>%s</b></td></tr>'% (
                     description)
             for est in sorted_ests[type_]:
                 pt_total+=est.ptfee

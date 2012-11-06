@@ -20,6 +20,7 @@
 ##                                                                           ##
 ###############################################################################
 
+import logging
 import re
 import urllib2
 from xml.dom import minidom
@@ -52,7 +53,21 @@ EXAMPLE_RESULT = '''
 </body>
 </html>
 '''
+class UpperCaseLineEdit(QtGui.QLineEdit):
+    '''
+    A custom line edit that accepts only BLOCK LETTERS.
+    '''
+    def setText(self, text):
+        QtGui.QLineEdit.setText(self, QtCore.QString(text).toUpper())
 
+    def keyPressEvent(self, event):
+        '''
+        convert the text to upper case, and pass the signal on to the
+        base widget
+        '''
+        QtGui.QLineEdit.keyPressEvent(self, event)
+        self.setText(self.text())
+        self.textEdited.emit(self.text())
 
 class ChildSmileDialog(BaseDialog):
     result = ""
@@ -60,10 +75,10 @@ class ChildSmileDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
 
         self.main_ui = parent
-        QtCore.QTimer.singleShot(0, self.simd_lookup)
         self.header_label = QtGui.QLabel()
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.pcde_le = QtGui.QLineEdit(self.main_ui.pt.pcde)
+        self.pcde_le = UpperCaseLineEdit()
+        self.pcde_le.setText(self.main_ui.pt.pcde)
         self.simd_label = QtGui.QLabel()
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -71,8 +86,8 @@ class ChildSmileDialog(BaseDialog):
         self.insertWidget(self.pcde_le)
         self.insertWidget(self.simd_label)
 
-        self.check_pcde()
-        self.pcde_le.editingFinished.connect(self.simd_lookup)
+        self.pcde_le.textEdited.connect(self.check_pcde)
+
 
     @property
     def pcde(self):
@@ -81,19 +96,31 @@ class ChildSmileDialog(BaseDialog):
         except:
             return ""
 
-    def check_pcde(self):
-        if not re.match("[A-Z][A-Z](\d+) (\d+)[A-Z][A-Z]", self.pcde):
-            self.header_label.setText(_("Please enter a valid postcode"))
-            return False
+    @property
+    def valid_postcode(self):
+        return bool(re.match("[A-Z][A-Z](\d+) (\d+)[A-Z][A-Z]", self.pcde))
 
-        return True
+    def postcode_warning(self):
+        if not self.valid_postcode:
+            QtGui.QMessageBox.warning(self, "error", "Postcode is not valid")
+
+    def check_pcde(self):
+        if self.valid_postcode:
+            QtCore.QTimer.singleShot(50, self.simd_lookup)
+        else:
+            self.header_label.setText(_("Please enter a valid postcode"))
+            self.simd_label.setText("")
+            self.enableApply(False)
 
     def simd_lookup(self):
         '''
         poll the server for a simd for a postcode
         '''
-        self.header_label.setText(_("Polling website with Postcode"))
-        if self.check_pcde():
+        try:
+            self.header_label.setText(_("Polling website with Postcode"))
+            QtGui.QApplication.instance().setOverrideCursor(
+                QtCore.Qt.WaitCursor)
+
             pcde = self.pcde.replace(" ", "%20")
 
             url = "%s?pCode=%s" %(LOOKUP_URL, pcde)
@@ -105,10 +132,13 @@ class ChildSmileDialog(BaseDialog):
             self.simd_label.setText(self.result)
 
             self.enableApply(True)
-        else:
+            QtGui.QApplication.instance().restoreOverrideCursor()
+        except Exception as exc:
+            logging.exception("error polling NHS website?")
+            QtGui.QApplication.instance().restoreOverrideCursor()
             QtGui.QMessageBox.warning(self, "error",
-            "Postcode is not valid")
-
+                "unable to poll NHS website")
+            self.reject()
 
     def _parse_result(self, result):
         dom = minidom.parseString(result)
@@ -120,12 +150,17 @@ class ChildSmileDialog(BaseDialog):
         return int(re.search("(\d+)", self.result).groups()[0])
 
     def exec_(self):
+        self.check_pcde()
+        QtCore.QTimer.singleShot(0, self.postcode_warning)
         if BaseDialog.exec_(self):
-            if self.check_pcde():
+            if self.valid_postcode:
                 self.main_ui.pt.pcde = self.pcde
 
             self.main_ui.addNewNote("CHILDSMILE (postcode '%s'): %s"%
                 (self.pcde, self.result))
+
+            return True
+
 
 if __name__ == "__main__":
 
@@ -139,11 +174,11 @@ if __name__ == "__main__":
     ui = QtGui.QMainWindow()
     ui.pt = namedtuple("pt",("pcde",))
 
-    ui.pt.pcde = "IV1 1P"
+    ui.pt.pcde = "Iv1 1P"
     ui.addNewNote = _mock_function
 
     dl = ChildSmileDialog(ui)
     #print dl._parse_result(EXAMPLE_RESULT)
-    dl.exec_()
-    print (dl.result)
-    print (dl.simd_number)
+    if dl.exec_():
+        print (dl.result)
+        print (dl.simd_number)
