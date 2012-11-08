@@ -33,7 +33,7 @@ class AppointmentWidget(QtGui.QFrame):
     textDetail is the number of slots to draw before writing the time text
     parentWidget =optional
     '''
-
+    selected_serialno = None
     def __init__(self, sTime, fTime, om_gui):
         QtGui.QFrame.__init__(self, om_gui)
 
@@ -199,6 +199,12 @@ class AppointmentWidget(QtGui.QFrame):
         self.connect(self.memo_lineEdit,
         QtCore.SIGNAL("editingFinished()"), self.newMemo)
 
+    def showEvent(self, event=None):
+        if self.om_gui.pt:
+            self.selected_serialno = self.om_gui.pt.serialno
+        else:
+            self.selected_serialno = None
+
     def update(self):
         if not self.outofoffice:
             self.canvas.update()
@@ -353,7 +359,7 @@ class appointmentCanvas(QtGui.QWidget):
         send it a value like "HHMM" or "HH:MM" to draw a marker at that time
         '''
         self.setTime = t
-        if t and self.startTime < int(t) < self.endTime:
+        if t and self.startTime < self.minutesPastMidnight(t) < self.endTime:
             return True
 
     def qTime(self, t):
@@ -743,7 +749,7 @@ class appointmentCanvas(QtGui.QWidget):
             rect = QtCore.QRectF(timeWidth,startcell*slotHeight,
             self.width()-timeWidth, (endcell-startcell)*slotHeight)
 
-            if sno !=0 and sno == self.om_gui.pt.serialno:
+            if sno !=0 and sno == self.pWidget.selected_serialno:
                 painter.setBrush(QtGui.QColor("orange"))
             elif self.selected == (startcell, endcell):
                 painter.setBrush(QtGui.QColor("#AAAAAA"))
@@ -821,9 +827,6 @@ class appointmentCanvas(QtGui.QWidget):
             painter.drawRect(trect)
             painter.drawText(trect, QtCore.Qt.AlignHCenter, droptime)
 
-        ## SIGNAL NO LONGER USED
-        #self.pWidget.emit(QtCore.SIGNAL("redrawn"), dragScale)
-
 if __name__ == "__main__":
     import datetime
     class patient():
@@ -836,17 +839,8 @@ if __name__ == "__main__":
             self.sname = "john"
             self.fname = "doe"
 
-    def clicktest_a(a):
-        print "clicktest_a", a
-
-    def clicktest_b(a):
-        print "clicktest_b",a
-
-    def clicktest_c(a):
-        print "clicktest_c",a
-
-    def click(a):
-        print "print me", a
+    def clicktest(*args):
+        print "clicktest", args
 
     import sys
     localsettings.initiate()
@@ -856,7 +850,7 @@ if __name__ == "__main__":
     #--five minute slots, text every 3 slots
 
     #from openmolar.qt4gui import maingui
-    #parent = maingui.openmolarGui()
+    #parent = maingui.OpenmolarGui()
     parent = QtGui.QFrame()
     parent.pt = patient()
 
@@ -890,16 +884,12 @@ if __name__ == "__main__":
     ):
         form.setAppointment(appoint)
 
-    QtCore.QObject.connect(form,
-    QtCore.SIGNAL("AppointmentClicked"), clicktest_a)
-    QtCore.QObject.connect(form,
-    QtCore.SIGNAL("ClearEmergencySlot"), clicktest_b)
-    QtCore.QObject.connect(form,
-    QtCore.SIGNAL("BlockEmptySlot"), clicktest_c)
-    QtCore.QObject.connect(form,
-    QtCore.SIGNAL("print_me"), click)
-    QtCore.QObject.connect(form,
-    QtCore.SIGNAL("Appointment_into_EmptySlot"), clicktest_c)
+    form.connect(form, QtCore.SIGNAL("AppointmentClicked"), clicktest)
+    form.connect(form, QtCore.SIGNAL("ClearEmergencySlot"), clicktest)
+    form.connect(form, QtCore.SIGNAL("BlockEmptySlot"), clicktest)
+    form.connect(form, QtCore.SIGNAL("print_me"), clicktest)
+    form.connect(form,
+        QtCore.SIGNAL("Appointment_into_EmptySlot"), clicktest)
 
     v = QtGui.QVBoxLayout()
     v.setSpacing(0)

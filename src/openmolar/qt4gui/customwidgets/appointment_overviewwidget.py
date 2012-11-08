@@ -506,7 +506,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
                     ###appts
                     for appt in self.appts[dent.ix]:
-                        if appt.serialno == self.om_gui.pt.serialno:
+                        if (self.om_gui.pt and
+                        appt.serialno == self.om_gui.pt.serialno):
                             painter.setBrush(QtGui.QColor("orange"))
                         else:
                             painter.setBrush(APPTCOLORS["BUSY"])
@@ -582,9 +583,6 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                 painter.setPen(red_pen)
                 painter.drawLine(self.dragLine)
 
-            ## SIGNAL NO LONGER USED
-            #self.emit(QtCore.SIGNAL("redrawn"), dragScale)
-
         except Exception, e:
             print "error painting appointment overviewwidget", e
 
@@ -595,8 +593,6 @@ if __name__ == "__main__":
         print a
     def headerclicktest(a):
         print a
-    def redrawn(b):
-        print b
 
     import sys
     localsettings.initiate()
@@ -678,8 +674,6 @@ if __name__ == "__main__":
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("DentistHeading"),headerclicktest)
 
-    QtCore.QObject.connect(form,
-    QtCore.SIGNAL("redrawn"), redrawn)
     form.show()
 
     sys.exit(app.exec_())

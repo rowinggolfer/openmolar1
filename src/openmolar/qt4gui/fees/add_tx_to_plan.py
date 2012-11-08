@@ -411,7 +411,7 @@ if __name__ == "__main__":
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class
     app = QtGui.QApplication([])
-    mw = maingui.openmolarGui(app)
+    mw = maingui.OpenmolarGui()
     mw.getrecord(11956)
     #disable the functions called
     mw.load_treatTrees = lambda : None

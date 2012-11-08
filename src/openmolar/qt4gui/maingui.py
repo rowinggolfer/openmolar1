@@ -43,16 +43,10 @@ from openmolar.qt4gui import new_patient_gui
 
 from openmolar.qt4gui.printing import om_printing
 
-from openmolar.qt4gui.appointment_gui_modules import appt_gui_module
-from openmolar.qt4gui.appointment_gui_modules import appointment_drag
-from openmolar.qt4gui.appointment_gui_modules import pt_diary_treemodel
-
 from openmolar.qt4gui.charts import charts_gui
 
 #--dialogs made with designer
 from openmolar.qt4gui.compiled_uis import Ui_main
-from openmolar.qt4gui.compiled_uis import Ui_patient_finder
-from openmolar.qt4gui.compiled_uis import Ui_select_patient
 
 from openmolar.qt4gui.compiled_uis import Ui_related_patients
 from openmolar.qt4gui.compiled_uis import Ui_options
@@ -69,7 +63,6 @@ from openmolar.qt4gui.dialogs import save_pttask
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs import choose_tooth_dialog
-from openmolar.qt4gui.dialogs import choose_clinicians
 from openmolar.qt4gui.dialogs import clinician_select_dialog
 from openmolar.qt4gui.dialogs import assistant_select_dialog
 from openmolar.qt4gui.dialogs.phrasebook_dialog import PhraseBookDialog
@@ -77,21 +70,19 @@ from openmolar.qt4gui.dialogs.recall_dialog import RecallDialog
 from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
 from openmolar.qt4gui.dialogs.alter_todays_notes import \
     AlterTodaysNotesDialog
-from openmolar.qt4gui.dialogs.appt_mode_dialog import ApptModeDialog
+from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 
 
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
 from openmolar.qt4gui.tools import recordtools
 
-
 #--database modules
 #--(do not even think of making db queries from ANYWHERE ELSE)
+from openmolar.dbtools import appointments
 from openmolar.dbtools import patient_write_changes
 from openmolar.dbtools import recall
 from openmolar.dbtools import patient_class
-from openmolar.dbtools import search
-from openmolar.dbtools import appointments
 from openmolar.dbtools import calldurr
 from openmolar.dbtools import docsprinted
 from openmolar.dbtools import docsimported
@@ -117,35 +108,29 @@ from openmolar.qt4gui.printing import multiDayListPrint
 from openmolar.qt4gui.printing import bulk_mail
 
 #--custom widgets
+from openmolar.qt4gui.diary_widget import DiaryWidget
+from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
 from openmolar.qt4gui.customwidgets import chartwidget
-from openmolar.qt4gui.customwidgets import toothProps
-from openmolar.qt4gui.customwidgets.appointment_overviewwidget \
-    import AppointmentOverviewWidget
 from openmolar.qt4gui.customwidgets import toothProps
 from openmolar.qt4gui.customwidgets import perioToothProps
 from openmolar.qt4gui.customwidgets import perioChartWidget
 from openmolar.qt4gui.customwidgets import estimateWidget
-from openmolar.qt4gui.customwidgets import aptOVcontrol
-from openmolar.qt4gui.customwidgets import calendars
 from openmolar.qt4gui.customwidgets import notification_widget
-from openmolar.qt4gui.customwidgets import dent_hyg_selector
-from openmolar.qt4gui.customwidgets import staff_diaries
 
-class openmolarGui(QtGui.QMainWindow):
 
-    VIEW_MODE = 0
-    SCHEDULING_MODE = 1
-    BLOCKING_MODE = 2
-    NOTES_MODE = 3
+class OpenmolarGui(QtGui.QMainWindow):
 
-    appt_mode = VIEW_MODE
-
-    def __init__(self, app):
+    def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
+        self.diary_widget = DiaryWidget(self)
+        self.ui.tab_appointments.layout().addWidget(self.diary_widget)
+
+        self.pt_diary_widget = PtDiaryWidget(self)
+        self.ui.pt_diary_groupBox.layout().addWidget(self.pt_diary_widget)
+
         self.ui.splitter_patient.setSizes([80,20])
-        self.app = app
         #--initiate a blank version of the patient class this
         #--is used to check for state.
         #--make a deep copy to check for changes
@@ -155,11 +140,8 @@ class openmolarGui(QtGui.QMainWindow):
         self.selectedChartWidget = "st" #other values are "pl" or "cmp"
         self.editPageVisited = False
         self.forum_notified = False
-        self.appointmentData = appointments.dayAppointmentData()
         self.fee_models = []
         self.wikiloaded = False
-        self.current_weekViewClinicians = set()
-        self.appt_mode = self.VIEW_MODE
 
         self.addCustomWidgets()
         self.labels_and_tabs()
@@ -208,9 +190,10 @@ class openmolarGui(QtGui.QMainWindow):
 
     def wait(self, waiting=True):
         if waiting:
-            self.app.setOverrideCursor(QtCore.Qt.WaitCursor)
+            QtGui.QApplication.instance().setOverrideCursor(
+            QtCore.Qt.WaitCursor)
         else:
-            self.app.restoreOverrideCursor()
+            QtGui.QApplication.instance().restoreOverrideCursor()
 
     def notify(self, message):
         '''
@@ -222,7 +205,7 @@ class openmolarGui(QtGui.QMainWindow):
         '''
         function called by the quit button in the menu
         '''
-        self.app.closeAllWindows()
+        QtGui.QApplication.instance().closeAllWindows()
 
     def closeEvent(self, event=None):
         '''
@@ -353,133 +336,13 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.perioGroupBoxes.append(periogb)
             self.ui.perioChartWidgets.append(pchart)
 
-        #--set a model for the patients diary
-        self.pt_diary_model = pt_diary_treemodel.treeModel(self)
-        self.ui.pt_diary_treeView.setModel(self.pt_diary_model)
-
-        #--add a dragable listView for making appointments
-        self.day_week_appt_listView = \
-            appointment_drag.DraggableList(True, self)
-
-        #--add a dragable listView for making blocks
-        self.day_week_block_listView = \
-            appointment_drag.DraggableList(False, self)
-
-
-        self.apt_drag_model = appointment_drag.simple_model(self)
-        self.day_week_appt_listView.setModel(self.apt_drag_model)
-        #self.day_week_appt_listView.setSelectionModel(
-        #    self.apt_drag_model.selection_model)
-
-        block_model = appointment_drag.blockModel(self)
-        self.day_week_block_listView.setModel(block_model)
-
-        self.appt_clinicianSelection_comboBox = QtGui.QComboBox()
-        self.clinician_select_model = \
-            appointment_drag.clinicianSelectModel(self)
-        self.appt_clinicianSelection_comboBox.setModel(
-            self.clinician_select_model)
-
-        self.appt_mode_but = QtGui.QPushButton("....")
-        self.appt_mode_but.setMaximumWidth(40)
-        self.appt_mode_label = QtGui.QLabel(_("Browsing Mode"))
-        control_layout = QtGui.QHBoxLayout()
-        control_layout.setMargin(0)
-        control_layout.addWidget(self.appt_mode_label)
-        control_layout.addWidget(self.appt_mode_but)
-
-        #keep a pointer to this layout as the layout is moved between
-        #dayview and weekview
-        self.appt_mode_layout = QtGui.QVBoxLayout(
-            self.ui.day_view_control_frame)
-        self.appt_mode_layout.setMargin(0)
-        self.appt_mode_layout.addWidget(self.day_week_appt_listView)
-        self.appt_mode_layout.addWidget(self.day_week_block_listView)
-        self.appt_mode_layout.addStretch(0)
-        self.appt_mode_layout.addWidget(self.appt_clinicianSelection_comboBox)
-        self.appt_mode_layout.addLayout(control_layout)
-
-        self.apptBookWidgets=[]
-
-        #-appointment OVerview widget
-        self.ui.apptoverviews=[]
-
-        for day in range(7):
-            bw = AppointmentOverviewWidget("0800", "1900", 15, 2, self)
-            self.ui.apptoverviews.append(bw)
-            ## connect a signal which informs the drag/drop mechanism of the
-            ## widgets size
-            ## ignore weekends for this..... they are smaller
-            if day < 5:
-                QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
-                    self.day_week_appt_listView.setScaling)
-                QtCore.QObject.connect(bw, QtCore.SIGNAL("redrawn"),
-                    self.day_week_block_listView.setScaling)
-
-        i = 0
-        for frame in (self.ui.appt_OV_Frame1,
-        self.ui.appt_OV_Frame2, self.ui.appt_OV_Frame3,
-        self.ui.appt_OV_Frame4, self.ui.appt_OV_Frame5,
-        self.ui.appt_OV_Frame6, self.ui.appt_OV_Frame7):
-            hlayout=QtGui.QHBoxLayout(frame)
-            hlayout.setMargin(2)
-            hlayout.addWidget(self.ui.apptoverviews[i])
-            i += 1
-
-        self.ui.apptoverviewControls=[]
-
-        for widg in (self.ui.day1_frame, self.ui.day2_frame,
-        self.ui.day3_frame, self.ui.day4_frame, self.ui.day5_frame,
-        self.ui.day6_frame, self.ui.day7_frame):
-            hlayout = QtGui.QHBoxLayout(widg)
-            hlayout.setMargin(0)
-            control = aptOVcontrol.control()
-            self.ui.apptoverviewControls.append(control)
-            hlayout.addWidget(control)
-
-        self.ui.weekView_splitter.setSizes([600,10])
-
-        self.appt_clinician_selector = dent_hyg_selector.dentHygSelector(
-            localsettings.activedents, localsettings.activehygs)
-
-        self.monthClinicianSelector = dent_hyg_selector.dentHygSelector(
-            localsettings.activedents, localsettings.activehygs)
-
-        #--customise the appointment widget calendar
-        self.ui.dayCalendar = calendars.controlCalendar()
-        hlayout = QtGui.QHBoxLayout(self.ui.dayCalendar_frame)
-        hlayout.setMargin(0)
-        hlayout.addWidget(self.ui.dayCalendar)
-
-        self.ui.weekCalendar = calendars.weekCalendar()
-        hlayout = QtGui.QHBoxLayout(self.ui.weekCalendar_frame)
-        hlayout.setMargin(0)
-        hlayout.addWidget(self.ui.weekCalendar)
-
-        #--add a month view
-        self.ui.monthView = calendars.monthCalendar()
-        #hlayout=QtGui.QHBoxLayout(self.ui.monthView_frame)
-        #hlayout.setMargin(0)
-        #hlayout.addWidget(self.ui.monthView)
-        self.ui.monthView_scrollArea.setWidget(self.ui.monthView)
-        #--add a year view
-        self.ui.yearView = calendars.yearCalendar()
-        hlayout=QtGui.QHBoxLayout(self.ui.yearView_frame)
-        hlayout.setMargin(0)
-        hlayout.addWidget(self.ui.yearView)
 
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
 
-        self.timer1 = QtCore.QTimer()
-        self.timer1.start(30000) #fire every 30 seconds
-        QtCore.QObject.connect(self.timer1, QtCore.SIGNAL("timeout()"),
-        self.apptTicker)
-
-        self.timer2 = QtCore.QTimer()
-        self.timer2.start(60000) #fire every minute
-        QtCore.QObject.connect(self.timer2, QtCore.SIGNAL("timeout()"),
-        self.checkForNewForumPosts)
+        self.forum_timer = QtCore.QTimer()
+        self.forum_timer.start(60000) #fire every minute
+        self.forum_timer.timeout.connect(self.checkForNewForumPosts)
 
         self.enableEdit(False)
         for desc in referral.getDescriptions():
@@ -489,9 +352,6 @@ class openmolarGui(QtGui.QMainWindow):
         #-- add a header to the estimates page
         self.ui.estWidget=estimateWidget.estWidget()
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
-
-        self.staffDiary = staff_diaries.Diary()
-        self.ui.diaries_scrollArea.setWidget(self.staffDiary)
 
         #--history
         self.addHistoryMenu()
@@ -705,7 +565,7 @@ class openmolarGui(QtGui.QMainWindow):
         ci = self.ui.main_tabWidget.currentIndex()
 
         if ci ==1 :     #--user is viewing appointment book
-            appt_gui_module.makeDiaryVisible(self)
+            self.diary_widget.handle_calendar_signal()
 
         if ci == 6:
             #--user is viewing the feetable
@@ -775,13 +635,6 @@ class openmolarGui(QtGui.QMainWindow):
 
         self.wait(False)
 
-    def diary_tabWidget_nav(self, i):
-        '''
-        catches a signal that the diary tab widget has been moved
-        '''
-        if self.ui.diary_tabWidget.isVisible():
-            appt_gui_module.handle_calendar_signal(self)
-
     def home(self):
         '''
         User has clicked the homw push_button -
@@ -828,8 +681,7 @@ class openmolarGui(QtGui.QMainWindow):
             self.ui.moneytextBrowser.setHtml(localsettings.message)
             self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
-            self.pt_diary_model.clear(True)
-            self.apt_drag_model.clear()
+            self.schedule_control.clear()
             self.ui.notesEnter_textEdit.setHtml("")
 
             self.ui.medNotes_pushButton.setStyleSheet("")
@@ -866,7 +718,7 @@ class openmolarGui(QtGui.QMainWindow):
         else:
             estimateHtml = estimates.toBriefHtml(self.pt)
             self.ui.moneytextBrowser.setText(estimateHtml)
-            appt_gui_module.layout_ptDiary(self)
+            self.pt_diary_widget.layout_ptDiary()
             note = formatted_notes.rec_notes(self.pt.notes_dict)
             self.ui.recNotes_webView.setHtml(note)
 
@@ -1388,12 +1240,13 @@ class openmolarGui(QtGui.QMainWindow):
                 #--spotted new "instance" of patient
                 self.pt = patient_class.patient(serialno)
                 self.pt_dbstate = copy.deepcopy(self.pt)
+                self.pt_diary_widget.pt = self.pt
 
                 #-- this next line is to prevent a "not saved warning"
                 #self.pt_dbstate.fees = self.pt.fees
                 try:
                     self.loadpatient(newPatientReload=newPatientReload)
-                except Exception, e:
+                except Exception as e:
                     self.advise(
                     _("Error populating interface\n%s")% e, 2)
 
@@ -1455,7 +1308,6 @@ class openmolarGui(QtGui.QMainWindow):
         if self.enteringNewPatient():
             return
         self.editPageVisited = False
-        self.pt_diary_model.clear(True)
         self.ui.main_tabWidget.setCurrentIndex(0)
         if localsettings.station == "surgery":
             self.ui.tabWidget.setCurrentIndex(4)
@@ -1626,50 +1478,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.ui.closeTx_pushButton.setText("Resume Existing Course")
                 self.ui.closeTx_pushButton.setEnabled(True)
 
-    def final_choice(self, candidates):
-        def DoubleClick():
-            '''user double clicked on an item... accept the dialog'''
-            Dialog.accept()
-        Dialog = QtGui.QDialog(self)
-        dl = Ui_select_patient.Ui_Dialog()
-        dl.setupUi(Dialog)
-        dl.tableWidget.clear()
-        dl.tableWidget.setSortingEnabled(False)
-        #--good practice to disable this while loading
-        dl.tableWidget.setRowCount(len(candidates))
-        headers=('Serialno', 'Surname', 'Forename', 'dob', 'Address1',
-        'Address2', 'POSTCODE')
-
-        widthFraction=(10, 20, 20, 10, 30, 30, 10)
-        dl.tableWidget.setColumnCount(len(headers))
-        dl.tableWidget.setHorizontalHeaderLabels(headers)
-        dl.tableWidget.verticalHeader().hide()
-        row=0
-        Dialog.setFixedWidth(self.width()-100)
-        for col in range(len(headers)):
-            dl.tableWidget.setColumnWidth(col, widthFraction[col]*\
-                                          (Dialog.width()-100)/130)
-            #grrr - this is a hack. the tablewidget width should be used..
-            #but it isn't available yet.
-        for candidate in candidates:
-            col=0
-            for attr in candidate:
-                if type(attr) == type(datetime.date(1900,1,1)):
-                    item = QtGui.QTableWidgetItem(
-                    localsettings.formatDate(attr))
-                else:
-                    item = QtGui.QTableWidgetItem(str(attr))
-                dl.tableWidget.setItem(row, col, item)
-                col+=1
-            row+=1
-        dl.tableWidget.setCurrentCell(0, 1)
-        QtCore.QObject.connect(dl.tableWidget, QtCore.SIGNAL(
-        "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
-        if Dialog.exec_():
-            row=dl.tableWidget.currentRow()
-            result=dl.tableWidget.item(row, 0).text()
-            return int(result)
-
     def find_patient(self):
         if self.enteringNewPatient():
                 return
@@ -1677,50 +1485,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             print "not loading"
             self.advise("Not loading patient")
             return
-        def repeat_last_search():
-            dl.dateEdit.setDate(localsettings.lastsearch[2])
-            dl.addr1.setText(localsettings.lastsearch[4])
-            dl.tel.setText(localsettings.lastsearch[3])
-            dl.sname.setText(localsettings.lastsearch[0])
-            dl.fname.setText(localsettings.lastsearch[1])
-            dl.pcde.setText(localsettings.lastsearch[5])
-        Dialog = QtGui.QDialog(self)
-        dl = Ui_patient_finder.Ui_Dialog()
-        dl.setupUi(Dialog)
 
-        QtCore.QObject.connect(dl.repeat_pushButton,
-        QtCore.SIGNAL("clicked()"), repeat_last_search)
-
-        dl.sname.setFocus()
-        if Dialog.exec_():
-            dob = dl.dateEdit.date().toPyDate()
-            addr = str(dl.addr1.text().toAscii())
-            tel = str(dl.tel.text().toAscii())
-            sname = str(dl.sname.text().toAscii())
-            fname = str(dl.fname.text().toAscii())
-            pcde = str(dl.pcde.text().toAscii())
-            localsettings.lastsearch = (sname, fname, dob, tel, addr, pcde)
-
-            try:
-                serialno = int(sname)
-            except:
-                serialno = 0
-            if serialno > 0:
-                self.getrecord(serialno, True)
-            else:
-                candidates = search.getcandidates(dob, addr, tel, sname,
-                dl.snameSoundex_checkBox.checkState(), fname,
-                dl.fnameSoundex_checkBox.checkState(), pcde)
-
-                if candidates == ():
-                    self.advise("no match found", 1)
-                else:
-                    if len(candidates) > 1:
-                        sno = self.final_choice(candidates)
-                        if sno != None:
-                            self.getrecord(int(sno), True)
-                    else:
-                        self.getrecord(int(candidates[0][0]), True)
+        dl = FindPatientDialog(self)
+        if dl.exec_():
+            if dl.chosen_sno:
+                self.getrecord(dl.chosen_sno, True)
 
     def set_surgery_mode(self, surgery):
         localsettings.station = "surgery" if surgery else "reception"
@@ -1751,7 +1520,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         self.ui.main_tabWidget.setCurrentIndex(0)
         self.ui.tabWidget.setCurrentIndex(0)
-        self.ui.diary_tabWidget.setCurrentIndex(0)
+        self.diary_widget.reset()
         c_list = QtGui.QCompleter([_("Mr"), _("Mrs"), _("Ms"), _("Miss"),
         _("Master"), _("Dr"), _("Professor")])
         self.ui.titleEdit.setCompleter(c_list)
@@ -1760,9 +1529,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
-
-        self.ui.appt_notes_webView.setVisible(
-            self.appt_mode == self.NOTES_MODE)
 
         self.ui.moneytextBrowser.setHtml(localsettings.message)
         self.ui.recNotes_webView.setHtml("")
@@ -1790,8 +1556,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.forum_mode()
         self.addHistoryMenu()
-
-        self.appt_clinician_selector.hide()
 
     def addHistoryMenu(self):
         '''
@@ -2134,11 +1898,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         disable/enable widgets "en mass" when no patient loaded
         '''
-        self.ui.scheduleAppt_pushButton.hide()
-        self.ui.modifyAppt_pushButton.hide()
-        self.ui.clearAppt_pushButton.hide()
-        self.ui.findAppt_pushButton.hide()
-        self.ui.del_pastAppointments_pushButton.hide()
+        self.pt_diary_widget.hide_appointment_buttons()
 
         for widg in (
         self.ui.summaryChartWidget,
@@ -2156,7 +1916,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.notesEnter_textEdit,
         self.ui.synopsis_lineEdit,
         self.ui.memos_pushButton,
-        self.ui.appt_buttons_frame,
+        self.pt_diary_widget.ui.appt_buttons_frame,
         self.ui.childsmile_button):
 
             widg.setEnabled(arg)
@@ -2191,101 +1951,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if select_language.run(self):
             self.ui.retranslateUi(self)
 
-    def apptTicker(self):
-        '''
-        called by a timer, moves signals down the appointment books
-        '''
-        appt_gui_module.triangles(self)
-
-    def pt_diary_clicked(self, index):
-        '''
-        user has selected an appointment in the patient's diary
-        '''
-        appt_gui_module.ptDiary_selection(self, index)
-
-    def pt_diary_expanded(self, arg):
-        '''
-        user has expanded an item in the patient's diary.
-        this will resize columns (if necessary)
-        '''
-        appt_gui_module.adjustDiaryColWidths(self, arg)
-
-    def update_pt_diary_selection(self, appt):
-        '''
-        the drag model selected appointment has changed... pass this on
-        '''
-        self.pt_diary_model.setSelectedAppt(appt)
-        aprix = 0 if appt == None else appt.aprix
-        appt_gui_module.select_apr_ix(self, aprix)
-        appt_gui_module.handle_calendar_signal(self)
-
-    def newAppt_pushButton_clicked(self):
-        '''
-        user has asked for a new appointment
-        '''
-        appt_gui_module.newAppt(self)
-
-    def apptWizard_pushButton_clicked(self):
-        '''
-        user has asked for the appointment wizard, which provides quick access
-        to standard groups of appointments
-        '''
-        appt_gui_module.newApptWizard(self)
-
-    def scheduleAppt_pushButton_clicked(self):
-        '''
-        user about to make an appointment
-        '''
-        self.appt_mode = self.SCHEDULING_MODE
-        appt_gui_module.begin_makeAppt(self)
-
-    def del_pastAppointments(self):
-        '''
-        user has requested deletion of all past appointments for the patient
-        '''
-        appt_gui_module.deletePastAppointments(self)
-
-    def clearApptButton_clicked(self):
-        '''
-        user is clearing an appointment (from the patient's diary)
-        '''
-        appt_gui_module.clearApptButtonClicked(self)
-
-    def modifyAppt_clicked(self):
-        '''
-        modify an appointment in the patient's diary
-        '''
-        appt_gui_module.modifyAppt(self)
-
-    def findApptButton_clicked(self):
-        '''
-        a trivial function to "find" an appointment in the book
-        '''
-        appt_gui_module.findApptButtonClicked(self)
-
-    def printApptCard_clicked(self):
-        '''
-        user has asked for a print of an appointment card
-        '''
-        appt_gui_module.printApptCard(self)
 
     def printGP17_clicked(self):
         '''
         print a GP17
         '''
         om_printing.printGP17(self)
-
-    def clearTodaysEmergencyTime_action(self):
-        '''
-        convenience function to auto clear all the reserved time for today
-        '''
-        appt_gui_module.clearTodaysEmergencyTime(self)
-
-    def appointmentTools_action(self):
-        '''
-        launch a 2nd application to organise and extend the practice diary
-        '''
-        appt_gui_module.appointmentTools(self)
 
     def advancedRecordTools(self):
         '''
@@ -2298,13 +1969,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 dl = recordtools.recordTools(self)
                 dl.exec_()
 
-    def gotoToday_clicked(self):
-        '''
-        handles button pressed asking for today to be loaded on the
-        appointments page
-        '''
-        appt_gui_module.gotoToday(self)
-
     def apptBook_fontSize(self):
         '''
         user is asking for a different font on the appointment book
@@ -2312,196 +1976,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         i, result = QtGui.QInputDialog.getInteger(self, _("FontSize"),
         _("Enter your preferred font size for appointment book") , 8,6,16)
         if result:
-            appt_gui_module.aptFontSize(self, i)
-
-    def apptBook_patientClickedSignal(self, args):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been selected.
-        the arg is a list of serial numbers
-        '''
-        if self.appt_mode == self.NOTES_MODE:
-            serialno = args[0]
-            html = formatted_notes.todays_notes(serialno)
-            self.ui.appt_notes_webView.setHtml(html)
-
-            page = self.ui.appt_notes_webView.page()
-            page.setLinkDelegationPolicy(page.DelegateAllLinks)
-
-
-    def apptBook_appointmentClickedSignal(self, arg):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been selected.
-        the arg is a list of serial numbers
-        '''
-        appt_gui_module.appointment_clicked(self, arg)
-
-    def apptBook_editAppointmentMemoClickedSignal(self, *args):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been selected to have it's memo edited.
-        '''
-        appt_gui_module.edit_appointment_memo_clicked(self, *args)
-
-    def apptBook_appointmentCancelSignal(self, *args):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been selected.
-        the arg is a list of serial numbers
-        '''
-        appt_gui_module.appointment_cancel(self, *args)
-
-    def apptBook_emergencySlotSignal(self, arg):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        emergency slot has been selected.
-        '''
-        appt_gui_module.clearEmergencySlot(self, arg)
-
-    def apptBook_blockSlotSignal(self, arg):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        free slot has been selected for blocking.
-        '''
-        appt_gui_module.blockEmptySlot(self, arg)
-
-    def apptBook_fillSlotSignal(self, arg):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        free slot has been selected for filling.
-        '''
-        appt_gui_module.fillEmptySlot(self, arg)
-
-    def apptBook_apptDropped(self, appt, droptime, dent):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been dropped into it
-        '''
-        appt_gui_module.appt_dropped_onto_daywidget(self,
-            appt, droptime, dent)
-
-    def dayCalendar_changed(self):
-        '''
-        the calendar on the appointments overview page has changed.
-        time to re-layout the appointment overview
-        '''
-        appt_gui_module.handle_calendar_signal(self)
-
-    def customDateSignal(self, d):
-        '''
-        either the custom year or month calendar has emitted a date signal
-        '''
-        self.ui.dayCalendar.setSelectedDate(d)
-
-    def addCalendarMemo(self, memos):
-        '''
-        a memo needs to be added to a day
-        '''
-        appt_gui_module.updateDayMemos(self, memos)
-
-    def addCalendarPubHol(self, arg):
-        '''
-        a public holiday needs to be added to a day
-        '''
-        appt_gui_module.addpubHol(self, arg)
-
-    def aptOV_monthBack_clicked(self):
-        '''
-        handles a request to move back a month in the appointments page
-        '''
-        appt_gui_module.aptOV_monthBack(self)
-
-    def aptOV_monthForward_clicked(self):
-        '''
-        handles a request to move forward a month in the appointments page
-        '''
-        appt_gui_module.aptOV_monthForward(self)
-
-    def aptOV_yearBack_clicked(self):
-        '''
-        handles a request to move back a month in the appointments page
-        '''
-        appt_gui_module.aptOV_yearBack(self)
-
-    def aptOV_yearForward_clicked(self):
-        '''
-        handles a request to move forward a year in the appointments page
-        '''
-        appt_gui_module.aptOV_yearForward(self)
-
-    def aptOV_checkboxes_changed(self):
-        '''
-        handles the signals from the options checkboxes on the appt OV page
-        Lunch, emergencies  etc..
-        '''
-        appt_gui_module.handle_aptOV_checkboxes(self)
-
-    def manage_dayView_clinicians(self, toggled=None):
-        '''
-        radiobutton toggling who's book to show on the appointment
-        '''
-        appt_gui_module.layout_dayView(self)
-        if toggled == None:
-            toggled = self.ui.day_clinician_selector_groupBox.isChecked()
-        self.appt_clinician_selector.setVisible(toggled)
-        if toggled:
-            i = self.clinician_select_model.manual_index
-            self.appt_clinicianSelection_comboBox.setCurrentIndex(i)
-
-    def manage_month_and_year_View_clinicians(self):
-        '''
-        radiobutton toggling who's book to show on the appointment
-        '''
-        self.dl = choose_clinicians.dialog(self.monthClinicianSelector, self)
-        self.dl.exec_()
-        val = self.monthClinicianSelector.allChecked()
-        self.ui.monthClinicians_checkBox.setChecked(val)
-        self.ui.yearClinicians_checkBox.setChecked(val)
-        appt_gui_module.handle_calendar_signal(self)
-
-    def month_and_year_All_clinicians(self):
-        '''
-        checkbox has been clicked, if True, then checkAll
-        '''
-        if self.sender().isChecked():
-            self.monthClinicianSelector.checkAll()
-        else:
-            self.monthClinicianSelector.checkAll(QtCore.Qt.Unchecked)
-        appt_gui_module.handle_calendar_signal(self)
-
-    def aptOVwidget_userHasChosen_slot(self, slot):
-        '''
-        user has been offered a slot, and accepted it.
-        the argument provides the required details
-        '''
-        appt_gui_module.makeAppt(self,
-            self.pt_diary_model.selectedAppt, slot)
-
-    def aptOVwidget_dropped_appointment(self, appt, slot, offset):
-        '''
-        user has dropped an appointment into a free slot on a week view widget
-        '''
-        appt_gui_module.makeAppt(self, appt, slot, offset)
-
-    def apptOVwidget_header_clicked(self, arg):
-        '''
-        user has clicked on the header of a apptOV widget.
-        the header contains the dentist's initials, passed as the argument here
-        '''
-        appt_gui_module.apptOVheaderclick(self, arg)
-
-    def aptOVlabel_clicked(self, arg):
-        '''
-        user has clicked on the label situated above the aptOV widgets
-        '''
-        appt_gui_module.aptOVlabelClicked(self, arg)
-
-    def aptOVlabel_rightClicked(self, arg):
-        '''
-        user has right clicked on the label situated above the aptOV widgets
-        '''
-        appt_gui_module.aptOVlabelRightClicked(self, arg)
+            self.diary_widget.aptFontSize(i)
 
     def takePayment_pushButton_clicked(self):
         '''
@@ -3022,12 +2497,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         om_printing.printaccount(self, tone)
 
-    def printMonth_pushButton_clicked(self):
-        '''
-        print the current Monthe View
-        '''
-        om_printing.printMonth(self)
-
     def testGP17(self):
         '''
         used to test print a GP17 (NHS scotland) claim form
@@ -3058,28 +2527,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 dlist.addDaylist(arg[1], arg[0], data)
         if something_to_print:
             dlist.print_()
-
-    def bookPrint(self, dentist, adate):
-        '''
-        print an appointment book
-        '''
-        try:
-            books = ((dentist, adate), )
-            om_printing.printdaylists(self, books)
-        except KeyError:
-            self.advise("error printing book", 1)
-
-    def bookmemo_Edited(self, arg):
-        '''
-        user has double clicked on the appointment widget memo label
-        '''
-        dentist, memo = arg
-        apptix = localsettings.apptix[dentist]
-        if self.appointmentData.getMemo(apptix) != memo:
-            appointments.setMemos(
-            self.ui.dayCalendar.selectedDate().toPyDate(),
-            ((apptix, memo),))
-            self.advise("adding day memo - %s %s"% (dentist, memo))
 
     def daylistPrintWizard(self):
         '''
@@ -3130,24 +2577,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                     self.updateNotesPage()
                     self.load_notes_summary()
 
-    def set_appt_mode(self):
-        dl = ApptModeDialog(self)
-        if dl.exec_():
-            self.update_appt_mode_label()
-            appt_gui_module.handle_calendar_signal(self)
-
-    def update_appt_mode_label(self):
-        if self.appt_mode == self.SCHEDULING_MODE:
-            value = _("Scheduling Mode")
-        elif self.appt_mode == self.BLOCKING_MODE:
-            value = _("Blocking Mode")
-        elif self.appt_mode == self.NOTES_MODE:
-            value = _("Notes Mode")
-        else:
-            value = _("Browsing Mode")
-
-        self.appt_mode_label.setText(value)
-
     def setupSignals(self):
         '''
         a function to call other functions (to keep the code clean)
@@ -3167,8 +2596,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.signals_notesPage()
         self.signals_periochart()
         self.signals_tabs()
-        self.signals_appointmentTab()
-        self.signals_appointmentOVTab()
+        self.signals_appointments()
         self.signals_forum()
         self.signals_history()
         self.signals_bulk_mail()
@@ -3247,11 +2675,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         a function to connect all the receptionists buttons
         '''
-        QtCore.QObject.connect(self.ui.pt_diary_treeView,
-        QtCore.SIGNAL("expanded(QModelIndex)"), self.pt_diary_expanded)
-
-        QtCore.QObject.connect(self.ui.pt_diary_treeView,
-        QtCore.SIGNAL("clicked (QModelIndex)"), self.pt_diary_clicked)
 
         QtCore.QObject.connect(self.ui.printAccount_pushButton,
         QtCore.SIGNAL("clicked()"), self.printaccount)
@@ -3264,30 +2687,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.takePayment_pushButton,
         QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.apptWizard_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apptWizard_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.newAppt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.newAppt_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.scheduleAppt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.scheduleAppt_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.del_pastAppointments_pushButton,
-        QtCore.SIGNAL("clicked()"), self.del_pastAppointments)
-
-        QtCore.QObject.connect(self.ui.clearAppt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.clearApptButton_clicked)
-
-        QtCore.QObject.connect(self.ui.modifyAppt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.modifyAppt_clicked)
-
-        QtCore.QObject.connect(self.ui.findAppt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.findApptButton_clicked)
-
-        QtCore.QObject.connect(self.ui.printAppt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printApptCard_clicked)
 
         QtCore.QObject.connect(self.ui.printGP17_pushButton,
         QtCore.SIGNAL("clicked()"), self.printGP17_clicked)
@@ -3303,7 +2702,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.SIGNAL("loadFinished(bool)"), self.webviewloaded)
 
         for wv in (self.ui.notes_webView, self.ui.notesSummary_webView,
-        self.ui.appt_notes_webView):
+        self.diary_widget.ui.appt_notes_webView):
             wv.linkClicked.connect(self.notes_link_clicked)
 
 
@@ -3394,8 +2793,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.actionTable_View_For_Charting.toggled.connect(
             self.showChartTable)
 
-        QtCore.QObject.connect(self.ui.actionClear_Today_s_Emergency_Slots,
-        QtCore.SIGNAL("triggered()"), self.clearTodaysEmergencyTime_action)
+        self.ui.actionClear_Today_s_Emergency_Slots.triggered.connect(
+            self.diary_widget.clearTodaysEmergencyTime)
 
         QtCore.QObject.connect(self.ui.actionTest_Print_a_GP17,
         QtCore.SIGNAL("triggered()"), self.testGP17)
@@ -3404,7 +2803,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
 
         QtCore.QObject.connect(self.ui.actionAppointment_Tools,
-        QtCore.SIGNAL("triggered()"), self.appointmentTools_action)
+        QtCore.SIGNAL("triggered()"), self.diary_widget.appointmentTools)
 
         QtCore.QObject.connect(self.ui.actionPrint_Daylists,
         QtCore.SIGNAL("triggered()"), self.daylistPrintWizard)
@@ -3736,9 +3135,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_tabs(self, connect=True):
         '''
-        connect (or disconnect) the slots for the main_tabWidget, tabWidget
-        and the diary tabWidget
-        default is to connect
+        connect (or disconnect) the slots for the main_tabWidget,
+        and patient tabWidget        default is to connect
         '''
         if connect:
             QtCore.QObject.connect(self.ui.main_tabWidget,
@@ -3746,9 +3144,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
             QtCore.QObject.connect(self.ui.tabWidget,
             QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
-
-            QtCore.QObject.connect(self.ui.diary_tabWidget,
-            QtCore.SIGNAL("currentChanged(int)"), self.diary_tabWidget_nav)
         else:
             QtCore.QObject.disconnect(self.ui.main_tabWidget,
             QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
@@ -3756,126 +3151,28 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.QObject.disconnect(self.ui.tabWidget,
             QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
 
-            QtCore.QObject.disconnect(self.ui.diary_tabWidget,
-            QtCore.SIGNAL("currentChanged(int)"), self.diary_tabWidget_nav)
-
-    def signals_appointmentTab(self):
+    def signals_appointments(self):
         #signals raised on the main appointment tab
-        QtCore.QObject.connect(self.ui.goTodayPushButton,
-        QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
-
-        QtCore.QObject.connect(self.ui.goto_current_week_PushButton,
-        QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
-
         QtCore.QObject.connect(self.ui.actionSet_Font_Size,
         QtCore.SIGNAL("triggered ()"), self.apptBook_fontSize)
 
-        QtCore.QObject.connect(self.ui.printMonth_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)
+        self.diary_widget.patient_card_request.connect(self.getrecord)
+        self.diary_widget.schedule_control.appointment_selected.connect(
+            self.pt_diary_widget.update_pt_diary_selection)
+        self.diary_widget.pt_diary_changed.connect(
+            self.pt_diary_widget.refresh_ptDiary)
 
-        QtCore.QObject.connect(self.apt_drag_model,
-        QtCore.SIGNAL("selectedAppointment"), self.update_pt_diary_selection)
+        self.pt_diary_widget.start_scheduling.connect(self.start_scheduling)
+        self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
+        self.pt_diary_widget.data_changed.connect(
+            self.diary_widget.schedule_control.set_data)
 
-        self.appt_mode_but.clicked.connect(self.set_appt_mode)
+        self.pt_diary_widget.appointment_selected.connect(
+            self.diary_widget.schedule_control.update_appt_selection)
 
-    def signals_apptWidgets(self, book):
-
-        book.connect(book, QtCore.SIGNAL("print_me"), self.bookPrint)
-
-        book.connect(book, QtCore.SIGNAL("new_memo"),
-        self.bookmemo_Edited)
-
-        book.connect(book, QtCore.SIGNAL("PatientClicked"),
-        self.apptBook_patientClickedSignal)
-
-        book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
-        self.apptBook_appointmentClickedSignal)
-
-        book.connect(book, QtCore.SIGNAL("EditAppointmentMemo"),
-        self.apptBook_editAppointmentMemoClickedSignal)
-
-        book.connect(book, QtCore.SIGNAL("AppointmentCancel"),
-        self.apptBook_appointmentCancelSignal)
-
-        book.connect(book, QtCore.SIGNAL("ClearEmergencySlot"),
-        self.apptBook_emergencySlotSignal)
-
-        book.connect(book, QtCore.SIGNAL("BlockEmptySlot"),
-        self.apptBook_blockSlotSignal)
-
-        book.connect(book, QtCore.SIGNAL("Appointment_into_EmptySlot"),
-        self.apptBook_fillSlotSignal)
-
-        book.connect(book.canvas, QtCore.SIGNAL("ApptDropped"),
-        self.apptBook_apptDropped)
-
-    def signals_calendar(self, connect=True):
-        if connect:
-            QtCore.QObject.connect(self.ui.dayCalendar,
-            QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
-        else:
-            QtCore.QObject.disconnect(self.ui.dayCalendar,
-            QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
-
-    def signals_appointmentOVTab(self):
-
-        self.signals_calendar()
-
-        QtCore.QObject.connect(self.ui.weekCalendar,
-        QtCore.SIGNAL("weekChanged"), self.customDateSignal)
-
-        for cal in (self.ui.yearView, self.ui.monthView):
-            QtCore.QObject.connect(cal, QtCore.SIGNAL("selectedDate"),
-                self.customDateSignal)
-            QtCore.QObject.connect(cal, QtCore.SIGNAL("add_memo"),
-                self.addCalendarMemo)
-
-        QtCore.QObject.connect(self.ui.yearView,
-        QtCore.SIGNAL("add_pub_hol"), self.addCalendarPubHol)
-
-        QtCore.QObject.connect(self.ui.aptOVprevmonth,
-        QtCore.SIGNAL("clicked()"), self.aptOV_monthBack_clicked)
-
-        QtCore.QObject.connect(self.ui.aptOVnextmonth,
-        QtCore.SIGNAL("clicked()"), self.aptOV_monthForward_clicked)
-
-        QtCore.QObject.connect(self.ui.aptOVprevyear,
-        QtCore.SIGNAL("clicked()"), self.aptOV_yearBack_clicked)
-
-        QtCore.QObject.connect(self.ui.aptOVnextyear,
-        QtCore.SIGNAL("clicked()"), self.aptOV_yearForward_clicked)
-
-        QtCore.QObject.connect(self.apt_drag_model,
-        QtCore.SIGNAL("clinicianListChanged"), self.aptOV_checkboxes_changed)
-
-        QtCore.QObject.connect(self.ui.monthView_clinicians_pushButton,
-        QtCore.SIGNAL("clicked()"), self.manage_month_and_year_View_clinicians)
-
-        QtCore.QObject.connect(self.ui.yearView_clinicians_pushButton,
-        QtCore.SIGNAL("clicked()"), self.manage_month_and_year_View_clinicians)
-
-        QtCore.QObject.connect(self.ui.monthClinicians_checkBox,
-        QtCore.SIGNAL("clicked()"), self.month_and_year_All_clinicians)
-
-        QtCore.QObject.connect(self.ui.yearClinicians_checkBox,
-        QtCore.SIGNAL("clicked()"), self.month_and_year_All_clinicians)
-
-        for widg in self.ui.apptoverviews:
-            widg.connect(widg, QtCore.SIGNAL("SlotClicked"),
-            self.aptOVwidget_userHasChosen_slot)
-
-            widg.connect(widg, QtCore.SIGNAL("ApptDropped"),
-            self.aptOVwidget_dropped_appointment)
-
-            widg.connect(widg, QtCore.SIGNAL("DentistHeading"),
-            self.apptOVwidget_header_clicked)
-
-        for control in self.ui.apptoverviewControls:
-            self.connect(control,
-            QtCore.SIGNAL("clicked"), self.aptOVlabel_clicked)
-
-            self.connect(control,
-            QtCore.SIGNAL("right-clicked"), self.aptOVlabel_rightClicked)
+    def start_scheduling(self):
+        self.ui.main_tabWidget.setCurrentIndex(1) #appointmenttab
+        self.diary_widget.start_scheduling(self.pt)
 
     def recalculateEstimate(self):
         '''
@@ -3933,7 +3230,7 @@ def main(app):
         print "unable to run... no login"
         sys.exit()
     localsettings.initiate()
-    mainWindow = openmolarGui(app)
+    mainWindow = OpenmolarGui()
     sys.excepthook = mainWindow.excepthook
     mainWindow.show()
     if __name__ != "__main__":

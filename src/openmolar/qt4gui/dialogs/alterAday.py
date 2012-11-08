@@ -236,7 +236,7 @@ if __name__ == "__main__":
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     from openmolar.qt4gui import maingui
-    om_gui = maingui.openmolarGui(app)
+    om_gui = maingui.OpenmolarGui()
     date = QtCore.QDate.currentDate()
     dl = alterDay(om_gui, date)
 

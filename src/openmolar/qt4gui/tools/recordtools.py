@@ -329,7 +329,7 @@ if __name__ == "__main__":
     import sys
     from openmolar.qt4gui import maingui
     app = QtGui.QApplication(sys.argv)
-    om_gui = maingui.openmolarGui(app)
+    om_gui = maingui.OpenmolarGui()
     om_gui.getrecord(1)
     ui = recordTools(om_gui)
     ui.exec_()

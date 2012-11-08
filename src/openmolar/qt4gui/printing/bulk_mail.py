@@ -508,7 +508,7 @@ if __name__ == "__main__":
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall
 
-    om_gui = maingui.openmolarGui(app)
+    om_gui = maingui.OpenmolarGui()
 
     conditions = "recd>=%s and recd<=%s and dnt1=%s"
     values = date(2012,7,1), date(2012,7,31), 6
