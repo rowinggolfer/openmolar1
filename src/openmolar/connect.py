@@ -42,11 +42,13 @@ if settingsversion == "1.1":
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
 kwargs = {
-    "host":myHost, 
+    "host":myHost,
     "port":myPort,
-    "user":myUser, 
+    "user":myUser,
     "passwd":myPassword,
-    "db":myDb
+    "db":myDb,
+    "use_unicode":True,
+    "charset":"utf8"
     }
 
 if sslnode and sslnode[0].firstChild.data=="True":
@@ -57,9 +59,9 @@ if sslnode and sslnode[0].firstChild.data=="True":
     #-- however, IIUC, just using ca will encrypt the data
     kwargs["ssl_settings"] = {'ca': '/etc/mysql/ca-cert.pem'}
 else:
-    if localsettings.VERBOSE: 
+    if localsettings.VERBOSE:
         print "not using ssl (you really should!)"
-    
+
 dom.unlink()
 
 GeneralError = MySQLdb.Error
@@ -75,7 +77,7 @@ class omSQLresult():
         self.message = ""
         self.number = 0
         self.result = False
-    
+
     def __nonzero__(self):
         '''
         used in case the class is used thus
@@ -119,7 +121,7 @@ def connect():
             if not (mainconnection and mainconnection.open):
                 print "New connection needed"
                 print "connecting to %s on %s port %s"% (myDb, myHost, myPort)
-                
+
                 mainconnection = MySQLdb.connect(**kwargs)
                 mainconnection.autocommit(True)
             else:
@@ -132,7 +134,7 @@ def connect():
             mainconnection = None
         time.sleep(2)
         attempts += 1
-        
+
     raise exc #localsettings.omDBerror(exc)
 
 if __name__ == "__main__":

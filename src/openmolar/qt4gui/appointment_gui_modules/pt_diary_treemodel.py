@@ -96,13 +96,13 @@ class treeModel(QtCore.QAbstractItemModel):
         self.selected_icon = QtGui.QIcon()
         self.selected_icon.addPixmap(
             QtGui.QPixmap(":/icons/schedule_active.png"))
-        
+
     def addAppointments(self, appointments):
         if appointments != self.appointments:
             self.clear()
             self.appointments = appointments
             self.setupModelData()
-        
+
     def setSelectedAppt(self, appt):
         if appt and self.om_gui:
             pt = self.om_gui.pt
@@ -110,7 +110,7 @@ class treeModel(QtCore.QAbstractItemModel):
             appt.cset = pt.cset
         self.selectedAppt = appt
         self.emit(QtCore.SIGNAL("selectedAppt"),appt)
-        
+
     def clear(self, resetSelectedAppt=False):
         if resetSelectedAppt:
             self.selectedAppt = None
@@ -146,7 +146,7 @@ class treeModel(QtCore.QAbstractItemModel):
         elif role == QtCore.Qt.DecorationRole:
             if (index.column() == 0 and
             item.appointment and item.appointment.unscheduled):
-                if (self.selectedAppt and 
+                if (self.selectedAppt and
                 item.appointment.aprix == self.selectedAppt.aprix):
                     return QtCore.QVariant(self.selected_icon)
                 return QtCore.QVariant(self.normal_icon)
@@ -195,7 +195,7 @@ class treeModel(QtCore.QAbstractItemModel):
         childItem = index.internalPointer()
         if not childItem:
             return QtCore.QModelIndex()
-        
+
         parentItem = childItem.parent()
 
         if parentItem == None:
@@ -242,7 +242,7 @@ class treeModel(QtCore.QAbstractItemModel):
 
                 self.parents[cat] = parent
 
-            self.parents[cat].appendChild(TreeItem("", appt, 
+            self.parents[cat].appendChild(TreeItem("", appt,
                 self.parents[cat]))
 
     def searchModel(self, appt):
@@ -253,21 +253,21 @@ class treeModel(QtCore.QAbstractItemModel):
             '''
             a function called recursively, looking at all nodes beneath node
             '''
-            
+
             for child in node.childItems:
                 data = child.appointment
                 if appt == data:
                     index = self.createIndex(child.row(), 0, child)
                     return index
-                    
+
                 if child.childCount() > 0:
                     result = searchNode(child)
                     if result:
                         return result
-        
+
         return searchNode(self.parents[0])
-            
-        
+
+
     def findItem(self, apr_ix):
         '''
         get the model index of a specific appointment
@@ -279,16 +279,16 @@ class treeModel(QtCore.QAbstractItemModel):
                 break
         if appt:
             index = self.searchModel(appt)
-            return (True, index)            
+            return (True, index)
         return (False, None)
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     from openmolar.dbtools import appointments
     from openmolar.qt4gui import resources_rc
-    
+
     class duckPt(object):
         def __init__(self):
-            self.serialno = 707
+            self.serialno = 13279
             self.sname = "Neil"
             self.fname = "Wallace"
             self.cset = "P"
@@ -296,10 +296,11 @@ if __name__ == "__main__":
     def resize(arg=None):
         for col in range(model.columnCount(arg)):
             tv.resizeColumnToContents(col)
+
     def appt_clicked(index):
-        print index, 
+        print index,
         print tv.model().data(index, QtCore.Qt.UserRole)
-        
+
     def but_clicked():
         appoint_number = int(dialog.sender().text())
         result, index = model.findItem(appoint_number)
@@ -308,35 +309,36 @@ if __name__ == "__main__":
                 tv.setCurrentIndex(index)
                 return
         tv.clearSelection()
-    
+
     app = QtGui.QApplication([])
     localsettings.initiate()
 
     appts = appointments.get_pts_appts(duckPt())
-    
+
     model = treeModel()
     model.addAppointments(appts)
-    dialog = QtGui.QDialog()
+    mw = QtGui.QMainWindow()
 
-    dialog.setMinimumSize(800,300)
-    layout = QtGui.QVBoxLayout(dialog)
+    mw.setMinimumSize(800,300)
+    frame = QtGui.QFrame(mw)
+    layout = QtGui.QVBoxLayout(frame)
 
-    tv = QtGui.QTreeView(dialog)
+    tv = QtGui.QTreeView()
     tv.setModel(model)
     tv.setAlternatingRowColors(True)
     layout.addWidget(tv)
     tv.expandAll()
 
     buts = []
-    frame = QtGui.QFrame(dialog)
-    layout2 = QtGui.QHBoxLayout(frame)
+    but_frame = QtGui.QFrame()
+    layout2 = QtGui.QHBoxLayout(but_frame)
     for appt in appts:
-        but = QtGui.QPushButton(str(appt.aprix), frame)
+        but = QtGui.QPushButton(str(appt.aprix), mw)
         buts.append(but)
         layout2.addWidget(but)
         QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"), but_clicked)
-        
-    layout.addWidget(frame)
+
+    layout.addWidget(but_frame)
 
     index = model.parents.get(1, None)
     if index:
@@ -348,17 +350,12 @@ if __name__ == "__main__":
     QtCore.QObject.connect(tv, QtCore.SIGNAL("clicked (QModelIndex)"),
         appt_clicked)
 
-    
+
     but = QtGui.QPushButton("Clear Selection")
     layout.addWidget(but)
-    QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"), tv.clearSelection)
+    but.clicked.connect(tv.clearSelection)
 
 
-    dialog.exec_()
-    app.closeAllWindows()
-    
-    
-    
-    
-    
-    
+    mw.setCentralWidget(frame)
+    mw.show()
+    app.exec_()

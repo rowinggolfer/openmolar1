@@ -34,7 +34,7 @@ else:
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 
-CLIENT_SCHEMA_VERSION = "1.9"
+CLIENT_SCHEMA_VERSION = "2.0"
 DB_SCHEMA_VERSION = "unknown"
 
 ENCODING = locale.getpreferredencoding()
@@ -230,7 +230,7 @@ except AttributeError: # will happen on windows
     OM_DATE_FORMAT = r"%d/%m/%Y"
 
 #-- ditto the qt one
-QDATE_FORMAT = "d, MMMM, yyyy"
+QDATE_FORMAT = "dddd, d MMMM yyyy"
 
 #-- updated at login
 operator = "unknown"

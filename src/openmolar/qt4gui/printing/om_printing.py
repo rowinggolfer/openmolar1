@@ -19,12 +19,13 @@ import sys
 import copy
 import datetime
 import subprocess
+import tempfile
 
 from openmolar.settings import localsettings, utilities
 
 from openmolar.ptModules import estimates
 from openmolar.ptModules import standardletter
-from openmolar.ptModules import notes
+from openmolar.ptModules import formatted_notes
 from openmolar.ptModules import referral
 
 from openmolar.dbtools import docsprinted
@@ -39,7 +40,6 @@ from openmolar.qt4gui.compiled_uis import Ui_confirmDentist
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint
-from openmolar.qt4gui.printing import notesPrint
 from openmolar.qt4gui.printing import chartPrint
 from openmolar.qt4gui.printing import bookprint
 from openmolar.qt4gui.printing import letterprint
@@ -50,6 +50,8 @@ from openmolar.qt4gui.printing import accountPrint
 from openmolar.qt4gui.printing import estimatePrint
 from openmolar.qt4gui.printing import GP17
 from openmolar.qt4gui.printing import bookprint
+
+from openmolar.qt4gui.dialogs.print_record_dialog import PrintRecordDialog
 
 def commitPDFtoDB(om_gui, descr, serialno=None):
     '''
@@ -76,7 +78,7 @@ def printDupReceipt(om_gui):
     '''
     print a duplicate receipt
     '''
-    dupdate = om_gui.ui.dupReceiptDate_lineEdit.text()
+    dupdate = localsettings.currentDay()
     amount = om_gui.ui.receiptDoubleSpinBox.value()
 
     printReceipt(om_gui, {_("Professional Services"):amount*100},
@@ -87,14 +89,14 @@ def printDupReceipt(om_gui):
         amount))
     om_gui.updateHiddenNotesLabel()
 
-def printReceipt(om_gui, valDict, total="0.00", duplicate=False, dupdate=""):
+def printReceipt(om_gui, valDict, total="0.00"):
     '''
     print a receipt
     '''
     if om_gui.pt.serialno == 0:
         om_gui.advise(_("no patient selected"), 1)
         return
-    myreceipt = receiptPrint.receipt(om_gui)
+    myreceipt = receiptPrint.Receipt()
 
     myreceipt.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
     om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3, om_gui.pt.town,
@@ -103,16 +105,10 @@ def printReceipt(om_gui, valDict, total="0.00", duplicate=False, dupdate=""):
     myreceipt.total = total
 
     myreceipt.receivedDict = valDict
-    if duplicate:
-        myreceipt.isDuplicate = duplicate
-        myreceipt.dupdate = dupdate
 
     if myreceipt.print_():
-        if duplicate:
-            commitPDFtoDB(om_gui, "dup receipt")
-        else:
-            commitPDFtoDB(om_gui, "receipt")
-            om_gui.pt.addHiddenNote("printed", "receipt")
+        commitPDFtoDB(om_gui, "receipt")
+        om_gui.pt.addHiddenNote("printed", "receipt")
         om_gui.updateHiddenNotesLabel()
 
 def printLetter(om_gui):
@@ -349,8 +345,7 @@ def printChart(om_gui):
 def printMonth(om_gui):
     temp = om_gui.ui.monthView.selectedDate
     om_gui.ui.monthView.selectedDate = None
-    myimage = QtGui.QPixmap
-    printimage = myimage.grabWidget(om_gui.ui.monthView)
+    printimage = QtGui.QPixmap.grabWidget(om_gui.ui.monthView)
     myclass = chartPrint.printChart(printimage, landscape=True)
     myclass.sizeToFit()
     myclass.printpage()
@@ -516,20 +511,20 @@ def printrecall(om_gui):
         om_gui.pt.addHiddenNote("printed", "recall - non batch")
         om_gui.updateHiddenNotesLabel()
 
-def printNotesV(om_gui):
-    '''verbose notes print'''
-    om_gui.printNotes(1)
-
 def printNotes(om_gui, detailed=False):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
         return
-    note=notes.notes(om_gui.pt.notes_dict, detailed)
-    #--not verbose...
-    myclass=notesPrint.printNotes(note)
-    myclass.printpage()
-    om_gui.pt.addHiddenNote("printed", "notes")
-    om_gui.updateHiddenNotesLabel()
+
+    ##TODO - write this to a temp file.
+    #image_file.name = "/home/neil/chart.png"
+    image_file = tempfile.NamedTemporaryFile(suffix=".png")
+    image = QtGui.QPixmap.grabWidget(om_gui.ui.summaryChartWidget)
+    image.save(image_file.name)
+    dl = PrintRecordDialog(
+        om_gui.pt, "file://%s"% image_file.name, om_gui)
+    dl.exec_()
+    #image_file can go out of scope here.
 
 def printSelectedAccounts(om_gui):
     '''

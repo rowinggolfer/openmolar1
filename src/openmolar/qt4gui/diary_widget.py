@@ -430,7 +430,8 @@ class DiaryWidget(QtGui.QWidget):
         user has been offered a slot, and accepted it.
         the argument provides the required details
         '''
-        self.makeAppt(self.pt_diary_model.selectedAppt, slot)
+        self.makeAppt(self.schedule_control.appointment_model.currentAppt,
+            slot)
 
     def aptOVwidget_dropped_appointment(self, appt, slot, offset):
         '''
@@ -1035,6 +1036,8 @@ class DiaryWidget(QtGui.QWidget):
         for ov in self.ui.apptoverviews:
             ov.date = weekdates[self.ui.apptoverviews.index(ov)]
             ov.clear()
+            ov.mode = self.appt_mode
+
             manual =  False
             if manual:
                 userCheckedClinicians = self.getUserCheckedClinicians("week")
@@ -1072,38 +1075,38 @@ class DiaryWidget(QtGui.QWidget):
 
         if date < QtCore.QDate.currentDate() and not thisWeek:
             self.advise(_("You are now in the past!"))
-            self.ui.weekCalendar.setSelectedDate(localsettings.currentDay())
-            return
-        result, message, slots = self.addWeekViewAvailableSlots()
-        if not result:
-            self.advise(message)
-            for ov in self.ui.apptoverviews:
-                ov.update()
-            return
-        else:
-            if slots == []:
-                if find_next_appt:
-                    self.signals_calendar(False)
-                    self.aptOV_weekForward()
-                    self.signals_calendar()
-                    self.layout_weekView(find_next_appt=True)
-                    return
-                elif find_prev_appt:
-                    self.signals_calendar(False)
-                    moved_back = self.aptOV_weekBack()
-                    self.signals_calendar()
-                    if not moved_back:
-                        self.advise(_("showing current week"))
-                    else:
-                        self.layout_weekView(find_prev_appt=True)
-                        return
-                else:
-                    self.advise(message)
-            else:
+
+        if self.appt_mode == self.SCHEDULING_MODE:
+            result, message, slots = self.addWeekViewAvailableSlots()
+            if not result:
+                self.advise(message)
                 for ov in self.ui.apptoverviews:
-                    for slot in slots:
-                        if slot.date_time.date() == ov.date.toPyDate():
-                            ov.addSlot(slot)
+                    ov.update()
+                return
+            else:
+                if slots == []:
+                    if find_next_appt:
+                        self.signals_calendar(False)
+                        self.aptOV_weekForward()
+                        self.signals_calendar()
+                        self.layout_weekView(find_next_appt=True)
+                        return
+                    elif find_prev_appt:
+                        self.signals_calendar(False)
+                        moved_back = self.aptOV_weekBack()
+                        self.signals_calendar()
+                        if not moved_back:
+                            self.advise(_("showing current week"))
+                        else:
+                            self.layout_weekView(find_prev_appt=True)
+                            return
+                    else:
+                        self.advise(message)
+                else:
+                    for ov in self.ui.apptoverviews:
+                        for slot in slots:
+                            if slot.date_time.date() == ov.date.toPyDate():
+                                ov.addSlot(slot)
 
         for ov in self.ui.apptoverviews:
             for dent in ov.dents:
@@ -1128,11 +1131,13 @@ class DiaryWidget(QtGui.QWidget):
         '''
         if self.ui.diary_tabWidget.currentIndex() != 0:
             return
+
         self.ui.day_view_control_frame.setLayout(self.appt_mode_layout)
 
         for book in self.apptBookWidgets:
             book.clearAppts()
             book.setTime = None
+            book.mode = self.appt_mode
 
         d = self.ui.dayCalendar.selectedDate().toPyDate()
         workingOnly = False

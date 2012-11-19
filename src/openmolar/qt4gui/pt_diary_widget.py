@@ -34,6 +34,7 @@ from openmolar.qt4gui.compiled_uis import Ui_patient_diary
 from openmolar.qt4gui.compiled_uis import Ui_specify_appointment
 
 from openmolar.qt4gui.dialogs import appt_wizard_dialog
+from openmolar.qt4gui.dialogs import appt_prefs_dialog
 
 from openmolar.qt4gui.printing import apptcardPrint
 
@@ -45,6 +46,7 @@ class PtDiaryWidget(QtGui.QWidget):
     find_appt = QtCore.pyqtSignal(object)
     data_changed = QtCore.pyqtSignal(object, object, object)
     appointment_selected = QtCore.pyqtSignal(object, object)
+    preferences_changed = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -86,6 +88,15 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         populates the patient's diary model
         '''
+        memo = self.pt.appt_memo
+        if memo is not None:
+            self.ui.appt_memo_lineEdit.setText(memo)
+        try:
+            self.om_gui.pt_dbstate._appt_memo = memo
+        except AttributeError as exc:
+            logging.debug("layout_ptDiary error %s"% exc.message)
+            pass
+
         appts = appointments.get_pts_appts(self.pt)
         self.diary_model.addAppointments(appts)
         self.ui.pt_diary_treeView.clearSelection()
@@ -578,6 +589,16 @@ class PtDiaryWidget(QtGui.QWidget):
         #self.updateHiddenNotesLabel()
 
 
+    def memo_edited(self):
+        print "memo_edited"
+        self.pt._appt_memo = unicode(self.ui.appt_memo_lineEdit.text())
+
+    def show_prefs_dialog(self):
+        dl = appt_prefs_dialog.ApptPrefsDialog(self.pt, self)
+        if dl.exec_():
+            self.preferences_changed.emit()
+
+
     def signals(self):
         self.ui.pt_diary_treeView.expanded.connect(self.treeview_expanded)
 
@@ -603,6 +624,11 @@ class PtDiaryWidget(QtGui.QWidget):
 
         QtCore.QObject.connect(self.ui.printAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.printApptCard_clicked)
+
+        self.ui.appt_memo_lineEdit.editingFinished.connect(self.memo_edited)
+
+        self.ui.recall_settings_pushButton.clicked.connect(
+            self.show_prefs_dialog)
 
 if __name__ == "__main__":
     import gettext

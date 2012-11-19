@@ -163,6 +163,11 @@ csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
                 trtchanges += '%s = %%s ,'% change
                 trtvalues.append(value)
 
+            elif change == "_appt_memo":
+                sqlcommands["appt_prefs"] = (
+                'replace into appt_prefs (serialno, note) values (%s, %s)',
+                (pt.serialno, pt._appt_memo))
+
     result=True
     if patchanges != "":
         patvalues.append(pt.serialno)
@@ -184,8 +189,8 @@ csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
         for table in tables:
             if table == "estimates":
                 statements = ()
-                for query in sqlcommands["estimates"]:
-                    statements += ((query[0], query[1]),)
+                for query, value in sqlcommands["estimates"]:
+                    statements += ((query, value),)
             else:
                 statements = (sqlcommands[table],)
             for query, values in statements:

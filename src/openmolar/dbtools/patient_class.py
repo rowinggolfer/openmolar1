@@ -36,7 +36,7 @@ patientTableAtts = (
 'ul1st','ul2st','ul3st','ul4st','ul5st','ul6st','ul7st','ul8st',
 'll8st','ll7st','ll6st','ll5st','ll4st','ll3st','ll2st','ll1st',
 'lr1st','lr2st','lr3st','lr4st','lr5st','lr6st','lr7st','lr8st',
-'dent0','dent1','dent2','dent3','recd',
+'dent0','dent1','dent2','dent3',
 'dmask','minstart','maxend','billdate','billct',
 'billtype','pf20','money11','pf13','familyno','memo',
 'town','county','mobile','fax','email1','email2','status','source',
@@ -107,7 +107,7 @@ clinical_memos = ("synopsis",)
 ## changes
 ATTRIBS_TO_CHECK = patientTableAtts + exemptionTableAtts + bpeTableAtts + \
 currtrtmtTableAtts + mnhistTableAtts + perioTableAtts + planDBAtts + \
-clinical_memos + ("estimates",)
+clinical_memos + ("estimates",) + ("_appt_memo",)
 
 #################### sub classes ##############################################
 class planData(object):
@@ -202,6 +202,8 @@ class patient(object):
         self.synopsis = ""
 
         self._dayBookHistory = None
+        self._appt_memo = None
+        self._appt_memo_loaded = False # False for not loaded.
 
         if self.serialno != 0:
             #load stuff from the database
@@ -284,6 +286,19 @@ class patient(object):
             #self.setCurrentEstimate()
 
     @property
+    def appt_memo(self):
+        if not self._appt_memo_loaded:
+            db = connect.connect()
+            cursor = db.cursor()
+            query = 'select note from appt_prefs where serialno=%s'
+            if cursor.execute(query, self.serialno):
+                self._appt_memo = cursor.fetchone()[0]
+            cursor.close()
+            self._appt_memo_loaded = True
+
+        return self._appt_memo
+
+    @property
     def dayBookHistory(self):
         if self._dayBookHistory is None:
             db = connect.connect()
@@ -296,6 +311,17 @@ class patient(object):
 
     def __repr__(self):
         return "'Patient_class instance - serialno %d'"% self.serialno
+
+    @property
+    def recd(self):
+        ##TODO
+        print "WARNING - pt.recd called"
+        return datetime.date.today()
+
+    def update_recd(self):
+        ##TODO
+        print "WARNING - pt.update_recd called"
+
 
     @property
     def address(self):
@@ -698,6 +724,11 @@ self.serialno, self.courseno0))
             self.load_warnings.append(_("Age Exemption removed"))
         else:
             return True
+
+    @property
+    def name_id(self):
+        return u"%s %s %s - %s"% (
+            self.title, self.fname, self.sname, self.serialno)
 
 if __name__ =="__main__":
     '''testing stuff'''

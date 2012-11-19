@@ -42,7 +42,6 @@ APPTCOLORS = {
     "N":QtGui.QColor("#d9d9ff"),
     "I":QtGui.QColor("#d9ffec"),
     "P":QtGui.QColor("#ffffd9"),
-    "BUSY":QtGui.QColor("#eeeeee"),
     "RESERVED CLINICAL TIME":QtGui.QColor("#ffcc99"),
     "LUNCH":QtGui.QColor("#dddddd"),
     "FREE":QtCore.Qt.transparent,
@@ -51,20 +50,11 @@ APPTCOLORS = {
     "//BLOCKED//":QtCore.Qt.transparent,
     "DOUBLE":QtCore.Qt.blue,
     "SLOT" : QtGui.QColor("#ffff99"),
-
-}
-
-APPT_OV_COLORS = {
     "HEADER" : QtCore.Qt.white,
     "BACKGROUND" : QtCore.Qt.white,
-    "BACKGROUND_" : QtGui.QColor("#dddddd"),
-    "SLOT" : QtGui.QColor("#ffff99"),
     "ACTIVE_SLOT" : QtGui.QColor("yellow"),
     "BUSY" : QtGui.QColor("#d9d9ff"),
-    "LUNCH":QtGui.QColor("#dddddd"),
-    "FREE" : QtCore.Qt.white,
-    "EMERGENCY" : QtGui.QColor("#ffd9ec"),
-    "default":QtGui.QColor("#eeeeee"),
+    "current_patient" : QtGui.QColor("orange"),
     }
 
 

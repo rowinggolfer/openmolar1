@@ -34,6 +34,10 @@ class AppointmentWidget(QtGui.QFrame):
     parentWidget =optional
     '''
     selected_serialno = None
+    BROWSING_MODE = 0
+    SCHEDULING_MODE = 1
+    mode = None
+
     def __init__(self, sTime, fTime, om_gui):
         QtGui.QFrame.__init__(self, om_gui)
 
@@ -751,6 +755,8 @@ class appointmentCanvas(QtGui.QWidget):
 
             if sno !=0 and sno == self.pWidget.selected_serialno:
                 painter.setBrush(QtGui.QColor("orange"))
+            elif self.pWidget.mode == self.pWidget.SCHEDULING_MODE:
+                painter.setBrush(APPTCOLORS["BUSY"])
             elif self.selected == (startcell, endcell):
                 painter.setBrush(QtGui.QColor("#AAAAAA"))
             elif APPTCOLORS.has_key(cset):
@@ -888,8 +894,9 @@ if __name__ == "__main__":
     form.connect(form, QtCore.SIGNAL("ClearEmergencySlot"), clicktest)
     form.connect(form, QtCore.SIGNAL("BlockEmptySlot"), clicktest)
     form.connect(form, QtCore.SIGNAL("print_me"), clicktest)
-    form.connect(form,
-        QtCore.SIGNAL("Appointment_into_EmptySlot"), clicktest)
+    form.connect(form, QtCore.SIGNAL("Appointment_into_EmptySlot"), clicktest)
+
+    form.mode = form.SCHEDULING_MODE
 
     v = QtGui.QVBoxLayout()
     v.setSpacing(0)

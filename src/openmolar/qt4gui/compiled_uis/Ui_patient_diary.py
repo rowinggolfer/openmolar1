@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/patient_diary.ui'
 #
-# Created: Wed Nov  7 21:54:31 2012
+# Created: Wed Nov 14 18:15:10 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,13 +18,20 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(829, 205)
-        self.horizontalLayout = QtGui.QHBoxLayout(Form)
-        self.horizontalLayout.setSpacing(3)
-        self.horizontalLayout.setMargin(3)
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.gridLayout = QtGui.QGridLayout(Form)
+        self.gridLayout.setMargin(0)
+        self.gridLayout.setSpacing(6)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.appt_memo_lineEdit = QtGui.QLineEdit(Form)
+        self.appt_memo_lineEdit.setStyleSheet(_fromUtf8("color:rgb(255, 0, 0)"))
+        self.appt_memo_lineEdit.setObjectName(_fromUtf8("appt_memo_lineEdit"))
+        self.gridLayout.addWidget(self.appt_memo_lineEdit, 0, 0, 1, 2)
+        self.recall_settings_pushButton = QtGui.QPushButton(Form)
+        self.recall_settings_pushButton.setObjectName(_fromUtf8("recall_settings_pushButton"))
+        self.gridLayout.addWidget(self.recall_settings_pushButton, 0, 2, 1, 1)
         self.pt_diary_treeView = QtGui.QTreeView(Form)
         self.pt_diary_treeView.setObjectName(_fromUtf8("pt_diary_treeView"))
-        self.horizontalLayout.addWidget(self.pt_diary_treeView)
+        self.gridLayout.addWidget(self.pt_diary_treeView, 1, 0, 1, 1)
         self.appt_buttons_frame = QtGui.QFrame(Form)
         self.appt_buttons_frame.setEnabled(True)
         self.appt_buttons_frame.setMinimumSize(QtCore.QSize(330, 0))
@@ -37,15 +44,13 @@ class Ui_Form(object):
         self.verticalLayout_33.setObjectName(_fromUtf8("verticalLayout_33"))
         self.apptWizard_pushButton = QtGui.QPushButton(self.appt_buttons_frame)
         self.apptWizard_pushButton.setEnabled(True)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.apptWizard_pushButton.sizePolicy().hasHeightForWidth())
         self.apptWizard_pushButton.setSizePolicy(sizePolicy)
         self.apptWizard_pushButton.setObjectName(_fromUtf8("apptWizard_pushButton"))
         self.verticalLayout_33.addWidget(self.apptWizard_pushButton)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_33.addItem(spacerItem)
         self.gridLayout_16 = QtGui.QGridLayout()
         self.gridLayout_16.setObjectName(_fromUtf8("gridLayout_16"))
         self.newAppt_pushButton = QtGui.QPushButton(self.appt_buttons_frame)
@@ -126,13 +131,15 @@ class Ui_Form(object):
         self.modifyAppt_pushButton.setObjectName(_fromUtf8("modifyAppt_pushButton"))
         self.gridLayout_16.addWidget(self.modifyAppt_pushButton, 1, 1, 1, 1)
         self.verticalLayout_33.addLayout(self.gridLayout_16)
-        self.horizontalLayout.addWidget(self.appt_buttons_frame)
+        self.gridLayout.addWidget(self.appt_buttons_frame, 1, 1, 1, 2)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_( u"Form"))
+        self.appt_memo_lineEdit.setToolTip(_( u"<html><head/><body><p>A place to keep a reminder of the patients appointment preferences.</p><p>Eg. &quot;30 minute appointments for examinations&quot; etc. </p></body></html>"))
+        self.recall_settings_pushButton.setText(_( u"Recall Settings"))
         self.apptWizard_pushButton.setToolTip(_( u"A Wizard to select some common appointment combinations"))
         self.apptWizard_pushButton.setText(_( u"Appointment Shortcuts"))
         self.newAppt_pushButton.setToolTip(_( u"A New Appointment for this patient"))

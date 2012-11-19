@@ -104,13 +104,13 @@ class aowAppt(object):
     a custom data object to contain data relevant to the painting of
     the appointment_overviewwidget
     '''
-    def __init__(self):
-        self.mpm = 0
-        self.length = 0
-        self.serialno = 0
-        self.isBlock = False
-        self.reason = ""
-        self.isEmergency = False
+    mpm = 0
+    length = 0
+    serialno = 0
+    isBlock = False
+    name = ""
+    isEmergency = False
+    cset = ""
 
 class ApptClass(object):
     '''
@@ -757,7 +757,7 @@ def allAppointmentData(adate, dents=()):
 
     return data
 
-def convertResults(results, inc_snos=False, inc_reason=False, isBlock=False):
+def convertResults(results):
     '''
     changes
     (830, 845) OR
@@ -766,19 +766,16 @@ def convertResults(results, inc_snos=False, inc_reason=False, isBlock=False):
     to and aowAppt object
     '''
     aptlist = []
-    for appt in results:
+    for start, end, serialno, name, cset in results:
         aow = aowAppt()
-        aow.mpm = localsettings.minutesPastMidnight(appt[0])
-        aow.length = localsettings.minutesPastMidnight(appt[1]) - aow.mpm
-        if inc_snos:
-            aow.serialno = appt[2]
-            if inc_reason:
-                aow.reason = appt[3]
-        elif inc_reason:
-            aow.reason = appt[2]
-        if isBlock and aow.reason.lower() == _("emergency").lower():
-            aow.isEmergency = True
-        aow.isBlock = isBlock
+        aow.mpm = localsettings.minutesPastMidnight(start)
+        aow.length = localsettings.minutesPastMidnight(end) - aow.mpm
+        aow.serialno = serialno
+        aow.cset = cset
+        aow.name = name
+        aow.isBlock = (cset == "block")
+        aow.isEmergency = (aow.isBlock and
+            aow.name.lower() == _("emergency").lower())
         aptlist.append(aow)
 
     return tuple(aptlist)
@@ -867,14 +864,13 @@ def day_summary(adate, dent):
     retarg = ()
     #--now get data for those days so that we can find slots within
     if daydata != ():
-        query = '''
-SELECT start, end, serialno FROM aslot
-WHERE adate = %s and apptix = %s AND flag0!=-128
-ORDER BY start'''
-
+        query = '''SELECT start, end, serialno, name, char(flag1) FROM aslot
+        WHERE adate = %s and apptix = %s AND flag0!=-128
+        ORDER BY start
+        '''
         cursor.execute(query, values)
         results = cursor.fetchall()
-        retarg = convertResults(results, inc_snos=True)
+        retarg = convertResults(results)
     cursor.close()
     return retarg
 
@@ -885,7 +881,7 @@ def getBlocks(adate, dent):
     db = connect()
     cursor = db.cursor()
 
-    query = '''SELECT start,end FROM aday
+    query = '''SELECT start, end FROM aday
     WHERE adate=%s and apptix=%s AND (flag=1 OR flag=2)'''
 
     values = (adate, dent)
@@ -897,16 +893,14 @@ def getBlocks(adate, dent):
 
     query = ""
     if retarg != ():
-        query = '''SELECT start,end, name FROM aslot
+        query = '''SELECT start, end, 0, name, "block" FROM aslot
         WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH"
         ORDER BY start'''
-        if localsettings.logqueries:
-            print query, values
         cursor.execute(query, values)
-
         results = cursor.fetchall()
-        retarg = convertResults(results, isBlock=True, inc_reason=True)
+        retarg = convertResults(results)
     cursor.close()
+
     return retarg
 
 def getLunch(gbdate, dent):
@@ -916,18 +910,17 @@ def getLunch(gbdate, dent):
     db = connect()
     cursor = db.cursor()
 
-    query = ""
-    query = ' adate = "%s" and apptix = %d '% (gbdate, dent)
-    fullquery = '''SELECT start, end FROM aslot
-    WHERE %s AND name="LUNCH" '''% query
-    if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery)
+    values = (gbdate, dent)
+
+    query = '''SELECT start, end, 0, "Lunch", "block" FROM aslot
+    WHERE adate = %s and apptix = %s AND name="LUNCH" '''
+
+    cursor.execute(query, values)
 
     results = cursor.fetchall()
     cursor.close()
-    #db.close()
-    return convertResults(results, isBlock=True)
+
+    return convertResults(results)
 
 def clearEms(cedate):
     '''
@@ -964,19 +957,16 @@ def get_pts_appts(pt, printing=False):
     db = connect()
     cursor = db.cursor()
 
-    fullquery = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
+    query = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
         adate, atime, length, datespec FROM apr WHERE serialno=%s '''
 
     if printing:
-        fullquery += "and adate>=date(NOW()) ORDER BY concat(adate, atime)"
-    else:
-        fullquery += "ORDER BY aprix"
+        query += "and adate>=date(NOW())"
+    query += 'order by concat(adate, lpad(atime,4,0))'
 
     ## - table also contains flag0,flag1,flag2,flag3,flag4,
 
-    if localsettings.logqueries:
-        print fullquery
-    cursor.execute(fullquery, sno)
+    cursor.execute(query, sno)
 
     rows = cursor.fetchall()
     #return rows

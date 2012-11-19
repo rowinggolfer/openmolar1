@@ -14,11 +14,20 @@ from openmolar.qt4gui import colours
 
 LINECOLOR = QtGui.QColor("#dddddd")
 TRANSPARENT = QtCore.Qt.transparent
-APPTCOLORS = colours.APPT_OV_COLORS
+#APPTCOLORS = colours.APPT_OV_COLORS
+APPTCOLORS = colours.APPTCOLORS
 BGCOLOR = APPTCOLORS["BACKGROUND"]
 
 class AppointmentOverviewWidget(QtGui.QWidget):
-    '''a custom widget to for a dental appointment book'''
+    '''
+    a custom widget to provide a week view for a dental appointment book
+    '''
+
+    selected_serialno = None
+    BROWSING_MODE = 0
+    SCHEDULING_MODE = 1
+    mode = None
+
     def __init__(self, sTime, fTime, slotLength, textDetail, om_gui):
         '''
         useage is (day, startTime,finishTime,slotLength, textDetail, parent)
@@ -383,208 +392,216 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         '''
         draws the widget - recalled at any point by instance.update()
         '''
-        try:
-            if len(self.dents) == 0:
-                return  #blank widget if no dents working
-            self.dragLine = None
-            painter = QtGui.QPainter(self)
-            painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+
+        if len(self.dents) == 0:
+            return  #blank widget if no dents working
+        self.dragLine = None
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+        painter.setBrush(BGCOLOR)
+
+        red_pen = QtGui.QPen(QtCore.Qt.red,2)
+        grey_pen = QtGui.QPen(QtCore.Qt.gray,1)
+        black_pen = QtGui.QPen(QtCore.Qt.black, 1)
+
+        currentSlot = 0
+        self.font.setPointSize(localsettings.appointmentFontSize)
+        fm = QtGui.QFontMetrics(self.font)
+        painter.setFont(self.font)
+        self.timeOffset = fm.width(" 88:88 ")
+        self.headingHeight = fm.height()
+
+        self.slotHeight = (self.height() - self.headingHeight
+        ) / self.slotCount
+        dragScale = self.slotHeight/self.slotLength
+
+        columnCount = len(self.dents)
+
+        if columnCount == 0:
+            columnCount = 1 #avoid division by zero!!
+        columnWidth = (self.width() - self.timeOffset) / columnCount
+        dragWidth = columnWidth
+
+        ## put the times down the side
+
+        while currentSlot < self.slotCount:
+
+            if currentSlot % self.textDetail == 0:
+                trect = QtCore.QRect(0,
+                0.8 * self.headingHeight + currentSlot * self.slotHeight,
+                self.timeOffset, self.textDetail * self.slotHeight)
+                painter.setPen(black_pen)
+
+                painter.drawText(trect, QtCore.Qt.AlignHCenter,
+                localsettings.humanTime(
+                self.startTime + (currentSlot * self.slotLength)))
+
+            currentSlot += 1
+            col = 0
+
+        for dent in self.dents:
+            leftx = self.timeOffset + col * columnWidth
+            rightx = self.timeOffset + (col+1) * columnWidth
+            ##headings
+            painter.setPen(black_pen)
+            painter.setBrush(APPTCOLORS["HEADER"])
+            rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
+            painter.drawRect(rect)
+            initials = localsettings.apptix_reverse.get(dent.ix)
+            if dent.memo != "":
+                initials = "*%s*"% initials
+            painter.drawText(rect,QtCore.Qt.AlignHCenter, initials)
+
+            ##dentist start/finish
             painter.setBrush(BGCOLOR)
 
-            red_pen = QtGui.QPen(QtCore.Qt.red,2)
-            grey_pen = QtGui.QPen(QtCore.Qt.gray,1)
-            black_pen = QtGui.QPen(QtCore.Qt.black, 1)
+            startcell = ((self.daystart[dent.ix]-self.startTime) /
+            self.slotLength)
 
-            currentSlot = 0
-            self.font.setPointSize(localsettings.appointmentFontSize)
-            fm = QtGui.QFontMetrics(self.font)
-            painter.setFont(self.font)
-            self.timeOffset = fm.width(" 88:88 ")
-            self.headingHeight = fm.height()
+            length = self.dayend[dent.ix] - self.daystart[dent.ix]
 
-            self.slotHeight = (self.height() - self.headingHeight
-            ) / self.slotCount
-            dragScale = self.slotHeight/self.slotLength
+            startY = startcell * self.slotHeight + self.headingHeight
+            endY = (length/self.slotLength) * self.slotHeight
+            rect = QtCore.QRectF(leftx, startY, columnWidth, endY)
 
-            columnCount = len(self.dents)
-
-            if columnCount == 0:
-                columnCount = 1 #avoid division by zero!!
-            columnWidth = (self.width() - self.timeOffset) / columnCount
-            dragWidth = columnWidth
-
-            ## put the times down the side
-
-            while currentSlot < self.slotCount:
-
-                if currentSlot % self.textDetail == 0:
-                    trect = QtCore.QRect(0,
-                    0.8 * self.headingHeight + currentSlot * self.slotHeight,
-                    self.timeOffset, self.textDetail * self.slotHeight)
-                    painter.setPen(black_pen)
-
-                    painter.drawText(trect, QtCore.Qt.AlignHCenter,
-                    localsettings.humanTime(
-                    self.startTime + (currentSlot * self.slotLength)))
-
-                currentSlot += 1
-                col = 0
-
-            for dent in self.dents:
-                leftx = self.timeOffset + col * columnWidth
-                rightx = self.timeOffset + (col+1) * columnWidth
-                ##headings
-                painter.setPen(black_pen)
-                painter.setBrush(APPTCOLORS["HEADER"])
-                rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
+            if self.flagDict[dent.ix]:
+                #don't draw a white canvas if dentist is out of office
                 painter.drawRect(rect)
-                initials = localsettings.apptix_reverse.get(dent.ix)
-                if dent.memo != "":
-                    initials = "*%s*"% initials
-                painter.drawText(rect,QtCore.Qt.AlignHCenter, initials)
 
-                ##dentist start/finish
-                painter.setBrush(BGCOLOR)
+                painter.setPen(grey_pen)
 
-                startcell = ((self.daystart[dent.ix]-self.startTime) /
-                self.slotLength)
+                ###emergencies
+                for appt in self.eTimes[dent.ix]:
+                    if (self.daystart[dent.ix] <= appt.mpm <
+                    self.dayend[dent.ix]):
+                        startcell = (appt.mpm - self.startTime
+                            ) / self.slotLength
 
-                length = self.dayend[dent.ix] - self.daystart[dent.ix]
-
-                startY = startcell * self.slotHeight + self.headingHeight
-                endY = (length/self.slotLength) * self.slotHeight
-                rect = QtCore.QRectF(leftx, startY, columnWidth, endY)
-
-                if self.flagDict[dent.ix]:
-                    #don't draw a white canvas if dentist is out of office
-                    painter.drawRect(rect)
-
-                    painter.setPen(grey_pen)
-
-                    ###emergencies
-                    for appt in self.eTimes[dent.ix]:
-                        if (self.daystart[dent.ix] <= appt.mpm <
-                        self.dayend[dent.ix]):
-                            startcell = (appt.mpm - self.startTime
-                                ) / self.slotLength
-
-                            rect = QtCore.QRectF(leftx,
-                            startcell * self.slotHeight + self.headingHeight,
-                            columnWidth,
-                            (appt.length/self.slotLength) * self.slotHeight)
-                            if appt.isEmergency:
-                                painter.setBrush(APPTCOLORS["EMERGENCY"])
-                            else:
-                                painter.setBrush(APPTCOLORS["default"])
-                            painter.drawRect(rect)
-                            painter.setPen(black_pen)
-
-                            painter.drawText(rect,QtCore.Qt.AlignLeft,
-                                appt.reason)
-
-                    painter.setPen(grey_pen)
-
-                    painter.setBrush(APPTCOLORS["LUNCH"])
-                    for appt in self.lunches[dent.ix]:
-                        if (self.daystart[dent.ix] <= appt.mpm <
-                        self.dayend[dent.ix]):
-                            startcell = (appt.mpm - self.startTime
-                                ) / self.slotLength
-
-                            rect = QtCore.QRectF(leftx,
-                            startcell * self.slotHeight + self.headingHeight,
-                            columnWidth,
-                            (appt.length/self.slotLength) * self.slotHeight)
-
-                            painter.drawRect(rect)
-                            painter.setPen(black_pen)
-
-                            painter.drawText(rect,QtCore.Qt.AlignCenter,
-                            "Lunch")
-
-                    painter.setPen(grey_pen)
-
-                    ###appts
-                    for appt in self.appts[dent.ix]:
-                        if (self.om_gui.pt and
-                        appt.serialno == self.om_gui.pt.serialno):
-                            painter.setBrush(QtGui.QColor("orange"))
+                        rect = QtCore.QRectF(leftx,
+                        startcell * self.slotHeight + self.headingHeight,
+                        columnWidth,
+                        (appt.length/self.slotLength) * self.slotHeight)
+                        if appt.isEmergency:
+                            painter.setBrush(APPTCOLORS["EMERGENCY"])
+                        elif APPTCOLORS.has_key(appt.cset):
+                            painter.setBrush(APPTCOLORS[appt.cset])
                         else:
-                            painter.setBrush(APPTCOLORS["BUSY"])
-
-                        startcell = (appt.mpm - self.startTime) / self.slotLength
-
-                        rect = QtCore.QRectF(leftx,
-                        startcell*self.slotHeight+self.headingHeight,
-                        columnWidth,(appt.length/self.slotLength)*self.slotHeight)
+                            painter.setBrush(APPTCOLORS["default"])
                         painter.drawRect(rect)
+                        painter.setPen(black_pen)
 
-                    ###slots
-                    painter.setPen(grey_pen)
-                    for slot in self.freeslots[dent.ix]:
-                        slotstart = localsettings.pyTimeToMinutesPastMidnight(
-                            slot.date_time.time())
-                        startcell = (
-                        slotstart - self.startTime)/self.slotLength
+                        painter.drawText(rect,QtCore.Qt.AlignLeft,
+                            appt.name)
+
+                painter.setPen(grey_pen)
+
+                painter.setBrush(APPTCOLORS["LUNCH"])
+                for appt in self.lunches[dent.ix]:
+                    if (self.daystart[dent.ix] <= appt.mpm <
+                    self.dayend[dent.ix]):
+                        startcell = (appt.mpm - self.startTime
+                            ) / self.slotLength
 
                         rect = QtCore.QRectF(leftx,
+                        startcell * self.slotHeight + self.headingHeight,
+                        columnWidth,
+                        (appt.length/self.slotLength) * self.slotHeight)
+
+                        painter.drawRect(rect)
+                        painter.setPen(black_pen)
+
+                        painter.drawText(rect,QtCore.Qt.AlignCenter,
+                        "Lunch")
+
+                painter.setPen(grey_pen)
+
+                ###appts
+                for appt in self.appts[dent.ix]:
+                    if (self.om_gui.pt and
+                    appt.serialno == self.om_gui.pt.serialno):
+                        painter.setBrush(APPTCOLORS["current_patient"])
+                    elif self.mode == self.SCHEDULING_MODE:
+                        painter.setBrush(APPTCOLORS["BUSY"])
+                    elif APPTCOLORS.has_key(appt.cset):
+                        painter.setBrush(APPTCOLORS[appt.cset])
+                    else:
+                        painter.setBrush(APPTCOLORS["BUSY"])
+
+                    startcell = (appt.mpm - self.startTime) / self.slotLength
+
+                    rect = QtCore.QRectF(
+                        leftx,
                         startcell*self.slotHeight+self.headingHeight,
                         columnWidth,
-                        (slot.length/self.slotLength)*self.slotHeight)
+                        (appt.length/self.slotLength)*self.slotHeight
+                        )
 
-                        if self.dragging and slot is self.dropSlot:
-                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
-                            painter.drawRect(rect)
+                    painter.drawRect(rect)
 
-                            painter.save()
-                            painter.setPen(red_pen)
+                ###slots
 
-                            height = (self.drag_appt.length/self.slotLength) \
-                                *self.slotHeight
+                painter.setPen(grey_pen)
+                for slot in self.freeslots[dent.ix]:
+                    slotstart = localsettings.pyTimeToMinutesPastMidnight(
+                        slot.date_time.time())
+                    startcell = (
+                    slotstart - self.startTime)/self.slotLength
 
-                            rect = QtCore.QRectF(leftx,
-                            self.dropPos.y(), columnWidth-1, height)
-                            painter.drawRect(rect)
+                    rect = QtCore.QRectF(leftx,
+                    startcell*self.slotHeight+self.headingHeight,
+                    columnWidth,
+                    (slot.length/self.slotLength)*self.slotHeight)
 
-                            self.dragLine = QtCore.QLine(0, self.dropPos.y(),
-                                self.width(), self.dropPos.y())
+                    if self.dragging and slot is self.dropSlot:
+                        painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                        painter.drawRect(rect)
 
-                            trect = QtCore.QRectF(0,
-                            self.dropPos.y(), self.timeOffset, height)
+                        painter.save()
+                        painter.setPen(red_pen)
 
-                            droptime = localsettings.humanTime(
-                            (slot.mpm + self.dropOffset))
+                        height = (self.drag_appt.length/self.slotLength) \
+                            *self.slotHeight
 
-                            painter.drawRect(trect)
-                            painter.drawText(trect, QtCore.Qt.AlignHCenter,
-                                droptime)
+                        rect = QtCore.QRectF(leftx,
+                        self.dropPos.y(), columnWidth-1, height)
+                        painter.drawRect(rect)
 
-                            painter.restore()
+                        self.dragLine = QtCore.QLine(0, self.dropPos.y(),
+                            self.width(), self.dropPos.y())
 
-                        else:
-                            painter.setBrush(APPTCOLORS["SLOT"])
-                            painter.drawRect(rect)
+                        trect = QtCore.QRectF(0,
+                        self.dropPos.y(), self.timeOffset, height)
 
-                            painter.setPen(black_pen)
-                            painter.drawText(rect,QtCore.Qt.AlignHCenter,
-                                "%s mins"% slot.length)
-                                #slot.date_time.strftime("%H:%M"))
+                        droptime = localsettings.humanTime(
+                        (slot.mpm + self.dropOffset))
 
-                painter.setPen(black_pen)
-                if col>0:
-                    painter.drawLine(leftx,0,leftx,self.height())
-                col+=1
+                        painter.drawRect(trect)
+                        painter.drawText(trect, QtCore.Qt.AlignHCenter,
+                            droptime)
 
-            if self.highlightedRect!=None:
-                painter.setPen(red_pen)
-                painter.setBrush(TRANSPARENT)
-                painter.drawRect(self.highlightedRect)
-            if self.dragLine:
-                painter.setPen(red_pen)
-                painter.drawLine(self.dragLine)
+                        painter.restore()
 
-        except Exception, e:
-            print "error painting appointment overviewwidget", e
+                    else:
+                        painter.setBrush(APPTCOLORS["SLOT"])
+                        painter.drawRect(rect)
+
+                        painter.setPen(black_pen)
+                        painter.drawText(rect,QtCore.Qt.AlignHCenter,
+                            "%s mins"% slot.length)
+                            #slot.date_time.strftime("%H:%M"))
+
+            painter.setPen(black_pen)
+            if col>0:
+                painter.drawLine(leftx,0,leftx,self.height())
+            col+=1
+
+        if self.highlightedRect!=None:
+            painter.setPen(red_pen)
+            painter.setBrush(TRANSPARENT)
+            painter.drawRect(self.highlightedRect)
+        if self.dragLine:
+            painter.setPen(red_pen)
+            painter.drawLine(self.dragLine)
 
 if __name__ == "__main__":
 
@@ -674,6 +691,6 @@ if __name__ == "__main__":
     QtCore.QObject.connect(form,
     QtCore.SIGNAL("DentistHeading"),headerclicktest)
 
+    form.mode = form.SCHEDULING_MODE
     form.show()
-
     sys.exit(app.exec_())

@@ -8,7 +8,7 @@
 
 '''
 This module provides a function 'run' which will move data
-to schema 1_9
+to schema 2_0
 '''
 from __future__ import division
 import sys
@@ -18,18 +18,47 @@ from openmolar import connect
 
 from PyQt4 import QtGui, QtCore
 
-SQLSTRINGS = [
+SQLSTRINGS_1 = [
 '''
-create table formatted_notes (ix serial, serialno int(11),
-ndate date, op1 varchar(8), op2 varchar(8), ntype varchar(32),
-note varchar(80), timestamp timestamp default NOW());
+create table appt_prefs (
+    serialno int(11),
+    recall_active bool not null default True,
+    recdent_period int,
+    recdent date,
+    rechyg_period int,
+    rechyg date,
+    recall_method enum("post", "sms", "email", "tel"),
+    sms_reminders bool not null default False,
+    no_combined_appts bool not null default False,
+    note varchar(120),
+    PRIMARY KEY (serialno)
+    );
+'''
+]
+
+SQLSTRINGS_2 = [
+'''
+insert into appt_prefs
+(serialno, recall_active, recdent, recdent_period)
+select serialno, True, recd, 6 from patients
+where status != "deceased" and recd>20081231;
 ''',
 '''
-create index formatted_notes_serialno_index on formatted_notes(serialno);
+update appt_prefs as t1, patients as t2
+set t1.recdent_period = 12
+where t1.serialno = t2.serialno and t2.memo like "%yearly%";
 ''',
 '''
-create index newdocsprinted_serialno_index on newdocsprinted(serialno);
+update appt_prefs as t1, patients as t2
+set t1.note = replace(replace(t2.memo,"\n"," "),"\r","")
+where t1.serialno = t2.serialno and t2.memo like "%appt%";
+''',
 '''
+update patients as t1, appt_prefs as t2
+set t1.memo = ""
+where t1.serialno = t2.serialno and t1.memo = t2.note;
+'''
+
 ]
 
 class UpdateException(Exception):
@@ -55,7 +84,7 @@ class dbUpdater(QtCore.QThread):
             self.MESSAGE = message
         self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
 
-    def create_alter_tables(self):
+    def execute_statements(self, sql_strings):
         '''
         execute the above commands
         NOTE - this function may fail depending on the mysql permissions
@@ -66,8 +95,8 @@ class dbUpdater(QtCore.QThread):
         cursor = db.cursor()
         sucess = False
         try:
-            i, commandNo = 0, len(SQLSTRINGS)
-            for sql_string in SQLSTRINGS:
+            i, commandNo = 0, len(sql_strings)
+            for sql_string in sql_strings:
                 try:
                     cursor.execute(sql_string)
                 except connect.GeneralError, e:
@@ -86,55 +115,32 @@ class dbUpdater(QtCore.QThread):
         else:
             raise UpdateException("couldn't execute all statements!")
 
-    def insertValues(self):
-        '''
-        this code is complex, so in a separate module for ease of maintenance
-        '''
-        from openmolar.schema_upgrades import formatted_notes1_9
-        max_sno = formatted_notes1_9.get_max_sno()
-        sno = 0
-        print "max_sno in notes = %s "% max_sno
-
-        while sno < max_sno:
-            sno += 1
-            formatted_notes1_9.transfer(sno)
-            progress = int(sno/max_sno * 90)+8
-            self.progressSig(progress, "%s %s"% (
-                _('converting note'), sno))
-            QtGui.QApplication.instance().processEvents()
-
-        return True
-
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
 
     def run(self):
-        print "running script to convert from schema 1.8 to 1.9"
+        print "running script to convert from schema 1.9 to 2.0"
         try:
             #- execute the SQL commands
-            self.progressSig(2, _("executing statements"))
-            self.create_alter_tables()
-            self.progressSig(8, _('inserting values'))
+            self.progressSig(10, _("creating new appt_prefs table"))
+            self.execute_statements(SQLSTRINGS_1)
+            self.progressSig(50, _('copying data'))
+            self.execute_statements(SQLSTRINGS_2)
+            self.progressSig(80, _('statements executed'))
 
-            print "inserting values"
-            if self.insertValues():
-                print "ok"
-            else:
-                print "FAILED!!!!!"
-
-            self.progressSig(99, _('updating settings'))
+            self.progressSig(90, _('updating settings'))
             print "update database settings..."
 
-            schema_version.update(("1.9",), "1_8 to 1_9 script")
+            schema_version.update(("2.0",), "1_9 to 2_0 script")
 
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
-            + " 1.9")
+            + " 2.0")
 
         except UpdateException, e:
-            localsettings.CLIENT_SCHEMA_VERSION = "1.8"
-            self.completeSig(_("rolled back to") + " 1.8")
+            localsettings.CLIENT_SCHEMA_VERSION = "1.9"
+            self.completeSig(_("rolled back to") + " 1.9")
 
         except Exception, e:
             print "Exception caught",e

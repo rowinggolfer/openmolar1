@@ -12,8 +12,9 @@ this module provides an html summary of the patient's details
 
 from __future__ import division
 
-import sys
 import datetime
+import logging
+import sys
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 
@@ -35,26 +36,32 @@ def getAge(pt):
             retarg = retarg.strip("s")
         return retarg + "<hr />"
 
+def header(pt):
+    retarg = '''<html>
+<head><link rel="stylesheet" href="%s" type="text/css"></head>
+<body><div class = "center">
+<h4>Patient %d</h4>
+<h3>%s %s %s</h3>
+        '''% (
+        localsettings.stylesheet, pt.serialno, pt.title.title(),
+        pt.fname.title(), pt.sname.title())
+
+    retarg += '%s %s'% (localsettings.formatDate(pt.dob), getAge(pt))
+    for line in (pt.addr1, pt.addr2, pt.addr3, pt.town, pt.county):
+        if str(line) != '':
+            retarg += "%s <br />"% line
+    if pt.pcde == "":
+        retarg += "<b>!UNKNOWN POSTCODE!</b><hr />"
+    else:
+        retarg +=  "%s <hr />"% pt.pcde
+
+    return retarg
+
 def details(pt, Saved=True):
     '''returns an html set showing pt name etc...'''
 
     try:
-        retarg = '''<html><head>
-        <link rel="stylesheet" href="%s" type="text/css">
-        </head>\n<body><div align = "center">
-        <h4>Patient %d</h4><h3>%s %s %s</h3>'''% (
-        localsettings.stylesheet, pt.serialno, pt.title.title(),
-        pt.fname.title(), pt.sname.title())
-
-        retarg += '%s %s'% (localsettings.formatDate(pt.dob), getAge(pt))
-        for line in (pt.addr1, pt.addr2, pt.addr3, pt.town, pt.county):
-            if str(line) != '':
-                retarg += "%s <br />"% line
-        if pt.pcde == "":
-            retarg += "<b>PLEASE GET POSTCODE</b><hr />"
-        else:
-            retarg +=  "%s <hr />"% pt.pcde
-
+        retarg = header(pt)
         if "N" in pt.cset:
             retarg += '''<img src="%s/nhs_scot.png" alt="NHS">
             <br />'''% localsettings.resources_path
@@ -77,7 +84,7 @@ def details(pt, Saved=True):
         #-- removed this next code as feescale is always the same
         #if pt.pf11!=0:
         #    retarg += '(feescale %s)<br />'%chr(pt.pf11)
-        
+
         retarg += "%s<br />"% pt.getFeeTable().briefName
         try:
             retarg += 'dentist      = %s'% localsettings.ops[pt.dnt1]
@@ -87,12 +94,12 @@ def details(pt, Saved=True):
             retarg += '<h4>Please Set a Dentist for this patient!</h4><hr />'
         if pt.memo != '':
             retarg += '<h4>Memo</h4>%s<hr />'% pt.memo
-        
+
         retarg += '''<table border="1">'
         <tr><td>Last IO Xrays</td><td>%s</td></tr>
         <tr><td>Last OPG</td><td>%s</td></tr>
         <tr><td>Last Sp</td><td>%s</td></tr>
-        '''% (localsettings.formatDate(pt.pd9), 
+        '''% (localsettings.formatDate(pt.pd9),
         localsettings.formatDate(pt.pd8), localsettings.formatDate(pt.pd10))
 
         letype = ""
@@ -131,10 +138,12 @@ def details(pt, Saved=True):
 
         return '''%s\n</div></body></html>'''% retarg
     except Exception, ex:
+        logging.exception("error in patientDetails.details")
         return "error displaying details, sorry <br />%s"% ex
 
 if __name__ == '__main__':
     localsettings.initiate()
+    localsettings.loadFeeTables()
     try:
         serialno = int(sys.argv[len(sys.argv)-1])
     except:

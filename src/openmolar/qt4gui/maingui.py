@@ -71,6 +71,7 @@ from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
 from openmolar.qt4gui.dialogs.alter_todays_notes import \
     AlterTodaysNotesDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
+from openmolar.qt4gui.dialogs import duplicate_receipt_dialog
 
 
 #secondary applications
@@ -147,7 +148,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.labels_and_tabs()
         self.ui.feescale_commit_pushButton.setEnabled(False)
 
-        self.setValidators()
         self.letters = bulk_mail.bulkMails(self)
         self.ui.bulk_mailings_treeView.setModel(self.letters.bulk_model)
         self.ui.actionSurgery_Mode.setChecked(
@@ -661,7 +661,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.pt.serialno != 0:
             #print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
-            self.ui.recallDate_comboBox.setCurrentIndex(0)
             self.ui.detailsBrowser.setText("")
             self.ui.notes_webView.setHtml("")
             self.ui.hiddenNotes_label.setText("")
@@ -681,7 +680,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.moneytextBrowser.setHtml(localsettings.message)
             self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
-            self.schedule_control.clear()
+            #self.diary_widget.schedule_control.clear()
             self.ui.notesEnter_textEdit.setHtml("")
 
             self.ui.medNotes_pushButton.setStyleSheet("")
@@ -1316,7 +1315,6 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.load_receptionSummaryPage()
         #--populate dnt1 and dnt2 comboboxes
         self.load_dentComboBoxes(newPatientReload)
-        self.ui.recallDate_comboBox.setCurrentIndex(0)
         self.pt.checkExemption()
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
@@ -1338,8 +1336,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.toothPropsWidget.setTooth("ur8","st")
         charts_gui.chartsTable(self)
         charts_gui.bpe_dates(self)
-        if self.pt.recd:
-            self.ui.recall_dateEdit.setDate(self.pt.recd)
+
         try:
             pos=localsettings.csetypes.index(self.pt.cset)
         except ValueError:
@@ -1452,7 +1449,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         Saved = (self.pt_dbstate.fees == self.pt.fees)
         details = patientDetails.details(self.pt, Saved)
-        self.ui.detailsBrowser.setText(details)
+        self.ui.detailsBrowser.setHtml(details)
         self.ui.detailsBrowser.update()
         self.ui.closeTx_pushButton.setText(_("Close Course"))
 
@@ -1534,22 +1531,22 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.recNotes_webView.setHtml("")
         self.ui.notesSummary_webView.setHtml(localsettings.message)
 
-        today=QtCore.QDate().currentDate()
+        today = QtCore.QDate().currentDate()
         self.ui.daybookEndDateEdit.setDate(today)
         self.ui.daybookStartDateEdit.setDate(today)
         self.ui.cashbookStartDateEdit.setDate(today)
         self.ui.cashbookEndDateEdit.setDate(today)
         self.ui.stackedWidget.setCurrentIndex(1)
-        self.ui.dupReceiptDate_lineEdit.setText(today.toString(
-            "dd'/'MM'/'yyyy"))
 
         brush = QtGui.QBrush(colours.LINEEDIT)
         palette = QtGui.QPalette()
         palette.setBrush(QtGui.QPalette.Base, brush)
+
         for widg in (self.ui.snameEdit, self.ui.titleEdit,
         self.ui.fnameEdit, self.ui.addr1Edit, self.ui.dobEdit,
         self.ui.pcdeEdit, self.ui.sexEdit):
             widg.setPalette(palette)
+
         self.ui.cseType_comboBox.addItems(localsettings.csetypes)
         self.ui.forumViewFilter_comboBox.addItems(
             localsettings.allowed_logins)
@@ -1633,26 +1630,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         else:
             self.advise(_("no file chosen"), 1)
         self.loadpatient()
-
-    def recallDate(self, arg):
-        '''
-        receives a signal when the date changes in the recall date edit
-        on the correspondence page
-        '''
-        newdate = arg.toPyDate()
-        if self.pt.recd != newdate:
-            self.pt.recd = newdate
-            self.updateDetails()
-
-    def recallDate_shortcuts(self, arg):
-        '''
-        receives a signal when the date shortcut combobox is triggered
-        '''
-        if arg > 0: #ignore the header (item 0) of the comboxbox
-            dstr = str(self.ui.recallDate_comboBox.currentText())
-            monthjump = int(dstr[:dstr.index(" ")])
-            today = QtCore.QDate.currentDate()
-            self.ui.recall_dateEdit.setDate(today.addMonths(monthjump))
 
     def exportRecalls(self):
         '''
@@ -1802,7 +1779,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         len(self.pt.HIDDENNOTES) != 0):
             changes.append("New Notes")
 
-        for attr in patient_class.ATTRIBS_TO_CHECK:
+        for attr in sorted(patient_class.ATTRIBS_TO_CHECK):
             try:
                 newval = str(self.pt.__dict__.get(attr, ""))
                 oldval = str(self.pt_dbstate.__dict__.get(attr, ""))
@@ -1916,7 +1893,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.notesEnter_textEdit,
         self.ui.synopsis_lineEdit,
         self.ui.memos_pushButton,
-        self.pt_diary_widget.ui.appt_buttons_frame,
+        self.pt_diary_widget,
         self.ui.childsmile_button):
 
             widg.setEnabled(arg)
@@ -1926,23 +1903,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         for i in (0, 1, 2, 5, 6, 7, 8, 9):
             if self.ui.tabWidget.isTabEnabled(i) != arg:
                 self.ui.tabWidget.setTabEnabled(i, arg)
-        if arg == True and "N" in self.pt.cset:
+        if self.pt is not None and "N" in self.pt.cset:
             #-- show NHS form printing button
             self.ui.NHSadmin_groupBox.show()
-            if self.pt.under_6:
-                self.ui.childsmile_button.show()
+            self.ui.childsmile_button.setVisible(self.pt.under_6)
         else:
             self.ui.NHSadmin_groupBox.hide()
             self.ui.childsmile_button.hide()
 
         if not arg:
             self.ui.medNotes_pushButton.setText("MedNotes")
-
-    def setValidators(self):
-        '''
-        add user Input validators to some existing widgets
-        '''
-        self.ui.dupReceiptDate_lineEdit.setInputMask("00/00/0000")
 
     def changeLanguage(self):
         '''
@@ -2449,17 +2419,20 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         om_printing.printSelectedAccounts(self)
 
-    def printDupReceipt(self):
-        '''
-        print a duplicate receipt
-        '''
-        om_printing.printDupReceipt(self)
-
     def printLetter(self):
         '''
         prints a letter to the patient
         '''
         om_printing.printLetter(self)
+
+    def printDupReceipt(self):
+        '''
+        prints a duplicate receipt
+        '''
+        dl = duplicate_receipt_dialog.DuplicateReceiptDialog(self.pt, self)
+        if dl.exec_() and dl.duplicate_printed:
+            om_printing.commitPDFtoDB(self, "dup receipt")
+            self.updateHiddenNotesLabel()
 
     def printAccountsTable(self):
         '''
@@ -2544,7 +2517,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         verbose notes print
         '''
-        om_printing.printNotes(self, 1)
+        self.printNotes(self, 1)
 
     def printNotes(self, detailed=False):
         '''
@@ -2753,13 +2726,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.importDoc_treeWidget,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
         self.showImportedDoc)
-
-        QtCore.QObject.connect(self.ui.recall_dateEdit,
-        QtCore.SIGNAL("dateChanged (const QDate&)"), self.recallDate)
-
-        QtCore.QObject.connect(self.ui.recallDate_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"),
-        self.recallDate_shortcuts)
 
     def signals_menu(self):
         #menu
@@ -3170,9 +3136,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.pt_diary_widget.appointment_selected.connect(
             self.diary_widget.schedule_control.update_appt_selection)
 
+        self.pt_diary_widget.preferences_changed.connect(
+            self.appt_prefs_changed)
+
     def start_scheduling(self):
         self.ui.main_tabWidget.setCurrentIndex(1) #appointmenttab
         self.diary_widget.start_scheduling(self.pt)
+
+    def appt_prefs_changed(self):
+        self.advise("appt_prefs_changed")
 
     def recalculateEstimate(self):
         '''

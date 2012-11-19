@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>948</width>
-    <height>649</height>
+    <width>899</width>
+    <height>642</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>948</width>
-         <height>606</height>
+         <width>899</width>
+         <height>599</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -82,7 +82,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <property name="documentMode">
            <bool>false</bool>
@@ -449,7 +449,7 @@
                <property name="currentIndex">
                 <number>3</number>
                </property>
-               <widget class="QWidget" name="tab_4">
+               <widget class="QWidget" name="tab_patient_details">
                 <attribute name="title">
                  <string>Patient Details</string>
                 </attribute>
@@ -464,7 +464,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>495</width>
+                      <width>655</width>
                       <height>473</height>
                      </rect>
                     </property>
@@ -1309,7 +1309,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_11">
+               <widget class="QWidget" name="tab_patient_contract">
                 <attribute name="title">
                  <string>Contract</string>
                 </attribute>
@@ -1723,7 +1723,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_6">
+               <widget class="QWidget" name="tab_patient_correspondence">
                 <attribute name="title">
                  <string>Correspondence</string>
                 </attribute>
@@ -1738,18 +1738,18 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>619</width>
-                      <height>504</height>
+                      <width>655</width>
+                      <height>420</height>
                      </rect>
                     </property>
-                    <layout class="QGridLayout" name="gridLayout_20">
+                    <layout class="QGridLayout" name="gridLayout">
                      <item row="0" column="0">
                       <widget class="QGroupBox" name="groupBox_6">
                        <property name="title">
                         <string>Letters TO the patient</string>
                        </property>
-                       <layout class="QGridLayout" name="gridLayout_18">
-                        <item row="0" column="0">
+                       <layout class="QVBoxLayout" name="verticalLayout_3">
+                        <item>
                          <widget class="QPushButton" name="standardLetterPushButton">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1762,175 +1762,49 @@
                           </property>
                          </widget>
                         </item>
-                        <item row="1" column="0" colspan="2">
-                         <widget class="QGroupBox" name="groupBox_15">
-                          <property name="title">
-                           <string>Recall management</string>
+                        <item>
+                         <widget class="QPushButton" name="printRecall_pushButton">
+                          <property name="toolTip">
+                           <string>Print a recall saying the patient is due now.</string>
                           </property>
-                          <layout class="QHBoxLayout" name="horizontalLayout_23">
-                           <item>
-                            <widget class="QDateEdit" name="recall_dateEdit">
-                             <property name="toolTip">
-                              <string>Set the date for a recall to be generated automatically</string>
-                             </property>
-                             <property name="calendarPopup">
-                              <bool>true</bool>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QComboBox" name="recallDate_comboBox">
-                             <item>
-                              <property name="text">
-                               <string>Date Shortcuts</string>
-                              </property>
-                             </item>
-                             <item>
-                              <property name="text">
-                               <string>1 Month hence</string>
-                              </property>
-                             </item>
-                             <item>
-                              <property name="text">
-                               <string>3 Months hence</string>
-                              </property>
-                             </item>
-                             <item>
-                              <property name="text">
-                               <string>6 Months hence</string>
-                              </property>
-                             </item>
-                             <item>
-                              <property name="text">
-                               <string>12 Months hence</string>
-                              </property>
-                             </item>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QPushButton" name="printRecall_pushButton">
-                             <property name="toolTip">
-                              <string>Print a recall saying the patient is due now.</string>
-                             </property>
-                             <property name="text">
-                              <string>Print Recall Now</string>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
+                          <property name="text">
+                           <string>Recall for An Examination</string>
+                          </property>
                          </widget>
                         </item>
-                        <item row="2" column="0">
-                         <widget class="QGroupBox" name="groupBox_9">
-                          <property name="title">
-                           <string>Accounts</string>
+                        <item>
+                         <widget class="QPushButton" name="receiptPrintButton">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
                           </property>
-                          <layout class="QVBoxLayout" name="verticalLayout_6">
-                           <item>
-                            <widget class="QRadioButton" name="accountA_radioButton">
-                             <property name="text">
-                              <string>&quot;A&quot; letter</string>
-                             </property>
-                             <property name="checked">
-                              <bool>true</bool>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QRadioButton" name="accountB_radioButton">
-                             <property name="text">
-                              <string>&quot;B&quot; letter</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QRadioButton" name="accountC_radioButton">
-                             <property name="text">
-                              <string>&quot;C&quot; letter</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QPushButton" name="account2_pushButton">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="text">
-                              <string>Print A Statement of Account</string>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </item>
-                        <item row="2" column="1">
-                         <widget class="QGroupBox" name="groupBox_2">
-                          <property name="title">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>32</height>
+                           </size>
+                          </property>
+                          <property name="toolTip">
+                           <string>Print a receipt - useful for duplicates.</string>
+                          </property>
+                          <property name="text">
                            <string>Duplicate Receipt</string>
                           </property>
-                          <layout class="QGridLayout" name="gridLayout_12">
-                           <item row="0" column="0">
-                            <widget class="QLabel" name="label_7">
-                             <property name="text">
-                              <string>Date</string>
-                             </property>
-                             <property name="alignment">
-                              <set>Qt::AlignCenter</set>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="0" column="1" colspan="2">
-                            <widget class="QLineEdit" name="dupReceiptDate_lineEdit"/>
-                           </item>
-                           <item row="1" column="0">
-                            <widget class="QLabel" name="label_11">
-                             <property name="text">
-                              <string>Amount</string>
-                             </property>
-                             <property name="alignment">
-                              <set>Qt::AlignCenter</set>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="1" column="1">
-                            <widget class="QDoubleSpinBox" name="receiptDoubleSpinBox">
-                             <property name="maximumSize">
-                              <size>
-                               <width>81</width>
-                               <height>16777215</height>
-                              </size>
-                             </property>
-                             <property name="maximum">
-                              <double>2000.000000000000000</double>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="1" column="2">
-                            <widget class="QPushButton" name="receiptPrintButton">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>16777215</width>
-                               <height>32</height>
-                              </size>
-                             </property>
-                             <property name="toolTip">
-                              <string>Print a receipt - useful for duplicates.</string>
-                             </property>
-                             <property name="text">
-                              <string>Print</string>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="account2_pushButton">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="text">
+                           <string>Print An Account Letter</string>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -1938,6 +1812,12 @@
                      </item>
                      <item row="0" column="1" rowspan="4">
                       <widget class="QGroupBox" name="groupBox_3">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="title">
                         <string>Previous Correspondence</string>
                        </property>
@@ -2007,7 +1887,7 @@
                        <property name="title">
                         <string>Referrals (Letters about the patient)</string>
                        </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_14">
+                       <layout class="QVBoxLayout" name="verticalLayout_4">
                         <item>
                          <widget class="QComboBox" name="referralLettersComboBox">
                           <property name="sizePolicy">
@@ -2140,7 +2020,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_7">
+               <widget class="QWidget" name="tab_patient_reception">
                 <attribute name="title">
                  <string>Reception</string>
                 </attribute>
@@ -2164,11 +2044,17 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>724</width>
-                      <height>487</height>
+                      <width>675</width>
+                      <height>469</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_26">
+                     <property name="spacing">
+                      <number>3</number>
+                     </property>
+                     <property name="margin">
+                      <number>0</number>
+                     </property>
                      <item>
                       <layout class="QVBoxLayout" name="verticalLayout_32">
                        <property name="spacing">
@@ -2425,7 +2311,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_summary">
+               <widget class="QWidget" name="tab_patient_summary">
                 <attribute name="title">
                  <string>Clinical Summary</string>
                 </attribute>
@@ -2707,7 +2593,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab">
+               <widget class="QWidget" name="tab_patient_notes">
                 <attribute name="title">
                  <string>Notes</string>
                 </attribute>
@@ -2791,7 +2677,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_2">
+               <widget class="QWidget" name="tab_patient_charts">
                 <attribute name="title">
                  <string>Charts</string>
                 </attribute>
@@ -2815,8 +2701,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>102</width>
-                      <height>102</height>
+                      <width>469</width>
+                      <height>380</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2947,7 +2833,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_5">
+               <widget class="QWidget" name="tab_patient_estimate">
                 <attribute name="title">
                  <string>Estimate/Plan</string>
                 </attribute>
@@ -2992,7 +2878,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
+                         <width>419</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -3025,7 +2911,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>191</width>
+                      <width>220</width>
                       <height>512</height>
                      </rect>
                     </property>
@@ -3356,7 +3242,7 @@ Note - this will not remove items which are currently there. </string>
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_8">
+               <widget class="QWidget" name="tab_patient_perio">
                 <attribute name="title">
                  <string>Perio Charts</string>
                 </attribute>
@@ -3374,7 +3260,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>261</width>
+                      <width>657</width>
                       <height>385</height>
                      </rect>
                     </property>
@@ -3575,7 +3461,7 @@ Note - this will not remove items which are currently there. </string>
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_9">
+               <widget class="QWidget" name="tab_patient_history">
                 <attribute name="title">
                  <string>History</string>
                 </attribute>
@@ -3832,8 +3718,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>118</width>
-                     <height>121</height>
+                     <width>111</width>
+                     <height>120</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -5233,7 +5119,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>948</width>
+     <width>899</width>
      <height>21</height>
     </rect>
    </property>
@@ -5534,16 +5420,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>contract_tabWidget</tabstop>
   <tabstop>newCourse_pushButton</tabstop>
   <tabstop>closeTx_pushButton</tabstop>
-  <tabstop>receiptDoubleSpinBox</tabstop>
-  <tabstop>dupReceiptDate_lineEdit</tabstop>
-  <tabstop>referralLettersComboBox</tabstop>
   <tabstop>exportChartPrintButton</tabstop>
   <tabstop>simpleNotesPrintButton</tabstop>
   <tabstop>detailedNotesPrintButton</tabstop>
-  <tabstop>accountA_radioButton</tabstop>
-  <tabstop>accountB_radioButton</tabstop>
-  <tabstop>accountC_radioButton</tabstop>
-  <tabstop>account2_pushButton</tabstop>
   <tabstop>loadAccountsTable_pushButton</tabstop>
  </tabstops>
  <resources>

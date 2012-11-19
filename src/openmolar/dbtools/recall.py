@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or 
+# by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
 import sys
@@ -12,9 +12,9 @@ from openmolar.connect import connect
 from datetime import date
 
 HEADERS = (
-_("Letter No"), _("Serial No"), _("Title"), _("First Name"), _("Surname"), 
+_("Letter No"), _("Serial No"), _("Title"), _("First Name"), _("Surname"),
 _("Age"),
-_("Address") + " 1",_("Address")+" 2",_("Address")+" 3", _("Town"), 
+_("Address") + " 1",_("Address")+" 2",_("Address")+" 3", _("Town"),
 _("County"), _("PostCode"), _("Dentist"), _("Family No"),_("Recall Date"))
 
 class recalled_patient(object):
@@ -35,14 +35,14 @@ class recalled_patient(object):
             self.familyno = row[5]
         self.age = localsettings.getAge(row[6])
         self.addr1 = row[7].strip()
-        
+
         self.addr2 = row[8] if row[8] != None else ""
         self.addr3 = row[9] if row[9] != None else ""
         self.town = row[10] if row[10] != None else ""
         self.county = row[11] if row[11] != None else ""
         self.pcde = row[12] if row[12] != None else ""
-        self.recd = row[13]  
-        
+        self.recd = row[13]
+
     def __getitem__(self, pos):
         if pos == 0:
             return self.letterno
@@ -63,24 +63,24 @@ class recalled_patient(object):
         elif pos == 8:
             return self.addr3
         elif pos == 9:
-            return self.town 
+            return self.town
         elif pos == 10:
-            return self.county 
+            return self.county
         elif pos == 11:
-            return self.pcde 
+            return self.pcde
         elif pos == 14:
-            return self.recd         
+            return self.recd
         elif pos == 12:
             return self.dnt1
         elif pos == 13:
             return self.familyno
-                
+
         else:
             raise IndexError
-        
+
     def __len__(self):
         return 15
-    
+
     def __cmp__(self, other):
         '''
         allow comparison based on family number and address line 1
@@ -90,7 +90,7 @@ class recalled_patient(object):
         else:
             return cmp((self.familyno, self.addr1),
         (other.familyno, other.addr1))
-        
+
     def __repr__(self):
         '''
         represent the object
@@ -102,19 +102,19 @@ def getpatients(conditions="", values=()):
     returns patients with a recall between the two dates
     '''
     assert type(conditions) == types.StringType, "conditions must be a string"
-    assert type(values) == types.TupleType, "conditions must be a string"
+    assert type(values) == types.TupleType, "values must be a string"
     query = '''
     select serialno, title, fname, sname, dnt1, familyno, dob,
-    addr1, addr2, addr3, town, county, pcde, recd from patients 
-    where CONDITIONS 
+    addr1, addr2, addr3, town, county, pcde, recd from patients
+    where CONDITIONS
     order by familyno DESC, addr1, dob,fname,sname'''
 
-    
+
     query = query.replace("CONDITIONS", conditions)
 
     #conditions = "recd>=%s and recd<=%s"
     #values = (startdate, enddate)
-    
+
     db = connect()
     cursor = db.cursor()
 
@@ -126,7 +126,7 @@ def getpatients(conditions="", values=()):
     letterno = 1
     patient = None
     for row in rows:
-        prev_patient = patient 
+        prev_patient = patient
         patient = recalled_patient(letterno, row)
         if patient == prev_patient:
             letterno -= 1
@@ -135,7 +135,7 @@ def getpatients(conditions="", values=()):
             patients[-1].grouped = True
         letterno += 1
         patients.append(patient)
-    
+
     return patients
 
 if __name__ == "__main__":
@@ -144,4 +144,3 @@ if __name__ == "__main__":
     values = date(2012,7,1), date(2012,7,31), 6
     patients = getpatients(conditions, values)
     print patients
-    

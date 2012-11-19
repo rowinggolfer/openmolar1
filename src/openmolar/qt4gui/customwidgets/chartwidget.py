@@ -1165,6 +1165,8 @@ if __name__ == "__main__":
     ("lr4", "b"), ("lr5", "dr"), ("lr7", "fs"), ("lr6", "modbl,pr")):
         form.setToothProps(properties[0], properties[1])
     form.show()
+    pixmap = QtGui.QPixmap.grabWidget(form)
+    pixmap.save("/home/neil/chart.png")
     form.selected = [0, 2]
     sys.exit(app.exec_())
 

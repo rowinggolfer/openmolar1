@@ -33,7 +33,7 @@ show_metadata = False
 # use these variables for the summary notes also?
 same_for_clinical = False
 
-HEADER ='''<html>
+HEADER = '''<html>
 <head>
 <link rel="stylesheet" href="%s" type="text/css">
 </head>
@@ -148,7 +148,7 @@ def notes(notes_dict, full_notes=True):
     '''
 
     retarg = HEADER + '''
-        <table width = "100%">
+        <table class="notes_table">
             <tr>
                 <th class = "date">Date</th>
                 <th class = "ops">ops</th>

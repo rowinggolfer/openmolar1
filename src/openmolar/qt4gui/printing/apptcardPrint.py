@@ -93,7 +93,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     from openmolar.dbtools import appointments
     pt = patient_class.patient(11956)
-    appts = appointments.get_pts_appts(pt)
+    appts = appointments.get_pts_appts(pt, True)
     mycard.setProps(pt, appts)
     mycard.print_()
 
