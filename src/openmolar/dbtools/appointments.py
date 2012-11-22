@@ -26,6 +26,10 @@ class freeSlot(object):
         return self.date_time.time()
 
     @property
+    def finish_time(self):
+        return self.date_time + datetime.timedelta(minutes=self.length)
+
+    @property
     def mpm(self):
         return localsettings.pyTimeToMinutesPastMidnight(self.time())
 
@@ -33,14 +37,18 @@ class freeSlot(object):
     def mpm_end(self):
         return self.mpm + self.length
 
-    def __cmp__(self, other):
-        try:
-            if (self.date_time == other.date_time and
-            self.dent == other.dent and self.length == other.length):
-                return 0
-        except AttributeError, e:
-            pass
-        return 1
+    def __lt__(self, other):
+        return self.date_time < other.date_time
+    def __le__(self, other):
+        return self.date_time <= other.date_time
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+    def __ne__(self, other):
+        return self.__dict__ != other.__dict__
+    def __gt__(self, other):
+        return self.date_time > other.date_time
+    def __ge__(self, other):
+        return self.date_time >= other.date_time
 
     def __repr__(self):
         return "SLOT %s , dent %s, %s mins"% (self.date_time, self.dent,
@@ -53,7 +61,7 @@ def getLengthySlots(slots, length):
     retlist = []
     now = datetime.datetime.now()
     for slot in slots:
-        if slot.length >= length and slot.date_time > now:
+        if slot.length >= length and slot.finish_time > now:
             retlist.append(slot)
     return retlist
 
@@ -89,6 +97,7 @@ def slots(adate, apptix, start, apdata, fin):
             aptstart = fMin
         if aptstart >= dayfin:
             break
+
     slength = dayfin-aptstart
     if slength > 0:
         date_time = datetime.datetime.combine(adate,
@@ -96,6 +105,7 @@ def slots(adate, apptix, start, apdata, fin):
 
         slot = freeSlot(date_time, apptix, slength)
         results.append(slot)
+
     return results
 
 
@@ -296,8 +306,7 @@ class dayAppointmentData(daySummary):
         retList = []
         for app in self.appointments:
             if app[0] == dent:
-                retList.append(app)
-        return retList
+                yield app
 
     def slots(self, minlength):
         '''
@@ -313,6 +322,7 @@ class dayAppointmentData(daySummary):
                 if appt_times_list:
                     slotlist += slots(self.date, dent, self.getStart(dent),
                         appt_times_list, self.getEnd(dent))
+
         return getLengthySlots(slotlist, minlength)
 
 class dentistDay():
@@ -1427,9 +1437,6 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
     WHERE adate>=%%s AND adate<=%%s AND (flag=1 OR flag= 2) %s
     ORDER BY adate'''% mystr
 
-    if localsettings.logqueries:
-        print fullquery, values
-
     cursor.execute(fullquery, values)
 
     possible_days = cursor.fetchall()
@@ -1440,13 +1447,10 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
     for day in possible_days:
         adate, apptix, daystart, dayfin = day
         values = (adate, apptix)
-        query = '''select start,end from aslot
+        query = '''select start, end from aslot
         where adate = %s and apptix = %s and flag0!=72 order by start'''
 
         #--flag0!=72 necessary to avoid zero length apps like pain/double/fam
-
-        if localsettings.logqueries:
-            print query, values
         cursor.execute(query, values)
 
         results = cursor.fetchall()
@@ -1469,12 +1473,15 @@ if __name__ == "__main__":
     #localsettings.initiate()
     #print get_pts_appts(pt)
 
-    testdate = datetime.date(2010,5,19)
+    testdate = datetime.date(2012,11,20)
     #dents = getWorkingDents(testdate)
     #print dents
 
     d_a_d = dayAppointmentData()
     d_a_d.setDate(testdate)
     d_a_d.getAppointments()
-    print d_a_d.slots()
+    slots = d_a_d.slots(20)
+    print "RESULTS"
+    for slot in slots:
+        print slot
 

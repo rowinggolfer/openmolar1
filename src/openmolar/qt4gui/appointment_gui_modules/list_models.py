@@ -146,6 +146,9 @@ class SimpleListModel(QtCore.QAbstractListModel):
         self.appointment_selected.emit(self.currentAppt)
 
     def set_current_appt(self, appt):
+        '''
+        set the current appointment as appt, return the model index of appt
+        '''
         self.currentAppt = appt
         if appt == None:
             self.selection_model.clear()
@@ -156,8 +159,10 @@ class SimpleListModel(QtCore.QAbstractListModel):
                 self.min_slot_length = appt.length
                 self.selection_model.select(index,
                     QtGui.QItemSelectionModel.Select)
+                return index
             except ValueError:
                 pass
+        return QtCore.QModelIndex()
 
     def load_from_database(self, pt):
         appts = appointments.get_pts_appts(pt)

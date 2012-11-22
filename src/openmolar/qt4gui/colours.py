@@ -52,7 +52,8 @@ APPTCOLORS = {
     "SLOT" : QtGui.QColor("#ffff99"),
     "HEADER" : QtCore.Qt.white,
     "BACKGROUND" : QtCore.Qt.white,
-    "ACTIVE_SLOT" : QtGui.QColor("yellow"),
+    "ACTIVE_SLOT" : QtGui.QColor("#ffff33"),
+    "ACTIVE_SLOT_BOLD" : QtGui.QColor("#dddd11"),
     "BUSY" : QtGui.QColor("#d9d9ff"),
     "current_patient" : QtGui.QColor("orange"),
     }

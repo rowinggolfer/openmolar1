@@ -35,6 +35,12 @@ class BriefPatient(object):
 
         self.title, self.fname, self.sname, self.dob, self.cset = row
 
+    @property
+    def name_id(self):
+        return u"%s %s %s - %s"% (
+            self.title, self.fname, self.sname, self.serialno)
+
+
 if __name__ =="__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])

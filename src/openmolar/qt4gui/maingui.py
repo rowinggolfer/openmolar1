@@ -48,7 +48,6 @@ from openmolar.qt4gui.charts import charts_gui
 #--dialogs made with designer
 from openmolar.qt4gui.compiled_uis import Ui_main
 
-from openmolar.qt4gui.compiled_uis import Ui_related_patients
 from openmolar.qt4gui.compiled_uis import Ui_options
 from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
 from openmolar.qt4gui.compiled_uis import Ui_showMemo
@@ -71,6 +70,8 @@ from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
 from openmolar.qt4gui.dialogs.alter_todays_notes import \
     AlterTodaysNotesDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
+from openmolar.qt4gui.dialogs.find_patient_dialog import FindRelativesDialog
+
 from openmolar.qt4gui.dialogs import duplicate_receipt_dialog
 
 
@@ -1081,70 +1082,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.pt.serialno == 0:
             self.advise("No patient to compare to", 2)
             return
-        def family_navigated():
-            dl.selected = dl.family_tableWidget.item(
-            dl.family_tableWidget.currentRow(), 0).text()
-        def address_navigated():
-            dl.selected = dl.address_tableWidget.item(
-            dl.address_tableWidget.currentRow(), 0).text()
-        def DoubleClick():
-            Dialog.accept()
-
-        candidates = search.getsimilar(self.pt.serialno, self.pt.addr1,
-        self.pt.sname, self.pt.familyno)
-
-        if candidates != ():
-            Dialog = QtGui.QDialog(self)
-            dl = Ui_related_patients.Ui_Dialog()
-            dl.setupUi(Dialog)
-            dl.selected=0
-
-            dl.thisPatient_label.setText(
-            "Possible Matches for patient - %d - %s %s - %s"%(
-            self.pt.serialno, self.pt.fname, self.pt.sname, self.pt.addr1))
-
-            headers=['Serialno', 'Surname', 'Forename', 'dob', 'Address1',
-            'Address2', 'POSTCODE']
-            tableNo=0
-            for table in (dl.family_tableWidget, dl.address_tableWidget):
-                table.clear()
-                table.setSortingEnabled(False)
-                #--good practice to disable this while loading
-                table.setRowCount(len(candidates[tableNo]))
-                table.setColumnCount(len(headers))
-                table.setHorizontalHeaderLabels(headers)
-                #table.verticalHeader().hide()
-                row=0
-                for candidate in candidates[tableNo]:
-                    col=0
-                    for attr in candidate:
-                        if type(attr) == type(datetime.date(1900,1,1)):
-                            item = QtGui.QTableWidgetItem(
-                            localsettings.formatDate(attr))
-                        else:
-                            item = QtGui.QTableWidgetItem(str(attr))
-                        table.setItem(row, col, item)
-                        col+=1
-                    row+=1
-                table.resizeColumnsToContents()
-                table.setSortingEnabled(True)
-                table.sortItems(1)
-                #--allow user to sort pt attributes
-                tableNo+=1
-            QtCore.QObject.connect(dl.family_tableWidget, QtCore.SIGNAL(
-            "itemSelectionChanged()"), family_navigated)
-            QtCore.QObject.connect(dl.family_tableWidget, QtCore.SIGNAL(
-            "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
-
-            QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
-            "itemSelectionChanged()"), address_navigated)
-            QtCore.QObject.connect(dl.address_tableWidget, QtCore.SIGNAL(
-            "itemDoubleClicked (QTableWidgetItem *)"), DoubleClick)
-
-            if Dialog.exec_():
-                self.getrecord(int(dl.selected))
-        else:
-            self.advise("no similar patients found")
+        dl = FindRelativesDialog(self.pt)
+        if dl.exec_():
+            self.getrecord(dl.chosen_sno)
 
     def next_patient(self):
         '''
@@ -3123,8 +3063,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("triggered ()"), self.apptBook_fontSize)
 
         self.diary_widget.patient_card_request.connect(self.getrecord)
+
         self.diary_widget.schedule_control.appointment_selected.connect(
             self.pt_diary_widget.update_pt_diary_selection)
+
         self.diary_widget.pt_diary_changed.connect(
             self.pt_diary_widget.refresh_ptDiary)
 

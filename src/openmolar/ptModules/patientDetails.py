@@ -39,7 +39,7 @@ def getAge(pt):
 def header(pt):
     retarg = '''<html>
 <head><link rel="stylesheet" href="%s" type="text/css"></head>
-<body><div class = "center">
+<body><div align = "center">
 <h4>Patient %d</h4>
 <h3>%s %s %s</h3>
         '''% (
