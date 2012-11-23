@@ -35,8 +35,8 @@ from openmolar.qt4gui.compiled_uis import Ui_specify_appointment
 
 from openmolar.qt4gui.dialogs import appt_wizard_dialog
 from openmolar.qt4gui.dialogs import appt_prefs_dialog
+from openmolar.qt4gui.dialogs import appointment_card_dialog
 
-from openmolar.qt4gui.printing import apptcardPrint
 
 
 class PtDiaryWidget(QtGui.QWidget):
@@ -361,8 +361,6 @@ class PtDiaryWidget(QtGui.QWidget):
         def delete_appt():
             if appointments.delete_appt_from_apr(appt):
                 self.advise(_("Sucessfully removed appointment"))
-                self.layout_ptDiary()
-                return True
             else:
                 self.advise(_("Error removing proposed appointment"), 2)
 
@@ -378,8 +376,10 @@ class PtDiaryWidget(QtGui.QWidget):
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                 delete_appt()
+
         elif appt.past:
             delete_appt()
+
         else:
             message = _("Confirm Delete appointment at")
             message += " %s %s "% (appt.atime,
@@ -396,26 +396,26 @@ class PtDiaryWidget(QtGui.QWidget):
                     ##we should add to notes
                     print "future appointment deleted - add to notes!!"
 
-                    #--keep in the patient's diary?
+                    appointments.made_appt_to_proposed(appt)
+                    self.layout_ptDiary()
 
-                    if QtGui.QMessageBox.question(self, _("Question"),
-                    _("Removed from appointment book - keep for rescheduling?"),
-                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                    QtGui.QMessageBox.No ) == QtGui.QMessageBox.Yes:
-                        #appointment "POSTPONED" - not totally cancelled
-                        if not appointments.made_appt_to_proposed(appt):
-                            self.advise(_("Error converting appointment"), 2)
+                #--keep in the patient's diary?
+
+                if QtGui.QMessageBox.question(self, _("Question"),
+                _("Removed from appointment book - keep for rescheduling?"),
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.No ) == QtGui.QMessageBox.No:
+                    #remove from the patients diary
+                    if appointments.delete_appt_from_apr(appt):
+                        self.advise(_("Sucessfully removed appointment"))
                     else:
-                        #remove from the patients diary
-                        if not delete_appt():
-                            self.advise(_("Error removing from patient diary"),
-                            2)
+                        self.advise(_("Error removing from patient diary"),2)
                 else:
                     #--aslot proc has returned False!
                     #let the user know, and go no further
                     self.advise(_("Error Removing from Appointment Book"), 2)
-                    return
-                self.layout_ptDiary()
+
+        self.layout_ptDiary()
 
     def addApptLength(self, dl, hourstext, minstext):
         '''
@@ -564,30 +564,11 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         user has asked for a print of an appointment card
         '''
-        appts = appointments.get_pts_appts(self.pt, True)
-
-        today_dialog = False
-        for appt in appts:
-            today_dialog = today_dialog or appt.today
-
-        if today_dialog:
-            if QtGui.QMessageBox.question(self, _("confirm"),
-            _("include today's appointment(s)?"),
-            QtGui.QMessageBox.No|QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
-                for appt in appts[:]:
-                    if appt.today:
-                        appts.remove(appt)
-
-        card = apptcardPrint.Card()
-        card.setProps(self.pt, appts)
-
-        card.print_()
-        self.pt.addHiddenNote("printed", "appt card")
 
         ##TODO this will need to be a signal now??
         #self.updateHiddenNotesLabel()
-
+        dl = appointment_card_dialog.AppointmentCardDialog(self.pt, self)
+        dl.exec_()
 
     def memo_edited(self):
         print "memo_edited"
@@ -622,8 +603,8 @@ class PtDiaryWidget(QtGui.QWidget):
         QtCore.QObject.connect(self.ui.findAppt_pushButton,
         QtCore.SIGNAL("clicked()"), self.findApptButton_clicked)
 
-        QtCore.QObject.connect(self.ui.printAppt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printApptCard_clicked)
+        self.ui.printAppt_pushButton.clicked.connect(
+            self.printApptCard_clicked)
 
         self.ui.appt_memo_lineEdit.editingFinished.connect(self.memo_edited)
 
@@ -647,7 +628,7 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication([])
     dw = PtDiaryWidget()
-    dw.pt = patient_class.patient(1)
+    dw.pt = patient_class.patient(20862)
     dw.layout_ptDiary()
     dw.show()
 

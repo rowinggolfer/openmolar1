@@ -7,6 +7,7 @@
 # more details.
 
 import datetime
+import logging
 from openmolar.connect import connect, omSQLresult, ProgrammingError
 from openmolar.settings import localsettings
 
@@ -160,6 +161,10 @@ class ApptClass(object):
     def readableTime(self):
         return localsettings.wystimeToHumanTime(self.atime)
 
+    @property
+    def treatment(self):
+        return "%s %s %s"% (self.trt1, self.trt2, self.trt3)
+
     def past_or_present(self):
         '''
         perform logic to decide if past/present future
@@ -174,6 +179,11 @@ class ApptClass(object):
                 self.future = self.atime > localsettings.int_timestamp()
             else:
                 self.future = self.date > today
+
+    @property
+    def html(self):
+        return "%s %s with %s for %s"% (self.readableTime,
+            self.readableDate, self.dent_inits, self.treatment)
 
     def __repr__(self):
         return "serialno=%s %s scheduled=%s dent=%s trt=%s length= %s ix=%s"%(
@@ -1345,16 +1355,17 @@ def delete_appt_from_apr(appt):
     if appt.aprix != "UNKNOWN":
         query += 'AND aprix=%s'
         values.append(appt.aprix)
-    if appt.date == None:
-        query += ' and adate is NULL'
     else:
-        query += ' and adate =%s'
-        values.append(appt.date)
-    if appt.atime == None:
-        query += ' and atime is NULL'
-    else:
-        query += ' and atime =%s'
-        values.append(appt.atime)
+        if appt.date == None:
+            query += ' and adate is NULL'
+        else:
+            query += ' and adate =%s'
+            values.append(appt.date)
+        if appt.atime == None:
+            query += ' and atime is NULL'
+        else:
+            query += ' and atime =%s'
+            values.append(appt.atime)
 
     try:
         if localsettings.logqueries:
@@ -1375,23 +1386,28 @@ def made_appt_to_proposed(appt):
     db = connect()
     cursor = db.cursor()
     result = False
-    query = '''UPDATE apr SET adate=NULL, atime=NULL WHERE serialno=%s AND
-        adate=%s and practix=%s and atime=%s '''
-    values = [appt.serialno, appt.date, appt.dent, appt.atime]
-    if appt.aprix != "UNKNOWN":
-        query += 'AND aprix=%s'
-        values.append(appt.aprix)
+    if appt.aprix == "UNKNOWN":
+        query = '''select aprix from apr WHERE serialno=%s AND
+            adate=%s and practix=%s and atime=%s '''
+        values = (appt.serialno, appt.date, appt.dent, appt.atime)
+        if not cursor.execute(query, values):
+            logging.warning("unable to get aprix from apr for %s"% appt)
+            return False
+        appt.aprix = cursor.fetchone()[0]
+
+    query = '''UPDATE apr SET adate=NULL, atime=NULL
+    WHERE serialno=%s AND aprix=%s'''
+
+    values = (appt.serialno, appt.aprix)
 
     try:
-        if localsettings.logqueries:
-            print query, values
-        result = cursor.execute(query, tuple(values))
+        result = cursor.execute(query, values)
         db.commit()
-    except Exception, ex:
-        print "exception in appointments.made_appt_to_proposed ", ex
+    except Exception as ex:
+        logging.exception("appointments.made_appt_to_proposed")
     cursor.close()
 
-    return result
+    return True
 
 
 def delete_appt_from_aslot(appt):

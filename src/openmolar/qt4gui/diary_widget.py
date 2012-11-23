@@ -63,6 +63,7 @@ from openmolar.qt4gui.customwidgets import staff_diaries
 
 from openmolar.qt4gui.dialogs.appt_mode_dialog import ApptModeDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
+from openmolar.qt4gui.dialogs import appointment_card_dialog
 
 class DiaryWidget(QtGui.QWidget):
     VIEW_MODE = 0
@@ -205,8 +206,8 @@ class DiaryWidget(QtGui.QWidget):
             now=QtCore.QTime.currentTime()
             QtGui.QMessageBox.warning(self, _("Error"), arg)
             #--for logging purposes
-            logging.warning(
-                "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg)
+            logging.warning("%d:%02d ERROR MESSAGE %s"%(
+                now.hour(), now.minute(), arg))
 
     def reset(self):
         '''
@@ -701,7 +702,8 @@ class DiaryWidget(QtGui.QWidget):
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes )
         if result == QtGui.QMessageBox.Yes:
-            self.printApptCard()
+            dl = appointment_card_dialog.AppointmentCardDialog(self.pt, self)
+            dl.exec_()
 
     def triangles(self, call_update=True):
         ''''
@@ -1229,7 +1231,8 @@ class DiaryWidget(QtGui.QWidget):
             for app in apps:
                 book.setAppointment(app)
 
-            if self.appt_mode == self.SCHEDULING_MODE:
+            if (self.appt_mode == self.SCHEDULING_MODE
+            and self.schedule_control.appointment_model.currentAppt):
                 for slot in available_slots:
                     book.addSlot(slot)
                     book.set_active_slot(self.schedule_control.chosen_slot)
@@ -1323,32 +1326,31 @@ class DiaryWidget(QtGui.QWidget):
                 ##we should add to notes
                 print "future appointment deleted - add to notes!!"
 
+                appointments.made_appt_to_proposed(appt)
+
+                self.layout_dayView()
+                self.schedule_control.get_data()
+
                 #--keep in the patient's diary?
 
                 if QtGui.QMessageBox.question(self, _("Question"),
                 _("Removed from appointment book - keep for rescheduling?"),
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No ) == QtGui.QMessageBox.Yes:
-                    #appointment "POSTPONED" - not totally cancelled
-                    if not appointments.made_appt_to_proposed(appt):
-                        self.advise(_("Error converting appointment"), 2)
-                else:
+                QtGui.QMessageBox.No ) == QtGui.QMessageBox.No:
                     #remove from the patients diary
                     if appointments.delete_appt_from_apr(appt):
                         self.advise(_("Sucessfully removed appointment"))
+                        self.schedule_control.get_data()
                     else:
                         self.advise(_("Error removing from patient diary"),2)
-
 
             else:
                 #--aslot proc has returned False!
                 #let the user know, and go no further
                 self.advise(_("Error Removing from Appointment Book"), 2)
-                return
+                self.layout_dayView()
 
-        self.layout_dayView()
         self.pt_diary_changed.emit(self.pt.serialno)
-
 
     def clearEmergencySlot(self, arg):
         '''
