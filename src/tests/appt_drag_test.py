@@ -48,12 +48,12 @@ class _DragTestDialog(QtGui.QDialog):
 
         self.OVbook = AppointmentOverviewWidget("1000", "1200", 15, 2, self)
 
-        d1 = appointments.dentistDay(1)
+        d1 = appointments.DentistDay(1)
         d1.start=1015
         d1.end=1145
         d1.memo="hello"
 
-        d2 = appointments.dentistDay(4)
+        d2 = appointments.DentistDay(4)
         d2.start=1015
         d2.end=1145
 
@@ -67,21 +67,21 @@ class _DragTestDialog(QtGui.QDialog):
             self.OVbook.setMemo(d)
             self.OVbook.setFlags(d)
 
-        slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,45),
+        slot = appointments.FreeSlot(datetime.datetime(2009,2,2,10,45),
             1,20)
-        slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),
+        slot2 = appointments.FreeSlot(datetime.datetime(2009,2,2,11,05),
             4,60)
 
         self.OVbook.addSlot(slot)
         self.OVbook.addSlot(slot2)
 
-        appt = appointments.aowAppt()
+        appt = appointments.WeekViewAppointment()
         appt.mpm = 10*60+30
         appt.length = 15
         appt.dent = 1
         self.OVbook.appts[1] = (appt,)
 
-        emerg = appointments.aowAppt()
+        emerg = appointments.WeekViewAppointment()
         emerg.mpm = 11*60+15
         emerg.length = 15
         emerg.reason = "emergency"

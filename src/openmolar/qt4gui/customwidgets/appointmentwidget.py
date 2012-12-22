@@ -988,7 +988,7 @@ if __name__ == "__main__":
         form.setAppointment(appoint)
 
     slot_date = datetime.datetime.combine(dt.date(), datetime.time(11,30))
-    slot = appointments.freeSlot(slot_date, 5, 90)
+    slot = appointments.FreeSlot(slot_date, 5, 90)
     form.addSlot(slot)
 
     form.connect(form, QtCore.SIGNAL("AppointmentClicked"), clicktest)

@@ -1179,7 +1179,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 #--spotted new "instance" of patient
                 self.pt = patient_class.patient(serialno)
                 self.pt_dbstate = copy.deepcopy(self.pt)
-                self.pt_diary_widget.pt = self.pt
+                self.pt_diary_widget.set_patient(self.pt)
 
                 #-- this next line is to prevent a "not saved warning"
                 #self.pt_dbstate.fees = self.pt.fees
@@ -1194,13 +1194,10 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self.advise (_("error getting serialno")+ " %d - " % serialno +
                               _("please check this number is correct?"), 1)
                 return
-            except Exception, e:
-                print "#"*20
-                print "Unknown ERROR loading patient???"
-                print str(Exception), e
-                print "maingself.ui.getrecord - serialno%d"%serialno
-                print "#"*20
-                self.advise ("Unknown Error - Tell Neil<br />%s"%e, 2)
+            except Exception as exc:
+                logging.exception(
+                "Unknown ERROR loading patient - serialno %d"% serialno)
+                self.advise ("Unknown Error - Tell Neil<br />%s"% exc, 2)
 
         else:
             self.advise("get record called with serialno 0")

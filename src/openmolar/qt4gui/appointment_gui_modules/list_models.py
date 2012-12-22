@@ -184,7 +184,7 @@ class BlockListModel(SimpleListModel):
         (_("emergency"), 20),
         (_("emergency"), 30),
         (_("Out of Office"), 30)):
-            block = appointments.ApptClass()
+            block = appointments.APR_Appointment()
             block.name = val
             block.unscheduled = True
             block.length = length

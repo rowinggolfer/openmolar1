@@ -44,12 +44,22 @@ class AppointmentCardDialog(BaseDialog):
 
         self.appointments_label = QtGui.QLabel()
 
+
+        self.check_box = QtGui.QCheckBox(_("Include Today's appointments?"))
+        self.check_box.setChecked(True)
+
         icon = QtGui.QIcon(":/ps.png")
         self.apply_but.setText(_("Print"))
         self.apply_but.setIcon(icon)
 
+        self.remove_spacer()
+
         self.insertWidget(patient_label)
         self.insertWidget(self.appointments_label)
+        self.layout.insertStretch(2)
+        self.insertWidget(self.check_box)
+
+        self.check_box.toggled.connect(self.today_check_box_toggled)
 
         QtCore.QTimer.singleShot(100, self.get_data)
 
@@ -57,41 +67,45 @@ class AppointmentCardDialog(BaseDialog):
     def sizeHint(self):
         return QtCore.QSize(260, 300)
 
+    def set_label_text(self):
+        html = "<ul>"
+        for appt in self.appts:
+            html += "<li>%s</li>"% appt.html
+        html += "</ul>"
+        self.appointments_label.setText(html)
+
     def get_data(self):
         '''
         poll the database for appointment data
         '''
-        def set_label_text():
-            html = "<ul>"
-            for appt in self.appts:
-                html += "<li>%s</li>"% appt.html
-            html += "</ul>"
-            self.appointments_label.setText(html)
 
         self.appts = appointments.get_pts_appts(self.pt, True)
-        set_label_text()
+        self.set_label_text()
 
-        today_dialog = False
+        print_today_issue = False
         for appt in self.appts:
-            today_dialog = today_dialog or appt.today
+            print_today_issue = print_today_issue or appt.today
 
-        if today_dialog:
-            if QtGui.QMessageBox.question(self, _("confirm"),
-            _("include today's appointment(s)?"),
-            QtGui.QMessageBox.No|QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
-                for appt in self.appts[:]:
-                    if appt.today:
-                        self.appts.remove(appt)
-                        set_label_text()
+        self.check_box.setVisible(print_today_issue)
 
+        self.enableApply()
+
+    def today_check_box_toggled(self, checked):
+        if not checked:
+            for appt in self.appts[:]:
+                if appt.today:
+                    self.appts.remove(appt)
+                    self.set_label_text()
+        else:
+            self.enableApply(False)
+            self.get_data()
+
+    def accept(self):
         if self.appts == []:
             QtGui.QMessageBox.information(self, "warning",
                 _("No appointments to print!"))
             self.reject()
-        self.enableApply()
 
-    def accept(self):
         card = apptcardPrint.Card()
         card.setProps(self.pt, self.appts)
 

@@ -156,7 +156,7 @@ class apptDialog(Ui_apptOpenDay.Ui_Dialog):
         user has entered a good sequence, so write it to the DB now
         '''
         print "writing to DB"
-        day = appointments.dentistDay(self.chosenDent)
+        day = appointments.DentistDay(self.chosenDent)
         day.date = self.dateEdit.date().toPyDate()
         day.start = int(self.dayStart_timeEdit.time().toString("hmm"))
         day.end = int(self.dayFinish_timeEdit.time().toString("hmm"))

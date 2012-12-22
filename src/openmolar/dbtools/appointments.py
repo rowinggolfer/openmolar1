@@ -11,10 +11,12 @@ import logging
 from openmolar.connect import connect, omSQLresult, ProgrammingError
 from openmolar.settings import localsettings
 
-class freeSlot(object):
+class FreeSlot(object):
     '''
-    a custom data object to represent a slot (ie. a free space in dentists book)
+    a custom data object to represent a slot
+    (ie. a free space in dentists book)
     '''
+    is_slot = True
     def __init__(self, date_time=None, dent=0, length=0):
         self.dent = dent
         self.date_time = date_time
@@ -52,65 +54,18 @@ class freeSlot(object):
         return self.date_time >= other.date_time
 
     def __repr__(self):
-        return "SLOT %s , dent %s, %s mins"% (self.date_time, self.dent,
+        return "%s , dent %s, %s mins SLOT"% (self.date_time, self.dent,
             self.length)
 
-def getLengthySlots(slots, length):
-    '''
-    sort through the list of slots, and filter out those with inadequate length
-    '''
-    retlist = []
-    now = datetime.datetime.now()
-    for slot in slots:
-        if slot.length >= length and slot.finish_time > now:
-            retlist.append(slot)
-    return retlist
-
-def slots(adate, apptix, start, apdata, fin):
-    '''
-    takes data like  830 ((830, 845), (900, 915), (1115, 1130), (1300, 1400),
-    (1400, 1420), (1600, 1630)) 1800
-    and returns a tuple of results like (freeSlot, freeSlot, ....)
-    '''
-    #--slotlength is required appt  length, in minutes
-
-    #-- modified this on 18_11_2009, for the situation when a clinician's day
-    #-- start may be later than any first appointment in that book
-    #-- this facilitates having lunch etc.. already in place for a non used
-    #-- day.
-    aptstart = localsettings.minutesPastMidnight(start)
-    dayfin = localsettings.minutesPastMidnight(fin)
-    if dayfin <= aptstart:
-        return ()
-    results = []
-    for ap in apdata:
-        sMin = localsettings.minutesPastMidnight(ap[0])
-        fMin = localsettings.minutesPastMidnight(ap[1])
-        slength = sMin-aptstart
-        if  slength > 0:
-            date_time = datetime.datetime.combine(adate,
-            localsettings.minutesPastMidnightToPyTime(aptstart))
-
-            slot = freeSlot(date_time, apptix, slength)
-            results.append(slot)
-
-        if fMin > aptstart:
-            aptstart = fMin
-        if aptstart >= dayfin:
-            break
-
-    slength = dayfin-aptstart
-    if slength > 0:
-        date_time = datetime.datetime.combine(adate,
-        localsettings.minutesPastMidnightToPyTime(aptstart))
-
-        slot = freeSlot(date_time, apptix, slength)
-        results.append(slot)
-
-    return results
+class AgendaAppointment(FreeSlot):
+    text = ""
+    is_slot = False
+    def __repr__(self):
+        return "%s , dent %s, %s mins %s"% (self.date_time, self.dent,
+            self.length, self.text)
 
 
-class aowAppt(object):
+class WeekViewAppointment(object):
     '''
     a custom data object to contain data relevant to the painting of
     the appointment_overviewwidget
@@ -123,7 +78,7 @@ class aowAppt(object):
     isEmergency = False
     cset = ""
 
-class ApptClass(object):
+class APR_Appointment(object):
     '''
     a class to hold data about a patient's appointment
     '''
@@ -202,7 +157,7 @@ class ApptClass(object):
         else:
             return 1
 
-class daySummary(object):
+class DaySummary(object):
     '''
     a data structure to hold just summary data for a day
     '''
@@ -243,12 +198,12 @@ class daySummary(object):
                     self.latest_end = dent.end
         self.workingDents = tuple(workingDents)
 
-class dayAppointmentData(daySummary):
+class DayAppointmentData(DaySummary):
     '''
     a data structure to hold all data for a day
     '''
     def __init__(self):
-        daySummary.__init__(self)
+        DaySummary.__init__(self)
         self.appointments = ()
 
     def header(self):
@@ -335,7 +290,7 @@ class dayAppointmentData(daySummary):
 
         return getLengthySlots(slotlist, minlength)
 
-class dentistDay():
+class DentistDay():
     '''
     a small class to store data about a dentist's day
     '''
@@ -364,7 +319,7 @@ class dentistDay():
         time2 = localsettings.minutesPastMidnight(self.end)
         return time2-time1
 
-class printableAppt():
+class PrintableAppointment():
     '''
     a class to store data used when printing a daylist
     '''
@@ -431,6 +386,104 @@ class printableAppt():
         return "%s %s %s %s %s %s %s %s"% (self.start, self.end, self.name,
         self.serialno, self.treat, self.note, self.cset, self.length())
 
+
+class AgendaData(object):
+
+    def __init__(self):
+        self._items = []
+        self._active_slot = None
+
+    def add_appointment(self, adate, appt):
+
+        dent = appt[0]
+        date_time = datetime.datetime.combine(adate,
+            localsettings.wystimeToPyTime(appt[1]))
+
+        length = (localsettings.minutesPastMidnight(appt[2]) -
+            localsettings.minutesPastMidnight(appt[1]))
+        ag_appt = AgendaAppointment(date_time, dent, length)
+        ag_appt.text = "%s %s %s %s %s %s"% appt[3:9]
+        self._items.append(ag_appt)
+
+    def add_slot(self, slot):
+        self._items.append(slot)
+
+    def items(self, start=None, finish=None):
+        for item in sorted(self._items):
+            yield item
+
+    def set_active_slot(self, slot):
+        self._active_slot = slot
+
+    def to_html(self):
+        text = '''<html><head><link rel="stylesheet"
+        href="%s" type="text/css"></head>
+        <body><ul>'''% localsettings.stylesheet
+        for item in self.items(self):
+            if self._active_slot and item == self._active_slot:
+                text += '<li class="active_slot">%s</li>'% item
+            elif item.is_slot:
+                text += '<li class="slot">%s</li>'% item
+            else:
+                text += "<li>%s</li>"% item
+        return text + "</ul></body></html>"
+
+
+def slots(adate, apptix, start, apdata, fin):
+    '''
+    takes data like  830 ((830, 845), (900, 915), (1115, 1130), (1300, 1400),
+    (1400, 1420), (1600, 1630)) 1800
+    and returns a tuple of results like (FreeSlot, FreeSlot, ....)
+    '''
+    #--slotlength is required appt  length, in minutes
+
+    #-- modified this on 18_11_2009, for the situation when a clinician's day
+    #-- start may be later than any first appointment in that book
+    #-- this facilitates having lunch etc.. already in place for a non used
+    #-- day.
+    aptstart = localsettings.minutesPastMidnight(start)
+    dayfin = localsettings.minutesPastMidnight(fin)
+    if dayfin <= aptstart:
+        return ()
+    results = []
+    for ap in apdata:
+        sMin = localsettings.minutesPastMidnight(ap[0])
+        fMin = localsettings.minutesPastMidnight(ap[1])
+        slength = sMin-aptstart
+        if  slength > 0:
+            date_time = datetime.datetime.combine(adate,
+            localsettings.minutesPastMidnightToPyTime(aptstart))
+
+            slot = FreeSlot(date_time, apptix, slength)
+            results.append(slot)
+
+        if fMin > aptstart:
+            aptstart = fMin
+        if aptstart >= dayfin:
+            break
+
+    slength = dayfin-aptstart
+    if slength > 0:
+        date_time = datetime.datetime.combine(adate,
+        localsettings.minutesPastMidnightToPyTime(aptstart))
+
+        slot = FreeSlot(date_time, apptix, slength)
+        results.append(slot)
+
+    return results
+
+def getLengthySlots(slots, length):
+    '''
+    sort through the list of slots, and filter out those with inadequate length
+    '''
+    retlist = []
+    now = datetime.datetime.now()
+    for slot in slots:
+        if slot.length >= length and slot.finish_time > now:
+            retlist.append(slot)
+    return retlist
+
+
 def updateAday(uddate, arg):
     '''
     takes an instance of the workingDay class
@@ -459,7 +512,7 @@ def updateAday(uddate, arg):
 
 def alterDay(arg):
     '''
-    takes a dentistDay object tries to change the aday table
+    takes a DentistDay object tries to change the aday table
     returns an omSQLresult
     '''
     #-- this method is called from the apptOpenDay Dialog, which is deprecated!!
@@ -561,7 +614,7 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
     ##originally I just return the rows here...
     wds = []
     for apptix, start, end, memo, flag in rows:
-        dent = dentistDay(apptix)
+        dent = DentistDay(apptix)
         dent.start = start
         dent.end = end
         dent.memo = memo
@@ -598,7 +651,7 @@ def getDayInfo(startdate, enddate, dents=() ):
     data = {}
     for adate, apptix, start, end, memo, flag in rows:
         key = "%d%02d"% (adate.month, adate.day)
-        dent = dentistDay(apptix)
+        dent = DentistDay(apptix)
         dent.start = start
         dent.end = end
         dent.memo = memo
@@ -783,11 +836,11 @@ def convertResults(results):
     (830, 845) OR
     (830, 845, serialno) or
     (1300,1400, "LUNCH")
-    to and aowAppt object
+    to and WeekViewAppointment object
     '''
     aptlist = []
     for start, end, serialno, name, cset in results:
-        aow = aowAppt()
+        aow = WeekViewAppointment()
         aow.mpm = localsettings.minutesPastMidnight(start)
         aow.length = localsettings.minutesPastMidnight(end) - aow.mpm
         aow.serialno = serialno
@@ -837,7 +890,7 @@ def printableDaylistData(adate, dent):
         current_apttime = daydata[0][0]
         if results:
             for row in results:
-                pa = printableAppt()
+                pa = PrintableAppointment()
                 pa.start = row[0]
                 pa.end = row[1]
                 pa.setSerialno(row[4]) #--do this BEFORE setting name
@@ -847,7 +900,7 @@ def printableDaylistData(adate, dent):
                 pa.setCset(row[7])
                 if current_apttime < pa.start:
                     #--either a gap or a double appointment
-                    extra = printableAppt()
+                    extra = PrintableAppointment()
                     extra.start = current_apttime
                     extra.end = pa.start #for length calc
                     retlist.append(extra)
@@ -855,7 +908,7 @@ def printableDaylistData(adate, dent):
                 if current_apttime < pa.end:
                     current_apttime = pa.end
             if pa.end < dayend:
-                last_pa = printableAppt()
+                last_pa = PrintableAppointment()
                 last_pa.start = pa.end
                 last_pa.end = dayend
                 retlist.append(last_pa)
@@ -993,7 +1046,7 @@ def get_pts_appts(pt, printing=False):
     data = []
     cursor.close()
     for row in rows:
-        appt = ApptClass()
+        appt = APR_Appointment()
         appt.serialno = row[0]
         appt.aprix = row[1]
         appt.name = name
@@ -1188,7 +1241,7 @@ def daydrop_appt(adate, appt, droptime, apptix):
 
     date_time = datetime.datetime.combine(adate, droptime)
 
-    this_slot = freeSlot(date_time, apptix, appt.length)
+    this_slot = FreeSlot(date_time, apptix, appt.length)
 
     #-- check block still available!!
     found = False
@@ -1235,7 +1288,7 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     block_length = (localsettings.pyTimeToMinutesPastMidnight(end) -
         localsettings.pyTimeToMinutesPastMidnight(start))
 
-    this_slot = freeSlot(date_time, apptix, block_length)
+    this_slot = FreeSlot(date_time, apptix, block_length)
 
     #-- check block still available!!
     found = False
@@ -1276,7 +1329,7 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     block_length = (localsettings.pyTimeToMinutesPastMidnight(end) -
         localsettings.pyTimeToMinutesPastMidnight(start))
 
-    this_slot = freeSlot(date_time, apptix, block_length)
+    this_slot = FreeSlot(date_time, apptix, block_length)
     #-- check block still available!!
     found = False
     for slot in slots:
@@ -1493,7 +1546,7 @@ if __name__ == "__main__":
     #dents = getWorkingDents(testdate)
     #print dents
 
-    d_a_d = dayAppointmentData()
+    d_a_d = DayAppointmentData()
     d_a_d.setDate(testdate)
     d_a_d.getAppointments()
     slots = d_a_d.slots(20)

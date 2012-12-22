@@ -59,7 +59,6 @@ from openmolar.qt4gui.customwidgets.appointment_overviewwidget \
 from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import dent_hyg_selector
 from openmolar.qt4gui.customwidgets import calendars
-from openmolar.qt4gui.customwidgets import staff_diaries
 
 from openmolar.qt4gui.dialogs.appt_mode_dialog import ApptModeDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
@@ -74,6 +73,7 @@ class DiaryWidget(QtGui.QWidget):
     appt_mode = VIEW_MODE
 
     pt = None
+    finding_next_slot = 0  # -1 = backwards, 1 = forwards
 
     patient_card_request = QtCore.pyqtSignal(object)
     pt_diary_changed = QtCore.pyqtSignal(object)
@@ -82,7 +82,7 @@ class DiaryWidget(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_diary_widget.Ui_Form()
         self.ui.setupUi(self)
-        self.appointmentData = appointments.dayAppointmentData()
+        self.appointmentData = appointments.DayAppointmentData()
 
         self.schedule_control = ApptScheduleControl(self)
         self.appt_clinicianSelection_comboBox = QtGui.QComboBox()
@@ -149,9 +149,9 @@ class DiaryWidget(QtGui.QWidget):
 
         #--customise the appointment widget calendar
         self.ui.dayCalendar = calendars.controlCalendar()
-        hlayout = QtGui.QHBoxLayout(self.ui.dayCalendar_frame)
-        hlayout.setMargin(0)
-        hlayout.addWidget(self.ui.dayCalendar)
+        self.calendar_layout = QtGui.QHBoxLayout(self.ui.dayCalendar_frame)
+        self.calendar_layout.setMargin(0)
+        self.calendar_layout.addWidget(self.ui.dayCalendar)
 
         self.ui.weekCalendar = calendars.weekCalendar()
         hlayout = QtGui.QHBoxLayout(self.ui.weekCalendar_frame)
@@ -170,9 +170,10 @@ class DiaryWidget(QtGui.QWidget):
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.yearView)
 
-
-        self.staffDiary = staff_diaries.Diary()
-        self.ui.diaries_scrollArea.setWidget(self.staffDiary)
+        self.agenda_widget = QtGui.QTextBrowser()
+        layout = QtGui.QVBoxLayout(self.ui.agenda_frame)
+        layout.setMargin(0)
+        layout.addWidget(self.agenda_widget)
 
         self.init_signals()
 
@@ -296,7 +297,7 @@ class DiaryWidget(QtGui.QWidget):
 
     def apptBook_slot_clicked(self, dent, time, length):
         dt = datetime.datetime.combine(self.appointmentData.date, time)
-        slot = appointments.freeSlot(dt, dent, length)
+        slot = appointments.FreeSlot(dt, dent, length)
         self.makeAppt(self.schedule_control.appointment_model.currentAppt,
             slot)
 
@@ -501,6 +502,7 @@ class DiaryWidget(QtGui.QWidget):
             localsettings.readableDate(appt.date)), 1)
             return
 
+        self.finding_next_slot = 1
         self.signals_calendar(False)
         self.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
         self.ui.weekCalendar.setSelectedDate(QtCore.QDate.currentDate())
@@ -725,6 +727,7 @@ class DiaryWidget(QtGui.QWidget):
         '''
         comes from click proceedures on other calendars
         '''
+        logging.debug("calendar %s"% sd)
         self.ui.dayCalendar.setSelectedDate(sd)
 
     def aptFontSize(self, e):
@@ -889,8 +892,7 @@ class DiaryWidget(QtGui.QWidget):
             self.layout_year()
             self.layout_yearHeader()
         elif i==4:
-            #self.taskView.layoutTasks()
-            pass
+            self.layout_agenda()
 
     def updateDayMemos(self, memos):
         '''
@@ -1144,6 +1146,9 @@ class DiaryWidget(QtGui.QWidget):
         if self.ui.diary_tabWidget.currentIndex() != 0:
             return
 
+        logging.debug("layout_dayView")
+
+        self.ui.dayCalendar_frame.setLayout(self.calendar_layout)
         self.ui.day_view_control_frame.setLayout(self.appt_mode_layout)
 
         for book in self.apptBookWidgets:
@@ -1176,6 +1181,8 @@ class DiaryWidget(QtGui.QWidget):
         if self.appt_mode == self.SCHEDULING_MODE:
             if d < localsettings.currentDay():
                 self.advise(_("You can't schedule an appointment in the past"))
+                #stop looking backwards
+                self.finding_next_slot = 1
                 self.ui.dayCalendar.setSelectedDate(localsettings.currentDay())
                 return
             minlength = self.schedule_control.min_slot_length
@@ -1183,8 +1190,8 @@ class DiaryWidget(QtGui.QWidget):
             self.schedule_control.set_available_slots(available_slots)
 
             if available_slots == []:
-                pass
-                ##TODO - alter the date and check the next day
+                self.step_date(self.finding_next_slot != -1)
+                return
 
         self.ui.daymemo_label.setText(self.appointmentData.memo)
 
@@ -1195,7 +1202,7 @@ class DiaryWidget(QtGui.QWidget):
             self.apptBookWidgets.append(book)
             self.ui.dayView_splitter.addWidget(book)
             self.signals_apptWidgets(book)
-
+            book.mode = self.appt_mode
         #-- clean past links to dentists
         i = 0
         for book in self.apptBookWidgets:
@@ -1233,9 +1240,14 @@ class DiaryWidget(QtGui.QWidget):
 
             if (self.appt_mode == self.SCHEDULING_MODE
             and self.schedule_control.appointment_model.currentAppt):
+
+                if self.finding_next_slot == -1:
+                    self.schedule_control.use_last_slot = True
+                    self.finding_next_slot = 1
                 for slot in available_slots:
                     book.addSlot(slot)
-                    book.set_active_slot(self.schedule_control.chosen_slot)
+
+                book.set_active_slot(self.schedule_control.chosen_slot)
 
             i += 1
 
@@ -1260,6 +1272,57 @@ class DiaryWidget(QtGui.QWidget):
             self.ui.daymemo_label.setText(t)
 
             #self.advise("all off today")
+
+
+    def layout_agenda(self):
+        '''
+        this populates the diary agenda
+        '''
+        if self.ui.diary_tabWidget.currentIndex() != 4:
+            return
+        self.ui.agenda_calendar_frame.setLayout(self.calendar_layout)
+        self.ui.agenda_control_frame.setLayout(self.appt_mode_layout)
+
+        d = self.ui.dayCalendar.selectedDate().toPyDate()
+
+        agenda_data = appointments.AgendaData()
+
+        self.appointmentData.setDate(d)
+        self.appointmentData.getAppointments()
+
+        if self.appt_mode == self.SCHEDULING_MODE:
+            if d < localsettings.currentDay():
+                self.advise(_("You can't schedule an appointment in the past"))
+                #stop looking backwards
+                self.finding_next_slot = 1
+                self.ui.dayCalendar.setSelectedDate(localsettings.currentDay())
+                return
+            minlength = self.schedule_control.min_slot_length
+            available_slots = self.appointmentData.slots(minlength)
+            self.schedule_control.set_available_slots(available_slots)
+
+            if available_slots == []:
+                self.step_date(self.finding_next_slot != -1)
+                return
+        else:
+            available_slots = []
+
+        for app in self.appointmentData.appointments:
+            agenda_data.add_appointment(d, app)
+
+        for slot in available_slots:
+            agenda_data.add_slot(slot)
+
+        if (self.appt_mode == self.SCHEDULING_MODE
+        and self.schedule_control.appointment_model.currentAppt):
+
+            if self.finding_next_slot == -1:
+                self.schedule_control.use_last_slot = True
+                self.finding_next_slot = 1
+
+            agenda_data.set_active_slot(self.schedule_control.chosen_slot)
+
+        self.agenda_widget.setText(agenda_data.to_html())
 
     def appointment_clicked(self, list_of_snos):
         if len(list_of_snos) == 1:
@@ -1314,7 +1377,7 @@ class DiaryWidget(QtGui.QWidget):
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
 
-            appt = appointments.ApptClass()
+            appt = appointments.APR_Appointment()
             appt.atime = int(start.replace(":",""))
             appt.dent = dentist
             appt.date = adate
@@ -1368,7 +1431,7 @@ class DiaryWidget(QtGui.QWidget):
         if QtGui.QMessageBox.question(self, "Confirm", message,
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
-            appt = appointments.ApptClass()
+            appt = appointments.APR_Appointment()
             appt.atime = localsettings.humanTimetoWystime(arg[0])
             appt.date = adate
             appt.dent = arg[2]
@@ -1416,7 +1479,7 @@ class DiaryWidget(QtGui.QWidget):
     def appt_dropped_onto_daywidget(self, appt, droptime, dent):
         '''
         appointment has been dropped onto a daybook widget
-        appt is of type openmolar.dbtools.appointments.ApptClass
+        appt is of type openmolar.dbtools.appointments.Appointment
         droptime is a pytime
         dent = numeric representation of dentist who's book was involved
         '''
@@ -1497,6 +1560,7 @@ class DiaryWidget(QtGui.QWidget):
         if forwards:
             date = date.addDays(1)
         else:
+            self.finding_next_slot = -1
             date = date.addDays(-1)
 
         self.calendar(date)

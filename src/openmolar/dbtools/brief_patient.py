@@ -8,7 +8,7 @@
 
 from openmolar import connect
 
-query = '''SELECT title, fname, sname, dob, cset
+query = '''SELECT title, fname, sname, dob, cset, dnt1, dnt2
 from patients where serialno = %s'''
 
 class BriefPatient(object):
@@ -21,6 +21,9 @@ class BriefPatient(object):
     sname = ""
     dob = None
     cset = ""
+    dnt1 = None
+    dnt2 = None
+    _appt_memo = None
 
     def __init__(self, sno):
         '''
@@ -33,12 +36,25 @@ class BriefPatient(object):
         cursor.execute(query, (sno,))
         row = cursor.fetchone()
 
-        self.title, self.fname, self.sname, self.dob, self.cset = row
+        self.title, self.fname, self.sname, \
+        self.dob, self.cset, self.dnt1, self.dnt2 = row
 
     @property
     def name_id(self):
         return u"%s %s %s - %s"% (
             self.title, self.fname, self.sname, self.serialno)
+
+    @property
+    def appt_memo(self):
+        if self._appt_memo is None:
+            db = connect.connect()
+            cursor = db.cursor()
+            query = 'select note from appt_prefs where serialno=%s'
+            if cursor.execute(query, self.serialno):
+                self._appt_memo = cursor.fetchone()[0]
+            cursor.close()
+
+        return self._appt_memo
 
 
 if __name__ =="__main__":

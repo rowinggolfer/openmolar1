@@ -19,6 +19,10 @@ li.about{list-style:none;color:blue;padding-left:0px}
 
 li.recep_note{font-size:9pt;list-style-type:none;padding-left:0px;background-color:#ffeedd;}
 
+li.agenda{font-size:9pt;}
+li.slot{font-size:9pt;font-style:bold;color:red;background-color:#ffff66;}
+li.active_slot{font-size:11pt;font-style:bold;color:red;background-color:#ffff00;}
+
 /* -- reception_notes -- */
 .recep_date{font-size:9pt;font-style:bold;background-color:#eeeeee;}
 

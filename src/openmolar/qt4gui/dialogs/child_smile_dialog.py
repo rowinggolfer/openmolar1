@@ -71,6 +71,7 @@ class UpperCaseLineEdit(QtGui.QLineEdit):
 
 class ChildSmileDialog(BaseDialog):
     result = ""
+    is_checking_website = False
     def __init__(self, parent):
         BaseDialog.__init__(self, parent)
 
@@ -112,11 +113,26 @@ class ChildSmileDialog(BaseDialog):
             self.simd_label.setText("")
             self.enableApply(False)
 
+    def check_hung(self):
+        '''
+        this is called by a timout of the web polling
+        '''
+        if self.is_checking_website:
+            QtGui.QApplication.instance().restoreOverrideCursor()
+            QtGui.QMessageBox.warning(self, "error",
+                "unable to poll NHS website")
+            self.reject()
+            return
+
+
     def simd_lookup(self):
         '''
         poll the server for a simd for a postcode
         '''
         try:
+            self.is_checking_website = True
+            QtCore.QTimer.singleShot(15000, self.check_hung)
+
             self.header_label.setText(_("Polling website with Postcode"))
             QtGui.QApplication.instance().setOverrideCursor(
                 QtCore.Qt.WaitCursor)
@@ -132,6 +148,7 @@ class ChildSmileDialog(BaseDialog):
             self.simd_label.setText(self.result)
 
             self.enableApply(True)
+            self.is_checking_website = False
             QtGui.QApplication.instance().restoreOverrideCursor()
         except Exception as exc:
             logging.exception("error polling NHS website?")

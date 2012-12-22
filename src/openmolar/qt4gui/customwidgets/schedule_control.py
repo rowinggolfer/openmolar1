@@ -31,6 +31,8 @@ from openmolar.qt4gui.appointment_gui_modules.list_models \
 
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 
+from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
+
 class ApptScheduleControl(QtGui.QWidget):
     BROWSE_MODE = 0
     SCHEDULE_MODE = 1
@@ -49,10 +51,16 @@ class ApptScheduleControl(QtGui.QWidget):
     pt = None
     available_slots = []
     _chosen_slot_no = 0
+    use_last_slot = False
+
+    _pt_diary_widget = None
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.patient_label = QtGui.QLabel()
+
+        self.diary_button = QtGui.QPushButton("diary")
+
         self.get_patient_button = QtGui.QPushButton("Change", self)
         self.get_patient_button.setMaximumWidth(80)
 
@@ -93,10 +101,11 @@ class ApptScheduleControl(QtGui.QWidget):
         layout = QtGui.QGridLayout(self)
         layout.setMargin(0)
         layout.addWidget(self.patient_label,0,0)
-        layout.addWidget(self.get_patient_button,0,1)
-        layout.addWidget(self.appt_listView,1,0,1,2)
-        layout.addWidget(self.appt_controls_frame,2,0,1,2)
-        layout.addWidget(self.block_listView,3,0,1,2)
+        layout.addWidget(self.diary_button,0,1)
+        layout.addWidget(self.get_patient_button,0,2)
+        layout.addWidget(self.appt_listView,1,0,1,3)
+        layout.addWidget(self.appt_controls_frame,2,0,1,3)
+        layout.addWidget(self.block_listView,3,0,1,3)
 
         self.set_mode(self.BROWSE_MODE)
 
@@ -112,6 +121,8 @@ class ApptScheduleControl(QtGui.QWidget):
         debug_button.clicked.connect(self.debug_function)
 
         book_now_button.clicked.connect(self.book_now_button_clicked)
+
+        self.diary_button.clicked.connect(self.show_pt_diary)
 
     def debug_function(self):
         '''
@@ -146,6 +157,7 @@ class ApptScheduleControl(QtGui.QWidget):
         self.mode = mode
         self.appt_listView.setVisible(mode == self.SCHEDULE_MODE)
         self.appt_controls_frame.setVisible(mode == self.SCHEDULE_MODE)
+        self.diary_button.setVisible(mode == self.SCHEDULE_MODE)
 
         self.get_patient_button.setVisible(mode == self.SCHEDULE_MODE)
         self.block_listView.setVisible(mode == self.BLOCK_MODE)
@@ -251,6 +263,9 @@ class ApptScheduleControl(QtGui.QWidget):
         self.chosen_slot_label.setText(_("No slot selected"))
         if self.available_slots == []:
             return None
+        if self.use_last_slot:
+            self._chosen_slot_no = len(self.available_slots)-1
+            self.use_last_slot = False
         try:
             slot = self.available_slots[self._chosen_slot_no]
             self.chosen_slot_label.setText("%s"% slot)
@@ -263,9 +278,39 @@ class ApptScheduleControl(QtGui.QWidget):
         self.book_now_signal.emit(
             self.appointment_model.currentAppt, self.chosen_slot)
 
+    @property
+    def pt_diary_widget(self):
+        if self._pt_diary_widget is None:
+            self._pt_diary_widget = PtDiaryWidget()
+        return self._pt_diary_widget
+
+    def show_pt_diary(self):
+        if self.pt is None:
+            return
+        self.pt_diary_widget.set_patient(self.pt)
+        self.pt_diary_widget.layout_ptDiary()
+        dl = QtGui.QDialog(self)
+        but_box = QtGui.QDialogButtonBox(dl)
+        but = but_box.addButton(_("Close"), but_box.AcceptRole)
+        but.clicked.connect(dl.accept)
+
+        layout = QtGui.QVBoxLayout(dl)
+        layout.addWidget(self.pt_diary_widget)
+        layout.addStretch()
+        layout.addWidget(but_box)
+
+        dl.exec_()
+
+        self.appointment_model.load_from_database(self.pt)
+
+
 if __name__ == "__main__":
     import gettext
     gettext.install("openmolar")
+
+    from openmolar.settings import localsettings
+    localsettings.initiate()
+
     app = QtGui.QApplication([])
     widg = ApptScheduleControl()
     widg.show()

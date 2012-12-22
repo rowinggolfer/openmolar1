@@ -278,7 +278,7 @@ class monthCalendar(QtGui.QWidget, calDialogs):
     def setData(self, data):
         '''
         pass a dictionary like {"1209":[d1,d2]}
-        where d1 and d2 are instances of appointments.dentistDay
+        where d1 and d2 are instances of appointments.DentistDay
         '''
         self.data = {}
         for key in data:

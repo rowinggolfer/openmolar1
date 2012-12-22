@@ -632,7 +632,7 @@ if __name__ == "__main__":
     duck_gui.show()
 
 
-    d1, d2 = appointments.dentistDay(4), appointments.dentistDay(5)
+    d1, d2 = appointments.DentistDay(4), appointments.DentistDay(5)
 
     d1.start=830
     d1.end=1800
@@ -653,28 +653,28 @@ if __name__ == "__main__":
     form.setEndTime(d2)
     form.setFlags(d2)
 
-    slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,15),4,30)
-    slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,17,35),4,20)
+    slot = appointments.FreeSlot(datetime.datetime(2009,2,2,10,15),4,30)
+    slot2 = appointments.FreeSlot(datetime.datetime(2009,2,2,17,35),4,20)
     form.addSlot(slot)
     form.addSlot(slot2)
 
-    appt1 = appointments.aowAppt()
+    appt1 = appointments.WeekViewAppointment()
     appt1.mpm = 9*60
     appt1.length = 40
     appt1.dent = 4
 
-    appt2 = appointments.aowAppt()
+    appt2 = appointments.WeekViewAppointment()
     appt2.mpm = 10*60
     appt2.length = 15
     appt2.dent = 4
 
     form.appts[4] = (appt1, appt2)
-    slot = appointments.freeSlot(datetime.datetime(2009,2,2,10,45),4,20)
-    slot2 = appointments.freeSlot(datetime.datetime(2009,2,2,11,05),4,10)
+    slot = appointments.FreeSlot(datetime.datetime(2009,2,2,10,45),4,20)
+    slot2 = appointments.FreeSlot(datetime.datetime(2009,2,2,11,05),4,10)
     form.addSlot(slot)
     form.addSlot(slot2)
 
-    emerg = appointments.aowAppt()
+    emerg = appointments.WeekViewAppointment()
     emerg.mpm = 11*60+15
     emerg.length = 15
     emerg.reason = "emergency"

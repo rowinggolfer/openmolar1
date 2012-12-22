@@ -40,7 +40,7 @@ from openmolar.qt4gui.dialogs import appointment_card_dialog
 
 
 class PtDiaryWidget(QtGui.QWidget):
-    pt = None
+    _pt = None
 
     start_scheduling = QtCore.pyqtSignal()
     find_appt = QtCore.pyqtSignal(object)
@@ -57,6 +57,20 @@ class PtDiaryWidget(QtGui.QWidget):
         self.ui.pt_diary_treeView.setModel(self.diary_model)
         self.hide_appointment_buttons()
         self.signals()
+        self.setSizePolicy(
+            QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+            )
+
+    def sizeHint(self):
+        return QtCore.QSize(800,200)
+
+    def set_patient(self, patient):
+        self._pt = patient
+
+    @property
+    def pt(self):
+        return self._pt
 
     def advise(self, *args):
         try:
@@ -300,7 +314,7 @@ class PtDiaryWidget(QtGui.QWidget):
                         self.layout_ptDiary()
                         self.select_apr_ix(apr_ix)
                         if dl.makeNow:
-                            self.begin_makeAppt()
+                            self.start_scheduling.emit()
                     else:
                         #--commit failed
                         self.advise("Error saving appointment", 2)
@@ -564,14 +578,11 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         user has asked for a print of an appointment card
         '''
-
-        ##TODO this will need to be a signal now??
-        #self.updateHiddenNotesLabel()
         dl = appointment_card_dialog.AppointmentCardDialog(self.pt, self)
         dl.exec_()
+        #self.updateHiddenNotesLabel()
 
     def memo_edited(self):
-        print "memo_edited"
         self.pt._appt_memo = unicode(self.ui.appt_memo_lineEdit.text())
 
     def show_prefs_dialog(self):
@@ -615,8 +626,8 @@ if __name__ == "__main__":
     import gettext
     from openmolar.dbtools import patient_class
 
-    def sig_catcher(pt):
-        print "start scheduling", pt
+    def sig_catcher(*args):
+        print "start scheduling", args
 
     def sig_catcher2(appt):
         print "find appointment", appt
@@ -628,7 +639,8 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication([])
     dw = PtDiaryWidget()
-    dw.pt = patient_class.patient(20862)
+    pt = patient_class.patient(20862)
+    dw.set_patient(pt)
     dw.layout_ptDiary()
     dw.show()
 
