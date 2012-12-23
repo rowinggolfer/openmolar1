@@ -33,20 +33,19 @@ class ClinicianSelectModel(QtCore.QAbstractListModel):
         QtCore.QAbstractListModel.__init__(self, parent)
 
         self.options_list = [
-            _("Everyone"),
+            _("Available Clinicians"),
             _("Selected Book(s)"),
             _("Relevant Books"),
             _("Available Dentists"),
             _("Available Hygenists"),
-            _("Available Clinicians"),
-            _("Manual Selection")
+            _("Everyone")
             ]
 
         self.om_gui = parent
         #if localsettings.activehygs == []:
         #    self.options_list.remove(_("Available Hygenists"))
 
-        self.manual_index = 6 #used if manual is called by another widget
+        self.manual_index = 5 #used if manual is called by another widget
 
     def rowCount(self, parent = QtCore.QModelIndex()):
         return len(self.options_list)
@@ -59,9 +58,22 @@ class ClinicianSelectModel(QtCore.QAbstractListModel):
             return QtCore.QVariant(option)
         return QtCore.QVariant()
 
+    @property
+    def all_clinicians(self):
+        '''
+        returns a numeric version of
+        localsettings.activedents + localsettings.activehygs
+        '''
+        retlist = []
+        for dent in localsettings.activedents + localsettings.activehygs:
+            retlist.append(localsettings.apptix.get(dent))
+        return tuple(retlist)
+
+
     def clinician_list(self, row, date):
         if row == 0:
-            return appointments.getWorkingDents(date)
+            return appointments.getWorkingDents(date,
+                include_non_working=False)
         elif row == 1:
             chkset = self.om_gui.schedule_control.selectedClinicians
             return appointments.getWorkingDents(date, chkset,
@@ -78,9 +90,33 @@ class ClinicianSelectModel(QtCore.QAbstractListModel):
             chkset = localsettings.activehyg_ixs
             return appointments.getWorkingDents(date, chkset,
                 include_non_working=False)
-        elif row == 5:
-            return appointments.getWorkingDents(date,
-                include_non_working=False)
-        else: #manual
-            return False
 
+        return appointments.getWorkingDents(date)
+
+
+if __name__ == "__main__":
+
+    def but_clicked():
+        print model.clinician_list(cb.currentIndex(), cal.date().toPyDate())
+
+    localsettings.initiate()
+    app = QtGui.QApplication([])
+
+    model = ClinicianSelectModel()
+
+    mw = QtGui.QMainWindow()
+    frame = QtGui.QWidget()
+    cb = QtGui.QComboBox()
+    cb.setModel(model)
+    cal = QtGui.QDateEdit()
+    button = QtGui.QPushButton("who's chosen?")
+    button.clicked.connect(but_clicked)
+
+    layout = QtGui.QVBoxLayout(frame)
+    layout.addWidget(cb)
+    layout.addWidget(cal)
+    layout.addWidget(button)
+
+    mw.setCentralWidget(frame)
+    mw.show()
+    app.exec_()

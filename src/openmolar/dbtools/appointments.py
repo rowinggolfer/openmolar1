@@ -604,8 +604,6 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
     query = 'SELECT apptix,start,end,memo,flag FROM aday WHERE adate=%s ' \
     + cond
 
-    if localsettings.logqueries:
-        print query, values
     cursor.execute(query, values)
 
     rows = cursor.fetchall()

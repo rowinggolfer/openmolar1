@@ -284,6 +284,8 @@ class appointmentCanvas(QtGui.QWidget):
     '''
     the canvas for me to draw on
     '''
+    blink_on = True # a boolean which toggles value
+
     def __init__(self, om_gui, pWidget):
         super(appointmentCanvas, self).__init__()
         self.setSizePolicy(QtGui.QSizePolicy(
@@ -314,10 +316,11 @@ class appointmentCanvas(QtGui.QWidget):
         self.qmenu = None
         self.mouse_freeslot = None
         self.active_slot = None
-        self.active_slot_bold = True
-        self.flashTimer = QtCore.QTimer()
-        self.flashTimer.timeout.connect(self.flash_slot)
-        self.flashTimer.start(1000)
+
+        self.blink_timer = QtCore.QTimer()
+        self.blink_timer.timeout.connect(self.toggle_blink)
+        self.blink_timer.start(1000)
+
 
     def setDayStartTime(self, sTime):
         '''
@@ -879,7 +882,7 @@ class appointmentCanvas(QtGui.QWidget):
             self.width()-self.timeWidth, (endcell-startcell)*self.slotHeight)
 
             if slot == self.active_slot:
-                if self.active_slot_bold:
+                if self.blink_on:
                     painter.setBrush(APPTCOLORS["ACTIVE_SLOT_BOLD"])
                 else:
                     painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
@@ -922,10 +925,10 @@ class appointmentCanvas(QtGui.QWidget):
             painter.drawRect(trect)
             painter.drawText(trect, QtCore.Qt.AlignHCenter, droptime)
 
-    def flash_slot(self):
+    def toggle_blink(self):
         if not self.pWidget.mode == self.pWidget.SCHEDULING_MODE:
             return
-        self.active_slot_bold = not self.active_slot_bold
+        self.blink_on = not self.blink_on
         self.update()
 
     def send_slotclicked_signal(self):

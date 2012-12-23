@@ -7,6 +7,7 @@
 # for more details.
 
 from openmolar import connect
+from openmolar.settings import localsettings
 
 query = '''SELECT title, fname, sname, dob, cset, dnt1, dnt2
 from patients where serialno = %s'''
@@ -29,12 +30,17 @@ class BriefPatient(object):
         '''
         initiate the class with default variables, then load from database
         '''
-        self.serialno = sno
+        if sno <= 0:
+            raise localsettings.PatientNotFoundError
 
+        self.serialno = sno
         db = connect.connect()
         cursor = db.cursor()
         cursor.execute(query, (sno,))
         row = cursor.fetchone()
+
+        if not row:
+            raise localsettings.PatientNotFoundError
 
         self.title, self.fname, self.sname, \
         self.dob, self.cset, self.dnt1, self.dnt2 = row

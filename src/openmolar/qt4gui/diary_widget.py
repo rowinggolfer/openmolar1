@@ -61,7 +61,6 @@ from openmolar.qt4gui.customwidgets import dent_hyg_selector
 from openmolar.qt4gui.customwidgets import calendars
 
 from openmolar.qt4gui.dialogs.appt_mode_dialog import ApptModeDialog
-from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.dialogs import appointment_card_dialog
 
 class DiaryWidget(QtGui.QWidget):
@@ -77,6 +76,9 @@ class DiaryWidget(QtGui.QWidget):
 
     patient_card_request = QtCore.pyqtSignal(object)
     pt_diary_changed = QtCore.pyqtSignal(object)
+
+    alterAday_clipboard = [] #clipboard used by the alterAday dialog
+    alterAday_clipboard_date = None
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -510,8 +512,10 @@ class DiaryWidget(QtGui.QWidget):
 
         #self.advise(_("Searching for 1st available appointment"))
         ci = self.ui.diary_tabWidget.currentIndex()
-        if ci == 0:
+        if self.viewing_day:
             self.layout_dayView()
+        elif self.viewing_agenda:
+            self.layout_agenda()
         else:
             self.ui.diary_tabWidget.setCurrentIndex(1)
             self.layout_weekView()
@@ -524,7 +528,7 @@ class DiaryWidget(QtGui.QWidget):
         arg2 is a message
         arg3 is the appointments
         '''
-        if self.ui.diary_tabWidget.currentIndex()!=1:
+        if not self.viewing_week:
             return (False, "week view not selected", ())
         if not minlength:
             minlength = self.schedule_control.min_slot_length
@@ -1003,34 +1007,27 @@ class DiaryWidget(QtGui.QWidget):
             retlist.append(localsettings.apptix.get(dent))
         return retlist
 
-    def getAllClinicians(self):
-        '''
-        returns a numeric version of
-        localsettings.activedents + localsettings.activehygs
-        '''
-        retlist = []
-        for dent in localsettings.activedents + localsettings.activehygs:
-            retlist.append(localsettings.apptix.get(dent))
-        return retlist
-
-    def layout_weekView(self, find_next_appt=False, find_prev_appt=False):
+    def layout_weekView(self):
         '''
         lay out the week view widget
         called by checking a dentist checkbox on apptov tab
         or by changeing the date on the appt OV calendar
         '''
-        if self.ui.diary_tabWidget.currentIndex() != 1:
+        if not self.viewing_week:
             return
+
+        logging.debug("layout_weekView")
+
         self.ui.week_view_control_frame.setLayout(self.appt_mode_layout)
 
         self.current_weekViewClinicians = set()
-        cal = self.ui.dayCalendar
-        date = cal.selectedDate()
+        date = self.ui.dayCalendar.selectedDate()
 
         dayno = date.dayOfWeek()
         weekdates = []
         #--(monday to friday) #prevMonday = date.addDays(1-dayno),
         #--prevTuesday = date.addDays(2-dayno)
+
         for day in range(7):
             weekday = (date.addDays(day + 1 - dayno))
             weekdates.append(weekday)
@@ -1058,8 +1055,8 @@ class DiaryWidget(QtGui.QWidget):
                 if userCheckedClinicians == []:
                     workingdents = ()
                 else:
-                    workingdents = appointments.getWorkingDents(ov.date.toPyDate(),
-                      tuple(userCheckedClinicians), True)
+                    workingdents = appointments.getWorkingDents(
+                    ov.date.toPyDate(), tuple(userCheckedClinicians), True)
             else:
                 if not self.appt_clinicianSelection_comboBox.isVisible():
                     workingdents = appointments.getWorkingDents(
@@ -1068,18 +1065,14 @@ class DiaryWidget(QtGui.QWidget):
                     i = self.appt_clinicianSelection_comboBox.currentIndex()
                     model = self.appt_clinicianSelection_comboBox.model()
                     workingdents = model.clinician_list(i, ov.date.toPyDate())
-                    if workingdents == False:
-                        manual = True
 
             #--reset
             ov.dents = []
 
-            for clinician in self.getAllClinicians():
-                for dent in workingdents:
-                    if dent.ix == clinician:
-                        ov.dents.append(dent)
-                        self.current_weekViewClinicians.add(dent.ix)
-                        break
+            for dent in workingdents:
+                ov.dents.append(dent)
+                self.current_weekViewClinicians.add(dent.ix)
+
             ov.init_dicts()
             for dent in workingdents:
                 ov.setStartTime(dent)
@@ -1087,40 +1080,39 @@ class DiaryWidget(QtGui.QWidget):
                 ov.setMemo(dent)
                 ov.setFlags(dent)
 
-        if date < QtCore.QDate.currentDate() and not thisWeek:
-            self.advise(_("You are now in the past!"))
-
         if self.appt_mode == self.SCHEDULING_MODE:
+            if date < QtCore.QDate.currentDate(): #and not thisWeek):
+                self.advise(
+                    _("You can't schedule an appointment in the past"))
+                #stop looking backwards
+                self.finding_next_slot = 1
+                self.calendar(localsettings.currentDay())
+                return
+
             result, message, slots = self.addWeekViewAvailableSlots()
+            self.schedule_control.set_available_slots(slots)
+
             if not result:
                 self.advise(message)
                 for ov in self.ui.apptoverviews:
                     ov.update()
                 return
-            else:
-                if slots == []:
-                    if find_next_appt:
-                        self.signals_calendar(False)
-                        self.aptOV_weekForward()
-                        self.signals_calendar()
-                        self.layout_weekView(find_next_appt=True)
-                        return
-                    elif find_prev_appt:
-                        self.signals_calendar(False)
-                        moved_back = self.aptOV_weekBack()
-                        self.signals_calendar()
-                        if not moved_back:
-                            self.advise(_("showing current week"))
-                        else:
-                            self.layout_weekView(find_prev_appt=True)
-                            return
-                    else:
-                        self.advise(message)
-                else:
-                    for ov in self.ui.apptoverviews:
-                        for slot in slots:
-                            if slot.date_time.date() == ov.date.toPyDate():
-                                ov.addSlot(slot)
+
+            if slots == []:
+                self.step_date(self.finding_next_slot != -1)
+                return
+
+            if self.finding_next_slot == -1:
+                self.schedule_control.use_last_slot = True
+                self.finding_next_slot = 1
+
+            for ov in self.ui.apptoverviews:
+                for slot in slots:
+                    if slot.date_time.date() == ov.date.toPyDate():
+                        ov.addSlot(slot)
+
+                ov.set_active_slot(self.schedule_control.chosen_slot)
+
 
         for ov in self.ui.apptoverviews:
             for dent in ov.dents:
@@ -1138,6 +1130,18 @@ class DiaryWidget(QtGui.QWidget):
 
         for ov in self.ui.apptoverviews:
             ov.update()
+
+        #needed to sync agenda and dayview
+        if self.schedule_control.chosen_slot:
+            sync_date = QtCore.QDate(
+                self.schedule_control.chosen_slot.date())
+            if (sync_date.weekNumber() ==
+            self.ui.weekCalendar.selectedDate().weekNumber()):
+                self.signals_calendar(False)
+                self.ui.weekCalendar.setSelectedDate(sync_date)
+                self.calendar(sync_date)
+                self.signals_calendar()
+
 
     def layout_dayView(self):
         '''
@@ -1159,21 +1163,15 @@ class DiaryWidget(QtGui.QWidget):
         d = self.ui.dayCalendar.selectedDate().toPyDate()
         workingOnly = False
 
-        ##TODO 29oct
-        manual = False #self.ui.day_clinician_selector_groupBox.isChecked()
-        if manual:
-            dents = tuple(self.getUserCheckedClinicians("day"))
-        else:
-            i = self.appt_clinicianSelection_comboBox.currentIndex()
-            model = self.appt_clinicianSelection_comboBox.model()
-            workingdents = model.clinician_list(i, d)
-            if workingdents == False:
-                manual = tuple(self.getUserCheckedClinicians("day"))
-            else:
-                dent_list = []
-                for dent in workingdents:
-                    dent_list.append(dent.ix)
-                dents = tuple(dent_list)
+        ##choose dentists to show.
+
+        i = self.appt_clinicianSelection_comboBox.currentIndex()
+        model = self.appt_clinicianSelection_comboBox.model()
+        workingdents = model.clinician_list(i, d)
+        dent_list = []
+        for dent in workingdents:
+            dent_list.append(dent.ix)
+        dents = tuple(dent_list)
 
         self.appointmentData.setDate(d)
         self.appointmentData.getAppointments(workingOnly, dents)
@@ -1183,7 +1181,7 @@ class DiaryWidget(QtGui.QWidget):
                 self.advise(_("You can't schedule an appointment in the past"))
                 #stop looking backwards
                 self.finding_next_slot = 1
-                self.ui.dayCalendar.setSelectedDate(localsettings.currentDay())
+                self.calendar(localsettings.currentDay())
                 return
             minlength = self.schedule_control.min_slot_length
             available_slots = self.appointmentData.slots(minlength)
@@ -1556,14 +1554,52 @@ class DiaryWidget(QtGui.QWidget):
         self.handle_calendar_signal()
 
     def step_date(self, forwards = True):
+        logging.debug("step date, forwards=%s"% forwards)
         date = self.ui.dayCalendar.selectedDate()
+
         if forwards:
-            date = date.addDays(1)
+            if self.viewing_week:
+                #goto 1st day of next week
+                date = date.addDays(1)
+                while date.dayOfWeek() != 1:
+                    date = date.addDays(1)
+            else:
+                date = date.addDays(1)
         else:
+            if self.viewing_week:
+                #goto last day of next week
+                date = date.addDays(-1)
+                while date.dayOfWeek() != 7:
+                    date = date.addDays(-1)
+            else:
+                date = date.addDays(-1)
+
             self.finding_next_slot = -1
-            date = date.addDays(-1)
 
         self.calendar(date)
+
+
+    @property
+    def viewing_day(self):
+        '''
+        is the user viewing a day?
+        '''
+        return self.ui.diary_tabWidget.currentIndex() == 0
+
+    @property
+    def viewing_week(self):
+        '''
+        is the user viewing a week?
+        '''
+        return self.ui.diary_tabWidget.currentIndex() == 1
+
+    @property
+    def viewing_agenda(self):
+        '''
+        is the user viewing a week?
+        '''
+        return self.ui.diary_tabWidget.currentIndex() == 4
+
 
     def init_signals(self):
         self.ui.diary_tabWidget.currentChanged.connect(
@@ -1711,6 +1747,8 @@ if __name__ == "__main__":
     localsettings.initiate()
 
     app = QtGui.QApplication([])
+
+
     dw = DiaryWidget()
 
     dw.patient_card_request.connect(sig_catcher)

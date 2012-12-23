@@ -50,7 +50,8 @@ class ApptScheduleControl(QtGui.QWidget):
 
     pt = None
     available_slots = []
-    _chosen_slot_no = 0
+    _chosen_slot = None
+
     use_last_slot = False
 
     _pt_diary_widget = None
@@ -86,6 +87,7 @@ class ApptScheduleControl(QtGui.QWidget):
 
         self.chosen_slot_label = QtGui.QLabel("No slot selected")
         self.chosen_slot_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.chosen_slot_label.setWordWrap(True)
         book_now_button = QtGui.QPushButton("Confirm")
 
         self.appt_controls_frame = QtGui.QFrame()
@@ -234,25 +236,36 @@ class ApptScheduleControl(QtGui.QWidget):
     def clear(self):
         self.appointment_model.clear()
         self.available_slots = []
-        self._chosen_slot_no = 0
+        self._chosen_slot = None
 
     def show_first_appt(self):
-        self._chosen_slot_no = 0
+        self._chosen_slot = None
         self.show_first_appointment.emit()
 
+    @property
+    def _chosen_slot_no(self):
+        try:
+            return self.available_slots.index(self._chosen_slot)
+        except ValueError:
+            return 0
+
     def show_next_appt(self):
-        if self._chosen_slot_no < len(self.available_slots)-1:
-            self._chosen_slot_no += 1
+        try:
+            self._chosen_slot = self.available_slots[self._chosen_slot_no + 1]
             self.chosen_slot_changed.emit()
-        else:
-            self._chosen_slot_no = 0
+        except IndexError:
+            self._chosen_slot = None
             self.move_on.emit(True)
 
     def show_prev_appt(self):
-        if self._chosen_slot_no > 0:
-            self._chosen_slot_no -= 1
+        try:
+            i = self._chosen_slot_no - 1
+            if i < 0:
+                raise IndexError
+            self._chosen_slot = self.available_slots[i]
             self.chosen_slot_changed.emit()
-        else:
+        except IndexError:
+            self._chosen_slot = None
             self.move_on.emit(False)
 
     def set_available_slots(self, slots):
@@ -260,19 +273,14 @@ class ApptScheduleControl(QtGui.QWidget):
 
     @property
     def chosen_slot(self):
+
         self.chosen_slot_label.setText(_("No slot selected"))
         if self.available_slots == []:
             return None
-        if self.use_last_slot:
-            self._chosen_slot_no = len(self.available_slots)-1
-            self.use_last_slot = False
-        try:
-            slot = self.available_slots[self._chosen_slot_no]
-            self.chosen_slot_label.setText("%s"% slot)
-            return slot
-        except IndexError:
-            self._chosen_slot_no = len(self.available_slots)-1
-            return self.available_slots[self._chosen_slot_no]
+        if self._chosen_slot is None:
+            self._chosen_slot = self.available_slots[0]
+        self.chosen_slot_label.setText("%s"% self._chosen_slot)
+        return self._chosen_slot
 
     def book_now_button_clicked(self):
         self.book_now_signal.emit(

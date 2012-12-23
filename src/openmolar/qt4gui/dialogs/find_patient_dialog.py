@@ -76,7 +76,9 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
                 self.fnameSoundex_checkBox.checkState(), pcde)
 
                 if candidates == ():
-                    self.advise("no match found", 1)
+                    QtGui.QMessageBox.warning(self.parent(), "warning",
+                    _("no match found"))
+                    return False
                 else:
                     if len(candidates) > 1:
                         dl = FinalChoiceDialog(candidates, self)
@@ -84,7 +86,9 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
                             self.chosen_sno = dl.chosen_sno
                     else:
                         self.chosen_sno = int(candidates[0][0])
+
             return True
+
         return False
 
 class FinalChoiceDialog(QtGui.QDialog, Ui_select_patient.Ui_Dialog):

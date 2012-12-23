@@ -28,6 +28,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
     SCHEDULING_MODE = 1
     mode = None
 
+    active_slot = None
+
     def __init__(self, sTime, fTime, slotLength, textDetail, om_gui):
         '''
         useage is (day, startTime,finishTime,slotLength, textDetail, parent)
@@ -77,16 +79,26 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         self.dropSlot = None
         self.dropOffset = 0
 
+        self.blink_on = True #for flashing effect
+        self.blink_timer = QtCore.QTimer()
+        self.blink_timer.timeout.connect(self.toggle_blink)
+        self.blink_timer.start(1000)
+
+
     def clear(self):
         self.appts = {}
         self.eTimes = {}
-        self.freeslots = {}
+        self.clearSlots()
         self.lunches = {}
 
     def clearSlots(self):
+        self.active_slot = None
         self.freeslots = {}
         for dent in self.dents:
             self.freeslots[dent.ix] = []
+
+    def set_active_slot(self, slot):
+        self.active_slot = slot
 
     def init_dicts(self):
         for dent in self.dents:
@@ -582,7 +594,14 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         painter.restore()
 
                     else:
-                        painter.setBrush(APPTCOLORS["SLOT"])
+                        if slot == self.active_slot:
+                            if self.blink_on:
+                                painter.setBrush(
+                                    APPTCOLORS["ACTIVE_SLOT_BOLD"])
+                            else:
+                                painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                        else:
+                            painter.setBrush(APPTCOLORS["SLOT"])
                         painter.drawRect(rect)
 
                         painter.setPen(black_pen)
@@ -602,6 +621,13 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         if self.dragLine:
             painter.setPen(red_pen)
             painter.drawLine(self.dragLine)
+
+    def toggle_blink(self):
+        if not self.mode == self.SCHEDULING_MODE:
+            return
+        self.blink_on = not self.blink_on
+        self.update()
+
 
 if __name__ == "__main__":
 
