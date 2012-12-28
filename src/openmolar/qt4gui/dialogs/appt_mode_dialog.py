@@ -34,7 +34,7 @@ class ApptModeDialog(BaseDialog):
     def __init__(self, parent):
         BaseDialog.__init__(self, parent)
 
-        self.om_gui = parent
+        self.diary_view_controller = parent
 
         self.setWindowTitle(_("User choice"))
 
@@ -44,22 +44,22 @@ class ApptModeDialog(BaseDialog):
         for mode, description, value in (
             (   _("Browsing"),
                 "",
-                self.om_gui.VIEW_MODE
+                self.diary_view_controller.VIEW_MODE
                 ),
 
             (   _("Scheduling"),
                 _("make appointments for a patient"),
-                self.om_gui.SCHEDULING_MODE
+                self.diary_view_controller.SCHEDULING_MODE
                 ),
 
             (   _("Blocking"),
                 _("block time periods. eg. lunch times etc."),
-                self.om_gui.BLOCKING_MODE
+                self.diary_view_controller.BLOCKING_MODE
                 ),
 
             (   _("Note Checking"),
                 _("check notes for today's patients"),
-                self.om_gui.NOTES_MODE),
+                self.diary_view_controller.NOTES_MODE),
         ):
 
             but = QtGui.QPushButton(mode)
@@ -76,7 +76,7 @@ class ApptModeDialog(BaseDialog):
 
     def but_clicked(self):
 
-        self.om_gui.appt_mode = self.sender().appt_mode
+        self.diary_view_controller.mode = self.sender().appt_mode
         self.accept()
 
 if __name__ == "__main__":

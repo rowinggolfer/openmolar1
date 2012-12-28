@@ -45,7 +45,10 @@ class FreeSlot(object):
     def __le__(self, other):
         return self.date_time <= other.date_time
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        try:
+            return self.__dict__ == other.__dict__
+        except AttributeError:
+            return False
     def __ne__(self, other):
         return self.__dict__ != other.__dict__
     def __gt__(self, other):
@@ -64,7 +67,6 @@ class AgendaAppointment(FreeSlot):
         return "%s , dent %s, %s mins %s"% (self.date_time, self.dent,
             self.length, self.text)
 
-
 class WeekViewAppointment(object):
     '''
     a custom data object to contain data relevant to the painting of
@@ -77,6 +79,7 @@ class WeekViewAppointment(object):
     name = ""
     isEmergency = False
     cset = ""
+    trt = ""
 
 class APR_Appointment(object):
     '''
@@ -202,9 +205,11 @@ class DayAppointmentData(DaySummary):
     '''
     a data structure to hold all data for a day
     '''
+    appointments = ()
+    workingDents = ()
+
     def __init__(self):
         DaySummary.__init__(self)
-        self.appointments = ()
 
     def header(self):
         '''
@@ -246,22 +251,22 @@ class DayAppointmentData(DaySummary):
         except KeyError:
             return 1200
 
-    def getAppointments(self, workingOnly=True, dents="ALL"):
+    def getAppointments(self, dents="ALL"):
         '''
         get the appointments for the date.
         '''
-        if not workingOnly:
-            wds = []
-            for dent in localsettings.activedents + localsettings.activehygs:
-                apptix = localsettings.apptix[dent]
-                if dents=="ALL" or apptix in dents:
-                    wds.append(apptix)
+        working_dents = []
+        for dent in localsettings.activedents + localsettings.activehygs:
+            apptix = localsettings.apptix[dent]
+            if dents=="ALL" or apptix in dents:
+                working_dents.append(apptix)
 
-            self.workingDents = tuple(wds)
         if dents != "ALL":
-            for dent in self.workingDents:
+            for dent in working_dents[:]:
                 if not dent in dents:
-                    self.workingDents.remove(dent)
+                    working_dents.remove(dent)
+
+        self.workingDents = tuple(working_dents)
         self.appointments = allAppointmentData(self.date, self.workingDents)
 
     def dentAppointments(self, dent):
@@ -294,21 +299,21 @@ class DentistDay():
     '''
     a small class to store data about a dentist's day
     '''
+    start = 830
+    end = 1800
+    flag = False
+    memo = ""
+
     def __init__(self, apptix=0):
         self.date = datetime.date.today()
-        self.start = 830
-        self.end = 1800
         self.ix = apptix
         self.initials = localsettings.apptix_reverse.get(apptix,"???")
         #a boolean showing if day is in use? (stored as a tiny int though)
-        self.flag = True
-        self.memo = ""
 
     def __repr__(self):
-        retarg = 'working day - %s times = %s - %s\n'% (
-        self.date, self.start, self.end)
-        retarg += 'dentistNo = %s in office = %s\n'% (self.ix, self.flag)
-        retarg += 'memo=%s'% self.memo
+        retarg = "DentistDay %s %s %s %s - %s '%s'"% (
+        self.initials, "IN" if self.flag else "FALSE",
+        self.date, self.start, self.end, self.memo)
         return retarg
 
     def length(self):
@@ -586,9 +591,6 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
     and optionally a tuple of dents
     then checks to see if they are flagged as off that day
     '''
-    if dents == ():
-        return ()
-
     db = connect()
     cursor = db.cursor()
     if 0 in dents:
@@ -610,16 +612,39 @@ def getWorkingDents(adate, dents=(0,), include_non_working=True):
     cursor.close()
 
     ##originally I just return the rows here...
-    wds = []
     for apptix, start, end, memo, flag in rows:
-        dent = DentistDay(apptix)
-        dent.start = start
-        dent.end = end
-        dent.memo = memo
-        dent.flag = bool(flag)
-        wds.append(dent)
+        d_day = DentistDay(apptix)
+        d_day.start = start
+        d_day.end = end
+        d_day.memo = memo
+        d_day.flag = bool(flag)
+        yield d_day
 
-    return tuple(wds)
+
+def getAllClinicians(adate):
+    '''
+    returns a list of all active clinical books.
+    '''
+    wds = list(getWorkingDents(adate))
+    start = DentistDay.start
+    end = DentistDay.end
+    for wd in  wds:
+        if start < wd.start:
+            start = wd.start
+        if end > wd.end:
+            end = wd.end
+
+    for dent in localsettings.activedent_ixs + localsettings.activehyg_ixs:
+        found = False
+        for wd in  wds:
+            found = wd.ix == dent
+            if found:
+                yield wd
+                break
+        if not found:
+            d_day = DentistDay(dent)
+            yield d_day
+
 
 def getDayInfo(startdate, enddate, dents=() ):
     '''
@@ -832,12 +857,12 @@ def convertResults(results):
     '''
     changes
     (830, 845) OR
-    (830, 845, serialno) or
+    (830, 845, serialno, "exam") or
     (1300,1400, "LUNCH")
     to and WeekViewAppointment object
     '''
     aptlist = []
-    for start, end, serialno, name, cset in results:
+    for start, end, serialno, name, cset, trt in results:
         aow = WeekViewAppointment()
         aow.mpm = localsettings.minutesPastMidnight(start)
         aow.length = localsettings.minutesPastMidnight(end) - aow.mpm
@@ -847,6 +872,7 @@ def convertResults(results):
         aow.isBlock = (cset == "block")
         aow.isEmergency = (aow.isBlock and
             aow.name.lower() == _("emergency").lower())
+        aow.trt = trt
         aptlist.append(aow)
 
     return tuple(aptlist)
@@ -935,10 +961,10 @@ def day_summary(adate, dent):
     retarg = ()
     #--now get data for those days so that we can find slots within
     if daydata != ():
-        query = '''SELECT start, end, serialno, name, char(flag1) FROM aslot
+        query = '''SELECT start, end, serialno, name, char(flag1),
+        concat(code0, code1, code2) FROM aslot
         WHERE adate = %s and apptix = %s AND flag0!=-128
-        ORDER BY start
-        '''
+        ORDER BY start'''
         cursor.execute(query, values)
         results = cursor.fetchall()
         retarg = convertResults(results)
@@ -964,7 +990,7 @@ def getBlocks(adate, dent):
 
     query = ""
     if retarg != ():
-        query = '''SELECT start, end, 0, name, "block" FROM aslot
+        query = '''SELECT start, end, 0, name, "block", "" FROM aslot
         WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH"
         ORDER BY start'''
         cursor.execute(query, values)
@@ -983,7 +1009,7 @@ def getLunch(gbdate, dent):
 
     values = (gbdate, dent)
 
-    query = '''SELECT start, end, 0, "Lunch", "block" FROM aslot
+    query = '''SELECT start, end, 0, "Lunch", "block" , "" FROM aslot
     WHERE adate = %s and apptix = %s AND name="LUNCH" '''
 
     cursor.execute(query, values)

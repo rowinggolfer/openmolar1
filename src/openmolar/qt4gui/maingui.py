@@ -563,7 +563,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         ci = self.ui.main_tabWidget.currentIndex()
 
         if ci ==1 :     #--user is viewing appointment book
-            self.diary_widget.handle_calendar_signal()
+            self.diary_widget.layout_diary()
 
         if ci == 6:
             #--user is viewing the feetable
@@ -678,7 +678,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.moneytextBrowser.setHtml(localsettings.message)
             self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
-            #self.diary_widget.schedule_control.clear()
+            #self.diary_widget.schedule_controller.clear()
             self.ui.notesEnter_textEdit.setHtml("")
 
             self.ui.medNotes_pushButton.setStyleSheet("")
@@ -3058,7 +3058,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.diary_widget.patient_card_request.connect(self.getrecord)
 
-        self.diary_widget.schedule_control.appointment_selected.connect(
+        self.diary_widget.schedule_controller.appointment_selected.connect(
             self.pt_diary_widget.update_pt_diary_selection)
 
         self.diary_widget.pt_diary_changed.connect(
@@ -3067,10 +3067,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.pt_diary_widget.start_scheduling.connect(self.start_scheduling)
         self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
         self.pt_diary_widget.data_changed.connect(
-            self.diary_widget.schedule_control.set_data)
+            self.diary_widget.schedule_controller.set_data)
 
         self.pt_diary_widget.appointment_selected.connect(
-            self.diary_widget.schedule_control.update_appt_selection)
+            self.diary_widget.schedule_controller.update_appt_selection)
 
         self.pt_diary_widget.preferences_changed.connect(
             self.appt_prefs_changed)

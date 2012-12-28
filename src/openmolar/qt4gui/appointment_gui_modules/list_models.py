@@ -1,4 +1,5 @@
 import datetime
+import logging
 import cPickle
 import pickle
 import sys
@@ -149,6 +150,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
         '''
         set the current appointment as appt, return the model index of appt
         '''
+        logging.debug("SimpleListModel.set_current_appt")
         self.currentAppt = appt
         if appt == None:
             self.selection_model.clear()

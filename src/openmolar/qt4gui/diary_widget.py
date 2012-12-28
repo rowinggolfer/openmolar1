@@ -49,9 +49,10 @@ from openmolar.qt4gui.compiled_uis import Ui_diary_widget
 from openmolar.qt4gui.compiled_uis import Ui_appointment_length
 
 from openmolar.qt4gui.customwidgets.schedule_control \
-    import ApptScheduleControl
-from openmolar.qt4gui.appointment_gui_modules.clinician_select_model \
-    import ClinicianSelectModel
+    import DiaryScheduleController
+from openmolar.qt4gui.customwidgets.diary_view_controller \
+    import DiaryViewController
+
 
 from openmolar.qt4gui.customwidgets.appointment_overviewwidget \
     import AppointmentOverviewWidget
@@ -60,7 +61,6 @@ from openmolar.qt4gui.customwidgets import aptOVcontrol
 from openmolar.qt4gui.customwidgets import dent_hyg_selector
 from openmolar.qt4gui.customwidgets import calendars
 
-from openmolar.qt4gui.dialogs.appt_mode_dialog import ApptModeDialog
 from openmolar.qt4gui.dialogs import appointment_card_dialog
 
 class DiaryWidget(QtGui.QWidget):
@@ -86,19 +86,8 @@ class DiaryWidget(QtGui.QWidget):
         self.ui.setupUi(self)
         self.appointmentData = appointments.DayAppointmentData()
 
-        self.schedule_control = ApptScheduleControl(self)
-        self.appt_clinicianSelection_comboBox = QtGui.QComboBox()
-        self.clinician_select_model = ClinicianSelectModel(self)
-        self.appt_clinicianSelection_comboBox.setModel(
-            self.clinician_select_model)
-
-        self.appt_mode_but = QtGui.QPushButton("....")
-        self.appt_mode_but.setMaximumWidth(40)
-        self.appt_mode_label = QtGui.QLabel(_("Browsing Mode"))
-        control_layout = QtGui.QHBoxLayout()
-        control_layout.setMargin(0)
-        control_layout.addWidget(self.appt_mode_label)
-        control_layout.addWidget(self.appt_mode_but)
+        self.schedule_controller = DiaryScheduleController(self)
+        self.view_controller = DiaryViewController(self)
 
         #keep a pointer to this layout as the layout is moved between
         #dayview and weekview
@@ -106,10 +95,9 @@ class DiaryWidget(QtGui.QWidget):
             self.ui.day_view_control_frame)
         self.appt_mode_layout.setMargin(0)
 
-        self.appt_mode_layout.addWidget(self.schedule_control)
+        self.appt_mode_layout.addWidget(self.schedule_controller)
         self.appt_mode_layout.addStretch(0)
-        self.appt_mode_layout.addWidget(self.appt_clinicianSelection_comboBox)
-        self.appt_mode_layout.addLayout(control_layout)
+        self.appt_mode_layout.addWidget(self.view_controller)
 
         self.apptBookWidgets=[]
 
@@ -186,7 +174,7 @@ class DiaryWidget(QtGui.QWidget):
 
     def showEvent(self, event):
         logging.debug("DiaryWidget.showEvent called")
-        QtCore.QTimer.singleShot(10, self.handle_calendar_signal)
+        QtCore.QTimer.singleShot(10, self.layout_diary)
 
     def advise(self, arg, warning_level=0):
         '''
@@ -220,6 +208,20 @@ class DiaryWidget(QtGui.QWidget):
         self.ui.appt_notes_webView.setVisible(
             self.appt_mode == self.NOTES_MODE)
 
+    def selected_date(self):
+        '''
+        a convenience function which calls a widget function
+        (keeps code more readable)
+        '''
+        return self.ui.dayCalendar.selectedDate()
+
+    def set_date(self, sd):
+        '''
+        a convenience function which calls a widget function
+        (keeps code more readable)
+        '''
+        self.ui.dayCalendar.setSelectedDate(sd)
+
     def gotoToday_clicked(self):
         '''
         handles button pressed asking for today to be loaded on the
@@ -233,10 +235,11 @@ class DiaryWidget(QtGui.QWidget):
         '''
         om_printing.printMonth(self)
 
-    def bookPrint(self, dentist, adate):
+    def appointment_book_print(self, dentist):
         '''
         print an appointment book
         '''
+        adate = self.selected_date()
         try:
             books = ((dentist, adate), )
             om_printing.printdaylists(self, books)
@@ -251,34 +254,22 @@ class DiaryWidget(QtGui.QWidget):
         apptix = localsettings.apptix[dentist]
         if self.appointmentData.getMemo(apptix) != memo:
             appointments.setMemos(
-            self.ui.dayCalendar.selectedDate().toPyDate(),
+            self.selected_date().toPyDate(),
             ((apptix, memo),))
             self.advise("adding day memo - %s %s"% (dentist, memo))
-
-    def set_appt_mode(self):
-        dl = ApptModeDialog(self)
-        if dl.exec_():
-            self.update_appt_mode_label()
-            self.handle_calendar_signal()
 
     def load_patient(self, patient, update=True):
         self.pt = patient
         for book in self.apptBookWidgets:
             book.selected_serialno = patient.serialno
         if update:
-            self.handle_calendar_signal()
+            self.layout_diary()
 
-    def update_appt_mode_label(self):
-        if self.appt_mode == self.SCHEDULING_MODE:
-            value = _("Scheduling Mode")
-        elif self.appt_mode == self.BLOCKING_MODE:
-            value = _("Blocking Mode")
-        elif self.appt_mode == self.NOTES_MODE:
-            value = _("Notes Mode")
-        else:
-            value = _("Browsing Mode")
-
-        self.appt_mode_label.setText(value)
+    def set_appt_mode(self, mode):
+        self.appt_mode = mode
+        self.schedule_controller.set_mode(mode)
+        self.view_controller.set_mode(mode)
+        self.layout_diary()
 
     def apptBook_patientClickedSignal(self, args):
         '''
@@ -286,134 +277,24 @@ class DiaryWidget(QtGui.QWidget):
         appointment has been selected.
         the arg is a list of serial numbers
         '''
+        serialno = args[0]
+
         if self.appt_mode == self.NOTES_MODE:
-            serialno = args[0]
             html = formatted_notes.todays_notes(serialno)
             self.ui.appt_notes_webView.setHtml(html)
-
             page = self.ui.appt_notes_webView.page()
             page.setLinkDelegationPolicy(page.DelegateAllLinks)
+
+        #this next bit is useful in showing "double appointments"
         for book in self.apptBookWidgets:
-            book.selected_serialno = args[0]
+            book.selected_serialno = serialno
             book.update()
 
     def apptBook_slot_clicked(self, dent, time, length):
         dt = datetime.datetime.combine(self.appointmentData.date, time)
         slot = appointments.FreeSlot(dt, dent, length)
-        self.makeAppt(self.schedule_control.appointment_model.currentAppt,
+        self.makeAppt(self.schedule_controller.appointment_model.currentAppt,
             slot)
-
-    def apptBook_appointmentClickedSignal(self, arg):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been selected.
-        the arg is a list of serial numbers
-        '''
-        self.appointment_clicked(arg)
-
-    def apptBook_editAppointmentMemoClickedSignal(self, *args):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been selected to have it's memo edited.
-        '''
-        self.edit_appointment_memo_clicked(*args)
-
-    def apptBook_appointmentCancelSignal(self, *args):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been selected.
-        the arg is a list of serial numbers
-        '''
-        self.appointment_cancel(*args)
-
-    def apptBook_emergencySlotSignal(self, arg):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        emergency slot has been selected.
-        '''
-        self.clearEmergencySlot(arg)
-
-    def apptBook_blockSlotSignal(self, arg):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        free slot has been selected for blocking.
-        '''
-        self.blockEmptySlot(arg)
-
-    def apptBook_fillSlotSignal(self, arg):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        free slot has been selected for filling.
-        '''
-        self.fillEmptySlot(arg)
-
-    def apptBook_apptDropped(self, appt, droptime, dent):
-        '''
-        a custom widget (dentist diary) has sent a signal that an
-        appointment has been dropped into it
-        '''
-        self.appt_dropped_onto_daywidget(appt, droptime, dent)
-
-    def dayCalendar_changed(self):
-        '''
-        the calendar on the appointments overview page has changed.
-        time to re-layout the appointment overview
-        '''
-        self.handle_calendar_signal()
-
-    def customDateSignal(self, d):
-        '''
-        either the custom year or month calendar has emitted a date signal
-        '''
-        self.ui.dayCalendar.setSelectedDate(d)
-
-    def addCalendarMemo(self, memos):
-        '''
-        a memo needs to be added to a day
-        '''
-        self.updateDayMemos(memos)
-
-    def addCalendarPubHol(self, arg):
-        '''
-        a public holiday needs to be added to a day
-        '''
-        self.addpubHol(arg)
-
-    def aptOV_monthBack_clicked(self):
-        '''
-        handles a request to move back a month in the appointments page
-        '''
-        self.aptOV_monthBack()
-
-    def aptOV_monthForward_clicked(self):
-        '''
-        handles a request to move forward a month in the appointments page
-        '''
-        self.aptOV_monthForward()
-
-    def aptOV_yearBack_clicked(self):
-        '''
-        handles a request to move back a month in the appointments page
-        '''
-        self.aptOV_yearBack()
-
-    def aptOV_yearForward_clicked(self):
-        '''
-        handles a request to move forward a year in the appointments page
-        '''
-        self.aptOV_yearForward()
-
-    def manage_dayView_clinicians(self, toggled=None):
-        '''
-        radiobutton toggling who's book to show on the appointment
-        '''
-        self.layout_dayView()
-        if toggled == None:
-            toggled = self.ui.day_clinician_selector_groupBox.isChecked()
-        self.appt_clinician_selector.setVisible(toggled)
-        if toggled:
-            i = self.clinician_select_model.manual_index
-            self.appt_clinicianSelection_comboBox.setCurrentIndex(i)
 
     def manage_month_and_year_View_clinicians(self):
         '''
@@ -424,7 +305,7 @@ class DiaryWidget(QtGui.QWidget):
         val = self.monthClinicianSelector.allChecked()
         self.ui.monthClinicians_checkBox.setChecked(val)
         self.ui.yearClinicians_checkBox.setChecked(val)
-        self.handle_calendar_signal()
+        self.layout_diary()
 
     def month_and_year_All_clinicians(self):
         '''
@@ -434,40 +315,15 @@ class DiaryWidget(QtGui.QWidget):
             self.monthClinicianSelector.checkAll()
         else:
             self.monthClinicianSelector.checkAll(QtCore.Qt.Unchecked)
-        self.handle_calendar_signal()
+        self.layout_diary()
 
     def aptOVwidget_userHasChosen_slot(self, slot):
         '''
         user has been offered a slot, and accepted it.
         the argument provides the required details
         '''
-        self.makeAppt(self.schedule_control.appointment_model.currentAppt,
+        self.makeAppt(self.schedule_controller.appointment_model.currentAppt,
             slot)
-
-    def aptOVwidget_dropped_appointment(self, appt, slot, offset):
-        '''
-        user has dropped an appointment into a free slot on a week view widget
-        '''
-        self.makeAppt(appt, slot, offset)
-
-    def apptOVwidget_header_clicked(self, arg):
-        '''
-        user has clicked on the header of a apptOV widget.
-        the header contains the dentist's initials, passed as the argument here
-        '''
-        self.apptOVheaderclick(arg)
-
-    def aptOVlabel_clicked(self, arg):
-        '''
-        user has clicked on the label situated above the aptOV widgets
-        '''
-        self.aptOVlabelClicked(arg)
-
-    def aptOVlabel_rightClicked(self, arg):
-        '''
-        user has right clicked on the label situated above the aptOV widgets
-        '''
-        self.aptOVlabelRightClicked(arg)
 
     def oddApptLength(self):
         '''
@@ -491,22 +347,20 @@ class DiaryWidget(QtGui.QWidget):
         logging.debug("DiaryWidget.begin_makeAppt")
         self.ui.appt_notes_webView.setVisible(False)
 
-        self.schedule_control.set_mode(self.schedule_control.SCHEDULE_MODE)
+        self.schedule_controller.set_mode(self.schedule_controller.SCHEDULE_MODE)
 
-        appt = self.schedule_control.appointment_model.currentAppt
+        appt = self.schedule_controller.appointment_model.currentAppt
         if appt is None:
-            self.handle_calendar_signal()
             self.advise(_("Please select an appointment to schedule"), 1)
             return
         if appt.date:
-            self.handle_calendar_signal()
             self.advise(_("appointment already scheduled for") + " %s"%(
             localsettings.readableDate(appt.date)), 1)
             return
 
         self.finding_next_slot = 1
         self.signals_calendar(False)
-        self.ui.dayCalendar.setSelectedDate(QtCore.QDate.currentDate())
+        self.set_date(QtCore.QDate.currentDate())
         self.ui.weekCalendar.setSelectedDate(QtCore.QDate.currentDate())
         self.signals_calendar()
 
@@ -531,9 +385,9 @@ class DiaryWidget(QtGui.QWidget):
         if not self.viewing_week:
             return (False, "week view not selected", ())
         if not minlength:
-            minlength = self.schedule_control.min_slot_length
+            minlength = self.schedule_controller.min_slot_length
 
-        seldate = self.ui.dayCalendar.selectedDate()
+        seldate = self.selected_date()
 
         if seldate.toPyDate() > localsettings.bookEnd:
             message = (_("Reached") +
@@ -574,7 +428,7 @@ class DiaryWidget(QtGui.QWidget):
 
     def makeAppt(self, appt, slot, offset=None):
         '''
-        called by a click on my custom overview slot -
+        called by a click on my custom overview slot - or a drop event
         user has selected an offered appointment
         '''
 
@@ -670,7 +524,7 @@ class DiaryWidget(QtGui.QWidget):
                     if appointments.pt_appt_made(appt.serialno, appt.aprix,
                     slot.date(), selectedtime, selectedDent):
                         #-- proc returned True so....update the patient apr table
-                        self.schedule_control.get_data()
+                        self.schedule_controller.get_data()
                         self.pt_diary_changed.emit(self.pt.serialno)
 
                         #== and offer an appointment card
@@ -683,7 +537,7 @@ class DiaryWidget(QtGui.QWidget):
                         self.advise(
                         _("Error putting appointment back into patient diary"))
 
-                self.handle_calendar_signal()
+                self.layout_diary()
             else:
                 self.advise(_("Error making appointment - sorry!"), 2)
         else:
@@ -693,13 +547,13 @@ class DiaryWidget(QtGui.QWidget):
             "is %d and we need %d"% (slotlength, appt.length), 2)
 
     def apptOVheaderclick(self, arg):
-        '''a click on the dentist portion of the appointment overview widget'''
-        ##TODO doing this should offer the user better options than just this..
-        result = QtGui.QMessageBox.question(self, "Confirm",
-        "Confirm Print Daybook", QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
-        if result == QtGui.QMessageBox.Ok:
-            apptix, adate = arg
-            self.bookPrint(apptix, adate)
+        '''
+        a click on the dentist portion of the appointment overview widget
+        '''
+
+        ##TODO should I abandon this?
+        apptix, adate = arg
+        self.advise("week header clicked %s %s"% (apptix, adate), 1)
 
     def offer_appointment_card(self):
         result = QtGui.QMessageBox.question(self,
@@ -714,10 +568,11 @@ class DiaryWidget(QtGui.QWidget):
     def triangles(self, call_update=True):
         ''''
         this moves a red line down the appointment books
+        called by A Qtimer, or programmatically when adding data
         '''
         if self.ui.diary_tabWidget.currentIndex()==0:
             currenttime = "%02d%02d"%(time.localtime()[3], time.localtime()[4])
-            d = self.ui.dayCalendar.selectedDate()
+            d = self.selected_date()
             if d == QtCore.QDate.currentDate():
                 for book in self.apptBookWidgets:
                     if book.setCurrentTime(currenttime) and call_update:
@@ -725,14 +580,6 @@ class DiaryWidget(QtGui.QWidget):
             else:
                 for book in self.apptBookWidgets:
                     book.setCurrentTime(None)
-
-
-    def calendar(self, sd):
-        '''
-        comes from click proceedures on other calendars
-        '''
-        logging.debug("calendar %s"% sd)
-        self.ui.dayCalendar.setSelectedDate(sd)
 
     def aptFontSize(self, e):
         '''
@@ -750,91 +597,43 @@ class DiaryWidget(QtGui.QWidget):
         '''
         go to the appointment book for the date on the label
         '''
-        self.calendar(sd)
+        self.set_date(sd)
         self.ui.diary_tabWidget.setCurrentIndex(0)
-
-    def aptOV_weekBack(self):
-        '''
-        appointment Overview page - change the calendar date,
-        and let it's event handler do the rest
-        '''
-        date_ = self.ui.dayCalendar.selectedDate()
-        weekno, year = QtCore.QDate.currentDate().weekNumber()
-        newdate = date_.addDays(-7)
-        prevweekno, prevyear = newdate.weekNumber()
-        if year > prevyear or (year == prevyear and weekno <= prevweekno):
-            self.ui.weekCalendar.setSelectedDate(newdate)
-            return True
-        else:
-            return False
-
-    def aptOV_weekForward(self):
-        '''
-        appointment Overview page - change the calendar date,
-        and let it's event handler do the rest
-        '''
-        date = self.ui.dayCalendar.selectedDate()
-        self.ui.weekCalendar.setSelectedDate(date.addDays(7))
 
     def aptOV_monthBack(self):
         '''
         appointment Overview page - change the calendar date,
         and let it's event handler do the rest
         '''
-        date = self.ui.dayCalendar.selectedDate()
-        self.ui.dayCalendar.setSelectedDate(date.addMonths(-1))
+        self.set_date(self.selected_date().addMonths(-1))
 
     def aptOV_monthForward(self):
         '''
         appointment Overview page - change the calendar date,
         and let it's event handler do the rest
         '''
-        date = self.ui.dayCalendar.selectedDate()
-        self.ui.dayCalendar.setSelectedDate(date.addMonths(1))
+        self.set_date(self.selected_date().addMonths(1))
 
     def aptOV_yearBack(self):
         '''
         appointment Overview page - change the calendar date,
         and let it's event handler do the rest
         '''
-        date = self.ui.dayCalendar.selectedDate()
-        self.ui.dayCalendar.setSelectedDate(date.addYears(-1))
+        self.set_date(self.selected_date().addYears(-1))
 
     def aptOV_yearForward(self):
         '''
         appointment Overview page - change the calendar date,
         and let it's event handler do the rest
         '''
-        date = self.ui.dayCalendar.selectedDate()
-        self.ui.dayCalendar.setSelectedDate(date.addYears(1))
+        self.set_date(self.selected_date().addYears(1))
 
     def gotoToday(self):
         '''
         appointment page - change the calendar date,
         and let it's event handler do the rest
         '''
-        self.ui.dayCalendar.setSelectedDate(
-        QtCore.QDate.currentDate())
-
-    def apt_dayBack(self):
-        '''
-        appointment page - change the calendar date,
-        and let it's event handler do the rest
-        '''
-        newdate = self.ui.dayCalendar.selectedDate().addDays(-1)
-        if newdate >= QtCore.QDate.currentDate():
-            self.ui.dayCalendar.setSelectedDate(newdate)
-            return True
-        else:
-            return False
-
-    def apt_dayForward(self):
-        '''
-        appointment page - change the calendar date,
-        and let it's event handler do the rest
-        '''
-        date = self.ui.dayCalendar.selectedDate()
-        self.ui.dayCalendar.setSelectedDate(date.addDays(1))
+        self.set_date(QtCore.QDate.currentDate())
 
     def clearTodaysEmergencyTime(self):
         '''
@@ -848,22 +647,25 @@ class DiaryWidget(QtGui.QWidget):
         if result == QtGui.QMessageBox.Yes:
             number_cleared = appointments.clearEms(localsettings.currentDay())
             self.advise("Cleared %d emergency slots"% number_cleared, 1)
-            self.handle_calendar_signal()
+            self.layout_diary()
 
-    def makeDiaryVisible(self):
+    def updateDayMemos(self, memos):
         '''
-        if called, this will take any steps necessary to show the current day's
-        appointments
+        user has added some memos
         '''
-        today=QtCore.QDate.currentDate()
-        if self.ui.diary_tabWidget.currentIndex() != 0:
-            self.ui.diary_tabWidget.setCurrentIndex(0)
-        if self.ui.dayCalendar.selectedDate() != today:
-            self.ui.dayCalendar.setSelectedDate(today)
-        else:
-            self.handle_calendar_signal()
+        d = self.selected_date().toPyDate()
+        appointments.setMemos(d, memos)
+        self.layout_diary()
 
-    def handle_calendar_signal(self):
+    def addpubHol(self, details):
+        '''
+        user has update/added a pub holiday
+        '''
+        d = self.selected_date().toPyDate()
+        appointments.setPubHol(d, details)
+        self.layout_diary()
+
+    def layout_diary(self):
         '''
         slot to catch a date change from the custom mont/year widgets emitting
         a date signal
@@ -871,7 +673,7 @@ class DiaryWidget(QtGui.QWidget):
         OR the checkboxes have been tweaked
         OR a memo has been added
         '''
-        d = self.ui.dayCalendar.selectedDate()
+        d = self.selected_date()
         self.ui.weekCalendar.setSelectedDate(d)
         self.ui.monthView.setSelectedDate(d.toPyDate())
         self.ui.yearView.setSelectedDate(d.toPyDate())
@@ -882,7 +684,7 @@ class DiaryWidget(QtGui.QWidget):
 
         self.ui.appt_notes_webView.setVisible(
             self.appt_mode == self.NOTES_MODE)
-        self.schedule_control.set_mode(self.appt_mode)
+        self.schedule_controller.set_mode(self.appt_mode)
 
         i = self.ui.diary_tabWidget.currentIndex()
 
@@ -898,52 +700,15 @@ class DiaryWidget(QtGui.QWidget):
         elif i==4:
             self.layout_agenda()
 
-    def updateDayMemos(self, memos):
-        '''
-        user has added some memos
-        '''
-        d = self.ui.dayCalendar.selectedDate().toPyDate()
-        appointments.setMemos(d, memos)
-        self.handle_calendar_signal()
-
-    def addpubHol(self, details):
-        '''
-        user has update/added a pub holiday
-        '''
-        d = self.ui.dayCalendar.selectedDate().toPyDate()
-        appointments.setPubHol(d, details)
-        self.handle_calendar_signal()
-
-    def layout_month(self):
-        '''
-        grab month memos
-        '''
-        qdate = self.ui.dayCalendar.selectedDate()
-        startdate = datetime.date(qdate.year(), qdate.month(), 1)
-
-        qdate = qdate.addMonths(1)
-        enddate = datetime.date(qdate.year(), qdate.month(), 1)
-
-        dents = tuple(self.getUserCheckedClinicians("month"))
-        self.ui.monthView.setDents(dents)
-
-        data = appointments.getDayInfo(startdate, enddate, dents)
-        self.ui.monthView.setData(data)
-
-        data = appointments.getBankHols(startdate, enddate)
-        self.ui.monthView.setHeadingData(data)
-
-        self.ui.monthView.update()
-
     def layout_year(self):
         '''
         grab year memos
         '''
-        year = self.ui.dayCalendar.selectedDate().year()
+        year = self.selected_date().year()
         startdate = datetime.date(year, 1, 1)
         enddate = datetime.date(year+1, 1, 1)
 
-        dents = tuple(self.getUserCheckedClinicians("year"))
+        dents = self.getUserCheckedClinicians()
         self.ui.yearView.setDents(dents)
 
         data = appointments.getDayInfo(startdate, enddate, dents)
@@ -990,22 +755,26 @@ class DiaryWidget(QtGui.QWidget):
 
         self.ui.year_textBrowser.setText(headerText)
 
-    def getUserCheckedClinicians(self, view="day"):
+    def layout_month(self):
         '''
-        checks the gui to see which dentists, hygienists are checked.
-        returns a list
+        grab month memos
         '''
-        if view == "day":
-            widg = self.appt_clinician_selector
-        elif view in ("month", "year"):
-            widg = self.monthClinicianSelector
-        else:
-            raise IndexError("Bad view chosen '%s'"% view)
+        qdate = self.selected_date()
+        startdate = datetime.date(qdate.year(), qdate.month(), 1)
 
-        retlist = []
-        for dent in widg.getSelectedClinicians():
-            retlist.append(localsettings.apptix.get(dent))
-        return retlist
+        qdate = qdate.addMonths(1)
+        enddate = datetime.date(qdate.year(), qdate.month(), 1)
+
+        dents = self.getUserCheckedClinicians()
+        self.ui.monthView.setDents(dents)
+
+        data = appointments.getDayInfo(startdate, enddate, dents)
+        self.ui.monthView.setData(data)
+
+        data = appointments.getBankHols(startdate, enddate)
+        self.ui.monthView.setHeadingData(data)
+
+        self.ui.monthView.update()
 
     def layout_weekView(self):
         '''
@@ -1021,15 +790,13 @@ class DiaryWidget(QtGui.QWidget):
         self.ui.week_view_control_frame.setLayout(self.appt_mode_layout)
 
         self.current_weekViewClinicians = set()
-        date = self.ui.dayCalendar.selectedDate()
+        date_ = self.selected_date()
 
-        dayno = date.dayOfWeek()
+        dayno = date_.dayOfWeek()
         weekdates = []
-        #--(monday to friday) #prevMonday = date.addDays(1-dayno),
-        #--prevTuesday = date.addDays(2-dayno)
 
         for day in range(7):
-            weekday = (date.addDays(day + 1 - dayno))
+            weekday = (date_.addDays(day + 1 - dayno))
             weekdates.append(weekday)
             header = self.ui.apptoverviewControls[day]
             header.setDate(weekday)
@@ -1045,52 +812,37 @@ class DiaryWidget(QtGui.QWidget):
         self.ui.goto_current_week_PushButton.setEnabled(not thisWeek)
 
         for ov in self.ui.apptoverviews:
+            logging.debug("iterating over apt_overviews - %s"% ov)
             ov.date = weekdates[self.ui.apptoverviews.index(ov)]
             ov.clear()
             ov.mode = self.appt_mode
 
-            manual =  False
-            if manual:
-                userCheckedClinicians = self.getUserCheckedClinicians("week")
-                if userCheckedClinicians == []:
-                    workingdents = ()
-                else:
-                    workingdents = appointments.getWorkingDents(
-                    ov.date.toPyDate(), tuple(userCheckedClinicians), True)
-            else:
-                if not self.appt_clinicianSelection_comboBox.isVisible():
-                    workingdents = appointments.getWorkingDents(
-                      ov.date.toPyDate(), include_non_working=False)
-                else:
-                    i = self.appt_clinicianSelection_comboBox.currentIndex()
-                    model = self.appt_clinicianSelection_comboBox.model()
-                    workingdents = model.clinician_list(i, ov.date.toPyDate())
+            ov.dents = \
+                self.view_controller.clinician_days(ov.date.toPyDate())
 
-            #--reset
-            ov.dents = []
-
-            for dent in workingdents:
-                ov.dents.append(dent)
+            for dent in ov.dents:
                 self.current_weekViewClinicians.add(dent.ix)
 
             ov.init_dicts()
-            for dent in workingdents:
+            for dent in ov.dents:
                 ov.setStartTime(dent)
                 ov.setEndTime(dent)
                 ov.setMemo(dent)
                 ov.setFlags(dent)
 
+            logging.debug(ov.daystart)
+
         if self.appt_mode == self.SCHEDULING_MODE:
-            if date < QtCore.QDate.currentDate(): #and not thisWeek):
+            if date_ < QtCore.QDate.currentDate(): #and not thisWeek):
                 self.advise(
                     _("You can't schedule an appointment in the past"))
                 #stop looking backwards
                 self.finding_next_slot = 1
-                self.calendar(localsettings.currentDay())
+                self.set_date(localsettings.currentDay())
                 return
 
             result, message, slots = self.addWeekViewAvailableSlots()
-            self.schedule_control.set_available_slots(slots)
+            self.schedule_controller.set_available_slots(slots)
 
             if not result:
                 self.advise(message)
@@ -1103,7 +855,7 @@ class DiaryWidget(QtGui.QWidget):
                 return
 
             if self.finding_next_slot == -1:
-                self.schedule_control.use_last_slot = True
+                self.schedule_controller.use_last_slot = True
                 self.finding_next_slot = 1
 
             for ov in self.ui.apptoverviews:
@@ -1111,7 +863,7 @@ class DiaryWidget(QtGui.QWidget):
                     if slot.date_time.date() == ov.date.toPyDate():
                         ov.addSlot(slot)
 
-                ov.set_active_slot(self.schedule_control.chosen_slot)
+                ov.set_active_slot(self.schedule_controller.chosen_slot)
 
 
         for ov in self.ui.apptoverviews:
@@ -1132,14 +884,14 @@ class DiaryWidget(QtGui.QWidget):
             ov.update()
 
         #needed to sync agenda and dayview
-        if self.schedule_control.chosen_slot:
+        if self.schedule_controller.chosen_slot:
             sync_date = QtCore.QDate(
-                self.schedule_control.chosen_slot.date())
+                self.schedule_controller.chosen_slot.date())
             if (sync_date.weekNumber() ==
             self.ui.weekCalendar.selectedDate().weekNumber()):
                 self.signals_calendar(False)
                 self.ui.weekCalendar.setSelectedDate(sync_date)
-                self.calendar(sync_date)
+                self.set_date(sync_date)
                 self.signals_calendar()
 
 
@@ -1160,56 +912,59 @@ class DiaryWidget(QtGui.QWidget):
             book.setTime = None
             book.mode = self.appt_mode
 
-        d = self.ui.dayCalendar.selectedDate().toPyDate()
-        workingOnly = False
+        date_ = self.selected_date().toPyDate()
 
         ##choose dentists to show.
+        dents = self.view_controller.clinician_list(date_)
 
-        i = self.appt_clinicianSelection_comboBox.currentIndex()
-        model = self.appt_clinicianSelection_comboBox.model()
-        workingdents = model.clinician_list(i, d)
-        dent_list = []
-        for dent in workingdents:
-            dent_list.append(dent.ix)
-        dents = tuple(dent_list)
-
-        self.appointmentData.setDate(d)
-        self.appointmentData.getAppointments(workingOnly, dents)
+        self.appointmentData.setDate(date_)
+        self.appointmentData.getAppointments(dents)
 
         if self.appt_mode == self.SCHEDULING_MODE:
-            if d < localsettings.currentDay():
+            if date_ < localsettings.currentDay():
                 self.advise(_("You can't schedule an appointment in the past"))
                 #stop looking backwards
                 self.finding_next_slot = 1
-                self.calendar(localsettings.currentDay())
+                self.set_date(localsettings.currentDay())
                 return
-            minlength = self.schedule_control.min_slot_length
-            available_slots = self.appointmentData.slots(minlength)
-            self.schedule_control.set_available_slots(available_slots)
+            if date_ > localsettings.bookEnd:
+                self.advise(_("You are beyond scheduling range"),1)
+                self.finding_next_slot = 0
+                all_slots = []
+                self.schedule_controller.set_available_slots(all_slots)
+            else:
+                minlength = self.schedule_controller.min_slot_length
+                logging.debug("min_slot length = %s"% minlength)
+                all_slots = self.appointmentData.slots(minlength)
+                self.schedule_controller.set_available_slots(all_slots)
 
-            if available_slots == []:
-                self.step_date(self.finding_next_slot != -1)
-                return
+                if self.schedule_controller.search_again:
+                    self.step_date(self.finding_next_slot != -1)
+                    return
 
         self.ui.daymemo_label.setText(self.appointmentData.memo)
 
         workingDents = self.appointmentData.workingDents
         number_of_books = len(workingDents)
+
+        abs_start = self.appointmentData.earliest_start
+        abs_end = self.appointmentData.latest_end
+
         while number_of_books > len(self.apptBookWidgets):
-            book = appointmentwidget.AppointmentWidget("0800", "1900", self)
+            logging.debug("initiating a new AppointmentWidget")
+            book = appointmentwidget.AppointmentWidget(
+                abs_start, abs_end, self)
             self.apptBookWidgets.append(book)
             self.ui.dayView_splitter.addWidget(book)
             self.signals_apptWidgets(book)
             book.mode = self.appt_mode
+
         #-- clean past links to dentists
         i = 0
         for book in self.apptBookWidgets:
             i += 1
             book.dentist = None
             book.scrollArea.show()
-
-        abs_start = self.appointmentData.earliest_start
-        abs_end = self.appointmentData.latest_end
 
         i = 0
         for dent in workingDents:
@@ -1236,16 +991,20 @@ class DiaryWidget(QtGui.QWidget):
             for app in apps:
                 book.setAppointment(app)
 
+            ## if scheduling.. add slots to the widgets
+
             if (self.appt_mode == self.SCHEDULING_MODE
-            and self.schedule_control.appointment_model.currentAppt):
+            and self.schedule_controller.appointment_model.currentAppt):
 
                 if self.finding_next_slot == -1:
-                    self.schedule_control.use_last_slot = True
+                    self.schedule_controller.use_last_slot = True
                     self.finding_next_slot = 1
-                for slot in available_slots:
+                for slot in all_slots:
                     book.addSlot(slot)
+                book.set_active_slot(self.schedule_controller.chosen_slot)
 
-                book.set_active_slot(self.schedule_control.chosen_slot)
+                book.enable_slots(book.apptix in
+                    self.schedule_controller.selectedClinicians)
 
             i += 1
 
@@ -1266,7 +1025,7 @@ class DiaryWidget(QtGui.QWidget):
         self.ui.dayView_splitter.setSizes(book_list)
 
         if i == 0:
-            t = self.ui.daymemo_label.text() + " - " + _("Nothing to show!")
+            t = self.ui.daymemo_label.text() + " - " + _("No books to show!")
             self.ui.daymemo_label.setText(t)
 
             #self.advise("all off today")
@@ -1281,7 +1040,7 @@ class DiaryWidget(QtGui.QWidget):
         self.ui.agenda_calendar_frame.setLayout(self.calendar_layout)
         self.ui.agenda_control_frame.setLayout(self.appt_mode_layout)
 
-        d = self.ui.dayCalendar.selectedDate().toPyDate()
+        d = self.selected_date().toPyDate()
 
         agenda_data = appointments.AgendaData()
 
@@ -1293,11 +1052,11 @@ class DiaryWidget(QtGui.QWidget):
                 self.advise(_("You can't schedule an appointment in the past"))
                 #stop looking backwards
                 self.finding_next_slot = 1
-                self.ui.dayCalendar.setSelectedDate(localsettings.currentDay())
+                self.set_date(localsettings.currentDay())
                 return
-            minlength = self.schedule_control.min_slot_length
+            minlength = self.schedule_controller.min_slot_length
             available_slots = self.appointmentData.slots(minlength)
-            self.schedule_control.set_available_slots(available_slots)
+            self.schedule_controller.set_available_slots(available_slots)
 
             if available_slots == []:
                 self.step_date(self.finding_next_slot != -1)
@@ -1312,15 +1071,25 @@ class DiaryWidget(QtGui.QWidget):
             agenda_data.add_slot(slot)
 
         if (self.appt_mode == self.SCHEDULING_MODE
-        and self.schedule_control.appointment_model.currentAppt):
+        and self.schedule_controller.appointment_model.currentAppt):
 
             if self.finding_next_slot == -1:
-                self.schedule_control.use_last_slot = True
+                self.schedule_controller.use_last_slot = True
                 self.finding_next_slot = 1
 
-            agenda_data.set_active_slot(self.schedule_control.chosen_slot)
+            agenda_data.set_active_slot(self.schedule_controller.chosen_slot)
 
         self.agenda_widget.setText(agenda_data.to_html())
+
+    def getUserCheckedClinicians(self):
+        '''
+        checks the gui to see which dentists, hygienists are checked.
+        returns a list
+        '''
+        retlist = []
+        for dent in self.monthClinicianSelector.getSelectedClinicians():
+            retlist.append(localsettings.apptix.get(dent))
+        return tuple(retlist)
 
     def appointment_clicked(self, list_of_snos):
         if len(list_of_snos) == 1:
@@ -1337,11 +1106,11 @@ class DiaryWidget(QtGui.QWidget):
 
     def edit_appointment_memo_clicked(self, list_of_snos, start, dentist):
         if len(list_of_snos) != 1:
-            self.advise("multiple appointments selected, unable to delete", 2)
+            self.advise(
+                "multiple appointments selected, unable to edit memo", 2)
             return
         sno = list_of_snos[0]
-        serialno = int(sno)
-        adate = self.ui.dayCalendar.selectedDate().toPyDate()
+        adate = self.selected_date().toPyDate()
         atime = int(start.replace(":",""))
         note, result = appointments.get_appt_note(sno, adate, atime, dentist)
         if not result:
@@ -1350,26 +1119,25 @@ class DiaryWidget(QtGui.QWidget):
             new_note, result = QtGui.QInputDialog.getText(self,
             "New Memo", "Please enter Memo for this appointment", text=note)
             if result and new_note != note:
-                appointments.set_appt_note(sno, adate, atime, dentist, new_note)
+                appointments.set_appt_note(
+                    sno, adate, atime, dentist, new_note)
 
         self.layout_dayView()
         self.pt_diary_changed.emit(self.pt.serialno)
 
     def appointment_cancel(self, list_of_snos, start, dentist):
         if len(list_of_snos) != 1:
-            self.advise("multiple appointments selected, unable to delete", 2)
+            self.advise("multiple appointments selected, unable to cancel", 2)
             return
 
         sno = list_of_snos[0]
         serialno = int(sno)
-        adate = self.ui.dayCalendar.selectedDate().toPyDate()
-
-        #self.advise("cancelling appointment %s on %s at %s"% (sno, adate, start))
+        adate = self.selected_date().toPyDate()
+        dent_inits = localsettings.apptix_reverse.get(dentist)
 
         message = _("Confirm Delete appointment at")
         message += " %s %s "% (start, localsettings.readableDate(adate))
-
-        message += _("with") + " %s?"% localsettings.apptix_reverse.get(dentist)
+        message += _("with") + " %s?"% dent_inits
 
         if QtGui.QMessageBox.question(self, _("Confirm"), message,
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
@@ -1383,14 +1151,14 @@ class DiaryWidget(QtGui.QWidget):
             appt.aprix = "UNKNOWN"
 
             if appointments.delete_appt_from_aslot(appt):
-                ##todo - if we deleted from the appt book,
+                ##TODO - if we deleted from the appt book,
                 ##we should add to notes
                 print "future appointment deleted - add to notes!!"
 
                 appointments.made_appt_to_proposed(appt)
 
                 self.layout_dayView()
-                self.schedule_control.get_data()
+                self.schedule_controller.get_data()
 
                 #--keep in the patient's diary?
 
@@ -1401,7 +1169,7 @@ class DiaryWidget(QtGui.QWidget):
                     #remove from the patients diary
                     if appointments.delete_appt_from_apr(appt):
                         self.advise(_("Sucessfully removed appointment"))
-                        self.schedule_control.get_data()
+                        self.schedule_controller.get_data()
                     else:
                         self.advise(_("Error removing from patient diary"),2)
 
@@ -1420,7 +1188,7 @@ class DiaryWidget(QtGui.QWidget):
         only question is... do they want to free it?
         it expects an arg like ('8:50', '11:00', 4)
         '''
-        adate = self.ui.dayCalendar.selectedDate().toPyDate()
+        adate = self.selected_date().toPyDate()
         message = _("Do you want to unblock the selected slot?")
         message += "<br />%s - %s <br />"% (arg[0], arg[1])
         message += "%s<br />"% localsettings.readableDate(adate)
@@ -1440,7 +1208,7 @@ class DiaryWidget(QtGui.QWidget):
         '''
         block the empty slot
         '''
-        adate = self.ui.dayCalendar.selectedDate().toPyDate()
+        adate = self.selected_date().toPyDate()
         start = tup[0].toPyTime()
         end = tup[1].toPyTime()
         adjstart = tup[2].toPyTime()
@@ -1457,7 +1225,7 @@ class DiaryWidget(QtGui.QWidget):
         '''
         fill the empty slot - this is called via the appointment widget.
         '''
-        adate = self.ui.dayCalendar.selectedDate().toPyDate()
+        adate = self.selected_date().toPyDate()
         start = tup[0].toPyTime()
         end = tup[1].toPyTime()
         adjstart = tup[2].toPyTime()
@@ -1494,7 +1262,7 @@ class DiaryWidget(QtGui.QWidget):
 
             if result == QtGui.QMessageBox.No:
                 return
-        adate = self.ui.dayCalendar.selectedDate().toPyDate()
+        adate = self.selected_date().toPyDate()
 
         result1, result2 = appointments.daydrop_appt(adate, appt, droptime, dent)
 
@@ -1510,21 +1278,20 @@ class DiaryWidget(QtGui.QWidget):
         self.pt_diary_changed.emit(self.pt.serialno)
 
     def start_scheduling(self, pt):
-        print self, "start_scheduling", pt
         self.load_patient(pt, update=False)
-        self.appt_mode = self.SCHEDULING_MODE
-        self.update_appt_mode_label()
+        self.set_appt_mode(self.SCHEDULING_MODE)
         self.begin_makeAppt()
 
     def find_appt(self, appt):
-        print self, "find_appt", appt
+        ##TODO
+        self.advise("DiaryWidgetfind_appt %s"% appt, 1)
 
     def aptOVlabelRightClicked(self, d):
         '''
         user wants to change appointment overview properties for date d
         '''
         if permissions.granted(self):
-            dl = alterAday.alterDay(self, d)
+            dl = alterAday.alterDayDialog(self, d)
 
             if dl.getInput():
                 self.layout_weekView()
@@ -1544,40 +1311,40 @@ class DiaryWidget(QtGui.QWidget):
         catches a signal that the diary tab widget has been moved
         '''
         logging.debug("diary_tabwidget_nav called")
-        self.handle_calendar_signal()
+        self.layout_diary()
 
-    def schedule_control_appointment_selected(self, *args):
+    def schedule_controller_appointment_selected(self, *args):
         '''
         a new appointment has been selected for scheduling
         '''
-        logging.debug("DiaryWidget.schedule_control_appointment_selected")
-        self.handle_calendar_signal()
+        logging.debug("DiaryWidget.schedule_controller_appointment_selected")
+        self.layout_diary()
 
     def step_date(self, forwards = True):
-        logging.debug("step date, forwards=%s"% forwards)
-        date = self.ui.dayCalendar.selectedDate()
+        date_ = self.selected_date()
+        logging.debug("step date called current=%s, forwards=%s"% (
+            date_, forwards))
 
         if forwards:
             if self.viewing_week:
                 #goto 1st day of next week
-                date = date.addDays(1)
-                while date.dayOfWeek() != 1:
-                    date = date.addDays(1)
+                date_ = date_.addDays(1)
+                while date_.dayOfWeek() != 1:
+                    date_ = date_.addDays(1)
             else:
-                date = date.addDays(1)
+                date_ = date_.addDays(1)
         else:
             if self.viewing_week:
                 #goto last day of next week
-                date = date.addDays(-1)
-                while date.dayOfWeek() != 7:
-                    date = date.addDays(-1)
+                date_ = date_.addDays(-1)
+                while date_.dayOfWeek() != 7:
+                    date_ = date_.addDays(-1)
             else:
-                date = date.addDays(-1)
+                date_ = date_.addDays(-1)
 
             self.finding_next_slot = -1
 
-        self.calendar(date)
-
+        self.set_date(date_)
 
     @property
     def viewing_day(self):
@@ -1605,134 +1372,125 @@ class DiaryWidget(QtGui.QWidget):
         self.ui.diary_tabWidget.currentChanged.connect(
             self.diary_tabWidget_nav)
 
-        self.appt_mode_but.clicked.connect(self.set_appt_mode)
+        self.ui.goTodayPushButton.clicked.connect(self.gotoToday_clicked)
 
+        self.ui.goto_current_week_PushButton.clicked.connect(
+            self.gotoToday_clicked)
 
-        QtCore.QObject.connect(self.ui.goTodayPushButton,
-        QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
+        self.ui.printMonth_pushButton.clicked.connect(
+            self.printMonth_pushButton_clicked)
 
-        QtCore.QObject.connect(self.ui.goto_current_week_PushButton,
-        QtCore.SIGNAL("clicked()"), self.gotoToday_clicked)
-
-        QtCore.QObject.connect(self.ui.printMonth_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printMonth_pushButton_clicked)
-
-        self.schedule_control.patient_selected.connect(
+        self.schedule_controller.patient_selected.connect(
             self.load_patient)
 
         self.signals_appointmentOVTab()
 
-        self.schedule_control.show_first_appointment.connect(
+        self.schedule_controller.show_first_appointment.connect(
             self.begin_makeAppt)
 
-        self.schedule_control.chosen_slot_changed.connect(
-            self.handle_calendar_signal)
+        self.schedule_controller.chosen_slot_changed.connect(
+            self.layout_diary)
 
-        self.schedule_control.move_on.connect(self.step_date)
+        self.schedule_controller.move_on.connect(self.step_date)
 
-        self.schedule_control.appointment_selected.connect(
-            self.schedule_control_appointment_selected)
+        self.schedule_controller.appointment_selected.connect(
+            self.schedule_controller_appointment_selected)
 
-        self.schedule_control.book_now_signal.connect(self.makeAppt)
+        self.schedule_controller.book_now_signal.connect(self.makeAppt)
+        self.schedule_controller.find_appt.connect(self.find_appt)
+
+        self.view_controller.update_needed.connect(
+            self.layout_diary)
+
+        self.view_controller.apt_mode_changed.connect(self.set_appt_mode)
 
     def signals_apptWidgets(self, book):
 
-        book.connect(book, QtCore.SIGNAL("print_me"), self.bookPrint)
+        book.connect(book, QtCore.SIGNAL("print_me"),
+            self.appointment_book_print)
 
         book.connect(book, QtCore.SIGNAL("new_memo"),
-        self.bookmemo_Edited)
+            self.bookmemo_Edited)
 
         book.connect(book, QtCore.SIGNAL("PatientClicked"),
-        self.apptBook_patientClickedSignal)
+            self.apptBook_patientClickedSignal)
 
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
-        self.apptBook_appointmentClickedSignal)
+            self.appointment_clicked)
 
         book.connect(book, QtCore.SIGNAL("EditAppointmentMemo"),
-        self.apptBook_editAppointmentMemoClickedSignal)
+            self.edit_appointment_memo_clicked)
 
         book.connect(book, QtCore.SIGNAL("AppointmentCancel"),
-        self.apptBook_appointmentCancelSignal)
+            self.appointment_cancel)
 
         book.connect(book, QtCore.SIGNAL("ClearEmergencySlot"),
-        self.apptBook_emergencySlotSignal)
+            self.clearEmergencySlot)
 
         book.connect(book, QtCore.SIGNAL("BlockEmptySlot"),
-        self.apptBook_blockSlotSignal)
+            self.blockEmptySlot)
 
         book.connect(book, QtCore.SIGNAL("Appointment_into_EmptySlot"),
-        self.apptBook_fillSlotSignal)
+            self.fillEmptySlot)
 
         book.connect(book.canvas, QtCore.SIGNAL("ApptDropped"),
-        self.apptBook_apptDropped)
+            self.appt_dropped_onto_daywidget)
 
         book.slotClicked.connect(self.apptBook_slot_clicked)
-
 
     def signals_calendar(self, connect=True):
         if connect:
             QtCore.QObject.connect(self.ui.dayCalendar,
-            QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
+            QtCore.SIGNAL("selectionChanged()"), self.layout_diary)
         else:
             QtCore.QObject.disconnect(self.ui.dayCalendar,
-            QtCore.SIGNAL("selectionChanged()"), self.dayCalendar_changed)
+            QtCore.SIGNAL("selectionChanged()"), self.layout_diary)
 
     def signals_appointmentOVTab(self):
 
         self.signals_calendar()
 
         QtCore.QObject.connect(self.ui.weekCalendar,
-        QtCore.SIGNAL("weekChanged"), self.customDateSignal)
+        QtCore.SIGNAL("weekChanged"), self.ui.dayCalendar.setSelectedDate)
 
         for cal in (self.ui.yearView, self.ui.monthView):
             QtCore.QObject.connect(cal, QtCore.SIGNAL("selectedDate"),
-                self.customDateSignal)
+                self.ui.dayCalendar.setSelectedDate)
             QtCore.QObject.connect(cal, QtCore.SIGNAL("add_memo"),
-                self.addCalendarMemo)
+                self.updateDayMemos)
 
         QtCore.QObject.connect(self.ui.yearView,
-        QtCore.SIGNAL("add_pub_hol"), self.addCalendarPubHol)
+        QtCore.SIGNAL("add_pub_hol"), self.addpubHol)
 
-        QtCore.QObject.connect(self.ui.aptOVprevmonth,
-        QtCore.SIGNAL("clicked()"), self.aptOV_monthBack_clicked)
-
-        QtCore.QObject.connect(self.ui.aptOVnextmonth,
-        QtCore.SIGNAL("clicked()"), self.aptOV_monthForward_clicked)
-
-        QtCore.QObject.connect(self.ui.aptOVprevyear,
-        QtCore.SIGNAL("clicked()"), self.aptOV_yearBack_clicked)
-
-        QtCore.QObject.connect(self.ui.aptOVnextyear,
-        QtCore.SIGNAL("clicked()"), self.aptOV_yearForward_clicked)
-
-        QtCore.QObject.connect(self.ui.monthView_clinicians_pushButton,
-        QtCore.SIGNAL("clicked()"), self.manage_month_and_year_View_clinicians)
-
-        QtCore.QObject.connect(self.ui.yearView_clinicians_pushButton,
-        QtCore.SIGNAL("clicked()"), self.manage_month_and_year_View_clinicians)
-
-        QtCore.QObject.connect(self.ui.monthClinicians_checkBox,
-        QtCore.SIGNAL("clicked()"), self.month_and_year_All_clinicians)
-
-        QtCore.QObject.connect(self.ui.yearClinicians_checkBox,
-        QtCore.SIGNAL("clicked()"), self.month_and_year_All_clinicians)
+        self.ui.aptOVprevmonth.clicked.connect(self.aptOV_monthBack)
+        self.ui.aptOVnextmonth.clicked.connect(self.aptOV_monthForward)
+        self.ui.aptOVprevyear.clicked.connect(self.aptOV_yearBack)
+        self.ui.aptOVnextyear.clicked.connect(self.aptOV_yearForward)
+        self.ui.monthView_clinicians_pushButton.clicked.connect(
+            self.manage_month_and_year_View_clinicians)
+        self.ui.yearView_clinicians_pushButton.clicked.connect(
+            self.manage_month_and_year_View_clinicians)
+        self.ui.monthClinicians_checkBox.clicked.connect(
+            self.month_and_year_All_clinicians)
+        self.ui.yearClinicians_checkBox.clicked.connect(
+            self.month_and_year_All_clinicians)
 
         for widg in self.ui.apptoverviews:
             widg.connect(widg, QtCore.SIGNAL("SlotClicked"),
             self.aptOVwidget_userHasChosen_slot)
 
             widg.connect(widg, QtCore.SIGNAL("ApptDropped"),
-            self.aptOVwidget_dropped_appointment)
+            self.makeAppt)
 
             widg.connect(widg, QtCore.SIGNAL("DentistHeading"),
-            self.apptOVwidget_header_clicked)
+            self.apptOVheaderclick)
 
         for control in self.ui.apptoverviewControls:
             self.connect(control,
-            QtCore.SIGNAL("clicked"), self.aptOVlabel_clicked)
+            QtCore.SIGNAL("clicked"), self.aptOVlabelClicked)
 
             self.connect(control,
-            QtCore.SIGNAL("right-clicked"), self.aptOVlabel_rightClicked)
+            QtCore.SIGNAL("right-clicked"), self.aptOVlabelRightClicked)
 
 if __name__ == "__main__":
     import gettext
@@ -1757,8 +1515,8 @@ if __name__ == "__main__":
     pt = patient_class.patient(20862)
 
     dw.show()
-    dw.schedule_control.set_data(pt, (), None)
-    dw.schedule_control.appointment_model.load_from_database(pt)
+    dw.schedule_controller.set_data(pt, (), None)
+    dw.schedule_controller.appointment_model.load_from_database(pt)
 
     dw.start_scheduling(pt)
     app.exec_()

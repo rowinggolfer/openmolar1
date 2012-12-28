@@ -20,6 +20,8 @@
 ##                                                                           ##
 ###############################################################################
 
+import logging
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.dbtools.brief_patient import BriefPatient
@@ -33,7 +35,7 @@ from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 
 from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
 
-class ApptScheduleControl(QtGui.QWidget):
+class DiaryScheduleController(QtGui.QStackedWidget):
     BROWSE_MODE = 0
     SCHEDULE_MODE = 1
     BLOCK_MODE = 2
@@ -47,6 +49,7 @@ class ApptScheduleControl(QtGui.QWidget):
     chosen_slot_changed = QtCore.pyqtSignal()
     move_on = QtCore.pyqtSignal(object)
     book_now_signal = QtCore.pyqtSignal(object, object)
+    find_appt = QtCore.pyqtSignal(object)
 
     pt = None
     available_slots = []
@@ -57,7 +60,7 @@ class ApptScheduleControl(QtGui.QWidget):
     _pt_diary_widget = None
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QStackedWidget.__init__(self, parent)
         self.patient_label = QtGui.QLabel()
 
         self.diary_button = QtGui.QPushButton("diary")
@@ -70,6 +73,7 @@ class ApptScheduleControl(QtGui.QWidget):
 
         self.appointment_model = SimpleListModel(self)
         self.appt_listView.setModel(self.appointment_model)
+        self.appt_listView.setSelectionModel(self.appointment_model.selection_model)
 
         block_model = BlockListModel(self)
         self.block_listView.setModel(block_model)
@@ -92,24 +96,13 @@ class ApptScheduleControl(QtGui.QWidget):
 
         self.appt_controls_frame = QtGui.QFrame()
         layout = QtGui.QGridLayout(self.appt_controls_frame)
-        layout.setMargin(2)
+        layout.setMargin(1)
         layout.addWidget(first_appt_button,0,0)
         layout.addWidget(prev_appt_button,0,1)
         layout.addWidget(next_appt_button,0,2)
         layout.addWidget(debug_button,0,3)
         layout.addWidget(self.chosen_slot_label,1,0,1,3)
         layout.addWidget(book_now_button,1,3)
-
-        layout = QtGui.QGridLayout(self)
-        layout.setMargin(0)
-        layout.addWidget(self.patient_label,0,0)
-        layout.addWidget(self.diary_button,0,1)
-        layout.addWidget(self.get_patient_button,0,2)
-        layout.addWidget(self.appt_listView,1,0,1,3)
-        layout.addWidget(self.appt_controls_frame,2,0,1,3)
-        layout.addWidget(self.block_listView,3,0,1,3)
-
-        self.set_mode(self.BROWSE_MODE)
 
         self.appointment_model.appointment_selected.connect(
             self.appointment_selected_signal)
@@ -126,13 +119,45 @@ class ApptScheduleControl(QtGui.QWidget):
 
         self.diary_button.clicked.connect(self.show_pt_diary)
 
+        # now arrange the stacked widget
+
+        #page 0
+        self.addWidget(QtGui.QLabel("Browsing"))
+
+        #page 1
+        widg = QtGui.QWidget()
+        layout = QtGui.QGridLayout(widg)
+        layout.setMargin(0)
+        layout.addWidget(self.patient_label,0,0)
+        layout.addWidget(self.diary_button,0,1)
+        layout.addWidget(self.get_patient_button,0,2)
+        layout.addWidget(self.appt_listView,1,0,1,3)
+        layout.addWidget(self.appt_controls_frame,2,0,1,3)
+
+        self.addWidget(widg)
+
+        #page 2
+        widg = QtGui.QWidget()
+        layout = QtGui.QVBoxLayout(widg)
+        layout.addWidget(self.block_listView)
+        self.addWidget(widg)
+
+        #page 4
+        self.addWidget(QtGui.QLabel("Notes"))
+
+
     def debug_function(self):
         '''
         temporary code.
         '''
         dl = QtGui.QDialog(self)
         dl.setWindowTitle("debug function")
+
+        tab_widget = QtGui.QTabWidget()
+
+        #for displaying slots.
         label = QtGui.QLabel()
+
         close_but = QtGui.QPushButton("close")
         close_but.clicked.connect(dl.reject)
 
@@ -140,8 +165,8 @@ class ApptScheduleControl(QtGui.QWidget):
             label.setText("no slots available")
         else:
             l_text = "<ul>"
-            for i, slot in enumerate(self.available_slots):
-                if i == self._chosen_slot_no:
+            for slot in self.available_slots:
+                if slot == self._chosen_slot:
                     l_text += "<li><b>%s</b></li>"% slot
                 else:
                     l_text += "<li>%s</li>"% slot
@@ -149,21 +174,32 @@ class ApptScheduleControl(QtGui.QWidget):
 
             label.setText(l_text)
 
+        tab_widget.addTab(label, "slots")
+
+        #who's selected
+        label = QtGui.QLabel("Selected %s <hr />Involved %s"% (
+            self.selectedClinicians, self.involvedClinicians))
+
+        tab_widget.addTab(label, "clinicians")
+
+        #min_slot_length
+        label = QtGui.QLabel(
+            "Min slot length required = %s"% (self.min_slot_length))
+
+        tab_widget.addTab(label, "min slot length")
+
+
         layout = QtGui.QVBoxLayout(dl)
-        layout.addWidget(label)
+        layout.addWidget(tab_widget)
         layout.addStretch(100)
         layout.addWidget(close_but)
         dl.exec_()
 
     def set_mode(self, mode):
+        if mode == self.SCHEDULE_MODE:
+            self.update_patient_label()
         self.mode = mode
-        self.appt_listView.setVisible(mode == self.SCHEDULE_MODE)
-        self.appt_controls_frame.setVisible(mode == self.SCHEDULE_MODE)
-        self.diary_button.setVisible(mode == self.SCHEDULE_MODE)
-
-        self.get_patient_button.setVisible(mode == self.SCHEDULE_MODE)
-        self.block_listView.setVisible(mode == self.BLOCK_MODE)
-        self.update_patient_label()
+        self.setCurrentIndex(mode)
 
     def set_data(self, pt, appts, chosen_appointment):
         self.pt = pt
@@ -193,11 +229,7 @@ class ApptScheduleControl(QtGui.QWidget):
         self.update_patient_label()
 
     def update_patient_label(self):
-        if self.mode in (self.SCHEDULE_MODE, self.NOTES_MODE):
-            self.patient_label.show()
-            self.patient_label.setText(self.patient_text)
-        else:
-            self.patient_label.hide()
+        self.patient_label.setText(self.patient_text)
 
     @property
     def min_slot_length(self):
@@ -215,7 +247,7 @@ class ApptScheduleControl(QtGui.QWidget):
         return self.appointment_model.involvedClinicians
 
     def sizeHint(self):
-        return QtCore.QSize(200,400)
+        return QtCore.QSize(150,400)
 
     def update_appt_selection(self, pt, appt):
         '''
@@ -269,11 +301,22 @@ class ApptScheduleControl(QtGui.QWidget):
             self.move_on.emit(False)
 
     def set_available_slots(self, slots):
-        self.available_slots = sorted(slots)
+        self.available_slots = []
+        for slot in sorted(slots):
+            if slot.dent in self.selectedClinicians:
+                self.available_slots.append(slot)
+
+    @property
+    def search_again(self):
+        '''
+        this determines whether it is worth continuing
+        '''
+        return (   len(self.selectedClinicians)>0 and
+                    len(self.available_slots)==0
+                    )
 
     @property
     def chosen_slot(self):
-
         self.chosen_slot_label.setText(_("No slot selected"))
         if self.available_slots == []:
             return None
@@ -290,6 +333,7 @@ class ApptScheduleControl(QtGui.QWidget):
     def pt_diary_widget(self):
         if self._pt_diary_widget is None:
             self._pt_diary_widget = PtDiaryWidget()
+            self._pt_diary_widget.find_appt.connect(self.find_appt.emit)
         return self._pt_diary_widget
 
     def show_pt_diary(self):
@@ -306,10 +350,42 @@ class ApptScheduleControl(QtGui.QWidget):
         layout.addWidget(self.pt_diary_widget)
         layout.addStretch()
         layout.addWidget(but_box)
-
+        self.pt_diary_widget.find_appt.connect(dl.accept)
         dl.exec_()
 
         self.appointment_model.load_from_database(self.pt)
+
+class TestWindow(QtGui.QMainWindow):
+    MODES = ("Browse", "Schedule", "Block", "Notes")
+    def __init__(self, parent=None):
+        QtGui.QMainWindow.__init__(self, parent)
+        self.schedule_controller = DiaryScheduleController()
+        self.but = QtGui.QPushButton()
+        self.but.clicked.connect(self.change_mode)
+
+        self.mode = self.schedule_controller.BROWSE_MODE
+
+        frame = QtGui.QWidget()
+        layout = QtGui.QVBoxLayout(frame)
+        layout.addWidget(self.schedule_controller)
+        layout.addWidget(self.but)
+
+        self.set_but_text()
+        self.setCentralWidget(frame)
+
+    def set_but_text(self):
+        self.but.setText("set mode (current='%s')"% self.MODES[self.mode])
+
+    def change_mode(self):
+        '''
+        toggle through the modes
+        '''
+        self.mode += 1
+        if self.mode > self.schedule_controller.NOTES_MODE:
+            self.mode = self.schedule_controller.BROWSE_MODE
+
+        self.set_but_text()
+        self.schedule_controller.set_mode(self.mode)
 
 
 if __name__ == "__main__":
@@ -320,8 +396,7 @@ if __name__ == "__main__":
     localsettings.initiate()
 
     app = QtGui.QApplication([])
-    widg = ApptScheduleControl()
-    widg.show()
-    widg.set_mode(widg.SCHEDULE_MODE)
+    obj = TestWindow()
+    obj.show()
     app.exec_()
 

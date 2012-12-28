@@ -7,7 +7,9 @@
 # for more details.
 
 from __future__ import division
+
 import pickle
+
 from PyQt4 import QtGui,QtCore
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
@@ -502,8 +504,10 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         painter.drawRect(rect)
                         painter.setPen(black_pen)
 
-                        painter.drawText(rect,QtCore.Qt.AlignLeft,
-                            appt.name)
+                        text = appt.name[:5]
+                        if len(text) < len(appt.name):
+                            text += ".."
+                        painter.drawText(rect,QtCore.Qt.AlignLeft, text)
 
                 painter.setPen(grey_pen)
 
@@ -549,6 +553,11 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         )
 
                     painter.drawRect(rect)
+
+                    text = appt.trt[:5]
+                    if len(text) < len(appt.trt):
+                        text += ".."
+                    painter.drawText(rect,QtCore.Qt.AlignLeft, text)
 
                 ###slots
 
@@ -654,6 +663,7 @@ if __name__ == "__main__":
 
     duck_gui = DuckMainWindow()
     form = AppointmentOverviewWidget("0800","1900",15, 2, duck_gui)
+
     duck_gui.setCentralWidget(form)
     duck_gui.show()
 
@@ -669,6 +679,7 @@ if __name__ == "__main__":
     form.dents=[d1,d2]
     form.clear()
     form.init_dicts()
+    form.active_slot = appointments.FreeSlot()
 
     form.setStartTime(d1)
     form.setEndTime(d1)

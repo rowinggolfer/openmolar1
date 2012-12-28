@@ -192,8 +192,7 @@ class AppointmentWidget(QtGui.QFrame):
         '''
         emits a signal when the print button is clicked
         '''
-        self.emit(QtCore.SIGNAL("print_me"), self.apptix,
-        self.om_gui.ui.dayCalendar.selectedDate())
+        self.emit(QtCore.SIGNAL("print_me"), self.apptix)
 
     def newMemo(self):
         '''
@@ -279,12 +278,17 @@ class AppointmentWidget(QtGui.QFrame):
         endcell = self.canvas.getCell_from_mpm(slot.mpm_end)
         self.canvas.active_slot = (startcell, endcell)
 
+    def enable_slots(self, bool_):
+        self.canvas.enabled_slots = bool_
+
 
 class appointmentCanvas(QtGui.QWidget):
     '''
     the canvas for me to draw on
     '''
     blink_on = True # a boolean which toggles value
+
+    enabled_slots = True
 
     def __init__(self, om_gui, pWidget):
         super(appointmentCanvas, self).__init__()
@@ -887,7 +891,14 @@ class appointmentCanvas(QtGui.QWidget):
                 else:
                     painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
             else:
-                painter.setBrush(APPTCOLORS["SLOT"])
+                brush = APPTCOLORS["SLOT"]
+                if self.enabled_slots:
+                    painter.setOpacity(1)
+                else:
+                    painter.setOpacity(0.4)
+                    #brush.setAlpha(40)
+                painter.setBrush(brush)
+
             painter.drawRect(rect)
             slot_duration = (endcell - startcell) * self.slotDuration
             painter.drawText(rect, "%s mins"% slot_duration, option)
