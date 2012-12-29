@@ -20,6 +20,13 @@ TRANSPARENT = QtCore.Qt.transparent
 APPTCOLORS = colours.APPTCOLORS
 BGCOLOR = APPTCOLORS["BACKGROUND"]
 
+RED_PEN = QtGui.QPen(QtCore.Qt.red,2)
+GREY_PEN = QtGui.QPen(QtCore.Qt.gray,1)
+GREYLINE_PEN = QtGui.QPen(colours.APPT_LINECOLOUR,1)
+#GREYLINE_PEN.setStyle(QtCore.Qt.DashLine)
+BLACK_PEN = QtGui.QPen(QtCore.Qt.black, 1)
+
+
 class AppointmentOverviewWidget(QtGui.QWidget):
     '''
     a custom widget to provide a week view for a dental appointment book
@@ -80,6 +87,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         self.dropPos = None
         self.dropSlot = None
         self.dropOffset = 0
+        self.enabled_clinicians = ()
 
         self.blink_on = True #for flashing effect
         self.blink_timer = QtCore.QTimer()
@@ -98,9 +106,13 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         self.freeslots = {}
         for dent in self.dents:
             self.freeslots[dent.ix] = []
+        self.enabled_clinicians = ()
 
     def set_active_slot(self, slot):
         self.active_slot = slot
+
+    def enable_clinician_slots(self, clinicians):
+        self.enabled_clinicians = clinicians
 
     def init_dicts(self):
         for dent in self.dents:
@@ -410,24 +422,21 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         if len(self.dents) == 0:
             return  #blank widget if no dents working
         self.dragLine = None
+
         painter = QtGui.QPainter(self)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
         painter.setBrush(BGCOLOR)
 
-        red_pen = QtGui.QPen(QtCore.Qt.red,2)
-        grey_pen = QtGui.QPen(QtCore.Qt.gray,1)
-        black_pen = QtGui.QPen(QtCore.Qt.black, 1)
-
         currentSlot = 0
+
         self.font.setPointSize(localsettings.appointmentFontSize)
         fm = QtGui.QFontMetrics(self.font)
         painter.setFont(self.font)
+
         self.timeOffset = fm.width(" 88:88 ")
         self.headingHeight = fm.height()
 
-        self.slotHeight = (self.height() - self.headingHeight
-        ) / self.slotCount
-        dragScale = self.slotHeight/self.slotLength
+        self.slotHeight = (
+            self.height() - self.headingHeight) / self.slotCount
 
         columnCount = len(self.dents)
 
@@ -439,12 +448,16 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         ## put the times down the side
 
         while currentSlot < self.slotCount:
-
-            if currentSlot % self.textDetail == 0:
-                trect = QtCore.QRect(0,
-                0.8 * self.headingHeight + currentSlot * self.slotHeight,
-                self.timeOffset, self.textDetail * self.slotHeight)
-                painter.setPen(black_pen)
+            #offset the first time.
+            if (currentSlot+2) % self.textDetail == 0:
+                y = 0.8 * self.headingHeight + currentSlot * self.slotHeight
+                trect = QtCore.QRect(
+                            0,
+                            y,
+                            self.timeOffset,
+                            self.textDetail * self.slotHeight
+                            )
+                painter.setPen(BLACK_PEN)
 
                 painter.drawText(trect, QtCore.Qt.AlignHCenter,
                 localsettings.humanTime(
@@ -457,7 +470,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
             leftx = self.timeOffset + col * columnWidth
             rightx = self.timeOffset + (col+1) * columnWidth
             ##headings
-            painter.setPen(black_pen)
+            painter.setPen(BLACK_PEN)
             painter.setBrush(APPTCOLORS["HEADER"])
             rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
             painter.drawRect(rect)
@@ -480,12 +493,22 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
             if self.flagDict[dent.ix]:
                 #don't draw a white canvas if dentist is out of office
+                #a white canvas
+                painter.save()
                 painter.drawRect(rect)
 
-                painter.setPen(grey_pen)
+                ## grey lines
+                painter.setPen(GREYLINE_PEN)
+                y = startY
+                while y < startY+endY:
+                    painter.drawLine(leftx, y, rightx, y)
+                    y += self.slotHeight/2
 
+                painter.restore()
+                painter.setPen(BLACK_PEN)
                 ###emergencies
                 for appt in self.eTimes[dent.ix]:
+                    painter.save()
                     if (self.daystart[dent.ix] <= appt.mpm <
                     self.dayend[dent.ix]):
                         startcell = (appt.mpm - self.startTime
@@ -495,22 +518,25 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         startcell * self.slotHeight + self.headingHeight,
                         columnWidth,
                         (appt.length/self.slotLength) * self.slotHeight)
-                        if appt.isEmergency:
+                        if self.mode == self.SCHEDULING_MODE:
+                            painter.setBrush(APPTCOLORS["BUSY"])
+                            painter.setPen(GREY_PEN)
+                        elif appt.isEmergency:
                             painter.setBrush(APPTCOLORS["EMERGENCY"])
                         elif APPTCOLORS.has_key(appt.cset):
                             painter.setBrush(APPTCOLORS[appt.cset])
                         else:
                             painter.setBrush(APPTCOLORS["default"])
-                        painter.drawRect(rect)
-                        painter.setPen(black_pen)
 
+                        painter.drawRect(rect)
                         text = appt.name[:5]
                         if len(text) < len(appt.name):
                             text += ".."
                         painter.drawText(rect,QtCore.Qt.AlignLeft, text)
 
-                painter.setPen(grey_pen)
+                    painter.restore()
 
+                painter.save()
                 painter.setBrush(APPTCOLORS["LUNCH"])
                 for appt in self.lunches[dent.ix]:
                     if (self.daystart[dent.ix] <= appt.mpm <
@@ -523,13 +549,15 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         columnWidth,
                         (appt.length/self.slotLength) * self.slotHeight)
 
-                        painter.drawRect(rect)
-                        painter.setPen(black_pen)
+                        if self.mode == self.SCHEDULING_MODE:
+                            painter.setPen(GREY_PEN)
+                        else:
+                            painter.setPen(BLACK_PEN)
 
+                        painter.drawRect(rect)
                         painter.drawText(rect,QtCore.Qt.AlignCenter,
                         "Lunch")
-
-                painter.setPen(grey_pen)
+                painter.restore()
 
                 ###appts
                 for appt in self.appts[dent.ix]:
@@ -537,6 +565,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                     appt.serialno == self.om_gui.pt.serialno):
                         painter.setBrush(APPTCOLORS["current_patient"])
                     elif self.mode == self.SCHEDULING_MODE:
+                        painter.setPen(GREY_PEN)
                         painter.setBrush(APPTCOLORS["BUSY"])
                     elif APPTCOLORS.has_key(appt.cset):
                         painter.setBrush(APPTCOLORS[appt.cset])
@@ -561,7 +590,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
                 ###slots
 
-                painter.setPen(grey_pen)
+                painter.save()
+                painter.setPen(GREY_PEN)
                 for slot in self.freeslots[dent.ix]:
                     slotstart = localsettings.pyTimeToMinutesPastMidnight(
                         slot.date_time.time())
@@ -574,11 +604,11 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                     (slot.length/self.slotLength)*self.slotHeight)
 
                     if self.dragging and slot is self.dropSlot:
+                        painter.save()
+
                         painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
                         painter.drawRect(rect)
-
-                        painter.save()
-                        painter.setPen(red_pen)
+                        painter.setPen(RED_PEN)
 
                         height = (self.drag_appt.length/self.slotLength) \
                             *self.slotHeight
@@ -603,32 +633,41 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         painter.restore()
 
                     else:
+                        painter.save()
                         if slot == self.active_slot:
                             if self.blink_on:
                                 painter.setBrush(
                                     APPTCOLORS["ACTIVE_SLOT_BOLD"])
                             else:
                                 painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                            painter.setPen(RED_PEN)
                         else:
+                            if slot.dent in self.enabled_clinicians:
+                                painter.setOpacity(1)
+                            else:
+                                painter.setOpacity(0.4)
                             painter.setBrush(APPTCOLORS["SLOT"])
                         painter.drawRect(rect)
 
-                        painter.setPen(black_pen)
-                        painter.drawText(rect,QtCore.Qt.AlignHCenter,
-                            "%s mins"% slot.length)
-                            #slot.date_time.strftime("%H:%M"))
+                        painter.setPen(RED_PEN)
+                        painter.drawText(rect,QtCore.Qt.AlignCenter,
+                            "%s"% slot.length)
+                        painter.restore()
+                painter.restore()
 
-            painter.setPen(black_pen)
             if col>0:
+                painter.save()
+                painter.setPen(BLACK_PEN)
                 painter.drawLine(leftx,0,leftx,self.height())
+                painter.restore()
             col+=1
 
         if self.highlightedRect!=None:
-            painter.setPen(red_pen)
+            painter.setPen(RED_PEN)
             painter.setBrush(TRANSPARENT)
             painter.drawRect(self.highlightedRect)
         if self.dragLine:
-            painter.setPen(red_pen)
+            painter.setPen(RED_PEN)
             painter.drawLine(self.dragLine)
 
     def toggle_blink(self):
@@ -640,94 +679,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
 if __name__ == "__main__":
 
-    import datetime
-    def clicktest(a):
-        print a
-    def headerclicktest(a):
-        print a
+    app = QtGui.QApplication([])
+    form = AppointmentOverviewWidget("0800","1900",15, 2, None)
 
-    import sys
-    localsettings.initiate()
-    app = QtGui.QApplication(sys.argv)
-    from openmolar.dbtools import appointments
-    #-initiate a book starttime 08:00
-    #-endtime 10:00 five minute slots, text every 3 slots
-
-    class DuckPatient(object):
-        serialno = 1
-
-    class DuckMainWindow(QtGui.QMainWindow):
-        pt = DuckPatient()
-        def sizeHint(self):
-            return QtCore.QSize(400,400)
-
-    duck_gui = DuckMainWindow()
-    form = AppointmentOverviewWidget("0800","1900",15, 2, duck_gui)
-
-    duck_gui.setCentralWidget(form)
-    duck_gui.show()
-
-
-    d1, d2 = appointments.DentistDay(4), appointments.DentistDay(5)
-
-    d1.start=830
-    d1.end=1800
-    d1.memo="hello"
-    d2.start=1300
-    d2.end=1700
-
-    form.dents=[d1,d2]
-    form.clear()
-    form.init_dicts()
-    form.active_slot = appointments.FreeSlot()
-
-    form.setStartTime(d1)
-    form.setEndTime(d1)
-    form.setMemo(d1)
-    form.setFlags(d1)
-
-    form.setStartTime(d2)
-    form.setEndTime(d2)
-    form.setFlags(d2)
-
-    slot = appointments.FreeSlot(datetime.datetime(2009,2,2,10,15),4,30)
-    slot2 = appointments.FreeSlot(datetime.datetime(2009,2,2,17,35),4,20)
-    form.addSlot(slot)
-    form.addSlot(slot2)
-
-    appt1 = appointments.WeekViewAppointment()
-    appt1.mpm = 9*60
-    appt1.length = 40
-    appt1.dent = 4
-
-    appt2 = appointments.WeekViewAppointment()
-    appt2.mpm = 10*60
-    appt2.length = 15
-    appt2.dent = 4
-
-    form.appts[4] = (appt1, appt2)
-    slot = appointments.FreeSlot(datetime.datetime(2009,2,2,10,45),4,20)
-    slot2 = appointments.FreeSlot(datetime.datetime(2009,2,2,11,05),4,10)
-    form.addSlot(slot)
-    form.addSlot(slot2)
-
-    emerg = appointments.WeekViewAppointment()
-    emerg.mpm = 11*60+15
-    emerg.length = 15
-    emerg.reason = "emergency"
-    form.eTimes[4] = (emerg,)
-
-    #form.lunches[4] = ((1300,60),)
-    #form.appts[5] = ((2,1400,15),)
-    #form.eTimes[5] = ((1115, 15), (1300, 60), (1600, 30))
-    #form.lunches[5] = ((1300,60),)
-
-    QtCore.QObject.connect(form,
-    QtCore.SIGNAL("AppointmentClicked"),clicktest)
-
-    QtCore.QObject.connect(form,
-    QtCore.SIGNAL("DentistHeading"),headerclicktest)
-
-    form.mode = form.SCHEDULING_MODE
     form.show()
-    sys.exit(app.exec_())
+    app.exec_()

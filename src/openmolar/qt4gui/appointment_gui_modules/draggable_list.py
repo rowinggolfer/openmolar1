@@ -17,6 +17,9 @@ class DraggableList(QtGui.QListView):
         self.multiSelect = multiSelect
         self.setMinimumHeight(100)
 
+    def sizeHint(self):
+        return QtCore.QSize(150, 200)
+
     def setSelectionModel(self, model):
         QtGui.QListView.setSelectionModel(self, model)
         if self.multiSelect:

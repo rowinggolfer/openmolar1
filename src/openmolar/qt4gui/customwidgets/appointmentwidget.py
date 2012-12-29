@@ -14,6 +14,7 @@ the canvas is a subclass of this
 from __future__ import division
 
 import datetime
+import logging
 import pickle
 
 from PyQt4 import QtGui, QtCore
@@ -26,6 +27,9 @@ FREECOLOR = colours.APPT_Background
 LINECOLOR = colours.APPT_LINECOLOUR
 APPTCOLORS = colours.APPTCOLORS
 TRANSPARENT = colours.TRANSPARENT
+
+GREY_PEN = QtGui.QPen(QtCore.Qt.gray,1)
+
 
 class AppointmentWidget(QtGui.QFrame):
     '''
@@ -134,7 +138,7 @@ class AppointmentWidget(QtGui.QFrame):
         '''
         set an (arbitrary) size for the widget
         '''
-        return QtCore.QSize(400, 450)
+        return QtCore.QSize(200, 400)
 
     def minimumSizeHint(self):
         '''
@@ -281,6 +285,12 @@ class AppointmentWidget(QtGui.QFrame):
     def enable_slots(self, bool_):
         self.canvas.enabled_slots = bool_
 
+    def set_scroll_bar(self, scroll_bar):
+        self.scrollArea.setVerticalScrollBar(scroll_bar)
+
+    def scroll_bar_off(self):
+        policy = QtCore.Qt.ScrollBarAlwaysOff
+        self.scrollArea.setVerticalScrollBarPolicy(policy)
 
 class appointmentCanvas(QtGui.QWidget):
     '''
@@ -304,6 +314,7 @@ class appointmentCanvas(QtGui.QWidget):
         self.dayStartTime=0
         self.startTime=0
         self.endTime=60
+        self.slotHeight = 0
         self.appts = []
         self.freeslots = []
         self.doubleAppts = []
@@ -361,6 +372,18 @@ class appointmentCanvas(QtGui.QWidget):
         self.slotNo = (
         self.dayEndTime - self.dayStartTime) // self.slotDuration
 
+        if self.parent() and (self.slotHeight *
+        self.slotNo < self.parent().height()):
+            self.setMinimumHeight(self.parent().height())
+            self.slotHeight = self.height() / self.slotNo
+            logging.debug("setting minimum height METHOD 1")
+        else:
+            self.setMinimumHeight(self.slotHeight * self.slotNo)
+            logging.debug("setting minimum height METHOD 2")
+
+        logging.debug("minimum height = %s"% self.minimumHeight())
+
+
     def minutesPastMidnight(self, t):
         '''
         converts a time in the format of
@@ -393,7 +416,7 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         set an (arbitrary) size for the widget
         '''
-        return QtCore.QSize(800, 800)
+        return QtCore.QSize(200, 500)
 
     def minimumSizeHint(self):
         '''
@@ -772,13 +795,6 @@ class appointmentCanvas(QtGui.QWidget):
 
         painter.setFont(self.font)
 
-        if self.parent() and (self.slotHeight *
-        self.slotNo < self.parent().height()):
-            self.setMinimumHeight(self.parent().height())
-            self.slotHeight = self.height() / self.slotNo
-        else:
-            self.setMinimumHeight(self.slotHeight * self.slotNo)
-
         #define and draw the white boundary
 
         painter.setBrush(colours.APPT_Background)
@@ -788,7 +804,7 @@ class appointmentCanvas(QtGui.QWidget):
         bottom = (self.lastSlot + 1 - self.firstSlot) * self.slotHeight
 
         colwidth = self.width()-self.timeWidth
-        dragScale = self.slotHeight / self.slotDuration
+
         rect = QtCore.QRectF(self.timeWidth, top, colwidth, bottom)
 
         painter.drawRect(rect)
@@ -827,6 +843,7 @@ class appointmentCanvas(QtGui.QWidget):
         option.setWrapMode(QtGui.QTextOption.WordWrap)
 
         for appt in self.appts:
+            painter.save()
             (startcell, endcell, start, fin, name, sno, trt1, trt2,
             trt3, memo, flag, cset, modtime) = appt
 
@@ -837,6 +854,7 @@ class appointmentCanvas(QtGui.QWidget):
                 painter.setBrush(QtGui.QColor("orange"))
             elif self.pWidget.mode == self.pWidget.SCHEDULING_MODE:
                 painter.setBrush(APPTCOLORS["BUSY"])
+                painter.setPen(GREY_PEN)
             elif self.selected == (startcell, endcell):
                 painter.setBrush(QtGui.QColor("#AAAAAA"))
             elif APPTCOLORS.has_key(cset):
@@ -859,22 +877,29 @@ class appointmentCanvas(QtGui.QWidget):
             ##highlight any appointments booked today
             if (sno !=0 and
             modtime and modtime.date() == localsettings.currentDay()):
-                rect = QtCore.QRectF(self.width()-self.timeWidth/2,
-                startcell*self.slotHeight, self.timeWidth/2,rect.height()).adjusted(
-                2,2,-2,-2)
+                rect = QtCore.QRectF(
+                    self.width()-self.timeWidth/2,
+                    startcell*self.slotHeight,
+                    self.timeWidth/2,
+                    rect.height()
+                    ).adjusted(2,2,-2,-2)
 
-                painter.save()
                 painter.setPen(colours.BOOKED_TODAY)
                 painter.setBrush(colours.BOOKED_TODAY)
                 painter.drawEllipse(rect)
-                painter.restore()
+
+            painter.restore()
+
 
         for appt in self.doubleAppts:
             (startcell,endcell,start,fin,name,sno, trt1,trt2,
             trt3,memo,flag,cset, modtime)=appt
 
-            rect=QtCore.QRectF(self.width()-self.timeWidth,startcell*self.slotHeight,
-            self.width()-self.timeWidth,self.slotHeight)
+            rect = QtCore.QRectF(
+                self.width()-self.timeWidth,
+                startcell*self.slotHeight,
+                self.width()-self.timeWidth,
+                self.slotHeight)
 
             painter.setBrush(APPTCOLORS["DOUBLE"])
             painter.drawRect(rect)
@@ -882,8 +907,11 @@ class appointmentCanvas(QtGui.QWidget):
         painter.setPen(QtGui.QColor("red"))
         for slot in self.freeslots:
             startcell, endcell = slot
-            rect = QtCore.QRectF(self.timeWidth, startcell*self.slotHeight,
-            self.width()-self.timeWidth, (endcell-startcell)*self.slotHeight)
+            rect = QtCore.QRectF(
+                self.timeWidth,
+                startcell*self.slotHeight,
+                self.width()-self.timeWidth,
+                (endcell-startcell)*self.slotHeight)
 
             if slot == self.active_slot:
                 if self.blink_on:
@@ -928,7 +956,10 @@ class appointmentCanvas(QtGui.QWidget):
             painter.drawLine(0, y, self.width(), y)
             painter.setBrush(QtGui.QColor("yellow"))
 
-            trect = QtCore.QRectF(self.timeWidth, y, self.width()-self.timeWidth, y2-y)
+            trect = QtCore.QRectF(
+                self.timeWidth, y,
+                self.width()-self.timeWidth,
+                y2-y)
             painter.drawRect(trect)
 
             droptime = self.drop_time.strftime("%H:%M")

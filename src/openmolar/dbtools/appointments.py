@@ -872,7 +872,7 @@ def convertResults(results):
         aow.isBlock = (cset == "block")
         aow.isEmergency = (aow.isBlock and
             aow.name.lower() == _("emergency").lower())
-        aow.trt = trt
+        aow.trt = trt.strip(" ")
         aptlist.append(aow)
 
     return tuple(aptlist)
@@ -962,7 +962,7 @@ def day_summary(adate, dent):
     #--now get data for those days so that we can find slots within
     if daydata != ():
         query = '''SELECT start, end, serialno, name, char(flag1),
-        concat(code0, code1, code2) FROM aslot
+        concat(code0, " ", code1," ", code2) FROM aslot
         WHERE adate = %s and apptix = %s AND flag0!=-128
         ORDER BY start'''
         cursor.execute(query, values)

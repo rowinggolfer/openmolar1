@@ -99,13 +99,14 @@ class DiaryWidget(QtGui.QWidget):
         self.appt_mode_layout.addStretch(0)
         self.appt_mode_layout.addWidget(self.view_controller)
 
+        self.day_scroll_bar = None
         self.apptBookWidgets=[]
 
         #-appointment OVerview widget
         self.ui.apptoverviews=[]
 
         for day in range(7):
-            bw = AppointmentOverviewWidget("0800", "1900", 15, 2, self)
+            bw = AppointmentOverviewWidget("0820", "1910", 10, 3, self)
             self.ui.apptoverviews.append(bw)
 
         i = 0
@@ -665,6 +666,22 @@ class DiaryWidget(QtGui.QWidget):
         appointments.setPubHol(d, details)
         self.layout_diary()
 
+    def add_appointmentwidget(self):
+        logging.debug("initiating a new AppointmentWidget")
+        book = appointmentwidget.AppointmentWidget(
+            "0800", "1900", self)
+        self.apptBookWidgets.append(book)
+        self.ui.dayView_splitter.addWidget(book)
+        self.signals_apptWidgets(book)
+        book.mode = self.appt_mode
+        if self.day_scroll_bar is None:
+            self.day_scroll_bar = book.scrollArea.verticalScrollBar()
+
+        if len(self.apptBookWidgets) > 1:
+            self.apptBookWidgets[-1].set_scroll_bar(self.day_scroll_bar)
+        for widg in self.apptBookWidgets[:-1]:
+            widg.scroll_bar_off()
+
     def layout_diary(self):
         '''
         slot to catch a date change from the custom mont/year widgets emitting
@@ -840,45 +857,49 @@ class DiaryWidget(QtGui.QWidget):
                 self.finding_next_slot = 1
                 self.set_date(localsettings.currentDay())
                 return
+            if date_ > localsettings.bookEnd:
+                self.advise(_("You are beyond scheduling range"),1)
+                self.finding_next_slot = 0
+                all_slots = []
+                self.schedule_controller.set_available_slots(all_slots)
+            else:
+                result, message, all_slots = self.addWeekViewAvailableSlots()
+                self.schedule_controller.set_available_slots(all_slots)
 
-            result, message, slots = self.addWeekViewAvailableSlots()
-            self.schedule_controller.set_available_slots(slots)
+                if not result:
+                    self.advise(message)
+                    for ov in self.ui.apptoverviews:
+                        ov.update()
+                    return
 
-            if not result:
-                self.advise(message)
+                if self.schedule_controller.search_again:
+                    self.step_date(self.finding_next_slot != -1)
+                    return
+
+                if self.finding_next_slot == -1:
+                    self.schedule_controller.use_last_slot = True
+                    self.finding_next_slot = 1
+
                 for ov in self.ui.apptoverviews:
-                    ov.update()
-                return
+                    for slot in all_slots:
+                        if slot.date_time.date() == ov.date.toPyDate():
+                            ov.addSlot(slot)
 
-            if slots == []:
-                self.step_date(self.finding_next_slot != -1)
-                return
-
-            if self.finding_next_slot == -1:
-                self.schedule_controller.use_last_slot = True
-                self.finding_next_slot = 1
-
-            for ov in self.ui.apptoverviews:
-                for slot in slots:
-                    if slot.date_time.date() == ov.date.toPyDate():
-                        ov.addSlot(slot)
-
-                ov.set_active_slot(self.schedule_controller.chosen_slot)
-
+                    ov.set_active_slot(self.schedule_controller.chosen_slot)
+                    ov.enable_clinician_slots(
+                        self.schedule_controller.selectedClinicians)
 
         for ov in self.ui.apptoverviews:
+            date_ = ov.date.toPyDate()
             for dent in ov.dents:
-                ov.appts[dent.ix] = appointments.day_summary(
-                ov.date.toPyDate(), dent.ix)
+                ov.appts[dent.ix] = appointments.day_summary(date_, dent.ix)
 
         #add lunches and blocks
         for ov in self.ui.apptoverviews:
+            date_ = ov.date.toPyDate()
             for dent in ov.dents:
-                ov.eTimes[dent.ix] = appointments.getBlocks(
-                ov.date.toPyDate(), dent.ix)
-
-                ov.lunches[dent.ix] = appointments.getLunch(
-                ov.date.toPyDate(), dent.ix)
+                ov.eTimes[dent.ix] = appointments.getBlocks(date_, dent.ix)
+                ov.lunches[dent.ix] = appointments.getLunch(date_, dent.ix)
 
         for ov in self.ui.apptoverviews:
             ov.update()
@@ -899,7 +920,7 @@ class DiaryWidget(QtGui.QWidget):
         '''
         this populates the appointment book widgets (on maintab, pageindex 1)
         '''
-        if self.ui.diary_tabWidget.currentIndex() != 0:
+        if not self.viewing_day:
             return
 
         logging.debug("layout_dayView")
@@ -951,23 +972,20 @@ class DiaryWidget(QtGui.QWidget):
         abs_end = self.appointmentData.latest_end
 
         while number_of_books > len(self.apptBookWidgets):
-            logging.debug("initiating a new AppointmentWidget")
-            book = appointmentwidget.AppointmentWidget(
-                abs_start, abs_end, self)
-            self.apptBookWidgets.append(book)
-            self.ui.dayView_splitter.addWidget(book)
-            self.signals_apptWidgets(book)
-            book.mode = self.appt_mode
+            self.add_appointmentwidget()
 
         #-- clean past links to dentists
         i = 0
         for book in self.apptBookWidgets:
             i += 1
             book.dentist = None
-            book.scrollArea.show()
+            book.setDayStartTime(abs_start)
+            book.setDayEndTime(abs_end)
+            #book.scrollArea.show()
 
-        i = 0
+        i = len(self.apptBookWidgets) - number_of_books
         for dent in workingDents:
+            logging.debug("using book %s"% i)
             book = self.apptBookWidgets[i]
 
             book.setDentist(dent)
@@ -1015,6 +1033,7 @@ class DiaryWidget(QtGui.QWidget):
             if book.dentist == None:
                 #--book has no data
                 book.hide()
+                book_list.append(0)
             else:
                 book_list.append(100)
                 book.show()
@@ -1492,12 +1511,32 @@ class DiaryWidget(QtGui.QWidget):
             self.connect(control,
             QtCore.SIGNAL("right-clicked"), self.aptOVlabelRightClicked)
 
+class _testDiary(QtGui.QMainWindow):
+    def __init__(self, parent=None):
+        QtGui.QMainWindow.__init__(self, parent)
+
+        dw = DiaryWidget()
+
+        dw.patient_card_request.connect(self.sig_catcher)
+
+        from openmolar.dbtools import patient_class
+        pt = patient_class.patient(20862)
+        dw.schedule_controller.set_data(pt, (), None)
+        dw.schedule_controller.appointment_model.load_from_database(pt)
+
+        #dw.start_scheduling(pt)
+
+        scroll_area = QtGui.QScrollArea()
+        scroll_area.setWidget(dw)
+        scroll_area.setWidgetResizable(True)
+        self.setCentralWidget(scroll_area)
+
+    def sig_catcher(self, *args):
+        print "signal caught", args
+
 if __name__ == "__main__":
     import gettext
     import sys
-
-    def sig_catcher(*args):
-        print "signal caught", args
 
     sys.argv.append("-v")
     gettext.install("openmolar")
@@ -1505,20 +1544,9 @@ if __name__ == "__main__":
     localsettings.initiate()
 
     app = QtGui.QApplication([])
+    mw = _testDiary()
+    mw.show()
 
-
-    dw = DiaryWidget()
-
-    dw.patient_card_request.connect(sig_catcher)
-
-    from openmolar.dbtools import patient_class
-    pt = patient_class.patient(20862)
-
-    dw.show()
-    dw.schedule_controller.set_data(pt, (), None)
-    dw.schedule_controller.appointment_model.load_from_database(pt)
-
-    dw.start_scheduling(pt)
     app.exec_()
 
 

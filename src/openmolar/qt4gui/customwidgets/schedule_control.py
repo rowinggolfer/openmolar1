@@ -73,7 +73,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         self.appointment_model = SimpleListModel(self)
         self.appt_listView.setModel(self.appointment_model)
-        self.appt_listView.setSelectionModel(self.appointment_model.selection_model)
+        self.appt_listView.setSelectionModel(
+            self.appointment_model.selection_model)
 
         block_model = BlockListModel(self)
         self.block_listView.setModel(block_model)
@@ -90,19 +91,26 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         debug_button = QtGui.QPushButton("debug")
 
         self.chosen_slot_label = QtGui.QLabel("No slot selected")
-        self.chosen_slot_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.chosen_slot_label.setWordWrap(True)
+
+        ## These lines causes a major bug with the widget size!!
+        #self.chosen_slot_label.setAlignment(QtCore.Qt.AlignCenter)
+        #self.chosen_slot_label.setWordWrap(True)
+
         book_now_button = QtGui.QPushButton("Confirm")
 
-        self.appt_controls_frame = QtGui.QFrame()
+        self.appt_controls_frame = QtGui.QWidget()
         layout = QtGui.QGridLayout(self.appt_controls_frame)
         layout.setMargin(1)
         layout.addWidget(first_appt_button,0,0)
         layout.addWidget(prev_appt_button,0,1)
         layout.addWidget(next_appt_button,0,2)
-        layout.addWidget(debug_button,0,3)
-        layout.addWidget(self.chosen_slot_label,1,0,1,3)
-        layout.addWidget(book_now_button,1,3)
+        layout.addWidget(debug_button,1,0,1,3)
+        layout.addWidget(self.chosen_slot_label,2,0,1,2)
+        layout.addWidget(book_now_button,2,2)
+        self.appt_controls_frame.setSizePolicy(
+            QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Minimum))
+
 
         self.appointment_model.appointment_selected.connect(
             self.appointment_selected_signal)
@@ -121,10 +129,10 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         # now arrange the stacked widget
 
-        #page 0
+        #page 0 - Browsing mode
         self.addWidget(QtGui.QLabel("Browsing"))
 
-        #page 1
+        #page 1 -- scheduling mode
         widg = QtGui.QWidget()
         layout = QtGui.QGridLayout(widg)
         layout.setMargin(0)
@@ -136,13 +144,13 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         self.addWidget(widg)
 
-        #page 2
+        #page 2 -- blocking mode
         widg = QtGui.QWidget()
         layout = QtGui.QVBoxLayout(widg)
         layout.addWidget(self.block_listView)
         self.addWidget(widg)
 
-        #page 4
+        #page 4 -- notes mode
         self.addWidget(QtGui.QLabel("Notes"))
 
 
@@ -247,7 +255,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         return self.appointment_model.involvedClinicians
 
     def sizeHint(self):
-        return QtCore.QSize(150,400)
+        return QtCore.QSize(150, 200)
 
     def update_appt_selection(self, pt, appt):
         '''
@@ -365,13 +373,17 @@ class TestWindow(QtGui.QMainWindow):
 
         self.mode = self.schedule_controller.BROWSE_MODE
 
-        frame = QtGui.QWidget()
+        frame = QtGui.QFrame()
         layout = QtGui.QVBoxLayout(frame)
         layout.addWidget(self.schedule_controller)
         layout.addWidget(self.but)
 
         self.set_but_text()
-        self.setCentralWidget(frame)
+
+        scroll_area = QtGui.QScrollArea()
+        scroll_area.setWidget(frame)
+        scroll_area.setWidgetResizable(True)
+        self.setCentralWidget(scroll_area)
 
     def set_but_text(self):
         self.but.setText("set mode (current='%s')"% self.MODES[self.mode])

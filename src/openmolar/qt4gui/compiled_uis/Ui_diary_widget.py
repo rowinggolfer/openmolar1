@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/diary_widget.ui'
 #
-# Created: Tue Dec 11 17:29:24 2012
+# Created: Sat Dec 29 13:01:37 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,6 +21,11 @@ class Ui_Form(object):
         self.horizontalLayout = QtGui.QHBoxLayout(Form)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.diary_tabWidget = QtGui.QTabWidget(Form)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.diary_tabWidget.sizePolicy().hasHeightForWidth())
+        self.diary_tabWidget.setSizePolicy(sizePolicy)
         self.diary_tabWidget.setObjectName(_fromUtf8("diary_tabWidget"))
         self.tab_dayview = QtGui.QWidget()
         self.tab_dayview.setObjectName(_fromUtf8("tab_dayview"))
