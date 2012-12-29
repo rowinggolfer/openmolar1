@@ -981,7 +981,9 @@ class DiaryWidget(QtGui.QWidget):
             book.dentist = None
             book.setDayStartTime(abs_start)
             book.setDayEndTime(abs_end)
-            #book.scrollArea.show()
+
+        if self.day_scroll_bar:
+            self.day_scroll_bar.setValue(0)
 
         i = len(self.apptBookWidgets) - number_of_books
         for dent in workingDents:

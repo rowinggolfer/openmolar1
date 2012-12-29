@@ -301,7 +301,7 @@ class appointmentCanvas(QtGui.QWidget):
     enabled_slots = True
 
     def __init__(self, om_gui, pWidget):
-        super(appointmentCanvas, self).__init__()
+        QtGui.QWidget.__init__(self, pWidget)
         self.setSizePolicy(QtGui.QSizePolicy(
         QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
 
@@ -314,7 +314,6 @@ class appointmentCanvas(QtGui.QWidget):
         self.dayStartTime=0
         self.startTime=0
         self.endTime=60
-        self.slotHeight = 0
         self.appts = []
         self.freeslots = []
         self.doubleAppts = []
@@ -331,6 +330,13 @@ class appointmentCanvas(QtGui.QWidget):
         self.qmenu = None
         self.mouse_freeslot = None
         self.active_slot = None
+
+        self.font = QtGui.QFont(self.fontInfo().family(),
+                localsettings.appointmentFontSize)
+
+        self.fm = QtGui.QFontMetrics(self.font)
+        self.timeWidth = self.fm.width(" 88:88 ")
+        self.slotHeight = self.fm.height()/self.textDetail
 
         self.blink_timer = QtCore.QTimer()
         self.blink_timer.timeout.connect(self.toggle_blink)
@@ -371,18 +377,18 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         self.slotNo = (
         self.dayEndTime - self.dayStartTime) // self.slotDuration
+        self.slotHeight = self.fm.height()/self.textDetail
 
-        if self.parent() and (self.slotHeight *
-        self.slotNo < self.parent().height()):
-            self.setMinimumHeight(self.parent().height())
+        min_height_required = self.slotHeight *self.slotNo
+
+        if min_height_required < self.pWidget.scrollArea.height()*.98:
+            self.setMinimumHeight(self.pWidget.scrollArea.height()*.98)
             self.slotHeight = self.height() / self.slotNo
-            logging.debug("setting minimum height METHOD 1")
         else:
-            self.setMinimumHeight(self.slotHeight * self.slotNo)
-            logging.debug("setting minimum height METHOD 2")
+            self.setMinimumHeight(min_height_required)
 
-        logging.debug("minimum height = %s"% self.minimumHeight())
-
+    def resizeEvent(self, event):
+        self.calcSlotNo()
 
     def minutesPastMidnight(self, t):
         '''
@@ -774,14 +780,6 @@ class appointmentCanvas(QtGui.QWidget):
         self.mouse_down = False
         self.selected=[-1,-1]
         self.update()
-
-    def showEvent(self, event=None):
-        self.font = QtGui.QFont(self.fontInfo().family(),
-                localsettings.appointmentFontSize)
-
-        fm = QtGui.QFontMetrics(self.font)
-        self.timeWidth = fm.width(" 88:88 ")
-        self.slotHeight = fm.height()/self.textDetail
 
     def paintEvent(self, event=None):
         '''
