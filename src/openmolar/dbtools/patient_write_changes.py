@@ -163,10 +163,9 @@ csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
                 trtchanges += '%s = %%s ,'% change
                 trtvalues.append(value)
 
-            elif change == "_appt_memo":
-                sqlcommands["appt_prefs"] = (
-                'replace into appt_prefs (serialno, note) values (%s, %s)',
-                (pt.serialno, pt._appt_memo))
+            elif change == "appt_prefs":
+                pt.appt_prefs.commit_changes()
+
 
     result=True
     if patchanges != "":

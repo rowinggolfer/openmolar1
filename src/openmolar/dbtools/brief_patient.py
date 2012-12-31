@@ -6,10 +6,14 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 
+import logging
+
 from openmolar import connect
 from openmolar.settings import localsettings
 
-query = '''SELECT title, fname, sname, dob, cset, dnt1, dnt2
+from openmolar.dbtools.appt_prefs import ApptPrefs
+
+QUERY = '''SELECT title, fname, sname, dob, cset, dnt1, dnt2
 from patients where serialno = %s'''
 
 class BriefPatient(object):
@@ -25,6 +29,7 @@ class BriefPatient(object):
     dnt1 = None
     dnt2 = None
     _appt_memo = None
+    _appt_prefs = None
 
     def __init__(self, sno):
         '''
@@ -36,7 +41,7 @@ class BriefPatient(object):
         self.serialno = sno
         db = connect.connect()
         cursor = db.cursor()
-        cursor.execute(query, (sno,))
+        cursor.execute(QUERY, (sno,))
         row = cursor.fetchone()
 
         if not row:
@@ -59,8 +64,25 @@ class BriefPatient(object):
             if cursor.execute(query, self.serialno):
                 self._appt_memo = cursor.fetchone()[0]
             cursor.close()
+            if self._appt_memo is None:
+                self._appt_memo = ""
 
         return self._appt_memo
+
+    def set_appt_memo(self, memo):
+        logging.debug("BriefPatient.set_appt_memo(%s"% memo)
+        db = connect.connect()
+        cursor = db.cursor()
+        query = 'replace into appt_prefs (serialno, note) values (%s, %s)'
+        cursor.execute(query, (self.serialno, memo))
+        cursor.close()
+
+    @property
+    def appt_prefs(self):
+        if self._appt_prefs is None:
+            self._appt_prefs = ApptPrefs(self.serialno)
+        return self._appt_prefs
+
 
 
 if __name__ =="__main__":

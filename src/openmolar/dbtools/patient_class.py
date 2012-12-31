@@ -12,8 +12,10 @@ import re
 import sys
 import time
 from openmolar import connect
-from openmolar.ptModules import perio,dec_perm,estimates, notes, formatted_notes
+from openmolar.ptModules import perio, dec_perm,estimates, notes, formatted_notes
 from openmolar.settings import localsettings
+
+from openmolar.dbtools.appt_prefs import ApptPrefs
 
 dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6",
 "pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
@@ -107,7 +109,7 @@ clinical_memos = ("synopsis",)
 ## changes
 ATTRIBS_TO_CHECK = patientTableAtts + exemptionTableAtts + bpeTableAtts + \
 currtrtmtTableAtts + mnhistTableAtts + perioTableAtts + planDBAtts + \
-clinical_memos + ("estimates",) + ("_appt_memo",)
+clinical_memos + ("estimates", "appt_prefs")
 
 #################### sub classes ##############################################
 class planData(object):
@@ -202,8 +204,7 @@ class patient(object):
         self.synopsis = ""
 
         self._dayBookHistory = None
-        self._appt_memo = None
-        self._appt_memo_loaded = False # False for not loaded.
+        self._appt_prefs = None
 
         if self.serialno != 0:
             #load stuff from the database
@@ -275,28 +276,28 @@ class patient(object):
             if self.MH!=None:
                 self.MEDALERT=self.MH[12]
 
-
             cursor.close()
             #db.close()
 
             #-- load from plandata
             self.plandata.getFromDB()
 
+            self.appt_prefs = ApptPrefs(self.serialno)
+
             self.updateChartgrid()
             #self.setCurrentEstimate()
 
+
     @property
     def appt_memo(self):
-        if not self._appt_memo_loaded:
-            db = connect.connect()
-            cursor = db.cursor()
-            query = 'select note from appt_prefs where serialno=%s'
-            if cursor.execute(query, self.serialno):
-                self._appt_memo = cursor.fetchone()[0]
-            cursor.close()
-            self._appt_memo_loaded = True
+        return self.appt_prefs.note
 
-        return self._appt_memo
+    def set_appt_memo(self, memo):
+        self.appt_prefs.note = memo
+
+    @property
+    def recd(self):
+        return self.appt_prefs.recdent
 
     @property
     def dayBookHistory(self):
@@ -311,17 +312,6 @@ class patient(object):
 
     def __repr__(self):
         return "'Patient_class instance - serialno %d'"% self.serialno
-
-    @property
-    def recd(self):
-        ##TODO
-        print "WARNING - pt.recd called"
-        return datetime.date.today()
-
-    def update_recd(self):
-        ##TODO
-        print "WARNING - pt.update_recd called"
-
 
     @property
     def address(self):
@@ -761,4 +751,5 @@ if __name__ =="__main__":
     #print pt.dayBookHistory
     print pt.dob
     print pt.estimates
+    print pt.recd
     #print pt.chartgrid

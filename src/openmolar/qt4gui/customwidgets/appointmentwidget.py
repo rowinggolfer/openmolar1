@@ -274,7 +274,7 @@ class AppointmentWidget(QtGui.QFrame):
         self.canvas.freeslots.append((startcell, endcell))
 
     def set_active_slot(self, slot):
-        if slot.dent != self.apptix:
+        if slot is None or slot.dent != self.apptix:
             self.canvas.active_slot = None
             return
 

@@ -1726,13 +1726,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 elif attr == "periocmp":
                     daybook_module.perioDates(self, newval)
                     changes.append(attr)
+                elif (attr == "memo" and
+                    oldval.replace(chr(13), "") == newval):
+                    #-- ok - windows line ends from old DB were
+                    #-- creating an issue
+                    #-- memo was reporting that update had occurred.
+                    pass
                 else:
-                    if (attr != "memo" or
-                    oldval.replace(chr(13), "") != newval):
-                        #-- ok - windows line ends from old DB were
-                        #-- creating an issue
-                        #-- memo was reporting that update had occurred.
-                        changes.append(attr)
+                    changes.append(attr)
         return changes
 
     def save_changes(self, leavingRecord=True):
@@ -2484,6 +2485,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                     self.updateNotesPage()
                     self.load_notes_summary()
 
+    def show_diary(self):
+        self.ui.main_tabWidget.setCurrentIndex(1)
+
     def setupSignals(self):
         '''
         a function to call other functions (to keep the code clean)
@@ -3056,6 +3060,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.actionSet_Font_Size,
         QtCore.SIGNAL("triggered ()"), self.apptBook_fontSize)
 
+        self.diary_widget.bring_to_front.connect(self.show_diary)
+
         self.diary_widget.patient_card_request.connect(self.getrecord)
 
         self.diary_widget.schedule_controller.appointment_selected.connect(
@@ -3080,7 +3086,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.diary_widget.start_scheduling(self.pt)
 
     def appt_prefs_changed(self):
-        self.advise("appt_prefs_changed")
+        self.updateDetails()
 
     def recalculateEstimate(self):
         '''

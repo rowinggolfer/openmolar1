@@ -27,6 +27,7 @@ from PyQt4 import QtCore, QtGui
 from openmolar.settings import localsettings
 
 from openmolar.dbtools import appointments
+from openmolar.dbtools.brief_patient import BriefPatient
 
 from openmolar.qt4gui.appointment_gui_modules import pt_diary_treemodel
 
@@ -102,14 +103,7 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         populates the patient's diary model
         '''
-        memo = self.pt.appt_memo
-        if memo is not None:
-            self.ui.appt_memo_lineEdit.setText(memo)
-        try:
-            self.om_gui.pt_dbstate._appt_memo = memo
-        except AttributeError as exc:
-            logging.debug("layout_ptDiary error %s"% exc.message)
-            pass
+        self.ui.appt_memo_lineEdit.setText(self.pt.appt_memo)
 
         appts = appointments.get_pts_appts(self.pt)
         self.diary_model.addAppointments(appts)
@@ -583,13 +577,15 @@ class PtDiaryWidget(QtGui.QWidget):
         #self.updateHiddenNotesLabel()
 
     def memo_edited(self):
-        self.pt._appt_memo = unicode(self.ui.appt_memo_lineEdit.text())
+        self.pt.set_appt_memo(unicode(self.ui.appt_memo_lineEdit.text()))
 
     def show_prefs_dialog(self):
         dl = appt_prefs_dialog.ApptPrefsDialog(self.pt, self)
         if dl.exec_():
-            self.preferences_changed.emit()
-
+            if type(pt) == BriefPatient:
+                pt.appt_prefs.commit_changes()
+            else:
+                self.preferences_changed.emit()
 
     def signals(self):
         self.ui.pt_diary_treeView.expanded.connect(self.treeview_expanded)
@@ -624,7 +620,6 @@ class PtDiaryWidget(QtGui.QWidget):
 
 if __name__ == "__main__":
     import gettext
-    from openmolar.dbtools import patient_class
 
     def sig_catcher(*args):
         print "start scheduling", args
@@ -639,7 +634,7 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication([])
     dw = PtDiaryWidget()
-    pt = patient_class.patient(20862)
+    pt = BriefPatient(20862)
     dw.set_patient(pt)
     dw.layout_ptDiary()
     dw.show()

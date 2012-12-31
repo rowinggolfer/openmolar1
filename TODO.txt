@@ -1,4 +1,7 @@
 to get to 0.3.2
 
     recd policy requires finalising and testing
-    scheduling ""
+
+    scheduling confirm button should should slot text and be yellow if active.
+
+    consider adding day and week forward buttons again.

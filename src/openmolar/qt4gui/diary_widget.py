@@ -76,6 +76,7 @@ class DiaryWidget(QtGui.QWidget):
 
     patient_card_request = QtCore.pyqtSignal(object)
     pt_diary_changed = QtCore.pyqtSignal(object)
+    bring_to_front = QtCore.pyqtSignal()
 
     alterAday_clipboard = [] #clipboard used by the alterAday dialog
     alterAday_clipboard_date = None
@@ -690,6 +691,8 @@ class DiaryWidget(QtGui.QWidget):
         OR the checkboxes have been tweaked
         OR a memo has been added
         '''
+        logging.debug("DiaryWidget.layout_diary")
+
         d = self.selected_date()
         self.ui.weekCalendar.setSelectedDate(d)
         self.ui.monthView.setSelectedDate(d.toPyDate())
@@ -721,6 +724,8 @@ class DiaryWidget(QtGui.QWidget):
         '''
         grab year memos
         '''
+        logging.debug("DiaryWidget.layout_year")
+
         year = self.selected_date().year()
         startdate = datetime.date(year, 1, 1)
         enddate = datetime.date(year+1, 1, 1)
@@ -776,6 +781,8 @@ class DiaryWidget(QtGui.QWidget):
         '''
         grab month memos
         '''
+        logging.debug("DiaryWidget.layout_month")
+
         qdate = self.selected_date()
         startdate = datetime.date(qdate.year(), qdate.month(), 1)
 
@@ -802,7 +809,7 @@ class DiaryWidget(QtGui.QWidget):
         if not self.viewing_week:
             return
 
-        logging.debug("layout_weekView")
+        logging.debug("DiaryWidget.layout_weekView")
 
         self.ui.week_view_control_frame.setLayout(self.appt_mode_layout)
 
@@ -854,9 +861,9 @@ class DiaryWidget(QtGui.QWidget):
                 self.advise(
                     _("You can't schedule an appointment in the past"))
                 #stop looking backwards
-                self.finding_next_slot = 1
-                self.set_date(localsettings.currentDay())
-                return
+                self.finding_next_slot = 0
+                #self.set_date(localsettings.currentDay())
+                #return
             if date_ > localsettings.bookEnd:
                 self.advise(_("You are beyond scheduling range"),1)
                 self.finding_next_slot = 0
@@ -923,7 +930,7 @@ class DiaryWidget(QtGui.QWidget):
         if not self.viewing_day:
             return
 
-        logging.debug("layout_dayView")
+        logging.debug("DiaryWidget.layout_dayView")
 
         self.ui.dayCalendar_frame.setLayout(self.calendar_layout)
         self.ui.day_view_control_frame.setLayout(self.appt_mode_layout)
@@ -945,10 +952,12 @@ class DiaryWidget(QtGui.QWidget):
             if date_ < localsettings.currentDay():
                 self.advise(_("You can't schedule an appointment in the past"))
                 #stop looking backwards
-                self.finding_next_slot = 1
-                self.set_date(localsettings.currentDay())
-                return
-            if date_ > localsettings.bookEnd:
+                self.finding_next_slot = 0
+                #self.set_date(localsettings.currentDay())
+                #return
+                all_slots = []
+                self.schedule_controller.set_available_slots(all_slots)
+            elif date_ > localsettings.bookEnd:
                 self.advise(_("You are beyond scheduling range"),1)
                 self.finding_next_slot = 0
                 all_slots = []
@@ -962,6 +971,11 @@ class DiaryWidget(QtGui.QWidget):
                 if self.schedule_controller.search_again:
                     self.step_date(self.finding_next_slot != -1)
                     return
+
+                if self.finding_next_slot == -1:
+                    self.schedule_controller.use_last_slot = True
+                    self.finding_next_slot = 1
+
 
         self.ui.daymemo_label.setText(self.appointmentData.memo)
 
@@ -987,7 +1001,6 @@ class DiaryWidget(QtGui.QWidget):
 
         i = len(self.apptBookWidgets) - number_of_books
         for dent in workingDents:
-            logging.debug("using book %s"% i)
             book = self.apptBookWidgets[i]
 
             book.setDentist(dent)
@@ -1016,9 +1029,6 @@ class DiaryWidget(QtGui.QWidget):
             if (self.appt_mode == self.SCHEDULING_MODE
             and self.schedule_controller.appointment_model.currentAppt):
 
-                if self.finding_next_slot == -1:
-                    self.schedule_controller.use_last_slot = True
-                    self.finding_next_slot = 1
                 for slot in all_slots:
                     book.addSlot(slot)
                 book.set_active_slot(self.schedule_controller.chosen_slot)
@@ -1072,9 +1082,9 @@ class DiaryWidget(QtGui.QWidget):
             if d < localsettings.currentDay():
                 self.advise(_("You can't schedule an appointment in the past"))
                 #stop looking backwards
-                self.finding_next_slot = 1
-                self.set_date(localsettings.currentDay())
-                return
+                self.finding_next_slot = 0
+                #self.set_date(localsettings.currentDay())
+                #return
             minlength = self.schedule_controller.min_slot_length
             available_slots = self.appointmentData.slots(minlength)
             self.schedule_controller.set_available_slots(available_slots)
@@ -1305,7 +1315,9 @@ class DiaryWidget(QtGui.QWidget):
 
     def find_appt(self, appt):
         ##TODO
-        self.advise("DiaryWidgetfind_appt %s"% appt, 1)
+        self.advise("DiaryWidgetfind_appt %s"% appt)
+        self.set_date(appt.date)
+        self.bring_to_front.emit()
 
     def aptOVlabelRightClicked(self, d):
         '''
@@ -1354,6 +1366,9 @@ class DiaryWidget(QtGui.QWidget):
                     date_ = date_.addDays(1)
             else:
                 date_ = date_.addDays(1)
+
+            self.finding_next_slot = 1
+
         else:
             if self.viewing_week:
                 #goto last day of next week
@@ -1417,7 +1432,6 @@ class DiaryWidget(QtGui.QWidget):
         self.schedule_controller.appointment_selected.connect(
             self.schedule_controller_appointment_selected)
 
-        self.schedule_controller.book_now_signal.connect(self.makeAppt)
         self.schedule_controller.find_appt.connect(self.find_appt)
 
         self.view_controller.update_needed.connect(
@@ -1526,7 +1540,7 @@ class _testDiary(QtGui.QMainWindow):
         dw.schedule_controller.set_data(pt, (), None)
         dw.schedule_controller.appointment_model.load_from_database(pt)
 
-        #dw.start_scheduling(pt)
+        dw.start_scheduling(pt)
 
         scroll_area = QtGui.QScrollArea()
         scroll_area.setWidget(dw)

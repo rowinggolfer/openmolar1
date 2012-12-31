@@ -48,6 +48,7 @@ class ApptPrefsDialog(BaseDialog):
             _("Dentist Recall"))
 
         self.recdent_groupbox.setCheckable(True)
+        self.recdent_groupbox.setChecked(False)
 
         self.recdent_period_spinbox = QtGui.QSpinBox()
         self.recdent_period_spinbox.setMinimum(1)
@@ -66,6 +67,8 @@ class ApptPrefsDialog(BaseDialog):
             _("Hygienist Recall"))
 
         self.rechyg_groupbox.setCheckable(True)
+        self.rechyg_groupbox.setChecked(False)
+
 
         self.rechyg_period_spinbox = QtGui.QSpinBox()
         self.rechyg_period_spinbox.setMinimum(1)
@@ -85,11 +88,11 @@ class ApptPrefsDialog(BaseDialog):
         self.recall_method_combobox.addItems(
             [_("Post"), _("email"), _("sms")])
 
-        self.sms_reminders_checkbox = QtGui.QCheckBox(
-            _("sms reminders for appointments?"))
+        #self.sms_reminders_checkbox = QtGui.QCheckBox(
+        #    _("sms reminders for appointments?"))
 
-        self.combined_appointment_checkbox = QtGui.QCheckBox(
-            _("Don't offer joint appointments"))
+        #self.combined_appointment_checkbox = QtGui.QCheckBox(
+        #    _("Don't offer joint appointments"))
 
         layout = QtGui.QGridLayout(self.recall_groupbox)
         layout.addWidget(self.recdent_groupbox,0,0,1,2)
@@ -101,8 +104,8 @@ class ApptPrefsDialog(BaseDialog):
         self.insertWidget(self.patient_label)
         self.insertWidget(self.recall_groupbox)
 
-        self.insertWidget(self.sms_reminders_checkbox)
-        self.insertWidget(self.combined_appointment_checkbox)
+        #self.insertWidget(self.sms_reminders_checkbox)
+        #self.insertWidget(self.combined_appointment_checkbox)
 
         QtCore.QTimer.singleShot(0, self.get_appt_prefs)
 
@@ -111,43 +114,21 @@ class ApptPrefsDialog(BaseDialog):
         return QtCore.QSize(500, 400)
 
     def get_appt_prefs(self):
-        query = '''select recall_active,
-        recdent_period, recdent,
-        rechyg_period, rechyg,
-        recall_method, sms_reminders, no_combined_appts from appt_prefs
-        where serialno = %s'''
-        db = connect.connect()
-        cursor = db.cursor()
-        count = cursor.execute(query, (self.pt.serialno,))
-        values = cursor.fetchone()
-        cursor.close()
+        appt_prefs = self.pt.appt_prefs
+        self.recall_groupbox.setChecked(appt_prefs.recall_active)
 
-        if not values:
-            self.recall_groupbox.setChecked(False)
-            self.init_edited_signals()
-            return
+        if appt_prefs.recdent_period is not None:
+            self.recdent_groupbox.setChecked(True)
+            self.recdent_period_spinbox.setValue(appt_prefs.recdent_period)
 
-        (recall_active, recdent_period, recdent, rechyg_period, rechyg,
-        recall_method, sms_reminders, no_combined_appts) = values
-
-        self.recall_groupbox.setChecked(recall_active)
-        self.recdent_groupbox.setChecked(recdent_period is not None)
-        if recdent_period:
-            self.recdent_period_spinbox.setValue(recdent_period)
-        if recdent:
-            self.recdent_date_edit.setDate(recdent)
-
-        self.rechyg_groupbox.setChecked(rechyg_period is not None)
-        if rechyg_period:
-            self.rechyg_period_spinbox.setValue(rechyg_period)
-        if rechyg:
-            self.rechyg_date_edit.setDate(rechyg)
-
-        self.sms_reminders_checkbox.setChecked(sms_reminders)
-        self.combined_appointment_checkbox.setChecked(no_combined_appts)
+            self.recdent_date_edit.setDate(appt_prefs.recdent)
+        if appt_prefs.rechyg_period is not None:
+            self.rechyg_groupbox.setChecked(True)
+            self.rechyg_period_spinbox.setValue(appt_prefs.rechyg_period)
+            self.rechyg_date_edit.setDate(appt_prefs.rechyg)
 
         try:
-            method_index = RECALL_METHODS.index(recall_method)
+            method_index = RECALL_METHODS.index(appt_prefs.recall_method)
         except ValueError:
             method_index = -1
         self.recall_method_combobox.setCurrentIndex(method_index)
@@ -159,8 +140,8 @@ class ApptPrefsDialog(BaseDialog):
         self.recall_groupbox,
         self.recdent_groupbox,
         self.rechyg_groupbox,
-        self.sms_reminders_checkbox,
-        self.combined_appointment_checkbox
+        #self.sms_reminders_checkbox,
+        #self.combined_appointment_checkbox
          ):
             widg.toggled.connect(self._set_enabled)
         for widg in (
@@ -182,33 +163,22 @@ class ApptPrefsDialog(BaseDialog):
 
     def apply_changed(self):
         print "applying changes"
-        query = '''update appt_prefs
-        set recall_active = %s,
-        recdent_period = %s,
-        recdent = %s,
-        rechyg_period = %s,
-        rechyg = %s,
-        recall_method = %s,
-        sms_reminders = %s,
-        no_combined_appts = %s
-        where serialno = %s'''
-        values = (
-            self.recall_groupbox.isChecked(),
-            self.recdent_period_spinbox.value(),
-            self.recdent_date_edit.date().toPyDate(),
-            self.rechyg_period_spinbox.value(),
-            self.rechyg_date_edit.date().toPyDate(),
-            RECALL_METHODS[self.recall_method_combobox.currentIndex()],
-            self.sms_reminders_checkbox.isChecked(),
-            self.combined_appointment_checkbox.isChecked(),
-            self.pt.serialno
-            )
 
-        db = connect.connect()
-        cursor = db.cursor()
-        cursor.execute(query, values)
-        cursor.close()
+        self.pt.appt_prefs.recall_active = self.recall_groupbox.isChecked()
 
+        if self.recdent_groupbox.isChecked():
+            self.pt.appt_prefs.recdent_period = self.recdent_period_spinbox.value()
+            self.pt.appt_prefs.recdent = self.recdent_date_edit.date().toPyDate()
+
+        if self.rechyg_groupbox.isChecked():
+            self.pt.appt_prefs.rechyg_period = self.rechyg_period_spinbox.value()
+            self.pt.appt_prefs.rechyg = self.rechyg_date_edit.date().toPyDate()
+
+        i = self.recall_method_combobox.currentIndex()
+        if i == -1:
+            self.pt.appt_prefs.recall_method = None
+        else:
+            self.pt.appt_prefs.recall_method = RECALL_METHODS[i]
 
     def exec_(self):
         if BaseDialog.exec_(self):
@@ -218,7 +188,7 @@ class ApptPrefsDialog(BaseDialog):
 if __name__ == "__main__":
     localsettings.initiate()
     from openmolar.dbtools import patient_class
-    pt = patient_class.patient(11956)
+    pt = patient_class.patient(1)
 
     app = QtGui.QApplication([])
 

@@ -24,6 +24,7 @@ import logging
 
 from PyQt4 import QtGui, QtCore
 
+from openmolar.settings import localsettings
 from openmolar.dbtools.brief_patient import BriefPatient
 
 from openmolar.qt4gui.appointment_gui_modules.draggable_list \
@@ -48,7 +49,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     show_first_appointment = QtCore.pyqtSignal()
     chosen_slot_changed = QtCore.pyqtSignal()
     move_on = QtCore.pyqtSignal(object)
-    book_now_signal = QtCore.pyqtSignal(object, object)
     find_appt = QtCore.pyqtSignal(object)
 
     pt = None
@@ -57,16 +57,15 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     use_last_slot = False
 
-    _pt_diary_widget = None
+    pt_diary_widget = None
 
     def __init__(self, parent=None):
         QtGui.QStackedWidget.__init__(self, parent)
         self.patient_label = QtGui.QLabel()
 
-        self.diary_button = QtGui.QPushButton("diary")
-
-        self.get_patient_button = QtGui.QPushButton("Change", self)
-        self.get_patient_button.setMaximumWidth(80)
+        icon = QtGui.QIcon(":/search.png")
+        self.get_patient_button = QtGui.QPushButton(icon, "")
+        self.get_patient_button.setMaximumWidth(40)
 
         self.appt_listView = DraggableList(True, self)
         self.block_listView = DraggableList(False, self)
@@ -79,34 +78,32 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         block_model = BlockListModel(self)
         self.block_listView.setModel(block_model)
 
-        first_appt_button = QtGui.QPushButton(_("1st"))
+        icon = QtGui.QIcon(":vcalendar.png")
+        diary_button = QtGui.QPushButton(icon, "")
+        diary_button.setToolTip(_("Open the patient's diary"))
+
+        icon = QtGui.QIcon(":first.png")
+        first_appt_button = QtGui.QPushButton(icon,"")
         first_appt_button.setToolTip(_("Find the 1st available appointment"))
 
-        prev_appt_button = QtGui.QPushButton("<")
+        icon = QtGui.QIcon(":back.png")
+        prev_appt_button = QtGui.QPushButton(icon, "")
         prev_appt_button.setToolTip(_("Previous appointment"))
 
-        next_appt_button = QtGui.QPushButton(">")
+        icon = QtGui.QIcon(":forward.png")
+        next_appt_button = QtGui.QPushButton(icon, "")
         next_appt_button.setToolTip(_("Next available appointment"))
 
         debug_button = QtGui.QPushButton("debug")
 
-        self.chosen_slot_label = QtGui.QLabel("No slot selected")
-
-        ## These lines causes a major bug with the widget size!!
-        #self.chosen_slot_label.setAlignment(QtCore.Qt.AlignCenter)
-        #self.chosen_slot_label.setWordWrap(True)
-
-        book_now_button = QtGui.QPushButton("Confirm")
-
         self.appt_controls_frame = QtGui.QWidget()
         layout = QtGui.QGridLayout(self.appt_controls_frame)
         layout.setMargin(1)
-        layout.addWidget(first_appt_button,0,0)
-        layout.addWidget(prev_appt_button,0,1)
-        layout.addWidget(next_appt_button,0,2)
-        layout.addWidget(debug_button,1,0,1,3)
-        layout.addWidget(self.chosen_slot_label,2,0,1,2)
-        layout.addWidget(book_now_button,2,2)
+        layout.addWidget(diary_button,0,0)
+        layout.addWidget(first_appt_button,0,1)
+        layout.addWidget(prev_appt_button,0,2)
+        layout.addWidget(next_appt_button,0,3)
+        layout.addWidget(debug_button,1,0,1,4)
         self.appt_controls_frame.setSizePolicy(
             QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
             QtGui.QSizePolicy.Minimum))
@@ -123,9 +120,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         debug_button.clicked.connect(self.debug_function)
 
-        book_now_button.clicked.connect(self.book_now_button_clicked)
-
-        self.diary_button.clicked.connect(self.show_pt_diary)
+        diary_button.clicked.connect(self.show_pt_diary)
 
         # now arrange the stacked widget
 
@@ -137,10 +132,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         layout = QtGui.QGridLayout(widg)
         layout.setMargin(0)
         layout.addWidget(self.patient_label,0,0)
-        layout.addWidget(self.diary_button,0,1)
-        layout.addWidget(self.get_patient_button,0,2)
-        layout.addWidget(self.appt_listView,1,0,1,3)
-        layout.addWidget(self.appt_controls_frame,2,0,1,3)
+        layout.addWidget(self.get_patient_button,0,1)
+        layout.addWidget(self.appt_listView,2,0,1,2)
+        layout.addWidget(self.appt_controls_frame,3,0,1,2)
 
         self.addWidget(widg)
 
@@ -248,7 +242,15 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     @property
     def selectedClinicians(self):
-        return self.appointment_model.selectedClinicians
+        ##TODO - this is mucky code and a compromise
+        clinicians = self.appointment_model.selectedClinicians
+        hygs_present = False
+        for clinician in clinicians:
+            hygs_present = (hygs_present or
+                        clinician in localsettings.activehyg_ixs)
+        if hygs_present:
+            return localsettings.activehyg_ixs
+        return clinicians
 
     @property
     def involvedClinicians(self):
@@ -325,40 +327,39 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     @property
     def chosen_slot(self):
-        self.chosen_slot_label.setText(_("No slot selected"))
         if self.available_slots == []:
             return None
         if self._chosen_slot is None:
-            self._chosen_slot = self.available_slots[0]
-        self.chosen_slot_label.setText("%s"% self._chosen_slot)
+            if self.use_last_slot:
+                i = -1
+                self.use_last_slot = False
+            else:
+                i = 0
+            self._chosen_slot = self.available_slots[i]
         return self._chosen_slot
-
-    def book_now_button_clicked(self):
-        self.book_now_signal.emit(
-            self.appointment_model.currentAppt, self.chosen_slot)
-
-    @property
-    def pt_diary_widget(self):
-        if self._pt_diary_widget is None:
-            self._pt_diary_widget = PtDiaryWidget()
-            self._pt_diary_widget.find_appt.connect(self.find_appt.emit)
-        return self._pt_diary_widget
 
     def show_pt_diary(self):
         if self.pt is None:
+            QtGui.QMessageBox.information(self, _("error"),
+            _("No patient selected"))
             return
-        self.pt_diary_widget.set_patient(self.pt)
-        self.pt_diary_widget.layout_ptDiary()
+
+        pt_diary_widget = PtDiaryWidget()
+        pt_diary_widget.find_appt.connect(self.find_appt.emit)
+
+        pt_diary_widget.set_patient(self.pt)
+        pt_diary_widget.layout_ptDiary()
+
         dl = QtGui.QDialog(self)
         but_box = QtGui.QDialogButtonBox(dl)
         but = but_box.addButton(_("Close"), but_box.AcceptRole)
         but.clicked.connect(dl.accept)
 
         layout = QtGui.QVBoxLayout(dl)
-        layout.addWidget(self.pt_diary_widget)
+        layout.addWidget(pt_diary_widget)
         layout.addStretch()
         layout.addWidget(but_box)
-        self.pt_diary_widget.find_appt.connect(dl.accept)
+        pt_diary_widget.find_appt.connect(dl.accept)
         dl.exec_()
 
         self.appointment_model.load_from_database(self.pt)
