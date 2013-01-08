@@ -358,8 +358,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.notificationWidget = \
         notification_widget.notificationWidget(self)
 
-        vlayout = QtGui.QVBoxLayout(self.ui.notification_frame)
-        vlayout.addWidget(self.ui.notificationWidget)
+        self.ui.details_frame.layout().addWidget(self.ui.notificationWidget)
 
     def setClinician(self):
         result, selected = clinician_select_dialog.Dialog(self).result()
@@ -563,8 +562,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         ci = self.ui.main_tabWidget.currentIndex()
 
         if ci ==1 :     #--user is viewing appointment book
-            self.diary_widget.layout_diary()
-
+            self.diary_widget.reset_and_view()
         if ci == 6:
             #--user is viewing the feetable
             if not self.feestableLoaded:
@@ -2393,12 +2391,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         om_printing.printReferral(self)
 
-    def printChart(self):
-        '''
-        prints the static chart
-        '''
-        om_printing.printChart(self)
-
     def printaccount(self, tone="A"):
         '''
         print an account
@@ -2448,17 +2440,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         om_printing.printrecall(self)
 
-    def printNotesV(self):
-        '''
-        verbose notes print
-        '''
-        self.printNotes(self, 1)
-
-    def printNotes(self, detailed=False):
+    def printNotes(self):
         '''
         normal notes print
         '''
-        om_printing.printNotes(self, detailed)
+        self.advise(
+        _("use the checkboxes on the notes tab to control what is printed."),
+        1)
+        om_printing.printNotes(self)
 
     def childsmile_button_clicked(self):
         '''
@@ -2486,7 +2475,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                     self.load_notes_summary()
 
     def show_diary(self):
+        '''
+        called when the diary widget itself has something to show.
+        we need to avoid changing to today's date as this may be undesirable
+        '''
+        self.signals_tabs(False)
         self.ui.main_tabWidget.setCurrentIndex(1)
+        self.signals_tabs()
 
     def setupSignals(self):
         '''
@@ -2624,14 +2619,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.receiptPrintButton,
         QtCore.SIGNAL("clicked()"), self.printDupReceipt)
 
-        QtCore.QObject.connect(self.ui.exportChartPrintButton,
-        QtCore.SIGNAL("clicked()"), self.printChart)
-
-        QtCore.QObject.connect(self.ui.simpleNotesPrintButton,
+        QtCore.QObject.connect(self.ui.notesPrintButton,
         QtCore.SIGNAL("clicked()"), self.printNotes)
-
-        QtCore.QObject.connect(self.ui.detailedNotesPrintButton,
-        QtCore.SIGNAL("clicked()"), self.printNotesV)
 
         QtCore.QObject.connect(self.ui.referralLettersPrintButton,
         QtCore.SIGNAL("clicked()"), self.printReferral)
@@ -3072,8 +3061,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.pt_diary_widget.start_scheduling.connect(self.start_scheduling)
         self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
-        self.pt_diary_widget.data_changed.connect(
-            self.diary_widget.schedule_controller.set_data)
 
         self.pt_diary_widget.appointment_selected.connect(
             self.diary_widget.schedule_controller.update_appt_selection)
@@ -3082,7 +3069,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.appt_prefs_changed)
 
     def start_scheduling(self):
+        self.signals_tabs(False)
         self.ui.main_tabWidget.setCurrentIndex(1) #appointmenttab
+        self.signals_tabs()
+        self.diary_widget.load_patient(self.pt)
+        self.pt_diary_widget.layout_ptDiary()
         self.diary_widget.start_scheduling(self.pt)
 
     def appt_prefs_changed(self):

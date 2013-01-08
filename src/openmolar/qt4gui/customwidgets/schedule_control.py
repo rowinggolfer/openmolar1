@@ -41,10 +41,15 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     SCHEDULE_MODE = 1
     BLOCK_MODE = 2
     NOTES_MODE = 3
-
     mode = BROWSE_MODE
 
-    appointment_selected = QtCore.pyqtSignal(object, object)
+    CLINICIAN_SELECTED = 0
+    CLINICIAN_ANY_DENT = 1
+    CLINICIAN_ANY_HYG = 2
+    CLINICIAN_ANY = 3
+    selection_mode = CLINICIAN_SELECTED
+
+    appointment_selected = QtCore.pyqtSignal(object)
     patient_selected = QtCore.pyqtSignal(object)
     show_first_appointment = QtCore.pyqtSignal()
     chosen_slot_changed = QtCore.pyqtSignal()
@@ -54,6 +59,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     pt = None
     available_slots = []
     _chosen_slot = None
+
+    excluded_days = []
 
     use_last_slot = False
 
@@ -107,7 +114,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appt_controls_frame.setSizePolicy(
             QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
             QtGui.QSizePolicy.Minimum))
-
 
         self.appointment_model.appointment_selected.connect(
             self.appointment_selected_signal)
@@ -190,7 +196,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         tab_widget.addTab(label, "min slot length")
 
-
         layout = QtGui.QVBoxLayout(dl)
         layout.addWidget(tab_widget)
         layout.addStretch(100)
@@ -200,13 +205,18 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def set_mode(self, mode):
         if mode == self.SCHEDULE_MODE:
             self.update_patient_label()
+
         self.mode = mode
         self.setCurrentIndex(mode)
 
-    def set_data(self, pt, appts, chosen_appointment):
+    def set_patient(self, pt):
+        self.clear()
         self.pt = pt
-        self.update_patient_label()
-        self.appointment_model.set_appointments(appts, chosen_appointment)
+        if pt is not None:
+            self.appointment_model.load_from_database(self.pt)
+
+    def set_chosen_appointment(self, appointment):
+        self.appointment_model.set_chosen_appointment(appointment)
 
     def get_data(self):
         if self.pt is None:
@@ -225,6 +235,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def find_patient(self):
         dl = FindPatientDialog(self)
         if dl.exec_():
+            self.clear()
             self.pt = BriefPatient(dl.chosen_sno)
             self.patient_selected.emit(self.pt)
             self.appointment_model.load_from_database(self.pt)
@@ -240,17 +251,24 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             msl = self.appointment_model.min_slot_length
         return msl
 
+    def set_selection_mode(self, mode):
+        assert mode in (
+            self.CLINICIAN_ANY,
+            self.CLINICIAN_ANY_DENT,
+            self.CLINICIAN_ANY_HYG,
+            self.CLINICIAN_SELECTED), "selection mode misunderstood"
+        self.selection_mode = mode
+
     @property
     def selectedClinicians(self):
-        ##TODO - this is mucky code and a compromise
-        clinicians = self.appointment_model.selectedClinicians
-        hygs_present = False
-        for clinician in clinicians:
-            hygs_present = (hygs_present or
-                        clinician in localsettings.activehyg_ixs)
-        if hygs_present:
+        if self.selection_mode == self.CLINICIAN_ANY_HYG:
             return localsettings.activehyg_ixs
-        return clinicians
+        if self.selection_mode == self.CLINICIAN_ANY_DENT:
+            return localsettings.activedent_ixs
+        if self.selection_mode == self.CLINICIAN_ANY:
+            return localsettings.activedent_ixs + localsettings.activehyg_ixs
+
+        return self.appointment_model.selectedClinicians
 
     @property
     def involvedClinicians(self):
@@ -259,21 +277,20 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def sizeHint(self):
         return QtCore.QSize(150, 200)
 
-    def update_appt_selection(self, pt, appt):
+    def update_appt_selection(self, appt):
         '''
         sync with the "patient diary" via signal/slot
         '''
-        if pt != self.pt:
+        if appt is None or self.pt is None:
+            return
+        if appt.serialno != self.pt.serialno:
             return
         index = self.appointment_model.set_current_appt(appt)
         self.appt_listView.setCurrentIndex(index)
 
     def appointment_selected_signal(self, appt):
-        self.set_appt_controls_visible()
-        self.appointment_selected.emit(self.pt, appt)
-
-    def set_appt_controls_visible(self):
-        self.appt_controls_frame.show()
+        if self.isVisible():
+            self.appointment_selected.emit(appt)
 
     def clear(self):
         self.appointment_model.clear()
@@ -281,6 +298,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self._chosen_slot = None
 
     def show_first_appt(self):
+        '''
+        resets the chosen slot and emits show_first_appointment signal
+        '''
         self._chosen_slot = None
         self.show_first_appointment.emit()
 
@@ -313,8 +333,21 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def set_available_slots(self, slots):
         self.available_slots = []
         for slot in sorted(slots):
-            if slot.dent in self.selectedClinicians:
+            if (slot.dent in self.selectedClinicians
+            and slot.day_no not in self.excluded_days) :
                 self.available_slots.append(slot)
+
+    @property
+    def last_appt_date(self):
+        '''
+        returns the latest date of patient's appointments,
+        or today's date if none found
+        '''
+        last_d = QtCore.QDate.currentDate().toPyDate()
+        for appt in self.appointment_model.scheduledList:
+            if appt.date > last_d:
+                last_d = appt.date
+        return last_d
 
     @property
     def search_again(self):
@@ -337,6 +370,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 i = 0
             self._chosen_slot = self.available_slots[i]
         return self._chosen_slot
+
+    def set_excluded_days(self, days):
+        self.excluded_days = days
 
     def show_pt_diary(self):
         if self.pt is None:
@@ -363,6 +399,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         dl.exec_()
 
         self.appointment_model.load_from_database(self.pt)
+
+        #now force diary relayout
+        self.chosen_slot_changed.emit()
 
 class TestWindow(QtGui.QMainWindow):
     MODES = ("Browse", "Schedule", "Block", "Notes")
@@ -399,6 +438,7 @@ class TestWindow(QtGui.QMainWindow):
 
         self.set_but_text()
         self.schedule_controller.set_mode(self.mode)
+
 
 
 if __name__ == "__main__":

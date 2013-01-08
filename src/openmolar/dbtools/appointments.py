@@ -25,6 +25,10 @@ class FreeSlot(object):
     def date(self):
         return self.date_time.date()
 
+    @property
+    def day_no(self):
+        return self.date().isoweekday()
+
     def time(self):
         return self.date_time.time()
 

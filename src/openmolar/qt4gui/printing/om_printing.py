@@ -511,13 +511,11 @@ def printrecall(om_gui):
         om_gui.pt.addHiddenNote("printed", "recall - non batch")
         om_gui.updateHiddenNotesLabel()
 
-def printNotes(om_gui, detailed=False):
+def printNotes(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
         return
 
-    ##TODO - write this to a temp file.
-    #image_file.name = "/home/neil/chart.png"
     image_file = tempfile.NamedTemporaryFile(suffix=".png")
     image = QtGui.QPixmap.grabWidget(om_gui.ui.summaryChartWidget)
     image.save(image_file.name)

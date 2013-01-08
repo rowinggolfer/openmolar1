@@ -45,8 +45,7 @@ class PtDiaryWidget(QtGui.QWidget):
 
     start_scheduling = QtCore.pyqtSignal()
     find_appt = QtCore.pyqtSignal(object)
-    data_changed = QtCore.pyqtSignal(object, object, object)
-    appointment_selected = QtCore.pyqtSignal(object, object)
+    appointment_selected = QtCore.pyqtSignal(object)
     preferences_changed = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
@@ -85,11 +84,11 @@ class PtDiaryWidget(QtGui.QWidget):
         self.ui.clearAppt_pushButton.hide()
         self.ui.findAppt_pushButton.hide()
 
-    def update_pt_diary_selection(self, pt, appt):
+    def update_pt_diary_selection(self, appt):
         '''
         the drag model selected appointment has changed... pass this on
         '''
-        if pt != self.pt:
+        if not self.pt or appt.serialno != self.pt.serialno:
             return
         self.diary_model.setSelectedAppt(appt)
         aprix = 0 if appt == None else appt.aprix
@@ -122,7 +121,7 @@ class PtDiaryWidget(QtGui.QWidget):
         self.adjustDiaryColWidths()
 
         ## now emit a signal to update the drag/drop controller
-        self.data_changed.emit(self.pt, appts, appt)
+        self.appointment_selected.emit(appt)
 
     def select_apr_ix(self, apr_ix):
         '''
@@ -203,8 +202,7 @@ class PtDiaryWidget(QtGui.QWidget):
             self.ui.findAppt_pushButton.show()
 
         ## pass on a signal to synchronise other widgets if necessary
-        self.appointment_selected.emit(self.pt, appt)
-
+        self.appointment_selected.emit(appt)
 
     def newAppt_pushButton_clicked(self):
         '''

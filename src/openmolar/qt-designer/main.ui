@@ -120,14 +120,17 @@
                </size>
               </property>
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
+               <enum>QFrame::Plain</enum>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout">
+               <property name="spacing">
+                <number>0</number>
+               </property>
                <property name="margin">
-                <number>6</number>
+                <number>0</number>
                </property>
                <item>
                 <widget class="QFrame" name="frame_15">
@@ -424,16 +427,6 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QFrame" name="notification_frame">
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </widget>
             </item>
@@ -447,7 +440,7 @@
               </property>
               <widget class="QTabWidget" name="tabWidget">
                <property name="currentIndex">
-                <number>3</number>
+                <number>2</number>
                </property>
                <widget class="QWidget" name="tab_patient_details">
                 <attribute name="title">
@@ -1738,8 +1731,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>655</width>
-                      <height>420</height>
+                      <width>673</width>
+                      <height>378</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout">
@@ -1942,33 +1935,11 @@
                      <item row="3" column="0">
                       <widget class="QGroupBox" name="groupBox_8">
                        <property name="title">
-                        <string>Export this record card</string>
+                        <string>Patient &quot;Notes&quot;</string>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_7">
                         <item>
-                         <widget class="QPushButton" name="exportChartPrintButton">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="toolTip">
-                           <string>Print a patient's static chart.</string>
-                          </property>
-                          <property name="text">
-                           <string>Print the Patient's static Chart</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="simpleNotesPrintButton">
+                         <widget class="QPushButton" name="notesPrintButton">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                             <horstretch>0</horstretch>
@@ -1985,29 +1956,7 @@
                            <string>Print a summary of the patient's notes (for them to take on). Includes No fee details.</string>
                           </property>
                           <property name="text">
-                           <string>Print A Summary of the Notes</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="detailedNotesPrintButton">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="toolTip">
-                           <string>Print a summary of the patient's notes. Includes FEE and ESTIMATE details.</string>
-                          </property>
-                          <property name="text">
-                           <string>Print Detailed Notes</string>
+                           <string>Print the patient's notes</string>
                           </property>
                          </widget>
                         </item>
@@ -5420,9 +5369,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>contract_tabWidget</tabstop>
   <tabstop>newCourse_pushButton</tabstop>
   <tabstop>closeTx_pushButton</tabstop>
-  <tabstop>exportChartPrintButton</tabstop>
-  <tabstop>simpleNotesPrintButton</tabstop>
-  <tabstop>detailedNotesPrintButton</tabstop>
+  <tabstop>notesPrintButton</tabstop>
   <tabstop>loadAccountsTable_pushButton</tabstop>
  </tabstops>
  <resources>

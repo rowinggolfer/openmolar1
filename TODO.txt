@@ -1,7 +1,13 @@
 to get to 0.3.2
 
     recd policy requires finalising and testing
-
-    scheduling confirm button should should slot text and be yellow if active.
+    DONE
 
     consider adding day and week forward buttons again.
+    DONE
+
+    remove printNOtesV and printChart functions (no longer necessary)
+    DONE
+
+    also, when printing notes, advise how to change verbosity.
+    DONE
