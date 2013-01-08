@@ -81,6 +81,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appt_listView.setModel(self.appointment_model)
         self.appt_listView.setSelectionModel(
             self.appointment_model.selection_model)
+        self.appt_listView.setSelectionMode(QtGui.QListView.SingleSelection)
 
         block_model = BlockListModel(self)
         self.block_listView.setModel(block_model)
@@ -90,16 +91,16 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         diary_button.setToolTip(_("Open the patient's diary"))
 
         icon = QtGui.QIcon(":first.png")
-        first_appt_button = QtGui.QPushButton(icon,"")
-        first_appt_button.setToolTip(_("Find the 1st available appointment"))
+        self.first_appt_button = QtGui.QPushButton(icon,"")
+        self.first_appt_button.setToolTip(_("Find the 1st available appointment"))
 
         icon = QtGui.QIcon(":back.png")
-        prev_appt_button = QtGui.QPushButton(icon, "")
-        prev_appt_button.setToolTip(_("Previous appointment"))
+        self.prev_appt_button = QtGui.QPushButton(icon, "")
+        self.prev_appt_button.setToolTip(_("Previous appointment"))
 
         icon = QtGui.QIcon(":forward.png")
-        next_appt_button = QtGui.QPushButton(icon, "")
-        next_appt_button.setToolTip(_("Next available appointment"))
+        self.next_appt_button = QtGui.QPushButton(icon, "")
+        self.next_appt_button.setToolTip(_("Next available appointment"))
 
         debug_button = QtGui.QPushButton("debug")
 
@@ -107,9 +108,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         layout = QtGui.QGridLayout(self.appt_controls_frame)
         layout.setMargin(1)
         layout.addWidget(diary_button,0,0)
-        layout.addWidget(first_appt_button,0,1)
-        layout.addWidget(prev_appt_button,0,2)
-        layout.addWidget(next_appt_button,0,3)
+        layout.addWidget(self.first_appt_button,0,1)
+        layout.addWidget(self.prev_appt_button,0,2)
+        layout.addWidget(self.next_appt_button,0,3)
         layout.addWidget(debug_button,1,0,1,4)
         self.appt_controls_frame.setSizePolicy(
             QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
@@ -120,9 +121,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         self.get_patient_button.clicked.connect(self.find_patient)
 
-        first_appt_button.clicked.connect(self.show_first_appt)
-        prev_appt_button.clicked.connect(self.show_prev_appt)
-        next_appt_button.clicked.connect(self.show_next_appt)
+        self.first_appt_button.clicked.connect(self.show_first_appt)
+        self.prev_appt_button.clicked.connect(self.show_prev_appt)
+        self.next_appt_button.clicked.connect(self.show_next_appt)
 
         debug_button.clicked.connect(self.debug_function)
 
@@ -205,6 +206,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def set_mode(self, mode):
         if mode == self.SCHEDULE_MODE:
             self.update_patient_label()
+            self.enable_scheduling_buttons()
 
         self.mode = mode
         self.setCurrentIndex(mode)
@@ -214,6 +216,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.pt = pt
         if pt is not None:
             self.appointment_model.load_from_database(self.pt)
+        self.enable_scheduling_buttons()
 
     def set_chosen_appointment(self, appointment):
         self.appointment_model.set_chosen_appointment(appointment)
@@ -289,6 +292,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appt_listView.setCurrentIndex(index)
 
     def appointment_selected_signal(self, appt):
+        self.enable_scheduling_buttons()
         if self.isVisible():
             self.appointment_selected.emit(appt)
 
@@ -402,6 +406,13 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         #now force diary relayout
         self.chosen_slot_changed.emit()
+
+    def enable_scheduling_buttons(self):
+        appt = self.appointment_model.currentAppt
+        enabled = (appt is not None and appt.unscheduled)
+        for but in (self.next_appt_button, self.prev_appt_button,
+        self.first_appt_button):
+            but.setEnabled(enabled)
 
 class TestWindow(QtGui.QMainWindow):
     MODES = ("Browse", "Schedule", "Block", "Notes")

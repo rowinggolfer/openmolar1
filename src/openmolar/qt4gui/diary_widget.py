@@ -269,7 +269,10 @@ class DiaryWidget(QtGui.QWidget):
             self.schedule_controller.clear()
             self.schedule_controller.set_patient(patient)
         for book in self.apptBookWidgets:
-            book.selected_serialno = patient.serialno
+            if patient is not None:
+                book.selected_serialno = patient.serialno
+            else:
+                book.selected_serialno = None
             book.update()
         if update:
             self.layout_diary()
@@ -708,6 +711,8 @@ class DiaryWidget(QtGui.QWidget):
         book.mode = self.appt_mode
         if self.day_scroll_bar is None:
             self.day_scroll_bar = book.scrollArea.verticalScrollBar()
+            self.ui.emergency_dayview_scroll_bar.valueChanged.connect(
+                self.day_scroll_bar.setValue)
 
         if len(self.apptBookWidgets) > 1:
             self.apptBookWidgets[-1].set_scroll_bar(self.day_scroll_bar)
@@ -962,7 +967,7 @@ class DiaryWidget(QtGui.QWidget):
             return
 
         logging.debug("DiaryWidget.layout_dayView")
-
+        self.ui.emergency_dayview_scroll_bar.hide()
         self.ui.dayCalendar_frame.setLayout(self.calendar_layout)
         self.ui.day_view_control_frame.setLayout(self.appt_mode_layout)
 
@@ -1082,6 +1087,7 @@ class DiaryWidget(QtGui.QWidget):
                 book.show()
                 book.update()
 
+
         # make sure the splitter is reset (user could have hidden a widget they
         # now need)
         self.ui.dayView_splitter.setSizes(book_list)
@@ -1089,8 +1095,16 @@ class DiaryWidget(QtGui.QWidget):
         if i == 0:
             t = self.ui.daymemo_label.text() + " - " + _("No books to show!")
             self.ui.daymemo_label.setText(t)
-
             #self.advise("all off today")
+        else:
+            if self.apptBookWidgets[-1].outofoffice:
+                esb = self.ui.emergency_dayview_scroll_bar
+
+                esb.setMinimum(self.day_scroll_bar.minimum())
+                esb.setMaximum(self.day_scroll_bar.maximum())
+                esb.setPageStep(self.day_scroll_bar.pageStep())
+                esb.setValue(self.day_scroll_bar.value())
+                esb.show()
 
 
     def layout_agenda(self):
@@ -1345,8 +1359,9 @@ class DiaryWidget(QtGui.QWidget):
         self.begin_makeAppt()
 
     def find_appt(self, appt):
-        ##TODO
-        self.advise("DiaryWidgetfind_appt %s"% appt)
+        logging.debug("DiaryWidgetfind_appt %s"% appt)
+        pt = BriefPatient(appt.serialno)
+        self.load_patient(pt)
         self.set_appt_mode(self.VIEW_MODE)
         self.set_date(appt.date)
         self.bring_to_front.emit()
@@ -1414,7 +1429,7 @@ class DiaryWidget(QtGui.QWidget):
 
         self.set_date(date_)
 
-    def reset_and_view(self):
+    def reset_and_view(self, patient):
         '''
         called when the diary is made visible by user navigating the mainUI
         tabwidget
@@ -1422,7 +1437,7 @@ class DiaryWidget(QtGui.QWidget):
 
         self.set_appt_mode(self.VIEW_MODE, update_required=False)
         self.ui.diary_tabWidget.setCurrentIndex(0)
-        self.schedule_controller.set_patient(None)
+        self.load_patient(patient, update=False)
         self.signals_calendar(False)
         self.set_date(localsettings.currentDay())
         self.signals_calendar()

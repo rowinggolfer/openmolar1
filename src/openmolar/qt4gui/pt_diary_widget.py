@@ -88,7 +88,9 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         the drag model selected appointment has changed... pass this on
         '''
-        if not self.pt or appt.serialno != self.pt.serialno:
+        if self.pt is None or appt is None:
+            return
+        if appt.serialno != self.pt.serialno:
             return
         self.diary_model.setSelectedAppt(appt)
         aprix = 0 if appt == None else appt.aprix

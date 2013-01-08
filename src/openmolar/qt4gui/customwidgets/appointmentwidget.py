@@ -916,6 +916,8 @@ class appointmentCanvas(QtGui.QWidget):
                     painter.setBrush(APPTCOLORS["ACTIVE_SLOT_BOLD"])
                 else:
                     painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                self.pWidget.scrollArea.ensureVisible(
+                    0, startcell*self.slotHeight)
             else:
                 brush = APPTCOLORS["SLOT"]
                 if self.enabled_slots:

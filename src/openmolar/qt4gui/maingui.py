@@ -562,7 +562,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         ci = self.ui.main_tabWidget.currentIndex()
 
         if ci ==1 :     #--user is viewing appointment book
-            self.diary_widget.reset_and_view()
+            self.diary_widget.reset_and_view(self.patient)
         if ci == 6:
             #--user is viewing the feetable
             if not self.feestableLoaded:
@@ -2482,6 +2482,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.signals_tabs(False)
         self.ui.main_tabWidget.setCurrentIndex(1)
         self.signals_tabs()
+
+    @property
+    def patient(self):
+        '''
+        a convenience property to use the new style pt attribute
+        '''
+        if self.pt.serialno == 0:
+            return None
+        return self.pt
 
     def setupSignals(self):
         '''
