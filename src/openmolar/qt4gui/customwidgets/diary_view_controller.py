@@ -65,6 +65,8 @@ class DiaryViewController(QtGui.QWidget):
         mode_but.clicked.connect(self.change_appt_mode)
 
     def set_mode(self, mode):
+        if self.mode == mode:
+            return
         self.mode = mode
         if self.mode == self.SCHEDULING_MODE:
             value = _("Scheduling Mode")
@@ -76,12 +78,12 @@ class DiaryViewController(QtGui.QWidget):
             value = _("Browsing Mode")
 
         self.mode_label.setText(value)
+        self.apt_mode_changed.emit(self.mode)
 
     def change_appt_mode(self):
         dl = ApptModeDialog(self)
         if dl.exec_():
-            self.set_mode(self.mode)
-            self.apt_mode_changed.emit(self.mode)
+            self.set_mode(dl.mode)
 
     def clinician_days(self, adate):
         i = self.clinicianSelection_comboBox.currentIndex()
@@ -111,5 +113,7 @@ if __name__ == "__main__":
     widg.show()
 
     widg.update_needed.connect(sig_catcher)
+    widg.apt_mode_changed.connect(sig_catcher)
+
     app.exec_()
 

@@ -596,7 +596,24 @@ class appointmentCanvas(QtGui.QWidget):
             QtGui.QToolTip.showText(event.globalPos(), "")
             return
 
-        if self.rows.has_key(row):
+        if self.mouse_over_freeslot(event.pos()):
+            startcell, endcell = self.mouse_freeslot
+            feedback = '''
+            <html><div align="center">
+            <b>SLOT with %s</b><br />
+            <b>%s</b><br />
+            (%d mins)
+            </div></html>
+            '''% (
+                    self.pWidget.dentist,
+                    self.getTime_from_Cell(startcell).strftime("%H:%M"),
+                    (endcell-startcell) * self.slotDuration,
+                    )
+            x_pos = self.mapToGlobal(self.pos()).x()
+            pos = QtCore.QPoint(x_pos, event.globalPos().y())
+            QtGui.QToolTip.showText(pos, feedback)
+
+        elif self.rows.has_key(row):
             selectedPatients = self.rows[row]
             self.selected = self.getApptBounds(selectedPatients)
             self.update()
@@ -635,14 +652,6 @@ class appointmentCanvas(QtGui.QWidget):
                 QtGui.QToolTip.showText(pos, feedback)
             else:
                 QtGui.QToolTip.showText(event.globalPos(), "")
-
-        elif self.mouse_over_freeslot(event.pos()):
-            startcell, endcell = self.mouse_freeslot
-            feedback = '%d mins starting at %s with %s'% (
-                    (endcell-startcell) * self.slotDuration,
-                    self.getTime_from_Cell(startcell),
-                    self.pWidget.dentist)
-            QtGui.QToolTip.showText(event.globalPos(), feedback)
 
         else:
 
@@ -695,7 +704,10 @@ class appointmentCanvas(QtGui.QWidget):
 
         actions = []
 
-        if self.rows.has_key(row):
+        if self.mouse_over_freeslot(event.pos()):
+            self.send_slotclicked_signal()
+
+        elif self.rows.has_key(row):
             start=self.humanTime(
             int(self.dayStartTime+self.selected[0]*self.slotDuration))
 
@@ -715,9 +727,6 @@ class appointmentCanvas(QtGui.QWidget):
                     tuple(selectedPatients))
             else:
                 actions.append(_("Clear Block"))
-
-        elif self.mouse_over_freeslot(event.pos()):
-            self.send_slotclicked_signal()
 
         else:
             #-- no-one in the book...

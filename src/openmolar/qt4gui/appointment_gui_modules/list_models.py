@@ -167,9 +167,10 @@ class SimpleListModel(QtCore.QAbstractListModel):
         return QtCore.QModelIndex()
 
     def load_from_database(self, pt):
+        app = self.currentAppt
         appts = appointments.get_pts_appts(pt)
         self.set_appointments(appts, None)
-
+        self.set_current_appt(app)
 
 class BlockListModel(SimpleListModel):
     '''

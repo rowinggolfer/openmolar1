@@ -31,10 +31,15 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 
 class ApptModeDialog(BaseDialog):
-    def __init__(self, parent):
-        BaseDialog.__init__(self, parent)
+    VIEW_MODE = 0
+    SCHEDULING_MODE = 1
+    BLOCKING_MODE = 2
+    NOTES_MODE = 3
 
-        self.diary_view_controller = parent
+    mode = VIEW_MODE
+
+    def __init__(self, parent=None):
+        BaseDialog.__init__(self, parent)
 
         self.setWindowTitle(_("User choice"))
 
@@ -44,22 +49,22 @@ class ApptModeDialog(BaseDialog):
         for mode, description, value in (
             (   _("Browsing"),
                 "",
-                self.diary_view_controller.VIEW_MODE
+                self.VIEW_MODE
                 ),
 
             (   _("Scheduling"),
                 _("make appointments for a patient"),
-                self.diary_view_controller.SCHEDULING_MODE
+                self.SCHEDULING_MODE
                 ),
 
             (   _("Blocking"),
                 _("block time periods. eg. lunch times etc."),
-                self.diary_view_controller.BLOCKING_MODE
+                self.BLOCKING_MODE
                 ),
 
             (   _("Note Checking"),
                 _("check notes for today's patients"),
-                self.diary_view_controller.NOTES_MODE),
+                self.NOTES_MODE),
         ):
 
             but = QtGui.QPushButton(mode)
@@ -76,21 +81,13 @@ class ApptModeDialog(BaseDialog):
 
     def but_clicked(self):
 
-        self.diary_view_controller.mode = self.sender().appt_mode
+        self.mode = self.sender().appt_mode
         self.accept()
 
 if __name__ == "__main__":
 
     app = QtGui.QApplication([])
 
-    class DuckMW(QtGui.QWidget):
-        VIEW_MODE = 0
-        SCHEDULING_MODE = 1
-        BLOCKING_MODE = 2
-        NOTES_MODE = 3
-
-        appt_mode = VIEW_MODE
-
-    duck_mw = DuckMW()
-    dl = ApptModeDialog(duck_mw)
-    dl.exec_()
+    dl = ApptModeDialog()
+    if dl.exec_():
+        print (dl.mode)

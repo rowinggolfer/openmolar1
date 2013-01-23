@@ -99,7 +99,7 @@ course dentist, but not the registered dentist</i>''')
                 if om_gui.pt.examt == "FCA":
                     om_gui.pt.pd7 = examd
                 om_gui.pt.examd = examd
-                om_gui.pt.update_recd()
+                om_gui.pt.appt_prefs.update_recdent()
 
                 newnotes = \
                 str(om_gui.ui.notesEnter_textEdit.toPlainText().toAscii())

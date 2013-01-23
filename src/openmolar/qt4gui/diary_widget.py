@@ -278,21 +278,32 @@ class DiaryWidget(QtGui.QWidget):
             self.layout_diary()
 
     def set_appt_mode(self, mode, update_required=True):
+        logging.debug("DiaryWidget.set_appt_mode")
+        if self.appt_mode == mode:
+            return
+        self.finding_next_slot = 0
         self.appt_mode = mode
         self.schedule_controller.set_mode(mode)
         self.view_controller.set_mode(mode)
         if mode == self.NOTES_MODE:
+            self.ui.appt_notes_webView.setHtml(_("No patient Selected"))
             self.ui.diary_tabWidget.setCurrentIndex(0)
+        else:
+            self.pt = self.schedule_controller.pt
+            serialno = 0 if self.pt is None else self.pt.serialno
+            for book in self.apptBookWidgets:
+                book.selected_serialno = serialno
+                book.update()
         if update_required:
             self.layout_diary()
 
-    def apptBook_patientClickedSignal(self, args):
+    def highlight_serialno(self, serialnos):
         '''
         a custom widget (dentist diary) has sent a signal that an
         appointment has been selected.
         the arg is a list of serial numbers
         '''
-        serialno = args[0]
+        serialno = serialnos[0]
 
         if self.appt_mode == self.NOTES_MODE:
             html = formatted_notes.todays_notes(serialno)
@@ -382,12 +393,15 @@ class DiaryWidget(QtGui.QWidget):
         dl = begin_make_appt_dialog.BeginMakeApptDialog(self.pt, appt, self)
         if not dl.exec_():
             return
+        self.advise(dl.message, 1)
 
         # apply dialog settings
         self.schedule_controller.set_selection_mode(
             dl.clinician_selection_mode)
 
         self.schedule_controller.set_excluded_days(dl.excluded_days)
+        self.schedule_controller.set_ignore_emergency_spaces(
+            dl.ignore_emergency_spaces)
 
         self.finding_next_slot = 1
 
@@ -549,11 +563,17 @@ class DiaryWidget(QtGui.QWidget):
             endtime = localsettings.minutesPastMidnighttoWystime(
                 localsettings.minutesPastMidnight(selectedtime) + appt.length)
 
+
+            if self.schedule_controller.ignore_emergency_spaces:
+                appointments.cancel_emergency_slot(
+                    slot.date(), selectedDent, selectedtime, endtime)
+
             #-- make appointment
             if appointments.make_appt(
                 slot.date(), selectedDent,
                 selectedtime, endtime, appt.name[:30], appt.serialno, appt.trt1,
                 appt.trt2, appt.trt3, appt.memo, appt.flag, cst, 0, 0):
+                self.layout_diary()
 
                 if appt.serialno !=0:
                     if appointments.pt_appt_made(appt.serialno, appt.aprix,
@@ -573,9 +593,9 @@ class DiaryWidget(QtGui.QWidget):
                         self.advise(
                         _("Error putting appointment back into patient diary"))
 
-                self.layout_diary()
             else:
                 self.advise(_("Error making appointment - sorry!"), 2)
+                self.layout_diary()
         else:
             #Hopefully this should never happen!!!!
             self.advise(
@@ -903,11 +923,11 @@ class DiaryWidget(QtGui.QWidget):
             if date_ > localsettings.bookEnd:
                 self.advise(_("You are beyond scheduling range"),1)
                 self.finding_next_slot = 0
-                all_slots = []
+                available_slots = []
                 self.schedule_controller.set_available_slots([])
             else:
-                result, message, all_slots = self.addWeekViewAvailableSlots()
-                self.schedule_controller.set_available_slots(all_slots)
+                result, message, available_slots = self.addWeekViewAvailableSlots()
+                self.schedule_controller.set_available_slots(available_slots)
 
                 if not result:
                     self.advise(message)
@@ -924,7 +944,7 @@ class DiaryWidget(QtGui.QWidget):
                     self.finding_next_slot = 1
 
                 for ov in self.ui.apptoverviews:
-                    for slot in all_slots:
+                    for slot in available_slots:
                         if slot.date_time.date() == ov.date.toPyDate():
                             ov.addSlot(slot)
 
@@ -991,18 +1011,22 @@ class DiaryWidget(QtGui.QWidget):
                 self.finding_next_slot = 0
                 #self.set_date(localsettings.currentDay())
                 #return
-                all_slots = []
-                self.schedule_controller.set_available_slots(all_slots)
+                available_slots = []
+                self.schedule_controller.set_available_slots(available_slots)
             elif date_ > localsettings.bookEnd:
                 self.advise(_("You are beyond scheduling range"),1)
                 self.finding_next_slot = 0
-                all_slots = []
-                self.schedule_controller.set_available_slots(all_slots)
+                available_slots = []
+                self.schedule_controller.set_available_slots(available_slots)
             else:
                 minlength = self.schedule_controller.min_slot_length
                 logging.debug("min_slot length = %s"% minlength)
-                all_slots = self.appointmentData.slots(minlength)
-                self.schedule_controller.set_available_slots(all_slots)
+
+                available_slots = self.appointmentData.slots(
+                    minlength,
+                    self.schedule_controller.ignore_emergency_spaces
+                    )
+                self.schedule_controller.set_available_slots(available_slots)
 
                 if self.schedule_controller.search_again:
                     self.step_date(self.finding_next_slot != -1)
@@ -1065,7 +1089,7 @@ class DiaryWidget(QtGui.QWidget):
             if (self.appt_mode == self.SCHEDULING_MODE
             and self.schedule_controller.appointment_model.currentAppt):
 
-                for slot in all_slots:
+                for slot in available_slots:
                     book.addSlot(slot)
                 book.set_active_slot(self.schedule_controller.chosen_slot)
 
@@ -1227,9 +1251,6 @@ class DiaryWidget(QtGui.QWidget):
             appt.aprix = "UNKNOWN"
 
             if appointments.delete_appt_from_aslot(appt):
-                ##TODO - if we deleted from the appt book,
-                ##we should add to notes
-                print "future appointment deleted - add to notes!!"
 
                 appointments.made_appt_to_proposed(appt)
 
@@ -1353,10 +1374,14 @@ class DiaryWidget(QtGui.QWidget):
         self.layout_dayView()
         self.pt_diary_changed.emit(self.pt.serialno)
 
+    def start_scheduling_current_patient(self):
+        self.start_scheduling(self.pt)
+
     def start_scheduling(self, pt):
+        logging.debug("DiaryWidget.start_scheduling")
         self.set_appt_mode(self.SCHEDULING_MODE)
         self.load_patient(pt, update=False)
-        self.begin_makeAppt()
+        #self.begin_makeAppt()
 
     def find_appt(self, appt):
         logging.debug("DiaryWidgetfind_appt %s"% appt)
@@ -1494,6 +1519,8 @@ class DiaryWidget(QtGui.QWidget):
             self.schedule_controller_appointment_selected)
 
         self.schedule_controller.find_appt.connect(self.find_appt)
+        self.schedule_controller.start_scheduling.connect(
+            self.start_scheduling_current_patient)
 
         self.view_controller.update_needed.connect(
             self.layout_diary)
@@ -1509,7 +1536,7 @@ class DiaryWidget(QtGui.QWidget):
             self.bookmemo_Edited)
 
         book.connect(book, QtCore.SIGNAL("PatientClicked"),
-            self.apptBook_patientClickedSignal)
+            self.highlight_serialno)
 
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
             self.appointment_clicked)
@@ -1598,6 +1625,7 @@ class _testDiary(QtGui.QMainWindow):
 
         from openmolar.dbtools import patient_class
         pt = patient_class.patient(20862)
+        dw.load_patient(pt)
         dw.schedule_controller.appointment_model.load_from_database(pt)
 
         dw.start_scheduling(pt)

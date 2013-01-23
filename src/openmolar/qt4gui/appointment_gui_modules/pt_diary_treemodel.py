@@ -288,7 +288,7 @@ if __name__ == "__main__":
 
     class duckPt(object):
         def __init__(self):
-            self.serialno = 13279
+            self.serialno = 20791
             self.sname = "Neil"
             self.fname = "Wallace"
             self.cset = "P"
@@ -302,7 +302,7 @@ if __name__ == "__main__":
         print tv.model().data(index, QtCore.Qt.UserRole)
 
     def but_clicked():
-        appoint_number = int(dialog.sender().text())
+        appoint_number = int(mw.sender().text())
         result, index = model.findItem(appoint_number)
         if result:
             if index:

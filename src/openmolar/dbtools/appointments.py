@@ -8,7 +8,8 @@
 
 import datetime
 import logging
-from openmolar.connect import connect, omSQLresult, ProgrammingError
+from openmolar.connect import connect, omSQLresult, ProgrammingError, \
+    OperationalError
 from openmolar.settings import localsettings
 
 class FreeSlot(object):
@@ -282,7 +283,7 @@ class DayAppointmentData(DaySummary):
             if app[0] == dent:
                 yield app
 
-    def slots(self, minlength):
+    def slots(self, minlength, ignore_emergency=False):
         '''
         return slots for this day
         '''
@@ -292,7 +293,10 @@ class DayAppointmentData(DaySummary):
             if self.inOffice.get(dent, False):
                 appt_times_list = []
                 for app in self.dentAppointments(dent):
-                    appt_times_list.append((app[1], app[2]))
+                    if (not ignore_emergency or
+                    not(app[4] == 0 and app[3].lower() == "emergency")
+                    ):
+                        appt_times_list.append((app[1], app[2]))
                 if appt_times_list:
                     slotlist += slots(self.date, dent, self.getStart(dent),
                         appt_times_list, self.getEnd(dent))
@@ -1063,7 +1067,12 @@ def get_pts_appts(pt, printing=False):
 
     if printing:
         query += "and adate>=date(NOW())"
-    query += 'order by concat(adate, lpad(atime,4,0))'
+
+
+    #why is aprix added to the sort here? concat of NULL and NULL led to
+    #occasional irregularities
+
+    query += 'order by concat(adate, lpad(atime,4,0)), aprix'
 
     ## - table also contains flag0,flag1,flag2,flag3,flag4,
 
@@ -1233,8 +1242,12 @@ def pt_appt_made(serialno, aprix, date, time, dent):
 
 def make_appt(make_date, apptix, start, end, name, serialno, code0, code1,
 code2, note, flag0, flag1, flag2, flag3):
-    '''this makes an appointment in the aslot table'''
-    ##TODO should I check for possible clashes from multi users ?????????
+    '''
+    this makes an appointment in the aslot table
+    a trigger in the mysql database checks to see if the appointment
+    clashes with any already made (useful in multi client setups!)
+    '''
+
     db = connect()
     cursor = db.cursor()
     query = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
@@ -1244,21 +1257,36 @@ code2, note, flag0, flag1, flag2, flag3):
     values = (make_date, apptix, start, end, name, serialno, code0,
     code1, code2, note, flag0, flag1, flag2, flag3)
 
-    if localsettings.logqueries:
-        print query, values
+    result = False
+    try:
+        result = cursor.execute(query, values)
+    except OperationalError as exc:
+        logging.exception("couldn't insert into aslot %s %s %s serialno %d"% (
+            make_date,apptix,start,serialno))
 
-    if cursor.execute(query, values):
-        #-- insert call.. so this will always be true
-        #--unless we have key value errors?
-        db.commit()
-        result = True
-    else:
-        print "couldn't insert into aslot %s %s %s serialno %d"% (
-        make_date,apptix,start,serialno)
-        result = False
     cursor.close()
-    #db.close()
     return result
+
+
+def cancel_emergency_slot(a_date, apptix, a_start, a_end):
+    '''
+    cancel any emergency slots which fall within this appointment
+    '''
+    db = connect()
+    cursor = db.cursor()
+    query = '''delete from aslot
+    where adate=%s and apptix=%s and name="emergency"
+    and start>=%s and start<=%s
+    '''
+
+    values = (a_date, apptix, a_start, a_end)
+
+    rows = cursor.execute(query, values)
+    logging.warning("deleted %d emergency slots"% rows)
+
+    cursor.close()
+    return rows>0
+
 
 def daydrop_appt(adate, appt, droptime, apptix):
     '''
@@ -1292,7 +1320,7 @@ def daydrop_appt(adate, appt, droptime, apptix):
     bl_start = localsettings.pyTimetoWystime(droptime)
     bl_end = localsettings.minutesPastMidnighttoWystime(start_mpm+appt.length)
 
-    flag_0 = -128 if appt.name == "emergency" else 1
+    flag_0 = -128 if appt.name.lower() == "emergency" else 1
 
     result1 = make_appt(adate, apptix, bl_start, bl_end, appt.name,
         appt.serialno, appt.trt1, appt.trt2, appt.trt3, appt.memo, flag_0,
@@ -1501,12 +1529,10 @@ def delete_appt_from_aslot(appt):
         query = '''DELETE FROM aslot WHERE adate=%s AND serialno=%s
         AND apptix=%s AND start=%s'''
         values =  (appt.date, appt.serialno, appt.dent, appt.atime)
-        if localsettings.logqueries:
-            print query, values
-        result = cursor.execute(query, values)
-        db.commit()
-    except Exception, ex:
-        print "exception in appointments.delete_appt_from_aslot ", ex
+        if cursor.execute(query, values):
+            result = True
+    except Exception as ex:
+        logging.exception("appointments.delete_appt_from_aslot")
     cursor.close()
 
     return result
@@ -1557,7 +1583,9 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
     return slotlist
 
 if __name__ == "__main__":
-    '''test procedures......'''
+    '''
+    test procedures......
+    '''
 
     class duckPt(object):
         def __init__(self):
@@ -1566,19 +1594,23 @@ if __name__ == "__main__":
             self.fname = "Wallace"
             self.cset = "P"
 
-    #pt = duckPt()
-    #localsettings.initiate()
-    #print get_pts_appts(pt)
+    localsettings.initiate()
 
-    testdate = datetime.date(2012,11,20)
-    #dents = getWorkingDents(testdate)
-    #print dents
+    testdate = datetime.date(2013,01,25)
 
     d_a_d = DayAppointmentData()
     d_a_d.setDate(testdate)
-    d_a_d.getAppointments()
-    slots = d_a_d.slots(20)
+    d_a_d.getAppointments((4,))
     print "RESULTS"
-    for slot in slots:
-        print slot
+    print "\tWORKING DENTS:\n\t%s"% str(d_a_d.workingDents)
+    print "\tAPPOINTMENTS:"
+    for appt in d_a_d.appointments:
+        print "\t\t%s"% str(appt)
+    print "\tSLOTS:"
+    for slot in d_a_d.slots(30):
+        print "\t\t%s"% slot
+    print "\tSLOTS (ignoring emergencies):"
+    for slot in d_a_d.slots(15, ignore_emergency=True):
+        print "\t\t%s"% slot
+    cancel_emergency_slot(testdate, 4, 1130, 1210)
 

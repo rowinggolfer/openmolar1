@@ -55,12 +55,14 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     chosen_slot_changed = QtCore.pyqtSignal()
     move_on = QtCore.pyqtSignal(object)
     find_appt = QtCore.pyqtSignal(object)
+    start_scheduling = QtCore.pyqtSignal()
 
     pt = None
     available_slots = []
     _chosen_slot = None
 
     excluded_days = []
+    ignore_emergency_spaces = False
 
     use_last_slot = False
 
@@ -204,7 +206,11 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         dl.exec_()
 
     def set_mode(self, mode):
+        if self.mode == mode:
+            return
+
         if mode == self.SCHEDULE_MODE:
+            self.set_patient(self.pt)
             self.update_patient_label()
             self.enable_scheduling_buttons()
 
@@ -276,6 +282,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     @property
     def involvedClinicians(self):
         return self.appointment_model.involvedClinicians
+
+    def set_ignore_emergency_spaces(self, bool_):
+        self.ignore_emergency_spaces = bool_
 
     def sizeHint(self):
         return QtCore.QSize(150, 200)
@@ -384,8 +393,22 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             _("No patient selected"))
             return
 
+        def find_appt(appt):
+            dl.accept()
+            self.find_appt.emit(appt)
+
+        def start_scheduling():
+            dl.accept()
+            QtCore.QTimer.singleShot(100, self.start_scheduling.emit)
+
+        self.appointment_model.appointment_selected.disconnect(
+            self.appointment_selected_signal)
+
         pt_diary_widget = PtDiaryWidget()
-        pt_diary_widget.find_appt.connect(self.find_appt.emit)
+        pt_diary_widget.find_appt.connect(find_appt)
+        pt_diary_widget.start_scheduling.connect(start_scheduling)
+        pt_diary_widget.appointment_selected.connect(
+            self.appointment_model.set_current_appt)
 
         pt_diary_widget.set_patient(self.pt)
         pt_diary_widget.layout_ptDiary()
@@ -399,13 +422,15 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         layout.addWidget(pt_diary_widget)
         layout.addStretch()
         layout.addWidget(but_box)
-        pt_diary_widget.find_appt.connect(dl.accept)
+
         dl.exec_()
 
         self.appointment_model.load_from_database(self.pt)
 
         #now force diary relayout
         self.chosen_slot_changed.emit()
+        self.appointment_model.appointment_selected.connect(
+            self.appointment_selected_signal)
 
     def enable_scheduling_buttons(self):
         appt = self.appointment_model.currentAppt

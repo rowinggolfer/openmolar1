@@ -11,6 +11,8 @@ import logging
 from openmolar import connect
 from openmolar.settings import localsettings
 
+from PyQt4.QtCore import QDate
+
 #NOTE - the appt_prefs table has unused columns at this point!
 
 QUERY = '''SELECT recall_active, recdent_period, recdent,
@@ -57,6 +59,12 @@ class ApptPrefs(object):
             self.note = ""
         if self.recall_active is None:
             self.recall_active = False
+
+    def update_recdent(self):
+        if self.recdent_period is None:
+            self.recdent_period = 6
+        self.recdent = QDate.currentDate().addMonths(
+            self.recdent_period).toPyDate()
 
     def commit_changes(self):
         logging.debug("ApptPrefs committing changes")

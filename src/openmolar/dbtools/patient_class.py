@@ -59,11 +59,13 @@ nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,nullDate,
 '','', '','', '','', '','',
 '','', '','', '','', '','',
 '','', '','', '','', '','',
-0,0,0,0,nullDate,
-'',0,0,nullDate,0,
-'',0,0,0,0,'',
-'','','','','','','','',nullDate,0,
-nullDate,nullDate,nullDate,nullDate,0,nullDate,0,0)
+0,0,0,0,
+'YYYYYYY',0,0,nullDate,0,None,
+0,0,0,0,'','',
+'','','','','','','','',
+nullDate,0,
+nullDate,nullDate,nullDate,nullDate,0,nullDate,
+0,0)
 
 bpeTableAtts=('bpedate','bpe')
 bpeTableVals=(nullDate,'',())
@@ -725,7 +727,7 @@ if __name__ =="__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=11956
+        serialno=0
     if "-v" in sys.argv:
         verbose=True
     else:
@@ -739,17 +741,21 @@ if __name__ =="__main__":
     #print pt.notestuple
 
     pt=patient(serialno)
-    if False:
-      for att in pt.__dict__.keys():
+    if True:
+      for att in sorted(pt.__dict__.keys()):
         if pt.__dict__[att] == "":
-            print att, "e"
+            print att, '""'
         else:
             print att,pt.__dict__[att]
     #print pt.dent1,pt.dent0,pt.dent3,pt.dent2
     #pt.flipDec_Perm("ur8")
     #print pt.dent1,pt.dent0,pt.dent3,pt.dent2
     #print pt.dayBookHistory
-    print pt.dob
+    print "dob", pt.dob
     print pt.estimates
-    print pt.recd
+    #print "recd", pt.recd
     #print pt.chartgrid
+    print "memo", pt.memo
+
+    for i, att in enumerate(patientTableAtts):
+        print att, patientTableVals[i]

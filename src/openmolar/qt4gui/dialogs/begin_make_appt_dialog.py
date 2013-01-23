@@ -46,10 +46,9 @@ class BeginMakeApptDialog(BaseDialog):
         label = QtGui.QLabel("<b>%s</b>"%
             _("Please set criteria for making this appointment"))
         label.setAlignment(QtCore.Qt.AlignCenter)
-        label1 = QtGui.QLabel("patient = %s"% pt)
-        label2 = QtGui.QLabel("appointment = %s"% appt)
 
-
+        self.pt = pt
+        self.appt = appt
 
         #WHEN TO LOOK
         begin_search_frame = QtGui.QFrame()
@@ -107,6 +106,18 @@ class BeginMakeApptDialog(BaseDialog):
         layout.addWidget(self.any_hygienist_radiobut,2,0)
         layout.addWidget(self.any_clinician_radiobut,2,1)
 
+
+        ignore_emergencies_frame = QtGui.QFrame()
+        layout = QtGui.QVBoxLayout(ignore_emergencies_frame)
+        emergency_label = QtGui.QLabel(
+            "<b>%s</b>"% _("Emergency time management"))
+        self.ignore_emergency_checkbox = QtGui.QCheckBox(
+            _("Ignore Emergency Spaces"))
+        self.ignore_emergency_checkbox.setChecked(False)
+        layout.addWidget(emergency_label)
+        layout.addWidget(self.ignore_emergency_checkbox)
+
+
         #DAY OF WEEK
         self.dow_checkboxes = []
         dow_frame = QtGui.QFrame()
@@ -118,10 +129,9 @@ class BeginMakeApptDialog(BaseDialog):
         self.add_dow_checkboxes(layout)
 
         self.insertWidget(label)
-        self.insertWidget(label1)
-        self.insertWidget(label2)
         self.insertWidget(clinician_frame)
         self.insertWidget(begin_search_frame)
+        self.insertWidget(ignore_emergencies_frame)
         self.insertWidget(day_week_frame)
         self.insertWidget(dow_frame)
 
@@ -159,6 +169,10 @@ class BeginMakeApptDialog(BaseDialog):
         return not self.day_radio_but.isChecked()
 
     @property
+    def ignore_emergency_spaces(self):
+        return self.ignore_emergency_checkbox.isChecked()
+
+    @property
     def start_search_criteria(self):
         if self.first_available_appointment_radiobut.isChecked():
             return self.APPT_FIRST
@@ -167,6 +181,14 @@ class BeginMakeApptDialog(BaseDialog):
         if self.follow_on_appointment_radiobut.isChecked():
             return self.APPT_FOLLOW_ON
 
+    @property
+    def message(self):
+        message = "<body>%s <b>%s</b><br />%s"% (
+            _("begin making appointment for patient"),
+            self.pt.name_id,
+            self.appt.html)
+
+        return message
 
 if __name__ == "__main__":
     from openmolar.settings import localsettings

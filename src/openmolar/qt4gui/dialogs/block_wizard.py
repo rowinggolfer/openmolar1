@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or 
+# by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
@@ -20,26 +20,26 @@ class blocker(Ui_block_wizard.Ui_Dialog):
         self.clinicianDict = self.addClinicians()
         self.dayDict = self.addDays()
         self.addTimeEdit()
-        self.start_dateEdit.setDate(QtCore.QDate(2010,1,1)) #currentDate())     
-        self.end_dateEdit.setDate(localsettings.bookEnd)     
+        self.start_dateEdit.setDate(QtCore.QDate.currentDate())
+        self.end_dateEdit.setDate(localsettings.bookEnd)
         self.lineEdit.setText(_("emergency"))
-        QtCore.QObject.connect(self.buttonBox, 
+        QtCore.QObject.connect(self.buttonBox,
         QtCore.SIGNAL("clicked(QAbstractButton*)"),self.writeToDB)
-        
+
     def addClinicians(self):
         '''
         assemble some checkboxes to put into the gui
         '''
         retarg = {}
         vbox = QtGui.QHBoxLayout()
-        for clinician in (localsettings.activedents 
+        for clinician in (localsettings.activedents
         + localsettings.activehygs):
             cb = QtGui.QCheckBox(clinician)
             vbox.addWidget(cb)
             retarg[clinician] = cb
         self.clinicians_groupBox.setLayout(vbox)
         return retarg
-    
+
     def addDays(self):
         '''
         assemble some checkboxes to put into the gui
@@ -48,7 +48,7 @@ class blocker(Ui_block_wizard.Ui_Dialog):
         vbox = QtGui.QGridLayout()
         for day in range(7):
             cb = QtGui.QCheckBox(localsettings.DAYNAMES[day])
-            if day < 4: 
+            if day < 4:
                 row = 0
             else:
                 row = 1
@@ -56,7 +56,7 @@ class blocker(Ui_block_wizard.Ui_Dialog):
             retarg[day] = cb
         self.day_groupBox.setLayout(vbox)
         return retarg
-    
+
     def addTimeEdit(self):
         '''
         adds a custom widget which enforces a five minute time
@@ -64,9 +64,9 @@ class blocker(Ui_block_wizard.Ui_Dialog):
         vlayout = QtGui.QVBoxLayout(self.time_frame)
         vlayout.setMargin(0)
         self.start_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
-        vlayout.addWidget(self.start_timeEdit)   
+        vlayout.addWidget(self.start_timeEdit)
         self.start_timeEdit.setTime(QtCore.QTime(12,0,0))
-        
+
     def writeToDB(self, arg):
         '''
         user has entered a good sequence, so write it to the DB now
@@ -75,25 +75,24 @@ class blocker(Ui_block_wizard.Ui_Dialog):
         QtGui.QDialogButtonBox.RejectRole):
             self.dialog.reject()
             return
-        print "writeToDB"
         sdate = self.start_dateEdit.date()
         fdate = self.end_dateEdit.date()
-        
+
         total = sdate.daysTo(fdate)
-                
+
         start = localsettings.humanTimetoWystime(
             self.start_timeEdit.time().toString("h:mm"))
         end = localsettings.minutesPastMidnighttoWystime(
-            localsettings.minutesPastMidnight(start) + self.spinBox.value())    
-        
+            localsettings.minutesPastMidnight(start) + self.spinBox.value())
+
         self.progressBar.show()
         for clinician in self.clinicianDict.keys():
             if self.clinicianDict[clinician].isChecked():
                 self.progress_label.setText("%s %s"%(
                 _("applying changes for"), clinician))
-                
+
                 dt = sdate
-            
+
                 while dt <= fdate:
                     progress = int(100 * (total - dt.daysTo(fdate))/total)
                     if self.progressBar.value() != progress:
@@ -105,9 +104,9 @@ class blocker(Ui_block_wizard.Ui_Dialog):
                         0,"","","","",-128,0,0,0)
 
                     dt = dt.addDays(1)
-        
+
         self.dialog.accept()
-            
+
 if __name__ == "__main__":
 
     localsettings.initiate()
@@ -115,5 +114,5 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()
     dl = blocker(Dialog)
-    print Dialog.exec_()
-        
+    Dialog.exec_()
+

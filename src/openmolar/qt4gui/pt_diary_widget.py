@@ -582,8 +582,8 @@ class PtDiaryWidget(QtGui.QWidget):
     def show_prefs_dialog(self):
         dl = appt_prefs_dialog.ApptPrefsDialog(self.pt, self)
         if dl.exec_():
-            if type(pt) == BriefPatient:
-                pt.appt_prefs.commit_changes()
+            if type(self.pt) == BriefPatient:
+                self.pt.appt_prefs.commit_changes()
             else:
                 self.preferences_changed.emit()
 

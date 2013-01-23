@@ -11,3 +11,10 @@ to get to 0.3.2
 
     also, when printing notes, advise how to change verbosity.
     DONE
+
+    add an "ignore emergency slots" option
+
+
+BUGS.
+    when clicking "schedule now" on patient diary - begin_make appt gets called twice
+
