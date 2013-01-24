@@ -210,7 +210,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             return
 
         if mode == self.SCHEDULE_MODE:
-            self.set_patient(self.pt)
             self.update_patient_label()
             self.enable_scheduling_buttons()
 
@@ -222,6 +221,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.pt = pt
         if pt is not None:
             self.appointment_model.load_from_database(self.pt)
+            self.patient_selected.emit(self.pt)
         self.enable_scheduling_buttons()
 
     def set_chosen_appointment(self, appointment):
@@ -245,9 +245,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         dl = FindPatientDialog(self)
         if dl.exec_():
             self.clear()
-            self.pt = BriefPatient(dl.chosen_sno)
-            self.patient_selected.emit(self.pt)
-            self.appointment_model.load_from_database(self.pt)
+            pt = BriefPatient(dl.chosen_sno)
+            self.set_patient(pt)
         self.update_patient_label()
 
     def update_patient_label(self):
@@ -301,6 +300,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appt_listView.setCurrentIndex(index)
 
     def appointment_selected_signal(self, appt):
+        self.available_slots = []
+        self._chosen_slot = None
         self.enable_scheduling_buttons()
         if self.isVisible():
             self.appointment_selected.emit(appt)
@@ -363,11 +364,17 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         return last_d
 
     @property
+    def is_searching(self):
+        appt = self.appointment_model.currentAppt
+        return appt is not None and appt.unscheduled
+
+    @property
     def search_again(self):
         '''
         this determines whether it is worth continuing
         '''
-        return (   len(self.selectedClinicians)>0 and
+        return (   self.is_searching and
+                    len(self.selectedClinicians)>0 and
                     len(self.available_slots)==0
                     )
 
@@ -426,6 +433,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         dl.exec_()
 
         self.appointment_model.load_from_database(self.pt)
+        self.enable_scheduling_buttons()
 
         #now force diary relayout
         self.chosen_slot_changed.emit()
@@ -461,6 +469,17 @@ class TestWindow(QtGui.QMainWindow):
         scroll_area.setWidgetResizable(True)
         self.setCentralWidget(scroll_area)
 
+        self.schedule_controller.appointment_selected.connect(
+            self.sig_catcher)
+        self.schedule_controller.patient_selected.connect(self.sig_catcher)
+        self.schedule_controller.show_first_appointment.connect(
+            self.sig_catcher)
+        self.schedule_controller.chosen_slot_changed.connect(self.sig_catcher)
+        self.schedule_controller.move_on.connect(self.sig_catcher)
+        self.schedule_controller.find_appt.connect(self.sig_catcher)
+        self.schedule_controller.start_scheduling.connect(self.sig_catcher)
+
+
     def set_but_text(self):
         self.but.setText("set mode (current='%s')"% self.MODES[self.mode])
 
@@ -475,7 +494,9 @@ class TestWindow(QtGui.QMainWindow):
         self.set_but_text()
         self.schedule_controller.set_mode(self.mode)
 
-
+    def sig_catcher(self, *args):
+        QtGui.QMessageBox.information(self, "signal",
+        "signal emitted %s"% str(args))
 
 if __name__ == "__main__":
     import gettext

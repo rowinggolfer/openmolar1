@@ -102,7 +102,6 @@ class APR_Appointment(object):
         self.today = False
         self.past = False
         self.future = False
-        self.unscheduled = False
 
         self.memo = ""
         self.trt1 = ""
@@ -128,14 +127,16 @@ class APR_Appointment(object):
     def treatment(self):
         return "%s %s %s"% (self.trt1, self.trt2, self.trt3)
 
+    @property
+    def unscheduled(self):
+        return self.date is None
+
     def past_or_present(self):
         '''
         perform logic to decide if past/present future
         '''
         today = localsettings.currentDay()
-        if self.date == None:
-            self.unscheduled = True
-        else:
+        if not self.unscheduled:
             self.today = self.date == today
             self.past = self.date < today
             if self.today:
@@ -1097,7 +1098,6 @@ def get_pts_appts(pt, printing=False):
         appt.trt2 = row[4]
         appt.trt3 = row[5]
         appt.datespec = row[10]
-        appt.unscheduled = False
         appt.past_or_present()
         data.append(appt)
 
@@ -1556,6 +1556,11 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
         values.append(dent)
     mystr = mystr[0:mystr.rindex(" or")]+")"
 
+    if override_emergencies:
+        emer_sql = ' and name!="emergency" '
+    else:
+        emer_sql = ""
+
     fullquery = '''SELECT adate, apptix, start, end FROM aday
     WHERE adate>=%%s AND adate<=%%s AND (flag=1 OR flag= 2) %s
     ORDER BY adate'''% mystr
@@ -1571,13 +1576,16 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
         adate, apptix, daystart, dayfin = day
         values = (adate, apptix)
         query = '''select start, end from aslot
-        where adate = %s and apptix = %s and flag0!=72 order by start'''
+        where adate = %%s and apptix = %%s and flag0!=72 %s order by start
+        '''% emer_sql
 
         #--flag0!=72 necessary to avoid zero length apps like pain/double/fam
         cursor.execute(query, values)
 
         results = cursor.fetchall()
-        slotlist += slots(adate, apptix, daystart, results, dayfin)
+        slotlist += slots(
+            adate, apptix, daystart, results, dayfin)
+
     cursor.close()
     #db.close()
     return slotlist

@@ -664,7 +664,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.bpe_textBrowser.setText("")
             self.ui.planSummary_textBrowser.setText("")
             self.ui.synopsis_lineEdit.setText("")
-
+            self.pt_diary_widget.diary_model.clear()
             #--restore the charts to full dentition
             ##TODO - perhaps handle this with the tabwidget calls?
             for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
@@ -686,7 +686,6 @@ class OpenmolarGui(QtGui.QMainWindow):
             #--and have the comparison copy identical (to check for changes)
             self.pt = copy.deepcopy(self.pt_dbstate)
             self.loadedPatient_label.setText("No Patient Loaded")
-
             if self.editPageVisited:
                 #print "blanking edit page fields"
                 self.load_editpage()
@@ -3078,11 +3077,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.appt_prefs_changed)
 
     def start_scheduling(self):
+        self.diary_widget.schedule_controller.set_patient(self.pt)
+        self.pt_diary_widget.layout_ptDiary()
         self.signals_tabs(False)
         self.ui.main_tabWidget.setCurrentIndex(1) #appointmenttab
         self.signals_tabs()
-        self.diary_widget.load_patient(self.pt)
-        self.pt_diary_widget.layout_ptDiary()
         self.diary_widget.start_scheduling(self.pt)
 
     def appt_prefs_changed(self):

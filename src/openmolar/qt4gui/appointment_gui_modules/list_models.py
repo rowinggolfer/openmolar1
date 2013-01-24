@@ -189,7 +189,6 @@ class BlockListModel(SimpleListModel):
         (_("Out of Office"), 30)):
             block = appointments.APR_Appointment()
             block.name = val
-            block.unscheduled = True
             block.length = length
             block.flag = -128
             self.list.append(block)

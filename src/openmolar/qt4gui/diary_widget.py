@@ -380,7 +380,8 @@ class DiaryWidget(QtGui.QWidget):
         if appt is None:
             self.advise(_("Please select an appointment to schedule"), 1)
             return
-        if appt.date:
+        if not appt.unscheduled:
+            self.layout_diary()
             self.advise(_("appointment already scheduled for") + " %s"%(
             localsettings.readableDate(appt.date)), 1)
             return
@@ -444,7 +445,6 @@ class DiaryWidget(QtGui.QWidget):
             _("which is specified as the book end point"))
             return (False, message, ())
 
-
         dayno = seldate.dayOfWeek()
         weekdates = []
         for day in range(1, 8):
@@ -465,8 +465,13 @@ class DiaryWidget(QtGui.QWidget):
             return (False, message, ())
 
         #--check for suitable apts in the selected WEEK!
-        slots = appointments.future_slots(startday.toPyDate(),
-            sunday.toPyDate(), tuple(dents))
+
+        slots = appointments.future_slots(
+            startday.toPyDate(),
+            sunday.toPyDate(),
+            tuple(dents),
+            self.schedule_controller.ignore_emergency_spaces)
+
         valid_slots = appointments.getLengthySlots(slots, minlength)
 
         if valid_slots == []:
@@ -570,10 +575,9 @@ class DiaryWidget(QtGui.QWidget):
 
             #-- make appointment
             if appointments.make_appt(
-                slot.date(), selectedDent,
-                selectedtime, endtime, appt.name[:30], appt.serialno, appt.trt1,
+                slot.date(), selectedDent, selectedtime, endtime,
+                appt.name[:30], appt.serialno, appt.trt1,
                 appt.trt2, appt.trt3, appt.memo, appt.flag, cst, 0, 0):
-                self.layout_diary()
 
                 if appt.serialno !=0:
                     if appointments.pt_appt_made(appt.serialno, appt.aprix,
@@ -595,12 +599,13 @@ class DiaryWidget(QtGui.QWidget):
 
             else:
                 self.advise(_("Error making appointment - sorry!"), 2)
-                self.layout_diary()
         else:
             #Hopefully this should never happen!!!!
             self.advise(
             "error - the appointment doesn't fit there.. slotlength "+
             "is %d and we need %d"% (slotlength, appt.length), 2)
+
+        self.layout_diary()
 
     def apptOVheaderclick(self, arg):
         '''
@@ -926,7 +931,8 @@ class DiaryWidget(QtGui.QWidget):
                 available_slots = []
                 self.schedule_controller.set_available_slots([])
             else:
-                result, message, available_slots = self.addWeekViewAvailableSlots()
+                result, message, available_slots = \
+                    self.addWeekViewAvailableSlots()
                 self.schedule_controller.set_available_slots(available_slots)
 
                 if not result:
@@ -943,14 +949,16 @@ class DiaryWidget(QtGui.QWidget):
                     self.schedule_controller.use_last_slot = True
                     self.finding_next_slot = 1
 
-                for ov in self.ui.apptoverviews:
-                    for slot in available_slots:
-                        if slot.date_time.date() == ov.date.toPyDate():
-                            ov.addSlot(slot)
+                if self.schedule_controller.is_searching:
+                    for ov in self.ui.apptoverviews:
+                        for slot in available_slots:
+                            if slot.date_time.date() == ov.date.toPyDate():
+                                ov.addSlot(slot)
 
-                    ov.set_active_slot(self.schedule_controller.chosen_slot)
-                    ov.enable_clinician_slots(
-                        self.schedule_controller.selectedClinicians)
+                        ov.set_active_slot(
+                            self.schedule_controller.chosen_slot)
+                        ov.enable_clinician_slots(
+                            self.schedule_controller.selectedClinicians)
 
         for ov in self.ui.apptoverviews:
             date_ = ov.date.toPyDate()
@@ -1087,13 +1095,14 @@ class DiaryWidget(QtGui.QWidget):
             ## if scheduling.. add slots to the widgets
 
             if (self.appt_mode == self.SCHEDULING_MODE
-            and self.schedule_controller.appointment_model.currentAppt):
+            and self.schedule_controller.is_searching):
 
                 for slot in available_slots:
                     book.addSlot(slot)
                 book.set_active_slot(self.schedule_controller.chosen_slot)
 
-                book.enable_slots(book.apptix in
+                book.enable_slots(
+                    book.apptix in
                     self.schedule_controller.selectedClinicians)
 
             i += 1
@@ -1381,7 +1390,7 @@ class DiaryWidget(QtGui.QWidget):
         logging.debug("DiaryWidget.start_scheduling")
         self.set_appt_mode(self.SCHEDULING_MODE)
         self.load_patient(pt, update=False)
-        #self.begin_makeAppt()
+        self.begin_makeAppt()
 
     def find_appt(self, appt):
         logging.debug("DiaryWidgetfind_appt %s"% appt)
@@ -1423,6 +1432,7 @@ class DiaryWidget(QtGui.QWidget):
         a new appointment has been selected for scheduling
         '''
         logging.debug("DiaryWidget.schedule_controller_appointment_selected")
+        self.layout_diary()
         self.begin_makeAppt()
 
     def step_date(self, forwards = True):
@@ -1509,9 +1519,6 @@ class DiaryWidget(QtGui.QWidget):
 
         self.schedule_controller.show_first_appointment.connect(
             self.begin_makeAppt)
-
-        self.schedule_controller.chosen_slot_changed.connect(
-            self.layout_diary)
 
         self.schedule_controller.move_on.connect(self.step_date)
 
@@ -1625,15 +1632,7 @@ class _testDiary(QtGui.QMainWindow):
 
         from openmolar.dbtools import patient_class
         pt = patient_class.patient(20862)
-        dw.load_patient(pt)
-        dw.schedule_controller.appointment_model.load_from_database(pt)
-
-        dw.start_scheduling(pt)
-
-        #scroll_area = QtGui.QScrollArea()
-        #scroll_area.setWidget(dw)
-        #scroll_area.setWidgetResizable(True)
-        #self.setCentralWidget(scroll_area)
+        dw.schedule_controller.set_patient(pt)
 
         self.setCentralWidget(dw)
 
