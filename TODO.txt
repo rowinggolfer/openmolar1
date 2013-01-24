@@ -14,9 +14,12 @@ to get to 0.3.2
 
     add an "ignore emergency slots" option
     DONE for dayview
-    TODO for weekview
+    DONE for weekview
 
 
 BUGS.
     when clicking "schedule now" on patient diary - begin_make appt gets called twice
-    FIXED
+    FIXED with 793
+
+    does not cycle through active slots properly (day or week views)
+    FIXED with 794

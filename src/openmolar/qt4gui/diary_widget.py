@@ -1139,6 +1139,16 @@ class DiaryWidget(QtGui.QWidget):
                 esb.setValue(self.day_scroll_bar.value())
                 esb.show()
 
+    def chosen_slot_changed(self):
+        '''
+        user has toggled the forwards and backwards buttons
+        '''
+        if self.viewing_week:
+            for ov in self.ui.apptoverviews:
+                ov.set_active_slot(self.schedule_controller.chosen_slot)
+        elif self.viewing_day:
+            for book in self.apptBookWidgets:
+                book.set_active_slot(self.schedule_controller.chosen_slot)
 
     def layout_agenda(self):
         '''
@@ -1521,6 +1531,9 @@ class DiaryWidget(QtGui.QWidget):
             self.begin_makeAppt)
 
         self.schedule_controller.move_on.connect(self.step_date)
+
+        self.schedule_controller.chosen_slot_changed.connect(
+            self.chosen_slot_changed)
 
         self.schedule_controller.appointment_selected.connect(
             self.schedule_controller_appointment_selected)
