@@ -288,6 +288,8 @@ class DiaryWidget(QtGui.QWidget):
         if mode == self.NOTES_MODE:
             self.ui.appt_notes_webView.setHtml(_("No patient Selected"))
             self.ui.diary_tabWidget.setCurrentIndex(0)
+            self.set_date(QtCore.QDate.currentDate())
+            update_required = False
         else:
             self.pt = self.schedule_controller.pt
             serialno = 0 if self.pt is None else self.pt.serialno
@@ -960,6 +962,16 @@ class DiaryWidget(QtGui.QWidget):
                         ov.enable_clinician_slots(
                             self.schedule_controller.selectedClinicians)
 
+        elif self.appt_mode == self.BLOCKING_MODE:
+            result, message, available_slots = \
+                self.addWeekViewAvailableSlots()
+            for ov in self.ui.apptoverviews:
+                ov.enable_clinician_slots(
+                    localsettings.activedents + localsettings.activehygs)
+                for slot in available_slots:
+                    if slot.date_time.date() == ov.date.toPyDate():
+                        ov.addSlot(slot)
+
         for ov in self.ui.apptoverviews:
             date_ = ov.date.toPyDate()
             for dent in ov.dents:
@@ -1386,12 +1398,13 @@ class DiaryWidget(QtGui.QWidget):
             self.advise(
             _("unable to make appointment - has the book been altered elsewhere?")
             ,1)
-        if not result2:
-            self.advise(
-            _("unable to make make changes to the patient diary!")
-            ,1)
         self.layout_dayView()
-        self.pt_diary_changed.emit(self.pt.serialno)
+        if self.pt:
+            if not result2:
+                self.advise(
+                _("unable to make make changes to the patient diary!")
+                ,1)
+            self.pt_diary_changed.emit(self.pt.serialno)
 
     def start_scheduling_current_patient(self):
         self.start_scheduling(self.pt)

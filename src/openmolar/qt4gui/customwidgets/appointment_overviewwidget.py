@@ -35,6 +35,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
     selected_serialno = None
     BROWSING_MODE = 0
     SCHEDULING_MODE = 1
+    BLOCKING_MODE = 2
     mode = None
 
     active_slot = None
