@@ -376,7 +376,8 @@ class DiaryWidget(QtGui.QWidget):
         logging.debug("DiaryWidget.begin_makeAppt")
         self.ui.appt_notes_webView.setVisible(False)
 
-        self.schedule_controller.set_mode(self.schedule_controller.SCHEDULE_MODE)
+        self.schedule_controller.set_mode(
+            self.schedule_controller.SCHEDULE_MODE)
 
         appt = self.schedule_controller.appointment_model.currentAppt
         if appt is None:
@@ -395,8 +396,12 @@ class DiaryWidget(QtGui.QWidget):
 
         dl = begin_make_appt_dialog.BeginMakeApptDialog(self.pt, appt, self)
         if not dl.exec_():
+            self.schedule_controller.set_chosen_appointment(None)
+            self.finding_next_slot = 0
             return
-        self.advise(dl.message, 1)
+
+        ## uncomment this line for debugging.
+        #self.advise(dl.message, 1)
 
         # apply dialog settings
         self.schedule_controller.set_selection_mode(
@@ -586,6 +591,7 @@ class DiaryWidget(QtGui.QWidget):
                     slot.date(), selectedtime, selectedDent):
                         #-- proc returned True so....update the patient apr table
                         self.schedule_controller.get_data()
+                        self.schedule_controller.set_chosen_appointment(None)
                         self.pt_diary_changed.emit(self.pt.serialno)
 
                         #== and offer an appointment card
@@ -746,6 +752,11 @@ class DiaryWidget(QtGui.QWidget):
         for widg in self.apptBookWidgets[:-1]:
             widg.scroll_bar_off()
 
+    def calendar_signal(self):
+        logging.debug("DiaryWidget.calendar_signal")
+        self.finding_next_slot = 0
+        self.layout_diary()
+
     def layout_diary(self):
         '''
         slot to catch a date change from the custom mont/year widgets emitting
@@ -782,6 +793,11 @@ class DiaryWidget(QtGui.QWidget):
             self.layout_yearHeader()
         elif i==4:
             self.layout_agenda()
+
+        if (i in (0,1) and self.schedule_controller.is_searching
+        and self.schedule_controller.chosen_slot is None):
+            self.advise(_("No matching appointments found"))
+
 
     def layout_year(self):
         '''
@@ -943,7 +959,8 @@ class DiaryWidget(QtGui.QWidget):
                         ov.update()
                     return
 
-                if self.schedule_controller.search_again:
+                if (self.finding_next_slot != 0 and
+                self.schedule_controller.search_again):
                     self.step_date(self.finding_next_slot != -1)
                     return
 
@@ -1048,13 +1065,14 @@ class DiaryWidget(QtGui.QWidget):
                     )
                 self.schedule_controller.set_available_slots(available_slots)
 
-                if self.schedule_controller.search_again:
-                    self.step_date(self.finding_next_slot != -1)
-                    return
-
                 if self.finding_next_slot == -1:
                     self.schedule_controller.use_last_slot = True
                     self.finding_next_slot = 1
+
+                if (self.finding_next_slot != 0 and
+                self.schedule_controller.search_again):
+                    self.step_date(self.finding_next_slot != -1)
+                    return
 
 
         self.ui.daymemo_label.setText(self.appointmentData.memo)
@@ -1455,7 +1473,7 @@ class DiaryWidget(QtGui.QWidget):
         a new appointment has been selected for scheduling
         '''
         logging.debug("DiaryWidget.schedule_controller_appointment_selected")
-        self.layout_diary()
+        #self.layout_diary()
         self.begin_makeAppt()
 
     def step_date(self, forwards = True):
@@ -1485,7 +1503,10 @@ class DiaryWidget(QtGui.QWidget):
 
             self.finding_next_slot = -1
 
+        self.signals_calendar(False)
         self.set_date(date_)
+        self.signals_calendar()
+        self.layout_diary()
 
     def reset_and_view(self, patient):
         '''
@@ -1596,11 +1617,10 @@ class DiaryWidget(QtGui.QWidget):
 
     def signals_calendar(self, connect=True):
         if connect:
-            QtCore.QObject.connect(self.ui.dayCalendar,
-            QtCore.SIGNAL("selectionChanged()"), self.layout_diary)
+            self.ui.dayCalendar.selectionChanged.connect(self.calendar_signal)
         else:
-            QtCore.QObject.disconnect(self.ui.dayCalendar,
-            QtCore.SIGNAL("selectionChanged()"), self.layout_diary)
+            self.ui.dayCalendar.selectionChanged.disconnect(
+                self.calendar_signal)
 
     def signals_appointmentOVTab(self):
 

@@ -23,3 +23,6 @@ BUGS.
 
     does not cycle through active slots properly (day or week views)
     FIXED with 794
+
+
+    bug when re-entering scheduling mode after all appointments have been made for a patient

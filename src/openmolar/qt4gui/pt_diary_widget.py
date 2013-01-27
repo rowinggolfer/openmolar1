@@ -418,10 +418,6 @@ class PtDiaryWidget(QtGui.QWidget):
                         self.advise(_("Sucessfully removed appointment"))
                     else:
                         self.advise(_("Error removing from patient diary"),2)
-                else:
-                    #--aslot proc has returned False!
-                    #let the user know, and go no further
-                    self.advise(_("Error Removing from Appointment Book"), 2)
 
         self.layout_ptDiary()
 

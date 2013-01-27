@@ -225,7 +225,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.enable_scheduling_buttons()
 
     def set_chosen_appointment(self, appointment):
-        self.appointment_model.set_chosen_appointment(appointment)
+        self.appointment_model.set_current_appt(appointment)
 
     def get_data(self):
         if self.pt is None:
