@@ -94,7 +94,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         icon = QtGui.QIcon(":first.png")
         self.first_appt_button = QtGui.QPushButton(icon,"")
-        self.first_appt_button.setToolTip(_("Find the 1st available appointment"))
+        self.first_appt_button.setToolTip(_("Launch the Appointment Wizard"))
 
         icon = QtGui.QIcon(":back.png")
         self.prev_appt_button = QtGui.QPushButton(icon, "")
@@ -117,19 +117,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appt_controls_frame.setSizePolicy(
             QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
             QtGui.QSizePolicy.Minimum))
-
-        self.appointment_model.appointment_selected.connect(
-            self.appointment_selected_signal)
-
-        self.get_patient_button.clicked.connect(self.find_patient)
-
-        self.first_appt_button.clicked.connect(self.show_first_appt)
-        self.prev_appt_button.clicked.connect(self.show_prev_appt)
-        self.next_appt_button.clicked.connect(self.show_next_appt)
-
-        debug_button.clicked.connect(self.debug_function)
-
-        diary_button.clicked.connect(self.show_pt_diary)
 
         # now arrange the stacked widget
 
@@ -155,6 +142,25 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         #page 4 -- notes mode
         self.addWidget(QtGui.QLabel("Notes"))
+
+        #connect signals
+
+        self.appointment_model.appointment_selected.connect(
+            self.update_selected_appointment)
+
+        self.get_patient_button.clicked.connect(self.find_patient)
+
+        self.first_appt_button.clicked.connect(self.show_first_appt)
+        self.prev_appt_button.clicked.connect(self.show_prev_appt)
+        self.next_appt_button.clicked.connect(self.show_next_appt)
+
+        debug_button.clicked.connect(self.debug_function)
+
+        diary_button.clicked.connect(self.show_pt_diary)
+
+        self.appt_listView.pressed.connect(self.appointment_pressed)
+        self.appt_listView.clicked.connect(self.appointment_clicked)
+        self.appt_listView.doubleClicked.connect(self.appointment_2x_clicked)
 
 
     def debug_function(self):
@@ -299,12 +305,21 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         index = self.appointment_model.set_current_appt(appt)
         self.appt_listView.setCurrentIndex(index)
 
-    def appointment_selected_signal(self, appt):
+    def update_selected_appointment(self, appt):
         self.available_slots = []
         self._chosen_slot = None
         self.enable_scheduling_buttons()
-        if self.isVisible():
-            self.appointment_selected.emit(appt)
+
+    def appointment_clicked(self, index):
+        logging.debug("ScheduleControl.appointment_clicked")
+
+    def appointment_pressed(self, index):
+        logging.debug("ScheduleControl.appointment_pressed")
+        self.appointment_selected.emit(self.appointment_model.currentAppt)
+
+    def appointment_2x_clicked(self, index):
+        logging.debug("ScheduleControl.appointment_clicked")
+        self.show_first_appointment.emit()
 
     def clear(self):
         self.appointment_model.clear()
@@ -400,20 +415,17 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             _("No patient selected"))
             return
 
-        def find_appt(appt):
+        def _find_appt(appt):
             dl.accept()
             self.find_appt.emit(appt)
 
-        def start_scheduling():
+        def _start_scheduling():
             dl.accept()
             QtCore.QTimer.singleShot(100, self.start_scheduling.emit)
 
-        self.appointment_model.appointment_selected.disconnect(
-            self.appointment_selected_signal)
-
         pt_diary_widget = PtDiaryWidget()
-        pt_diary_widget.find_appt.connect(find_appt)
-        pt_diary_widget.start_scheduling.connect(start_scheduling)
+        pt_diary_widget.find_appt.connect(_find_appt)
+        pt_diary_widget.start_scheduling.connect(_start_scheduling)
         pt_diary_widget.appointment_selected.connect(
             self.appointment_model.set_current_appt)
 
@@ -436,9 +448,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.enable_scheduling_buttons()
 
         #now force diary relayout
-        self.chosen_slot_changed.emit()
-        self.appointment_model.appointment_selected.connect(
-            self.appointment_selected_signal)
+        self.appointment_selected.emit(self.appointment_model.currentAppt)
 
     def enable_scheduling_buttons(self):
         appt = self.appointment_model.currentAppt

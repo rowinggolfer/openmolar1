@@ -82,6 +82,8 @@ class DiaryWidget(QtGui.QWidget):
     alterAday_clipboard = [] #clipboard used by the alterAday dialog
     alterAday_clipboard_date = None
 
+    message_alert = None
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_diary_widget.Ui_Form()
@@ -186,16 +188,23 @@ class DiaryWidget(QtGui.QWidget):
         warning level 1 advisory
         warning level 2 critical (and logged)
         '''
+        def accept():
+            self.message_alert.accept()
+
         if warning_level == 0:
-            m = QtGui.QMessageBox(self)
-            m.setText(arg)
-            m.setStandardButtons(QtGui.QMessageBox.NoButton)
-            m.setWindowTitle(_("advisory"))
-            m.setModal(False)
-            QtCore.QTimer.singleShot(3*1000, m.accept)
-            m.show()
+            if self.message_alert is not None:
+                accept()
+            self.message_alert = QtGui.QMessageBox(self)
+            self.message_alert.setText(arg)
+            self.message_alert.setStandardButtons(QtGui.QMessageBox.NoButton)
+            self.message_alert.setWindowTitle(_("advisory"))
+            self.message_alert.setModal(False)
+            QtCore.QTimer.singleShot(3*1000, accept)
+            self.message_alert.show()
+
         elif warning_level == 1:
             QtGui.QMessageBox.information(self, _("Advisory"), arg)
+
         elif warning_level == 2:
             now=QtCore.QTime.currentTime()
             QtGui.QMessageBox.warning(self, _("Error"), arg)
@@ -753,6 +762,10 @@ class DiaryWidget(QtGui.QWidget):
             widg.scroll_bar_off()
 
     def calendar_signal(self):
+        '''
+        called when the user clicks on the calendar
+        (ie. NOT when called programatically by move_on)
+        '''
         logging.debug("DiaryWidget.calendar_signal")
         self.finding_next_slot = 0
         self.layout_diary()
@@ -767,14 +780,14 @@ class DiaryWidget(QtGui.QWidget):
         '''
         logging.debug("DiaryWidget.layout_diary")
 
-        d = self.selected_date()
-        self.ui.weekCalendar.setSelectedDate(d)
-        self.ui.monthView.setSelectedDate(d.toPyDate())
-        self.ui.yearView.setSelectedDate(d.toPyDate())
+        date_ = self.selected_date()
+        self.ui.weekCalendar.setSelectedDate(date_)
+        self.ui.monthView.setSelectedDate(date_.toPyDate())
+        self.ui.yearView.setSelectedDate(date_.toPyDate())
         today = QtCore.QDate.currentDate()
-        self.ui.goTodayPushButton.setEnabled(d != today)
+        self.ui.goTodayPushButton.setEnabled(date_ != today)
         self.ui.goto_current_week_PushButton.setEnabled(
-            d.weekNumber() != today.weekNumber())
+            date_.weekNumber() != today.weekNumber())
 
         self.ui.appt_notes_webView.setVisible(
             self.appt_mode == self.NOTES_MODE)
@@ -794,9 +807,29 @@ class DiaryWidget(QtGui.QWidget):
         elif i==4:
             self.layout_agenda()
 
-        if (i in (0,1) and self.schedule_controller.is_searching
-        and self.schedule_controller.chosen_slot is None):
-            self.advise(_("No matching appointments found"))
+        if self.appt_mode == self.SCHEDULING_MODE:
+            if date_ > localsettings.bookEnd:
+                self.advise(u'''<b>%s<br />%s %s</b><hr /><em>(%s)</em>
+                <ul><li>%s</li><li>%s</li><li>%s</li></ul>'''% (
+                _("This date is beyond the diary limit."),
+                _("If the appointment wizard has brought you here"),
+                _("you should search again with different criteria."),
+                _("for instance..."),
+                _("no excluded days"),
+                _("ignore emergencies"),
+                _("add or view more clinicians."))
+                ,1)
+
+            elif date_ < localsettings.currentDay():
+                self.advise(
+                _("You can't schedule an appointment in the past"),
+                1)
+                self.set_date(localsettings.currentDay())
+
+            elif (i in (0,1) and self.schedule_controller.is_searching
+            and self.schedule_controller.chosen_slot is None):
+                self.advise(_("No matching appointments found"))
+
 
 
     def layout_year(self):
@@ -944,7 +977,7 @@ class DiaryWidget(QtGui.QWidget):
                 #self.set_date(localsettings.currentDay())
                 #return
             if date_ > localsettings.bookEnd:
-                self.advise(_("You are beyond scheduling range"),1)
+                #self.advise(_("You are beyond scheduling range"),1)
                 self.finding_next_slot = 0
                 available_slots = []
                 self.schedule_controller.set_available_slots([])
@@ -1008,6 +1041,7 @@ class DiaryWidget(QtGui.QWidget):
         if self.schedule_controller.chosen_slot:
             sync_date = QtCore.QDate(
                 self.schedule_controller.chosen_slot.date())
+            logging.debug("sync date%s"% sync_date)
             if (sync_date.weekNumber() ==
             self.ui.weekCalendar.selectedDate().weekNumber()):
                 self.signals_calendar(False)
@@ -1043,7 +1077,7 @@ class DiaryWidget(QtGui.QWidget):
 
         if self.appt_mode == self.SCHEDULING_MODE:
             if date_ < localsettings.currentDay():
-                self.advise(_("You can't schedule an appointment in the past"))
+                #self.advise(_("You can't schedule an appointment in the past"))
                 #stop looking backwards
                 self.finding_next_slot = 0
                 #self.set_date(localsettings.currentDay())
@@ -1051,7 +1085,7 @@ class DiaryWidget(QtGui.QWidget):
                 available_slots = []
                 self.schedule_controller.set_available_slots(available_slots)
             elif date_ > localsettings.bookEnd:
-                self.advise(_("You are beyond scheduling range"),1)
+                #self.advise(_("You are beyond scheduling range"),1)
                 self.finding_next_slot = 0
                 available_slots = []
                 self.schedule_controller.set_available_slots(available_slots)
@@ -1067,7 +1101,7 @@ class DiaryWidget(QtGui.QWidget):
 
                 if self.finding_next_slot == -1:
                     self.schedule_controller.use_last_slot = True
-                    self.finding_next_slot = 1
+                    #self.finding_next_slot = 1
 
                 if (self.finding_next_slot != 0 and
                 self.schedule_controller.search_again):
@@ -1173,12 +1207,28 @@ class DiaryWidget(QtGui.QWidget):
         '''
         user has toggled the forwards and backwards buttons
         '''
+        chosen_slot = self.schedule_controller.chosen_slot
+
         if self.viewing_week:
             for ov in self.ui.apptoverviews:
-                ov.set_active_slot(self.schedule_controller.chosen_slot)
+                ov.set_active_slot(chosen_slot)
+            for ov in self.ui.apptoverviews:
+                ov.toggle_blink()
         elif self.viewing_day:
             for book in self.apptBookWidgets:
-                book.set_active_slot(self.schedule_controller.chosen_slot)
+                book.set_active_slot(chosen_slot)
+            for book in self.apptBookWidgets:
+                book.canvas.toggle_blink()
+
+        if chosen_slot:
+            sync_date = QtCore.QDate(chosen_slot.date())
+
+            logging.debug("chosen_slot sync date %s"% sync_date)
+            self.signals_calendar(False)
+            self.ui.weekCalendar.setSelectedDate(sync_date)
+            self.set_date(sync_date)
+            self.signals_calendar()
+
 
     def layout_agenda(self):
         '''
@@ -1198,7 +1248,7 @@ class DiaryWidget(QtGui.QWidget):
 
         if self.appt_mode == self.SCHEDULING_MODE:
             if d < localsettings.currentDay():
-                self.advise(_("You can't schedule an appointment in the past"))
+                #self.advise(_("You can't schedule an appointment in the past"))
                 #stop looking backwards
                 self.finding_next_slot = 0
                 #self.set_date(localsettings.currentDay())
@@ -1473,10 +1523,10 @@ class DiaryWidget(QtGui.QWidget):
         a new appointment has been selected for scheduling
         '''
         logging.debug("DiaryWidget.schedule_controller_appointment_selected")
-        #self.layout_diary()
-        self.begin_makeAppt()
+        self.layout_diary()
+        #self.begin_makeAppt()
 
-    def step_date(self, forwards = True):
+    def step_date(self, forwards=True):
         date_ = self.selected_date()
         logging.debug("step date called current=%s, forwards=%s"% (
             date_, forwards))

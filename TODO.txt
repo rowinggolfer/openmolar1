@@ -26,3 +26,8 @@ BUGS.
 
 
     bug when re-entering scheduling mode after all appointments have been made for a patient
+    FIXED
+
+    debug button still present
+
+    join appointment (exam/hyg) should be added to the "wizard"
