@@ -8,9 +8,10 @@
 
 import datetime
 import logging
-from openmolar.connect import connect, omSQLresult, ProgrammingError, \
-    OperationalError
+
 from openmolar.settings import localsettings
+from openmolar.connect import (connect,
+    omSQLresult, ProgrammingError, OperationalError)
 
 class FreeSlot(object):
     '''
@@ -65,6 +66,98 @@ class FreeSlot(object):
         return "%s , dent %s, %s mins SLOT"% (self.date_time, self.dent,
             self.length)
 
+
+    def wait_time(self, appt1_length, appt2_length, slot):
+        '''
+        how long would a patient be kept waiting?
+        this is a complex bit of logic!!!!
+        '''
+
+        #step one get appointment bounds
+
+        appt1_earliest_start = self.date_time
+        appt1_latest_start = \
+            self.finish_time - datetime.timedelta(minutes=appt1_length)
+        appt1_earliest_finish = \
+            self.date_time + datetime.timedelta(minutes=appt1_length)
+        appt1_latest_finish = self.finish_time
+
+        appt2_earliest_start = slot.date_time
+        appt2_latest_start = \
+            slot.finish_time - datetime.timedelta(minutes=appt2_length)
+        appt2_earliest_finish = \
+            slot.date_time + datetime.timedelta(minutes=appt2_length)
+        appt2_latest_finish = slot.finish_time
+
+        #step two - calcuate wait times.
+        # appt1 first
+        max_wait = appt2_latest_start - appt1_earliest_finish
+        min_wait = appt2_earliest_start - appt1_latest_finish
+
+        waiting_time = None
+        if min_wait.days == 0:
+            waiting_time = min_wait.seconds//60
+        else: # minimum wait is negative!!
+            if max_wait.days == 0:
+                waiting_time = 0
+
+        #if waiting_time == 0:
+        #    return waiting_time
+
+        # appt2 first
+        max_wait = appt1_latest_start - appt2_earliest_finish
+        min_wait = appt1_earliest_start - appt2_latest_finish
+
+        other_waiting_time = None
+        if min_wait.days == 0:
+            other_waiting_time = min_wait.seconds//60
+        else: # minimum wait is negative!!
+            if max_wait.days == 0:
+                other_waiting_time = 0
+
+        #print "EARLIEST APPT 1    ", appt1_earliest_start, appt1_earliest_finish
+        #print "LATEST APPT 1      ", appt1_latest_start, appt1_latest_finish
+        #print "EARLIEST APPT 2    ", appt2_earliest_start, appt2_earliest_finish
+        #print "LATEST APPT 2      ", appt2_latest_start, appt2_latest_finish
+        #print "MIN WAIT           ", min_wait
+        #print "MAX WAIT           ", max_wait
+        #print "WAITING TIME IF APPT1 first = %s MINUTES"% waiting_time
+        #print "WAITING TIME IF APPT2 first = %s MINUTES"% other_waiting_time
+
+        if waiting_time == other_waiting_time:
+        #    print "waiting_time == other_waiting_time"
+            return waiting_time
+        elif waiting_time is None:
+        #    print "waiting_time is None"
+            return other_waiting_time
+        elif other_waiting_time is None:
+        #    print "other_waiting_time is None"
+            return waiting_time
+        elif waiting_time < other_waiting_time:
+        #    print "waiting_time < other_waiting_time"
+            return waiting_time
+        else:
+        #    print "else"
+            return other_waiting_time
+
+
+    def best_joint(self, appt1_length, appt2_length, slots):
+        '''
+        the idea here is a list of slots is checked and the best one returned
+        along with the amount of time the patient would be waiting
+        returns a tuple (best_slot, wait)
+        '''
+        chosen_slot = None
+        chosen_wait = 60*24 # number of minutes in a day!
+        for slot in slots:
+            wait = self.wait_time(appt1_length, appt2_length, slot)
+
+            if wait is not None and wait < chosen_wait:
+                chosen_wait = wait
+                chosen_slot = slot
+
+        return (chosen_slot, chosen_wait)
+
 class AgendaAppointment(FreeSlot):
     text = ""
     is_slot = False
@@ -85,6 +178,27 @@ class WeekViewAppointment(object):
     isEmergency = False
     cset = ""
     trt = ""
+
+    @property
+    def end_mpm(self):
+        return self.mpm + self.length
+
+    def __lt__(self, other):
+        return self.mpm < other.mpm
+    def __le__(self, other):
+        return self.mpm <= other.mpm
+    def __eq__(self, other):
+        return self.mpm == other.mpm
+    def __ne__(self, other):
+        return self.mpm != other.mpm
+    def __gt__(self, other):
+        return self.mpm > other.mpm
+    def __ge__(self, other):
+        return self.mpm >= other.mpm
+
+    def __repr__(self):
+        return "WeekViewAppointment. %d mins past midnight for %d mins"% (
+        self.mpm, self.length)
 
 class APR_Appointment(object):
     '''
@@ -284,13 +398,15 @@ class DayAppointmentData(DaySummary):
             if app[0] == dent:
                 yield app
 
-    def slots(self, minlength, ignore_emergency=False):
+    def slots(self, minlength, ignore_emergency=False, dents=None):
         '''
         return slots for this day
         '''
         slotlist = []
-        dents = self.workingDents
-        for dent in self.workingDents:
+        if dents == None:
+            dents = self.workingDents
+
+        for dent in dents:
             if self.inOffice.get(dent, False):
                 appt_times_list = []
                 for app in self.dentAppointments(dent):
@@ -332,6 +448,15 @@ class DentistDay():
         time1 = localsettings.minutesPastMidnight(self.start)
         time2 = localsettings.minutesPastMidnight(self.end)
         return time2-time1
+
+    @property
+    def start_mpm(self):
+        return localsettings.minutesPastMidnight(self.start)
+
+    @property
+    def end_mpm(self):
+        return localsettings.minutesPastMidnight(self.end)
+
 
 class PrintableAppointment():
     '''
@@ -1114,7 +1239,7 @@ def has_unscheduled(serialno):
     rows = cursor.fetchall()
     cursor.close()
     result = rows[0][0] != 0
-    print "has_unscheduled is returning ", result
+    logging.debug ("appointments.has_unscheduled is returning %s"% result)
     return result
 
 
@@ -1286,50 +1411,6 @@ def cancel_emergency_slot(a_date, apptix, a_start, a_end):
 
     cursor.close()
     return rows>0
-
-
-def daydrop_appt(adate, appt, droptime, apptix):
-    '''
-    this is the procedure called when an appointment is dropped onto the
-    day widget
-    '''
-    slots = future_slots(adate, adate, (apptix,), appt.length)
-
-    date_time = datetime.datetime.combine(adate, droptime)
-
-    this_slot = FreeSlot(date_time, apptix, appt.length)
-
-    #-- check block still available!!
-    found = False
-    for slot in slots:
-        if slot.mpm <= this_slot.mpm and slot.mpm_end >= this_slot.mpm_end:
-            found = True
-            break
-
-    if not found:
-        print "slot doesn't fit"
-        return (False, True)
-
-    try:
-        cset = ord(appt.cset[0])
-    except:
-        cset = 0
-
-    start_mpm = localsettings.pyTimeToMinutesPastMidnight(droptime)
-
-    bl_start = localsettings.pyTimetoWystime(droptime)
-    bl_end = localsettings.minutesPastMidnighttoWystime(start_mpm+appt.length)
-
-    flag_0 = -128 if appt.name.lower() == "emergency" else 1
-
-    result1 = make_appt(adate, apptix, bl_start, bl_end, appt.name,
-        appt.serialno, appt.trt1, appt.trt2, appt.trt3, appt.memo, flag_0,
-        cset , 0, 0)
-
-    result2 = False
-    if result1:
-        result2 = pt_appt_made(appt.serialno, appt.aprix, adate, bl_start, apptix)
-    return (result1, result2)
 
 def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     '''

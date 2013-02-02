@@ -128,7 +128,13 @@ class BeginMakeApptDialog(BaseDialog):
         layout.addWidget(dow_label,0,0,1,7)
         self.add_dow_checkboxes(layout)
 
+        #JOINT APPOINTMENTS
+        self.joint_appt_checkbox= QtGui.QCheckBox(
+            _("Look for Joint Appointments with the hygienist"))
+
+
         self.insertWidget(label)
+        self.insertWidget(self.joint_appt_checkbox)
         self.insertWidget(clinician_frame)
         self.insertWidget(begin_search_frame)
         self.insertWidget(ignore_emergencies_frame)
@@ -180,6 +186,10 @@ class BeginMakeApptDialog(BaseDialog):
             return self.APPT_WEEKS_TIME
         if self.follow_on_appointment_radiobut.isChecked():
             return self.APPT_FOLLOW_ON
+
+    @property
+    def joint_appointment_search(self):
+        return self.joint_appt_checkbox.isChecked()
 
     @property
     def message(self):

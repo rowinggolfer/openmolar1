@@ -8,10 +8,13 @@
 
 from __future__ import division
 
+import datetime
+import logging
 import pickle
 
 from PyQt4 import QtGui,QtCore
 from openmolar.settings import localsettings
+from openmolar.dbtools import appointments
 from openmolar.qt4gui import colours
 
 LINECOLOR = QtGui.QColor("#dddddd")
@@ -82,13 +85,12 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         self.setMouseTracking(True)
         self.clear()
         self.init_dicts()
-        self.dragging = False
         self.setAcceptDrops(True)
         self.drag_appt = None
         self.dropPos = None
-        self.dropSlot = None
-        self.dropOffset = 0
         self.enabled_clinicians = ()
+        self._mouse_drag_rects  = None
+        self.mouse_drag_rect  = None
 
         self.blink_on = True #for flashing effect
         self.blink_timer = QtCore.QTimer()
@@ -101,16 +103,18 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         self.eTimes = {}
         self.clearSlots()
         self.lunches = {}
+        self._mouse_drag_rects = None
 
     def clearSlots(self):
-        self.active_slot = None
+        self.active_slots = ()
         self.freeslots = {}
         for dent in self.dents:
             self.freeslots[dent.ix] = []
         self.enabled_clinicians = ()
+        self._mouse_drag_rects = None
 
-    def set_active_slot(self, slot):
-        self.active_slot = slot
+    def set_active_slots(self, slots):
+        self.active_slots = slots
 
     def enable_clinician_slots(self, clinicians):
         self.enabled_clinicians = clinicians
@@ -133,7 +137,14 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         self.memoDict[dent.ix] = dent.memo
 
     def addSlot(self, slot):
-        self.freeslots[slot.dent].append(slot)
+        try:
+            self.freeslots[slot.dent].append(slot)
+        except KeyError:
+            logging.warning(
+                "unable to show a slot for clinician %s"% slot.dent)
+            pass
+
+
 
     def setFlags(self, dent):
         self.flagDict[dent.ix] = dent.flag
@@ -328,92 +339,129 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         self.update()
 
     def dragEnterEvent(self, event):
+        self._mouse_drag_rects is None
+        self.mouse_drag_rect = None
+        self.drag_appt = None
         if event.mimeData().hasFormat("application/x-appointment"):
             data = event.mimeData()
             bstream = data.retrieveData("application/x-appointment",
             QtCore.QVariant.ByteArray)
-            self.drag_appt = pickle.loads(bstream.toByteArray())
-
-            event.accept()
+            appt = pickle.loads(bstream.toByteArray())
+            if self.date >= localsettings.currentDay():
+                self.drag_appt = appt
+                event.accept()
+            else:
+                event.ignore()
         else:
             event.ignore()
 
-    def dragMoveEvent(self, event):
-        if event.mimeData().hasFormat("application/x-appointment"):
-            col = 0
+    @property
+    def is_dragging(self):
+        return self.mouse_drag_rect is not None
+
+    @property
+    def mouse_drag_rects(self):
+        if self._mouse_drag_rects is None:
+            self._mouse_drag_rects = []
+
             columnCount = len(self.dents)
             if columnCount == 0:
-                event.ignore()
-                return #nothing to do... and division by zero errors!
+                return self._mouse_drag_rects
+
             columnWidth = (self.width() - self.timeOffset) / columnCount
 
-            allowDrop = False
-            for dent in self.dents:
-                if allowDrop:
+            for col, dent in enumerate(self.dents):
+                left_x = self.timeOffset + (col) * columnWidth
+
+                busy_times = [(0, dent.start_mpm)]
+                for block in sorted(
+                    self.eTimes[dent.ix] +
+                    self.lunches[dent.ix] +
+                    self.appts[dent.ix]
+                ):
+                    busy_times.append((block.mpm, block.end_mpm))
+                busy_times.append((dent.end_mpm, 1440))
+
+                for pos, (start, finish) in enumerate((busy_times)[:-1]):
+                    next_start = busy_times[pos+1][0]
+                    if next_start - finish >= self.drag_appt.length:
+
+                        startcell = (finish - self.startTime) / self.slotLength
+                        top_y = startcell * self.slotHeight + self.headingHeight
+
+                        height = ((next_start-finish)
+                        /self.slotLength) * self.slotHeight
+
+                        rect = QtCore.QRectF(
+                            left_x,
+                            top_y,
+                            columnWidth,
+                            height)
+
+
+                        self._mouse_drag_rects.append((dent.ix, rect))
+
+        return self._mouse_drag_rects
+
+    def dragMoveEvent(self, event):
+        self.mouse_drag_rect = None
+        if (self.date >= localsettings.currentDay() and
+        event.mimeData().hasFormat("application/x-appointment")):
+
+            self.dropPos = QtCore.QPointF(event.pos())
+            for dent_ix, rect_f in self.mouse_drag_rects:
+                if rect_f.contains(self.dropPos):
+                    self.mouse_drag_rect = (dent_ix, rect_f)
+
+
+                    # now handle the situation where the drag lower border
+                    # is outwith the slot
+                    height = (self.drag_appt.length/self.slotLength) \
+                        *self.slotHeight
+                    if self.dropPos.y() + height >= rect_f.bottom():
+                        self.dropPos = QtCore.QPointF(
+                            self.dropPos.x(), rect_f.bottom() - height)
+
                     break
 
-                leftx = self.timeOffset + (col) * columnWidth
-                rightx = self.timeOffset + (col + 1) * columnWidth
-
-                for slot in self.freeslots[dent.ix]:
-                    slotstart = localsettings.pyTimeToMinutesPastMidnight(
-                        slot.date_time.time())
-                    startcell = (
-                        slotstart - self.startTime)/self.slotLength
-
-                    top_line = startcell * self.slotHeight + self.headingHeight
-                    rect = QtCore.QRect(leftx, top_line, columnWidth,
-                    (slot.length / self.slotLength) * self.slotHeight)
-
-                    if rect.contains(event.pos()):
-                        allowDrop = True
-                        self.dropSlot = slot
-
-                        pixel_offset = event.pos().y() - top_line
-                        minutes = (pixel_offset/self.slotHeight * self.slotLength)
-                        offset = minutes - minutes%5
-                        if offset > 0:
-                            self.dropOffset = offset
-                        else:
-                            self.dropOffset = 0
-                        if (self.dropOffset + self.drag_appt.length >
-                        slot.length):
-                            self.dropOffset = slot.length - self.drag_appt.length
-
-                        dropcell = (self.dropOffset+slotstart -
-                            self.startTime)/self.slotLength
-                        dropY =  dropcell * self.slotHeight + self.headingHeight
-                        self.dropPos = QtCore.QPoint(event.pos().x(), dropY)
-                        break
-                col+=1
-
-            if allowDrop:
-                self.dragging = True
-                self.update()
+            if self.is_dragging:
                 event.accept()
             else:
-                self.dragging = False
-                self.dropSlot = None
-                self.dropOffset = 0
-                self.update()
                 event.ignore()
+            self.update()
         else:
             event.ignore()
 
     def dragLeaveEvent(self, event):
-        self.dragging = False
-        self.dropSlot = None
-        self.dropOffset = 0
+        self.mouse_drag_rect = None
         self.update()
         event.accept()
 
     def dropEvent(self, event):
-        self.dragging = False
-        self.emit(QtCore.SIGNAL("ApptDropped"), self.drag_appt, self.dropSlot,
-            self.dropOffset)
+        if not self.is_dragging:
+            event.ignore()
+
+        #print "TODO - dropEvent"
+        #print "%s was dropped at %s"% (self.drag_appt, self.dropPos)
+
+        date_time = datetime.datetime.combine(self.date.toPyDate(),
+            localsettings.minutesPastMidnightToPyTime(self.drop_time()))
+        dent =  self.mouse_drag_rect[0]
+        slot = appointments.FreeSlot(date_time, dent, self.drag_appt.length)
+        self.emit(QtCore.SIGNAL("ApptDropped"), self.drag_appt, slot)
+
+        self.mouse_drag_rect = None
         self.drag_appt = None
-        self.dropOffset = 0
         event.accept()
+
+    def drop_time(self):
+        '''
+        returns minutes past midnight of the drop.
+        '''
+        current_row = (self.dropPos.y()-self.headingHeight)/self.slotHeight
+        mpm = self.startTime + (current_row * self.slotLength)
+        mpm = int(5 * round(float(mpm)/5))
+        return mpm
 
     def paintEvent(self, event=None):
         '''
@@ -604,57 +652,58 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                     columnWidth,
                     (slot.length/self.slotLength)*self.slotHeight)
 
-                    if self.dragging and slot is self.dropSlot:
-                        painter.save()
-
-                        painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
-                        painter.drawRect(rect)
-                        painter.setPen(RED_PEN)
-
-                        height = (self.drag_appt.length/self.slotLength) \
-                            *self.slotHeight
-
-                        rect = QtCore.QRectF(leftx,
-                        self.dropPos.y(), columnWidth-1, height)
-                        painter.drawRect(rect)
-
-                        self.dragLine = QtCore.QLine(0, self.dropPos.y(),
-                            self.width(), self.dropPos.y())
-
-                        trect = QtCore.QRectF(0,
-                        self.dropPos.y(), self.timeOffset, height)
-
-                        droptime = localsettings.humanTime(
-                        (slot.mpm + self.dropOffset))
-
-                        painter.drawRect(trect)
-                        painter.drawText(trect, QtCore.Qt.AlignHCenter,
-                            droptime)
-
-                        painter.restore()
-
-                    else:
-                        painter.save()
-                        if slot == self.active_slot:
-                            if self.blink_on:
-                                painter.setBrush(
-                                    APPTCOLORS["ACTIVE_SLOT_BOLD"])
-                            else:
-                                painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
-                            painter.setPen(RED_PEN)
+                    painter.save()
+                    if slot in self.active_slots:
+                        if self.blink_on:
+                            painter.setBrush(
+                                APPTCOLORS["ACTIVE_SLOT_BOLD"])
                         else:
-                            if slot.dent in self.enabled_clinicians:
-                                painter.setOpacity(1)
-                            else:
-                                painter.setOpacity(0.4)
-                            painter.setBrush(APPTCOLORS["SLOT"])
-                        painter.drawRect(rect)
-
+                            painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
                         painter.setPen(RED_PEN)
-                        painter.drawText(rect,QtCore.Qt.AlignCenter,
-                            "%s"% slot.length)
-                        painter.restore()
+                    else:
+                        if slot.dent in self.enabled_clinicians:
+                            painter.setOpacity(1)
+                        else:
+                            painter.setOpacity(0.4)
+                        painter.setBrush(APPTCOLORS["SLOT"])
+                    painter.drawRect(rect)
+
+                    painter.setPen(RED_PEN)
+                    painter.drawText(rect,QtCore.Qt.AlignCenter,
+                        "%s"% slot.length)
+                    painter.restore()
                 painter.restore()
+
+                ## drag drop
+
+                if (self.is_dragging and
+                self.mouse_drag_rect[0] == dent.ix):
+                    painter.save()
+
+                    rect = self.mouse_drag_rect[1]
+
+                    painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
+                    painter.drawRect(rect)
+                    painter.setPen(RED_PEN)
+
+                    height = (self.drag_appt.length/self.slotLength) \
+                        *self.slotHeight
+
+                    rect = QtCore.QRectF(leftx,
+                    self.dropPos.y(), columnWidth-1, height)
+                    painter.drawRect(rect)
+
+                    self.dragLine = QtCore.QLine(0, self.dropPos.y(),
+                        self.width(), self.dropPos.y())
+
+                    trect = QtCore.QRectF(0,
+                    self.dropPos.y(), self.timeOffset, height)
+
+                    painter.drawRect(trect)
+                    painter.drawText(trect, QtCore.Qt.AlignHCenter,
+                        localsettings.humanTime(self.drop_time()))
+
+                    painter.restore()
 
             if col>0:
                 painter.save()

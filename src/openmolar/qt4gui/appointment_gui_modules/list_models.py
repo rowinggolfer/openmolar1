@@ -166,6 +166,15 @@ class SimpleListModel(QtCore.QAbstractListModel):
                 pass
         return QtCore.QModelIndex()
 
+    @property
+    def min_unscheduled_hyg_slot_length(self):
+        msl = None
+        for appt in self.unscheduledList:
+            if appt.dent in localsettings.activehyg_ixs:
+                if msl is None or appt.length < msl:
+                    msl = appt.length
+        return msl
+
     def load_from_database(self, pt):
         app = self.currentAppt
         appts = appointments.get_pts_appts(pt)

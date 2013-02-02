@@ -14,6 +14,7 @@ the canvas is a subclass of this
 from __future__ import division
 
 import datetime
+import functools  #for partial
 import logging
 import pickle
 
@@ -274,16 +275,25 @@ class AppointmentWidget(QtGui.QFrame):
         self.canvas.freeslots.append((startcell, endcell))
 
     def set_active_slot(self, slot):
-        if slot is None or slot.dent != self.apptix:
-            self.canvas.active_slot = None
-            return
+        '''
+        returns true if the slot is accepted
+        (ie.. this book is for that dentist)
+        '''
+        if slot is not None and slot.dent == self.apptix:
+            startcell = self.canvas.getCell_from_mpm(slot.mpm)
+            endcell = self.canvas.getCell_from_mpm(slot.mpm_end)
+            self.canvas.active_slot = (startcell, endcell)
 
-        startcell = self.canvas.getCell_from_mpm(slot.mpm)
-        endcell = self.canvas.getCell_from_mpm(slot.mpm_end)
-        self.canvas.active_slot = (startcell, endcell)
+            self.canvas.ensure_slot_visible = True
+            return True
+
+        else:
+            self.canvas.active_slot = None
+            return False
 
     def enable_slots(self, bool_):
-        self.canvas.enabled_slots = bool_
+        self.canvas.enabled_slots = (
+            bool_ or self.canvas.active_slot != None)
 
     def set_scroll_bar(self, scroll_bar):
         self.scrollArea.setVerticalScrollBar(scroll_bar)
@@ -299,6 +309,7 @@ class appointmentCanvas(QtGui.QWidget):
     blink_on = True # a boolean which toggles value
 
     enabled_slots = True
+    ensure_slot_visible = True
 
     def __init__(self, om_gui, pWidget):
         QtGui.QWidget.__init__(self, pWidget)
@@ -937,8 +948,8 @@ class appointmentCanvas(QtGui.QWidget):
                     painter.setBrush(APPTCOLORS["ACTIVE_SLOT_BOLD"])
                 else:
                     painter.setBrush(APPTCOLORS["ACTIVE_SLOT"])
-                self.pWidget.scrollArea.ensureVisible(
-                    0, startcell*self.slotHeight)
+                if self.ensure_slot_visible:
+                    self.ensure_visible(0, startcell*self.slotHeight)
             else:
                 brush = APPTCOLORS["SLOT"]
                 if self.enabled_slots:
@@ -993,6 +1004,10 @@ class appointmentCanvas(QtGui.QWidget):
             return
         self.blink_on = not self.blink_on
         self.update()
+
+    def ensure_visible(self, x, y):
+        QtCore.QTimer.singleShot(5,
+            functools.partial(self.pWidget.scrollArea.ensureVisible,x, y))
 
     def send_slotclicked_signal(self):
         startcell, endcell = self.mouse_freeslot
@@ -1057,6 +1072,13 @@ if __name__ == "__main__":
     slot_date = datetime.datetime.combine(dt.date(), datetime.time(11,30))
     slot = appointments.FreeSlot(slot_date, 5, 40)
     form.addSlot(slot)
+
+    slot = appointments.FreeSlot(
+        slot_date + datetime.timedelta(minutes=60), 5, 30)
+    form.addSlot(slot)
+
+    form.set_active_slot(slot)
+
 
     form.connect(form, QtCore.SIGNAL("AppointmentClicked"), clicktest)
     form.connect(form, QtCore.SIGNAL("ClearEmergencySlot"), clicktest)

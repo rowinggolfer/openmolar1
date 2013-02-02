@@ -59,10 +59,13 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     pt = None
     available_slots = []
+    hygienist_slots = []
+
     _chosen_slot = None
 
     excluded_days = []
     ignore_emergency_spaces = False
+    finding_joint_appointments = False
 
     use_last_slot = False
 
@@ -104,8 +107,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.next_appt_button = QtGui.QPushButton(icon, "")
         self.next_appt_button.setToolTip(_("Next available appointment"))
 
-        debug_button = QtGui.QPushButton("debug")
-
         self.appt_controls_frame = QtGui.QWidget()
         layout = QtGui.QGridLayout(self.appt_controls_frame)
         layout.setMargin(1)
@@ -113,7 +114,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         layout.addWidget(self.first_appt_button,0,1)
         layout.addWidget(self.prev_appt_button,0,2)
         layout.addWidget(self.next_appt_button,0,3)
-        layout.addWidget(debug_button,1,0,1,4)
         self.appt_controls_frame.setSizePolicy(
             QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
             QtGui.QSizePolicy.Minimum))
@@ -154,62 +154,11 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.prev_appt_button.clicked.connect(self.show_prev_appt)
         self.next_appt_button.clicked.connect(self.show_next_appt)
 
-        debug_button.clicked.connect(self.debug_function)
-
         diary_button.clicked.connect(self.show_pt_diary)
 
         self.appt_listView.pressed.connect(self.appointment_pressed)
         self.appt_listView.clicked.connect(self.appointment_clicked)
         self.appt_listView.doubleClicked.connect(self.appointment_2x_clicked)
-
-
-    def debug_function(self):
-        '''
-        temporary code.
-        '''
-        dl = QtGui.QDialog(self)
-        dl.setWindowTitle("debug function")
-
-        tab_widget = QtGui.QTabWidget()
-
-        #for displaying slots.
-        label = QtGui.QLabel()
-
-        close_but = QtGui.QPushButton("close")
-        close_but.clicked.connect(dl.reject)
-
-        if self.available_slots == []:
-            label.setText("no slots available")
-        else:
-            l_text = "<ul>"
-            for slot in self.available_slots:
-                if slot == self._chosen_slot:
-                    l_text += "<li><b>%s</b></li>"% slot
-                else:
-                    l_text += "<li>%s</li>"% slot
-            l_text += "</ul>"
-
-            label.setText(l_text)
-
-        tab_widget.addTab(label, "slots")
-
-        #who's selected
-        label = QtGui.QLabel("Selected %s <hr />Involved %s"% (
-            self.selectedClinicians, self.involvedClinicians))
-
-        tab_widget.addTab(label, "clinicians")
-
-        #min_slot_length
-        label = QtGui.QLabel(
-            "Min slot length required = %s"% (self.min_slot_length))
-
-        tab_widget.addTab(label, "min slot length")
-
-        layout = QtGui.QVBoxLayout(dl)
-        layout.addWidget(tab_widget)
-        layout.addStretch(100)
-        layout.addWidget(close_but)
-        dl.exec_()
 
     def set_mode(self, mode):
         if self.mode == mode:
@@ -263,6 +212,13 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         msl = 0
         if self.mode == self.SCHEDULE_MODE:
             msl = self.appointment_model.min_slot_length
+        return msl
+
+    @property
+    def min_hyg_slot_length(self):
+        msl = None
+        if self.mode == self.SCHEDULE_MODE:
+            msl = self.appointment_model.min_unscheduled_hyg_slot_length
         return msl
 
     def set_selection_mode(self, mode):
@@ -323,8 +279,13 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     def clear(self):
         self.appointment_model.clear()
+        self.reset()
+
+    def reset(self):
         self.available_slots = []
+        self.hygienist_slots = []
         self._chosen_slot = None
+        self.finding_joint_appointments = False
 
     def show_first_appt(self):
         '''
@@ -361,10 +322,57 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     def set_available_slots(self, slots):
         self.available_slots = []
+        self.hygienist_slots = []
+
         for slot in sorted(slots):
             if (slot.dent in self.selectedClinicians
             and slot.day_no not in self.excluded_days) :
                 self.available_slots.append(slot)
+
+    def set_joint_slots(self, dent_slots, hyg_slots, max_wait=10):
+
+        logging.debug(
+            "ScheduleControl.set join slots %s %s"% (dent_slots, hyg_slots))
+        self.available_slots = []
+        self.hygienist_slots = []
+
+        all_dent_slots = []
+        all_hyg_slots = []
+        for slot in sorted(dent_slots):
+            if (slot.dent in self.selectedClinicians
+            and slot.day_no not in self.excluded_days) :
+                all_dent_slots.append(slot)
+
+        for slot in sorted(hyg_slots):
+            if slot.day_no not in self.excluded_days :
+                all_hyg_slots.append(slot)
+
+        appt = self.appointment_model.currentAppt
+
+        for slot in all_dent_slots:
+            hyg_slot, wait = slot.best_joint(
+                appt.length,
+                self.min_hyg_slot_length,
+                all_hyg_slots)
+
+            if wait <= max_wait:
+                self.available_slots.append(slot)
+                self.hygienist_slots.append(hyg_slot)
+
+    @property
+    def chosen_hyg_slot(self):
+        if self.hygienist_slots == [] or self.chosen_slot is None:
+            return None
+
+        appt = self.appointment_model.currentAppt
+
+        best_slot, wait = self.chosen_slot.best_joint(
+            appt.length,
+            self.min_hyg_slot_length,
+            self.hygienist_slots)
+
+        logging.info("WAIT TIME FOR HYGIENIST = %s minutes"% wait)
+        return best_slot
 
     @property
     def last_appt_date(self):

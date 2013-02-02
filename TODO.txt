@@ -30,4 +30,14 @@ BUGS.
 
     debug button still present
 
-    join appointment (exam/hyg) should be added to the "wizard"
+    joint appointment (exam/hyg) should be added to the "wizard"
+    DONE
+
+    drop appointment doesnt refresh schedule widget
+    DONE!
+
+    drop hygienist appointment on weekview is clinician specific.
+    FIXED	
+
+    toggling between weekview and dayview when making appointments remains an issue.
+    UNABLE TO REPRODUCE NOW - ASSUMED FIXED
