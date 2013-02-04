@@ -116,8 +116,13 @@ def details(pt, Saved=True):
             retarg += '<tr><td>Last Exam %s</td><td>%s</td></tr>'% (
             letype, localsettings.formatDate(lastexam))
 
-        retarg += '''<tr><td>Recall Date</td><td>%s</td></tr>
-        </table>''' % localsettings.formatDate(pt.recd)
+
+        if pt.recall_active:
+            retarg += '''<tr><td>Recall Date</td><td>%s</td></tr>
+            </table>''' % localsettings.formatDate(pt.recd)
+        else:
+            retarg += '<tr><td colspan="2">%s</td></tr></table>'% _(
+                "DO NOT RECALL")
 
         if not pt.status in ("Active", "", None):
             retarg += "<h1>%s</h1>"% pt.status

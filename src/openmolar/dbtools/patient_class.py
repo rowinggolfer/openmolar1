@@ -298,6 +298,10 @@ class patient(object):
         self.appt_prefs.note = memo
 
     @property
+    def recall_active(self):
+        return self.appt_prefs.recall_active
+
+    @property
     def recd(self):
         return self.appt_prefs.recdent
 

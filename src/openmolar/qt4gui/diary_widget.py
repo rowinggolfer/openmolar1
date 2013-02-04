@@ -194,11 +194,13 @@ class DiaryWidget(QtGui.QWidget):
         if warning_level == 0:
             if self.message_alert is not None:
                 accept()
-            self.message_alert = QtGui.QMessageBox(self)
+            else:
+                self.message_alert = QtGui.QMessageBox(self)
+                self.message_alert.setStandardButtons(QtGui.QMessageBox.NoButton)
+                self.message_alert.setWindowTitle(_("advisory"))
+                self.message_alert.setModal(False)
+
             self.message_alert.setText(arg)
-            self.message_alert.setStandardButtons(QtGui.QMessageBox.NoButton)
-            self.message_alert.setWindowTitle(_("advisory"))
-            self.message_alert.setModal(False)
             QtCore.QTimer.singleShot(3*1000, accept)
             self.message_alert.show()
 
@@ -298,7 +300,7 @@ class DiaryWidget(QtGui.QWidget):
             self.ui.appt_notes_webView.setHtml(_("No patient Selected"))
             self.ui.diary_tabWidget.setCurrentIndex(0)
             self.set_date(QtCore.QDate.currentDate())
-            update_required = False
+
         else:
             self.pt = self.schedule_controller.pt
             serialno = 0 if self.pt is None else self.pt.serialno
