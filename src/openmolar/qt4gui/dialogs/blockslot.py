@@ -138,7 +138,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         '''
         let's the dialog know who the patient is
         '''
-        if pt.serialno != 0:
+        if pt is not None and pt.serialno != 0:
             self.pt_label.setText(
                 _("Chosen Patient is")+"<br />%s"% pt.name_id)
         else:

@@ -572,6 +572,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                             painter.setPen(GREY_PEN)
                         elif appt.isEmergency:
                             painter.setBrush(APPTCOLORS["EMERGENCY"])
+                        elif APPTCOLORS.has_key(appt.name.upper()):
+                            painter.setBrush(APPTCOLORS[appt.name.upper()])
                         elif APPTCOLORS.has_key(appt.cset):
                             painter.setBrush(APPTCOLORS[appt.cset])
                         else:
@@ -616,6 +618,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                     elif self.mode == self.SCHEDULING_MODE:
                         painter.setPen(GREY_PEN)
                         painter.setBrush(APPTCOLORS["BUSY"])
+                    elif APPTCOLORS.has_key(appt.name.upper()):
+                        painter.setBrush(APPTCOLORS[appt.name.upper()])
                     elif APPTCOLORS.has_key(appt.cset):
                         painter.setBrush(APPTCOLORS[appt.cset])
                     else:

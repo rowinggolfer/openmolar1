@@ -197,8 +197,8 @@ class WeekViewAppointment(object):
         return self.mpm >= other.mpm
 
     def __repr__(self):
-        return "WeekViewAppointment. %d mins past midnight for %d mins"% (
-        self.mpm, self.length)
+        return "WeekViewAppointment.%s %s %d mins past midnight for %d mins"% (
+        self.name, self.cset, self.mpm, self.length)
 
 class APR_Appointment(object):
     '''

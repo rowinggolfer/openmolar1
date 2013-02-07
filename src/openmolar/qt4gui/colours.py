@@ -47,7 +47,7 @@ APPTCOLORS = {
     "FREE":QtCore.Qt.transparent,
     "EMERGENCY":QtGui.QColor("#ffd9ec"),
     "default":QtGui.QColor("#adb3ff"),
-    "//BLOCKED//":QtCore.Qt.transparent,
+    "//BLOCKED//":QtCore.Qt.lightGray,
     "DOUBLE":QtCore.Qt.blue,
     "SLOT" : QtGui.QColor("#ffff99"),
     "HEADER" : QtCore.Qt.white,
