@@ -102,12 +102,13 @@ def getpatients(conditions="", values=()):
     returns patients with a recall between the two dates
     '''
     assert type(conditions) == types.StringType, "conditions must be a string"
-    assert type(values) == types.TupleType, "values must be a string"
+    assert type(values) == types.TupleType, "values must be a tuple"
     query = '''
-    select serialno, title, fname, sname, dnt1, familyno, dob,
-    addr1, addr2, addr3, town, county, pcde, recd from patients
+    select patients.serialno, title, fname, sname, dnt1, familyno, dob,
+    addr1, addr2, addr3, town, county, pcde, recdent
+    from patients join appt_prefs on patients.serialno = appt_prefs.serialno
     where CONDITIONS
-    order by familyno DESC, addr1, dob,fname,sname'''
+    order by familyno DESC, addr1, dob, fname, sname'''
 
 
     query = query.replace("CONDITIONS", conditions)
