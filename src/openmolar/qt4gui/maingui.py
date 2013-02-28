@@ -1149,22 +1149,25 @@ class OpenmolarGui(QtGui.QMainWindow):
         sno = self.ui.accounts_tableWidget.item(row, 1).text()
         self.getrecord(int(sno))
 
-    def getrecord(self, serialno, checkedNeedToLeaveAlready=False,
-    addToRecentSnos=True, newPatientReload=False):
+    def getrecord(self, serialno,
+                    checkedNeedToLeaveAlready=False,
+                    newPatientReload=False
+                ):
         '''
         a record has been called byone of several means
         '''
         if self.enteringNewPatient():
-            return
-        if not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
+            pass
+        elif self.pt and serialno == self.pt.serialno:
+            self.ui.main_tabWidget.setCurrentIndex(0)
+            self.advise(_("Patient already loaded"))
+        elif not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
             print "not loading"
-            self.advise("Not loading patient")
-            return
-        if serialno != 0:
-            if addToRecentSnos:
-                localsettings.recent_snos.append(serialno)
-                localsettings.recent_sno_index = len(
-                localsettings.recent_snos) - 1
+            self.advise(_("Not loading patient"))
+        elif serialno != 0:
+            localsettings.recent_snos.append(serialno)
+            localsettings.recent_sno_index = len(
+            localsettings.recent_snos) - 1
 
             try:
                 #--work on a copy only, so that changes can be tested for later
@@ -1187,7 +1190,6 @@ class OpenmolarGui(QtGui.QMainWindow):
                 print "NOT FOUND ERROR"
                 self.advise (_("error getting serialno")+ " %d - " % serialno +
                               _("please check this number is correct?"), 1)
-                return
             except Exception as exc:
                 logging.exception(
                 "Unknown ERROR loading patient - serialno %d"% serialno)
@@ -1411,7 +1413,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 return
         if not self.okToLeaveRecord():
             print "not loading"
-            self.advise("Not loading patient")
+            self.advise(_("Not loading patient"))
             return
 
         dl = FindPatientDialog(self)

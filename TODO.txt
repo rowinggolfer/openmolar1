@@ -1,16 +1,12 @@
 to get to 0.3.3
 
+    BUG FIXES.
+        patient records do not "reload" when clicking on current patient
+        in the appointment book, hence save dialog comes up.
+        (fixed with 801)
 
-
-
-
-
-
-
-
-
-
-
+    recall changes when doing an exam should inform the user more.
+    bulk mailer needs to use appt_prefs!
 
 
 
