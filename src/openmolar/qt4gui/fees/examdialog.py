@@ -99,7 +99,8 @@ course dentist, but not the registered dentist</i>''')
                 if om_gui.pt.examt == "FCA":
                     om_gui.pt.pd7 = examd
                 om_gui.pt.examd = examd
-                om_gui.pt.appt_prefs.update_recdent()
+
+                update_recall_date(om_gui)
 
                 newnotes = \
                 str(om_gui.ui.notesEnter_textEdit.toPlainText().toAscii())
@@ -136,3 +137,8 @@ course dentist, but not the registered dentist</i>''')
         else:
             om_gui.advise(_("Examination not applied"), 2)
             break
+    return APPLIED
+
+def update_recall_date(om_gui):
+    #om_gui.advise("updating recall date")
+    om_gui.pt.appt_prefs.update_recdent()
