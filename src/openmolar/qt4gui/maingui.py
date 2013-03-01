@@ -1151,12 +1151,13 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def getrecord(self, serialno,
                     checkedNeedToLeaveAlready=False,
+                    addToRecentSnos=True,
                     newPatientReload=False
                 ):
         '''
         a record has been called byone of several means
         '''
-        if self.enteringNewPatient():
+        if self.enteringNewPatient() or serialno ==0:
             pass
         elif self.pt and serialno == self.pt.serialno:
             self.ui.main_tabWidget.setCurrentIndex(0)
@@ -1164,10 +1165,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         elif not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
             print "not loading"
             self.advise(_("Not loading patient"))
-        elif serialno != 0:
-            localsettings.recent_snos.append(serialno)
-            localsettings.recent_sno_index = len(
-            localsettings.recent_snos) - 1
+        else:
+            if addToRecentSnos:
+                localsettings.recent_snos.append(serialno)
+                localsettings.recent_sno_index = len(
+                localsettings.recent_snos) - 1
 
             try:
                 #--work on a copy only, so that changes can be tested for later
@@ -1195,14 +1197,16 @@ class OpenmolarGui(QtGui.QMainWindow):
                 "Unknown ERROR loading patient - serialno %d"% serialno)
                 self.advise ("Unknown Error - Tell Neil<br />%s"% exc, 2)
 
-        else:
-            self.advise("get record called with serialno 0")
 
     def reload_patient(self):
         '''
         reload the current record
         '''
-        self.getrecord(self.pt.serialno)
+        if self.okToLeaveRecord():
+            sno = self.pt.serialno
+            self.advise("%s %s"%(_("Reloading record"), sno))
+            self.clearRecord()
+            self.getrecord(sno)
 
     def set_note_preferences(self):
         formatted_notes.show_printed = \
