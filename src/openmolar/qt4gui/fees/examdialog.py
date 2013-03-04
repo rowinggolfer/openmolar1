@@ -140,5 +140,10 @@ course dentist, but not the registered dentist</i>''')
     return APPLIED
 
 def update_recall_date(om_gui):
-    #om_gui.advise("updating recall date")
-    om_gui.pt.appt_prefs.update_recdent()
+    if not om_gui.pt.appt_prefs.recall_active:
+        om_gui.advise(
+        _("WARNING - Not updating recall due to patients recall settings"),1)
+    else:
+        date_ = localsettings.formatDate(om_gui.pt.appt_prefs.new_recdent)
+        om_gui.advise("updating recall date to %s"% date_, 1)
+        om_gui.pt.appt_prefs.update_recdent()

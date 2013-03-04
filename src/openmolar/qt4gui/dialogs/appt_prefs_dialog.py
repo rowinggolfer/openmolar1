@@ -29,6 +29,24 @@ from openmolar import connect
 
 RECALL_METHODS = ["post","email","sms"]
 
+class ShortcutButs(QtGui.QWidget):
+    clicked = QtCore.pyqtSignal(object)
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        layout = QtGui.QHBoxLayout(self)
+        layout.setMargin(0)
+        for term in (1,2,3,6,9,12):
+            but = QtGui.QPushButton("%d"% term)
+            but.setMaximumWidth(40)
+            layout.addWidget(but)
+            if term == 9:
+                layout.addStretch()
+            but.clicked.connect(self._but_clicked)
+
+    def _but_clicked(self):
+        but = self.sender()
+        self.clicked.emit(int(but.text()))
+
 class ApptPrefsDialog(BaseDialog):
     def __init__(self, patient, parent):
         BaseDialog.__init__(self, parent)
@@ -56,12 +74,15 @@ class ApptPrefsDialog(BaseDialog):
         self.recdent_date_edit = QtGui.QDateEdit()
         self.recdent_date_edit.setCalendarPopup(True)
         self.recdent_date_edit.setDate(QtCore.QDate.currentDate())
+        self.dent_shortcut_buts = ShortcutButs()
+
 
         layout = QtGui.QFormLayout(self.recdent_groupbox)
         layout.addRow(_("dentist recall period (months)"),
             self.recdent_period_spinbox)
-        layout.addRow(_("Next Recall"), self.recdent_date_edit)
-
+        layout.addRow(_("Next Recall Date"), self.recdent_date_edit)
+        layout.addRow(_("Shortcuts (months from today)"),
+            self.dent_shortcut_buts)
 
         self.rechyg_groupbox = QtGui.QGroupBox(
             _("Hygienist Recall"))
@@ -109,6 +130,7 @@ class ApptPrefsDialog(BaseDialog):
 
         QtCore.QTimer.singleShot(0, self.get_appt_prefs)
 
+        self.dent_shortcut_buts.clicked.connect(self.dent_shortcuts)
 
     def sizeHint(self):
         return QtCore.QSize(500, 400)
@@ -134,6 +156,10 @@ class ApptPrefsDialog(BaseDialog):
         self.recall_method_combobox.setCurrentIndex(method_index)
 
         self.init_edited_signals()
+
+    def dent_shortcuts(self, period):
+        self.recdent_date_edit.setDate(
+            QtCore.QDate.currentDate().addMonths(period))
 
     def init_edited_signals(self):
         for widg in (

@@ -206,7 +206,6 @@ class patient(object):
         self.synopsis = ""
 
         self._dayBookHistory = None
-        self._appt_prefs = None
 
         if self.serialno != 0:
             #load stuff from the database

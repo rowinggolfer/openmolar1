@@ -42,6 +42,8 @@ class ApptPrefs(object):
         self.rechyg_period = None
         self.rechyg = None
         self.recall_method = None
+        self.note = ""
+        self.recall_active = False
 
         db = connect.connect()
         cursor = db.cursor()
@@ -61,10 +63,15 @@ class ApptPrefs(object):
             self.recall_active = False
 
     def update_recdent(self):
+        if not self.recall_active:
+            return
+        self.recdent = self.new_recdent
+
+    @property
+    def new_recdent(self):
         if self.recdent_period is None:
             self.recdent_period = 6
-        self.recdent = QDate.currentDate().addMonths(
-            self.recdent_period).toPyDate()
+        return QDate.currentDate().addMonths(self.recdent_period).toPyDate()
 
     def commit_changes(self):
         logging.debug("ApptPrefs committing changes")
@@ -84,6 +91,9 @@ class ApptPrefs(object):
 
     def __repr__(self):
         return str(self.__dict__)
+
+    #def __eq__(self, other):
+    #    return self.__dict__ == other.__dict__
 
 if __name__ =="__main__":
     try:
