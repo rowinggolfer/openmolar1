@@ -1,3 +1,9 @@
+0.3.4 milestones
+    BUGS
+        save new patient -> "patient already loaded"
+        
+        pt diary not collapsing past appointments
+
 0.3.3 (bzr 805)
     BUG FIXES.
         patient records do not "reload" when clicking on current patient
@@ -9,7 +15,6 @@
 
         recall changes when doing an exam should inform the user more.
             done with 805
-
 
 
 

@@ -1159,7 +1159,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         if self.enteringNewPatient() or serialno ==0:
             pass
-        elif self.pt and serialno == self.pt.serialno:
+        elif (self.pt and serialno == self.pt.serialno and 
+        not newPatientReload):
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.advise(_("Patient already loaded"))
         elif not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
