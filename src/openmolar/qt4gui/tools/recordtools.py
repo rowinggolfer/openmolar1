@@ -282,19 +282,34 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         '''
         load the patients hidden notes
         '''
-        hn_string = ""
-        for n in self.om_gui.pt.HIDDENNOTES:
-            hn_string += "%s\n"% n
-        self.hidden_notes_plainTextEdit.setPlainText(hn_string)
+        self.hidden_notes_tableWidget.clear()
+        self.hidden_notes_tableWidget.setColumnCount(2)
+        self.hidden_notes_tableWidget.setRowCount(
+            len(self.om_gui.pt.HIDDENNOTES))        
+        header = self.hidden_notes_tableWidget.horizontalHeader()
+        self.hidden_notes_tableWidget.setHorizontalHeaderLabels(
+            ["type", "note"])
+        header.setStretchLastSection(True)
+        for row_no, (ntype, note) in enumerate(self.om_gui.pt.HIDDENNOTES):
+            ntype_item = QtGui.QTableWidgetItem(ntype)
+            self.hidden_notes_tableWidget.setItem(row_no, 0, ntype_item)
+
+            note_item = QtGui.QTableWidgetItem(note)
+            self.hidden_notes_tableWidget.setItem(row_no, 1, note_item)
 
     def changeHidden_notes(self):
         '''
         apply new notes
         '''
-        hn_string = self.hidden_notes_plainTextEdit.toPlainText()
-        hn_list = hn_string.split("\n") #Qlist
-        hn_list.removeAll("") #Qlist function
-        self.om_gui.pt.HIDDENNOTES = list(hn_list)
+        HN = []
+        for row_no in range(self.hidden_notes_tableWidget.rowCount()):
+            ntype = self.hidden_notes_tableWidget.item(row_no, 0).text()
+            note = self.hidden_notes_tableWidget.item(row_no, 1).text()
+
+            HN.append((ntype, note))
+            
+        self.om_gui.pt.HIDDENNOTES = HN
+        self.om_gui.updateHiddenNotesLabel()
         self.om_gui.advise(_("updated hidden notes list"), 1)
 
     def signals(self):
@@ -332,6 +347,11 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     om_gui = maingui.OpenmolarGui()
     om_gui.getrecord(1)
+    om_gui.pt.HIDDENNOTES = [
+        ('COURSE OPENED', '= = = = = '), 
+        ('TC: EXAM', 'CE')
+        ]
+
     ui = recordTools(om_gui)
     ui.exec_()
     sys.exit(app.exec_())

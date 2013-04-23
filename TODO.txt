@@ -1,5 +1,14 @@
-0.3.4 milestones
+0.3.5 milestones
     BUGS
+        possible to create 2 open course on one day.
+        this can be fixed with SQL, however, the client needs to give 
+        appropriate messages.
+        
+        advanced record tools fails to parse hidden notes. 
+
+
+0.3.4 (bzr 807)
+    BUGS FIXED.
         save new patient -> "patient already loaded"
         
         pt diary not collapsing past appointments

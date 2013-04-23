@@ -1,3 +1,17 @@
+openmolar (0.3.4+bzr0807-1~__DIST__0) __DIST__; urgency=low
+
+  * rebuild
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 17 Apr 2013 21:16:10 +0100
+
+
+openmolar (0.3.4+bzr0807-0~__DIST__0) __DIST__; urgency=low
+
+  * upstream release
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 17 Apr 2013 21:00:13 +0100
+
+
 openmolar (0.3.3+bzr0805-0~__DIST__0) __DIST__; urgency=low
 
   * upstream release

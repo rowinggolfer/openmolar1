@@ -150,7 +150,7 @@ deb:
 	cp -av $(TARBALL_DIR)$(TARBALL) $(TMP_DIR)
 	
 	cd $(TMP_DIR) ;\
-	tar -zxvf $(TARBALL); \
+	tar -zxf $(TARBALL); \
 	mv $(TARBALL) `$(BUILD_SCRIPTS_DIR)version_name.py $(DEB_CONF_DIR)`.orig.tar.gz 
 	
 	cd $(TMP_DIR)$(PACKAGE)-$(VERSION) ; \
@@ -165,7 +165,7 @@ debsign:
 	debsign $(DEB_BUILDS_DIR)*$(VERSION)*.changes -kF230408E 
 	
 debsigns:
-	#make debsign DIST=<unstable|testing|stable|precise|lucid> 
+	#make debsign DIST=<unstable|testing|stable|raring|quantal|precise|lucid> 
 	
 	$(foreach dist,$(DEBDISTS), \
 		make debsign DIST=$(dist) ;\
@@ -173,7 +173,7 @@ debsigns:
 	
 	
 notes:
-	#pdebuild --architecture <i386|amd64>  --buildresult /tmp --pbuilderroot "sudo DIST=<unstable|stable|testing|hardy|lucid|natty|oneiric|precise> ARCH=<i386|amd64>"
+	#pdebuild --architecture <i386|amd64>  --buildresult /tmp --pbuilderroot "sudo DIST=<unstable|stable|testing|raring|quantal|precise|lucid> ARCH=<i386|amd64>"
 	
 debs:
 	@echo "making all debian based packages.. first we need to update the changelogs for the 2 build systems"
@@ -181,12 +181,12 @@ debs:
 	#make changelog DEBHELPER=<dh_python2|py_central>
 	$(foreach var,$(DEBHELPERS), make changelog DEBHELPER=$(var);)
 	
-	#make deb DIST=<unstable|testing|stable|precise|lucid> NEW_CHANGELOG=False 
+	#make deb DIST=<unstable|testing|stable|raring|quantal|precise|lucid> NEW_CHANGELOG=False 
 	$(foreach dist,$(DEBDISTS), \
 		make deb DIST=$(dist) NEW_CHANGELOG=False;\
 	) 
 	
-	#make debsign DIST=<unstable|testing|stable|precise|lucid> 
+	#make debsign DIST=<unstable|testing|stable|raring|quantal|precise|lucid> 
 	$(foreach var,$(DEBDISTS), make debsign DIST=$(var);) 
 	
 	#make debsigns
