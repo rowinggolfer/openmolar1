@@ -165,6 +165,27 @@ ESTIMATES_QUERY = '''
 update newestimates set courseno=%s where serialno=%s and courseno=%s
 '''
 
+GARBAGE_QUERY = '''
+delete from currtrtmt2 
+WHERE examt="" AND xraypl="" AND periopl="" AND anaespl="" AND otherpl="" 
+AND ndupl="" AND ndlpl="" AND odupl="" AND odlpl="" AND custompl="" 
+AND ur8pl="" AND ur7pl="" AND ur6pl="" AND ur5pl="" AND ur4pl="" AND ur3pl="" 
+AND ur2pl="" AND ur1pl="" AND ul1pl="" AND ul2pl="" AND ul3pl="" AND ul4pl="" 
+AND ul5pl="" AND ul6pl="" AND ul7pl="" AND ul8pl="" AND ll8pl="" AND ll7pl="" 
+AND ll6pl="" AND ll5pl="" AND ll4pl="" AND ll3pl="" AND ll2pl="" AND ll1pl="" 
+AND lr1pl="" AND lr2pl="" AND lr3pl="" AND lr4pl="" AND lr5pl="" AND lr6pl="" 
+AND lr7pl="" AND lr8pl="" AND 
+ur8cmp="" AND ur7cmp="" AND ur6cmp="" AND ur5cmp="" AND ur4cmp="" AND 
+ur3cmp="" AND ur2cmp="" AND ur1cmp="" AND ul1cmp="" AND ul2cmp="" AND 
+ul3cmp="" AND ul4cmp="" AND ul5cmp="" AND ul6cmp="" AND ul7cmp="" AND 
+ul8cmp="" AND ll8cmp="" AND ll7cmp="" AND ll6cmp="" AND ll5cmp="" AND 
+ll4cmp="" AND ll3cmp="" AND ll2cmp="" AND ll1cmp="" AND lr1cmp="" AND 
+lr2cmp="" AND lr3cmp="" AND lr4cmp="" AND lr5cmp="" AND lr6cmp="" AND 
+lr7cmp="" AND lr8cmp="" AND 
+xraycmp="" AND periocmp="" AND anaescmp="" AND othercmp="" AND nducmp="" 
+AND ndlcmp="" AND oducmp="" AND odlcmp="" AND customcmp=""
+'''
+
 
 class UpdateException(Exception):
     '''
@@ -232,8 +253,11 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(10, _('transferring data'))
             
             self.transfer_data()
+
+            self.progressSig(95, _("deleting void courses"))
+            self.execute_statements([GARBAGE_QUERY])
             
-            self.progressSig(95, _('updating settings'))
+            self.progressSig(97, _('updating settings'))
             print "update database settings..."
 
             schema_version.update(("2.1",), "2_0 to 2_1 script")

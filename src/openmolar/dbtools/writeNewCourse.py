@@ -8,16 +8,26 @@
 
 from openmolar.connect import connect
 
-QUERY = 'insert into currtrtmt2 (serialno, accd) values (%s, %s)'
+INS_QUERY = 'insert into currtrtmt2 (serialno, accd) values (%s, %s)'
+
+DEL_QUERY = 'delete from currtrtmt2 where serialno = %s and courseno = %s'
 
 def write(serialno, accd):
     db = connect()
     cursor = db.cursor()
-    cursor.execute(QUERY, (serialno, accd))
+    cursor.execute(INS_QUERY, (serialno, accd))
     cno = db.insert_id()
     cursor.close()
 
     return cno
+
+def delete(serialno, courseno):
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(DEL_QUERY, (serialno, courseno))
+    cno = db.insert_id()
+    cursor.close()
+    
 
 if __name__ == "__main__":
     print "started course %d"% write(31720, "20081225")

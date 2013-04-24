@@ -9,11 +9,11 @@ from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.compiled_uis import Ui_newCourse
 from openmolar.settings import localsettings
 
-class course(Ui_newCourse.Ui_Dialog):
+class NewCourseDialog(Ui_newCourse.Ui_Dialog):
     '''
     a custom dialog to set the variables for a new course of treatment
     '''
-    def __init__(self,dialog,dnt1,dnt2,csetype,parent=None):
+    def __init__(self, dialog, dnt1, dnt2, csetype, parent=None):
         self.setupUi(dialog)
         self.dialog=dialog
         self.dateEdit.setDate(QtCore.QDate().currentDate())
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
-    Dialog = QtGui.QDialog()
-    ui = course(Dialog,"BW","AH","")
+    dl = QtGui.QDialog()
+    ui = NewCourseDialog(dl, "BW", "AH", "")
     print ui.getInput()
    

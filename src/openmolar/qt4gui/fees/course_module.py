@@ -31,21 +31,34 @@ def newCourseNeeded(om_gui):
         _("Please save the old course changes before continuing"), 1)
         return True
 
-    if not setupNewCourse(om_gui):
+    ## before starting a new course.. check to see if one has been started 
+    ## by another client.
+    
+    if om_gui.pt.newer_course_found:
+        om_gui.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(True)
+        om_gui.advise(u"<p>%s<br />%s</p><hr /><em>%s</em>"%(
+        _("It looks as if another user is starting a course of treatment"),
+        _("Please allow this other user to commit their changes"
+        " then reload this record before continuing."),
+        _("If you are seeing this message and are sure no other user is"
+        " using this record, use menu-&gt;tools-&gt;"
+        "Fix Locked New Course of Treatment")) 
+        , 1)
+        
+    elif setupNewCourse(om_gui):
+        print "new course started with accd of '%s'"% om_gui.pt.accd
+        return False
+    else:
         om_gui.advise(u"<p>%s</p>"% _(
         "unable to plan or perform treatment if"
         " the patient does not have an active course"), 1)
-        return True
-    else:
-        print "new course started with accd of '%s'"% om_gui.pt.accd
-        return False
+        
+    return True
 
 def setupNewCourse(om_gui):
     '''
     set up a new course of treatment
     '''
-
-    Dialog = QtGui.QDialog(om_gui)
 
     if localsettings.clinicianNo != 0 and \
     localsettings.clinicianInits in localsettings.activedents:
@@ -55,8 +68,13 @@ def setupNewCourse(om_gui):
         cdnt = om_gui.pt.dnt1
     else:
         cdnt = om_gui.pt.dnt2
-    dl = newCourse.course(Dialog, localsettings.ops.get(om_gui.pt.dnt1),
-    localsettings.ops.get(cdnt), om_gui.pt.cset)
+
+    dialog = QtGui.QDialog(om_gui)
+        
+    dl = newCourse.NewCourseDialog(dialog, 
+        localsettings.ops.get(om_gui.pt.dnt1),
+        localsettings.ops.get(cdnt), 
+        om_gui.pt.cset)
 
     result, atts = dl.getInput()
 
@@ -74,12 +92,14 @@ def setupNewCourse(om_gui):
 
         accd = atts[3].toPyDate()
 
-        courseno = writeNewCourse.write(om_gui.pt.serialno, accd)
+        new_courseno = writeNewCourse.write(om_gui.pt.serialno, accd)
+        return apply_new_courseno(omgui, new_courseno, accd)
 
+def apply_new_courseno(om_gui, new_courseno, accd=None):
         om_gui.pt.blankCurrtrt()
         om_gui.pt_dbstate.blankCurrtrt()
-        om_gui.pt.courseno = courseno
-        om_gui.pt.courseno0 = courseno
+        om_gui.pt.courseno = new_courseno
+        om_gui.pt.courseno0 = new_courseno
         om_gui.pt.setAccd(accd)
         # force a recheck for the new course date
         om_gui.pt.feeTable = None
@@ -88,6 +108,8 @@ def setupNewCourse(om_gui):
         om_gui.ui.planChartWidget.clear(keepSelection=True)
         om_gui.ui.completedChartWidget.clear()
         om_gui.updateDetails()
+        om_gui.load_clinicalSummaryPage()
+        om_gui.load_receptionSummaryPage()
         om_gui.pt.addHiddenNote("open_course")
         om_gui.updateHiddenNotesLabel()
         om_gui.advise(_("Sucessfully started new course of treatment"))
@@ -101,6 +123,16 @@ def prompt_close_course(om_gui):
     if "surgery" in localsettings.station and om_gui.pt.underTreatment:
         if not om_gui.pt.treatmentOutstanding():
             closeCourse(om_gui, True)
+
+def delete_new_course(om_gui):
+    '''
+    user is discarding all changes to a record.
+    potentially, this will leave debris in the currtrtmt2 table
+    '''
+    if om_gui.pt.courseno != om_gui.pt_dbstate.courseno:
+        print "deleting unused course of treatment"
+        writeNewCourse.delete(om_gui.pt.serialno, om_gui.pt.courseno)
+
 
 def closeCourse(om_gui, leaving=False):
     '''
@@ -120,7 +152,12 @@ def closeCourse(om_gui, leaving=False):
     ##focus the "yes" button
     my_dialog.buttonBox.buttons()[0].setFocus()
 
-    if Dialog.exec_():
+    if (Dialog.exec_() and 
+    QtGui.QMessageBox.question(om_gui, _("Confirm"), 
+    _("are you sure you wish to close this course of treatment?"),
+    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+    QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Ok):
+        
         cmpd = my_dialog.dateEdit.date().toPyDate()
         om_gui.pt.setCmpd(cmpd)
         om_gui.pt.addHiddenNote("close_course")
@@ -157,3 +194,27 @@ def resumeCourse(om_gui):
         om_gui.updateHiddenNotesLabel()
 
         return True
+
+def fix_zombied_course(om_gui):
+    '''
+    a situation COULD arise where a new course was started and the client
+    crashed (without cleaning up the temporary row in the currtrtmt2 table)
+    this functionality retrieves this.
+    '''
+    if not om_gui.pt and om_gui.pt.newer_course_found:
+        om_gui.advise(_("no zombied course found"),1)
+        return
+        
+    message = _("a situation COULD arise where a new course was started"
+    " but the client lost connectivity crashed"
+    " (without cleaning up the temporary row in the currtrtmt2 table)")
+    question = _("Do you wish to recover this row now?")
+    if QtGui.QMessageBox.question(om_gui, _("question"),
+        u"%s<hr /><b>%s</b>" %(message, question),
+        QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+        QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+        
+        cno = om_gui.pt.max_tx_courseno
+        apply_new_courseno(om_gui, cno)
+            
+    

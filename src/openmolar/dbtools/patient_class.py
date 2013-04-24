@@ -490,7 +490,23 @@ self.serialno, self.courseno0))
     def underTreatment(self):
         return (not self.accd in ("", None) and self.cmpd in ("", None))
            
-
+    @property
+    def max_tx_courseno(self):
+        db = connect.connect()
+        cursor = db.cursor()
+        if cursor.execute( 
+        "select max(courseno) from currtrtmt2 where serialno=%s", 
+        (self.serialno,)):
+            cno = cursor.fetchone()[0]
+        else:
+            cno = 0
+        cursor.close()
+        return cno
+    
+    @property
+    def newer_course_found(self):
+        return self.max_tx_courseno > self.courseno
+    
     def getNotesTuple(self):
         '''
         connect and poll the formatted_notes table
@@ -559,6 +575,8 @@ self.serialno, self.courseno0))
         '''
         set the acceptance date (with a pydate)
         '''
+        if accd is None:
+            accd = localsettings.currentDay()
         self.accd = accd
 
     def setCmpd(self, cmpd):

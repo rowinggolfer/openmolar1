@@ -546,6 +546,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             if Dialog.exec_():
                 if dl.result == "discard":
                     print "user discarding changes"
+                    course_module.delete_new_course(self)
                 elif dl.result == "save":
                     print "user is saving"
                     self.save_changes(False)
@@ -690,6 +691,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 #print "blanking edit page fields"
                 self.load_editpage()
                 self.editPageVisited = False
+        
 
     def gotoDefaultTab(self):
         '''
@@ -1251,6 +1253,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         else:
             self.ui.tabWidget.setCurrentIndex(3)
             self.load_receptionSummaryPage()
+        self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)
         #--populate dnt1 and dnt2 comboboxes
         self.load_dentComboBoxes(newPatientReload)
         self.pt.checkExemption()
@@ -1833,7 +1836,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.synopsis_lineEdit,
         self.ui.memos_pushButton,
         self.pt_diary_widget,
-        self.ui.childsmile_button):
+        self.ui.childsmile_button,
+        self.ui.actionFix_Locked_New_Course_of_Treatment):
 
             widg.setEnabled(arg)
 
@@ -2719,6 +2723,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.actionAdvanced_Record_Management,
         QtCore.SIGNAL("triggered()"), self.advancedRecordTools)
 
+        self.ui.actionFix_Locked_New_Course_of_Treatment.triggered.connect(
+            self.fix_zombied_course)
+
 
     def signals_estimates(self):
         #Estimates and course ManageMent
@@ -3128,6 +3135,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if result and estimates.apply_exemption(self.pt, max):
             self.handle_patientTab()
             self.updateDetails()
+
+    def fix_zombied_course(self):
+        '''
+        a situation COULD arise where a new course was started and the client
+        crashed (without cleaning up the temporary row in the currtrtmt2 table)
+        this functionality retrieves this.
+        '''
+        course_module.fix_zombied_course(self)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
