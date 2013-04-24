@@ -314,6 +314,7 @@ src/openmolar/resources/expand.png
 src/openmolar/resources/expand.svg
 src/openmolar/resources/hdp.png
 src/openmolar/resources/hdp_small.png
+src/openmolar/resources/information-guide-2012-final.pdf
 src/openmolar/resources/information_guide_2010_v2.pdf
 src/openmolar/resources/logo.png
 src/openmolar/resources/logo1.png
@@ -329,7 +330,9 @@ src/openmolar/resources/resources.qrc
 src/openmolar/resources/scotNHSremuneration08.pdf
 src/openmolar/resources/scotNHSremuneration09.pdf
 src/openmolar/resources/scotNHSremuneration10.pdf
+src/openmolar/resources/scotNHSremuneration12.pdf
 src/openmolar/resources/smalllogo.png
+src/openmolar/resources/ssi_20100208_en.pdf
 src/openmolar/resources/style.css
 src/openmolar/resources/tinylogo.png
 src/openmolar/resources/icons/Speaker_Icon.svg
@@ -408,6 +411,7 @@ src/openmolar/schema_upgrades/schema1_6to1_7.py
 src/openmolar/schema_upgrades/schema1_7to1_8.py
 src/openmolar/schema_upgrades/schema1_8to1_9.py
 src/openmolar/schema_upgrades/schema1_9to2_0.py
+src/openmolar/schema_upgrades/schema2_0to2_1.py
 src/openmolar/settings/__init__.py
 src/openmolar/settings/_version.py
 src/openmolar/settings/allowed.py

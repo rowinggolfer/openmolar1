@@ -1837,12 +1837,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.memos_pushButton,
         self.pt_diary_widget,
         self.ui.childsmile_button,
-        self.ui.actionFix_Locked_New_Course_of_Treatment):
+        ):
 
             widg.setEnabled(arg)
 
         self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
-
+        self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)
+        
         for i in (0, 1, 2, 5, 6, 7, 8, 9):
             if self.ui.tabWidget.isTabEnabled(i) != arg:
                 self.ui.tabWidget.setTabEnabled(i, arg)
