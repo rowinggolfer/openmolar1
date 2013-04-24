@@ -93,7 +93,7 @@ def setupNewCourse(om_gui):
         accd = atts[3].toPyDate()
 
         new_courseno = writeNewCourse.write(om_gui.pt.serialno, accd)
-        return apply_new_courseno(omgui, new_courseno, accd)
+        return apply_new_courseno(om_gui, new_courseno, accd)
 
 def apply_new_courseno(om_gui, new_courseno, accd=None):
         om_gui.pt.blankCurrtrt()

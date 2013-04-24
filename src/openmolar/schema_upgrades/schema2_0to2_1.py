@@ -186,6 +186,14 @@ xraycmp="" AND periocmp="" AND anaescmp="" AND othercmp="" AND nducmp=""
 AND ndlcmp="" AND oducmp="" AND odlcmp="" AND customcmp=""
 '''
 
+## don't use this one.. seems unnecessary.
+
+CORRECTION_QUERY = '''
+update patients join 
+(select serialno, max(courseno) cno from currtrtmt2 group by serialno) as t 
+on t.serialno = patients.serialno set courseno0 = cno 
+where cno > courseno0
+'''
 
 class UpdateException(Exception):
     '''
@@ -255,7 +263,7 @@ class dbUpdater(QtCore.QThread):
             self.transfer_data()
 
             self.progressSig(95, _("deleting void courses"))
-            self.execute_statements([GARBAGE_QUERY])
+            self.execute_statements([GARBAGE_QUERY, CORRECTION_QUERY])
             
             self.progressSig(97, _('updating settings'))
             print "update database settings..."
