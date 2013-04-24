@@ -201,7 +201,7 @@ class patient(object):
         self.MEDALERT = False
         self.HIDDENNOTES = []
         self.chartgrid = {}
-        self.underTreatment = False
+        #self.underTreatment = False
         self.feeTable = None
         self.synopsis = ""
 
@@ -388,7 +388,7 @@ class patient(object):
             if self.cset == "N":
                 if self.getAge()[0] < 18:
                     feecat = "C"
-            if self.accd == None:
+            if self.accd is None:
                 cse_accd = localsettings.currentDay()
             else:
                 cse_accd = self.accd
@@ -468,26 +468,28 @@ self.serialno, self.courseno0))
             print "WARNING -", e
 
     def getCurrtrt(self):
-        db=connect.connect()
-        cursor=db.cursor()
-        fields=currtrtmtTableAtts
-        query=""
+        fields = currtrtmtTableAtts
+        query = "SELECT "
         for field in fields:
-            query += field+","
-        query=query.strip(",")
-        cursor.execute('''SELECT %s from currtrtmt where serialno=%d
-        and courseno=%d'''%(query,self.serialno,self.courseno0))
+            query += "%s, "% field
+        query = query.rstrip(", ")
+        query += " from currtrtmt2 where serialno=%s and courseno=%s"
+        
+        db = connect.connect()
+        cursor = db.cursor()
+        
+        cursor.execute(query, (self.serialno, self.courseno0))
 
-        values= cursor.fetchall()
-        for value in values:
-            i=0
-            for field in fields:
-                self.__dict__[field]=value[i]
-                i+=1
-        if not self.accd in ("", None) and self.cmpd in ("", None):
-            self.underTreatment = True
-
+        for value in cursor.fetchall():
+            for i, field in enumerate(fields):
+                self.__dict__[field] = value[i]
+        
         cursor.close()
+
+    @property
+    def underTreatment(self):
+        return (not self.accd in ("", None) and self.cmpd in ("", None))
+           
 
     def getNotesTuple(self):
         '''

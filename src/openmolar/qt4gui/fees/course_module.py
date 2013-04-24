@@ -26,18 +26,19 @@ def newCourseNeeded(om_gui):
     '''
     if om_gui.pt.underTreatment:
         return False
+    if om_gui.pt.cmpd != om_gui.pt_dbstate.cmpd:
+        om_gui.advise(
+        _("Please save the old course changes before continuing"), 1)
+        return True
+
+    if not setupNewCourse(om_gui):
+        om_gui.advise(u"<p>%s</p>"% _(
+        "unable to plan or perform treatment if"
+        " the patient does not have an active course"), 1)
+        return True
     else:
-        if om_gui.pt.cmpd != om_gui.pt_dbstate.cmpd:
-            om_gui.advise(
-            _("Please save the old course changes before continuing"), 1)
-            return True
-        elif not setupNewCourse(om_gui):
-            om_gui.advise(_('''<p>unable to plan or perform treatment if pt
-does not have an active course</p>'''), 1)
-            return True
-        else:
-            print "new course started with accd of '%s'"% om_gui.pt.accd
-            return False
+        print "new course started with accd of '%s'"% om_gui.pt.accd
+        return False
 
 def setupNewCourse(om_gui):
     '''
@@ -73,29 +74,24 @@ def setupNewCourse(om_gui):
 
         accd = atts[3].toPyDate()
 
-        result, courseno = writeNewCourse.write(om_gui.pt.serialno,
-        localsettings.ops_reverse.get(atts[1]), accd)
+        courseno = writeNewCourse.write(om_gui.pt.serialno, accd)
 
-        if result:
-            om_gui.pt.blankCurrtrt()
-            om_gui.pt_dbstate.blankCurrtrt()
-            om_gui.pt.courseno = courseno
-            om_gui.pt.courseno0 = courseno
-            om_gui.pt.setAccd(accd)
-            om_gui.advise(_("Sucessfully started new course of treatment"))
-            # force a recheck for the new course date
-            om_gui.pt.feeTable = None
-            om_gui.pt.estimates = []
-            om_gui.pt.underTreatment = True
-            om_gui.load_newEstPage()
-            om_gui.ui.planChartWidget.clear(keepSelection=True)
-            om_gui.ui.completedChartWidget.clear()
-            om_gui.updateDetails()
-            om_gui.pt.addHiddenNote("open_course")
-            om_gui.updateHiddenNotesLabel()
-            return True
-        else:
-            om_gui.advise(_("ERROR STARTING NEW COURSE, sorry"), 2)
+        om_gui.pt.blankCurrtrt()
+        om_gui.pt_dbstate.blankCurrtrt()
+        om_gui.pt.courseno = courseno
+        om_gui.pt.courseno0 = courseno
+        om_gui.pt.setAccd(accd)
+        # force a recheck for the new course date
+        om_gui.pt.feeTable = None
+        om_gui.pt.estimates = []
+        om_gui.load_newEstPage()
+        om_gui.ui.planChartWidget.clear(keepSelection=True)
+        om_gui.ui.completedChartWidget.clear()
+        om_gui.updateDetails()
+        om_gui.pt.addHiddenNote("open_course")
+        om_gui.updateHiddenNotesLabel()
+        om_gui.advise(_("Sucessfully started new course of treatment"))
+        return True
 
 def prompt_close_course(om_gui):
     '''
@@ -127,7 +123,6 @@ def closeCourse(om_gui, leaving=False):
     if Dialog.exec_():
         cmpd = my_dialog.dateEdit.date().toPyDate()
         om_gui.pt.setCmpd(cmpd)
-        om_gui.pt.underTreatment = False
         om_gui.pt.addHiddenNote("close_course")
         om_gui.updateDetails()
         om_gui.updateHiddenNotesLabel()
@@ -157,7 +152,6 @@ def resumeCourse(om_gui):
 
     if result == QtGui.QMessageBox.Yes:
         om_gui.pt.cmpd = None
-        om_gui.pt.underTreatment = True
         om_gui.updateDetails()
         om_gui.pt.addHiddenNote("resume_course")
         om_gui.updateHiddenNotesLabel()

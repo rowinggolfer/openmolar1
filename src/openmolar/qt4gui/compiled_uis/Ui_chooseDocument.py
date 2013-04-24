@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/chooseDocument.ui'
 #
-# Created: Wed May 30 00:19:00 2012
-#      by: PyQt4 UI code generator 4.9.1
+# Created: Wed Apr 24 13:30:35 2013
+#      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(394, 195)
+        Dialog.resize(394, 270)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label = QtGui.QLabel(Dialog)
@@ -67,17 +67,34 @@ class Ui_Dialog(object):
         spacerItem2 = QtGui.QSpacerItem(128, 25, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_6.addItem(spacerItem2)
         self.tabWidget.addTab(self.tab_3, _fromUtf8(""))
+        self.tab_4 = QtGui.QWidget()
+        self.tab_4.setObjectName(_fromUtf8("tab_4"))
+        self.verticalLayout_8 = QtGui.QVBoxLayout(self.tab_4)
+        self.verticalLayout_8.setObjectName(_fromUtf8("verticalLayout_8"))
+        self.remuneration2010_radioButton_3 = QtGui.QRadioButton(self.tab_4)
+        self.remuneration2010_radioButton_3.setChecked(True)
+        self.remuneration2010_radioButton_3.setObjectName(_fromUtf8("remuneration2010_radioButton_3"))
+        self.verticalLayout_8.addWidget(self.remuneration2010_radioButton_3)
+        self.info2012_radioButton = QtGui.QRadioButton(self.tab_4)
+        self.info2012_radioButton.setObjectName(_fromUtf8("info2012_radioButton"))
+        self.verticalLayout_8.addWidget(self.info2012_radioButton)
+        self.terms_radioButton = QtGui.QRadioButton(self.tab_4)
+        self.terms_radioButton.setObjectName(_fromUtf8("terms_radioButton"))
+        self.verticalLayout_8.addWidget(self.terms_radioButton)
+        spacerItem3 = QtGui.QSpacerItem(128, 15, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_8.addItem(spacerItem3)
+        self.tabWidget.addTab(self.tab_4, _fromUtf8(""))
         self.verticalLayout.addWidget(self.tabWidget)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.verticalLayout.addWidget(self.buttonBox)
+        self.terms_buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.terms_buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.terms_buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.terms_buttonBox.setObjectName(_fromUtf8("terms_buttonBox"))
+        self.verticalLayout.addWidget(self.terms_buttonBox)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(2)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        self.tabWidget.setCurrentIndex(3)
+        QtCore.QObject.connect(self.terms_buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
+        QtCore.QObject.connect(self.terms_buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -92,4 +109,8 @@ class Ui_Dialog(object):
         self.remuneration2010_radioButton.setText(_( u"NHS Schedule of Remuneration"))
         self.info2010_radioButton.setText(_( u"NHS \"Information Guide\""))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _( u"2010"))
+        self.remuneration2010_radioButton_3.setText(_( u"NHS Schedule of Remuneration"))
+        self.info2012_radioButton.setText(_( u"NHS \"Information Guide\""))
+        self.terms_radioButton.setText(_( u"NHS terms and conditions"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _( u"2012"))
 

@@ -377,13 +377,23 @@ def nhsRegsPDF(om_gui):
             else:
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "scotNHSremuneration09.pdf")
-        else:
+        elif dl.tabWidget.currentIndex() == 2:
             if dl.info2010_radioButton.isChecked():
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "information_guide_2010_v2.pdf")
             else:
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "scotNHSremuneration10.pdf")
+        else:
+            if dl.info2012_radioButton.isChecked():
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "information-guide-2012-final.pdf")
+            elif dl.terms_radioButton.isChecked():
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "ssi_20100208_en.pdf")
+            else:
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "scotNHSremuneration12.pdf")
 
         try:
             print "opening %s"% doc

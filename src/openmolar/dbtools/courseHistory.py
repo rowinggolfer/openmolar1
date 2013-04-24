@@ -153,7 +153,7 @@ def details(sno):
 
     query = query.strip(",")
 
-    cursor.execute('''SELECT %s from currtrtmt where serialno = %d
+    cursor.execute('''SELECT %s from currtrtmt2 where serialno = %d
     order by courseno desc'''% (query, sno))
 
     rows = cursor.fetchall()
@@ -192,7 +192,7 @@ def all_details(sno):
 
     query = query.strip(",")
 
-    cursor.execute('''SELECT %s from currtrtmt where serialno = %d
+    cursor.execute('''SELECT %s from currtrtmt2 where serialno = %d
     order by courseno desc'''% (query, sno))
 
     rows = cursor.fetchall()

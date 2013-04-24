@@ -178,7 +178,7 @@ csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
         trtvalues.append(pt.serialno)
         trtvalues.append(pt.courseno)
         sqlcommands['currtrtmt'] = (
-        '''update currtrtmt SET %s where serialno=%%s and courseno=%%s'''%(
+        '''update currtrtmt2 SET %s where serialno=%%s and courseno=%%s'''%(
         trtchanges.strip(",")), tuple(trtvalues))
 
     if sqlcommands != {}:
