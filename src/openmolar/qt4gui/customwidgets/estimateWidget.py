@@ -154,7 +154,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         else:
             self.separateIcon(False)
             self.setType(self.items[0].type)
-
+        
     def validators(self):
         '''
         set validators to prevent junk data being entered by user
@@ -329,6 +329,10 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         self.fee_lineEdit.setEnabled(state)
         self.ptFee_lineEdit.setEnabled(state)
         self.chain.setEnabled(state)
+        #allow_delete = (len(self.items) == 1 and not
+        #    self.completed_checkBox.isChecked())
+        self.delete_pushButton.setEnabled(state or len(self.items)>1)
+
 
     def completeItem(self):
         '''
@@ -337,7 +341,7 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         '''
         number = len(self.items)
         arg = self.completed_checkBox.checkState()
-        print arg
+        
         if arg == 0:
             action = "reverse"
             complete = False
@@ -402,6 +406,12 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         a scissors button has been clicked
         call up a dialog to split the items
         '''
+        def delete_item(*args):
+            # if the mini dialog has only one item.. it is no longer needed!
+            if len(self.items) == 1:
+                Dialog.accept()
+            self.passOnDeleteItemSignal(*args)
+            
         Dialog = QtGui.QDialog(self.parent)
         dl = Ui_estSplitItemsDialog.Ui_Dialog()
         dl.setupUi(Dialog)
@@ -417,10 +427,10 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         ew.connect(ew, QtCore.SIGNAL("unCompletedItem"),
         self.passOnUncompletedSignal)
 
-        ew.connect(ew, QtCore.SIGNAL("deleteItem"),
-        self.passOnDeleteItemSignal)
-
+        ew.connect(ew, QtCore.SIGNAL("deleteItem"), delete_item)
+    
         Dialog.exec_()
+        
         if ew.allPlanned:
             self.completed_checkBox.setChecked(False)
         elif ew.allCompleted:
@@ -429,7 +439,10 @@ class estItemWidget(Ui_estimateItemWidget.Ui_Form):
         else:
             self.completed_checkBox.setCheckState(
             QtCore.Qt.CheckState(QtCore.Qt.PartiallyChecked))
-
+        
+        if len(self.items) == 0:
+            #do something
+            pass
         self.loadValues()
         self.userInput()
 

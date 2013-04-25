@@ -1,3 +1,11 @@
+0.3.6 
+    BUGS FIXED
+        hidden notes is not working when user deletes (
+        as opposed to uncompletes using the check box) treatments.
+
+	dialog that pops up for multiple items on the estimate will now 
+	self close if it is no longer required (prevents an index error)
+
 0.3.5 (bzr 810)
     BUGS FIXED
         possible to create 2 open course on one day.

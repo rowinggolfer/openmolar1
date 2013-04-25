@@ -679,6 +679,10 @@ self.serialno, self.courseno0))
         '''
         re-written for schema 1.9
         '''
+        print(
+        "patient.addHiddenNote(ntype='%s',note='%s',deleteIfPossible='%s'"% (
+        ntype, note, deleteIfPossible)
+        )
         HN = ()
         if ntype=="payment":
             HN=("RECEIVED: ", note)
