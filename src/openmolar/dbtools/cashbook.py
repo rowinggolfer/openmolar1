@@ -12,29 +12,49 @@ table of the database
 '''
 
 from __future__ import division
+import functools
+
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
 # this variable allows HISTORIC cashbook entries to be altered (by supervisor)
 full_edit = False
 
-def getCashBookCodes():
-    '''A dictionary of cashbookCodes called at module initialisation'''
-    myDict = {}
-    db = connect()
-    cursor = db.cursor()
-    try:
-        query = "select code,descr from cbcodes where flag>1"
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        for row in rows:
-            myDict[int(row[0])] = row[1]
-        print "cashbook codes loaded sucessfully"
-    except:
-        print "error loading cashbook codes"
-    finally:
-        cursor.close()
-    return myDict
+def viewitems(obj):
+    '''
+    provides 2.7 functionality for 2.6 and under 
+    '''
+    for key in obj.keys():
+        yield (key, obj[key])
+    
+
+class CashBookCodesDict(dict):
+    '''
+    A dictionary of cashbookCodes called at module initialisation
+    '''
+    def __init__(self):
+        dict.__init__(self)
+        self.get_values()
+        try:
+            self.viewitems
+        except AttributeError: #patched for python <2.7
+            self.viewitems = functools.partial(viewitems, self)
+    
+    def get_values(self):
+        db = connect()
+        cursor = db.cursor()
+        try:
+            query = "select code,descr from cbcodes where flag>1"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            for row in rows:
+                self[int(row[0])] = row[1]
+            print "cashbook codes loaded sucessfully"
+        except:
+            print "error loading cashbook codes"
+        finally:
+            cursor.close()
+            
 
 def paymenttaken(sno, name, dent, csetyp, cash, cheque, card,
 sundry_cash, sundry_cheque, sundry_card, hdp, other):
@@ -193,14 +213,11 @@ def details(dent, startdate, enddate,
     return retarg
 
 #--initiate the cashbook dictionary on module import
-cashbookCodesDict = getCashBookCodes()
+cashbookCodesDict = CashBookCodesDict()
 
 if __name__ == "__main__":
     from PyQt4.QtCore import QDate
 
     localsettings.initiate()
-    localsettings.logqueries = True
-
-    print'<html><body><head>'
-    print details("*ALL*", QDate(2009,2,1), QDate(2009,2,20))
-    print "</body></html>"
+    print cashbookCodesDict
+    print cashbookCodesDict.viewitems()
