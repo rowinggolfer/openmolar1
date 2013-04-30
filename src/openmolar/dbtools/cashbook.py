@@ -15,6 +15,9 @@ from __future__ import division
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
+# this variable allows HISTORIC cashbook entries to be altered (by supervisor)
+full_edit = False
+
 def getCashBookCodes():
     '''A dictionary of cashbookCodes called at module initialisation'''
     myDict = {}
@@ -71,8 +74,14 @@ def details(dent, startdate, enddate,
 
     db = connect()
     cursor = db.cursor()
+
+    #note - len(headers) is used writing out the html
     headers = ("cbdate", "Serial NO", "Dentist", "Patient", "code", "cash",
     "cheque", "card", "unknown", "amt")
+    
+    if full_edit or (startdate.toPyDate() <= 
+    localsettings.currentDay() <= enddate.toPyDate()):
+        headers += ("edit",)
 
     if dent == "*ALL*":
         cond1 = ""
@@ -88,12 +97,16 @@ def details(dent, startdate, enddate,
     elif sundries_only:
         cond1 += "code >=14  and  code <= 18 and "
         restriction_header = "SUNDRIES ONLY"
+    else:
+        restriction_header = "ALL PAYMENTS"
         
 
     #-- note - mysqldb doesn't play nice with DATE_FORMAT
     #-- hence the string is formatted entirely using python formatting
-    query = '''select DATE_FORMAT(cbdate, '%s'), ref, dntid, descr, code, amt
-    from cashbook where %s cbdate>='%s' and cbdate<='%s' order by cbdate'''%(
+    query = '''select 
+    DATE_FORMAT(cbdate, '%s'), ref, dntid, descr, code, amt, cbdate, id
+    from cashbook where %s cbdate>='%s' and cbdate<='%s' 
+    order by cbdate'''%(
     localsettings.OM_DATE_FORMAT, cond1,
     startdate.toPyDate(), enddate.toPyDate())
 
@@ -152,6 +165,12 @@ def details(dent, startdate, enddate,
             otherTOT += amt
 
         retarg += '<td align="right">%s</td>'% amt_str
+        if len(headers) == 11:
+            if full_edit or row[6] == localsettings.currentDay():
+                retarg += '''<td align="center">
+                <a href="edit_%s">edit</a></td>'''% row[7]
+            else:
+                retarg += '<td align="center">n/a</a>'
         retarg += '</tr>\n'
         total += amt
 

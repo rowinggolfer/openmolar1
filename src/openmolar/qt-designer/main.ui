@@ -440,7 +440,7 @@
               </property>
               <widget class="QTabWidget" name="tabWidget">
                <property name="currentIndex">
-                <number>2</number>
+                <number>4</number>
                </property>
                <widget class="QWidget" name="tab_patient_details">
                 <attribute name="title">
@@ -457,7 +457,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>493</width>
+                      <width>655</width>
                       <height>480</height>
                      </rect>
                     </property>
@@ -1993,7 +1993,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>311</width>
+                      <width>675</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2650,8 +2650,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>102</width>
-                      <height>111</height>
+                      <width>469</width>
+                      <height>376</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2827,7 +2827,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
+                         <width>419</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -2860,7 +2860,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>192</width>
+                      <width>220</width>
                       <height>514</height>
                      </rect>
                     </property>
@@ -3209,7 +3209,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>261</width>
+                      <width>657</width>
                       <height>387</height>
                      </rect>
                     </property>
@@ -3846,20 +3846,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
            <attribute name="title">
             <string>Cashbook</string>
            </attribute>
-           <layout class="QGridLayout">
-            <item row="2" column="5">
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>389</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
+           <layout class="QGridLayout" name="gridLayout_5">
             <item row="0" column="0">
              <widget class="QLabel" name="label_34">
               <property name="text">
@@ -3881,7 +3868,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
              </widget>
             </item>
-            <item row="0" column="3" rowspan="3">
+            <item row="0" column="3" rowspan="2">
              <widget class="QPushButton" name="cashbookGoPushButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -3904,7 +3891,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
              </widget>
             </item>
-            <item row="0" column="4" rowspan="3">
+            <item row="0" column="4" rowspan="2">
              <widget class="QPushButton" name="cashbookPrintButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -3936,7 +3923,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="1" column="0">
              <widget class="QDateEdit" name="cashbookStartDateEdit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -3955,7 +3942,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="1" column="1">
              <widget class="QDateEdit" name="cashbookEndDateEdit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -3974,33 +3961,53 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
               </property>
              </widget>
             </item>
-            <item row="2" column="2">
+            <item row="1" column="2">
              <widget class="QComboBox" name="cashbookDentComboBox"/>
             </item>
-            <item row="3" column="0" colspan="10">
-             <widget class="QTextBrowser" name="cashbookTextBrowser"/>
-            </item>
-            <item row="2" column="7">
-             <widget class="QRadioButton" name="sundries_only_radioButton">
-              <property name="text">
-               <string>Sundries_only</string>
+            <item row="1" column="5">
+             <spacer>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-             </widget>
-            </item>
-            <item row="2" column="8">
-             <widget class="QRadioButton" name="treatment_only_radioButton">
-              <property name="text">
-               <string>Treatment_only</string>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>389</width>
+                <height>20</height>
+               </size>
               </property>
-             </widget>
+             </spacer>
             </item>
-            <item row="2" column="6">
+            <item row="1" column="6">
              <widget class="QRadioButton" name="all_payments_radioButton">
               <property name="text">
                <string>All payments</string>
               </property>
               <property name="checked">
                <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="7">
+             <widget class="QRadioButton" name="sundries_only_radioButton">
+              <property name="text">
+               <string>Sundries_only</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="8">
+             <widget class="QRadioButton" name="treatment_only_radioButton">
+              <property name="text">
+               <string>Treatment_only</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="9">
+             <widget class="QWidget" name="cashbook_placeholder_widget" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
              </widget>
             </item>
@@ -5138,12 +5145,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
      </property>
      <addaction name="actionShow_Geek_Column"/>
     </widget>
+    <widget class="QMenu" name="menuCashbook">
+     <property name="title">
+      <string>Cashbook</string>
+     </property>
+     <addaction name="actionAllow_Full_Edit"/>
+    </widget>
     <addaction name="actionChange_Language"/>
     <addaction name="separator"/>
     <addaction name="menuView"/>
     <addaction name="menuCharts"/>
     <addaction name="menuAppointments"/>
     <addaction name="menuForum"/>
+    <addaction name="menuCashbook"/>
     <addaction name="menuFeescales"/>
     <addaction name="menuPrinting"/>
     <addaction name="separator"/>
@@ -5294,6 +5308,14 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <string>Fix Locked New Course of Treatment</string>
    </property>
   </action>
+  <action name="actionAllow_Full_Edit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Allow Full Edit</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -5311,7 +5333,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>cashbookStartDateEdit</tabstop>
   <tabstop>cashbookEndDateEdit</tabstop>
   <tabstop>cashbookDentComboBox</tabstop>
-  <tabstop>cashbookTextBrowser</tabstop>
   <tabstop>daybookGoPushButton</tabstop>
   <tabstop>daybookPrintButton</tabstop>
   <tabstop>daybookStartDateEdit</tabstop>

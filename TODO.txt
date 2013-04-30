@@ -1,3 +1,9 @@
+0.3.7
+    NEW FUNCTIONALITY
+        allow modification of todays cashbook entries
+        (+ more advanced edits for supervisors)
+        
+
 0.3.6 
     BUGS FIXED
         hidden notes is not working when user deletes (

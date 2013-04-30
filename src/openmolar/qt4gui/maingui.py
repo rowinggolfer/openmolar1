@@ -360,6 +360,13 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         self.ui.details_frame.layout().addWidget(self.ui.notificationWidget)
 
+        #cashbook browser
+    
+        self.ui.cashbookTextBrowser = cashbook_module.CashBookBrowser(self)
+        layout = QtGui.QVBoxLayout(self.ui.cashbook_placeholder_widget)
+        layout.setMargin(0)
+        layout.addWidget(self.ui.cashbookTextBrowser)
+
     def setClinician(self):
         result, selected = clinician_select_dialog.Dialog(self).result()
         if result:
@@ -2727,6 +2734,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.actionFix_Locked_New_Course_of_Treatment.triggered.connect(
             self.fix_zombied_course)
 
+
+        self.ui.actionAllow_Full_Edit.triggered.connect(
+            self.ui.cashbookTextBrowser.allow_full_edit)
 
     def signals_estimates(self):
         #Estimates and course ManageMent

@@ -187,7 +187,7 @@ debs:
 	) 
 	
 	#make debsign DIST=<unstable|testing|stable|raring|quantal|precise|lucid> 
-	$(foreach var,$(DEBDISTS), make debsign DIST=$(var);) 
+	#$(foreach var,$(DEBDISTS), make debsign DIST=$(var);) 
 	
 	#make debsigns
 	

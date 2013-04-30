@@ -71,6 +71,7 @@ class ApptPrefsDialog(BaseDialog):
         self.recdent_period_spinbox = QtGui.QSpinBox()
         self.recdent_period_spinbox.setMinimum(1)
         self.recdent_period_spinbox.setMaximum(24)
+        self.recdent_period_spinbox.setValue(6)
         self.recdent_date_edit = QtGui.QDateEdit()
         self.recdent_date_edit.setCalendarPopup(True)
         self.recdent_date_edit.setDate(QtCore.QDate.currentDate())
