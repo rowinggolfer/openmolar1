@@ -54,7 +54,10 @@ def header(pt):
         retarg += "<b>!UNKNOWN POSTCODE!</b>"
     else:
         retarg +=  "%s"% pt.pcde
-
+    
+    if not pt.status in ("Active", "", None):
+        retarg += "<h1>%s</h1>"% pt.status
+        
     return retarg
 
 def details(pt, Saved=True):
@@ -124,8 +127,6 @@ def details(pt, Saved=True):
             retarg += '<tr><td colspan="2">%s</td></tr></table>'% _(
                 "DO NOT RECALL")
 
-        if not pt.status in ("Active", "", None):
-            retarg += "<h1>%s</h1>"% pt.status
         if not Saved:
             alert = "<br />NOT SAVED"
         else:
@@ -152,7 +153,7 @@ if __name__ == '__main__':
     try:
         serialno = int(sys.argv[len(sys.argv)-1])
     except:
-        serialno = 27222
+        serialno = 4792
     if '-v' in sys.argv:
         verbose = True
     else:

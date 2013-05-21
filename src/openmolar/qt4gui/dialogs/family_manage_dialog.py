@@ -34,7 +34,7 @@ from openmolar.qt4gui.dialogs.address_match_dialog import AddressMatchDialog
 from openmolar.ptModules import patientDetails
 
 QUERY = '''select serialno, title, fname, sname, 
-addr1, addr2, addr3, town, county, pcde, dob from patients
+addr1, addr2, addr3, town, county, pcde, dob, status from patients
 where familyno = %s order by dob'''
 
 LINK_QUERY = 'update patients set familyno=%s where serialno=%s'
@@ -61,6 +61,7 @@ class _DuckPatient(object):
         self.county = result[8]
         self.pcde = result[9]
         self.dob = result[10]
+        self.status = result[11]
     
     def getAge(self):
         '''
@@ -242,7 +243,10 @@ class FamilyManageDialog(ExtendableDialog):
             column = i%4
             self.frame_layout.addWidget(browser, row, column)
             message = u"%s %s %s"% (mes1, pt.serialno, mes2)
-            icon = QtGui.QIcon(":/eraser.png")
+            if mes1 == _("Unlink"):
+                icon = QtGui.QIcon(":/eraser.png")
+            else:
+                icon = QtGui.QIcon(":/logo.png")
             member_but = QtGui.QPushButton(icon, message)
             self.frame_layout.addWidget(member_but, row+1, column)
             
@@ -255,14 +259,20 @@ class FamilyManageDialog(ExtendableDialog):
         if len(members) == 0:
             label = QtGui.QLabel(
                 _("This patient does not belong to any family group."))
+            label.setAlignment(QtCore.Qt.AlignRight)
             but = QtGui.QPushButton(_("Create a New Family Group"))
             but.clicked.connect(self.new_family_group)
+
+            but2 = QtGui.QPushButton(_("Show similar addresses"))
+            but2.clicked.connect(self.show_addresses)            
             
             self.widgets.append(label)
             self.widgets.append(but)
+            self.widgets.append(but2)
             
             self.frame_layout.addWidget(label, 0, 0)
             self.frame_layout.addWidget(but,0, 1)
+            self.frame_layout.addWidget(but2,1, 1)
         else:
             self.advanced_widg.setEnabled(True)
             
@@ -335,6 +345,14 @@ class FamilyManageDialog(ExtendableDialog):
         if dl.exec_():
             for serialno in dl.selected_patients:
                 self.add_member(serialno)
+                
+    def show_addresses(self):
+        dl = AddressMatchDialog(self.om_gui)
+        dl.table_widget.setSelectionMode(
+            QtGui.QAbstractItemView.NoSelection)
+        
+        dl.exec_()
+        
     
     def new_family_group(self):
         db = connect()
@@ -375,7 +393,7 @@ if __name__ == "__main__":
 
     mw = QtGui.QWidget()
     mw.pt = _DuckPatient((1,"","","","The Gables",
-        "Craggiemore Daviot","Inverness","","","IV2 5XQ", ""))
+        "Craggiemore Daviot","Inverness","","","IV2 5XQ", "", "active"))
     
     mw.pt.familyno = 1
 
