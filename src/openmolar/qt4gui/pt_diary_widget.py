@@ -78,6 +78,11 @@ class PtDiaryWidget(QtGui.QWidget):
         except AttributeError:
             print args
 
+    def clear(self):
+        self.diary_model.clear()
+        self.hide_appointment_buttons()
+        self.ui.appt_memo_lineEdit.setText("")
+
     def hide_appointment_buttons(self):
         self.ui.scheduleAppt_pushButton.hide()
         self.ui.modifyAppt_pushButton.hide()

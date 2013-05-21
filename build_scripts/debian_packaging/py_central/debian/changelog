@@ -1,3 +1,10 @@
+openmolar (0.3.8+bzr0820-0~__DIST__0) __DIST__; urgency=low
+
+  * bugfix for 0.3.8
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Tue, 21 May 2013 15:19:56 +0100
+
+
 openmolar (0.3.8+bzr0819-0~__DIST__0) __DIST__; urgency=low
 
   * upstream release

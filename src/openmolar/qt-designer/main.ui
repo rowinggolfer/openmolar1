@@ -440,7 +440,7 @@
               </property>
               <widget class="QTabWidget" name="tabWidget">
                <property name="currentIndex">
-                <number>0</number>
+                <number>4</number>
                </property>
                <widget class="QWidget" name="tab_patient_details">
                 <attribute name="title">
@@ -462,7 +462,7 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-75</y>
+                      <y>0</y>
                       <width>673</width>
                       <height>467</height>
                      </rect>
@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>655</width>
+                      <width>441</width>
                       <height>425</height>
                      </rect>
                     </property>
@@ -2672,8 +2672,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>469</width>
-                      <height>376</height>
+                      <width>102</width>
+                      <height>111</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2849,7 +2849,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>419</width>
+                         <width>98</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -2882,7 +2882,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>220</width>
+                      <width>192</width>
                       <height>514</height>
                      </rect>
                     </property>
@@ -3231,7 +3231,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>657</width>
+                      <width>261</width>
                       <height>387</height>
                      </rect>
                     </property>

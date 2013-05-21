@@ -679,7 +679,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.bpe_textBrowser.setText("")
             self.ui.planSummary_textBrowser.setText("")
             self.ui.synopsis_lineEdit.setText("")
-            self.pt_diary_widget.diary_model.clear()
+            self.pt_diary_widget.clear()
             #--restore the charts to full dentition
             ##TODO - perhaps handle this with the tabwidget calls?
             for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
