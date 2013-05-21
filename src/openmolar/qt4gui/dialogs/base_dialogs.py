@@ -162,8 +162,8 @@ class ExtendableDialog(BaseDialog):
     builds on BaseDialog, adding an area for advanced options
     unlike BaseDialog.. this dialog has no spacer item by default
     '''
-    def __init__(self, parent=None):
-        BaseDialog.__init__(self, parent)
+    def __init__(self, parent=None, remove_stretch=False):
+        BaseDialog.__init__(self, parent, remove_stretch)
 
         self.button_box.setCenterButtons(False)
 

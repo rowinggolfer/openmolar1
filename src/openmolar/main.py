@@ -99,7 +99,6 @@ and you can continue if you wish</p>
                 run_main = True
 
     if run_main:
-        localsettings.loadFeeTables()
         from openmolar.qt4gui import maingui
         maingui.main(my_app)
     else:

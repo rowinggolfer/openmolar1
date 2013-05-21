@@ -30,7 +30,6 @@ from openmolar.dbtools import search
 
 from openmolar.qt4gui.compiled_uis import Ui_patient_finder
 from openmolar.qt4gui.compiled_uis import Ui_select_patient
-from openmolar.qt4gui.compiled_uis import Ui_related_patients
 
 
 class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
@@ -103,10 +102,11 @@ class FinalChoiceDialog(QtGui.QDialog, Ui_select_patient.Ui_Dialog):
         headers=('Serialno', 'Surname', 'Forename', 'dob', 'Address1',
         'Address2', 'POSTCODE')
 
-        widthFraction=(10, 20, 20, 10, 30, 30, 10)
+        widthFraction=(0, 20, 20, 15, 30, 30, 10)
         self.tableWidget.setColumnCount(len(headers))
         self.tableWidget.setHorizontalHeaderLabels(headers)
         self.tableWidget.verticalHeader().hide()
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
         row=0
 
         for col in range(len(headers)):
@@ -136,84 +136,6 @@ class FinalChoiceDialog(QtGui.QDialog, Ui_select_patient.Ui_Dialog):
             return True
         return False
 
-class FindRelativesDialog(QtGui.QDialog, Ui_related_patients.Ui_Dialog):
-
-    chosen_sno = None
-    def __init__(self, pt, parent=None):
-        QtGui.QDialog.__init__(self, parent)
-        self.setupUi(self)
-
-        self.pt = pt
-
-        self.load()
-
-        self.family_tableWidget.itemSelectionChanged.connect(
-            self.family_navigated)
-
-        self.family_tableWidget.itemDoubleClicked.connect(self.accept)
-
-        self.address_tableWidget.itemSelectionChanged.connect(
-            self.address_navigated)
-
-        self.address_tableWidget.itemDoubleClicked.connect(self.accept)
-
-    def family_navigated(self):
-        self.address_tableWidget.setCurrentItem(None)
-        item = self.family_tableWidget.item(
-            self.family_tableWidget.currentRow(), 0)
-        if item:
-            self.chosen_sno = int(item.text())
-
-    def address_navigated(self):
-        self.family_tableWidget.setCurrentItem(None)
-        item = self.address_tableWidget.item(
-            self.address_tableWidget.currentRow(), 0)
-        if item:
-            self.chosen_sno = int(item.text())
-
-    def load(self):
-        candidates = search.getsimilar(self.pt.serialno, self.pt.addr1,
-        self.pt.sname, self.pt.familyno)
-
-        if candidates == ():
-            QtGui.QMessageBox.information(self, _("error"),
-            _("No similar patients found"))
-            return
-
-        self.thisPatient_label.setText(
-        "Possible Matches for patient - %d - %s %s - %s"%(
-        self.pt.serialno, self.pt.fname, self.pt.sname, self.pt.addr1))
-
-        headers=['Serialno', 'Surname', 'Forename', 'dob', 'Address1',
-        'Address2', 'POSTCODE']
-        tableNo=0
-        for table in (self.family_tableWidget, self.address_tableWidget):
-            table.clear()
-            table.setSortingEnabled(False)
-            #--good practice to disable this while loading
-            table.setRowCount(len(candidates[tableNo]))
-            table.setColumnCount(len(headers))
-            table.setHorizontalHeaderLabels(headers)
-            #table.verticalHeader().hide()
-            row=0
-            for candidate in candidates[tableNo]:
-                col=0
-                for attr in candidate:
-                    if type(attr) == type(datetime.date(1900,1,1)):
-                        item = QtGui.QTableWidgetItem(
-                        localsettings.formatDate(attr))
-                    else:
-                        item = QtGui.QTableWidgetItem(str(attr))
-                    table.setItem(row, col, item)
-                    col+=1
-                row+=1
-            table.resizeColumnsToContents()
-            table.setSortingEnabled(True)
-            table.sortItems(1)
-            #--allow user to sort pt attributes
-            tableNo+=1
-
-
 if __name__ == "__main__":
 
     localsettings.initiate()
@@ -223,10 +145,3 @@ if __name__ == "__main__":
     print ("chosen sno = %s"% dl.chosen_sno)
     if dl.exec_():
         print (dl.chosen_sno)
-
-        from openmolar.dbtools import patient_class
-        pt = patient_class.patient(dl.chosen_sno)
-
-        dl2 = FindRelativesDialog(pt)
-        if dl2.exec_():
-            print (dl2.chosen_sno)

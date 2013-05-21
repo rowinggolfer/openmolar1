@@ -20,6 +20,7 @@ import pickle
 import re
 import sys
 import traceback
+import webbrowser #for email
 
 from PyQt4 import QtGui, QtCore
 
@@ -70,9 +71,11 @@ from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
 from openmolar.qt4gui.dialogs.alter_todays_notes import \
     AlterTodaysNotesDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
-from openmolar.qt4gui.dialogs.find_patient_dialog import FindRelativesDialog
+from openmolar.qt4gui.dialogs.family_manage_dialog import LoadRelativesDialog
 
 from openmolar.qt4gui.dialogs import duplicate_receipt_dialog
+from openmolar.qt4gui.dialogs.auto_address_dialog import AutoAddressDialog
+from openmolar.qt4gui.dialogs.family_manage_dialog import FamilyManageDialog
 
 
 #secondary applications
@@ -159,6 +162,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.forum_parenting_mode = (False, None)
         self.feetesterdl = None
 
+        QtCore.QTimer.singleShot(2000, self.load_fee_tables)
         QtCore.QTimer.singleShot(1000, self.set_operator_label)
         QtCore.QTimer.singleShot(1000, self.load_todays_patients_combobox)
 
@@ -542,7 +546,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         #--this returns a LIST of changes ie [] if none.
         quit = True
         uc = self.unsavedChanges()
-        if uc != []:
+        if uc == []:
+            print "no changes"
+        else:
             #--raise a custom dialog to get user input
             Dialog = QtGui.QDialog(self)
             dl = saveDiscardCancel.sdcDialog(Dialog)
@@ -663,6 +669,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         Other pages are disabled.
         '''
         if self.pt.serialno != 0:
+            
             #print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
@@ -698,6 +705,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 #print "blanking edit page fields"
                 self.load_editpage()
                 self.editPageVisited = False
+            self.update_family_label()
         
 
     def gotoDefaultTab(self):
@@ -851,14 +859,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 print "unknown dentist number", self.pt.dnt2
                 message = _("unknown course dentist - please correct this")
                 self.advise(message, 2)
-
-    def showAdditionalFields(self):
-        '''
-        more Fields Button has been pressed
-        '''
-        #TODO - add more code here!!
-        self.advise("not yet available", 1)
-
+    
     def enterNewPatient(self):
         '''
         called by the user clicking the new patient button
@@ -1085,7 +1086,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.pt.serialno == 0:
             self.advise("No patient to compare to", 2)
             return
-        dl = FindRelativesDialog(self.pt)
+        dl = LoadRelativesDialog(self)
         if dl.exec_():
             self.getrecord(dl.chosen_sno)
 
@@ -1164,9 +1165,9 @@ class OpenmolarGui(QtGui.QMainWindow):
                     newPatientReload=False
                 ):
         '''
-        a record has been called byone of several means
+        a record has been called by one of several means
         '''
-        if self.enteringNewPatient() or serialno ==0:
+        if self.enteringNewPatient() or serialno in (0, None):
             pass
         elif (self.pt and serialno == self.pt.serialno and 
         not newPatientReload):
@@ -1179,7 +1180,11 @@ class OpenmolarGui(QtGui.QMainWindow):
             if addToRecentSnos:
                 localsettings.recent_snos.append(serialno)
                 localsettings.recent_sno_index = len(
-                localsettings.recent_snos) - 1
+                    localsettings.recent_snos) - 1
+            localsettings.defaultNewPatientDetails=(
+                self.pt.sname, self.pt.addr1, self.pt.addr2,
+                self.pt.addr3, self.pt.town, self.pt.county,
+                self.pt.pcde, self.pt.tel1)
 
             try:
                 #--work on a copy only, so that changes can be tested for later
@@ -1295,11 +1300,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         self.ui.contract_tabWidget.setCurrentIndex(pos)
         #--update bpe
-        localsettings.defaultNewPatientDetails=(
-        self.pt.sname, self.pt.addr1, self.pt.addr2,
-        self.pt.addr3, self.pt.town, self.pt.county,
-        self.pt.pcde, self.pt.tel1)
-
+        
         labeltext = "currently editing  %s %s %s - (%s)"% (
             self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
         self.loadedPatient_label.setText(labeltext)
@@ -1308,11 +1309,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.ui.tabWidget.currentIndex() == 4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.ui.debugBrowser.setText("")
+        
+        self.update_family_label()
         self.medalert()
-        self.getmemos()
         if localsettings.station == "surgery":
             self.callXrays()
-
+        self.getmemos()
+        
         for warning in self.pt.load_warnings:
             self.advise(warning, 1)
 
@@ -3033,10 +3036,11 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_editPatient(self):
         #edit page
-        QtCore.QObject.connect(self.ui.editMore_pushButton,
-            QtCore.SIGNAL("clicked()"), self.showAdditionalFields)
-        QtCore.QObject.connect(self.ui.defaultNP_pushButton,
-            QtCore.SIGNAL("clicked()"), self.defaultNP)
+        self.ui.email1_button.clicked.connect(self.send_email)
+        self.ui.email2_button.clicked.connect(self.send_email)
+        self.ui.auto_address_button.clicked.connect(self.raise_address_dialog)
+        self.ui.titleEdit.editingFinished.connect(self.check_sex)
+        self.ui.family_button.clicked.connect(self.raise_family_dialog)
 
     def signals_notesPage(self):
         #notes page
@@ -3155,6 +3159,58 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         course_module.fix_zombied_course(self)
 
+    def check_sex(self):
+        '''
+        when the title field is edited, make assumptions about the patient's 
+        sex
+        '''
+        if self.ui.titleEdit.text().toUpper() in ("MISS", "MRS"):
+            self.ui.sexEdit.setCurrentIndex(1)
+        elif self.ui.titleEdit.text().toUpper() in ("MR", "MASTER"):
+            self.ui.sexEdit.setCurrentIndex(0)        
+        
+    def raise_address_dialog(self):
+        '''
+        raise the dialog for the last known address
+        '''
+        dl = AutoAddressDialog(self)
+        if dl.exec_():
+            dl.apply()
+    
+    def raise_family_dialog(self):
+        '''
+        raise the dialog for family management
+        '''
+        dl = FamilyManageDialog(self)
+        if dl.exec_():
+            dl.apply()
+    
+    def update_family_label(self):
+        if self.pt.familyno:
+            message = u"%s %s - <b>%d %s</b>"% (
+                _("Family ID"), 
+                self.pt.familyno,
+                self.pt.n_family_members,
+                _("Member(s)")
+                )
+        else:
+            message = _("Not a member of a known family")
+        self.ui.family_group_label.setText(message)
+        
+    def send_email(self):
+        if self.sender == self.ui.email2_button:
+            email = self.ui.email2Edit.text()
+        else:
+            email = self.ui.email1Edit.text()
+        webbrowser.open("mailto:%s"% email)
+    
+    def load_fee_tables(self):
+        localsettings.loadFeeTables()
+        for warning in localsettings.FEETABLES.warnings:
+            self.advise(u"<b>%s</b><hr />%s"% (
+            _("error loading feetable"), warning)
+            ,2)
+    
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
         PyQt4 prints unhandled exceptions to stdout and carries on regardless
@@ -3173,16 +3229,12 @@ def main(app):
     '''
 
     if not localsettings.successful_login and not "neil" in os.getcwd():
-        print "unable to run... no login"
-        sys.exit()
+        sys.exit("unable to run... no login")
     localsettings.initiate()
     mainWindow = OpenmolarGui()
     sys.excepthook = mainWindow.excepthook
     mainWindow.show()
-    if __name__ != "__main__":
-        #--don't maximise the window for dev purposes - I like to see
-        #--all the error messages in a terminal ;).
-        mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
+    mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
 
     sys.exit(app.exec_())
 
@@ -3195,6 +3247,5 @@ if __name__ == "__main__":
     print "Qt Version: ", QtCore.QT_VERSION_STR
     print "PyQt Version: ", QtCore.PYQT_VERSION_STR
     newapp = QtGui.QApplication(sys.argv)
-    localsettings.loadFeeTables()
     localsettings.operator = "NW"
     main(newapp)

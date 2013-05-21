@@ -123,7 +123,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                 return False
 
     def changePt(self):
-        dl = FindPatientDialog()
+        dl = FindPatientDialog(self)
         if dl.exec_():
             serialno = dl.chosen_sno
             try:

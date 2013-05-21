@@ -1,3 +1,17 @@
+0.3.9
+    MILESTONES
+        Ability to print out a personalised MH form from record card
+        Ability to print out a personalised MH form for all patients 
+            attending today. Suggest alphabetical order?
+
+0.3.8
+    NEW FUNCTIONALITY
+        MRS or MISS when entering patient details should toggle sex
+        Alert the user (not just via terminal) if a feescale doesnt parse!
+        Add a patient to a known family set.
+        Allow easy change of address to the stored value 
+            (not just for new patients)
+
 0.3.7
     NEW FUNCTIONALITY
         allow modification of todays cashbook entries

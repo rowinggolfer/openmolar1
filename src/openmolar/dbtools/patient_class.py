@@ -204,7 +204,7 @@ class patient(object):
         #self.underTreatment = False
         self.feeTable = None
         self.synopsis = ""
-
+        self._n_family_members = None
         self._dayBookHistory = None
 
         if self.serialno != 0:
@@ -748,6 +748,18 @@ self.serialno, self.courseno0))
     def name_id(self):
         return u"%s %s %s - %s"% (
             self.title, self.fname, self.sname, self.serialno)
+
+    @property
+    def n_family_members(self):
+        if self._n_family_members is None:
+            db = connect.connect()
+            cursor = db.cursor()
+            cursor.execute("select count(*) from patients where familyno=%s", 
+                (self.familyno,))
+            self._n_family_members = cursor.fetchone()[0]
+        
+        return self._n_family_members
+
 
 if __name__ =="__main__":
     '''testing stuff'''

@@ -20,7 +20,6 @@
 ##                                                                           ##
 ###############################################################################
 
-import logging
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -149,7 +148,7 @@ class AlterCashbookDialog(ExtendableDialog):
         amt = int(currency.replace(".", ""))
         
         values = (date_, ref, descr, code, dntid, amt, self.ix)
-        print values
+    
         db = connect()
         cursor = db.cursor()
         cursor.execute(UPDATE_QUERY, values)

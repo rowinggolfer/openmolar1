@@ -138,17 +138,3 @@ def abortNewPatientEntry(om_gui):
         finishedNewPatientInput(om_gui)
         return True
 
-def defaultNP(om_gui):
-    '''
-    default NP has been pressed - so apply the address and surname
-    from the previous patient
-    '''
-    dup_tup = localsettings.defaultNewPatientDetails
-    om_gui.ui.snameEdit.setText(dup_tup[0])
-    om_gui.ui.addr1Edit.setText(dup_tup[1])
-    om_gui.ui.addr2Edit.setText(dup_tup[2])
-    om_gui.ui.addr3Edit.setText(dup_tup[3])
-    om_gui.ui.townEdit.setText(dup_tup[4])
-    om_gui.ui.countyEdit.setText(dup_tup[5])
-    om_gui.ui.pcdeEdit.setText(dup_tup[6])
-    om_gui.ui.tel1Edit.setText(dup_tup[7])

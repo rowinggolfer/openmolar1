@@ -51,9 +51,9 @@ def header(pt):
         if str(line) != '':
             retarg += "%s <br />"% line
     if pt.pcde == "":
-        retarg += "<b>!UNKNOWN POSTCODE!</b><hr />"
+        retarg += "<b>!UNKNOWN POSTCODE!</b>"
     else:
-        retarg +=  "%s <hr />"% pt.pcde
+        retarg +=  "%s"% pt.pcde
 
     return retarg
 
@@ -61,7 +61,7 @@ def details(pt, Saved=True):
     '''returns an html set showing pt name etc...'''
 
     try:
-        retarg = header(pt)
+        retarg = header(pt) + "<hr />"
         if "N" in pt.cset:
             retarg += '''<img src="%s/nhs_scot.png" alt="NHS">
             <br />'''% localsettings.resources_path

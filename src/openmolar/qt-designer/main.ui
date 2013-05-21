@@ -446,7 +446,13 @@
                 <attribute name="title">
                  <string>Patient Details</string>
                 </attribute>
-                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QScrollArea" name="scrollArea_4">
                    <property name="widgetResizable">
@@ -456,268 +462,34 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>0</y>
-                      <width>655</width>
-                      <height>480</height>
+                      <y>-75</y>
+                      <width>673</width>
+                      <height>467</height>
                      </rect>
                     </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_10">
+                    <layout class="QVBoxLayout" name="verticalLayout_6">
                      <item>
                       <widget class="QGroupBox" name="patientEdit_groupBox">
                        <property name="title">
                         <string>Details</string>
                        </property>
                        <layout class="QGridLayout" name="gridLayout_2">
-                        <item row="0" column="0">
-                         <widget class="QLabel" name="label">
+                        <property name="verticalSpacing">
+                         <number>3</number>
+                        </property>
+                        <property name="margin">
+                         <number>6</number>
+                        </property>
+                        <item row="6" column="0">
+                         <widget class="QLabel" name="label_9">
                           <property name="text">
-                           <string>Title</string>
+                           <string>Address3</string>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="buddy">
-                           <cstring>titleEdit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="1">
-                         <widget class="QLineEdit" name="titleEdit">
-                          <property name="maximumSize">
-                           <size>
-                            <width>101</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="2">
-                         <widget class="QLabel" name="label_17">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Sex</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>sexEdit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="3">
-                         <widget class="QComboBox" name="sexEdit">
-                          <property name="minimumSize">
-                           <size>
-                            <width>50</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <item>
-                           <property name="text">
-                            <string>M</string>
-                           </property>
-                          </item>
-                          <item>
-                           <property name="text">
-                            <string>F</string>
-                           </property>
-                          </item>
-                         </widget>
-                        </item>
-                        <item row="0" column="4">
-                         <widget class="QLabel" name="label_12">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>25</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Tel (home)</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>tel1Edit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="5">
-                         <widget class="QLineEdit" name="tel1Edit">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>100</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="6" colspan="2">
-                         <widget class="QPushButton" name="editMore_pushButton">
-                          <property name="toolTip">
-                           <string>More Fields are available. Click Here to Edit.</string>
-                          </property>
-                          <property name="text">
-                           <string>More</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="0">
-                         <widget class="QLabel" name="label_2">
-                          <property name="text">
-                           <string>First Name</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>fnameEdit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="1" colspan="3">
-                         <widget class="QLineEdit" name="fnameEdit">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="autoFillBackground">
-                           <bool>false</bool>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="4">
-                         <widget class="QLabel" name="label_13">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Tel (work)</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>tel2Edit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="5">
-                         <widget class="QLineEdit" name="tel2Edit">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>100</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="2" column="0">
-                         <widget class="QLabel" name="label_3">
-                          <property name="text">
-                           <string>Surname</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>snameEdit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="2" column="1" colspan="3">
-                         <widget class="QLineEdit" name="snameEdit">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="autoFillBackground">
-                           <bool>false</bool>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="2" column="4">
-                         <widget class="QLabel" name="label_14">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Tel (mob)</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>mobileEdit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="2" column="5">
-                         <widget class="QLineEdit" name="mobileEdit">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>100</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
+                           <cstring>addr3Edit</cstring>
                           </property>
                          </widget>
                         </item>
@@ -783,316 +555,6 @@
                           </property>
                           <property name="buddy">
                            <cstring>faxEdit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="3" column="5">
-                         <widget class="QLineEdit" name="faxEdit">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>100</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="3" column="7">
-                         <widget class="QPushButton" name="pushButton">
-                          <property name="enabled">
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>60</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="toolTip">
-                           <string>send a fax</string>
-                          </property>
-                          <property name="text">
-                           <string>fax</string>
-                          </property>
-                          <property name="icon">
-                           <iconset resource="../resources/resources.qrc">
-                            <normaloff>:/button_ok.png</normaloff>:/button_ok.png</iconset>
-                          </property>
-                          <property name="iconSize">
-                           <size>
-                            <width>8</width>
-                            <height>8</height>
-                           </size>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="4" column="0">
-                         <widget class="QLabel" name="label_4">
-                          <property name="text">
-                           <string>Address1</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>addr1Edit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="4" column="1" colspan="3">
-                         <widget class="QLineEdit" name="addr1Edit">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="4" column="4">
-                         <widget class="QLabel" name="label_16">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>email1</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>email1Edit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="4" column="5" colspan="2">
-                         <widget class="QLineEdit" name="email1Edit">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>150</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>100</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>50</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="4" column="7">
-                         <widget class="QPushButton" name="pushButton_2">
-                          <property name="enabled">
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>60</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="toolTip">
-                           <string>send an email</string>
-                          </property>
-                          <property name="text">
-                           <string>email</string>
-                          </property>
-                          <property name="icon">
-                           <iconset resource="../resources/resources.qrc">
-                            <normaloff>:/button_ok.png</normaloff>:/button_ok.png</iconset>
-                          </property>
-                          <property name="iconSize">
-                           <size>
-                            <width>8</width>
-                            <height>8</height>
-                           </size>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="5" column="0">
-                         <widget class="QLabel" name="label_5">
-                          <property name="text">
-                           <string>Address2</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>addr2Edit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="5" column="1" colspan="3">
-                         <widget class="QLineEdit" name="addr2Edit">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="5" column="4">
-                         <widget class="QLabel" name="label_23">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>email2</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>email2Edit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="5" column="5" colspan="2">
-                         <widget class="QLineEdit" name="email2Edit">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>150</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>100</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>50</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="5" column="7">
-                         <widget class="QPushButton" name="pushButton_3">
-                          <property name="enabled">
-                           <bool>false</bool>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>60</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="toolTip">
-                           <string>send an email</string>
-                          </property>
-                          <property name="text">
-                           <string>email</string>
-                          </property>
-                          <property name="icon">
-                           <iconset resource="../resources/resources.qrc">
-                            <normaloff>:/button_ok.png</normaloff>:/button_ok.png</iconset>
-                          </property>
-                          <property name="iconSize">
-                           <size>
-                            <width>8</width>
-                            <height>8</height>
-                           </size>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="6" column="0">
-                         <widget class="QLabel" name="label_9">
-                          <property name="text">
-                           <string>Address3</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>addr3Edit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="6" column="1" colspan="3">
-                         <widget class="QLineEdit" name="addr3Edit">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="6" column="4">
-                         <widget class="QLabel" name="label_25">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Occupation</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>occupationEdit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="6" column="5" colspan="3">
-                         <widget class="QLineEdit" name="occupationEdit">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>100</height>
-                           </size>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
                           </property>
                          </widget>
                         </item>
@@ -1167,6 +629,348 @@
                           </property>
                          </widget>
                         </item>
+                        <item row="4" column="4">
+                         <widget class="QLabel" name="label_16">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>email1</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>email1Edit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="4" column="5" colspan="2">
+                         <widget class="QLineEdit" name="email1Edit">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>150</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>100</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>50</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="4" column="7">
+                         <widget class="QPushButton" name="email1_button">
+                          <property name="enabled">
+                           <bool>true</bool>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>60</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="toolTip">
+                           <string>send an email</string>
+                          </property>
+                          <property name="text">
+                           <string>email</string>
+                          </property>
+                          <property name="icon">
+                           <iconset resource="../resources/resources.qrc">
+                            <normaloff>:/button_ok.png</normaloff>:/button_ok.png</iconset>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>8</width>
+                            <height>8</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="6" column="1" colspan="3">
+                         <widget class="QLineEdit" name="addr3Edit">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="6" column="4">
+                         <widget class="QLabel" name="label_25">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Occupation</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>occupationEdit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="6" column="5" colspan="3">
+                         <widget class="QLineEdit" name="occupationEdit">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>100</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="label">
+                          <property name="text">
+                           <string>Title</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>titleEdit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="0">
+                         <widget class="QLabel" name="label_3">
+                          <property name="text">
+                           <string>Surname</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>snameEdit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="1" colspan="3">
+                         <widget class="QLineEdit" name="snameEdit">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="autoFillBackground">
+                           <bool>false</bool>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="4">
+                         <widget class="QLabel" name="label_14">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Tel (mob)</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>mobileEdit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="5" column="0">
+                         <widget class="QLabel" name="label_5">
+                          <property name="text">
+                           <string>Address2</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>addr2Edit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="5" column="1" colspan="3">
+                         <widget class="QLineEdit" name="addr2Edit">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="5" column="4">
+                         <widget class="QLabel" name="label_23">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>email2</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>email2Edit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="5" column="5" colspan="2">
+                         <widget class="QLineEdit" name="email2Edit">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>150</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>100</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>50</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="5" column="7">
+                         <widget class="QPushButton" name="email2_button">
+                          <property name="enabled">
+                           <bool>true</bool>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>60</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="toolTip">
+                           <string>send an email</string>
+                          </property>
+                          <property name="text">
+                           <string>email</string>
+                          </property>
+                          <property name="icon">
+                           <iconset resource="../resources/resources.qrc">
+                            <normaloff>:/button_ok.png</normaloff>:/button_ok.png</iconset>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>8</width>
+                            <height>8</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QLineEdit" name="titleEdit">
+                          <property name="maximumSize">
+                           <size>
+                            <width>101</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2">
+                         <widget class="QLabel" name="label_17">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Sex</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>sexEdit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="3">
+                         <widget class="QComboBox" name="sexEdit">
+                          <property name="minimumSize">
+                           <size>
+                            <width>50</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <item>
+                           <property name="text">
+                            <string>M</string>
+                           </property>
+                          </item>
+                          <item>
+                           <property name="text">
+                            <string>F</string>
+                           </property>
+                          </item>
+                         </widget>
+                        </item>
                         <item row="8" column="1" colspan="3">
                          <widget class="QLineEdit" name="countyEdit">
                           <property name="maximumSize">
@@ -1193,6 +997,80 @@
                           </property>
                          </widget>
                         </item>
+                        <item row="0" column="4">
+                         <widget class="QLabel" name="label_12">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Tel (home)</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>tel1Edit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="3" column="7">
+                         <widget class="QPushButton" name="pushButton">
+                          <property name="enabled">
+                           <bool>false</bool>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>60</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="toolTip">
+                           <string>send a fax</string>
+                          </property>
+                          <property name="text">
+                           <string>fax</string>
+                          </property>
+                          <property name="icon">
+                           <iconset resource="../resources/resources.qrc">
+                            <normaloff>:/button_ok.png</normaloff>:/button_ok.png</iconset>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>8</width>
+                            <height>8</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="4" column="0">
+                         <widget class="QLabel" name="label_4">
+                          <property name="text">
+                           <string>Address1</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>addr1Edit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="4" column="1" colspan="3">
+                         <widget class="QLineEdit" name="addr1Edit">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
                         <item row="9" column="1" colspan="3">
                          <widget class="QLineEdit" name="pcdeEdit">
                           <property name="maximumSize">
@@ -1206,91 +1084,198 @@
                           </property>
                          </widget>
                         </item>
-                        <item row="10" column="0" colspan="8">
-                         <spacer name="verticalSpacer_2">
-                          <property name="orientation">
-                           <enum>Qt::Vertical</enum>
+                        <item row="1" column="0">
+                         <widget class="QLabel" name="label_2">
+                          <property name="text">
+                           <string>First Name</string>
                           </property>
-                          <property name="sizeHint" stdset="0">
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>fnameEdit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1" colspan="3">
+                         <widget class="QLineEdit" name="fnameEdit">
+                          <property name="maximumSize">
                            <size>
-                            <width>20</width>
-                            <height>40</height>
+                            <width>16777215</width>
+                            <height>16777215</height>
                            </size>
                           </property>
-                         </spacer>
+                          <property name="autoFillBackground">
+                           <bool>false</bool>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
                         </item>
-                        <item row="11" column="0" colspan="8">
-                         <widget class="QGroupBox" name="np_groupBox">
+                        <item row="1" column="4">
+                         <widget class="QLabel" name="label_13">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Tel (work)</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>tel2Edit</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="10" column="0" colspan="5">
+                         <widget class="QLabel" name="highlighted_fields_label">
                           <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
                           </property>
-                          <property name="title">
-                           <string>New Patients</string>
+                          <property name="text">
+                           <string>Higlighted Fields are Mandatory for New Patients</string>
                           </property>
-                          <layout class="QGridLayout" name="gridLayout_17">
-                           <item row="0" column="0">
-                            <spacer name="horizontalSpacer_8">
-                             <property name="orientation">
-                              <enum>Qt::Horizontal</enum>
-                             </property>
-                             <property name="sizeHint" stdset="0">
-                              <size>
-                               <width>111</width>
-                               <height>26</height>
-                              </size>
-                             </property>
-                            </spacer>
-                           </item>
-                           <item row="0" column="1">
-                            <widget class="QPushButton" name="defaultNP_pushButton">
-                             <property name="toolTip">
-                              <string>Use the Sname and Address details from the previous patient.</string>
-                             </property>
-                             <property name="text">
-                              <string>Default Sname / Address</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="0" column="2">
-                            <widget class="QPushButton" name="familyNewPatient_pushButton">
-                             <property name="enabled">
-                              <bool>false</bool>
-                             </property>
-                             <property name="toolTip">
-                              <string>Not implemented yet.</string>
-                             </property>
-                             <property name="text">
-                              <string>Family</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="0" column="3">
-                            <spacer name="horizontalSpacer_7">
-                             <property name="orientation">
-                              <enum>Qt::Horizontal</enum>
-                             </property>
-                             <property name="sizeHint" stdset="0">
-                              <size>
-                               <width>110</width>
-                               <height>26</height>
-                              </size>
-                             </property>
-                            </spacer>
-                           </item>
-                           <item row="1" column="0" colspan="4">
-                            <widget class="QLabel" name="npEdit_label">
-                             <property name="text">
-                              <string>Higlighted Fields are Mandatory for New Patients</string>
-                             </property>
-                             <property name="alignment">
-                              <set>Qt::AlignCenter</set>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
+                          <property name="alignment">
+                           <set>Qt::AlignCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="5" colspan="2">
+                         <widget class="QLineEdit" name="tel1Edit">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>100</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="3" column="5" colspan="2">
+                         <widget class="QLineEdit" name="faxEdit">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>100</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="5" colspan="2">
+                         <widget class="QLineEdit" name="mobileEdit">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>100</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="5" colspan="2">
+                         <widget class="QLineEdit" name="tel2Edit">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>100</height>
+                           </size>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="family_groupBox">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="title">
+                        <string>Family Groups</string>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_11">
+                        <property name="margin">
+                         <number>6</number>
+                        </property>
+                        <property name="spacing">
+                         <number>3</number>
+                        </property>
+                        <item row="1" column="1">
+                         <widget class="QPushButton" name="family_button">
+                          <property name="enabled">
+                           <bool>true</bool>
+                          </property>
+                          <property name="toolTip">
+                           <string>Raise a dialog to edit the patients family grouping</string>
+                          </property>
+                          <property name="text">
+                           <string>Edit family group</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QLabel" name="family_group_label">
+                          <property name="text">
+                           <string>Not a member of a known family</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="0" colspan="2">
+                         <widget class="QPushButton" name="auto_address_button">
+                          <property name="toolTip">
+                           <string>Use the Sname and Address details from the previous patient.</string>
+                          </property>
+                          <property name="text">
+                           <string>Apply Address of previous record</string>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -1731,12 +1716,12 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>673</width>
-                      <height>374</height>
+                      <width>655</width>
+                      <height>425</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout">
-                     <item row="0" column="0">
+                     <item row="0" column="0" colspan="2">
                       <widget class="QGroupBox" name="groupBox_6">
                        <property name="title">
                         <string>Letters TO the patient</string>
@@ -1803,7 +1788,82 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="0" column="1" rowspan="4">
+                     <item row="1" column="0" colspan="2">
+                      <widget class="QGroupBox" name="groupBox_7">
+                       <property name="title">
+                        <string>Referrals (Letters about the patient)</string>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_4">
+                        <item>
+                         <widget class="QComboBox" name="referralLettersComboBox">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>240</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="referralLettersPrintButton">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Print</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item row="5" column="0" colspan="2">
+                      <widget class="QGroupBox" name="groupBox_8">
+                       <property name="title">
+                        <string>Patient &quot;Notes&quot;</string>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_7">
+                        <item>
+                         <widget class="QPushButton" name="notesPrintButton">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="toolTip">
+                           <string>Print a summary of the patient's notes (for them to take on). Includes No fee details.</string>
+                          </property>
+                          <property name="text">
+                           <string>Print the patient's notes</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item row="0" column="2" rowspan="6">
                       <widget class="QGroupBox" name="groupBox_3">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1875,51 +1935,7 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="1" column="0">
-                      <widget class="QGroupBox" name="groupBox_7">
-                       <property name="title">
-                        <string>Referrals (Letters about the patient)</string>
-                       </property>
-                       <layout class="QVBoxLayout" name="verticalLayout_4">
-                        <item>
-                         <widget class="QComboBox" name="referralLettersComboBox">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>240</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="referralLettersPrintButton">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Print</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                     <item row="2" column="0">
+                     <item row="3" column="0" rowspan="2" colspan="2">
                       <spacer name="verticalSpacer_11">
                        <property name="orientation">
                         <enum>Qt::Vertical</enum>
@@ -1932,14 +1948,14 @@
                        </property>
                       </spacer>
                      </item>
-                     <item row="3" column="0">
-                      <widget class="QGroupBox" name="groupBox_8">
+                     <item row="2" column="0" colspan="2">
+                      <widget class="QGroupBox" name="groupBox_9">
                        <property name="title">
-                        <string>Patient &quot;Notes&quot;</string>
+                        <string>Medical History</string>
                        </property>
-                       <layout class="QVBoxLayout" name="verticalLayout_7">
+                       <layout class="QVBoxLayout" name="verticalLayout_19">
                         <item>
-                         <widget class="QPushButton" name="notesPrintButton">
+                         <widget class="QPushButton" name="medicalPrintButton">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                             <horstretch>0</horstretch>
@@ -1956,7 +1972,7 @@
                            <string>Print a summary of the patient's notes (for them to take on). Includes No fee details.</string>
                           </property>
                           <property name="text">
-                           <string>Print the patient's notes</string>
+                           <string>Print a medical history form</string>
                           </property>
                          </widget>
                         </item>
@@ -3707,28 +3723,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </widget>
                  </widget>
                 </item>
-                <item row="0" column="3" rowspan="2">
-                 <widget class="QTextEdit" name="notesEnter_textEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="toolTip">
-                   <string>Enter Notes.</string>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="4">
                  <widget class="QLabel" name="label_39">
                   <property name="sizePolicy">
@@ -3812,6 +3806,28 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                   <property name="shortcut">
                    <string>Ctrl+S</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3" rowspan="2">
+                 <widget class="QTextEdit" name="notesEnter_textEdit">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Enter Notes.</string>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
                   </property>
                  </widget>
                 </item>
@@ -5356,7 +5372,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>otherTxpushButton</tabstop>
   <tabstop>accounts_tableWidget</tabstop>
   <tabstop>printSelectedAccounts_pushButton</tabstop>
-  <tabstop>scrollArea_4</tabstop>
   <tabstop>titleEdit</tabstop>
   <tabstop>fnameEdit</tabstop>
   <tabstop>snameEdit</tabstop>
@@ -5376,12 +5391,10 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>email2Edit</tabstop>
   <tabstop>occupationEdit</tabstop>
   <tabstop>memoEdit</tabstop>
-  <tabstop>defaultNP_pushButton</tabstop>
-  <tabstop>pushButton_3</tabstop>
+  <tabstop>email2_button</tabstop>
   <tabstop>pushButton</tabstop>
-  <tabstop>pushButton_2</tabstop>
+  <tabstop>email1_button</tabstop>
   <tabstop>pushButton_6</tabstop>
-  <tabstop>familyNewPatient_pushButton</tabstop>
   <tabstop>printEst_pushButton</tabstop>
   <tabstop>bpe_textBrowser</tabstop>
   <tabstop>newBPE_pushButton</tabstop>
@@ -5392,7 +5405,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>newPerioChartPushButton</tabstop>
   <tabstop>bpeDateComboBox</tabstop>
   <tabstop>perioChartData_scrollArea</tabstop>
-  <tabstop>editMore_pushButton</tabstop>
   <tabstop>contract_tabWidget</tabstop>
   <tabstop>newCourse_pushButton</tabstop>
   <tabstop>closeTx_pushButton</tabstop>

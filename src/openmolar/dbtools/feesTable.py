@@ -113,13 +113,14 @@ class feeTables():
     '''
     a wrapper class to contain as many fee tables as the user has outlined.
     '''
+    
     def __init__(self):
         self.tables = {}
+        self.warnings = []
         self.default_table = None
         defaulttableno = self.getTables()
         self.default_table = self.tables[defaulttableno]
         self.loadTables()
-
 
     def __repr__(self):
         '''
@@ -179,9 +180,12 @@ class feeTables():
             try:
                 table.loadFees()
             except Exception,e:
-                print (_("Feetable") + " %s "%table.tablename +
-                _("Failed to Load") + " %s"% e)
+                message = (table.tablename + _("Failed to Load") + 
+                "<br /><pre>%s</pre>"% e)
 
+                print message
+                self.warnings.append(message)
+    
 class feeTable():
     '''
     a class to contain and allow quick access to data stored in a fee table
