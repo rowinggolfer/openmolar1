@@ -197,7 +197,6 @@ src/openmolar/qt4gui/compiled_uis/Ui_pt_task.py
 src/openmolar/qt4gui/compiled_uis/Ui_quick_daylist_print.py
 src/openmolar/qt4gui/compiled_uis/Ui_raiseCharge.py
 src/openmolar/qt4gui/compiled_uis/Ui_record_tools.py
-src/openmolar/qt4gui/compiled_uis/Ui_related_patients.py
 src/openmolar/qt4gui/compiled_uis/Ui_saveDiscardCancel.py
 src/openmolar/qt4gui/compiled_uis/Ui_saveMemo.py
 src/openmolar/qt4gui/compiled_uis/Ui_select_patient.py
@@ -235,6 +234,7 @@ src/openmolar/qt4gui/customwidgets/simple_chartwidget.py
 src/openmolar/qt4gui/customwidgets/toothProps.py
 src/openmolar/qt4gui/dialogs/__init__.py
 src/openmolar/qt4gui/dialogs/addTreat.py
+src/openmolar/qt4gui/dialogs/address_match_dialog.py
 src/openmolar/qt4gui/dialogs/alterAday.py
 src/openmolar/qt4gui/dialogs/alter_cashbook_dialog.py
 src/openmolar/qt4gui/dialogs/alter_todays_notes.py
@@ -244,6 +244,7 @@ src/openmolar/qt4gui/dialogs/appt_mode_dialog.py
 src/openmolar/qt4gui/dialogs/appt_prefs_dialog.py
 src/openmolar/qt4gui/dialogs/appt_wizard_dialog.py
 src/openmolar/qt4gui/dialogs/assistant_select_dialog.py
+src/openmolar/qt4gui/dialogs/auto_address_dialog.py
 src/openmolar/qt4gui/dialogs/base_dialogs.py
 src/openmolar/qt4gui/dialogs/begin_make_appt_dialog.py
 src/openmolar/qt4gui/dialogs/block_wizard.py
@@ -256,6 +257,7 @@ src/openmolar/qt4gui/dialogs/clinician_select_dialog.py
 src/openmolar/qt4gui/dialogs/completeTreat.py
 src/openmolar/qt4gui/dialogs/duplicate_receipt_dialog.py
 src/openmolar/qt4gui/dialogs/examWizard.py
+src/openmolar/qt4gui/dialogs/family_manage_dialog.py
 src/openmolar/qt4gui/dialogs/finalise_appt_time.py
 src/openmolar/qt4gui/dialogs/find_patient_dialog.py
 src/openmolar/qt4gui/dialogs/hygTreatWizard.py

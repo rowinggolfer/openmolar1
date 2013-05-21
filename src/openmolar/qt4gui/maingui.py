@@ -3186,6 +3186,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             dl.apply()
     
     def update_family_label(self):
+        message_2 = u"&%s"% _("Relatives")
         if self.pt.familyno:
             message = u"%s %s - <b>%d %s</b>"% (
                 _("Family ID"), 
@@ -3193,9 +3194,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 self.pt.n_family_members,
                 _("Member(s)")
                 )
+            message_2 += " (%d)"% (self.pt.n_family_members-1)
+                
         else:
             message = _("Not a member of a known family")
+        
         self.ui.family_group_label.setText(message)
+        
+        self.ui.relatedpts_pushButton.setText(message_2)
         
     def send_email(self):
         if self.sender == self.ui.email2_button:
