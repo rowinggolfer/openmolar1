@@ -291,11 +291,17 @@ Are you ready to proceed?</center>''')
             except LoginError:
                 QtGui.QMessageBox.warning(my_dialog,
                 _("Login Error"),
-                _('''Incorrect<br />User/password<br />
-combination!<br />Please Try Again.'''))
-            except localsettings.omDBerror, e:
-                message = _('''<p>DATABASE ERROR </p>
-<p>application cannot run</p>Error %s''')% e
+                u'<h2>%s %s</h2><em>%s</em>'% (
+                    _('Incorrect'), 
+                    _("User/password combination!"),
+                    _('Please Try Again.')
+                    )
+                )
+            except Exception as exc:
+                message = u'<p>%s</p><p>%s</p><hr /><pre>%s</pre>'% (
+                    _("UNEXPECTED ERROR"),
+                    _("application cannot run"),
+                    exc)
 
                 QtGui.QMessageBox.warning(my_dialog,
                 _("Login Error"), message)

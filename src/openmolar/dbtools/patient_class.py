@@ -189,7 +189,6 @@ class patient(object):
         self.plandata = planData(self.serialno)
 
         ###NEIL'S STUFF####
-        self.ageYears = 0
         self.exemption = ""
         self.exempttext = ""
         self.perioData = {}
@@ -364,20 +363,24 @@ class patient(object):
         except Exception, e:
             print "error calculating patient's age", e
             return (0,0,False)
-
+    
+    @property
+    def ageYears(self):
+        return self.getAge()[0]
+    
     @property
     def under_6(self):
         '''
         returns a bool "is patient under 6?".
         '''
-        return self.getAge()[0] < 6
+        return self.ageYears < 6
 
     @property
     def under_18(self):
         '''
         returns a bool "is patient under 18?".
         '''
-        return self.getAge()[0] < 18
+        return self.ageYears < 18
 
     def getFeeTable(self):
         '''
@@ -746,8 +749,14 @@ self.serialno, self.courseno0))
 
     @property
     def name_id(self):
-        return u"%s %s %s - %s"% (
-            self.title, self.fname, self.sname, self.serialno)
+        return u"%s - %s"% (
+            selfname, self.serialno)
+
+
+    @property
+    def name(self):
+        return u"%s %s %s"% (
+            self.title, self.fname, self.sname)
 
     @property
     def n_family_members(self):

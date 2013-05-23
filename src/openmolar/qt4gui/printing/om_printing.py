@@ -50,6 +50,7 @@ from openmolar.qt4gui.printing import accountPrint
 from openmolar.qt4gui.printing import estimatePrint
 from openmolar.qt4gui.printing import GP17
 from openmolar.qt4gui.printing import bookprint
+from openmolar.qt4gui.printing.mh_print import MHPrint
 
 from openmolar.qt4gui.dialogs.print_record_dialog import PrintRecordDialog
 
@@ -524,6 +525,22 @@ def printNotes(om_gui):
     dl.exec_()
     #image_file can go out of scope here.
 
+def print_mh_form(om_gui):
+    if om_gui.pt.serialno == 0:
+        om_gui.advise("no patient selected", 1)
+        return
+    print "print MH form for %s"% om_gui.pt
+    mh_printer = MHPrint(om_gui.pt, om_gui)
+    mh_printer.print_()
+    
+def print_mh_forms(serialnos, om_gui):
+    for serialno in serialnos:
+        pt = patient_class.patient(serialno)
+        print "print MH form for %s"% pt
+        mh_printer = MHPrint(pt, om_gui)
+        mh_printer.print_()
+    
+    
 def printSelectedAccounts(om_gui):
     '''
     iterate over te accounts table, and print letters to those who

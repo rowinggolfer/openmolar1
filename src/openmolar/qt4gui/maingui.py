@@ -2469,6 +2469,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         _("use the checkboxes on the notes tab to control what is printed."),
         1)
         om_printing.printNotes(self)
+        
+    def printMH(self):
+        om_printing.print_mh_form(self)
+
+    def print_mh_forms(self, serialnos):
+        om_printing.print_mh_forms(serialnos, self)        
 
     def childsmile_button_clicked(self):
         '''
@@ -2683,6 +2689,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.importDoc_treeWidget,
         QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
         self.showImportedDoc)
+
+        self.ui.medicalPrintButton.clicked.connect(self.printMH)
 
     def signals_menu(self):
         #menu
@@ -3095,6 +3103,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.diary_widget.pt_diary_changed.connect(
             self.pt_diary_widget.refresh_ptDiary)
+        self.diary_widget.print_mh_signal.connect(self.print_mh_forms)
 
         self.pt_diary_widget.start_scheduling.connect(self.start_scheduling)
         self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
@@ -3104,6 +3113,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.pt_diary_widget.preferences_changed.connect(
             self.appt_prefs_changed)
+            
 
     def start_scheduling(self):
         self.diary_widget.schedule_controller.set_patient(self.pt)

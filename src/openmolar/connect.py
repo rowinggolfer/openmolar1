@@ -116,7 +116,7 @@ def connect():
     '''
     global mainconnection
     attempts = 0
-    while attempts < 60:
+    while attempts < 30:
         try:
             if not (mainconnection and mainconnection.open):
                 print "New connection needed"
@@ -135,7 +135,7 @@ def connect():
         time.sleep(2)
         attempts += 1
 
-    raise exc #localsettings.omDBerror(exc)
+    raise exc
 
 if __name__ == "__main__":
     from openmolar.settings import localsettings

@@ -78,6 +78,9 @@ APPOINTMENT_CARD_FOOTER = _("Please try and give at least 24 hours notice") +\
 
 CORRESPONDENCE_SIG = "The Academy Dental Practice"
 
+MH_HEADER = ("The Academy Dental Practice", 
+            _("Confidential Medical History Questionaire"))
+
 GP17_LEFT = 0
 GP17_TOP = 0
 
@@ -330,13 +333,6 @@ defaultPrinterforGP17 = True
 #-- my own class of excpetion, for when a serialno is called
 #--from the database and no match is found
 class PatientNotFoundError(Exception):
-    pass
-
-class omDBerror(Exception):
-    '''
-    a custom Exception which is raised when the database squeals or
-    isn't present
-    '''
     pass
 
 def currentTime():

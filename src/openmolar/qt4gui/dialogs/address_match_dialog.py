@@ -64,6 +64,7 @@ class AddressMatchDialog(BaseDialog):
         self.table_widget.setSelectionBehavior(
             QtGui.QAbstractItemView.SelectRows)
         self.table_widget.setAlternatingRowColors(True)
+        self.table_widget.setSortingEnabled(True)
         
         addr = "%s, %s, %s, %s, %s, %s"% (
             self.om_gui.pt.addr1,

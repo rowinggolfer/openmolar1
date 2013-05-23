@@ -78,7 +78,8 @@ class DiaryWidget(QtGui.QWidget):
     patient_card_request = QtCore.pyqtSignal(object)
     pt_diary_changed = QtCore.pyqtSignal(object)
     bring_to_front = QtCore.pyqtSignal()
-
+    print_mh_signal = QtCore.pyqtSignal(object)
+    
     alterAday_clipboard = [] #clipboard used by the alterAday dialog
     alterAday_clipboard_date = None
 
@@ -1702,6 +1703,7 @@ class DiaryWidget(QtGui.QWidget):
             self.appt_dropped_onto_daywidget)
 
         book.slotClicked.connect(self.apptBook_slot_clicked)
+        book.print_mh_signal.connect(self.print_mh_signal.emit)
 
     def signals_calendar(self, connect=True):
         if connect:
