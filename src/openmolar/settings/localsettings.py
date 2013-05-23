@@ -21,8 +21,8 @@ import types
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 21st May 2013.
-__MAJOR_VERSION__= "0.3.8"
+#- updated 22st May 2013.
+__MAJOR_VERSION__= "0.3.9"
 
 
 if "-v" in sys.argv:

@@ -1,6 +1,8 @@
 0.3.9
-    MILESTONES
+    NEW FUNCTIONALITY
         Ability to print out a personalised MH form from record card
+    
+    UNDECIDED (not yet implemented
         Ability to print out a personalised MH form for all patients 
             attending today. Suggest alphabetical order?
 
