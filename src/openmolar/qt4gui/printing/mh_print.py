@@ -99,7 +99,7 @@ class MHPrint(object):
         pen.setWidth(2)
         painter.setPen(2)
         
-        font = QtGui.QFont("sans", 16)
+        font = QtGui.QFont("sans", 14)
         font.setBold(True)
         painter.setFont(font)
         
@@ -118,7 +118,7 @@ class MHPrint(object):
         
         y += 2*line_height
         
-        painter.setFont(QtGui.QFont("sans", 10))
+        painter.setFont(QtGui.QFont("sans", 9))
         line_height = QtGui.QFontMetrics(painter.font()).height()
         padding = line_height/3
         

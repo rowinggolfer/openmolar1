@@ -750,8 +750,7 @@ self.serialno, self.courseno0))
     @property
     def name_id(self):
         return u"%s - %s"% (
-            selfname, self.serialno)
-
+            self.name, self.serialno)
 
     @property
     def name(self):

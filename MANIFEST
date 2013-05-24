@@ -298,11 +298,11 @@ src/openmolar/qt4gui/printing/chartPrint.py
 src/openmolar/qt4gui/printing/daylistprint.py
 src/openmolar/qt4gui/printing/estimatePrint.py
 src/openmolar/qt4gui/printing/letterprint.py
+src/openmolar/qt4gui/printing/mh_print.py
 src/openmolar/qt4gui/printing/multiDayListPrint.py
 src/openmolar/qt4gui/printing/om_printing.py
 src/openmolar/qt4gui/printing/recallprint.py
 src/openmolar/qt4gui/printing/receiptPrint.py
-src/openmolar/qt4gui/printing/table_print.py
 src/openmolar/qt4gui/tools/__init__.py
 src/openmolar/qt4gui/tools/apptTools.py
 src/openmolar/qt4gui/tools/new_setup.py

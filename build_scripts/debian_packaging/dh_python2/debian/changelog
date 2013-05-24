@@ -1,3 +1,10 @@
+openmolar (0.3.9+bzr0824-0~__DIST__0) __DIST__; urgency=low
+
+  * upstream release
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Thu, 23 May 2013 11:30:51 +0100
+
+
 openmolar (0.3.8+bzr0822-0~__DIST__0) __DIST__; urgency=low
 
   * reinstated address search when no relatives linked
