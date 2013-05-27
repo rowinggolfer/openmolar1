@@ -107,7 +107,7 @@ def getpatients(conditions="", values=()):
     select patients.serialno, title, fname, sname, dnt1, familyno, dob,
     addr1, addr2, addr3, town, county, pcde, recdent
     from patients join appt_prefs on patients.serialno = appt_prefs.serialno
-    where CONDITIONS
+    where CONDITIONS and status != "DECEASED"
     order by familyno DESC, addr1, dob, fname, sname'''
 
 

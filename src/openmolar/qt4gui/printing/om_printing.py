@@ -508,7 +508,9 @@ def printrecall(om_gui):
         om_gui.pt.serialno, om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3, \
         om_gui.pt.town, om_gui.pt.county, om_gui.pt.pcde), )
 
-        recallprint.printRecall(args)
+        recall_printer = recallprint.RecallPrinter(args)
+        recall_printer.print_()
+        
         om_gui.pt.addHiddenNote("printed", "recall - non batch")
         om_gui.updateHiddenNotesLabel()
 

@@ -8,17 +8,37 @@
 
 from __future__ import division
 
-import os, sys
+import os
+import re
+import sys
+
 from PyQt4 import QtCore, QtGui
-
-if __name__ == "__main__":
-
-    sys.path.insert(0, os.path.abspath("../../../"))
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
 
 DATE_FORMAT = "MMMM, yyyy"
+DEBUG = False
+
+SALUTATION = _("Dear")
+
+BODY = '''%s\n%s'''% (
+_("We are writing to inform you that your dental examination is now due."),
+_("Please contact the surgery to arrange an appointment. *")
+)
+
+FAMILY_BODY = '''%s\n\n%s'''%(
+_("We are writing to inform you that your dental examinations are now due."),
+_("Please contact the surgery to arrange suitable appointments. *"),
+)
+
+SIGN_OFF= _("Yours sincerely,")
+
+SIGNATURE = localsettings.PRACTICE_NAME
+
+FOOTER = _('''* If you already have a future appointment with us -
+please accept our apologies and ignore this letter.''')
+
 
 try:
     f = open(os.path.join(
@@ -30,32 +50,95 @@ except IOError:
     PROMO_TEXT= ""
 
 
-class omLetter(object):
-    def __init__(self):
-        self.salutation = ""
-        self.address_topline =""
-        self.patients = ""
-        self.address = ""
-        self.recd = None
-        self.body = '''\n\n%s <<SALUTATION>>,
-\n<<NAMES>>\n\n%s\n\n%s\n\n%s'''% (_("Dear"),
-_("We are writing to inform you that your dental examination is now due."),
-_("Please contact the surgery to arrange an appointment. *"),
-_("We look forward to seeing you in the near future."))
-        self.bodyfamily = '''\n\n%s,\n\n<<NAMES>>\n%s\n\n%s\n\n%s'''%(
-_("Dear Patients"),
-_("We are writing to inform you that your dental examinations are now due."),
-_("Please contact the surgery to arrange suitable appointments. *"),
-_("We look forward to seeing you all in the near future."))
+class OMLetter(object):
+    def __init__(self, recipients):
+        self.recipients = recipients
+        
+    
+    @property
+    def head(self):
+        return self.recipients[0]
+    
+    @property
+    def recd(self):
+        return self.head.recd
+    
+    @property
+    def _topline(self):
+        head = self.head
+        line_ = u"%s %s %s"% (
+            head.title,
+            head.fname.strip(), 
+            head.sname.strip()
+            )
+        for r in self.recipients[1:]:
+            if r.age > 18:
+                line_ += "\n%s %s %s"% (r.title, r.fname, r.sname)
+            else:
+                line_ += ", %s"% (r.fname)
 
-        self.sign_off = _("Yours sincerely,")
+        if ", " in line_:
+            i = line_.rindex(", ")
+            line_ = "%s and%s"% (line_[:i], line_[i+1:])
+        
+        return line_
+    
+    @property
+    def address(self):
+        head = self.head
+            
+        address_ = u'%s\n%s\n%s\n%s\n%s\n%s\n%s'% (
+            self._topline,
+            head.addr1.title(), 
+            head.addr2.title(),
+            head.addr3.title(), 
+            head.town,
+            head.county, 
+            head.pcde)
 
-        self.promo_text = PROMO_TEXT
-        self.signature = localsettings.CORRESPONDENCE_SIG
-
-        self.footer = _('''* If you already have a future appointment with us -
-please accept our apologies and ignore this letter.''')
-
+        while re.search(" *\n *\n", address_):
+            address_ = re.sub(" *\n\n", "\n", address_)
+        
+        return address_
+    
+    @property
+    def subjects(self):
+        subjects_ = []
+        for r in self.recipients:
+            subjects_.append("%s %s %s - %s %s"% (
+                r.title, r.fname, r.sname, 
+                _("our ref"), r.serialno))
+        return subjects_
+    
+    @property
+    def subject_text(self):
+        text = ""
+        for subject in self.subjects:
+            text += "%s\n"% subject
+        return text
+    
+    @property
+    def is_family(self):
+        return len(self.recipients) > 1
+    
+    @property
+    def salutation(self):
+        
+        if self.is_family:
+            salut_ = _("Patients")
+        elif self.head.age < 18:
+            salut_ = self.head.fname
+        else:
+            salut_ = "%s %s"% (self.head.title, self.head.sname.strip())
+            
+        return u"%s %s,"% (SALUTATION, salut_)
+    
+    @property
+    def text(self):
+        if self.is_family:
+            return FAMILY_BODY
+        return BODY
+        
 class TreeItem(object):
     def __init__(self, data, parent=None):
         self.parentItem = parent
@@ -300,46 +383,8 @@ class bulkMails(object):
 
         for key in sorted(letters):
             recipients = letters[key]
-            head = recipients[0]
-            address = '%s\n%s\n%s\n%s\n%s\n%s'% (
-            head.addr1.title(), head.addr2.title(),
-            head.addr3.title(), head.town,
-            head.county, head.pcde)
-
-            letter = omLetter()
-            while "\n\n" in address:
-                address = address.replace("\n\n","\n")
-            letter.address = address
-            letter.recd = head.recd
-
-            letter.names = ""
-            for r in recipients:
-                letter.names += "        %s %s %s - %s %s\n"% (
-                r.title, r.fname, r.sname, _("our ref"), r.serialno)
-
-            letter.address_topline = "%s %s %s"% (head.title,
-            head.fname.strip(), head.sname.strip())
-
-            if head.age < 18:
-                letter.salutation = head.fname
-            else:
-                letter.salutation = "%s %s"% (head.title, head.sname.strip())
-
-            for r in recipients[1:]:
-                if r.age > 18:
-                    letter.address_topline += "\n%s %s %s"% (r.title,
-                    r.fname, r.sname)
-                else:
-                    letter.address_topline += ", %s"% (r.fname)
-
-            if ", " in letter.address_topline:
-                i = letter.address_topline.rindex(", ")
-                letter.address_topline = "%s and%s"% (
-                letter.address_topline[:i], letter.address_topline[i+1:])
-
-            isFamily = len(recipients)>1
-
-            yield letter, isFamily
+            letter = OMLetter(recipients)
+            yield letter
 
     def selected(self, index):
         '''
@@ -354,42 +399,42 @@ class bulkMails(object):
         except IndexError:
             print "selected bulk mail out of range"
 
-    def printViaQPainter(self, showRects = False):
+    def print_(self):
         dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
         if not dialog.exec_():
             return
 
-        sansFont = QtGui.QFont("Helvetica", 11)
-        sansLineHeight = QtGui.QFontMetrics(sansFont).height()
-        serifFont = QtGui.QFont("Times", 11)
-        serifLineHeight = QtGui.QFontMetrics(serifFont).height()
-        sigFont = QtGui.QFont("Lucida Handwriting",13)
-        fm = QtGui.QFontMetrics(serifFont)
-        datewidth = fm.width("Wednesday September 2999 ")
-        dateheight = fm.height()
+        font = QtGui.QFont("Sans", 11)
+        fm = QtGui.QFontMetrics(font)
+        line_height = fm.height()
+        
+        sigFont = QtGui.QFont("URW Chancery L",15)
+        sigFont.setBold(True)
+        sig_font_height = QtGui.QFontMetrics(sigFont).height()*1.2
+
         pageRect = self.printer.pageRect()
 
-        LEFT = 50
-        TOP = 150
-        RECT_WIDTH = pageRect.width() - (2 * LEFT)
 
-        ADDRESS_LEFT = LEFT + 50
-        ADDRESS_HEIGHT = 180
+        LEFT = 60
+        RIGHT = 80
+        TOP = 130
+        RECT_WIDTH = pageRect.width() - (LEFT + RIGHT)
+
+        ADDRESS_LEFT = 100
+        ADDRESS_HEIGHT = 100
         FOOTER_HEIGHT = 150
-        BODY_HEIGHT = pageRect.height() - TOP - ADDRESS_HEIGHT - FOOTER_HEIGHT
+        DATE_HEIGHT = 3 * line_height
+        BODY_HEIGHT = pageRect.height() - (
+            TOP + ADDRESS_HEIGHT + FOOTER_HEIGHT + DATE_HEIGHT)
 
         addressRect = QtCore.QRectF(ADDRESS_LEFT, TOP,
                                     300, ADDRESS_HEIGHT)
 
-        dateRect = QtCore.QRectF(LEFT + RECT_WIDTH - datewidth,
-        TOP + ADDRESS_HEIGHT, datewidth, dateheight)
+        dateRect = QtCore.QRectF(LEFT, addressRect.bottom(), 
+            RECT_WIDTH, DATE_HEIGHT)
 
-        bodyRect = QtCore.QRectF(LEFT, TOP + ADDRESS_HEIGHT + dateheight,
-        RECT_WIDTH, BODY_HEIGHT)
-
-        promoRect = bodyRect.adjusted(0, BODY_HEIGHT*.5, 0, 0)
-
-        sigRect = bodyRect.adjusted(0,bodyRect.height()*.75,0,0)
+        bodyRect = QtCore.QRectF(LEFT, dateRect.bottom(),
+            RECT_WIDTH, BODY_HEIGHT)
 
         footerRect = QtCore.QRectF(LEFT,
                             pageRect.height() - FOOTER_HEIGHT,
@@ -400,7 +445,7 @@ class bulkMails(object):
         first_page = True
         page_no = 0
 
-        for letter, FamilyLetter in self.iterate_letters():
+        for letter in self.iterate_letters():
             page_no += 1
 
             if dialog.printRange() == dialog.PageRange:
@@ -414,19 +459,18 @@ class bulkMails(object):
             first_page = False
 
             painter.save()
-            painter.setFont(serifFont)
+            painter.setFont(font)
             painter.setPen(QtCore.Qt.black)
 
             option = QtGui.QTextOption(QtCore.Qt.AlignLeft)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
 
             ##address
-            painter.drawText(addressRect, "%s\n%s"% (
-            letter.address_topline, letter.address), option)
-            if showRects:
+            painter.drawText(addressRect, letter.address, option)
+            if DEBUG:
                 painter.drawRect(addressRect)
             ##date
-            painter.setFont(serifFont)
+            
             if self.use_given_recall_date:
                 pdate = letter.recd
             else:
@@ -438,57 +482,87 @@ class bulkMails(object):
                 pdate_str = "%s %s"% (localsettings.monthName(pdate),
                 pdate.year)
 
-            painter.drawText(dateRect, pdate_str)
-            if showRects:
+            painter.drawText(dateRect, pdate_str, 
+                QtGui.QTextOption(QtCore.Qt.AlignRight))
+            if DEBUG:
                 painter.drawRect(dateRect)
 
+            ##salutation
+            rect = bodyRect.adjusted(
+                0, 0, 0, 2*line_height- bodyRect.height())
+            painter.drawText(rect, letter.salutation, option)
+            if DEBUG:
+                painter.drawRect(rect)
+            
+            ##subject
+            option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
+            font.setBold(True)
+            painter.setFont(font)
+            subject_count = len(letter.subjects) + 1            
+            rect = QtCore.QRectF(
+                rect.bottomLeft().x(), rect.bottomLeft().y(),
+                bodyRect.width(), line_height * subject_count)
+            painter.drawText(rect, letter.subject_text, option)
+            if DEBUG:
+                painter.drawRect(rect)
+            font.setBold(False)
+            painter.setFont(font)
+            
             ##body
-            if FamilyLetter:
-                painter.drawText(bodyRect, letter.bodyfamily.replace(
-                "<<NAMES>>",letter.names), option)
-            else:
-                body = letter.body.replace(
-                "<<SALUTATION>>",letter.salutation)
-                body = body.replace("<<NAMES>>",letter.names)
-                painter.drawText(bodyRect, body, option)
-            if showRects:
-                painter.drawRect(bodyRect)
-
-            ##promo
-            font = painter.font()
-            font.setItalic(True)
-            painter.setFont(font)
-            painter.drawText(promoRect, letter.promo_text, option)
-            if showRects:
-                painter.drawRect(bodyRect)
-            font.setItalic(False)
-            painter.setFont(font)
-
-
+            option = QtGui.QTextOption(QtCore.Qt.AlignLeft)
+            line_count = letter.text.count("\n")+3            
+            body_rect = QtCore.QRectF(
+                rect.bottomLeft().x(), rect.bottomLeft().y(),
+                bodyRect.width(), line_height * line_count)
+            
+            painter.drawText(body_rect, letter.text, option)
+            if DEBUG:
+                painter.drawRect(body_rect)
 
             ##signature
-            painter.drawText(sigRect, letter.sign_off, option)
-
-            painter.setFont(sigFont)
-            painter.drawText(sigRect. adjusted(0, 40,0,0),
-                letter.signature, option)
-            if showRects:
+            #place signature immediately after the body text (which will vary)
+            
+            sigRect = QtCore.QRectF(
+                body_rect.bottomLeft().x(), body_rect.bottomLeft().y(),
+                body_rect.width(), line_height * 2)
+            painter.drawText(sigRect, SIGN_OFF, option)
+            if DEBUG:
                 painter.drawRect(sigRect)
 
-
+            sigRect = sigRect.adjusted(0, sigRect.height(), 0, sig_font_height)
+            painter.setFont(sigFont)
+            painter.drawText(sigRect, SIGNATURE, option)
+            if DEBUG:
+                painter.drawRect(sigRect)
+            
+            option = QtGui.QTextOption(QtCore.Qt.AlignVCenter)
+            
+            ##promo
+            promoRect = QtCore.QRectF(
+                QtCore.QPointF(
+                    sigRect.bottomLeft().x(), sigRect.bottomLeft().y()),
+                QtCore.QPointF(
+                    footerRect.topRight().x(), footerRect.topRight().y())
+                )
+            promoRect = promoRect.adjusted(50, 30, -50, -30)
+            painter.setFont(font)
+            painter.drawText(promoRect, PROMO_TEXT, option)
+            promoRect = promoRect.adjusted(-10, -10, 10, 10)
+            
+            #if DEBUG:
+            painter.drawRect(promoRect)
+            
+            option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
+            option.setWrapMode(QtGui.QTextOption.WordWrap)
+            
             ##footer
             painter.drawLine(footerRect.topLeft(), footerRect.topRight())
-            font = QtGui.QFont("Helvetica", 7)
             font.setItalic(True)
             painter.setFont(font)
 
-            option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
-            option.setWrapMode(QtGui.QTextOption.WordWrap)
-
-            painter.drawText(footerRect, letter.footer, option)
-            if showRects:
+            painter.drawText(footerRect, FOOTER, option)
+            if DEBUG:
                 painter.drawRect(footerRect)
-
 
             ##fold marks
             top_fold_y = pageRect.height()/3
@@ -501,7 +575,8 @@ class bulkMails(object):
             painter.restore()
 
 if __name__ == "__main__":
-
+    DEBUG = True
+    localsettings.station = "reception"
     app = QtGui.QApplication([])
     from datetime import date
     os.chdir(os.environ.get("HOME", "."))
@@ -511,11 +586,11 @@ if __name__ == "__main__":
     om_gui = maingui.OpenmolarGui()
 
     conditions = "recd>=%s and recd<=%s and dnt1=%s"
-    values = date(2012,7,1), date(2012,7,31), 6
+    values = date(2012,7,1), date(2012,7,13), 6
     patients = recall.getpatients(conditions, values)
 
     letters = bulkMails(om_gui)
-    letters.showOptions()
+    #letters.showOptions()
     letters.setData(recall.HEADERS, patients)
-    letters.printViaQPainter(True)
+    letters.print_()
     app.closeAllWindows()

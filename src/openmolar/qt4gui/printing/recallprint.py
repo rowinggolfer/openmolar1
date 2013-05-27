@@ -12,13 +12,13 @@ import datetime
 
 DATE_FORMAT = "MMMM, yyyy"
 
-class printRecall():
-    def __init__(self,rows,parent=None):
+class RecallPrinter():
+    def __init__(self, rows):
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A5)
-        self.recalls=rows
-        self.printViaQPainter()
-    def printViaQPainter(self):
+        self.recalls = rows
+        
+    def print_(self):
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
@@ -96,8 +96,12 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
-    pts=(('TITLE', 'FNAME', 'SNAME', 6, 1809L, "6 ST MARY'S ROAD", 'KIRKHILL', '', '', '', 'IV5 7NX'),)
-    printRecall(pts)
-
-
+    pts = (
+        ('TITLE', 'FNAME', 'SNAME', 6, 1809L, 
+        "6 ST MARY'S ROAD", 'KIRKHILL', '', '', '', 'IV5 7NX'),
+        )
+    
+    recall_printer = RecallPrinter(pts)
+    recall_printer.print_()
+        
 

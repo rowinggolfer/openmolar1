@@ -11,37 +11,107 @@ from openmolar.settings import localsettings
 from openmolar.connect import connect
 from openmolar.dbtools.cashbook import cashbookCodesDict
 
+HEADERS = (
+        _("Date"),
+        _("Dentist"),
+        _("Patient"),
+        _("code"),
+        _("cash"),
+        _("cheque"),
+        _("card"),
+        _("unknown"),
+        _("amt")
+        )
+
+QUERY = '''
+select DATE_FORMAT(cbdate, %s), dntid, descr, code, amt 
+from cashbook where ref=%s order by cbdate desc
+'''
+
+SUMMARY_QUERY = '''
+select DATE_FORMAT(cbdate, %s), dntid, code, amt 
+from cashbook where ref=%s and cbdate >= %s order by cbdate
+'''
+
+def summary_details(sno, start_date):
+    values = (localsettings.OM_DATE_FORMAT, "%06d"% sno, start_date)
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(SUMMARY_QUERY, values)
+    rows = cursor.fetchall()
+    cursor.close()
+    
+    claimNo = len(rows)
+
+    if claimNo==0:
+        return "No Payments Found"
+
+    retarg = '<table width="100%" border="1">'
+    retarg += '<tr class="table_header">'
+    for header in HEADERS[:3] + HEADERS[8:]:
+        retarg += "<th>%s</th>"% header
+    retarg += '</tr>'
+    
+    total = 0
+    for i, row in enumerate(rows):
+        if i %2 == 0:
+            retarg+='<tr bgcolor="#eeeeee">'
+        else:
+            retarg+='<tr>'
+            
+        #-- a row is  (date,sno,dnt,patient,code,amount)
+            
+        retarg += '<td>%s</td>'% (row[0])
+        retarg += '<td>%s</td>'% localsettings.ops.get(row[1])
+        CODE = cashbookCodesDict.get(row[2], "UNKNOWN")
+        retarg += '<td>%s</td>'% CODE                
+        amt = row[3]
+        
+        retarg += '<td align="right">%s</td>'% localsettings.formatMoney(amt)
+    
+        retarg += '</tr>\n'
+        total += amt
+    
+    retarg += '''<tr class="table_header">
+    <td colspan="3" align="right"><b>TOTAL</b></td>
+    <td align="right"><b>%s</b></td></tr>'''% (
+        localsettings.formatMoney(total))
+    
+    retarg += '</table>'
+
+    return retarg
+
 def details(sno):
     '''
     returns an html page showing pt's payment History
     '''
-
-    db=connect()
-    cursor=db.cursor()
-    query="DATE_FORMAT(cbdate,'%s'),dntid,descr,code,amt"%localsettings.OM_DATE_FORMAT
-    cursor.execute('select %s from cashbook where ref=%06d order by cbdate desc'%(query,sno))
+    values = (localsettings.OM_DATE_FORMAT, "%06d"% sno)
+    
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(QUERY, values)
     rows = cursor.fetchall()
     cursor.close()
     
-    claimNo=len(rows)
-    retarg="<h2>Past Payments - %d found</h2>"%claimNo
+    claimNo = len(rows)
+
     if claimNo==0:
-        return retarg
-    headers=("cbdate","Dentist","Patient","code","cash","cheque","card","unknown","amt")
-    retarg+='<table width="100%" border="1">'
-    retarg+='<tr>'
-    for header in headers:
-        retarg+="<th>%s</th>"%header
-    retarg+='</tr>'
-    odd=True
-    total,cashTOT,chequeTOT,cardTOT,otherTOT=0,0,0,0,0
+        return "<h2>No Payments Found</h2>"
+
+    retarg = '<html><body><table width="100%" border="1">'
+    retarg += '<tr>'
+    for header in HEADERS:
+        retarg += "<th>%s</th>"% header
+    retarg += '</tr>'
+    odd = True
+    total, cashTOT, chequeTOT, cardTOT, otherTOT = 0, 0, 0, 0, 0
     for row in rows:
         if odd:
             retarg+='<tr bgcolor="#eeeeee">'
-            odd=False
+            odd = False
         else:
             retarg+='<tr>'
-            odd=True
+            odd = True
             
         #-- a row is  (date,sno,dnt,patient,code,amount)
             
@@ -74,27 +144,25 @@ def details(sno):
     
         retarg += '</tr>\n'
         total += amt
-    retarg+='''<tr><td colspan="3"></td>
+    
+    retarg += '''<tr><td colspan="3"></td>
     <td><b>TOTAL</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
-    <td align="right"><b>%s</b></td></tr>'''%(
-    localsettings.formatMoney(cashTOT), 
-    localsettings.formatMoney(chequeTOT), 
-    localsettings.formatMoney(cardTOT), 
-    localsettings.formatMoney(otherTOT), 
-    localsettings.formatMoney(total))
+    <td align="right"><b>%s</b></td></tr>'''% (
+        localsettings.formatMoney(cashTOT), 
+        localsettings.formatMoney(chequeTOT), 
+        localsettings.formatMoney(cardTOT), 
+        localsettings.formatMoney(otherTOT), 
+        localsettings.formatMoney(total))
     
-    retarg+='</table>'
+    retarg += '</table></body></html>'
 
-    
-    retarg+='</table>'
-    #db.close()
     return retarg
 
 if __name__ == "__main__":
-    print'<html><body>'
-    print details(17322)
-    print "</body></html>"
+    from datetime import date
+    print summary_details(1, date(2000,1,1)).encode("ascii", "replace")
+    

@@ -89,15 +89,19 @@ def notes(notes_dict, verbosity=0, ignoreRec=False):
     href="%s" type="text/css"></head><body>'''% localsettings.stylesheet
     keys = notes_dict.keys()
     keys.sort()
-    retarg += '''<table width = "100%">
-    <tr><th class = "date">Date</th><th class = "ops">ops</th>
-    <th class = "tx">Tx</th><th class = "notes">Notes</th>'''
+    retarg += '''<table>
+    <tr>
+        <th>Date</th>
+        <th>ops</th>
+        <th>Tx</th>
+        <th>Notes</th>
+    '''
 
     if verbosity > 0:
-        retarg += '<th class="reception">reception</th>'
+        retarg += '<th>reception</th>'
 
     if verbosity == 2: #this is for development/debugging purposes
-        retarg += '<th class="verbose">Detailed</th>'
+        retarg += '<th>Detailed</th>'
 
     retarg += '</tr>'
     wstring = "70%"
@@ -202,8 +206,8 @@ def get_reception_for_date(line):
     '''
     recep = ""
     for action, value, user in line:
-        value = value.replace("sundries 0.00","")
-        value = value.replace("==========","")
+        value = value.replace("sundries 0.00", "")
+        value = value.replace("==========", "")
         if (("PRINT" in action) or ("RECEIVED" in action) or
         ("FINAL" in action) or ("UNKNOWN" in action) or
         ("UPDATE" in action) or ("COURSE" in action)):

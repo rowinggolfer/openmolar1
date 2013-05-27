@@ -21,8 +21,8 @@ import types
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 22st May 2013.
-__MAJOR_VERSION__= "0.3.9"
+#- updated 27th May 2013.
+__MAJOR_VERSION__= "0.4.0"
 
 
 if "-v" in sys.argv:
@@ -70,8 +70,11 @@ def showVersion():
 if VERBOSE:
     showVersion()
 
-APPOINTMENT_CARD_HEADER =\
-"The Academy Dental Practice, 19 Union Street\nInverness. tel 01463 232423"
+PRACTICE_NAME = "The Academy Dental Practice"
+
+APPOINTMENT_CARD_HEADER = \
+"%s, 19 Union Street\nInverness. tel 01463 232423" % PRACTICE_NAME
+
 
 APPOINTMENT_CARD_FOOTER = _("Please try and give at least 24 hours notice") +\
 "\n" +_("if you need to change an appointment.")
@@ -159,6 +162,10 @@ else:
 
 cflocation = os.path.join(localFileDirectory,"openmolar.conf")
 TEMP_PDF = os.path.join(localFileDirectory, "temp.pdf")
+
+
+print "using stylesheet '%s'" % stylesheet
+
 
 #this is updated if correct password is given
 successful_login = False

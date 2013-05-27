@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>441</width>
+                      <width>655</width>
                       <height>425</height>
                      </rect>
                     </property>
@@ -2036,7 +2036,7 @@
                          <property name="orientation">
                           <enum>Qt::Horizontal</enum>
                          </property>
-                         <widget class="QGroupBox" name="adminAccount_groupBox">
+                         <widget class="QGroupBox" name="reception_groupBox">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                             <horstretch>0</horstretch>
@@ -2056,7 +2056,7 @@
                            </size>
                           </property>
                           <property name="title">
-                           <string>Account</string>
+                           <string>Reception</string>
                           </property>
                           <layout class="QHBoxLayout" name="horizontalLayout_32">
                            <property name="spacing">
@@ -2138,7 +2138,7 @@
                               </widget>
                              </item>
                              <item row="0" column="0" rowspan="7">
-                              <widget class="QTextBrowser" name="moneytextBrowser">
+                              <widget class="QTextBrowser" name="reception_textBrowser">
                                <property name="sizePolicy">
                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                                  <horstretch>0</horstretch>
@@ -2672,8 +2672,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>102</width>
-                      <height>111</height>
+                      <width>469</width>
+                      <height>376</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2849,7 +2849,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
+                         <width>419</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -2882,7 +2882,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>192</width>
+                      <width>220</width>
                       <height>514</height>
                      </rect>
                     </property>
@@ -3231,7 +3231,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>261</width>
+                      <width>657</width>
                       <height>387</height>
                      </rect>
                     </property>
@@ -5362,7 +5362,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>daybookDent1ComboBox</tabstop>
   <tabstop>daybookDent2ComboBox</tabstop>
   <tabstop>daybookTextBrowser</tabstop>
-  <tabstop>moneytextBrowser</tabstop>
+  <tabstop>reception_textBrowser</tabstop>
   <tabstop>printAccount_pushButton</tabstop>
   <tabstop>takePayment_pushButton</tabstop>
   <tabstop>scrollArea_3</tabstop>

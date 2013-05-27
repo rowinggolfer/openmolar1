@@ -107,6 +107,7 @@ from openmolar.ptModules import debug_html
 from openmolar.ptModules import estimates
 from openmolar.ptModules import tooth_history
 from openmolar.ptModules import hidden_notes
+from openmolar.ptModules import reception_summary
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import multiDayListPrint
@@ -688,7 +689,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 chart.clear()
                 chart.update()
             self.ui.notesSummary_webView.setHtml(localsettings.message)
-            self.ui.moneytextBrowser.setHtml(localsettings.message)
+            self.ui.reception_textBrowser.setHtml(localsettings.message)
             self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
             #self.diary_widget.schedule_controller.clear()
@@ -725,10 +726,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         load the reception views
         '''
         if self.pt.serialno == 0:
-            self.ui.moneytextBrowser.setHtml(localsettings.message)
+            self.ui.reception_textBrowser.setHtml(localsettings.message)
         else:
-            estimateHtml = estimates.toBriefHtml(self.pt)
-            self.ui.moneytextBrowser.setText(estimateHtml)
+            html_ = reception_summary.html(self.pt)
+            self.ui.reception_textBrowser.setText(html_)
             self.pt_diary_widget.layout_ptDiary()
             note = formatted_notes.rec_notes(self.pt.notes_dict)
             self.ui.recNotes_webView.setHtml(note)
@@ -1478,7 +1479,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         else:
             self.ui.tabWidget.setCurrentIndex(3)
 
-        self.ui.moneytextBrowser.setHtml(localsettings.message)
+        self.ui.reception_textBrowser.setHtml(localsettings.message)
         self.ui.recNotes_webView.setHtml("")
         self.ui.notesSummary_webView.setHtml(localsettings.message)
 
@@ -1602,7 +1603,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         the print button on the bulk mail tab has been clicked
         '''
-        self.letters.printViaQPainter()
+        self.letters.print_()
 
     def bulkMailLetterOptions(self):
         '''
@@ -2264,15 +2265,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         show all past payments for a patient
         '''
-        html=paymentHistory.details(self.pt.serialno)
+        html = paymentHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
-
 
     def pastTreatment_clicked(self):
         '''
         show all past estimates for a patient
         '''
-        html=daybookHistory.details(self.pt.serialno)
+        html = daybookHistory.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
 
     def pastCourses_clicked(self):
@@ -3264,4 +3264,5 @@ if __name__ == "__main__":
     print "PyQt Version: ", QtCore.PYQT_VERSION_STR
     newapp = QtGui.QApplication(sys.argv)
     localsettings.operator = "NW"
+    localsettings.station = "reception"
     main(newapp)

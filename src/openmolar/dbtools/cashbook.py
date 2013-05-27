@@ -86,10 +86,9 @@ sundry_cash, sundry_cheque, sundry_card, hdp, other):
         return dbOK
 
 def details(dent, startdate, enddate, 
-    treatment_only=False, sundries_only=False):
-    
+treatment_only=False, sundries_only=False):    
     '''
-    returns an html set showing pt name etc...
+    retrns an html version of the cashbook table
     '''
 
     db = connect()
@@ -112,7 +111,7 @@ def details(dent, startdate, enddate,
 
     restriction_header = ""
     if treatment_only:
-        cond1 += "code < 9 and "
+        cond1 += "code < 10 and "
         restriction_header = "TREATMENT ONLY"
     elif sundries_only:
         cond1 += "code >=14  and  code <= 18 and "

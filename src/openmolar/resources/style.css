@@ -42,5 +42,10 @@ table.yeartable{width:600pt;}
 .yearops{background-color:#eeeeff;font-size:12pt;text-align:center;}
 .yearmemo{background-color:#eeeeff;font-style:italic;font-size:12pt;}
 
-th{border-style:solid;background-color:#eeeeee;}
+th{border-style:solid;
+background-color:#4322a8;
+color:#ffffff;}
+
+
+
 

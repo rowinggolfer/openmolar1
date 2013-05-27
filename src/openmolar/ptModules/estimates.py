@@ -168,62 +168,6 @@ def recalculate_estimate(pt):
 
     return True
 
-def toBriefHtml(pt):
-    '''
-    returns an HTML table showing the estimate in a receptionist friendly format
-    '''
-    retarg = u'<html><body>'
-    if pt.underTreatment:
-        retarg += _("<h1>Under Treatment - Current Estimate</h1>")
-    else:
-        retarg += _("<h1>Estimate from previous course</h1>")
-
-    if not pt.estimates:
-        retarg += _('No estimate data found</body></html>')
-        return retarg
-
-    retarg += _('''<table width ="100%" border="1">
-    <tr><td colspan="7"><h3>ESTIMATE</h3></td></tr>
-    <tr><th>No.</th><th>Description</th><th>Category</th>
-    <th>Type</th><th>Course</th>
-    <th>Fee</th><th>Pt Fee</th><th>Completed</th></tr>''')
-    total=0
-    pt_total=0
-    for est in sorted(pt.estimates):
-        total+=est.fee
-        pt_total+=est.ptfee
-        retarg+='<tr><td>%s</td><td>%s</td>'%(est.number ,est.description)
-        retarg+='<td align="center">%s</td>'%est.category
-        retarg+='<td align="center">%s</td>'%est.type
-        if est.csetype==None:
-            retarg+='<td align="center">?</td>'
-        else:
-            retarg+='<td align="center">%s</td>'%est.csetype
-
-        retarg+='<td align="right">%s</td>'% (
-        localsettings.formatMoney(est.fee))
-
-        retarg+='<td align="right"><b>%s</b></td>'%(
-        localsettings.formatMoney(est.ptfee))
-
-        retarg+='<td align="center">'
-        if est.completed:
-            retarg+='YES'
-        else:
-            retarg+='NO'
-        retarg+="</td></tr>"
-
-    retarg+='<tr><td colspan="5"></td>'
-    retarg+='<td align="right">%s</td>'% localsettings.formatMoney(total)
-    retarg+='<td align="right"><b>%s</b></td>'% (
-    localsettings.formatMoney(pt_total))
-
-    retarg+='<td></td></tr>'
-
-    retarg+='</table></body></htsml>'
-
-    return retarg
-
 if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     localsettings.initiate()
@@ -235,7 +179,5 @@ if __name__ == "__main__":
     pt = patient_class.patient(serialno)
     print str(pt.estimates)
     #print toHtml(pt.estimates,pt.tsfees)
-
-    #print toBriefHtml(pt.estimates)
 
     #recalculate_estimate(pt)

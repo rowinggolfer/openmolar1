@@ -492,7 +492,7 @@ self.serialno, self.courseno0))
     @property
     def underTreatment(self):
         return (not self.accd in ("", None) and self.cmpd in ("", None))
-           
+        
     @property
     def max_tx_courseno(self):
         db = connect.connect()

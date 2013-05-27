@@ -80,7 +80,9 @@ class MHPrint(object):
                 )            
             if DEBUG:
                 painter.drawRect(rect)
-            painter.drawText(rect, text, QtGui.QTextOption(option|QtCore.Qt.AlignVCenter))
+            text_option = QtGui.QTextOption(option|QtCore.Qt.AlignVCenter)
+            text_option.setWrapMode(text_option.NoWrap)
+            painter.drawText(rect, text, text_option)
             return line_height*rowspan # so that y can be adjusted accordingly
     
         dialog = QtGui.QPrintDialog(self.printer, self.parent)
