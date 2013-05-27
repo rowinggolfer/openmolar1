@@ -22,7 +22,7 @@ from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
 #- updated 27th May 2013.
-__MAJOR_VERSION__= "0.4.0"
+__MAJOR_VERSION__= "0.4.01"
 
 
 if "-v" in sys.argv:

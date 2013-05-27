@@ -15,12 +15,12 @@ HEADERS = (
         _("Date"),
         _("Dentist"),
         _("Patient"),
-        _("code"),
-        _("cash"),
-        _("cheque"),
-        _("card"),
-        _("unknown"),
-        _("amt")
+        _("Code"),
+        _("Cash"),
+        _("Cheque"),
+        _("Card"),
+        _("Unknown"),
+        _("Amount")
         )
 
 QUERY = '''
@@ -30,7 +30,7 @@ from cashbook where ref=%s order by cbdate desc
 
 SUMMARY_QUERY = '''
 select DATE_FORMAT(cbdate, %s), dntid, code, amt 
-from cashbook where ref=%s and cbdate >= %s order by cbdate
+from cashbook where ref=%s and code<10 and cbdate >= %s order by cbdate
 '''
 
 def summary_details(sno, start_date):

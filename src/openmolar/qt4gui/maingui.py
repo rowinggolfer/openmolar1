@@ -731,7 +731,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             html_ = reception_summary.html(self.pt)
             self.ui.reception_textBrowser.setText(html_)
             self.pt_diary_widget.layout_ptDiary()
-            note = formatted_notes.rec_notes(self.pt.notes_dict)
+            note = formatted_notes.rec_notes(self.pt.notes_dict, self.pt.accd)
             self.ui.recNotes_webView.setHtml(note)
 
     def webviewloaded(self):

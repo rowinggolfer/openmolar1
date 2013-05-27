@@ -63,7 +63,7 @@ def s_t_l(note):
     '''
     strip trailing linebreaks
     '''
-    return re.sub("(<br /> ?)*$", "", note)
+    return re.sub("(<br /> *)*$", "", note)
 
 
 def get_notes_for_date(lines, full_notes=False):
@@ -115,24 +115,27 @@ def get_rec_summary(lines):
     return s_t_l(note)
 
 
-def rec_notes(notes_dict):
+def rec_notes(notes_dict, startdate=None):
     '''
     returns an html string of notes, designed to fit into the
     reception notes panel (ie. vertical)
     '''
 
     retarg = HEADER + '<table border="1">'
+    if startdate:
+        retarg += "<h4>%s</h4>"% _("Course Activity")
 
     keys = notes_dict.keys()
     #keys.sort()
 
     for key in keys:
         date, op = key
-        data = notes_dict[key]
-        note = get_rec_summary(data)
-        if note:
-            retarg += '<tr><td>%s</td><td>%s</td></tr>'% (
-                localsettings.formatDate(date), note)
+        if startdate and date >= startdate:
+            data = notes_dict[key]
+            note = get_rec_summary(data)
+            if note:
+                retarg += '<tr><td>%s</td><td>%s</td></tr>'% (
+                    localsettings.formatDate(date), note)
 
     retarg += '</table></body></html>'
 
