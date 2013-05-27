@@ -163,10 +163,6 @@ else:
 cflocation = os.path.join(localFileDirectory,"openmolar.conf")
 TEMP_PDF = os.path.join(localFileDirectory, "temp.pdf")
 
-
-print "using stylesheet '%s'" % stylesheet
-
-
 #this is updated if correct password is given
 successful_login = False
 

@@ -29,6 +29,7 @@ src/openmolar/dbtools/db_patients.py
 src/openmolar/dbtools/db_settings.py
 src/openmolar/dbtools/docsimported.py
 src/openmolar/dbtools/docsprinted.py
+src/openmolar/dbtools/estimate_synopsis.py
 src/openmolar/dbtools/estimatesHistory.py
 src/openmolar/dbtools/extend_books.py
 src/openmolar/dbtools/feesTable.py
@@ -124,6 +125,7 @@ src/openmolar/ptModules/patientDetails.py
 src/openmolar/ptModules/perio.py
 src/openmolar/ptModules/plan.py
 src/openmolar/ptModules/planDetails.py
+src/openmolar/ptModules/reception_summary.py
 src/openmolar/ptModules/referral.py
 src/openmolar/ptModules/standardletter.py
 src/openmolar/ptModules/tooth_history.py
