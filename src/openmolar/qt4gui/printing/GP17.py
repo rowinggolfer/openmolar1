@@ -94,10 +94,11 @@ class gp17():
     '''
     a class to set up and print a GP17
     '''
-    def __init__(self, pt, dentist, testtingMode=False, parent=None):
+    def __init__(self, pt, dentist, parent, testtingMode=False):
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A4)
-        self.printer.setPaperSource(QtGui.QPrinter.Middle)  #set bin 2
+        #self.printer.setPaperSource(QtGui.QPrinter.Middle)  #set bin 2
+        self.om_gui = parent
         self.pt = pt
         if dentist:
             self.dentist = dentist
@@ -283,9 +284,9 @@ class gp17():
         
     def print_(self):
         if not localsettings.defaultPrinterforGP17:
-            dialog = QtGui.QPrintDialog(self.printer)
+            dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
             if not dialog.exec_():
-                return
+                return False
         print "printing GP17 with offset (%d,%d)"%(
         self.OFFSETLEFT,self.OFFSETTOP)
 
@@ -404,8 +405,9 @@ class gp17():
                 i+=1
         for rect in self.miscCBS.values():
             if self.testingMode : painter.drawRect(rect)
-        print "treatment on referral,special needs, cancel registration not implemented"
-    
+        
+        return True
+        
     def setStampText(self):
         '''
         sets the dentist details for the top right of the form
@@ -428,5 +430,5 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     
     app = QtGui.QApplication(sys.argv)
-    form=gp17(patient_class.patient(1),True)
+    form=gp17(patient_class.patient(1), 4, None, True)
     form.print_()

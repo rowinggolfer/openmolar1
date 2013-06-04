@@ -102,7 +102,7 @@ class PtDiaryWidget(QtGui.QWidget):
         self.select_apr_ix(aprix)
 
     def refresh_ptDiary(self, serialno):
-        if serialno == self.pt.serialno:
+        if self.pt and serialno == self.pt.serialno:
             self.layout_ptDiary()
 
     def layout_ptDiary(self):

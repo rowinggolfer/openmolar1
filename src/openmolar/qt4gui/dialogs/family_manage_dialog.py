@@ -34,7 +34,7 @@ from openmolar.qt4gui.dialogs.address_match_dialog import AddressMatchDialog
 from openmolar.ptModules import patientDetails
 
 QUERY = '''select serialno, title, fname, sname, 
-addr1, addr2, addr3, town, county, pcde, dob, status from patients
+addr1, addr2, addr3, town, county, pcde, dob, status, tel1 from patients
 where familyno = %s order by dob'''
 
 LINK_QUERY = 'update patients set familyno=%s where serialno=%s'
@@ -47,6 +47,11 @@ NEXT_FAMILYNO_QUERY = "select max(familyno)+1 from patients"
 NEW_GROUP_QUERY = "update patients set familyno=%s where serialno=%s"
 
 DELETE_FAMILYNO_QUERY = "update patients set familyno=NULL where familyno=%s"
+
+HEADERS = (
+    _("Address 1"),_("Address 2"),_("Address 3"),
+    _("TOWN"), _("County"), _("Postcode")
+    )
 
 class _DuckPatient(object):
     def __init__(self, result):
@@ -62,6 +67,7 @@ class _DuckPatient(object):
         self.pcde = result[9]
         self.dob = result[10]
         self.status = result[11]
+        self.tel1 = result[12]
     
     def getAge(self):
         '''
@@ -122,24 +128,35 @@ class _ChooseAddressDialog(BaseDialog):
         
         self.addresses = list(addresses)
         label = QtGui.QLabel(_("Which address should be used?"))
-        self.list_widget = QtGui.QListWidget()
-        for address in addresses:
-            addr = "%s, %s, %s, %s, %s, %s"% address
-            while re.search(", *,", addr):
-                addr =  re.sub(", *,",", ", addr)
-            self.list_widget.addItem(addr)
+        self.table_widget = QtGui.QTableWidget()
+        self.table_widget.setSelectionBehavior(
+            QtGui.QAbstractItemView.SelectRows)
+        self.table_widget.setAlternatingRowColors(True)
         
+        self.table_widget.setRowCount(len(addresses))
+        self.table_widget.setColumnCount(len(HEADERS))
+        self.table_widget.setHorizontalHeaderLabels(HEADERS)
+        self.table_widget.horizontalHeader().setStretchLastSection(True)
+        
+        for row, fields in enumerate(addresses):
+            for col, field in enumerate(fields):
+                if field is None:
+                    continue
+                item = QtGui.QTableWidgetItem(field)
+                self.table_widget.setItem(row, col, item)
+            
         self.insertWidget(label)
-        self.insertWidget(self.list_widget)
+        self.insertWidget(self.table_widget)
+        self.table_widget.resizeColumnsToContents()
         
-        self.list_widget.itemSelectionChanged.connect(self.enableApply)
+        self.table_widget.itemSelectionChanged.connect(self.enableApply)
 
     def sizeHint(self):
-        return QtCore.QSize(400,200)
+        return QtCore.QSize(800,200)
     
     @property
     def chosen_address(self):
-        return self.addresses[self.list_widget.currentIndex().row()]
+        return self.addresses[self.table_widget.currentIndex().row()]
 
 class _AdvancedWidget(QtGui.QWidget):
     sync_address_signal = QtCore.pyqtSignal()
@@ -329,7 +346,7 @@ class FamilyManageDialog(ExtendableDialog):
             _("Addresses are all identical - nothing to do!"))
             return
         
-        dl = _ChooseAddressDialog(address_set)
+        dl = _ChooseAddressDialog(address_set, self)
         if dl.exec_():
             db = connect()
             cursor = db.cursor()
@@ -393,7 +410,7 @@ if __name__ == "__main__":
 
     mw = QtGui.QWidget()
     mw.pt = _DuckPatient((1,"","","","The Gables",
-        "Craggiemore Daviot","Inverness","","","IV2 5XQ", "", "active"))
+        "Craggiemore Daviot","Inverness","","","IV2 5XQ", "", "active", ""))
     
     mw.pt.familyno = 1
 

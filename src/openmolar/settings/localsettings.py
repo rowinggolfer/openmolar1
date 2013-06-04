@@ -22,7 +22,7 @@ from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
 #- updated 27th May 2013.
-__MAJOR_VERSION__= "0.4.01"
+__MAJOR_VERSION__= "0.4.02"
 
 
 if "-v" in sys.argv:
@@ -41,7 +41,6 @@ ENCODING = locale.getpreferredencoding()
 FEETABLES = {}
 
 WIKIURL = ""
-PHRASEBOOK = '<?xml version="1.0" ?><phrasebook />'
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -330,8 +329,7 @@ practiceAddress = ("The Academy Dental Practice","19 Union Street",
 defaultNewPatientDetails = ("",)*8
 
 #-- 1 less dialog box for these lucky people
-defaultPrinterforGP17 = True
-
+defaultPrinterforGP17 = False
 
 #-- my own class of excpetion, for when a serialno is called
 #--from the database and no match is found
@@ -740,8 +738,7 @@ def initiate(changedServer= False, debug = False):
     #print "initiating settings"
     global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
-    apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, WIKIURL, \
-    PHRASEBOOK
+    apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, WIKIURL
 
     from openmolar import connect
     from openmolar.dbtools import db_settings
@@ -769,11 +766,6 @@ def initiate(changedServer= False, debug = False):
 
     db = connect.connect()
     cursor = db.cursor()
-
-    query = "select phrases from phrasebook where clinician_id=0"
-    cursor.execute(query)
-    rows = cursor.fetchone()
-    PHRASEBOOK = rows[0]
 
     #set up four lists with key/value pairs reversedto make for easy referencing
 

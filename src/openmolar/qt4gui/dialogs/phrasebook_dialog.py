@@ -8,8 +8,17 @@
 
 from PyQt4 import QtGui, QtCore
 import types
-from openmolar.settings import localsettings
 from xml.dom import minidom
+
+from openmolar.dbtools.phrasebook import Phrasebook
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    #OrderedDict only came in python 2.7
+    print "using openmolar.backports for OrderedDict"
+    from openmolar.backports import OrderedDict
+
 
 class shadePicker(QtGui.QFrame):
     def __init__(self, parent=None):
@@ -58,31 +67,40 @@ class PhraseBookDialog(QtGui.QDialog):
         layout.addWidget(self.tabWidget)
         layout.addWidget(self.buttonBox)
 
-        self.dict = {}
+        self.phrasebook = Phrasebook()
 
-        self.xml = minidom.parseString(localsettings.PHRASEBOOK)
+        self.dict = OrderedDict()
+
+        self.xml = minidom.parseString(self.phrasebook.xml)
         sections = self.xml.getElementsByTagName("section")
         icon = QtGui.QIcon(":icons/expand.png")
-        i = 0
+        
         for section in sections:
             header = section.getElementsByTagName("header")
             page = QtGui.QWidget(self)
             layout = QtGui.QVBoxLayout(page)
             phrases = section.getElementsByTagName("phrase")
             for phrase in phrases:
-                cb = QtGui.QCheckBox(page)
-                text = phrase.firstChild.data
-                cb.setText(text)
-                layout.addWidget(cb)
-                self.dict[i] = (cb, text)
-                i += 1
+                    
+                if phrase.hasAttribute("spacer"):
+                    layout.addStretch()                    
+                elif phrase.hasAttribute("sub_heading"):
+                    text = phrase.firstChild.data
+                    label = QtGui.QLabel(u"<b>%s</b>"%text)
+                    layout.addWidget(label)                    
+                else:
+                    text = phrase.firstChild.data
+                    cb = QtGui.QCheckBox(page)
+                    cb.setText(text)
+                    layout.addWidget(cb)
+                    self.dict[cb] = text
             widgets = section.getElementsByTagName("widget")
             for widget in widgets:
                 if widget.firstChild.data == "choose_shade":
                     sp = shadePicker(self)
                     layout.addWidget(sp)
-                    self.dict[i] = (sp.cb, sp.result)
-                    i += 1
+                    self.dict[sp.cb] = sp.result
+            
             spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
             layout.addItem(spacerItem)
@@ -95,19 +113,19 @@ class PhraseBookDialog(QtGui.QDialog):
     @property
     def selectedPhrases(self):
         retlist = []
-        for key in self.dict:
-            cb , text = self.dict[key]
+        for cb, value in self.dict.iteritems():
             if cb.isChecked():
-                if type(text) == types.MethodType:
-                    text = text()
+                if type(value) == types.MethodType:
+                    text = value()
+                else:
+                    text = value
                 retlist.append(text)
         return retlist
 
 if __name__ == "__main__":
     from openmolar.qt4gui import resources_rc
-    localsettings.initiate()
     app = QtGui.QApplication([])
-    ui = phraseBook()
+    ui = PhraseBookDialog()
     if ui.exec_():
         print ui.selectedPhrases
     app.closeAllWindows()

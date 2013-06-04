@@ -54,9 +54,9 @@ def header(pt):
         retarg += "<b>!UNKNOWN POSTCODE!</b>"
     else:
         retarg +=  "%s"% pt.pcde
-    
+
     if not pt.status in ("Active", "", None):
-        retarg += "<h1>%s</h1>"% pt.status
+        retarg += "<hr /><h1>%s</h1>"% pt.status
         
     return retarg
 
@@ -64,9 +64,9 @@ def details(pt, Saved=True):
     '''returns an html set showing pt name etc...'''
 
     try:
-        retarg = header(pt) + "<hr />"
+        retarg = header(pt) + '<hr />'
         if "N" in pt.cset:
-            retarg += '''<img src="%s/nhs_scot.png" alt="NHS">
+            retarg += '''<img src="%s/nhs_scot.png" alt="NHS" />
             <br />'''% localsettings.resources_path
 
             if pt.exemption != "":
@@ -75,11 +75,11 @@ def details(pt, Saved=True):
                 retarg += "NOT EXEMPT"
             retarg += "<br />"
         elif "I" in pt.cset:
-            retarg += '''<img src="%s/hdp_small.png" alt="HDP">
+            retarg += '''<img src="%s/hdp_small.png" alt="HDP" />
             <br />'''% localsettings.resources_path
 
         elif "P" in pt.cset:
-            retarg += '''<img src="%s/private.png" alt="PRIVATE">
+            retarg += '''<img src="%s/private.png" alt="PRIVATE" />
             <br />'''% localsettings.resources_path
 
         else:

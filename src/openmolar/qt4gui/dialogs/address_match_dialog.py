@@ -168,7 +168,7 @@ if __name__ == "__main__":
 
     mw = QtGui.QWidget()
     mw.pt = _DuckPatient((1,"","","","The Gables",
-        "Craggiemore Daviot","Inverness","","","IV2 5XQ", "", "active"))
+        "Craggiemore Daviot","Inverness","","","IV2 5XQ", "", "active", ""))
     
     print mw.pt
     dl = AddressMatchDialog(mw)

@@ -1,3 +1,16 @@
+0.4.02
+    BUGFIXES.
+        FindPatientDialog throwing an exception when called via diary widget
+        pt_diary update is unnecessary (and fails) if no patient is loaded
+        fixed print dialog parent when printing gp17
+
+    NEW FUNCTIONALITY
+        when synching addresses, it is not always obvious which is the best one
+        NHS form printing - should now always raise print dialog to 
+            allow printer choice.
+        Phrasebook - allow subheadings and spacers
+        opalite cr recognition by feescales - ordered dict issue??
+
 0.4.0
     reception front page better html
     Tidied up recall bulk mail

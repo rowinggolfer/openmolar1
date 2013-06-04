@@ -394,7 +394,7 @@ def printGP17(om_gui, test=False, known_course=False):
     localsettings.formatDate(om_gui.pt.accd),
     localsettings.formatDate(om_gui.pt.cmpd))
 
-    dl.previousCourse_radioButton.setChecked(known_course)
+    dl.previousCourse_radioButton.setChecked(not known_course)
     dl.previousCourse_radioButton.setText(prevDetails)
     if localsettings.apptix_reverse.get(dent) in \
     localsettings.activedents:
@@ -419,11 +419,10 @@ def printGP17(om_gui, test=False, known_course=False):
         #-- see if user has overridden the dentist
         chosenDent = str(dl.dents_comboBox.currentText())
         dent = localsettings.ops_reverse.get(chosenDent)
-        form = GP17.gp17(om_gui.pt, dent, test)
+        form = GP17.gp17(om_gui.pt, dent, om_gui, test)
         if dl.previousCourse_radioButton.isChecked():
             form.detailed = True
-        form.print_()
-        if not test:
+        if form.print_():
             om_gui.pt.addHiddenNote("printed", "GP17 %s"% chosenDent)
             om_gui.updateHiddenNotesLabel()
 

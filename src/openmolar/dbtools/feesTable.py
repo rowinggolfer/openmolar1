@@ -16,6 +16,14 @@ from openmolar import connect
 from openmolar.settings import localsettings
 from openmolar.ptModules import plan
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    #OrderedDict only came in python 2.7
+    print "using openmolar.backports for OrderedDict"
+    from openmolar.backports import OrderedDict
+
+
 logging.basicConfig(level=logging.DEBUG)
 
 def getData():
@@ -201,7 +209,7 @@ class feeTable():
         self.categories = []
         self.hasPtCols = False
         self.treatmentCodes = {}
-        self.chartTreatmentCodes = {}
+        self.chartTreatmentCodes = OrderedDict()
         self.feeColCount = 0
         self.data = ""
         self.pl_cmp_Categories = plan.tup_Atts + ("CHART",)
