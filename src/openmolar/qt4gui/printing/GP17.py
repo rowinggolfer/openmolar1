@@ -5,8 +5,42 @@
 # by the Free Software Foundation, either version 3 of the License, or 
 # (at your option) any later version. See the GNU General Public License for more details.
 
+import ConfigParser
+import os
+    
 from PyQt4 import QtCore,QtGui
 from openmolar.settings import localsettings
+
+
+conf_path = os.path.join(localsettings.localFileDirectory, "gp17.conf")
+
+c = ConfigParser.ConfigParser()    
+c.read([conf_path])
+
+#these globals can be altered by a dialog of the main gui
+try:
+    try:
+        OFFSET_LEFT = int(c.get("Margins", "left"))
+    except ConfigParser.NoOptionError:
+        OFFSET_LEFT = 0
+    try:
+        OFFSET_TOP = int(c.get("Margins", "top"))
+    except ConfigParser.NoOptionError:
+        OFFSET_TOP = 0
+except ConfigParser.NoSectionError:
+    OFFSET_LEFT, OFFSET_TOP = 0, 0
+
+print "offsets", OFFSET_LEFT, OFFSET_TOP
+
+def save_config():
+    c = ConfigParser.ConfigParser()
+    c.add_section("Margins")
+    c.set("Margins","left",OFFSET_LEFT)
+    c.set("Margins","top",OFFSET_TOP)
+    f = open(conf_path, "w")
+    c.write(f)
+    f.close()
+
 
 textBoxWidth = 16
 textBoxHeight = 21
@@ -97,6 +131,7 @@ class gp17():
     def __init__(self, pt, dentist, parent, testtingMode=False):
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A4)
+        self.printer.setFullPage(True)
         #self.printer.setPaperSource(QtGui.QPrinter.Middle)  #set bin 2
         self.om_gui = parent
         self.pt = pt
@@ -105,190 +140,183 @@ class gp17():
         else:
             self.dentist = ""
         self.setStampText()
-        self.OFFSETLEFT = localsettings.GP17_LEFT
-        self.OFFSETTOP = localsettings.GP17_TOP
-        self.sizes()
         self.detailed = False
         #-- if detailed, openmolar includes dates and treatment details, 
         #-- otherwise just the pt's address and the dentists details.
         self.testingMode = testtingMode
         
-    def setOffset(self, x, y):
-        self.OFFSETLEFT = x
-        self.OFFSETTOP = y 
-        self.sizes()       
-
-    ###sizes
     def sizes(self):
         paperRect = self.printer.paperRect()  #get the paper size (in pixels)
-        self.absWidth = paperRect.width()
-        self.absHeight = paperRect.height()
-        #print "paperRect width %d height %d"%(self.absWidth,self.absHeight)
         
         self.surnameBoxes = {}
         for i in range(14):
             self.surnameBoxes[i] = QtCore.QRectF(
-            snameboxLeft+self.OFFSETLEFT+i*(textBoxWidth+snameboxPad),
-            snameboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+            snameboxLeft+OFFSET_LEFT+i*(textBoxWidth+snameboxPad),
+            snameboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
             
         self.forenameBoxes={}
         for i in range(14):
             self.forenameBoxes[i]=QtCore.QRectF(
-            fnameboxLeft+self.OFFSETLEFT+i*(textBoxWidth+fnameboxPad),
-            fnameboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+            fnameboxLeft+OFFSET_LEFT+i*(textBoxWidth+fnameboxPad),
+            fnameboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
         
         self.dobBoxes={}
-        self.dobBoxes[0]=QtCore.QRectF(dobd1boxLeft+self.OFFSETLEFT,
-        dobboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.dobBoxes[0]=QtCore.QRectF(dobd1boxLeft+OFFSET_LEFT,
+        dobboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
         
-        self.dobBoxes[1]=QtCore.QRectF(dobd2boxLeft+self.OFFSETLEFT,
-        dobboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.dobBoxes[1]=QtCore.QRectF(dobd2boxLeft+OFFSET_LEFT,
+        dobboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.dobBoxes[2]=QtCore.QRectF(dobm1boxLeft+self.OFFSETLEFT,
-        dobboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.dobBoxes[2]=QtCore.QRectF(dobm1boxLeft+OFFSET_LEFT,
+        dobboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.dobBoxes[3]=QtCore.QRectF(dobm2boxLeft+self.OFFSETLEFT,
-        dobboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.dobBoxes[3]=QtCore.QRectF(dobm2boxLeft+OFFSET_LEFT,
+        dobboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.dobBoxes[4]=QtCore.QRectF(doby1boxLeft+self.OFFSETLEFT,
-        dobboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.dobBoxes[4]=QtCore.QRectF(doby1boxLeft+OFFSET_LEFT,
+        dobboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.dobBoxes[5]=QtCore.QRectF(doby2boxLeft+self.OFFSETLEFT,
-        dobboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.dobBoxes[5]=QtCore.QRectF(doby2boxLeft+OFFSET_LEFT,
+        dobboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.dobBoxes[6]=QtCore.QRectF(doby3boxLeft+self.OFFSETLEFT,
-        dobboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.dobBoxes[6]=QtCore.QRectF(doby3boxLeft+OFFSET_LEFT,
+        dobboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.dobBoxes[7]=QtCore.QRectF(doby4boxLeft+self.OFFSETLEFT,
-        dobboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.dobBoxes[7]=QtCore.QRectF(doby4boxLeft+OFFSET_LEFT,
+        dobboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.maleBox=QtCore.QRectF(maleboxLeft+self.OFFSETLEFT,
-        sexTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.maleBox=QtCore.QRectF(maleboxLeft+OFFSET_LEFT,
+        sexTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.femaleBox=QtCore.QRectF(femaleboxLeft+self.OFFSETLEFT,
-        sexTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.femaleBox=QtCore.QRectF(femaleboxLeft+OFFSET_LEFT,
+        sexTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
         
         self.pidBoxes={}
         for i in range(10):
             if i<3:
                 self.pidBoxes[i]=QtCore.QRectF(
-                pidboxLeft+self.OFFSETLEFT+i*(textBoxWidth+pidPad),
-                pidTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+                pidboxLeft+OFFSET_LEFT+i*(textBoxWidth+pidPad),
+                pidTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
             else:
                 self.pidBoxes[i]=QtCore.QRectF(
-                pidboxLeft+self.OFFSETLEFT+pidBigPad+i*(textBoxWidth+pidPad),
-                pidTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+                pidboxLeft+OFFSET_LEFT+pidBigPad+i*(textBoxWidth+pidPad),
+                pidTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
         
         self.pnameBoxes={}
 
         for i in range(12):
             self.pnameBoxes[i]=QtCore.QRectF(
-            pnameboxLeft+self.OFFSETLEFT+i*(textBoxWidth+pnameboxPad),
-            pnameboxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+            pnameboxLeft+OFFSET_LEFT+i*(textBoxWidth+pnameboxPad),
+            pnameboxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
         
-        self.stampBox=QtCore.QRectF(stampboxLeft+self.OFFSETLEFT,
-        stampboxTop+self.OFFSETTOP,stampboxWidth,stampboxHeight)
+        self.stampBox=QtCore.QRectF(stampboxLeft+OFFSET_LEFT,
+        stampboxTop+OFFSET_TOP,stampboxWidth,stampboxHeight)
         
         self.address1Boxes={}
         for i in range(18):
             self.address1Boxes[i]=QtCore.QRectF(
-            addressLeft+self.OFFSETLEFT+i*(textBoxWidth+addressPad),
-            address1Top+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+            addressLeft+OFFSET_LEFT+i*(textBoxWidth+addressPad),
+            address1Top+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
         self.address2Boxes={}
         for i in range(18):
             self.address2Boxes[i]=QtCore.QRectF(
-            addressLeft+self.OFFSETLEFT+i*(textBoxWidth+addressPad),
-            address2Top+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+            addressLeft+OFFSET_LEFT+i*(textBoxWidth+addressPad),
+            address2Top+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
         self.address3Boxes={}
         for i in range(18):
             self.address3Boxes[i]=QtCore.QRectF(
-            addressLeft+self.OFFSETLEFT+i*(textBoxWidth+addressPad),
-            address3Top+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+            addressLeft+OFFSET_LEFT+i*(textBoxWidth+addressPad),
+            address3Top+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
         self.postcode1Boxes={}
         for i in range(4):
             self.postcode1Boxes[i]=QtCore.QRectF(
-            postcode1Left+self.OFFSETLEFT+i*(textBoxWidth+postcodePad),
-            postcodeTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+            postcode1Left+OFFSET_LEFT+i*(textBoxWidth+postcodePad),
+            postcodeTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
         self.postcode2Boxes={}
         for i in range(3):
             self.postcode2Boxes[i]=QtCore.QRectF(
-            postcode2Left+self.OFFSETLEFT+i*(textBoxWidth+postcodePad),
-            postcodeTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+            postcode2Left+OFFSET_LEFT+i*(textBoxWidth+postcodePad),
+            postcodeTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
         self.accdBoxes={}
         self.accdBoxes[0]=QtCore.QRectF(
-        accdd1boxLeft+self.OFFSETLEFT,accdBoxTop+self.OFFSETTOP,
+        accdd1boxLeft+OFFSET_LEFT,accdBoxTop+OFFSET_TOP,
         textBoxWidth,textBoxHeight)
 
         self.accdBoxes[1]=QtCore.QRectF(
-        accdd2boxLeft+self.OFFSETLEFT,accdBoxTop+self.OFFSETTOP,
+        accdd2boxLeft+OFFSET_LEFT,accdBoxTop+OFFSET_TOP,
         textBoxWidth,textBoxHeight)
 
-        self.accdBoxes[2]=QtCore.QRectF(accdm1boxLeft+self.OFFSETLEFT,
-        accdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.accdBoxes[2]=QtCore.QRectF(accdm1boxLeft+OFFSET_LEFT,
+        accdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.accdBoxes[3]=QtCore.QRectF(accdm2boxLeft+self.OFFSETLEFT,
-        accdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.accdBoxes[3]=QtCore.QRectF(accdm2boxLeft+OFFSET_LEFT,
+        accdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.accdBoxes[4]=QtCore.QRectF(accdy1boxLeft+self.OFFSETLEFT,
-        accdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.accdBoxes[4]=QtCore.QRectF(accdy1boxLeft+OFFSET_LEFT,
+        accdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.accdBoxes[5]=QtCore.QRectF(accdy2boxLeft+self.OFFSETLEFT,
-        accdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.accdBoxes[5]=QtCore.QRectF(accdy2boxLeft+OFFSET_LEFT,
+        accdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.accdBoxes[6]=QtCore.QRectF(accdy3boxLeft+self.OFFSETLEFT,
-        accdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.accdBoxes[6]=QtCore.QRectF(accdy3boxLeft+OFFSET_LEFT,
+        accdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.accdBoxes[7]=QtCore.QRectF(accdy4boxLeft+self.OFFSETLEFT,
-        accdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.accdBoxes[7]=QtCore.QRectF(accdy4boxLeft+OFFSET_LEFT,
+        accdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
         self.cmpdBoxes={}
 
-        self.cmpdBoxes[0]=QtCore.QRectF(accdd1boxLeft+self.OFFSETLEFT,
-        cmpdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.cmpdBoxes[0]=QtCore.QRectF(accdd1boxLeft+OFFSET_LEFT,
+        cmpdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.cmpdBoxes[1]=QtCore.QRectF(accdd2boxLeft+self.OFFSETLEFT,
-        cmpdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.cmpdBoxes[1]=QtCore.QRectF(accdd2boxLeft+OFFSET_LEFT,
+        cmpdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.cmpdBoxes[2]=QtCore.QRectF(accdm1boxLeft+self.OFFSETLEFT,
-        cmpdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.cmpdBoxes[2]=QtCore.QRectF(accdm1boxLeft+OFFSET_LEFT,
+        cmpdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.cmpdBoxes[3]=QtCore.QRectF(accdm2boxLeft+self.OFFSETLEFT,
-        cmpdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.cmpdBoxes[3]=QtCore.QRectF(accdm2boxLeft+OFFSET_LEFT,
+        cmpdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.cmpdBoxes[4]=QtCore.QRectF(accdy1boxLeft+self.OFFSETLEFT,
-        cmpdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.cmpdBoxes[4]=QtCore.QRectF(accdy1boxLeft+OFFSET_LEFT,
+        cmpdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.cmpdBoxes[5]=QtCore.QRectF(accdy2boxLeft+self.OFFSETLEFT,
-        cmpdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.cmpdBoxes[5]=QtCore.QRectF(accdy2boxLeft+OFFSET_LEFT,
+        cmpdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.cmpdBoxes[6]=QtCore.QRectF(accdy3boxLeft+self.OFFSETLEFT,
-        cmpdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.cmpdBoxes[6]=QtCore.QRectF(accdy3boxLeft+OFFSET_LEFT,
+        cmpdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
-        self.cmpdBoxes[7]=QtCore.QRectF(accdy4boxLeft+self.OFFSETLEFT,
-        cmpdBoxTop+self.OFFSETTOP,textBoxWidth,textBoxHeight)
+        self.cmpdBoxes[7]=QtCore.QRectF(accdy4boxLeft+OFFSET_LEFT,
+        cmpdBoxTop+OFFSET_TOP,textBoxWidth,textBoxHeight)
 
         self.miscCBS={}
-        self.miscCBS[0]=QtCore.QRectF(misccbsLeft+self.OFFSETLEFT,
-        misccbs1Top+self.OFFSETTOP,checkBoxWidth,checkBoxHeight)
+        self.miscCBS[0]=QtCore.QRectF(misccbsLeft+OFFSET_LEFT,
+        misccbs1Top+OFFSET_TOP,checkBoxWidth,checkBoxHeight)
 
-        self.miscCBS[1]=QtCore.QRectF(misccbsLeft+self.OFFSETLEFT,
-        misccbs2Top+self.OFFSETTOP,checkBoxWidth,checkBoxHeight)
+        self.miscCBS[1]=QtCore.QRectF(misccbsLeft+OFFSET_LEFT,
+        misccbs2Top+OFFSET_TOP,checkBoxWidth,checkBoxHeight)
 
-        self.miscCBS[2]=QtCore.QRectF(misccbsLeft+self.OFFSETLEFT,
-        misccbs3Top+self.OFFSETTOP,checkBoxWidth,checkBoxHeight)
+        self.miscCBS[2]=QtCore.QRectF(misccbsLeft+OFFSET_LEFT,
+        misccbs3Top+OFFSET_TOP,checkBoxWidth,checkBoxHeight)
         
     def print_(self):
+        print "BEFORE = ", self.printer.getPageMargins(self.printer.Millimeter)
+        print "BEFORE = ", self.printer.pageRect()
         if not localsettings.defaultPrinterforGP17:
             dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
             if not dialog.exec_():
                 return False
+        print "AFTER = ", self.printer.getPageMargins(self.printer.Millimeter)
+        print "AFTER = ", self.printer.pageRect()
+        self.sizes()
         print "printing GP17 with offset (%d,%d)"%(
-        self.OFFSETLEFT,self.OFFSETTOP)
+        OFFSET_LEFT,OFFSET_TOP)
 
         print "printer paper source = ",self.printer.paperSource()
 
@@ -426,9 +454,13 @@ class gp17():
             
 if __name__ == "__main__":
     import sys
+    
+    os.chdir(os.path.expanduser("~"))
     localsettings.initiate()
     from openmolar.dbtools import patient_class
     
     app = QtGui.QApplication(sys.argv)
     form=gp17(patient_class.patient(1), 4, None, True)
     form.print_()
+
+    save_config()

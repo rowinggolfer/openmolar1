@@ -39,6 +39,7 @@ src/openmolar/dbtools/nhs_claims.py
 src/openmolar/dbtools/patient_class.py
 src/openmolar/dbtools/patient_write_changes.py
 src/openmolar/dbtools/paymentHistory.py
+src/openmolar/dbtools/phrasebook.py
 src/openmolar/dbtools/recall.py
 src/openmolar/dbtools/schema_version.py
 src/openmolar/dbtools/search.py

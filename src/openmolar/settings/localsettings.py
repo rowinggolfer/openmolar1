@@ -21,8 +21,8 @@ import types
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 27th May 2013.
-__MAJOR_VERSION__= "0.4.02"
+#- updated 7th June 2013.
+__MAJOR_VERSION__= "0.4.03"
 
 
 if "-v" in sys.argv:
@@ -82,9 +82,6 @@ CORRESPONDENCE_SIG = "The Academy Dental Practice"
 
 MH_HEADER = ("The Academy Dental Practice", 
             _("Confidential Medical History Questionaire"))
-
-GP17_LEFT = 0
-GP17_TOP = 0
 
 WINDOWS = False
 
@@ -150,9 +147,7 @@ if "win" in sys.platform:
         "://",":///").replace(" ","%20").replace("\\","/")
     LOGOPATH = LOGOPATH.replace(
         "://",":///").replace(" ","%20").replace("\\","/")
-    GP17_LEFT = 15
-    GP17_RIGHT = 15
-
+    
 else:
     if not "linux" in sys.platform:
         print "unknown system platform (mac?) - defaulting to linux settings"

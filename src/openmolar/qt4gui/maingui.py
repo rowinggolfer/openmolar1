@@ -43,6 +43,7 @@ from openmolar.qt4gui import contract_gui_module
 from openmolar.qt4gui import new_patient_gui
 
 from openmolar.qt4gui.printing import om_printing
+from openmolar.qt4gui.printing import GP17
 
 from openmolar.qt4gui.charts import charts_gui
 
@@ -1708,12 +1709,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         Dialog = QtGui.QDialog(self)
         dl = Ui_options.Ui_Dialog()
         dl.setupUi(Dialog)
-        dl.leftMargin_spinBox.setValue(localsettings.GP17_LEFT)
-        dl.topMargin_spinBox.setValue(localsettings.GP17_TOP)
+        dl.leftMargin_spinBox.setValue(GP17.OFFSET_LEFT)
+        dl.topMargin_spinBox.setValue(GP17.OFFSET_TOP)
 
         if Dialog.exec_():
-            localsettings.GP17_LEFT=dl.leftMargin_spinBox.value()
-            localsettings.GP17_TOP=dl.topMargin_spinBox.value()
+            GP17.OFFSET_LEFT=dl.leftMargin_spinBox.value()
+            GP17.OFFSET_TOP=dl.topMargin_spinBox.value()
+            GP17.save_config()
 
     def unsavedChanges(self):
         '''
@@ -3256,6 +3258,7 @@ def main(app):
 
 if __name__ == "__main__":
     print "dev mode"
+    os.chdir(os.path.expanduser("~"))
     import gettext
     os.environ.setdefault('LANG', 'en')
     gettext.install('openmolar')

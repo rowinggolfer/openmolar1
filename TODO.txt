@@ -1,3 +1,8 @@
+0.4.03
+    GP17 form
+        printing badly from some stations.
+
+
 0.4.02
     BUGFIXES.
         FindPatientDialog throwing an exception when called via diary widget
