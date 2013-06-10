@@ -1,3 +1,6 @@
+0.4.05
+    ordereddict backports method fix (phrasebook was out of order!)
+
 0.4.04
     GP17 date issue fixed
 
