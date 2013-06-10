@@ -394,7 +394,7 @@ def printGP17(om_gui, test=False, known_course=False):
     localsettings.formatDate(om_gui.pt.accd),
     localsettings.formatDate(om_gui.pt.cmpd))
 
-    dl.previousCourse_radioButton.setChecked(not known_course)
+    dl.previousCourse_radioButton.setChecked(known_course)
     dl.previousCourse_radioButton.setText(prevDetails)
     if localsettings.apptix_reverse.get(dent) in \
     localsettings.activedents:

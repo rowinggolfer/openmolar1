@@ -30,8 +30,6 @@ try:
 except ConfigParser.NoSectionError:
     OFFSET_LEFT, OFFSET_TOP = 0, 0
 
-print "offsets", OFFSET_LEFT, OFFSET_TOP
-
 def save_config():
     c = ConfigParser.ConfigParser()
     c.add_section("Margins")
@@ -306,19 +304,12 @@ class gp17():
         misccbs3Top+OFFSET_TOP,checkBoxWidth,checkBoxHeight)
         
     def print_(self):
-        print "BEFORE = ", self.printer.getPageMargins(self.printer.Millimeter)
-        print "BEFORE = ", self.printer.pageRect()
         if not localsettings.defaultPrinterforGP17:
             dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
             if not dialog.exec_():
                 return False
-        print "AFTER = ", self.printer.getPageMargins(self.printer.Millimeter)
-        print "AFTER = ", self.printer.pageRect()
         self.sizes()
-        print "printing GP17 with offset (%d,%d)"%(
-        OFFSET_LEFT,OFFSET_TOP)
-
-        print "printer paper source = ",self.printer.paperSource()
+        print "printing GP17 with offset (%d,%d)"% (OFFSET_LEFT, OFFSET_TOP)
 
         serifFont = QtGui.QFont("Courier", 12)
         serifFont.setBold(True)
@@ -454,13 +445,13 @@ class gp17():
             
 if __name__ == "__main__":
     import sys
+    from openmolar.dbtools import patient_class
     
     os.chdir(os.path.expanduser("~"))
     localsettings.initiate()
-    from openmolar.dbtools import patient_class
     
     app = QtGui.QApplication(sys.argv)
-    form=gp17(patient_class.patient(1), 4, None, True)
+    form = gp17(patient_class.patient(1), 4, None, True)
     form.print_()
 
     save_config()

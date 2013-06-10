@@ -1878,7 +1878,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if select_language.run(self):
             self.ui.retranslateUi(self)
 
-
     def printGP17_clicked(self):
         '''
         print a GP17
@@ -3267,5 +3266,5 @@ if __name__ == "__main__":
     print "PyQt Version: ", QtCore.PYQT_VERSION_STR
     newapp = QtGui.QApplication(sys.argv)
     localsettings.operator = "NW"
-    localsettings.station = "reception"
+    #localsettings.station = "reception"
     main(newapp)

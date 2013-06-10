@@ -1,3 +1,6 @@
+0.4.04
+    GP17 date issue fixed
+
 0.4.03
     GP17 form
         printing badly from some stations.
