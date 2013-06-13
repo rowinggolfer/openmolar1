@@ -41,27 +41,26 @@ class MiscPaymentWidget(QtGui.QWidget):
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        layout = QtGui.QGridLayout(self)
-
-        ann_hdp_label = QtGui.QLabel(_("Annual Hdp Payment"))
-        other_payments_label = QtGui.QLabel(_("Other Payments"))
+        layout = QtGui.QFormLayout(self)
 
         self.hdp_le = MoneyLineEdit()
         self.other_le = MoneyLineEdit()
-
-        layout.addWidget(ann_hdp_label,0,0)
-        layout.addWidget(other_payments_label,1,0)
-
-        layout.addWidget(self.hdp_le,0,1)
-        layout.addWidget(self.other_le,1,1)
+        self.refund_le = MoneyLineEdit()
+        self.refund_le.setStyleSheet("color:red")
+        
+        layout.addRow(_("Annual Hdp Payment"),self.hdp_le)
+        layout.addRow(_("Other Payments"),self.other_le)
+        layout.addRow(_("Patient Refunds"),self.refund_le)
 
         self.hdp_le.textEdited.connect(self.updated.emit)
         self.other_le.textEdited.connect(self.updated.emit)
+        self.refund_le.textEdited.connect(self.updated.emit)
 
     def hide_treatment(self, hide):
         if hide:
             self.hdp_le.setEnabled(False)
-
+            self.refund_le.setEnabled(False)
+        
     @property
     def hdp_value(self):
         return self.hdp_le.pence_value
@@ -69,6 +68,10 @@ class MiscPaymentWidget(QtGui.QWidget):
     @property
     def other_value(self):
         return self.other_le.pence_value
+
+    @property
+    def refund_value(self):
+        return -self.refund_le.pence_value
 
 
 class PaymentDialog(ExtendableDialog):
@@ -175,15 +178,17 @@ class PaymentDialog(ExtendableDialog):
 
     def int_to_decimal(self, i):
         assert type(i) == IntType, "input must be an integer, not %s, (%s)"% (
-                                                i, type(i))
+                                                i, type(i))        
         ss = str(i)
+        negative = "-" if "-" in ss else ""
+        ss = ss.strip("-")
         if len(ss) == 0:
             return "0.00"
         if len(ss) == 1:
-            return "0.0%s"% ss
+            return "%s0.0%s"% (negative, ss)
         if len(ss) == 2:
-            return "0.%s"% ss
-        return "%s.%s"% (ss[:-2], ss[-2:])
+            return "%s0.%s"% (negative, ss)
+        return "%s%s.%s"% (negative, ss[:-2], ss[-2:])
 
     def update_totals(self, *args):
         self.cash_tot_label.setText(self.int_to_decimal(self.cash_total))
@@ -205,12 +210,15 @@ class PaymentDialog(ExtendableDialog):
     def other(self):
         return self.misc_payment_widget.other_value
 
+    @property
+    def refund(self):
+        return self.misc_payment_widget.refund_value
 
     @property
     def grand_total(self):
         val = (self.cash_total + self.cheque_total +
-            self.card_total + self.hdp + self.other)
-        self.enableApply(val != 0)
+            self.card_total + self.hdp + self.other + self.refund)
+        self.enableApply(val != 0 or self.refund != 0)
         return val
 
     @property
@@ -225,6 +233,14 @@ class PaymentDialog(ExtendableDialog):
     def grand_total_text(self):
         return self.int_to_decimal(self.grand_total)
 
+    @property
+    def other_text(self):
+        return self.int_to_decimal(self.other)
+    
+    @property
+    def refund_text(self):
+        return self.int_to_decimal(self.refund)
+    
     @property
     def cash_total(self):
         return self.cash_le.pence_value + self.cash_sundries_le.pence_value

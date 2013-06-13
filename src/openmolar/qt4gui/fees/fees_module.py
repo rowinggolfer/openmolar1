@@ -85,11 +85,14 @@ def takePayment(om_gui):
 
         if cashbook.paymenttaken(paymentPt.serialno, name, dent,paymentPt.cset,
         dl.tx_cash, dl.tx_cheque, dl.tx_card,
-        dl.sundry_cash, dl.sundry_cheque, dl.sundry_card, dl.hdp, dl.other):
+        dl.sundry_cash, dl.sundry_cheque, dl.sundry_card, 
+        dl.hdp, dl.other, dl.refund):
 
             print "ADDING NOTE"
             paymentPt.addHiddenNote("payment",
-            " treatment %s sundries %s"% (dl.tx_total_text, dl.sundry_total_text))
+            " treatment %s sundries %s"% (
+                dl.tx_total_text, dl.sundry_total_text))
+                
             om_gui.updateHiddenNotesLabel()
 
             print "CHECKING SERIALNO of loaded patient",
@@ -97,7 +100,9 @@ def takePayment(om_gui):
                 print "loaded patient == payment patient"
                 om_printing.printReceipt(om_gui,{
                 "Treatments and Services" : dl.tx_total_text,
-                "Sundry Items" : dl.sundry_total_text},
+                "Sundry Items" : dl.sundry_total_text,
+                "Unspecified Items" : dl.other_text,
+                "REFUND" : dl.refund_text},
                 total=dl.grand_total_text)
 
                 #-- always refer to money in terms of pence
@@ -106,6 +111,7 @@ def takePayment(om_gui):
                     om_gui.pt.money2 += dl.tx_total
                 else:
                     om_gui.pt.money3 += dl.tx_total
+                om_gui.pt.money11 -= dl.refund
 
             else:
                 print "No patient loaded. skipping receipt offer."
@@ -115,10 +121,11 @@ def takePayment(om_gui):
 
             print "writing to notes"
             if patient_write_changes.discreet_changes(paymentPt,
-            ("money2", "money3")) and om_gui.pt.serialno != 0:
+            ("money2", "money3", "money11")) and om_gui.pt.serialno != 0:
                 print "updating stored values"
                 om_gui.pt_dbstate.money2 = om_gui.pt.money2
                 om_gui.pt_dbstate.money3 = om_gui.pt.money3
+                om_gui.pt_dbstate.money11 = om_gui.pt.money11
 
             paymentPt.clearHiddenNotes()
             om_gui.updateDetails()

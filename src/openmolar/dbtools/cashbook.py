@@ -57,23 +57,24 @@ class CashBookCodesDict(dict):
             
 
 def paymenttaken(sno, name, dent, csetyp, cash, cheque, card,
-sundry_cash, sundry_cheque, sundry_card, hdp, other):
+sundry_cash, sundry_cheque, sundry_card, hdp, other, refund):
     '''
     called when a payment has been taken at the desk
     '''
     if csetyp[:1] == "N":
-        codes = (1, 3, 5, 14, 15, 17, 21, 24)
+        codes = (1, 3, 5, 14, 15, 17, 21, 24, 125)
     else:
-        codes = (2, 4, 6, 14, 15, 17, 21, 24)
-    i = 0
+        codes = (2, 4, 6, 14, 15, 17, 21, 24, 125)
     queries = []
-    for amount in (cash, cheque, card, sundry_cash, sundry_cheque, sundry_card, hdp, other):
+    for i, amount in enumerate(
+        (cash, cheque, card, sundry_cash, 
+        sundry_cheque, sundry_card, hdp, other, refund)
+        ):
         if amount != 0:
             queries.append('''
             insert into cashbook set cbdate = date(NOW()),
             ref="%06d", linkid=0, descr="%s", code=%d, dntid=%d, amt=%d
             '''%(sno, name, codes[i], dent, amount))
-        i += 1
     if queries != []:
         db = connect()
         cursor = db.cursor()
@@ -111,7 +112,7 @@ treatment_only=False, sundries_only=False):
 
     restriction_header = ""
     if treatment_only:
-        cond1 += "code < 10 and "
+        cond1 += "(code < 10 or code > 123) and "
         restriction_header = "TREATMENT ONLY"
     elif sundries_only:
         cond1 += "code >=14  and  code <= 18 and "
