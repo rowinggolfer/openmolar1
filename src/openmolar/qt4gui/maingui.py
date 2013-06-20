@@ -43,14 +43,12 @@ from openmolar.qt4gui import contract_gui_module
 from openmolar.qt4gui import new_patient_gui
 
 from openmolar.qt4gui.printing import om_printing
-from openmolar.qt4gui.printing import GP17
+from openmolar.qt4gui.printing.gp17.gp17_printer import GP17Printer
 
 from openmolar.qt4gui.charts import charts_gui
 
 #--dialogs made with designer
 from openmolar.qt4gui.compiled_uis import Ui_main
-
-from openmolar.qt4gui.compiled_uis import Ui_options
 from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
 from openmolar.qt4gui.compiled_uis import Ui_showMemo
 
@@ -78,7 +76,7 @@ from openmolar.qt4gui.dialogs import duplicate_receipt_dialog
 from openmolar.qt4gui.dialogs.auto_address_dialog import AutoAddressDialog
 from openmolar.qt4gui.dialogs.family_manage_dialog import FamilyManageDialog
 
-
+from openmolar.qt4gui.dialogs.nhs_forms_config_dialog import NHSFormsConfigDialog
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
 from openmolar.qt4gui.tools import recordtools
@@ -1701,22 +1699,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         charts_gui.bpe_dates(self)
         charts_gui.bpe_table(self, 0)
 
-    def userOptionsDialog(self):
+    def nhsformOptionsDialog(self):
         '''
-        not too many user options available yet
-        this will change.
+        adjust the top left corner and scaling of nhs forms.
         '''
-        Dialog = QtGui.QDialog(self)
-        dl = Ui_options.Ui_Dialog()
-        dl.setupUi(Dialog)
-        dl.leftMargin_spinBox.setValue(GP17.OFFSET_LEFT)
-        dl.topMargin_spinBox.setValue(GP17.OFFSET_TOP)
-
-        if Dialog.exec_():
-            GP17.OFFSET_LEFT=dl.leftMargin_spinBox.value()
-            GP17.OFFSET_TOP=dl.topMargin_spinBox.value()
-            GP17.save_config()
-
+        dl = NHSFormsConfigDialog(self)
+        dl.exec_()
+        
     def unsavedChanges(self):
         '''
         important function, checks for changes since the patient was loaded
@@ -1882,7 +1871,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         print a GP17
         '''
-        om_printing.printGP17(self)
+        form_printer = GP17Printer(self)
+        form_printer.print_()
 
     def advancedRecordTools(self):
         '''
@@ -2423,7 +2413,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         used to test print a GP17 (NHS scotland) claim form
         '''
-        om_printing.printGP17(self, True)
+        form_printer = GP17Printer(self)
+        form_printer.print_(test=True)
 
     def accountButton2Clicked(self):
         '''
@@ -2732,7 +2723,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("triggered()"), self.testGP17)
 
         QtCore.QObject.connect(self.ui.actionNHS_Form_Settings,
-        QtCore.SIGNAL("triggered()"), self.userOptionsDialog)
+        QtCore.SIGNAL("triggered()"), self.nhsformOptionsDialog)
 
         QtCore.QObject.connect(self.ui.actionAppointment_Tools,
         QtCore.SIGNAL("triggered()"), self.diary_widget.appointmentTools)

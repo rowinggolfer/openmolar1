@@ -36,7 +36,6 @@ from openmolar.dbtools import patient_write_changes
 from openmolar.qt4gui.compiled_uis import Ui_enter_letter_text
 from openmolar.qt4gui.compiled_uis import Ui_daylist_print
 from openmolar.qt4gui.compiled_uis import Ui_ortho_ref_wizard
-from openmolar.qt4gui.compiled_uis import Ui_confirmDentist
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint
@@ -48,7 +47,6 @@ from openmolar.qt4gui.printing import daylistprint
 from openmolar.qt4gui.printing import multiDayListPrint
 from openmolar.qt4gui.printing import accountPrint
 from openmolar.qt4gui.printing import estimatePrint
-from openmolar.qt4gui.printing import GP17
 from openmolar.qt4gui.printing import bookprint
 from openmolar.qt4gui.printing.mh_print import MHPrint
 
@@ -369,61 +367,6 @@ def printaccount(om_gui, tone="A"):
             om_gui.pt.addHiddenNote("printed", "account - tone %s"%tone)
             om_gui.addNewNote("Account Printed")
             commitPDFtoDB(om_gui, "Account tone%s"%tone)
-            om_gui.updateHiddenNotesLabel()
-
-def testGP17(om_gui):
-    printGP17(om_gui, True)
-
-def printGP17(om_gui, test=False, known_course=False):
-    '''
-    a GP17 is a scottish NHS form
-    '''
-    #-- if test is true.... you also get boxes
-
-    #--check that the form is goin gto have the correct dentist
-    if om_gui.pt.dnt2 != 0:
-        dent=om_gui.pt.dnt2
-    else:
-        dent=om_gui.pt.dnt1
-
-    Dialog = QtGui.QDialog(om_gui)
-    dl = Ui_confirmDentist.Ui_Dialog()
-    dl.setupUi(Dialog)
-    dl.dents_comboBox.addItems(localsettings.activedents)
-    prevDetails = _("Previous Course (%s - %s)")% (
-    localsettings.formatDate(om_gui.pt.accd),
-    localsettings.formatDate(om_gui.pt.cmpd))
-
-    dl.previousCourse_radioButton.setChecked(known_course)
-    dl.previousCourse_radioButton.setText(prevDetails)
-    if localsettings.apptix_reverse.get(dent) in \
-    localsettings.activedents:
-
-        pos=localsettings.activedents.index(
-        localsettings.apptix_reverse.get(dent))
-
-        dl.dents_comboBox.setCurrentIndex(pos)
-    else:
-        dl.dents_comboBox.setCurrentIndex(-1)
-
-    if known_course:
-        result = QtGui.QMessageBox.question(om_gui,
-        _("Question"),
-        _("Print an NHS form now?"),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.Yes )
-        if result == QtGui.QMessageBox.No:
-            return
-
-    if known_course or Dialog.exec_():
-        #-- see if user has overridden the dentist
-        chosenDent = str(dl.dents_comboBox.currentText())
-        dent = localsettings.ops_reverse.get(chosenDent)
-        form = GP17.gp17(om_gui.pt, dent, om_gui, test)
-        if dl.previousCourse_radioButton.isChecked():
-            form.detailed = True
-        if form.print_():
-            om_gui.pt.addHiddenNote("printed", "GP17 %s"% chosenDent)
             om_gui.updateHiddenNotesLabel()
 
 def accountButton2Clicked(om_gui):

@@ -18,6 +18,7 @@ from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.compiled_uis import Ui_completionDate
 from openmolar.qt4gui import contract_gui_module
 from openmolar.ptModules import plan
+from openmolar.qt4gui.printing.gp17.gp17_printer import GP17Printer
 
 def newCourseNeeded(om_gui):
     '''
@@ -176,7 +177,8 @@ def offerFinalPaperWork(om_gui):
     time to print a claim form?
     '''
     if "N" in om_gui.pt.cset:
-        om_printing.printGP17(om_gui, known_course=True)
+        form_printer = GP17Printer(om_gui)
+        form_printer.print_(final_paperwork=True)
 
 def resumeCourse(om_gui):
     '''
