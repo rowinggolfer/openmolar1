@@ -12,7 +12,7 @@ import re
 import sys
 import time
 from openmolar import connect
-from openmolar.ptModules import perio, dec_perm,estimates, notes, formatted_notes
+from openmolar.ptModules import perio, dec_perm, estimates, notes, formatted_notes
 from openmolar.settings import localsettings
 
 from openmolar.dbtools.appt_prefs import ApptPrefs
@@ -242,7 +242,8 @@ class patient(object):
             for value in values:
                 self.exemption, self.exempttext = value
 
-            query = 'select bpedate, bpe from bpe where serialno=%s'
+            query = '''select bpedate, bpe from bpe where serialno=%s 
+            order by bpedate'''
             cursor.execute(query, self.serialno)
 
             values = cursor.fetchall()
@@ -516,7 +517,7 @@ self.serialno, self.courseno0))
         '''
         self.notes_dict = formatted_notes.get_notes_dict(self.serialno)
 
-    def flipDec_Perm(self,tooth):
+    def flipDec_Perm(self, tooth):
         '''
         switches a deciduous tooth to a permanent one,
         and viceVersa pass a variable like "ur5"
@@ -772,13 +773,13 @@ self.serialno, self.courseno0))
 if __name__ =="__main__":
     '''testing stuff'''
     try:
-        serialno=int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=0
+        serialno = 0
     if "-v" in sys.argv:
-        verbose=True
+        verbose = True
     else:
-         verbose=False
+         verbose = False
     #pt=patient(serialno)
     #print pt.title,pt.fname,pt.sname,pt.dob
     #for line in pt.notestuple:
@@ -787,8 +788,8 @@ if __name__ =="__main__":
     #print pt.save()
     #print pt.notestuple
 
-    pt=patient(serialno)
-    if True:
+    pt = patient(serialno)
+    if verbose:
       for att in sorted(pt.__dict__.keys()):
         if pt.__dict__[att] == "":
             print att, '""'
@@ -799,10 +800,11 @@ if __name__ =="__main__":
     #print pt.dent1,pt.dent0,pt.dent3,pt.dent2
     #print pt.dayBookHistory
     print "dob", pt.dob
-    print pt.estimates
+    #print pt.estimates
     #print "recd", pt.recd
-    #print pt.chartgrid
+    print "chartgrid", pt.dent0, pt.dent1, pt.dent2, pt.dent3
     print "memo", pt.memo
 
-    for i, att in enumerate(patientTableAtts):
-        print att, patientTableVals[i]
+    if verbose:
+        for i, att in enumerate(patientTableAtts):
+            print att, patientTableVals[i]

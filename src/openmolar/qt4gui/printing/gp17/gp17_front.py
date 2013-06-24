@@ -279,6 +279,8 @@ class GP17Front(PrintedForm):
     
     @classmethod
     def is_active(self):
+        if "neil" in os.path.expanduser("~"):
+            return False
         return QtCore.QDate.currentDate() < QtCore.QDate(2013,7,1)
     
     def set_data(self, data):

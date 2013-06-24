@@ -26,6 +26,7 @@ Provides Gp17Data class for the data required by a GP17(Scotland) NHS form
 
 from datetime import date
 from openmolar.settings import localsettings
+from openmolar.ptModules import dec_perm
 
 
 test_misc_dict = {
@@ -64,6 +65,8 @@ class DuckPatient(object):
     cmpd = date(2015,12,9)
     dnt1 = 1
     dnt2 = None
+    dent0,dent1,dent2,dent3 = 0,0,0,0
+    bpe = [""]
 
     
 class Gp17Data(object):
@@ -171,13 +174,58 @@ class Gp17Data(object):
         return self.format_date(self.pt.cmpd)
 
     @property
-    def chart(self):
-        '''
-        chart
-        '''
+    def show_chart(self):
         if "chart" in self.exclusions:
-            return ""        
-        return "00000 00000 00000000 00000000 00000000 00000000 00000 00000"
+            return False                
+        return True
+    
+    def tooth_present(self, quadrant, tooth):
+        '''
+        chart - returns True if the tooth is present.
+        '''
+        
+        old_quadrant = ["ur","ul","ll","lr"][(quadrant %4)-1]
+        old_notation = "%s%dst"%(old_quadrant, tooth)
+        static_string = self.pt.__dict__[old_notation].split(" ")
+        
+        #print "checking for tooth %s%s (%s), '%s'"% (
+        #    quadrant, tooth, old_notation, static_string)
+        
+        if "TM" in static_string:
+            return False
+        
+        if quadrant > 4:
+            if self._is_deciduous(quadrant-4, tooth):
+                result = True
+            else:
+                result = False
+        else:
+            if self._is_deciduous(quadrant, tooth):
+                result = "+P" in static_string
+            else:
+                result = not "AT" in static_string
+                
+        return result
+        
+    def _is_deciduous(self, quadrant, tooth):
+        '''
+        chart - returns True if the tooth is present.
+        '''
+        if quadrant == 1:
+            att = self.pt.dent0
+        elif quadrant == 2:
+            att = self.pt.dent1
+        elif quadrant == 3:
+            att = self.pt.dent2
+        elif quadrant == 4:
+            att = self.pt.dent3
+        else:
+            return False    
+
+        array = dec_perm.fromSignedByte(att)
+        if quadrant in (2,4):
+            array = list(reversed(array))
+        return array[tooth-1] == "1"
 
     @property
     def bpe(self):
@@ -185,9 +233,12 @@ class Gp17Data(object):
         bpe
         '''
         if "bpe" in self.exclusions:
-            return ""        
-        return "123456"
-    
+            return "" 
+        try:       
+            return self.pt.bpe[-1][1]
+        except IndexError:
+            return ""
+        
     @property
     def simple_codes(self):
         if "tx" in self.exclusions:

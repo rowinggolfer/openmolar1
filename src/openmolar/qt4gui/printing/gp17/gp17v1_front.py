@@ -190,7 +190,8 @@ class GP17iFront(PrintedForm):
     
     @classmethod
     def is_active(self):
-        return QtCore.QDate.currentDate() >= QtCore.QDate(2013,7,1)
+        return "neil" in os.path.expanduser("~") or \
+            QtCore.QDate.currentDate() >= QtCore.QDate(2013,7,1)
     
     def set_data(self, data):
         self.data = data
@@ -223,10 +224,12 @@ class GP17iFront(PrintedForm):
             self._fill_pid,
             self._fill_accd,
             self._fill_cmpd,
-            #self._fill_misc_cbs,
             self._fill_stampbox,
             self._fill_previous_surname,
             self._fill_address,            
+            self._fill_charting,
+            self._fill_bpe,            
+            #self._fill_misc_cbs,
             #self._fill_simple_codes,
             #self._fill_complex_codes
             ):
@@ -290,21 +293,21 @@ class GP17iFront(PrintedForm):
         painter.drawText(self.rects["stampbox"], self.data.stamp_text)
     
     def _fill_address(self, painter):
-        for i in range(18):
+        for i in range(14):
             rect = self.rects["addr1_%02d"% i]
             try:
                 painter.drawText(rect, self.data.addr1[i], OPTION)
             except IndexError:
                 break
 
-        for i in range(18):
+        for i in range(14):
             rect = self.rects["addr2_%02d"% i]
             try:
                 painter.drawText(rect, self.data.addr2[i], OPTION)
             except IndexError:
                 break
 
-        for i in range(18):
+        for i in range(14):
             rect = self.rects["addr3_%02d"% i]
             try:
                 painter.drawText(rect, self.data.addr3[i], OPTION)
@@ -333,7 +336,31 @@ class GP17iFront(PrintedForm):
                 painter.drawText(rect, self.data.cmpd[i], OPTION)
             except IndexError:
                 break
-                
+            
+    def _fill_charting(self, painter):
+        if not self.data.show_chart:
+            return
+        painter.save()
+        painter.setBrush(QtGui.QBrush(QtCore.Qt.black))
+        for quadrant in range(1,9):
+            for tooth in range(1,9):
+                if quadrant > 4 and tooth > 5:
+                    continue
+                if not self.data.tooth_present(quadrant, tooth):
+                    tooth_id = "%s%s"% (quadrant, tooth)
+                    rect = self.rects["chart_%s"% tooth_id]
+                    painter.drawRect(rect.adjusted(0,2,0,-2))
+        painter.restore()
+    
+    def _fill_bpe(self, painter):
+        for i in range(6):
+            rect = self.rects["bpe_%02d"% i]
+            try:
+                painter.drawText(rect, self.data.bpe[i], OPTION)
+            except IndexError:
+                break
+
+    
     def _fill_misc_cbs(self, painter):
         for key in ["on_referral", "not_extending", "special_needs","on_referral",
                     "radiographs","models","trauma"]:

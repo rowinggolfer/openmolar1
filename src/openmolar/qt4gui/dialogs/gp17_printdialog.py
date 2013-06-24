@@ -177,7 +177,7 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication([])
 
-    pt = patient_class.patient(11956)
+    pt = patient_class.patient(2981)
     dl = GP17PrintDialog(pt)
     
     if dl.exec_():

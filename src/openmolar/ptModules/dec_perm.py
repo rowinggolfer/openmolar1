@@ -49,6 +49,6 @@ def fromSignedByte(val):
 if __name__=="__main__":
         for byte in(-127,-126,-125,-8,120,32):
             print byte,
-            result=fromSignedByte(int(byte))
+            result = fromSignedByte(int(byte))
             print "chart =",result,
             print "and back =",toSignedByte(result)
