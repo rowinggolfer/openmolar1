@@ -144,12 +144,19 @@ class GP17PrintDialog(ExtendableDialog):
     def chosen_forms(self):
         return self.choose_form_widget.chosen_forms
 
+    @property
+    def dent_inits(self):
+        return str(self.dentist_combobox.currentText())
+
+    @property
+    def chosen_dentist(self):
+        return localsettings.ops_reverse.get(self.dent_inits)
+
     def apply(self):
         '''
         todo - apply changes to the gp17 data object
         '''
-        dent_inits = str(self.dentist_combobox.currentText())
-        self.data.dentist = localsettings.ops_reverse.get(dent_inits)
+        self.data.dentist = self.chosen_dentist
         
         for att, cb in (
             ("accd", self.accd_cb),
@@ -177,7 +184,7 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication([])
 
-    pt = patient_class.patient(2981)
+    pt = patient_class.patient(20862)
     dl = GP17PrintDialog(pt)
     
     if dl.exec_():

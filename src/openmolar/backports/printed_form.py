@@ -67,8 +67,9 @@ class PrintedForm(object):
         '''
         dialog = QtGui.QPrintDialog(self.printer)
         if dialog.exec_():
-            return self.print_()
-
+            self.print_()
+            return True
+        
     def print_(self, painter=None):
         '''
         print the background and any rects if in testing_mode

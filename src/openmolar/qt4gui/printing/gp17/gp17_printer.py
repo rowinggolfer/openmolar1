@@ -24,7 +24,7 @@
 Provides a Class for printing the GP17s
 Will raise dialogs etc to enable user choices.
 '''
-
+import os
 from PyQt4 import QtCore, QtGui
 from openmolar.qt4gui.dialogs.gp17_printdialog import GP17PrintDialog
 
@@ -63,17 +63,15 @@ class GP17Printer(object):
                 form.set_data(dl.data)
                 
                 ## temp code            
-                form.testing_mode = True
+                form.testing_mode = "neil" in os.path.expanduser("~")
                 
                 if form.controlled_print():
                     self.om_gui.pt.addHiddenNote(
-                        "printed", "%s %s"% (form.NAME, chosenDent))
+                        "printed", "%s %s"% (form.NAME, dl.dent_inits))
                     self.om_gui.updateHiddenNotesLabel()
 
 
 if __name__ == "__main__":
-    import os
-    
     from openmolar.settings import localsettings
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class

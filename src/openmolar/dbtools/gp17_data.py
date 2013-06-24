@@ -65,7 +65,7 @@ class DuckPatient(object):
     cmpd = date(2015,12,9)
     dnt1 = 1
     dnt2 = None
-    dent0,dent1,dent2,dent3 = 0,0,0,0
+    #dent0,dent1,dent2,dent3 = 0,0,0,0
     bpe = [""]
 
     
@@ -183,6 +183,8 @@ class Gp17Data(object):
         '''
         chart - returns True if the tooth is present.
         '''
+        if type(self.pt) == DuckPatient:
+            return True
         
         old_quadrant = ["ur","ul","ll","lr"][(quadrant %4)-1]
         old_notation = "%s%dst"%(old_quadrant, tooth)
@@ -240,15 +242,33 @@ class Gp17Data(object):
             return ""
         
     @property
+    def common_codes(self):
+        '''
+        looks for exams, perio, small xrays and special trays.
+        counts these items.
+        '''
+        if "tx" in self.exclusions:
+            return []        
+        
+        items = {}
+        for item in self.pt.estimates:
+            #check for exama, examb, small xrays, perioa, periob, 
+            #special tray (upper), special tray(lower)
+            if item.itemcode in ["0101", "0111", "0201", "1001", "1011", 
+            "2771", "2772"]:
+                try:
+                    items[item.itemcode] += item.number
+                except KeyError:
+                    items[item.itemcode] = item.number
+        return items
+        
+    @property
     def simple_codes(self):
         if "tx" in self.exclusions:
             return []        
-
-        if self.testing_mode:
-            return ["0101", "0111", "3502"]
-        else:
-            return []
-    
+        
+        return []
+            
     @property
     def complex_codes(self):
         if "tx" in self.exclusions:

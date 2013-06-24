@@ -87,7 +87,7 @@ for i, x in enumerate([552,570,588, 656,674,692]):
 left_x, right_x = 548, 696
 for i, y in enumerate([302,340,360,380,408,432,452]):
     field = (
-        "special_needs", "examb", "periob", "lower tray",
+        "special_needs", "0111", "1011", "2772",
         "advice", "models", "trauma")[i]
         
     RECTS[field] = C_BOX.translated(right_x, y)
@@ -95,14 +95,14 @@ for i, y in enumerate([302,340,360,380,408,432,452]):
     if i == 0:
         pass
     elif i == 4:
-        RECTS["radiograph_01"] = C_BOX.translated(left_x-18, y)
-        RECTS["radiograph_02"] = C_BOX.translated(left_x, y)
+        RECTS["rad_01"] = C_BOX.translated(left_x-18, y)
+        RECTS["rad_02"] = C_BOX.translated(left_x, y)
     elif i == 6:
         RECTS["ref_01"] = C_BOX.translated(left_x-18, y)
         RECTS["ref_02"] = C_BOX.translated(left_x, y)
     else:
         field = (
-            None, "exama", "perioa", "upper tray",
+            None, "0101", "1001", "2771",
             None, "rads_available", None )[i]
 
         RECTS[field] = C_BOX.translated(left_x, y)
@@ -230,6 +230,7 @@ class GP17iFront(PrintedForm):
             self._fill_charting,
             self._fill_bpe,            
             #self._fill_misc_cbs,
+            self._fill_common_codes,
             #self._fill_simple_codes,
             #self._fill_complex_codes
             ):
@@ -368,6 +369,27 @@ class GP17iFront(PrintedForm):
                 rect = self.rects[key]
                 painter.drawText(rect, "X", OPTION)
             
+    def _fill_common_codes(self, painter):
+        '''
+        exams, perio, small xrays, special trays
+        '''
+        for code, number in self.data.common_codes.iteritems():
+            if code == "0201":
+                #small xrays could be multiple
+                n_string = "%02d"% number
+                try:
+                    painter.drawText(
+                        self.rects["rad_01"], n_string[0], OPTION) 
+                    painter.drawText(
+                        self.rects["rad_02"], n_string[1], OPTION)                 
+                except KeyError:
+                    print "unable to claim code %s"% code
+            else:
+                try:
+                    painter.drawText(self.rects[code], "X", OPTION) 
+                except KeyError:
+                    print "unable to claim code %s"% code
+                    
     def _fill_simple_codes(self, painter):
         self.row = 1
         def other_treatment():

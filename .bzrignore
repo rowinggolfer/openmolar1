@@ -2,3 +2,4 @@ src/openmolar/settings/_version.py
 tmp/*
 builds/*
 dist/*
+MANIFEST
