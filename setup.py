@@ -82,7 +82,7 @@ setup(
                 'openmolar.qt4gui.dialogs',
                 'openmolar.qt4gui.fees',
                 'openmolar.qt4gui.printing',
-                'openmolar.qt4gui.printing.gp17'
+                'openmolar.qt4gui.printing.gp17',
                 'openmolar.qt4gui.tools',
                 'openmolar.settings',
                 'openmolar.ptModules'],
