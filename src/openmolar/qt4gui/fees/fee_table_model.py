@@ -16,6 +16,8 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
+HIDE_RARE_CODES = True
+
 CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart", "Surgical",
 "Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
 
@@ -75,8 +77,8 @@ class TreeItem(object):
                     fee = localsettings.formatMoney(
                     self.itemData.fees[self.myindex][column-5])
                     return QtCore.QVariant(fee)
-                except:
-                    print column, self.itemData.fees
+                except IndexError:
+                    print "misconfigured feescale - bad column count!"
                     
         return QtCore.QVariant()
 
@@ -132,8 +134,8 @@ class treeModel(QtCore.QAbstractItemModel):
                 return QtCore.QVariant(QtCore.Qt.AlignRight)
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
-            ## in this case a feeItemClass
-            return item.itemData   
+            ## in this case a FeeItem
+            return (item.itemData, item.myindex) 
         
         return QtCore.QVariant()
         
@@ -212,6 +214,8 @@ class treeModel(QtCore.QAbstractItemModel):
         keys.sort()
         for key in keys:
             feeItem = self.table.feesDict[key]
+            if HIDE_RARE_CODES and feeItem.hide:
+                continue
             cat = feeItem.category
             if not parents.has_key(cat) :
                 try:
@@ -228,7 +232,7 @@ class treeModel(QtCore.QAbstractItemModel):
                 
             for row in range(1, number_in_group):
                 branch.appendChild(
-                TreeItem(self.table, key,feeItem, branch, row))
+                TreeItem(self.table, key, feeItem, branch, row))
     
     def searchNode(self, node, columns=()):
         '''

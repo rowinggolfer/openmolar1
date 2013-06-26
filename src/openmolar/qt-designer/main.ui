@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>673</width>
+                      <width>487</width>
                       <height>467</height>
                      </rect>
                     </property>
@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>655</width>
+                      <width>441</width>
                       <height>425</height>
                      </rect>
                     </property>
@@ -2015,7 +2015,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>675</width>
+                      <width>311</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2672,8 +2672,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>469</width>
-                      <height>376</height>
+                      <width>102</width>
+                      <height>111</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2849,7 +2849,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>419</width>
+                         <width>98</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -2882,7 +2882,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>220</width>
+                      <width>192</width>
                       <height>514</height>
                      </rect>
                     </property>
@@ -3231,7 +3231,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>657</width>
+                      <width>261</width>
                       <height>387</height>
                      </rect>
                     </property>
@@ -4602,6 +4602,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 </widget>
                </item>
                <item>
+                <widget class="QCheckBox" name="hide_rare_feescale_codes_checkBox">
+                 <property name="text">
+                  <string>Hide Rarely Used Codes</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QRadioButton" name="feeExpand_radioButton">
                  <property name="enabled">
                   <bool>true</bool>
@@ -4629,19 +4639,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <bool>true</bool>
                  </property>
                 </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
                <item>
                 <widget class="QFrame" name="frame_7">
@@ -4704,7 +4701,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <string/>
                  </property>
                  <property name="title">
-                  <string>Feescale Adjustment</string>
+                  <string>Advanced Options</string>
                  </property>
                  <property name="checkable">
                   <bool>false</bool>
@@ -4713,23 +4710,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <bool>false</bool>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_35">
-                  <item>
-                   <widget class="QCheckBox" name="feescale_adjust_checkBox">
-                    <property name="toolTip">
-                     <string>If checked, then the user can modify the underlying fees and fee items.</string>
-                    </property>
-                    <property name="text">
-                     <string>Allow Adjust FeeScales</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="feescale_commit_pushButton">
-                    <property name="text">
-                     <string>Commit Changes</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item>
                    <widget class="QPushButton" name="feetable_xml_pushButton">
                     <property name="text">
@@ -4741,6 +4721,13 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <widget class="QPushButton" name="feescale_tester_pushButton">
                     <property name="text">
                      <string>Feesscale Tester</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="reload_feescales_pushButton">
+                    <property name="text">
+                     <string>Reload Fee Scales</string>
                     </property>
                    </widget>
                   </item>

@@ -37,6 +37,7 @@ from openmolar.qt4gui.fees import complete_tx
 from openmolar.qt4gui.fees import manipulate_tx_plan
 from openmolar.qt4gui.fees import daybook_module
 from openmolar.qt4gui.fees import cashbook_module
+from openmolar.qt4gui.fees import fee_table_model
 
 from openmolar.qt4gui import forum_gui_module
 from openmolar.qt4gui import contract_gui_module
@@ -124,7 +125,7 @@ from openmolar.qt4gui.customwidgets import notification_widget
 
 
 class OpenmolarGui(QtGui.QMainWindow):
-
+    fee_table_editor = None
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_main.Ui_MainWindow()
@@ -150,7 +151,6 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         self.addCustomWidgets()
         self.labels_and_tabs()
-        self.ui.feescale_commit_pushButton.setEnabled(False)
 
         self.letters = bulk_mail.bulkMails(self)
         self.ui.bulk_mailings_treeView.setModel(self.letters.bulk_model)
@@ -219,19 +219,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         if not self.okToLeaveRecord():
             event.ignore()
             return
-        if self.ui.feescale_commit_pushButton.isEnabled():
-            result = QtGui.QMessageBox.question(self, _("Decision Required"),
-            "<p>" + _("you have unsaved changes to your feetables") +
-            "<br />" + _("commit now?") + "</p>",
-            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No|
-            QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Yes)
-            if result == QtGui.QMessageBox.Yes:
-                self.feescale_commit()
-                event.ignore()
-            elif result == QtGui.QMessageBox.Cancel:
-                event.ignore()
-                return
+        if self.fee_table_editor:
+            self.fee_table_editor.show()
+            self.fee_table_editor.raise_()
+            self.fee_table_editor.check_close(event)
+            
         utilities.deleteTempFiles()
         self.emit(QtCore.SIGNAL("closed")) #close the feescale tester
 
@@ -583,7 +575,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 fees_module.loadFeesTable(self)
             if self.pt.serialno !=0:
                 self.ui.chooseFeescale_comboBox.setCurrentIndex(
-                self.pt.getFeeTable().index)
+                    self.pt.getFeeTable().index)
 
         if ci == 7:
             #--forum
@@ -2011,40 +2003,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         add custom items to the treatment plan
         '''
         add_tx_to_plan.customAdd(self)
-
-    def feescale_allowed_edit(self):
-        '''
-        user has toggled the option to allow feescale edit
-        requires increased privileges
-        '''
-        self.ui.feescale_adjust_checkBox.setChecked(
-            self.ui.feescale_adjust_checkBox.isChecked() and
-            permissions.granted(self))
-
-    def feeScaleTreatAdd(self, item):
+    
+    def feeScaleTreatAdd(self, item, subindex):
         '''
         add an item directly from the feescale
         '''
-        add_tx_to_plan.fromFeeTable(self, item)
-
-    def feescale_commit(self):
-        '''
-        user has called for db changes to be committed
-        '''
-        try:
-            if fees_module.apply_all_table_changes(self):
-                self.dirty_feetable(False)
-        except Exception, e:
-            self.advise(_("error commiting changes") + "<br />" + str(e), 2)
-
-    def dirty_feetable(self, dirty=True):
-        '''
-        indicate one (or more) feetables has uncommitted changes and
-        enable the save button
-        '''
-        self.ui.feescale_commit_pushButton.setEnabled(dirty)
-        ss = ("background-color: %s"% colours.med_warning) if dirty else ""
-        self.ui.feescale_commit_pushButton.setStyleSheet(ss)
+        add_tx_to_plan.fromFeeTable(self, item, subindex)
 
     def feetable_xml(self):
         '''
@@ -2963,11 +2927,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.feetable_xml_pushButton,
         QtCore.SIGNAL("clicked()"), self.feetable_xml)
 
-        QtCore.QObject.connect(self.ui.feescale_commit_pushButton,
-        QtCore.SIGNAL("clicked()"), self.feescale_commit)
+        self.ui.hide_rare_feescale_codes_checkBox.toggled.connect(
+            self.hide_rare_feescale_items)
 
-        QtCore.QObject.connect(self.ui.feescale_adjust_checkBox,
-        QtCore.SIGNAL("clicked()"), self.feescale_allowed_edit)
+        self.ui.reload_feescales_pushButton.clicked.connect(self.reload_feescales)
 
     def signals_charts(self):
 
@@ -3219,6 +3182,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             _("error loading feetable"), warning)
             ,2)
     
+    def hide_rare_feescale_items(self, bool):
+        fee_table_model.HIDE_RARE_CODES = bool
+        fees_module.loadFeesTable(self)
+        
+    def reload_feescales(self):
+        self.advise(_("Reloading feescales from database"))
+        localsettings.loadFeeTables()
+        fees_module.loadFeesTable(self)
+        
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
         PyQt4 prints unhandled exceptions to stdout and carries on regardless
@@ -3229,7 +3201,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         for l in traceback.format_exception(exc_type, exc_val, tracebackobj):
             message += l
         self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s'% message, 2)
-
 
 def main(app):
     '''

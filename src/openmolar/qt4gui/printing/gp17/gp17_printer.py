@@ -85,7 +85,7 @@ if __name__ == "__main__":
     
     om_gui = maingui.OpenmolarGui()
     
-    om_gui.pt = patient_class.patient(11956)
+    om_gui.pt = patient_class.patient(2981)
     
     p = GP17Printer(om_gui)
     p.test_print()

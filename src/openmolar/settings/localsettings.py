@@ -38,8 +38,8 @@ CLIENT_SCHEMA_VERSION = "2.1"
 DB_SCHEMA_VERSION = "unknown"
 
 ENCODING = locale.getpreferredencoding()
-FEETABLES = {}
 
+FEETABLES = None
 WIKIURL = ""
 
 locale.setlocale(locale.LC_ALL, '')
@@ -871,7 +871,7 @@ def loadFeeTables():
     from openmolar.dbtools import feesTable
 
     print "loading fee and treatment logic tables"
-    FEETABLES = feesTable.feeTables()
+    FEETABLES = feesTable.FeeTables()
 
 def _test():
     import doctest

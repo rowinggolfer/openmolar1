@@ -157,12 +157,20 @@ def customAdd(om_gui):
             om_gui.load_treatTrees()
 
 
-def fromFeeTable(om_gui, fee_item):
+def fromFeeTable(om_gui, fee_item, sub_index):
     '''
     add an item which has been selected from the fee table itself
+    sub_index is when a child item has been added.
     '''
+    if not fee_item.allow_feescale_add:
+        om_gui.advise(
+        _("This item can not be added to a treatment plan using this method, sorry")
+        ,1) 
+        return
     if course_module.newCourseNeeded(om_gui):
         return
+
+    print "adding fee_item fromFeeTable sub_index %s"% sub_index
 
     table = om_gui.pt.getFeeTable()
 
@@ -173,37 +181,51 @@ def fromFeeTable(om_gui, fee_item):
         if not table:
             return
 
-    Dialog = QtGui.QDialog(om_gui)
-    items = (fee_item.itemcode, )
-    type = fee_item.pl_cmp_type
-    if "CHART" in type:
+    type_ = fee_item.pl_cmp_type
+    if "CHART" in type_:
         update_charts_needed = True
         types = om_gui.chooseTooth()
     else:
         update_charts_needed = False
-        types = [type]
-    dl = addTreat.feeTable_treatment(Dialog, table, items)
-
-    chosenTreatments = dl.getInput()
-    for usercode, itemcode, description in chosenTreatments:
-        for type in types:
-            try:
-                om_gui.pt.__dict__[type+"pl"] += "%s "% usercode
-                if update_charts_needed:
-                    om_gui.ui.planChartWidget.setToothProps(type,
-                    om_gui.pt.__dict__[type+"pl"])
-            except KeyError, e:
-                print "patient class has no attribute '%spl'", type,
-                print "Will default to 'other'"
-                om_gui.pt.otherpl += "%s "% usercode
-            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
-            category = type, type=usercode, feescale=table.index)
+        types = [type_]
+        
+    usercode = fee_item.usercode
+    itemcode = fee_item.itemcode
+    description = fee_item.description
+    fee = fee_item.fees[sub_index][0]
+    
+    if usercode == "":
+        usercode = itemcode 
+    
+    try:
+        pt_fee = fee_item.ptFees[sub_index][0]
+    except IndexError:
+        pt_fee = fee
+        
+    for type_ in types:
+        try:
+            om_gui.pt.__dict__[type_+"pl"] += "%s "% usercode
+            if update_charts_needed:
+                om_gui.ui.planChartWidget.setToothProps(type_,
+                om_gui.pt.__dict__[type_+"pl"])
+        except KeyError, e:
+            print "patient class has no attribute '%spl'" %type_,
+            print "Will default to 'other'"
+            om_gui.pt.otherpl += "%s "% usercode
+            
+        om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
+        category = type_, type=usercode, feescale=table.index, 
+        fee=fee, ptfee=pt_fee)
 
     if om_gui.ui.tabWidget.currentIndex() != 7:
         om_gui.ui.tabWidget.setCurrentIndex(7)
     else:
         om_gui.load_newEstPage()
         om_gui.load_treatTrees()
+
+    om_gui.advise(u"<b>%s</b> %s (%s)"% (
+        fee_item.description, _("added to estimate"), _("from feescale"))
+        ,1)
 
 def confirmWrongFeeTable(om_gui, suggested, current):
     '''
@@ -408,8 +430,12 @@ def deleteTxItem(om_gui, pl_cmp, txtype, passedOn=False):
 if __name__ == "__main__":
     #-- test code
     localsettings.initiate()
+    localsettings.loadFeeTables()
+    localsettings.station="reception"
+
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class
+    
     app = QtGui.QApplication([])
     mw = maingui.OpenmolarGui()
     mw.getrecord(11956)

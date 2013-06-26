@@ -170,7 +170,7 @@ for row in range(10):
             x_offset = 98
             t_range = range(8,0, -1) #reverse for the right side
         for i, toothno in enumerate(t_range):
-            tooth = "item%s_chart_%s%s"% (row, quadrant, toothno)
+            tooth = "item%s_chart_%s%s"% (row+1, quadrant, toothno)
             x = i * 15 + x_offset
             RECTS[tooth] = S_BOX.translated(x, ty)
         
@@ -182,6 +182,8 @@ class GP17iFront(PrintedForm):
     '''
     NAME = "GP17(1) Front"
     data = None
+    unhandled_ts_codes = []
+    unhandled_codes = []
     
     def __init__(self):
         PrintedForm.__init__(self)
@@ -195,6 +197,8 @@ class GP17iFront(PrintedForm):
     
     def set_data(self, data):
         self.data = data
+        self.unhandled_ts_codes = []
+        self.unhandled_codes = []
             
     def print_(self):
         self.set_offset(
@@ -231,8 +235,9 @@ class GP17iFront(PrintedForm):
             self._fill_bpe,            
             #self._fill_misc_cbs,
             self._fill_common_codes,
-            #self._fill_simple_codes,
+            self._fill_tooth_specific_codes,
             #self._fill_complex_codes
+            self._fill_unhandled_codes,
             ):
             
             painter.save()
@@ -390,38 +395,27 @@ class GP17iFront(PrintedForm):
                 except KeyError:
                     print "unable to claim code %s"% code
                     
-    def _fill_simple_codes(self, painter):
-        self.row = 1
-        def other_treatment():
-                
-            painter.drawText(self.rects["other%dA"% self.row], code[0], OPTION) 
-            painter.drawText(self.rects["other%dB"% self.row], code[1], OPTION) 
-            painter.drawText(self.rects["other%dC"% self.row], code[2], OPTION) 
-            painter.drawText(self.rects["other%dD"% self.row], code[3], OPTION)     
-            painter.drawText(self.rects["other%da"% self.row], "0", OPTION) 
-            painter.drawText(self.rects["other%db"% self.row], "1", OPTION) 
-            self.row += 1
-             
-        for code in self.data.simple_codes:
-            try:
-                painter.drawText(self.rects[code], "X", OPTION) 
-            except KeyError:
-                other_treatment()
-    
-    def _fill_complex_codes(self, painter):
-        def other_treatment():
-                
-            painter.drawText(self.rects["other%dA"% self.row], code.code[0], OPTION) 
-            painter.drawText(self.rects["other%dB"% self.row], code.code[1], OPTION) 
-            painter.drawText(self.rects["other%dC"% self.row], code.code[2], OPTION) 
-            painter.drawText(self.rects["other%dD"% self.row], code.code[3], OPTION)     
-            n = "%02d"% code.number
-            painter.drawText(self.rects["other%da"% self.row], n[0], OPTION) 
-            painter.drawText(self.rects["other%db"% self.row], n[1], OPTION) 
+                    
+    def _fill_tooth_specific_codes(self, painter):
+        row = 1
+        for code, teeth in self.data.tooth_specific_codes.iteritems():
+            if row > 9:
+                self.unhandled_ts_codes.appen(code)
+                continue
             
-            if code.free_replace:
-                painter.drawText(self.rects["free_replace%d"% self.row], "X", OPTION)
-            self.row += 1
+            for i in range(4):                
+                painter.drawText(
+                    self.rects["item%s_code%02d"% (row,i)], code[i], OPTION) 
+            
+            painter.save()
+            for tooth in teeth:
+                painter.setBrush(QtGui.QBrush(QtCore.Qt.black))
+                painter.drawRect(self.rects["item%s_chart_%s"% (row,tooth)])
+            painter.restore()
+            
+            row += 1
+            
+    def _fill_complex_codes(self, painter):
          
         for code in self.data.complex_codes:
             if code.free_replace:
@@ -434,6 +428,12 @@ class GP17iFront(PrintedForm):
             except KeyError:
                 other_treatment()
         
+        
+    def _fill_unhandled_codes(self, painter):
+        for item in self.unhandled_ts_codes:
+            print "unhandled tooth specific code", item            
+        for item in self.unhandled_codes:
+            print "unhandled item code", item            
             
 if __name__ == "__main__":
     os.chdir(os.path.expanduser("~")) # for print to file

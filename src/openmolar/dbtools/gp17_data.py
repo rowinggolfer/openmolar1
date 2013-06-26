@@ -28,6 +28,62 @@ from datetime import date
 from openmolar.settings import localsettings
 from openmolar.ptModules import dec_perm
 
+def convert_tooth(tooth):
+    '''
+    take something like "ul5" and return the iso code
+    '''
+    print "converting tooth '%s'"% tooth ,
+    quadrant = tooth[:2].lower()
+    iso_quadrant = ["ur", "ul", "ll", "lr"].index(quadrant)
+    try:
+        tooth_no = "abcde".index(tooth[2].lower()) + 1
+        iso_quadrant += 4
+    except ValueError:
+        tooth_no = tooth[2]
+    
+    result = "%s%s"% (iso_quadrant+1, tooth_no)
+    print result 
+    return result
+
+CAPITATION_SIMPLE = [ 
+    "2771", #upper special tray 
+  "2772"  #lower special tray
+]
+
+CONTINUING_CARE_SIMPLE = [ 
+    "0101", # exam a 
+    "0111", # exam b
+    "0201", # exam c
+    "1001", # perio a
+    "1011", # perio b
+    "2771", #upper special tray 
+    "2772"  #lower special tray
+]
+
+TOOTH_SPECIFIC_CODES = [
+    "0701", #Fissure sealant, unfilled third molars
+    "1021", #non-surgical treatment of periodontal disease
+    "1131", #crown lengthening
+    "1401", #1 surface
+    "1402", #2 surface
+    "1403", #2 or more surface including MO or DO
+    "1404", #3 or more surface including MOD
+    "1411", #tunnel
+    "1412", #tunnel, max per tooth
+    "1421", #resin
+    "1420", #2 or more (same tooth)
+    "1422", #acid etch - 1 angle
+    "1423", #incisal edge
+    "1424", #2 agles - mesial and distal
+    "1425", #cusp tip
+    "1425", #glass ionomer - 1 filling
+    "1426", #glass ionomer - 2 or more
+]
+
+
+
+
+
 
 test_misc_dict = {
     "on_referral":True,
@@ -59,7 +115,9 @@ class DuckPatient(object):
     psn = "Davis"  #previous surname
     addr1 = "The Gables"
     addr2 = "Daviot"
-    addr3 = "Inverness"
+    addr3 = ""
+    town = "Inverness"
+    county = ""
     pcde = "IV25XQ"
     accd = date(1969,12,9)
     cmpd = date(2015,12,9)
@@ -67,7 +125,9 @@ class DuckPatient(object):
     dnt2 = None
     #dent0,dent1,dent2,dent3 = 0,0,0,0
     bpe = [""]
-
+    under_capitation = False
+    estimates = []
+    nhs_claims = []
     
 class Gp17Data(object):
     '''
@@ -131,11 +191,19 @@ class Gp17Data(object):
     
     @property
     def addr2(self):
-        return self.pt.addr2
-    
+        for att in (self.pt.addr2, self.pt.addr3, self.pt.town, self.pt.county):
+            att = att.strip(" ")
+            if att != "":
+                return att 
+        
     @property
     def addr3(self):
-        return self.pt.addr3
+        for att in (self.pt.addr3, self.pt.town, self.pt.county):
+            att = att.strip(" ")
+            if att != "" and att != self.addr2:
+                return att 
+        
+        return ""
         
     @property
     def pcde(self):
@@ -251,11 +319,14 @@ class Gp17Data(object):
             return []        
         
         items = {}
-        for item in self.pt.estimates:
-            #check for exama, examb, small xrays, perioa, periob, 
-            #special tray (upper), special tray(lower)
-            if item.itemcode in ["0101", "0111", "0201", "1001", "1011", 
-            "2771", "2772"]:
+
+        if self.pt.under_capitation:
+            allowed_claim_codes = CAPITATION_SIMPLE
+        else:
+            allowed_claim_codes = CONTINUING_CARE_SIMPLE
+                                
+        for item in self.pt.nhs_claims:
+            if item.itemcode in allowed_claim_codes:
                 try:
                     items[item.itemcode] += item.number
                 except KeyError:
@@ -278,6 +349,26 @@ class Gp17Data(object):
             return test_complex_codes
         else:
             return []
+        
+    @property
+    def tooth_specific_codes(self):
+        if "tx" in self.exclusions:
+            return []    
+
+        ts_items = {}
+
+        allowed_claim_codes = TOOTH_SPECIFIC_CODES
+        for item in self.pt.nhs_claims:
+            if item.itemcode in allowed_claim_codes:
+                iso_tooth = convert_tooth(item.category)
+                try:
+                    ts_items[item.itemcode].append(iso_tooth)
+                except KeyError:
+                    ts_items[item.itemcode] = [iso_tooth]
+        return ts_items
+
+        return []    
+        
             
 if __name__ == "__main__":
     data = Gp17Data(testing_mode=True)

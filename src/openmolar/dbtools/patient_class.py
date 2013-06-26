@@ -7,10 +7,8 @@
 # for more details.
 
 import datetime
-import pickle
-import re
 import sys
-import time
+
 from openmolar import connect
 from openmolar.ptModules import perio, dec_perm, estimates, notes, formatted_notes
 from openmolar.settings import localsettings
@@ -678,6 +676,11 @@ self.serialno, self.courseno0))
 
         return est
 
+    @property
+    def nhs_claims(self):
+        for est in self.estimates:
+            if est.csetype == "N" and est.completed:
+                yield est
 
     def addHiddenNote(self,ntype,note="",deleteIfPossible=False):
         '''
@@ -769,6 +772,14 @@ self.serialno, self.courseno0))
         
         return self._n_family_members
 
+    @property
+    def under_capitation(self):
+        if self.cset != "N":
+            return False
+        if self.accd is None:
+            return self.ageYears < 19
+        eighteenth = self.dob + datetime.timedelta(days = 18 * 365.24)
+        return self.accd < eighteenth
 
 if __name__ =="__main__":
     '''testing stuff'''

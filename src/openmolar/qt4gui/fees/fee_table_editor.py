@@ -17,9 +17,9 @@ from PyQt4 import QtGui, QtCore
 
 from openmolar.dbtools import feesTable
 
-class tableViewer(QtGui.QWidget):
+class TableViewer(QtGui.QWidget):
     def __init__(self, tablename, mainWindow):
-        super(tableViewer, self).__init__(mainWindow)
+        QtGui.QWidget.__init__(self, mainWindow)
         self.mainWindow = mainWindow
         self.tablename = tablename
         layout = QtGui.QVBoxLayout(self)
@@ -153,25 +153,47 @@ class tableViewer(QtGui.QWidget):
         self.connect(self.statsButton, QtCore.SIGNAL("clicked()"), self.stats)
         
 
-class editor(QtGui.QMainWindow):
+class FeeTableEditor(QtGui.QMainWindow):
     def __init__(self, rows, parent=None):
-        super(editor, self).__init__(parent)
+        QtGui.QMainWindow.__init__(self, parent)
         self.setWindowTitle(_("Fee Table Editor"))
         self.setMinimumSize(600,400)
         self.tabWidget = QtGui.QTabWidget()
         self.setCentralWidget(self.tabWidget)
-        rows = rows
+        self.table_viewers = []
         for (tablename, categories, description, startdate, endate,
         feecoltypes, data) in rows:
-            widget = tableViewer(tablename, self)
+            widget = TableViewer(tablename, self)
             widget.setText(data)
             self.tabWidget.addTab(widget, tablename)
+            self.table_viewers.append(widget)
+        if parent == None:
+            self.closeEvent = self.check_close
+        
+    @property
+    def has_dirty_feescale(self):
+        for table_viewer in self.table_viewers:
+            if table_viewer.dirty:
+                return True
+        return False
+    
+    def check_close(self, event):
+        if self.has_dirty_feescale:
+            result = QtGui.QMessageBox.question(self, _("Decision Required"),
+            "<p>" + _("you have unsaved changes to your feetables") +
+            "<br />" + _("Do you still wish to quit?") + "</p>",
+            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
+            QtGui.QMessageBox.Cancel)
+            if result == QtGui.QMessageBox.Cancel:
+                event.ignore()
+                return
+        
             
 if __name__ == "__main__":
     
     app = QtGui.QApplication([])
     rows = feesTable.getData()
-    ed = editor(rows)
+    ed = FeeTableEditor(rows)
     ed.show()
     app.exec_()
     

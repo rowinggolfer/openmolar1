@@ -98,30 +98,32 @@ def getFeesFromNode(node, id):
                 sublist.append(int(n))
         values.append(tuple(sublist))
     return tuple(values)
-
+    
 def getTextFromNode(node, id):
     '''
     get the text data from the first child of any such nodes
     '''
     nlist = node.getElementsByTagName(id)
-    value = ""
+    text = ""
     for n in nlist:
         children = n.childNodes
         for child in children:
-            value += child.data.strip()
-    return value
+            text += child.data.strip()
+    return text
 
-def getBoolFromNode(node, id):
+def getBoolFromNode(node, id, default=False):
     '''
     get the text data from the first child of any such nodes
     '''
-    return getTextFromNode(node, id) == "True"
+    if default:
+        return not getTextFromNode(node, id) in ("False","0")
+    else:
+        return getTextFromNode(node, id) in ("True","1")
 
-class feeTables():
+class FeeTables(object):
     '''
     a wrapper class to contain as many fee tables as the user has outlined.
     '''
-    
     def __init__(self):
         self.tables = {}
         self.warnings = []
@@ -160,7 +162,7 @@ class feeTables():
         defaulttableno = -1
         for (tablename, categories, description, startdate, enddate,
         feecoltypes, data) in rows:
-            ft = feeTable(tablename, i)
+            ft = FeeTable(tablename, i)
             ft.setCategories(categories)
             ft.setTableDescription(description)
             ft.setStartDate(startdate)
@@ -194,7 +196,7 @@ class feeTables():
                 print message
                 self.warnings.append(message)
     
-class feeTable():
+class FeeTable(object):
     '''
     a class to contain and allow quick access to data stored in a fee table
     '''
@@ -208,8 +210,11 @@ class feeTable():
         self.feesDict = {}
         self.categories = []
         self.hasPtCols = False
-        self.treatmentCodes = {}
-        self.chartTreatmentCodes = OrderedDict()
+        
+        self.treatmentCodes = OrderedDict()
+        self.chartRegexCodes = OrderedDict()
+        self.chartMultiRegexCodes = OrderedDict()
+        
         self.feeColCount = 0
         self.data = ""
         self.pl_cmp_Categories = plan.tup_Atts + ("CHART",)
@@ -258,69 +263,6 @@ class feeTable():
     def getData(self, data):
         return self.data
 
-    def saveDataToDB(self):
-        '''
-        if the feetable has been altered, this will save the changes
-        '''
-        dom = minidom.parseString(self.data)
-        newdata = dom.toxml()
-        dom.unlink()
-
-        result = saveData (self.tablename, newdata)
-        if result:
-            self.dirty = False
-        return result
-
-    def alterItem(self, item, nodexml):
-        '''
-        update an Item
-        '''
-        dom = minidom.parseString(self.data)
-        nodeList = dom.getElementsByTagName("item")
-
-        newnode = minidom.parseString(nodexml)
-        for node in nodeList:
-            codes = node.getElementsByTagName("code")
-            for code in codes:
-                if code.firstChild.data.strip() == item.itemcode:
-                    node.parentNode.replaceChild(newnode.firstChild, node)
-                    newdata = dom.toxml()
-                    if self.data != newdata:
-                        self.dirty = True
-                        self.data = newdata
-                    dom.unlink()
-                    return True
-
-    def alterUserCodeOnly(self, foreign_item):
-        '''
-        the user has edited the usercode of an item with the same key
-        but from a different table
-        '''
-        dom = minidom.parseString(self.data)
-        nodeList = dom.getElementsByTagName("item")
-        result = False
-        for node in nodeList:
-            codes = node.getElementsByTagName("code")
-            for code in codes:
-                if code.firstChild.data.strip() == foreign_item.itemcode:
-                    uc_node = node.getElementsByTagName("USERCODE")[0]
-                    if uc_node.firstChild:
-                        uc_node.firstChild.replaceWholeText(
-                        foreign_item.usercode)
-                    else:
-                        uc_node.appendChild(
-                        dom.createTextNode(foreign_item.usercode))
-
-                    newdata = dom.toxml().encode("utf-8")
-
-                    if self.data != newdata:
-                        self.data = newdata
-                        self.dirty = True
-                        result = True
-                    dom.unlink()
-                    return result
-        dom.unlink()
-
     def setFeeCols(self, arg):
         '''
         arg is some xml logic to let me know what columns to query
@@ -352,18 +294,31 @@ class feeTable():
         '''
         dom = minidom.parseString(self.data)
 
-        items = dom.getElementsByTagName("item")
-        for item in items:
-            code = getTextFromNode(item, "code")
-            feeItem = feeItemClass(self, code)
-            feeItem.from_xml(item)
-
-            if feeItem.usercode != "":
-                self.treatmentCodes[feeItem.usercode] = code
-                if feeItem.pl_cmp_type == "CHART":
-                    self.chartTreatmentCodes[feeItem.usercode] = code
+        elements = dom.getElementsByTagName("item")
+        for element in elements:
+            code = getTextFromNode(element, "code")
+            feeItem = FeeItem(self, code)
+            feeItem.from_xml(element)
 
             self.feesDict[code] = feeItem
+
+            if feeItem.usercode == "":
+                continue
+            
+            if feeItem.pl_cmp_type == "CHART":
+                if feeItem.is_regex:
+                    #use pre-compiled regex as the key
+                    key = re.compile(feeItem.usercode)
+                    self.chartRegexCodes[key] = code
+                elif feeItem.is_multi_regex:
+                    regexes = []
+                    for regex in feeItem.usercode.split(" _AND_ "):
+                        regexes.append(re.compile(regex)) 
+                    self.chartMultiRegexCodes[tuple(regexes)] = code
+                else:
+                    self.treatmentCodes[feeItem.usercode] = code
+            else:
+                self.treatmentCodes[feeItem.usercode] = code
 
         dom.unlink()
 
@@ -373,34 +328,26 @@ class feeTable():
         eg "MOD" -> "1404" (both are strings)
         arg will be something like "CR,GO" or "MOD,CO"
         '''
-
-        if arg in self.chartTreatmentCodes.keys(): #direct match!!
+        #print "getToothCode for %s%s"% (tooth, arg)
+        if arg in self.treatmentCodes.keys(): #direct match!!
             return self.getItemCodeFromUserCode(arg)
 
-        try:
-            for key in self.chartTreatmentCodes:
-                match = key == arg
-                if key.startswith("reg "):
-                    match = re.match(key[4:], tooth+arg)
-                if key.startswith("multireg "):
-                    regexes = key[9:].split(" _AND_ ")
-                    match = bool(regexes)
-                    for regex in regexes:
-                        if not re.match(regex, tooth+arg):
-                            match = False
-                            break
-                if match:
-                    return self.chartTreatmentCodes[key]
-        except Exception, e:
-            print e
-            print key, self.chartTreatmentCodes[key]
-
+        for key in self.chartRegexCodes:
+            if key.match(tooth+arg):
+                return self.chartRegexCodes[key]
+            
+        for key in self.chartMultiRegexCodes:
+            #has to match ALL regexes 
+            match = True
+            for regex in keys:
+                match = match and regex.match(tooth+arg)
+            if match:
+                return self.chartTreatmentCodes[key]
+    
         logging.warning(
             'no match in %s getToothCode for %s - %s RETURNING 4001'% (
             self.tablename, tooth, arg))
-
-        return ""
-
+        return "4001"
 
     def getItemCodeFromUserCode(self, arg):
         '''
@@ -418,7 +365,7 @@ class feeTable():
 
 
     def getFees(self, itemcode, no_items=1, conditions=[],
-    no_already_in_estimate=None):
+        no_already_in_estimate=None):
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
@@ -435,12 +382,12 @@ where conditions are %s and %s similar items already in the estimate'''% (
             
         if self.hasItemCode(itemcode):
             if no_already_in_estimate ==0 :
-                return self.feesDict[itemcode].getFees(no_items, conditions)
+                return self.feesDict[itemcode].get_fees(no_items, conditions)
             else:
-                fee, ptfee = self.feesDict[itemcode].getFees(
+                fee, ptfee = self.feesDict[itemcode].get_fees(
                 no_items+no_already_in_estimate, conditions)
 
-                offset, ptoffset = self.feesDict[itemcode].getFees(
+                offset, ptoffset = self.feesDict[itemcode].get_fees(
                 no_already_in_estimate, conditions)
 
                 return (fee - offset, ptfee - ptoffset)
@@ -498,7 +445,7 @@ where conditions are %s and %s similar items already in the estimate'''% (
         return (item, description)
 
 
-class feeItemClass(object):
+class FeeItem(object):
     '''
     this class handles the calculation of fees
     part of the challenge is recognising the fact that
@@ -511,18 +458,21 @@ class feeItemClass(object):
         '''
         self.table = table
         self.itemcode = itemcode
+        
         self.oldcode = ""
         self.category = 0
         self.pl_cmp_type = "other"
         self.description = ""
-        self.depth = 1  # depth will be > 1 if a non-linear regulation
         self.brief_descriptions = ()
         self.fees = ()
         self.ptFees = ()
         self.multiples = False # is there complex fee logic behind this item?
         self.regulations = ""
         self.usercode = ""
+        self.is_regex = False
+        self.is_multi_regex = False
         self.hide = False
+        self.allow_feescale_add = True
 
     def get_stored_xml(self):
         '''
@@ -539,24 +489,42 @@ class feeItemClass(object):
                     return retarg
         return _("not found")
 
-    def from_xml(self, item):
-        section = getTextFromNode(item, "section")
-        oldcode = getTextFromNode(item, "oldcode")
-        USERCODE = getTextFromNode(item, "USERCODE")
+    def from_xml(self, element):
+        section = getTextFromNode(element, "section")
+        oldcode = getTextFromNode(element, "oldcode")        
+        USERCODE = getTextFromNode(element, "USERCODE")
         
-        for reg in item.getElementsByTagName("regulation"):
+        try:
+            usercode = element.getElementsByTagName("USERCODE")[0]
+            self.is_regex = usercode.getAttribute("type") == "regex"
+            self.is_multi_regex = \
+                usercode.getAttribute("type") == "multiregex"
+        except IndexError:
+            print "NO USERCODE NODE FOUND for %s"% itemcode
+
+        # for backwards compat
+        if USERCODE.startswith("reg "):
+            self.is_regex = True
+            USERCODE = USERCODE[4:]
+        elif USERCODE.startswith("multireg "):
+            self.is_multi_regex = True
+            USERCODE = USERCODE[9:]
+        # ends
+        
+        for reg in element.getElementsByTagName("regulation"):
             self.multiples = reg.getAttribute("type")=="multiple"
-            regulation = getTextFromNode(item, "regulation")
+            regulation = getTextFromNode(element, "regulation")
             self.setRegulations(regulation)
         
-        description = getTextFromNode(item, "description")
-        brief_descriptions = getListFromNode(item, "brief_description")
-        pl_cmp = getTextFromNode(item, "pl_cmp")
-        hide = getBoolFromNode(item, "hide")
-
-        fees = getFeesFromNode(item, "fee")
+        description = getTextFromNode(element, "description")
+        brief_descriptions = getListFromNode(element, "brief_description")
+        pl_cmp = getTextFromNode(element, "pl_cmp")
+        hide = getBoolFromNode(element, "hide")
+        allow_feescale_add = getBoolFromNode(
+            element, "allow_feescale_add", default=True)
+        fees = getFeesFromNode(element, "fee")
         if self.table.hasPtCols:
-            ptfees = getFeesFromNode(item, "pt_fee")
+            ptfees = getFeesFromNode(element, "pt_fee")
         else:
             ptfees = ()
 
@@ -568,7 +536,7 @@ class feeItemClass(object):
         self.hide = hide
         self.addFees(fees)
         self.addPtFees(ptfees)
-        self.depth = len(fees)
+        self.allow_feescale_add = allow_feescale_add
         for bd in brief_descriptions:
             self.addBriefDescription(bd)
 
@@ -611,6 +579,11 @@ class feeItemClass(object):
 
         n = dom.createElement("hide")
         val = "1" if self.hide else "0"
+        n.appendChild(dom.createTextNode(val))
+        item.appendChild(n)
+
+        n = dom.createElement("allow_feescale_add")
+        val = "1" if self.allow_feescale_add else "0"
         n.appendChild(dom.createTextNode(val))
         item.appendChild(n)
 
@@ -702,23 +675,23 @@ ptFees                =  %s'''% (self.table.tablename,
         '''
         self.regulations = arg
 
-    def getFees(self, no_items=1, conditions=""):
+    def get_fees(self, no_items=1, conditions=""):
         '''
         convenience wrapper for getFee function
         returns a tuple fee,ptfee
         '''
-        fee = self.getFee(no_items,conditions)
+        fee = self.get_fee(no_items,conditions)
         if "no_charge" in conditions:
             return (fee, 0)
 
-        ptFee = self.getFee(no_items, conditions, True)
+        ptFee = self.get_fee(no_items, conditions, patient=True)
 
         if ptFee == None:
             return (fee, fee)
         else:
             return (fee, ptFee)
 
-    def getFee(self, no_items=1, conditions="", patient=False):
+    def get_fee(self, no_items=1, conditions="", patient=False):
         '''
         get a fee for x items of this type
         conditions allows some flexibility (eg conditions=lower premolar)
@@ -840,7 +813,7 @@ if __name__ == "__main__":
 
     def reloadTables():
         global table
-        fts = feeTables()
+        fts = FeeTables()
         table = fts.tables[dl.comboBox.currentIndex()]
 
     def change_table(i):
@@ -849,23 +822,24 @@ if __name__ == "__main__":
         print "changed to ", table.tablename
         check_codes()
 
-    fts = feeTables()
+    fts = FeeTables()
 
     table_list = []
     for table in fts.tables.values():
+        print "="*80
         print table.tablename
         table_list.append(table.tablename)
 
-    def checkCommonItems():
-        ## not called
-        for tx in ("CE","S", "SP","SP+","SR F/F"):
-            print "looking up %s"%tx
-            code = table.getItemCodeFromUserCode(tx)
-            print "got code %s, fee %s"% (
-                code, table.getFees(code, no_already_in_estimate=0))
+        def checkCommonItems():
+            for tx in ("CE","S", "SP","SP+","SR F/F"):
+                print "looking up %s"%tx
+                code = table.getItemCodeFromUserCode(tx)
+                print "got code %s, fee %s"% (
+                    code, table.getFees(code, no_already_in_estimate=0))
 
-    checkCommonItems()
-
+        checkCommonItems()
+        print "="*80
+        
     from PyQt4 import QtGui, QtCore
     from openmolar.dbtools.patient_class import mouth, decidmouth
     from openmolar.qt4gui.compiled_uis import Ui_codeChecker

@@ -21,7 +21,6 @@ from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
 patient_write_changes
 from openmolar.settings import localsettings
 from openmolar.qt4gui.fees import fee_table_model
-from openmolar.qt4gui.fees import edit_feeitem_dialog
 from openmolar.qt4gui.fees import feescale_tester
 from openmolar.qt4gui.fees import fee_table_editor
 
@@ -140,21 +139,32 @@ def loadFeesTable(om_gui):
     '''
     loads the fee table
     '''
+    try:
+        tableKeys = localsettings.FEETABLES.tables.keys()
+    except AttributeError:
+        localsettings.loadFeeTables()
+        tableKeys = localsettings.FEETABLES.tables.keys()
+        
     om_gui.feestableLoaded = True
-
+    i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
+    
     tableKeys = localsettings.FEETABLES.tables.keys()
     tableKeys.sort()
+    om_gui.fee_models = []
+    om_gui.ui.chooseFeescale_comboBox.clear()
+    
     for key in tableKeys:
         table = localsettings.FEETABLES.tables[key]
         model = fee_table_model.treeModel(table)
         om_gui.fee_models.append(model)
         om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
 
-    n = len(om_gui.fee_models)
-    text = "%d "%n + _("Fee Scales Available")
+    text = u"%d %s"%(len(om_gui.fee_models), _("Fee Scales Available"))
     om_gui.ui.feescales_available_label.setText(text)
-
-    print "loaded feesTable, %d fee models in use"% n
+    
+    if i != -1:
+        om_gui.ui.chooseFeescale_comboBox.setCurrentIndex(i)
+        
 
 def feetester(om_gui):
     '''
@@ -181,80 +191,15 @@ def showTableXML(om_gui):
     '''
     user wants to view the full table logic!
     '''
-    if permissions.granted(om_gui):
+    if om_gui.fee_table_editor is not None:
+        om_gui.fee_table_editor.show()
+        om_gui.fee_table_editor.raise_()
+    elif permissions.granted(om_gui):
         om_gui.wait(True)
         rows = feesTable.getData()
-        mw2 = fee_table_editor.editor(rows, om_gui)
-        mw2.show()
+        om_gui.fee_table_editor = fee_table_editor.FeeTableEditor(rows, om_gui)
+        om_gui.fee_table_editor.show()
         om_gui.wait(False)
-
-def apply_all_table_changes(om_gui):
-    '''
-    apply changes to the tables
-    '''
-    updated_tables = []
-    for table in localsettings.FEETABLES.tables.values():
-        if table.dirty:
-            if table.saveDataToDB():
-                updated_tables.append(table.tablename)
-
-    if updated_tables:
-        message = _("The following tables were altered")+ "<ul>"
-        for tablename in updated_tables:
-            message += "<li>%s</li>"% tablename
-        om_gui.advise(message + "</ul>", 1)
-        return True
-    else:
-        om_gui.advise(_("No changes apllied"),1)
-
-def getSelectedTables(om_gui, excludedTable):
-    def select_all(val):
-        for cb in table_dict.keys():
-            cb.setChecked(val)
-
-    dl = QtGui.QDialog(om_gui)
-    layout = QtGui.QVBoxLayout(dl)
-
-    dl.setWindowTitle(_("Make Selection"))
-    label = QtGui.QLabel(_("Choose other tables to alter"))
-    layout.addWidget(label)
-
-    cb = QtGui.QCheckBox(dl)
-    cb.setText(_("Select All"))
-
-    QtCore.QObject.connect(cb, QtCore.SIGNAL("stateChanged(int)"), select_all)
-
-    layout.addWidget(cb)
-    line = QtGui.QFrame(dl)
-    line.setFrameShape(QtGui.QFrame.HLine)
-    line.setFrameShadow(QtGui.QFrame.Sunken)
-    layout.addWidget(line)
-    table_dict = {}
-
-    for table in localsettings.FEETABLES.tables.values():
-        cb = QtGui.QCheckBox(dl)
-        cb.setText(table.tablename)
-        if table == excludedTable:
-            cb.setChecked(True)
-            cb.setEnabled(False)
-        else:
-            table_dict[cb] = table
-        layout.addWidget(cb)
-
-    buttonBox = QtGui.QDialogButtonBox(dl)
-    buttonBox.setOrientation(QtCore.Qt.Horizontal)
-    buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok)
-    buttonBox.setCenterButtons(True)
-    layout.addWidget(buttonBox)
-    QtCore.QObject.connect(buttonBox, QtCore.SIGNAL("accepted()"),
-        dl.accept)
-
-    dl.exec_()
-    tables = []
-    for cb in table_dict.keys():
-        if cb.isChecked():
-            tables.append(table_dict[cb])
-    return tables
 
 def table_clicked(om_gui, index):
     '''
@@ -262,36 +207,19 @@ def table_clicked(om_gui, index):
     show the user some options (depending on whether they have a patient
     loaded for edit, or are in feetable adjust mode etc....
     '''
-    fee_item = om_gui.ui.feeScales_treeView.model().data(index,
+    fee_item, sub_index = om_gui.ui.feeScales_treeView.model().data(index,
     QtCore.Qt.UserRole)
 
     if not fee_item:
         # this will be the case if a header item was clicked
         return
 
-    def edit_fee_item():
-        '''
-        user wishes to alter a fee item
-        '''
-        Dialog = QtGui.QDialog()
-        dl = edit_feeitem_dialog.editFee(fee_item, Dialog)
-
-        result, edited_item, newXml, update_others = dl.getInput()
-        if result:
-            if update_others:
-                for table in getSelectedTables(om_gui, edited_item.table):
-                    table.alterUserCodeOnly(edited_item)
-            if edited_item.table.alterItem(edited_item, newXml):
-                om_gui.dirty_feetable()
-
     def apply(arg):
         '''
         apply the result of the QMenu generated when feetable is clicked
         '''
-        if arg.text() == _("Adjust / edit this Item"):
-            edit_fee_item()
-        elif arg.text().startsWith(_("Add to tx plan")):
-                om_gui.feeScaleTreatAdd(fee_item)
+        if arg.text().startsWith(_("Add to tx plan")):
+            om_gui.feeScaleTreatAdd(fee_item, sub_index)
         else:
             om_gui.advise(arg.text() + " not yet available", 1)
 
@@ -299,13 +227,7 @@ def table_clicked(om_gui, index):
     ptno = om_gui.pt.serialno
     if ptno != 0:
         menu.addAction(_("Add to tx plan of patient")+" %d"% ptno)
-        if om_gui.ui.feescale_adjust_checkBox.isChecked():
-            menu.addSeparator()
-
-    if om_gui.ui.feescale_adjust_checkBox.isChecked():
-        menu.addAction(_("Adjust / edit this Item"))
-        menu.addAction(_("Delete Item"))
-        menu.addAction(_("Insert New Item"))
+        #menu.addSeparator()
 
     if not menu.isEmpty():
         menu.setDefaultAction(menu.actions()[0])
@@ -415,6 +337,8 @@ def chooseFeescale(om_gui, i):
     acts on the fee table
     arg will be the chosen index
     '''
+    if i == -1:
+        return
     table = localsettings.FEETABLES.tables[i]
     if table.endDate == None:
         end = _("IN CURRENT USE")
@@ -529,9 +453,3 @@ def populateAccountsTable(om_gui):
         om_gui.ui.accounts_tableWidget.resizeColumnToContents(i)
     om_gui.ui.accountsTotal_doubleSpinBox.setValue(total / 100)
 
-
-if __name__ == "__main__":
-    localsettings.loadFeeTables()
-    app = QtGui.QApplication([])
-    print getSelectedTables(None, localsettings.FEETABLES.tables[0])
-    app.closeAllWindows()

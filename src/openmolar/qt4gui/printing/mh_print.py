@@ -241,7 +241,7 @@ class MHPrint(object):
         
         y += padding
         
-        print_text(_("Athritis?"), y, 0.5, 5.5)
+        print_text(_("Arthritis?"), y, 0.5, 5.5)
         print_line(y, 8, 4)
         print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
         y += print_text(_("No"), y, 7, colspan=1, option=QtCore.Qt.AlignLeft)
