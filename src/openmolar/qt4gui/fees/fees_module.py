@@ -122,9 +122,9 @@ def takePayment(om_gui):
             if patient_write_changes.discreet_changes(paymentPt,
             ("money2", "money3", "money11")) and om_gui.pt.serialno != 0:
                 print "updating stored values"
-                om_gui.pt_dbstate.money2 = om_gui.pt.money2
-                om_gui.pt_dbstate.money3 = om_gui.pt.money3
-                om_gui.pt_dbstate.money11 = om_gui.pt.money11
+                om_gui.pt.dbstate.money2 = om_gui.pt.money2
+                om_gui.pt.dbstate.money3 = om_gui.pt.money3
+                om_gui.pt.dbstate.money11 = om_gui.pt.money11
 
             paymentPt.clearHiddenNotes()
             om_gui.updateDetails()

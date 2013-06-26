@@ -56,7 +56,7 @@ def updateDaybook(om_gui):
     for att in currtrtmtTableAtts:
         if att == "examt" or att[-3:] == "cmp": #be wary of "cmpd"
             newcmp = om_gui.pt.__dict__[att]
-            existingcmp = om_gui.pt_dbstate.__dict__[att]
+            existingcmp = om_gui.pt.dbstate.__dict__[att]
 
             if newcmp != existingcmp:
                 treatment = newcmp.replace(existingcmp, "", 1)

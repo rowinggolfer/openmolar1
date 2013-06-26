@@ -100,7 +100,7 @@ def chartComplete(om_gui, arg):
             om_gui.pt.addHiddenNote("chart_treatment",
             "%s %s"% (toothName.upper(), treatmentItem))
             om_gui.updateHiddenNotesLabel()
-
+            om_gui.ui.toothPropsWidget.lineEdit.setKnownProps(newplan)
         else:
             print "%s not found in plan!"% treatmentItem
 

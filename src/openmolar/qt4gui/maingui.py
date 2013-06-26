@@ -140,9 +140,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         #--initiate a blank version of the patient class this
         #--is used to check for state.
         #--make a deep copy to check for changes
-        self.pt_dbstate = patient_class.patient(0)
-        self.pt = copy.deepcopy(self.pt_dbstate)
-
+        self.pt = patient_class.patient(0)
+        
         self.selectedChartWidget = "st" #other values are "pl" or "cmp"
         self.editPageVisited = False
         self.forum_notified = False
@@ -536,7 +535,6 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         #--check pt against the original loaded state
         #--this returns a LIST of changes ie [] if none.
-        quit = True
         uc = self.unsavedChanges()
         if uc == []:
             print "no changes"
@@ -689,9 +687,8 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.medNotes_pushButton.setStyleSheet("")
 
             #--load a blank version of the patient class
-            self.pt_dbstate = patient_class.patient(0)
-            #--and have the comparison copy identical (to check for changes)
-            self.pt = copy.deepcopy(self.pt_dbstate)
+            self.pt = patient_class.patient(0)
+
             self.loadedPatient_label.setText("No Patient Loaded")
             if self.editPageVisited:
                 #print "blanking edit page fields"
@@ -1179,18 +1176,11 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self.pt.pcde, self.pt.tel1)
 
             try:
-                #--work on a copy only, so that changes can be tested for later
-                #--has to be a deep copy, as opposed to shallow
-                #--otherwise changes to attributes which are lists aren't
-                #--spotted new "instance" of patient
                 self.pt = patient_class.patient(serialno)
-                self.pt_dbstate = copy.deepcopy(self.pt)
                 self.pt_diary_widget.set_patient(self.pt)
 
-                #-- this next line is to prevent a "not saved warning"
-                #self.pt_dbstate.fees = self.pt.fees
                 try:
-                    self.loadpatient(newPatientReload=newPatientReload)
+                    self.loadpatient(newPatientReload = newPatientReload)
                 except Exception as e:
                     self.advise(
                     _("Error populating interface\n%s")% e, 2)
@@ -1283,12 +1273,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         charts_gui.bpe_dates(self)
 
         try:
-            pos=localsettings.csetypes.index(self.pt.cset)
+            pos = localsettings.csetypes.index(self.pt.cset)
         except ValueError:
             if not newPatientReload:
                 QtGui.QMessageBox.information(self, "Advisory",
                 "Please set a Valid Course Type for this patient")
-            pos=-1
+            pos = -1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         self.ui.contract_tabWidget.setCurrentIndex(pos)
         #--update bpe
@@ -1390,7 +1380,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.ui.detailsBrowser.setText("")
             return
 
-        Saved = (self.pt_dbstate.fees == self.pt.fees)
+        Saved = (self.pt.dbstate.fees == self.pt.fees)
         details = patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setHtml(details)
         self.ui.detailsBrowser.update()
@@ -1502,10 +1492,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         add items to a toolbutton for trawling the database
         for old data about the patient
         '''
-        self.pastDataMenu=QtGui.QMenu()
-        self.pastDataMenu.addAction("No Options Set")
-
-        self.ui.pastData_toolButton.setMenu(self.pastDataMenu)
 
         self.debugMenu=QtGui.QMenu()
         self.debugMenu.addAction("Patient table data")
@@ -1513,7 +1499,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.debugMenu.addAction("HDP table data")
         self.debugMenu.addAction("Estimates table data")
         self.debugMenu.addAction("Perio table data")
-        self.debugMenu.addAction("Verbose (displays everything in memory)")
+        self.debugMenu.addAction("Changable Fields")
 
         self.ui.debug_toolButton.setMenu(self.debugMenu)
 
@@ -1563,9 +1549,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             try:
                 f = open(filename, "r")
                 loadedpt = pickle.loads(f.read())
-                if loadedpt.serialno != self.pt.serialno:
-                    self.pt_dbstate = patient_class.patient(0)
-                    self.pt_dbstate.serialno = loadedpt.serialno
+                if loadedpt.serialno == self.pt.serialno:
+                    self.pt.take_snapshot()
                 self.pt = loadedpt
                 f.close()
             except Exception, e:
@@ -1702,39 +1687,24 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         important function, checks for changes since the patient was loaded
         '''
-        changes=[]
-        if self.pt.serialno != self.pt_dbstate.serialno:
+        if self.pt.serialno != self.pt.dbstate.serialno:
             #this should NEVER happen!!!
             self.advise(
             _('''POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS''') +
-            ' %d and %d'% (self.pt.serialno, self.pt_dbstate.serialno), 2)
-            return changes
+            ' %d and %d'% (self.pt.serialno, self.pt.dbstate.serialno), 2)
+            return []
+
+        changes = self.pt.changes
 
         if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
         len(self.pt.HIDDENNOTES) != 0):
             changes.append("New Notes")
-
-        for attr in sorted(patient_class.ATTRIBS_TO_CHECK):
-            try:
-                newval = str(self.pt.__dict__.get(attr, ""))
-                oldval = str(self.pt_dbstate.__dict__.get(attr, ""))
-            except UnicodeEncodeError:
-                print attr, self.pt.__dict__[attr]
-            if oldval != newval:
-                if attr == "xraycmp":
-                    daybook_module.xrayDates(self, newval)
-                    changes.append(attr)
-                elif attr == "periocmp":
-                    daybook_module.perioDates(self, newval)
-                    changes.append(attr)
-                elif (attr == "memo" and
-                    oldval.replace(chr(13), "") == newval):
-                    #-- ok - windows line ends from old DB were
-                    #-- creating an issue
-                    #-- memo was reporting that update had occurred.
-                    pass
-                else:
-                    changes.append(attr)
+            
+        if "xraycmp" in changes:
+            daybook_module.xrayDates(self, self.pt.xraycmp)
+        if "periocmp" in changes:
+            daybook_module.perioDates(self, self.pt.periocmp)
+        
         return changes
 
     def save_changes(self, leavingRecord=True):
@@ -1747,31 +1717,20 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if self.editPageVisited:
             #-- only make changes if user has visited this tab
             self.apply_editpage_changes()
-
         daybook_module.updateDaybook(self)
         uc = self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
-
-            result = patient_write_changes.all_changes(
-            self.pt, self.pt_dbstate, uc)
-
+            result = patient_write_changes.all_changes(self.pt, uc)
             if result: #True if sucessful
                 if not leavingRecord and "estimates" in uc:
                     #-- necessary to get index numbers for estimate data types
                     self.pt.getEsts()
                     if self.ui.tabWidget.currentIndex() == 7:
                         self.load_newEstPage()
-                    else:
-                        print "tab widget page=",self.ui.tabWidget.currentIndex()
-
-                self.pt_dbstate=copy.deepcopy(self.pt)
-                if localsettings.showSaveChanges:
-                    message = _("Sucessfully altered the following items")
-                    message += "<ul>"
-                    for item in uc:
-                        message += "<li>%s</li>"%str(item)
-                    self.advise(message+"</ul>", 1)
+                    
+                self.pt.take_snapshot()
+            
             else:
                 self.advise("Error applying changes... please retry", 2)
                 print "error saving changes to record %s"%self.pt.serialno,
@@ -2022,7 +1981,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         add_tx_to_plan.chartAdd(self, tooth, properties)
 
-    def planChartWidget_completed(self,arg):
+    def planChartWidget_completed(self, arg):
         '''
         called when double clicking on a tooth in the plan chart
         the arg is a list - ["ul5","MOD","RT",]
@@ -2030,7 +1989,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if not self.pt.underTreatment:
             self.advise("course has been closed",1)
         else:
-            complete_tx.chartComplete(self,arg)
+            complete_tx.chartComplete(self, arg)
 
     def estwidget_completeItem(self, txtype):
         '''
@@ -2208,14 +2167,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         contract_gui_module.editOtherContract(self)
 
-    def pastDataMenu_clicked(self, arg):
-        '''
-        called from pastData toolbutton - arg is the chosen qstring
-        '''
-        ## TODO deprecated - toolbutton is not good enough
-        ## for this important functionality
-        print "deprecated pastDataMenu_clicked, received arg", arg
-
     def pastPayments_clicked(self):
         '''
         show all past payments for a patient
@@ -2282,12 +2233,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         #--load a table of self.pt.attributes
         if arg != None:
-            txtype=str(arg.text()).split(" ")[0]
+            txtype = str(arg.text()).split(" ")[0]
         else:
-            txtype=debug_html.existing.split(" ")[0]
+            txtype = None
 
         changesOnly=self.ui.ptAtts_checkBox.isChecked()
-        html=debug_html.toHtml(self.pt_dbstate, self.pt, txtype, changesOnly)
+        html = debug_html.toHtml(self.pt, txtype, changesOnly)
         self.ui.debugBrowser.setText(html)
 
     def cashbookView(self):
@@ -2793,9 +2744,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             QtCore.SIGNAL("toggled (bool)"), self.forum_radioButtons)
 
     def signals_history(self):
-        QtCore.QObject.connect(self.pastDataMenu,
-        QtCore.SIGNAL("triggered (QAction *)"), self.pastDataMenu_clicked)
-
         QtCore.QObject.connect(self.debugMenu,
         QtCore.SIGNAL("triggered (QAction *)"), self.showPtAttributes)
 

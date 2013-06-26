@@ -193,7 +193,7 @@ def printEstimate(om_gui):
     est.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
     om_gui.pt.serialno)
 
-    est.setEsts(estimates.sorted(om_gui.pt.estimates))
+    est.setEsts(estimates.sorted_estimates(om_gui.pt.estimates))
 
     if est.print_():
         commitPDFtoDB(om_gui, "auto estimate")
@@ -219,7 +219,7 @@ def customEstimate(om_gui, html="", version=0):
         #separate into NHS and non-NHS items.
         sorted_ests = {"N":[],"P":[]}
 
-        for est in estimates.sorted(om_gui.pt.estimates):
+        for est in estimates.sorted_estimates(om_gui.pt.estimates):
             if "N" in est.csetype:
                 sorted_ests["N"].append(est)
             else:

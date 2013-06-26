@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>487</width>
+                      <width>673</width>
                       <height>467</height>
                      </rect>
                     </property>
@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>441</width>
+                      <width>655</width>
                       <height>425</height>
                      </rect>
                     </property>
@@ -2015,7 +2015,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>311</width>
+                      <width>675</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2672,8 +2672,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>102</width>
-                      <height>111</height>
+                      <width>469</width>
+                      <height>376</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2849,7 +2849,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
+                         <width>419</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -2882,7 +2882,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>192</width>
+                      <width>220</width>
                       <height>514</height>
                      </rect>
                     </property>
@@ -3231,7 +3231,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>261</width>
+                      <width>657</width>
                       <height>387</height>
                      </rect>
                     </property>
@@ -3544,28 +3544,6 @@ Note - this will not remove items which are currently there. </string>
                        </size>
                       </property>
                      </spacer>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="pastData_toolButton">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>Custom Options</string>
-                      </property>
-                      <property name="popupMode">
-                       <enum>QToolButton::InstantPopup</enum>
-                      </property>
-                     </widget>
                     </item>
                     <item>
                      <widget class="Line" name="line_3">

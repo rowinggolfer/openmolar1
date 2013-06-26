@@ -21,8 +21,8 @@ import types
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
-#- updated 24th June 2013.
-__MAJOR_VERSION__= "0.4.07"
+#- updated 26th June 2013.
+__MAJOR_VERSION__= "0.4.09"
 
 
 if "-v" in sys.argv:
@@ -44,7 +44,6 @@ WIKIURL = ""
 
 locale.setlocale(locale.LC_ALL, '')
 
-#--this is a hack to get the correct bzr number. it will always be one up.
 __build__ = int(_version.version_info.get("revno"))
 
 VERBOSE = False
@@ -315,8 +314,7 @@ csetypes = ["P","I","N","N OR","N O"]
 
 #--for debugging purposes... set this to true.- not yet implemented throughout.
 logqueries = False
-#-- if you want an additional box showing saved changes when a record is saved
-showSaveChanges = False
+
 #-- self evident
 practiceAddress = ("The Academy Dental Practice","19 Union Street",
 "Inverness","IV1 1PP")

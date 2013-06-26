@@ -27,7 +27,7 @@ def newCourseNeeded(om_gui):
     '''
     if om_gui.pt.underTreatment:
         return False
-    if om_gui.pt.cmpd != om_gui.pt_dbstate.cmpd:
+    if om_gui.pt.cmpd != om_gui.pt.dbstate.cmpd:
         om_gui.advise(
         _("Please save the old course changes before continuing"), 1)
         return True
@@ -98,7 +98,7 @@ def setupNewCourse(om_gui):
 
 def apply_new_courseno(om_gui, new_courseno, accd=None):
         om_gui.pt.blankCurrtrt()
-        om_gui.pt_dbstate.blankCurrtrt()
+        om_gui.pt.dbstate.blankCurrtrt()
         om_gui.pt.courseno = new_courseno
         om_gui.pt.courseno0 = new_courseno
         om_gui.pt.setAccd(accd)
@@ -130,7 +130,7 @@ def delete_new_course(om_gui):
     user is discarding all changes to a record.
     potentially, this will leave debris in the currtrtmt2 table
     '''
-    if om_gui.pt.courseno != om_gui.pt_dbstate.courseno:
+    if om_gui.pt.courseno != om_gui.pt.dbstate.courseno:
         print "deleting unused course of treatment"
         writeNewCourse.delete(om_gui.pt.serialno, om_gui.pt.courseno)
 

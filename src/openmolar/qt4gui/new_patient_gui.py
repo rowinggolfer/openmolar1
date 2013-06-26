@@ -100,7 +100,7 @@ def saveNewPatient(om_gui):
         om_gui.pt.serialno = sno
         #--messy, but avoids a "previous pt has changed"
         #--dialog when reloaded
-        om_gui.pt_dbstate = copy.deepcopy(om_gui.pt)
+        om_gui.pt.take_snapshot()
         return True
 
 def finishedNewPatientInput(om_gui):

@@ -88,13 +88,26 @@ class ApptPrefs(object):
         cursor = db.cursor()
         cursor.execute(UPDATE_QUERY, values)
         cursor.close()
-
+        
     def __repr__(self):
-        return str(self.__dict__)
+        return self.__str__()
 
-    #def __eq__(self, other):
-    #    return self.__dict__ == other.__dict__
+    def __str__(self):
+        return "%s %s %s %s %s %s %s %s"% (self.serialno,
+        self.recdent_period,
+        self.recdent,
+        self.rechyg_period,
+        self.rechyg,
+        self.recall_method,
+        self.note,
+        self.recall_active)
 
+    def __eq__(self, other):
+        return str(self)== str(other)
+
+    def __ne__(self, other):
+        return str(self)!= str(other)
+    
 if __name__ =="__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
@@ -104,3 +117,8 @@ if __name__ =="__main__":
     prefs = ApptPrefs(serialno)
     for att in prefs.__dict__.keys():
         print att, prefs.__dict__[att]
+        
+    prefs2 = ApptPrefs(serialno)
+    
+    print prefs == prefs2
+    print prefs != prefs2

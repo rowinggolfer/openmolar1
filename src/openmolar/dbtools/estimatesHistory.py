@@ -14,7 +14,7 @@ def getEsts(sno):
     db = connect()
     cursor = db.cursor()
 
-    cursor.execute('''SELECT ix, courseno,number, itemcode, description, 
+    cursor.execute('''SELECT ix, courseno, number, itemcode, description, 
 category, type, fee, ptfee, feescale, csetype, dent, completed, carriedover 
 from newestimates where serialno=%d order by courseno desc, itemcode'''%sno)
     rows = cursor.fetchall()
@@ -24,7 +24,7 @@ from newestimates where serialno=%d order by courseno desc, itemcode'''%sno)
     
     for row in rows:
         #initiate a custom data class
-        est = estimates.est()
+        est = estimates.Estimate()
         est.ix = row[0]
         est.courseno = row[1]
         est.number = row[2]

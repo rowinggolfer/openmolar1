@@ -9,7 +9,7 @@ from openmolar.dbtools import patient_class
 
 existing=""
 
-def toHtml(p1,p2,tableCalled,changesOnly=False):
+def toHtml(pt, tableCalled=None, changesOnly=False):
     '''
     this sub puts all the attributes found for patient 1 and patient 2 
     (normaly a deep copy of patient 1 taken at the moment of load from db)
@@ -22,42 +22,43 @@ def toHtml(p1,p2,tableCalled,changesOnly=False):
     #attribs.sort()
     
     attributesDict={}
-    if tableCalled=="Verbose": #let's see exactly what the class is about:
-        attributesDict["all attributes"]=p1.__dict__.keys()
+    if tableCalled == "Patient": 
+        attributesDict["Patient Table"] = patient_class.patientTableAtts
+    elif tableCalled == "Treatment": 
+        attributesDict[
+        "Treatment Items"] = patient_class.currtrtmtTableAtts
+    elif tableCalled == "HDP": 
+        attributesDict["HDP"] = ("plandata",)
+    elif tableCalled == "Estimates": 
+        attributesDict["Estimates"] = ("estimates", )
+    elif tableCalled=="Perio": 
+        attributesDict["Perio Data"] = ("perioData",)
     else:
-        if tableCalled=="Patient": 
-            attributesDict["Patient Table"]=patient_class.patientTableAtts
-        elif tableCalled=="Treatment": 
-            attributesDict["Treatment Items"]=patient_class.currtrtmtTableAtts
-        elif tableCalled=="HDP": 
-            attributesDict["HDP"]=("plandata",)
-        elif tableCalled=="Estimates": 
-            attributesDict["Estimates"]=("estimates", )
-        elif tableCalled=="Perio": 
-            attributesDict["Perio Data"]=("perioData",)
-    keys=attributesDict.keys()
-    keys.sort()
+        attributesDict["all attributes"] = pt.dbstate.__dict__.keys()
+    
     changes=False
-    for key in keys:
-        attribs=attributesDict[key]
+    for key in sorted(attributesDict.keys()):
+        attribs = attributesDict[key]
         if changesOnly:
-            title="%s (changes only)"%key
-        else: title=key
-        retarg+="<h2>%s</h2>"%title
-        retarg+='<table width="100%" border="1">'
-        retarg+='<tr><th>Attribute</th><th>orig</th><th>changed</th>'
-        for att in attribs:
-            orig,new=p1.__dict__[att],p2.__dict__[att]
-            if not changesOnly or str(orig)!=str(new):
-                changes=True
-                retarg+= "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"%(
-                att,orig,new)
-        retarg+="</table>"
-        existing=key
+            title = "%s (changes only)"%key
+        else: title = key
+        retarg += "<h2>%s</h2>"%title
+        retarg += '<table width="100%" border="1">'
+        retarg += '<tr><th>Attribute</th><th>orig</th><th>changed</th>'
+        for att in sorted(attribs):
+            orig = pt.__dict__[att]
+            new = pt.dbstate.__dict__.get(att, "")
+            if not changesOnly or str(orig) != str(new):
+                changes = True
+                retarg += '''<tr>
+                <td>%s</td><td>%s</td><td>%s</td>
+                </tr>'''% (att,orig,new)
+        retarg += "</table>"
+        existing = key
     if not changes:
-        retarg+="<br />No data or relevant changes found"
+        retarg += "<br />No data or relevant changes found"
         
-    retarg +='</div></body></html>'
+    retarg += '</div></body></html>'
     return retarg
 
 if __name__ == "__main__":
@@ -69,5 +70,5 @@ if __name__ == "__main__":
     except:
         serialno=29283
 
-    pt=patient_class.patient(serialno)
-    print toHtml(pt,pt,True)
+    pt = patient_class.patient(serialno)
+    print toHtml(pt, changesOnly=True)

@@ -32,9 +32,7 @@ def add(sno, cset, dent, trtid, t, fee, ptfee):
     t["perio"], t["anaes"], t["misc"], t["ndu"], t["ndl"], t["odu"],
     t["odl"], t["other"], t["chart"], fee, ptfee, 0)
 
-    print query
-    print values
-    print cursor.execute(query, values)
+    cursor.execute(query, values)
 
     cursor.close()
 

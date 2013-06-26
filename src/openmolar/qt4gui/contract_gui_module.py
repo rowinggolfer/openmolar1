@@ -96,7 +96,7 @@ def exemption_edited(om_gui):
     om_gui.ui.exempttext_lineEdit.text().toAscii())
     if not om_gui.pt.checkExemption():
         om_gui.advise(_("erroneous exemption category entered"),1)
-        om_gui.ui.exemption_lineEdit.setText(om_gui.pt_dbstate.exemption)
+        om_gui.ui.exemption_lineEdit.setText(om_gui.pt.dbstate.exemption)
     om_gui.updateDetails()
     
 def editPrivateContract(om_gui):

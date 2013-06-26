@@ -16,7 +16,7 @@ from openmolar.ptModules import plan
 
 import struct
 
-class est(object):
+class Estimate(object):
     '''
     this class has attributes suitable for storing in the estimates table
     '''
@@ -51,6 +51,9 @@ class est(object):
         for att in ("completed","carriedover"):
             retarg+="%s ,"%self.__dict__[att]
         return "%s)"% retarg.strip(",")
+    
+    def __eq__(self, other):
+        return str(self) == str(other)
 
     def toHtmlRow(self):
         return '''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
@@ -88,7 +91,7 @@ def strip_curlies(description):
     else:
         return description
 
-def sorted(ests):
+def sorted_estimates(ests):
     '''
     compresses a list of estimates down into number*itemcode
     '''

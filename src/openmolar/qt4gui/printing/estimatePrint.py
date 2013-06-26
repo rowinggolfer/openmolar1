@@ -160,6 +160,6 @@ if __name__ == "__main__":
     myreceipt.fname = pt.fname
     myreceipt.sname = pt.sname
     myreceipt.ourref = pt.serialno
-    myreceipt.estItems = estimates.sorted(pt.estimates)
+    myreceipt.estItems = estimates.sorted_estimates(pt.estimates)
 
     myreceipt.print_()

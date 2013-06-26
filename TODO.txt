@@ -1,3 +1,10 @@
+0.4.09
+    as a result of 0.4.08 - the deepcopying of the patient class finally
+    bit me in the bum (deepcopy does not work with compiled regexes.) 
+    this version is radically more efficient in the way a snapshot is taken.
+    BUGFIX - when completing chart tx by double clicking on the plan chart the
+    treatment lineEntry box is updated.
+
 0.4.08
     new feescale logic. An attempt to tighten up on NHS regulations.
 

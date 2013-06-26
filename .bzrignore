@@ -1,4 +1,4 @@
-src/openmolar/settings/_version.py
+#src/openmolar/settings/_version.py
 tmp/*
 builds/*
 dist/*

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Tue Jun 25 22:16:19 2013
+# Created: Wed Jun 26 23:34:03 2013
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -223,7 +223,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName(_fromUtf8("scrollArea_4"))
         self.scrollAreaWidgetContents_7 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 487, 467))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 673, 467))
         self.scrollAreaWidgetContents_7.setObjectName(_fromUtf8("scrollAreaWidgetContents_7"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_7)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
@@ -691,7 +691,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollArea_5.setObjectName(_fromUtf8("scrollArea_5"))
         self.scrollAreaWidgetContents_8 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 441, 425))
+        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 655, 425))
         self.scrollAreaWidgetContents_8.setObjectName(_fromUtf8("scrollAreaWidgetContents_8"))
         self.gridLayout = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -833,7 +833,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_5 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 311, 471))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 675, 471))
         self.scrollAreaWidgetContents_5.setObjectName(_fromUtf8("scrollAreaWidgetContents_5"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_5)
         self.horizontalLayout_26.setSpacing(3)
@@ -1109,7 +1109,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.scrollArea_3.setObjectName(_fromUtf8("scrollArea_3"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 102, 111))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 469, 376))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_5.setSpacing(0)
@@ -1194,7 +1194,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName(_fromUtf8("estimate_scrollArea"))
         self.scrollAreaWidgetContents_11 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 98, 200))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 419, 200))
         self.scrollAreaWidgetContents_11.setObjectName(_fromUtf8("scrollAreaWidgetContents_11"))
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName(_fromUtf8("horizontalLayout_19"))
@@ -1211,7 +1211,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_4 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 192, 514))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 220, 514))
         self.scrollAreaWidgetContents_4.setObjectName(_fromUtf8("scrollAreaWidgetContents_4"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_9.setObjectName(_fromUtf8("verticalLayout_9"))
@@ -1359,7 +1359,7 @@ class Ui_MainWindow(object):
         self.perioCharts_scrollArea.setWidgetResizable(True)
         self.perioCharts_scrollArea.setObjectName(_fromUtf8("perioCharts_scrollArea"))
         self.scrollAreaWidgetContents_6 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 261, 387))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 657, 387))
         self.scrollAreaWidgetContents_6.setObjectName(_fromUtf8("scrollAreaWidgetContents_6"))
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
         self.gridLayout_15.setObjectName(_fromUtf8("gridLayout_15"))
@@ -1492,16 +1492,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_25.addWidget(self.historyPrint_pushButton)
         spacerItem12 = QtGui.QSpacerItem(20, 123, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_25.addItem(spacerItem12)
-        self.pastData_toolButton = QtGui.QToolButton(self.frame_3)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pastData_toolButton.sizePolicy().hasHeightForWidth())
-        self.pastData_toolButton.setSizePolicy(sizePolicy)
-        self.pastData_toolButton.setMinimumSize(QtCore.QSize(0, 0))
-        self.pastData_toolButton.setPopupMode(QtGui.QToolButton.InstantPopup)
-        self.pastData_toolButton.setObjectName(_fromUtf8("pastData_toolButton"))
-        self.verticalLayout_25.addWidget(self.pastData_toolButton)
         self.line_3 = QtGui.QFrame(self.frame_3)
         self.line_3.setFrameShape(QtGui.QFrame.HLine)
         self.line_3.setFrameShadow(QtGui.QFrame.Sunken)
@@ -2566,7 +2556,6 @@ class Ui_MainWindow(object):
         self.NHSClaims_pushButton.setText(_translate("MainWindow", "NHS Claims", None))
         self.historyPrint_pushButton.setToolTip(_translate("MainWindow", "Print the text displayed on this page.", None))
         self.historyPrint_pushButton.setText(_translate("MainWindow", "Print", None))
-        self.pastData_toolButton.setText(_translate("MainWindow", "Custom Options", None))
         self.debug_toolButton.setToolTip(_translate("MainWindow", "Advanced options for developer use. Don\'t expect this to make much sense!\n"
 "\n"
 "If the \"changes only\" checkbox is checked, only data which has been changed will be displayed.", None))

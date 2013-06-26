@@ -336,13 +336,13 @@ class FeeTable(object):
             if key.match(tooth+arg):
                 return self.chartRegexCodes[key]
             
-        for key in self.chartMultiRegexCodes:
+        for keys in self.chartMultiRegexCodes:
             #has to match ALL regexes 
             match = True
             for regex in keys:
                 match = match and regex.match(tooth+arg)
             if match:
-                return self.chartTreatmentCodes[key]
+                return self.chartMultiRegexCodes[keys]
     
         logging.warning(
             'no match in %s getToothCode for %s - %s RETURNING 4001'% (
