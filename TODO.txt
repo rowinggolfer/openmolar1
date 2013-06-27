@@ -1,3 +1,10 @@
+0.4.10
+    TODO incisal angles, max per tooth, extraction visits, special tray,
+    1st in arch, partial dentures(n teeth)
+    tidy up addition from feescale.
+    much of this work will be on the database itself, 
+    but the codebase will also need tweaking
+
 0.4.09
     as a result of 0.4.08 - the deepcopying of the patient class finally
     bit me in the bum (deepcopy does not work with compiled regexes.) 
