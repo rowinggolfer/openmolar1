@@ -328,13 +328,7 @@ class FeeTable(object):
         eg "MOD" -> "1404" (both are strings)
         arg will be something like "CR,GO" or "MOD,CO"
         '''
-        #print "getToothCode for %s%s"% (tooth, arg)
-        if arg in self.treatmentCodes.keys(): #direct match!!
-            return self.getItemCodeFromUserCode(arg)
-
-        for key in self.chartRegexCodes:
-            if key.match(tooth+arg):
-                return self.chartRegexCodes[key]
+        logging.info("getToothCode for %s%s"% (tooth, arg))
             
         for keys in self.chartMultiRegexCodes:
             #has to match ALL regexes 
@@ -343,7 +337,14 @@ class FeeTable(object):
                 match = match and regex.match(tooth+arg)
             if match:
                 return self.chartMultiRegexCodes[keys]
-    
+        
+        for key in self.chartRegexCodes:
+            if key.match(tooth+arg):
+                return self.chartRegexCodes[key]
+        
+        if arg in self.treatmentCodes.keys(): #direct match!!
+            return self.getItemCodeFromUserCode(arg)
+
         logging.warning(
             'no match in %s getToothCode for %s - %s RETURNING 4001'% (
             self.tablename, tooth, arg))
