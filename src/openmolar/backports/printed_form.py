@@ -27,6 +27,8 @@ Provides a Class for printing on an A4 Sheet
 from __future__ import division
 from PyQt4 import QtCore, QtGui
 
+from openmolar.settings import localsettings
+
 class PrintedForm(object):
     '''
     a class to set up and print an a4 form
@@ -44,9 +46,16 @@ class PrintedForm(object):
     def __init__(self):
 
         self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A4)
-        self.printer.setFullPage(True)
-        self.printer.setResolution(96)
+        self.pdfprinter = QtGui.QPrinter()
+        self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
+        self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
+        
+        self.chosen_printer = self.printer
+            
+        for printer in (self.printer, self.pdfprinter):
+            printer.setPageSize(QtGui.QPrinter.A4)
+            printer.setFullPage(True)
+            printer.setResolution(96)
 
     def set_offset(self, x, y):
         '''
@@ -67,9 +76,11 @@ class PrintedForm(object):
         '''
         dialog = QtGui.QPrintDialog(self.printer)
         if dialog.exec_():
-            self.print_()
+            for printer in (self.pdfprinter, self.printer):
+                self.chosen_printer = printer
+                self.print_()
             return True
-        
+    
     def print_(self, painter=None):
         '''
         print the background and any rects if in testing_mode
@@ -77,8 +88,9 @@ class PrintedForm(object):
         note - this functions return the active painter so that classes which
         inherit from PrintedForm can finalise the printing.
         '''
+        
         if painter is None:
-            painter = QtGui.QPainter(self.printer)
+            painter = QtGui.QPainter(self.chosen_printer)
 
         if self.print_background:
             painter.save()

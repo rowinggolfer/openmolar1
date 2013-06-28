@@ -26,8 +26,9 @@ Will raise dialogs etc to enable user choices.
 '''
 import os
 from PyQt4 import QtCore, QtGui
-from openmolar.qt4gui.dialogs.gp17_printdialog import GP17PrintDialog
 
+from openmolar.qt4gui.dialogs.gp17_printdialog import GP17PrintDialog
+from openmolar.qt4gui.printing.om_printing import commitPDFtoDB
 
 class GP17Printer(object):
     def __init__(self, om_gui):
@@ -63,9 +64,11 @@ class GP17Printer(object):
                 form.set_data(dl.data)
                 
                 ## temp code            
-                form.testing_mode = "neil" in os.path.expanduser("~")
+                form.testing_mode = test or "neil" in os.path.expanduser("~")
                 
                 if form.controlled_print():
+                    commitPDFtoDB(self.om_gui, form.NAME)
+            
                     self.om_gui.pt.addHiddenNote(
                         "printed", "%s %s"% (form.NAME, dl.dent_inits))
                     self.om_gui.updateHiddenNotesLabel()

@@ -45,7 +45,8 @@ def add(sno, docname, object, version=1):
     db = connect.connect()
     cursor = db.cursor()
     query = '''INSERT INTO newdocsprinted
-(serialno,printdate,docname,docversion,data) VALUES (%s, NOW(), %s, %s, %s)'''
+(serialno,printdate,docname,docversion,data) 
+VALUES (%s, date(NOW()), %s, %s, %s)'''
     values = (sno, docname, version, object)
     print "adding letter to newdocsprinted table"
     if localsettings.logqueries:
