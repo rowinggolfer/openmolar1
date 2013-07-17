@@ -34,7 +34,8 @@ else:
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 
-CLIENT_SCHEMA_VERSION = "2.1"
+#updated 17th July 2013
+CLIENT_SCHEMA_VERSION = "2.2"
 DB_SCHEMA_VERSION = "unknown"
 
 ENCODING = locale.getpreferredencoding()

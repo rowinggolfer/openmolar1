@@ -435,7 +435,6 @@ self.serialno, self.courseno0))
             est.csetype = row[9]
             est.dent = row[10]
             est.completed = bool(row[11])
-            est.carriedover = bool(row[12])
             self.estimates.append(est)
 
         cursor.close()
@@ -667,7 +666,6 @@ self.serialno, self.courseno0))
 
         est.dent = dent
         est.completed = completed
-        est.carriedover = carriedover
 
         self.estimates.append(est)
 

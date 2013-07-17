@@ -24,8 +24,8 @@ class Estimate(object):
         self.ix = None
         self.serialno = None
         self.courseno = None
-        self.category = ""
-        self.type = ""
+        #self.category = ""
+        #self.type = ""
         self.number = None
         self.itemcode = "4001"
         self.description = None
@@ -35,8 +35,10 @@ class Estimate(object):
         self.csetype = None
         self.dent = None
         self.completed = None
-        self.carriedover = None
-        self.linked = False
+        #self.carriedover = None
+        #self.linked = False
+        
+        self.tx_hashes = []
 
     def __repr__(self):
         return self.__str__()
@@ -44,13 +46,11 @@ class Estimate(object):
     def __str__(self):
         retarg=u"("
         for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
-            retarg+='%s ,'%self.__dict__[att]
-        for att in ("category","type","itemcode","description","csetype",
-        "feescale"):
-            retarg+='"%s" ,'%self.__dict__[att]
-        for att in ("completed","carriedover"):
-            retarg+="%s ,"%self.__dict__[att]
-        return "%s)"% retarg.strip(",")
+            retarg+='%s ,'% self.__dict__[att]
+        for att in ("tx_hashes","itemcode","description","csetype","feescale"):
+            retarg+='"%s" ,'% self.__dict__[att]
+        retarg += "%s"% self.__dict__["completed"]
+        return "%s)"% retarg
     
     def __eq__(self, other):
         return str(self) == str(other)

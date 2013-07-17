@@ -15,7 +15,7 @@ def getEsts(sno):
     cursor = db.cursor()
 
     cursor.execute('''SELECT ix, courseno, number, itemcode, description, 
-category, type, fee, ptfee, feescale, csetype, dent, completed, carriedover 
+category, type, fee, ptfee, feescale, csetype, dent, completed
 from newestimates where serialno=%d order by courseno desc, itemcode'''%sno)
     rows = cursor.fetchall()
     cursor.close()
@@ -38,7 +38,6 @@ from newestimates where serialno=%d order by courseno desc, itemcode'''%sno)
         est.csetype = row[10]
         est.dent = row[11]
         est.completed = bool(row[12])
-        est.carriedover = bool(row[13])
         estimatesFound.append(est)
         
     return estimatesFound

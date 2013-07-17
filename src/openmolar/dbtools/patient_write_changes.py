@@ -6,7 +6,9 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 
+import logging
 import MySQLdb,sys,types
+
 from openmolar.connect import connect
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
@@ -86,13 +88,12 @@ def all_changes(pt, changes):
                     if est.ix == None: #--new item
                         query = '''insert into newestimates (serialno,
 courseno, category, type, number, itemcode, description, fee, ptfee, feescale,
-csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
-(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())'''
+csetype, dent, completed, modified_by, time_stamp) values
+(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())'''
                         values = (pt.serialno, pt.courseno, est.category,
                         est.type, est.number, est.itemcode, est.description,
                         est.fee, est.ptfee, est.feescale, est.csetype,
-                        est.dent, est.completed, est.carriedover,
-                        est. linked, localsettings.operator)
+                        est.dent, est.completed, localsettings.operator)
 
                         sqlcommands["estimates"].append((query,values),)
 
@@ -134,12 +135,6 @@ csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
                             if oldEst.completed != est.completed:
                                 query += 'completed=%s,'
                                 values.append(est.completed)
-                            if oldEst.carriedover != est.carriedover:
-                                query += 'carriedover=%s,'
-                                values.append(est.carriedover)
-                            if oldEst.linked != est.linked:
-                                query += 'linked=%s,'
-                                values.append(est.linked)
                             query += '''modified_by = %s,
                             time_stamp = NOW() where ix = %s'''
 
@@ -198,9 +193,8 @@ csetype, dent, completed, carriedover, linked, modified_by, time_stamp) values
                 try:
                     cursor.execute(query, values)
                 except Exception,e:
-                    print "error saving %s for patient %d"%(table,
-                    pt.serialno)
-                    print e
+                    logging.exception(
+                        "error saving %s for patient %d"%(table, pt.serialno))
                     result = False
         cursor.close()
         db.commit()
