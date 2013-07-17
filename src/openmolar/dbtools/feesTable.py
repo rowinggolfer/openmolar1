@@ -306,15 +306,15 @@ class FeeTable(object):
                 continue
             
             if feeItem.pl_cmp_type == "CHART":
-                if feeItem.is_regex:
-                    #use pre-compiled regex as the key
-                    key = re.compile(feeItem.usercode)
-                    self.chartRegexCodes[key] = code
-                elif feeItem.is_multi_regex:
+                if feeItem.is_multi_regex:
                     regexes = []
                     for regex in feeItem.usercode.split(" _AND_ "):
                         regexes.append(re.compile(regex)) 
                     self.chartMultiRegexCodes[tuple(regexes)] = code
+                elif feeItem.is_regex:
+                    #use pre-compiled regex as the key
+                    key = re.compile(feeItem.usercode)
+                    self.chartRegexCodes[key] = code
                 else:
                     self.treatmentCodes[feeItem.usercode] = code
             else:
