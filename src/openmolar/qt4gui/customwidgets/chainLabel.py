@@ -8,25 +8,26 @@
 from PyQt4 import QtGui,QtCore
 from openmolar.qt4gui import resources_rc
 
-class chainLabel(QtGui.QLabel):
+class ChainLabel(QtGui.QLabel):
     '''
     a custom label with a chain link
     '''
     def __init__(self, parent=None):
-        super(chainLabel,self).__init__(parent)
-        self.chainpic=QtGui.QPixmap(":/icons/chain.png")
-        self.unchainpic=QtGui.QPixmap(":/icons/chain-broken.png")
-        self.setMinimumSize(30,28)
+        QtGui.QLabel.__init__(self, parent)
+        self.chainpic = QtGui.QPixmap(":/icons/chain.png")
+        self.unchainpic = QtGui.QPixmap(":/icons/chain-broken.png")
+        self.setFixedWidth(30)
         self.setPixmap(self.chainpic)
-        self.chained=True
+        self.chained = True
+        
     def mousePressEvent(self,arg):
         if self.chained:
             self.setPixmap(self.unchainpic)
-            self.chained=False
+            self.chained = False
         else:
             self.setPixmap(self.chainpic)
-            self.chained=True
-        self.emit(QtCore.SIGNAL("chained"),self.chained)
+            self.chained = True
+        self.emit(QtCore.SIGNAL("chained"), self.chained)
         
 if __name__ == "__main__":
     def test(arg):
@@ -34,10 +35,9 @@ if __name__ == "__main__":
     
     import sys    
     app = QtGui.QApplication(sys.argv)
-    Form = QtGui.QWidget()
-    ui = chainLabel(Form)
-    QtCore.QObject.connect(ui,QtCore.SIGNAL("chained"), test)
-    Form.show()
+    widg = ChainLabel()
+    QtCore.QObject.connect(widg, QtCore.SIGNAL("chained"), test)
     
+    widg.show()
     sys.exit(app.exec_())
 

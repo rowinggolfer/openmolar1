@@ -120,7 +120,8 @@ from openmolar.qt4gui.customwidgets import chartwidget
 from openmolar.qt4gui.customwidgets import toothProps
 from openmolar.qt4gui.customwidgets import perioToothProps
 from openmolar.qt4gui.customwidgets import perioChartWidget
-from openmolar.qt4gui.customwidgets import estimateWidget
+#from openmolar.qt4gui.customwidgets import estimateWidget
+from openmolar.qt4gui.customwidgets import estimate_widget
 from openmolar.qt4gui.customwidgets import notification_widget
 
 
@@ -343,7 +344,9 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.referralLettersComboBox.addItem(s)
 
         #-- add a header to the estimates page
-        self.ui.estWidget=estimateWidget.estWidget()
+        #self.ui.estWidget = estimateWidget.estWidget()
+        self.ui.estWidget = estimate_widget.EstimateWidget()
+        
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
         #--history
