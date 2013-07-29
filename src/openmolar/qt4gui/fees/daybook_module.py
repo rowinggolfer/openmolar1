@@ -10,13 +10,17 @@
 update perio dates, xray dates, and write items to the daybook
 '''
 
+import logging
+import re
+
 from openmolar.settings import localsettings
-from openmolar.dbtools.patient_class import currtrtmtTableAtts
+from openmolar.dbtools.patient_class import CURRTRT_ATTS
 from openmolar.dbtools import daybook
 
 from openmolar.qt4gui.fees import fees_module
 from openmolar.qt4gui.printing import bookprint
 
+LOGGER = logging.getLogger("openmolar")
 
 def perioDates(om_gui, arg):
     '''
@@ -53,7 +57,7 @@ def updateDaybook(om_gui):
     feesa = 0         #fee
     feesb = 0         #ptfee
     writeNeeded = False
-    for att in currtrtmtTableAtts:
+    for att in CURRTRT_ATTS:
         if att == "examt" or att[-3:] == "cmp": #be wary of "cmpd"
             newcmp = om_gui.pt.__dict__[att]
             existingcmp = om_gui.pt.dbstate.__dict__[att]
@@ -66,26 +70,36 @@ def updateDaybook(om_gui):
                 if att == "examt":
                     key = "exam"
                 else:
-                    key = att.rstrip("cmp")
-                    ## WHOOPS - this removes the final m from "custom"
-
+                    key = re.sub(".*(cmp)","", att)
+                    
                 if key in daybookdict.keys():
                     daybookdict[key] += "%s "% treatment
                 elif key == "xray" or key == "exam":
                     daybookdict["diagn"] += "%s "% treatment
-                elif key == "custo": #see above
+                elif key == "custom": #see above
                     daybookdict["other"] += "CUSTOM:%s "% treatment
                 else:
                     #--tooth include the key ie ul7 etc...
                     daybookdict["chart"] += "%s %s "% (key.upper(), treatment)
 
                 ##todo - get the real fee if poss!
-                for treat in treatment.strip(" ").split(" "):
-                    fees = fees_module.getFeesFromEst(om_gui, key, treat)
-                    #print "fee attempt '%s' '%s' '%s'"%(key,treat,fees)
+                already_completed = newcmp.split(" ")
+                for treat in treatment.split(" "):
+                    if treat == "":
+                        continue
+                    #todo - this COUNT is a fudge!
+                    already_completed.append(treat)
+                    count = already_completed.count(treat)
+                    
+                    hash_ = hash("%s %s %s"%(key, count, treat))
+                    fees = fees_module.getFeesFromEst(om_gui, hash_)
+                    
                     if fees:
                         feesa += fees[0]
                         feesb += fees[1]
+                    else:
+                        LOGGER.warning(
+                        "daybook module - no fees for '%s' '%s'"% (att, treat))
 
     if writeNeeded:
         if om_gui.pt.dnt2 != 0 and om_gui.pt.cset != "I":
@@ -96,21 +110,21 @@ def updateDaybook(om_gui):
 
         daybook.add(om_gui.pt.serialno, om_gui.pt.cset, dent, trtid,
         daybookdict, feesa, feesb)
-        print "updating pd4"
+        LOGGER.debug("daybook_module - updating pd4")
         om_gui.pt.pd4 = localsettings.currentDay()
 
 def daybookView(om_gui, print_ = False):
-    dent1=str(om_gui.ui.daybookDent1ComboBox.currentText())
-    dent2=str(om_gui.ui.daybookDent2ComboBox.currentText())
-    sdate=om_gui.ui.daybookStartDateEdit.date()
-    edate=om_gui.ui.daybookEndDateEdit.date()
+    dent1 = str(om_gui.ui.daybookDent1ComboBox.currentText())
+    dent2 = str(om_gui.ui.daybookDent2ComboBox.currentText())
+    sdate = om_gui.ui.daybookStartDateEdit.date()
+    edate = om_gui.ui.daybookEndDateEdit.date()
     if sdate > edate:
         om_gui.advise(_("bad date sequence"),1)
         return False
-    html=daybook.details(dent1, dent2, sdate, edate)
+    html = daybook.details(dent1, dent2, sdate, edate)
     om_gui.ui.daybookTextBrowser.setHtml(html)
     if print_:
-        myclass=bookprint.printBook(html)
+        myclass = bookprint.printBook(html)
         myclass.printpage()
 
 

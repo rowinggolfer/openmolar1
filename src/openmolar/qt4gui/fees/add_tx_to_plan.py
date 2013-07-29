@@ -29,12 +29,12 @@ from openmolar.qt4gui.fees import complete_tx
 from openmolar.qt4gui.charts import charts_gui
 
 
-def offerTreatmentItems(om_gui, arg, completedItems=False):
+def offerTreatmentItems(om_gui, tx_list, completedItems=False):
     '''
     offers treatment items passed by argument like ((1,"SP"),)
     '''
     Dialog = QtGui.QDialog(om_gui)
-    dl = addTreat.treatment(Dialog, arg, om_gui.pt)
+    dl = addTreat.treatment(Dialog, tx_list, om_gui.pt)
     if completedItems: #we are adding to the completed treatments, not plan
         dl.completed_messages()
     result =  dl.getInput()
@@ -117,9 +117,8 @@ def otherAdd(om_gui):
         mylist = ()
         itemDict= om_gui.pt.getFeeTable().treatmentCodes
         usercodes = itemDict.keys()
-        usercodes.sort()
-
-        for usercode in usercodes:
+        
+        for usercode in sorted(usercodes):
             mylist += ((0, usercode), )
 
         chosenTreatments = offerTreatmentItems(om_gui, mylist)
@@ -214,7 +213,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
             om_gui.pt.otherpl += "%s "% usercode
             
         om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
-        category = type_, type=usercode, feescale=table.index, 
+        category = type_, type_=usercode, feescale=table.index, 
         fee=fee, ptfee=pt_fee)
 
     if om_gui.ui.tabWidget.currentIndex() != 7:
@@ -248,30 +247,28 @@ def confirmWrongFeeTable(om_gui, suggested, current):
 
 
 
-def itemsPerTooth(tooth,props):
+def itemsPerTooth(tooth, props):
     '''
     usage itemsPerTooth("ul7","MOD,CO,PR ")
     returns (("ul7","MOD,CO"),("ul7","PR"))
     '''
-    treats=[]
-    items=props.strip("() ").split(" ")
+    treats = []
+    items = props.strip("() ").split(" ")
     for item in items:
         #--look for pins and posts
         if re.match(".*,PR.*",item):
             #print "removing .pr"
-            treats.append((tooth,"PR"),)
-            item=item.replace(",PR","")
-        if re.match("CR.*,C[1-4].*",item):
-            posts=re.findall(",C[1-4]",item)
+            treats.append((tooth, "PR"),)
+            item = item.replace(",PR", "")
+        if re.match("CR.*,C[1-4].*", item):
+            posts = re.findall(",C[1-4]", item)
             #print "making Post a separate item"
             for post in posts:
-                treats.append((tooth,"CR%s"%post),)
+                treats.append((tooth, "CR%s"%post),)
             item=item.replace(post,"")
 
         treats.append((tooth, item), )
     return treats
-
-
 
 def chartAdd(om_gui, tooth, properties):
     '''
@@ -307,7 +304,6 @@ def chartAdd(om_gui, tooth, properties):
                 #--tooth may be deciduous
                 toothname = om_gui.pt.chartgrid.get(item[0])
                 om_gui.pt.removeFromEstimate(toothname, item[1])
-                om_gui.advise("removed %s from estimate"% item[1], 1)
     #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
     for tooth, usercode in updatedItems:
 
@@ -320,112 +316,77 @@ def chartAdd(om_gui, tooth, properties):
         om_gui.pt.addToEstimate(1, item, om_gui.pt.dnt1,
             om_gui.pt.cset, toothname, usercode, item_description)
 
-
-def pass_on_estimate_delete(om_gui, est):
+def remove_estimate_item(om_gui, est_item):
     '''
-    the est has been deleted...
+    the estimate_item has been deleted...
     remove from the plan or completed also?
     '''
-    if est.completed == False:
+    
+    if est_item.completed and est_item.ptfee != 0:
+        result = QtGui.QMessageBox.question(om_gui, _("question"),
+        _('<p>Credit Patient %s for undoing this item?</p>')% (
+        localsettings.formatMoney(est_item.ptfee)) ,
+        QtGui.QMessageBox.No|QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes )
+         
+        if result == QtGui.QMessageBox.Yes:
+            fees_module.applyFeeNow(
+                om_gui, 
+                -1 * est_item.ptfee, 
+                est_item.csetype)
+
+    # now remove from the treatment plan
+
+    if est_item.completed == False:
         pl_cmp = "pl"
     else:
         pl_cmp = "cmp"
 
-    try:
-        #-- format the treatment into the notation used in the
-        #-- plan tree widget
-        txtype = "%s - %s"% (est.category,est.type)
-        deleteTxItem(om_gui, pl_cmp, txtype, passedOn=True)
+    pt = om_gui.pt
+    found = False
+    
+    for tx_hash in est_item.tx_hashes:
+        for hash_, att, treat_code in pt.tx_hashes:
+            #print "comparing %s with %s"% (hash_, tx_hash)
+            if hash_ == tx_hash:
+                found = True
+                
+                #print "MATCH!"
+                
+                if est_item.is_exam:
+                    pt.examt = ""
+                    pt.examd = None
+                    pt.addHiddenNote("exam", treat_code, deleteIfPossible=True)
+                    continue
+                
+                completed = pt.__dict__[att + "cmp"].replace(treat_code, "", 1)
+                pt.__dict__[att + "cmp"] = completed
 
-        if est.completed and est.ptfee != 0:
-            result = QtGui.QMessageBox.question(om_gui, _("question"),
-            _('<p>Credit Patient %s for undoing this item?</p>')% (
-            localsettings.formatMoney(est.ptfee)) ,
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes )
-            if result == QtGui.QMessageBox.Yes:
-                fees_module.applyFeeNow(om_gui, -1 * est.ptfee, est.csetype)
+                plan = pt.__dict__[att + "pl"].replace(treat_code, "", 1)
+                pt.__dict__[att + "pl"] = plan
 
-    except ValueError:
-        om_gui.advise (_("couldn't pass on delete message - ") +
-        _('badly formed est.type??? %s')% est.type, 1)
+                if re.findall("[ul][lr][1-8]", att):
+                    charts_gui.updateChartsAfterTreatment(
+                        om_gui, att, plan, completed)
+                    toothName = pt.chartgrid.get(att,"").upper()
+                    if pl_cmp == "cmp":
+                        pt.addHiddenNote("chart_treatment", "%s %s"% (
+                            toothName, treat_code), deleteIfPossible=True)
+                if pl_cmp == "cmp":
+                    if att in ("xray", "perio"):
+                        pt.addHiddenNote("%s_treatment"%att, treat_code,
+                            deleteIfPossible=True)
+                    else:
+                        pt.addHiddenNote("treatment", treat_code,
+                        deleteIfPossible=True)
 
-
-def estimate_item_delete(om_gui, pl_cmp, category, ttype):
-    '''
-    delete an estimate item when user has removed an item of treatment
-    from the plan or completed
-    '''
-
-    result = QtGui.QMessageBox.question(om_gui, _("question"),
-    _("remove %s %s from the estimate?")% (category, ttype),
-    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-    QtGui.QMessageBox.Yes )
-    if result == QtGui.QMessageBox.Yes:
-        removed = False
-        for est in om_gui.pt.estimates:
-            if est.category.lower() == category.lower() and \
-            est.type == ttype and est.completed == ("cmp" == pl_cmp):
-                if om_gui.pt.removeKnownEstimate(est):
-                    removed = True
-                    break
-        if not removed:
-            om_gui.advise("Unable to remove %s %s from estimate, sorry"%(
-            category, ttype), 1)
-        else:
-            om_gui.load_newEstPage()
-
-
-def deleteTxItem(om_gui, pl_cmp, txtype, passedOn=False):
-    '''
-    delete an item of treatment (called by clicking on the treewidget)
-    or passed on from the est widget.
-    '''
-    tup = txtype.split(" - ")
-    try:
-        att = tup[0]
-        treat = tup[1] + " "
-        result = QtGui.QMessageBox.question(om_gui, "question",
-        "remove %s %sfrom this course of treatment?"% (att, treat),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.Yes )
-        if result == QtGui.QMessageBox.Yes:
-            att = att.lower()
-            if re.match("[ul][lr][a-e]", att):
-                att = "%s%s"% (att[:2],"abcde".index(att[2])+1)
-
-            if att == "exam":
-                om_gui.pt.examt = ""
-                om_gui.pt.examd = None
-                om_gui.pt.addHiddenNote("exam", "%s"% tup[1], True)
-                om_gui.updateHiddenNotesLabel()
-            else:
-                if pl_cmp == "pl":
-                    plan = om_gui.pt.__dict__[att + "pl"].replace(
-                    treat, "", 1)#-- only remove 1 occurrence
-                    om_gui.pt.__dict__[att + "pl"] = plan
-                    completed = om_gui.pt.__dict__[att + "cmp"]
-                else:
-                    plan = om_gui.pt.__dict__[att + "pl"]
-                    #om_gui.pt.__dict__[att+"pl"]=plan
-                    completed = om_gui.pt.__dict__[att + "cmp"].replace(
-                    treat, "", 1) #-- only remove 1 occurrence
-
-                    om_gui.pt.__dict__[att + "cmp"] = completed
-
-                #-- now update the charts
-                if re.search("[ul][lr][1-8]", att):
-                    charts_gui.updateChartsAfterTreatment(om_gui, att, plan,
-                    completed)
-
-            om_gui.load_treatTrees()
-            if not passedOn:
-                estimate_item_delete(om_gui, pl_cmp, tup[0], tup[1])
-
-    except Exception, e:
-        om_gui.advise("Error deleting %s from plan<br>"% txtype +
-        "Please remove manually", 1)
-        print "handled this in add_tx_to_plan.deleteTxItem", Exception, e
+    if not found:
+        om_gui.advise (u"%s - %s"%(
+        _("couldn't pass on delete message for"), est_item.description)
+        , 1)
+    else:
+        om_gui.load_treatTrees()
+        om_gui.updateHiddenNotesLabel()
 
 if __name__ == "__main__":
     #-- test code

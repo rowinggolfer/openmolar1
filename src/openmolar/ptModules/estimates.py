@@ -24,8 +24,6 @@ class Estimate(object):
         self.ix = None
         self.serialno = None
         self.courseno = None
-        #self.category = ""
-        #self.type = ""
         self.number = None
         self.itemcode = "4001"
         self.description = None
@@ -35,8 +33,6 @@ class Estimate(object):
         self.csetype = None
         self.dent = None
         self.completed = None
-        #self.carriedover = None
-        #self.linked = False
         
         self.tx_hashes = []
 
@@ -58,17 +54,17 @@ class Estimate(object):
     def toHtmlRow(self):
         return '''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
         <td>%s</td><td>%s</td><td>%s</td>
-        <td>%s</td><td>%s</td><td>%s</td></tr>'''%(
+        <td>%s</td><td>%s</td></tr>'''%(
         localsettings.ops.get(self.dent), self.number, self.itemcode,
-        self.category, self.type,
         self.description, localsettings.formatMoney(self.fee),
         localsettings.formatMoney(self.ptfee),self.feescale,
-        self.csetype, self.completed)
+        self.csetype, self.completed, str(self.tx_hashes))
 
     def htmlHeader(self):
         return '''<tr><th>Dentist</th><th>number</th><th>code</th>
-        <th colspan="2">Type</th><th>Description</th><th>fee</th>
-        <th>pt fee</th><th>feescale</th><th>cset</th><th>completed</th></tr>'''
+        <th>Description</th><th>fee</th>
+        <th>pt fee</th><th>feescale</th><th>cset</th><th>completed</th>
+        <th>Hashes</th></tr>'''
 
     def filteredDescription(self):
         '''
@@ -80,6 +76,9 @@ class Estimate(object):
             retarg = retarg.replace(gunk, "")
         return retarg
 
+    @property
+    def is_exam(self):
+        return bool(re.match("01[012]1$", self.itemcode))
 
 def strip_curlies(description):
     '''
@@ -162,9 +161,9 @@ def recalculate_estimate(pt):
             pt.applyFee(est.ptfee * -1)
 
     pt.estimates = []
-    for number, itemcode, cset, category, type, descrpt, complete \
+    for number, itemcode, cset, category, type_, descrpt, complete \
     in codeList:
-        est = pt.addToEstimate(number, itemcode, dent, cset, category, type,
+        est = pt.addToEstimate(number, itemcode, dent, cset, category, type_,
         descr = descrpt, completed=complete)
         if est.completed:
             pt.applyFee(est.ptfee)
@@ -181,6 +180,7 @@ if __name__ == "__main__":
 
     pt = patient_class.patient(serialno)
     print str(pt.estimates)
-    #print toHtml(pt.estimates,pt.tsfees)
+    for estimate in pt.estimates:
+        print estimate.toHtmlRow().encode("ascii", "replace")
 
     #recalculate_estimate(pt)

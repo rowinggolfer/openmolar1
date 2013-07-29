@@ -12,7 +12,7 @@ a module to search for previous course items
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
-from openmolar.dbtools.patient_class import currtrtmtTableAtts
+from openmolar.dbtools.patient_class import CURRTRT_ATTS
 from openmolar.dbtools import estimatesHistory
 
 uppers = ('ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 
@@ -26,7 +26,7 @@ class txCourse():
     '''
     def __init__(self, vals):
         i = 0
-        for att in currtrtmtTableAtts:
+        for att in CURRTRT_ATTS:
             val = vals[i]
             self.__dict__[att] = val
             i += 1
@@ -140,7 +140,7 @@ def details(sno):
     '''
     db = connect()
     cursor = db.cursor()
-    fields = currtrtmtTableAtts
+    fields = CURRTRT_ATTS
     query = ""
     
     for field in fields:
@@ -179,7 +179,7 @@ def all_details(sno):
     '''
     db = connect()
     cursor = db.cursor()
-    fields = currtrtmtTableAtts
+    fields = CURRTRT_ATTS
     query = ""
     
     for field in fields:

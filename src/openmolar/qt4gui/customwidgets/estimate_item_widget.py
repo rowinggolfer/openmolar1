@@ -14,6 +14,7 @@ and editing treatment costs
 
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.customwidgets.chainLabel import ChainLabel
+from openmolar.qt4gui.customwidgets.confirming_check_box import ConfirmingCheckBox
 
 def decimalise(pence):
     return "%d.%02d"% (pence // 100, pence % 100)
@@ -32,6 +33,8 @@ class EstimateItemWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         
+        self.est_widget = parent
+        
         self.number_label = QtGui.QLabel()
         self.number_label.setFixedWidth(40)
         self.itemCode_label = QtGui.QLabel()
@@ -40,18 +43,21 @@ class EstimateItemWidget(QtGui.QWidget):
         self.cset_lineEdit.setFixedWidth(40)
         self.fee_lineEdit = QtGui.QLineEdit()
         self.fee_lineEdit.setFixedWidth(self.MONEY_WIDTH)
+        self.fee_lineEdit.setAlignment(QtCore.Qt.AlignRight)
         self.chain = ChainLabel()
         self.ptFee_lineEdit = QtGui.QLineEdit()
         self.ptFee_lineEdit.setFixedWidth(self.MONEY_WIDTH)
-        self.completed_checkBox = QtGui.QCheckBox()
+        self.ptFee_lineEdit.setAlignment(QtCore.Qt.AlignRight)
+        self.completed_checkBox = ConfirmingCheckBox(self)
+        self.completed_checkBox.check_first = self.check_first
         self.delete_pushButton = QtGui.QPushButton()
         
         self.validators()
         self.feesLinked = True
-        self.items = []
+        self.est_items = []
         self.itemCode = ""
         self.signals()
-
+        
     def components(self):
         '''
         returns all the sub widgets.
@@ -95,7 +101,7 @@ class EstimateItemWidget(QtGui.QWidget):
         self.delete_pushButton.setIcon(icon)
 
     def addItem(self, item):
-        self.items.append(item)
+        self.est_items.append(item)
         self.itemCode_label.setToolTip(self.toolTip())
         self.loadValues()
 
@@ -104,28 +110,31 @@ class EstimateItemWidget(QtGui.QWidget):
         calculates a string to be added as a tool tip for the widget
         '''
         retarg = '<center>'
-        for item in self.items:
-            retarg += '''Category - '%s'<br /> Type - '%s'<br />
-            ItemCode - '%s'<br />Feescale - %s
-            <br />CSEtype - %s<br />Dent - %s<br />
-            DBindex - %s<hr />'''% (
-            item.category,
-            item.type,
+        for item in self.est_items:
+            retarg += '''ItemCode - '%s'<br />
+            Feescale - %s<br />
+            CSET - %s<br />
+            Dent - %s<br />
+            Hashes - %s<br />
+            DBindex - %s<hr />
+            '''% (
             item.itemcode,
             item.feescale,
             item.csetype,
             item.dent,
+            str(item.tx_hashes),
             item.ix)
         return retarg + "</center>"
 
     def loadValues(self):
         '''
-        loads the values stored in self.items into the graphical widgets
+        loads the values stored in self.est_items into the graphical widgets
         '''
         fee, ptfee, number = 0, 0, 0
-        treatmentPlanned = True
-        treatmentCompleted = True
-        for item in self.items:
+        all_planned = True
+        all_completed = True
+        
+        for item in self.est_items:
             if item.number:
                 number += item.number
             fee += item.fee
@@ -136,25 +145,28 @@ class EstimateItemWidget(QtGui.QWidget):
             self.setCset(item.csetype)
             self.setChain(item.csetype)
             if item.completed:
-                treatmentPlanned=False
+                all_planned = False
             else:
-                treatmentCompleted=False
+                all_completed = False
 
         #-- set partially checked if any doubt
-        if treatmentPlanned:
+        if all_planned:
             self.completed_checkBox.setChecked(False)
-        elif treatmentCompleted:
+        elif all_completed:
             self.completed_checkBox.setCheckState(
             QtCore.Qt.CheckState(QtCore.Qt.Checked))
         else:
             self.completed_checkBox.setCheckState(
             QtCore.Qt.CheckState(QtCore.Qt.PartiallyChecked))
+        
+        if item.is_exam:
+            self.delete_pushButton.hide()
 
         self.setNumber(number)
         self.setFee(fee)
         self.setPtFee(ptfee)
 
-        self.separateIcon(len(self.items)>1)
+        self.separateIcon(len(self.est_items)>1)
             
     def validators(self):
         '''
@@ -176,30 +188,20 @@ class EstimateItemWidget(QtGui.QWidget):
         QtCore.QObject.connect(self.chain,
         QtCore.SIGNAL("chained"), self.linkfees)
 
-        QtCore.QObject.connect(self.delete_pushButton,
-        QtCore.SIGNAL("clicked()"), self.deleteItem)
-
-        QtCore.QObject.connect(self.completed_checkBox,
-        QtCore.SIGNAL("clicked()"), self.completeItem)
-
-        self.cset_lineEdit.connect(self.cset_lineEdit, QtCore.SIGNAL(
-        "textEdited (const QString&)"), self.update_cset)
-
-        self.description_lineEdit.connect(self.description_lineEdit,
-        QtCore.SIGNAL("textEdited (const QString&)"), self.update_descr)
-
-        self.fee_lineEdit.connect(self.fee_lineEdit, QtCore.SIGNAL(
-        "textEdited (const QString&)"), self.update_Fee)
-
-        self.ptFee_lineEdit.connect(self.ptFee_lineEdit, QtCore.SIGNAL(
-        "textEdited (const QString&)"), self.update_ptFee)
-
+        self.delete_pushButton.clicked.connect(self.deleteItem)
+        self.cset_lineEdit.textEdited.connect(self.update_cset)
+        self.description_lineEdit.textEdited.connect(self.update_descr)
+        self.fee_lineEdit.textEdited.connect(self.update_Fee)
+        self.ptFee_lineEdit.textEdited.connect(self.update_ptFee)
+        self.completed_checkBox.new_state_signal.connect(
+                self.completed_state_changed)
+                
     def update_cset(self, arg):
         '''
         csetype has been altered, alter ALL underying data
         (for multiple items)
         '''
-        for item in self.items:
+        for item in self.est_items:
             item.csetype = str(arg)
 
     def update_descr(self, arg):
@@ -207,7 +209,7 @@ class EstimateItemWidget(QtGui.QWidget):
         description has been altered, alter ALL underying data
         (for multiple items)
         '''
-        for item in self.items:
+        for item in self.est_items:
             item.description = str(arg.toAscii()).replace('"', '\"')
 
     def update_Fee(self, arg, userPerforming=True):
@@ -223,8 +225,8 @@ class EstimateItemWidget(QtGui.QWidget):
                 self.update_ptFee(arg, False)
         except ValueError:
             newVal = 0
-        for item in self.items:
-            item.fee = newVal / len(self.items)
+        for item in self.est_items:
+            item.fee = newVal / len(self.est_items)
         if userPerforming:
             self.edited_signal.emit()
 
@@ -241,11 +243,11 @@ class EstimateItemWidget(QtGui.QWidget):
                 self.update_Fee(arg, False)
         except ValueError:
             newVal = 0
-        for item in self.items:
-            item.ptfee = newVal / len(self.items)
+        for item in self.est_items:
+            item.ptfee = newVal / len(self.est_items)
         if userPerforming:
             self.edited_signal.emit()
-        print self.items
+        print self.est_items
 
     def setNumber(self, arg):
         '''
@@ -257,7 +259,7 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         update description label
         '''
-        if len(self.items) > 1:
+        if len(self.est_items) > 1:
             arg += " etc"
         
         self.description_lineEdit.setText(arg)
@@ -302,7 +304,7 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         a slot for the delete button press
         '''
-        if len(self.items)>1:
+        if len(self.est_items)>1:
             #self.splitMultiItemDialog()
             self.separate_signal.emit(self)
         else:
@@ -316,28 +318,30 @@ class EstimateItemWidget(QtGui.QWidget):
         self.fee_lineEdit.setEnabled(state)
         self.ptFee_lineEdit.setEnabled(state)
         self.chain.setEnabled(state)
-        #allow_delete = (len(self.items) == 1 and not
-        #    self.completed_checkBox.isChecked())
-        self.delete_pushButton.setEnabled(state or len(self.items)>1)
+        
+        self.delete_pushButton.setEnabled(state or len(self.est_items)>1)
+   
 
-    def completeItem(self):
+    def check_first(self):
         '''
-        a slot for the checkbox state change
-        should only happen when this is altered by user (not programatically)
+        user has tried to toggle the completed check box
+        perform logic here first to see if he/she is allowed to do this
         '''
+        if len(self.est_items) > 1:
+            return self._multi_item_check()
+        return self.est_widget.allow_check(self)
+
+    def _multi_item_check(self):
         
-        if self.completed_checkBox.checkState() == 0:
-            action = "reverse"
-            complete = False
-        else:
-            #-- the user is "completing"
-            action = "complete"
-            complete = True
+        #allow for tri-state!!
+        complete = not (
+            self.completed_checkBox.checkState() == QtCore.Qt.Checked)
         
-        number = len(self.items)            
+        action = "complete" if complete else "reverse"
+        number = len(self.est_items)
         if number > 1:
             number_of_relevant_items = 0
-            for item in self.items:
+            for item in self.est_items:
                 if item.completed != complete:
                     number_of_relevant_items += 1
             if number_of_relevant_items == 1:
@@ -351,22 +355,27 @@ class EstimateItemWidget(QtGui.QWidget):
             %s %s?'''% (number, number_of_relevant_items, action, mystr),
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes )
-            if result == QtGui.QMessageBox.Yes:
-                self.completed_checkBox.setChecked(complete)
-                self.checked()
-                for item in self.items:
-                    if item.completed  !=  complete:
-                        item.completed = complete
-                        self.completed_signal.emit(item)
-            self.completed_checkBox.setCheckState(
-                QtCore.Qt.CheckState(QtCore.Qt.Checked))
+            if result == QtGui.QMessageBox.No:
+                return False
+        return True
+
+    def completed_state_changed(self, *args):
+        '''
+        a slot for the checkbox state change
+        should only happen when this is altered by user (not programatically)
+        '''
+        print "completed_state_changed %s"% args
+        complete = self.completed_checkBox.isChecked()
         
-        else:
-            self.checked()
-            self.items[0].completed = complete
-            self.completed_signal.emit(self.items[0])
-            self.completed_checkBox.setChecked(complete)
-            
+        if self.est_items[0].is_exam:
+            self.deleteItem()
+            return
+        
+        for item in self.est_items:
+            if item.completed != complete:
+                item.completed = complete
+                self.completed_signal.emit(item)
+
         self.checked() #changes the enabled state of buttons etc...
         self.edited_signal.emit()
 
@@ -388,12 +397,19 @@ class _TestParent(QtGui.QWidget):
         layout.addWidget(widg.completed_checkBox)
         layout.addWidget(widg.delete_pushButton)
         
+        widg.edited_signal.connect(self.sig_catcher)
+        widg.completed_signal.connect(self.sig_catcher)
+    
         self.edited_signal = widg.edited_signal
-        
-if __name__ == "__main__":
-    def sig_catcher(*args):
+    
+    def allow_check(self, est_item_widget):
+        return True
+    
+    def sig_catcher(self, *args):
         '''test procedure'''
         print "signal caught argument=", args
+        
+if __name__ == "__main__":
         
     import sys
 
@@ -402,9 +418,9 @@ if __name__ == "__main__":
     form = QtGui.QMainWindow()
     
     widg = _TestParent()
-    widg.edited_signal.connect(sig_catcher)
     
     form.setCentralWidget(widg)
     form.show()
+    
     
     sys.exit(app.exec_())

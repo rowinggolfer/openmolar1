@@ -49,7 +49,9 @@ INDEX (est_id)
 ]
 
             
-SOURCE_QUERY = "select ix, category, type from newestimates"
+SOURCE_QUERY = '''
+select courseno, ix, category, type from newestimates 
+order by serialno, courseno, category, type'''
 
 DEST_QUERY = '''insert into est_link (est_id, tx_hash) 
     values (%s, %s)'''
@@ -154,13 +156,24 @@ class dbUpdater(QtCore.QThread):
             rows = cursor.fetchall()
             cursor.close()
             cursor = db.cursor()
-            step = 1 / len(rows)      
+            step = 1 / len(rows)     
+            count, prev_courseno, prev_cat_type = 1, 0, "" 
             for i, row in enumerate(rows):
-                ix, category, type_ = row
-                
-                values = (ix, hash("%s %s"% (category, type_)))
+                courseno, ix, category, type_ = row
+                cat_type = "%s%s"% (category, type_) 
+                if courseno != prev_courseno:
+                    count = 1
+                    prev_courseno = courseno
+                elif cat_type != prev_cat_type:
+                    count = 1
+                    prev_cat_type = cat_type
+                else:
+                    count += 1
+                    
+                tx_hash = hash("%s %s %s"% (category, count, type_))
+                values = (ix, tx_hash)
                 cursor.execute(DEST_QUERY, values)
-                if i % 100 == 0:
+                if i % 1000 == 0:
                     self.progressSig(80 * i/len(rows) + 10, 
                     _("transfering data"))
             cursor.close()

@@ -16,6 +16,9 @@ from PyQt4 import QtGui, QtCore
 from estimate_item_widget import decimalise, EstimateItemWidget
 from openmolar.qt4gui.compiled_uis import Ui_estSplitItemsDialog
 
+import logging
+LOGGER = logging.getLogger("openmolar")
+
 class EstimateWidget(QtGui.QWidget):
     '''
     provides a custom widget to view/edit the patient's estimate
@@ -41,6 +44,7 @@ class EstimateWidget(QtGui.QWidget):
         self.expand_all_button = QtGui.QPushButton(_("Expand All"))
         
         self.g_layout = QtGui.QGridLayout(self)
+        self.g_layout.setSpacing(0)
         
         self.g_layout.addWidget(self.number_label, 0, 0)
         self.g_layout.addWidget(self.code_label, 0, 1)
@@ -59,7 +63,7 @@ class EstimateWidget(QtGui.QWidget):
         
         self.fees_total_le = QtGui.QLineEdit()
         self.charges_total_le = QtGui.QLineEdit()
-    
+        
         for le in (
             self.planned_fees_total_le, 
             self.completed_fees_total_le,
@@ -68,7 +72,8 @@ class EstimateWidget(QtGui.QWidget):
             self.planned_charges_total_le,
             self.completed_charges_total_le):
             le.setFixedWidth(EstimateItemWidget.MONEY_WIDTH)
-        
+            le.setAlignment(QtCore.Qt.AlignRight)
+            
         self.planned_total_label = QtGui.QLabel(_("Planned Items Total"))
         self.completed_total_label = QtGui.QLabel(_("Completed Items Total"))
         self.total_label = QtGui.QLabel(_("TOTAL"))
@@ -89,6 +94,7 @@ class EstimateWidget(QtGui.QWidget):
         
         spacer_item = QtGui.QSpacerItem(0, 100)
         self.g_layout.addItem(spacer_item, row+1, 0, 1, 9)
+        self.g_layout.setRowStretch(row+1, 2)
         
         row += 2
         for i, label in enumerate(
@@ -142,7 +148,7 @@ class EstimateWidget(QtGui.QWidget):
         for widg in self.estItemWidgets:
             if widg.itemCode == item.itemcode :
                 if otherTypes:
-                    for exist_item in widg.items:
+                    for exist_item in widg.est_items:
                         if item.description == exist_item.description:                
                             widg.addItem(item)
                             return True
@@ -189,6 +195,7 @@ class EstimateWidget(QtGui.QWidget):
                 self.g_layout.addWidget(widg.ptFee_lineEdit, row, 6)
                 self.g_layout.addWidget(widg.completed_checkBox, row, 7)
                 self.g_layout.addWidget(widg.delete_pushButton, row, 8)
+                self.g_layout.setRowStretch(row, 0)
                 row += 1
                 
         self.add_footer()
@@ -197,7 +204,8 @@ class EstimateWidget(QtGui.QWidget):
         self.updateTotals()
 
     def itemCompletionState(self, item):
-        self.setEstimate(self.ests)
+        LOGGER.debug("itemCompletionState - emmitting signal")
+        #self.setEstimate(self.ests)
         if item.completed:
             self.emit(QtCore.SIGNAL("completedItem"), item)
         else:
@@ -209,6 +217,7 @@ class EstimateWidget(QtGui.QWidget):
         '''
         while self.estItemWidgets != []:
             widg = self.estItemWidgets.pop()
+            widg.completed_checkBox.check_first = None
             for child in widg.components():
                 self.g_layout.removeWidget(child)
                 child.setParent(None)
@@ -219,15 +228,17 @@ class EstimateWidget(QtGui.QWidget):
         '''
         deletes a widget when delete button pressed.
         '''
-        message = "Delete %s %s from estimate?"%(
+        message = u"<p>%s %s %s<br />%s?</p>"%(
+            _("Delete"),
             item_widget.number_label.text(), 
-            item_widget.description_lineEdit.text()
+            item_widget.description_lineEdit.text(),
+            _("from treatment plan and estimate")
             )
 
         if not confirm_first or QtGui.QMessageBox.question(self, "confirm",
         message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes ) == QtGui.QMessageBox.Yes:
-            est = item_widget.items[0]
+            est = item_widget.est_items[0]
             self.ests.remove(est)
             self.emit(QtCore.SIGNAL("deleteItem"), est)
 
@@ -253,7 +264,7 @@ class EstimateWidget(QtGui.QWidget):
                 self.deleteItemWidget(item_widget, confirm_first = False)
             
             # if the mini dialog has only one item.. it is no longer needed!
-            if len(est_item_widget.items) <= 1:
+            if len(est_item_widget.est_items) <= 1:
                 dialog.accept()
             
         dialog = QtGui.QDialog(self)
@@ -262,7 +273,7 @@ class EstimateWidget(QtGui.QWidget):
         ew = EstimateWidget()
         ew.expandAll = True
         ew.deleteItemWidget = delete_item
-        ew.setEstimate(est_item_widget.items, True)
+        ew.setEstimate(est_item_widget.est_items, True)
         dl.scrollArea.setWidget(ew)
 
         #-- this miniDialog emits signals that go uncaught
@@ -284,15 +295,32 @@ class EstimateWidget(QtGui.QWidget):
                 return False
         return True
 
+    
+    def allow_check(self, est_item_widget):
+        '''
+        check to see if est_widget can be checked by the user
+        (in the case of multiple identical treatment items, there is a 
+        specific allowable order)
+        '''
+        print "estimate_widget.allow_check %s"% est_item_widget
+        result = QtGui.QMessageBox.information(self, "info",
+        "just checking before (un)checking!",
+        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel
+        )== QtGui.QMessageBox.Ok
+        
+        return result
 
+    
 if __name__ == "__main__":
     def CatchAllSignals(arg=None):
         '''test procedure'''
         print "signal caught argument=", arg
     
+    LOGGER.setLevel(logging.DEBUG)
+    
     from gettext import gettext as _
     from openmolar.dbtools import patient_class
-    pt = patient_class.patient(11956)
+    pt = patient_class.patient(32908)
 
     app = QtGui.QApplication([])
 
@@ -303,9 +331,9 @@ if __name__ == "__main__":
     
     widg.setEstimate(pt.estimates)
     
-    form.connect(form, QtCore.SIGNAL("completedItem"), CatchAllSignals)
-    form.connect(form, QtCore.SIGNAL("unCompletedItem"), CatchAllSignals)
-    form.connect(form, QtCore.SIGNAL("deleteItem"), CatchAllSignals)
+    form.connect(widg, QtCore.SIGNAL("completedItem"), CatchAllSignals)
+    form.connect(widg, QtCore.SIGNAL("unCompletedItem"), CatchAllSignals)
+    form.connect(widg, QtCore.SIGNAL("deleteItem"), CatchAllSignals)
 
     form.show()
     #QtCore.QTimer.singleShot(2000, widg.clear)

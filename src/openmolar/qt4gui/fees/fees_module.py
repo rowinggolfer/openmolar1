@@ -46,17 +46,15 @@ def updateFees(om_gui):
     if om_gui.pt.serialno != 0:
         om_gui.updateDetails()
 
-def getFeesFromEst(om_gui, tooth, treat):
+def getFeesFromEst(om_gui, hash_):
     '''
     iterate through the ests... find this item
     '''
-    tooth = tooth.rstrip("pl")
-    retarg = (0,0)
     for est in om_gui.pt.estimates:
-        if est.type == treat.strip(" "):
-            retarg = (est.fee, est.ptfee)
-            break
-    return retarg
+        for tx_hash in est.tx_hashes:
+            if hash_ == tx_hash:
+                return (est.fee, est.ptfee)
+    return (0,0)
 
 def takePayment(om_gui):
     '''

@@ -34,7 +34,6 @@ from openmolar.qt4gui.fees import examdialog
 from openmolar.qt4gui.fees import perio_tx_dialog
 from openmolar.qt4gui.fees import add_tx_to_plan
 from openmolar.qt4gui.fees import complete_tx
-from openmolar.qt4gui.fees import manipulate_tx_plan
 from openmolar.qt4gui.fees import daybook_module
 from openmolar.qt4gui.fees import cashbook_module
 from openmolar.qt4gui.fees import fee_table_model
@@ -124,6 +123,8 @@ from openmolar.qt4gui.customwidgets import perioChartWidget
 from openmolar.qt4gui.customwidgets import estimate_widget
 from openmolar.qt4gui.customwidgets import notification_widget
 
+logging.basicConfig(level = logging.INFO)
+LOGGER = logging.getLogger("openmolar")
 
 class OpenmolarGui(QtGui.QMainWindow):
     fee_table_editor = None
@@ -1994,39 +1995,25 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         else:
             complete_tx.chartComplete(self, arg)
 
-    def estwidget_completeItem(self, txtype):
+    def estwidget_completeItem(self, est_item):
         '''
         estwidget has sent a signal that an item is marked as completed.
         '''
-        complete_tx.estwidg_complete(self, txtype)
+        complete_tx.estwidg_complete(self, est_item)
 
-    def estwidget_unCompleteItem(self,txtype):
+    def estwidget_unCompleteItem(self, est_item):
         '''
         estwidget has sent a signal that a previous completed item needs
         reversing
         '''
-        complete_tx.estwidg_unComplete(self, txtype)
+        complete_tx.estwidg_unComplete(self, est_item)
 
-    def estwidget_deleteTxItem(self, argument):
+    def estwidget_deleteTxItem(self, est_item):
         '''
         estWidget has removed an item from the estimates.
         (user clicked on the delete button)
         '''
-        add_tx_to_plan.pass_on_estimate_delete(self, argument)
-
-    def planItemClicked(self,item,col):
-        '''
-        user has clicked on the treatment plan tree
-        col is of no importance as I only have 1 column
-        '''
-        manipulate_tx_plan.planItemChosen(self, item)
-
-    def cmpItemClicked(self,item,col):
-        '''
-        user has double clicked on the treatment competled tree
-        col is of no importance - tree widget has only 1 column.
-        '''
-        manipulate_tx_plan.cmpItemChosen(self, item)
+        add_tx_to_plan.remove_estimate_item(self, est_item)
 
     def makeBadDebt_clicked(self):
         '''
@@ -2700,12 +2687,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
 
-        QtCore.QObject.connect(self.ui.plan_treeWidget, QtCore.SIGNAL(
-        "itemClicked (QTreeWidgetItem *,int)"), self.planItemClicked)
-
-        QtCore.QObject.connect(self.ui.comp_treeWidget, QtCore.SIGNAL(
-        "itemDoubleClicked (QTreeWidgetItem *,int)"), self.cmpItemClicked)
-
     def signals_bulk_mail(self):
         QtCore.QObject.connect(self.ui.bulk_mailings_treeView,
         QtCore.SIGNAL("doubleClicked (const QModelIndex&)"),
@@ -3169,7 +3150,8 @@ def main(app):
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    print "dev mode"
+    LOGGER.setLevel(logging.DEBUG)
+    LOGGER.warning("dev mode in use - verbose logging")
     os.chdir(os.path.expanduser("~"))
     import gettext
     os.environ.setdefault('LANG', 'en')

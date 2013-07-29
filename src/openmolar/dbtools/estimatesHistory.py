@@ -10,13 +10,14 @@ from openmolar.settings import localsettings
 from openmolar.connect import connect
 from openmolar.ptModules import estimates
 
+QUERY = '''SELECT ix, courseno, number, itemcode, description, 
+category, type, fee, ptfee, feescale, csetype, dent, completed
+from newestimates where serialno=%s order by courseno desc, itemcode'''
+
 def getEsts(sno):
     db = connect()
     cursor = db.cursor()
-
-    cursor.execute('''SELECT ix, courseno, number, itemcode, description, 
-category, type, fee, ptfee, feescale, csetype, dent, completed
-from newestimates where serialno=%d order by courseno desc, itemcode'''%sno)
+    cursor.execute(QUERY, (sno,))
     rows = cursor.fetchall()
     cursor.close()
     
@@ -70,5 +71,5 @@ def details(sno):
 if __name__ == "__main__":
     localsettings.initiate()
     print'<html><body>'
-    print details(707)
+    print details(707).encode("ascii", "replace")
     print "</body></html>"
