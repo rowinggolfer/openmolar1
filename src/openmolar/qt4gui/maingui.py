@@ -1389,14 +1389,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.detailsBrowser.setHtml(details)
         self.ui.detailsBrowser.update()
         self.ui.closeTx_pushButton.setText(_("Close Course"))
-
+        
         self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
-        self.ui.newCourse_pushButton.setEnabled(not self.pt.underTreatment)
         self.ui.estimate_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.completed_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.planDetails_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.closeTx_pushButton.setEnabled(self.pt.underTreatment)
-
+        
         if self.pt.underTreatment:
             self.ui.estimate_groupBox.setTitle(
             "Current Course- started %s"% (
@@ -1903,12 +1902,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         have been clicked.
         '''
         fees_module.expandFees(self)
-
-    def newCourse_pushButton_clicked(self):
-        '''
-        user has clicked on the new course button
-        '''
-        course_module.newCourseNeeded(self)
 
     def closeTx_pushButton_clicked(self):
         '''
@@ -2455,9 +2448,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.exampushButton,
         QtCore.SIGNAL("clicked()"), self.showExamDialog)
 
-        QtCore.QObject.connect(self.ui.examTxpushButton,
-        QtCore.SIGNAL("clicked()"), self.showExamDialog)
-
         QtCore.QObject.connect(self.ui.hygWizard_pushButton,
         QtCore.SIGNAL("clicked()"), self.showHygDialog)
 
@@ -2648,9 +2638,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def signals_estimates(self):
         #Estimates and course ManageMent
-        QtCore.QObject.connect(self.ui.newCourse_pushButton,
-        QtCore.SIGNAL("clicked()"), self.newCourse_pushButton_clicked)
-
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
         QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
 

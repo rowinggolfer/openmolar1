@@ -63,7 +63,7 @@
          <x>0</x>
          <y>0</y>
          <width>899</width>
-         <height>596</height>
+         <height>598</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -463,8 +463,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>673</width>
-                      <height>467</height>
+                      <width>678</width>
+                      <height>477</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -1722,8 +1722,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>655</width>
-                      <height>425</height>
+                      <width>660</width>
+                      <height>423</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout">
@@ -2015,7 +2015,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>675</width>
+                      <width>680</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2307,7 +2307,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>699</width>
-                      <height>463</height>
+                      <height>456</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_4">
@@ -2673,7 +2673,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>469</width>
-                      <height>376</height>
+                      <height>377</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2860,6 +2860,81 @@
                    </layout>
                   </widget>
                  </item>
+                 <item row="1" column="0">
+                  <widget class="QGroupBox" name="planDetails_groupBox">
+                   <property name="title">
+                    <string>Details</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_5">
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>6</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>6</number>
+                    </property>
+                    <item>
+                     <widget class="QTreeWidget" name="plan_treeWidget">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="alternatingRowColors">
+                       <bool>true</bool>
+                      </property>
+                      <property name="sortingEnabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="animated">
+                       <bool>true</bool>
+                      </property>
+                      <attribute name="headerShowSortIndicator" stdset="0">
+                       <bool>false</bool>
+                      </attribute>
+                      <column>
+                       <property name="text">
+                        <string>Plan</string>
+                       </property>
+                      </column>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QTreeWidget" name="comp_treeWidget">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="alternatingRowColors">
+                       <bool>true</bool>
+                      </property>
+                      <property name="sortingEnabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="animated">
+                       <bool>true</bool>
+                      </property>
+                      <attribute name="headerShowSortIndicator" stdset="0">
+                       <bool>false</bool>
+                      </attribute>
+                      <column>
+                       <property name="text">
+                        <string>Completed</string>
+                       </property>
+                      </column>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
                  <item row="0" column="1" rowspan="2">
                   <widget class="QScrollArea" name="scrollArea">
                    <property name="sizePolicy">
@@ -2881,9 +2956,9 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>0</y>
-                      <width>220</width>
-                      <height>514</height>
+                      <y>-104</y>
+                      <width>225</width>
+                      <height>479</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -2892,7 +2967,7 @@
                        <property name="title">
                         <string>Course Management</string>
                        </property>
-                       <layout class="QGridLayout" name="gridLayout_35">
+                       <layout class="QGridLayout" name="gridLayout_12">
                         <item row="0" column="0">
                          <widget class="QLabel" name="label_22">
                           <property name="text">
@@ -2914,13 +2989,6 @@
                          </widget>
                         </item>
                         <item row="1" column="0" colspan="2">
-                         <widget class="QPushButton" name="newCourse_pushButton">
-                          <property name="text">
-                           <string>New Course Of Treatment</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="2" column="0" colspan="2">
                          <widget class="QPushButton" name="closeTx_pushButton">
                           <property name="enabled">
                            <bool>true</bool>
@@ -3002,25 +3070,6 @@ Note - this will not remove items which are currently there. </string>
                         <string>Treatment Planning</string>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_2">
-                        <item>
-                         <widget class="QPushButton" name="examTxpushButton">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Perform Exam</string>
-                          </property>
-                         </widget>
-                        </item>
                         <item>
                          <widget class="QPushButton" name="perioTxpushButton">
                           <property name="sizePolicy">
@@ -3129,86 +3178,31 @@ Note - this will not remove items which are currently there. </string>
                           </property>
                          </widget>
                         </item>
+                        <item>
+                         <spacer name="verticalSpacer_2">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="pushButton_2">
+                          <property name="text">
+                           <string>Advanced Tx Planning</string>
+                          </property>
+                         </widget>
+                        </item>
                        </layout>
                       </widget>
                      </item>
                     </layout>
                    </widget>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QGroupBox" name="planDetails_groupBox">
-                   <property name="title">
-                    <string>Details</string>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_5">
-                    <property name="leftMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>6</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>6</number>
-                    </property>
-                    <item>
-                     <widget class="QTreeWidget" name="plan_treeWidget">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="alternatingRowColors">
-                       <bool>true</bool>
-                      </property>
-                      <property name="sortingEnabled">
-                       <bool>true</bool>
-                      </property>
-                      <property name="animated">
-                       <bool>true</bool>
-                      </property>
-                      <attribute name="headerShowSortIndicator" stdset="0">
-                       <bool>false</bool>
-                      </attribute>
-                      <column>
-                       <property name="text">
-                        <string>Plan</string>
-                       </property>
-                      </column>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QTreeWidget" name="comp_treeWidget">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="alternatingRowColors">
-                       <bool>true</bool>
-                      </property>
-                      <property name="sortingEnabled">
-                       <bool>true</bool>
-                      </property>
-                      <property name="animated">
-                       <bool>true</bool>
-                      </property>
-                      <attribute name="headerShowSortIndicator" stdset="0">
-                       <bool>false</bool>
-                      </attribute>
-                      <column>
-                       <property name="text">
-                        <string>Completed</string>
-                       </property>
-                      </column>
-                     </widget>
-                    </item>
-                   </layout>
                   </widget>
                  </item>
                 </layout>
@@ -3231,8 +3225,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>657</width>
-                      <height>387</height>
+                      <width>675</width>
+                      <height>377</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -3667,8 +3661,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>112</width>
-                     <height>118</height>
+                     <width>111</width>
+                     <height>119</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -5063,7 +5057,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
      <x>0</x>
      <y>0</y>
      <width>899</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
@@ -5335,7 +5329,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>perioChartDateComboBox</tabstop>
   <tabstop>dnt1comboBox</tabstop>
   <tabstop>scrollArea</tabstop>
-  <tabstop>examTxpushButton</tabstop>
   <tabstop>perioTxpushButton</tabstop>
   <tabstop>xrayTxpushButton</tabstop>
   <tabstop>dentureTxpushButton</tabstop>
@@ -5377,7 +5370,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>bpeDateComboBox</tabstop>
   <tabstop>perioChartData_scrollArea</tabstop>
   <tabstop>contract_tabWidget</tabstop>
-  <tabstop>newCourse_pushButton</tabstop>
   <tabstop>closeTx_pushButton</tabstop>
   <tabstop>notesPrintButton</tabstop>
   <tabstop>loadAccountsTable_pushButton</tabstop>
