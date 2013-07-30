@@ -30,8 +30,6 @@ from openmolar.qt4gui import colours
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import fees_module
 from openmolar.qt4gui.fees import course_module
-from openmolar.qt4gui.fees import examdialog
-from openmolar.qt4gui.fees import perio_tx_dialog
 from openmolar.qt4gui.fees import add_tx_to_plan
 from openmolar.qt4gui.fees import complete_tx
 from openmolar.qt4gui.fees import daybook_module
@@ -54,11 +52,12 @@ from openmolar.qt4gui.compiled_uis import Ui_showMemo
 
 
 #--custom dialog modules
+from openmolar.qt4gui.dialogs.exam_wizard import ExamWizard
+from openmolar.qt4gui.dialogs.hygTreatWizard import HygTreatWizard
 from openmolar.qt4gui.dialogs import medNotes
 from openmolar.qt4gui.dialogs import saveDiscardCancel
 from openmolar.qt4gui.dialogs import newBPE
 from openmolar.qt4gui.dialogs import saveMemo
-from openmolar.qt4gui.dialogs import save_pttask
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs import choose_tooth_dialog
@@ -77,6 +76,9 @@ from openmolar.qt4gui.dialogs.auto_address_dialog import AutoAddressDialog
 from openmolar.qt4gui.dialogs.family_manage_dialog import FamilyManageDialog
 
 from openmolar.qt4gui.dialogs.nhs_forms_config_dialog import NHSFormsConfigDialog
+from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog import \
+    AdvancedTxPlanningDialog
+
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
 from openmolar.qt4gui.tools import recordtools
@@ -1331,12 +1333,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.advise(_("problem getting a memo %s")%e,2)
             pass
 
-    def newPtTask(self):
-        Dialog = QtGui.QDialog(self)
-        dl = save_pttask.Ui_Dialog(Dialog, self.pt.serialno)
-        if not dl.getInput():
-            self.advise("task not saved", 1)
-
     def newCustomMemo(self):
         Dialog = QtGui.QDialog(self)
         dl = saveMemo.Ui_Dialog(Dialog, self.pt.serialno)
@@ -1921,15 +1917,17 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         call a smart dialog which will perform an exam on the current patient
         '''
-        examdialog.performExam(self)
+        dl = ExamWizard(self)
+        dl.perform_exam()
 
     def showHygDialog(self):
         '''
         call a smart dialog which will perform hygenist treatment
         on the current patient
         '''
-        perio_tx_dialog.performPerio(self)
-
+        dl = HygTreatWizard(self)
+        dl.perform_tx()
+        
     def addXrayItems(self):
         '''
         add Xray items to the treatment plan
@@ -2466,9 +2464,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.memos_pushButton,
         QtCore.SIGNAL("clicked()"), self.newCustomMemo)
 
-        QtCore.QObject.connect(self.ui.tasks_pushButton,
-        QtCore.SIGNAL("clicked()"), self.newPtTask)
-
         QtCore.QObject.connect(self.ui.childsmile_button,
         QtCore.SIGNAL("clicked()"), self.childsmile_button_clicked)
 
@@ -2673,6 +2668,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
+
+        self.ui.advanced_tx_planning_button.clicked.connect(
+            self.advanced_tx_planning)
 
     def signals_bulk_mail(self):
         QtCore.QObject.connect(self.ui.bulk_mailings_treeView,
@@ -3109,6 +3107,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.advise(_("Reloading feescales from database"))
         localsettings.loadFeeTables()
         fees_module.loadFeesTable(self)
+        
+    def advanced_tx_planning(self):
+        dl = AdvancedTxPlanningDialog(self)
+        dl.exec_()
         
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

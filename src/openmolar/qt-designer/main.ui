@@ -3192,7 +3192,7 @@ Note - this will not remove items which are currently there. </string>
                          </spacer>
                         </item>
                         <item>
-                         <widget class="QPushButton" name="pushButton_2">
+                         <widget class="QPushButton" name="advanced_tx_planning_button">
                           <property name="text">
                            <string>Advanced Tx Planning</string>
                           </property>

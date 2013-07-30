@@ -5,10 +5,9 @@
     much of this work will be on the database itself, 
     but the codebase will also need tweaking
     
-    NEW BUGS
-      -  xray add dialog adds too many items to the plan (est correct)
-      -  multiple identical treatments (eg 4 x sp) 
-         fails when completing via est widget
+    estimates.recalculate_estimate needs to be rewritten
+    undoing multiple identical items is problematic (hence the 
+        "just checking" placeholder currently in use.)
       
 0.4.09
     as a result of 0.4.08 - the deepcopying of the patient class finally

@@ -24,7 +24,7 @@ class Estimate(object):
         self.ix = None
         self.serialno = None
         self.courseno = None
-        self.number = None
+        self.number = 1
         self.itemcode = "4001"
         self.description = None
         self.fee = None
@@ -153,21 +153,14 @@ def recalculate_estimate(pt):
     if pt.dnt2 and pt.dnt2 != "":
         dent = pt.dnt2
 
-    codeList=[]
     for est in pt.estimates:
-        codeList.append((est.number, est.itemcode, est.csetype,
-        est.category, est.type, est.description , est.completed))
         if est.completed:
             pt.applyFee(est.ptfee * -1)
 
     pt.estimates = []
-    for number, itemcode, cset, category, type_, descrpt, complete \
-    in codeList:
-        est = pt.addToEstimate(number, itemcode, dent, cset, category, type_,
-        descr = descrpt, completed=complete)
-        if est.completed:
-            pt.applyFee(est.ptfee)
-
+    
+    ##TODO - recalculate everything from the treatment plan!
+    
     return True
 
 if __name__ == "__main__":

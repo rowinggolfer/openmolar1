@@ -330,13 +330,13 @@ class FeeTable(object):
         '''
         logging.info("getToothCode for %s%s"% (tooth, arg))
             
-        for keys in self.chartMultiRegexCodes:
+        for key in self.chartMultiRegexCodes:
             #has to match ALL regexes 
             match = True
-            for regex in keys:
+            for regex in key:
                 match = match and regex.match(tooth+arg)
             if match:
-                return self.chartMultiRegexCodes[keys]
+                return self.chartMultiRegexCodes[key]
         
         for key in self.chartRegexCodes:
             if key.match(tooth+arg):
@@ -355,7 +355,7 @@ class FeeTable(object):
         the table stores it's own usercodes now.
         return the itemcode associated with it, otherwise, return "4001"
         '''
-        return self.treatmentCodes.get(arg,"4001")
+        return self.treatmentCodes.get(arg, "4001")
 
 
     def hasItemCode(self, arg):
@@ -419,7 +419,6 @@ where conditions are %s and %s similar items already in the estimate'''% (
             return self.pl_cmp_Categories[i]
         except IndexError:
             return "other"
-
 
     def userCodeWizard(self, usercode):
         '''

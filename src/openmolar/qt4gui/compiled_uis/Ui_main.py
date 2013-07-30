@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
 #
-# Created: Mon Jul 29 12:38:32 2013
+# Created: Tue Jul 30 22:54:10 2013
 #      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -1336,9 +1336,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.customTx_pushButton)
         spacerItem12 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem12)
-        self.pushButton_2 = QtGui.QPushButton(self.groupBox_4)
-        self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
-        self.verticalLayout_2.addWidget(self.pushButton_2)
+        self.advanced_tx_planning_button = QtGui.QPushButton(self.groupBox_4)
+        self.advanced_tx_planning_button.setObjectName(_fromUtf8("advanced_tx_planning_button"))
+        self.verticalLayout_2.addWidget(self.advanced_tx_planning_button)
         self.verticalLayout_9.addWidget(self.groupBox_4)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_4)
         self.gridLayout_21.addWidget(self.scrollArea, 0, 1, 2, 1)
@@ -2526,7 +2526,7 @@ class Ui_MainWindow(object):
         self.OrthoTxpushButton.setText(_translate("MainWindow", "Ortho", None))
         self.otherTxpushButton.setText(_translate("MainWindow", "Other Tx", None))
         self.customTx_pushButton.setText(_translate("MainWindow", "Add Custom Item", None))
-        self.pushButton_2.setText(_translate("MainWindow", "Advanced Tx Planning", None))
+        self.advanced_tx_planning_button.setText(_translate("MainWindow", "Advanced Tx Planning", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_patient_estimate), _translate("MainWindow", "Estimate/Plan", None))
         self.groupBox_11.setTitle(_translate("MainWindow", "Choose Data", None))
         self.label_41.setText(_translate("MainWindow", "Chart Date", None))

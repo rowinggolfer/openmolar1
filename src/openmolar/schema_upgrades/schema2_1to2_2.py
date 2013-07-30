@@ -51,7 +51,7 @@ INDEX (est_id)
             
 SOURCE_QUERY = '''
 select courseno, ix, category, type from newestimates 
-order by serialno, courseno, category, type'''
+order by serialno, courseno, category, completed desc, type'''
 
 DEST_QUERY = '''insert into est_link (est_id, tx_hash) 
     values (%s, %s)'''

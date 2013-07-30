@@ -34,29 +34,28 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.label.setText("%s (%s)"% (self.description, self.itemcode))
 
         
-class treatment(Ui_addTreatment.Ui_Dialog):
+class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
     '''
     a custom dialog to offer a range of treatments for selection
     '''
-    def __init__(self, dialog, itemTups, pt):
-        
-        self.setupUi(dialog)
-        self.dialog = dialog
+    def __init__(self, usercodes, pt, parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.setupUi(self)
         self.items = []
-        for n_items, usercode in itemTups:
+        for usercode in usercodes:
             item = pt.getFeeTable().getItemCodeFromUserCode(usercode)
             item_description = pt.getFeeTable().getItemDescription(item)
             
-            self.items.append((n_items, item, item_description,usercode))
+            self.items.append((0, item, item_description,usercode))
         self.pt = pt
         self.showItems()
         
-    def completed_messages(self):
+    def use_completed_messages(self):
         '''
         if called, the dialog shows different messages, indicating to the
         users that treatment will be COMPLETED upon entry
         '''
-        self.dialog.setWindowTitle(_("Complete Treatments"))
+        self.setWindowTitle(_("Complete Treatments"))
         self.label.setText(_("What treatment has been performed?"))
         
     def showItems(self):
@@ -75,34 +74,28 @@ class treatment(Ui_addTreatment.Ui_Dialog):
             
     def getInput(self):
         '''
-        returns a tuple of tuples (usercode, itemcode, description) eg.
-        (("CE", "0101", "clinical exam"),)
+        yields selected usercodes (allowing multiple selections)
         '''
-        if self.dialog.exec_():
+        if self.exec_():
             retarg = ()
-            for itemW in self.itemWidgets:
-                number = itemW.spinBox.value()
-                ##TODO - this needs to be modded
-                #should be along the lines of
+            for item_widg in self.itemWidgets:
+                number = item_widg.spinBox.value()
                 if number != 0:
                     for n in range(number):
-                        retarg += ((itemW.usercode, itemW.itemcode, 
-                        itemW.description), )
-            return retarg
-        else:
-            return()
-
+                        yield item_widg.usercode
+        
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
     localsettings.loadFeeTables()
     app = QtGui.QApplication(sys.argv)
-    Dialog = QtGui.QDialog()
-    
+
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(11956)
-    items = [(0,"CE"),(0,"M"),(1,"SP")]
-    ui = treatment(Dialog, items, pt)
-    ui.completed_messages()
-    print ui.getInput()
+    items = ("CE","M","SP")
+    
+    dl = AddTreatmentDialog(items, pt)
+    dl.use_completed_messages()
+    for tx in dl.getInput():
+        print "chosen item = %s"% tx
     

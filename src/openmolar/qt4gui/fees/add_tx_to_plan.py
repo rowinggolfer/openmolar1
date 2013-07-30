@@ -14,13 +14,15 @@ to the treatment plan
 from __future__ import division
 
 import re
+import logging
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_customTreatment
 from openmolar.qt4gui.compiled_uis import Ui_feeTableTreatment
 
-from openmolar.qt4gui.dialogs import addTreat
+from openmolar.qt4gui.dialogs.add_treatment_dialog import AddTreatmentDialog
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import course_module
 from openmolar.qt4gui.fees import fees_module
@@ -28,48 +30,57 @@ from openmolar.qt4gui.fees import complete_tx
 
 from openmolar.qt4gui.charts import charts_gui
 
+LOGGER = logging.getLogger("openmolar")
 
-def offerTreatmentItems(om_gui, tx_list, completedItems=False):
+def offerTreatmentItems(om_gui, tx_list, completing=False):
     '''
     offers treatment items passed by argument like ((1,"SP"),)
     '''
-    Dialog = QtGui.QDialog(om_gui)
-    dl = addTreat.treatment(Dialog, tx_list, om_gui.pt)
-    if completedItems: #we are adding to the completed treatments, not plan
-        dl.completed_messages()
-    result =  dl.getInput()
-    return result
+    dl = AddTreatmentDialog(tx_list, om_gui.pt, om_gui)
+    if completing: #we are adding to the completed treatments, not plan
+        dl.use_completed_messages()
+    return dl.getInput()
+
+def perioAdd(om_gui):
+    '''
+    add perio items
+    '''
+    LOGGER.debug("add_tx_to_plan.perioAdd")
+    pt = om_gui.pt
+    if not course_module.newCourseNeeded(om_gui):
+        if "N" in pt.cset:
+            mylist = ("SP", "SP+")
+        else:
+            mylist = ("SP-", "SP", "SP+")
+        chosenTreatments = offerTreatmentItems(om_gui, mylist)
+        LOGGER.debug("perioAdd chosen treatments %s"% str(chosenTreatments))
+        for usercode in chosenTreatments:
+            pt.periopl += "%s "% usercode
+            
+            perio_txs = "%s %s"%(pt.periocmp, pt.periopl)
+            n = perio_txs.split(" ").count(usercode)
+            tx_hash = str(hash("perio %s %s"% (n, usercode)))
+            dentid = om_gui.pt.course_dentist
+            
+            pt.add_to_estimate(usercode, dentid, [tx_hash])
+
+        om_gui.load_treatTrees()
+        om_gui.load_newEstPage()
+
 
 def xrayAdd(om_gui, complete=False):
     '''
     add xray items
     '''
+
+    pt = om_gui.pt
     if course_module.newCourseNeeded(om_gui):
         return
-    mylist = ((0, "S"), (0, "M"), (0, "P"))
+    mylist = ("S", "M", "P")
     chosenTreatments = offerTreatmentItems(om_gui, mylist, complete)
     if chosenTreatments == ():
         return
-
-    added = []
-    for usercode, itemcode, description in chosenTreatments:
-        foundInEsts = False
-        if complete:
-            for est in om_gui.pt.estimates:
-                if (est.itemcode == itemcode and est.completed == False
-                and est.number == 1 and not est in added):
-                    foundInEsts = True
-                    added.append(est)
-                    break
-
-        if not foundInEsts:
-            om_gui.pt.xraypl += "%s "% usercode
-
-            est = om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
-            om_gui.pt.cset, "xray", usercode, completed=False)
-
-            added.append(est)
-
+    
     if not complete:
         input = QtGui.QMessageBox.question(om_gui, _("question"),
         _("Were these xrays taken today?"),
@@ -77,10 +88,21 @@ def xrayAdd(om_gui, complete=False):
         QtGui.QMessageBox.No )
         if input == QtGui.QMessageBox.Yes:
             complete = True
-
-    if complete:
-        for est in added:
-            est.completed = True
+    
+    added = []
+    for usercode in chosenTreatments:
+        
+        pt.xraypl += "%s "% usercode
+        
+        xray_txs = "%s %s"%(pt.xraycmp, pt.xraypl)
+        n = xray_txs.split(" ").count(usercode)
+        tx_hash = str(hash("xray %s %s"% (n, usercode)))
+        dentid = om_gui.pt.course_dentist
+        
+        est = pt.add_to_estimate(usercode, dentid, [tx_hash], 
+            completed=complete)
+        
+        if complete:
             complete_tx.estwidg_complete(om_gui, est)
 
     if om_gui.ui.tabWidget.currentIndex() == 7: #estimates page
@@ -89,71 +111,67 @@ def xrayAdd(om_gui, complete=False):
     else:
         om_gui.load_clinicalSummaryPage()
 
-
-
-def perioAdd(om_gui):
-    '''
-    add perio items
-    '''
-    if not course_module.newCourseNeeded(om_gui):
-        if "N" in om_gui.pt.cset:
-            mylist = ((0, "SP"), (0, "SP+"))
-        else:
-            mylist = ((0, "SP-"), (0, "SP"), (0, "SP+"))
-        chosenTreatments = offerTreatmentItems(om_gui, mylist)
-        for usercode, itemcode, description in chosenTreatments:
-            om_gui.pt.periopl += "%s "% usercode
-            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
-            om_gui.pt.cset, "perio", usercode)
-        om_gui.load_treatTrees()
-        om_gui.load_newEstPage()
-
-
 def otherAdd(om_gui):
     '''
     add 'other' items
     '''
-    if not course_module.newCourseNeeded(om_gui):
-        mylist = ()
-        itemDict= om_gui.pt.getFeeTable().treatmentCodes
-        usercodes = itemDict.keys()
+    if course_module.newCourseNeeded(om_gui):
+        return
+
+    pt = om_gui.pt    
+    mylist = ()
+    itemDict= om_gui.pt.getFeeTable().treatmentCodes
+    usercodes = itemDict.keys()
+    
+    chosenTreatments = offerTreatmentItems(om_gui, sorted(usercodes))
+    for usercode in chosenTreatments:
+            
+        pt.otherpl += "%s "% usercode
         
-        for usercode in sorted(usercodes):
-            mylist += ((0, usercode), )
+        other_txs = "%s %s"%(pt.othercmp, pt.otherpl)
+        n = other_txs.split(" ").count(usercode)
+        tx_hash = str(hash("other %s %s"% (n, usercode)))
+        dentid = om_gui.pt.course_dentist
+        
+        pt.add_to_estimate(usercode, dentid, [tx_hash])
 
-        chosenTreatments = offerTreatmentItems(om_gui, mylist)
-        for usercode, itemcode, description in chosenTreatments:
-            om_gui.pt.otherpl += "%s "% usercode
-            om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
-            om_gui.pt.cset, "other", usercode)
-
-        om_gui.load_newEstPage()
-        om_gui.load_treatTrees()
-
+    om_gui.load_newEstPage()
+    om_gui.load_treatTrees()
 
 def customAdd(om_gui):
     '''
     add 'custom' items
     '''
-    if not course_module.newCourseNeeded(om_gui):
-        Dialog = QtGui.QDialog(om_gui)
-        dl = Ui_customTreatment.Ui_Dialog()
-        dl.setupUi(Dialog)
-        if Dialog.exec_():
-            no = dl.number_spinBox.value()
-            descr = unicode(dl.description_lineEdit.text(),"ascii","ignore")
+    if course_module.newCourseNeeded(om_gui):
+        return
 
-            if descr == "":
-                descr = "??"
-            usercode = str (descr.replace(" ", "_"))[:40]
+    pt = om_gui.pt    
+    Dialog = QtGui.QDialog(om_gui)
+    dl = Ui_customTreatment.Ui_Dialog()
+    dl.setupUi(Dialog)
+    if Dialog.exec_():
+        no = dl.number_spinBox.value()
+        descr = unicode(dl.description_lineEdit.text(), "ascii", "ignore")
 
-            fee = int(dl.fee_doubleSpinBox.value() * 100)
+        if descr == "":
+            descr = "??"
+        usercode = str (descr.replace(" ", "_"))[:20]
 
-            om_gui.pt.custompl += "%s "% usercode
-            om_gui.pt.addToEstimate(no, "4002", om_gui.pt.dnt1,
-            "P", "custom", usercode, descr, fee, fee, )
-            om_gui.load_newEstPage()
-            om_gui.load_treatTrees()
+        fee = int(dl.fee_doubleSpinBox.value() * 100)
+        
+        for i in range(no):
+            pt.custompl += "%s "% usercode
+        
+            custom_txs = "%s %s"%(pt.customcmp, pt.custompl)
+            n = custom_txs.split(" ").count(usercode)
+            tx_hash = str(hash("custom %s %s"% (n, usercode)))
+            dentid = om_gui.pt.course_dentist
+            
+            pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode="4002",
+            csetype="P", descr=descr, fee=fee, ptfee=fee)
+        
+        om_gui.load_newEstPage()
+        om_gui.load_treatTrees()
 
 
 def fromFeeTable(om_gui, fee_item, sub_index):
@@ -245,77 +263,63 @@ def confirmWrongFeeTable(om_gui, suggested, current):
     if input == QtGui.QMessageBox.Yes:
         return suggestedTable
 
-
-
-def itemsPerTooth(tooth, props):
-    '''
-    usage itemsPerTooth("ul7","MOD,CO,PR ")
-    returns (("ul7","MOD,CO"),("ul7","PR"))
-    '''
-    treats = []
-    items = props.strip("() ").split(" ")
-    for item in items:
-        #--look for pins and posts
-        if re.match(".*,PR.*",item):
-            #print "removing .pr"
-            treats.append((tooth, "PR"),)
-            item = item.replace(",PR", "")
-        if re.match("CR.*,C[1-4].*", item):
-            posts = re.findall(",C[1-4]", item)
-            #print "making Post a separate item"
-            for post in posts:
-                treats.append((tooth, "CR%s"%post),)
-            item=item.replace(post,"")
-
-        treats.append((tooth, item), )
-    return treats
-
-def chartAdd(om_gui, tooth, properties):
+def chartAdd(om_gui, tooth, new_string):
     '''
     add treatment to a toothtreatment to a tooth
     '''
-    #-- let's cite this eample to show how this funtion works
-    #-- assume the UR1 has a root treatment and a palatal fill.
-    #-- user enters UR1 RT P,CO
+    if course_module.newCourseNeeded(om_gui):
+        return
 
-    #-- what is the current item in ur1pl?
-    existing = om_gui.pt.__dict__[tooth + "pl"]
+    pt = om_gui.pt    
+    
+    existing = pt.__dict__[tooth + "pl"]
 
-    om_gui.pt.__dict__[tooth + "pl"] = properties
-    #--update the patient!!
-    om_gui.ui.planChartWidget.setToothProps(tooth, properties)
+    pt.__dict__[tooth + "pl"] = new_string
+    om_gui.ui.planChartWidget.setToothProps(tooth, new_string)
 
-    #-- new items are input - existing.
-    #-- split our string into a list of treatments.
-    #-- so UR1 RT P,CO -> [("UR1","RT"),("UR1","P,CO")]
-    #-- this also separates off any postsetc..
-    #-- and bridge brackets
-
-    existingItems = itemsPerTooth(tooth, existing)
-    updatedItems = itemsPerTooth(tooth, properties)
-
-    #check to see if treatments have been removed
-
-    for item in existingItems:
-        if item in updatedItems:
-            updatedItems.remove(item)
-        else:
-            if item[1] != "":
-                #--tooth may be deciduous
-                toothname = om_gui.pt.chartgrid.get(item[0])
-                om_gui.pt.removeFromEstimate(toothname, item[1])
-    #-- so in our exmample, items=[("UR1","RT"),("UR1","P,CO")]
-    for tooth, usercode in updatedItems:
-
-        #--tooth may be deciduous
-        toothname = om_gui.pt.chartgrid.get(tooth)
-
-        item, item_description = om_gui.pt.getFeeTable().toothCodeWizard(
-            toothname, usercode)
-
-        om_gui.pt.addToEstimate(1, item, om_gui.pt.dnt1,
-            om_gui.pt.cset, toothname, usercode, item_description)
-
+    existing_usercodes = existing.split(" ")
+    updated_usercodes = new_string.split(" ")
+    #--tooth may be deciduous
+    tooth_name = pt.chartgrid.get(tooth)
+    
+    other_txs = "%s %s"%(pt.__dict__["%scmp"% tooth], existing)
+    other_txs = other_txs.split(" ")
+        
+    for usercode in existing_usercodes:
+        if usercode in updated_usercodes:
+            updated_usercodes.remove(usercode)
+        elif usercode != "":
+            n = other_txs.count(usercode)
+            tx_hash = str(hash("%s %s %s"% (tooth, n, usercode)))
+            for est in pt.estimates:
+                if tx_hash in est.tx_hashes:
+                    om_gui.advise("<p>%s <i>%s</i> %s</p>"% (
+                        _("Removing"), est.description, _("from estimate")))
+                    pt.estimates.remove(est)
+            
+    other_txs = "%s %s"%(
+        pt.__dict__["%scmp"% tooth], 
+        pt.__dict__["%spl"% tooth]
+        )
+    other_txs = other_txs.split(" ")
+    
+    dentid = om_gui.pt.course_dentist
+        
+    for usercode in updated_usercodes:
+        n = other_txs.count(usercode)
+        tx_hash = str(hash("%s %s %s"% (tooth, n, usercode)))
+        
+        itemcode, descr = pt.getFeeTable().toothCodeWizard(
+            tooth_name, usercode)
+        
+        pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode, descr=descr)
+        
+        ##TODO this should be capable of adding more than one item to est
+        #ie.....
+        #itemcodes = pt.getFeeTable().getToothCode(toothname, usercode)
+        #for itemcode in itemcodes:
+        #    pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode)
+        
 def remove_estimate_item(om_gui, est_item):
     '''
     the estimate_item has been deleted...
@@ -390,6 +394,8 @@ def remove_estimate_item(om_gui, est_item):
 
 if __name__ == "__main__":
     #-- test code
+    LOGGER.setLevel(logging.DEBUG)
+    
     localsettings.initiate()
     localsettings.loadFeeTables()
     localsettings.station="reception"
@@ -404,7 +410,7 @@ if __name__ == "__main__":
     mw.load_treatTrees = lambda : None
     mw.load_newEstPage = lambda : None
 
-    xrayAdd(mw)
+    #xrayAdd(mw)
     perioAdd(mw)
-    otherAdd(mw)
-    customAdd(mw)
+    #otherAdd(mw)
+    #customAdd(mw)

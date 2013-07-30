@@ -4,29 +4,47 @@
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
-from __future__ import division
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.compiled_uis import Ui_hygenist_wizard
-from openmolar.settings import localsettings
 
-class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
-    def __init__(self,dialog,parent=None):
-        self.setupUi(dialog)
-        self.dialog=dialog
+from openmolar.settings import localsettings
+from openmolar.qt4gui.fees import course_module, fees_module
+from openmolar.qt4gui.compiled_uis import Ui_hygenist_wizard
+
+class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
+    def __init__(self,parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.setupUi(self)
+        self.om_gui = parent
         self.practitioners=localsettings.activedents+localsettings.activehygs
         self.dents_comboBox.addItems(self.practitioners)
-        self.trt=None
-        self.dent=None
+        self.setPractitioner(localsettings.clinicianNo)
         
-    def setPractitioner(self,arg):
+    def setPractitioner(self, arg):
         '''
         who's performing this treatment?
         '''
         try:
-            inits=localsettings.ops[arg]
+            inits = localsettings.ops[arg]
             self.dents_comboBox.setCurrentIndex(self.practitioners.index(inits))
         except:
             self.dents_comboBox.setCurrentIndex(-1)
+
+    @property
+    def trt(self):
+        if self.sp_radioButton.isChecked():
+            return "SP"
+        elif self.db_radioButton.isChecked():
+           return "SP-"
+        elif self.extsp_radioButton.isChecked():
+           return "SP+"
+        elif self.twovisit1_radioButton.isChecked():
+            return "SP+/1"
+        else:    # self.twovisit1_radioButton.isChecked():
+            return "SP+/2"
+        
+    @property
+    def dent(self):
+        return str(self.dents_comboBox.currentText())
 
     def getInput(self):
         '''
@@ -34,36 +52,91 @@ class Ui_Dialog(Ui_hygenist_wizard.Ui_Dialog):
         '''
         result = True
         while result == True:
-            if self.dialog.exec_():
-                if self.sp_radioButton.isChecked():
-                    self.trt = "SP"
-                elif self.db_radioButton.isChecked():
-                   self.trt = "SP-"
-                elif self.extsp_radioButton.isChecked():
-                   self.trt = "SP+"
-                elif self.twovisit1_radioButton.isChecked():
-                    self.trt = "SP+/1"
-                else:    # self.twovisit1_radioButton.isChecked():
-                    self.trt = "SP+/2"
-                self.dent = str(self.dents_comboBox.currentText())
-                if self.dent != "":
-                    break
-                else:
+            if self.exec_():
+                if self.dent == "":
                     message = _("Please enter a dentist / hygenist")
-                    QtGui.QMessageBox.information(self.dialog,
-                    "Whoops", message)
+                    QtGui.QMessageBox.information(self, _("Whoops"), message)
+                else:
+                    break
             else:
                 result = False
         return result
 
+    def perform_tx(self):
+        pt = self.om_gui.pt
+        if pt.serialno == 0:
+            self.om_gui.advise(_("no patient selected"), 1)
+            return
+        if course_module.newCourseNeeded(self.om_gui):
+            return
+
+        if "N" in pt.cset:
+            self.db_radioButton.setEnabled(False)
+    
+        self.extsp_radioButton.setChecked("SP+" in pt.periopl)
+        
+        result = self.getInput()
+
+        if result:
+            pt.addHiddenNote("perio_treatment", "%s"% self.trt)
+            self.om_gui.updateHiddenNotesLabel()
+
+            n = pt.periocmp.split(" ").count(self.trt)
+            tx_hash = str(hash("perio %s %s"% (n+1, self.trt)))
+            dentid = pt.course_dentist
+            
+            trt = "%s "% self.trt
+            if trt in pt.periopl:
+                pt.periopl = pt.periopl.replace(trt, "", 1)
+                found_est, found_completed = False, False
+                for est in pt.ests_from_hash(tx_hash):
+                    found_est = True
+                    if not est.completed:
+                        est.dent = dentid
+                        est.completed = True
+                        fees_module.applyFeeNow(self.om_gui, est.ptfee)
+                    else:
+                        found_completed  = True
+                if not found_est:
+                    self.om_gui.advise(("found %s in plan,"% self.trt) +
+                    "but not in estimate.. this shouldn't happen!", 1)
+                elif found_completed:
+                    self.om_gui.advise(("found %s in estimate,"% self.trt) +
+                    "but was already completed.. this shouldn't happen!", 1)
+                    
+            else:
+                est = pt.add_to_estimate(self.trt, dentid, [tx_hash], 
+                    completed=True)
+
+                fees_module.applyFeeNow(self.om_gui, est.ptfee)
+
+            pt.periocmp += trt
+
+            self.om_gui.load_clinicalSummaryPage()
+
+            newnotes = str(
+                self.om_gui.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes += "%s %s %s\n"%(
+                self.trt,
+                _("performed by"), 
+                self.dent)
+            self.om_gui.ui.notesEnter_textEdit.setText(newnotes)
+        else:
+            self.om_gui.advise("Hyg Treatment not applied", 2)
+
+
 if __name__ == "__main__":
     localsettings.initiate()
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    Dialog = QtGui.QDialog()
-    ui = Ui_Dialog(Dialog)
-    ui.setPractitioner(0)
-    if ui.getInput():
-        print ui.trt
-        print ui.dent
+    localsettings.loadFeeTables()
+    localsettings.station="reception"
+
+    from openmolar.qt4gui import maingui
+    from openmolar.dbtools import patient_class
+    
+    app = QtGui.QApplication([])
+    mw = maingui.OpenmolarGui()
+    mw.getrecord(11956)
+    
+    dl = HygTreatWizard(mw)
+    print dl.perform_tx()
         

@@ -99,18 +99,12 @@ def updateCharts(om_gui, arg):
         om_gui.ui.summaryChartWidget.setToothProps(tooth, arg)
         om_gui.ui.staticChartWidget.update()
     elif om_gui.selectedChartWidget == "pl":
-        if arg != "" and course_module.newCourseNeeded(om_gui):
-            return
         om_gui.toothTreatAdd(tooth, arg)
         om_gui.ui.planChartWidget.update()
-
     elif om_gui.selectedChartWidget == "cmp":
-        om_gui.advise('<p>'+_('''for the moment, please enter treatment
-into the plan first then complete it.''')+'</p>', 1)
-    else:
-        om_gui.advise(_("unable to update chart - this shouldn't happen!!"),
-        2) #--should NEVER happen
-
+        om_gui.advise(u'<p>%s</p>%'% _(
+        "please enter treatment via the plan chart"), 1)
+    
 def updateChartsAfterTreatment(om_gui, tooth, newplan, newcompleted):
     '''
     update the charts when a planned item has moved to completed

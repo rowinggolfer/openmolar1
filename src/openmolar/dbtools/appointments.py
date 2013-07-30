@@ -1242,19 +1242,6 @@ def has_unscheduled(serialno):
     logging.debug ("appointments.has_unscheduled is returning %s"% result)
     return result
 
-
-def deletePastAppts(serialno):
-    '''
-    remove old appointments "en mass" for the specified record
-    '''
-    db = connect()
-    cursor = db.cursor()
-    query = "delete from apr where serialno = %s and adate < %s"
-    values = (serialno, localsettings.currentDay())
-    rows = cursor.execute(query, values)
-    db.commit()
-    return rows
-
 def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
     note="", datespec="", ctype="P", flag0=1, flag2=0, flag3=0, flag4=0):
     '''
