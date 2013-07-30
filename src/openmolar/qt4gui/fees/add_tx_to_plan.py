@@ -311,6 +311,10 @@ def chartAdd(om_gui, tooth, new_string):
         
         itemcode, descr = pt.getFeeTable().toothCodeWizard(
             tooth_name, usercode)
+        if itemcode == "4001":
+            om_gui.advise(u"%s '%s' %s"% (_("Warning"), usercode, 
+                _("not understood by the active feescale")), 2)
+            descr = "%s %s"% (_("Other treatment"), tooth_name)
         
         pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode, descr=descr)
         

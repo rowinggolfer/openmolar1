@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>678</width>
+                      <width>484</width>
                       <height>477</height>
                      </rect>
                     </property>
@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>660</width>
+                      <width>440</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -2015,7 +2015,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>680</width>
+                      <width>302</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2672,8 +2672,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>469</width>
-                      <height>377</height>
+                      <width>98</width>
+                      <height>111</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2849,7 +2849,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>419</width>
+                         <width>98</width>
                          <height>200</height>
                         </rect>
                        </property>
@@ -2956,8 +2956,8 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-104</y>
-                      <width>225</width>
+                      <y>0</y>
+                      <width>188</width>
                       <height>479</height>
                      </rect>
                     </property>
@@ -3225,8 +3225,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>675</width>
-                      <height>377</height>
+                      <width>252</width>
+                      <height>376</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -3606,23 +3606,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <property name="spacing">
                  <number>3</number>
                 </property>
-                <item row="0" column="0">
-                 <widget class="QPushButton" name="memos_pushButton">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Memos</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../resources/resources.qrc">
-                    <normaloff>:/icons/memos.png</normaloff>:/icons/memos.png</iconset>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="1" rowspan="2">
                  <widget class="Line" name="line">
                   <property name="sizePolicy">
@@ -3727,23 +3710,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="tasks_pushButton">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Tasks</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../resources/resources.qrc">
-                    <normaloff>:/icons/action.png</normaloff>:/icons/action.png</iconset>
-                  </property>
-                 </widget>
-                </item>
                 <item row="1" column="4">
                  <widget class="QPushButton" name="phraseBook_pushButton">
                   <property name="text">
@@ -3806,6 +3772,23 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                   <property name="frameShape">
                    <enum>QFrame::NoFrame</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0" rowspan="2">
+                 <widget class="QPushButton" name="memos_pushButton">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Memos</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../resources/resources.qrc">
+                    <normaloff>:/icons/memos.png</normaloff>:/icons/memos.png</iconset>
                   </property>
                  </widget>
                 </item>
