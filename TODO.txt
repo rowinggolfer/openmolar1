@@ -1,3 +1,10 @@
+0.5.00
+    I'm goin going to introduce the following features, and obsolete a lot of stuff.
+    1. new table for feetables, which will be rejected if they don't comply with an 
+       XSD schema
+    2. poll openmolar.com to check versioning, and inform of updates.
+    3. do a "release" to get some publicity?
+
 0.4.10
     TODO incisal angles, max per tooth, extraction visits, special tray,
     1st in arch, partial dentures(n teeth)

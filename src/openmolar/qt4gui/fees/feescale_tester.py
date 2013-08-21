@@ -14,19 +14,78 @@ from openmolar.dbtools.patient_class import mouth, decidmouth
 from openmolar.qt4gui.compiled_uis import Ui_codeChecker
 #from openmolar.dbtools import feesTable
 
+DECIDMOUTH = []
+for tooth in decidmouth:
+    if tooth != "***":
+        DECIDMOUTH.append(tooth)
+ADULTMOUTH = []
+for tooth in mouth:
+    ADULTMOUTH.append(tooth)    
+        
+class DeciduousAttributeModel(QtCore.QAbstractTableModel):
+    def __init__(self, table, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+        self.attributes = DECIDMOUTH
+        self.table = table
+        self.code = None
+        self._rowcount = None
+        
+    def get_value(self, row):
+        tooth = self.attributes[row]
+        code = self.table.getToothCode(tooth, self.code.upper())
+        if code:
+            return self.table.feesDict[code].description
+        return "-"
+    
+    def rowCount(self, index):
+        if self._rowcount is None:
+            self._rowcount = len(self.attributes)//2
+        return self._rowcount
+    
+    def columnCount(self, index):
+        return 4
+
+    def data(self, index,role):
+        if role != QtCore.Qt.DisplayRole:
+            return QtCore.QVariant()
+        
+        if index.column() == 0:
+            return self.attributes[index.row()].upper()
+        if index.column() == 1:
+            return self.get_value(index.row())
+        if index.column() == 2:
+            return self.attributes[index.row() + self._rowcount].upper()
+        if index.column() == 3:
+            return self.get_value(index.row() + self._rowcount)
+    
+        
+class AdultAttributeModel(DeciduousAttributeModel):
+    def __init__(self, table, parent=None):
+        DeciduousAttributeModel.__init__(self, table, parent)
+        self.attributes = ADULTMOUTH
+        
+
 class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
     def __init__(self, tables, parent = None):
-        super (test_dialog, self).__init__(parent)
+        QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.table_list = []
         tablenames = []
         for table in tables.values():
             self.table_list.append(table)
-            tablenames.append(table.tablename)
+            tablenames.append(table.briefName)
         self.comboBox.addItems(tablenames)
 
-        self.table = self.table_list[self.comboBox.currentIndex()]
-        self.setWindowTitle(self.table.tablename)
+        self.model2 = DeciduousAttributeModel(self.current_table)
+        self.model3 = AdultAttributeModel(self.current_table)
+        
+        self.dec_tableView.setModel(self.model2)
+        self.adult_tableView.setModel(self.model3)
+        
+        self.dec_tableView.horizontalHeader().setStretchLastSection(True)
+        self.adult_tableView.horizontalHeader().setStretchLastSection(True)
+        
+        self.setWindowTitle(_("Shortcut tester"))
 
         self.connect(self.comboBox, QtCore.SIGNAL("currentIndexChanged (int)"),
             self.change_table)
@@ -36,26 +95,25 @@ class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"),
             self.check_codes)
 
+        self.lineEdit.setText("P")
+        self.check_codes()
+
     def check_codes(self):
         tx = str(self.lineEdit.text().toAscii())
-        #print "checking",tx
-
-        self.dec_listWidget.clear()
-        self.adult_listWidget.clear()
-        for tooth in decidmouth:
-            if tooth != "***":
-                code, desc = self.table.toothCodeWizard(tooth, tx.upper())
-                result = "%s - %s %s"% (tooth.upper(), code, desc)
-                self.dec_listWidget.addItem(result)
-        for tooth in mouth:
-            code, desc = self.table.toothCodeWizard(tooth, tx.upper())
-            result = "%s - %s %s"% (tooth.upper(), code, desc)
-            self.adult_listWidget.addItem(result)
-
+        code, value = self.current_table.userCodeWizard(tx.upper())
+        self.att_lineEdit.setText("%s %s"%(code, value))
+        for model in (self.model2, self.model3):
+            model.code = tx
+            model.reset()
+    
+    @property
+    def current_table(self):
+        return self.table_list[self.comboBox.currentIndex()]
+            
     def change_table(self, i):
-        self.table = self.table_list[i]
-        self.setWindowTitle(self.table.tablename)
-
+        self.model2.table = self.current_table
+        self.model3.table = self.current_table
+        
         self.check_codes()
 
 if __name__ == "__main__":

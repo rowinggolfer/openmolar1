@@ -16,10 +16,12 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
-HIDE_RARE_CODES = True
+HIDE_RARE_CODES = 0 # fee iterms has an "obscurity" level of 0-2 
 
-CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart", "Surgical",
-"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
+#new for version 0.5 - categories come from the feescale XML
+
+#CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart",
+#"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
 
 
 class TreeItem(object):
@@ -57,8 +59,8 @@ class TreeItem(object):
         if showAll:
             if column == 2:
                 return QtCore.QVariant(self.itemData.description)
-            if column == 3:
-                return QtCore.QVariant(self.itemData.regulations)
+            #if column == 3:
+            #    return QtCore.QVariant(self.itemData.regulations)
         if column == 4:
             return QtCore.QVariant(self.itemData.brief_descriptions[self.myindex])
              
@@ -66,16 +68,16 @@ class TreeItem(object):
             if self.table.hasPtCols:
                 if column % 2 == 0:
                     fee = localsettings.formatMoney(
-                    self.itemData.ptFees[self.myindex][(column-6)//2])
+                    self.itemData.ptFees[self.myindex])
                     return QtCore.QVariant(fee)
                 else:
                     fee = localsettings.formatMoney(
-                    self.itemData.fees[self.myindex][(column-5)//2]) 
+                    self.itemData.fees[self.myindex]) 
                     return QtCore.QVariant(fee)
             else:
                 try:
                     fee = localsettings.formatMoney(
-                    self.itemData.fees[self.myindex][column-5])
+                    self.itemData.fees[self.myindex])
                     return QtCore.QVariant(fee)
                 except IndexError:
                     print "misconfigured feescale - bad column count!"
@@ -97,15 +99,9 @@ class treeModel(QtCore.QAbstractItemModel):
     def __init__(self, table):
         super(QtCore.QAbstractItemModel, self).__init__()
         self.table = table
-        self.feeColNo = len(self.table.categories)
+        self.feeColNo = 1
         if self.table.hasPtCols:
-            self.feeColNo *= 2
-            self.feecats = []
-            for cat in self.table.categories:
-                self.feecats.append(cat)
-                self.feecats.append("%s_fee"% cat)
-        else:
-            self.feecats = self.table.categories
+            self.feeColNo = 2
             
         self.rootItem = TreeItem(self.table, None, None)
     
@@ -150,19 +146,18 @@ class treeModel(QtCore.QAbstractItemModel):
         role == QtCore.Qt.DisplayRole):
             
             if column==1:
-                return QtCore.QVariant(_("Usercode"))
+                return _("Usercode")
             elif column==2:
-                return QtCore.QVariant(_("Description"))
+                return _("Description")
             elif column==3:
-                return QtCore.QVariant(_("Regulations"))
+                return _("Regulations")
             elif column==4:
-                return QtCore.QVariant(_("brief description"))
-            elif column>4:
-                try:
-                    return QtCore.QVariant(self.feecats[column-5])
-                except IndexError:
-                    pass
-                
+                return _("brief description")
+            elif column==5:
+                return _("Gross Fee")
+            elif column==6:
+                return _("Charge to Patient")
+            
         return QtCore.QVariant()
 
     def index(self, row, column, parent):
@@ -214,21 +209,21 @@ class treeModel(QtCore.QAbstractItemModel):
         keys.sort()
         for key in keys:
             feeItem = self.table.feesDict[key]
-            if HIDE_RARE_CODES and feeItem.hide:
+            if feeItem.obscurity > HIDE_RARE_CODES:
                 continue
-            cat = feeItem.category
-            if not parents.has_key(cat) :
+            section = feeItem.section
+            if not parents.has_key(section) :
                 try:
-                    header = CATEGORIES[cat]
-                except IndexError:
-                    header = "CATEGORY %d"%cat
+                    header = self.table.headers[section]
+                except KeyError:
+                    header = "Unknown Section - '%s'"% section
                 head = TreeItem(self.table, header, None, self.rootItem)
-                parents[cat] = head
+                parents[section] = head
                 self.rootItem.appendChild(head)
                 
             number_in_group = len(feeItem.brief_descriptions)
-            branch = TreeItem(self.table, key,feeItem, parents[cat])
-            parents[cat].appendChild(branch)
+            branch = TreeItem(self.table, key,feeItem, parents[section])
+            parents[section].appendChild(branch)
                 
             for row in range(1, number_in_group):
                 branch.appendChild(

@@ -320,7 +320,9 @@ logqueries = False
 practiceAddress = ("The Academy Dental Practice","19 Union Street",
 "Inverness","IV1 1PP")
 
-defaultNewPatientDetails = ("",)*8
+#-- this is updated whenever a patient record loads, for ease of address 
+#-- manipulation
+LAST_ADDRESS = ("",)*8
 
 #-- 1 less dialog box for these lucky people
 defaultPrinterforGP17 = False

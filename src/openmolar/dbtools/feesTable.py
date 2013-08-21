@@ -6,6 +6,7 @@
 # (at your option) any later version.
 # See the GNU General Public License for more details.
 
+import datetime
 import inspect
 import logging
 import re
@@ -23,8 +24,7 @@ except ImportError:
     print "using openmolar.backports for OrderedDict"
     from openmolar.backports import OrderedDict
 
-
-logging.basicConfig(level=logging.DEBUG)
+LOGGER = logging.getLogger("openmolar")
 
 def getData():
     '''
@@ -33,9 +33,8 @@ def getData():
     db = connect.connect()
     cursor = db.cursor()
 
-    query = ''' select tablename, categories, description, startdate,
-    enddate, feecoltypes, data from feetable_key
-    where in_use = True order by display_order'''
+    query = ''' select ix, xml_data from feescales where in_use = True 
+    order by disp_order'''
 
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -46,6 +45,11 @@ def saveData(tablename, data):
     '''
     update the database with the new xml data
     '''
+
+    print "deprecated function called - feesTable.saveData"
+    #TODO - fix this! 
+    return False
+
     db = connect.connect()
     cursor = db.cursor()
     query = "update feetable_key set data=%s where tablename = %s"
@@ -68,8 +72,8 @@ def isParseable(data):
         d = minidom.parseString(data)
         d.toxml()
         d.unlink
-    except Exception, e:
-        return (False, str(e))
+    except Exception as exc:
+        return (False, str(exc))
     return (True, "")
 
 def getListFromNode(node, id):
@@ -83,21 +87,6 @@ def getListFromNode(node, id):
         for child in children:
             values.append(child.data.strip())
     return values
-
-def getFeesFromNode(node, id):
-    '''
-    get the text data from the first child of any such nodes
-    '''
-    nlist = node.getElementsByTagName(id)
-    values = []
-    for n in nlist:
-        sublist=[]
-        children = n.childNodes
-        for child in children:
-            for n in child.data.split(","):
-                sublist.append(int(n))
-        values.append(tuple(sublist))
-    return tuple(values)
     
 def getTextFromNode(node, id):
     '''
@@ -127,11 +116,17 @@ class FeeTables(object):
     def __init__(self):
         self.tables = {}
         self.warnings = []
-        self.default_table = None
-        defaulttableno = self.getTables()
-        self.default_table = self.tables[defaulttableno]
+        self.getTables()
         self.loadTables()
 
+    @property
+    def default_table(self):
+        try:
+            keys = sorted(self.tables.keys())
+            return self.tables[keys[0]]
+        except IndexError:
+            return None
+        
     def __repr__(self):
         '''
         a readable description of the object
@@ -158,29 +153,12 @@ class FeeTables(object):
         get the key to our tables
         '''
         rows = getData()
-        i = 0
-        defaulttableno = -1
-        for (tablename, categories, description, startdate, enddate,
-        feecoltypes, data) in rows:
-            ft = FeeTable(tablename, i)
-            ft.setCategories(categories)
-            ft.setTableDescription(description)
-            ft.setStartDate(startdate)
-            ft.setEndDate(enddate)
-            ft.setFeeCols(feecoltypes)
-            ft.setData(data)
+        #for (tablename, categories, description, startdate, enddate,
+        #feecoltypes, data) in rows:
+        for i, (ix, xml_data) in enumerate(rows):
+            ft = FeeTable(ix, xml_data)
+            ft.index = i
             self.tables[i] = ft
-
-            if defaulttableno == -1:
-                if ("P" in ft.categories and
-                startdate <= localsettings.currentDay() and
-                (enddate == None or enddate > localsettings.currentDay())):
-                    defaulttableno = i
-            i += 1
-        if defaulttableno == -1:
-            print "WARNING - NO DEFAULT FEE TABLE FOUND!"
-            defaulttableno = 0
-        return defaulttableno
 
     def loadTables(self):
         '''
@@ -189,138 +167,149 @@ class FeeTables(object):
         for table in self.tables.values():
             try:
                 table.loadFees()
-            except Exception,e:
-                message = (table.tablename + _("Failed to Load") + 
-                "<br /><pre>%s</pre>"% e)
+            except Exception as exc:
+                message = "%s %s %s"%(
+                    _("feesscale"),
+                    table.database_ix,
+                    _("Failed to Load")
+                    )
 
-                print message
-                self.warnings.append(message)
+                LOGGER.exception(message)
+                self.warnings.append(message + "<hr /><pre>%s</pre>"% exc)
     
 class FeeTable(object):
     '''
     a class to contain and allow quick access to data stored in a fee table
     '''
-    def __init__(self, tablename, index):
-        self.tablename = tablename
-        self.briefName = tablename.replace("feetable_","")
-        self.index = index
-        self.feeColNames = ()
-        self.pt_feeColNames = ()
-        self.columnQuery = ""
+    def __init__(self, ix, xml_data):
+        
+        self.database_ix = ix
+        self.dom = minidom.parseString(xml_data)
+
+        self.setCategories()
+        self.setTableDescription()
+        self.setStartDate()
+        self.setEndDate()
+        self.setSectionHeaders()
+        #ft.setFeeCols(feecoltypes)
+        
         self.feesDict = {}
-        self.categories = []
-        self.hasPtCols = False
         
         self.treatmentCodes = OrderedDict()
         self.chartRegexCodes = OrderedDict()
         self.chartMultiRegexCodes = OrderedDict()
         
-        self.feeColCount = 0
-        self.data = ""
-        self.pl_cmp_Categories = plan.tup_Atts + ("CHART",)
-        self.dirty = False  # a boolean which indicates whether the table
-                            #is in db state
-
     def __repr__(self):
         '''
         a readable description of the object
         '''
-        return "Class feeTable %s - %s feeItems"% (self.tablename,
-        len(self.feesDict))
+        return "Class feeTable database index %s - has %s feeItems"% (
+            self.database_ix, len(self.feesDict))
+    
+    @property
+    def briefName(self):
+        return self.description
 
-    def setCategories(self, arg):
+    @property
+    def hasPtCols(self):
+        for fee_item in self.feesDict.values():
+            if fee_item.has_pt_fees:
+                return True
+        return False
+    
+    @property
+    def feeColCount(self):
+        if self.hasPtCols:
+            return 2
+        return 1
+
+    def setCategories(self):
         '''
         the categories will be a list like "P", "PB" etc...
         '''
-
-        cats = arg.split(",")
-        self.categories = cats
-
-    def setTableDescription(self, arg):
+        LOGGER.debug("loading categories")
+        self.categories = []
+        for node in self.dom.getElementsByTagName("category"):
+            text = node.childNodes[0].data.strip(" \n")
+            self.categories.append(text)
+        LOGGER.debug("categories = %s"% str(self.categories))
+    
+    def setSectionHeaders(self):
+        '''
+        Headers are used when displaying feescale in a treeview 
+        '''
+        LOGGER.debug("loading section headers")
+        self.headers = {}
+        for node in self.dom.getElementsByTagName("header"):
+            id = node.getAttribute("id")
+            text = node.childNodes[0].data.strip(" \n")
+            self.headers[id] = text
+        LOGGER.debug("sction headers = %s"% self.headers)
+        
+    def setTableDescription(self):
         '''
         a user friendly description of the table
         '''
-        self.description = arg
+        LOGGER.debug("loading feescale description")
+        node = self.dom.getElementsByTagName("feescale_description")[0]
+        text = node.childNodes[0].data.strip(" \n")
+        self.description = text
+        LOGGER.debug("description = %s"% self.description)
 
-    def setStartDate(self, arg):
+    def setStartDate(self):
         '''
         the date the feetable started (can be in the future)
         '''
-        self.startDate = arg
-
-    def setEndDate(self, arg):
+        LOGGER.debug("loading startdate")
+        start_node = self.dom.getElementsByTagName("start")[0]
+        day = start_node.getElementsByTagName("day")[0].childNodes[0].data
+        month = start_node.getElementsByTagName("month")[0].childNodes[0].data
+        year = start_node.getElementsByTagName("year")[0].childNodes[0].data
+        self.startDate = datetime.date(int(year), int(month), int(day))
+        LOGGER.debug("startDate = %s"% self.startDate)
+        
+    def setEndDate(self):
         '''
         the date the feetable became obsolete (can be in the past)
         '''
-        self.endDate = arg
-
-    def setData(self, data):
-        '''
-        data is the xml string pulled from the database.
-        '''
-        self.data = data
-
-    def getData(self, data):
-        return self.data
-
-    def setFeeCols(self, arg):
-        '''
-        arg is some xml logic to let me know what columns to query
-        '''
-        dom = minidom.parseString(arg)
-
-        cols = dom.getElementsByTagName("column")
-        self.feeColCount = len(cols)
-        feeCol_list = []
-        ptfeeCol_list = []
-        for col in cols:
-            colname = col.firstChild.data
-            self.columnQuery += ", %s"% colname
-            if col.getAttribute("type") == "fee":
-                feeCol_list.append(colname)
-            else:
-                ptfeeCol_list.append(colname)
-
-        self.feeColNames = tuple(feeCol_list)
-        self.pt_feeColNames = tuple(ptfeeCol_list)
-
-        self.hasPtCols = not(len(self.pt_feeColNames)==0)
-
-        dom.unlink()
+        LOGGER.debug("loading enddate")
+        try:
+            end_node = self.dom.getElementsByTagName("end")[0]
+        except IndexError:
+            self.endDate = None
+            LOGGER.debug("feescale is open ended (no end date)")
+            return
+        day = end_node.getElementsByTagName("day")[0].childNodes[0].data
+        month = end_node.getElementsByTagName("month")[0].childNodes[0].data
+        year = end_node.getElementsByTagName("year")[0].childNodes[0].data
+        self.endDate = datetime.date(int(year), int(month), int(day))
+        LOGGER.debug("endDate = %s"% self.endDate)
 
     def loadFees(self):
         '''
         now load the fees
         '''
-        dom = minidom.parseString(self.data)
-
-        elements = dom.getElementsByTagName("item")
+        elements = self.dom.getElementsByTagName("item")
         for element in elements:
-            code = getTextFromNode(element, "code")
-            feeItem = FeeItem(self, code)
-            feeItem.from_xml(element)
-
-            self.feesDict[code] = feeItem
-
-            if feeItem.usercode == "":
-                continue
+            itemcode = element.getAttribute("id")
+            fee_item = FeeItem(itemcode, element)
+            self.feesDict[itemcode] = fee_item
             
-            if feeItem.pl_cmp_type == "CHART":
-                if feeItem.is_multi_regex:
-                    regexes = []
-                    for regex in feeItem.usercode.split(" _AND_ "):
-                        regexes.append(re.compile(regex)) 
-                    self.chartMultiRegexCodes[tuple(regexes)] = code
-                elif feeItem.is_regex:
-                    #use pre-compiled regex as the key
-                    key = re.compile(feeItem.usercode)
-                    self.chartRegexCodes[key] = code
-                else:
-                    self.treatmentCodes[feeItem.usercode] = code
+            if fee_item.usercode == "":
+                pass
+            elif fee_item.is_multi_regex:
+                regexes = []
+                for regex in fee_item.usercode.split(" _AND_ "):
+                    regexes.append(re.compile(regex)) 
+                self.chartMultiRegexCodes[tuple(regexes)] = itemcode
+            elif fee_item.is_regex:
+                #use pre-compiled regex as the key
+                key = re.compile(fee_item.usercode)
+                self.chartRegexCodes[key] = itemcode
             else:
-                self.treatmentCodes[feeItem.usercode] = code
-
-        dom.unlink()
+                self.treatmentCodes[fee_item.usercode] = itemcode
+        
+        self.dom.unlink()
 
     def getToothCode(self, tooth, arg):
         '''
@@ -328,7 +317,7 @@ class FeeTable(object):
         eg "MOD" -> "1404" (both are strings)
         arg will be something like "CR,GO" or "MOD,CO"
         '''
-        logging.info("getToothCode for %s%s"% (tooth, arg))
+        LOGGER.info("getToothCode for %s%s"% (tooth, arg))
             
         for key in self.chartMultiRegexCodes:
             #has to match ALL regexes 
@@ -341,15 +330,18 @@ class FeeTable(object):
         for key in self.chartRegexCodes:
             if key.match(tooth+arg):
                 return self.chartRegexCodes[key]
-        
-        if arg in self.treatmentCodes.keys(): #direct match!!
-            return self.getItemCodeFromUserCode(arg)
-
-        logging.warning(
-            'no match in %s getToothCode for %s - %s RETURNING 4001'% (
-            self.tablename, tooth, arg))
-        return "4001"
-
+            
+    def get_tooth_fee_item(self, tooth, usercode):
+        '''
+        send a usercode, get a results set
+        (item (string), description (string))
+        where description is the estimate ready description of the item
+        '''
+        LOGGER.debug("get_tooth_fee_item")
+        item_code = self.getToothCode(tooth, usercode)
+        LOGGER.debug("item_code = %s"% item_code)
+        return self.feesDict.get(item_code, None)
+            
     def getItemCodeFromUserCode(self, arg):
         '''
         the table stores it's own usercodes now.
@@ -357,45 +349,37 @@ class FeeTable(object):
         '''
         return self.treatmentCodes.get(arg, "4001")
 
-
     def hasItemCode(self, arg):
         '''
         check to see if the table contains a data about itemcode "arg"
         '''
         return arg in self.feesDict.keys()
 
-
-    def getFees(self, itemcode, no_items=1, conditions=[],
-        no_already_in_estimate=None):
+    def getFees(self, itemcode, pt, csetype):
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
-        logging.debug('''looking up a fee for %d item(s) of code %s
-where conditions are %s and %s similar items already in the estimate'''% (
-        no_items, itemcode, conditions, no_already_in_estimate))
+        LOGGER.debug("%s %s"% ('looking up a fee for', itemcode))
 
-        if no_already_in_estimate is None:
-            logging.warning("deprecated call to getFees")
-            caller = inspect.stack()[1]
-            logging.debug("module %s line %s\n   function %s\n    %s"% (
-                caller[1], caller[2], caller[3], caller[4][0]))
-            no_already_in_estimate = 0
-            
-        if self.hasItemCode(itemcode):
-            if no_already_in_estimate ==0 :
-                return self.feesDict[itemcode].get_fees(no_items, conditions)
-            else:
-                fee, ptfee = self.feesDict[itemcode].get_fees(
-                no_items+no_already_in_estimate, conditions)
+        try:
+            fee_item = self.feesDict[itemcode]
+        except KeyError:
+            LOGGER.warning("itemcode %s not found in feetable %s"% (
+                itemcode, self.database_ix))
+            return (0, 0)
+                    
+        if fee_item.is_simple:
+            return fee_item.get_fees(1)
 
-                offset, ptoffset = self.feesDict[itemcode].get_fees(
-                no_already_in_estimate, conditions)
-
-                return (fee - offset, ptfee - ptoffset)
-        else:
-            print "itemcode %s not found in %s"% (itemcode, self.tablename)
-            return (0,0)
-
+        #complex codes have a different fee if there are multiple 
+        #in the estimate already
+        existing_no = 0
+        for existing_est in pt.estimates:
+            if (existing_est.itemcode == itemcode and 
+            csetype == existing_est.csetype):
+                existing_no += 1
+        
+        return fee_item.get_fees(existing_no+1)
 
     def getItemDescription(self, itemcode):
         '''
@@ -430,20 +414,7 @@ where conditions are %s and %s similar items already in the estimate'''% (
         description = self.getItemDescription(item)
 
         return (item, description)
-
-    def toothCodeWizard(self, tooth, usercode):
-        '''
-        send a usercode, get a results set
-        (item (string), description (string))
-        where description is the estimate ready description of the item
-        '''
-        item = self.getToothCode(tooth, usercode)
-        if item != "":
-            description = "%s - %s"% (self.getItemDescription(item), tooth)
-        else:
-            description = "other treatment"
-        return (item, description)
-
+    
 
 class FeeItem(object):
     '''
@@ -452,410 +423,167 @@ class FeeItem(object):
     2x an item is not necessarily
     the same as double the fee for a single item etc..
     '''
-    def __init__(self, table, itemcode):
-        '''
-        initiate the class with the default settings for a private fee
-        '''
-        self.table = table
+    def __init__(self, itemcode, element):
         self.itemcode = itemcode
+    
+        self.section = getTextFromNode(element, "section")
+        try:
+            self.obscurity = int(element.getAttribute("obscurity"))
+        except ValueError:
+            self.obscurity = 0
+        self.fees = []
+        self.ptFees = []
+        self.brief_descriptions = []
+        self.conditions = []
+        self.dependencies = []
+    
+        try:
+            usercode_node = element.getElementsByTagName("shortcut")[0]
+            self.is_regex = usercode_node.getAttribute("type") == "regex"
+            self.is_multi_regex = \
+                usercode_node.getAttribute("type") == "multiregex"
+            self.usercode = usercode_node.childNodes[0].data
+        except IndexError:
+            #LOGGER.debug("NO USERCODE FOUND for FEE_ITEM %s"% itemcode)
+            self.usercode = itemcode
+            self.is_regex, self.is_multi_regex = False, False
         
-        self.oldcode = ""
-        self.category = 0
-        self.pl_cmp_type = "other"
-        self.description = ""
-        self.brief_descriptions = ()
-        self.fees = ()
-        self.ptFees = ()
-        self.multiples = False # is there complex fee logic behind this item?
-        self.regulations = ""
-        self.usercode = ""
-        self.is_regex = False
-        self.is_multi_regex = False
-        self.hide = False
-        self.allow_feescale_add = True
-
-    def get_stored_xml(self):
-        '''
-        get the xml node the feeitem represents
-        '''
-        dom = minidom.parseString(self.table.data)
-        nodeList = dom.getElementsByTagName("item")
-        for node in nodeList:
-            codes = node.getElementsByTagName("code")
-            for code in codes:
-                if code.firstChild.data.strip() == self.itemcode:
-                    retarg = node.toxml()
-                    dom.unlink()
-                    return retarg
-        return _("not found")
-
-    def from_xml(self, element):
-        section = getTextFromNode(element, "section")
-        oldcode = getTextFromNode(element, "oldcode")        
-        USERCODE = getTextFromNode(element, "USERCODE")
+        self.description = getTextFromNode(element, "description")
         
         try:
-            usercode = element.getElementsByTagName("USERCODE")[0]
-            self.is_regex = usercode.getAttribute("type") == "regex"
-            self.is_multi_regex = \
-                usercode.getAttribute("type") == "multiregex"
+            feescale_add_node = element.getElementsByTagName("feescale_add")[0]
+            self.allow_feescale_add = True
+            #TODO - more work needed here....
         except IndexError:
-            print "NO USERCODE NODE FOUND for %s"% itemcode
-
-        # for backwards compat
-        if USERCODE.startswith("reg "):
-            self.is_regex = True
-            USERCODE = USERCODE[4:]
-        elif USERCODE.startswith("multireg "):
-            self.is_multi_regex = True
-            USERCODE = USERCODE[9:]
-        # ends
+            self.allow_feescale_add = False
+            
+        fee_nodes = element.getElementsByTagName("fee")
+        for node in fee_nodes:
+            bd = getTextFromNode(node, "brief_description")
+            self.brief_descriptions.append(bd)
         
-        for reg in element.getElementsByTagName("regulation"):
-            self.multiples = reg.getAttribute("type")=="multiple"
-            regulation = getTextFromNode(element, "regulation")
-            self.setRegulations(regulation)
+            fee = int(getTextFromNode(node, "gross"))
+            self.fees.append(fee)
+            
+            try: # charge is an optional field.
+                charge = int(getTextFromNode(node, "charge"))            
+                self.ptFees.append(charge)
+            except ValueError:
+                pass
+                
+            condition = node.getAttribute("condition").replace(
+                "&gt;", ">").replace("&lt;", "<")
+            self.conditions.append(condition)
         
-        description = getTextFromNode(element, "description")
-        brief_descriptions = getListFromNode(element, "brief_description")
-        pl_cmp = getTextFromNode(element, "pl_cmp")
-        hide = getBoolFromNode(element, "hide")
-        allow_feescale_add = getBoolFromNode(
-            element, "allow_feescale_add", default=True)
-        fees = getFeesFromNode(element, "fee")
-        if self.table.hasPtCols:
-            ptfees = getFeesFromNode(element, "pt_fee")
-        else:
-            ptfees = ()
-
-        self.setCategory(int(section))
-        self.setPl_Cmp_Type(pl_cmp)
-        self.usercode = USERCODE
-        self.oldcode = oldcode
-        self.description = description
-        self.hide = hide
-        self.addFees(fees)
-        self.addPtFees(ptfees)
-        self.allow_feescale_add = allow_feescale_add
-        for bd in brief_descriptions:
-            self.addBriefDescription(bd)
-
-
-    def to_xml(self, pretty=False):
-        '''
-        convert the current object to an xml representation
-        '''
-        dom = minidom.Document()
-        item = dom.createElement("item")
-
-        n = dom.createElement("section")
-        n.appendChild(dom.createTextNode(str(self.category)))
-        item.appendChild(n)
-
-        n = dom.createElement("code")
-        n.appendChild(dom.createTextNode(self.itemcode))
-        item.appendChild(n)
-
-        n = dom.createElement("oldcode")
-        n.appendChild(dom.createTextNode(self.oldcode))
-        item.appendChild(n)
-
-        n = dom.createElement("USERCODE")
-        n.appendChild(dom.createTextNode(self.usercode))
-        item.appendChild(n)
-
-        n = dom.createElement("regulation")
-        n.appendChild(dom.createTextNode(self.regulations))
-        item.appendChild(n)
-
-        n = dom.createElement("description")
-        n.appendChild(dom.createTextNode(self.description))
-        item.appendChild(n)
-
-        for bdesc in self.brief_descriptions:
-            n = dom.createElement("brief_description")
-            n.appendChild(dom.createTextNode(bdesc))
-            item.appendChild(n)
-
-        n = dom.createElement("hide")
-        val = "1" if self.hide else "0"
-        n.appendChild(dom.createTextNode(val))
-        item.appendChild(n)
-
-        n = dom.createElement("allow_feescale_add")
-        val = "1" if self.allow_feescale_add else "0"
-        n.appendChild(dom.createTextNode(val))
-        item.appendChild(n)
-
-        n = dom.createElement("pl_cmp")
-        n.appendChild(dom.createTextNode(self.pl_cmp_type))
-        item.appendChild(n)
-
-        for fee in self.fees:
-            f_string = str(fee).strip("(),")
-            n = dom.createElement("fee")
-            n.appendChild(dom.createTextNode(f_string))
-            item.appendChild(n)
-
-        for fee in self.ptFees:
-            f_string = str(fee).strip("(),")
-            n = dom.createElement("pt_fee")
-            n.appendChild(dom.createTextNode(f_string))
-            item.appendChild(n)
-
-        dom.appendChild(item)
-
-        if pretty:
-            retarg = dom.toprettyxml()
-            retarg = retarg.replace("\t", "    ")
-        else:
-            retarg = dom.toxml()
-        dom.unlink()
-        return retarg
-
+        
+        dependency_nodes = element.getElementsByTagName("dependency")
+        for node in dependency_nodes:
+            att = getTextFromNode(node, "attribute")
+            shortcut = getTextFromNode(node, "shortcut")
+            self.dependencies.append((att, shortcut))
+        
     def __repr__(self):
+        return "FeeItem '%s' %s %s %s %s"% (
+            self.itemcode, 
+            self.description,
+            str(self.fees),
+            str(self.ptFees),
+            str(self.brief_descriptions)
+            )
+            
+    @property
+    def has_pt_fees(self):
+        return len(self.ptFees) > 0
+    
+    @property
+    def is_simple(self):
         '''
-        a readable version of the instance
+        a boolean which is true if n items costs n* fee
+        many items the cost goes down with multiples, or there is a maximum fee
         '''
-        return '''
-feesTable.feeItem object
-table, Item           =  %s   %s
-category, usercode    =  %s, '%s'
-pl_cmp_type           =  %s,
-brief description(s)  = '%s'
-estimate phrase       = '%s'
-regulations           = '%s'
-fees                  =  %s
-ptFees                =  %s'''% (self.table.tablename,
-        self.itemcode, self.category, self.usercode, self.pl_cmp_type,
-        self.brief_descriptions, self.description, self.regulations,
-        self.fees, self.ptFees)
-
-    def addFees(self, arg):
-        '''
-        add a fee to the list of fees contained by this class
-        frequently this list will have only one item
-        '''
-        self.fees = arg
-
-    def addPtFees(self,arg):
-        '''
-        same again, but for the pt charge
-        '''
-        self.ptFees = arg
-
-    def setCategory(self, arg):
-        '''
-        add a numeric category, which is later translated into diagnosis,
-        perio, chart etc...
-        '''
-        self.category = arg
-
-    def setPl_Cmp_Type(self,arg):
-        '''
-        the fee needs to know where it would belong in the treatment plan,
-        if added via an indirect method. default is "other"
-        this is where the item would be inserted into the pt class
-        eg "ul7pl" or "otherpl"
-        use 'CHART' to indicate that a tooth needs to be specified.
-        '''
-        if arg:
-            self.pl_cmp_type = arg
-
-    def addBriefDescription(self, arg):
-        '''
-        add a brief description
-        '''
-        self.brief_descriptions += (arg,)
-
-    def setRegulations(self, arg):
-        '''
-        pass a string which sets the conditions for
-        applying fees to this treatment item
-        '''
-        self.regulations = arg
-
-    def get_fees(self, no_items=1, conditions=""):
+        return len(self.fees) == 1
+    
+    def get_fees(self, item_no=1):
         '''
         convenience wrapper for getFee function
-        returns a tuple fee,ptfee
+        returns a tuple fee, ptfee
         '''
-        fee = self.get_fee(no_items,conditions)
-        if "no_charge" in conditions:
-            return (fee, 0)
-
-        ptFee = self.get_fee(no_items, conditions, patient=True)
+        fee = self.get_fee(item_no)
+        ptFee = self.get_fee(item_no, charge=True)
 
         if ptFee == None:
             return (fee, fee)
         else:
             return (fee, ptFee)
 
-    def get_fee(self, no_items=1, conditions="", patient=False):
+    def get_fee(self, item_no=1, charge=False):
         '''
-        get a fee for x items of this type
-        conditions allows some flexibility (eg conditions=lower premolar)
-        patient = True when you using a feescale with distinctly different
-        patient values to the true fee (eg nhs)
+        get a fee for the xth item of this type
+        if charge is true, then return the "charge" rather than the gross fee
         '''
-
-        ##todo - this is a holder for when I include multi column fee dicts
-        KEY = 0
-
-        def getFeeList(fees):
-            '''
-            get a list of the KEYth column of fees
-            '''
-            retarg = []
-            for feetuple in fees:
-                retarg.append(feetuple[KEY])
-            return retarg
-
-        if patient:
-            if self.ptFees == ():
+        LOGGER.debug(
+            "FeeItem.get_fee(item_no=%d, charge=%s)"% (item_no, charge))
+        if charge:
+            if self.ptFees == []:
                 return None
-            else:
-                feeList = getFeeList(self.ptFees)
+            feeList = self.ptFees
         else:
-            feeList = getFeeList(self.fees)
+            feeList = self.fees
 
-        if self.regulations and not self.multiples:
-            logging.warning(
-            "TODO - apply regulation '%s'"% self.regulations)
-
-        if not self.multiples:
-            #linear charging x items = x * fee.
-            return feeList[0] * no_items
-        
-
-        #-- this is the "regulation" for small xrays
-        #--  n=1:A,n=2:B,n=3:C,n>3:C+(n-3)*D,max=E
-
-        #--and here is the new one for the 2012 feescale
-        #-- n=1:A,n=2:B,n=3:C,n>4:E
-
-        logging.debug("applying multiple regulation '%s'"% self.regulations)
-
-        regulations = self.regulations.split(',')
-        max_fee = None
-        found = False
-        for regulation in regulations:
-
-            m = re.match("max=([A-Z])", regulation)
-            if m:
-                max_fee = feeList[ord(m.groups()[0])-65]
-                continue
-
-            if found:
-                continue
-
-            logic, value = regulation.split(":")
-
-            if re.search("[^>^<]=[^=]", logic):
-                #can't simply use eval because n=5 is not n==5
-                logic = logic.replace("=", "==")
-
-            if eval(logic.replace("n", str(no_items))):
-                logging.debug("match found with %s"% logic)
-                if re.match("[A-Z]$", value):
-                    fee = feeList[ord(value)-65]
-                else:
-                    eval_string = value.replace("n", str(no_items))
-                    for cap in re.findall("[A-Z]", value):
-                        eval_string = eval_string.replace(
-                            cap, str(feeList[ord(cap)-65]))
-
-                    logging.debug("Fee logic is '%s', evaluating '%s'"% (
-                        value, eval_string))
-                    fee = eval(eval_string)
-
-                found = True
-
-        if not found:
-            logging.warning(
-                "no match for fee regulations '%s'"% self.regulations)
-            fee = feeList[0] * no_items
-
-        if max_fee and max_fee < fee:
-            logging.info("max fee reached for this fee code")
-            fee = max_fee
-        logging.debug("returning a fee of %s"% fee)
-        return fee
-
+        if self.is_simple or item_no == 1:
+            fee = feeList[0]
+            LOGGER.debug("simple addition of 1st item, fee=%s"% fee)
+            return fee
+            
+        LOGGER.warning("COMPLEX FEE BEING APPLIED!")
+        for i, condition in enumerate(self.conditions):
+            if condition == "item_no=%d"% item_no:
+                fee = feeList[i]
+                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                return fee
+            m = re.match("item_no>(\d+)", condition)
+            if m and item_no > int(m.groups()[0]):
+                fee = feeList[i]
+                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                return fee
+            m = re.match("item_no>=(\d+)", condition)
+            if m and item_no >= int(m.groups()[0]):
+                fee = feeList[i]
+                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                return fee
+            m = re.match("item_no<(\d+)", condition)
+            if m and item_no < int(m.groups()[0]):
+                fee = feeList[i]
+                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                return fee
+            m = re.match("item_no<=(\d+)", condition)
+            if m and item_no <= int(m.groups()[0]):
+                fee = feeList[i]
+                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                return fee
+            m = re.match("(\d+)<item_no<(\d+)", condition)
+            if m and int(m.groups()[0]) < item_no < int(m.groups()[1]):
+                fee = feeList[i]
+                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                return fee
+            m = re.match("(\d+)<=item_n<=(\d+)", condition)
+            if m and int(m.groups()[0]) <= item_no <= int(m.groups()[1]):
+                fee = feeList[i]
+                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                return fee
+            
+        #if all has failed.... go with the simple one
+        LOGGER.debug("no conditions met... returning simple fee")
+        return feeList[0]    
+            
 if __name__ == "__main__":
-
-    def check_codes():
-        tx = str(dl.lineEdit.text().toAscii())
-        print "checking",tx
-
-        dl.dec_listWidget.clear()
-        dl.adult_listWidget.clear()
-        for tooth in decidmouth:
-            if tooth != "***":
-                code, desc = table.toothCodeWizard(tooth, tx.upper())
-                result = "%s - %s %s"% (tooth.upper(), code, desc)
-                dl.dec_listWidget.addItem(result)
-        for tooth in mouth:
-            code, desc = table.toothCodeWizard(tooth, tx.upper())
-            result = "%s - %s %s"% (tooth.upper(), code, desc)
-            dl.adult_listWidget.addItem(result)
-
-    def showTable():
-        dialog2 = QtGui.QDialog(Dialog)
-        te = QtGui.QPlainTextEdit(dialog2)
-        te.setMinimumSize(800,600)
-
-        text = table.data.replace("</item>","</item>\n")
-        text = text.replace("<item>","\n<item>")
-        text = text.replace("><","> <")
-        te.setPlainText(text)
-        dialog2.show()
-
-    def reloadTables():
-        global table
-        fts = FeeTables()
-        table = fts.tables[dl.comboBox.currentIndex()]
-
-    def change_table(i):
-        global table
-        table = fts.tables[i]
-        print "changed to ", table.tablename
-        check_codes()
+    LOGGER.setLevel(logging.DEBUG)
 
     fts = FeeTables()
-
-    table_list = []
-    for table in fts.tables.values():
-        print "="*80
-        print table.tablename
-        table_list.append(table.tablename)
-
-        def checkCommonItems():
-            for tx in ("CE","S", "SP","SP+","SR F/F"):
-                print "looking up %s"%tx
-                code = table.getItemCodeFromUserCode(tx)
-                print "got code %s, fee %s"% (
-                    code, table.getFees(code, no_already_in_estimate=0))
-
-        checkCommonItems()
-        print "="*80
-        
-    from PyQt4 import QtGui, QtCore
-    from openmolar.dbtools.patient_class import mouth, decidmouth
-    from openmolar.qt4gui.compiled_uis import Ui_codeChecker
-    app = QtGui.QApplication([])
-    Dialog = QtGui.QDialog()
-    dl = Ui_codeChecker.Ui_Dialog()
-    dl.setupUi(Dialog)
-    dl.comboBox.addItems(table_list)
-
-    table = fts.tables[dl.comboBox.currentIndex()]
-
-    Dialog.setWindowTitle(table.tablename)
-    Dialog.connect(dl.pushButton, QtCore.SIGNAL("clicked()"), check_codes)
-    Dialog.connect(dl.lineEdit, QtCore.SIGNAL("returnPressed()"), check_codes)
-    Dialog.connect(dl.comboBox, QtCore.SIGNAL("currentIndexChanged (int)"),
-        change_table)
-
-    Dialog.exec_()
-    app.closeAllWindows()
+    
+    table = fts.default_table
+    for id, fee_item in table.feesDict.iteritems():
+        print id, fee_item
+    
+    print table.hasPtCols
+    

@@ -8,13 +8,14 @@
 
 from __future__ import division
 import copy
+import logging
 import re
 import sys
 
 from openmolar.settings import localsettings
 from openmolar.ptModules import plan
 
-import struct
+LOGGER = logging.getLogger("openmolar")
 
 class Estimate(object):
     '''
@@ -79,6 +80,10 @@ class Estimate(object):
     @property
     def is_exam(self):
         return bool(re.match("01[012]1$", self.itemcode))
+    
+    @property
+    def is_custom(self):
+        return self.itemcode == "4002"
 
 def strip_curlies(description):
     '''
@@ -153,14 +158,55 @@ def recalculate_estimate(pt):
     if pt.dnt2 and pt.dnt2 != "":
         dent = pt.dnt2
 
+    #drop all existing estimates except custom items.
+    #and reverse fee for completed items.
+    cust_ests = []
+    for estimate in pt.estimates:
+        if estimate.is_custom:
+            cust_ests.append(estimate)
+        elif estimate.completed:
+            pt.applyFee(estimate.ptfee * -1)
+    pt.estimates = cust_ests
+    
+    for tx_hash, att, tx in pt.tx_hashes:
+        tx = tx.strip(" ")
+        if att == "custom":
+            pass
+        elif re.match("[ul][lr][1-8]$", att): # chart add
+            
+            #--tooth may be deciduous
+            tooth_name = pt.chartgrid.get(att)
+            ft = pt.getFeeTable()
+            item = ft.get_tooth_fee_item(tooth_name, tx)
+            if item:
+                itemcode = item.itemcode
+                descr = item.description.replace("*", 
+                    " %s"% tooth_name.upper())
+                pt.add_to_estimate(
+                    tx, dent, [tx_hash], itemcode, descr=descr)
+                
+                # add any other estimate items here.
+                # example an extraction may have an "extraction visit"
+                # a veneer may have a "first in arch"
+                for att, usercode in item.dependencies:
+                    add_dependency(om_gui, att, usercode)
+            else:
+                descr = "%s %s"% (_("Other treatment"), tooth_name)
+                pt.add_to_estimate(
+                    tx, dent, [tx_hash], "4001", descr=descr)
+
+        else:
+            pt.add_to_estimate(tx, dent, [tx_hash])
+
+    LOGGER.debug("checking for completed items")
+    for est in pt.estimates:
+        for tx_hash in pt.completed_tx_hashes:
+            if tx_hash in est.tx_hashes:
+                est.completed = True
     for est in pt.estimates:
         if est.completed:
-            pt.applyFee(est.ptfee * -1)
-
-    pt.estimates = []
-    
-    ##TODO - recalculate everything from the treatment plan!
-    
+            pt.applyFee(est.ptfee)
+                
     return True
 
 if __name__ == "__main__":

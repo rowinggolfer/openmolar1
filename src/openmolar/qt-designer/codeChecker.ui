@@ -6,40 +6,33 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>599</height>
+    <width>907</width>
+    <height>686</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="2">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Adult</string>
+   <item row="2" column="0">
+    <widget class="QLineEdit" name="att_lineEdit">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QListWidget" name="dec_listWidget"/>
+   <item row="0" column="0" colspan="3">
+    <widget class="QComboBox" name="comboBox"/>
    </item>
-   <item row="3" column="2">
-    <widget class="QListWidget" name="adult_listWidget"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Deciduous</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="3">
+   <item row="5" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Enter a Restoration Code (eg. MOD) to test your fee scale logic</string>
+        <string>Enter a Restoration Code (eg. MOD) to see how a feescale interprets the shortcut</string>
        </property>
       </widget>
      </item>
@@ -71,8 +64,43 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="0" colspan="3">
-    <widget class="QComboBox" name="comboBox"/>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Deciduous Teeth</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QTableView" name="dec_tableView">
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Adult Teeth</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Raw Attribute</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" rowspan="3">
+    <widget class="QTableView" name="adult_tableView">
+     <attribute name="horizontalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+    </widget>
    </item>
   </layout>
  </widget>

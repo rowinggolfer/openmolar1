@@ -1,0 +1,180 @@
+<?xml version="1.0" ?>
+<feescale>
+	<version>0.1</version>
+	<tablename>test_feescale</tablename>
+	<feescale_description>Example Fee Scale</feescale_description>
+	<category>P</category>
+	<header id="1">Diagnosis</header>
+	<header id="2">Preventive Care</header>
+	<header id="3">Periodontal Treatment</header>
+	<header id="4">Conservative Treatment</header>
+	<header id="5">Endodontic Treatment</header>
+	<header id="6">Crowns and Veneers</header>
+	<header id="7">Bridgework</header>
+	<header id="8">Extractions and Surgical Treatment</header>
+	<header id="9">Prostheses</header>
+	<header id="10">Orthodontic Treatment</header>
+	<header id="11">Other Forms of Treatment </header>
+	<start>
+		<year>2013</year>
+		<month>8</month>
+		<day>1</day>
+	</start>
+	<item id="0101">
+		<section>1</section>
+		<shortcut>CE</shortcut>
+		<description>clinical examination^</description>
+		<fee>
+			<brief_description>clinical exam</brief_description>
+			<gross>2200</gross>
+			<charge>2200</charge>
+		</fee>
+	</item>
+	<item id="0111">
+		<section>1</section>
+		<shortcut>ECE</shortcut>
+		<description>extensive clinical examination^</description>
+		<fee>
+			<brief_description>extensive clinical exam</brief_description>
+			<gross>4500</gross>
+			<charge>4500</charge>
+		</fee>
+	</item>
+	<item id="0121" obscurity="2">
+		<section>1</section>
+		<shortcut>FCA</shortcut>
+		<description>full case assessment^</description>
+		<fee>
+			<brief_description>full case assessment^</brief_description>
+			<gross>6000</gross>
+			<charge>6000</charge>
+		</fee>
+	</item>
+	<item id="0201">
+		<section>1</section>
+		<shortcut>S</shortcut>
+		<description>small xray*</description>
+		<fee condition="item_no=1">
+			<brief_description>small xrays 1 film</brief_description>
+			<gross>900</gross>
+			<charge>900</charge>
+		</fee>
+		<fee condition="item_no=2">
+			<brief_description>small xrays 2 films</brief_description>
+			<gross>1500</gross>
+			<charge>1500</charge>
+		</fee>
+		<fee condition="item_no=3">
+			<brief_description>small xrays 3 films</brief_description>
+			<gross>2000</gross>
+			<charge>2000</charge>
+		</fee>
+		<fee condition="item_no&gt;=4">
+			<brief_description>small xrays maximum</brief_description>
+			<gross>2500</gross>
+			<charge>2500</charge>
+		</fee>
+		<feescale_add>
+			<attribute>xray</attribute>
+		</feescale_add>
+	</item>
+	<item id="1401" obscurity="0">
+		<section>4</section>
+		<shortcut type="regex">u[lr][de4-8][MODBP]*$|l[lr][de4-8][MODBL]*$|u[lr][a-c1-3][MIDBP]*$|l[lr][a-c1-3][MIDBL]*$</shortcut>
+		<description>filling*</description>
+		<fee>
+			<brief_description>filling</brief_description>
+			<gross>4500</gross>
+			<charge>4500</charge>
+		</fee>
+	</item>
+	<item id="1501">
+		<section>5</section>
+		<shortcut type="regex">[ul][lr][1-3]RT$</shortcut>
+		<description>anterior root filling*</description>
+		<fee>
+			<brief_description>root filling 1-3</brief_description>
+			<gross>19500</gross>
+			<charge>19500</charge>
+		</fee>
+	</item>
+	<item id="1502">
+		<section>5</section>
+		<shortcut type="regex">[ul][lr][45]RT$</shortcut>
+		<description>premolar root filling*</description>
+		<fee>
+			<brief_description>root filling 4-5</brief_description>
+			<gross>19500</gross>
+			<charge>19500</charge>
+		</fee>
+	</item>
+	<item id="1504">
+		<section>5</section>
+		<shortcut type="regex">[ul][lr][6-8]RT$</shortcut>
+		<description>molar root filling*</description>
+		<fee>
+			<brief_description>root filling 6-8</brief_description>
+			<gross>28000</gross>
+			<charge>19500</charge>
+		</fee>
+	</item>
+	<item id="0601">
+		<section>6</section>
+		<shortcut type="regex">[ul][lr][1-8]CR</shortcut>
+		<description>other crown*</description>
+		<fee>
+			<brief_description>unspecified crown</brief_description>
+			<gross>35000</gross>
+			<charge>0</charge>
+		</fee>
+	</item>
+	<item id="0701">
+		<section>7</section>
+		<shortcut type="regex">[ul][lr][1-8]BR</shortcut>
+		<description>bridge unit*</description>
+		<fee>
+			<brief_description>unspecified bridge unit</brief_description>
+			<gross>35000</gross>
+			<charge>0</charge>
+		</fee>
+	</item>
+	<item id="2101">
+		<section>8</section>
+		<shortcut type="regex">u[lr][a-e1-8]EX</shortcut>
+		<description>extraction*</description>
+		<dependency condition="item_no&gt;=1 present" type="shortcut">
+			<attribute>other</attribute>
+			<shortcut>XV</shortcut>
+		</dependency>
+		<fee condition="item_no=1">
+			<brief_description>extraction, 1 tooth</brief_description>
+			<gross>5500</gross>
+			<charge>5500</charge>
+		</fee>
+		<fee condition="item_no=2">
+			<brief_description>extraction, 2 teeth</brief_description>
+			<gross>6500</gross>
+			<charge>5500</charge>
+		</fee>
+		<fee condition="3&lt;=item_no&lt;=4">
+			<brief_description>extraction, 3-4 teeth</brief_description>
+			<gross>8000</gross>
+			<charge>5500</charge>
+		</fee>
+		<fee condition="5&lt;=item_no&lt;=9">
+			<brief_description>extraction, 5-9 teeth</brief_description>
+			<gross>9000</gross>
+			<charge>5500</charge>
+		</fee>
+		<fee condition="10&lt;=item_no&lt;=18">
+			<brief_description>extraction, 10-18 teeth</brief_description>
+			<gross>12000</gross>
+			<charge>5500</charge>
+		</fee>
+		<fee condition="item_no&gt;=18">
+			<brief_description>extraction, &gt; 18 teeth</brief_description>
+			<gross>15000</gross>
+			<charge>5500</charge>
+		</fee>
+	</item>
+</feescale>

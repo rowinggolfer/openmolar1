@@ -665,6 +665,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         Other pages are disabled.
         '''
         if self.pt.serialno != 0:
+            LOGGER.debug("updating last_address_details")
+            localsettings.LAST_ADDRESS=(
+                self.pt.sname, self.pt.addr1, self.pt.addr2,
+                self.pt.addr3, self.pt.town, self.pt.county,
+                self.pt.pcde, self.pt.tel1)
+            LOGGER.debug("details are %s"% str(localsettings.LAST_ADDRESS))
             
             #print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
@@ -1163,9 +1169,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         a record has been called by one of several means
         '''
         if self.enteringNewPatient() or serialno in (0, None):
-            pass
-        elif (self.pt and serialno == self.pt.serialno and 
-        not newPatientReload):
+            return
+    
+        if (self.pt and serialno == self.pt.serialno and not newPatientReload):
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.advise(_("Patient already loaded"))
         elif not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
@@ -1176,11 +1182,6 @@ class OpenmolarGui(QtGui.QMainWindow):
                 localsettings.recent_snos.append(serialno)
                 localsettings.recent_sno_index = len(
                     localsettings.recent_snos) - 1
-            localsettings.defaultNewPatientDetails=(
-                self.pt.sname, self.pt.addr1, self.pt.addr2,
-                self.pt.addr3, self.pt.town, self.pt.county,
-                self.pt.pcde, self.pt.tel1)
-
             try:
                 self.pt = patient_class.patient(serialno)
                 self.pt_diary_widget.set_patient(self.pt)
@@ -1199,7 +1200,6 @@ class OpenmolarGui(QtGui.QMainWindow):
                 logging.exception(
                 "Unknown ERROR loading patient - serialno %d"% serialno)
                 self.advise ("Unknown Error - Tell Neil<br />%s"% exc, 2)
-
 
     def reload_patient(self):
         '''
@@ -3004,7 +3004,10 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         prompts the user to confirm tooth treatment fees
         '''
         result=QtGui.QMessageBox.question(self, "Confirm",
+        u"%s<hr /><i>(%s)</i>"% (
         _("Scrap the estimate and re-price everything?"),
+        _("Custom items will be unaffected")
+        ),
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.No )
         if result == QtGui.QMessageBox.No:
@@ -3100,7 +3103,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             ,2)
     
     def hide_rare_feescale_items(self, bool):
-        fee_table_model.HIDE_RARE_CODES = bool
+        #TODO - this could actually have 3 levels.
+        if bool:
+            level = 1
+        else:
+            level = 0
+        fee_table_model.HIDE_RARE_CODES = level            
         fees_module.loadFeesTable(self)
         
     def reload_feescales(self):

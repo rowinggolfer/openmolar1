@@ -110,7 +110,7 @@ class AutoAddressDialog(BaseDialog):
         default NP has been pressed - so apply the address and surname
         from the previous patient
         '''
-        dup_tup = localsettings.defaultNewPatientDetails
+        dup_tup = localsettings.LAST_ADDRESS
         
         self.addr1_le.setText(dup_tup[1])
         self.addr2_le.setText(dup_tup[2])
@@ -119,7 +119,7 @@ class AutoAddressDialog(BaseDialog):
         self.county_le.setText(dup_tup[5])
         self.pcde_le.setText(dup_tup[6])
         self.tel1_le.setText(dup_tup[7])
-
+        
         self.old_addr1_le.setText(self.om_gui.ui.addr1Edit.text())
         self.old_addr2_le.setText(self.om_gui.ui.addr2Edit.text())
         self.old_addr3_le.setText(self.om_gui.ui.addr3Edit.text())
@@ -148,7 +148,7 @@ class AutoAddressDialog(BaseDialog):
         return QtCore.QSize(600,350)
 
     def exec_(self):
-        if localsettings.defaultNewPatientDetails == ("",)*8:
+        if localsettings.LAST_ADDRESS == ("",) * 8:
             self.om_gui.advise(_("No previous address details found"), 1)
         elif BaseDialog.exec_(self):
             return True

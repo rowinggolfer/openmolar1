@@ -13,6 +13,7 @@ to schema 2_2
 from __future__ import division
 
 import logging
+import os
 import sys
 from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
@@ -25,6 +26,7 @@ logging.basicConfig()
 SQLSTRINGS = [
 'drop table if exists currtrtmt',
 'drop table if exists est_link',
+'drop table if exists feescales',
 'update patients set addr2="" where addr2 is NULL',
 'update patients set addr3="" where addr3 is NULL',
 'update patients set town="" where town is NULL',
@@ -45,6 +47,15 @@ create table est_link (
   tx_hash    varchar(20) NOT NULL,
 PRIMARY KEY (ix),
 INDEX (est_id)
+)''',
+
+'''
+create table feescales (
+    ix            int(11) unsigned  not null auto_increment, 
+    in_use        bool              not null default true, 
+    disp_order    int(8)  not null default 0, 
+    xml_data      mediumtext not null, 
+PRIMARY KEY (ix)
 )'''
 ]
 
@@ -56,6 +67,7 @@ order by serialno, courseno, category, completed desc, type'''
 DEST_QUERY = '''insert into est_link (est_id, tx_hash) 
     values (%s, %s)'''
 
+FEESCALE_QUERY = 'insert into feescales (xml_data) values (%s)'
 
 class UpdateException(Exception):
     '''
@@ -124,6 +136,9 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(90, _("populating est_link table"))            
             self.transfer_data()
 
+            self.progressSig(95, _("populating feescales"))            
+            self.insert_feescales()
+
             self.progressSig(97, _('updating settings'))
             print "update database settings..."
 
@@ -183,6 +198,26 @@ class dbUpdater(QtCore.QThread):
             logging.exception("error transfering data")
             db.rollback()
             raise UpdateException(exc)
+
+    def insert_feescales(self):
+        feescale_path = os.path.join(localsettings.wkdir, 'resources',
+            "test_feescale.xml")
+        db = connect.connect()
+        db.autocommit(False)
+        try:
+            f = open(feescale_path, "r")
+            data = f.read()
+            f.close()
+            cursor = db.cursor()
+            cursor.execute(FEESCALE_QUERY, (data,))
+            cursor.close()
+            db.commit()
+            db.close()            
+        except Exception as exc:
+            logging.exception("error inserting test feescale")
+            db.rollback()
+            raise UpdateException(exc)
+        
 
 if __name__ == "__main__":
     dbu = dbUpdater()

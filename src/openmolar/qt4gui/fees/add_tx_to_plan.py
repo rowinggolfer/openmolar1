@@ -137,6 +137,7 @@ def otherAdd(om_gui):
 
     om_gui.load_newEstPage()
     om_gui.load_treatTrees()
+    
 
 def customAdd(om_gui):
     '''
@@ -304,25 +305,58 @@ def chartAdd(om_gui, tooth, new_string):
     other_txs = other_txs.split(" ")
     
     dentid = om_gui.pt.course_dentist
-        
+    ft = pt.getFeeTable()
     for usercode in updated_usercodes:
         n = other_txs.count(usercode)
         tx_hash = str(hash("%s %s %s"% (tooth, n, usercode)))
-        
-        itemcode, descr = pt.getFeeTable().toothCodeWizard(
-            tooth_name, usercode)
-        if itemcode == "4001":
+        LOGGER.debug("getting tooth fee item for %s %s"% (tooth_name, usercode))
+        item = ft.get_tooth_fee_item(tooth_name, usercode)
+        LOGGER.debug("got %s"% item)
+        if item:
+            itemcode = item.itemcode
+            descr = item.description.replace("*", " %s"% tooth_name.upper())
+            LOGGER.debug("adding to estimate %s %s %s %s %s"%(
+                usercode, dentid, [tx_hash], itemcode, descr
+                ))
+            pt.add_to_estimate(
+                usercode, dentid, [tx_hash], itemcode, descr=descr)
+            
+            # add any other estimate items here.
+            # example an extraction may have an "extraction visit"
+            # a veneer may have a "first in arch"
+            for att, usercode in item.dependencies:
+                add_dependency(om_gui, att, usercode)
+        else:
             om_gui.advise(u"%s '%s' %s"% (_("Warning"), usercode, 
                 _("not understood by the active feescale")), 2)
             descr = "%s %s"% (_("Other treatment"), tooth_name)
+            pt.add_to_estimate(
+                usercode, dentid, [tx_hash], "4001", descr=descr)
+
+def add_dependency(om_gui, att, usercode):
+    message = "adding dependency %s %s"% (att, usercode)
+    LOGGER.warning (message)
+    om_gui.advise(message, 1)
+    pt = om_gui.pt
+    dentid = om_gui.pt.course_dentist
+    if att == "other":
+        pt.otherpl += "%s "% usercode
         
-        pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode, descr=descr)
+        other_txs = "%s %s"%(pt.othercmp, pt.otherpl)
+        n = other_txs.split(" ").count(usercode)
+        tx_hash = str(hash("other %s %s"% (n, usercode)))
+        pt.add_to_estimate(usercode, dentid, [tx_hash])
+    else:
+        message = u"%s '%s' %s '%s' %s"%(
+            _("unable to add"),
+            usercode,
+            _("because attribute"),
+            att,
+            _("is not understod")
+            )
+        LOGGER.warning(message)
+        om_gui.advise(message, 2)
         
-        ##TODO this should be capable of adding more than one item to est
-        #ie.....
-        #itemcodes = pt.getFeeTable().getToothCode(toothname, usercode)
-        #for itemcode in itemcodes:
-        #    pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode)
         
 def remove_estimate_item(om_gui, est_item):
     '''
@@ -415,6 +449,7 @@ if __name__ == "__main__":
     mw.load_newEstPage = lambda : None
 
     #xrayAdd(mw)
-    perioAdd(mw)
+    #perioAdd(mw)
     #otherAdd(mw)
     #customAdd(mw)
+    chartAdd(mw, "ur7", "MOD")

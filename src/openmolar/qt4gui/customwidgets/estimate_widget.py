@@ -302,13 +302,24 @@ class EstimateWidget(QtGui.QWidget):
         (in the case of multiple identical treatment items, there is a 
         specific allowable order)
         '''
-        print "estimate_widget.allow_check %s"% est_item_widget
-        result = QtGui.QMessageBox.information(self, "info",
-        "just checking before (un)checking!",
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel
-        )== QtGui.QMessageBox.Ok
+        check_first = False
+        affected_est = est_item_widget.est_items[0]
+        for est in self.ests:
+            if (est.itemcode == affected_est.itemcode and 
+            est.tx_hashes != affected_est.tx_hashes):
+                check_first = True
+                break
         
-        return result
+        if check_first:
+            LOGGER.debug("estimate_widget.allow_check %s"% est_item_widget)
+            result = QtGui.QMessageBox.information(self, "info",
+            "just checking before (un)checking!",
+            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel
+            )== QtGui.QMessageBox.Ok
+            
+            return result
+        
+        return True
 
     
 if __name__ == "__main__":

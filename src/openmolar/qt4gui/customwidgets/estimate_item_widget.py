@@ -327,6 +327,11 @@ class EstimateItemWidget(QtGui.QWidget):
         user has tried to toggle the completed check box
         perform logic here first to see if he/she is allowed to do this
         '''
+        if self.est_items[0].is_exam:
+            if self.est_widget.allow_check(self):
+                self.deleteItem()
+            return
+        
         if len(self.est_items) > 1:
             return self._multi_item_check()
         return self.est_widget.allow_check(self)
@@ -366,10 +371,6 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         print "completed_state_changed %s"% args
         complete = self.completed_checkBox.isChecked()
-        
-        if self.est_items[0].is_exam:
-            self.deleteItem()
-            return
         
         for item in self.est_items:
             if item.completed != complete:
