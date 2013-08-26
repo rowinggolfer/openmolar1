@@ -46,10 +46,10 @@ def header_html(pt):
 
     if pt.underTreatment:
         html_ = u"<h3>Patient is under Treatment</h3>course started %s"% (
-            localsettings.readableDate(pt.accd))
+            localsettings.readableDate(pt.treatment_course.accd))
     else:
         html_ = u"<h3>Last course of treatment</h3>completed %s"% (
-            localsettings.readableDate(pt.cmpd))
+            localsettings.readableDate(pt.treatment_course.cmpd))
     
     return html_ 
 
@@ -59,7 +59,8 @@ def treatment_html(pt):
 
 def payments_html(pt):
     return u'''<h4>Payments Since this course began (excluding Sundries)</h4>
-        %s '''% paymentHistory.summary_details(pt.serialno, pt.accd)
+        %s '''% paymentHistory.summary_details(
+            pt.serialno, pt.treatment_course.accd)
 
 def html(pt):
     html_ = HTML_TEMPLATE.replace("{{TREATMENTS}}",treatment_html(pt))

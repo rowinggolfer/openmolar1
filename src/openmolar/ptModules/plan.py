@@ -68,10 +68,10 @@ def completedDict(pt):
 
 def plannedItems(pt):
     plannedList = []
-    if pt.examt != "" and not pt.examd:
-        plannedList.append(("Exam", pt.examt),)
-    for attrib in tup_Atts+tup_toothAtts:
-        tx = pt.__dict__[attrib+"pl"]
+    if pt.treatment_course.examt != "" and not pt.treatment_course.examd:
+        plannedList.append(("Exam", pt.treatment_course.examt),)
+    for attrib in tup_Atts + tup_toothAtts:
+        tx = pt.treatment_course.__dict__[attrib+"pl"]
         if not tx in ("", None):
             items = tx.strip(" ").split(" ")
             for item in items:
@@ -88,7 +88,7 @@ def completedItems(pt, teethOnly=False):
     compList = []
     if teethOnly:
         for tooth in tup_toothAtts:
-            tx = pt.__dict__[tooth+"cmp"]
+            tx = pt.treatment_course.__dict__[tooth+"cmp"]
             if not tx in ("", None):
                 items = tx.strip(" ").split(" ")
                 for item in items:
@@ -96,11 +96,11 @@ def completedItems(pt, teethOnly=False):
                     if re.match("[ul][lr][0-8]",tooth):
                         compList.append((tooth, item),)
     else:
-        if pt.examt!="" and pt.examd:
-            compList.append(("Exam", pt.examt),)
+        if pt.treatment_course.examt!="" and pt.treatment_course.examd:
+            compList.append(("Exam", pt.treatment_course.examt),)
 
         for attrib in tup_Atts+tup_toothAtts:
-            tx = pt.__dict__[attrib+"cmp"]
+            tx = pt.treatment_course.__dict__[attrib+"cmp"]
             if not tx in ("",None):
                 items = tx.strip(" ").split(" ")
                 for item in items:
@@ -119,17 +119,20 @@ def summary(pt):
     returns html set showing a summary of planned or completed treatment
     '''
 
+    if pt.treatment_course is None:
+        return ""
+    
     retarg = '''<html><body><head>
     <link rel="stylesheet" href="%s" type="text/css">
     </head>\n'''%localsettings.stylesheet
     if not pt.underTreatment:
         retarg += "<H4>%s</H4>"% _("Previous Course")
-    if pt.accd != None:
+    if pt.treatment_course.accd != None:
         retarg += '%s %s<br />'% ( _("Start"),
-        localsettings.formatDate(pt.accd))
-    if pt.cmpd != None:
+        localsettings.formatDate(pt.treatment_course.accd))
+    if pt.treatment_course.cmpd != None:
         retarg += '%s %s<br />'% (_('End'),
-        localsettings.formatDate(pt.cmpd))
+        localsettings.formatDate(pt.treatment_course.cmpd))
     plan = u""
     for item in plannedItems(pt):
         plan+='%s - %s<br />'%(item)
@@ -155,7 +158,7 @@ def completedFillsToStatic(pt):
         for tooth, prop in items:
             tooth = tooth.lower()
             if re.match("EX", prop):
-                pt.__dict__["%sst"% tooth] = "TM "
+                pt.treatment_course.__dict__["%sst"% tooth] = "TM "
             else:
                 existing = pt.__dict__.get("%sst"% tooth)
                 new = "%s %s "% (existing, prop)

@@ -166,7 +166,7 @@ class FeeTables(object):
         '''
         for table in self.tables.values():
             try:
-                table.loadFees()
+                table.load_fee_items_and_shorcuts()
             except Exception as exc:
                 message = "%s %s %s"%(
                     _("feesscale"),
@@ -195,9 +195,9 @@ class FeeTable(object):
         
         self.feesDict = {}
         
+        self.complex_shortcuts = []
         self.treatmentCodes = OrderedDict()
         self.chartRegexCodes = OrderedDict()
-        self.chartMultiRegexCodes = OrderedDict()
         
     def __repr__(self):
         '''
@@ -285,30 +285,30 @@ class FeeTable(object):
         self.endDate = datetime.date(int(year), int(month), int(day))
         LOGGER.debug("endDate = %s"% self.endDate)
 
-    def loadFees(self):
+    def load_fee_items_and_shorcuts(self):
         '''
-        now load the fees
+        now load the fee items and shortcuts
         '''
-        elements = self.dom.getElementsByTagName("item")
-        for element in elements:
-            itemcode = element.getAttribute("id")
-            fee_item = FeeItem(itemcode, element)
-            self.feesDict[itemcode] = fee_item
+        shortcut_nodes = self.dom.getElementsByTagName("complex_shortcut")
+        for shortcut_node in shortcut_nodes:
+            complex_shortcut = ComplexShortcut(shortcut_node)
+            self.complex_shortcuts.append(complex_shortcut)
             
+        item_nodes = self.dom.getElementsByTagName("item")
+        for item_node in item_nodes:
+            item_code = item_node.getAttribute("id")
+            fee_item = FeeItem(item_code, item_node)
+            self.feesDict[item_code] = fee_item
+        
             if fee_item.usercode == "":
                 pass
-            elif fee_item.is_multi_regex:
-                regexes = []
-                for regex in fee_item.usercode.split(" _AND_ "):
-                    regexes.append(re.compile(regex)) 
-                self.chartMultiRegexCodes[tuple(regexes)] = itemcode
             elif fee_item.is_regex:
                 #use pre-compiled regex as the key
                 key = re.compile(fee_item.usercode)
-                self.chartRegexCodes[key] = itemcode
+                self.chartRegexCodes[key] = item_code
             else:
-                self.treatmentCodes[fee_item.usercode] = itemcode
-        
+                self.treatmentCodes[fee_item.usercode] = item_code
+                
         self.dom.unlink()
 
     def getToothCode(self, tooth, arg):
@@ -319,14 +319,6 @@ class FeeTable(object):
         '''
         LOGGER.info("getToothCode for %s%s"% (tooth, arg))
             
-        for key in self.chartMultiRegexCodes:
-            #has to match ALL regexes 
-            match = True
-            for regex in key:
-                match = match and regex.match(tooth+arg)
-            if match:
-                return self.chartMultiRegexCodes[key]
-        
         for key in self.chartRegexCodes:
             if key.match(tooth+arg):
                 return self.chartRegexCodes[key]
@@ -435,19 +427,15 @@ class FeeItem(object):
         self.ptFees = []
         self.brief_descriptions = []
         self.conditions = []
-        self.dependencies = []
-    
+        
         try:
             usercode_node = element.getElementsByTagName("shortcut")[0]
             self.is_regex = usercode_node.getAttribute("type") == "regex"
-            self.is_multi_regex = \
-                usercode_node.getAttribute("type") == "multiregex"
             self.usercode = usercode_node.childNodes[0].data
         except IndexError:
-            #LOGGER.debug("NO USERCODE FOUND for FEE_ITEM %s"% itemcode)
             self.usercode = itemcode
-            self.is_regex, self.is_multi_regex = False, False
-        
+            self.is_regex = False
+                        
         self.description = getTextFromNode(element, "description")
         
         try:
@@ -474,13 +462,6 @@ class FeeItem(object):
             condition = node.getAttribute("condition").replace(
                 "&gt;", ">").replace("&lt;", "<")
             self.conditions.append(condition)
-        
-        
-        dependency_nodes = element.getElementsByTagName("dependency")
-        for node in dependency_nodes:
-            att = getTextFromNode(node, "attribute")
-            shortcut = getTextFromNode(node, "shortcut")
-            self.dependencies.append((att, shortcut))
         
     def __repr__(self):
         return "FeeItem '%s' %s %s %s %s"% (
@@ -575,6 +556,64 @@ class FeeItem(object):
         #if all has failed.... go with the simple one
         LOGGER.debug("no conditions met... returning simple fee")
         return feeList[0]    
+
+class ComplexShortcut(object):
+    '''
+    this class allows complex logic to be placed into an xml feescale
+    complex shortcuts are checked for a match with treatment items
+    before the simple one-to-one feeitems are considered.
+    '''
+    def __init__(self, element):
+        
+        shortcut_node = element.getElementsByTagName("shortcut")[0]
+        self.is_regex = shortcut_node.getAttribute("type") == "regex"
+        shortcut = shortcut_node.childNodes[0].data
+        if self.is_regex:
+            self.shortcut = re.compile(shortcut)
+        else:
+            self.shortcut = shortcut
+        
+        self.cases = []
+        
+        case_nodes = element.getElementsByTagName("case")
+        for case_node in case_nodes:
+            condition = case_node.getAttribute("condition").replace(
+                "&gt;", ">").replace("&lt;", "<")
+            case_action = _CaseAction(condition)
+            
+            removal_nodes = case_node.getElementsByTagName("remove_item")
+            for removal_node in removal_nodes:
+                case_action.removals.append(removal_node.getAttribute("id"))
+            
+            addition_nodes = case_node.getElementsByTagName("add_item")
+            for addition_node in addition_nodes:
+                case_action.additions.append(addition_node.getAttribute("id"))
+
+            alteration_nodes = case_node.getElementsByTagName("alter_item")
+            for alt_node in alteration_nodes:
+                case_action.alterations.append(alt_node.getAttribute("id"))
+                
+            case_action.message = getTextFromNode(case_node, "message")
+            
+            self.cases.append(case_action)
+
+    def matches(self, shortcut):
+        if self.is_regex:
+            return self.shortcut.match(shortcut)
+        else:
+            return self.shortcut == shortcut
+
+class _CaseAction(object):
+    '''
+    a simple class to store what should be performed when a ComplexShortcut 
+    is matched
+    '''
+    def __init__(self, condition):
+        self.condition = condition
+        self.removals = []
+        self.additions = []
+        self.alterations = []
+        self.message = ""
             
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
@@ -586,4 +625,11 @@ if __name__ == "__main__":
         print id, fee_item
     
     print table.hasPtCols
-    
+    for i, complex_shortcut in enumerate(table.complex_shortcuts):
+        print "looking for SP in complex_shortcut %d"% i
+        if complex_shortcut.matches("SP"):
+            print "    match found" 
+            print "    shortcut has %d cases:"% len(complex_shortcut.cases)
+            for case in complex_shortcut.cases:
+                print "          %s additions=%s removals=%s message='%s'"% (
+                case.condition, case.additions, case.removals, case.message)

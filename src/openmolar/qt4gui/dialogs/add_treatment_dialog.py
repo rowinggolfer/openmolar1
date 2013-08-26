@@ -8,11 +8,10 @@
 from __future__ import division
 
 from PyQt4 import QtGui, QtCore
+from openmolar.settings import localsettings
+
 from openmolar.qt4gui.compiled_uis import Ui_addTreatment
 from openmolar.qt4gui.compiled_uis import Ui_treatmentItemWidget
-from openmolar.qt4gui.customwidgets import chainLabel
-from openmolar.qt4gui.fees import fees_module
-from openmolar.settings import localsettings
 
 class itemWidget(Ui_treatmentItemWidget.Ui_Form):
     def __init__(self, parent, widget):

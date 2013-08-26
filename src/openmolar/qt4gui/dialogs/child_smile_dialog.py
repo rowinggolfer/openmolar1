@@ -31,6 +31,7 @@ if __name__ == "__main__":
     sys.path.insert(0, os.path.abspath("../../../"))
 
 from openmolar.settings import localsettings
+from openmolar.qt4gui.customwidgets.upper_case_line_edit import UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOOKUP_URL = "http://www.psd.scot.nhs.uk/dev/simd/simdLookup.aspx"
@@ -53,21 +54,6 @@ EXAMPLE_RESULT = '''
 </body>
 </html>
 '''
-class UpperCaseLineEdit(QtGui.QLineEdit):
-    '''
-    A custom line edit that accepts only BLOCK LETTERS.
-    '''
-    def setText(self, text):
-        QtGui.QLineEdit.setText(self, QtCore.QString(text).toUpper())
-
-    def keyPressEvent(self, event):
-        '''
-        convert the text to upper case, and pass the signal on to the
-        base widget
-        '''
-        QtGui.QLineEdit.keyPressEvent(self, event)
-        self.setText(self.text())
-        self.textEdited.emit(self.text())
 
 class ChildSmileDialog(BaseDialog):
     result = ""
@@ -88,7 +74,6 @@ class ChildSmileDialog(BaseDialog):
         self.insertWidget(self.simd_label)
 
         self.pcde_le.textEdited.connect(self.check_pcde)
-
 
     @property
     def pcde(self):

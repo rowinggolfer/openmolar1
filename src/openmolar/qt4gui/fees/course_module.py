@@ -9,6 +9,8 @@
 '''
 functions to open a course, close a course, or check if one is needed.
 '''
+import logging
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -20,6 +22,8 @@ from openmolar.qt4gui import contract_gui_module
 from openmolar.ptModules import plan
 from openmolar.qt4gui.printing.gp17.gp17_printer import GP17Printer
 
+LOGGER = logging.getLogger("openmolar")
+
 def newCourseNeeded(om_gui):
     '''
     checks to see if the patient is under treatment.
@@ -27,7 +31,7 @@ def newCourseNeeded(om_gui):
     '''
     if om_gui.pt.underTreatment:
         return False
-    if om_gui.pt.cmpd != om_gui.pt.dbstate.cmpd:
+    if om_gui.pt.treatment_course.cmpd != om_gui.pt.dbstate.treatment_course.cmpd:
         om_gui.advise(
         _("Please save the old course changes before continuing"), 1)
         return True
@@ -47,7 +51,8 @@ def newCourseNeeded(om_gui):
         , 1)
         
     elif setupNewCourse(om_gui):
-        print "new course started with accd of '%s'"% om_gui.pt.accd
+        LOGGER.info("new course started with accd of '%s'"% 
+            om_gui.pt.treatment_course.accd)
         return False
     else:
         om_gui.advise(u"<p>%s</p>"% _(
@@ -97,11 +102,9 @@ def setupNewCourse(om_gui):
         return apply_new_courseno(om_gui, new_courseno, accd)
 
 def apply_new_courseno(om_gui, new_courseno, accd=None):
-        om_gui.pt.blankCurrtrt()
-        om_gui.pt.dbstate.blankCurrtrt()
-        om_gui.pt.courseno = new_courseno
-        om_gui.pt.courseno0 = new_courseno
-        om_gui.pt.setAccd(accd)
+        new_course = om_gui.pt.new_tx_course(new_courseno)
+        #om_gui.pt.dbstate.treatment_course = new_course
+        om_gui.pt.treatment_course.setAccd(accd)
         # force a recheck for the new course date
         om_gui.pt.feeTable = None
         om_gui.pt.estimates = []
@@ -130,10 +133,10 @@ def delete_new_course(om_gui):
     user is discarding all changes to a record.
     potentially, this will leave debris in the currtrtmt2 table
     '''
-    if om_gui.pt.courseno != om_gui.pt.dbstate.courseno:
-        print "deleting unused course of treatment"
-        writeNewCourse.delete(om_gui.pt.serialno, om_gui.pt.courseno)
-
+    if om_gui.pt.has_new_course:
+        LOGGER.info("deleting unused course of treatment")
+        writeNewCourse.delete(
+            om_gui.pt.serialno, om_gui.pt.treatment_course.courseno)
 
 def closeCourse(om_gui, leaving=False):
     '''
@@ -147,7 +150,7 @@ def closeCourse(om_gui, leaving=False):
 
     if not leaving:
         my_dialog.autoComplete_label.hide()
-    my_dialog.dateEdit.setMinimumDate(om_gui.pt.accd)
+    my_dialog.dateEdit.setMinimumDate(om_gui.pt.treatment_course.accd)
     my_dialog.dateEdit.setMaximumDate(QtCore.QDate().currentDate())
     my_dialog.dateEdit.setDate(QtCore.QDate().currentDate())
     ##focus the "yes" button
@@ -160,7 +163,7 @@ def closeCourse(om_gui, leaving=False):
     QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Ok):
         
         cmpd = my_dialog.dateEdit.date().toPyDate()
-        om_gui.pt.setCmpd(cmpd)
+        om_gui.pt.treatment_course.setCmpd(cmpd)
         om_gui.pt.addHiddenNote("close_course")
         om_gui.updateDetails()
         om_gui.updateHiddenNotesLabel()
@@ -190,7 +193,7 @@ def resumeCourse(om_gui):
     QtGui.QMessageBox.Yes )
 
     if result == QtGui.QMessageBox.Yes:
-        om_gui.pt.cmpd = None
+        om_gui.pt.treatment_course.cmpd = None
         om_gui.updateDetails()
         om_gui.pt.addHiddenNote("resume_course")
         om_gui.updateHiddenNotesLabel()

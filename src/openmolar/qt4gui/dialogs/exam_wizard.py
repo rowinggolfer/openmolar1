@@ -19,16 +19,6 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
         QtGui.QDialog.__init__(self, parent)
         self.om_gui = parent
         self.pt = self.om_gui.pt
-        if self.pt.serialno == 0:
-            om_gui.advise("no patient selected", 1)
-            return
-        if course_module.newCourseNeeded(self.om_gui):
-            return
-        if self.pt.examt != "" and self.pt.examd:
-            self.om_gui.advise(u"<p>%s</p><hr /><p>%s</p>"%(
-            _('You already have a completed exam on this course of treatment'),
-            _("Unable to perform exam")), 1)
-            return
         
         self.setupUi(self)
         self.dateEdit.setDate(QtCore.QDate().currentDate())
@@ -117,6 +107,17 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
         '''
         perform an exam
         '''
+        if self.pt.serialno == 0:
+            om_gui.advise("no patient selected", 1)
+            return
+        if course_module.newCourseNeeded(self.om_gui):
+            return
+        if self.pt.treatment_course.has_exam:
+            self.om_gui.advise(u"<p>%s</p><hr /><p>%s</p>"%(
+            _('You already have a completed exam on this course of treatment'),
+            _("Unable to perform exam")), 1)
+            return
+        
         APPLIED = False
         while not APPLIED:
             result = self.getInput()
@@ -128,14 +129,14 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
             
             APPLIED, examdent = self.check_dent(examdent)
             if APPLIED:
-                self.pt.examt = examtype
-                if self.pt.examt == "CE":
+                self.pt.treatment_course.examt = examtype
+                if self.pt.treatment_course.examt == "CE":
                     self.pt.pd5 = examd
-                if self.pt.examt == "ECE":
+                if self.pt.treatment_course.examt == "ECE":
                     self.pt.pd6 = examd
-                if self.pt.examt == "FCA":
+                if self.pt.treatment_course.examt == "FCA":
                     self.pt.pd7 = examd
-                self.pt.examd = examd
+                self.pt.treatment_course.examd = examd
 
                 self.update_recall_date()
 

@@ -7,7 +7,7 @@
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
-from openmolar.qt4gui.fees import course_module, fees_module
+from openmolar.qt4gui.fees import course_module, fees_module, add_tx_to_plan
 from openmolar.qt4gui.compiled_uis import Ui_hygenist_wizard
 
 class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
@@ -37,10 +37,6 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
            return "SP-"
         elif self.extsp_radioButton.isChecked():
            return "SP+"
-        elif self.twovisit1_radioButton.isChecked():
-            return "SP+/1"
-        else:    # self.twovisit1_radioButton.isChecked():
-            return "SP+/2"
         
     @property
     def dent(self):
@@ -54,7 +50,7 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         while result == True:
             if self.exec_():
                 if self.dent == "":
-                    message = _("Please enter a dentist / hygenist")
+                    message = _("Please enter a dentist / hygienist")
                     QtGui.QMessageBox.information(self, _("Whoops"), message)
                 else:
                     break
@@ -71,46 +67,46 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
             return
 
         if "N" in pt.cset:
-            self.db_radioButton.setEnabled(False)
-    
-        self.extsp_radioButton.setChecked("SP+" in pt.periopl)
+            self.db_radioButton.hide()
+            self.extsp_radioButton.hide()
+        else:
+            self.extsp_radioButton.setChecked(
+                "SP+" in pt.treatment_course.periopl)
         
         result = self.getInput()
-
+        
         if result:
+            trt = "%s "% self.trt            
+            if not trt in pt.treatment_course.periopl:
+                add_tx_to_plan.add_perio_treatments(self.om_gui, [self.trt])
+
             pt.addHiddenNote("perio_treatment", "%s"% self.trt)
             self.om_gui.updateHiddenNotesLabel()
 
-            n = pt.periocmp.split(" ").count(self.trt)
+            n = pt.treatment_course.periocmp.split(" ").count(self.trt)
             tx_hash = str(hash("perio %s %s"% (n+1, self.trt)))
             dentid = pt.course_dentist
             
-            trt = "%s "% self.trt
-            if trt in pt.periopl:
-                pt.periopl = pt.periopl.replace(trt, "", 1)
-                found_est, found_completed = False, False
-                for est in pt.ests_from_hash(tx_hash):
-                    found_est = True
-                    if not est.completed:
-                        est.dent = dentid
-                        est.completed = True
-                        fees_module.applyFeeNow(self.om_gui, est.ptfee)
-                    else:
-                        found_completed  = True
-                if not found_est:
-                    self.om_gui.advise(("found %s in plan,"% self.trt) +
-                    "but not in estimate.. this shouldn't happen!", 1)
-                elif found_completed:
-                    self.om_gui.advise(("found %s in estimate,"% self.trt) +
-                    "but was already completed.. this shouldn't happen!", 1)
-                    
-            else:
-                est = pt.add_to_estimate(self.trt, dentid, [tx_hash], 
-                    completed=True)
-
-                fees_module.applyFeeNow(self.om_gui, est.ptfee)
-
-            pt.periocmp += trt
+            pt.treatment_course.periopl = \
+                pt.treatment_course.periopl.replace(trt, "", 1)
+            found_est, found_completed = False, False
+            for est in pt.ests_from_hash(tx_hash):
+                found_est = True
+                if not est.completed:
+                    est.dent = dentid
+                    est.completed = True
+                    fees_module.applyFeeNow(self.om_gui, est.ptfee)
+                else:
+                    found_completed  = True
+            if not found_est:
+                self.om_gui.advise(("found %s in plan,"% self.trt) +
+                "but not in estimate.. this shouldn't happen!", 1)
+            elif found_completed:
+                self.om_gui.advise(("found %s in estimate,"% self.trt) +
+                "but was already completed.. this shouldn't happen!", 1)
+                
+            
+            pt.treatment_course.periocmp += trt
 
             self.om_gui.load_clinicalSummaryPage()
 

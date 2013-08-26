@@ -12,7 +12,7 @@ a module to search for previous course items
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
-from openmolar.dbtools.patient_class import CURRTRT_ATTS
+from openmolar.dbtools.treatment_course import CURRTRT_ATTS
 from openmolar.dbtools import estimatesHistory
 
 uppers = ('ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 

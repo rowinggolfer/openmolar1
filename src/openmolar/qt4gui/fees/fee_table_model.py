@@ -43,47 +43,49 @@ class TreeItem(object):
         return len(self.childItems)
 
     def columnCount(self):
-        return 6 + self.table.feeColCount
+        return 4 + self.table.feeColCount
+        
+    @property
+    def has_parent(self):
+        return self.parentItem is None
         
     def data(self, column):
-        showAll = self.parentItem.itemData == None       
         if column == 0:
-            if showAll or (self.key != self.parentItem.key):
+            if self.key != self.parentItem.key:
                 return QtCore.QVariant(self.key)
-        if self.itemData == None:
-            return QtCore.QVariant() 
-        if column == 1:
-            if showAll or (self.itemData.usercode != 
-            self.parentItem.itemData.usercode):
-                return QtCore.QVariant(self.itemData.usercode)
-        if showAll:
-            if column == 2:
-                return QtCore.QVariant(self.itemData.description)
-            #if column == 3:
-            #    return QtCore.QVariant(self.itemData.regulations)
-        if column == 4:
-            return QtCore.QVariant(self.itemData.brief_descriptions[self.myindex])
-             
-        if column > 4 and column < self.columnCount()-1:
-            if self.table.hasPtCols:
-                if column % 2 == 0:
-                    fee = localsettings.formatMoney(
-                    self.itemData.ptFees[self.myindex])
-                    return QtCore.QVariant(fee)
-                else:
-                    fee = localsettings.formatMoney(
+        if self.itemData is None:
+            pass
+        elif column == 1:
+            uc = self.itemData.usercode
+            try:
+                if uc == self.parentItem.itemData.usercode:
+                    return ""
+            except AttributeError:
+                return uc
+        elif column == 2:
+            desc = self.itemData.description
+            try:
+                if desc == self.parentItem.itemData.description:
+                    return ""
+            except AttributeError:
+                return desc
+        elif column == 3:
+            return self.itemData.brief_descriptions[self.myindex]
+        elif column == 4:
+            fee = localsettings.formatMoney(self.itemData.fees[self.myindex])
+            return QtCore.QVariant(fee)
+            
+        elif column == 5:
+            #if self.table.hasPtCols:
+            try:
+                fee = localsettings.formatMoney(
                     self.itemData.fees[self.myindex]) 
-                    return QtCore.QVariant(fee)
-            else:
-                try:
-                    fee = localsettings.formatMoney(
-                    self.itemData.fees[self.myindex])
-                    return QtCore.QVariant(fee)
-                except IndexError:
-                    print "misconfigured feescale - bad column count!"
-                    
+                return fee
+            except IndexError:
+                return "error in feescale"
+                
         return QtCore.QVariant()
-
+        
     def parent(self):
         return self.parentItem
 
@@ -126,7 +128,7 @@ class treeModel(QtCore.QAbstractItemModel):
             brush = QtGui.QBrush(QtGui.QColor("yellow"))
             return QtCore.QVariant(brush)
         if role == QtCore.Qt.TextAlignmentRole:
-            if index.column() > 4:
+            if index.column() > 3:
                 return QtCore.QVariant(QtCore.Qt.AlignRight)
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
@@ -150,12 +152,10 @@ class treeModel(QtCore.QAbstractItemModel):
             elif column==2:
                 return _("Description")
             elif column==3:
-                return _("Regulations")
-            elif column==4:
                 return _("brief description")
-            elif column==5:
+            elif column==4:
                 return _("Gross Fee")
-            elif column==6:
+            elif column==5:
                 return _("Charge to Patient")
             
         return QtCore.QVariant()
@@ -264,10 +264,7 @@ if __name__ == "__main__":
     def resize(arg):
         print "resizing"
         for col in range(model.columnCount(arg)):
-            if col != 3:#regulation column
-                tv.resizeColumnToContents(col)
-            else:
-                tv.setColumnWidth(3,0)
+            tv.resizeColumnToContents(col)
                 
     app = QtGui.QApplication([])
     localsettings.initiate()

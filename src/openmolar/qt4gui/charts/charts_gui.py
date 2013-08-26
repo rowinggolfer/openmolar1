@@ -319,8 +319,8 @@ def chartsTable(om_gui):
         row += 1
         om_gui.ui.summaryChartWidget.setToothProps(tooth, static_text)
         om_gui.ui.staticChartWidget.setToothProps(tooth, static_text)
-        pItem = om_gui.pt.__dict__[tooth+"pl"]
-        cItem = om_gui.pt.__dict__[tooth+"cmp"]
+        pItem = om_gui.pt.treatment_course.__dict__[tooth+"pl"]
+        cItem = om_gui.pt.treatment_course.__dict__[tooth+"cmp"]
         planitem = QtGui.QTableWidgetItem(pItem)
         cmpitem = QtGui.QTableWidgetItem(cItem)
         om_gui.ui.chartsTableWidget.setItem(row, 3, planitem)

@@ -350,8 +350,15 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.tooth_label.setText(self.parent.pt.chartgrid[selectedTooth].upper())
         #--ALLOWS for deciduos teeth
 
-        self.isStatic(selectedChart == "st")
-        self.setExistingProps(self.parent.pt.__dict__[selectedTooth+selectedChart])
+        if selectedChart == "st":
+            self.isStatic(True)
+            props = self.parent.pt.__dict__["%sst"% selectedTooth]
+        else:
+            self.isStatic(False)
+            props = self.parent.pt.treatment_course.__dict__[
+                "%s%s"% (selectedTooth, selectedChart)]
+            
+        self.setExistingProps(props)
 
     def setSelectedChart(self, arg):
         '''

@@ -14,7 +14,7 @@ import logging
 import re
 
 from openmolar.settings import localsettings
-from openmolar.dbtools.patient_class import CURRTRT_ATTS
+from openmolar.dbtools.treatment_course import CURRTRT_ATTS
 from openmolar.dbtools import daybook
 
 from openmolar.qt4gui.fees import fees_module
@@ -59,8 +59,8 @@ def updateDaybook(om_gui):
     writeNeeded = False
     for att in CURRTRT_ATTS:
         if att == "examt" or att[-3:] == "cmp": #be wary of "cmpd"
-            newcmp = om_gui.pt.__dict__[att]
-            existingcmp = om_gui.pt.dbstate.__dict__[att]
+            newcmp = om_gui.pt.treatment_course.__dict__[att]
+            existingcmp = om_gui.pt.dbstate.treatment_course.__dict__[att]
 
             if newcmp != existingcmp:
                 treatment = newcmp.replace(existingcmp, "", 1)

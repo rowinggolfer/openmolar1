@@ -230,7 +230,7 @@ class Gp17Data(object):
         '''
         if "accd" in self.exclusions:
             return ""
-        return self.format_date(self.pt.accd)
+        return self.format_date(self.pt.treatment_course.accd)
     
     @property
     def cmpd(self):
@@ -239,7 +239,7 @@ class Gp17Data(object):
         '''
         if "cmpd" in self.exclusions:
             return ""        
-        return self.format_date(self.pt.cmpd)
+        return self.format_date(self.pt.treatment_course.cmpd)
 
     @property
     def show_chart(self):

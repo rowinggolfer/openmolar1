@@ -90,14 +90,14 @@ def chartComplete(om_gui, args):
         completedATT = "%scmp"% adultTooth
         #print "moving '%s' from %s to %s"% (result[1], planATT, completedATT)
         
-        if treatmentItem in om_gui.pt.__dict__[planATT]:
-            existingplan = om_gui.pt.__dict__[planATT]
+        if treatmentItem in om_gui.pt.treatment_course.__dict__[planATT]:
+            existingplan = om_gui.pt.treatment_course.__dict__[planATT]
             newplan = existingplan.replace(treatmentItem, "", 1)
-            om_gui.pt.__dict__[planATT] = newplan
-            existingcompleted = om_gui.pt.__dict__[completedATT]
+            om_gui.pt.treatment_course.__dict__[planATT] = newplan
+            existingcompleted = om_gui.pt.treatment_course.__dict__[completedATT]
             newcompleted = existingcompleted + treatmentItem
 
-            om_gui.pt.__dict__[completedATT] = newcompleted
+            om_gui.pt.treatment_course.__dict__[completedATT] = newcompleted
             charts_gui.updateChartsAfterTreatment(om_gui, adultTooth, newplan,
             newcompleted)
             
@@ -132,11 +132,13 @@ def estwidg_complete(om_gui, est_item):
             if hash_ == tx_hash:
                 found = True
                 #print "Match!"
-                plan = pt.__dict__[att + "pl"].replace(treat_code, "", 1)
-                pt.__dict__[att + "pl"] = plan
+                plan = pt.treatment_course.__dict__[att + "pl"].replace(
+                    treat_code, "", 1)
+                pt.treatment_course.__dict__[att + "pl"] = plan
 
-                completed = pt.__dict__[att + "cmp"] + treat_code
-                pt.__dict__[att + "cmp"] = completed
+                completed = pt.treatment_course.__dict__[att + "cmp"] \
+                    + treat_code
+                pt.treatment_course.__dict__[att + "cmp"] = completed
 
                 if re.findall("[ul][lr][1-8]", att):
                     charts_gui.updateChartsAfterTreatment(
@@ -178,11 +180,12 @@ def estwidg_unComplete(om_gui, est_item):
                 found = True
                 
                 LOGGER.debug("MATCH!")
-                completed = pt.__dict__[att + "cmp"].replace(treat_code, "", 1)
-                pt.__dict__[att + "cmp"] = completed
+                completed = pt.treatment_course.__dict__[att + "cmp"].replace(
+                    treat_code, "", 1)
+                pt.treatment_course.__dict__[att + "cmp"] = completed
 
-                plan = pt.__dict__[att + "pl"] + treat_code
-                pt.__dict__[att + "pl"] = plan
+                plan = pt.treatment_course.__dict__[att + "pl"] + treat_code
+                pt.treatment_course.__dict__[att + "pl"] = plan
 
                 if re.findall("[ul][lr][1-8]", att):
                     charts_gui.updateChartsAfterTreatment(

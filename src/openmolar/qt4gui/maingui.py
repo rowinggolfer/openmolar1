@@ -191,7 +191,8 @@ class OpenmolarGui(QtGui.QMainWindow):
             now=QtCore.QTime.currentTime()
             QtGui.QMessageBox.warning(self, _("Error"), arg)
             #--for logging purposes
-            print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
+            print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute())
+            print arg
 
     def wait(self, waiting=True):
         if waiting:
@@ -543,7 +544,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         #--this returns a LIST of changes ie [] if none.
         uc = self.unsavedChanges()
         if uc == []:
-            print "no changes"
+            LOGGER.debug("okToLeaveRecord - no changes")
         else:
             #--raise a custom dialog to get user input
             Dialog = QtGui.QDialog(self)
@@ -554,13 +555,14 @@ class OpenmolarGui(QtGui.QMainWindow):
             dl.allowDiscard(not cont)
             if Dialog.exec_():
                 if dl.result == "discard":
-                    print "user discarding changes"
+                    LOGGER.info(
+                        "okToLeaveRecord - user discarding changes")
                     course_module.delete_new_course(self)
                 elif dl.result == "save":
-                    print "user is saving"
+                    LOGGER.debug("okToLeaveRecord - user is saving")
                     self.save_changes(False)
             else:
-                print "user chose to continue editing"
+                LOGGER.debug("okToLeaveRecord - continue editing")
                 return False
         return True
 
@@ -731,7 +733,8 @@ class OpenmolarGui(QtGui.QMainWindow):
             html_ = reception_summary.html(self.pt)
             self.ui.reception_textBrowser.setText(html_)
             self.pt_diary_widget.layout_ptDiary()
-            note = formatted_notes.rec_notes(self.pt.notes_dict, self.pt.accd)
+            note = formatted_notes.rec_notes(self.pt.notes_dict, 
+                self.pt.treatment_course.accd)
             self.ui.recNotes_webView.setHtml(note)
 
     def webviewloaded(self):
@@ -1189,8 +1192,9 @@ class OpenmolarGui(QtGui.QMainWindow):
                 try:
                     self.loadpatient(newPatientReload = newPatientReload)
                 except Exception as e:
-                    self.advise(
-                    _("Error populating interface\n%s")% e, 2)
+                    message = _("Error populating interface")
+                    LOGGER.exception(message)
+                    self.advise(u"<b>%s</b><hr /><pre>%s"% (message, e), 2)
 
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
@@ -1395,15 +1399,15 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if self.pt.underTreatment:
             self.ui.estimate_groupBox.setTitle(
             "Current Course- started %s"% (
-            localsettings.formatDate(self.pt.accd)))
+            localsettings.formatDate(self.pt.treatment_course.accd)))
 
         else:
             self.ui.estimate_groupBox.setTitle(
             "Previous Course - started %s and completed %s"% (
-            localsettings.formatDate(self.pt.accd),
-            localsettings.formatDate(self.pt.cmpd)))
+            localsettings.formatDate(self.pt.treatment_course.accd),
+            localsettings.formatDate(self.pt.treatment_course.cmpd)))
 
-            if not self.pt.accd in ("", None):
+            if not self.pt.treatment_course.accd in ("", None):
                 self.ui.closeTx_pushButton.setText("Resume Existing Course")
                 self.ui.closeTx_pushButton.setEnabled(True)
 
@@ -1699,11 +1703,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         len(self.pt.HIDDENNOTES) != 0):
             changes.append("New Notes")
             
-        if "xraycmp" in changes:
-            daybook_module.xrayDates(self, self.pt.xraycmp)
-        if "periocmp" in changes:
-            daybook_module.perioDates(self, self.pt.periocmp)
-        
+        if "treatment_course" in changes:
+            course = self.pt.treatment_course
+            db_course = self.pt.dbstate.treatment_course
+            if course.xraycmp != db_course.xraycmp:
+                daybook_module.xrayDates(self, course.xraycmp)
+            if course.periocmp != db_course.periocmp:
+                daybook_module.perioDates(self, course.periocmp)
+            
         return changes
 
     def save_changes(self, leavingRecord=True):
@@ -3013,7 +3020,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if result == QtGui.QMessageBox.No:
             return
 
-        if estimates.recalculate_estimate(self.pt):
+        if add_tx_to_plan.recalculate_estimate(self):
             self.load_newEstPage()
             self.load_treatTrees()
             self.updateDetails()

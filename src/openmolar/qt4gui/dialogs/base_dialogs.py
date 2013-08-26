@@ -33,7 +33,7 @@ class BaseDialog(QtGui.QDialog):
     A base class for all my dialogs
     provides a button box with ok and cancel buttons,
     slots connected to accept and reject
-    has a VBoxlayout - accessed by self.layout
+    has a VBoxlayout - accessed by self.layout_
     '''
     def __init__(self, parent=None, remove_stretch=False):
         QtGui.QDialog.__init__(self, parent)
@@ -48,7 +48,7 @@ class BaseDialog(QtGui.QDialog):
 
         self.button_box.setCenterButtons(True)
 
-        self.layout = QtGui.QVBoxLayout(self)
+        self.layout_ = QtGui.QVBoxLayout(self)
 
         self.button_box.clicked.connect(self._clicked)
 
@@ -58,8 +58,8 @@ class BaseDialog(QtGui.QDialog):
 
         self.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Expanding)
-        self.layout.addItem(self.spacer)
-        self.layout.addWidget(self.button_box)
+        self.layout_.addItem(self.spacer)
+        self.layout_.addWidget(self.button_box)
         self.insertpoint_offset = 2
 
         if remove_stretch:
@@ -82,7 +82,7 @@ class BaseDialog(QtGui.QDialog):
         If this is called, then the spacer added at init is removed.
         sometimes the spacer mucks up dialogs
         '''
-        self.layout.removeItem(self.spacer)
+        self.layout_.removeItem(self.spacer)
         self.insertpoint_offset = 1
 
     def set_check_on_cancel(self, check):
@@ -110,9 +110,9 @@ class BaseDialog(QtGui.QDialog):
         '''
         insert widget at the bottom of the layout
         '''
-        count = self.layout.count()
+        count = self.layout_.count()
         insertpoint = count - self.insertpoint_offset
-        self.layout.insertWidget(insertpoint, widg)
+        self.layout_.insertWidget(insertpoint, widg)
 
     def _clicked(self, but):
         '''

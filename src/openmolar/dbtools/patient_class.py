@@ -17,13 +17,12 @@ from openmolar.ptModules import perio, dec_perm, estimates, notes, formatted_not
 from openmolar.settings import localsettings
 
 from openmolar.dbtools.appt_prefs import ApptPrefs
+from openmolar.dbtools.treatment_course import TreatmentCourse
+from openmolar.dbtools.plan_data import PlanData
+
+from openmolar.dbtools.queries import ESTS_QUERY, PATIENT_QUERY
 
 LOGGER = logging.getLogger("openmolar")
-
-ESTS_QUERY = '''SELECT newestimates.ix, number, itemcode, description, 
-fee, ptfee, feescale, csetype, dent, completed, tx_hash
-from newestimates right join est_link on newestimates.ix = est_link.est_id
-where serialno=%s and courseno=%s order by itemcode'''
 
 dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6",
 "pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
@@ -78,28 +77,6 @@ nullDate,nullDate,nullDate,nullDate,0,nullDate,
 bpeTableAtts=('bpedate','bpe')
 bpeTableVals=(nullDate,'',())
 
-CURRTRT_ROOT_ATTS = ('xray', 'perio', 'anaes', 'other', 'ndu', 'ndl', 'odu', 
-'odl', 'custom', 'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
-'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', 'll8', 'll7', 'll6', 'll5',
-'ll4', 'll3', 'll2', 'll1', 'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7',
-'lr8') 
-
-CURRTRT_ATTS=('courseno','xraypl','periopl','anaespl','otherpl',
-'ndupl','ndlpl','odupl','odlpl',"custompl",
-'xraycmp','periocmp','anaescmp','othercmp','nducmp','ndlcmp',
-'oducmp','odlcmp',"customcmp",'ur8pl','ur7pl',
-'ur6pl','ur5pl','ur4pl','ur3pl','ur2pl','ur1pl','ul1pl','ul2pl','ul3pl',
-'ul4pl','ul5pl','ul6pl','ul7pl',
-'ul8pl','ll8pl','ll7pl','ll6pl','ll5pl','ll4pl','ll3pl','ll2pl','ll1pl',
-'lr1pl','lr2pl','lr3pl','lr4pl',
-'lr5pl','lr6pl','lr7pl','lr8pl','ur8cmp','ur7cmp','ur6cmp','ur5cmp',
-'ur4cmp','ur3cmp','ur2cmp','ur1cmp',
-'ul1cmp','ul2cmp','ul3cmp','ul4cmp','ul5cmp','ul6cmp','ul7cmp','ul8cmp',
-'ll8cmp','ll7cmp','ll6cmp','ll5cmp',
-'ll4cmp','ll3cmp','ll2cmp','ll1cmp','lr1cmp','lr2cmp','lr3cmp','lr4cmp',
-'lr5cmp','lr6cmp','lr7cmp','lr8cmp',
-'examt','examd','accd','cmpd')
-
 perioTableAtts=('chartdate','bpe','chartdata','flag')
 
 mnhistTableAtts=('chgdate','ix','note')
@@ -116,60 +93,7 @@ decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA',
 '***','***','***','lrE','lrD','lrC','lrB','lrA',
 'llA','llB','llC','llD','llE','***','***','***']
 
-planDBAtts=("serialno", "plantype","band", "grosschg","discount","netchg",
-"catcode", "planjoin","regno")
-
 clinical_memos = ("synopsis",)
-
-
-#################### sub classes ##############################################
-class planData(object):
-    '''
-    a custom class to hold data about the patient's maintenance plan
-    '''
-    def __init__(self, sno):
-        self.serialno = sno
-        self.plantype = None
-        self.band = None
-        self.grosschg = 0
-        self.discount = 0
-        self.netchg = 0
-        self.catcode = None
-        self.planjoin = None
-        self.regno = None
-        #-- a variable to indicate if getFromDbhas been run
-        self.retrieved=False
-
-    def __repr__(self):
-        return "%d,%s,%s,%s,%s,%s,%s,%s,%s"%(
-        self.serialno, self.plantype, self.band, self.grosschg, self.discount,
-        self.netchg, self.catcode, self.planjoin,self.regno)
-
-    def getFromDB(self):
-        try:
-            db=connect.connect()
-            cursor=db.cursor()
-
-            query='''SELECT %s,%s,%s,%s,%s,%s,%s,%s from plandata
-            where serialno=%s'''%(planDBAtts[1:]+(self.serialno,))
-            if localsettings.logqueries:
-                print query
-            cursor.execute(query)
-            row=cursor.fetchone()
-            cursor.close()
-            i=1
-            if row:
-                for val in row:
-                    if val:
-                        att=planDBAtts[i]
-                        if att=="planjoin":
-                            self.planjoin=localsettings.formatDate(val)
-                        else:
-                            self.__dict__[att]=val
-                    i+=1
-            self.retrieved=True
-        except Exception,e:
-            print "error loading from plandata",e
 
 class patient(object):
     def __init__(self, sno):
@@ -180,23 +104,148 @@ class patient(object):
         self.dbstate = None
 
         self.load_warnings = []
-        self.courseno = None
-        
-        for i, att in enumerate(patientTableAtts):
-            self.__dict__[att] = patientTableVals[i]
 
+        ## patient table atts
+        self.courseno = None
+        self.pf0 = 0
+        self.pf1 = 0
+        self.pf2 = 0
+        self.pf3 = 0
+        self.pf4 = 0
+        self.pf5 = 0
+        self.pf6 = 0
+        self.pf7 = 0
+        self.pf8 = 0
+        self.pf9 = 0
+        self.pf10 = 0
+        self.pf11 = 0
+        self.pf12 = 0
+        self.pf14 = 0
+        self.pf15 = 0
+        self.pf16 = 0
+        self.pf17 = 0
+        self.pf18 = 0
+        self.pf19 = 0
+        self.money0 = 0
+        self.money1 = 0
+        self.money2 = 0
+        self.money3 = 0
+        self.money4 = 0
+        self.money5 = 0
+        self.money6 = 0
+        self.money7 = 0
+        self.money8 = 0
+        self.money9 = 0
+        self.money10 = 0
+        self.pd0 = None
+        self.pd1 = None
+        self.pd2 = None
+        self.pd3 = None
+        self.pd4 = None
+        self.pd5 = None
+        self.pd6 = None
+        self.pd7 = None
+        self.pd8 = None
+        self.pd9 = None
+        self.pd10 = None
+        self.pd11 = None
+        self.pd12 = None
+        self.pd13 = None
+        self.pd14 = None
+        self.sname = ''
+        self.fname = ''
+        self.title = ''
+        self.sex = ''
+        self.dob = None
+        self.addr1 = ''
+        self.addr2 = ''
+        self.addr3 = ''
+        self.pcde = ''
+        self.tel1 = ''
+        self.tel2 = ''
+        self.occup = ''
+        self.nhsno = ''
+        self.cnfd = None
+        self.psn = ''
+        self.cset = ''
+        self.dnt1 = 0
+        self.dnt2 = 0
+        self.courseno1 = 0
+        self.ur8st = ''
+        self.ur7st = ''
+        self.ur6st = ''
+        self.ur5st = ''
+        self.ur4st = ''
+        self.ur3st = ''
+        self.ur2st = ''
+        self.ur1st = ''
+        self.ul1st = ''
+        self.ul2st = ''
+        self.ul3st = ''
+        self.ul4st = ''
+        self.ul5st = ''
+        self.ul6st = ''
+        self.ul7st = ''
+        self.ul8st = ''
+        self.ll8st = ''
+        self.ll7st = ''
+        self.ll6st = ''
+        self.ll5st = ''
+        self.ll4st = ''
+        self.ll3st = ''
+        self.ll2st = ''
+        self.ll1st = ''
+        self.lr1st = ''
+        self.lr2st = ''
+        self.lr3st = ''
+        self.lr4st = ''
+        self.lr5st = ''
+        self.lr6st = ''
+        self.lr7st = ''
+        self.lr8st = ''
+        self.dent0 = 0
+        self.dent1 = 0
+        self.dent2 = 0
+        self.dent3 = 0
+        self.dmask = "YYYYYYY"
+        self.minstart = 0
+        self.maxend = 0
+        self.billdate = None
+        self.billct = 0
+        self.billtype = None
+        self.pf20 = 0
+        self.money11 = 0
+        self.pf13 = 0
+        self.familyno = 0
+        self.memo = ''
+        self.town = ''
+        self.county = ''
+        self.mobile = ''
+        self.fax = ''
+        self.email1 = ''
+        self.email2 = ''
+        self.status = ''
+        self.source = ''
+        self.enrolled = ''
+        self.archived = None
+        self.initaccept = 0
+        self.lastreaccept = None
+        self.lastclaim = None
+        self.expiry = None
+        self.cstatus = None
+        self.transfer = 0
+        self.pstatus = None
+        self.courseno2 = 0
+        
         ######TABLE 'mnhist'#######
         self.chgdate = nullDate   # date 	YES 	 	None
         self.ix = 0               #tinyint(3) unsigned 	YES 	 	None
         self.note = ''            #varchar(60) 	YES 	 	None
 
-        ######data from the completed table#########
-        self.blankCurrtrt()
-
         self.estimates = []
 
         ##from userdata
-        self.plandata = planData(self.serialno)
+        self.plandata = PlanData(self.serialno)
 
         ###NEIL'S STUFF####
         self.exemption = ""
@@ -210,11 +259,11 @@ class patient(object):
         self.MEDALERT = False
         self.HIDDENNOTES = []
         self.chartgrid = {}
-        #self.underTreatment = False
         self.feeTable = None
         self.synopsis = ""
         self._n_family_members = None
         self._dayBookHistory = None
+        self.treatment_course = None
 
         if self.serialno != 0:
             #load stuff from the database
@@ -223,23 +272,16 @@ class patient(object):
 
             self.getSynopsis()
 
-            fields = patientTableAtts
-            query = ""
-            for field in fields:
-                query += field + ","
-
-            query = 'SELECT %s from patients where serialno ='% (
-            query.strip(","))
-
-            cursor.execute(query + "%s", self.serialno)
+            cursor.execute(PATIENT_QUERY, (self.serialno,))
             values= cursor.fetchall()
 
             if values == ():
                 raise localsettings.PatientNotFoundError
 
-            for i, field in enumerate(fields):
-                if values[0][i] !=None:
-                    self.__dict__[field]=values[0][i]
+            for i, att in enumerate(patientTableAtts):
+                value = values[0][i]
+                if value is not None:
+                    self.__dict__[att] = value
 
             query = '''select exemption, exempttext from exemptions
             where serialno=%s'''
@@ -260,9 +302,11 @@ class patient(object):
                 self.bpe.append(value)
 
             if self.courseno0 != 0:
-                self.getCurrtrt()
                 self.getEsts()
-
+            
+            self.treatment_course = TreatmentCourse(
+                self.serialno, self.courseno0)
+            
             self.getNotesTuple()
 
             query = 'select chartdate,chartdata from perio where serialno=%s'
@@ -402,10 +446,10 @@ class patient(object):
             if self.cset == "N":
                 if self.getAge()[0] < 18:
                     feecat = "C"
-            if self.accd is None:
+            if self.treatment_course.accd is None:
                 cse_accd = localsettings.currentDay()
             else:
-                cse_accd = self.accd
+                cse_accd = self.treatment_course.accd
             for table in localsettings.FEETABLES.tables.values():
                 
                 LOGGER.debug(
@@ -477,15 +521,6 @@ class patient(object):
             
         cursor.close()
 
-    def blankCurrtrt(self):
-        for att in CURRTRT_ATTS:
-            if att == 'courseno':
-                pass
-            elif att in ('examd', 'cmpd', 'accd'):
-                self.__dict__[att] = nullDate
-            else:
-                self.__dict__[att] = ""
-
     def getSynopsis(self):
         db = connect.connect()
         cursor = db.cursor()
@@ -502,46 +537,19 @@ class patient(object):
         except connect.OperationalError, e:
             'necessary because the column is missing is db schema 1.4'
             print "WARNING -", e
-
-    def getCurrtrt(self):
-        fields = CURRTRT_ATTS
-        query = "SELECT "
-        for field in fields:
-            query += "%s, "% field
-        query = query.rstrip(", ")
-        query += " from currtrtmt2 where serialno=%s and courseno=%s"
-        
-        db = connect.connect()
-        cursor = db.cursor()
-        
-        cursor.execute(query, (self.serialno, self.courseno0))
-
-        for value in cursor.fetchall():
-            for i, field in enumerate(fields):
-                self.__dict__[field] = value[i]
-        
-        cursor.close()
-
+    
     @property
     def underTreatment(self):
-        return (not self.accd in ("", None) and self.cmpd in ("", None))
+        return (self.treatment_course is not None and 
+        self.treatment_course.underTreatment)
         
     @property
     def max_tx_courseno(self):
-        db = connect.connect()
-        cursor = db.cursor()
-        if cursor.execute( 
-        "select max(courseno) from currtrtmt2 where serialno=%s", 
-        (self.serialno,)):
-            cno = cursor.fetchone()[0]
-        else:
-            cno = 0
-        cursor.close()
-        return cno
-    
+        return self.treatment_course.max_tx_courseno
+        
     @property
     def newer_course_found(self):
-        return self.max_tx_courseno > self.courseno
+        return self.treatment_course.newer_course_found
     
     def getNotesTuple(self):
         '''
@@ -606,20 +614,6 @@ class patient(object):
     def fees(self):
         return int(self.money0 + self.money1 + self.money9 + self.money10 +
         self.money11 - self.money2 - self.money3 - self.money8)
-
-    def setAccd(self, accd):
-        '''
-        set the acceptance date (with a pydate)
-        '''
-        if accd is None:
-            accd = localsettings.currentDay()
-        self.accd = accd
-
-    def setCmpd(self, cmpd):
-        '''
-        set the completion date (with a pydate)
-        '''
-        self.cmpd = cmpd
 
     def resetAllMonies(self):
         '''
@@ -699,11 +693,9 @@ class patient(object):
         self.billtype = tone
 
     def treatmentOutstanding(self):
-        for att in CURRTRT_ATTS:
-            if att[-2:] == "pl":
-                if self.__dict__[att] != "":
-                    return True
-
+        return (self.treatment_course and 
+        self.treatment_course.has_treatment_outstanding)
+        
     def checkExemption(self):
         if self.exemption == "A" and self.getAge()[0] > 17:
             self.exemption = ""
@@ -736,11 +728,14 @@ class patient(object):
     def under_capitation(self):
         if self.cset != "N":
             return False
-        if self.accd is None:
+        if self.treatment_course.accd is None:
             return self.ageYears < 19
         eighteenth = self.dob + datetime.timedelta(days = 18 * 365.24)
-        return self.accd < eighteenth
+        return self.treatment_course.accd < eighteenth
 
+    def new_tx_course(self, new_courseno):
+        self.courseno0 = new_courseno
+        self.treatment_course = TreatmentCourse(self.serialno, new_courseno)
     
     @property
     def user_changeable_attributes(self):
@@ -748,10 +743,9 @@ class patient(object):
         the attributes used to determine whether the patient has been edited.
         '''        
         return (patientTableAtts + 
-            exemptionTableAtts + bpeTableAtts + 
-            CURRTRT_ATTS + mnhistTableAtts + 
-            perioTableAtts + planDBAtts + 
-            clinical_memos + ("estimates", "appt_prefs"))
+            exemptionTableAtts + bpeTableAtts + mnhistTableAtts + 
+            perioTableAtts + clinical_memos + 
+            ("serialno", "estimates", "appt_prefs", "treatment_course"))
     
     @property
     def changes(self):
@@ -760,8 +754,12 @@ class patient(object):
             new_value = self.__dict__.get(att, "")
             db_value = self.dbstate.__dict__.get(att, "")
             if  new_value != db_value:
+                LOGGER.debug("PT DBSTATE ALTERED - %s"% att)
+                LOGGER.debug("OLD %s"% db_value)
+                LOGGER.debug("NEW %s"% new_value)
+                
                 changes.append(att)
-        return changes
+        return changes# + self.treatment_course.changes
  
     def take_snapshot(self):
         # create a snapshot of this class, copying all attributes that the 
@@ -771,9 +769,13 @@ class patient(object):
         snapshot = cls.__new__(cls)
         memo[id(self)] = snapshot
         for att, v in self.__dict__.items():
-            if att in self.user_changeable_attributes + ("blankCurrtrt",):
+            if att in self.user_changeable_attributes:
                 setattr(snapshot, att, deepcopy(v, memo))
         self.dbstate = snapshot
+        
+        #LOGGER.debug("snapshot taken")
+        #LOGGER.debug(self.treatment_course)
+        #LOGGER.debug(self.dbstate.treatment_course)
     
     @property
     def course_dentist(self):
@@ -789,55 +791,22 @@ class patient(object):
         return self.dnt1
     
     @property
+    def has_new_course(self):
+        if self.treatment_course and self.dbstate.treatment_course is None:
+            return True
+        return (self.treatment_course.courseno != 
+                        self.dbstate.treatment_course.courseno)
+    
+    @property
     def tx_hashes(self):
-        return self._get_tx_hashes()
+        return self.treatment_course._get_tx_hashes()
     
     @property
     def completed_tx_hashes(self):
-        for tx_hash, att, tx in self._get_tx_hashes(True):
-            yield tx_hash
-            
-    def _get_tx_hashes(self, completed_only=False):
-        '''
-        returns a tuple (unique hash, attribute, treatment)
-        hashes will be unique as multiple identical items are indexed
-        eg. eg "perio SP AC SP " is hashed as follows
-        "perio 1 SP"
-        "perio 2 SP"
-        "perio 1 AC"
-        '''
-        if self.examt != "":
-            hash_ = hash("exam 1 %s"% self.examt)
-            yield (str(hash_), "exam", self.examt)
-
-        for att in CURRTRT_ROOT_ATTS:
-            treats = self.__dict__[att+"cmp"] 
-            if not completed_only:
-                treats += " " + self.__dict__[att+"pl"] 
-            treat_list = sorted(treats.split(" "))
-            prev_tx, count = "", 1
-            for i, tx in enumerate(treat_list):
-                if tx == "":
-                    continue
-                if tx != prev_tx:
-                    count = 1
-                    prev_tx = tx
-                else:
-                    count += 1
-                hash_ = hash("%s %s %s"% (att, count, tx))
-                yield (str(hash_), att, tx+" ")
-        
+        return self.treatment_course.completed_tx_hashes    
     
     def get_tx_from_hash(self, hash_):
-        '''
-        example
-        imput a hash 039480284098
-        get back ("ur1", "M")
-        '''
-        for tx_hash in self.tx_hashes:
-            if tx_hash[0] == hash_:
-                return tx_hash[1], tx_hash[2]
-        return None, None
+        return self.treatment_course.get_tx_from_hash(hash_)
     
     def ests_from_hash(self, hash_):
         '''
@@ -925,3 +894,5 @@ if __name__ =="__main__":
     pt.take_snapshot() 
     pt.dob = datetime.date(1969,12,9)
     print list(pt.tx_hashes)
+    
+    print pt.treatment_course

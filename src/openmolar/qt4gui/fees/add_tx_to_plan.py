@@ -49,23 +49,30 @@ def perioAdd(om_gui):
     pt = om_gui.pt
     if not course_module.newCourseNeeded(om_gui):
         if "N" in pt.cset:
-            mylist = ("SP", "SP+")
+            mylist = ("SP",)
         else:
             mylist = ("SP-", "SP", "SP+")
-        chosenTreatments = offerTreatmentItems(om_gui, mylist)
-        LOGGER.debug("perioAdd chosen treatments %s"% str(chosenTreatments))
-        for usercode in chosenTreatments:
-            pt.periopl += "%s "% usercode
-            
-            perio_txs = "%s %s"%(pt.periocmp, pt.periopl)
-            n = perio_txs.split(" ").count(usercode)
-            tx_hash = str(hash("perio %s %s"% (n, usercode)))
-            dentid = om_gui.pt.course_dentist
-            
+        chosen_treatments = offerTreatmentItems(om_gui, mylist)
+        add_perio_treatments(om_gui, chosen_treatments)
+        
+def add_perio_treatments(om_gui, chosen_treatments):
+    LOGGER.debug("adding perio treatments %s"% str(chosen_treatments))
+    pt = om_gui.pt
+    
+    for usercode in chosen_treatments:
+        pt.treatment_course.periopl += "%s "% usercode
+        
+        perio_txs = "%s %s"%(
+            pt.treatment_course.periocmp, pt.treatment_course.periopl)
+        n = perio_txs.split(" ").count(usercode)
+        tx_hash = str(hash("perio %s %s"% (n, usercode)))
+        dentid = om_gui.pt.course_dentist
+        
+        if not complex_shortcut_handled(om_gui, usercode, n, dentid, tx_hash):
             pt.add_to_estimate(usercode, dentid, [tx_hash])
 
-        om_gui.load_treatTrees()
-        om_gui.load_newEstPage()
+    om_gui.load_treatTrees()
+    om_gui.load_newEstPage()
 
 
 def xrayAdd(om_gui, complete=False):
@@ -92,9 +99,10 @@ def xrayAdd(om_gui, complete=False):
     added = []
     for usercode in chosenTreatments:
         
-        pt.xraypl += "%s "% usercode
+        pt.treatment_course.xraypl += "%s "% usercode
         
-        xray_txs = "%s %s"%(pt.xraycmp, pt.xraypl)
+        xray_txs = "%s %s"%(
+            pt.treatment_course.xraycmp, pt.treatment_course.xraypl)
         n = xray_txs.split(" ").count(usercode)
         tx_hash = str(hash("xray %s %s"% (n, usercode)))
         dentid = om_gui.pt.course_dentist
@@ -126,9 +134,10 @@ def otherAdd(om_gui):
     chosenTreatments = offerTreatmentItems(om_gui, sorted(usercodes))
     for usercode in chosenTreatments:
             
-        pt.otherpl += "%s "% usercode
+        pt.treatment_course.otherpl += "%s "% usercode
         
-        other_txs = "%s %s"%(pt.othercmp, pt.otherpl)
+        other_txs = "%s %s"%(
+            pt.treatment_course.othercmp, pt.treatment_course.otherpl)
         n = other_txs.split(" ").count(usercode)
         tx_hash = str(hash("other %s %s"% (n, usercode)))
         dentid = om_gui.pt.course_dentist
@@ -161,9 +170,10 @@ def customAdd(om_gui):
         fee = int(dl.fee_doubleSpinBox.value() * 100)
         
         for i in range(no):
-            pt.custompl += "%s "% usercode
+            pt.treatment_course.custompl += "%s "% usercode
         
-            custom_txs = "%s %s"%(pt.customcmp, pt.custompl)
+            custom_txs = "%s %s"%(
+                pt.treatment_course.customcmp, pt.treatment_course.custompl)
             n = custom_txs.split(" ").count(usercode)
             tx_hash = str(hash("custom %s %s"% (n, usercode)))
             dentid = om_gui.pt.course_dentist
@@ -222,14 +232,14 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         
     for type_ in types:
         try:
-            om_gui.pt.__dict__[type_+"pl"] += "%s "% usercode
+            om_gui.pt.treatment_course.__dict__[type_+"pl"] += "%s "% usercode
             if update_charts_needed:
                 om_gui.ui.planChartWidget.setToothProps(type_,
-                om_gui.pt.__dict__[type_+"pl"])
+                om_gui.pt.treatment_course.__dict__[type_+"pl"])
         except KeyError, e:
             print "patient class has no attribute '%spl'" %type_,
             print "Will default to 'other'"
-            om_gui.pt.otherpl += "%s "% usercode
+            om_gui.pt.treatment_course.otherpl += "%s "% usercode
             
         om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
         category = type_, type_=usercode, feescale=table.index, 
@@ -273,9 +283,9 @@ def chartAdd(om_gui, tooth, new_string):
 
     pt = om_gui.pt    
     
-    existing = pt.__dict__[tooth + "pl"]
+    existing = pt.treatment_course.__dict__[tooth + "pl"]
 
-    pt.__dict__[tooth + "pl"] = new_string
+    pt.treatment_course.__dict__[tooth + "pl"] = new_string
     om_gui.ui.planChartWidget.setToothProps(tooth, new_string)
 
     existing_usercodes = existing.split(" ")
@@ -283,7 +293,7 @@ def chartAdd(om_gui, tooth, new_string):
     #--tooth may be deciduous
     tooth_name = pt.chartgrid.get(tooth)
     
-    other_txs = "%s %s"%(pt.__dict__["%scmp"% tooth], existing)
+    other_txs = "%s %s"%(pt.treatment_course.__dict__["%scmp"% tooth], existing)
     other_txs = other_txs.split(" ")
         
     for usercode in existing_usercodes:
@@ -299,8 +309,8 @@ def chartAdd(om_gui, tooth, new_string):
                     pt.estimates.remove(est)
             
     other_txs = "%s %s"%(
-        pt.__dict__["%scmp"% tooth], 
-        pt.__dict__["%spl"% tooth]
+        pt.treatment_course.__dict__["%scmp"% tooth], 
+        pt.treatment_course.__dict__["%spl"% tooth]
         )
     other_txs = other_txs.split(" ")
     
@@ -320,12 +330,6 @@ def chartAdd(om_gui, tooth, new_string):
                 ))
             pt.add_to_estimate(
                 usercode, dentid, [tx_hash], itemcode, descr=descr)
-            
-            # add any other estimate items here.
-            # example an extraction may have an "extraction visit"
-            # a veneer may have a "first in arch"
-            for att, usercode in item.dependencies:
-                add_dependency(om_gui, att, usercode)
         else:
             om_gui.advise(u"%s '%s' %s"% (_("Warning"), usercode, 
                 _("not understood by the active feescale")), 2)
@@ -333,30 +337,55 @@ def chartAdd(om_gui, tooth, new_string):
             pt.add_to_estimate(
                 usercode, dentid, [tx_hash], "4001", descr=descr)
 
-def add_dependency(om_gui, att, usercode):
-    message = "adding dependency %s %s"% (att, usercode)
-    LOGGER.warning (message)
-    om_gui.advise(message, 1)
+def complex_shortcut_handled(om_gui, shortcut, item_no, dentid, tx_hash):
     pt = om_gui.pt
-    dentid = om_gui.pt.course_dentist
-    if att == "other":
-        pt.otherpl += "%s "% usercode
-        
-        other_txs = "%s %s"%(pt.othercmp, pt.otherpl)
-        n = other_txs.split(" ").count(usercode)
-        tx_hash = str(hash("other %s %s"% (n, usercode)))
-        pt.add_to_estimate(usercode, dentid, [tx_hash])
-    else:
-        message = u"%s '%s' %s '%s' %s"%(
-            _("unable to add"),
-            usercode,
-            _("because attribute"),
-            att,
-            _("is not understod")
-            )
-        LOGGER.warning(message)
-        om_gui.advise(message, 2)
-        
+    for complex_shortcut in pt.getFeeTable().complex_shortcuts:
+        if complex_shortcut.matches(shortcut):
+            message = "%s is a complex shortcut with %d cases"% (shortcut, 
+                len(complex_shortcut.cases))
+            LOGGER.debug(message)
+            
+            for case in complex_shortcut.cases:
+                condition_met = False
+                m = re.match("n_txs=(\d+)", case.condition)
+                m2 = re.match("n_txs>(\d+)", case.condition)
+                
+                if m and int(m.groups()[0]) == item_no:
+                    condition_met = True
+                elif m2 and item_no > int(m2.groups()[0]):
+                    condition_met = True
+                
+                if condition_met:
+                    LOGGER.debug("condition met %s"% case.condition)     
+                    tx_hashes = [tx_hash]
+                    for item_code in case.removals:
+                        for est in pt.estimates:
+                            if est.itemcode == item_code:
+                                LOGGER.debug("removing estimate %s"% est)     
+                                pt.estimates.remove(est)
+                                if est.completed:
+                                    pt.applyFee(est.ptfee * -1)
+                                tx_hashes += est.tx_hashes
+                                
+                    for item_code in case.additions:
+                        LOGGER.debug("adding additional code %s"% item_code)     
+                        pt.add_to_estimate(
+                        shortcut, dentid, tx_hashes, item_code) 
+                    
+                    for item_code in case.alterations:
+                        #instead of adding a new estimate item
+                        #add this treatment hash to existing item
+                        LOGGER.debug("altering code %s"% item_code)     
+                        for est in pt.estimates:
+                            if est.itemcode == item_code:
+                                est.tx_hashes += tx_hashes
+                                LOGGER.debug("est altered %s"% est)     
+                            
+                    if case.message != "":
+                        om_gui.advise(case.message, 1)
+            
+            return True
+    return False
         
 def remove_estimate_item(om_gui, est_item):
     '''
@@ -396,16 +425,18 @@ def remove_estimate_item(om_gui, est_item):
                 #print "MATCH!"
                 
                 if est_item.is_exam:
-                    pt.examt = ""
-                    pt.examd = None
+                    pt.treatment_course.examt = ""
+                    pt.treatment_course.examd = None
                     pt.addHiddenNote("exam", treat_code, deleteIfPossible=True)
                     continue
                 
-                completed = pt.__dict__[att + "cmp"].replace(treat_code, "", 1)
-                pt.__dict__[att + "cmp"] = completed
+                completed = pt.treatment_course.__dict__[att + "cmp"].replace(
+                    treat_code, "", 1)
+                pt.treatment_course.__dict__[att + "cmp"] = completed
 
-                plan = pt.__dict__[att + "pl"].replace(treat_code, "", 1)
-                pt.__dict__[att + "pl"] = plan
+                plan = pt.treatment_course.__dict__[att + "pl"].replace(
+                    treat_code, "", 1)
+                pt.treatment_course.__dict__[att + "pl"] = plan
 
                 if re.findall("[ul][lr][1-8]", att):
                     charts_gui.updateChartsAfterTreatment(
@@ -429,6 +460,71 @@ def remove_estimate_item(om_gui, est_item):
     else:
         om_gui.load_treatTrees()
         om_gui.updateHiddenNotesLabel()
+        
+        
+def recalculate_estimate(om_gui):
+    '''
+    look up all the itemcodes in the patients feetable
+    (which could have changed), and apply new fees
+    '''
+    pt = om_gui.pt
+    dentid = pt.course_dentist
+    
+    #drop all existing estimates except custom items.
+    #and reverse fee for completed items.
+    cust_ests = []
+    for estimate in pt.estimates:
+        if estimate.is_custom:
+            cust_ests.append(estimate)
+        elif estimate.completed:
+            pt.applyFee(estimate.ptfee * -1)
+    pt.estimates = cust_ests
+    
+    duplicate_txs = []
+    
+    for tx_hash, att, tx in pt.tx_hashes:
+        tx = tx.strip(" ")
+        
+        duplicate_txs.append("%s%s"%(att, tx))
+        item_no = duplicate_txs.count("%s%s"%(att, tx))
+        #tx_hash = str(hash("perio %s %s"% (n, usercode)))
+            
+        if att == "custom":
+            pass
+        elif re.match("[ul][lr][1-8]$", att): # chart add
+            
+            #--tooth may be deciduous
+            tooth_name = pt.chartgrid.get(att)
+            ft = pt.getFeeTable()
+            item = ft.get_tooth_fee_item(tooth_name, tx)
+            if item:
+                itemcode = item.itemcode
+                descr = item.description.replace("*", 
+                    " %s"% tooth_name.upper())
+                pt.add_to_estimate(
+                    tx, dentid, [tx_hash], itemcode, descr=descr)
+                
+            else:
+                descr = "%s %s"% (_("Other treatment"), tooth_name)
+                pt.add_to_estimate(
+                    tx, dentid, [tx_hash], "4001", descr=descr)
+
+        else:
+            if not complex_shortcut_handled(om_gui, tx, item_no, dentid, tx_hash):
+                pt.add_to_estimate(tx, dentid, [tx_hash])
+
+    LOGGER.debug("checking for completed items")
+    for est in pt.estimates:
+        for tx_hash in pt.completed_tx_hashes:
+            if tx_hash in est.tx_hashes:
+                est.completed = True
+    for est in pt.estimates:
+        if est.completed:
+            pt.applyFee(est.ptfee)
+                
+    return True
+
+
 
 if __name__ == "__main__":
     #-- test code

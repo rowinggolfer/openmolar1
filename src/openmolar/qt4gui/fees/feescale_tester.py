@@ -92,14 +92,22 @@ class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
 
         QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL("clicked()"),
             self.check_codes)
-        QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"),
-            self.check_codes)
+        #QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"),
+        #    self.check_codes)
 
         self.lineEdit.setText("P")
         self.check_codes()
 
     def check_codes(self):
         tx = str(self.lineEdit.text().toAscii())
+        for complex_shortcut in self.current_table.complex_shortcuts:
+            if complex_shortcut.matches(tx.upper()):
+                QtGui.QMessageBox.information(self, "information",
+                "%s is a complex shortcut with %d cases"% (tx, 
+                len(complex_shortcut.cases)
+                ))
+                return
+            
         code, value = self.current_table.userCodeWizard(tx.upper())
         self.att_lineEdit.setText("%s %s"%(code, value))
         for model in (self.model2, self.model3):

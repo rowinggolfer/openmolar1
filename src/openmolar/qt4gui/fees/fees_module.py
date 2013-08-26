@@ -357,10 +357,7 @@ def chooseFeescale(om_gui, i):
 def adjustTable(om_gui, index):
     tv = om_gui.ui.feeScales_treeView
     for col in range(tv.model().columnCount(index)):
-        if col == 3 and not om_gui.ui.actionShow_Geek_Column.isChecked():
-            tv.setColumnWidth(3, 0)
-        else:
-            tv.resizeColumnToContents(col)
+        tv.resizeColumnToContents(col)
     #usercolumn is unmanageably wide now
     tv.setColumnWidth(1, 80)
 
@@ -371,8 +368,6 @@ def expandFees(om_gui):
     '''
     if om_gui.ui.feeExpand_radioButton.isChecked():
         om_gui.ui.feeScales_treeView.expandAll()
-        if not om_gui.ui.actionShow_Geek_Column.isChecked():
-            om_gui.ui.feeScales_treeView.setColumnWidth(3, 0)
     else:
         om_gui.ui.feeScales_treeView.collapseAll()
 

@@ -6,6 +6,7 @@
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from openmolar.dbtools import patient_class
+from openmolar.dbtools.treatment_course import CURRTRT_ATTS
 
 existing=""
 
@@ -25,8 +26,7 @@ def toHtml(pt, tableCalled=None, changesOnly=False):
     if tableCalled == "Patient": 
         attributesDict["Patient Table"] = patient_class.patientTableAtts
     elif tableCalled == "Treatment": 
-        attributesDict[
-        "Treatment Items"] = patient_class.CURRTRT_ATTS
+        attributesDict["Treatment Items"] = CURRTRT_ATTS
     elif tableCalled == "HDP": 
         attributesDict["HDP"] = ("plandata",)
     elif tableCalled == "Estimates": 
