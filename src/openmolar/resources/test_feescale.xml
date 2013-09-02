@@ -1,5 +1,4 @@
-<?xml version="1.0" ?>
-<feescale>
+<?xml version="1.0" ?><feescale>
 	<version>0.1</version>
 	<tablename>test_feescale</tablename>
 	<feescale_description>Example Fee Scale</feescale_description>
@@ -20,7 +19,21 @@
 		<month>8</month>
 		<day>1</day>
 	</start>
-	<item id="0101">
+	<complex_shortcut>
+		<shortcut>SP</shortcut>
+		<case condition="n_txs=1">
+			<add_item id="E1001"/>
+		</case>
+		<case condition="n_txs=2">
+			<remove_item id="E1001"/>
+			<add_item id="E1011"/>
+		</case>
+		<case condition="n_txs&gt;2">
+			<alter_item id="E1011"/>
+			<message>maximum fee already claimed for this treatment</message>
+		</case>
+	</complex_shortcut>
+	<item id="E0101">
 		<section>1</section>
 		<shortcut>CE</shortcut>
 		<description>clinical examination^</description>
@@ -30,7 +43,7 @@
 			<charge>2200</charge>
 		</fee>
 	</item>
-	<item id="0111">
+	<item id="E0111">
 		<section>1</section>
 		<shortcut>ECE</shortcut>
 		<description>extensive clinical examination^</description>
@@ -40,7 +53,7 @@
 			<charge>4500</charge>
 		</fee>
 	</item>
-	<item id="0121" obscurity="2">
+	<item id="E0121" obscurity="2">
 		<section>1</section>
 		<shortcut>FCA</shortcut>
 		<description>full case assessment^</description>
@@ -50,7 +63,7 @@
 			<charge>6000</charge>
 		</fee>
 	</item>
-	<item id="0201">
+	<item id="E0201">
 		<section>1</section>
 		<shortcut>S</shortcut>
 		<description>small xray*</description>
@@ -78,7 +91,7 @@
 			<attribute>xray</attribute>
 		</feescale_add>
 	</item>
-	<item id="1401" obscurity="0">
+	<item id="E1401" obscurity="0">
 		<section>4</section>
 		<shortcut type="regex">u[lr][de4-8][MODBP]*$|l[lr][de4-8][MODBL]*$|u[lr][a-c1-3][MIDBP]*$|l[lr][a-c1-3][MIDBL]*$</shortcut>
 		<description>filling*</description>
@@ -88,7 +101,27 @@
 			<charge>4500</charge>
 		</fee>
 	</item>
-	<item id="1501">
+	<item id="E1001">
+		<section>3</section>
+		<shortcut>SP</shortcut>
+		<description>scale and polish^</description>
+		<fee>
+			<brief_description>scale &amp; polish</brief_description>
+			<gross>3300</gross>
+			<charge>3300</charge>
+		</fee>
+	</item>
+	<item id="E1011">
+		<section>3</section>
+		<shortcut>SP+</shortcut>
+		<description>extended scale and polish^</description>
+		<fee>
+			<brief_description>scale &amp; polish &gt; 1 visit</brief_description>
+			<gross>4500</gross>
+			<charge>4500</charge>
+		</fee>
+	</item>
+	<item id="E1501">
 		<section>5</section>
 		<shortcut type="regex">[ul][lr][1-3]RT$</shortcut>
 		<description>anterior root filling*</description>
@@ -98,7 +131,7 @@
 			<charge>19500</charge>
 		</fee>
 	</item>
-	<item id="1502">
+	<item id="E1502">
 		<section>5</section>
 		<shortcut type="regex">[ul][lr][45]RT$</shortcut>
 		<description>premolar root filling*</description>
@@ -108,7 +141,7 @@
 			<charge>19500</charge>
 		</fee>
 	</item>
-	<item id="1504">
+	<item id="E1504">
 		<section>5</section>
 		<shortcut type="regex">[ul][lr][6-8]RT$</shortcut>
 		<description>molar root filling*</description>
@@ -118,7 +151,7 @@
 			<charge>19500</charge>
 		</fee>
 	</item>
-	<item id="0601">
+	<item id="E0601">
 		<section>6</section>
 		<shortcut type="regex">[ul][lr][1-8]CR</shortcut>
 		<description>other crown*</description>
@@ -128,7 +161,7 @@
 			<charge>0</charge>
 		</fee>
 	</item>
-	<item id="0701">
+	<item id="E0701">
 		<section>7</section>
 		<shortcut type="regex">[ul][lr][1-8]BR</shortcut>
 		<description>bridge unit*</description>
@@ -138,14 +171,10 @@
 			<charge>0</charge>
 		</fee>
 	</item>
-	<item id="2101">
+	<item id="E2101">
 		<section>8</section>
 		<shortcut type="regex">u[lr][a-e1-8]EX</shortcut>
 		<description>extraction*</description>
-		<dependency condition="item_no&gt;=1 present" type="shortcut">
-			<attribute>other</attribute>
-			<shortcut>XV</shortcut>
-		</dependency>
 		<fee condition="item_no=1">
 			<brief_description>extraction, 1 tooth</brief_description>
 			<gross>5500</gross>

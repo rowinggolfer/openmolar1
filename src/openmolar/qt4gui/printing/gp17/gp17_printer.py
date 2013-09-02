@@ -52,8 +52,12 @@ class GP17Printer(object):
             QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.No:
                 return
-
-        dl = GP17PrintDialog(self.om_gui.pt, self.om_gui)
+        
+        if test: #self.om_gui.pt.serialno == 0:
+            pt = None
+        else:
+            pt = self.om_gui.pt
+        dl = GP17PrintDialog(pt, self.om_gui)
         
         #chosenDent = str(dl.dents_comboBox.currentText())
         #dent = localsettings.ops_reverse.get(chosenDent)
@@ -63,10 +67,8 @@ class GP17Printer(object):
                 form = Form()
                 form.set_data(dl.data)
                 
-                ## temp code            
-                form.testing_mode = test or "neil" in os.path.expanduser("~")
-                
-                if form.controlled_print():
+                form.testing_mode = test                 
+                if form.controlled_print() and not test:
                     commitPDFtoDB(self.om_gui, form.NAME)
             
                     self.om_gui.pt.addHiddenNote(

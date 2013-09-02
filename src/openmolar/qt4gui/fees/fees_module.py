@@ -13,9 +13,11 @@ script, concerning fees, accounts and graphical feescale display.
 
 from __future__ import division
 
-from PyQt4 import QtGui, QtCore
+import logging
 import os
 import subprocess
+
+from PyQt4 import QtGui, QtCore
 
 from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
 patient_write_changes
@@ -30,6 +32,7 @@ from openmolar.qt4gui.dialogs.payment_dialog import PaymentDialog
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
 from openmolar.qt4gui.compiled_uis import Ui_raiseCharge
 
+LOGGER = logging.getLogger("openmolar")
 
 def applyFeeNow(om_gui, arg, cset=None):
     '''
@@ -78,23 +81,21 @@ def takePayment(om_gui):
         else:
             dent = paymentPt.dnt1
 
-        print "TAKING PAYMENT", paymentPt.serialno
+        LOGGER.debug("TAKING PAYMENT for patient %s"% paymentPt.serialno)
 
         if cashbook.paymenttaken(paymentPt.serialno, name, dent,paymentPt.cset,
         dl.tx_cash, dl.tx_cheque, dl.tx_card,
         dl.sundry_cash, dl.sundry_cheque, dl.sundry_card, 
         dl.hdp, dl.other, dl.refund):
 
-            print "ADDING NOTE"
             paymentPt.addHiddenNote("payment",
             " treatment %s sundries %s"% (
                 dl.tx_total_text, dl.sundry_total_text))
                 
             om_gui.updateHiddenNotesLabel()
 
-            print "CHECKING SERIALNO of loaded patient",
             if om_gui.pt.serialno != 0:
-                print "loaded patient == payment patient"
+                LOGGER.debug("loaded patient == payment patient")
                 om_printing.printReceipt(om_gui,{
                 "Treatments and Services" : dl.tx_total_text,
                 "Sundry Items" : dl.sundry_total_text,
@@ -111,15 +112,16 @@ def takePayment(om_gui):
                 om_gui.pt.money11 -= dl.refund
 
             else:
-                print "No patient loaded. skipping receipt offer."
+                LOGGER.debug(
+                "Payment patient is not loaded. skipping receipt offer.")
 
             patient_write_changes.toNotes(paymentPt.serialno,
                                           paymentPt.HIDDENNOTES)
 
-            print "writing to notes"
+            LOGGER.debug("writing payment notes")
             if patient_write_changes.discreet_changes(paymentPt,
             ("money2", "money3", "money11")) and om_gui.pt.serialno != 0:
-                print "updating stored values"
+                LOGGER.debug("updating patient's stored money values")
                 om_gui.pt.dbstate.money2 = om_gui.pt.money2
                 om_gui.pt.dbstate.money3 = om_gui.pt.money3
                 om_gui.pt.dbstate.money11 = om_gui.pt.money11
@@ -127,11 +129,14 @@ def takePayment(om_gui):
             paymentPt.clearHiddenNotes()
             om_gui.updateDetails()
             om_gui.updateHiddenNotesLabel()
-            print "PAYMENT ALL DONE!"
+            LOGGER.info("PAYMENT ALL DONE!")
         else:
-            om_gui.advise("error applying payment.... sorry!<br />"\
-            +"Please write this down and tell Neil what happened", 2)
-
+            LOGGER.warning("payment failed to write to database!")
+            message = "%s<br />%s"% (
+                _("error applying payment.... sorry!"),
+                _("This shouldn't happen - please report as an urgent bug")
+                )
+            om_gui.advise(message, 2)
 
 def loadFeesTable(om_gui):
     '''
@@ -311,7 +316,7 @@ def nhsRegsPDF(om_gui):
             else:
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "scotNHSremuneration10.pdf")
-        else:
+        elif dl.tabWidget.currentIndex() == 3:
             if dl.info2012_radioButton.isChecked():
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "information-guide-2012-final.pdf")
@@ -321,13 +326,27 @@ def nhsRegsPDF(om_gui):
             else:
                 doc = os.path.join(localsettings.wkdir, 'resources',
                 "scotNHSremuneration12.pdf")
+        else:
+            if dl.info2013_radioButton.isChecked():
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "information-guide-2012-final.pdf")
+            elif dl.tooth_specific_radioButton.isChecked():
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "guidance-issue-2-v17.pdf")
+            elif dl.terms2013_radioButton.isChecked():
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "ssi_20100208_en.pdf")
+            else:
+                doc = os.path.join(localsettings.wkdir, 'resources',
+                "scotNHSremuneration13.pdf")
 
         try:
             print "opening %s"% doc
             localsettings.openPDF(doc)
-        except Exception, e:
-            print Exception, e
-            om_gui.advise(_("Error opening PDF file"), 2)
+        except Exception as exc:
+            message = _("Error opening PDF file")
+            LOGGER.exception(message)
+            om_gui.advise(message, 2)
 
 def chooseFeescale(om_gui, i):
     '''
@@ -385,7 +404,8 @@ def makeBadDebt(om_gui):
         om_gui.pt.resetAllMonies()
         om_gui.pt.status = "BAD DEBT"
         om_gui.ui.notesEnter_textEdit.setText(
-        "changed patients status to BAD DEBT")
+            _("changed patients status to BAD DEBT")
+            )
 
         om_gui.updateStatus()
         om_gui.updateDetails()

@@ -4,6 +4,13 @@
        XSD schema
     2. poll openmolar.com to check versioning, and inform of updates.
     3. do a "release" to get some publicity?
+    
+    TODO
+    advanced tx planning dialog - apply completion of treatments
+    estimates with > 1 tx_hashes associated need to have different behaviour
+    in fact.. I realise that tx_hashes only gets written on the first commit of an est to database.
+    estimate printing is broken!
+    
 
 0.4.10
     TODO incisal angles, max per tooth, extraction visits, special tray,

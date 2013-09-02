@@ -41,6 +41,10 @@ alter table patients
 ''',
 
 '''
+alter table newestimates modify column itemcode char(5)
+''',
+
+'''
 create table est_link (
   ix         int(11) unsigned not null auto_increment ,
   est_id     int(11),

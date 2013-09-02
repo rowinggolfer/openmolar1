@@ -331,7 +331,7 @@ if __name__ == "__main__":
     
     from gettext import gettext as _
     from openmolar.dbtools import patient_class
-    pt = patient_class.patient(32908)
+    pt = patient_class.patient(11956)
 
     app = QtGui.QApplication([])
 

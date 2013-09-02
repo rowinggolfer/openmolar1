@@ -41,7 +41,7 @@ class Estimate(object):
         return self.__str__()
 
     def __str__(self):
-        retarg=u"("
+        retarg=u"Estimate ("
         for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
             retarg+='%s ,'% self.__dict__[att]
         for att in ("tx_hashes","itemcode","description","csetype","feescale"):

@@ -218,7 +218,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         overrule QMaindow's close event
         check for unsaved changes then politely close the app if appropriate
         '''
-        print "quit called"
+        LOGGER.info("quit called")
         okToLeave = True
         if not self.okToLeaveRecord():
             event.ignore()

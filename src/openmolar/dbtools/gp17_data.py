@@ -23,16 +23,18 @@
 '''
 Provides Gp17Data class for the data required by a GP17(Scotland) NHS form
 '''
+import logging
 
 from datetime import date
 from openmolar.settings import localsettings
 from openmolar.ptModules import dec_perm
 
+LOGGER = logging.getLogger("openmolar")
+
 def convert_tooth(tooth):
     '''
     take something like "ul5" and return the iso code
     '''
-    print "converting tooth '%s'"% tooth ,
     quadrant = tooth[:2].lower()
     iso_quadrant = ["ur", "ul", "ll", "lr"].index(quadrant)
     try:
@@ -42,7 +44,7 @@ def convert_tooth(tooth):
         tooth_no = tooth[2]
     
     result = "%s%s"% (iso_quadrant+1, tooth_no)
-    print result 
+    LOGGER.debug("converted tooth '%s' to '%s'"% (tooth, result)) 
     return result
 
 CAPITATION_SIMPLE = [ 
@@ -105,6 +107,9 @@ test_complex_codes = [
     DuckCode("3803",1,True)
     ]
 
+class DuckCourse(object):
+    accd = date(1969,12,9)
+    cmpd = date(2015,12,9)    
 
 class DuckPatient(object):
     sname = "Wallace"
@@ -119,8 +124,6 @@ class DuckPatient(object):
     town = "Inverness"
     county = ""
     pcde = "IV25XQ"
-    accd = date(1969,12,9)
-    cmpd = date(2015,12,9)
     dnt1 = 1
     dnt2 = None
     #dent0,dent1,dent2,dent3 = 0,0,0,0
@@ -128,6 +131,8 @@ class DuckPatient(object):
     under_capitation = False
     estimates = []
     nhs_claims = []
+    def __init__(self):
+        self.treatment_course = DuckCourse()
     
 class Gp17Data(object):
     '''
@@ -137,6 +142,9 @@ class Gp17Data(object):
     misc_dict = {}
     
     def __init__(self, pt=None, testing_mode=False):
+        
+        LOGGER.debug("Gp17Data object created, pt = %s testing_mode = %s"% (
+            pt, testing_mode))
         
         self.pt = DuckPatient() if pt is None else pt
         self.dentist = self.pt.dnt2 if self.pt.dnt2 != 0 else self.pt.dnt1
@@ -261,7 +269,7 @@ class Gp17Data(object):
         #print "checking for tooth %s%s (%s), '%s'"% (
         #    quadrant, tooth, old_notation, static_string)
         
-        if "TM" in static_string:
+        if "TM" in static_string or "UE" in static_string:
             return False
         
         if quadrant > 4:
