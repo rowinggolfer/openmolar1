@@ -12,10 +12,14 @@ table of the database
 '''
 
 from __future__ import division
+
+import logging
 import functools
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
+
+LOGGER = logging.getLogger("openmolar")
 
 # this variable allows HISTORIC cashbook entries to be altered (by supervisor)
 full_edit = False
@@ -49,9 +53,9 @@ class CashBookCodesDict(dict):
             rows = cursor.fetchall()
             for row in rows:
                 self[int(row[0])] = row[1]
-            print "cashbook codes loaded sucessfully"
-        except:
-            print "error loading cashbook codes"
+            LOGGER.debug("cashbook codes loaded sucessfully")
+        except Exception as exc:
+            LOGGER.exception("error loading cashbook codes")
         finally:
             cursor.close()
             
@@ -130,8 +134,6 @@ treatment_only=False, sundries_only=False):
     localsettings.OM_DATE_FORMAT, cond1,
     startdate.toPyDate(), enddate.toPyDate())
 
-    if localsettings.logqueries:
-        print query
     cursor.execute(query)
 
     rows = cursor.fetchall()
