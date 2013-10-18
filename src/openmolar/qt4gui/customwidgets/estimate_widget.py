@@ -18,6 +18,9 @@ from PyQt4 import QtGui, QtCore
 from estimate_item_widget import decimalise, EstimateItemWidget
 from openmolar.qt4gui.compiled_uis import Ui_estSplitItemsDialog
 
+from openmolar.qt4gui.dialogs.complete_treatment_dialog \
+    import CompleteTreatmentDialog
+
 LOGGER = logging.getLogger("openmolar")
 
 class EstimateWidget(QtGui.QWidget):
@@ -435,6 +438,107 @@ class EstimateWidget(QtGui.QWidget):
                 
         return True
     
+    def raise_multi_treatment_dialog(self, est_item_widget):
+        '''
+        show treatments for this item
+        '''
+        LOGGER.debug("raise_multi_treatment_dialog")
+        tx_hashes = []
+        for item in est_item_widget.est_items:
+            tx_hashes += item.tx_hashes
+        assert len(tx_hashes) >0 , \
+            "no treatments found.. this shouldn't happen"
+
+        txs = []        
+        for hash_, att, tx in self.pt.tx_hashes:
+            for tx_hash in tx_hashes:
+                if hash_ == tx_hash:
+                    txs.append((att, tx, tx_hash.completed))
+                    
+        dl = CompleteTreatmentDialog(txs, self)
+        if not dl.exec_():
+            return
+        
+        for att, treat in dl.completed_treatments:
+            LOGGER.debug("checking completed %s %s"% (att, treat))
+            found = False #only complete 1 treatment!!
+            for hash_, att_, tx in self.pt.tx_hashes:
+                if found:
+                    break 
+                if att == att_ and tx == treat:
+                    LOGGER.debug("att and treat match... checking hashes")
+                    for item in est_item_widget.est_items:
+                        LOGGER.debug("Checking hashes of item %s"% item)
+                        for tx_hash in item.tx_hashes:
+                            if tx_hash == hash_ and not tx_hash.completed:
+                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
+                                tx_hash.completed = True        
+                                self.tx_hash_complete(tx_hash)
+                                found = True
+                                break
+                        if found: 
+                            break
+                                
+        for att, treat in dl.uncompleted_treatments:
+            LOGGER.debug("checking completed %s %s"% (att, treat))
+            found = False #only complete 1 treatment!!
+            for hash_, att_, tx in self.pt.tx_hashes:
+                if found:
+                    break 
+                if att == att_ and tx == treat:
+                    LOGGER.debug("att and treat match... checking hashes")
+                    for item in est_item_widget.est_items:
+                        LOGGER.debug("Checking hashes of item %s"% item)
+                        for tx_hash in item.tx_hashes:
+                            if tx_hash == hash_ and tx_hash.completed:
+                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
+                                tx_hash.completed = False        
+                                self.tx_hash_complete(tx_hash)
+                                found = True
+                                break
+                        if found: 
+                            break
+            
+        for att, treat, already_completed in dl.deleted_treatments:
+            LOGGER.debug("checking deleted %s %s"% (att, treat))
+            found = False #only complete 1 treatment!!
+            for hash_, att_, tx in self.pt.tx_hashes:
+                if found:
+                    break 
+                if att == att_ and tx == treat:
+                    LOGGER.debug("att and treat match... checking hashes")
+                    for item in est_item_widget.est_items:
+                        LOGGER.debug("Checking hashes of item %s"% item)
+                        for tx_hash in item.tx_hashes:
+                            if tx_hash == hash_:
+                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
+                                if tx_hash.completed and already_completed:
+                                    #this will reverse the treatment.
+                                    self.tx_hash_complete(tx_hash)
+                                item.tx_hashes.remove(tx_hash)
+                                found = True
+                                break
+                        if found: 
+                            break
+            
+        if dl.all_planned:
+            est_item_widget.completed_checkBox.setCheckState(QtCore.Qt.Unchecked)
+        elif dl.all_completed:
+            est_item_widget.completed_checkBox.setCheckState(QtCore.Qt.Checked)
+        else:
+            est_item_widget.completed_checkBox.setCheckState(QtCore.Qt.PartiallyChecked)
+
+        if est_item_widget.has_no_treatments:
+            self.deleteItemWidget(est_item_widget, False)
+        else:
+            for item in est_item_widget.est_items:
+                if item.tx_hashes == []:
+                    self.ests.remove(item)
+        
+        self.resetEstimate()
+                    
+        #self.updateTotals()
+
     
 if __name__ == "__main__":
     def CatchAllSignals(arg=None):
