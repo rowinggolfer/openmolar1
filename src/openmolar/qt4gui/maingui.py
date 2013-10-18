@@ -500,7 +500,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         right click menu - prop is the fill to be changed
         '''
         print "tooth_change_material", prop
-        self.advise("change material not working yet",1)
+        self.advise("change material not working yet", 1)
 
     def tooth_change_crown(self, prop):
         '''
@@ -508,7 +508,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         right click menu - prop is the crown to be changed
         '''
         print "tooth_change_crown", prop
-        self.advise("change crown type not working yet",1)
+        self.advise("change crown type not working yet", 1)
 
     def tooth_add_comments(self):
         '''
@@ -516,7 +516,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         menu
         '''
         print "tooth_add_comments"
-        self.advise("add comments not working yet",1)
+        self.advise("add comments not working yet", 1)
 
     def chooseTooth(self):
         '''
@@ -532,7 +532,8 @@ class OpenmolarGui(QtGui.QMainWindow):
             return True
         #--a debug print statement
         if not cont:
-            print "leaving record checking to see if save is required...",
+            LOGGER.debug(
+            "leaving record checking to see if save is required...")
             course_module.prompt_close_course(self)
 
         #--apply changes to patient details
@@ -544,7 +545,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         #--this returns a LIST of changes ie [] if none.
         uc = self.unsavedChanges()
         if uc == []:
-            LOGGER.debug("okToLeaveRecord - no changes")
+            LOGGER.debug("   okToLeaveRecord - no changes")
         else:
             #--raise a custom dialog to get user input
             Dialog = QtGui.QDialog(self)
@@ -556,10 +557,10 @@ class OpenmolarGui(QtGui.QMainWindow):
             if Dialog.exec_():
                 if dl.result == "discard":
                     LOGGER.info(
-                        "okToLeaveRecord - user discarding changes")
+                        "   okToLeaveRecord - user discarding changes")
                     course_module.delete_new_course(self)
                 elif dl.result == "save":
-                    LOGGER.debug("okToLeaveRecord - user is saving")
+                    LOGGER.debug("   okToLeaveRecord - user is saving")
                     self.save_changes(False)
             else:
                 LOGGER.debug("okToLeaveRecord - continue editing")
@@ -639,7 +640,6 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         if ci == 7:  #-- estimate/plan page.
             self.load_newEstPage()
-            self.load_treatTrees()
 
         self.wait(False)
 
@@ -753,52 +753,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         this is probably quite computationally expensive
         so should only be done if the widget is visible
         '''
-        logging.debug("load_newEstPage called")
-        self.ui.estWidget.setEstimate(self.pt.estimates)
-
-    def load_treatTrees(self):
-
-        self.ui.plan_treeWidget.clear()
-        pdict = plan.plannedDict(self.pt)
-        #-- pdict is a dictionary in the format
-        #-- {'Perio': ['perio - SP'], Diagnosis': ['xray - 2S', 'xray - M']}
-        #-- so the keys are treatment categories... and they contain a list
-        #-- of treatments within that category
-        #-- display as a tree view
-        #-- PLANNED ITEMS
-        itemToCompress=None
-        for category in pdict.keys():
-            items=pdict[category]
-            header=category + '(%d items)'%len(items)
-            parent = QtGui.QTreeWidgetItem(
-                    self.ui.plan_treeWidget, [header])
-            if category == "Tooth":
-                itemToCompress=parent
-            for item in items:
-                child = QtGui.QTreeWidgetItem(parent, [item])
-            #-- next line causes drawing errors?
-            #self.ui.plan_treeWidget.expandItem(parent)
-        self.ui.plan_treeWidget.expandAll()
-        self.ui.plan_treeWidget.resizeColumnToContents(0)
-        if itemToCompress:
-            itemToCompress.setExpanded(False)
-        #--COMPLETED ITEMS
-
-        self.ui.comp_treeWidget.clear()
-        pdict=plan.completedDict(self.pt)
-        for category in pdict.keys():
-            items=pdict[category]
-            header=category + '(%d items)'%len(items)
-            parent = QtGui.QTreeWidgetItem(
-                    self.ui.comp_treeWidget, [header])
-            if category == "Tooth":
-                itemToCompress=parent
-            for item in items:
-                child = QtGui.QTreeWidgetItem(parent, [item])
-        self.ui.comp_treeWidget.expandAll()
-        self.ui.comp_treeWidget.resizeColumnToContents(0)
-        if itemToCompress:
-            itemToCompress.setExpanded(False)
+        LOGGER.debug("load_newEstPage called")
+        self.ui.estWidget.setPatient(self.pt)
+        #self.ui.estWidget.setEstimate(self.pt.estimates)
 
     def load_editpage(self):
         self.ui.titleEdit.setText(self.pt.title)
@@ -1201,7 +1158,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self.advise (_("error getting serialno")+ " %d - " % serialno +
                               _("please check this number is correct?"), 1)
             except Exception as exc:
-                logging.exception(
+                LOGGER.exception(
                 "Unknown ERROR loading patient - serialno %d"% serialno)
                 self.advise ("Unknown Error - Tell Neil<br />%s"% exc, 2)
 
@@ -1383,6 +1340,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if self.pt.serialno == 0:
             self.ui.detailsBrowser.setText("")
             return
+        
+        self.pt.apply_fees()        
 
         Saved = (self.pt.dbstate.fees == self.pt.fees)
         details = patientDetails.details(self.pt, Saved)
@@ -1393,7 +1352,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
         self.ui.estimate_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.completed_groupBox.setEnabled(self.pt.underTreatment)
-        self.ui.planDetails_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.closeTx_pushButton.setEnabled(self.pt.underTreatment)
         
         if self.pt.underTreatment:
@@ -1924,16 +1882,25 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         call a smart dialog which will perform an exam on the current patient
         '''
+        if course_module.newCourseNeeded(self):
+            return
         dl = ExamWizard(self)
-        dl.perform_exam()
-
+        if dl.perform_exam():
+            self.ui.estWidget.setEstimate(self.pt.estimates)
+            self.load_clinicalSummaryPage()
+            self.updateHiddenNotesLabel()
+        self.updateDetails()
+        
     def showHygDialog(self):
         '''
         call a smart dialog which will perform hygenist treatment
         on the current patient
         '''
+        if course_module.newCourseNeeded(self):
+            return
         dl = HygTreatWizard(self)
         dl.perform_tx()
+        self.updateDetails()
         
     def addXrayItems(self):
         '''
@@ -1983,28 +1950,40 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         add_tx_to_plan.chartAdd(self, tooth, properties)
 
-    def planChartWidget_completed(self, arg):
+    def complete_treatments(self, treatments):
         '''
         called when double clicking on a tooth in the plan chart
-        the arg is a list - ["ul5","MOD","RT",]
+        the arg is a list - [("ul5","MOD"),("ul5pl", "RT")]
         '''
         if not self.pt.underTreatment:
-            self.advise("course has been closed",1)
+            self.advise("course has been closed", 1)
         else:
-            complete_tx.chartComplete(self, arg)
+            complete_tx.complete_txs(self, treatments)
 
-    def estwidget_completeItem(self, est_item):
+    def complete_tx_hash(self, tx_hash):
         '''
         estwidget has sent a signal that an item is marked as completed.
         '''
-        complete_tx.estwidg_complete(self, est_item)
+        complete_tx.tx_hash_complete(self, tx_hash)
+    
+    def complete_tx(self, att, tx):
+        '''
+        estwidget has sent a signal that an item is marked as completed.
+        '''
+        complete_tx.complete_txs(self, [(att, tx)])
 
-    def estwidget_unCompleteItem(self, est_item):
+    def reverse_tx_hash(self, tx_hash):
         '''
         estwidget has sent a signal that a previous completed item needs
         reversing
         '''
-        complete_tx.estwidg_unComplete(self, est_item)
+        complete_tx.tx_hash_reverse(self, tx_hash)
+    
+    def reverse_tx(self, att, tx):
+        '''
+        estwidget has sent a signal that an item is marked as completed.
+        '''
+        complete_tx.reverse_txs(self, [(att, tx)])
 
     def estwidget_deleteTxItem(self, est_item):
         '''
@@ -2667,11 +2646,13 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.QObject.connect(self.ui.customTx_pushButton,
         QtCore.SIGNAL("clicked()"), self.addCustomItem)
 
-        QtCore.QObject.connect(self.ui.estWidget,
-        QtCore.SIGNAL("completedItem"), self.estwidget_completeItem)
-
-        QtCore.QObject.connect(self.ui.estWidget,
-        QtCore.SIGNAL("unCompletedItem"), self.estwidget_unCompleteItem)
+        self.ui.estWidget.complete_tx_signal.connect(self.complete_tx)
+        self.ui.estWidget.reverse_tx_signal.connect(self.reverse_tx)        
+        self.ui.estWidget.complete_txhash_signal.connect(self.complete_tx_hash)
+        self.ui.estWidget.reverse_txhash_signal.connect(self.reverse_tx_hash)
+        
+        self.ui.estWidget.updated_fees_signal.connect(self.updateDetails)
+        
 
         QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
@@ -2897,7 +2878,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         #self.chartTableNav)
 
         QtCore.QObject.connect(self.ui.planChartWidget,
-        QtCore.SIGNAL("completeTreatment"), self.planChartWidget_completed)
+        QtCore.SIGNAL("completeTreatment"), self.complete_treatments)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
         QtCore.SIGNAL("NextTooth"), self.navigateCharts)
@@ -3022,7 +3003,6 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         if add_tx_to_plan.recalculate_estimate(self):
             self.load_newEstPage()
-            self.load_treatTrees()
             self.updateDetails()
 
     def apply_exemption(self):
@@ -3157,12 +3137,9 @@ if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     LOGGER.warning("dev mode in use - verbose logging")
     os.chdir(os.path.expanduser("~"))
-    import gettext
-    os.environ.setdefault('LANG', 'en')
-    gettext.install('openmolar')
-
-    print "Qt Version: ", QtCore.QT_VERSION_STR
-    print "PyQt Version: ", QtCore.PYQT_VERSION_STR
+    
+    LOGGER.debug("Qt Version: %s"% QtCore.QT_VERSION_STR)
+    LOGGER.debug("PyQt Version: %s"% QtCore.PYQT_VERSION_STR)
     newapp = QtGui.QApplication(sys.argv)
     localsettings.operator = "NW"
     #localsettings.station = "reception"

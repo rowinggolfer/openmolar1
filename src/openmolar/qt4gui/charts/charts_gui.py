@@ -19,6 +19,8 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.qt4gui.fees import course_module
 
+LOGGER = logging.getLogger("openmolar")
+
 def navigateCharts(om_gui, direction):
     '''
     called by a keypress in the tooth prop LineEdit or a click on one of
@@ -152,7 +154,8 @@ def chartTableNav(om_gui, row, col, row1, col1):
     '''
     charts table has been navigated
     '''
-    logging.debug("UNUSED chartTableNav row %s, col %s, row %s, col %s"% (row,col,row1,col1))
+    LOGGER.debug(
+    "UNUSED chartTableNav row %s, col %s, row %s, col %s"% (row,col,row1,col1))
 
 def chartNavigation(om_gui, teeth, callerIsTable=False):
     '''

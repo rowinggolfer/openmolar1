@@ -12,6 +12,8 @@ import sys
 
 from openmolar.settings import localsettings
 
+LOGGER = logging.getLogger("openmolar")
+
 treatmentTypeHeaders = {
     "Diagnosis":("Exam","xray", "Diagnosis", "Preventive"),
     "Perio":("perio", ),
@@ -171,7 +173,7 @@ def completedFillsToStatic(pt):
 
     except Exception, e:
         #shouldn't happen, but safety first.
-        logging.exception("FAILED TO TRANSFER FILLS TO STATIC")
+        LOGGER.exception("FAILED TO TRANSFER FILLS TO STATIC")
 
 
 if __name__ == "__main__":

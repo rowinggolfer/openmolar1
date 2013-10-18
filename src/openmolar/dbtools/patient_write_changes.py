@@ -28,11 +28,11 @@ EXMPT_INS_QUERY = ('insert into exemptions '
 
 ESTS_INS_QUERY = ('insert into newestimates (serialno, '
 'courseno, number, itemcode, description, fee, ptfee, feescale, '
-'csetype, dent, completed, modified_by, time_stamp) values '
-'(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())')
+'csetype, dent, modified_by, time_stamp) values '
+'(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())')
 
 EST_LINK_INS_QUERY = (
-'insert into est_link (est_id, tx_hash) values (%s, %s)')
+'insert into est_link (est_id, tx_hash, completed) values (%s, %s, %s)')
 
 EST_DEL_QUERY = "delete from newestimates where ix=%s"
 EST_LINK_DEL_QUERY = "delete from est_link where est_id=%s"
@@ -117,7 +117,7 @@ def all_changes(pt, changes):
                         values = (pt.serialno, pt.courseno0, est.number, 
                         est.itemcode, est.description,
                         est.fee, est.ptfee, est.feescale, est.csetype,
-                        est.dent, est.completed, localsettings.operator)
+                        est.dent, localsettings.operator)
 
                         estimate_commands["insertions"].append(
                             (ESTS_INS_QUERY, values, est.tx_hashes)
@@ -161,9 +161,12 @@ def all_changes(pt, changes):
                             if oldEst.dent != est.dent:
                                 query += 'dent=%d,'
                                 values.append(est.dent)
-                            if oldEst.completed != est.completed:
-                                query += 'completed=%s,'
-                                values.append(est.completed)
+
+                            #obsolete code.. completed is now in tx_hash!
+                            #if oldEst.completed != est.completed:
+                            #    query += 'completed=%s,'
+                            #   values.append(est.completed)
+                            
                             query += ('modified_by = %s, '
                             'time_stamp = NOW() where ix = %s')
 
@@ -188,7 +191,7 @@ def all_changes(pt, changes):
                 for trt_att in CURRTRT_ATTS:
                     value = pt.treatment_course.__dict__[trt_att]
                     existing = pt.dbstate.treatment_course.__dict__[trt_att]
-                    if value != existing:
+                    if pt.has_new_course or value != existing:
                         trtchanges += '%s = %%s ,'% trt_att
                         trtvalues.append(value)
 
@@ -221,6 +224,8 @@ def all_changes(pt, changes):
         for table in tables:
             for query, values in sqlcommands[table]:
                 try:
+                    LOGGER.debug(query)
+                    LOGGER.debug(values)
                     cursor.execute(query, values)
                 except Exception as exc:
                     LOGGER.exception("error executing query %s"% query)
@@ -231,10 +236,17 @@ def all_changes(pt, changes):
             try:
                 cursor.execute(query, values)
                 ix = cursor.lastrowid
-                for tx_hash in tx_hashes:
-                    cursor.execute(EST_LINK_INS_QUERY, (ix, tx_hash))
-            except Exception as exc:
-                LOGGER.exception("error executing query %s"% query)
+                try:
+                    for tx_hash in tx_hashes:
+                        vals = (ix, tx_hash.hash, tx_hash.completed)
+                        cursor.execute(EST_LINK_INS_QUERY, vals)
+                except Exception as exc:                
+                    LOGGER.exception("error executing query\n %s\n %s"% (
+                        EST_LINK_INS_QUERY, vals))
+                    result = False
+            except Exception as exc:                
+                LOGGER.exception("error executing query\n %s\n %s"% (
+                    query, str(values)))
                 result = False
             
         update_commands = estimate_commands.get("updates", [])
@@ -243,7 +255,9 @@ def all_changes(pt, changes):
                 cursor.execute(query, values)
                 cursor.execute(EST_LINK_DEL_QUERY, (estimate.ix,))
                 for tx_hash in estimate.tx_hashes:
-                    cursor.execute(EST_LINK_INS_QUERY, (estimate.ix, tx_hash))
+                    cursor.execute(EST_LINK_INS_QUERY, 
+                    (estimate.ix, tx_hash.hash, tx_hash.completed)
+                    )
             except Exception as exc:
                 LOGGER.exception("error updating estimate %s"% estimate)
                 result = False

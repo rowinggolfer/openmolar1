@@ -17,10 +17,30 @@ from openmolar.ptModules import plan
 
 LOGGER = logging.getLogger("openmolar")
 
+class TXHash(object):
+    def __init__(self, hash_, completed=False):
+        self.hash = str(hash_)
+        self.completed = completed
+    
+    def __eq__(self, other):
+        '''
+        compare the object with another hash
+        note - completion state is irrelevant
+        '''
+        if type(other) == TXHash:
+            return self.hash == other.hash
+        return self.hash == other
+
+    def __repr__(self):
+        return ("TXHash %s completed=%s"% (self.hash, self.completed))    
+
 class Estimate(object):
     '''
     this class has attributes suitable for storing in the estimates table
     '''
+    COMPLETED = 2
+    PARTIALLY_COMPLETED = 1
+    PLANNED = 0
     def __init__(self):
         self.ix = None
         self.serialno = None
@@ -33,9 +53,40 @@ class Estimate(object):
         self.feescale = None
         self.csetype = None
         self.dent = None
-        self.completed = None
+        #self.completed = None
         
         self.tx_hashes = []
+
+    @property
+    def completed(self):
+        '''
+        returns a tri-state value.
+        0 = nothing completed
+        1 = some treatments completed
+        2 = all related treatments completed
+        '''
+        all_planned, all_completed = True, True
+        for tx_hash in self.tx_hashes:
+            all_planned = all_planned and not tx_hash.completed 
+            all_completed = all_completed and tx_hash.completed 
+            
+        if all_planned:
+            return 0
+        if all_completed:
+            return 2
+        return 1
+
+    @property
+    def interim_fee(self):
+        if self.tx_hashes == []:
+            return 0
+        return self.fee//len(self.tx_hashes)
+    
+    @property
+    def interim_pt_fee(self):
+        if self.tx_hashes == []:
+            return 0
+        return self.ptfee//len(self.tx_hashes)
 
     def __repr__(self):
         return self.__str__()
@@ -46,8 +97,7 @@ class Estimate(object):
             retarg+='%s ,'% self.__dict__[att]
         for att in ("tx_hashes","itemcode","description","csetype","feescale"):
             retarg+='"%s" ,'% self.__dict__[att]
-        retarg += "%s"% self.__dict__["completed"]
-        return "%s)"% retarg
+        return "%s)"% retarg.rstrip(",")
     
     def __eq__(self, other):
         return str(self) == str(other)
@@ -79,11 +129,24 @@ class Estimate(object):
 
     @property
     def is_exam(self):
-        return bool(re.match("01[012]1$", self.itemcode))
+        '''
+        important that feescales use an itemcode that matches this!
+        examples are 0101, 0111, 0121
+        can also be prepended with a single character eg E0101
+        '''
+        return bool(re.match(".?01[012]1$", self.itemcode))
     
     @property
     def is_custom(self):
         return self.itemcode == "4002"
+    
+    @property
+    def has_one_tx(self):
+        return len(self.tx_hashes) == 1
+    
+    @property
+    def has_multi_txs(self):
+        return len(self.tx_hashes) > 1
 
 def strip_curlies(description):
     '''
@@ -132,9 +195,7 @@ def apply_exemption(pt, maxCharge=0):
     for est in pt.estimates:
         if not "N" in est.csetype:
             continue
-        if est.completed:
-            pt.applyFee(est.ptfee * -1)
-
+        
         if maxCharge - total >= est.ptfee:
             pass
         else:
@@ -144,8 +205,6 @@ def apply_exemption(pt, maxCharge=0):
                 est.ptfee = 0
         total += est.ptfee
 
-        if est.completed:
-            pt.applyFee(est.ptfee)
     return True
 
 
@@ -161,5 +220,3 @@ if __name__ == "__main__":
     print str(pt.estimates)
     for estimate in pt.estimates:
         print estimate.toHtmlRow().encode("ascii", "replace")
-
-    #recalculate_estimate(pt)

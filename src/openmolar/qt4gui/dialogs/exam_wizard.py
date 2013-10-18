@@ -8,9 +8,10 @@
 import logging
 from PyQt4 import QtGui, QtCore
 
-from openmolar.qt4gui.fees import course_module, fees_module
 from openmolar.qt4gui.compiled_uis import Ui_exam_wizard
 from openmolar.settings import localsettings
+
+from openmolar.ptModules.estimates import TXHash
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -110,8 +111,6 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
         if self.pt.serialno == 0:
             om_gui.advise("no patient selected", 1)
             return
-        if course_module.newCourseNeeded(self.om_gui):
-            return
         if self.pt.treatment_course.has_exam:
             self.om_gui.advise(u"<p>%s</p><hr /><p>%s</p>"%(
             _('You already have a completed exam on this course of treatment'),
@@ -143,22 +142,24 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 self.pt.addHiddenNote("exam", "%s"% examtype)
 
                 dentid = localsettings.ops_reverse[examdent]
-                tx_hashes = [str(hash("exam 1 %s"% examtype))]
+                
+                tx_hash = TXHash(hash("exam 1 %s"% examtype), True)
 
-                est = self.pt.add_to_estimate(examtype, dentid, tx_hashes, 
-                    completed=True)
-
-                fees_module.applyFeeNow(self.om_gui, est.ptfee)
-
-                self.om_gui.load_clinicalSummaryPage()
-                self.om_gui.updateHiddenNotesLabel()
-
+                self.pt.add_to_estimate(examtype, dentid, [tx_hash])
+                
+                newnotes = unicode(
+                self.om_gui.ui.notesEnter_textEdit.toPlainText().toUtf8())
+                newnotes += "%s %s %s\n"%(
+                examtype, _("performed by"), examdent)
+                self.om_gui.ui.notesEnter_textEdit.setText(newnotes)
+                
         return APPLIED
 
     def update_recall_date(self):
         if not self.pt.appt_prefs.recall_active:
             self.om_gui.advise(
-            _("WARNING - Not updating recall due to patients recall settings"),1)
+            _("WARNING - Not updating recall due to patients recall settings")
+            ,1)
         else:
             date_ = localsettings.formatDate(self.pt.appt_prefs.new_recdent)
             self.om_gui.advise("updating recall date to %s"% date_, 1)

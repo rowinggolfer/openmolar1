@@ -12,6 +12,8 @@ import logging
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.compiled_uis import Ui_choose_language
 
+LOGGER = logging.getLogger("openmolar")
+
 def getCurrentLanguage():
     '''
     get the current language in use
@@ -58,7 +60,7 @@ def setLanguage(lang):
         lang1 = gettext.translation('openmolar', languages=[lang,])
         lang1.install(unicode=True)
     except IOError:    
-        logging.exception("%s not found, sorry"% lang1)
+        LOGGER.exception("%s not found, sorry"% lang1)
         gettext.install('openmolar', unicode=True)
 
 class language_dialog(Ui_choose_language.Ui_Dialog):
@@ -87,7 +89,7 @@ class language_dialog(Ui_choose_language.Ui_Dialog):
                         print "ok"
                         return True
                     except IOError:
-                        logging.exception("unable to find translation file")
+                        LOGGER.exception("unable to find translation file")
                         message = _("no translation file found for %s")% lang 
                         QtGui.QMessageBox.information(self.dialog,
                         _("Advisory"), message)

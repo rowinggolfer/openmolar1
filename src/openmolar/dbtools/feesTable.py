@@ -55,10 +55,7 @@ def saveData(tablename, data):
     query = "update feetable_key set data=%s where tablename = %s"
 
     values = (data, tablename)
-    if localsettings.logqueries:
-        print query
-        print values[0][:30]
-        print values[1]
+    
     result = cursor.execute(query, values)
     if result:
         db.commit()

@@ -23,9 +23,6 @@ def write(sno,data):
         query+=",chkdate) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         values=(int(sno),)+data[:13]+(dateToWrite,)
         print values
-    if localsettings.logqueries:
-        print len(query),len(values)
-        print query,values
     try:
         cursor.execute("delete from mednotes where serialno=%d"%sno)
         cursor.execute(query,values)
@@ -46,8 +43,6 @@ def writeHist(sno,data):
         query = '''insert into mnhist (serialno,chgdate,ix,note)
         values (%s, NOW(), %s, %s)'''
         values = (sno, ix, note)
-        if localsettings.logqueries:
-            print query
         cursor.execute(query, values)
     db.commit()
     cursor.close()

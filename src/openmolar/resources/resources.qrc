@@ -3,7 +3,8 @@
     <file>icons/mail_new.png</file>
     <file>icons/schedule_active.png</file>
     <file>icons/pencil.png</file>
-    <file>icons/expand.png</file>
+    <file>icons/expand.svg</file>
+    <file>icons/contract.svg</file>
     <file>icons/wikipedia.png</file>
     <file>icons/action.png</file>
     <file>icons/memos.png</file>

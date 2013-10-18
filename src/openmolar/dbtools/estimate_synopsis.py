@@ -80,5 +80,4 @@ def html(courseno):
             
             
 if __name__ == "__main__":
-    print html(10000).encode("ascii", "replace")
-    
+    print html(41146).encode("ascii", "replace")

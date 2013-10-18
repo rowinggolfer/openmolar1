@@ -13,6 +13,8 @@ from openmolar.settings import localsettings
 from openmolar.connect import (connect,
     omSQLresult, ProgrammingError, OperationalError)
 
+LOGGER = logging.getLogger("openmolar")
+
 class FreeSlot(object):
     '''
     a custom data object to represent a slot
@@ -640,9 +642,6 @@ def updateAday(uddate, arg):
     values = (arg.memo, uddate, arg.apptix, arg.sqlStart(), arg.sqlFinish(),
     arg.active)*2
 
-    if localsettings.logqueries:
-        print query, values
-
     result.setNumber(cursor.execute(query, values))
 
     if result:
@@ -662,9 +661,6 @@ def alterDay(arg):
     query = 'SELECT flag FROM aday WHERE adate="%s" and apptix=%d'% (
     arg.date, arg.apptix)
 
-    if localsettings.logqueries:
-        print query
-
     if cursor.execute(query):
         #-- dentists diary includes this date
         query = '''update aday set start=%s,end=%s,flag=%s, memo=%s
@@ -672,8 +668,6 @@ def alterDay(arg):
         values = (arg.start, arg.end, arg.flag, arg.memo, arg.date,
         arg.ix)
 
-        if localsettings.logqueries:
-            print query, values
         result.setNumber(cursor.execute(query,values))
 
         if result.getNumber() == 1:
@@ -711,8 +705,6 @@ def todays_patients(dents):
     query = 'SELECT serialno,name FROM aslot WHERE adate=%s ' + cond + \
     ' and serialno!=0 ORDER BY name'
 
-    if localsettings.logqueries:
-        print query, values
     cursor.execute(query, values)
     rows = cursor.fetchall()
     cursor.close()
@@ -799,8 +791,6 @@ def getDayInfo(startdate, enddate, dents=() ):
     db = connect()
     cursor = db.cursor()
 
-    if localsettings.logqueries:
-        print query, values
     cursor.execute(query, values)
 
     rows = cursor.fetchall()
@@ -831,8 +821,6 @@ def getBankHol(adate):
     retarg = ""
 
     try:
-        if localsettings.logqueries:
-            print query, (adate, )
         cursor.execute(query, (adate, ))
 
         rows = cursor.fetchall()
@@ -853,8 +841,6 @@ def getGlobalMemo(date):
 
     query = '''SELECT memo FROM aday WHERE adate=%s and apptix=0'''
 
-    if localsettings.logqueries:
-        print query, (date, )
     cursor.execute(query, (date, ))
 
     rows = cursor.fetchall()
@@ -878,8 +864,6 @@ def getBankHols(startdate, enddate):
 
     data = {}
     try:
-        if localsettings.logqueries:
-            print fullquery, (startdate, enddate)
         cursor.execute(query, (startdate, enddate))
 
         rows = cursor.fetchall()
@@ -908,8 +892,6 @@ def setMemos(adate, memos):
     end = localsettings.pyTimetoWystime(localsettings.latestFinish)
     for apptix, memo in memos:
         values = (memo, adate, apptix, start, end, memo)
-        if localsettings.logqueries:
-            print query, values
         cursor.execute(query, values)
     cursor.close()
 
@@ -956,8 +938,6 @@ def setPubHol(adate, arg):
         query = '''insert into calendar (adate, memo) values (%s,%s)
         on duplicate key update memo=%s'''
         values = (adate, arg, arg)
-    if localsettings.logqueries:
-            print query, values
     cursor.execute(query, values)
     cursor.close()
 
@@ -978,8 +958,6 @@ def allAppointmentData(adate, dents=()):
     code1,code2,note,flag0,flag1,flag2,flag3, timestamp from aslot
     where adate=%s'''
     query += " %s order by apptix, start"% cond
-    if localsettings.logqueries:
-        print query
     cursor.execute(query, (adate,)+dents)
 
     data = cursor.fetchall()
@@ -1021,8 +999,6 @@ def printableDaylistData(adate, dent):
     query = '''SELECT start,end,memo FROM aday
     WHERE adate=%s and apptix=%s and (flag=1 or flag=2)'''
     values = (adate, dent)
-    if localsettings.logqueries:
-        print query, values
     cursor.execute(query, values)
 
     daydata = cursor.fetchall()
@@ -1039,8 +1015,6 @@ def printableDaylistData(adate, dent):
         patients.serialno,concat(code0," ",code1," ",code2),note,patients.cset
         FROM patients right join aslot on patients.serialno=aslot.serialno
         WHERE adate = %s and apptix = %s  order by start'''
-        if localsettings.logqueries:
-            print query, values
         cursor.execute(query,values)
 
         results = cursor.fetchall()
@@ -1087,18 +1061,16 @@ def day_summary(adate, dent):
     query = '''SELECT start, end FROM aday
     WHERE adate=%s and (flag=1 or flag=2) and apptix=%s'''
     values = (adate, dent)
-    if localsettings.logqueries:
-        print query, values
     cursor.execute(query, values)
 
     daydata = cursor.fetchall()
     retarg = ()
     #--now get data for those days so that we can find slots within
     if daydata != ():
-        query = '''SELECT start, end, serialno, name, char(flag1),
-        concat(code0, " ", code1," ", code2) FROM aslot
-        WHERE adate = %s and apptix = %s AND flag0!=-128
-        ORDER BY start'''
+        query = ('SELECT start, end, serialno, name, char(flag1), '
+        'concat(code0, " ", code1," ", code2) FROM aslot '
+        'WHERE adate = %s and apptix = %s AND flag0!=-128 ' 
+        'ORDER BY start')
         cursor.execute(query, values)
         results = cursor.fetchall()
         retarg = convertResults(results)
@@ -1112,21 +1084,19 @@ def getBlocks(adate, dent):
     db = connect()
     cursor = db.cursor()
 
-    query = '''SELECT start, end FROM aday
-    WHERE adate=%s and apptix=%s AND (flag=1 OR flag=2)'''
+    query = ('SELECT start, end FROM aday '
+    'WHERE adate=%s and apptix=%s AND (flag=1 OR flag=2)')
 
     values = (adate, dent)
-    if localsettings.logqueries:
-        print query, values
     cursor.execute(query, values)
 
     retarg = cursor.fetchall()
 
     query = ""
     if retarg != ():
-        query = '''SELECT start, end, 0, name, "block", "" FROM aslot
-        WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH"
-        ORDER BY start'''
+        query = ('SELECT start, end, 0, name, "block", "" FROM aslot '
+        'WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH" '
+        'ORDER BY start')
         cursor.execute(query, values)
         results = cursor.fetchall()
         retarg = convertResults(results)
@@ -1165,8 +1135,6 @@ def clearEms(cedate):
         query = \
         'delete from aslot WHERE adate=%s and flag0=%s and name like %s'
         values = (cedate, -128, "%Emergency%")
-        if localsettings.logqueries:
-            print query, values
         number = cursor.execute(query, values)
         db.commit()
     except Exception, ex:
@@ -1239,7 +1207,7 @@ def has_unscheduled(serialno):
     rows = cursor.fetchall()
     cursor.close()
     result = rows[0][0] != 0
-    logging.debug ("appointments.has_unscheduled is returning %s"% result)
+    LOGGER.debug ("appointments.has_unscheduled is returning %s"% result)
     return result
 
 def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
@@ -1270,8 +1238,6 @@ def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
         if aprix == -1:
             #--this means put the appointment at the end
             fullquery = 'SELECT max(aprix) FROM apr WHERE serialno=%d'% serialno
-            if localsettings.logqueries:
-                print fullquery
             cursor.execute(fullquery)
 
             data = cursor.fetchall()
@@ -1288,8 +1254,6 @@ def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
         values = (serialno, aprix, practix, code0, code1, code2, note, length,
         flag0, flag1, flag2, flag3, flag4, datespec)
 
-        if localsettings.logqueries:
-            print query, values
         cursor.execute(query, values)
 
         db.commit()
@@ -1318,8 +1282,6 @@ code2="", note="", datespec="", flag1=80, flag0=1, flag2=0, flag3=0, flag4=0):
 
     result = True
     try:
-        if localsettings.logqueries:
-            print fullquery
         cursor.execute(fullquery)
         db.commit()
     except Exception, ex:
@@ -1340,8 +1302,6 @@ def pt_appt_made(serialno, aprix, date, time, dent):
     try:
         fullquery = '''UPDATE apr SET adate="%s" ,atime=%d, practix=%d
         WHERE serialno=%d AND aprix=%d'''% (date, time, dent, serialno, aprix)
-        if localsettings.logqueries:
-            print fullquery
         cursor.execute(fullquery)
 
         db.commit()
@@ -1373,7 +1333,7 @@ code2, note, flag0, flag1, flag2, flag3):
     try:
         result = cursor.execute(query, values)
     except OperationalError as exc:
-        logging.exception("couldn't insert into aslot %s %s %s serialno %d"% (
+        LOGGER.exception("couldn't insert into aslot %s %s %s serialno %d"% (
             make_date,apptix,start,serialno))
 
     cursor.close()
@@ -1394,7 +1354,7 @@ def cancel_emergency_slot(a_date, apptix, a_start, a_end):
     values = (a_date, apptix, a_start, a_end)
 
     rows = cursor.execute(query, values)
-    logging.warning("deleted %d emergency slots"% rows)
+    LOGGER.warning("deleted %d emergency slots"% rows)
 
     cursor.close()
     return rows>0
@@ -1473,9 +1433,6 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
     localsettings.pyTimetoWystime(bl_end), reason, 0, "", "", "", "",
     -128, 0, 0, 0)
 
-    if localsettings.logqueries:
-        print query,  values
-
     if cursor.execute(query, values):
         #-- insert call.. so this will always be true unless we have key
         #-- value errors?
@@ -1504,8 +1461,6 @@ note, flag1, flag0, flag2, flag3):
     and start=%%s and serialno=%%s'''% changes
     values = (moddate, apptix, start, serialno)
 
-    if localsettings.logqueries:
-        print query, values
     try:
         cursor.execute(query, values)
         db.commit()
@@ -1545,8 +1500,6 @@ def delete_appt_from_apr(appt):
             values.append(appt.atime)
 
     try:
-        if localsettings.logqueries:
-            print query, values
         result = cursor.execute(query, tuple(values))
         db.commit()
     except Exception, ex:
@@ -1568,7 +1521,7 @@ def made_appt_to_proposed(appt):
             adate=%s and practix=%s and atime=%s '''
         values = (appt.serialno, appt.date, appt.dent, appt.atime)
         if not cursor.execute(query, values):
-            logging.warning("unable to get aprix from apr for %s"% appt)
+            LOGGER.warning("unable to get aprix from apr for %s"% appt)
             return False
         appt.aprix = cursor.fetchone()[0]
 
@@ -1581,7 +1534,7 @@ def made_appt_to_proposed(appt):
         result = cursor.execute(query, values)
         db.commit()
     except Exception as ex:
-        logging.exception("appointments.made_appt_to_proposed")
+        LOGGER.exception("appointments.made_appt_to_proposed")
     cursor.close()
 
     return True
@@ -1600,7 +1553,7 @@ def delete_appt_from_aslot(appt):
         if cursor.execute(query, values):
             result = True
     except Exception as ex:
-        logging.exception("appointments.delete_appt_from_aslot")
+        LOGGER.exception("appointments.delete_appt_from_aslot")
     cursor.close()
 
     return result

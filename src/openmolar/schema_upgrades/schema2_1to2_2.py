@@ -49,6 +49,7 @@ create table est_link (
   ix         int(11) unsigned not null auto_increment ,
   est_id     int(11),
   tx_hash    varchar(20) NOT NULL,
+  completed  bool NOT NULL default 0,
 PRIMARY KEY (ix),
 INDEX (est_id)
 )''',
@@ -64,12 +65,12 @@ PRIMARY KEY (ix)
 ]
 
             
-SOURCE_QUERY = '''
-select courseno, ix, category, type from newestimates 
-order by serialno, courseno, category, completed desc, type'''
+SOURCE_QUERY = ('SELECT courseno, ix, category, type, completed '
+'FROM newestimates '
+'ORDER BY serialno, courseno, category, completed DESC, type')
 
-DEST_QUERY = '''insert into est_link (est_id, tx_hash) 
-    values (%s, %s)'''
+DEST_QUERY = ('insert into est_link (est_id, tx_hash, completed) '
+'values (%s, %s, %s)')
 
 FEESCALE_QUERY = 'insert into feescales (xml_data) values (%s)'
 
@@ -178,7 +179,7 @@ class dbUpdater(QtCore.QThread):
             step = 1 / len(rows)     
             count, prev_courseno, prev_cat_type = 1, 0, "" 
             for i, row in enumerate(rows):
-                courseno, ix, category, type_ = row
+                courseno, ix, category, type_, completed = row
                 cat_type = "%s%s"% (category, type_) 
                 if courseno != prev_courseno:
                     count = 1
@@ -190,7 +191,9 @@ class dbUpdater(QtCore.QThread):
                     count += 1
                     
                 tx_hash = hash("%s %s %s"% (category, count, type_))
-                values = (ix, tx_hash)
+                if completed is None:
+                    completed = False
+                values = (ix, tx_hash, completed)
                 cursor.execute(DEST_QUERY, values)
                 if i % 1000 == 0:
                     self.progressSig(80 * i/len(rows) + 10, 

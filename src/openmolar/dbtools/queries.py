@@ -7,7 +7,7 @@
 # for more details.
 
 ESTS_QUERY = '''SELECT newestimates.ix, number, itemcode, description, 
-fee, ptfee, feescale, csetype, dent, completed, tx_hash
+fee, ptfee, feescale, csetype, dent, est_link.completed, tx_hash
 from newestimates right join est_link on newestimates.ix = est_link.est_id
 where serialno=%s and courseno=%s order by itemcode'''
 

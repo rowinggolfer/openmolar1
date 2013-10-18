@@ -17,6 +17,8 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
 from openmolar.qt4gui import colours
 
+LOGGER = logging.getLogger("openmolar")
+
 LINECOLOR = QtGui.QColor("#dddddd")
 TRANSPARENT = QtCore.Qt.transparent
 #APPTCOLORS = colours.APPT_OV_COLORS
@@ -140,11 +142,9 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         try:
             self.freeslots[slot.dent].append(slot)
         except KeyError:
-            logging.warning(
+            LOGGER.warning(
                 "unable to show a slot for clinician %s"% slot.dent)
             pass
-
-
 
     def setFlags(self, dent):
         self.flagDict[dent.ix] = dent.flag

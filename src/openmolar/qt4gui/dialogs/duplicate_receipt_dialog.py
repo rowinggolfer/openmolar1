@@ -32,6 +32,8 @@ from openmolar.qt4gui.printing import receiptPrint
 
 from openmolar import connect
 
+LOGGER = logging.getLogger("openmolar")
+
 RECALL_METHODS = ["post","email","sms"]
 
 class DuplicateReceiptDialog(BaseDialog):
@@ -157,7 +159,7 @@ class DuplicateReceiptDialog(BaseDialog):
             f.close()
             localsettings.openPDF()
         except Exception:
-            logging.exception("view PDF error")
+            LOGGER.exception("view PDF error")
             QtGui.QMessageBox.warning(self, "error",
                 _("error reviewing PDF file"))
 

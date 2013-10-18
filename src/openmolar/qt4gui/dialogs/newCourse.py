@@ -33,8 +33,6 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
         try:
             pos=localsettings.csetypes.index(csetype)  
         except ValueError:
-            QtGui.QMessageBox.information(self.dialog, _("Advisory"),
-            _("Please set a Valid Course Type"))
             pos=-1
         self.cseType_comboBox.setCurrentIndex(pos)
         

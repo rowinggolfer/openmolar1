@@ -40,17 +40,13 @@ def commitPost(post):
     query = \
     "insert into forum (%s) VALUES (%%s,%%s,%%s,NOW(),%%s,%%s)"% columns
 
-    if localsettings.logqueries:
-        print query,values
-    cursor.execute(query,values)
+    cursor.execute(query, values)
     db.commit()
     
 def deletePost(ix):
     db=connect.connect()
     cursor=db.cursor()
-    query="update forum set open=False where ix=%s"
-    if localsettings.logqueries:
-        print query, (ix,)
+    query = "update forum set open=False where ix=%s"
     cursor.execute(query, (ix,))    
     db.commit()
     cursor.close()
@@ -59,8 +55,6 @@ def setParent(ix, parent_ix):
     db = connect.connect()
     cursor = db.cursor()
     query = "update forum set parent_ix=%s where ix=%s"
-    if localsettings.logqueries:
-        print query, (parent_ix, ix)
     cursor.execute(query, (parent_ix, ix))    
     db.commit()
     cursor.close()
@@ -119,11 +113,9 @@ def getPosts(user=None, include_closed=False):
         filter = "where " + filter
     db = connect.connect()
     cursor = db.cursor()
-    query = '''select ix, parent_ix, topic, inits, fdate, recipient, comment 
-    from forum %s order by parent_ix, ix''' % filter
+    query = ('SELECT ix, parent_ix, topic, inits, fdate, recipient, comment ' 
+    'FROM forum %s ORDER BY parent_ix, ix' % filter)
 
-    if localsettings.logqueries:
-        print query
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()

@@ -5,8 +5,11 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
-from PyQt4 import QtGui, QtCore
+import logging
 import re
+
+from PyQt4 import QtGui, QtCore
+
 from openmolar.settings import localsettings
 from openmolar.settings import allowed
 from openmolar.qt4gui.compiled_uis import Ui_toothProps
@@ -14,6 +17,8 @@ from openmolar.qt4gui import colours
 from openmolar.qt4gui.compiled_uis import Ui_crownChoice
 
 from openmolar.qt4gui.dialogs import toothprop_fulledit
+
+LOGGER = logging.getLogger("openmolar")
 
 FS_OPTIONS = {
 "--"        : "--"+_("Fissure Sealants"),
@@ -248,7 +253,7 @@ class chartLineEdit(QtGui.QLineEdit):
             else:
                 allowedCode = False
         if allowedCode:
-            print "accepting new entry", prop
+            LOGGER.debug("toothProps - accepting new entry '%s'"% prop)
         return allowedCode
 
     def specialKeyPressed(self, arg):

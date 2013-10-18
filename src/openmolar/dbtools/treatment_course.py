@@ -169,7 +169,7 @@ class TreatmentCourse(object):
         for value in cursor.fetchall():
             for i, field in enumerate(CURRTRT_ATTS):
                 self.__dict__[field] = value[i]
-        
+                #LOGGER.debug("getCurrtrt '%s' = '%s'"% (field, value[i]))
         cursor.close()
 
     @property
@@ -225,9 +225,14 @@ class TreatmentCourse(object):
     
     @property
     def completed_tx_hashes(self):
-        for tx_hash, att, tx in self._get_tx_hashes(True):
-            yield tx_hash
+        return self._get_tx_hashes(True)
             
+    @property
+    def planned_tx_hashes(self):
+        for tup in self._get_tx_hashes():
+            if not tup in self.completed_tx_hashes:
+                yield tup
+        
     def _get_tx_hashes(self, completed_only=False):
         '''
         returns a tuple (unique hash, attribute, treatment)
@@ -240,14 +245,17 @@ class TreatmentCourse(object):
         if self.examt != "":
             hash_ = hash("exam 1 %s"% self.examt)
             yield (str(hash_), "exam", self.examt)
+        else:
+            LOGGER.debug(
+            "no exam to be yielded as TreatmentCourse.examt='%s'" % self.examt)
 
         for att in CURRTRT_ROOT_ATTS:
             treats = self.__dict__[att+"cmp"] 
             if not completed_only:
                 treats += " " + self.__dict__[att+"pl"] 
             treat_list = sorted(treats.split(" "))
-            prev_tx, count = "", 1
-            for i, tx in enumerate(treat_list):
+            prev_tx, count = None, 1
+            for tx in treat_list:
                 if tx == "":
                     continue
                 if tx != prev_tx:
@@ -257,7 +265,6 @@ class TreatmentCourse(object):
                     count += 1
                 hash_ = hash("%s %s %s"% (att, count, tx))
                 yield (str(hash_), att, tx+" ")
-        
     
     def get_tx_from_hash(self, hash_):
         '''

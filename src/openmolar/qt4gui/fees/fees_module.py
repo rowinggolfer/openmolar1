@@ -34,21 +34,6 @@ from openmolar.qt4gui.compiled_uis import Ui_raiseCharge
 
 LOGGER = logging.getLogger("openmolar")
 
-def applyFeeNow(om_gui, arg, cset=None):
-    '''
-    updates the patients outstanding money
-    '''
-    om_gui.pt.applyFee(arg, cset)
-    updateFees(om_gui)
-
-def updateFees(om_gui):
-    '''
-    recalc money and
-    update the details down the left hand side
-    '''
-    if om_gui.pt.serialno != 0:
-        om_gui.updateDetails()
-
 def getFeesFromEst(om_gui, hash_):
     '''
     iterate through the ests... find this item

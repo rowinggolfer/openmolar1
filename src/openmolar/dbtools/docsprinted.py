@@ -49,8 +49,6 @@ def add(sno, docname, object, version=1):
 VALUES (%s, date(NOW()), %s, %s, %s)'''
     values = (sno, docname, version, object)
     print "adding letter to newdocsprinted table"
-    if localsettings.logqueries:
-        print query, values
     cursor.execute(query, values)
     db.commit()
     cursor.close()

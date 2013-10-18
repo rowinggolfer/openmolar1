@@ -19,6 +19,8 @@ from PyQt4 import QtGui, QtCore
 
 from openmolar.qt4gui import colours
 
+LOGGER = logging.getLogger("openmolar")
+
 class chartWidget(QtGui.QWidget):
     '''
     a custom widget to show a standard UK dental chart
@@ -74,7 +76,7 @@ class chartWidget(QtGui.QWidget):
 
         #-- select the ur8
         if keepSelection:
-            logging.debug("keeping existing chart selection(s)")
+            LOGGER.debug("keeping existing chart selection(s)")
         else:
             self.showSelected = False
             self.selected = [0, 0]
@@ -375,10 +377,12 @@ class chartWidget(QtGui.QWidget):
         either a double click or default right click on the plan chart
         '''
         tooth = self.grid[self.selected[1]][self.selected[0]]
-        plannedTreatment = [tooth,]
+        plannedTreatment = []
         for item in self.__dict__[tooth]:
-            plannedTreatment.append(item.upper())
-        if plannedTreatment != [tooth]:
+            tx = item.upper()
+            plannedTreatment.append((tooth, tx))
+            
+        if plannedTreatment != []:
             self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
 
     def keyPressEvent(self, event):
@@ -843,7 +847,7 @@ class toothSurfaces():
                     self.painter.setPen(QtGui.QPen(colours.FISSURE, 1))
                     self.painter.setBrush(colours.FISSURE)
                 else:
-                    logging.debug("unhandled material colour %s %s %s"% (
+                    LOGGER.debug("unhandled material colour %s %s %s"% (
                         self.toothtext, prop, material))
 
                 if self.quadrant[1] == "l" and prop != "dr":

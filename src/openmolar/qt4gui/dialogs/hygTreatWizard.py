@@ -7,7 +7,11 @@
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
-from openmolar.qt4gui.fees import course_module, fees_module, add_tx_to_plan
+from openmolar.ptModules.estimates import TXHash
+
+from openmolar.qt4gui.fees import add_tx_to_plan
+from openmolar.qt4gui.fees import complete_tx
+
 from openmolar.qt4gui.compiled_uis import Ui_hygenist_wizard
 
 class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
@@ -63,8 +67,6 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         if pt.serialno == 0:
             self.om_gui.advise(_("no patient selected"), 1)
             return
-        if course_module.newCourseNeeded(self.om_gui):
-            return
 
         if "N" in pt.cset:
             self.db_radioButton.hide()
@@ -80,36 +82,12 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
             if not trt in pt.treatment_course.periopl:
                 add_tx_to_plan.add_perio_treatments(self.om_gui, [self.trt])
 
-            pt.addHiddenNote("perio_treatment", "%s"% self.trt)
-            self.om_gui.updateHiddenNotesLabel()
-
             n = pt.treatment_course.periocmp.split(" ").count(self.trt)
-            tx_hash = str(hash("perio %s %s"% (n+1, self.trt)))
+            tx_hash = TXHash(hash("perio %s %s"% (n+1, self.trt)))
+            
             dentid = pt.course_dentist
             
-            pt.treatment_course.periopl = \
-                pt.treatment_course.periopl.replace(trt, "", 1)
-            found_est, found_completed = False, False
-            for est in pt.ests_from_hash(tx_hash):
-                found_est = True
-                if not est.completed:
-                    est.dent = dentid
-                    est.completed = True
-                    fees_module.applyFeeNow(self.om_gui, est.ptfee)
-                else:
-                    found_completed  = True
-            if not found_est:
-                self.om_gui.advise(("found %s in plan,"% self.trt) +
-                "but not in estimate.. this shouldn't happen!", 1)
-            elif found_completed:
-                self.om_gui.advise(("found %s in estimate,"% self.trt) +
-                "but was already completed.. this shouldn't happen!", 1)
-                
-            
-            pt.treatment_course.periocmp += trt
-
-            self.om_gui.load_clinicalSummaryPage()
-
+            complete_tx.tx_hash_complete(self.om_gui, tx_hash)
             newnotes = str(
                 self.om_gui.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes += "%s %s %s\n"%(
@@ -117,10 +95,12 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
                 _("performed by"), 
                 self.dent)
             self.om_gui.ui.notesEnter_textEdit.setText(newnotes)
+            return True
         else:
             self.om_gui.advise("Hyg Treatment not applied", 2)
 
-
+        return False
+        
 if __name__ == "__main__":
     localsettings.initiate()
     localsettings.loadFeeTables()

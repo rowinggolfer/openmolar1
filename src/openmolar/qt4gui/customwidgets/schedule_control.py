@@ -36,6 +36,8 @@ from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 
 from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
 
+LOGGER = logging.getLogger("openmolar")
+
 class DiaryScheduleController(QtGui.QStackedWidget):
     BROWSE_MODE = 0
     SCHEDULE_MODE = 1
@@ -267,14 +269,14 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.enable_scheduling_buttons()
 
     def appointment_clicked(self, index):
-        logging.debug("ScheduleControl.appointment_clicked")
+        LOGGER.debug("ScheduleControl.appointment_clicked")
 
     def appointment_pressed(self, index):
-        logging.debug("ScheduleControl.appointment_pressed")
+        LOGGER.debug("ScheduleControl.appointment_pressed")
         self.appointment_selected.emit(self.appointment_model.currentAppt)
 
     def appointment_2x_clicked(self, index):
-        logging.debug("ScheduleControl.appointment_clicked")
+        LOGGER.debug("ScheduleControl.appointment_clicked")
         self.show_first_appointment.emit()
 
     def clear(self):
@@ -331,7 +333,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     def set_joint_slots(self, dent_slots, hyg_slots, max_wait=10):
 
-        logging.debug(
+        LOGGER.debug(
             "ScheduleControl.set join slots %s %s"% (dent_slots, hyg_slots))
         self.available_slots = []
         self.hygienist_slots = []

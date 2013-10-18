@@ -19,6 +19,8 @@ import logging
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
+from openmolar.ptModules.estimates import TXHash
+
 from openmolar.qt4gui.compiled_uis import Ui_customTreatment
 from openmolar.qt4gui.compiled_uis import Ui_feeTableTreatment
 
@@ -65,13 +67,14 @@ def add_perio_treatments(om_gui, chosen_treatments):
         perio_txs = "%s %s"%(
             pt.treatment_course.periocmp, pt.treatment_course.periopl)
         n = perio_txs.split(" ").count(usercode)
-        tx_hash = str(hash("perio %s %s"% (n, usercode)))
+        
+        tx_hash = TXHash(hash("perio %s %s"% (n, usercode)))
+
         dentid = om_gui.pt.course_dentist
         
         if not complex_shortcut_handled(om_gui, usercode, n, dentid, tx_hash):
             pt.add_to_estimate(usercode, dentid, [tx_hash])
 
-    om_gui.load_treatTrees()
     om_gui.load_newEstPage()
 
 
@@ -104,17 +107,17 @@ def xrayAdd(om_gui, complete=False):
         xray_txs = "%s %s"%(
             pt.treatment_course.xraycmp, pt.treatment_course.xraypl)
         n = xray_txs.split(" ").count(usercode)
-        tx_hash = str(hash("xray %s %s"% (n, usercode)))
+
+        tx_hash = TXHash(hash("xray %s %s"% (n, usercode)), complete)
         dentid = om_gui.pt.course_dentist
         
-        est = pt.add_to_estimate(usercode, dentid, [tx_hash], 
-            completed=complete)
+        est = pt.add_to_estimate(usercode, dentid, [tx_hash])
         
         if complete:
-            complete_tx.estwidg_complete(om_gui, est)
+            complete_tx.tx_hash_complete(om_gui, tx_hash)
+            #complete_tx.estwidg_complete(om_gui, est)
 
     if om_gui.ui.tabWidget.currentIndex() == 7: #estimates page
-        om_gui.load_treatTrees()
         om_gui.load_newEstPage()
     else:
         om_gui.load_clinicalSummaryPage()
@@ -139,14 +142,12 @@ def otherAdd(om_gui):
         other_txs = "%s %s"%(
             pt.treatment_course.othercmp, pt.treatment_course.otherpl)
         n = other_txs.split(" ").count(usercode)
-        tx_hash = str(hash("other %s %s"% (n, usercode)))
+        tx_hash = TXHash(hash("other %s %s"% (n, usercode)))
         dentid = om_gui.pt.course_dentist
         
         pt.add_to_estimate(usercode, dentid, [tx_hash])
 
     om_gui.load_newEstPage()
-    om_gui.load_treatTrees()
-    
 
 def customAdd(om_gui):
     '''
@@ -175,15 +176,14 @@ def customAdd(om_gui):
             custom_txs = "%s %s"%(
                 pt.treatment_course.customcmp, pt.treatment_course.custompl)
             n = custom_txs.split(" ").count(usercode)
-            tx_hash = str(hash("custom %s %s"% (n, usercode)))
+            tx_hash = TXHash(hash("custom %s %s"% (n, usercode)))
             dentid = om_gui.pt.course_dentist
             
             pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode="4002",
             csetype="P", descr=descr, fee=fee, ptfee=fee)
         
         om_gui.load_newEstPage()
-        om_gui.load_treatTrees()
-
+        
 
 def fromFeeTable(om_gui, fee_item, sub_index):
     '''
@@ -249,7 +249,6 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         om_gui.ui.tabWidget.setCurrentIndex(7)
     else:
         om_gui.load_newEstPage()
-        om_gui.load_treatTrees()
 
     om_gui.advise(u"<b>%s</b> %s (%s)"% (
         fee_item.description, _("added to estimate"), _("from feescale"))
@@ -301,7 +300,7 @@ def chartAdd(om_gui, tooth, new_string):
             updated_usercodes.remove(usercode)
         elif usercode != "":
             n = other_txs.count(usercode)
-            tx_hash = str(hash("%s %s %s"% (tooth, n, usercode)))
+            tx_hash = TXHash(hash("%s %s %s"% (tooth, n, usercode)))
             for est in pt.estimates:
                 if tx_hash in est.tx_hashes:
                     om_gui.advise("<p>%s <i>%s</i> %s</p>"% (
@@ -318,7 +317,7 @@ def chartAdd(om_gui, tooth, new_string):
     ft = pt.getFeeTable()
     for usercode in updated_usercodes:
         n = other_txs.count(usercode)
-        tx_hash = str(hash("%s %s %s"% (tooth, n, usercode)))
+        tx_hash = TXHash(hash("%s %s %s"% (tooth, n, usercode)))
         LOGGER.debug("getting tooth fee item for %s %s"% (tooth_name, usercode))
         item = ft.get_tooth_fee_item(tooth_name, usercode)
         LOGGER.debug("got %s"% item)
@@ -363,8 +362,6 @@ def complex_shortcut_handled(om_gui, shortcut, item_no, dentid, tx_hash):
                             if est.itemcode == item_code:
                                 LOGGER.debug("removing estimate %s"% est)     
                                 pt.estimates.remove(est)
-                                if est.completed:
-                                    pt.applyFee(est.ptfee * -1)
                                 tx_hashes += est.tx_hashes
                                 
                     for item_code in case.additions:
@@ -393,21 +390,6 @@ def remove_estimate_item(om_gui, est_item):
     remove from the plan or completed also?
     '''
     
-    if est_item.completed and est_item.ptfee != 0:
-        result = QtGui.QMessageBox.question(om_gui, _("question"),
-        _('<p>Credit Patient %s for undoing this item?</p>')% (
-        localsettings.formatMoney(est_item.ptfee)) ,
-        QtGui.QMessageBox.No|QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.Yes )
-         
-        if result == QtGui.QMessageBox.Yes:
-            fees_module.applyFeeNow(
-                om_gui, 
-                -1 * est_item.ptfee, 
-                est_item.csetype)
-
-    # now remove from the treatment plan
-
     if est_item.completed == False:
         pl_cmp = "pl"
     else:
@@ -416,19 +398,20 @@ def remove_estimate_item(om_gui, est_item):
     pt = om_gui.pt
     found = False
     
-    for tx_hash in est_item.tx_hashes:
+    for i, tx_hash in enumerate(est_item.tx_hashes):
+        LOGGER.debug("est_item.tx_hash %d = %s" %(i, tx_hash))
         for hash_, att, treat_code in pt.tx_hashes:
-            #print "comparing %s with %s"% (hash_, tx_hash)
+            LOGGER.debug("comparing %s with %s"% (hash_, tx_hash))
             if hash_ == tx_hash:
                 found = True
                 
-                #print "MATCH!"
+                LOGGER.debug("       MATCH!")
                 
                 if est_item.is_exam:
                     pt.treatment_course.examt = ""
                     pt.treatment_course.examd = None
-                    pt.addHiddenNote("exam", treat_code, deleteIfPossible=True)
-                    continue
+                    pt.addHiddenNote("exam", treat_code, attempt_delete=True)
+                    break
                 
                 completed = pt.treatment_course.__dict__[att + "cmp"].replace(
                     treat_code, "", 1)
@@ -444,22 +427,22 @@ def remove_estimate_item(om_gui, est_item):
                     toothName = pt.chartgrid.get(att,"").upper()
                     if pl_cmp == "cmp":
                         pt.addHiddenNote("chart_treatment", "%s %s"% (
-                            toothName, treat_code), deleteIfPossible=True)
+                            toothName, treat_code), attempt_delete=True)
                 if pl_cmp == "cmp":
                     if att in ("xray", "perio"):
                         pt.addHiddenNote("%s_treatment"%att, treat_code,
-                            deleteIfPossible=True)
+                            attempt_delete=True)
                     else:
                         pt.addHiddenNote("treatment", treat_code,
-                        deleteIfPossible=True)
+                        attempt_delete=True)
+
 
     if not found:
         om_gui.advise (u"%s - %s"%(
         _("couldn't pass on delete message for"), est_item.description)
         , 1)
-    else:
-        om_gui.load_treatTrees()
-        om_gui.updateHiddenNotesLabel()
+    
+    om_gui.updateHiddenNotesLabel()
         
         
 def recalculate_estimate(om_gui):
@@ -476,18 +459,17 @@ def recalculate_estimate(om_gui):
     for estimate in pt.estimates:
         if estimate.is_custom:
             cust_ests.append(estimate)
-        elif estimate.completed:
-            pt.applyFee(estimate.ptfee * -1)
     pt.estimates = cust_ests
     
     duplicate_txs = []
     
-    for tx_hash, att, tx in pt.tx_hashes:
+    for hash_, att, tx in pt.tx_hashes:
         tx = tx.strip(" ")
+        
+        tx_hash = TXHash(hash_)
         
         duplicate_txs.append("%s%s"%(att, tx))
         item_no = duplicate_txs.count("%s%s"%(att, tx))
-        #tx_hash = str(hash("perio %s %s"% (n, usercode)))
             
         if att == "custom":
             pass
@@ -501,6 +483,7 @@ def recalculate_estimate(om_gui):
                 itemcode = item.itemcode
                 descr = item.description.replace("*", 
                     " %s"% tooth_name.upper())
+                
                 pt.add_to_estimate(
                     tx, dentid, [tx_hash], itemcode, descr=descr)
                 
@@ -515,15 +498,12 @@ def recalculate_estimate(om_gui):
 
     LOGGER.debug("checking for completed items")
     for est in pt.estimates:
-        for tx_hash in pt.completed_tx_hashes:
-            if tx_hash in est.tx_hashes:
-                est.completed = True
-    for est in pt.estimates:
-        if est.completed:
-            pt.applyFee(est.ptfee)
+        for hash_, att, tx in pt.completed_tx_hashes:
+            for tx_hash in est.tx_hashes:
+                if tx_hash == hash_:
+                    tx_hash.completed = True
                 
     return True
-
 
 
 if __name__ == "__main__":
@@ -541,7 +521,6 @@ if __name__ == "__main__":
     mw = maingui.OpenmolarGui()
     mw.getrecord(11956)
     #disable the functions called
-    mw.load_treatTrees = lambda : None
     mw.load_newEstPage = lambda : None
 
     #xrayAdd(mw)

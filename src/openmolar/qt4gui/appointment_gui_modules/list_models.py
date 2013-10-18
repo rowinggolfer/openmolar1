@@ -8,6 +8,8 @@ from PyQt4 import QtGui, QtCore
 from openmolar.dbtools import appointments
 from openmolar.settings import localsettings
 
+LOGGER = logging.getLogger("openmolar")
+
 class SimpleListModel(QtCore.QAbstractListModel):
 
     appointment_selected = QtCore.pyqtSignal(object)
@@ -150,7 +152,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
         '''
         set the current appointment as appt, return the model index of appt
         '''
-        logging.debug("SimpleListModel.set_current_appt")
+        LOGGER.debug("SimpleListModel.set_current_appt")
         self.currentAppt = appt
         if appt == None:
             self.selection_model.clear()

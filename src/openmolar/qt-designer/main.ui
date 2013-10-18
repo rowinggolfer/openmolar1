@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>484</width>
+                      <width>678</width>
                       <height>477</height>
                      </rect>
                     </property>
@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>440</width>
+                      <width>660</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -2015,7 +2015,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>302</width>
+                      <width>680</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2672,8 +2672,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>98</width>
-                      <height>111</height>
+                      <width>469</width>
+                      <height>377</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2849,87 +2849,12 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
-                         <height>200</height>
+                         <width>419</width>
+                         <height>339</height>
                         </rect>
                        </property>
                        <layout class="QHBoxLayout" name="horizontalLayout_19"/>
                       </widget>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QGroupBox" name="planDetails_groupBox">
-                   <property name="title">
-                    <string>Details</string>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_5">
-                    <property name="leftMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>6</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>6</number>
-                    </property>
-                    <item>
-                     <widget class="QTreeWidget" name="plan_treeWidget">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="alternatingRowColors">
-                       <bool>true</bool>
-                      </property>
-                      <property name="sortingEnabled">
-                       <bool>true</bool>
-                      </property>
-                      <property name="animated">
-                       <bool>true</bool>
-                      </property>
-                      <attribute name="headerShowSortIndicator" stdset="0">
-                       <bool>false</bool>
-                      </attribute>
-                      <column>
-                       <property name="text">
-                        <string>Plan</string>
-                       </property>
-                      </column>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QTreeWidget" name="comp_treeWidget">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="alternatingRowColors">
-                       <bool>true</bool>
-                      </property>
-                      <property name="sortingEnabled">
-                       <bool>true</bool>
-                      </property>
-                      <property name="animated">
-                       <bool>true</bool>
-                      </property>
-                      <attribute name="headerShowSortIndicator" stdset="0">
-                       <bool>false</bool>
-                      </attribute>
-                      <column>
-                       <property name="text">
-                        <string>Completed</string>
-                       </property>
-                      </column>
                      </widget>
                     </item>
                    </layout>
@@ -2957,7 +2882,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>188</width>
+                      <width>225</width>
                       <height>479</height>
                      </rect>
                     </property>
@@ -3225,8 +3150,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>252</width>
-                      <height>376</height>
+                      <width>675</width>
+                      <height>377</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">

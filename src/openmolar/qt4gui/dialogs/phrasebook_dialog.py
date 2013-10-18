@@ -73,7 +73,7 @@ class PhraseBookDialog(QtGui.QDialog):
 
         self.xml = minidom.parseString(self.phrasebook.xml)
         sections = self.xml.getElementsByTagName("section")
-        icon = QtGui.QIcon(":icons/expand.png")
+        icon = QtGui.QIcon(":icons/expand.svg")
         
         for section in sections:
             header = section.getElementsByTagName("header")

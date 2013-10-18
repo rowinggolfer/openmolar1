@@ -13,6 +13,8 @@ from openmolar.settings import localsettings
 
 from PyQt4.QtCore import QDate
 
+LOGGER = logging.getLogger("openmolar")
+
 #NOTE - the appt_prefs table has unused columns at this point!
 
 QUERY = '''SELECT recall_active, recdent_period, recdent,
@@ -24,6 +26,7 @@ UPDATE_QUERY = '''replace into appt_prefs
         rechyg_period, rechyg, recall_method, note)
         values (%s,%s,%s,%s,%s,%s,%s,%s)
         '''
+        
 
 class ApptPrefs(object):
     '''
@@ -74,7 +77,7 @@ class ApptPrefs(object):
         return QDate.currentDate().addMonths(self.recdent_period).toPyDate()
 
     def commit_changes(self):
-        logging.debug("ApptPrefs committing changes")
+        LOGGER.debug("ApptPrefs committing changes")
         values = (
             self.serialno,
             self.recall_active,

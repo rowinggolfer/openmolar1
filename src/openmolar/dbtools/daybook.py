@@ -10,15 +10,18 @@
 this module provides read/write tools for the daybook database table
 '''
 
-from __future__ import division
+import logging
+
 from PyQt4.QtCore import QDate
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
-def add(sno, cset, dent, trtid, t, fee, ptfee):
+LOGGER = logging.getLogger("openmolar")
+
+def add(sno, cset, dent, trtid, t_dict, fee, ptfee):
     '''
-    add an item to the daybook table
+    add a row to the daybook table
     '''
     db = connect()
     cursor = db.cursor()
@@ -28,10 +31,15 @@ def add(sno, cset, dent, trtid, t, fee, ptfee):
     misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
     values (DATE(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
-    values = (sno, cset, dent, trtid, t["diagn"],
-    t["perio"], t["anaes"], t["misc"], t["ndu"], t["ndl"], t["odu"],
-    t["odl"], t["other"], t["chart"], fee, ptfee, 0)
+    values = (sno, cset, dent, trtid, t_dict["diagn"], t_dict["perio"], 
+    t_dict["anaes"], t_dict["misc"], t_dict["ndu"], t_dict["ndl"], 
+    t_dict["odu"], t_dict["odl"], t_dict["other"], t_dict["chart"], 
+    fee, ptfee, 0)
 
+    LOGGER.debug('''updating daybook with the following values: 
+        %s %s %s %s %s %s %s %s'''% (
+        sno, cset, dent, trtid, t_dict, fee, ptfee, 0))
+    
     cursor.execute(query, values)
 
     cursor.close()
@@ -68,7 +76,6 @@ def details(regdent, trtdent, startdate, enddate):
     <th>Pt Type</th><th>Treatment</th><th>Gross Fee</th><th>Net Fee</th>'''
 
     while enddate >= iterDate:
-        print "iterDate = ",iterDate
         monthtotal, monthnettotal = 0,0
 
         if startdate > iterDate:
@@ -89,8 +96,6 @@ def details(regdent, trtdent, startdate, enddate):
         localsettings.OM_DATE_FORMAT, cond1, cond2,
         queryStartDate.toPyDate(), queryEndDate.toPyDate())
 
-        if localsettings.logqueries:
-            print query
         cursor.execute(query)
 
         rows = cursor.fetchall()
@@ -160,6 +165,6 @@ def details(regdent, trtdent, startdate, enddate):
 
 if __name__ == "__main__":
     localsettings.initiate()
-    localsettings.logqueries = True
+    
     for combo in (("*ALL*", "NW"), ("NW", "AH"), ("NW", "NW")):
         r = details(combo[0], combo[1], QDate(2008,10,31), QDate(2008,11,11))

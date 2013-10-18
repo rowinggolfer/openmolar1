@@ -18,6 +18,8 @@ import sys
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 
+LOGGER = logging.getLogger("openmolar")
+
 def getAge(pt):
     '''
     display the patient's age in human readable form
@@ -143,9 +145,9 @@ def details(pt, Saved=True):
             retarg += '<hr /><h2 class="ut_label">UNDER TREATMENT</h2><hr />'
 
         return '''%s\n</div></body></html>'''% retarg
-    except Exception, ex:
-        logging.exception("error in patientDetails.details")
-        return "error displaying details, sorry <br />%s"% ex
+    except Exception as exc:
+        LOGGER.exception("error in patientDetails.details")
+        return "error displaying details, sorry <br />%s"% exc
 
 if __name__ == '__main__':
     localsettings.initiate()

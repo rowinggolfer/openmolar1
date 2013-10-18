@@ -34,6 +34,8 @@ from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.upper_case_line_edit import UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
+LOGGER = logging.getLogger("openmolar")
+
 LOOKUP_URL = "http://www.psd.scot.nhs.uk/dev/simd/simdLookup.aspx"
 
 ## here is the result when using this
@@ -136,7 +138,7 @@ class ChildSmileDialog(BaseDialog):
             self.is_checking_website = False
             QtGui.QApplication.instance().restoreOverrideCursor()
         except Exception as exc:
-            logging.exception("error polling NHS website?")
+            LOGGER.exception("error polling NHS website?")
             QtGui.QApplication.instance().restoreOverrideCursor()
             QtGui.QMessageBox.warning(self, "error",
                 "unable to poll NHS website")

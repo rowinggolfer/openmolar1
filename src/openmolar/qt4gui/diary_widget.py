@@ -64,6 +64,8 @@ from openmolar.qt4gui.customwidgets import calendars
 
 from openmolar.qt4gui.dialogs import appointment_card_dialog
 
+LOGGER = logging.getLogger("openmolar")
+
 class DiaryWidget(QtGui.QWidget):
     VIEW_MODE = 0
     SCHEDULING_MODE = 1
@@ -179,7 +181,7 @@ class DiaryWidget(QtGui.QWidget):
 
 
     def showEvent(self, event):
-        logging.debug("DiaryWidget.showEvent called")
+        LOGGER.debug("DiaryWidget.showEvent called")
         #QtCore.QTimer.singleShot(10, self.layout_diary)
 
     def advise(self, arg, warning_level=0):
@@ -212,7 +214,7 @@ class DiaryWidget(QtGui.QWidget):
             now=QtCore.QTime.currentTime()
             QtGui.QMessageBox.warning(self, _("Error"), arg)
             #--for logging purposes
-            logging.warning("%d:%02d ERROR MESSAGE %s"%(
+            LOGGER.warning("%d:%02d ERROR MESSAGE %s"%(
                 now.hour(), now.minute(), arg))
 
     def reset(self):
@@ -274,7 +276,7 @@ class DiaryWidget(QtGui.QWidget):
             self.advise("adding day memo - %s %s"% (dentist, memo))
 
     def load_patient(self, patient, update=True):
-        logging.debug("DiaryWidget.load_patient, update=%s"% update)
+        LOGGER.debug("DiaryWidget.load_patient, update=%s"% update)
 
         self.pt = patient
         if self.schedule_controller.pt != patient:
@@ -290,7 +292,7 @@ class DiaryWidget(QtGui.QWidget):
             self.layout_diary()
 
     def set_appt_mode(self, mode, update_required=True):
-        logging.debug("DiaryWidget.set_appt_mode")
+        LOGGER.debug("DiaryWidget.set_appt_mode")
         if self.appt_mode == mode:
             return
         self.finding_next_slot = 0
@@ -385,7 +387,7 @@ class DiaryWidget(QtGui.QWidget):
         appointment overview to show possible appointments
         also handles both 1st appointment buttons
         '''
-        logging.debug("DiaryWidget.begin_makeAppt")
+        LOGGER.debug("DiaryWidget.begin_makeAppt")
         self.ui.appt_notes_webView.setVisible(False)
 
         self.schedule_controller.set_mode(
@@ -757,7 +759,7 @@ class DiaryWidget(QtGui.QWidget):
         self.layout_diary()
 
     def add_appointmentwidget(self):
-        logging.debug("initiating a new AppointmentWidget")
+        LOGGER.debug("initiating a new AppointmentWidget")
         book = appointmentwidget.AppointmentWidget(
             "0800", "1900", self)
         self.apptBookWidgets.append(book)
@@ -779,7 +781,7 @@ class DiaryWidget(QtGui.QWidget):
         called when the user clicks on the calendar
         (ie. NOT when called programatically by move_on)
         '''
-        logging.debug("DiaryWidget.calendar_signal")
+        LOGGER.debug("DiaryWidget.calendar_signal")
         self.finding_next_slot = 0
         self.layout_diary()
 
@@ -791,7 +793,7 @@ class DiaryWidget(QtGui.QWidget):
         OR the checkboxes have been tweaked
         OR a memo has been added
         '''
-        logging.debug("DiaryWidget.layout_diary")
+        LOGGER.debug("DiaryWidget.layout_diary")
 
         date_ = self.selected_date()
         self.ui.weekCalendar.setSelectedDate(date_)
@@ -849,7 +851,7 @@ class DiaryWidget(QtGui.QWidget):
         '''
         grab year memos
         '''
-        logging.debug("DiaryWidget.layout_year")
+        LOGGER.debug("DiaryWidget.layout_year")
 
         year = self.selected_date().year()
         startdate = datetime.date(year, 1, 1)
@@ -906,7 +908,7 @@ class DiaryWidget(QtGui.QWidget):
         '''
         grab month memos
         '''
-        logging.debug("DiaryWidget.layout_month")
+        LOGGER.debug("DiaryWidget.layout_month")
 
         qdate = self.selected_date()
         startdate = datetime.date(qdate.year(), qdate.month(), 1)
@@ -934,7 +936,7 @@ class DiaryWidget(QtGui.QWidget):
         if not self.viewing_week:
             return
 
-        logging.debug("DiaryWidget.layout_weekView")
+        LOGGER.debug("DiaryWidget.layout_weekView")
 
         self.ui.week_view_control_frame.setLayout(self.appt_mode_layout)
 
@@ -1067,7 +1069,7 @@ class DiaryWidget(QtGui.QWidget):
         if self.schedule_controller.chosen_slot:
             sync_date = QtCore.QDate(
                 self.schedule_controller.chosen_slot.date())
-            logging.debug("sync date%s"% sync_date)
+            LOGGER.debug("sync date%s"% sync_date)
             if (sync_date.weekNumber() ==
             self.ui.weekCalendar.selectedDate().weekNumber()):
                 self.signals_calendar(False)
@@ -1083,7 +1085,7 @@ class DiaryWidget(QtGui.QWidget):
         if not self.viewing_day:
             return
 
-        logging.debug("DiaryWidget.layout_dayView")
+        LOGGER.debug("DiaryWidget.layout_dayView")
         self.ui.emergency_dayview_scroll_bar.hide()
         self.ui.dayCalendar_frame.setLayout(self.calendar_layout)
         self.ui.day_view_control_frame.setLayout(self.appt_mode_layout)
@@ -1281,7 +1283,7 @@ class DiaryWidget(QtGui.QWidget):
         if chosen_slot:
             sync_date = QtCore.QDate(chosen_slot.date())
 
-            logging.debug("chosen_slot sync date %s"% sync_date)
+            LOGGER.debug("chosen_slot sync date %s"% sync_date)
             self.signals_calendar(False)
             self.ui.weekCalendar.setSelectedDate(sync_date)
             self.set_date(sync_date)
@@ -1380,7 +1382,8 @@ class DiaryWidget(QtGui.QWidget):
                     sno, adate, atime, dentist, new_note)
 
         self.layout_dayView()
-        self.pt_diary_changed.emit(self.pt.serialno)
+        if self.pt:
+            self.pt_diary_changed.emit(self.pt.serialno)
 
     def appointment_cancel(self, list_of_snos, start, dentist):
         if len(list_of_snos) != 1:
@@ -1507,7 +1510,7 @@ class DiaryWidget(QtGui.QWidget):
             self.selected_date().toPyDate(),
             droptime)
 
-        logging.debug("appt dropped %s %s %s"% (date_time, dent, appt.length))
+        LOGGER.debug("appt dropped %s %s %s"% (date_time, dent, appt.length))
         slot = appointments.FreeSlot(date_time, dent, appt.length)
         self.makeAppt(appt, slot)
 
@@ -1515,13 +1518,13 @@ class DiaryWidget(QtGui.QWidget):
         self.start_scheduling(self.pt)
 
     def start_scheduling(self, pt):
-        logging.debug("DiaryWidget.start_scheduling")
+        LOGGER.debug("DiaryWidget.start_scheduling")
         self.set_appt_mode(self.SCHEDULING_MODE)
         self.load_patient(pt, update=False)
         self.begin_makeAppt()
 
     def find_appt(self, appt):
-        logging.debug("DiaryWidgetfind_appt %s"% appt)
+        LOGGER.debug("DiaryWidgetfind_appt %s"% appt)
         pt = BriefPatient(appt.serialno)
         self.load_patient(pt)
         self.set_appt_mode(self.VIEW_MODE)
@@ -1552,14 +1555,14 @@ class DiaryWidget(QtGui.QWidget):
         '''
         catches a signal that the diary tab widget has been moved
         '''
-        logging.debug("diary_tabwidget_nav called")
+        LOGGER.debug("diary_tabwidget_nav called")
         self.layout_diary()
 
     def schedule_controller_appointment_selected(self, appt):
         '''
         a new appointment has been selected for scheduling
         '''
-        logging.debug("DiaryWidget.schedule_controller_appointment_selected")
+        LOGGER.debug("DiaryWidget.schedule_controller_appointment_selected")
 
         self.finding_next_slot = 0
         self.schedule_controller.reset()
@@ -1567,7 +1570,7 @@ class DiaryWidget(QtGui.QWidget):
 
     def step_date(self, forwards=True):
         date_ = self.selected_date()
-        logging.debug("step date called current=%s, forwards=%s"% (
+        LOGGER.debug("step date called current=%s, forwards=%s"% (
             date_, forwards))
 
         if forwards:

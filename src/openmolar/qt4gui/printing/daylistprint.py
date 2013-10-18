@@ -113,7 +113,6 @@ if __name__ == "__main__":
     from openmolar.dbtools import appointments
     import datetime
     localsettings.initiate()
-    localsettings.logqueries=True
     app = QtGui.QApplication(sys.argv)
     d=datetime.date.today()
     apps=appointments.printableDaylistData(d,4)

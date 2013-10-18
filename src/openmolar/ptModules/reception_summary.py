@@ -54,8 +54,8 @@ def header_html(pt):
     return html_ 
 
 def treatment_html(pt):
-    
-    return u"<h4>Treatments</h4>%s"%estimate_synopsis.html(pt.courseno)
+    return u"<h4>Treatments (courseno %s)</h4>%s"% (
+        pt.courseno0, estimate_synopsis.html(pt.courseno0))
 
 def payments_html(pt):
     return u'''<h4>Payments Since this course began (excluding Sundries)</h4>

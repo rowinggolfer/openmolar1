@@ -12,31 +12,39 @@ class ChainLabel(QtGui.QLabel):
     '''
     a custom label with a chain link
     '''
+    toggled = QtCore.pyqtSignal(object)
     def __init__(self, parent=None):
         QtGui.QLabel.__init__(self, parent)
         self.chainpic = QtGui.QPixmap(":/icons/chain.png")
         self.unchainpic = QtGui.QPixmap(":/icons/chain-broken.png")
         self.setFixedWidth(30)
-        self.setPixmap(self.chainpic)
-        self.chained = True
+        self._chained = True
+        self._update()
         
-    def mousePressEvent(self,arg):
-        if self.chained:
-            self.setPixmap(self.unchainpic)
-            self.chained = False
-        else:
+    def mousePressEvent(self, event):
+        self._chained = not self._chained
+        self._update()
+        
+    def setValue(self, chained):
+        self._chained = chained
+        self._update()
+        
+    def _update(self):
+        if self._chained:
             self.setPixmap(self.chainpic)
-            self.chained = True
-        self.emit(QtCore.SIGNAL("chained"), self.chained)
-        
+        else:
+            self.setPixmap(self.unchainpic)
+        self.toggled.emit(self._chained)
+    
 if __name__ == "__main__":
     def test(arg):
-        print "chained = ",arg
+        print ("chained = %s"% arg)
     
     import sys    
     app = QtGui.QApplication(sys.argv)
     widg = ChainLabel()
-    QtCore.QObject.connect(widg, QtCore.SIGNAL("chained"), test)
+    widg.setMinimumSize(QtCore.QSize(100,100))
+    widg.toggled.connect(test)
     
     widg.show()
     sys.exit(app.exec_())

@@ -6,8 +6,6 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 
-from __future__ import division
-
 import sys
 import datetime
 import logging
@@ -18,18 +16,15 @@ import subprocess
 #import inspect
 import types
 
+import openmolar
+
 from xml.dom import minidom
 import _version  #--in the same directory - created by bzr
 
 #- updated 26th June 2013.
 __MAJOR_VERSION__= "0.4.09"
 
-
-if "-v" in sys.argv:
-    logging.basicConfig(level=logging.DEBUG)
-else:
-    logging.basicConfig(level=logging.INFO)
-
+LOGGER = logging.getLogger("openmolar")
 
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
@@ -47,13 +42,11 @@ locale.setlocale(locale.LC_ALL, '')
 
 __build__ = int(_version.version_info.get("revno"))
 
-VERBOSE = False
-
 try:
     s = _("translation tools are installed sucessfully")
-    if VERBOSE:
-        print s
+    LOGGER.debug(s)
 except NameError:
+    LOGGER.error("installing gettext for translations")
     ##- an unelegant hack to get _() on the namespace for testing
     ##- main.py will normally do this for us.
     import gettext
@@ -63,10 +56,10 @@ def showVersion():
     '''
     push version details to std out
     '''
-    print "OpenMolar\n - Version %s\n - Bzr Revision No. %s"% (
-    __MAJOR_VERSION__, __build__)
+    LOGGER.info(
+    "OpenMolar %s (Bzr Revision %s)"% (__MAJOR_VERSION__, __build__))
 
-if VERBOSE:
+if LOGGER.level == logging.DEBUG:
     showVersion()
 
 PRACTICE_NAME = "The Academy Dental Practice"
@@ -110,11 +103,9 @@ def setChosenServer(i):
     chosenserver = i
     try:
         DBNAME = server_names[i]
-        if VERBOSE:
-            print "DBNAME=", DBNAME
+        LOGGER.debug("DBNAME = %s"% DBNAME)
     except IndexError:
-        if VERBOSE:
-            print "no server name.. config file is old format?"
+        LOGGER.warning("no server name.. config file is old format?")
 
 wkdir = determine_path()
 referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
@@ -129,7 +120,7 @@ resources_path = "file://" + resources_location
 
 if "win" in sys.platform:
     WINDOWS = True
-    print "windows settings"
+    LOGGER.info("Windows OS detected - modifying settings")
     #-- sorry about this... but cross platform is a goal :(
     global_cflocation = 'C:\\Program Files\\openmolar\\openmolar.conf'
     localFileDirectory = os.path.join(os.environ.get("HOMEPATH"),".openmolar")
@@ -150,7 +141,8 @@ if "win" in sys.platform:
     
 else:
     if not "linux" in sys.platform:
-        print "unknown system platform (mac?) - defaulting to linux settings"
+        LOGGER.warning(
+        "unknown system platform (mac?) - defaulting to linux settings")
     global_cflocation = '/etc/openmolar/openmolar.conf'
     localFileDirectory = os.path.join(os.environ.get("HOME"),".openmolar")
 
@@ -194,7 +186,7 @@ Version %s  -  Bazaar Revno %s<br />
 Client Schema Version is %s, DataBase is at version %s<br /><hr />
 Copyright (C) 2009  Neil A. Wallace B.Ch.D.<br />
 sourcecode available at <a href="http://launchpad.net/openmolar">
-"http://launchpad.net/openmolar"</a>.
+"http://www.openmolar.com"</a>.
 </p>
 Thanks to <a href="http://rfquerin.org">Richard Querin</a>
 for the wonderful icon and Logo.'''%(__MAJOR_VERSION__, __build__,
@@ -314,7 +306,6 @@ surgeryno = -1
 csetypes = ["P","I","N","N OR","N O"]
 
 #--for debugging purposes... set this to true.- not yet implemented throughout.
-logqueries = False
 
 #-- self evident
 practiceAddress = ("The Academy Dental Practice","19 Union Street",
@@ -355,6 +346,13 @@ def currentDay():
     '''
     return datetime.date.today()
 
+def pence_to_pounds(m):
+    '''
+    takes an integer, returns as pounds.pence
+    eg 1950 -> "19.50"
+    '''
+    return "%d.%02d"% ( m // 100, m % 100)
+    
 def formatMoney(m):
     '''
     takes an integer, returns a string
@@ -367,12 +365,13 @@ def formatMoney(m):
             print "formatMoney error", e
             return "%s"% m
     else:
+        val = pence_to_pounds(m)
         try:
-            retarg = locale.currency(m/100)
+            retarg = locale.currency(float(val))
             return retarg.decode(ENCODING, "replace")
         except Exception, e:
-            print "formatMoney error", e
-            return "%.02f"% m/100
+            LOGGER.exception("formatMoney error")
+            return val
 
 def reverseFormatMoney(m):
     '''
@@ -643,9 +642,9 @@ def getLocalSettings():
         node = dom.getElementsByTagName("surgeryno")
         if node and node[0].hasChildNodes():
             surgeryno = int(node[0].firstChild.data)
-            if VERBOSE: print "%s location"% station
+            LOGGER.debug("setting as surgery number %s"% surgeryno)
         else:
-            if VERBOSE: print "unknown location"
+            LOGGER.debug("unknown surgery number")
         dom.unlink()
     else:
         #-- no file found..
@@ -662,7 +661,7 @@ def updateLocalSettings(setting, value):
     '''
     try:
         localSets = os.path.join(localFileDirectory, "localsettings.conf")
-        if VERBOSE: print "updating local settings... %s = %s"% (setting, value)
+        LOGGER.debug("updating local settings... %s = %s"% (setting, value))
         if os.path.exists(localSets):
             dom = minidom.parse(localSets)
             nodeToChange = dom.getElementsByTagName(setting)
@@ -684,8 +683,8 @@ def updateLocalSettings(setting, value):
             dom.unlink()
             return True
 
-    except Exception, e:
-        print "error updating local settings file", e
+    except Exception as exc:
+        LOGGER.exception("error updating local settings file")
         return False
 
 def getAge(dob):
@@ -754,9 +753,10 @@ def initiate(changedServer= False, debug = False):
     if data:
         SUPERVISOR = data[0][0]
     else:
-        print "#"*30
-        print "WARNING - no supervisor password is set, restting to default"
-        print "#"*30
+        LOGGER.warning("#"*30)
+        LOGGER.warning(
+        "WARNING - no supervisor password is set, restting to default")
+        LOGGER.warning("#"*30)
         db_settings.updateData("supervisor_pword", SUPERVISOR,
         "not found reset")
 
@@ -783,10 +783,9 @@ def initiate(changedServer= False, debug = False):
 
     try:
         ##correspondence details for NHS forms
-        query = "select id,inits,name,formalname,fpcno,quals "
-        query += "from practitioners where flag0=1"
-        if logqueries:
-            print query
+        query = ("select id,inits,name,formalname,fpcno,quals "
+        "from practitioners where flag0=1")
+        
         cursor.execute(query)
         practitioners = cursor.fetchall()
         dentDict = {}
@@ -795,8 +794,6 @@ def initiate(changedServer= False, debug = False):
 
         #now get only practitioners who have an active daybook
         query = "select apptix,inits from practitioners where flag3=1"
-        if logqueries:
-            print query
         cursor.execute(query)
         practitioners = cursor.fetchall()
         apptix = {}
@@ -824,8 +821,8 @@ def initiate(changedServer= False, debug = False):
             activehygs.append(inits)
         activehyg_ixs = tuple(ixs)
 
-    except:
-        print "error loading practitioners"
+    except Exception as exc:
+        LOGGER.exception("error loading practitioners")
 
     #-- set the clinician if possible
     u1 = operator.split("/")[0].strip(" ")
@@ -833,7 +830,7 @@ def initiate(changedServer= False, debug = False):
         clinicianNo = ops_reverse.get(u1)
         clinicianInits = u1
     else:
-        if VERBOSE: print "no clinician!"
+        LOGGER.debug("no clinician set!")
 
     getLocalSettings()
 
@@ -871,7 +868,7 @@ def loadFeeTables():
     global FEETABLES
     from openmolar.dbtools import feesTable
 
-    print "loading fee and treatment logic tables"
+    LOGGER.debug("loading fee and treatment logic tables")
     FEETABLES = feesTable.FeeTables()
 
 def _test():
@@ -879,21 +876,6 @@ def _test():
     doctest.testmod()
 
 if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
     _test()
-    #-- testing only
-
-    #wkdir = determine_path()
-    #sys.path.append(os.path.dirname(wkdir))
-    #if os.path.exists(global_cflocation):
-    #    print "using global", global_cflocation
-    #    cflocation = global_cflocation
-    #else:
-    #    print "using local", local_cflocation
-    #    cflocation = local_cflocation
-    #print cflocation
-    #print stylesheet
-    #initiate(debug = True)
-
-    #print global_cflocation, local_cfloaction
-    #updateLocalSettings("stationID","surgery3")
-
+    

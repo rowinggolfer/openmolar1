@@ -25,19 +25,17 @@ def getMemos(serialno):
     retarg=[]
     db=connect()
 
-    query = '''select ix,serialno,author,type,mdate,message from ptmemos 
-    where serialno=%d and open=1 and 
-    (expiredate is NULL or expiredate >= curdate())''' %serialno
+    query = ('SELECT ix,serialno,author,type,mdate,message FROM ptmemos ' 
+    'WHERE serialno = %s and open = 1 AND '
+    '(expiredate is NULL or expiredate >= curdate())')
     
     if localsettings.station == "surgery":
-        query += ' and (type ="surg" or type = "all")'
+        query += ' AND (type = "surg" or type = "all")'
     elif localsettings.station == "reception":
-        query += ' and (type ="rec" or type = "all")'
+        query += ' AND (type = "rec" or type = "all")'
         
-    if localsettings.logqueries:
-        print query
     cursor = db.cursor()
-    cursor.execute(query)
+    cursor.execute(query, (serialno,))
     rows = cursor.fetchall()
     cursor.close()
     for row in rows:
@@ -54,12 +52,10 @@ def getMemos(serialno):
     return retarg
 
 def deleteMemo(ix):
-    query="update ptmemos set open=0 where ix=%d"%ix
-    db=connect()
-    if localsettings.logqueries:
-        print query
+    query = "update ptmemos set open = 0 where ix=%s"
+    db = connect()
     cursor = db.cursor()
-    cursor.execute(query)
+    cursor.execute(query, (ix,))
     cursor.close()
     db.commit()
 
@@ -67,18 +63,16 @@ def saveMemo(serialno, author, type, expire, message, open):
     '''
     put a memo into the database
     '''
-    db=connect()
+    db = connect()
     
     values = (serialno, author, type, expire, message, open)
 
-    query = '''insert into ptmemos 
-    (serialno, author, type, mdate, expiredate, message, open) 
-    VALUES (%s, %s, %s, NOW(), %s, %s, %s)'''
-    if localsettings.logqueries:
-        print query, values
+    query = ('insert into ptmemos '
+    '(serialno, author, type, mdate, expiredate, message, open) ' 
+    'VALUES (%s, %s, %s, NOW(), %s, %s, %s)')
     cursor = db.cursor()
-    result=cursor.execute(query, values)
+    result = cursor.execute(query, values)
     db.commit()
     cursor.close()
-    #db.close()
+    
     return result

@@ -110,11 +110,7 @@ def getpatients(conditions="", values=()):
     where CONDITIONS and status != "DECEASED"
     order by familyno DESC, addr1, dob, fname, sname'''
 
-
     query = query.replace("CONDITIONS", conditions)
-
-    #conditions = "recd>=%s and recd<=%s"
-    #values = (startdate, enddate)
 
     db = connect()
     cursor = db.cursor()
@@ -122,7 +118,7 @@ def getpatients(conditions="", values=()):
     cursor.execute(query, values)
     rows = cursor.fetchall()
     cursor.close()
-    #db.close()
+
     patients = []
     letterno = 1
     patient = None

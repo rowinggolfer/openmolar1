@@ -57,49 +57,57 @@ def updateDaybook(om_gui):
     feesa = 0         #fee
     feesb = 0         #ptfee
     writeNeeded = False
+    
+    is_new_course = (om_gui.pt.treatment_course.courseno != 
+        om_gui.pt.dbstate.treatment_course.courseno)
+    
     for att in CURRTRT_ATTS:
-        if att == "examt" or att[-3:] == "cmp": #be wary of "cmpd"
-            newcmp = om_gui.pt.treatment_course.__dict__[att]
-            existingcmp = om_gui.pt.dbstate.treatment_course.__dict__[att]
+        if re.match("examt|.*cmp$", att):
+            newcmps = om_gui.pt.treatment_course.__dict__[att].split(" ")
+            orig_newcmps = newcmps[:]
+            if is_new_course:
+                existingcmps = []
+            else:
+                existingcmps = \
+                om_gui.pt.dbstate.treatment_course.__dict__[att].split(" ")
 
-            if newcmp != existingcmp:
-                treatment = newcmp.replace(existingcmp, "", 1)
-                #print att,newcmp,existingcmp,treatment
+            for cmp_tx in existingcmps:
+                try:
+                    newcmps.remove(cmp_tx)
+                except ValueError:
+                    pass
+
+            for treatment in newcmps:
+                if treatment == "":
+                    continue
                 writeNeeded = True
 
                 if att == "examt":
                     key = "exam"
                 else:
-                    key = re.sub(".*(cmp)","", att)
+                    key = re.sub("cmp$", "", att)
                     
                 if key in daybookdict.keys():
                     daybookdict[key] += "%s "% treatment
-                elif key == "xray" or key == "exam":
+                elif key in ("xray", "exam"):
                     daybookdict["diagn"] += "%s "% treatment
-                elif key == "custom": #see above
+                elif key == "custom":
                     daybookdict["other"] += "CUSTOM:%s "% treatment
                 else:
                     #--tooth include the key ie ul7 etc...
                     daybookdict["chart"] += "%s %s "% (key.upper(), treatment)
 
-                ##todo - get the real fee if poss!
-                already_completed = newcmp.split(" ")
-                for treat in treatment.split(" "):
-                    if treat == "":
-                        continue
-                    #todo - this COUNT is a fudge!
-                    already_completed.append(treat)
-                    count = already_completed.count(treat)
-                    
-                    hash_ = hash("%s %s %s"%(key, count, treat))
-                    fees = fees_module.getFeesFromEst(om_gui, hash_)
-                    
-                    if fees:
-                        feesa += fees[0]
-                        feesb += fees[1]
-                    else:
-                        LOGGER.warning(
-                        "daybook module - no fees for '%s' '%s'"% (att, treat))
+                count = orig_newcmps.count(treatment)
+                
+                hash_ = hash("%s %s %s"%(key, count, treatment))
+                fees = fees_module.getFeesFromEst(om_gui, hash_)
+                
+                if fees:
+                    feesa += fees[0]
+                    feesb += fees[1]
+                else:
+                    LOGGER.warning(
+                    "daybook module - no fees for '%s' '%s'"% (att, treatment))
 
     if writeNeeded:
         if om_gui.pt.dnt2 != 0 and om_gui.pt.cset != "I":

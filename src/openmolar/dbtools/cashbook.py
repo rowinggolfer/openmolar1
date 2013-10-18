@@ -195,14 +195,22 @@ treatment_only=False, sundries_only=False):
                 retarg += '<td align="center">n/a</a>'
         retarg += '</tr>\n'
         total += amt
-
-    retarg += '''<tr><td colspan="4"></td>
+    
+    sum_text = "= %s + %s + %s + %s"% (
+        localsettings.pence_to_pounds(cashTOT),
+        localsettings.pence_to_pounds(chequeTOT), 
+        localsettings.pence_to_pounds(cardTOT), 
+        localsettings.pence_to_pounds(otherTOT) 
+        )
+        
+    retarg += '''<tr><td colspan="4">%s</td>
     <td><b>TOTAL</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td></tr>'''% (
+    sum_text.replace("+ -", "- "),
     localsettings.formatMoney(cashTOT),
     localsettings.formatMoney(chequeTOT),
     localsettings.formatMoney(cardTOT),

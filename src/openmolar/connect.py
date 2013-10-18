@@ -23,6 +23,9 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
+if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
+
 mainconnection = None
 
 LOGGER.debug("parsing the global settings file")

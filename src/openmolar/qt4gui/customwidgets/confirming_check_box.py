@@ -35,6 +35,7 @@ class ConfirmingCheckBox(QtGui.QCheckBox):
     new_state_signal = QtCore.pyqtSignal(object)
     def __init__(self, *args):
         QtGui.QCheckBox.__init__(self, *args)
+        self.setTristate(True)
     
     def nextCheckState(self):
         if not self.check_first(): 

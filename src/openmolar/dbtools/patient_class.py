@@ -106,7 +106,7 @@ class patient(object):
         self.load_warnings = []
 
         ## patient table atts
-        self.courseno = None
+        self.courseno0 = None
         self.pf0 = 0
         self.pf1 = 0
         self.pf2 = 0
@@ -243,7 +243,7 @@ class patient(object):
         self.note = ''            #varchar(60) 	YES 	 	None
 
         self.estimates = []
-
+        
         ##from userdata
         self.plandata = PlanData(self.serialno)
 
@@ -300,7 +300,7 @@ class patient(object):
 
             for value in values:
                 self.bpe.append(value)
-
+            
             if self.courseno0 != 0:
                 self.getEsts()
             
@@ -485,7 +485,11 @@ class patient(object):
         self.estimates = []
         
         for row in rows:
-            tx_hash = row[10]
+            hash_ = row[10]
+            completed = bool(row[9])            
+            
+            tx_hash = estimates.TXHash(hash_, completed)
+            
             ix = row[0]
             
             found = False
@@ -510,7 +514,6 @@ class patient(object):
             est.feescale = row[6]
             est.csetype = row[7]
             est.dent = row[8]
-            est.completed = bool(row[9])
             
             #est.category = "TODO"
             #est.type_ = "TODO"
@@ -518,8 +521,9 @@ class patient(object):
             est.tx_hashes = [tx_hash]
             self.estimates.append(est)
         
-            
         cursor.close()
+
+        
 
     def getSynopsis(self):
         db = connect.connect()
@@ -599,33 +603,52 @@ class patient(object):
             else:
                 self.chartgrid[pos]=decidmouth[mouth.index(pos)]
 
-    def applyFee(self, arg, cset=None):
-        '''
-        raise a charge
-        '''
-        if cset == None:
-            cset = self.cset
-        if "N" in cset:
-            self.money0 += arg
+    def apply_fees(self):
+        if "N" in self.cset:
+            self.money0 = self.dbstate.money0 + self.fees_accrued
         else:
-            self.money1 += arg
+            self.money1 = self.dbstate.money1 + self.fees_accrued    
 
     @property
     def fees(self):
         return int(self.money0 + self.money1 + self.money9 + self.money10 +
         self.money11 - self.money2 - self.money3 - self.money8)
 
+    @property
+    def fees_accrued(self):
+        old_estimate_charges = 0
+        if self.courseno0 == self.dbstate.courseno0:
+            old_estimate_charges = self.dbstate.estimate_charges
+        
+        accrued_fees = self.estimate_charges - old_estimate_charges        
+        LOGGER.debug("fees_accrued = (new-existing) = %d - %d = %d"%(
+                self.estimate_charges,
+                old_estimate_charges,
+                accrued_fees)
+                )
+        return accrued_fees
+    
+    @property
+    def estimate_charges(self):
+        charges = 0
+        for est in self.estimates:
+            if est.completed == 2:
+                charges += est.ptfee
+            elif est.completed == 1:
+                charges += est.interim_pt_fee
+        return charges
+    
     def resetAllMonies(self):
         '''
         zero's everything except money11 (bad debt)
         '''
-        self.money0=0
-        self.money1=0
-        self.money9=0
-        self.money10=0
-        self.money2=0
-        self.money3=0
-        self.money8=0
+        self.money0 = 0
+        self.money1 = 0
+        self.money9 = 0
+        self.money10 = 0
+        self.money2 = 0
+        self.money3 = 0
+        self.money8 = 0
 
     @property
     def nhs_claims(self):
@@ -636,14 +659,14 @@ class patient(object):
                 claims.append(est)
         return claims
 
-    def addHiddenNote(self,ntype,note="",deleteIfPossible=False):
+    def addHiddenNote(self, ntype, note="", attempt_delete=False):
         '''
         re-written for schema 1.9
         '''
-        print(
-        "patient.addHiddenNote(ntype='%s',note='%s',deleteIfPossible='%s'"% (
-        ntype, note, deleteIfPossible)
-        )
+        LOGGER.info(
+        "patient.addHiddenNote(ntype='%s',note='%s', attempt_delete='%s'"% (
+        ntype, note, attempt_delete))
+        
         HN = ()
         if ntype=="payment":
             HN=("RECEIVED: ", note)
@@ -673,17 +696,20 @@ class patient(object):
         if not HN:
             print "unable to add Hidden Note notetype '%s' not found"% ntype
             return
+        
+        reversing_note = ("UNCOMPLETED", "{%s}"% note)
 
-        if deleteIfPossible:
-            if HN in self.HIDDENNOTES:
+        if attempt_delete:
+            try:
                 self.HIDDENNOTES.remove(HN)
-            else:
-                self.HIDDENNOTES.append(
-                    ("UNCOMPLETED", "{%s, %s}"% (ntype,note)))
+            except ValueError:
+                self.HIDDENNOTES.append(reversing_note)
         else:
-            self.HIDDENNOTES.append(HN)
-        #print self.HIDDENNOTES
-
+            try:
+                self.HIDDENNOTES.remove(reversing_note)
+            except ValueError:
+                self.HIDDENNOTES.append(HN)
+        
     def clearHiddenNotes(self):
         self.HIDDENNOTES=[]
 
@@ -744,8 +770,8 @@ class patient(object):
         '''        
         return (patientTableAtts + 
             exemptionTableAtts + bpeTableAtts + mnhistTableAtts + 
-            perioTableAtts + clinical_memos + 
-            ("serialno", "estimates", "appt_prefs", "treatment_course"))
+            perioTableAtts + clinical_memos + ("fees", "estimate_charges",
+            "serialno", "estimates", "appt_prefs", "treatment_course"))
     
     @property
     def changes(self):
@@ -755,11 +781,12 @@ class patient(object):
             db_value = self.dbstate.__dict__.get(att, "")
             if  new_value != db_value:
                 LOGGER.debug("PT DBSTATE ALTERED - %s"% att)
-                LOGGER.debug("OLD %s"% db_value)
-                LOGGER.debug("NEW %s"% new_value)
+                if att != "treatment_course":
+                    LOGGER.debug(
+                    "  OLD '%s' NEW - '%s'"% (db_value, new_value))
                 
                 changes.append(att)
-        return changes# + self.treatment_course.changes
+        return changes
  
     def take_snapshot(self):
         # create a snapshot of this class, copying all attributes that the 
@@ -773,10 +800,8 @@ class patient(object):
                 setattr(snapshot, att, deepcopy(v, memo))
         self.dbstate = snapshot
         
-        #LOGGER.debug("snapshot taken")
-        #LOGGER.debug(self.treatment_course)
-        #LOGGER.debug(self.dbstate.treatment_course)
-    
+        LOGGER.debug("snapshot of %s taken"% self)
+        
     @property
     def course_dentist(self):
         '''
@@ -799,11 +824,19 @@ class patient(object):
     
     @property
     def tx_hashes(self):
-        return self.treatment_course._get_tx_hashes()
-    
+        '''
+        a list of unique hashes of all treatment on the current treatment plan
+        '''
+        for tup in self.treatment_course._get_tx_hashes():
+            yield tup
+        
     @property
     def completed_tx_hashes(self):
         return self.treatment_course.completed_tx_hashes    
+    
+    @property
+    def planned_tx_hashes(self):
+        return self.treatment_course.planned_tx_hashes    
     
     def get_tx_from_hash(self, hash_):
         return self.treatment_course.get_tx_from_hash(hash_)
@@ -818,17 +851,21 @@ class patient(object):
                     yield est
     
     def add_to_estimate(self, usercode, dentid, tx_hashes, 
-    itemcode=None, completed=False, csetype=None, descr=None,  
+    itemcode=None, csetype=None, descr=None,  
     fee=None, ptfee=None, chosen_feescale=None):
         '''
         add an item to the patient's estimate
         usercode unnecessary if itemcode is provided.
         '''
-        LOGGER.debug("patient.add_to_estimate %s %s %s %s %s %s %s %s %s %s"%(
-            usercode, dentid, tx_hashes, completed,
+        LOGGER.debug("patient.add_to_estimate %s %s %s %s %s %s %s %s %s"%(
+            usercode, dentid, tx_hashes, 
             itemcode, csetype, descr,  
             fee, ptfee, chosen_feescale)
             )
+            
+        for tx_hash in tx_hashes:
+            assert type(tx_hash) == estimates.TXHash, "bad form Neil"
+            
         est = estimates.Estimate()
         est.ix = None #-- this will be generated by autoincrement on commit
         est.serialno = self.serialno
@@ -863,7 +900,6 @@ class patient(object):
         est.tx_hashes = tx_hashes
         
         est.dent = dentid
-        est.completed = completed
 
         self.estimates.append(est)
 

@@ -6,15 +6,18 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 
-'''
-this module provides two classes.
-a parent "estimate widget", and a custom item widget for displaying
-and editing treatment costs
-'''
+import logging
 
 from PyQt4 import QtGui, QtCore
+
 from openmolar.qt4gui.customwidgets.chainLabel import ChainLabel
 from openmolar.qt4gui.customwidgets.confirming_check_box import ConfirmingCheckBox
+
+from openmolar.qt4gui.dialogs.complete_treatment_dialog \
+    import CompleteTreatmentDialog
+
+
+LOGGER = logging.getLogger("openmolar")
 
 def decimalise(pence):
     return "%d.%02d"% (pence // 100, pence % 100)
@@ -26,8 +29,9 @@ class EstimateItemWidget(QtGui.QWidget):
     MONEY_WIDTH = 80
     
     separate_signal = QtCore.pyqtSignal(object)
-    completed_signal =  QtCore.pyqtSignal(object)
-    delete_signal =  QtCore.pyqtSignal(object)
+    compress_signal = QtCore.pyqtSignal(object)
+    completed_signal = QtCore.pyqtSignal(object)
+    delete_signal = QtCore.pyqtSignal(object)
     edited_signal = QtCore.pyqtSignal()
     
     def __init__(self, parent=None):
@@ -49,8 +53,32 @@ class EstimateItemWidget(QtGui.QWidget):
         self.ptFee_lineEdit.setFixedWidth(self.MONEY_WIDTH)
         self.ptFee_lineEdit.setAlignment(QtCore.Qt.AlignRight)
         self.completed_checkBox = ConfirmingCheckBox(self)
+        self.completed_checkBox.setMaximumWidth(30)
         self.completed_checkBox.check_first = self.check_first
+        
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/eraser.png"),
+            QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.delete_pushButton = QtGui.QPushButton()
+        self.delete_pushButton.setMaximumWidth(30)
+        self.delete_pushButton.setIcon(icon)
+        self.delete_pushButton.setFlat(True)
+            
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":icons/expand.svg"), 
+            QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.expand_pushButton = QtGui.QPushButton()
+        self.expand_pushButton.setIcon(icon)
+        self.expand_pushButton.setMaximumWidth(30)
+        self.expand_pushButton.setFlat(True)
+        self.expand_pushButton.setSizePolicy(QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+            )
+        
+        self.examine_icon = QtGui.QIcon()
+        self.examine_icon.addPixmap(QtGui.QPixmap(":/search.png"),
+            QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        
         
         self.validators()
         self.feesLinked = True
@@ -71,7 +99,8 @@ class EstimateItemWidget(QtGui.QWidget):
         self.chain,
         self.ptFee_lineEdit,
         self.completed_checkBox,
-        self.delete_pushButton)
+        self.delete_pushButton,
+        self.expand_pushButton)
 
     def linkfees(self, arg):
         '''
@@ -83,23 +112,8 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         break the chain if the course type is not P
         '''
-        if cset != "P":
-            self.chain.mousePressEvent(None)
+        self.chain.setValue(cset == "P")
     
-    def separateIcon(self, separate=True):
-        '''
-        this is our little chain icon
-        '''
-        icon = QtGui.QIcon()
-        if separate:
-            icon.addPixmap(QtGui.QPixmap(":icons/expand.png"),
-            QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        else:
-            icon.addPixmap(QtGui.QPixmap(":/eraser.png"),
-            QtGui.QIcon.Normal, QtGui.QIcon.Off)
-
-        self.delete_pushButton.setIcon(icon)
-
     def addItem(self, item):
         self.est_items.append(item)
         self.itemCode_label.setToolTip(self.toolTip())
@@ -131,8 +145,7 @@ class EstimateItemWidget(QtGui.QWidget):
         loads the values stored in self.est_items into the graphical widgets
         '''
         fee, ptfee, number = 0, 0, 0
-        all_planned = True
-        all_completed = True
+        all_planned, all_completed = True, True
         
         for item in self.est_items:
             if item.number:
@@ -141,54 +154,67 @@ class EstimateItemWidget(QtGui.QWidget):
             ptfee += item.ptfee
             self.setDescription(item.description)
             self.setItemCode(item.itemcode)
-            self.setCompleted(item.completed)
+            
             self.setCset(item.csetype)
             self.setChain(item.csetype)
-            if item.completed:
-                all_planned = False
-            else:
-                all_completed = False
 
-        #-- set partially checked if any doubt
-        if all_planned:
-            self.completed_checkBox.setChecked(False)
-        elif all_completed:
-            self.completed_checkBox.setCheckState(
-            QtCore.Qt.CheckState(QtCore.Qt.Checked))
-        else:
-            self.completed_checkBox.setCheckState(
-            QtCore.Qt.CheckState(QtCore.Qt.PartiallyChecked))
+            all_planned = all_planned and not item.completed
+            all_completed = all_completed and item.completed
         
-        if item.is_exam:
-            self.delete_pushButton.hide()
-
+        n_items = len(self.est_items)
+        if n_items > 1:
+            #self.expand_pushButton.setText("%d %s"% (n_items, _("items")))
+            if all_planned:
+                self.setCompleted(0)
+            elif all_completed:                
+                self.setCompleted(2)
+            else:
+                self.setCompleted(1)
+        else:
+            n_txs = len(self.est_items[0].tx_hashes)
+            if n_txs >1:
+                self.expand_pushButton.setIcon(self.examine_icon)
+            self.setCompleted(item.completed)
+            
         self.setNumber(number)
         self.setFee(fee)
         self.setPtFee(ptfee)
 
-        self.separateIcon(len(self.est_items)>1)
+        if item.is_exam:
+            self.delete_pushButton.hide()
+        elif self.can_expand:
+            self.delete_pushButton.hide()
+        self.expand_pushButton.setVisible(self.can_expand)
+        
+    @property
+    def can_expand(self):
+        return self.is_seperable or self.has_multi_treatments
+    
+    @property
+    def is_seperable(self):
+        return len(self.est_items) > 1
             
+    @property
+    def has_multi_treatments(self):
+        return len(self.est_items[0].tx_hashes) > 1
+        
     def validators(self):
         '''
         set validators to prevent junk data being entered by user
         '''
-        self.fee_lineEdit.setValidator(QtGui.QDoubleValidator(
-        0.0, 3000.0, 2, self.fee_lineEdit) )
-
-        self.ptFee_lineEdit.setValidator(QtGui.QDoubleValidator(
-        0.0, 3000.0, 2, self.ptFee_lineEdit) )
-
-        #self.fee_lineEdit.setInputMask('000.00')
-        #self.ptFee_lineEdit.setInputMask("000.00")
+        val = QtGui.QDoubleValidator(0, 3000, 2, self)
+        
+        self.fee_lineEdit.setValidator(val)
+        self.ptFee_lineEdit.setValidator(val)
 
     def signals(self):
         '''
         connects signals
         '''
-        QtCore.QObject.connect(self.chain,
-        QtCore.SIGNAL("chained"), self.linkfees)
+        self.chain.toggled.connect(self.linkfees)
 
         self.delete_pushButton.clicked.connect(self.deleteItem)
+        self.expand_pushButton.clicked.connect(self.expand_but_clicked)
         self.cset_lineEdit.textEdited.connect(self.update_cset)
         self.description_lineEdit.textEdited.connect(self.update_descr)
         self.fee_lineEdit.textEdited.connect(self.update_Fee)
@@ -247,8 +273,7 @@ class EstimateItemWidget(QtGui.QWidget):
             item.ptfee = newVal / len(self.est_items)
         if userPerforming:
             self.edited_signal.emit()
-        print self.est_items
-
+        
     def setNumber(self, arg):
         '''
         update number label
@@ -297,36 +322,182 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         function so that external calls can alter this widget
         '''
-        self.completed_checkBox.setChecked(bool(arg))
-        self.checked()
+        LOGGER.debug("est_item_widget.setCompleted %s"% arg)
+        self.completed_checkBox.setCheckState(arg) #ed(bool(arg))
+        self.enable_components()
 
     def deleteItem(self):
         '''
         a slot for the delete button press
         '''
-        if len(self.est_items)>1:
-            #self.splitMultiItemDialog()
-            self.separate_signal.emit(self)
-        else:
-            self.delete_signal.emit(self)
+        self.delete_signal.emit(self)
 
-    def checked(self):
+    def expand_but_clicked(self):
+        if self.is_seperable:
+            self.separate_signal.emit(self)
+        elif self.has_multi_treatments:
+            self.multi_treatment_info_dialog()
+        else:
+            self.compress_signal.emit(self.itemCode)
+            
+    def enable_components(self):
         '''
         this is a slot called when the completed checkbox changes
         '''
-        state = not self.completed_checkBox.checkState()
+        LOGGER.debug("EstimateItemWidget.enable_components")
+        return
+        state = (self.completed_checkBox.checkState() == 0 or
+        (self.completed_checkBox.checkState() == 1 and 
+        len(self.est_items) == 1) )
+        
         self.fee_lineEdit.setEnabled(state)
         self.ptFee_lineEdit.setEnabled(state)
         self.chain.setEnabled(state)
-        
-        self.delete_pushButton.setEnabled(state or len(self.est_items)>1)
+        self.delete_pushButton.setEnabled(state)
    
+    def multi_treatment_info_dialog(self):
+        '''
+        show treatments for this item
+        '''
+        LOGGER.debug("multi_treatment_info_dialog")
+        tx_hashes = []
+        for item in self.est_items:
+            tx_hashes += item.tx_hashes
+        assert len(tx_hashes) >0 , \
+            "no treatments found.. this shouldn't happen"
+        
+        txs = []  
+        for hash_, att, tx in self.est_widget.pt.tx_hashes:
+            for tx_hash in tx_hashes:
+                if hash_ == tx_hash:
+                    txs.append((att, tx, tx_hash.completed))
+        list_ = ""
+        for att, tx, completed in txs:
+            list_ += "<li>%s <b>%s</b>"% (att, tx)
+            if completed:
+                list_ += " (%s)</li>"% _("completed already")
+            else:
+                list_ += "</li>"
+        message = "%s<ul>%s</ul><hr />%s"%(
+        _("There are multiple treatments associated with this estimate item"),
+        list_,
+        _("All must be completed for the full charge to be applied"))
+        
+        QtGui.QMessageBox.information(self, _("information"), message)
+
+    def raise_multi_treatment_dialog(self):
+        '''
+        show treatments for this item
+        '''
+        LOGGER.debug("raise_multi_treatment_dialog")
+        tx_hashes = []
+        for item in self.est_items:
+            tx_hashes += item.tx_hashes
+        assert len(tx_hashes) >0 , \
+            "no treatments found.. this shouldn't happen"
+
+        txs = []        
+        for hash_, att, tx in self.est_widget.pt.tx_hashes:
+            for tx_hash in tx_hashes:
+                if hash_ == tx_hash:
+                    txs.append((att, tx, tx_hash.completed))
+                    
+        dl = CompleteTreatmentDialog(txs, self)
+        if not dl.exec_():
+            return
+        
+        for att, treat in dl.completed_treatments:
+            LOGGER.debug("checking completed %s %s"% (att, treat))
+            found = False #only complete 1 treatment!!
+            for hash_, att_, tx in self.est_widget.pt.tx_hashes:
+                if found:
+                    break 
+                if att == att_ and tx == treat:
+                    LOGGER.debug("att and treat match... checking hashes")
+                    for item in self.est_items:
+                        LOGGER.debug("Checking hashes of item %s"% item)
+                        for tx_hash in item.tx_hashes:
+                            if tx_hash == hash_ and not tx_hash.completed:
+                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
+                                tx_hash.completed = True        
+                                self.est_widget.tx_hash_complete(tx_hash)
+                                found = True
+                                break
+                        if found: 
+                            break
+                                
+        for att, treat in dl.uncompleted_treatments:
+            LOGGER.debug("checking completed %s %s"% (att, treat))
+            found = False #only complete 1 treatment!!
+            for hash_, att_, tx in self.est_widget.pt.tx_hashes:
+                if found:
+                    break 
+                if att == att_ and tx == treat:
+                    LOGGER.debug("att and treat match... checking hashes")
+                    for item in self.est_items:
+                        LOGGER.debug("Checking hashes of item %s"% item)
+                        for tx_hash in item.tx_hashes:
+                            if tx_hash == hash_ and tx_hash.completed:
+                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
+                                tx_hash.completed = False        
+                                self.est_widget.tx_hash_complete(tx_hash)
+                                found = True
+                                break
+                        if found: 
+                            break
+            
+        for att, treat, already_completed in dl.deleted_treatments:
+            LOGGER.debug("checking deleted %s %s"% (att, treat))
+            found = False #only complete 1 treatment!!
+            for hash_, att_, tx in self.est_widget.pt.tx_hashes:
+                if found:
+                    break 
+                if att == att_ and tx == treat:
+                    LOGGER.debug("att and treat match... checking hashes")
+                    for item in self.est_items:
+                        LOGGER.debug("Checking hashes of item %s"% item)
+                        for tx_hash in item.tx_hashes:
+                            if tx_hash == hash_:
+                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
+                                if tx_hash.completed and already_completed:
+                                    #this will reverse the treatment.
+                                    self.est_widget.tx_hash_complete(tx_hash)
+                                item.tx_hashes.remove(tx_hash)
+                                found = True
+                                break
+                        if found: 
+                            break
+            
+        if dl.all_planned:
+            self.completed_checkBox.setCheckState(QtCore.Qt.Unchecked)
+        elif dl.all_completed:
+            self.completed_checkBox.setCheckState(QtCore.Qt.Checked)
+        else:
+            self.completed_checkBox.setCheckState(QtCore.Qt.PartiallyChecked)
+
+        if self.has_no_treatments:
+            self.est_widget.deleteItemWidget(self, False)
+        else:
+            for item in self.est_items:
+                if item.tx_hashes == []:
+                    self.est_widget.ests.remove(item)
+                    self.est_widget.setEstimate(self.est_widget.ests)
+                    
+        self.est_widget.updateTotals()
+
+    @property
+    def has_no_treatments(self):
+        for item in self.est_items:
+            for hash_ in item.tx_hashes:
+                return False
+        return True
 
     def check_first(self):
         '''
         user has tried to toggle the completed check box
         perform logic here first to see if he/she is allowed to do this
         '''
+        LOGGER.debug("EstimateItemWidget.check_first")
         if self.est_items[0].is_exam:
             if self.est_widget.allow_check(self):
                 self.deleteItem()
@@ -334,50 +505,41 @@ class EstimateItemWidget(QtGui.QWidget):
         
         if len(self.est_items) > 1:
             return self._multi_item_check()
-        return self.est_widget.allow_check(self)
+        
+        est_item = self.est_items[0]
+        if est_item.has_multi_txs:
+            return self._multi_tx_check()  
+        else:
+            #if we've got this far, then there is only 1 tx associated.          
+            completing = not self.completed_checkBox.isChecked()
+            return self.est_widget.allow_check(est_item, completing)
 
     def _multi_item_check(self):
-        
         #allow for tri-state!!
-        complete = not (
-            self.completed_checkBox.checkState() == QtCore.Qt.Checked)
+        if len(self.est_items) == 1:
+            return True
+        self.raise_multi_treatment_dialog()
+        return False
         
-        action = "complete" if complete else "reverse"
-        number = len(self.est_items)
-        if number > 1:
-            number_of_relevant_items = 0
-            for item in self.est_items:
-                if item.completed != complete:
-                    number_of_relevant_items += 1
-            if number_of_relevant_items == 1:
-                mystr = "this treatment"
-            else:
-                mystr = "these treatments"
-            result = QtGui.QMessageBox.question(self,
-            "Multiple items",
-            '''There are %d items associated with this Widget.<br />
-            of these, %d would be affected<br />
-            %s %s?'''% (number, number_of_relevant_items, action, mystr),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes )
-            if result == QtGui.QMessageBox.No:
-                return False
-        return True
+    def _multi_tx_check(self):        
+        #allow for tri-state!!
+        self.raise_multi_treatment_dialog()
+        return False
 
     def completed_state_changed(self, *args):
         '''
         a slot for the checkbox state change
         should only happen when this is altered by user (not programatically)
         '''
-        print "completed_state_changed %s"% args
-        complete = self.completed_checkBox.isChecked()
+        LOGGER.debug("EstimateItemWidget.completed_state_changed %s"% args)
+        completed = self.completed_checkBox.isChecked()
         
-        for item in self.est_items:
-            if item.completed != complete:
-                item.completed = complete
-                self.completed_signal.emit(item)
+        for est in self.est_items:
+            for tx_hash in est.tx_hashes:
+                if tx_hash.completed != completed:
+                    tx_hash.completed = completed
+                    self.completed_signal.emit(tx_hash)
 
-        self.checked() #changes the enabled state of buttons etc...
         self.edited_signal.emit()
 
 class _TestParent(QtGui.QWidget):
@@ -397,6 +559,7 @@ class _TestParent(QtGui.QWidget):
         layout.addWidget(widg.ptFee_lineEdit)
         layout.addWidget(widg.completed_checkBox)
         layout.addWidget(widg.delete_pushButton)
+        layout.addWidget(widg.expand_pushButton)
         
         widg.edited_signal.connect(self.sig_catcher)
         widg.completed_signal.connect(self.sig_catcher)

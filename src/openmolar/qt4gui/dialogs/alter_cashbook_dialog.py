@@ -127,8 +127,8 @@ class AlterCashbookDialog(ExtendableDialog):
         code_str = cashbookCodesDict.get(code)
         self.code_cb.setCurrentIndex(self.codestrings.index(code_str))
 
-        pounds = amt/100 
-        pence = (amt- pounds*100)//100
+        pounds = amt // 100 
+        pence = amt % 100
         double_val = float("%s.%s"% (pounds, pence))
         self.amount_sb.setValue(double_val)
         

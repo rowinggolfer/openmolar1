@@ -215,7 +215,7 @@ class Gp17Data(object):
         
     @property
     def pcde(self):
-        pcde = self.pt.pcde
+        pcde = self.pt.pcde.replace(" ","")
         if len(pcde) == 6:
             return "%s %s"% (pcde[:3], pcde[3:])
         return pcde

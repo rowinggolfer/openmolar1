@@ -13,6 +13,8 @@ from openmolar.settings import localsettings
 
 from openmolar.dbtools.appt_prefs import ApptPrefs
 
+LOGGER = logging.getLogger("openmolar")
+
 QUERY = '''SELECT title, fname, sname, dob, cset, dnt1, dnt2
 from patients where serialno = %s'''
 
@@ -70,7 +72,7 @@ class BriefPatient(object):
         return self._appt_memo
 
     def set_appt_memo(self, memo):
-        logging.debug("BriefPatient.set_appt_memo(%s"% memo)
+        LOGGER.debug("BriefPatient.set_appt_memo(%s"% memo)
         db = connect.connect()
         cursor = db.cursor()
         query = 'replace into appt_prefs (serialno, note) values (%s, %s)'

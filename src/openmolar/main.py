@@ -16,12 +16,13 @@ and starts the gui
 '''
 
 import getopt
+import logging
 import sys
 import os
 import hashlib
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
-
+    
 ## a variable to force the first run and database update tools
 FIRST_RUN_TESTING = False
 IGNORE_SCHEMA_CHECK = False
@@ -30,20 +31,7 @@ SHORTARGS = "v"
 LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=",
 "ignore-schema-check"]
 
-import gettext
-lang = os.environ.get("LANG")
-if lang:
-    try:
-        print "trying to install your environment language", lang
-        lang1 = gettext.translation('openmolar', languages=[lang,])
-        lang1.install(unicode=True)
-    except IOError:
-        print "%s not found, using default"% lang
-        gettext.install('openmolar', unicode=True)
-else:
-    #-- on windows.. os.environ.get("LANG") is None
-    print "no language environment found"
-    gettext.install('openmolar', unicode=True)
+LOGGER = logging.getLogger("openmolar")
 
 class LoginError(Exception):
     '''
@@ -55,9 +43,11 @@ def proceed():
     '''
     check db schema, and proceed if all is well
     '''
-    print "checking schema version...",
-
+    # this import will set up gettext and logging
     from openmolar.dbtools import schema_version
+
+    LOGGER.debug("checking schema version...")
+
     sv = schema_version.getVersion()
 
     run_main = False
@@ -345,9 +335,9 @@ def run():
 
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], SHORTARGS, LONGARGS)
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as exc:
         # print help information and exit:
-        print str(err)
+        LOGGER.exception("FATAL ERROR - config file not parseable!")
         # above will print something like "option -foo not recognized"
         sys.exit(2)
 
@@ -380,10 +370,8 @@ def run():
 
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....
-    print "starting openMolar.... using main.py as __main__"
-    print "Qt Version: ", QtCore.QT_VERSION_STR
-    print "PyQt Version: ", QtCore.PYQT_VERSION_STR
-
+    LOGGER.debug("starting openMolar.... using main.py as __main__")
+    
     def determine_path ():
         """Borrowed from wxglade.py"""
         try:
@@ -393,8 +381,9 @@ if __name__ == "__main__":
             retarg = os.path.dirname (os.path.abspath (root))
             return retarg
         except:
-            print "I'm sorry, but something is wrong."
-            print "There is no __file__ variable. Please contact the author."
+            LOGGER.exception(
+            "There is no __file__ variable.\n"
+            "OpenMolar cannot run in this environment")
             sys.exit ()
 
     wkdir = determine_path()

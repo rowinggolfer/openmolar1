@@ -67,19 +67,6 @@
 </referral>
 
 <referral>
-<description>Andrew Huntington</description>
-<surgeon_postal>Dr. Andrew Huntington</surgeon_postal>
-<surgeon_greeting>Andy</surgeon_greeting>
-<address>
-<line>Dingwall Dental and Implant Centre</line> 
-<line>Lockhart House</line>
-<line>Tulloch Street</line>
-<line>Dingwall</line>
-<line>IV15 9JY.</line>
-</address>
-</referral>
-
-<referral>
 <description>Inverness Dental Centre (GA kids..)</description>
 <surgeon_postal>The Community Dental Officer</surgeon_postal>
 <surgeon_greeting>Sir/Madam</surgeon_greeting>
@@ -107,7 +94,7 @@
 <referral>
 <description>Oral Surgery, Dundee</description>
 <surgeon_postal>The Consultant Oral Surgeon</surgeon_postal>
-<surgeon_greeting>Dear Sir/Madam</surgeon_greeting>
+<surgeon_greeting>Sir/Madam</surgeon_greeting>
 <address>
 <line>Department of Oral Surgery</line>
 <line>Dundee Dental Hospital</line>
@@ -119,7 +106,7 @@
 <referral>
 <description>Oral Surgery, Glasgow</description>
 <surgeon_postal>The Consultant Oral Surgeon</surgeon_postal>
-<surgeon_greeting>Dear Sir/Madam</surgeon_greeting>
+<surgeon_greeting>Sir/Madam</surgeon_greeting>
 <address>
 <line>Department of Oral Surgery</line>
 <line>Glasgow Dental Hospital</line>
@@ -127,6 +114,22 @@
 <line>Glasgow</line>
 <line>G2 3JZ.</line>
 </address>
+</referral>
+
+<referral>
+<description>Oral Surgery, Edinburgh</description>
+<surgeon_postal>The Consultant Oral Surgeon</surgeon_postal>
+<surgeon_greeting>Sir/Madam</surgeon_greeting>
+<address>
+<line>Department of Oral Surgery</line>
+<line>Edinburgh Dental Institute</line>
+<line>The University of Edinburgh</line>
+<line>4th Floor, Lauriston Building</line>
+<line>Lauriston Place</line>
+<line>Edinburgh</line>
+<line>EH3 9HA</line>
+</address>
+
 </referral>
 
 </referrals>
