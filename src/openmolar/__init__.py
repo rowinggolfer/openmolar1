@@ -3,7 +3,11 @@ import sys
 import logging
 import gettext
 
-FORMAT = '%(levelname)s {%(filename)s:%(lineno)d} %(funcName)s  - %(message)s'
+if "neil" in os.path.expanduser("~"):
+    FORMAT = \
+    '%(levelname)s {%(filename)s:%(lineno)d} %(funcName)s  - %(message)s'
+else:
+    FORMAT = '%(levelname)s - %(message)s'
 
 stream_handler = logging.StreamHandler()
 formatter = logging.Formatter(FORMAT)
@@ -19,6 +23,8 @@ elif "-v" in sys.argv:
     LOGGER.setLevel(logging.DEBUG)
 else:
     LOGGER.setLevel(logging.INFO)
+
+LOGGER.info("running openmolar base module = %s"% os.path.dirname(__file__))
 
 lang = os.environ.get("LANG")
 if lang:
