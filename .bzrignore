@@ -3,3 +3,4 @@ tmp/*
 builds/*
 dist/*
 MANIFEST
+local_branches/
