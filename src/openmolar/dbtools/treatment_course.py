@@ -15,11 +15,11 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-CURRTRT_ROOT_ATTS = ('xray', 'perio', 'anaes', 'other', 'ndu', 'ndl', 'odu', 
+CURRTRT_ROOT_ATTS = ('xray', 'perio', 'anaes', 'other', 'ndu', 'ndl', 'odu',
 'odl', 'custom', 'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', 'll8', 'll7', 'll6', 'll5',
 'll4', 'll3', 'll2', 'll1', 'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7',
-'lr8') 
+'lr8')
 
 CURRTRT_ATTS=('courseno','xraypl','periopl','anaespl','otherpl',
 'ndupl','ndlpl','odupl','odlpl',"custompl",
@@ -138,15 +138,15 @@ class TreatmentCourse(object):
         self.examd = ''
         self.accd = None
         self.cmpd = None
-        
+
         if self.courseno == 0:
             return
-        
+
         db = connect.connect()
         cursor = db.cursor()
         self.getCurrtrt()
         cursor.close()
-            
+
     def __repr__(self):
         message = "TreatmentCourse for patient %s courseno %s\n"% (
             self.serialno, self.courseno)
@@ -156,14 +156,14 @@ class TreatmentCourse(object):
             if value != "":
                 message += "   %s,%s\n"% (att, value)
         return message
-    
+
     def __cmp__(self, other):
         return cmp(unicode(self), unicode(other))
-    
+
     def getCurrtrt(self):
         db = connect.connect()
         cursor = db.cursor()
-        
+
         cursor.execute(QUERY, (self.serialno, self.courseno))
 
         for value in cursor.fetchall():
@@ -175,28 +175,28 @@ class TreatmentCourse(object):
     @property
     def underTreatment(self):
         return (not self.accd in ("", None) and self.cmpd in ("", None))
-        
+
     @property
     def max_tx_courseno(self):
         db = connect.connect()
         cursor = db.cursor()
-        if cursor.execute( 
-        "select max(courseno) from currtrtmt2 where serialno=%s", 
+        if cursor.execute(
+        "select max(courseno) from currtrtmt2 where serialno=%s",
         (self.serialno,)):
             cno = cursor.fetchone()[0]
         else:
             cno = 0
         cursor.close()
         return cno
-    
+
     @property
     def newer_course_found(self):
         return self.max_tx_courseno > self.courseno
-    
+
     @property
     def has_exam(self):
         return self.examt != "" and self.examd
-    
+
     def setAccd(self, accd):
         '''
         set the acceptance date (with a pydate)
@@ -218,21 +218,21 @@ class TreatmentCourse(object):
                 if self.__dict__[att] != "":
                     return True
         return False
-    
+
     @property
     def tx_hashes(self):
         return self._get_tx_hashes()
-    
+
     @property
     def completed_tx_hashes(self):
         return self._get_tx_hashes(True)
-            
+
     @property
     def planned_tx_hashes(self):
         for tup in self._get_tx_hashes():
             if not tup in self.completed_tx_hashes:
                 yield tup
-        
+
     def _get_tx_hashes(self, completed_only=False):
         '''
         returns a tuple (unique hash, attribute, treatment)
@@ -250,9 +250,9 @@ class TreatmentCourse(object):
             "no exam to be yielded as TreatmentCourse.examt='%s'" % self.examt)
 
         for att in CURRTRT_ROOT_ATTS:
-            treats = self.__dict__[att+"cmp"] 
+            treats = self.__dict__[att+"cmp"]
             if not completed_only:
-                treats += " " + self.__dict__[att+"pl"] 
+                treats += " " + self.__dict__[att+"pl"]
             treat_list = sorted(treats.split(" "))
             prev_tx, count = None, 1
             for tx in treat_list:
@@ -265,7 +265,7 @@ class TreatmentCourse(object):
                     count += 1
                 hash_ = hash("%s %s %s"% (att, count, tx))
                 yield (str(hash_), att, tx+" ")
-    
+
     def get_tx_from_hash(self, hash_):
         '''
         example
@@ -275,9 +275,10 @@ class TreatmentCourse(object):
         for tx_hash in self.tx_hashes:
             if tx_hash[0] == hash_:
                 return tx_hash[1], tx_hash[2]
+        LOGGER.warning("couldn't find treatment %s"% hash_)
         return None, None
-    
-    
+
+
 if __name__ =="__main__":
     '''
     testing stuff

@@ -900,8 +900,20 @@ class patient(object):
         est.tx_hashes = tx_hashes
         
         est.dent = dentid
-
-        self.estimates.append(est)
+        
+        inserted = False
+        for i, existing_est in enumerate(self.estimates):
+            if existing_est.itemcode == est.itemcode:
+                try:
+                    if self.estimates[i+1].itemcode != est.itemcode:
+                        self.estimates.insert(i, est)
+                        inserted = True
+                        break
+                except IndexError:
+                    pass
+        
+        if not inserted:
+            self.estimates.append(est)
 
         return est
 

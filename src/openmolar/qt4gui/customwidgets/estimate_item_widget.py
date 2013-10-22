@@ -24,18 +24,18 @@ class EstimateItemWidget(QtGui.QWidget):
     a class to show one specific item of treatment
     '''
     MONEY_WIDTH = 80
-    
+
     separate_signal = QtCore.pyqtSignal(object)
     compress_signal = QtCore.pyqtSignal(object)
     completed_signal = QtCore.pyqtSignal(object)
     delete_signal = QtCore.pyqtSignal(object)
     edited_signal = QtCore.pyqtSignal()
-    
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        
+
         self.est_widget = parent
-        
+
         self.number_label = QtGui.QLabel()
         self.number_label.setFixedWidth(40)
         self.itemCode_label = QtGui.QLabel()
@@ -52,7 +52,7 @@ class EstimateItemWidget(QtGui.QWidget):
         self.completed_checkBox = ConfirmingCheckBox(self)
         self.completed_checkBox.setMaximumWidth(30)
         self.completed_checkBox.check_first = self.check_first
-        
+
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/eraser.png"),
             QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -60,9 +60,9 @@ class EstimateItemWidget(QtGui.QWidget):
         self.delete_pushButton.setMaximumWidth(30)
         self.delete_pushButton.setIcon(icon)
         self.delete_pushButton.setFlat(True)
-            
+
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":icons/expand.svg"), 
+        icon.addPixmap(QtGui.QPixmap(":icons/expand.svg"),
             QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.expand_pushButton = QtGui.QPushButton()
         self.expand_pushButton.setIcon(icon)
@@ -71,18 +71,18 @@ class EstimateItemWidget(QtGui.QWidget):
         self.expand_pushButton.setSizePolicy(QtGui.QSizePolicy(
             QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
             )
-        
+
         self.examine_icon = QtGui.QIcon()
         self.examine_icon.addPixmap(QtGui.QPixmap(":/search.png"),
             QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        
-        
+
+
         self.validators()
         self.feesLinked = True
         self.est_items = []
         self.itemCode = ""
         self.signals()
-        
+
     def components(self):
         '''
         returns all the sub widgets.
@@ -90,7 +90,7 @@ class EstimateItemWidget(QtGui.QWidget):
         return (
         self.number_label,
         self.itemCode_label,
-        self.description_lineEdit, 
+        self.description_lineEdit,
         self.cset_lineEdit,
         self.fee_lineEdit,
         self.chain,
@@ -110,7 +110,7 @@ class EstimateItemWidget(QtGui.QWidget):
         break the chain if the course type is not P
         '''
         self.chain.setValue(cset == "P")
-    
+
     def addItem(self, item):
         self.est_items.append(item)
         self.itemCode_label.setToolTip(self.toolTip())
@@ -143,7 +143,7 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         fee, ptfee, number = 0, 0, 0
         all_planned, all_completed = True, True
-        
+
         for item in self.est_items:
             if item.number:
                 number += item.number
@@ -151,19 +151,19 @@ class EstimateItemWidget(QtGui.QWidget):
             ptfee += item.ptfee
             self.setDescription(item.description)
             self.setItemCode(item.itemcode)
-            
+
             self.setCset(item.csetype)
             self.setChain(item.csetype)
 
             all_planned = all_planned and not item.completed
             all_completed = all_completed and item.completed
-        
+
         n_items = len(self.est_items)
         if n_items > 1:
             #self.expand_pushButton.setText("%d %s"% (n_items, _("items")))
             if all_planned:
                 self.setCompleted(0)
-            elif all_completed:                
+            elif all_completed:
                 self.setCompleted(2)
             else:
                 self.setCompleted(1)
@@ -172,7 +172,7 @@ class EstimateItemWidget(QtGui.QWidget):
             if n_txs >1:
                 self.expand_pushButton.setIcon(self.examine_icon)
             self.setCompleted(item.completed)
-            
+
         self.setNumber(number)
         self.setFee(fee)
         self.setPtFee(ptfee)
@@ -182,25 +182,25 @@ class EstimateItemWidget(QtGui.QWidget):
         elif self.can_expand:
             self.delete_pushButton.hide()
         self.expand_pushButton.setVisible(self.can_expand)
-        
+
     @property
     def can_expand(self):
         return self.is_seperable or self.has_multi_treatments
-    
+
     @property
     def is_seperable(self):
         return len(self.est_items) > 1
-            
+
     @property
     def has_multi_treatments(self):
         return len(self.est_items[0].tx_hashes) > 1
-        
+
     def validators(self):
         '''
         set validators to prevent junk data being entered by user
         '''
         val = QtGui.QDoubleValidator(0, 3000, 2, self)
-        
+
         self.fee_lineEdit.setValidator(val)
         self.ptFee_lineEdit.setValidator(val)
 
@@ -218,7 +218,7 @@ class EstimateItemWidget(QtGui.QWidget):
         self.ptFee_lineEdit.textEdited.connect(self.update_ptFee)
         self.completed_checkBox.new_state_signal.connect(
                 self.completed_state_changed)
-                
+
     def update_cset(self, arg):
         '''
         csetype has been altered, alter ALL underying data
@@ -270,7 +270,7 @@ class EstimateItemWidget(QtGui.QWidget):
             item.ptfee = newVal / len(self.est_items)
         if userPerforming:
             self.edited_signal.emit()
-        
+
     def setNumber(self, arg):
         '''
         update number label
@@ -283,7 +283,7 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         if len(self.est_items) > 1:
             arg += " etc"
-        
+
         self.description_lineEdit.setText(arg)
 
     def setItemCode(self, arg):
@@ -319,14 +319,15 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         function so that external calls can alter this widget
         '''
-        LOGGER.debug("est_item_widget.setCompleted %s"% arg)
+        #LOGGER.debug("est_item_widget.setCompleted %s"% arg)
         self.completed_checkBox.setCheckState(arg) #ed(bool(arg))
-        self.enable_components()
+        #self.enable_components()
 
     def deleteItem(self):
         '''
         a slot for the delete button press
         '''
+        LOGGER.debug("EstimateItemWidget calling for deletion")
         self.delete_signal.emit(self)
 
     def expand_but_clicked(self):
@@ -336,22 +337,20 @@ class EstimateItemWidget(QtGui.QWidget):
             self.multi_treatment_info_dialog()
         else:
             self.compress_signal.emit(self.itemCode)
-            
+
     def enable_components(self):
         '''
         this is a slot called when the completed checkbox changes
         '''
-        LOGGER.debug("EstimateItemWidget.enable_components")
-        return
         state = (self.completed_checkBox.checkState() == 0 or
-        (self.completed_checkBox.checkState() == 1 and 
+        (self.completed_checkBox.checkState() == 1 and
         len(self.est_items) == 1) )
-        
+
         self.fee_lineEdit.setEnabled(state)
         self.ptFee_lineEdit.setEnabled(state)
         self.chain.setEnabled(state)
         self.delete_pushButton.setEnabled(state)
-   
+
     def multi_treatment_info_dialog(self):
         '''
         show treatments for this item
@@ -362,8 +361,8 @@ class EstimateItemWidget(QtGui.QWidget):
             tx_hashes += item.tx_hashes
         assert len(tx_hashes) >0 , \
             "no treatments found.. this shouldn't happen"
-        
-        txs = []  
+
+        txs = []
         for hash_, att, tx in self.est_widget.pt.tx_hashes:
             for tx_hash in tx_hashes:
                 if hash_ == tx_hash:
@@ -379,10 +378,10 @@ class EstimateItemWidget(QtGui.QWidget):
         _("There are multiple treatments associated with this estimate item"),
         list_,
         _("All must be completed for the full charge to be applied"))
-        
+
         QtGui.QMessageBox.information(self, _("information"), message)
 
-    
+
     @property
     def has_no_treatments(self):
         for item in self.est_items:
@@ -400,15 +399,15 @@ class EstimateItemWidget(QtGui.QWidget):
             if self.est_widget.allow_check(self):
                 self.deleteItem()
             return
-        
+
         if len(self.est_items) > 1:
             return self._multi_item_check()
-        
+
         est_item = self.est_items[0]
         if est_item.has_multi_txs:
-            return self._multi_tx_check()  
+            return self._multi_tx_check()
         else:
-            #if we've got this far, then there is only 1 tx associated.          
+            #if we've got this far, then there is only 1 tx associated.
             completing = not self.completed_checkBox.isChecked()
             return self.est_widget.allow_check(est_item, completing)
 
@@ -418,8 +417,8 @@ class EstimateItemWidget(QtGui.QWidget):
             return True
         self.est_widget.raise_multi_treatment_dialog(self)
         return False
-        
-    def _multi_tx_check(self):        
+
+    def _multi_tx_check(self):
         #allow for tri-state!!
         self.est_widget.raise_multi_treatment_dialog(self)
         return False
@@ -431,7 +430,7 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         LOGGER.debug("EstimateItemWidget.completed_state_changed %s"% args)
         completed = self.completed_checkBox.isChecked()
-        
+
         for est in self.est_items:
             for tx_hash in est.tx_hashes:
                 if tx_hash.completed != completed:
@@ -443,10 +442,10 @@ class EstimateItemWidget(QtGui.QWidget):
 class _TestParent(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        
-        layout = QtGui.QHBoxLayout(self) 
+
+        layout = QtGui.QHBoxLayout(self)
         layout.setMargin(0)
-        
+
         widg = EstimateItemWidget(self)
         layout.addWidget(widg.number_label)
         layout.addWidget(widg.itemCode_label)
@@ -458,31 +457,31 @@ class _TestParent(QtGui.QWidget):
         layout.addWidget(widg.completed_checkBox)
         layout.addWidget(widg.delete_pushButton)
         layout.addWidget(widg.expand_pushButton)
-        
+
         widg.edited_signal.connect(self.sig_catcher)
         widg.completed_signal.connect(self.sig_catcher)
-    
+
         self.edited_signal = widg.edited_signal
-    
+
     def allow_check(self, est_item_widget):
         return True
-    
+
     def sig_catcher(self, *args):
         '''test procedure'''
         print "signal caught argument=", args
-        
+
 if __name__ == "__main__":
-        
+
     import sys
 
     app = QtGui.QApplication(sys.argv)
 
     form = QtGui.QMainWindow()
-    
+
     widg = _TestParent()
-    
+
     form.setCentralWidget(widg)
     form.show()
-    
-    
+
+
     sys.exit(app.exec_())

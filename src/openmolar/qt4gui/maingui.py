@@ -125,8 +125,8 @@ from openmolar.qt4gui.customwidgets import perioChartWidget
 from openmolar.qt4gui.customwidgets import estimate_widget
 from openmolar.qt4gui.customwidgets import notification_widget
 
-logging.basicConfig(level = logging.INFO)
 LOGGER = logging.getLogger("openmolar")
+LOGGER.setLevel(logging.INFO)
 
 class OpenmolarGui(QtGui.QMainWindow):
     fee_table_editor = None
@@ -145,7 +145,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         #--is used to check for state.
         #--make a deep copy to check for changes
         self.pt = patient_class.patient(0)
-        
+
         self.selectedChartWidget = "st" #other values are "pl" or "cmp"
         self.editPageVisited = False
         self.forum_notified = False
@@ -227,7 +227,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.fee_table_editor.show()
             self.fee_table_editor.raise_()
             self.fee_table_editor.check_close(event)
-            
+
         utilities.deleteTempFiles()
         self.emit(QtCore.SIGNAL("closed")) #close the feescale tester
 
@@ -350,7 +350,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         #-- add a header to the estimates page
         #self.ui.estWidget = estimateWidget.estWidget()
         self.ui.estWidget = estimate_widget.EstimateWidget()
-        
+
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
         #--history
@@ -363,7 +363,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.details_frame.layout().addWidget(self.ui.notificationWidget)
 
         #cashbook browser
-    
+
         self.ui.cashbookTextBrowser = cashbook_module.CashBookBrowser(self)
         layout = QtGui.QVBoxLayout(self.ui.cashbook_placeholder_widget)
         layout.setMargin(0)
@@ -673,7 +673,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self.pt.addr3, self.pt.town, self.pt.county,
                 self.pt.pcde, self.pt.tel1)
             LOGGER.debug("details are %s"% str(localsettings.LAST_ADDRESS))
-            
+
             #print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
@@ -709,7 +709,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self.load_editpage()
                 self.editPageVisited = False
             self.update_family_label()
-        
+
 
     def gotoDefaultTab(self):
         '''
@@ -733,7 +733,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             html_ = reception_summary.html(self.pt)
             self.ui.reception_textBrowser.setText(html_)
             self.pt_diary_widget.layout_ptDiary()
-            note = formatted_notes.rec_notes(self.pt.notes_dict, 
+            note = formatted_notes.rec_notes(self.pt.notes_dict,
                 self.pt.treatment_course.accd)
             self.ui.recNotes_webView.setHtml(note)
 
@@ -820,7 +820,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 print "unknown dentist number", self.pt.dnt2
                 message = _("unknown course dentist - please correct this")
                 self.advise(message, 2)
-    
+
     def enterNewPatient(self):
         '''
         called by the user clicking the new patient button
@@ -1130,7 +1130,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         if self.enteringNewPatient() or serialno in (0, None):
             return
-    
+
         if (self.pt and serialno == self.pt.serialno and not newPatientReload):
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.advise(_("Patient already loaded"))
@@ -1249,7 +1249,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         self.ui.contract_tabWidget.setCurrentIndex(pos)
         #--update bpe
-        
+
         labeltext = "currently editing  %s %s %s - (%s)"% (
             self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
         self.loadedPatient_label.setText(labeltext)
@@ -1258,13 +1258,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.ui.tabWidget.currentIndex() == 4:  #clinical summary
             self.ui.summaryChartWidget.update()
         self.ui.debugBrowser.setText("")
-        
+
         self.update_family_label()
         self.medalert()
         if localsettings.station == "surgery":
             self.callXrays()
         self.getmemos()
-        
+
         for warning in self.pt.load_warnings:
             self.advise(warning, 1)
 
@@ -1340,20 +1340,20 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if self.pt.serialno == 0:
             self.ui.detailsBrowser.setText("")
             return
-        
-        self.pt.apply_fees()        
+
+        self.pt.apply_fees()
 
         Saved = (self.pt.dbstate.fees == self.pt.fees)
         details = patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setHtml(details)
         self.ui.detailsBrowser.update()
         self.ui.closeTx_pushButton.setText(_("Close Course"))
-        
+
         self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
         self.ui.estimate_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.completed_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.closeTx_pushButton.setEnabled(self.pt.underTreatment)
-        
+
         if self.pt.underTreatment:
             self.ui.estimate_groupBox.setTitle(
             "Current Course- started %s"% (
@@ -1643,7 +1643,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         dl = NHSFormsConfigDialog(self)
         dl.exec_()
-        
+
     def unsavedChanges(self):
         '''
         important function, checks for changes since the patient was loaded
@@ -1660,7 +1660,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
         len(self.pt.HIDDENNOTES) != 0):
             changes.append("New Notes")
-            
+
         if "treatment_course" in changes:
             course = self.pt.treatment_course
             db_course = self.pt.dbstate.treatment_course
@@ -1668,7 +1668,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                 daybook_module.xrayDates(self, course.xraycmp)
             if course.periocmp != db_course.periocmp:
                 daybook_module.perioDates(self, course.periocmp)
-            
+
         return changes
 
     def save_changes(self, leavingRecord=True):
@@ -1692,9 +1692,9 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
                     self.pt.getEsts()
                     if self.ui.tabWidget.currentIndex() == 7:
                         self.load_newEstPage()
-                    
+
                 self.pt.take_snapshot()
-            
+
             else:
                 self.advise("Error applying changes... please retry", 2)
                 print "error saving changes to record %s"%self.pt.serialno,
@@ -1760,7 +1760,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
         self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)
-        
+
         for i in (0, 1, 2, 5, 6, 7, 8, 9):
             if self.ui.tabWidget.isTabEnabled(i) != arg:
                 self.ui.tabWidget.setTabEnabled(i, arg)
@@ -1890,7 +1890,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
             self.load_clinicalSummaryPage()
             self.updateHiddenNotesLabel()
         self.updateDetails()
-        
+
     def showHygDialog(self):
         '''
         call a smart dialog which will perform hygenist treatment
@@ -1901,7 +1901,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         dl = HygTreatWizard(self)
         dl.perform_tx()
         self.updateDetails()
-        
+
     def addXrayItems(self):
         '''
         add Xray items to the treatment plan
@@ -1931,7 +1931,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         add custom items to the treatment plan
         '''
         add_tx_to_plan.customAdd(self)
-    
+
     def feeScaleTreatAdd(self, item, subindex):
         '''
         add an item directly from the feescale
@@ -1965,7 +1965,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         estwidget has sent a signal that an item is marked as completed.
         '''
         complete_tx.tx_hash_complete(self, tx_hash)
-    
+
     def complete_tx(self, att, tx):
         '''
         estwidget has sent a signal that an item is marked as completed.
@@ -1978,7 +1978,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         reversing
         '''
         complete_tx.tx_hash_reverse(self, tx_hash)
-    
+
     def reverse_tx(self, att, tx):
         '''
         estwidget has sent a signal that an item is marked as completed.
@@ -2343,12 +2343,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         _("use the checkboxes on the notes tab to control what is printed."),
         1)
         om_printing.printNotes(self)
-        
+
     def printMH(self):
         om_printing.print_mh_form(self)
 
     def print_mh_forms(self, serialnos):
-        om_printing.print_mh_forms(serialnos, self)        
+        om_printing.print_mh_forms(serialnos, self)
 
     def childsmile_button_clicked(self):
         '''
@@ -2647,12 +2647,12 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         QtCore.SIGNAL("clicked()"), self.addCustomItem)
 
         self.ui.estWidget.complete_tx_signal.connect(self.complete_tx)
-        self.ui.estWidget.reverse_tx_signal.connect(self.reverse_tx)        
+        self.ui.estWidget.reverse_tx_signal.connect(self.reverse_tx)
         self.ui.estWidget.complete_txhash_signal.connect(self.complete_tx_hash)
         self.ui.estWidget.reverse_txhash_signal.connect(self.reverse_tx_hash)
-        
+
         self.ui.estWidget.updated_fees_signal.connect(self.updateDetails)
-        
+
 
         QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
@@ -2973,7 +2973,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         self.pt_diary_widget.preferences_changed.connect(
             self.appt_prefs_changed)
-            
+
 
     def start_scheduling(self):
         self.diary_widget.schedule_controller.set_patient(self.pt)
@@ -3033,14 +3033,14 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
     def check_sex(self):
         '''
-        when the title field is edited, make assumptions about the patient's 
+        when the title field is edited, make assumptions about the patient's
         sex
         '''
         if self.ui.titleEdit.text().toUpper() in ("MISS", "MRS"):
             self.ui.sexEdit.setCurrentIndex(1)
         elif self.ui.titleEdit.text().toUpper() in ("MR", "MASTER"):
-            self.ui.sexEdit.setCurrentIndex(0)        
-        
+            self.ui.sexEdit.setCurrentIndex(0)
+
     def raise_address_dialog(self):
         '''
         raise the dialog for the last known address
@@ -3048,7 +3048,7 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         dl = AutoAddressDialog(self)
         if dl.exec_():
             dl.apply()
-    
+
     def raise_family_dialog(self):
         '''
         raise the dialog for family management
@@ -3056,57 +3056,57 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         dl = FamilyManageDialog(self)
         if dl.exec_():
             dl.apply()
-    
+
     def update_family_label(self):
         message_2 = u"&%s"% _("Relatives")
         if self.pt.familyno:
             message = u"%s %s - <b>%d %s</b>"% (
-                _("Family ID"), 
+                _("Family ID"),
                 self.pt.familyno,
                 self.pt.n_family_members,
                 _("Member(s)")
                 )
             message_2 += " (%d)"% (self.pt.n_family_members-1)
-                
+
         else:
             message = _("Not a member of a known family")
-        
+
         self.ui.family_group_label.setText(message)
-        
+
         self.ui.relatedpts_pushButton.setText(message_2)
-        
+
     def send_email(self):
         if self.sender == self.ui.email2_button:
             email = self.ui.email2Edit.text()
         else:
             email = self.ui.email1Edit.text()
         webbrowser.open("mailto:%s"% email)
-    
+
     def load_fee_tables(self):
         localsettings.loadFeeTables()
         for warning in localsettings.FEETABLES.warnings:
             self.advise(u"<b>%s</b><hr />%s"% (
             _("error loading feetable"), warning)
             ,2)
-    
+
     def hide_rare_feescale_items(self, bool):
         #TODO - this could actually have 3 levels.
         if bool:
             level = 1
         else:
             level = 0
-        fee_table_model.HIDE_RARE_CODES = level            
+        fee_table_model.HIDE_RARE_CODES = level
         fees_module.loadFeesTable(self)
-        
+
     def reload_feescales(self):
         self.advise(_("Reloading feescales from database"))
         localsettings.loadFeeTables()
         fees_module.loadFeesTable(self)
-        
+
     def advanced_tx_planning(self):
         dl = AdvancedTxPlanningDialog(self)
         dl.exec_()
-        
+
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
         PyQt4 prints unhandled exceptions to stdout and carries on regardless
@@ -3137,7 +3137,7 @@ if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     LOGGER.warning("dev mode in use - verbose logging")
     os.chdir(os.path.expanduser("~"))
-    
+
     LOGGER.debug("Qt Version: %s"% QtCore.QT_VERSION_STR)
     LOGGER.debug("PyQt Version: %s"% QtCore.PYQT_VERSION_STR)
     newapp = QtGui.QApplication(sys.argv)

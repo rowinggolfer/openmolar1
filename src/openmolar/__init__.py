@@ -3,9 +3,15 @@ import sys
 import logging
 import gettext
 
-logging.basicConfig(level=logging.DEBUG)
+FORMAT = '%(levelname)s {%(filename)s:%(lineno)d} %(funcName)s  - %(message)s'
+
+stream_handler = logging.StreamHandler()
+formatter = logging.Formatter(FORMAT)
+stream_handler.setFormatter(formatter)
+#logging.basicConfig(level = logging.INFO, format=FORMAT)
 
 LOGGER = logging.getLogger("openmolar")
+LOGGER.addHandler(stream_handler)
 
 if "-q" in sys.argv:
     LOGGER.setLevel(logging.WARNING)
@@ -13,7 +19,7 @@ elif "-v" in sys.argv:
     LOGGER.setLevel(logging.DEBUG)
 else:
     LOGGER.setLevel(logging.INFO)
-    
+
 lang = os.environ.get("LANG")
 if lang:
     try:

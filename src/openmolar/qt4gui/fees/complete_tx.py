@@ -29,7 +29,7 @@ LOGGER = logging.getLogger("openmolar")
 def reverse_txs(om_gui, treatments):
     LOGGER.debug("reverse_tx.reverse_txs, %s"% str(treatments))
     pt = om_gui.pt
-    
+
     if len(treatments) > 1:
         txs = []
         for att, treat in treatments:
@@ -38,10 +38,10 @@ def reverse_txs(om_gui, treatments):
         if not dl.exec_():
             return
         treatments = dl.uncompleted_treatments
-    
+
     for att, treatment in treatments:
         completed = pt.treatment_course.__dict__["%scmp"% att]
-        
+
         treat = treatment.strip(" ")
         count = completed.split(" ").count(treat)
         LOGGER.debug(
@@ -56,12 +56,12 @@ def complete_txs(om_gui, treatments):
     complete tooth treatment
     #args is a list - ["ul5","MOD","RT",]
     args is a list - [("ul5","MOD"),("ul5", "RT"), ("perio", "SP")]
-        
+
     '''
     LOGGER.debug("complete_tx.chartComplete, %s"% str(treatments))
-    
+
     pt = om_gui.pt
-    
+
     if len(treatments) > 1:
         txs = []
         for att, treat in treatments:
@@ -71,11 +71,11 @@ def complete_txs(om_gui, treatments):
         if not dl.exec_():
             return
         treatments = dl.completed_treatments
-    
+
     for att, treatment in treatments:
         existingcompleted = pt.treatment_course.__dict__["%scmp"% att]
         newcompleted = existingcompleted + treatment
-        
+
         treat = treatment.strip(" ")
         count = newcompleted.split(" ").count(treat)
         LOGGER.debug(
@@ -84,14 +84,14 @@ def complete_txs(om_gui, treatments):
         tx_hash = TXHash(hash_)
 
         tx_hash_complete(om_gui, tx_hash)
-        
+
 def tx_hash_complete(om_gui, tx_hash):
     '''
     reponds to a signal when the user completes an item of treatment by
     checking a checkbox on the estwidget
     '''
     LOGGER.debug("tx_hash_complete %s"% tx_hash)
-    
+
     pt = om_gui.pt
     found = False
     for hash_, att, treat_code in pt.tx_hashes:
@@ -114,25 +114,25 @@ def tx_hash_complete(om_gui, tx_hash):
 
                 pt.addHiddenNote(
                     "chart_treatment", "%s %s"% (toothName, treat_code))
-            
+
             elif att in ("xray", "perio"):
                 pt.addHiddenNote("%s_treatment"%att, treat_code)
 
             else:
                 pt.addHiddenNote("treatment", treat_code)
-        
+
             break
-        
+
     if not found:
         msg = "Error moving %s from plan to completed"% tx_hash
         om_gui.advise("<p>%s</p><hr />This shouldn't happen!"% msg, 2)
         return
-    
+
     for estimate in pt.estimates:
         for est_tx_hash in estimate.tx_hashes:
             if est_tx_hash == tx_hash:
                 est_tx_hash.completed = True
-                
+
     om_gui.updateHiddenNotesLabel()
     om_gui.ui.estWidget.resetEstimate()
     om_gui.updateDetails()
@@ -143,16 +143,16 @@ def tx_hash_reverse(om_gui, tx_hash):
     checking a checkbox on the estwidget
     '''
     LOGGER.debug("complete_tx.tx_hash_reverse %s"% tx_hash)
-    
+
     pt = om_gui.pt
     found = False
     for hash_, att, treat_code in pt.tx_hashes:
         LOGGER.debug("comparing %s with %s"% (hash_, tx_hash))
         if hash_ == tx_hash:
             found = True
-            
+
             LOGGER.debug("MATCH!")
-            
+
             completed = pt.treatment_course.__dict__[att + "cmp"
                 ].replace(treat_code, "", 1)
             pt.treatment_course.__dict__[att + "cmp"] = completed
@@ -176,19 +176,18 @@ def tx_hash_reverse(om_gui, tx_hash):
             else:
                 pt.addHiddenNote("treatment", treat_code,
                     attempt_delete=True)
-            
+
             break
-    
+
     if not found:
-        msg = "Error moving %s from completed to plan"% est_item.description
+        msg = "Error moving %s from completed to plan"% tx_hash
         om_gui.advise("<p>%s</p><p>This shouldn't happen</p>"% msg, 1)
 
     for estimate in pt.estimates:
         for est_tx_hash in estimate.tx_hashes:
             if est_tx_hash == tx_hash:
                 est_tx_hash.completed = False
-    
+
     om_gui.updateHiddenNotesLabel()
     om_gui.ui.estWidget.resetEstimate()
     om_gui.updateDetails()
-    
