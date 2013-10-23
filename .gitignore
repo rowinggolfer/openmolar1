@@ -1,4 +1,5 @@
-#src/openmolar/settings/_version.py
+*.pyc
+*~
 tmp/*
 builds/*
 dist/*
