@@ -33,6 +33,7 @@ from openmolar.qt4gui.appointment_gui_modules import pt_diary_treemodel
 
 from openmolar.qt4gui.compiled_uis import Ui_patient_diary
 from openmolar.qt4gui.compiled_uis import Ui_specify_appointment
+from openmolar.qt4gui.compiled_uis import Ui_appointment_length
 
 from openmolar.qt4gui.dialogs import appt_wizard_dialog
 from openmolar.qt4gui.dialogs import appt_prefs_dialog
@@ -210,6 +211,20 @@ class PtDiaryWidget(QtGui.QWidget):
 
         ## pass on a signal to synchronise other widgets if necessary
         self.appointment_selected.emit(appt)
+
+    def oddApptLength(self):
+        '''
+        this is called from within the a dialog when the appointment lengths
+        offered aren't enough!!
+        '''
+        Dialog = QtGui.QDialog(self)
+        dl = Ui_appointment_length.Ui_Dialog()
+        dl.setupUi(Dialog)
+        if Dialog.exec_():
+            hours = dl.hours_spinBox.value()
+            mins = dl.mins_spinBox.value()
+            return (hours, mins)
+
 
     def newAppt_pushButton_clicked(self):
         '''

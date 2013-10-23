@@ -47,7 +47,6 @@ from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.tools import apptTools
 
 from openmolar.qt4gui.compiled_uis import Ui_diary_widget
-from openmolar.qt4gui.compiled_uis import Ui_appointment_length
 
 from openmolar.qt4gui.customwidgets.schedule_control \
     import DiaryScheduleController
@@ -81,7 +80,7 @@ class DiaryWidget(QtGui.QWidget):
     pt_diary_changed = QtCore.pyqtSignal(object)
     bring_to_front = QtCore.pyqtSignal()
     print_mh_signal = QtCore.pyqtSignal(object)
-    
+
     alterAday_clipboard = [] #clipboard used by the alterAday dialog
     alterAday_clipboard_date = None
 
@@ -367,19 +366,6 @@ class DiaryWidget(QtGui.QWidget):
         '''
         self.makeAppt(self.schedule_controller.appointment_model.currentAppt,
             slot)
-
-    def oddApptLength(self):
-        '''
-        this is called from within the a dialog when the appointment lengths
-        offered aren't enough!!
-        '''
-        Dialog = QtGui.QDialog(self)
-        dl = Ui_appointment_length.Ui_Dialog()
-        dl.setupUi(Dialog)
-        if Dialog.exec_():
-            hours = dl.hours_spinBox.value()
-            mins = dl.mins_spinBox.value()
-            return (hours, mins)
 
     def begin_makeAppt(self):
         '''
