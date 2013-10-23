@@ -38,11 +38,13 @@ def getFeesFromEst(om_gui, hash_):
     '''
     iterate through the ests... find this item
     '''
+    LOGGER.debug("getting a daybook fee for treatment id %s"% hash_)
     for est in om_gui.pt.estimates:
         for tx_hash in est.tx_hashes:
-            if hash_ == tx_hash:
-                return (est.fee, est.ptfee)
-    return (0,0)
+            if hash_ == tx_hash.hash:
+                return (est.interim_fee, est.interim_pt_fee)
+    LOGGER.debug("NO MATCH!")
+    return None
 
 def takePayment(om_gui):
     '''
@@ -70,13 +72,13 @@ def takePayment(om_gui):
 
         if cashbook.paymenttaken(paymentPt.serialno, name, dent,paymentPt.cset,
         dl.tx_cash, dl.tx_cheque, dl.tx_card,
-        dl.sundry_cash, dl.sundry_cheque, dl.sundry_card, 
+        dl.sundry_cash, dl.sundry_cheque, dl.sundry_card,
         dl.hdp, dl.other, dl.refund):
 
             paymentPt.addHiddenNote("payment",
             " treatment %s sundries %s"% (
                 dl.tx_total_text, dl.sundry_total_text))
-                
+
             om_gui.updateHiddenNotesLabel()
 
             if om_gui.pt.serialno != 0:
@@ -132,15 +134,15 @@ def loadFeesTable(om_gui):
     except AttributeError:
         localsettings.loadFeeTables()
         tableKeys = localsettings.FEETABLES.tables.keys()
-        
+
     om_gui.feestableLoaded = True
     i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
-    
+
     tableKeys = localsettings.FEETABLES.tables.keys()
     tableKeys.sort()
     om_gui.fee_models = []
     om_gui.ui.chooseFeescale_comboBox.clear()
-    
+
     for key in tableKeys:
         table = localsettings.FEETABLES.tables[key]
         model = fee_table_model.treeModel(table)
@@ -149,10 +151,10 @@ def loadFeesTable(om_gui):
 
     text = u"%d %s"%(len(om_gui.fee_models), _("Fee Scales Available"))
     om_gui.ui.feescales_available_label.setText(text)
-    
+
     if i != -1:
         om_gui.ui.chooseFeescale_comboBox.setCurrentIndex(i)
-        
+
 
 def feetester(om_gui):
     '''

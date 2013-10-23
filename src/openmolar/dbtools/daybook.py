@@ -31,15 +31,15 @@ def add(sno, cset, dent, trtid, t_dict, fee, ptfee):
     misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
     values (DATE(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
-    values = (sno, cset, dent, trtid, t_dict["diagn"], t_dict["perio"], 
-    t_dict["anaes"], t_dict["misc"], t_dict["ndu"], t_dict["ndl"], 
-    t_dict["odu"], t_dict["odl"], t_dict["other"], t_dict["chart"], 
+    values = (sno, cset, dent, trtid, t_dict["diagn"], t_dict["perio"],
+    t_dict["anaes"], t_dict["misc"], t_dict["ndu"], t_dict["ndl"],
+    t_dict["odu"], t_dict["odl"], t_dict["other"], t_dict["chart"],
     fee, ptfee, 0)
 
-    LOGGER.debug('''updating daybook with the following values: 
-        %s %s %s %s %s %s %s %s'''% (
+    LOGGER.debug('updating daybook with the following values: '
+        '%s %s %s %s %s %s %s %s'% (
         sno, cset, dent, trtid, t_dict, fee, ptfee, 0))
-    
+
     cursor.execute(query, values)
 
     cursor.close()
@@ -165,6 +165,6 @@ def details(regdent, trtdent, startdate, enddate):
 
 if __name__ == "__main__":
     localsettings.initiate()
-    
+
     for combo in (("*ALL*", "NW"), ("NW", "AH"), ("NW", "NW")):
         r = details(combo[0], combo[1], QDate(2008,10,31), QDate(2008,11,11))

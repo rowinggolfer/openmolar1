@@ -57,10 +57,10 @@ def updateDaybook(om_gui):
     feesa = 0         #fee
     feesb = 0         #ptfee
     writeNeeded = False
-    
-    is_new_course = (om_gui.pt.treatment_course.courseno != 
+
+    is_new_course = (om_gui.pt.treatment_course.courseno !=
         om_gui.pt.dbstate.treatment_course.courseno)
-    
+
     for att in CURRTRT_ATTS:
         if re.match("examt|.*cmp$", att):
             newcmps = om_gui.pt.treatment_course.__dict__[att].split(" ")
@@ -86,7 +86,7 @@ def updateDaybook(om_gui):
                     key = "exam"
                 else:
                     key = re.sub("cmp$", "", att)
-                    
+
                 if key in daybookdict.keys():
                     daybookdict[key] += "%s "% treatment
                 elif key in ("xray", "exam"):
@@ -98,10 +98,10 @@ def updateDaybook(om_gui):
                     daybookdict["chart"] += "%s %s "% (key.upper(), treatment)
 
                 count = orig_newcmps.count(treatment)
-                
-                hash_ = hash("%s %s %s"%(key, count, treatment))
+
+                hash_ = str(hash("%s %s %s"%(key, count, treatment)))
                 fees = fees_module.getFeesFromEst(om_gui, hash_)
-                
+
                 if fees:
                     feesa += fees[0]
                     feesb += fees[1]

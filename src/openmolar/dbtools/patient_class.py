@@ -780,11 +780,11 @@ class patient(object):
             new_value = self.__dict__.get(att, "")
             db_value = self.dbstate.__dict__.get(att, "")
             if  new_value != db_value:
-                LOGGER.debug("PT DBSTATE ALTERED - %s"% att)
-                if att != "treatment_course":
-                    LOGGER.debug(
-                    "  OLD '%s' NEW - '%s'"% (db_value, new_value))
-
+                message = "Altered pt.%s"% att.ljust(20)
+                if att not in ("treatment_course", "estimates"):
+                    message += (
+                    " ORIG = '%s' NEW = '%s'"% (db_value, new_value))
+                LOGGER.debug(message)
                 changes.append(att)
         return changes
 
