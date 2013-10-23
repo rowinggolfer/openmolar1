@@ -21,18 +21,18 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.ptfeelist = []
         self.description = ""
         self.itemcode = ""
-        
+
     def setNumber(self, arg):
         self.spinBox.setValue(arg)
 
     def setItem(self, itemcode):
         self.itemcode = itemcode
-    
+
     def setDescription(self, description):
         self.description = description
         self.label.setText("%s (%s)"% (self.description, self.itemcode))
 
-        
+
 class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
     '''
     a custom dialog to offer a range of treatments for selection
@@ -44,11 +44,11 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
         for usercode in usercodes:
             item = pt.getFeeTable().getItemCodeFromUserCode(usercode)
             item_description = pt.getFeeTable().getItemDescription(item)
-            
+
             self.items.append((0, item, item_description,usercode))
         self.pt = pt
         self.showItems()
-        
+
     def use_completed_messages(self):
         '''
         if called, the dialog shows different messages, indicating to the
@@ -56,7 +56,7 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
         '''
         self.setWindowTitle(_("Complete Treatments"))
         self.label.setText(_("What treatment has been performed?"))
-        
+
     def showItems(self):
         self.itemWidgets = []
         vlayout = QtGui.QVBoxLayout()
@@ -70,7 +70,7 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
             self.itemWidgets.append(itemW)
             vlayout.addWidget(iw)
         self.frame.setLayout(vlayout)
-            
+
     def getInput(self):
         '''
         yields selected usercodes (allowing multiple selections)
@@ -82,7 +82,7 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
                 if number != 0:
                     for n in range(number):
                         yield item_widg.usercode
-        
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
@@ -92,9 +92,9 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(11956)
     items = ("CE","M","SP")
-    
+
     dl = AddTreatmentDialog(items, pt)
     dl.use_completed_messages()
     for tx in dl.getInput():
         print "chosen item = %s"% tx
-    
+

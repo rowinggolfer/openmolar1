@@ -227,6 +227,9 @@ class EstimateWidget(QtGui.QWidget):
 
     def resetEstimate(self):
         LOGGER.debug("EstimateWidget.resetEstimate")
+        if self.pt is None:
+            LOGGER.warning("called when patient is None!")
+            return
         self.setEstimate(self.pt.estimates)
 
     def setEstimate(self, ests):

@@ -41,7 +41,8 @@ def offerTreatmentItems(om_gui, tx_list, completing=False):
     dl = AddTreatmentDialog(tx_list, om_gui.pt, om_gui)
     if completing: #we are adding to the completed treatments, not plan
         dl.use_completed_messages()
-    return dl.getInput()
+    result = dl.getInput()
+    return result
 
 def perioAdd(om_gui):
     '''
@@ -90,6 +91,8 @@ def xrayAdd(om_gui, complete=False):
     chosenTreatments = offerTreatmentItems(om_gui, mylist, complete)
     if chosenTreatments == ():
         return
+    LOGGER.debug(
+    "adding xrays to plan current = '%s'"% pt.treatment_course.xraypl)
 
     if not complete:
         input = QtGui.QMessageBox.question(om_gui, _("question"),
@@ -115,7 +118,6 @@ def xrayAdd(om_gui, complete=False):
 
         if complete:
             complete_tx.tx_hash_complete(om_gui, tx_hash)
-            #complete_tx.estwidg_complete(om_gui, est)
 
     if om_gui.ui.tabWidget.currentIndex() == 7: #estimates page
         om_gui.load_newEstPage()
@@ -409,14 +411,19 @@ def remove_estimate_item(om_gui, est_item):
                     pt.addHiddenNote("exam", treat_code, attempt_delete=True)
                     break
 
-                completed = pt.treatment_course.__dict__[att + "cmp"].replace(
-                    treat_code, "", 1)
+                old_completed = pt.treatment_course.__dict__[att + "cmp"]
+                new_completed = old_completed.replace(treat_code, "", 1)
 
-                plan = pt.treatment_course.__dict__[att + "pl"].replace(
-                    treat_code, "", 1)
+                old_plan = pt.treatment_course.__dict__[att + "pl"]
+                new_plan = old_plan.replace(treat_code, "", 1)
 
                 if tx_hash.completed:
-                    pt.treatment_course.__dict__[att + "cmp"] = completed
+                    attribute = att + "cmp"
+                    LOGGER.debug("%s old = '%s' new = '%s'"% (
+                        attribute, old_completed, new_completed))
+
+                    pt.treatment_course.__dict__[attribute] = new_completed
+
                     if re.match("[ul][lr][1-8]", att):
                         charts_gui.updateChartsAfterTreatment(
                             om_gui, att, plan, completed)
@@ -433,7 +440,11 @@ def remove_estimate_item(om_gui, est_item):
                             treat_code,
                             attempt_delete=True)
                 else:
-                    pt.treatment_course.__dict__[att + "pl"] = plan
+                    attribute = att + "pl"
+                    LOGGER.debug("%s old = '%s' new = '%s'"% (
+                        attribute, old_plan, new_plan))
+
+                    pt.treatment_course.__dict__[attribute] = new_plan
 
 
     if not found:

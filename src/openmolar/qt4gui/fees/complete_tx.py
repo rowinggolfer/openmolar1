@@ -153,17 +153,18 @@ def tx_hash_reverse(om_gui, tx_hash):
 
             LOGGER.debug("MATCH!")
 
-            completed = pt.treatment_course.__dict__[att + "cmp"
-                ].replace(treat_code, "", 1)
-            pt.treatment_course.__dict__[att + "cmp"] = completed
+            old_completed = pt.treatment_course.__dict__[att + "cmp"]
+            new_completed = old_completed.replace(treat_code, "", 1)
+            pt.treatment_course.__dict__[att + "cmp"] = new_completed
 
-            plan = "%s %s"% (
-                pt.treatment_course.__dict__[att + "pl"], treat_code)
-            pt.treatment_course.__dict__[att + "pl"] = plan
+            old_plan = pt.treatment_course.__dict__[att + "pl"]
+            #doubly cautious here to ensure single space separation
+            new_plan = "%s %s "% (old_plan.strip(" "), treat_code.strip(" "))
+            pt.treatment_course.__dict__[att + "pl"] = new_plan
 
             if re.findall("[ul][lr][1-8]", att):
                 charts_gui.updateChartsAfterTreatment(
-                    om_gui, att, plan, completed)
+                    om_gui, att, new_plan, new_completed)
                 toothName = pt.chartgrid.get(att,"").upper()
 
                 pt.addHiddenNote(
