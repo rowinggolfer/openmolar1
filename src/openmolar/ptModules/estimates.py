@@ -21,7 +21,7 @@ class TXHash(object):
     def __init__(self, hash_, completed=False):
         self.hash = str(hash_)
         self.completed = completed
-    
+
     def __eq__(self, other):
         '''
         compare the object with another hash
@@ -32,7 +32,7 @@ class TXHash(object):
         return self.hash == other
 
     def __repr__(self):
-        return ("TXHash %s completed=%s"% (self.hash, self.completed))    
+        return ("TXHash %s completed=%s"% (self.hash, self.completed))
 
 class Estimate(object):
     '''
@@ -54,7 +54,7 @@ class Estimate(object):
         self.csetype = None
         self.dent = None
         #self.completed = None
-        
+
         self.tx_hashes = []
 
     @property
@@ -67,9 +67,9 @@ class Estimate(object):
         '''
         all_planned, all_completed = True, True
         for tx_hash in self.tx_hashes:
-            all_planned = all_planned and not tx_hash.completed 
-            all_completed = all_completed and tx_hash.completed 
-            
+            all_planned = all_planned and not tx_hash.completed
+            all_completed = all_completed and tx_hash.completed
+
         if all_planned:
             return 0
         if all_completed:
@@ -81,7 +81,7 @@ class Estimate(object):
         if self.tx_hashes == []:
             return 0
         return self.fee//len(self.tx_hashes)
-    
+
     @property
     def interim_pt_fee(self):
         if self.tx_hashes == []:
@@ -98,18 +98,49 @@ class Estimate(object):
         for att in ("tx_hashes","itemcode","description","csetype","feescale"):
             retarg+='"%s" ,'% self.__dict__[att]
         return "%s)"% retarg.rstrip(",")
-    
+
     def __eq__(self, other):
         return str(self) == str(other)
 
     def toHtmlRow(self):
-        return '''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
-        <td>%s</td><td>%s</td><td>%s</td>
-        <td>%s</td><td>%s</td></tr>'''%(
-        localsettings.ops.get(self.dent), self.number, self.itemcode,
-        self.description, localsettings.formatMoney(self.fee),
-        localsettings.formatMoney(self.ptfee),self.feescale,
-        self.csetype, self.completed, str(self.tx_hashes))
+        hash_string = ""
+        for tx_hash in self.tx_hashes:
+            hash_string += "<li>%s</li>"% tx_hash.hash
+        if hash_string:
+            hash_string = "<ul>%s</ul>"% hash_string
+        else:
+            hash_string = _("no treatments")
+
+        if self.completed == 2:
+            completed = _("Yes")
+        elif self.completed == 1:
+            completed = _("Partially")
+        else:
+            completed = _("No")
+        return '''
+            <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+            </tr>
+            '''%(
+        localsettings.ops.get(self.dent),
+        self.number,
+        self.itemcode,
+        self.description,
+        localsettings.formatMoney(self.fee),
+        localsettings.formatMoney(self.ptfee),
+        self.feescale,
+        self.csetype,
+        completed,
+        hash_string)
 
     def htmlHeader(self):
         return '''<tr><th>Dentist</th><th>number</th><th>code</th>
@@ -135,15 +166,15 @@ class Estimate(object):
         can also be prepended with a single character eg E0101
         '''
         return bool(re.match(".?01[012]1$", self.itemcode))
-    
+
     @property
     def is_custom(self):
         return self.itemcode == "4002"
-    
+
     @property
     def has_one_tx(self):
         return len(self.tx_hashes) == 1
-    
+
     @property
     def has_multi_txs(self):
         return len(self.tx_hashes) > 1
@@ -195,7 +226,7 @@ def apply_exemption(pt, maxCharge=0):
     for est in pt.estimates:
         if not "N" in est.csetype:
             continue
-        
+
         if maxCharge - total >= est.ptfee:
             pass
         else:

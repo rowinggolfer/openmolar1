@@ -8,11 +8,17 @@
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
-from openmolar.ptModules import estimates
+from openmolar.ptModules.estimates import Estimate, TXHash
 
-QUERY = '''SELECT ix, courseno, number, itemcode, description, 
-category, type, fee, ptfee, feescale, csetype, dent, completed
-from newestimates where serialno=%s order by courseno desc, itemcode'''
+QUERY = '''SELECT newestimates.ix, number, itemcode, description,
+fee, ptfee, feescale, csetype, dent, est_link.completed, tx_hash, courseno
+from newestimates right join est_link on newestimates.ix = est_link.est_id
+where serialno=%s order by courseno desc, itemcode, ix'''
+
+
+#QUERY = '''SELECT ix, courseno, number, itemcode, description,
+#category, type, fee, ptfee, feescale, csetype, dent, completed
+#from newestimates where serialno=%s order by courseno desc, itemcode'''
 
 def getEsts(sno):
     db = connect()
@@ -20,28 +26,50 @@ def getEsts(sno):
     cursor.execute(QUERY, (sno,))
     rows = cursor.fetchall()
     cursor.close()
-    
-    estimatesFound = []
-    
+
+    estimates = []
+
     for row in rows:
+        hash_ = row[10]
+        completed = bool(row[9])
+
+        tx_hash = TXHash(hash_, completed)
+
+        ix = row[0]
+
+        found = False
+        #use existing est if one relates to multiple treatments
+        for existing_est in estimates:
+            if existing_est.ix == ix:
+                existing_est.tx_hashes.append(tx_hash)
+                found = True
+                break
+        if found:
+            continue
+
         #initiate a custom data class
-        est = estimates.Estimate()
-        est.ix = row[0]
-        est.courseno = row[1]
-        est.number = row[2]
-        est.itemcode = row[3]
-        est.description = row[4]
-        est.category = row[5]
-        est.type = row[6]
-        est.fee = row[7]
-        est.ptfee = row[8]
-        est.feescale = row[9]
-        est.csetype = row[10]
-        est.dent = row[11]
-        est.completed = bool(row[12])
-        estimatesFound.append(est)
-        
-    return estimatesFound
+        est = Estimate()
+
+        est.ix = ix
+        est.courseno = row[11]
+        est.number = row[1]
+        est.itemcode = row[2]
+        est.description = row[3]
+        est.fee = row[4]
+        est.ptfee = row[5]
+        est.feescale = row[6]
+        est.csetype = row[7]
+        est.dent = row[8]
+
+        #est.category = "TODO"
+        #est.type_ = "TODO"
+
+        est.tx_hashes = [tx_hash]
+        estimates.append(est)
+
+        cursor.close()
+
+    return estimates
 
 def details(sno):
     '''
@@ -65,7 +93,7 @@ def details(sno):
             courseno = est.courseno
         retarg += est.toHtmlRow()
     retarg += '</table>\n'
-    
+
     return retarg
 
 if __name__ == "__main__":
