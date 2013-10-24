@@ -42,23 +42,23 @@ def convert_tooth(tooth):
         iso_quadrant += 4
     except ValueError:
         tooth_no = tooth[2]
-    
+
     result = "%s%s"% (iso_quadrant+1, tooth_no)
-    LOGGER.debug("converted tooth '%s' to '%s'"% (tooth, result)) 
+    LOGGER.debug("converted tooth '%s' to '%s'"% (tooth, result))
     return result
 
-CAPITATION_SIMPLE = [ 
-    "2771", #upper special tray 
+CAPITATION_SIMPLE = [
+    "2771", #upper special tray
   "2772"  #lower special tray
 ]
 
-CONTINUING_CARE_SIMPLE = [ 
-    "0101", # exam a 
+CONTINUING_CARE_SIMPLE = [
+    "0101", # exam a
     "0111", # exam b
     "0201", # exam c
     "1001", # perio a
     "1011", # perio b
-    "2771", #upper special tray 
+    "2771", #upper special tray
     "2772"  #lower special tray
 ]
 
@@ -101,7 +101,7 @@ class DuckCode(object):
         self.code = code
         self.number = number
         self.free_replace = free_replace
-    
+
 test_complex_codes = [
     DuckCode("4401",2),
     DuckCode("3803",1,True)
@@ -109,7 +109,7 @@ test_complex_codes = [
 
 class DuckCourse(object):
     accd = date(1969,12,9)
-    cmpd = date(2015,12,9)    
+    cmpd = date(2015,12,9)
 
 class DuckPatient(object):
     sname = "Wallace"
@@ -133,47 +133,47 @@ class DuckPatient(object):
     nhs_claims = []
     def __init__(self):
         self.treatment_course = DuckCourse()
-    
+
 class Gp17Data(object):
     '''
     a class to hold data required by the form
     '''
-    
+
     misc_dict = {}
-    
+
     def __init__(self, pt=None, testing_mode=False):
-        
+
         LOGGER.debug("Gp17Data object created, pt = %s testing_mode = %s"% (
             pt, testing_mode))
-        
+
         self.pt = DuckPatient() if pt is None else pt
         self.dentist = self.pt.dnt2 if self.pt.dnt2 != 0 else self.pt.dnt1
-        
+
         self.testing_mode = testing_mode
         if testing_mode:
             self.misc_dict = test_misc_dict
 
         self.exclusions = []
-    
+
     def format_date(self, date):
         '''
         format's a date of birth to MMDDYYYY
         '''
         try:
             return "%02d%02d%04d"% (
-                date.day, 
-                date.month, 
+                date.day,
+                date.month,
                 date.year)
         except AttributeError:
             return "        "
-        
+
     @property
     def dob(self):
         '''
         format the patients date of birth to MMDDYYYY
         '''
         return self.format_date(self.pt.dob)
-            
+
     @property
     def stamp_text(self):
         '''
@@ -190,47 +190,47 @@ class Gp17Data(object):
             text += localsettings.dentDict[self.dentist][3]
         except KeyError:
             text += ""
-    
+
         return text
-    
+
     @property
     def addr1(self):
         return self.pt.addr1
-    
+
     @property
     def addr2(self):
         for att in (self.pt.addr2, self.pt.addr3, self.pt.town, self.pt.county):
             att = att.strip(" ")
             if att != "":
-                return att 
-        
+                return att
+
     @property
     def addr3(self):
         for att in (self.pt.addr3, self.pt.town, self.pt.county):
             att = att.strip(" ")
             if att != "" and att != self.addr2:
-                return att 
-        
+                return att
+
         return ""
-        
+
     @property
     def pcde(self):
         pcde = self.pt.pcde.replace(" ","")
         if len(pcde) == 6:
             return "%s %s"% (pcde[:3], pcde[3:])
         return pcde
-    
+
     @property
     def identifier(self):
         '''
         CHI number
         '''
         return str(self.pt.nhsno)
-    
+
     @property
     def previous_sname(self):
         return self.pt.psn
-    
+
     @property
     def accd(self):
         '''
@@ -239,39 +239,39 @@ class Gp17Data(object):
         if "accd" in self.exclusions:
             return ""
         return self.format_date(self.pt.treatment_course.accd)
-    
+
     @property
     def cmpd(self):
         '''
         date of completion
         '''
         if "cmpd" in self.exclusions:
-            return ""        
+            return ""
         return self.format_date(self.pt.treatment_course.cmpd)
 
     @property
     def show_chart(self):
         if "chart" in self.exclusions:
-            return False                
+            return False
         return True
-    
+
     def tooth_present(self, quadrant, tooth):
         '''
         chart - returns True if the tooth is present.
         '''
         if type(self.pt) == DuckPatient:
             return True
-        
+
         old_quadrant = ["ur","ul","ll","lr"][(quadrant %4)-1]
         old_notation = "%s%dst"%(old_quadrant, tooth)
         static_string = self.pt.__dict__[old_notation].split(" ")
-        
+
         #print "checking for tooth %s%s (%s), '%s'"% (
         #    quadrant, tooth, old_notation, static_string)
-        
+
         if "TM" in static_string or "UE" in static_string:
             return False
-        
+
         if quadrant > 4:
             if self._is_deciduous(quadrant-4, tooth):
                 result = True
@@ -282,9 +282,9 @@ class Gp17Data(object):
                 result = "+P" in static_string
             else:
                 result = not "AT" in static_string
-                
+
         return result
-        
+
     def _is_deciduous(self, quadrant, tooth):
         '''
         chart - returns True if the tooth is present.
@@ -298,7 +298,7 @@ class Gp17Data(object):
         elif quadrant == 4:
             att = self.pt.dent3
         else:
-            return False    
+            return False
 
         array = dec_perm.fromSignedByte(att)
         if quadrant in (2,4):
@@ -311,12 +311,12 @@ class Gp17Data(object):
         bpe
         '''
         if "bpe" in self.exclusions:
-            return "" 
-        try:       
+            return ""
+        try:
             return self.pt.bpe[-1][1]
         except IndexError:
             return ""
-        
+
     @property
     def common_codes(self):
         '''
@@ -324,15 +324,15 @@ class Gp17Data(object):
         counts these items.
         '''
         if "tx" in self.exclusions:
-            return []        
-        
+            return []
+
         items = {}
 
         if self.pt.under_capitation:
             allowed_claim_codes = CAPITATION_SIMPLE
         else:
             allowed_claim_codes = CONTINUING_CARE_SIMPLE
-                                
+
         for item in self.pt.nhs_claims:
             if item.itemcode in allowed_claim_codes:
                 try:
@@ -340,44 +340,47 @@ class Gp17Data(object):
                 except KeyError:
                     items[item.itemcode] = item.number
         return items
-        
+
     @property
     def simple_codes(self):
         if "tx" in self.exclusions:
-            return []        
-        
+            return []
+
         return []
-            
+
     @property
     def complex_codes(self):
         if "tx" in self.exclusions:
-            return []        
-        
+            return []
+
         if self.testing_mode:
             return test_complex_codes
         else:
             return []
-        
+
     @property
     def tooth_specific_codes(self):
         if "tx" in self.exclusions:
-            return []    
+            return []
 
         ts_items = {}
 
         allowed_claim_codes = TOOTH_SPECIFIC_CODES
+
+        #iterate over the estimates
         for item in self.pt.nhs_claims:
             if item.itemcode in allowed_claim_codes:
-                iso_tooth = convert_tooth(item.category)
+                att, tx = self.pt.get_tx_from_hash(item.tx_hashes[0].hash)
+                iso_tooth = convert_tooth(att)
                 try:
                     ts_items[item.itemcode].append(iso_tooth)
                 except KeyError:
                     ts_items[item.itemcode] = [iso_tooth]
         return ts_items
 
-        return []    
-        
-            
+        return []
+
+
 if __name__ == "__main__":
     data = Gp17Data(testing_mode=True)
-    
+
