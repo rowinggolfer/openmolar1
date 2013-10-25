@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/main.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Mon Sep 23 18:28:40 2013
-#      by: PyQt4 UI code generator 4.10.2
+# Created: Fri Oct 25 12:58:39 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -1446,6 +1446,9 @@ class Ui_MainWindow(object):
         self.NHSClaims_pushButton = QtGui.QPushButton(self.frame_3)
         self.NHSClaims_pushButton.setObjectName(_fromUtf8("NHSClaims_pushButton"))
         self.verticalLayout_25.addWidget(self.NHSClaims_pushButton)
+        self.memo_history_pushButton = QtGui.QPushButton(self.frame_3)
+        self.memo_history_pushButton.setObjectName(_fromUtf8("memo_history_pushButton"))
+        self.verticalLayout_25.addWidget(self.memo_history_pushButton)
         self.historyPrint_pushButton = QtGui.QPushButton(self.frame_3)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -1508,7 +1511,7 @@ class Ui_MainWindow(object):
         self.scrollArea_8.setWidgetResizable(True)
         self.scrollArea_8.setObjectName(_fromUtf8("scrollArea_8"))
         self.scrollAreaWidgetContents_13 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 111, 119))
+        self.scrollAreaWidgetContents_13.setGeometry(QtCore.QRect(0, 0, 107, 119))
         self.scrollAreaWidgetContents_13.setObjectName(_fromUtf8("scrollAreaWidgetContents_13"))
         self.verticalLayout_20 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_13)
         self.verticalLayout_20.setSpacing(0)
@@ -2500,6 +2503,7 @@ class Ui_MainWindow(object):
         self.past_course_estimates_pushButton.setToolTip(_translate("MainWindow", "display a combination of courses and estimates.", None))
         self.past_course_estimates_pushButton.setText(_translate("MainWindow", "Courses / Estimates", None))
         self.NHSClaims_pushButton.setText(_translate("MainWindow", "NHS Claims", None))
+        self.memo_history_pushButton.setText(_translate("MainWindow", "Memos", None))
         self.historyPrint_pushButton.setToolTip(_translate("MainWindow", "Print the text displayed on this page.", None))
         self.historyPrint_pushButton.setText(_translate("MainWindow", "Print", None))
         self.debug_toolButton.setToolTip(_translate("MainWindow", "Advanced options for developer use. Don\'t expect this to make much sense!\n"

@@ -3432,6 +3432,13 @@ Note - this will not remove items which are currently there. </string>
                      </widget>
                     </item>
                     <item>
+                     <widget class="QPushButton" name="memo_history_pushButton">
+                      <property name="text">
+                       <string>Memos</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <widget class="QPushButton" name="historyPrint_pushButton">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -3569,7 +3576,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>111</width>
+                     <width>107</width>
                      <height>119</height>
                     </rect>
                    </property>

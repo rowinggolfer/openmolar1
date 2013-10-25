@@ -1272,27 +1272,23 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         get valid memos for the patient
         '''
-        try:
-            urgentMemos = memos.getMemos(self.pt.serialno)
-            for umemo in urgentMemos:
+        for umemo in memos.get_memos(self.pt.serialno):
+            message = u"%<center>%s<br />%s%s<br /><br />%s</center>" % (
+                _('Message from'),
+                umemo.author,
+                _("Dated"),
+                localsettings.formatDate(umemo.mdate),
+                umemo.message)
 
-                mtext = umemo.message
+            Dialog = QtGui.QDialog(self)
+            dl = Ui_showMemo.Ui_Dialog()
+            dl.setupUi(Dialog)
+            dl.message_label.setText(message)
 
-                message = _('''<center>Message from %s <br />
-Dated %s<br /><br />%s</center>''')% (umemo.author,
-                localsettings.formatDate(umemo.mdate), mtext)
-
-                Dialog=QtGui.QDialog(self)
-                dl=Ui_showMemo.Ui_Dialog()
-                dl.setupUi(Dialog)
-                dl.message_label.setText(message)
-                if Dialog.exec_():
-                    if dl.checkBox.checkState():
-                        print "deleting Memo %s"% umemo.ix
-                        memos.deleteMemo(umemo.ix)
-        except Exception, e:
-            self.advise(_("problem getting a memo %s")%e,2)
-            pass
+            Dialog.exec_()
+            if dl.checkBox.checkState():
+                LOGGER.debug("deleting Memo %s"% umemo.ix)
+                memos.deleteMemo(umemo.ix)
 
     def newCustomMemo(self):
         Dialog = QtGui.QDialog(self)
@@ -2176,8 +2172,16 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
         '''
         show all past NHS claims for a patient
         '''
-        html=nhs_claims.details(self.pt.serialno)
+        html = nhs_claims.details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
+
+    def show_memo_history(self):
+        '''
+        show all memos for a patient
+        '''
+        html = memos.html_history(self.pt.serialno)
+        self.ui.debugBrowser.setText(html)
+
 
     def nhsClaimsShortcut(self):
         '''
@@ -2727,6 +2731,8 @@ Dated %s<br /><br />%s</center>''')% (umemo.author,
 
         QtCore.QObject.connect(self.ui.NHSClaims_pushButton,
         QtCore.SIGNAL("clicked()"), self.NHSClaims_clicked)
+
+        self.ui.memo_history_pushButton.clicked.connect(self.show_memo_history)
 
     def signals_daybook(self):
         #daybook - cashbook
