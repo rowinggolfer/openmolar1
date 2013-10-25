@@ -7,7 +7,6 @@
     
     TODO
     advanced tx planning dialog - apply completion of treatments
-    estimates with > 1 tx_hashes associated need to have different behaviour
     estimate printing is broken!
     
     newestimates table now has 3 dead columns, completed, type and category
