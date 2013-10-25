@@ -3,6 +3,7 @@
 
 import logging
 import os
+import re
 import subprocess
 LOGGER = logging.getLogger("openmolar")
 
@@ -13,7 +14,7 @@ try:
     ["git","describe"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     git_version = p.communicate()[0].strip()
     if git_version:
-        VERSION = git_version
+        VERSION = re.sub("v", "", git_version, 1)
         import git
         try:
             repo = git.Repo(os.path.dirname(__file__))
