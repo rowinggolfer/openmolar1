@@ -5,10 +5,13 @@ Use this in preference to pyuic4, because it adapts the files to utilise
 pygettext style translations
 '''
 
-from PyQt4 import uic
+import git
 import re
 import os
 import sys
+
+from PyQt4 import uic
+
 
 def compile_ui(ui_fname, outdir=""):
     if outdir == "":
@@ -56,28 +59,33 @@ def compile_ui(ui_fname, outdir=""):
         pass
     return pyfile
 
-def get_changed_ui_files():
-    from bzrlib.workingtree import WorkingTree
-    tree = WorkingTree.open("../../../")
-    changes = tree.changes_from (tree.basis_tree ())
-    for change in changes.added + changes.modified:
-        if re.match(".*.ui$", change[0]):
-            yield change[0]
+def get_changed_ui_files(repo):
+    files = repo.git.status("--porcelain")
+    for file_ in files.split("\n"):
+       if re.match(".*.ui$", file_):
+            yield file_[3:]
 
-def get_all_ui_files():
-    for ui_file in os.listdir(os.getcwd()):
+def get_all_ui_files(dirname):
+    for ui_file in os.listdir(dirname):
         if re.match(".*.ui$", ui_file):
             yield ui_file
         
 if __name__ == "__main__":
-    root = os.getcwd()
+    repo = git.Repo(os.getcwd()) 
+    
+    uipath = os.path.join(repo.working_dir, "src", "openmolar", "qt-designer")
+    
+    outpath = os.path.join(
+        repo.working_dir, "src", "openmolar", "qt4gui", "compiled_uis")
     
     ## change the commented line if you want all redone!!
-    #for ui_file in get_all_ui_files(): 
-    for ui_file in get_changed_ui_files():
-        name = os.path.basename(ui_file)
-        path = os.path.join(root, name)
-        pyfile = compile_ui(path, "../qt4gui/compiled_uis")
+    
+    ui_files = get_changed_ui_files(repo)
+    #ui_files = get_all_ui_files(uipath)
+    
+    for ui_file in ui_files:
+        path = os.path.join(uipath, os.path.basename(ui_file))
+        pyfile = compile_ui(path, outpath)
         if pyfile:
             print "created/updated py file", pyfile
 
