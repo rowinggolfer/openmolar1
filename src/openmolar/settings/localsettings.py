@@ -16,13 +16,9 @@ import subprocess
 #import inspect
 import types
 
-import openmolar
-
 from xml.dom import minidom
-import _version  #--in the same directory - created by bzr
 
-#- updated 26th June 2013.
-__MAJOR_VERSION__= "0.4.09"
+from openmolar.settings._version import VERSION
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -40,8 +36,6 @@ WIKIURL = ""
 
 locale.setlocale(locale.LC_ALL, '')
 
-__build__ = int(_version.version_info.get("revno"))
-
 try:
     s = _("translation tools are installed sucessfully")
     LOGGER.debug(s)
@@ -56,8 +50,7 @@ def showVersion():
     '''
     push version details to std out
     '''
-    LOGGER.info(
-    "OpenMolar %s (Bzr Revision %s)"% (__MAJOR_VERSION__, __build__))
+    print ("OpenMolar %s"% VERSION)
 
 if LOGGER.level == logging.DEBUG:
     showVersion()
@@ -73,7 +66,7 @@ APPOINTMENT_CARD_FOOTER = _("Please try and give at least 24 hours notice") +\
 
 CORRESPONDENCE_SIG = "The Academy Dental Practice"
 
-MH_HEADER = ("The Academy Dental Practice", 
+MH_HEADER = ("The Academy Dental Practice",
             _("Confidential Medical History Questionaire"))
 
 WINDOWS = False
@@ -138,7 +131,7 @@ if "win" in sys.platform:
         "://",":///").replace(" ","%20").replace("\\","/")
     LOGOPATH = LOGOPATH.replace(
         "://",":///").replace(" ","%20").replace("\\","/")
-    
+
 else:
     if not "linux" in sys.platform:
         LOGGER.warning(
@@ -181,16 +174,18 @@ def openFile(filepath):
 #################  MESSAGES ####################################################
 def about():
     return '''<p>
-openMolar - open Source dental practice management software.<br />
-Version %s  -  Bazaar Revno %s<br />
+OpenMolar - open Source dental practice management software.<br />
+Version %s<br />
 Client Schema Version is %s, DataBase is at version %s<br /><hr />
 Copyright (C) 2009  Neil A. Wallace B.Ch.D.<br />
 sourcecode available at <a href="http://launchpad.net/openmolar">
 "http://www.openmolar.com"</a>.
 </p>
 Thanks to <a href="http://rfquerin.org">Richard Querin</a>
-for the wonderful icon and Logo.'''%(__MAJOR_VERSION__, __build__,
-CLIENT_SCHEMA_VERSION, DB_SCHEMA_VERSION)
+for the wonderful icon and Logo.'''%(
+    VERSION,
+    CLIENT_SCHEMA_VERSION,
+    DB_SCHEMA_VERSION)
 
 license = '''<hr />
 <p>
@@ -311,7 +306,7 @@ csetypes = ["P","I","N","N OR","N O"]
 practiceAddress = ("The Academy Dental Practice","19 Union Street",
 "Inverness","IV1 1PP")
 
-#-- this is updated whenever a patient record loads, for ease of address 
+#-- this is updated whenever a patient record loads, for ease of address
 #-- manipulation
 LAST_ADDRESS = ("",)*8
 
@@ -352,7 +347,7 @@ def pence_to_pounds(m):
     eg 1950 -> "19.50"
     '''
     return "%d.%02d"% ( m // 100, m % 100)
-    
+
 def formatMoney(m):
     '''
     takes an integer, returns a string
@@ -785,7 +780,7 @@ def initiate(changedServer= False, debug = False):
         ##correspondence details for NHS forms
         query = ("select id,inits,name,formalname,fpcno,quals "
         "from practitioners where flag0=1")
-        
+
         cursor.execute(query)
         practitioners = cursor.fetchall()
         dentDict = {}
@@ -844,8 +839,8 @@ def initiate(changedServer= False, debug = False):
 <h1>'''% (stylesheet, LOGOPATH, LOGOPATH) +
 _("Welcome to OpenMolar!")+ '''</h1>
 <ul><li class="about">''' + _("Version") + ''' %s</li>
-<li class="about">'''% __MAJOR_VERSION__ + _("Revision") +
-''' %s</li></ul><br clear="all" /><p>''' % __build__ +
+<li class="about">'''% VERSION +
+'''</li></ul><br clear="all" /><p>''' +
 _("Your Data is Accessible, and the server reports no issues.") +
 '''</p><p>''' + _("Have a great day!") + '''</p></div></body></html>''')
 
@@ -878,4 +873,3 @@ def _test():
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     _test()
-    
