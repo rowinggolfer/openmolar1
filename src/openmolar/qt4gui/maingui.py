@@ -3111,7 +3111,14 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def advanced_tx_planning(self):
         dl = AdvancedTxPlanningDialog(self)
-        dl.exec_()
+        if dl.exec_():
+            complete_tx.complete_txs(self, tuple(dl.completed_items), False)
+            complete_tx.reverse_txs(self, tuple(dl.reversed_items), False)
+            add_tx_to_plan.do_something(self, dl.new_plan_items)
+            add_tx_to_plan.do_something(self, dl.new_cmp_items)
+            add_tx_to_plan.do_something(self, dl.deleted_plan_items)
+            add_tx_to_plan.do_something(self, dl.deleted_cmp_items)
+
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

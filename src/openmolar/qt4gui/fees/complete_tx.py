@@ -26,11 +26,11 @@ from openmolar.qt4gui.charts import charts_gui
 import logging
 LOGGER = logging.getLogger("openmolar")
 
-def reverse_txs(om_gui, treatments):
+def reverse_txs(om_gui, treatments, confirm_multiples=True):
     LOGGER.debug("reverse_tx.reverse_txs, %s"% str(treatments))
     pt = om_gui.pt
 
-    if len(treatments) > 1:
+    if len(treatments) > 1 and confirm_multiples:
         txs = []
         for att, treat in treatments:
             txs.append((att, treat, False))
@@ -51,7 +51,7 @@ def reverse_txs(om_gui, treatments):
 
         tx_hash_reverse(om_gui, tx_hash)
 
-def complete_txs(om_gui, treatments):
+def complete_txs(om_gui, treatments, confirm_multiples=True):
     '''
     complete tooth treatment
     #args is a list - ["ul5","MOD","RT",]
@@ -62,7 +62,7 @@ def complete_txs(om_gui, treatments):
 
     pt = om_gui.pt
 
-    if len(treatments) > 1:
+    if len(treatments) > 1 and confirm_multiples:
         txs = []
         for att, treat in treatments:
             txs.append((att, treat, False))

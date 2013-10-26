@@ -44,6 +44,9 @@ def offerTreatmentItems(om_gui, tx_list, completing=False):
     result = dl.getInput()
     return result
 
+def do_something(om_gui, items):
+    LOGGER.info("do_something %s"% str(items))
+
 def perioAdd(om_gui):
     '''
     add perio items
