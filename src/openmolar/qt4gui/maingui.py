@@ -467,12 +467,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         charts_gui.flipDeciduous(self)
 
-    def chartTableNav(self, row, col, row1, col1):
-        '''
-        charts table has been navigated
-        '''
-        charts_gui.chartTableNav(self, row, col, row1, col1)
-
     def toothHistory(self, tooth):
         '''
         show history of the tooth
@@ -685,7 +679,6 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.synopsis_lineEdit.setText("")
             self.pt_diary_widget.clear()
             #--restore the charts to full dentition
-            ##TODO - perhaps handle this with the tabwidget calls?
             for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
             self.ui.completedChartWidget, self.ui.perioChartWidget,
             self.ui.summaryChartWidget):
@@ -1273,7 +1266,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         get valid memos for the patient
         '''
         for umemo in memos.get_memos(self.pt.serialno):
-            message = u"%<center>%s<br />%s%s<br /><br />%s</center>" % (
+            message = u'''<center>%s %s
+            <br />%s %s<br /><br /><br />
+            <b>%s</b></center>''' % (
                 _('Message from'),
                 umemo.author,
                 _("Dated"),
@@ -2878,11 +2873,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.completedChartWidget,
         QtCore.SIGNAL("toothSelected"), self.comp_chartNavigation)
 
-        ##TODO  -  safe to remove this (and the attached function??")
-        #QtCore.QObject.connect(self.ui.chartsTableWidget,
-        #QtCore.SIGNAL("currentCellChanged (int,int,int,int)"),
-        #self.chartTableNav)
-
         QtCore.QObject.connect(self.ui.planChartWidget,
         QtCore.SIGNAL("completeTreatment"), self.complete_treatments)
 
@@ -3110,15 +3100,29 @@ class OpenmolarGui(QtGui.QMainWindow):
         fees_module.loadFeesTable(self)
 
     def advanced_tx_planning(self):
+        if course_module.newCourseNeeded(self):
+            return
+
         dl = AdvancedTxPlanningDialog(self)
         if dl.exec_():
             complete_tx.complete_txs(self, tuple(dl.completed_items), False)
             complete_tx.reverse_txs(self, tuple(dl.reversed_items), False)
-            add_tx_to_plan.do_something(self, dl.new_plan_items)
-            add_tx_to_plan.do_something(self, dl.new_cmp_items)
-            add_tx_to_plan.do_something(self, dl.deleted_plan_items)
-            add_tx_to_plan.do_something(self, dl.deleted_cmp_items)
-
+            LOGGER.debug("new plan items, %s"% dl.new_plan_items)
+            LOGGER.debug("new cmp items, %s"% dl.new_cmp_items)
+            LOGGER.debug("deleted plan items, %s"% dl.deleted_plan_items)
+            LOGGER.debug("deleted cmp items, %s"% dl.deleted_cmp_items)
+            if dl.new_plan_items:
+                add_tx_to_plan.tx_planning_dialog_add_txs(
+                self, dl.new_plan_items)
+            if dl.new_cmp_items:
+                add_tx_to_plan.tx_planning_dialog_add_txs(
+                self, dl.new_cmp_items, completed=True)
+            if dl.deleted_plan_items:
+                add_tx_to_plan.tx_planning_dialog_delete_txs(
+                self, dl.deleted_plan_items)
+            if dl.deleted_cmp_items:
+                add_tx_to_plan.tx_planning_dialog_delete_txs(
+                self, dl.deleted_cmp_items, completed=True)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

@@ -198,6 +198,10 @@ class ExtendableDialog(BaseDialog):
     def add_advanced_widget(self, widg):
         self.extension().layout().addWidget(widg)
 
+    def hide_extension(self):
+        self.more_but.setChecked(False)
+        self.showExtension(False)
+
 if __name__ == "__main__":
     app = QtGui.QApplication([])
 

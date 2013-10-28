@@ -33,7 +33,7 @@ def getData():
     db = connect.connect()
     cursor = db.cursor()
 
-    query = ''' select ix, xml_data from feescales where in_use = True 
+    query = ''' select ix, xml_data from feescales where in_use = True
     order by disp_order'''
 
     cursor.execute(query)
@@ -47,7 +47,7 @@ def saveData(tablename, data):
     '''
 
     print "deprecated function called - feesTable.saveData"
-    #TODO - fix this! 
+    #TODO - fix this!
     return False
 
     db = connect.connect()
@@ -55,7 +55,7 @@ def saveData(tablename, data):
     query = "update feetable_key set data=%s where tablename = %s"
 
     values = (data, tablename)
-    
+
     result = cursor.execute(query, values)
     if result:
         db.commit()
@@ -84,7 +84,7 @@ def getListFromNode(node, id):
         for child in children:
             values.append(child.data.strip())
     return values
-    
+
 def getTextFromNode(node, id):
     '''
     get the text data from the first child of any such nodes
@@ -123,7 +123,7 @@ class FeeTables(object):
             return self.tables[keys[0]]
         except IndexError:
             return None
-        
+
     def __repr__(self):
         '''
         a readable description of the object
@@ -173,13 +173,13 @@ class FeeTables(object):
 
                 LOGGER.exception(message)
                 self.warnings.append(message + "<hr /><pre>%s</pre>"% exc)
-    
+
 class FeeTable(object):
     '''
     a class to contain and allow quick access to data stored in a fee table
     '''
     def __init__(self, ix, xml_data):
-        
+
         self.database_ix = ix
         self.dom = minidom.parseString(xml_data)
 
@@ -189,20 +189,20 @@ class FeeTable(object):
         self.setEndDate()
         self.setSectionHeaders()
         #ft.setFeeCols(feecoltypes)
-        
+
         self.feesDict = {}
-        
+
         self.complex_shortcuts = []
         self.treatmentCodes = OrderedDict()
         self.chartRegexCodes = OrderedDict()
-        
+
     def __repr__(self):
         '''
         a readable description of the object
         '''
         return "Class feeTable database index %s - has %s feeItems"% (
             self.database_ix, len(self.feesDict))
-    
+
     @property
     def briefName(self):
         return self.description
@@ -213,7 +213,7 @@ class FeeTable(object):
             if fee_item.has_pt_fees:
                 return True
         return False
-    
+
     @property
     def feeColCount(self):
         if self.hasPtCols:
@@ -230,10 +230,10 @@ class FeeTable(object):
             text = node.childNodes[0].data.strip(" \n")
             self.categories.append(text)
         LOGGER.debug("categories = %s"% str(self.categories))
-    
+
     def setSectionHeaders(self):
         '''
-        Headers are used when displaying feescale in a treeview 
+        Headers are used when displaying feescale in a treeview
         '''
         LOGGER.debug("loading section headers")
         self.headers = {}
@@ -242,7 +242,7 @@ class FeeTable(object):
             text = node.childNodes[0].data.strip(" \n")
             self.headers[id] = text
         LOGGER.debug("sction headers = %s"% self.headers)
-        
+
     def setTableDescription(self):
         '''
         a user friendly description of the table
@@ -264,7 +264,7 @@ class FeeTable(object):
         year = start_node.getElementsByTagName("year")[0].childNodes[0].data
         self.startDate = datetime.date(int(year), int(month), int(day))
         LOGGER.debug("startDate = %s"% self.startDate)
-        
+
     def setEndDate(self):
         '''
         the date the feetable became obsolete (can be in the past)
@@ -290,13 +290,13 @@ class FeeTable(object):
         for shortcut_node in shortcut_nodes:
             complex_shortcut = ComplexShortcut(shortcut_node)
             self.complex_shortcuts.append(complex_shortcut)
-            
+
         item_nodes = self.dom.getElementsByTagName("item")
         for item_node in item_nodes:
             item_code = item_node.getAttribute("id")
             fee_item = FeeItem(item_code, item_node)
             self.feesDict[item_code] = fee_item
-        
+
             if fee_item.usercode == "":
                 pass
             elif fee_item.is_regex:
@@ -305,7 +305,7 @@ class FeeTable(object):
                 self.chartRegexCodes[key] = item_code
             else:
                 self.treatmentCodes[fee_item.usercode] = item_code
-                
+
         self.dom.unlink()
 
     def getToothCode(self, tooth, arg):
@@ -315,11 +315,11 @@ class FeeTable(object):
         arg will be something like "CR,GO" or "MOD,CO"
         '''
         LOGGER.info("getToothCode for %s%s"% (tooth, arg))
-            
+
         for key in self.chartRegexCodes:
             if key.match(tooth+arg):
                 return self.chartRegexCodes[key]
-            
+
     def get_tooth_fee_item(self, tooth, usercode):
         '''
         send a usercode, get a results set
@@ -330,7 +330,7 @@ class FeeTable(object):
         item_code = self.getToothCode(tooth, usercode)
         LOGGER.debug("item_code = %s"% item_code)
         return self.feesDict.get(item_code, None)
-            
+
     def getItemCodeFromUserCode(self, arg):
         '''
         the table stores it's own usercodes now.
@@ -356,21 +356,21 @@ class FeeTable(object):
             LOGGER.warning("itemcode %s not found in feetable %s"% (
                 itemcode, self.database_ix))
             return (0, 0)
-                    
+
         if fee_item.is_simple:
             return fee_item.get_fees(1)
 
-        #complex codes have a different fee if there are multiple 
+        #complex codes have a different fee if there are multiple
         #in the estimate already
         existing_no = 0
         for existing_est in pt.estimates:
-            if (existing_est.itemcode == itemcode and 
+            if (existing_est.itemcode == itemcode and
             csetype == existing_est.csetype):
                 existing_no += 1
-        
+
         return fee_item.get_fees(existing_no+1)
 
-    def getItemDescription(self, itemcode):
+    def getItemDescription(self, itemcode, usercode="?"):
         '''
         returns the patient readable (ie. estimate ready) description of the
         item
@@ -378,7 +378,7 @@ class FeeTable(object):
         if self.hasItemCode(itemcode):
             return self.feesDict[itemcode].description
         else:
-            return "No description for this item!"
+            return u"%s %s"% (usercode, _("other treatment"))
 
     def getTxCategory(self, itemcode):
         '''
@@ -400,10 +400,10 @@ class FeeTable(object):
         where description is the estimate ready description of the item
         '''
         item = self.getItemCodeFromUserCode(usercode)
-        description = self.getItemDescription(item)
+        description = self.getItemDescription(item, usercode)
 
         return (item, description)
-    
+
 
 class FeeItem(object):
     '''
@@ -414,7 +414,7 @@ class FeeItem(object):
     '''
     def __init__(self, itemcode, element):
         self.itemcode = itemcode
-    
+
         self.section = getTextFromNode(element, "section")
         try:
             self.obscurity = int(element.getAttribute("obscurity"))
@@ -424,7 +424,7 @@ class FeeItem(object):
         self.ptFees = []
         self.brief_descriptions = []
         self.conditions = []
-        
+
         try:
             usercode_node = element.getElementsByTagName("shortcut")[0]
             self.is_regex = usercode_node.getAttribute("type") == "regex"
@@ -432,47 +432,47 @@ class FeeItem(object):
         except IndexError:
             self.usercode = itemcode
             self.is_regex = False
-                        
+
         self.description = getTextFromNode(element, "description")
-        
+
         try:
             feescale_add_node = element.getElementsByTagName("feescale_add")[0]
             self.allow_feescale_add = True
             #TODO - more work needed here....
         except IndexError:
             self.allow_feescale_add = False
-            
+
         fee_nodes = element.getElementsByTagName("fee")
         for node in fee_nodes:
             bd = getTextFromNode(node, "brief_description")
             self.brief_descriptions.append(bd)
-        
+
             fee = int(getTextFromNode(node, "gross"))
             self.fees.append(fee)
-            
+
             try: # charge is an optional field.
-                charge = int(getTextFromNode(node, "charge"))            
+                charge = int(getTextFromNode(node, "charge"))
                 self.ptFees.append(charge)
             except ValueError:
                 pass
-                
+
             condition = node.getAttribute("condition").replace(
                 "&gt;", ">").replace("&lt;", "<")
             self.conditions.append(condition)
-        
+
     def __repr__(self):
         return "FeeItem '%s' %s %s %s %s"% (
-            self.itemcode, 
+            self.itemcode,
             self.description,
             str(self.fees),
             str(self.ptFees),
             str(self.brief_descriptions)
             )
-            
+
     @property
     def has_pt_fees(self):
         return len(self.ptFees) > 0
-    
+
     @property
     def is_simple(self):
         '''
@@ -480,7 +480,7 @@ class FeeItem(object):
         many items the cost goes down with multiples, or there is a maximum fee
         '''
         return len(self.fees) == 1
-    
+
     def get_fees(self, item_no=1):
         '''
         convenience wrapper for getFee function
@@ -512,7 +512,7 @@ class FeeItem(object):
             fee = feeList[0]
             LOGGER.debug("simple addition of 1st item, fee=%s"% fee)
             return fee
-            
+
         LOGGER.warning("COMPLEX FEE BEING APPLIED!")
         for i, condition in enumerate(self.conditions):
             if condition == "item_no=%d"% item_no:
@@ -549,10 +549,10 @@ class FeeItem(object):
                 fee = feeList[i]
                 LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
                 return fee
-            
+
         #if all has failed.... go with the simple one
         LOGGER.debug("no conditions met... returning simple fee")
-        return feeList[0]    
+        return feeList[0]
 
 class ComplexShortcut(object):
     '''
@@ -561,7 +561,7 @@ class ComplexShortcut(object):
     before the simple one-to-one feeitems are considered.
     '''
     def __init__(self, element):
-        
+
         shortcut_node = element.getElementsByTagName("shortcut")[0]
         self.is_regex = shortcut_node.getAttribute("type") == "regex"
         shortcut = shortcut_node.childNodes[0].data
@@ -569,19 +569,19 @@ class ComplexShortcut(object):
             self.shortcut = re.compile(shortcut)
         else:
             self.shortcut = shortcut
-        
+
         self.cases = []
-        
+
         case_nodes = element.getElementsByTagName("case")
         for case_node in case_nodes:
             condition = case_node.getAttribute("condition").replace(
                 "&gt;", ">").replace("&lt;", "<")
             case_action = _CaseAction(condition)
-            
+
             removal_nodes = case_node.getElementsByTagName("remove_item")
             for removal_node in removal_nodes:
                 case_action.removals.append(removal_node.getAttribute("id"))
-            
+
             addition_nodes = case_node.getElementsByTagName("add_item")
             for addition_node in addition_nodes:
                 case_action.additions.append(addition_node.getAttribute("id"))
@@ -589,9 +589,9 @@ class ComplexShortcut(object):
             alteration_nodes = case_node.getElementsByTagName("alter_item")
             for alt_node in alteration_nodes:
                 case_action.alterations.append(alt_node.getAttribute("id"))
-                
+
             case_action.message = getTextFromNode(case_node, "message")
-            
+
             self.cases.append(case_action)
 
     def matches(self, shortcut):
@@ -602,7 +602,7 @@ class ComplexShortcut(object):
 
 class _CaseAction(object):
     '''
-    a simple class to store what should be performed when a ComplexShortcut 
+    a simple class to store what should be performed when a ComplexShortcut
     is matched
     '''
     def __init__(self, condition):
@@ -611,21 +611,21 @@ class _CaseAction(object):
         self.additions = []
         self.alterations = []
         self.message = ""
-            
+
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
 
     fts = FeeTables()
-    
+
     table = fts.default_table
     for id, fee_item in table.feesDict.iteritems():
         print id, fee_item
-    
+
     print table.hasPtCols
     for i, complex_shortcut in enumerate(table.complex_shortcuts):
         print "looking for SP in complex_shortcut %d"% i
         if complex_shortcut.matches("SP"):
-            print "    match found" 
+            print "    match found"
             print "    shortcut has %d cases:"% len(complex_shortcut.cases)
             for case in complex_shortcut.cases:
                 print "          %s additions=%s removals=%s message='%s'"% (

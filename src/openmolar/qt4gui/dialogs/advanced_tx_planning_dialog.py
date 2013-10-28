@@ -86,7 +86,7 @@ class TxDisplayWidget(QtGui.QWidget):
 
 
 class AdvancedTxPlanningDialog(ExtendableDialog):
-    hide_fields = True
+    SHOW_CHART_ITEMS = False
     def __init__(self, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
         self.setWindowTitle(_("Advanced Treatment Planning"))
@@ -118,8 +118,8 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
                 self.widgets[att] = widg
                 form_layout.addRow(att, widg)
 
-        frame2 = QtGui.QFrame()
-        form_layout2 = QtGui.QFormLayout(frame2)
+        chart_frame = QtGui.QFrame()
+        form_layout2 = QtGui.QFormLayout(chart_frame)
 
         plan_header_label = QtGui.QLabel(_("Planned Text"))
         plan_header_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -141,14 +141,14 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
         left_scroll_area.setWidget(frame)
         left_scroll_area.setWidgetResizable(True)
 
-        right_scroll_area = QtGui.QScrollArea()
-        right_scroll_area.setWidget(frame2)
-        right_scroll_area.setWidgetResizable(True)
+        self.chart_scroll_area = QtGui.QScrollArea()
+        self.chart_scroll_area.setWidget(chart_frame)
+        self.chart_scroll_area.setWidgetResizable(True)
 
         upper_frame = QtGui.QFrame()
         layout = QtGui.QHBoxLayout(upper_frame)
         layout.addWidget(left_scroll_area)
-        layout.addWidget(right_scroll_area)
+        layout.addWidget(self.chart_scroll_area)
 
         self.insertWidget(upper_frame)
 
@@ -158,6 +158,11 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
         self.new_plan_items = []
 
         self.load_values()
+
+        self.chart_but = QtGui.QPushButton(_("Show Chart Items"))
+        self.chart_but.clicked.connect(self._show_chart)
+        self.add_advanced_widget(self.chart_but)
+        self.chart_scroll_area.setVisible(self.SHOW_CHART_ITEMS)
 
     def load_values(self):
         if self.pt is None:
@@ -171,6 +176,16 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
 
             widg.text_edited.connect(self.check_appliable)
 
+    def _show_chart(self):
+        self.SHOW_CHART_ITEMS = not self.SHOW_CHART_ITEMS
+        self.chart_scroll_area.setVisible(self.SHOW_CHART_ITEMS)
+        self.hide_extension()
+        self.resize(self.sizeHint())
+        if self.SHOW_CHART_ITEMS:
+            self.chart_but.setText(_("Hide Chart Items"))
+        else:
+            self.chart_but.setText(_("Show Chart Items"))
+
     def check_appliable(self):
         for widg in self.widgets.values():
             if widg.has_been_edited:
@@ -179,7 +194,9 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
         self.enableApply(False)
 
     def sizeHint(self):
-        return QtCore.QSize(800, 600)
+        if self.SHOW_CHART_ITEMS:
+            return QtCore.QSize(800, 600)
+        return QtCore.QSize(500, 500)
 
     @property
     def _new_plan_items(self):

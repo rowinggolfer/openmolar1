@@ -204,7 +204,8 @@ class EstimateWidget(QtGui.QWidget):
         if est.itemcode in self.separate_codes:
             return False
 
-        item_is_other =  est.itemcode in ("4001", "4002")
+        #item_is_other =  est.itemcode in ("4001", "CUST")
+        item_is_other = False
         for widg in self.estItemWidgets:
             if widg.itemCode == est.itemcode :
                 if item_is_other:
@@ -393,8 +394,6 @@ class EstimateWidget(QtGui.QWidget):
                 "\n** WAS ASKED TO DELETE %s,\n** INSTEAD DELETING    %s"% (
                                 est, ex_est))
 
-                                #move the treatments over
-                                #self.ests[self.ests.index(est)].tx_hashes = ex_est.tx_hashes[:]
                                 return ex_est
 
         LOGGER.warning(

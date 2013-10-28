@@ -41,9 +41,10 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.items = []
+        feetable = pt.getFeeTable()
         for usercode in usercodes:
-            item = pt.getFeeTable().getItemCodeFromUserCode(usercode)
-            item_description = pt.getFeeTable().getItemDescription(item)
+            item = feetable.getItemCodeFromUserCode(usercode)
+            item_description = feetable.getItemDescription(item, usercode)
 
             self.items.append((0, item, item_description,usercode))
         self.pt = pt

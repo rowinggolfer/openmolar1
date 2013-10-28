@@ -11,8 +11,6 @@ provides code to add Xrays, perio items......etc
 to the treatment plan
 '''
 
-from __future__ import division
-
 import re
 import logging
 
@@ -22,12 +20,10 @@ from openmolar.settings import localsettings
 from openmolar.ptModules.estimates import TXHash
 
 from openmolar.qt4gui.compiled_uis import Ui_customTreatment
-from openmolar.qt4gui.compiled_uis import Ui_feeTableTreatment
 
 from openmolar.qt4gui.dialogs.add_treatment_dialog import AddTreatmentDialog
-#-- fee modules which interact with the gui
+
 from openmolar.qt4gui.fees import course_module
-from openmolar.qt4gui.fees import fees_module
 from openmolar.qt4gui.fees import complete_tx
 
 from openmolar.qt4gui.charts import charts_gui
@@ -44,8 +40,47 @@ def offerTreatmentItems(om_gui, tx_list, completing=False):
     result = dl.getInput()
     return result
 
-def do_something(om_gui, items):
-    LOGGER.info("do_something %s"% str(items))
+def tx_planning_dialog_add_txs(om_gui, items, completed=False):
+    LOGGER.debug(items)
+
+    perio_items = []
+    xray_items = []
+    other_items = []
+    for att, treatment in items:
+        if att == "perio":
+            perio_items.append(treatment)
+        elif att == "xray":
+            xray_items.append(treatment)
+        elif att == "other":
+            other_items.append(treatment)
+
+    if perio_items:
+        add_perio_treatments(om_gui, perio_items, completed)
+    if xray_items:
+        add_xray_treatments(om_gui, xray_items, completed)
+    if other_items:
+        add_other_treatments(om_gui, other_items, completed)
+
+def tx_planning_dialog_delete_txs(om_gui, items, completed=False):
+    LOGGER.debug("%s %s"% (items, completed))
+    perio_items = []
+    xray_items = []
+    other_items = []
+    for att, treatment in items:
+        if att == "perio":
+            perio_items.append(treatment)
+        elif att == "xray":
+            xray_items.append(treatment)
+        elif att == "other":
+            other_items.append(treatment)
+
+    if perio_items:
+        remove_perio_treatments(om_gui, perio_items, completed)
+    if xray_items:
+        remove_xray_treatments(om_gui, xray_items, completed)
+    if other_items:
+        remove_other_treatments(om_gui, other_items, completed)
+
 
 def perioAdd(om_gui):
     '''
@@ -61,41 +96,87 @@ def perioAdd(om_gui):
         chosen_treatments = offerTreatmentItems(om_gui, mylist)
         add_perio_treatments(om_gui, chosen_treatments)
 
-def add_perio_treatments(om_gui, chosen_treatments):
-    LOGGER.debug("adding perio treatments %s"% str(chosen_treatments))
+def add_perio_treatments(om_gui, treatments, complete=False):
+    LOGGER.debug(treatments)
     pt = om_gui.pt
 
-    for usercode in chosen_treatments:
-        pt.treatment_course.periopl += "%s "% usercode
+    for code in treatments:
+        pt.treatment_course.periopl += "%s "% code
 
-        perio_txs = "%s %s"%(
+        perio_txs = "%s %s"% (
             pt.treatment_course.periocmp, pt.treatment_course.periopl)
-        n = perio_txs.split(" ").count(usercode)
+        n_txs = perio_txs.split(" ").count(code)
 
-        tx_hash = TXHash(hash("perio %s %s"% (n, usercode)))
+        tx_hash = TXHash(hash("perio %s %s"% (n_txs, code)))
 
-        dentid = om_gui.pt.course_dentist
+        dentid = pt.course_dentist
 
-        if not complex_shortcut_handled(om_gui, usercode, n, dentid, tx_hash):
-            pt.add_to_estimate(usercode, dentid, [tx_hash])
+        if not complex_shortcut_handled(om_gui, code, n_txs, dentid, tx_hash):
+            pt.add_to_estimate(code, dentid, [tx_hash])
+        if complete:
+            complete_tx.tx_hash_complete(om_gui, tx_hash)
 
     om_gui.load_newEstPage()
 
+def remove_perio_treatments(om_gui, treatments, completed=False):
+    LOGGER.debug(treatments)
+    pt = om_gui.pt
+
+    for code in treatments:
+        txs = "%s %s"% (
+            pt.treatment_course.periocmp, pt.treatment_course.periopl)
+        n_txs = txs.split(" ").count(code)
+
+        tx_hash = TXHash(hash("perio %s %s"% (n_txs, code)), completed)
+        pt.remove_tx_hash(tx_hash)
+
+    om_gui.load_newEstPage()
+
+def remove_xray_treatments(om_gui, treatments, completed=False):
+    LOGGER.debug(treatments)
+    pt = om_gui.pt
+
+    for code in treatments:
+        txs = "%s %s"% (
+            pt.treatment_course.xraycmp, pt.treatment_course.xraypl)
+        n_txs = txs.split(" ").count(code)
+
+        tx_hash = TXHash(hash("xray %s %s"% (n_txs, code)), completed)
+        pt.remove_tx_hash(tx_hash)
+
+    om_gui.load_newEstPage()
+
+def remove_other_treatments(om_gui, treatments, completed=False):
+    LOGGER.debug(treatments)
+    pt = om_gui.pt
+
+    for code in treatments:
+        txs = "%s %s"% (
+            pt.treatment_course.othercmp, pt.treatment_course.otherpl)
+        n_txs = txs.split(" ").count(code)
+
+        tx_hash = TXHash(hash("other %s %s"% (n_txs, code)), completed)
+        pt.remove_tx_hash(tx_hash)
+
+    om_gui.load_newEstPage()
 
 def xrayAdd(om_gui, complete=False):
     '''
     add xray items
     '''
-
-    pt = om_gui.pt
     if course_module.newCourseNeeded(om_gui):
         return
     mylist = ("S", "M", "P")
     chosenTreatments = offerTreatmentItems(om_gui, mylist, complete)
-    if chosenTreatments == ():
+    if not chosenTreatments:
         return
-    LOGGER.debug(
-    "adding xrays to plan current = '%s'"% pt.treatment_course.xraypl)
+    add_xray_treatments(om_gui, chosenTreatments, complete)
+    if om_gui.ui.tabWidget.currentIndex() == 4: #clinical summary
+        om_gui.load_clinicalSummaryPage()
+
+def add_xray_treatments(om_gui, treatments, complete=False):
+    LOGGER.debug(treatments)
+    pt = om_gui.pt
 
     if not complete:
         input = QtGui.QMessageBox.question(om_gui, _("question"),
@@ -105,27 +186,19 @@ def xrayAdd(om_gui, complete=False):
         if input == QtGui.QMessageBox.Yes:
             complete = True
 
-    added = []
-    for usercode in chosenTreatments:
-
-        pt.treatment_course.xraypl += "%s "% usercode
-
+    for code in treatments:
+        pt.treatment_course.xraypl += "%s "% code
         xray_txs = "%s %s"%(
             pt.treatment_course.xraycmp, pt.treatment_course.xraypl)
-        n = xray_txs.split(" ").count(usercode)
-
-        tx_hash = TXHash(hash("xray %s %s"% (n, usercode)), complete)
-        dentid = om_gui.pt.course_dentist
-
-        est = pt.add_to_estimate(usercode, dentid, [tx_hash])
+        n = xray_txs.split(" ").count(code)
+        tx_hash = TXHash(hash("xray %s %s"% (n, code)), complete)
+        dentid = pt.course_dentist
+        est = pt.add_to_estimate(code, dentid, [tx_hash])
 
         if complete:
             complete_tx.tx_hash_complete(om_gui, tx_hash)
+    om_gui.load_newEstPage()
 
-    if om_gui.ui.tabWidget.currentIndex() == 7: #estimates page
-        om_gui.load_newEstPage()
-    else:
-        om_gui.load_clinicalSummaryPage()
 
 def otherAdd(om_gui):
     '''
@@ -140,18 +213,25 @@ def otherAdd(om_gui):
     usercodes = itemDict.keys()
 
     chosenTreatments = offerTreatmentItems(om_gui, sorted(usercodes))
-    for usercode in chosenTreatments:
+    if not chosenTreatments:
+        return
+    add_other_treatments(om_gui, chosenTreatments)
 
-        pt.treatment_course.otherpl += "%s "% usercode
+def add_other_treatments(om_gui, treatments, complete=False):
+    LOGGER.debug(treatments)
+    pt = om_gui.pt
 
+    for code in treatments:
+        pt.treatment_course.otherpl += "%s "% code
         other_txs = "%s %s"%(
             pt.treatment_course.othercmp, pt.treatment_course.otherpl)
-        n = other_txs.split(" ").count(usercode)
-        tx_hash = TXHash(hash("other %s %s"% (n, usercode)))
-        dentid = om_gui.pt.course_dentist
+        n = other_txs.split(" ").count(code)
+        tx_hash = TXHash(hash("other %s %s"% (n, code)), complete)
+        dentid = pt.course_dentist
+        est = pt.add_to_estimate(code, dentid, [tx_hash])
 
-        pt.add_to_estimate(usercode, dentid, [tx_hash])
-
+        if complete:
+            complete_tx.tx_hash_complete(om_gui, tx_hash)
     om_gui.load_newEstPage()
 
 def customAdd(om_gui):
@@ -184,7 +264,7 @@ def customAdd(om_gui):
             tx_hash = TXHash(hash("custom %s %s"% (n, usercode)))
             dentid = om_gui.pt.course_dentist
 
-            pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode="4002",
+            pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode="CUST",
             csetype="P", descr=descr, fee=fee, ptfee=fee)
 
         om_gui.load_newEstPage()
@@ -224,7 +304,6 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
     usercode = fee_item.usercode
     itemcode = fee_item.itemcode
-    description = fee_item.description
     fee = fee_item.fees[sub_index][0]
 
     if usercode == "":

@@ -67,7 +67,7 @@ def chart_navigate(om_gui):
 
     tString = str(om_gui.ui.chartsTableWidget.item(
     row, 0).text().toAscii())
-    
+
     om_gui.ui.toothPropsWidget.setTooth(tString, om_gui.selectedChartWidget)
     chartNavigation(om_gui, [tString], True)
 
@@ -106,7 +106,7 @@ def updateCharts(om_gui, arg):
     elif om_gui.selectedChartWidget == "cmp":
         om_gui.advise(u'<p>%s</p>%'% _(
         "please enter treatment via the plan chart"), 1)
-    
+
 def updateChartsAfterTreatment(om_gui, tooth, newplan, newcompleted):
     '''
     update the charts when a planned item has moved to completed
@@ -149,13 +149,6 @@ def checkPreviousEntry(om_gui):
         return True
     else:
         return om_gui.ui.toothPropsWidget.lineEdit.additional()
-    
-def chartTableNav(om_gui, row, col, row1, col1):
-    '''
-    charts table has been navigated
-    '''
-    LOGGER.debug(
-    "UNUSED chartTableNav row %s, col %s, row %s, col %s"% (row,col,row1,col1))
 
 def chartNavigation(om_gui, teeth, callerIsTable=False):
     '''

@@ -169,7 +169,7 @@ class Estimate(object):
 
     @property
     def is_custom(self):
-        return self.itemcode == "4002"
+        return self.itemcode == "CUST"
 
     @property
     def has_one_tx(self):
