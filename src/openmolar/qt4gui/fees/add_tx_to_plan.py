@@ -116,7 +116,7 @@ def add_perio_treatments(om_gui, treatments, complete=False):
         if complete:
             complete_tx.tx_hash_complete(om_gui, tx_hash)
 
-    om_gui.load_newEstPage()
+    om_gui.update_plan_est()
 
 def remove_perio_treatments(om_gui, treatments, completed=False):
     LOGGER.debug(treatments)
@@ -130,7 +130,7 @@ def remove_perio_treatments(om_gui, treatments, completed=False):
         tx_hash = TXHash(hash("perio %s %s"% (n_txs, code)), completed)
         pt.remove_tx_hash(tx_hash)
 
-    om_gui.load_newEstPage()
+    om_gui.update_plan_est()
 
 def remove_xray_treatments(om_gui, treatments, completed=False):
     LOGGER.debug(treatments)
@@ -144,7 +144,7 @@ def remove_xray_treatments(om_gui, treatments, completed=False):
         tx_hash = TXHash(hash("xray %s %s"% (n_txs, code)), completed)
         pt.remove_tx_hash(tx_hash)
 
-    om_gui.load_newEstPage()
+    om_gui.update_plan_est()
 
 def remove_other_treatments(om_gui, treatments, completed=False):
     LOGGER.debug(treatments)
@@ -158,7 +158,7 @@ def remove_other_treatments(om_gui, treatments, completed=False):
         tx_hash = TXHash(hash("other %s %s"% (n_txs, code)), completed)
         pt.remove_tx_hash(tx_hash)
 
-    om_gui.load_newEstPage()
+    om_gui.update_plan_est()
 
 def xrayAdd(om_gui, complete=False):
     '''
@@ -167,7 +167,11 @@ def xrayAdd(om_gui, complete=False):
     if course_module.newCourseNeeded(om_gui):
         return
     mylist = ("S", "M", "P")
-    chosenTreatments = offerTreatmentItems(om_gui, mylist, complete)
+    #offerTreatmentItems is a generator, so the list conversion here
+    #is so that the dialog get raised before the
+    #"were these xrays taken today question
+    chosenTreatments = list(offerTreatmentItems(om_gui, mylist, complete))
+
     if not chosenTreatments:
         return
     add_xray_treatments(om_gui, chosenTreatments, complete)
@@ -197,7 +201,7 @@ def add_xray_treatments(om_gui, treatments, complete=False):
 
         if complete:
             complete_tx.tx_hash_complete(om_gui, tx_hash)
-    om_gui.load_newEstPage()
+    om_gui.update_plan_est()
 
 
 def otherAdd(om_gui):
@@ -232,7 +236,7 @@ def add_other_treatments(om_gui, treatments, complete=False):
 
         if complete:
             complete_tx.tx_hash_complete(om_gui, tx_hash)
-    om_gui.load_newEstPage()
+    om_gui.update_plan_est()
 
 def customAdd(om_gui):
     '''
@@ -267,7 +271,7 @@ def customAdd(om_gui):
             pt.add_to_estimate(usercode, dentid, [tx_hash], itemcode="CUST",
             csetype="P", descr=descr, fee=fee, ptfee=fee)
 
-        om_gui.load_newEstPage()
+        om_gui.update_plan_est()
 
 
 def fromFeeTable(om_gui, fee_item, sub_index):
@@ -332,7 +336,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
     if om_gui.ui.tabWidget.currentIndex() != 7:
         om_gui.ui.tabWidget.setCurrentIndex(7)
     else:
-        om_gui.load_newEstPage()
+        om_gui.update_plan_est()
 
     om_gui.advise(u"<b>%s</b> %s (%s)"% (
         fee_item.description, _("added to estimate"), _("from feescale"))

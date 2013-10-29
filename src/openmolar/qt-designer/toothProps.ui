@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>180</width>
+    <width>150</width>
     <height>479</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>180</width>
+    <width>150</width>
     <height>459</height>
    </size>
   </property>
@@ -200,42 +200,30 @@
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="margin">
-      <number>2</number>
+    <widget class="QFrame" name="frame">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>120</height>
+      </size>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <property name="spacing">
       <number>2</number>
      </property>
-     <item row="0" column="0" rowspan="5">
-      <widget class="QFrame" name="frame">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>120</width>
-         <height>100</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>130</width>
-         <height>130</height>
-        </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
+     <property name="margin">
+      <number>2</number>
+     </property>
+     <item>
       <widget class="QPushButton" name="am_pushButton">
        <property name="minimumSize">
         <size>
@@ -257,7 +245,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item>
       <widget class="QPushButton" name="co_pushButton">
        <property name="minimumSize">
         <size>
@@ -279,7 +267,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item>
       <widget class="QPushButton" name="gl_pushButton">
        <property name="minimumSize">
         <size>
@@ -301,29 +289,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QPushButton" name="porc_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>48</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="autoFillBackground">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Po</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
+     <item>
       <widget class="QPushButton" name="gold_pushButton">
        <property name="minimumSize">
         <size>
@@ -345,10 +311,76 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="porc_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>48</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Po</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
+     <item row="1" column="0">
+      <widget class="QPushButton" name="ex_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>extract (plan only!)</string>
+       </property>
+       <property name="text">
+        <string>Ex</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="rt_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>root treatment</string>
+       </property>
+       <property name="text">
+        <string>RT</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="0">
       <widget class="QPushButton" name="leftTooth_pushButton">
        <property name="minimumSize">
@@ -359,7 +391,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
+         <width>80</width>
          <height>16777215</height>
         </size>
        </property>
@@ -384,6 +416,28 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="defaultCrown_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>porcelain veneer</string>
+       </property>
+       <property name="text">
+        <string>Cr</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QPushButton" name="pushButton">
        <property name="minimumSize">
@@ -394,7 +448,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
+         <width>80</width>
          <height>40</height>
         </size>
        </property>
@@ -425,7 +479,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
+         <width>80</width>
          <height>16777215</height>
         </size>
        </property>
@@ -447,186 +501,6 @@
        </property>
        <property name="flat">
         <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QPushButton" name="static_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>48</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Toggle between static and plan</string>
-       </property>
-       <property name="text">
-        <string>Static</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="dec_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>32</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>toggle between deciduous and permanent tooth</string>
-       </property>
-       <property name="text">
-        <string>Dec</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="at_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>32</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>denture tooth</string>
-       </property>
-       <property name="text">
-        <string>AT</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="tm_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>32</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>tooth missing</string>
-       </property>
-       <property name="text">
-        <string>TM</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QPushButton" name="plan_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>48</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Toggle between static and plan</string>
-       </property>
-       <property name="text">
-        <string>Plan</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="ex_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>32</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>extract (plan only!)</string>
-       </property>
-       <property name="text">
-        <string>Ex</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QPushButton" name="rt_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>32</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>root treatment</string>
-       </property>
-       <property name="text">
-        <string>RT</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QPushButton" name="defaultCrown_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>32</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>porcelain veneer</string>
-       </property>
-       <property name="text">
-        <string>Cr</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QPushButton" name="comp_pushButton">
-       <property name="minimumSize">
-        <size>
-         <width>48</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Toggle between static and plan</string>
-       </property>
-       <property name="text">
-        <string>Comp</string>
        </property>
       </widget>
      </item>
@@ -658,8 +532,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>174</width>
-        <height>140</height>
+        <width>144</width>
+        <height>147</height>
        </rect>
       </property>
      </widget>

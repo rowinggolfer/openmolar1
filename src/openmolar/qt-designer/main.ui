@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>899</width>
+    <width>943</width>
     <height>642</height>
    </rect>
   </property>
@@ -62,7 +62,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>899</width>
+         <width>943</width>
          <height>598</height>
         </rect>
        </property>
@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>678</width>
+                      <width>722</width>
                       <height>477</height>
                      </rect>
                     </property>
@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>660</width>
+                      <width>704</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -2015,7 +2015,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>680</width>
+                      <width>724</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2306,7 +2306,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>699</width>
+                      <width>718</width>
                       <height>456</height>
                      </rect>
                     </property>
@@ -2387,7 +2387,7 @@
                        </property>
                        <property name="maximumSize">
                         <size>
-                         <width>120</width>
+                         <width>145</width>
                          <height>135</height>
                         </size>
                        </property>
@@ -2395,7 +2395,16 @@
                         <string>BPE</string>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_8">
-                        <property name="margin">
+                        <property name="leftMargin">
+                         <number>3</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>3</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>9</number>
+                        </property>
+                        <property name="bottomMargin">
                          <number>3</number>
                         </property>
                         <item>
@@ -2449,7 +2458,7 @@
                        </property>
                        <property name="maximumSize">
                         <size>
-                         <width>120</width>
+                         <width>150</width>
                          <height>16777215</height>
                         </size>
                        </property>
@@ -2650,10 +2659,19 @@
                </widget>
                <widget class="QWidget" name="tab_patient_charts">
                 <attribute name="title">
-                 <string>Charts</string>
+                 <string>Charts / Planning</string>
                 </attribute>
-                <layout class="QHBoxLayout" name="horizontalLayout_27">
-                 <item>
+                <layout class="QGridLayout" name="gridLayout_8">
+                 <property name="horizontalSpacing">
+                  <number>3</number>
+                 </property>
+                 <property name="verticalSpacing">
+                  <number>2</number>
+                 </property>
+                 <property name="margin">
+                  <number>2</number>
+                 </property>
+                 <item row="0" column="0" rowspan="2">
                   <widget class="QScrollArea" name="scrollArea_3">
                    <property name="frameShape">
                     <enum>QFrame::NoFrame</enum>
@@ -2672,8 +2690,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>469</width>
-                      <height>377</height>
+                      <width>570</width>
+                      <height>340</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2686,11 +2704,11 @@
                      <item>
                       <widget class="QStackedWidget" name="stackedWidget">
                        <property name="currentIndex">
-                        <number>0</number>
+                        <number>1</number>
                        </property>
                        <widget class="QWidget" name="table">
-                        <layout class="QGridLayout" name="gridLayout_8">
-                         <item row="0" column="0" colspan="2">
+                        <layout class="QHBoxLayout" name="horizontalLayout_4">
+                         <item>
                           <widget class="QTableWidget" name="chartsTableWidget">
                            <property name="maximumSize">
                             <size>
@@ -2710,6 +2728,29 @@
                        </widget>
                        <widget class="QWidget" name="charts">
                         <layout class="QGridLayout" name="gridLayout_14">
+                         <property name="margin">
+                          <number>3</number>
+                         </property>
+                         <item row="3" column="1">
+                          <widget class="QListView" name="completed_listView">
+                           <property name="maximumSize">
+                            <size>
+                             <width>120</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="2" column="1">
+                          <widget class="QListView" name="plan_listView">
+                           <property name="maximumSize">
+                            <size>
+                             <width>120</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
+                          </widget>
+                         </item>
                          <item row="0" column="0">
                           <widget class="QGroupBox" name="static_groupBox">
                            <property name="font">
@@ -2725,7 +2766,7 @@
                            </property>
                           </widget>
                          </item>
-                         <item row="1" column="0">
+                         <item row="2" column="0">
                           <widget class="QGroupBox" name="plan_groupBox">
                            <property name="autoFillBackground">
                             <bool>false</bool>
@@ -2735,7 +2776,29 @@
                            </property>
                           </widget>
                          </item>
-                         <item row="2" column="0">
+                         <item row="0" column="1">
+                          <widget class="QFrame" name="static_frame">
+                           <property name="minimumSize">
+                            <size>
+                             <width>0</width>
+                             <height>120</height>
+                            </size>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>120</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
+                           <property name="frameShape">
+                            <enum>QFrame::StyledPanel</enum>
+                           </property>
+                           <property name="frameShadow">
+                            <enum>QFrame::Raised</enum>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="3" column="0">
                           <widget class="QGroupBox" name="completed_groupBox">
                            <property name="title">
                             <string>Completed</string>
@@ -2750,11 +2813,115 @@
                    </widget>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QFrame" name="frame_4">
+                 <item row="2" column="0">
+                  <widget class="QGroupBox" name="groupBox_4">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
-                     <width>200</width>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="title">
+                    <string>Treatment Planning</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_9">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <property name="margin">
+                     <number>2</number>
+                    </property>
+                    <item>
+                     <widget class="QPushButton" name="advanced_tx_planning_button">
+                      <property name="text">
+                       <string>Advanced Tx Planning</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="customTx_pushButton">
+                      <property name="text">
+                       <string>Custom</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="otherTxpushButton">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>Other</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="xrayTxpushButton">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>X-Rays</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="perioTxpushButton">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>Perio</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" rowspan="3">
+                  <widget class="QFrame" name="toothProps_frame">
+                   <property name="minimumSize">
+                    <size>
+                     <width>160</width>
                      <height>0</height>
                     </size>
                    </property>
@@ -2770,97 +2937,40 @@
                    <property name="frameShadow">
                     <enum>QFrame::Raised</enum>
                    </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_14">
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <property name="margin">
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <widget class="QFrame" name="toothProps_frame">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>200</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="frameShape">
-                       <enum>QFrame::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Raised</enum>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
                   </widget>
                  </item>
                 </layout>
                </widget>
                <widget class="QWidget" name="tab_patient_estimate">
                 <attribute name="title">
-                 <string>Estimate/Plan</string>
+                 <string>Estimate</string>
                 </attribute>
-                <layout class="QGridLayout" name="gridLayout_21">
-                 <item row="0" column="0">
-                  <widget class="QGroupBox" name="estimate_groupBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="QScrollArea" name="estimate_scrollArea">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>202</height>
+                    </size>
                    </property>
-                   <property name="title">
-                    <string>Estimate</string>
+                   <property name="widgetResizable">
+                    <bool>true</bool>
                    </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_13">
-                    <property name="leftMargin">
-                     <number>0</number>
+                   <widget class="QWidget" name="scrollAreaWidgetContents_11">
+                    <property name="geometry">
+                     <rect>
+                      <x>0</x>
+                      <y>0</y>
+                      <width>529</width>
+                      <height>375</height>
+                     </rect>
                     </property>
-                    <property name="topMargin">
-                     <number>6</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>6</number>
-                    </property>
-                    <item>
-                     <widget class="QScrollArea" name="estimate_scrollArea">
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>202</height>
-                       </size>
-                      </property>
-                      <property name="widgetResizable">
-                       <bool>true</bool>
-                      </property>
-                      <widget class="QWidget" name="scrollAreaWidgetContents_11">
-                       <property name="geometry">
-                        <rect>
-                         <x>0</x>
-                         <y>0</y>
-                         <width>419</width>
-                         <height>339</height>
-                        </rect>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_19"/>
-                      </widget>
-                     </widget>
-                    </item>
-                   </layout>
+                    <layout class="QHBoxLayout" name="horizontalLayout_19"/>
+                   </widget>
                   </widget>
                  </item>
-                 <item row="0" column="1" rowspan="2">
+                 <item>
                   <widget class="QScrollArea" name="scrollArea">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -2870,7 +2980,7 @@
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>240</width>
+                     <width>180</width>
                      <height>0</height>
                     </size>
                    </property>
@@ -2882,48 +2992,16 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>225</width>
-                      <height>479</height>
+                      <width>180</width>
+                      <height>375</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
                      <item>
-                      <widget class="QGroupBox" name="groupBox_5">
-                       <property name="title">
-                        <string>Course Management</string>
+                      <widget class="QLabel" name="estimate_label">
+                       <property name="text">
+                        <string>Estimate</string>
                        </property>
-                       <layout class="QGridLayout" name="gridLayout_12">
-                        <item row="0" column="0">
-                         <widget class="QLabel" name="label_22">
-                          <property name="text">
-                           <string>Course Dentist</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="1">
-                         <widget class="QComboBox" name="dnt2comboBox">
-                          <property name="maximumSize">
-                           <size>
-                            <width>50</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="0" colspan="2">
-                         <widget class="QPushButton" name="closeTx_pushButton">
-                          <property name="enabled">
-                           <bool>true</bool>
-                          </property>
-                          <property name="text">
-                           <string>Close Course</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
                       </widget>
                      </item>
                      <item>
@@ -2984,142 +3062,38 @@ Note - this will not remove items which are currently there. </string>
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QGroupBox" name="groupBox_4">
-                       <property name="minimumSize">
-                        <size>
-                         <width>170</width>
-                         <height>221</height>
-                        </size>
-                       </property>
+                      <widget class="QGroupBox" name="groupBox_5">
                        <property name="title">
-                        <string>Treatment Planning</string>
+                        <string>Course Management</string>
                        </property>
-                       <layout class="QVBoxLayout" name="verticalLayout_2">
-                        <item>
-                         <widget class="QPushButton" name="perioTxpushButton">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
+                       <layout class="QGridLayout" name="gridLayout_12">
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="label_22">
                           <property name="text">
-                           <string>Perio</string>
+                           <string>Course Dentist</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
-                        <item>
-                         <widget class="QPushButton" name="xrayTxpushButton">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
+                        <item row="0" column="1">
+                         <widget class="QComboBox" name="dnt2comboBox">
                           <property name="maximumSize">
                            <size>
-                            <width>16777215</width>
+                            <width>50</width>
                             <height>16777215</height>
                            </size>
                           </property>
-                          <property name="text">
-                           <string>X-Rays</string>
-                          </property>
                          </widget>
                         </item>
-                        <item>
-                         <widget class="QPushButton" name="dentureTxpushButton">
+                        <item row="1" column="0" colspan="2">
+                         <widget class="QPushButton" name="closeTx_pushButton">
                           <property name="enabled">
-                           <bool>false</bool>
-                          </property>
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
+                           <bool>true</bool>
                           </property>
                           <property name="text">
-                           <string>Dentures</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="OrthoTxpushButton">
-                          <property name="enabled">
-                           <bool>false</bool>
-                          </property>
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Ortho</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="otherTxpushButton">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Other Tx</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="customTx_pushButton">
-                          <property name="text">
-                           <string>Add Custom Item</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <spacer name="verticalSpacer_2">
-                          <property name="orientation">
-                           <enum>Qt::Vertical</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>20</width>
-                            <height>40</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="advanced_tx_planning_button">
-                          <property name="text">
-                           <string>Advanced Tx Planning</string>
+                           <string>Close Course</string>
                           </property>
                          </widget>
                         </item>
@@ -3150,7 +3124,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>675</width>
+                      <width>719</width>
                       <height>377</height>
                      </rect>
                     </property>
@@ -3576,7 +3550,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>107</width>
+                     <width>118</width>
                      <height>119</height>
                     </rect>
                    </property>
@@ -4971,7 +4945,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>899</width>
+     <width>943</width>
      <height>22</height>
     </rect>
    </property>
@@ -5244,11 +5218,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>perioChartDateComboBox</tabstop>
   <tabstop>dnt1comboBox</tabstop>
   <tabstop>scrollArea</tabstop>
-  <tabstop>perioTxpushButton</tabstop>
-  <tabstop>xrayTxpushButton</tabstop>
-  <tabstop>dentureTxpushButton</tabstop>
-  <tabstop>OrthoTxpushButton</tabstop>
-  <tabstop>otherTxpushButton</tabstop>
   <tabstop>accounts_tableWidget</tabstop>
   <tabstop>printSelectedAccounts_pushButton</tabstop>
   <tabstop>titleEdit</tabstop>

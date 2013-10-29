@@ -69,18 +69,8 @@ SURGICAL_OPTIONS = {
 "AP"        : _( u"Apicectomy")
 }
 
-STATIC_OPTIONS = {
-"--"        : "--"+_("Static Only"),
-"TM"        : _( u"Tooth Missing"),
-"AT"        : _( u"Denture Tooth"),
-"RP"        : _( u"Root Present"),
-"+P"        : _( u"Permanent Tooth Present"),
-"PE"        : _( u"Partially Erupted Tooth"),
-"UE"        : _( u"Unerupted Tooth"),
-}
 
 COMBOBOXES = (
-STATIC_OPTIONS,
 FS_OPTIONS,
 CR_OPTIONS,
 BR_RE_OPTIONS,
@@ -98,7 +88,7 @@ class chartLineEdit(QtGui.QLineEdit):
     '''
     def __init__(self, parent=None):
         super(chartLineEdit,self).__init__(parent)
-        self.parent = parent
+        self.om_gui = parent
         self.originalPropList = []
 
     def unsavedChanges(self):
@@ -141,8 +131,8 @@ class chartLineEdit(QtGui.QLineEdit):
         '''
         if checkedAlready or self.verifyProps():
             self.updateFromPropList(self.propListFromText())
-            self.parent.tooth.clear()
-            self.parent.tooth.update()
+            self.om_gui.tooth.clear()
+            self.om_gui.tooth.update()
             self.finishedEdit()
 
     def propListFromText(self):
@@ -160,8 +150,8 @@ class chartLineEdit(QtGui.QLineEdit):
                 text += "%s "% prop
         self.setKnownProps(text)
         ##not sure these are needed??
-        self.parent.tooth.clear()
-        self.parent.tooth.update()
+        self.om_gui.tooth.clear()
+        self.om_gui.tooth.update()
         self.finishedEdit()
 
     def setKnownProps(self, arg):
@@ -235,12 +225,12 @@ class chartLineEdit(QtGui.QLineEdit):
 
         allowedCode = True
         if prop!= "":
-            if self.parent.tooth.isBacktooth and not (prop in allowed.backToothCodes):
+            if self.om_gui.tooth.isBacktooth and not (prop in allowed.backToothCodes):
                 allowedCode = False
-            if not self.parent.tooth.isBacktooth and \
+            if not self.om_gui.tooth.isBacktooth and \
             not (prop in allowed.frontToothCodes):
                 allowedCode = False
-            if (not self.parent.is_Static) and (prop in allowed.treatment_only):
+            if (not self.om_gui.is_Static) and (prop in allowed.treatment_only):
                 allowedCode = True
         if not allowedCode:
             message = '''"%s" is not recognised <br />
@@ -280,22 +270,23 @@ class chartLineEdit(QtGui.QLineEdit):
                 #-- catch and overwrite any lower case
                 event = QtGui.QKeyEvent(event.type(), event.key(),
                 event.modifiers(), event.text().toUpper())
-            if not (inputT == "!" and not self.parent.is_Static):
+            if not (inputT == "!" and not self.om_gui.is_Static):
                 #don't allow comments if not in static
                 QtGui.QLineEdit.keyPressEvent(self,event)
 
 class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
+    static_chosen = QtCore.pyqtSignal(object)
     def __init__(self, parent=None):
         super(tpWidget, self).__init__(parent)
-        self.parent = parent
+        self.om_gui = parent
         self.setupUi(self)
         hlayout=QtGui.QHBoxLayout(self.editframe)
         hlayout.setContentsMargins(0,0,0,0)
         self.lineEdit=chartLineEdit(self)
         self.lineEdit.setMaxLength(34) #as defined in the sql tables for a static entry - may exceed the plan stuff.... but I will validate that anyway.
         hlayout.addWidget(self.lineEdit)
-        self.tooth=tooth()  #self.frame)
-        self.toothlayout=QtGui.QHBoxLayout(self.frame)
+        self.tooth = Tooth()  #self.frame)
+        self.toothlayout = QtGui.QHBoxLayout(self.frame)
         self.toothlayout.setContentsMargins(0,0,0,0)
         self.toothlayout.addWidget(self.tooth)
         self.am_pushButton.setStyleSheet(
@@ -352,17 +343,17 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         self.tooth.clear()
         self.tooth.update()
 
-        self.tooth_label.setText(self.parent.pt.chartgrid[selectedTooth].upper())
+        self.tooth_label.setText(self.om_gui.pt.chartgrid[selectedTooth].upper())
         #--ALLOWS for deciduos teeth
 
         if selectedChart == "st":
             self.isStatic(True)
-            props = self.parent.pt.__dict__["%sst"% selectedTooth]
+            props = self.om_gui.pt.__dict__["%sst"% selectedTooth]
         else:
             self.isStatic(False)
-            props = self.parent.pt.treatment_course.__dict__[
+            props = self.om_gui.pt.treatment_course.__dict__[
                 "%s%s"% (selectedTooth, selectedChart)]
-            
+
         self.setExistingProps(props)
 
     def setSelectedChart(self, arg):
@@ -371,8 +362,9 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         '''
         self.selectedChart = arg
         self.isStatic(arg=="st")
+        self.static_chosen.emit(arg=="st")
 
-    def isStatic(self,arg):
+    def isStatic(self, arg):
         '''
         if the editing is of the static chart, then different buttons are enabled
         '''
@@ -537,15 +529,8 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             self.lineEdit.finishedEdit()
             self.emit(QtCore.SIGNAL("NextTooth"),("down"))
 
-    def dec_perm(self):
-        self.emit(QtCore.SIGNAL("FlipDeciduousState"))
-
-    def at(self):
-        self.lineEdit.addItem("AT")
-        self.nextTooth()
-
-    def tm(self):
-        self.lineEdit.addItem("TM")
+    def static_input(self, value):
+        self.lineEdit.addItem(value)
         self.nextTooth()
 
     def ex(self):
@@ -623,13 +608,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
                     if combobox_dict[key] == arg:
                         self.lineEdit.addItem(key)
 
-    def staticButPressed(self):
-        self.emit(QtCore.SIGNAL("static"))
-    def planButPressed(self):
-        self.emit(QtCore.SIGNAL("plan"))
-    def compButPressed(self):
-        self.emit(QtCore.SIGNAL("completed"))
-
     def signals(self):
         QtCore.QObject.connect(self.am_pushButton,
         QtCore.SIGNAL("clicked()"), self.am)
@@ -668,15 +646,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         QtCore.QObject.connect(self.leftTooth_pushButton,
         QtCore.SIGNAL("clicked()"), self.leftTooth)
 
-        QtCore.QObject.connect(self.dec_pushButton,
-        QtCore.SIGNAL("clicked()"), self.dec_perm)
-
-        QtCore.QObject.connect(self.at_pushButton,
-        QtCore.SIGNAL("clicked()"), self.at)
-
-        QtCore.QObject.connect(self.tm_pushButton,
-        QtCore.SIGNAL("clicked()"), self.tm)
-
         QtCore.QObject.connect(self.ex_pushButton,
         QtCore.SIGNAL("clicked()"), self.ex)
 
@@ -686,15 +655,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         QtCore.QObject.connect(self.defaultCrown_pushButton,
         QtCore.SIGNAL("clicked()"), self.crown)
 
-        QtCore.QObject.connect(self.static_pushButton,
-        QtCore.SIGNAL("clicked()"), self.staticButPressed)
-
-        QtCore.QObject.connect(self.plan_pushButton,
-        QtCore.SIGNAL("clicked()"), self.planButPressed)
-
-        QtCore.QObject.connect(self.comp_pushButton,
-        QtCore.SIGNAL("clicked()"), self.compButPressed)
-
         QtCore.QObject.connect(self.comments_comboBox,
         QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
 
@@ -703,28 +663,34 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             QtCore.SIGNAL("currentIndexChanged (const QString&)"),
             self.cb_treat)
 
-class tooth(QtGui.QWidget):
-    def __init__(self,parent=None):
-        super(tooth,self).__init__(parent)
-        self.isBacktooth=True
-        self.quadrant=1
-        self.isUpper=True
-        self.isRight=True
+class Tooth(QtGui.QWidget):
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.isBacktooth = True
+        self.quadrant = 1
+        self.isUpper = True
+        self.isRight = True
         self.setMouseTracking(True)
         self.shapes()
         self.clear()
+
     def sizeHint(self):
         return self.parent().size()
+
     def minimumSizeHint(self):
         return QtCore.QSize(80, 80)
+
     def setBacktooth(self,arg):
         if self.isBacktooth!=arg:
             self.isBacktooth=arg
             self.shapes()
+
     def setRightSide(self,arg):
         self.isRight=arg
+
     def setUpper(self,arg):
         self.isUpper=arg
+
     def clear(self):
         self.filledSurfaces=""
         if self.isBacktooth:
@@ -753,6 +719,7 @@ class tooth(QtGui.QWidget):
             retarg+="I"
 
         return retarg
+
     def setFilledSurfaces(self,arg):
         if arg in self.filledSurfaces:
             self.filledSurfaces=self.filledSurfaces.replace(arg,"")
@@ -760,9 +727,11 @@ class tooth(QtGui.QWidget):
             self.filledSurfaces+=arg
         self.filledSurfaces=self.sortSurfaces(self.filledSurfaces)
         self.update()
+
     def leaveEvent(self,event):
         self.mouseOverSurface=None
         self.update()
+
     def mouseMoveEvent(self,event):
         y=event.y()
         x=event.x()
@@ -813,8 +782,10 @@ class tooth(QtGui.QWidget):
         else:
             return #missed!!
         self.emit(QtCore.SIGNAL("toothSurface"))
+
     def resizeEvent(self,event):
         self.shapes()
+
     def shapes(self):
         self.toothRect=QtCore.QRectF(0,0,self.width(),self.height())
         irw=self.toothRect.width()*0.25                                                                  #inner rectangle width
@@ -930,8 +901,6 @@ if __name__ == "__main__":
     Form = QtGui.QWidget()
     ui = tpWidget(Form)
     ui.setExistingProps("MOD B,GL !COMMENT_TWO")
-    #Form.setEnabled(False)
-    #Form = chartLineEdit()
     Form.show()
     sys.exit(app.exec_())
 

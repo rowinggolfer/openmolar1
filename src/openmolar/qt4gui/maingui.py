@@ -35,6 +35,8 @@ from openmolar.qt4gui.fees import complete_tx
 from openmolar.qt4gui.fees import daybook_module
 from openmolar.qt4gui.fees import cashbook_module
 from openmolar.qt4gui.fees import fee_table_model
+from openmolar.qt4gui.fees.treatment_list_models \
+    import PlannedTreatmentListModel, CompletedTreatmentListModel
 
 from openmolar.qt4gui import forum_gui_module
 from openmolar.qt4gui import contract_gui_module
@@ -66,8 +68,8 @@ from openmolar.qt4gui.dialogs import assistant_select_dialog
 from openmolar.qt4gui.dialogs.phrasebook_dialog import PhraseBookDialog
 from openmolar.qt4gui.dialogs.recall_dialog import RecallDialog
 from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
-from openmolar.qt4gui.dialogs.alter_todays_notes import \
-    AlterTodaysNotesDialog
+from openmolar.qt4gui.dialogs.alter_todays_notes \
+    import AlterTodaysNotesDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.dialogs.family_manage_dialog import LoadRelativesDialog
 
@@ -75,9 +77,10 @@ from openmolar.qt4gui.dialogs import duplicate_receipt_dialog
 from openmolar.qt4gui.dialogs.auto_address_dialog import AutoAddressDialog
 from openmolar.qt4gui.dialogs.family_manage_dialog import FamilyManageDialog
 
-from openmolar.qt4gui.dialogs.nhs_forms_config_dialog import NHSFormsConfigDialog
-from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog import \
-    AdvancedTxPlanningDialog
+from openmolar.qt4gui.dialogs.nhs_forms_config_dialog \
+    import NHSFormsConfigDialog
+from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog \
+    import AdvancedTxPlanningDialog
 
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
@@ -121,9 +124,10 @@ from openmolar.qt4gui.customwidgets import chartwidget
 from openmolar.qt4gui.customwidgets import toothProps
 from openmolar.qt4gui.customwidgets import perioToothProps
 from openmolar.qt4gui.customwidgets import perioChartWidget
-#from openmolar.qt4gui.customwidgets import estimateWidget
 from openmolar.qt4gui.customwidgets import estimate_widget
 from openmolar.qt4gui.customwidgets import notification_widget
+from openmolar.qt4gui.customwidgets.static_control_panel \
+    import StaticControlPanel
 
 LOGGER = logging.getLogger("openmolar")
 LOGGER.setLevel(logging.INFO)
@@ -164,6 +168,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.feestableLoaded = False
         self.forum_parenting_mode = (False, None)
         self.feetesterdl = None
+
+        self.ui.plan_listView.setModel(PlannedTreatmentListModel(self))
+        self.ui.completed_listView.setModel(CompletedTreatmentListModel(self))
+
 
         QtCore.QTimer.singleShot(2000, self.load_fee_tables)
         QtCore.QTimer.singleShot(1000, self.set_operator_label)
@@ -300,6 +308,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         hlayout.addWidget(self.ui.completedChartWidget)
         self.ui.completed_groupBox.setStyleSheet("border: 1px solid gray;")
 
+        #static control panel
+        self.ui.static_control_panel = StaticControlPanel()
+        hlayout = QtGui.QHBoxLayout(self.ui.static_frame)
+        hlayout.setMargin(0)
+        hlayout.addWidget(self.ui.static_control_panel)
+
         #-TOOTHPROPS (right hand side on the charts page)
         self.ui.toothPropsWidget = toothProps.tpWidget(self)
         hlayout = QtGui.QHBoxLayout(self.ui.toothProps_frame)
@@ -396,27 +410,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         layout the perio charts
         '''
         charts_gui.layoutPerioCharts(self)
-
-    def editStatic(self):
-        '''
-        called by the static button on the toothprops widget
-        '''
-        self.selectedChartWidget="st"
-        charts_gui.chart_navigate(self)
-
-    def editPlan(self):
-        '''
-        called by the plan button on the toothprops widget
-        '''
-        self.selectedChartWidget="pl"
-        charts_gui.chart_navigate(self)
-
-    def editCompleted(self):
-        '''
-        called by the cmp button on the toothprops widget
-        '''
-        self.selectedChartWidget="cmp"
-        charts_gui.chart_navigate(self)
 
     def deleteComments(self):
         '''
@@ -610,32 +603,42 @@ class OpenmolarGui(QtGui.QMainWindow):
             if self.load_editpage():
                 self.editPageVisited = True
 
-        if ci == 1:
+        elif ci == 1:
             self.updateStatus()
             self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
             contract_gui_module.handle_ContractTab(self)
 
-        if ci == 2: #-correspondence
+        elif ci == 2: #-correspondence
             self.docsPrintedInit()
             self.docsImportedInit()
 
-        if ci == 3:
+        elif ci == 3:
             self.load_receptionSummaryPage()
-        if ci == 4:
+
+        elif ci == 4:
             self.load_clinicalSummaryPage()
 
-        if ci == 5: #-- full notes
+        elif ci == 5: #-- full notes
             self.updateNotesPage()
 
-        if ci == 8: #-- perio tab
+        elif ci in (6, 7): #-- charts/plan or estimate
+            self.update_plan_est()
+
+        elif ci == 8: #-- perio tab
             charts_gui.periochart_dates(self)
             #load the periocharts (if the patient has data)
             charts_gui.layoutPerioCharts(self)
 
-        if ci == 7:  #-- estimate/plan page.
-            self.load_newEstPage()
-
         self.wait(False)
+
+    def update_plan_est(self):
+        ci = self.ui.tabWidget.currentIndex()
+        if  ci == 7:
+            self.load_newEstPage()
+        elif ci == 6:
+            self.ui.plan_listView.model().reset()
+            self.ui.completed_listView.model().reset()
+
 
     def home(self):
         '''
@@ -1341,20 +1344,24 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.closeTx_pushButton.setText(_("Close Course"))
 
         self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
-        self.ui.estimate_groupBox.setEnabled(self.pt.underTreatment)
+        self.ui.estWidget.setEnabled(self.pt.underTreatment)
         self.ui.completed_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.closeTx_pushButton.setEnabled(self.pt.underTreatment)
 
         if self.pt.underTreatment:
-            self.ui.estimate_groupBox.setTitle(
-            "Current Course- started %s"% (
-            localsettings.formatDate(self.pt.treatment_course.accd)))
+            self.ui.estimate_label.setText(u"<b>%s</b><br />%s %s"% (
+                _("Active Course"),
+                _("started"),
+                localsettings.formatDate(self.pt.treatment_course.accd)))
 
         else:
-            self.ui.estimate_groupBox.setTitle(
-            "Previous Course - started %s and completed %s"% (
-            localsettings.formatDate(self.pt.treatment_course.accd),
-            localsettings.formatDate(self.pt.treatment_course.cmpd)))
+            self.ui.estimate_label.setText(
+                u"<b>%s</b><br />%s %s<br />%s %s"% (
+                _("Previous Course"),
+                _("started"),
+                localsettings.formatDate(self.pt.treatment_course.accd),
+                _("completed"),
+                localsettings.formatDate(self.pt.treatment_course.cmpd)))
 
             if not self.pt.treatment_course.accd in ("", None):
                 self.ui.closeTx_pushButton.setText("Resume Existing Course")
@@ -2879,6 +2886,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.toothPropsWidget,
         QtCore.SIGNAL("NextTooth"), self.navigateCharts)
 
+        self.ui.static_control_panel.clicked.connect(
+            self.ui.toothPropsWidget.static_input)
+
         #--fillings have changed!!
         QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
         QtCore.SIGNAL("Changed_Properties"), self.updateCharts)
@@ -2886,17 +2896,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
         QtCore.SIGNAL("DeletedComments"), self.deleteComments)
 
-        QtCore.QObject.connect(self.ui.toothPropsWidget,
-        QtCore.SIGNAL("static"), self.editStatic)
+        self.ui.static_control_panel.deciduous_signal.connect(
+            self.flipDeciduous)
 
-        QtCore.QObject.connect(self.ui.toothPropsWidget,
-        QtCore.SIGNAL("plan"), self.editPlan)
-
-        QtCore.QObject.connect(self.ui.toothPropsWidget,
-        QtCore.SIGNAL("completed"), self.editCompleted)
-
-        QtCore.QObject.connect(self.ui.toothPropsWidget,
-        QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
+        self.ui.toothPropsWidget.static_chosen.connect(
+            self.ui.static_control_panel.setEnabled)
 
     def signals_editPatient(self):
         #edit page
@@ -3123,6 +3127,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             if dl.deleted_cmp_items:
                 add_tx_to_plan.tx_planning_dialog_delete_txs(
                 self, dl.deleted_cmp_items, completed=True)
+            self.update_plan_est()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

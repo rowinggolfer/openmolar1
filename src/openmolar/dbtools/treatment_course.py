@@ -15,8 +15,11 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-CURRTRT_ROOT_ATTS = ('xray', 'perio', 'anaes', 'other', 'ndu', 'ndl', 'odu',
-'odl', 'custom', 'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
+CURRTRT_NON_TOOTH_ATTS = ('xray', 'perio', 'anaes',
+'other', 'ndu', 'ndl', 'odu', 'odl', 'custom')
+
+CURRTRT_ROOT_ATTS = CURRTRT_NON_TOOTH_ATTS + (
+'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', 'll8', 'll7', 'll6', 'll5',
 'll4', 'll3', 'll2', 'll1', 'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7',
 'lr8')
@@ -160,6 +163,29 @@ class TreatmentCourse(object):
     def __cmp__(self, other):
         return cmp(unicode(self), unicode(other))
 
+    def _non_tooth_items(self, suffix="pl"):
+        for att in CURRTRT_NON_TOOTH_ATTS:
+            value = self.__dict__.get(att+suffix, "")
+            if value != "":
+                txs = value.split(" ")
+                for tx in set(txs):
+                    if tx != "":
+                        n = txs.count(tx)
+                        if n != 1:
+                            tx = "%d%s"% (n, tx)
+                        yield "%s %s"% (att.ljust(10), tx)
+
+    @property
+    def non_tooth_plan_items(self):
+        return list(self._non_tooth_items("pl"))
+
+    @property
+    def non_tooth_cmp_items(self):
+        items = []
+        if self.examt != "" and self.examd:
+            items.append("%s %s"% ("exam".ljust(10), self.examt))
+        return items + list(self._non_tooth_items("cmp"))
+
     def getCurrtrt(self):
         db = connect.connect()
         cursor = db.cursor()
@@ -298,3 +324,6 @@ if __name__ =="__main__":
 
     tc = TreatmentCourse(TEST_SNO, courseno)
     print tc
+
+    print tc.non_tooth_plan_items
+    print tc.non_tooth_cmp_items
