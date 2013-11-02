@@ -203,8 +203,8 @@ class FeeTable(object):
         '''
         a readable description of the object
         '''
-        return "Class feeTable database index %s - has %s feeItems"% (
-            self.database_ix, len(self.feesDict))
+        return "FeeTable %s database index %s - has %s feeItems"% (
+            self.briefName, self.database_ix, len(self.feesDict))
 
     @property
     def briefName(self):
@@ -575,7 +575,11 @@ class ComplexShortcut(object):
 
         shortcut_node = element.getElementsByTagName("shortcut")[0]
         self.is_regex = shortcut_node.getAttribute("type") == "regex"
+        self.pt_attribute = shortcut_node.getAttribute("att")
+
         shortcut = shortcut_node.childNodes[0].data
+        if self.pt_attribute != "chart":
+            shortcut = "%s %s"% (self.pt_attribute, shortcut)
         if self.is_regex:
             self.shortcut = re.compile(shortcut)
         else:
@@ -606,6 +610,8 @@ class ComplexShortcut(object):
             self.cases.append(case_action)
 
     def matches(self, shortcut):
+        LOGGER.debug(
+        "Complex shortcut, comparing %s with %s"% (shortcut, self.shortcut))
         if self.is_regex:
             return self.shortcut.match(shortcut)
         else:

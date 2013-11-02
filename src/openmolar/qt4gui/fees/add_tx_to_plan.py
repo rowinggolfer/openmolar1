@@ -427,8 +427,12 @@ def confirmWrongFeeTable(om_gui, suggested, current):
         return suggestedTable
 
 def complex_shortcut_handled(om_gui, shortcut, item_no, dentid, tx_hash):
+    LOGGER.debug("checking %s %s %s %s"% (shortcut, item_no, dentid, tx_hash))
     pt = om_gui.pt
-    for complex_shortcut in pt.getFeeTable().complex_shortcuts:
+    fee_table = pt.getFeeTable()
+    LOGGER.debug("Feetable being checked = %s"% fee_table)
+
+    for complex_shortcut in fee_table.complex_shortcuts:
         if complex_shortcut.matches(shortcut):
             message = "%s is a complex shortcut with %d cases"% (shortcut,
                 len(complex_shortcut.cases))
@@ -456,9 +460,8 @@ def complex_shortcut_handled(om_gui, shortcut, item_no, dentid, tx_hash):
 
                     for item_code in case.additions:
                         LOGGER.debug("adding additional code %s"% item_code)
-
-                        ##TODO this is broken!
-                        add_treatment_to_estimate(om_gui, shortcut, dentid,
+                        add_treatment_to_estimate(om_gui,
+                        complex_shortcut.pt_attribute, shortcut, dentid,
                         tx_hashes, item_code)
 
                     for item_code in case.alterations:
@@ -473,7 +476,9 @@ def complex_shortcut_handled(om_gui, shortcut, item_no, dentid, tx_hash):
                     if case.message != "":
                         om_gui.advise(case.message, 1)
 
+            LOGGER.info("%s was handled by as a complex shortcut"% shortcut)
             return True
+    LOGGER.debug("%s not a complex shortcut"% shortcut)
     return False
 
 def remove_estimate_item(om_gui, est_item):
@@ -592,7 +597,6 @@ def recalculate_estimate(om_gui):
 
 if __name__ == "__main__":
     #-- test code
-    LOGGER.setLevel(logging.DEBUG)
 
     localsettings.initiate()
     localsettings.loadFeeTables()
@@ -600,6 +604,7 @@ if __name__ == "__main__":
 
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class
+    LOGGER.setLevel(logging.DEBUG)
 
     app = QtGui.QApplication([])
     mw = maingui.OpenmolarGui()
