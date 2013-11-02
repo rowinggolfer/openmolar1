@@ -1944,6 +1944,8 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def handle_chart_treatment_input(self, tooth, prop, completed):
         LOGGER.debug("%s %s %s"% (tooth, prop, completed))
+        if course_module.newCourseNeeded(self):
+            return
 
         for tx in prop.split(" "):
             if tx == "":
