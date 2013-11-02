@@ -34,7 +34,7 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
             self.buttonBox.setEnabled(False)
             self.pushButton.clicked.connect(self._re_enable)
             self.groupBox.hide()
-            self.dent_label.hide()
+            self.clinicianGroupBox.hide()
             self.dents_comboBox.hide()
         else:
             self.planned_groupbox.hide()
@@ -43,7 +43,7 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         self.planned_groupbox.hide()
         self.groupBox.show()
         self.buttonBox.setEnabled(True)
-        self.dent_label.show()
+        self.clinicianGroupBox.show()
         self.dents_comboBox.show()
 
     def setPractitioner(self, arg):
