@@ -304,6 +304,32 @@ class TreatmentCourse(object):
         LOGGER.warning("couldn't find treatment %s"% hash_)
         return None, None
 
+    def pl_txs(self, att):
+        '''
+        returns the list of treatments currently planned for this attribute.
+        eg pl_txs("ul8") may return ["O", "B,CO"]
+        '''
+        txs = self.__dict__["%spl"%att].split(" ")
+        while "" in txs:
+            txs.remove("")
+        return txs
+
+    def cmp_txs(self, att):
+        '''
+        returns the list of treatments currently planned for this attribute.
+        eg pl_txs("ul8") may return ["O", "B,CO"]
+        '''
+        txs = self.__dict__["%scmp"%att].split(" ")
+        while "" in txs:
+            txs.remove("")
+        return txs
+
+    def all_txs(self, att):
+        '''
+        returns the list of treatments currently associated with an attribute.
+        eg all_txs("ul8") may return ["O", "B,CO"]
+        '''
+        return self.cmp_txs(att) + self.pl_txs(att)
 
 if __name__ =="__main__":
     '''
@@ -327,3 +353,5 @@ if __name__ =="__main__":
 
     print tc.non_tooth_plan_items
     print tc.non_tooth_cmp_items
+    print tc.all_txs("ur5")
+

@@ -8,10 +8,11 @@
 import logging
 from PyQt4 import QtGui, QtCore
 
-from openmolar.qt4gui.compiled_uis import Ui_exam_wizard
 from openmolar.settings import localsettings
 
 from openmolar.ptModules.estimates import TXHash
+from openmolar.qt4gui.compiled_uis import Ui_exam_wizard
+from openmolar.qt4gui.fees import add_tx_to_plan
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -20,11 +21,11 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
         QtGui.QDialog.__init__(self, parent)
         self.om_gui = parent
         self.pt = self.om_gui.pt
-        
+
         self.setupUi(self)
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         self.dents_comboBox.addItems(localsettings.activedents)
-        
+
         performingDent = localsettings.apptix_reverse.get(
             localsettings.clinicianNo, None)
         if performingDent in localsettings.activedents:
@@ -49,7 +50,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 QtGui.QMessageBox.information(self, _("Whoops"), message)
             else:
                 break
-            
+
         if result:
             return (exam, dent, self.dateEdit.date().toPyDate())
         else:
@@ -57,7 +58,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
 
     def check_dent(self, examdent):
         if examdent  == localsettings.ops.get(self.pt.dnt1):
-            if (self.pt.dnt2 == 0 or 
+            if (self.pt.dnt2 == 0 or
             self.pt.dnt2 == self.pt.dnt1): #--no dnt2
                 APPLIED = True
             else:
@@ -77,14 +78,14 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                     self.om_gui.updateDetails()
                     APPLIED = True
         else:
-            message = u'<p>%s %s<br />%s</p>'%( 
+            message = u'<p>%s %s<br />%s</p>'%(
                 examdent,
                 _("performed this exam"),
                 _("Is this correct?"))
-            
+
             if examdent != localsettings.ops.get(self.pt.dnt2):
                 message += u'<br /><i>%s, %s</i></p>'%(
-                _("confirming this will change the course dentist"), 
+                _("confirming this will change the course dentist"),
                 _("but not the registered dentist")
                 )
             else:
@@ -92,9 +93,9 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 _("consider making"),
                 examdent,
                 _("the registered dentist"))
-                
+
             if QtGui.QMessageBox.question(self,
-            _("Confirm"), message, 
+            _("Confirm"), message,
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                 self.pt.dnt2 = localsettings.ops_reverse[examdent]
@@ -102,7 +103,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 APPLIED = True
 
         return APPLIED, examdent
-    
+
 
     def perform_exam(self):
         '''
@@ -116,7 +117,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
             _('You already have a completed exam on this course of treatment'),
             _("Unable to perform exam")), 1)
             return
-        
+
         APPLIED = False
         while not APPLIED:
             result = self.getInput()
@@ -125,7 +126,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 return False
 
             examtype, examdent, examd = result
-            
+
             APPLIED, examdent = self.check_dent(examdent)
             if APPLIED:
                 self.pt.treatment_course.examt = examtype
@@ -142,17 +143,20 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 self.pt.addHiddenNote("exam", "%s"% examtype)
 
                 dentid = localsettings.ops_reverse[examdent]
-                
+
                 tx_hash = TXHash(hash("exam 1 %s"% examtype), True)
 
-                self.pt.add_to_estimate(examtype, dentid, [tx_hash])
-                
+                add_tx_to_plan.add_treatment_to_estimate(
+                    self.om_gui, "exam", examtype, dentid, [tx_hash])
+
                 newnotes = unicode(
                 self.om_gui.ui.notesEnter_textEdit.toPlainText().toUtf8())
+                if newnotes != "" and newnotes[-1] != "\n":
+                    newnotes += "\n"
                 newnotes += "%s %s %s\n"%(
                 examtype, _("performed by"), examdent)
                 self.om_gui.ui.notesEnter_textEdit.setText(newnotes)
-                
+
         return APPLIED
 
     def update_recall_date(self):
@@ -168,18 +172,17 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    
+
     localsettings.initiate()
     localsettings.loadFeeTables()
     localsettings.station="reception"
 
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class
-    
+
     app = QtGui.QApplication([])
     mw = maingui.OpenmolarGui()
     mw.getrecord(11956)
-    
+
     dl = ExamWizard(mw)
     print dl.perform_exam()
-    

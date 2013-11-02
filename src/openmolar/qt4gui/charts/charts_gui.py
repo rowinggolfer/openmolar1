@@ -17,7 +17,6 @@ import logging
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
-from openmolar.qt4gui.fees import course_module
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -89,6 +88,7 @@ def updateCharts(om_gui, arg):
     called by a signal from the toothprops widget -
     args are the new tooth properties eg modbl,co
     '''
+    LOGGER.debug(arg)
     try:
         tooth = str(om_gui.ui.chartsTableWidget.item(
         om_gui.ui.chartsTableWidget.currentRow(), 0).text())
@@ -100,12 +100,9 @@ def updateCharts(om_gui, arg):
         om_gui.ui.staticChartWidget.setToothProps(tooth, arg)
         om_gui.ui.summaryChartWidget.setToothProps(tooth, arg)
         om_gui.ui.staticChartWidget.update()
-    elif om_gui.selectedChartWidget == "pl":
-        om_gui.toothTreatAdd(tooth, arg)
-        om_gui.ui.planChartWidget.update()
-    elif om_gui.selectedChartWidget == "cmp":
-        om_gui.advise(u'<p>%s</p>%'% _(
-        "please enter treatment via the plan chart"), 1)
+    else:
+        om_gui.handle_chart_treatment_input(
+            tooth, arg, om_gui.selectedChartWidget == "cmp")
 
 def updateChartsAfterTreatment(om_gui, tooth, newplan, newcompleted):
     '''
@@ -129,12 +126,11 @@ def flipDeciduous(om_gui):
             selectedTooth=str(
             om_gui.ui.chartsTableWidget.item(row, 0).text().toAscii())
 
-            #print "flipping tooth ", selectedTooth
             om_gui.pt.flipDec_Perm(selectedTooth)
         for chart in (om_gui.ui.staticChartWidget, om_gui.ui.planChartWidget,
         om_gui.ui.completedChartWidget, om_gui.ui.perioChartWidget,
         om_gui.ui.summaryChartWidget):
-            chart.chartgrid=om_gui.pt.chartgrid
+            chart.chartgrid = om_gui.pt.chartgrid
             #--necessary to restore the chart to full dentition
             chart.update()
     else:

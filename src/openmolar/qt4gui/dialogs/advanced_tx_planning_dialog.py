@@ -66,11 +66,15 @@ class TxDisplayWidget(QtGui.QWidget):
 
     @property
     def plan_text(self):
-        return unicode(self.pl_lineedit.text().toUtf8())
+        txt = unicode(self.pl_lineedit.text().toUtf8())
+        #denture codes are dumb!
+        return re.sub("SR\ ", "SR_", txt)
 
     @property
     def cmp_text(self):
-        return unicode(self.cmp_lineedit.text().toUtf8())
+        txt = unicode(self.cmp_lineedit.text().toUtf8())
+        #denture codes are dumb!
+        return re.sub("SR\ ", "SR_", txt)
 
     @property
     def plan_edited(self):

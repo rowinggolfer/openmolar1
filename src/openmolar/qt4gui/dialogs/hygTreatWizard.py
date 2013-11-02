@@ -24,9 +24,12 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         self.setPractitioner(localsettings.clinicianNo)
 
         if self.om_gui.pt.has_planned_perio_txs:
-            self.label.setText(u"<b>%s</b><hr /><em>%s</em>"% (
-            _("WARNING - THERE ARE OUTSTANDING TREATMENTS."),
-            _("Please complete the correct treatment type")
+            tx_list = ""
+            for trt in self.om_gui.pt.treatment_course.periopl.split(" "):
+                tx_list += "<li>%s</li>"% trt
+            self.label.setText(u"<b>%s</b><hr /><ul>%s</ul>"% (
+            _("WARNING - THE FOLLOWING TREATMENTS ARE ALREADY PLANNED."),
+            tx_list
             ))
             self.buttonBox.setEnabled(False)
             self.pushButton.clicked.connect(self._re_enable)
@@ -98,18 +101,19 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         result = self.getInput()
 
         if result:
-            trt = "%s "% self.trt
-            if not trt in pt.treatment_course.periopl:
-                add_tx_to_plan.add_perio_treatments(self.om_gui, [self.trt])
+            if self.trt in pt.treatment_course.periopl:
+                n_txs = pt.treatment_course.periocmp.split(
+                    " ").count(self.trt) + 1
+                tx_hash = TXHash(hash("perio %s %s"% (n_txs, self.trt)))
+                complete_tx.tx_hash_complete(self.om_gui, tx_hash)
+            else:
+                trts = (("perio", "%s"% self.trt),)
+                add_tx_to_plan.add_treatments_to_plan(self.om_gui, trts, True)
 
-            n = pt.treatment_course.periocmp.split(" ").count(self.trt)
-            tx_hash = TXHash(hash("perio %s %s"% (n+1, self.trt)))
-
-            dentid = pt.course_dentist
-
-            complete_tx.tx_hash_complete(self.om_gui, tx_hash)
-            newnotes = str(
-                self.om_gui.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes = unicode(
+                self.om_gui.ui.notesEnter_textEdit.toPlainText().toUtf8())
+            if newnotes != "" and newnotes[-1] != "\n":
+                    newnotes += "\n"
             newnotes += "%s %s %s\n"%(
                 self.trt,
                 _("performed by"),

@@ -1942,11 +1942,34 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         fees_module.showTableXML(self)
 
-    def toothTreatAdd(self, tooth, properties):
-        '''
-        properties for tooth has changed.
-        '''
-        add_tx_to_plan.chartAdd(self, tooth, properties)
+    def handle_chart_treatment_input(self, tooth, prop, completed):
+        LOGGER.debug("%s %s %s"% (tooth, prop, completed))
+
+        for tx in prop.split(" "):
+            if tx == "":
+                continue
+            existing_items = self.pt.treatment_course.cmp_txs(tooth)
+            n_txs = existing_items.count(tx)
+
+            if (completed and
+            tx in self.pt.treatment_course.pl_txs(tooth)):
+                hash_ = hash("%s %s %s"% (tooth, n_txs+1, tx))
+                tx_hash = estimates.TXHash(hash_)
+                complete_tx.tx_hash_complete(self, tx_hash)
+            elif not completed and n_txs:
+                hash_ = hash("%s %s %s"% (tooth, n_txs, tx))
+                tx_hash = estimates.TXHash(hash_)
+                complete_tx.tx_hash_reverse(self, tx_hash)
+            else:
+                add_tx_to_plan.add_treatments_to_plan(self,
+                ((tooth, tx),), completed)
+        if completed:
+            self.ui.completedChartWidget.setToothProps(tooth, prop)
+            self.ui.completedChartWidget.update()
+        else:
+            self.ui.planChartWidget.setToothProps(tooth, prop)
+            self.ui.planChartWidget.update()
+
 
     def complete_treatments(self, treatments):
         '''

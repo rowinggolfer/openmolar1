@@ -20,7 +20,7 @@ from openmolar.ptModules.estimates import TXHash
 
 from openmolar.qt4gui.dialogs.complete_treatment_dialog \
     import CompleteTreatmentDialog
-from openmolar.qt4gui.fees import fees_module
+
 from openmolar.qt4gui.charts import charts_gui
 
 import logging

@@ -22,9 +22,6 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.description = ""
         self.itemcode = ""
 
-    def setNumber(self, arg):
-        self.spinBox.setValue(arg)
-
     def setItem(self, itemcode):
         self.itemcode = itemcode
 
@@ -42,12 +39,11 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
         self.setupUi(self)
         self.items = []
         feetable = pt.getFeeTable()
-        for usercode in usercodes:
-            item = feetable.getItemCodeFromUserCode(usercode)
-            item_description = feetable.getItemDescription(item, usercode)
+        for att, shortcut in usercodes:
+            item = feetable.getItemCodeFromUserCode("%s %s"% (att, shortcut))
+            item_description = feetable.getItemDescription(item, shortcut)
+            self.items.append((item, item_description, (att, shortcut)))
 
-            self.items.append((0, item, item_description,usercode))
-        self.pt = pt
         self.showItems()
 
     def use_completed_messages(self):
@@ -61,11 +57,10 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
     def showItems(self):
         self.itemWidgets = []
         vlayout = QtGui.QVBoxLayout()
-        for n_items, item, item_description, usercode in self.items:
+        for item, item_description, usercode in self.items:
             iw = QtGui.QWidget()
             itemW = itemWidget(self, iw)
             itemW.setItem(item)
-            itemW.setNumber(n_items)
             itemW.usercode = usercode
             itemW.setDescription(item_description)
             self.itemWidgets.append(itemW)
@@ -92,10 +87,14 @@ if __name__ == "__main__":
 
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(11956)
-    items = ("CE","M","SP")
+    items = (
+            ("exam", "CE"),
+            ("xray", "M"),
+            ("perio","SP")
+            )
 
     dl = AddTreatmentDialog(items, pt)
     dl.use_completed_messages()
-    for tx in dl.getInput():
-        print "chosen item = %s"% tx
+    for att, shortcut in dl.getInput():
+        print "chosen item = %s %s"% (att, shortcut)
 

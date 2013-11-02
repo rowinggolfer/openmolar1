@@ -115,6 +115,10 @@ class FeeTables(object):
         self.warnings = []
         self.getTables()
         self.loadTables()
+        if not self.default_table:
+            self.warnings.append("No Feetables Found")
+        else:
+            LOGGER.info("Default FeeTable = %s"% self.default_table)
 
     @property
     def default_table(self):
@@ -163,7 +167,7 @@ class FeeTables(object):
         '''
         for table in self.tables.values():
             try:
-                table.load_fee_items_and_shorcuts()
+                table.load_fee_items_and_shortcuts()
             except Exception as exc:
                 message = "%s %s %s"%(
                     _("feesscale"),
@@ -179,7 +183,7 @@ class FeeTable(object):
     a class to contain and allow quick access to data stored in a fee table
     '''
     def __init__(self, ix, xml_data):
-
+        LOGGER.info("initiating Feetable %s"% ix)
         self.database_ix = ix
         self.dom = minidom.parseString(xml_data)
 
@@ -188,7 +192,6 @@ class FeeTable(object):
         self.setStartDate()
         self.setEndDate()
         self.setSectionHeaders()
-        #ft.setFeeCols(feecoltypes)
 
         self.feesDict = {}
 
@@ -241,7 +244,7 @@ class FeeTable(object):
             id = node.getAttribute("id")
             text = node.childNodes[0].data.strip(" \n")
             self.headers[id] = text
-        LOGGER.debug("sction headers = %s"% self.headers)
+        LOGGER.debug("section headers = %s"% sorted(self.headers))
 
     def setTableDescription(self):
         '''
@@ -251,7 +254,7 @@ class FeeTable(object):
         node = self.dom.getElementsByTagName("feescale_description")[0]
         text = node.childNodes[0].data.strip(" \n")
         self.description = text
-        LOGGER.debug("description = %s"% self.description)
+        LOGGER.info("Feetable description = %s"% self.description)
 
     def setStartDate(self):
         '''
@@ -282,7 +285,7 @@ class FeeTable(object):
         self.endDate = datetime.date(int(year), int(month), int(day))
         LOGGER.debug("endDate = %s"% self.endDate)
 
-    def load_fee_items_and_shorcuts(self):
+    def load_fee_items_and_shortcuts(self):
         '''
         now load the fee items and shortcuts
         '''
@@ -314,7 +317,7 @@ class FeeTable(object):
         eg "MOD" -> "1404" (both are strings)
         arg will be something like "CR,GO" or "MOD,CO"
         '''
-        LOGGER.info("getToothCode for %s%s"% (tooth, arg))
+        LOGGER.debug("getToothCode for %s%s"% (tooth, arg))
 
         for key in self.chartRegexCodes:
             if key.match(tooth+arg):
@@ -326,14 +329,13 @@ class FeeTable(object):
         (item (string), description (string))
         where description is the estimate ready description of the item
         '''
-        LOGGER.debug("get_tooth_fee_item")
+        LOGGER.debug("tooth '%s', usercode '%s'"% (tooth, usercode))
         item_code = self.getToothCode(tooth, usercode)
-        LOGGER.debug("item_code = %s"% item_code)
+        LOGGER.debug("found item code %s"% item_code)
         return self.feesDict.get(item_code, None)
 
     def getItemCodeFromUserCode(self, arg):
         '''
-        the table stores it's own usercodes now.
         return the itemcode associated with it, otherwise, return "4001"
         '''
         return self.treatmentCodes.get(arg, "4001")
@@ -393,16 +395,14 @@ class FeeTable(object):
         except IndexError:
             return "other"
 
-    def userCodeWizard(self, usercode):
+    @property
+    def other_shortcuts(self):
         '''
-        send a usercode, get a results set
-        (item (string), description (string))
-        where description is the estimate ready description of the item
+        shortcuts which are used in association with 'other' items
         '''
-        item = self.getItemCodeFromUserCode(usercode)
-        description = self.getItemDescription(item, usercode)
-
-        return (item, description)
+        for item in self.feesDict.values():
+            if item.pt_attribute == "other":
+                yield ("other", item.shortcut)
 
 
 class FeeItem(object):
@@ -424,13 +424,18 @@ class FeeItem(object):
         self.ptFees = []
         self.brief_descriptions = []
         self.conditions = []
+        self.pt_attribute = "other"
+        self.shortcut = ""
 
         try:
-            usercode_node = element.getElementsByTagName("shortcut")[0]
-            self.is_regex = usercode_node.getAttribute("type") == "regex"
-            self.usercode = usercode_node.childNodes[0].data
+            shortcut_node = element.getElementsByTagName("shortcut")[0]
+            self.is_regex = shortcut_node.getAttribute("type") == "regex"
+            self.pt_attribute = shortcut_node.getAttribute("att")
+            self.shortcut = shortcut_node.childNodes[0].data
+
         except IndexError:
-            self.usercode = itemcode
+            self.shortcut = itemcode
+            self.pt_attribute = "feescale_code"
             self.is_regex = False
 
         self.description = getTextFromNode(element, "description")
@@ -480,6 +485,12 @@ class FeeItem(object):
         many items the cost goes down with multiples, or there is a maximum fee
         '''
         return len(self.fees) == 1
+
+    @property
+    def usercode(self):
+        if self.pt_attribute == "chart":
+            return self.shortcut
+        return"%s %s"% (self.pt_attribute, self.shortcut)
 
     def get_fees(self, item_no=1):
         '''
