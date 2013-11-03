@@ -60,8 +60,8 @@ def add_treatments_to_plan(om_gui, treatments, completed=False):
 
         dentid = pt.course_dentist
 
-        usercode = "%s %s"% (att, shortcut)
-        if (complex_shortcut_handled(om_gui, usercode, n_txs, dentid, tx_hash)
+        if (
+        complex_shortcut_handled(om_gui, att, shortcut, n_txs, dentid, tx_hash)
         or
         add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash])
         ):
@@ -426,24 +426,25 @@ def confirmWrongFeeTable(om_gui, suggested, current):
     if input == QtGui.QMessageBox.Yes:
         return suggestedTable
 
-def complex_shortcut_handled(om_gui, shortcut, item_no, dentid, tx_hash):
-    LOGGER.debug("checking %s %s %s %s"% (shortcut, item_no, dentid, tx_hash))
+def complex_shortcut_handled(om_gui, att, shortcut, item_no, dentid, tx_hash):
+    LOGGER.debug(
+    "checking %s %s %s %s %s"% (att, shortcut, item_no, dentid, tx_hash))
     pt = om_gui.pt
     fee_table = pt.getFeeTable()
     LOGGER.debug("Feetable being checked = %s"% fee_table)
-
     for complex_shortcut in fee_table.complex_shortcuts:
-        if complex_shortcut.matches(shortcut):
-            message = "%s is a complex shortcut with %d cases"% (shortcut,
-                len(complex_shortcut.cases))
-            LOGGER.debug(message)
+        if complex_shortcut.matches(att, shortcut):
+            LOGGER.debug("%s %s is a complex shortcut with %d cases"% (
+            att, shortcut,len(complex_shortcut.cases)))
 
             for case in complex_shortcut.cases:
                 condition_met = False
                 m = re.match("n_txs=(\d+)", case.condition)
                 m2 = re.match("n_txs>(\d+)", case.condition)
 
-                if m and int(m.groups()[0]) == item_no:
+                if case.condition == "True":
+                    condition_met = True
+                elif m and int(m.groups()[0]) == item_no:
                     condition_met = True
                 elif m2 and item_no > int(m2.groups()[0]):
                     condition_met = True
@@ -461,8 +462,7 @@ def complex_shortcut_handled(om_gui, shortcut, item_no, dentid, tx_hash):
                     for item_code in case.additions:
                         LOGGER.debug("adding additional code %s"% item_code)
                         add_treatment_to_estimate(om_gui,
-                        complex_shortcut.pt_attribute, shortcut, dentid,
-                        tx_hashes, item_code)
+                        att, shortcut, dentid, tx_hashes, item_code)
 
                     for item_code in case.alterations:
                         #instead of adding a new estimate item
@@ -475,8 +475,10 @@ def complex_shortcut_handled(om_gui, shortcut, item_no, dentid, tx_hash):
 
                     if case.message != "":
                         om_gui.advise(case.message, 1)
+                        LOGGER.info(case.message)
 
-            LOGGER.info("%s was handled by as a complex shortcut"% shortcut)
+            LOGGER.info(
+            "%s %s was handled by as a complex shortcut"% (att, shortcut))
             return True
     LOGGER.debug("%s not a complex shortcut"% shortcut)
     return False
@@ -581,7 +583,7 @@ def recalculate_estimate(om_gui):
             pass
 
         else:
-            if not complex_shortcut_handled(om_gui, "%s %s"% (att, tx),
+            if not complex_shortcut_handled(om_gui, att, tx,
             item_no, dentid, tx_hash):
                 add_treatment_to_estimate(om_gui, att, tx, dentid, [tx_hash])
 

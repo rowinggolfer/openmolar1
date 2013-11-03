@@ -589,45 +589,54 @@ class ComplexShortcut(object):
 
         case_nodes = element.getElementsByTagName("case")
         for case_node in case_nodes:
-            condition = case_node.getAttribute("condition").replace(
-                "&gt;", ">").replace("&lt;", "<")
-            case_action = _CaseAction(condition)
-
-            removal_nodes = case_node.getElementsByTagName("remove_item")
-            for removal_node in removal_nodes:
-                case_action.removals.append(removal_node.getAttribute("id"))
-
-            addition_nodes = case_node.getElementsByTagName("add_item")
-            for addition_node in addition_nodes:
-                case_action.additions.append(addition_node.getAttribute("id"))
-
-            alteration_nodes = case_node.getElementsByTagName("alter_item")
-            for alt_node in alteration_nodes:
-                case_action.alterations.append(alt_node.getAttribute("id"))
-
-            case_action.message = getTextFromNode(case_node, "message")
-
+            case_action = CaseAction(case_node)
             self.cases.append(case_action)
+            LOGGER.debug(case_action)
 
-    def matches(self, shortcut):
-        LOGGER.debug(
-        "Complex shortcut, comparing %s with %s"% (shortcut, self.shortcut))
-        if self.is_regex:
-            return self.shortcut.match(shortcut)
-        else:
+    def matches(self, att, shortcut):
+        LOGGER.debug("Complex shortcut, comparing '%s' '%s' with '%s'"% (
+                att, shortcut, self.shortcut))
+
+        if re.match("[ul][lr][1-8]", att):
+            if self.is_regex:
+                return self.shortcut.match("%s%s"% (att, shortcut))
             return self.shortcut == shortcut
+        else:
+            usercode = "%s %s"% (att, shortcut)
+            if self.is_regex:
+                return self.shortcut.match(usercode)
+            return self.shortcut == usercode
 
-class _CaseAction(object):
+class CaseAction(object):
     '''
     a simple class to store what should be performed when a ComplexShortcut
     is matched
     '''
-    def __init__(self, condition):
-        self.condition = condition
+    def __init__(self, case_node):
         self.removals = []
         self.additions = []
         self.alterations = []
-        self.message = ""
+
+        self.condition = case_node.getAttribute("condition").replace(
+            "&gt;", ">").replace("&lt;", "<")
+
+        removal_nodes = case_node.getElementsByTagName("remove_item")
+        for removal_node in removal_nodes:
+            self.removals.append(removal_node.getAttribute("id"))
+
+        addition_nodes = case_node.getElementsByTagName("add_item")
+        for addition_node in addition_nodes:
+            self.additions.append(addition_node.getAttribute("id"))
+
+        alteration_nodes = case_node.getElementsByTagName("alter_item")
+        for alt_node in alteration_nodes:
+            self.alterations.append(alt_node.getAttribute("id"))
+
+        self.message = getTextFromNode(case_node, "message")
+
+    def __repr__(self):
+        return "CaseAction '%s' '%s'"% (self.condition, self.message)
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
@@ -641,7 +650,7 @@ if __name__ == "__main__":
     print table.hasPtCols
     for i, complex_shortcut in enumerate(table.complex_shortcuts):
         print "looking for SP in complex_shortcut %d"% i
-        if complex_shortcut.matches("SP"):
+        if complex_shortcut.matches("perio", "SP"):
             print "    match found"
             print "    shortcut has %d cases:"% len(complex_shortcut.cases)
             for case in complex_shortcut.cases:
