@@ -180,67 +180,36 @@ def tx_planning_dialog_add_txs(om_gui, items, completed=False):
     for att, shortcut in cust_items:
         customAdd(om_gui, shortcut)
 
+def remove_treatments_from_plan(om_gui, treatments, completed=False):
+    LOGGER.debug(treatments)
+    pt = om_gui.pt
+
+    for att, shortcut in treatments:
+        if completed:
+            txs = pt.treatment_course.__dict__["%scmp"% att]
+        else:
+            txs = "%s %s"% (
+                pt.treatment_course.__dict__["%scmp"% att],
+                pt.treatment_course.__dict__["%spl"% att]
+                )
+
+        n_txs = txs.split(" ").count(shortcut)
+        tx_hash = TXHash(hash("%s %s %s"% (att, n_txs, shortcut)), completed)
+        pt.remove_tx_hash(tx_hash)
+
+        if re.match("[ul][lr[1-8]", att):
+            plan = pt.treatment_course.__dict__["%spl"% att]
+            cmp = pt.treatment_course.__dict__["%scmp"% att]
+            charts_gui.updateChartsAfterTreatment(om_gui, att, plan, cmp)
+
+
 def tx_planning_dialog_delete_txs(om_gui, items, completed=False):
+    '''
+    these will be items such as (("perio", "SP"),). if completed, then the
+    items have already been completed.
+    '''
     LOGGER.debug("%s %s"% (items, completed))
-    perio_items = []
-    xray_items = []
-    other_items = []
-    for att, treatment in items:
-        if att == "perio":
-            perio_items.append(treatment)
-        elif att == "xray":
-            xray_items.append(treatment)
-        elif att == "other":
-            other_items.append(treatment)
-
-    if perio_items:
-        remove_perio_treatments(om_gui, perio_items, completed)
-    if xray_items:
-        remove_xray_treatments(om_gui, xray_items, completed)
-    if other_items:
-        remove_other_treatments(om_gui, other_items, completed)
-
-def remove_perio_treatments(om_gui, treatments, completed=False):
-    LOGGER.debug(treatments)
-    pt = om_gui.pt
-
-    for code in treatments:
-        txs = "%s %s"% (
-            pt.treatment_course.periocmp, pt.treatment_course.periopl)
-        n_txs = txs.split(" ").count(code)
-
-        tx_hash = TXHash(hash("perio %s %s"% (n_txs, code)), completed)
-        pt.remove_tx_hash(tx_hash)
-
-    om_gui.update_plan_est()
-
-def remove_xray_treatments(om_gui, treatments, completed=False):
-    LOGGER.debug(treatments)
-    pt = om_gui.pt
-
-    for code in treatments:
-        txs = "%s %s"% (
-            pt.treatment_course.xraycmp, pt.treatment_course.xraypl)
-        n_txs = txs.split(" ").count(code)
-
-        tx_hash = TXHash(hash("xray %s %s"% (n_txs, code)), completed)
-        pt.remove_tx_hash(tx_hash)
-
-    om_gui.update_plan_est()
-
-def remove_other_treatments(om_gui, treatments, completed=False):
-    LOGGER.debug(treatments)
-    pt = om_gui.pt
-
-    for code in treatments:
-        txs = "%s %s"% (
-            pt.treatment_course.othercmp, pt.treatment_course.otherpl)
-        n_txs = txs.split(" ").count(code)
-
-        tx_hash = TXHash(hash("other %s %s"% (n_txs, code)), completed)
-        pt.remove_tx_hash(tx_hash)
-
-    om_gui.update_plan_est()
+    remove_treatments_from_plan(om_gui, items, completed)
 
 def perioAdd(om_gui):
     '''

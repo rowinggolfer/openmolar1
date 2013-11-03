@@ -1947,14 +1947,31 @@ class OpenmolarGui(QtGui.QMainWindow):
         if course_module.newCourseNeeded(self):
             return
 
-        for tx in prop.split(" "):
+        existing_cmp_items = self.pt.treatment_course.cmp_txs(tooth)
+        existing_pl_items = self.pt.treatment_course.pl_txs(tooth)
+        if completed:
+            existing_items = existing_cmp_items
+        else:
+            existing_items = existing_pl_items
+
+        new_items = prop.split(" ")
+        additions = []
+        for item in set(new_items):
+            add_no = new_items.count(item) - existing_items.count(item)
+            for i in range(add_no):
+                additions.append(item)
+        removals = []
+        for item in set(existing_items):
+            remove_no = existing_items.count(item) - new_items.count(item)
+            for i in range(remove_no):
+                removals.append((tooth, item))
+
+        for tx in additions:
             if tx == "":
                 continue
-            existing_items = self.pt.treatment_course.cmp_txs(tooth)
-            n_txs = existing_items.count(tx)
+            n_txs = existing_cmp_items.count(tx)
 
-            if (completed and
-            tx in self.pt.treatment_course.pl_txs(tooth)):
+            if (completed and tx in existing_pl_items):
                 hash_ = hash("%s %s %s"% (tooth, n_txs+1, tx))
                 tx_hash = estimates.TXHash(hash_)
                 complete_tx.tx_hash_complete(self, tx_hash)
@@ -1965,6 +1982,11 @@ class OpenmolarGui(QtGui.QMainWindow):
             else:
                 add_tx_to_plan.add_treatments_to_plan(self,
                 ((tooth, tx),), completed)
+
+        if removals:
+            add_tx_to_plan.remove_treatments_from_plan(
+                self, removals, completed)
+
         if completed:
             self.ui.completedChartWidget.setToothProps(tooth, prop)
             self.ui.completedChartWidget.update()
@@ -2999,7 +3021,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.pt_diary_widget.preferences_changed.connect(
             self.appt_prefs_changed)
 
-
     def start_scheduling(self):
         self.diary_widget.schedule_controller.set_patient(self.pt)
         self.pt_diary_widget.layout_ptDiary()
@@ -3153,6 +3174,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 add_tx_to_plan.tx_planning_dialog_delete_txs(
                 self, dl.deleted_cmp_items, completed=True)
             self.update_plan_est()
+            self.updateDetails()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
