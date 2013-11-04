@@ -45,10 +45,6 @@ alter table newestimates modify column itemcode char(5)
 ''',
 
 '''
-alter table daybook add column tx_hash char(20)
-''',
-
-'''
 create table est_link (
   ix         int(11) unsigned not null auto_increment ,
   est_id     int(11),
@@ -94,7 +90,7 @@ where category in ("ndu", "ndl")
 
 SOURCE_QUERY = ('SELECT courseno, ix, category, type, completed '
 'FROM newestimates '
-'ORDER BY serialno, courseno, category, completed DESC, type')
+'ORDER BY serialno, courseno, category, type, completed DESC')
 
 DEST_QUERY = ('insert into est_link (est_id, tx_hash, completed) '
 'values (%s, %s, %s)')
@@ -205,19 +201,22 @@ class dbUpdater(QtCore.QThread):
             cursor = db.cursor()
             step = 1 / len(rows)
             count, prev_courseno, prev_cat_type = 1, 0, ""
+            prev_hash = None
             for i, row in enumerate(rows):
                 courseno, ix, category, type_, completed = row
                 cat_type = "%s%s"% (category, type_)
                 if courseno != prev_courseno:
                     count = 1
-                    prev_courseno = courseno
                 elif cat_type != prev_cat_type:
                     count = 1
-                    prev_cat_type = cat_type
                 else:
                     count += 1
 
+                prev_courseno = courseno
+                prev_cat_type = cat_type
+
                 tx_hash = hash("%s%s%s%s"% (courseno, category, count, type_))
+
                 if completed is None:
                     completed = False
                 values = (ix, tx_hash, completed)
