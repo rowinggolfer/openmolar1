@@ -33,8 +33,8 @@ SQLSTRINGS = [
 'update patients set county="" where town is NULL',
 
 '''
-alter table patients 
-    alter column addr2 set default "", 
+alter table patients
+    alter column addr2 set default "",
     alter column addr3 set default "",
     alter column town set default "",
     alter column county set default ""
@@ -45,26 +45,53 @@ alter table newestimates modify column itemcode char(5)
 ''',
 
 '''
+alter table daybook add column tx_hash char(20)
+''',
+
+'''
 create table est_link (
   ix         int(11) unsigned not null auto_increment ,
   est_id     int(11),
+  daybook_id     int(11),
   tx_hash    varchar(20) NOT NULL,
   completed  bool NOT NULL default 0,
 PRIMARY KEY (ix),
 INDEX (est_id)
 )''',
 
+'create index est_link_hash_index on est_link(tx_hash)',
+
 '''
 create table feescales (
-    ix            int(11) unsigned  not null auto_increment, 
-    in_use        bool              not null default true, 
-    disp_order    int(8)  not null default 0, 
-    xml_data      mediumtext not null, 
+    ix            int(11) unsigned  not null auto_increment,
+    in_use        bool              not null default true,
+    disp_order    int(8)  not null default 0,
+    xml_data      mediumtext not null,
 PRIMARY KEY (ix)
-)'''
+)''',
+
+'update currtrtmt2 set ndlpl = replace(ndlpl, "SR ", "SR_")',
+'update currtrtmt2 set ndlpl = replace(ndlpl, "CC ", "CC_")',
+'update currtrtmt2 set ndupl = replace(ndupl, "SR ", "SR_")',
+'update currtrtmt2 set ndupl = replace(ndupl, "SR ", "SR_")',
+'update currtrtmt2 set ndlcmp = replace(ndlcmp, "SR ", "SR_")',
+'update currtrtmt2 set ndlcmp = replace(ndlcmp, "CC ", "CC_")',
+'update currtrtmt2 set nducmp = replace(nducmp, "SR ", "SR_")',
+'update currtrtmt2 set nducmp = replace(nducmp, "SR ", "SR_")',
+
+'''
+update newestimates set type = replace(type, "SR ", "SR_")
+where category in ("ndu", "ndl")
+''',
+
+'''
+update newestimates set type = replace(type, "CC ", "CC_")
+where category in ("ndu", "ndl")
+'''
+
 ]
 
-            
+
 SOURCE_QUERY = ('SELECT courseno, ix, category, type, completed '
 'FROM newestimates '
 'ORDER BY serialno, courseno, category, completed DESC, type')
@@ -137,11 +164,11 @@ class dbUpdater(QtCore.QThread):
             #- execute the SQL commands
             self.progressSig(5, _("creating est_link table"))
             self.execute_statements(SQLSTRINGS)
-            
-            self.progressSig(90, _("populating est_link table"))            
+
+            self.progressSig(90, _("populating est_link table"))
             self.transfer_data()
 
-            self.progressSig(95, _("populating feescales"))            
+            self.progressSig(95, _("populating feescales"))
             self.insert_feescales()
 
             self.progressSig(97, _('updating settings'))
@@ -176,11 +203,11 @@ class dbUpdater(QtCore.QThread):
             rows = cursor.fetchall()
             cursor.close()
             cursor = db.cursor()
-            step = 1 / len(rows)     
-            count, prev_courseno, prev_cat_type = 1, 0, "" 
+            step = 1 / len(rows)
+            count, prev_courseno, prev_cat_type = 1, 0, ""
             for i, row in enumerate(rows):
                 courseno, ix, category, type_, completed = row
-                cat_type = "%s%s"% (category, type_) 
+                cat_type = "%s%s"% (category, type_)
                 if courseno != prev_courseno:
                     count = 1
                     prev_courseno = courseno
@@ -189,14 +216,14 @@ class dbUpdater(QtCore.QThread):
                     prev_cat_type = cat_type
                 else:
                     count += 1
-                    
-                tx_hash = hash("%s %s %s"% (category, count, type_))
+
+                tx_hash = hash("%s%s%s%s"% (courseno, category, count, type_))
                 if completed is None:
                     completed = False
                 values = (ix, tx_hash, completed)
                 cursor.execute(DEST_QUERY, values)
                 if i % 1000 == 0:
-                    self.progressSig(80 * i/len(rows) + 10, 
+                    self.progressSig(80 * i/len(rows) + 10,
                     _("transfering data"))
             cursor.close()
             db.commit()
@@ -219,12 +246,12 @@ class dbUpdater(QtCore.QThread):
             cursor.execute(FEESCALE_QUERY, (data,))
             cursor.close()
             db.commit()
-            db.close()            
+            db.close()
         except Exception as exc:
             logging.exception("error inserting test feescale")
             db.rollback()
             raise UpdateException(exc)
-        
+
 
 if __name__ == "__main__":
     dbu = dbUpdater()

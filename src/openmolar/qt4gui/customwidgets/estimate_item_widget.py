@@ -396,7 +396,10 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         LOGGER.debug("EstimateItemWidget.check_first")
         if self.est_items[0].is_exam:
-            if self.est_widget.allow_check(self):
+            if QtGui.QMessageBox.question(self, _("confirm"),
+            _("Delete examination from this treatment plan and estimate?"),
+            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
+            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
                 self.deleteItem()
             return
 

@@ -56,7 +56,8 @@ def add_treatments_to_plan(om_gui, treatments, completed=False):
 
         # count the existing number and add 1 for the new shortcut
         n_txs = existing_txs.split(" ").count(shortcut) + 1
-        tx_hash = TXHash(hash("%s %s %s"% (att, n_txs, shortcut)))
+        courseno = pt.treatment_course.courseno
+        tx_hash = TXHash(hash("%s%s%s%s"% (courseno, att, n_txs, shortcut)))
 
         dentid = pt.course_dentist
 
@@ -183,7 +184,7 @@ def tx_planning_dialog_add_txs(om_gui, items, completed=False):
 def remove_treatments_from_plan(om_gui, treatments, completed=False):
     LOGGER.debug(treatments)
     pt = om_gui.pt
-
+    courseno = pt.treatment_course.courseno
     for att, shortcut in treatments:
         if completed:
             txs = pt.treatment_course.__dict__["%scmp"% att]
@@ -194,14 +195,50 @@ def remove_treatments_from_plan(om_gui, treatments, completed=False):
                 )
 
         n_txs = txs.split(" ").count(shortcut)
-        tx_hash = TXHash(hash("%s %s %s"% (att, n_txs, shortcut)), completed)
-        pt.remove_tx_hash(tx_hash)
+        hash_ = hash("%s%s%s%s"% (courseno, att, n_txs, shortcut))
+        tx_hash = TXHash(hash_, completed)
+        remove_tx_hash(om_gui, tx_hash)
 
         if re.match("[ul][lr[1-8]", att):
             plan = pt.treatment_course.__dict__["%spl"% att]
             cmp = pt.treatment_course.__dict__["%scmp"% att]
             charts_gui.updateChartsAfterTreatment(om_gui, att, plan, cmp)
 
+def remove_tx_hash(om_gui, hash_):
+    LOGGER.debug("removing tx_hash %s"% hash_)
+    att_, tx = om_gui.pt.get_tx_from_hash(hash_)
+    if att_ is None or tx is None:
+        LOGGER.error("%s not found!"% hash_)
+        om_gui.advise(u"%s %s"% (
+        _("Couldn't find item in the patient's treatment plan"),
+        _("This Shouldn't Happen!")), 2)
+
+        return
+
+    att = "%scmp"% att_ if hash_.completed else "%spl"% att_
+
+    old_val = om_gui.pt.treatment_course.__dict__[att]
+    new_val = old_val.replace("%s"% tx, "", 1)
+    om_gui.pt.treatment_course.__dict__[att] = new_val
+    LOGGER.debug(
+    "updated pt.treatment_course.%s to from '%s' to '%s'"% (
+    att, old_val, new_val))
+
+    ests_altered = False
+    for est in om_gui.pt.ests_from_hash(hash_):
+        LOGGER.debug("removing reference to %s in estimate %s"% (
+            hash_, est))
+        est.tx_hashes.remove(hash_)
+        if est.tx_hashes == []:
+            om_gui.pt.estimates.remove(est)
+        ests_altered = True
+
+    if not ests_altered:
+        om_gui.advise(u"%s %s"% (
+        _("Couldn't find item in the patient's estimate"),
+        _("This Shouldn't Happen!")), 2)
+
+    return True
 
 def tx_planning_dialog_delete_txs(om_gui, items, completed=False):
     '''
@@ -278,6 +315,7 @@ def customAdd(om_gui, description=None):
         return
 
     pt = om_gui.pt
+    courseno = pt.treatment_course.courseno
     Dialog = QtGui.QDialog(om_gui)
     dl = Ui_customTreatment.Ui_Dialog()
     dl.setupUi(Dialog)
@@ -299,7 +337,7 @@ def customAdd(om_gui, description=None):
             custom_txs = "%s %s"%(
                 pt.treatment_course.customcmp, pt.treatment_course.custompl)
             n = custom_txs.split(" ").count(usercode)
-            tx_hash = TXHash(hash("custom %s %s"% (n, usercode)))
+            tx_hash = TXHash(hash("%scustom%s%s"% (courseno, n, usercode)))
             dentid = om_gui.pt.course_dentist
 
             add_treatment_to_estimate(om_gui, "custom", usercode, dentid,

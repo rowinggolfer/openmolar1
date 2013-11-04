@@ -29,7 +29,7 @@ LOGGER = logging.getLogger("openmolar")
 def reverse_txs(om_gui, treatments, confirm_multiples=True):
     LOGGER.debug("reverse_tx.reverse_txs, %s"% str(treatments))
     pt = om_gui.pt
-
+    courseno = pt.treatment_course.courseno
     if len(treatments) > 1 and confirm_multiples:
         txs = []
         for att, treat in treatments:
@@ -46,7 +46,7 @@ def reverse_txs(om_gui, treatments, confirm_multiples=True):
         count = completed.split(" ").count(treat)
         LOGGER.debug(
             "creating tx_hash using %s %s %s"% (att, count, treat))
-        hash_ = hash("%s %s %s"%(att, count, treat))
+        hash_ = hash("%s%s%s%s"%(courseno, att, count, treat))
         tx_hash = TXHash(hash_)
 
         tx_hash_reverse(om_gui, tx_hash)
@@ -61,7 +61,7 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
     LOGGER.debug("complete_tx.chartComplete, %s"% str(treatments))
 
     pt = om_gui.pt
-
+    courseno = pt.treatment_course.courseno
     if len(treatments) > 1 and confirm_multiples:
         txs = []
         for att, treat in treatments:
@@ -80,7 +80,7 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
         count = newcompleted.split(" ").count(treat)
         LOGGER.debug(
             "creating tx_hash using %s %s %s"% (att, count, treat))
-        hash_ = hash("%s %s %s"%(att, count, treat))
+        hash_ = hash("%s%s%s%s"%(courseno, att, count, treat))
         tx_hash = TXHash(hash_)
 
         tx_hash_complete(om_gui, tx_hash)
@@ -128,10 +128,17 @@ def tx_hash_complete(om_gui, tx_hash):
         om_gui.advise("<p>%s</p><hr />This shouldn't happen!"% msg, 2)
         return
 
+    found = False
     for estimate in pt.estimates:
         for est_tx_hash in estimate.tx_hashes:
             if est_tx_hash == tx_hash:
+                found = True
                 est_tx_hash.completed = True
+
+    if not found:
+        msg = "This item '%s' was not found in the patient's estimate"% tx_hash
+        om_gui.advise("<p>%s</p><hr />This shouldn't happen!"% msg, 2)
+        return
 
     om_gui.updateHiddenNotesLabel()
     om_gui.ui.estWidget.resetEstimate()

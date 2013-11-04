@@ -58,9 +58,10 @@ def updateDaybook(om_gui):
     feesb = 0         #ptfee
     writeNeeded = False
 
-    is_new_course = (om_gui.pt.treatment_course.courseno !=
-        om_gui.pt.dbstate.treatment_course.courseno)
+    courseno = om_gui.pt.treatment_course.courseno
+    is_new_course = (courseno != om_gui.pt.dbstate.treatment_course.courseno)
 
+    hashes = []
     for att in CURRTRT_ATTS:
         if re.match("examt|.*cmp$", att):
             newcmps = om_gui.pt.treatment_course.__dict__[att].split(" ")
@@ -99,7 +100,11 @@ def updateDaybook(om_gui):
 
                 count = orig_newcmps.count(treatment)
 
-                hash_ = str(hash("%s %s %s"%(key, count, treatment)))
+                hash_ = str(
+                hash("%s%s%s%s"%(courseno, key, count, treatment)))
+
+                hashes.append(hash_)
+
                 fees = fees_module.getFeesFromEst(om_gui, hash_)
 
                 if fees:
@@ -117,7 +122,8 @@ def updateDaybook(om_gui):
         trtid = localsettings.clinicianNo
 
         daybook.add(om_gui.pt.serialno, om_gui.pt.cset, dent, trtid,
-        daybookdict, feesa, feesb)
+        daybookdict, feesa, feesb, hashes)
+
         LOGGER.debug("daybook_module - updating pd4")
         om_gui.pt.pd4 = localsettings.currentDay()
 

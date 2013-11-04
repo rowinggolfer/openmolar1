@@ -1679,11 +1679,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.editPageVisited:
             #-- only make changes if user has visited this tab
             self.apply_editpage_changes()
-        daybook_module.updateDaybook(self)
         uc = self.unsavedChanges()
         if uc != []:
             print "changes made to patient atttributes..... updating database"
             result = patient_write_changes.all_changes(self.pt, uc)
+            daybook_module.updateDaybook(self)
+
             if result: #True if sucessful
                 if not leavingRecord and "estimates" in uc:
                     #-- necessary to get index numbers for estimate data types
@@ -1697,6 +1698,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self.advise("Error applying changes... please retry", 2)
                 print "error saving changes to record %s"%self.pt.serialno,
                 print result, str(uc)
+
 
         if "New Notes" in uc:
             newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
@@ -1970,13 +1972,13 @@ class OpenmolarGui(QtGui.QMainWindow):
             if tx == "":
                 continue
             n_txs = existing_cmp_items.count(tx)
-
+            courseno = self.pt.treatment_course.courseno
             if (completed and tx in existing_pl_items):
-                hash_ = hash("%s %s %s"% (tooth, n_txs+1, tx))
+                hash_ = hash("%s%s%s%s"% (courseno, tooth, n_txs+1, tx))
                 tx_hash = estimates.TXHash(hash_)
                 complete_tx.tx_hash_complete(self, tx_hash)
             elif not completed and n_txs:
-                hash_ = hash("%s %s %s"% (tooth, n_txs, tx))
+                hash_ = hash("%s%s%s%s"% (courseno, tooth, n_txs, tx))
                 tx_hash = estimates.TXHash(hash_)
                 complete_tx.tx_hash_reverse(self, tx_hash)
             else:

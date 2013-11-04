@@ -129,6 +129,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
 
             APPLIED, examdent = self.check_dent(examdent)
             if APPLIED:
+                courseno = self.pt.treatment_course.courseno
                 self.pt.treatment_course.examt = examtype
                 if self.pt.treatment_course.examt == "CE":
                     self.pt.pd5 = examd
@@ -144,7 +145,8 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
 
                 dentid = localsettings.ops_reverse[examdent]
 
-                tx_hash = TXHash(hash("exam 1 %s"% examtype), True)
+                hash_ = hash("%sexam1%s"% (courseno, examtype))
+                tx_hash = TXHash(hash_, True)
 
                 add_tx_to_plan.add_treatment_to_estimate(
                     self.om_gui, "exam", examtype, dentid, [tx_hash])

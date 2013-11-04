@@ -854,29 +854,6 @@ class patient(object):
                 if tx_hash == hash_:
                     yield est
 
-    def remove_tx_hash(self, hash_):
-        LOGGER.debug("removing tx_hash %s"% hash_)
-        att_, tx = self.get_tx_from_hash(hash_)
-        if att_ is None or tx is None:
-            LOGGER.error("%s not found!"% hash_)
-            return
-        att = "%scmp"% att_ if hash_.completed else "%spl"% att_
-
-        old_val = self.treatment_course.__dict__[att]
-        new_val = old_val.replace("%s"% tx, "", 1)
-        self.treatment_course.__dict__[att] = new_val
-        LOGGER.debug(
-        "updated pt.treatment_course.%s to from '%s' to '%s'"% (
-        att, old_val, new_val))
-
-        for est in self.ests_from_hash(hash_):
-            LOGGER.debug("removing reference to %s in estimate %s"% (
-                hash_, est))
-            est.tx_hashes.remove(hash_)
-            if est.tx_hashes == []:
-                self.estimates.remove(est)
-        return True
-
 
 if __name__ =="__main__":
     '''testing stuff'''

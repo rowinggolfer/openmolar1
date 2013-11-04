@@ -19,17 +19,19 @@ from openmolar.connect import connect
 
 LOGGER = logging.getLogger("openmolar")
 
-def add(sno, cset, dent, trtid, t_dict, fee, ptfee):
+QUERY = '''insert into daybook
+(date, serialno, coursetype, dntid, trtid, diagn, perio, anaes,
+misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
+values (DATE(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+
+HASH_QUERY = '''update est_link set daybook_id=%s where tx_hash=%s'''
+
+def add(sno, cset, dent, trtid, t_dict, fee, ptfee, tx_hashes):
     '''
     add a row to the daybook table
     '''
     db = connect()
     cursor = db.cursor()
-
-    query = '''insert into daybook
-    (date, serialno, coursetype, dntid, trtid, diagn, perio, anaes,
-    misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
-    values (DATE(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
     values = (sno, cset, dent, trtid, t_dict["diagn"], t_dict["perio"],
     t_dict["anaes"], t_dict["misc"], t_dict["ndu"], t_dict["ndl"],
@@ -40,7 +42,13 @@ def add(sno, cset, dent, trtid, t_dict, fee, ptfee):
         '%s %s %s %s %s %s %s %s'% (
         sno, cset, dent, trtid, t_dict, fee, ptfee, 0))
 
-    cursor.execute(query, values)
+    cursor.execute(QUERY, values)
+
+    daybook_id = db.insert_id()
+
+    for tx_hash in tx_hashes:
+        LOGGER.debug("%s %s %s"% (HASH_QUERY, daybook_id, tx_hash))
+        cursor.execute(HASH_QUERY, (daybook_id, tx_hash))
 
     cursor.close()
 

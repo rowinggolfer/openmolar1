@@ -101,10 +101,12 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         result = self.getInput()
 
         if result:
+            courseno = pt.treatment_course.courseno
             if self.trt in pt.treatment_course.periopl:
                 n_txs = pt.treatment_course.periocmp.split(
                     " ").count(self.trt) + 1
-                tx_hash = TXHash(hash("perio %s %s"% (n_txs, self.trt)))
+                hash_ = hash("%sperio%s%s"% (courseno, n_txs, self.trt))
+                tx_hash = TXHash(hash_)
                 complete_tx.tx_hash_complete(self.om_gui, tx_hash)
             else:
                 trts = (("perio", "%s"% self.trt),)
