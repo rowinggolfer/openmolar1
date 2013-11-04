@@ -14,6 +14,8 @@ to the treatment plan
 import re
 import logging
 
+from functools import partial
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -274,7 +276,7 @@ def xrayAdd(om_gui, complete=False):
         if input == QtGui.QMessageBox.Yes:
             complete = True
 
-    add_treatments_to_plan(om_gui, chosen_treatments)
+    add_treatments_to_plan(om_gui, chosen_treatments, complete)
     if om_gui.ui.tabWidget.currentIndex() == 4: #clinical summary
         om_gui.load_clinicalSummaryPage()
 
@@ -326,6 +328,85 @@ def customAdd(om_gui, description=None):
             descr=descr, fee=fee, ptfee=fee)
 
         om_gui.update_plan_est()
+
+def plan_list_right_click(om_gui, point):
+    index = om_gui.ui.plan_listView.indexAt(point)
+    LOGGER.debug("%s right clicked"% index)
+    if not index.isValid():
+        return
+    model = om_gui.ui.plan_listView.model()
+    att, value = model.att_val(index)
+
+    qmenu = QtGui.QMenu(om_gui)
+
+    message = "%s %s %s"% (_("Complete"), att, value)
+    complete_action = QtGui.QAction(message, om_gui)
+    complete_action.triggered.connect(
+        partial(complete_tx.complete_txs, om_gui, ((att, value),)))
+
+    message = "%s %s %s"% (_("Delete"), att, value)
+    delete_action = QtGui.QAction(message, om_gui)
+    delete_action.triggered.connect(
+        partial(remove_treatments_from_plan, om_gui, ((att, value),)))
+
+    cancel_action = QtGui.QAction(_("Cancel"), om_gui)
+    #not connected to anything.. f clicked menu will simply die!
+
+    qmenu.addAction(complete_action)
+    qmenu.addSeparator()
+    qmenu.addAction(delete_action)
+    qmenu.addAction(cancel_action)
+
+    qmenu.setDefaultAction(complete_action)
+
+    exec_point = om_gui.ui.plan_listView.mapToGlobal(point)
+    qmenu.exec_(exec_point)
+
+    model.reset()
+    om_gui.ui.completed_listView.model().reset()
+
+def cmp_list_right_click(om_gui, point):
+    index = om_gui.ui.completed_listView.indexAt(point)
+    LOGGER.debug("%s right clicked"% index)
+    if not index.isValid():
+        return
+    model = om_gui.ui.completed_listView.model()
+    att, value = model.att_val(index)
+
+    qmenu = QtGui.QMenu(om_gui)
+
+    if att == "exam":
+        tx_hash = TXHash(hash("%sexam1%s"% (
+            om_gui.pt.treatment_course.courseno,
+            om_gui.pt.treatment_course.examt)), True)
+        rev_func = partial(complete_tx.tx_hash_reverse, om_gui, tx_hash)
+    else:
+        rev_func = partial(complete_tx.reverse_txs, om_gui, ((att, value),))
+        message = "%s %s %s"% (_("Reverse and Delete"), att, value)
+        delete_action = QtGui.QAction(message, qmenu)
+        delete_action.triggered.connect(partial(
+            remove_treatments_from_plan, om_gui, ((att, value), ), True))
+
+    message = "%s %s %s"% (_("Reverse"), att, value)
+    reverse_action = QtGui.QAction(message, qmenu)
+    reverse_action.triggered.connect(rev_func)
+
+    cancel_action = QtGui.QAction(_("Cancel"), qmenu)
+    #not connected to anything.. f clicked menu will simply die!
+
+    qmenu.addAction(reverse_action)
+    qmenu.addSeparator()
+    if att != "exam":
+        qmenu.addAction(delete_action)
+    qmenu.addAction(cancel_action)
+
+    qmenu.setDefaultAction(qmenu.actions()[0])
+
+    exec_point = om_gui.ui.completed_listView.mapToGlobal(point)
+    qmenu.exec_(exec_point)
+
+    model.reset()
+    om_gui.ui.plan_listView.model().reset()
 
 
 def fromFeeTable(om_gui, fee_item, sub_index):

@@ -42,11 +42,17 @@ class TreatmentListModel(QtCore.QAbstractListModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return QtCore.QVariant()
-        if role == QtCore.Qt.DisplayRole:
-            option = self._list[index.row()]
-            return QtCore.QVariant(option)
+            pass
+        elif role == QtCore.Qt.DisplayRole:
+            att, tx = self._list[index.row()]
+            return "%s %s"% (att.ljust(10), tx)
         return QtCore.QVariant()
+
+    def att_val(self, index):
+        '''
+        returns a tuple, treatment course attribute, value
+        '''
+        return self._list[index.row()]
 
 class PlannedTreatmentListModel(TreatmentListModel):
     @property

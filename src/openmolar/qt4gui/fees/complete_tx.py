@@ -160,6 +160,17 @@ def tx_hash_reverse(om_gui, tx_hash):
 
             LOGGER.debug("MATCH!")
 
+            if att == "exam":
+                pt.treatment_course.examt = ""
+                pt.treatment_course.examd = None
+                pt.addHiddenNote("exam", treat_code, attempt_delete=True)
+                for estimate in pt.estimates:
+                    for est_tx_hash in estimate.tx_hashes:
+                        if est_tx_hash == tx_hash:
+                            pt.estimates.remove(estimate)
+                            break
+                break
+
             old_completed = pt.treatment_course.__dict__[att + "cmp"]
             new_completed = old_completed.replace(treat_code, "", 1)
             pt.treatment_course.__dict__[att + "cmp"] = new_completed

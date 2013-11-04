@@ -173,7 +173,7 @@ class TreatmentCourse(object):
                         n = txs.count(tx)
                         if n != 1:
                             tx = "%d%s"% (n, tx)
-                        yield "%s %s"% (att.ljust(10), tx)
+                        yield att, tx
 
     @property
     def non_tooth_plan_items(self):
@@ -183,7 +183,7 @@ class TreatmentCourse(object):
     def non_tooth_cmp_items(self):
         items = []
         if self.examt != "" and self.examd:
-            items.append("%s %s"% ("exam".ljust(10), self.examt))
+            items.append(("exam", self.examt))
         return items + list(self._non_tooth_items("cmp"))
 
     def getCurrtrt(self):

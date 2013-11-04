@@ -22,6 +22,8 @@ import sys
 import traceback
 import webbrowser #for email
 
+from functools import partial
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings, utilities
@@ -170,11 +172,15 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.feetesterdl = None
 
         self.ui.plan_listView.setModel(PlannedTreatmentListModel(self))
-        self.ui.completed_listView.setModel(CompletedTreatmentListModel(self))
+        self.ui.plan_listView.setContextMenuPolicy(
+            QtCore.Qt.CustomContextMenu)
 
+        self.ui.completed_listView.setModel(CompletedTreatmentListModel(self))
+        self.ui.completed_listView.setContextMenuPolicy(
+            QtCore.Qt.CustomContextMenu)
 
         QtCore.QTimer.singleShot(2000, self.load_fee_tables)
-        QtCore.QTimer.singleShot(1000, self.set_operator_label)
+        QtCore.QTimer.singleShot(500, self.set_operator_label)
         QtCore.QTimer.singleShot(1000, self.load_todays_patients_combobox)
 
     def advise(self, arg, warning_level=0):
@@ -1996,7 +2002,6 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.planChartWidget.setToothProps(tooth, prop)
             self.ui.planChartWidget.update()
 
-
     def complete_treatments(self, treatments):
         '''
         called when double clicking on a tooth in the plan chart
@@ -2458,6 +2463,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.signals_printing()
         self.signals_menu()
         self.signals_estimates()
+        self.signals_plan()
         self.signals_daybook()
         self.signals_accounts()
         self.signals_contract()
@@ -2708,12 +2714,22 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         self.ui.estWidget.updated_fees_signal.connect(self.updateDetails)
 
-
         QtCore.QObject.connect(self.ui.estWidget,
         QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
 
+    def signals_plan(self):
         self.ui.advanced_tx_planning_button.clicked.connect(
             self.advanced_tx_planning)
+
+        self.ui.plan_listView.customContextMenuRequested.connect(
+            self.handle_plan_listview_menu)
+        self.ui.plan_listView.doubleClicked.connect(
+            self.handle_plan_listview_2xclick)
+
+        self.ui.completed_listView.customContextMenuRequested.connect(
+            self.handle_completed_listview_menu)
+        self.ui.completed_listView.doubleClicked.connect(
+            self.handle_completed_listview_2xclick)
 
     def signals_bulk_mail(self):
         QtCore.QObject.connect(self.ui.bulk_mailings_treeView,
@@ -3177,6 +3193,43 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self, dl.deleted_cmp_items, completed=True)
             self.update_plan_est()
             self.updateDetails()
+
+    def handle_plan_listview_menu(self, point):
+        LOGGER.debug("plan listview pressed %s"% point)
+        # use singleShot to slow this down fractionally
+        #(was occasionaly firing the Qmenu)
+        QtCore.QTimer.singleShot(100,
+            partial(add_tx_to_plan.plan_list_right_click, self, point))
+
+    def handle_plan_listview_2xclick(self, index):
+        LOGGER.debug("plan listview 2xclick %s"% index)
+        model = self.ui.plan_listView.model()
+        att, value = model.att_val(index)
+        model.beginResetModel()
+        complete_tx.complete_txs(self, ((att, value),))
+        model.endResetModel()
+        self.ui.completed_listView.model().reset()
+
+    def handle_completed_listview_menu(self, point):
+        LOGGER.debug("completed listview pressed %s"% point)
+        # use singleShot to slow this down fractionally
+        #(was occasionaly firing the Qmenu)
+        QtCore.QTimer.singleShot(100,
+            partial(add_tx_to_plan.cmp_list_right_click, self, point))
+
+    def handle_completed_listview_2xclick(self, index):
+        LOGGER.debug("completed listview 2xclick %s"% index)
+        model = self.ui.completed_listView.model()
+        att, value = model.att_val(index)
+        if att == "exam":
+            point = self.ui.completed_listView.mapFromGlobal(
+                QtGui.QCursor.pos())
+            self.handle_completed_listview_menu(point)
+            return
+        model.beginResetModel()
+        complete_tx.reverse_txs(self, ((att, value),))
+        model.endResetModel()
+        self.ui.plan_listView.model().reset()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
