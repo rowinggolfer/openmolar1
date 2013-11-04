@@ -107,25 +107,6 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
         est.csetype = pt.cset
     else:
         est.csetype = csetype
-    '''
-        elif re.match("[ul][lr][1-8]$", att): # chart add
-
-            #--tooth may be deciduous
-            tooth_name = pt.chartgrid.get(att)
-            ft = pt.getFeeTable()
-            item = ft.get_tooth_fee_item(tooth_name, tx)
-            if item:
-                descr = item.description.replace("*",
-                    " %s"% tooth_name.upper())
-
-                add_treatment_to_estimate(om_gui,
-                    att, tx, dentid, [tx_hash], item.itemcode, descr=descr)
-
-            else:
-                descr = "%s %s"% (_("Other treatment"), tooth_name)
-                add_treatment_to_estimate(om_gui, att, tx, dentid, [tx_hash],
-                "4001", descr=descr)
-    '''
 
     if re.match("[ul][lr][1-8]", att):
         if itemcode is None:
@@ -549,7 +530,6 @@ def remove_estimate_item(om_gui, est_item):
                         attribute, old_plan, new_plan))
 
                     pt.treatment_course.__dict__[attribute] = new_plan
-
 
     if not found:
         LOGGER.debug("NO MATCHING hash FOUND!")
