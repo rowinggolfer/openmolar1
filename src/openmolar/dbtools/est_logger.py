@@ -103,7 +103,7 @@ def html_history(courseno):
 
     for est_data, author, time_stamp in rows:
         lines = est_data.split("||\n")
-        formatted_est = '''<table width="100%%">
+        formatted_est = '''<table width="100%%" border="1">
         <tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th>
         <th>%s</th><th>%s</th></tr>'''%(
         _("No."), _("Itemcode"), _("Description"), "CseTyp", _("Feescale"),

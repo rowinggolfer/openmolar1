@@ -266,7 +266,7 @@ class dbUpdater(QtCore.QThread):
             for i, (courseno, number, itemcode, description, csetype,
             feescale, dent, fee, ptfee) in enumerate(rows):
                 line_text = \
-                "%s || %s || %s || %s || %s || %s || %s || %s ||\n"% (
+                "%s || %s || %s || %s || %s || %s || %s || %s||\n"% (
                     number, itemcode, description, csetype,
                     feescale, dent, fee, ptfee)
 

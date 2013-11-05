@@ -105,7 +105,7 @@ class Estimate(object):
         estimate data formatted so as to be useful in a log
         || can be used to separate values
         '''
-        return "%s || %s || %s || %s || %s || %s || %s || %s ||\n"% (
+        return "%s || %s || %s || %s || %s || %s || %s || %s||\n"% (
             self.number, self.itemcode, self.description, self.csetype,
             self.feescale, self.dent, self.fee, self.ptfee)
 
