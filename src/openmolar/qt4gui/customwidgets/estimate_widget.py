@@ -203,7 +203,7 @@ class EstimateWidget(QtGui.QWidget):
         if est.itemcode in self.separate_codes:
             return False
 
-        item_is_other =  est.itemcode == "-----"
+        item_is_other = est.itemcode == "-----"
         for widg in self.estItemWidgets:
             if widg.itemCode == est.itemcode :
                 if item_is_other:
@@ -303,6 +303,8 @@ class EstimateWidget(QtGui.QWidget):
             else:
                 add_but()
                 code = est_item_widget.itemCode
+                if code == "-----":
+                    code = None
                 start_row = None
         if row:
             row += 1
