@@ -322,29 +322,13 @@ class FeeTable(object):
         for key in self.chartRegexCodes:
             if key.match(tooth+arg):
                 return self.chartRegexCodes[key]
-
-    def get_tooth_fee_item(self, tooth, usercode):
-        '''
-        send a usercode, get a results set
-        (item (string), description (string))
-        where description is the estimate ready description of the item
-        '''
-        LOGGER.debug("tooth '%s', usercode '%s'"% (tooth, usercode))
-        item_code = self.getToothCode(tooth, usercode)
-        LOGGER.debug("found item code %s"% item_code)
-        return self.feesDict.get(item_code, None)
+        return "-----"
 
     def getItemCodeFromUserCode(self, arg):
         '''
-        return the itemcode associated with it, otherwise, return "4001"
+        return the itemcode associated with it, otherwise, return "-----"
         '''
-        return self.treatmentCodes.get(arg, "4001")
-
-    def hasItemCode(self, arg):
-        '''
-        check to see if the table contains a data about itemcode "arg"
-        '''
-        return arg in self.feesDict.keys()
+        return self.treatmentCodes.get(arg, "-----")
 
     def getFees(self, itemcode, pt, csetype):
         '''
@@ -372,28 +356,15 @@ class FeeTable(object):
 
         return fee_item.get_fees(existing_no+1)
 
-    def getItemDescription(self, itemcode, usercode="?"):
+    def getItemDescription(self, itemcode, usercode):
         '''
         returns the patient readable (ie. estimate ready) description of the
         item
         '''
-        if self.hasItemCode(itemcode):
-            return self.feesDict[itemcode].description
-        else:
-            return u"%s %s"% (usercode, _("other treatment"))
-
-    def getTxCategory(self, itemcode):
-        '''
-        tries to categorise the treatment (BETA FOR NOW)
-        '''
-        i = 0
-        if self.hasItemCode(itemcode):
-            i = self.feesDict[itemcode].category
-
         try:
-            return self.pl_cmp_Categories[i]
-        except IndexError:
-            return "other"
+            return self.feesDict[itemcode].description
+        except KeyError:
+            return u"%s (%s)"% (_("OTHER TREATMENT"), usercode)
 
     @property
     def other_shortcuts(self):

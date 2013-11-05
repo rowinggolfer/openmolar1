@@ -46,7 +46,7 @@ class Estimate(object):
         self.serialno = None
         self.courseno = None
         self.number = 1
-        self.itemcode = "4001"
+        self.itemcode = "-----"
         self.description = None
         self.fee = None
         self.ptfee = None
@@ -182,7 +182,7 @@ class Estimate(object):
 
     @property
     def is_custom(self):
-        return self.itemcode == "CUST"
+        return self.itemcode == "CUSTO"
 
     @property
     def has_one_tx(self):

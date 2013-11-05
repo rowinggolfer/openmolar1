@@ -325,7 +325,7 @@ def customAdd(om_gui, description=None):
             dentid = om_gui.pt.course_dentist
 
             add_treatment_to_estimate(om_gui, "custom", usercode, dentid,
-            [tx_hash], itemcode="CUST", csetype="P",
+            [tx_hash], itemcode="CUSTO", csetype="P",
             descr=descr, fee=fee, ptfee=fee)
 
         om_gui.update_plan_est()

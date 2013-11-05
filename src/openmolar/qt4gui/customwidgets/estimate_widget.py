@@ -113,7 +113,6 @@ class EstimateWidget(QtGui.QWidget):
         self.expand_all_button.clicked.connect(self.expandItems)
 
         self.spacer_item = QtGui.QSpacerItem(0, 10)
-        #self.add_footer()
 
     def add_footer(self):
         row = len(self.estItemWidgets)
@@ -204,8 +203,7 @@ class EstimateWidget(QtGui.QWidget):
         if est.itemcode in self.separate_codes:
             return False
 
-        #item_is_other =  est.itemcode in ("4001", "CUST")
-        item_is_other = False
+        item_is_other =  est.itemcode == "-----"
         for widg in self.estItemWidgets:
             if widg.itemCode == est.itemcode :
                 if item_is_other:

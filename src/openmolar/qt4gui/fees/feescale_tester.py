@@ -111,8 +111,12 @@ class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         for att in CURRTRT_NON_TOOTH_ATTS:
             usercode = "%s %s"% (att, tx.upper())
             code = self.current_table.getItemCodeFromUserCode(usercode)
-            description = self.current_table.getItemDescription(code)
-            self.line_edits[att].setText("%s %s"%(code, description))
+            if code == "-----":
+                self.line_edits[att].setText("")
+            else:
+                description = self.current_table.getItemDescription(
+                code, usercode)
+                self.line_edits[att].setText("%s %s"%(code, description))
         for model in (self.model2, self.model3):
             model.code = tx
             model.reset()
