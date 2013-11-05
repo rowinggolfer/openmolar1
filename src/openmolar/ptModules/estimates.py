@@ -53,9 +53,16 @@ class Estimate(object):
         self.feescale = None
         self.csetype = None
         self.dent = None
-        #self.completed = None
 
         self.tx_hashes = []
+
+    def __cmp__(self, other):
+        '''
+        this function enables sorting for the estimate widget.
+        the replacement of "-" with "Z" ensures that "other" items are last
+        '''
+        return cmp(
+        self.itemcode.replace("-", "Z"), other.itemcode.replace("-", "Z"))
 
     @property
     def completed(self):

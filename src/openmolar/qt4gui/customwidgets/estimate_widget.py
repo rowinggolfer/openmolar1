@@ -239,7 +239,7 @@ class EstimateWidget(QtGui.QWidget):
         self.clear()
 
         row = 1
-        for est in self.ests:
+        for est in sorted(self.ests):
             #- check to see if similar items exist already, if not, add a
             #- widget
 
@@ -587,8 +587,8 @@ if __name__ == "__main__":
 
     from gettext import gettext as _
     from openmolar.dbtools import patient_class
-    #pt = patient_class.patient(11956)
-    pt = patient_class.patient(16539)
+    pt = patient_class.patient(11956)
+    #pt = patient_class.patient(16539)
 
     app = QtGui.QApplication([])
 

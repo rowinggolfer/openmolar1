@@ -648,7 +648,7 @@ class patient(object):
         '''
         text = ""
         total, p_total = 0, 0
-        for estimate in self.estimates:
+        for estimate in sorted(self.estimates):
             text += estimate.log_text
             total += estimate.fee
             p_total += estimate.ptfee
