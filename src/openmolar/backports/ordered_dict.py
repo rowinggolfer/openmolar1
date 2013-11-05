@@ -72,20 +72,22 @@ class OrderedDict(dict, MutableMapping):
         for key in iterable:
             d[key] = value
         return d
-    
+
     def iteritems(self):
         for key in self.keys():
             yield(key, self[key])
-        
+
 if __name__ == "__main__":
     d = OrderedDict()
     d[1] = "neil"
     d[4] = "fraser"
     d[2] = "bea"
     d[3] = "iona"
-    
+
     print d.keys()
-    
+
     for key, value in d.iteritems():
         print key, value
-    
+
+    for value in d.itervalues():
+        print value

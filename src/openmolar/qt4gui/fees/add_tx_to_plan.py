@@ -83,6 +83,51 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
     add an item to the patient's estimate
     usercode unnecessary if itemcode is provided.
     '''
+    def _tooth_code_search(att, shortcut):
+        itemcode = table.getToothCode(att, shortcut)
+        if itemcode != "-----":
+            return itemcode, table
+        LOGGER.debug("%s %s not matched by %s"% (att, shortcut, table))
+        for alt_table in localsettings.FEETABLES.tables.itervalues():
+            if alt_table == table:
+                continue
+            alt_code = alt_table.getToothCode(att, shortcut)
+            if alt_code != "-----":
+                if QtGui.QMessageBox.question(om_gui, _("Confirm"),
+                u"<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" %(
+                att.upper(), shortcut,
+                _("was not found in the patient's default feescale"),
+                _("It is matched in another feescale -"),
+                alt_table.briefName,
+                _("Shall we add this item from this feescale?")),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                    return alt_code, alt_table
+
+        return itemcode, table
+
+    def _user_code_search(usercode):
+        itemcode = table.getItemCodeFromUserCode(usercode)
+        if itemcode != "-----":
+            return itemcode, table
+        LOGGER.debug("%s not matched by %s"% (usercode, table))
+        for alt_table in localsettings.FEETABLES.tables.itervalues():
+            if alt_table == table:
+                continue
+            alt_code = alt_table.getItemCodeFromUserCode(usercode)
+            if alt_code != "-----":
+                if QtGui.QMessageBox.question(om_gui, _("Confirm"),
+                u"<p><b>%s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" %(
+                usercode,
+                _("was not found in the patient's default feescale"),
+                _("It is matched in another feescale -"),
+                alt_table.briefName,
+                _("Shall we add this item from this feescale?")),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                    return alt_code, alt_table
+        return itemcode, table
+
     usercode = ("%s %s"% (att, shortcut))
     LOGGER.debug("%s %s %s %s %s %s %s %s %s"%(
         usercode, dentid, tx_hashes,
@@ -105,26 +150,22 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
     else:
         table = localsettings.FEETABLES.tables[feescale]
 
-    if csetype is None:
-        est.csetype = pt.cset
-    else:
-        est.csetype = csetype
-
     if re.match("[ul][lr][1-8]", att):
         if itemcode is None:
-            itemcode = table.getToothCode(att, shortcut)
+            itemcode, table = _tooth_code_search(att, shortcut)
         if descr is None:
             tooth_name = pt.chartgrid.get(att).upper()
             descr = table.getItemDescription(itemcode, usercode)
             descr = descr.replace("*", " %s"% tooth_name)
     else:
         if itemcode is None:
-            itemcode = table.getItemCodeFromUserCode(usercode)
+            itemcode, table = _user_code_search(usercode)
         if descr is None:
             descr = table.getItemDescription(itemcode, usercode)
 
     est.itemcode = itemcode
     est.description = descr
+    est.csetype = table.categories[0]
 
     if fee is None and ptfee is None:
         #look up the fee here
@@ -136,19 +177,15 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
 
     est.dent = dentid
 
-    inserted = False
-    for i, existing_est in enumerate(pt.estimates):
-        if existing_est.itemcode == est.itemcode:
-            try:
-                if pt.estimates[i+1].itemcode != est.itemcode:
-                    pt.estimates.insert(i, est)
-                    inserted = True
-                    break
-            except IndexError:
-                pass
+    pt.estimates.append(est)
 
-    if not inserted:
-        pt.estimates.append(est)
+    if itemcode == "-----":
+        om_gui.advise(u"%s - %s <b>%s</b><br />%s.<hr />%s"% (
+        _("WARNING"),
+        _("treatment"),
+        usercode,
+        _("has not been succesfully priced"),
+        _("Please edit the estimate manually")), 1)
 
     return True
 

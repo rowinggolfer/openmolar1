@@ -26,17 +26,17 @@ except ImportError:
 
 LOGGER = logging.getLogger("openmolar")
 
+QUERY = ('select ix, xml_data from feescales where in_use = True '
+        'order by disp_order')
+
+
 def getData():
     '''
     connects and get the data from feetable_key
     '''
     db = connect.connect()
     cursor = db.cursor()
-
-    query = ''' select ix, xml_data from feescales where in_use = True
-    order by disp_order'''
-
-    cursor.execute(query)
+    cursor.execute(QUERY)
     rows = cursor.fetchall()
     cursor.close()
     return rows
@@ -111,7 +111,7 @@ class FeeTables(object):
     a wrapper class to contain as many fee tables as the user has outlined.
     '''
     def __init__(self):
-        self.tables = {}
+        self.tables = OrderedDict()
         self.warnings = []
         self.getTables()
         self.loadTables()
@@ -123,8 +123,7 @@ class FeeTables(object):
     @property
     def default_table(self):
         try:
-            keys = sorted(self.tables.keys())
-            return self.tables[keys[0]]
+            return self.tables.values()[0]
         except IndexError:
             return None
 
@@ -627,3 +626,6 @@ if __name__ == "__main__":
             for case in complex_shortcut.cases:
                 print "          %s additions=%s removals=%s message='%s'"% (
                 case.condition, case.additions, case.removals, case.message)
+
+
+    print table.categories
