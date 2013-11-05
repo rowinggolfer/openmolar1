@@ -12,6 +12,7 @@ has one class, a custom widget which inherits from QWidget
 
 from __future__ import division
 
+from functools import partial
 import logging
 import re
 import sys
@@ -26,8 +27,17 @@ class chartWidget(QtGui.QWidget):
     a custom widget to show a standard UK dental chart
     - allows for user navigation with mouse and/or keyboard
     '''
+    teeth_selected_signal = QtCore.pyqtSignal(object)
+    flip_deciduous_signal = QtCore.pyqtSignal()
+    add_comments_signal = QtCore.pyqtSignal(object)
+    show_history_signal = QtCore.pyqtSignal(object)
+    delete_all_signal = QtCore.pyqtSignal()
+    delete_prop_signal = QtCore.pyqtSignal(object)
+    complete_treatments_signal = QtCore.pyqtSignal(object)
+    request_tx_context_menu_signal = QtCore.pyqtSignal(object, object, object)
+
     def __init__(self, parent=None):
-        super(chartWidget, self).__init__(parent)
+        QtGui.QWidget.__init__(self, parent)
 
         self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
         QtGui.QSizePolicy.Expanding))
@@ -265,99 +275,58 @@ class chartWidget(QtGui.QWidget):
             if (a,b) != (x,y):
                 teeth.append(self.grid[b][a])
 
-        self.emit(QtCore.SIGNAL("toothSelected"), teeth )
+        self.teeth_selected_signal.emit(teeth)
 
-        right_click = False
         try:
-            right_click = event.button() == 2
-        except AttributeError: #keyboard events have no attribute "button"
-            pass
+            if event.button() == 2:
+                tooth = teeth[0]
+                QtCore.QTimer.singleShot(200, partial(
+                    self.raise_context_menu, tooth , event.globalPos()))
+        except AttributeError:
+            pass #keyboard events have no attribute "button"
+        except IndexError:
+            pass # teeth is an empty list!
 
-        if teeth and right_click:
-            tooth = teeth[0]
-
+    def raise_context_menu(self, tooth, point):
+        if self.isStaticChart:
             menu = QtGui.QMenu(self)
-            if self.isStaticChart:
-                menu.addAction(_("Toggle Deciduous State"))
+
+            action = menu.addAction(_("Toggle Deciduous State"))
+            action.triggered.connect(self.flip_deciduous_signal.emit)
+
+            menu.setDefaultAction(action)
+
+            menu.addSeparator()
+
+            for prop in self.__dict__[tooth]:
+                prop = prop.upper().strip(" ")
+                action = menu.addAction("%s %s"%(_("Delete"), prop))
+                action.triggered.connect(partial(
+                    self.delete_prop_signal.emit, prop))
+
+            if len(self.__dict__[tooth]) > 1:
+                action = menu.addAction(_("Delete All Restorations"))
+                action.triggered.connect(self.delete_all_signal.emit)
+
+            if self.__dict__[tooth]:
                 menu.addSeparator()
 
-            fillList = self.__dict__[tooth]
-            if fillList:
-                if self.isPlanChart:
-                    menu.addAction(_("Complete Treatments"))
-                    for fill in fillList:
-                        if not re.match("!.*", fill):
-                            fill = fill.upper()
-                        menu.addAction(_("Complete") + " - %s"% fill)
-                    menu.addSeparator()
-                for fill in fillList:
-                    fill = fill.upper()
-                    if re.match("CR,.*", fill):
-                        menu.addAction(
-                        _("Change Crown Type") + " - %s"% fill)
+            action = menu.addAction(_("Add Comments"))
+            action.triggered.connect(partial(
+                self.add_comments_signal.emit, tooth))
 
-                    elif re.match("[MODBPIL]{1,5},?([COAMGOL]{2,2})? $", fill):
-                        menu.addAction(
-                        _("Change Material of") + " - %s"% fill)
-                menu.addSeparator()
+            action = menu.addAction(_("Show History"))
+            action.triggered.connect(partial(
+                self.show_history_signal.emit, tooth))
 
-                if len(fillList) > 1:
-                    menu.addAction(_("Delete All Restorations"))
-                for fill in fillList:
-                    if not re.match("!.*", fill):
-                        fill = fill.upper()
-                    menu.addAction(_("Delete") + " - %s"% fill)
-            if self.isStaticChart:
-                menu.addSeparator()
-                menu.addAction(_("ADD COMMENTS"))
-                menu.addAction(_("Show History"))
-
-            self.rightClickMenuResult(tooth, menu.exec_(event.globalPos()))
-
-    def rightClickMenuResult(self, tooth, result):
-        if not result:
-            return
-
-        if result.text() == _("Toggle Deciduous State"):
-            self.emit(QtCore.SIGNAL("FlipDeciduousState"))
-
-        elif _("Change Crown Type") in result.text():
-            reg = re.search(" - (.*) ", str(result.text().toAscii()))
-            if reg:
-                prop = reg.groups()[0]
-                self.emit(QtCore.SIGNAL("change_crown"), prop)
-                self.update()
-
-        elif _("Change Material of") in result.text():
-            reg = re.search(" - (.*) ", str(result.text().toAscii()))
-            if reg:
-                prop = reg.groups()[0]
-                self.emit(QtCore.SIGNAL("change_material"), prop)
-                self.update()
-
-        elif result.text() == _("Delete All Restorations"):
-            self.emit(QtCore.SIGNAL("delete_all"))
-            self.update()
-
-        elif _("Delete ") in result.text():
-            reg = re.search(" - (.*) ", str(result.text().toAscii()))
-            if reg:
-                prop = reg.groups()[0]
-                self.emit(QtCore.SIGNAL("delete_prop"), prop)
-                self.update()
-
-        elif result.text() == _("Show History"):
-            self.emit(QtCore.SIGNAL("showHistory"), tooth)
-
-        elif result.text() == _("Complete Treatments"):
-            self.signal_treatment_completed()
-
-        elif result.text() == _("ADD COMMENTS"):
-            self.emit(QtCore.SIGNAL("add_comments"))
+            menu.exec_(point)
 
         else:
-            print "right click on chart widget ",result.text()
+            values = []
+            for prop in self.__dict__[tooth]:
+                values.append(prop.upper().strip(" "))
 
+            self.request_tx_context_menu_signal.emit(tooth, values, point)
 
     def mouseDoubleClickEvent(self, event):
         '''
@@ -368,7 +337,7 @@ class chartWidget(QtGui.QWidget):
         '''
 
         if self.isStaticChart:
-            self.emit(QtCore.SIGNAL("FlipDeciduousState"))
+            self.flip_deciduous_signal.emit()
         elif self.isPlanChart:
             self.signal_treatment_completed()
 
@@ -377,13 +346,13 @@ class chartWidget(QtGui.QWidget):
         either a double click or default right click on the plan chart
         '''
         tooth = self.grid[self.selected[1]][self.selected[0]]
-        plannedTreatment = []
+        planned_txs = []
         for item in self.__dict__[tooth]:
             tx = item.upper()
-            plannedTreatment.append((tooth, tx))
-            
-        if plannedTreatment != []:
-            self.emit(QtCore.SIGNAL("completeTreatment"), plannedTreatment)
+            planned_txs.append((tooth, tx))
+
+        if planned_txs != []:
+            self.complete_treatments_signal.emit(planned_txs)
 
     def keyPressEvent(self, event):
         '''
@@ -1146,6 +1115,10 @@ class toothImage(QtGui.QWidget):
         return myimage
 
 if __name__ == "__main__":
+    def signal_catcher(*args):
+        LOGGER.info("signal caught %s"% str(args))
+
+    LOGGER.setLevel(logging.DEBUG)
     from gettext import gettext as _
     app = QtGui.QApplication(sys.argv)
     form = chartWidget()
@@ -1168,6 +1141,13 @@ if __name__ == "__main__":
     ("ll5", "ob ml"), ("ll6", "mod,co"), ("ll7", "pe"), ("ll8", "ue !watch"),
     ("lr4", "b"), ("lr5", "dr"), ("lr7", "fs"), ("lr6", "modbl,pr")):
         form.setToothProps(properties[0], properties[1])
+
+    form.flip_deciduous_signal.connect(signal_catcher)
+    form.add_comments_signal.connect(signal_catcher)
+    form.show_history_signal.connect(signal_catcher)
+    form.delete_all_signal.connect(signal_catcher)
+    form.delete_prop_signal.connect(signal_catcher)
+
     form.show()
     pixmap = QtGui.QPixmap.grabWidget(form)
     pixmap.save("/home/neil/chart.png")

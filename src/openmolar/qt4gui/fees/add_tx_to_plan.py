@@ -186,6 +186,7 @@ def remove_treatments_from_plan(om_gui, treatments, completed=False):
             plan = pt.treatment_course.__dict__["%spl"% att]
             cmp = pt.treatment_course.__dict__["%scmp"% att]
             charts_gui.updateChartsAfterTreatment(om_gui, att, plan, cmp)
+    om_gui.updateDetails()
 
 def remove_tx_hash(om_gui, hash_):
     LOGGER.debug("removing tx_hash %s"% hash_)
@@ -329,16 +330,21 @@ def customAdd(om_gui, description=None):
 
         om_gui.update_plan_est()
 
-def plan_list_right_click(om_gui, point):
-    index = om_gui.ui.plan_listView.indexAt(point)
-    LOGGER.debug("%s right clicked"% index)
-    if not index.isValid():
-        return
-    model = om_gui.ui.plan_listView.model()
-    att, value = model.att_val(index)
-
+def plan_viewer_context_menu(om_gui, att, values, point):
+    '''
+    provides and handles a context menu for the ui.plan_listView and
+    the ui.planChartWidget
+    '''
     qmenu = QtGui.QMenu(om_gui)
 
+    if len(values) > 1:
+        treatments = []
+        for value in values:
+            treatments.append((att, value))
+        complete_tx.complete_txs(om_gui, treatments, confirm_multiples=True)
+        return
+
+    value = values[0]
     message = "%s %s %s"% (_("Complete"), att, value)
     complete_action = QtGui.QAction(message, om_gui)
     complete_action.triggered.connect(
@@ -358,22 +364,23 @@ def plan_list_right_click(om_gui, point):
     qmenu.addAction(cancel_action)
 
     qmenu.setDefaultAction(complete_action)
+    qmenu.exec_(point)
 
-    exec_point = om_gui.ui.plan_listView.mapToGlobal(point)
-    qmenu.exec_(exec_point)
-
-    model.reset()
-    om_gui.ui.completed_listView.model().reset()
-
-def cmp_list_right_click(om_gui, point):
-    index = om_gui.ui.completed_listView.indexAt(point)
-    LOGGER.debug("%s right clicked"% index)
-    if not index.isValid():
-        return
-    model = om_gui.ui.completed_listView.model()
-    att, value = model.att_val(index)
-
+def cmp_viewer_context_menu(om_gui, att, values, point):
+    '''
+    provides and handles a context menu for the ui.completed_listView and
+    the ui.completedChartWidget
+    '''
     qmenu = QtGui.QMenu(om_gui)
+
+    if len(values) > 1:
+        treatments = []
+        for value in values:
+            treatments.append((att, value))
+        complete_tx.reverse_txs(om_gui, treatments, confirm_multiples=True)
+        return
+
+    value = values[0]
 
     if att == "exam":
         tx_hash = TXHash(hash("%sexam1%s"% (
@@ -401,13 +408,50 @@ def cmp_list_right_click(om_gui, point):
     qmenu.addAction(cancel_action)
 
     qmenu.setDefaultAction(qmenu.actions()[0])
+    qmenu.exec_(point)
 
-    exec_point = om_gui.ui.completed_listView.mapToGlobal(point)
-    qmenu.exec_(exec_point)
+def plan_list_right_click(om_gui, point):
+    index = om_gui.ui.plan_listView.indexAt(point)
+    LOGGER.debug("%s right clicked"% index)
+    if not index.isValid():
+        return
+    model = om_gui.ui.plan_listView.model()
+    att, value = model.att_val(index)
+    m = re.match("(\d+)(.*)", value)
+    if m:
+        values = []
+        for i in range(int(m.groups()[0])):
+            values.append(m.groups()[1])
+    else:
+        values = [value]
+
+    exec_point = om_gui.ui.plan_listView.mapToGlobal(point)
+    plan_viewer_context_menu(om_gui, att, values, exec_point)
+
+    model.reset()
+    om_gui.ui.completed_listView.model().reset()
+
+def cmp_list_right_click(om_gui, point):
+    index = om_gui.ui.completed_listView.indexAt(point)
+    LOGGER.debug("%s right clicked"% index)
+    if not index.isValid():
+        return
+    model = om_gui.ui.completed_listView.model()
+    att, value = model.att_val(index)
+
+    m = re.match("(\d+)(.*)", value)
+    if m:
+        values = []
+        for i in range(int(m.groups()[0])):
+            values.append(m.groups()[1])
+    else:
+        values = [value]
+
+    exec_point = om_gui.ui.plan_listView.mapToGlobal(point)
+    cmp_viewer_context_menu(om_gui, att, values, exec_point)
 
     model.reset()
     om_gui.ui.plan_listView.model().reset()
-
 
 def fromFeeTable(om_gui, fee_item, sub_index):
     '''

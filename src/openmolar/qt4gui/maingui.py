@@ -487,29 +487,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         self.ui.toothPropsWidget.lineEdit.deleteProp(prop)
 
-    def tooth_change_material(self, prop):
-        '''
-        user has clicked on the change material option from a tooth's
-        right click menu - prop is the fill to be changed
-        '''
-        print "tooth_change_material", prop
-        self.advise("change material not working yet", 1)
-
-    def tooth_change_crown(self, prop):
-        '''
-        user has clicked on the change crown type option from a tooth's
-        right click menu - prop is the crown to be changed
-        '''
-        print "tooth_change_crown", prop
-        self.advise("change crown type not working yet", 1)
-
-    def tooth_add_comments(self):
+    def tooth_add_comments(self, tooth):
         '''
         user has clicked on the delete all option from a tooth's right click
         menu
         '''
-        print "tooth_add_comments"
-        self.advise("add comments not working yet", 1)
+        self.advise("add comments for tooth %s not working yet"% tooth)
 
     def chooseTooth(self):
         '''
@@ -2005,7 +1988,7 @@ class OpenmolarGui(QtGui.QMainWindow):
     def complete_treatments(self, treatments):
         '''
         called when double clicking on a tooth in the plan chart
-        the arg is a list - [("ul5","MOD"),("ul5pl", "RT")]
+        the arg is a list - [('ur5', u'MOD '), ('ur5', u'RT ')]
         '''
         if not self.pt.underTreatment:
             self.advise("course has been closed", 1)
@@ -2722,14 +2705,19 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.advanced_tx_planning)
 
         self.ui.plan_listView.customContextMenuRequested.connect(
-            self.handle_plan_listview_menu)
+            self.show_plan_listview_context_menu)
         self.ui.plan_listView.doubleClicked.connect(
             self.handle_plan_listview_2xclick)
 
         self.ui.completed_listView.customContextMenuRequested.connect(
-            self.handle_completed_listview_menu)
+            self.show_cmp_listview_context_menu)
         self.ui.completed_listView.doubleClicked.connect(
             self.handle_completed_listview_2xclick)
+
+        self.ui.planChartWidget.request_tx_context_menu_signal.connect(
+            self.show_plan_chart_context_menu)
+        self.ui.completedChartWidget.request_tx_context_menu_signal.connect(
+            self.show_cmp_chart_context_menu)
 
     def signals_bulk_mail(self):
         QtCore.QObject.connect(self.ui.bulk_mailings_treeView,
@@ -2913,40 +2901,22 @@ class OpenmolarGui(QtGui.QMainWindow):
     def signals_charts(self):
 
         for chart in (self.ui.summaryChartWidget, self.ui.staticChartWidget):
-            QtCore.QObject.connect(chart, QtCore.SIGNAL("showHistory"),
-            self.toothHistory)
+            chart.teeth_selected_signal.connect(self.static_chartNavigation)
 
-            QtCore.QObject.connect(chart, QtCore.SIGNAL("toothSelected"),
-            self.static_chartNavigation)
+            chart.show_history_signal.connect(self.toothHistory)
+            chart.flip_deciduous_signal.connect(self.flipDeciduous)
+            chart.add_comments_signal.connect(self.tooth_add_comments)
+            chart.delete_all_signal.connect(self.tooth_delete_all)
+            chart.delete_prop_signal.connect(self.tooth_delete_prop)
 
-            QtCore.QObject.connect(chart,
-            QtCore.SIGNAL("FlipDeciduousState"), self.flipDeciduous)
+        self.ui.planChartWidget.teeth_selected_signal.connect(
+            self.plan_chartNavigation)
 
-            QtCore.QObject.connect(chart,
-            QtCore.SIGNAL("add_comments"), self.tooth_add_comments)
+        self.ui.completedChartWidget.teeth_selected_signal.connect(
+            self.comp_chartNavigation)
 
-        for chart in (self.ui.summaryChartWidget, self.ui.staticChartWidget,
-        self.ui.planChartWidget, self.ui.completedChartWidget):
-            QtCore.QObject.connect(chart,
-            QtCore.SIGNAL("delete_all"), self.tooth_delete_all)
-
-            QtCore.QObject.connect(chart,
-            QtCore.SIGNAL("delete_prop"), self.tooth_delete_prop)
-
-            QtCore.QObject.connect(chart,
-            QtCore.SIGNAL("change_crown"), self.tooth_change_crown)
-
-            QtCore.QObject.connect(chart,
-            QtCore.SIGNAL("change_material"), self.tooth_change_material)
-
-        QtCore.QObject.connect(self.ui.planChartWidget,
-        QtCore.SIGNAL("toothSelected"), self.plan_chartNavigation)
-
-        QtCore.QObject.connect(self.ui.completedChartWidget,
-        QtCore.SIGNAL("toothSelected"), self.comp_chartNavigation)
-
-        QtCore.QObject.connect(self.ui.planChartWidget,
-        QtCore.SIGNAL("completeTreatment"), self.complete_treatments)
+        self.ui.planChartWidget.complete_treatments_signal.connect(
+            self.complete_treatments)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
         QtCore.SIGNAL("NextTooth"), self.navigateCharts)
@@ -3194,10 +3164,18 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.update_plan_est()
             self.updateDetails()
 
-    def handle_plan_listview_menu(self, point):
-        LOGGER.debug("plan listview pressed %s"% point)
+    def show_plan_chart_context_menu(self, att, values, point):
+        QtCore.QTimer.singleShot(100, partial(
+        add_tx_to_plan.plan_viewer_context_menu, self, att, values, point))
+
+    def show_cmp_chart_context_menu(self, att, values, point):
         # use singleShot to slow this down fractionally
         #(was occasionaly firing the Qmenu)
+        QtCore.QTimer.singleShot(100, partial(
+        add_tx_to_plan.cmp_viewer_context_menu, self, att, values, point))
+
+    def show_plan_listview_context_menu(self, point):
+        LOGGER.debug("plan listview pressed %s"% point)
         QtCore.QTimer.singleShot(100,
             partial(add_tx_to_plan.plan_list_right_click, self, point))
 
@@ -3210,7 +3188,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         model.endResetModel()
         self.ui.completed_listView.model().reset()
 
-    def handle_completed_listview_menu(self, point):
+    def show_cmp_listview_context_menu(self, point):
         LOGGER.debug("completed listview pressed %s"% point)
         # use singleShot to slow this down fractionally
         #(was occasionaly firing the Qmenu)

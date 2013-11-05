@@ -45,7 +45,7 @@ class TreatmentListModel(QtCore.QAbstractListModel):
             pass
         elif role == QtCore.Qt.DisplayRole:
             att, tx = self._list[index.row()]
-            return "%s %s"% (att.ljust(10), tx)
+            return "%s %s"% (att.ljust(8), tx)
         return QtCore.QVariant()
 
     def att_val(self, index):

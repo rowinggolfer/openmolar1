@@ -33,7 +33,7 @@ def reverse_txs(om_gui, treatments, confirm_multiples=True):
     if len(treatments) > 1 and confirm_multiples:
         txs = []
         for att, treat in treatments:
-            txs.append((att, treat, False))
+            txs.append((att, treat, True))
         dl = CompleteTreatmentDialog(txs, om_gui)
         if not dl.exec_():
             return
