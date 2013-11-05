@@ -13,20 +13,21 @@
 	<header id="8">Extractions and Surgical Treatment</header>
 	<header id="9">Prostheses</header>
 	<header id="10">Orthodontic Treatment</header>
-	<header id="11">Other Forms of Treatment </header>
+	<header id="11">Other Forms of Treatment</header>
 	<start>
 		<year>2013</year>
 		<month>8</month>
 		<day>1</day>
 	</start>
 	<complex_shortcut>
-		<shortcut>SP</shortcut>
+		<shortcut att="perio">SP</shortcut>
 		<case condition="n_txs=1">
 			<add_item id="E1001"/>
 		</case>
 		<case condition="n_txs=2">
 			<remove_item id="E1001"/>
 			<add_item id="E1011"/>
+			<message>2 visit scale and polish fee added to estimate.</message>
 		</case>
 		<case condition="n_txs&gt;2">
 			<alter_item id="E1011"/>
@@ -35,7 +36,7 @@
 	</complex_shortcut>
 	<item id="E0101">
 		<section>1</section>
-		<shortcut>CE</shortcut>
+		<shortcut att="exam">CE</shortcut>
 		<description>clinical examination^</description>
 		<fee>
 			<brief_description>clinical exam</brief_description>
@@ -45,7 +46,7 @@
 	</item>
 	<item id="E0111">
 		<section>1</section>
-		<shortcut>ECE</shortcut>
+		<shortcut att="exam">ECE</shortcut>
 		<description>extensive clinical examination^</description>
 		<fee>
 			<brief_description>extensive clinical exam</brief_description>
@@ -55,7 +56,7 @@
 	</item>
 	<item id="E0121" obscurity="2">
 		<section>1</section>
-		<shortcut>FCA</shortcut>
+		<shortcut att="exam">FCA</shortcut>
 		<description>full case assessment^</description>
 		<fee>
 			<brief_description>full case assessment^</brief_description>
@@ -65,7 +66,7 @@
 	</item>
 	<item id="E0201">
 		<section>1</section>
-		<shortcut>S</shortcut>
+		<shortcut att="xray">S</shortcut>
 		<description>small xray*</description>
 		<fee condition="item_no=1">
 			<brief_description>small xrays 1 film</brief_description>
@@ -93,7 +94,7 @@
 	</item>
 	<item id="E1401" obscurity="0">
 		<section>4</section>
-		<shortcut type="regex">u[lr][de4-8][MODBP]*$|l[lr][de4-8][MODBL]*$|u[lr][a-c1-3][MIDBP]*$|l[lr][a-c1-3][MIDBL]*$</shortcut>
+		<shortcut att="chart" type="regex">u[lr][de4-8][MODBP]*$|l[lr][de4-8][MODBL]*$|u[lr][a-c1-3][MIDBP]*$|l[lr][a-c1-3][MIDBL]*$</shortcut>
 		<description>filling*</description>
 		<fee>
 			<brief_description>filling</brief_description>
@@ -103,7 +104,7 @@
 	</item>
 	<item id="E1001">
 		<section>3</section>
-		<shortcut>SP</shortcut>
+		<shortcut att="perio">SP</shortcut>
 		<description>scale and polish^</description>
 		<fee>
 			<brief_description>scale &amp; polish</brief_description>
@@ -113,7 +114,7 @@
 	</item>
 	<item id="E1011">
 		<section>3</section>
-		<shortcut>SP+</shortcut>
+		<shortcut att="perio">SP+</shortcut>
 		<description>extended scale and polish^</description>
 		<fee>
 			<brief_description>scale &amp; polish &gt; 1 visit</brief_description>
@@ -123,7 +124,7 @@
 	</item>
 	<item id="E1501">
 		<section>5</section>
-		<shortcut type="regex">[ul][lr][1-3]RT$</shortcut>
+		<shortcut att="chart" type="regex">[ul][lr][1-3]RT$</shortcut>
 		<description>anterior root filling*</description>
 		<fee>
 			<brief_description>root filling 1-3</brief_description>
@@ -133,7 +134,7 @@
 	</item>
 	<item id="E1502">
 		<section>5</section>
-		<shortcut type="regex">[ul][lr][45]RT$</shortcut>
+		<shortcut att="chart" type="regex">[ul][lr][45]RT$</shortcut>
 		<description>premolar root filling*</description>
 		<fee>
 			<brief_description>root filling 4-5</brief_description>
@@ -143,7 +144,7 @@
 	</item>
 	<item id="E1504">
 		<section>5</section>
-		<shortcut type="regex">[ul][lr][6-8]RT$</shortcut>
+		<shortcut att="chart" type="regex">[ul][lr][6-8]RT$</shortcut>
 		<description>molar root filling*</description>
 		<fee>
 			<brief_description>root filling 6-8</brief_description>
@@ -153,7 +154,7 @@
 	</item>
 	<item id="E0601">
 		<section>6</section>
-		<shortcut type="regex">[ul][lr][1-8]CR</shortcut>
+		<shortcut att="chart" type="regex">[ul][lr][1-8]CR</shortcut>
 		<description>other crown*</description>
 		<fee>
 			<brief_description>unspecified crown</brief_description>
@@ -163,7 +164,7 @@
 	</item>
 	<item id="E0701">
 		<section>7</section>
-		<shortcut type="regex">[ul][lr][1-8]BR</shortcut>
+		<shortcut att="chart" type="regex">[ul][lr][1-8]BR</shortcut>
 		<description>bridge unit*</description>
 		<fee>
 			<brief_description>unspecified bridge unit</brief_description>
@@ -173,7 +174,7 @@
 	</item>
 	<item id="E2101">
 		<section>8</section>
-		<shortcut type="regex">u[lr][a-e1-8]EX</shortcut>
+		<shortcut att="chart" type="regex">u[lr][a-e1-8]EX</shortcut>
 		<description>extraction*</description>
 		<fee condition="item_no=1">
 			<brief_description>extraction, 1 tooth</brief_description>

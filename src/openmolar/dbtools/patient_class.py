@@ -19,6 +19,7 @@ from openmolar.settings import localsettings
 from openmolar.dbtools.appt_prefs import ApptPrefs
 from openmolar.dbtools.treatment_course import TreatmentCourse
 from openmolar.dbtools.plan_data import PlanData
+from openmolar.dbtools.est_logger import EstLogger
 
 from openmolar.dbtools.queries import ESTS_QUERY, PATIENT_QUERY
 
@@ -264,83 +265,87 @@ class patient(object):
         self._n_family_members = None
         self._dayBookHistory = None
         self.treatment_course = None
+        self.est_logger = None
 
-        if self.serialno != 0:
-            #load stuff from the database
-            db = connect.connect()
-            cursor = db.cursor()
+        if self.serialno == 0:
+            return
 
-            self.getSynopsis()
+        ######################################
+        ## now load stuff from the database ##
+        ######################################
+        db = connect.connect()
+        cursor = db.cursor()
 
-            cursor.execute(PATIENT_QUERY, (self.serialno,))
-            values= cursor.fetchall()
+        self.getSynopsis()
 
-            if values == ():
-                raise localsettings.PatientNotFoundError
+        cursor.execute(PATIENT_QUERY, (self.serialno,))
+        values= cursor.fetchall()
 
-            for i, att in enumerate(patientTableAtts):
-                value = values[0][i]
-                if value is not None:
-                    self.__dict__[att] = value
+        if values == ():
+            raise localsettings.PatientNotFoundError
 
-            query = '''select exemption, exempttext from exemptions
-            where serialno=%s'''
-            cursor.execute(query, self.serialno)
+        for i, att in enumerate(patientTableAtts):
+            value = values[0][i]
+            if value is not None:
+                self.__dict__[att] = value
 
-            values = cursor.fetchall()
+        query = '''select exemption, exempttext from exemptions
+        where serialno=%s'''
+        cursor.execute(query, self.serialno)
 
-            for value in values:
-                self.exemption, self.exempttext = value
+        values = cursor.fetchall()
 
-            query = '''select bpedate, bpe from bpe where serialno=%s
-            order by bpedate'''
-            cursor.execute(query, self.serialno)
+        for value in values:
+            self.exemption, self.exempttext = value
 
-            values = cursor.fetchall()
+        query = '''select bpedate, bpe from bpe where serialno=%s
+        order by bpedate'''
+        cursor.execute(query, self.serialno)
 
-            for value in values:
-                self.bpe.append(value)
+        values = cursor.fetchall()
 
-            if self.courseno0 != 0:
-                self.getEsts()
+        for value in values:
+            self.bpe.append(value)
 
-            self.treatment_course = TreatmentCourse(
-                self.serialno, self.courseno0)
+        if self.courseno0 != 0:
+            self.getEsts()
 
-            self.getNotesTuple()
+        self.treatment_course = TreatmentCourse(
+            self.serialno, self.courseno0)
 
-            query = 'select chartdate,chartdata from perio where serialno=%s'
-            cursor.execute(query, self.serialno)
-            perioData=cursor.fetchall()
+        self.getNotesTuple()
 
-            for data in perioData:
-                self.perioData[localsettings.formatDate(data[0])] = (
-                perio.get_perioData(data[1]))
-                #--perioData is
-                #--a dictionary (keys=dates) of dictionaries with keys
-                #--like "ur8" and containing 7 tuples of data
+        query = 'select chartdate,chartdata from perio where serialno=%s'
+        cursor.execute(query, self.serialno)
+        perioData=cursor.fetchall()
 
-            query = 'select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,'+\
-            'liver,kidney,bleed,anaes,other,alert,chkdate from mednotes'+\
-            ' where serialno=%s'
-            cursor.execute(query, (self.serialno,))
+        for data in perioData:
+            self.perioData[localsettings.formatDate(data[0])] = (
+            perio.get_perioData(data[1]))
+            #--perioData is
+            #--a dictionary (keys=dates) of dictionaries with keys
+            #--like "ur8" and containing 7 tuples of data
 
-            self.MH=cursor.fetchone()
-            if self.MH!=None:
-                self.MEDALERT=self.MH[12]
+        query = 'select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,'+\
+        'liver,kidney,bleed,anaes,other,alert,chkdate from mednotes'+\
+        ' where serialno=%s'
+        cursor.execute(query, (self.serialno,))
 
-            cursor.close()
-            #db.close()
+        self.MH=cursor.fetchone()
+        if self.MH!=None:
+            self.MEDALERT=self.MH[12]
 
-            #-- load from plandata
-            self.plandata.getFromDB()
+        cursor.close()
+        #db.close()
 
-            self.appt_prefs = ApptPrefs(self.serialno)
+        #-- load from plandata
+        self.plandata.getFromDB()
 
-            self.updateChartgrid()
-            #self.setCurrentEstimate()
+        self.appt_prefs = ApptPrefs(self.serialno)
 
-            self.take_snapshot()
+        self.updateChartgrid()
+
+        self.take_snapshot()
 
 
     @property
@@ -520,7 +525,7 @@ class patient(object):
 
         cursor.close()
 
-
+        self.est_logger = EstLogger(self.courseno0)
 
     def getSynopsis(self):
         db = connect.connect()
@@ -634,6 +639,21 @@ class patient(object):
             elif est.completed == 1:
                 charges += est.interim_pt_fee
         return charges
+
+    @property
+    def est_logger_text(self):
+        '''
+        a summary of the estimate for use in the est_logger_table
+        est_logger is unconcerned whether treatment is completed etc..
+        '''
+        text = ""
+        total, p_total = 0, 0
+        for estimate in self.estimates:
+            text += estimate.log_text
+            total += estimate.fee
+            p_total += estimate.ptfee
+        text += "TOTAL ||  ||  ||  ||  ||  || %s || %s"% (total, p_total)
+        return text
 
     def resetAllMonies(self):
         '''

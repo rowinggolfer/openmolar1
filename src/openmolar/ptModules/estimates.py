@@ -99,6 +99,16 @@ class Estimate(object):
             retarg+='"%s" ,'% self.__dict__[att]
         return "%s)"% retarg.rstrip(",")
 
+    @property
+    def log_text(self):
+        '''
+        estimate data formatted so as to be useful in a log
+        || can be used to separate values
+        '''
+        return "%s || %s || %s || %s || %s || %s || %s || %s ||\n"% (
+            self.number, self.itemcode, self.description, self.csetype,
+            self.feescale, self.dent, self.fee, self.ptfee)
+
     def __eq__(self, other):
         return str(self) == str(other)
 
@@ -165,7 +175,10 @@ class Estimate(object):
         examples are 0101, 0111, 0121
         can also be prepended with a single character eg E0101
         '''
-        return bool(re.match(".?01[012]1$", self.itemcode))
+        try:
+            return bool(re.match(".?01[012]1$", self.itemcode))
+        except TypeError:
+            return False
 
     @property
     def is_custom(self):

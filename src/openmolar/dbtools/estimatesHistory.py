@@ -15,11 +15,6 @@ fee, ptfee, feescale, csetype, dent, est_link.completed, tx_hash, courseno
 from newestimates right join est_link on newestimates.ix = est_link.est_id
 where serialno=%s order by courseno desc, itemcode, ix'''
 
-
-#QUERY = '''SELECT ix, courseno, number, itemcode, description,
-#category, type, fee, ptfee, feescale, csetype, dent, completed
-#from newestimates where serialno=%s order by courseno desc, itemcode'''
-
 def getEsts(sno):
     db = connect()
     cursor = db.cursor()

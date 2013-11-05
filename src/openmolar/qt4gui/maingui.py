@@ -103,6 +103,8 @@ from openmolar.dbtools import daybookHistory
 from openmolar.dbtools import paymentHistory
 from openmolar.dbtools import courseHistory
 from openmolar.dbtools import estimatesHistory
+from openmolar.dbtools import est_logger
+
 
 #--modules which act upon the pt class type (and subclasses)
 from openmolar.ptModules import patientDetails
@@ -740,7 +742,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         LOGGER.debug("load_newEstPage called")
         self.ui.estWidget.setPatient(self.pt)
-        #self.ui.estWidget.setEstimate(self.pt.estimates)
 
     def load_editpage(self):
         self.ui.titleEdit.setText(self.pt.title)
@@ -1673,6 +1674,9 @@ class OpenmolarGui(QtGui.QMainWindow):
             print "changes made to patient atttributes..... updating database"
             result = patient_write_changes.all_changes(self.pt, uc)
             daybook_module.updateDaybook(self)
+            if self.pt.est_logger is not None:
+                self.pt.est_logger.add_row(
+                    self.pt.courseno0, self.pt.est_logger_text)
 
             if result: #True if sucessful
                 if not leavingRecord and "estimates" in uc:
@@ -2221,6 +2225,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         html = memos.html_history(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
 
+    def show_estimate_versioning(self):
+        '''
+        show how the current estimate has changed
+        '''
+        html = est_logger.html_history(self.pt.courseno0)
+        self.ui.debugBrowser.setText(html)
 
     def nhsClaimsShortcut(self):
         '''
@@ -2788,6 +2798,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.SIGNAL("clicked()"), self.NHSClaims_clicked)
 
         self.ui.memo_history_pushButton.clicked.connect(self.show_memo_history)
+        self.ui.current_est_versioning_pushButton.clicked.connect(
+            self.show_estimate_versioning)
 
     def signals_daybook(self):
         #daybook - cashbook

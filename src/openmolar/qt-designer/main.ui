@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>722</width>
+                      <width>486</width>
                       <height>477</height>
                      </rect>
                     </property>
@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>704</width>
+                      <width>442</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -2015,7 +2015,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>724</width>
+                      <width>303</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2690,8 +2690,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>570</width>
-                      <height>340</height>
+                      <width>163</width>
+                      <height>288</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2962,8 +2962,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>529</width>
-                      <height>375</height>
+                      <width>36</width>
+                      <height>200</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -2993,7 +2993,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>180</width>
-                      <height>375</height>
+                      <height>274</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3125,7 +3125,7 @@ Note - this will not remove items which are currently there. </string>
                       <x>0</x>
                       <y>0</y>
                       <width>719</width>
-                      <height>377</height>
+                      <height>391</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -3369,6 +3369,16 @@ Note - this will not remove items which are currently there. </string>
                      </widget>
                     </item>
                     <item>
+                     <widget class="QPushButton" name="past_course_estimates_pushButton">
+                      <property name="toolTip">
+                       <string>display a combination of courses and estimates.</string>
+                      </property>
+                      <property name="text">
+                       <string>Courses / Estimates</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <widget class="QPushButton" name="pastCourses_pushButton">
                       <property name="toolTip">
                        <string>View all Courses of treatment. This includes treatment that was planned but not completed.</string>
@@ -3389,12 +3399,9 @@ Note - this will not remove items which are currently there. </string>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="past_course_estimates_pushButton">
-                      <property name="toolTip">
-                       <string>display a combination of courses and estimates.</string>
-                      </property>
+                     <widget class="QPushButton" name="current_est_versioning_pushButton">
                       <property name="text">
-                       <string>Courses / Estimates</string>
+                       <string>Current Estimate</string>
                       </property>
                      </widget>
                     </item>
@@ -3551,7 +3558,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>119</height>
+                     <height>105</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">

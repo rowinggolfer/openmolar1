@@ -27,6 +27,7 @@ SQLSTRINGS = [
 'drop table if exists currtrtmt',
 'drop table if exists est_link',
 'drop table if exists feescales',
+'drop table est_logger',
 'update patients set addr2="" where addr2 is NULL',
 'update patients set addr3="" where addr3 is NULL',
 'update patients set town="" where town is NULL',
@@ -42,6 +43,14 @@ alter table patients
 
 '''
 alter table newestimates modify column itemcode char(5)
+''',
+
+'''
+update newestimates set itemcode="-----" where itemcode = "4001"
+''',
+
+'''
+update newestimates set itemcode="CUSTO" where itemcode = "4002"
 ''',
 
 '''
@@ -63,6 +72,16 @@ create table feescales (
     in_use        bool              not null default true,
     disp_order    int(8)  not null default 0,
     xml_data      mediumtext not null,
+PRIMARY KEY (ix)
+)''',
+
+'''
+create table est_logger (
+    ix            int(11) unsigned  not null auto_increment,
+    courseno      int(11) unsigned not null,
+    est_data      mediumtext not null,
+    operator      varchar(16) not null,
+    time_stamp    timestamp NOT NULL default CURRENT_TIMESTAMP,
 PRIMARY KEY (ix)
 )''',
 
@@ -96,6 +115,20 @@ DEST_QUERY = ('insert into est_link (est_id, tx_hash, completed) '
 'values (%s, %s, %s)')
 
 FEESCALE_QUERY = 'insert into feescales (xml_data) values (%s)'
+
+#this query gets selected estimate data for all active courses
+LOGGER_SELECT_QUERY = '''
+ select newestimates.courseno, number, itemcode, description, csetype,
+feescale, dent, fee, ptfee from newestimates join
+(select currtrtmt2.courseno from currtrtmt2 join patients
+on currtrtmt2.courseno = patients.courseno0
+where accd is not NULL and cmpd is NULL) as active_courses
+on newestimates.courseno=active_courses.courseno
+order by newestimates.courseno, newestimates.itemcode, newestimates.ix
+'''
+
+LOGGER_INSERT_QUERY = ('insert into est_logger '
+'(courseno, est_data, operator) values (%s,%s, %s)')
 
 class UpdateException(Exception):
     '''
@@ -161,7 +194,7 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(5, _("creating est_link table"))
             self.execute_statements(SQLSTRINGS)
 
-            self.progressSig(90, _("populating est_link table"))
+            self.progressSig(10, _("populating est_link table"))
             self.transfer_data()
 
             self.progressSig(95, _("populating feescales"))
@@ -222,9 +255,38 @@ class dbUpdater(QtCore.QThread):
                 values = (ix, tx_hash, completed)
                 cursor.execute(DEST_QUERY, values)
                 if i % 1000 == 0:
-                    self.progressSig(80 * i/len(rows) + 10,
+                    self.progressSig(50 * i/len(rows) + 10,
                     _("transfering data"))
-            cursor.close()
+
+            cursor.execute(LOGGER_SELECT_QUERY)
+            rows = cursor.fetchall()
+            prev_courseno = None
+            est_log_text = ""
+            total, p_total = 0, 0
+            for i, (courseno, number, itemcode, description, csetype,
+            feescale, dent, fee, ptfee) in enumerate(rows):
+                line_text = \
+                "%s || %s || %s || %s || %s || %s || %s || %s ||\n"% (
+                    number, itemcode, description, csetype,
+                    feescale, dent, fee, ptfee)
+
+                if prev_courseno is None or courseno == prev_courseno:
+                    est_log_text += line_text
+                    total += fee
+                    p_total += ptfee
+                else:
+                    est_log_text += "TOTAL ||  ||  ||  ||  ||  || %s || %s"% (
+                        total, p_total)
+                    values = (prev_courseno, est_log_text, "2_2script")
+                    cursor.execute(LOGGER_INSERT_QUERY, values)
+                    est_log_text = line_text
+                    total, p_total = fee, ptfee
+
+                prev_courseno = courseno
+                if i % 1000 == 0:
+                    self.progressSig(30 * i/len(rows) + 60,
+                    _("transfering data"))
+
             db.commit()
             db.close()
         except Exception as exc:
