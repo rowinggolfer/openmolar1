@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/record_tools.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/record_tools.ui'
 #
-# Created: Tue Apr 23 10:40:52 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Wed Nov  6 23:05:24 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,9 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -513,66 +515,78 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( u"Advanced Record Alteration"))
-        self.label.setText(_( u"NHS current fees (money0)"))
-        self.label_2.setText(_( u"NHS payments (money2)"))
-        self.label_5.setText(_( u"NHS estimated (money4)"))
-        self.label_6.setText(_( u"private estimate (money5)"))
-        self.label_7.setText(_( u"Exempt - nhs gross - completed treatment (money6)"))
-        self.label_8.setText(_( u"Exempt - NHS gross - estimated current (money7)"))
-        self.label_9.setText(_( u"credit (money8)"))
-        self.label_10.setText(_( u"debt (money9)"))
-        self.label_11.setText(_( u"debt2 (money10)"))
-        self.label_12.setText(_( u"money 11 (always 0!)"))
-        self.label_3.setText(_( u"private current fees (money1) "))
-        self.label_4.setText(_( u"private payments (money3)"))
-        self.label_14.setText(_( u"ALL AMOUNTS ARE IN PENCE (cents)"))
-        self.label_13.setText(_( u"Outstanding <br />amount"))
-        self.total_label.setText(_( u"0.00"))
-        self.money_pushButton.setText(_( u"Apply Changes"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _( u"Money"))
-        self.dates_pushButton.setText(_( u"Apply Changes"))
-        self.label_15.setText(_( u"Last CE (pd5)"))
-        self.pd5_pushButton.setText(_( u"Add Date"))
-        self.label_16.setText(_( u"Last ECE (pd6)"))
-        self.pd6_pushButton.setText(_( u"Add Date"))
-        self.label_17.setText(_( u"Last FCA (pd7)"))
-        self.pd7_pushButton.setText(_( u"Add Date"))
-        self.label_18.setText(_( u"Last OPT (pd8)"))
-        self.pd8_pushButton.setText(_( u"Add Date"))
-        self.label_19.setText(_( u"Last intraoral Xrays (pd9)"))
-        self.pd9_pushButton.setText(_( u"Add Date"))
-        self.label_20.setText(_( u"Last SP (pd10)"))
-        self.pd10_pushButton.setText(_( u"Add Date"))
-        self.label_21.setText(_( u"Last Account sent (billdate)"))
-        self.billdate_pushButton.setText(_( u"Add Date"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _( u"Dates"))
-        self.plan_pushButton.setText(_( u"Apply Changes"))
-        self.label_22.setText(_( u"Xray"))
-        self.label_23.setText(_( u"Perio"))
-        self.label_47.setText(_( u"anaesthetics"))
-        self.label_48.setText(_( u"other"))
-        self.label_49.setText(_( u"custom"))
-        self.label_51.setText(_( u"Dentures"))
-        self.label_52.setText(_( u"new upper"))
-        self.label_53.setText(_( u"new lower"))
-        self.label_54.setText(_( u"repair upper"))
-        self.label_55.setText(_( u"repair lower"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _( u"Treatment Plan"))
-        self.completed_pushButton.setText(_( u"Apply Changes"))
-        self.label_24.setText(_( u"Xray"))
-        self.label_25.setText(_( u"Perio"))
-        self.label_50.setText(_( u"anaesthetics"))
-        self.label_56.setText(_( u"other"))
-        self.label_57.setText(_( u"custom"))
-        self.label_58.setText(_( u"Dentures"))
-        self.label_59.setText(_( u"new upper"))
-        self.label_60.setText(_( u"new lower"))
-        self.label_61.setText(_( u"repair upper"))
-        self.label_62.setText(_( u"repair lower"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _( u"Completed Treatment"))
-        self.label_26.setText(_( u"Hidden Notes"))
-        self.hidden_notes_pushButton.setText(_( u"Apply Changes"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _( u"Miscellaneous"))
+        Dialog.setWindowTitle(_("Advanced Record Alteration"))
+        self.label.setText(_("NHS current fees (money0)"))
+        self.label_2.setText(_("NHS payments (money2)"))
+        self.label_5.setText(_("NHS estimated (money4)"))
+        self.label_6.setText(_("private estimate (money5)"))
+        self.label_7.setText(_("Exempt - nhs gross - completed treatment (money6)"))
+        self.label_8.setText(_("Exempt - NHS gross - estimated current (money7)"))
+        self.label_9.setText(_("credit (money8)"))
+        self.label_10.setText(_("debt (money9)"))
+        self.label_11.setText(_("debt2 (money10)"))
+        self.label_12.setText(_("money 11 (always 0!)"))
+        self.label_3.setText(_("private current fees (money1) "))
+        self.label_4.setText(_("private payments (money3)"))
+        self.label_14.setText(_("ALL AMOUNTS ARE IN PENCE (cents)"))
+        self.label_13.setText(_("Outstanding <br />amount"))
+        self.total_label.setText(_("0.00"))
+        self.money_pushButton.setText(_("Apply Changes"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("Money"))
+        self.dates_pushButton.setText(_("Apply Changes"))
+        self.label_15.setText(_("Last CE (pd5)"))
+        self.pd5_pushButton.setText(_("Add Date"))
+        self.label_16.setText(_("Last ECE (pd6)"))
+        self.pd6_pushButton.setText(_("Add Date"))
+        self.label_17.setText(_("Last FCA (pd7)"))
+        self.pd7_pushButton.setText(_("Add Date"))
+        self.label_18.setText(_("Last OPT (pd8)"))
+        self.pd8_pushButton.setText(_("Add Date"))
+        self.label_19.setText(_("Last intraoral Xrays (pd9)"))
+        self.pd9_pushButton.setText(_("Add Date"))
+        self.label_20.setText(_("Last SP (pd10)"))
+        self.pd10_pushButton.setText(_("Add Date"))
+        self.label_21.setText(_("Last Account sent (billdate)"))
+        self.billdate_pushButton.setText(_("Add Date"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("Dates"))
+        self.plan_pushButton.setText(_("Apply Changes"))
+        self.label_22.setText(_("Xray"))
+        self.label_23.setText(_("Perio"))
+        self.label_47.setText(_("anaesthetics"))
+        self.label_48.setText(_("other"))
+        self.label_49.setText(_("custom"))
+        self.label_51.setText(_("Dentures"))
+        self.label_52.setText(_("new upper"))
+        self.label_53.setText(_("new lower"))
+        self.label_54.setText(_("repair upper"))
+        self.label_55.setText(_("repair lower"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("Treatment Plan"))
+        self.completed_pushButton.setText(_("Apply Changes"))
+        self.label_24.setText(_("Xray"))
+        self.label_25.setText(_("Perio"))
+        self.label_50.setText(_("anaesthetics"))
+        self.label_56.setText(_("other"))
+        self.label_57.setText(_("custom"))
+        self.label_58.setText(_("Dentures"))
+        self.label_59.setText(_("new upper"))
+        self.label_60.setText(_("new lower"))
+        self.label_61.setText(_("repair upper"))
+        self.label_62.setText(_("repair lower"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("Completed Treatment"))
+        self.label_26.setText(_("Hidden Notes"))
+        self.hidden_notes_pushButton.setText(_("Apply Changes"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _("Miscellaneous"))
 
 from openmolar.qt4gui import resources_rc
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Dialog = QtGui.QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())
+

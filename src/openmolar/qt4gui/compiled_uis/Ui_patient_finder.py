@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/patient_finder.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/patient_finder.ui'
 #
-# Created: Mon May 20 22:55:51 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Wed Nov  6 23:05:24 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,9 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -131,29 +133,41 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.snameSoundex_checkBox, self.fnameSoundex_checkBox)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( u"Patient Finder"))
-        self.label_3.setText(_( u"Fill in a few of the following fields to get a list of possible patients"))
-        self.repeat_pushButton.setText(_( u"Repeat Last Search"))
-        self.label_5.setText(_( u"SNO or Surname"))
-        self.sname.setToolTip(_( u"Enter either the full name or the first few letters of the name.\n"
+        Dialog.setWindowTitle(_("Patient Finder"))
+        self.label_3.setText(_("Fill in a few of the following fields to get a list of possible patients"))
+        self.repeat_pushButton.setText(_("Repeat Last Search"))
+        self.label_5.setText(_("SNO or Surname"))
+        self.sname.setToolTip(_("Enter either the full name or the first few letters of the name.\n"
 "\n"
 "If you are unsure of the spelling, type in the COMPLETE name,\n"
 "and check the adjacent \"sounds like\" box."))
-        self.snameSoundex_checkBox.setToolTip(_( u"check to search for a similar sounding name"))
-        self.label_6.setText(_( u"First Name"))
-        self.fname.setToolTip(_( u"Enter either the full name or the first few letters of the name.\n"
+        self.snameSoundex_checkBox.setToolTip(_("check to search for a similar sounding name"))
+        self.label_6.setText(_("First Name"))
+        self.fname.setToolTip(_("Enter either the full name or the first few letters of the name.\n"
 "\n"
 "If you are unsure of the spelling, type in the COMPLETE name,\n"
 "and check the adjacent \"sounds like\" box.\n"
 "Be wary of middle names. \n"
 "eg. \"Neil\" does NOT sound like \"Neil Alexander\"!"))
-        self.fnameSoundex_checkBox.setToolTip(_( u"check to search for a similar sounding name"))
-        self.label_2.setText(_( u"Date of Birth"))
-        self.label_7.setText(_( u"Address includes"))
-        self.addr1.setToolTip(_( u"openMolar will search line1 and line2 of the address for this text"))
-        self.label_8.setText(_( u"Telephone"))
-        self.tel.setToolTip(_( u"open molar will search tel1, tel2 and mobile for numbers present here."))
-        self.label_9.setText(_( u"Postcode"))
-        self.pcde.setToolTip(_( u"search for a postcode"))
+        self.fnameSoundex_checkBox.setToolTip(_("check to search for a similar sounding name"))
+        self.label_2.setText(_("Date of Birth"))
+        self.label_7.setText(_("Address includes"))
+        self.addr1.setToolTip(_("openMolar will search line1 and line2 of the address for this text"))
+        self.label_8.setText(_("Telephone"))
+        self.tel.setToolTip(_("open molar will search tel1, tel2 and mobile for numbers present here."))
+        self.label_9.setText(_("Postcode"))
+        self.pcde.setToolTip(_("search for a postcode"))
 
 from openmolar.qt4gui import resources_rc
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Dialog = QtGui.QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())
+

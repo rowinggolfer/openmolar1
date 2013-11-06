@@ -23,8 +23,7 @@
       </font>
      </property>
      <property name="text">
-      <string>&lt;p align=&quot;center&quot;&gt;Friday, 25th December 2009&lt;/p&gt;
-&lt;p align=&quot;center&quot;&gt;Christmas Day&lt;/p&gt;</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -65,7 +64,7 @@
         <x>0</x>
         <y>0</y>
         <width>399</width>
-        <height>253</height>
+        <height>238</height>
        </rect>
       </property>
      </widget>

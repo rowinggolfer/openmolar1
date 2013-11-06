@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/chooseDocument.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/chooseDocument.ui'
 #
-# Created: Tue Aug 27 18:32:00 2013
-#      by: PyQt4 UI code generator 4.10.2
+# Created: Wed Nov  6 23:05:24 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -15,13 +15,6 @@ except AttributeError:
     def _fromUtf8(s):
         return s
 
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -127,24 +120,36 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Choose a Document", None))
-        self.remuneration_radioButton.setText(_translate("Dialog", "NHS Schedule of Remuneration April 2008", None))
-        self.info_radioButton.setText(_translate("Dialog", "NHS \"Information Guide\" 2008", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "2008", None))
-        self.remuneration2009_radioButton.setText(_translate("Dialog", "NHS Schedule of Remuneration", None))
-        self.info2009_radioButton.setText(_translate("Dialog", "NHS \"Information Guide\"", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "2009", None))
-        self.remuneration2010_radioButton.setText(_translate("Dialog", "NHS Schedule of Remuneration", None))
-        self.info2010_radioButton.setText(_translate("Dialog", "NHS \"Information Guide\"", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Dialog", "2010", None))
-        self.remuneration2012_radioButton.setText(_translate("Dialog", "NHS Schedule of Remuneration", None))
-        self.info2012_radioButton.setText(_translate("Dialog", "NHS \"Information Guide\"", None))
-        self.terms_radioButton.setText(_translate("Dialog", "NHS terms and conditions", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("Dialog", "2012", None))
-        self.remuneration2013_radioButton.setText(_translate("Dialog", "NHS Schedule of Remuneration", None))
-        self.tooth_specific_radioButton.setText(_translate("Dialog", "Tooth Specific Guidance", None))
-        self.info2013_radioButton.setText(_translate("Dialog", "NHS \"Information Guide\"", None))
-        self.terms2013_radioButton.setText(_translate("Dialog", "NHS terms and conditions", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("Dialog", "2013", None))
-        self.label.setText(_translate("Dialog", "Choose a document to view", None))
+        Dialog.setWindowTitle(_("Choose a Document"))
+        self.remuneration_radioButton.setText(_("NHS Schedule of Remuneration April 2008"))
+        self.info_radioButton.setText(_("NHS \"Information Guide\" 2008"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("2008"))
+        self.remuneration2009_radioButton.setText(_("NHS Schedule of Remuneration"))
+        self.info2009_radioButton.setText(_("NHS \"Information Guide\""))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("2009"))
+        self.remuneration2010_radioButton.setText(_("NHS Schedule of Remuneration"))
+        self.info2010_radioButton.setText(_("NHS \"Information Guide\""))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("2010"))
+        self.remuneration2012_radioButton.setText(_("NHS Schedule of Remuneration"))
+        self.info2012_radioButton.setText(_("NHS \"Information Guide\""))
+        self.terms_radioButton.setText(_("NHS terms and conditions"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("2012"))
+        self.remuneration2013_radioButton.setText(_("NHS Schedule of Remuneration"))
+        self.tooth_specific_radioButton.setText(_("Tooth Specific Guidance"))
+        self.info2013_radioButton.setText(_("NHS \"Information Guide\""))
+        self.terms2013_radioButton.setText(_("NHS terms and conditions"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _("2013"))
+        self.label.setText(_("Choose a document to view"))
+
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Dialog = QtGui.QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())
 

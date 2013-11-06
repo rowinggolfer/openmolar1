@@ -30,7 +30,6 @@ from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs.payment_dialog import PaymentDialog
 from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
-from openmolar.qt4gui.compiled_uis import Ui_raiseCharge
 
 LOGGER = logging.getLogger("openmolar")
 

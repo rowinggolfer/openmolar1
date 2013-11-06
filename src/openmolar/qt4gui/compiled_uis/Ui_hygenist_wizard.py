@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/hygenist_wizard.ui'
 #
-# Created: Fri Nov  1 12:52:08 2013
+# Created: Wed Nov  6 23:05:24 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,13 +15,6 @@ except AttributeError:
     def _fromUtf8(s):
         return s
 
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -96,13 +89,25 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Hygienist Wizard", None))
-        self.planned_groupbox.setTitle(_translate("Dialog", "Planned Treatments", None))
-        self.label.setText(_translate("Dialog", "label", None))
-        self.pushButton.setText(_translate("Dialog", "Ok - I\'ll be careful!", None))
-        self.groupBox.setTitle(_translate("Dialog", "Type", None))
-        self.db_radioButton.setText(_translate("Dialog", "Debridement", None))
-        self.sp_radioButton.setText(_translate("Dialog", "Scale and Polish", None))
-        self.extsp_radioButton.setText(_translate("Dialog", "Extensive Scaling", None))
-        self.clinicianGroupBox.setTitle(_translate("Dialog", "Treating Dentist/Hygienist", None))
+        Dialog.setWindowTitle(_("Hygienist Wizard"))
+        self.planned_groupbox.setTitle(_("Planned Treatments"))
+        self.label.setText(_("label"))
+        self.pushButton.setText(_("Ok - I\'ll be careful!"))
+        self.groupBox.setTitle(_("Type"))
+        self.db_radioButton.setText(_("Debridement"))
+        self.sp_radioButton.setText(_("Scale and Polish"))
+        self.extsp_radioButton.setText(_("Extensive Scaling"))
+        self.clinicianGroupBox.setTitle(_("Treating Dentist/Hygienist"))
+
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Dialog = QtGui.QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())
 

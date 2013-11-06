@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>941</width>
-    <height>598</height>
+    <width>910</width>
+    <height>594</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -26,6 +26,46 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
+   <item row="2" column="1">
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Dental History</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <property name="margin">
+       <number>2</number>
+      </property>
+      <item row="0" column="0" colspan="2">
+       <widget class="QPlainTextEdit" name="dh_plainTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
@@ -35,6 +75,13 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Previous Referral Date</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QRadioButton" name="ref1_radioButton">
         <property name="text">
@@ -72,24 +119,74 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label_2">
+      <item row="2" column="0" colspan="3">
+       <widget class="QCheckBox" name="tx_checkBox">
         <property name="text">
-         <string>Previous Referral Date</string>
+         <string>I am Willing to carry out simple treatment</string>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QCheckBox" name="tx_checkBox">
-     <property name="text">
-      <string>I am Willing to carry out simple treatment</string>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="chart_groupBox">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Teeth With Poor Prognosis</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="4" column="0" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Relevant Medical History</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="margin">
+       <number>2</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QPlainTextEdit" name="mh__plainTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" rowspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
@@ -112,28 +209,14 @@
         <property name="title">
          <string>Crowding</string>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <property name="margin">
           <number>2</number>
          </property>
          <item>
-          <widget class="QRadioButton" name="crowding1_radioButton">
+          <widget class="QRadioButton" name="crowding5_radioButton">
            <property name="text">
-            <string>Spaced</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="crowding2_radioButton">
-           <property name="text">
-            <string>None</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="crowding3_radioButton">
-           <property name="text">
-            <string>Mild</string>
+            <string>Severe</string>
            </property>
           </widget>
          </item>
@@ -145,9 +228,23 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="crowding5_radioButton">
+          <widget class="QRadioButton" name="crowding3_radioButton">
            <property name="text">
-            <string>Severe</string>
+            <string>Mild</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="crowding2_radioButton">
+           <property name="text">
+            <string>None</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="crowding1_radioButton">
+           <property name="text">
+            <string>Spaced</string>
            </property>
           </widget>
          </item>
@@ -238,93 +335,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_4">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Relevant Medical History</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <property name="margin">
-          <number>2</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QTextEdit" name="mh__textEdit">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="html">
-            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Serif'; font-size:7pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_5">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Dental History</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <property name="margin">
-          <number>2</number>
-         </property>
-         <item row="0" column="0" colspan="2">
-          <widget class="QTextEdit" name="dh_textEdit">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="chart_groupBox">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Teeth With Poor Prognosis</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QGroupBox" name="groupBox_6">
         <property name="title">
          <string>Patient Motivation</string>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QVBoxLayout" name="verticalLayout">
          <property name="spacing">
           <number>2</number>
          </property>
@@ -332,16 +347,16 @@ p, li { white-space: pre-wrap; }
           <number>2</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="removable_checkBox">
+          <widget class="QCheckBox" name="fixed_checkBox">
            <property name="text">
-            <string>Removable Applicance</string>
+            <string>Fixed Appliance</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="fixed_checkBox">
+          <widget class="QCheckBox" name="removable_checkBox">
            <property name="text">
-            <string>Fixed Appliance</string>
+            <string>Removable Applicance</string>
            </property>
           </widget>
          </item>
@@ -349,26 +364,6 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" rowspan="3">
-    <widget class="QTextEdit" name="notes_textEdit">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
     </widget>
    </item>
   </layout>
