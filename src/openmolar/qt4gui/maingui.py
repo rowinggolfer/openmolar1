@@ -1336,7 +1336,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
         self.ui.estWidget.setEnabled(self.pt.underTreatment)
         self.ui.completed_groupBox.setEnabled(self.pt.underTreatment)
+        self.ui.plan_groupBox.setEnabled(self.pt.underTreatment)
         self.ui.closeTx_pushButton.setEnabled(self.pt.underTreatment)
+        self.ui.plan_listView.setEnabled(self.pt.underTreatment)
+        self.ui.completed_listView.setEnabled(self.pt.underTreatment)
 
         if self.pt.underTreatment:
             self.ui.estimate_label.setText(u"<b>%s</b><br />%s %s"% (
@@ -1747,6 +1750,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.memos_pushButton,
         self.pt_diary_widget,
         self.ui.childsmile_button,
+        self.ui.plan_listView,
+        self.ui.completed_listView
         ):
 
             widg.setEnabled(arg)
