@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/crownChoice.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/crownChoice.ui'
 #
-# Created: Wed May 30 00:19:00 2012
-#      by: PyQt4 UI code generator 4.9.1
+# Created: Wed Nov  6 23:05:24 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,9 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -76,19 +78,31 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( u"Choose"))
-        self.gold.setText(_( u"Gold"))
-        self.resin.setText(_( u"Resin"))
-        self.pjc.setText(_( u"PJC"))
-        self.temp.setText(_( u"Temporary"))
-        self.lava.setText(_( u"Lava"))
-        self.fortress.setText(_( u"Fortress"))
-        self.bonded.setText(_( u"Bonded"))
-        self.other.setText(_( u"Other"))
-        self.recement.setText(_( u"Recement"))
-        self.cancel_pushButton.setText(_( u"Cancel"))
-        self.opalite.setText(_( u"Opalite"))
-        self.everest.setText(_( u"Everest"))
-        self.emax.setText(_( u"e-max"))
+        Dialog.setWindowTitle(_("Choose"))
+        self.gold.setText(_("Gold"))
+        self.resin.setText(_("Resin"))
+        self.pjc.setText(_("PJC"))
+        self.temp.setText(_("Temporary"))
+        self.lava.setText(_("Lava"))
+        self.fortress.setText(_("Fortress"))
+        self.bonded.setText(_("Bonded"))
+        self.other.setText(_("Other"))
+        self.recement.setText(_("Recement"))
+        self.cancel_pushButton.setText(_("Cancel"))
+        self.opalite.setText(_("Opalite"))
+        self.everest.setText(_("Everest"))
+        self.emax.setText(_("e-max"))
 
 from openmolar.qt4gui import resources_rc
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Dialog = QtGui.QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())
+

@@ -323,7 +323,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         hlayout.addWidget(self.ui.static_control_panel)
 
         #-TOOTHPROPS (right hand side on the charts page)
-        self.ui.toothPropsWidget = toothProps.tpWidget(self)
+        self.ui.toothPropsWidget = toothProps.ToothPropertyEditingWidget(self)
         hlayout = QtGui.QHBoxLayout(self.ui.toothProps_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.toothPropsWidget)

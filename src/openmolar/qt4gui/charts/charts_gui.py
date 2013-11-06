@@ -57,19 +57,6 @@ def navigateCharts(om_gui, direction):
     om_gui.ui.chartsTableWidget.setCurrentCell(row, 0)
     om_gui.ui.toothPropsWidget.setTooth(tooth, om_gui.selectedChartWidget)
 
-def chart_navigate(om_gui):
-    '''
-    this is called when the tooth props widget
-    static/plan/completed buttons are used
-    '''
-    row=om_gui.ui.chartsTableWidget.currentRow()
-
-    tString = str(om_gui.ui.chartsTableWidget.item(
-    row, 0).text().toAscii())
-
-    om_gui.ui.toothPropsWidget.setTooth(tString, om_gui.selectedChartWidget)
-    chartNavigation(om_gui, [tString], True)
-
 def deleteComments(om_gui):
     '''
     called when user has trigger deleted comments in the toothProp

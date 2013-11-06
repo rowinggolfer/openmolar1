@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/diary_widget.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/diary_widget.ui'
 #
-# Created: Tue Jan  8 21:19:07 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Wed Nov  6 23:05:24 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,9 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -454,23 +456,35 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_( u"Form"))
-        self.goTodayPushButton.setText(_( u"Go To Today"))
-        self.daymemo_label.setText(_( u"TextLabel"))
-        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_dayview), _( u"Day View"))
-        self.goto_current_week_PushButton.setText(_( u"View Current Week"))
-        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_weekview), _( u"Week View"))
-        self.label_65.setText(_( u"Month"))
-        self.printMonth_pushButton.setText(_( u"Print Month View"))
-        self.monthClinicians_checkBox.setText(_( u"All Clinicians"))
-        self.monthView_clinicians_pushButton.setText(_( u"Select Clinicians"))
-        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_monthview), _( u"Month View"))
-        self.yearClinicians_checkBox.setText(_( u"All Clinicians"))
-        self.yearView_clinicians_pushButton.setText(_( u"Select Clinicians"))
-        self.label_64.setText(_( u"Year"))
-        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_yearview), _( u"Year View"))
-        self.agenda_goTodayPushButton.setText(_( u"Go To Today"))
-        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_agenda), _( u"Agenda"))
+        Form.setWindowTitle(_("Form"))
+        self.goTodayPushButton.setText(_("Go To Today"))
+        self.daymemo_label.setText(_("TextLabel"))
+        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_dayview), _("Day View"))
+        self.goto_current_week_PushButton.setText(_("View Current Week"))
+        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_weekview), _("Week View"))
+        self.label_65.setText(_("Month"))
+        self.printMonth_pushButton.setText(_("Print Month View"))
+        self.monthClinicians_checkBox.setText(_("All Clinicians"))
+        self.monthView_clinicians_pushButton.setText(_("Select Clinicians"))
+        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_monthview), _("Month View"))
+        self.yearClinicians_checkBox.setText(_("All Clinicians"))
+        self.yearView_clinicians_pushButton.setText(_("Select Clinicians"))
+        self.label_64.setText(_("Year"))
+        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_yearview), _("Year View"))
+        self.agenda_goTodayPushButton.setText(_("Go To Today"))
+        self.diary_tabWidget.setTabText(self.diary_tabWidget.indexOf(self.tab_agenda), _("Agenda"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Form = QtGui.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())
+

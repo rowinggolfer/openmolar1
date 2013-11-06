@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/patient_diary.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/patient_diary.ui'
 #
-# Created: Wed Nov 14 18:15:10 2012
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Wed Nov  6 23:05:24 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,9 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -137,22 +139,34 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_( u"Form"))
-        self.appt_memo_lineEdit.setToolTip(_( u"<html><head/><body><p>A place to keep a reminder of the patients appointment preferences.</p><p>Eg. &quot;30 minute appointments for examinations&quot; etc. </p></body></html>"))
-        self.recall_settings_pushButton.setText(_( u"Recall Settings"))
-        self.apptWizard_pushButton.setToolTip(_( u"A Wizard to select some common appointment combinations"))
-        self.apptWizard_pushButton.setText(_( u"Appointment Shortcuts"))
-        self.newAppt_pushButton.setToolTip(_( u"A New Appointment for this patient"))
-        self.newAppt_pushButton.setText(_( u"&New"))
-        self.clearAppt_pushButton.setToolTip(_( u"delete or cancel the appointment"))
-        self.clearAppt_pushButton.setText(_( u"Clear/Cancel"))
-        self.scheduleAppt_pushButton.setToolTip(_( u"Make the selected appointment"))
-        self.scheduleAppt_pushButton.setText(_( u"Schedule"))
-        self.findAppt_pushButton.setToolTip(_( u"Find the appointment in the the practice appointment list"))
-        self.findAppt_pushButton.setText(_( u"Find in Book"))
-        self.printAppt_pushButton.setToolTip(_( u"Print out the next 5 appointments for this patient"))
-        self.printAppt_pushButton.setText(_( u"Print Card"))
-        self.modifyAppt_pushButton.setToolTip(_( u"Allows modifcation of certain criteria for this appointment"))
-        self.modifyAppt_pushButton.setText(_( u"Modify"))
+        Form.setWindowTitle(_("Form"))
+        self.appt_memo_lineEdit.setToolTip(_("<html><head/><body><p>A place to keep a reminder of the patients appointment preferences.</p><p>Eg. &quot;30 minute appointments for examinations&quot; etc. </p></body></html>"))
+        self.recall_settings_pushButton.setText(_("Recall Settings"))
+        self.apptWizard_pushButton.setToolTip(_("A Wizard to select some common appointment combinations"))
+        self.apptWizard_pushButton.setText(_("Appointment Shortcuts"))
+        self.newAppt_pushButton.setToolTip(_("A New Appointment for this patient"))
+        self.newAppt_pushButton.setText(_("&New"))
+        self.clearAppt_pushButton.setToolTip(_("delete or cancel the appointment"))
+        self.clearAppt_pushButton.setText(_("Clear/Cancel"))
+        self.scheduleAppt_pushButton.setToolTip(_("Make the selected appointment"))
+        self.scheduleAppt_pushButton.setText(_("Schedule"))
+        self.findAppt_pushButton.setToolTip(_("Find the appointment in the the practice appointment list"))
+        self.findAppt_pushButton.setText(_("Find in Book"))
+        self.printAppt_pushButton.setToolTip(_("Print out the next 5 appointments for this patient"))
+        self.printAppt_pushButton.setText(_("Print Card"))
+        self.modifyAppt_pushButton.setToolTip(_("Allows modifcation of certain criteria for this appointment"))
+        self.modifyAppt_pushButton.setText(_("Modify"))
 
 from openmolar.qt4gui import resources_rc
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Form = QtGui.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())
+

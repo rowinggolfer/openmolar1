@@ -26,17 +26,6 @@ FS_OPTIONS = {
 "FS,CO"     : _( u"Fissure Sealant/Composite")
 }
 
-CR_OPTIONS = {
-"--"        : "--"+_("Crowns"),
-"CR,V1"  : _( u"Porcelain Bonded Crown"),
-"CR,GO"  : _( u"Gold Crown"),
-"CR,LAVA": _( u"Lava Crown"),
-"CR,PJ"  : _( u"Porcelain Jacket Crown"),
-"CR,TC"  : _( u"Temporary Crown"),
-"CR,SR"  : _( u"Resin Crown"),
-"CR,OT"  : _( u"Other Crown"),
-}
-
 BR_RE_OPTIONS = {
 "--"        : "--"+_("Bridge Retainers"),
 "BR/CR,V1"  : _( u"Bonded"),
@@ -69,16 +58,13 @@ SURGICAL_OPTIONS = {
 "AP"        : _( u"Apicectomy")
 }
 
-
 COMBOBOXES = (
 FS_OPTIONS,
-CR_OPTIONS,
 BR_RE_OPTIONS,
 BR_PO_OPTIONS,
 ENDO_OPTIONS,
 SURGICAL_OPTIONS,
 )
-
 
 class chartLineEdit(QtGui.QLineEdit):
     '''
@@ -274,10 +260,10 @@ class chartLineEdit(QtGui.QLineEdit):
                 #don't allow comments if not in static
                 QtGui.QLineEdit.keyPressEvent(self,event)
 
-class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
+class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
     static_chosen = QtCore.pyqtSignal(object)
     def __init__(self, parent=None):
-        super(tpWidget, self).__init__(parent)
+        QtGui.QWidget.__init__(self, parent)
         self.om_gui = parent
         self.setupUi(self)
         hlayout=QtGui.QHBoxLayout(self.editframe)
@@ -366,10 +352,12 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
 
     def isStatic(self, arg):
         '''
-        if the editing is of the static chart, then different buttons are enabled
+        if the editing is of the static chart,
+        then different buttons are enabled
         '''
         self.is_Static = arg
         self.comments_comboBox.setEnabled(arg)
+
 
     def comments(self,arg):
         '''
@@ -397,7 +385,7 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
         '''
         Dialog = QtGui.QDialog(self)
         lineEdit = chartLineEdit()
-        if self.isStatic:
+        if self.selectedChart == "st":
             lineEdit.setMaxLength(34)
         lineEdit.setText(self.lineEdit.text())
 
@@ -409,7 +397,6 @@ class tpWidget(Ui_toothProps.Ui_Form, QtGui.QWidget):
             self.lineEdit.additional()
         else:
             self.lineEdit.updateFromPropList(self.lineEdit.originalPropList)
-        #self.emit(QtCore.SIGNAL("full_edit"))
 
     def setExistingProps(self, arg):
         self.lineEdit.setKnownProps(arg)
@@ -899,7 +886,7 @@ if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
     Form = QtGui.QWidget()
-    ui = tpWidget(Form)
+    ui = ToothPropertyEditingWidget(Form)
     ui.setExistingProps("MOD B,GL !COMMENT_TWO")
     Form.show()
     sys.exit(app.exec_())

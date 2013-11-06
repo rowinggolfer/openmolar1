@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/toothProps.ui'
 #
-# Created: Tue Oct 29 13:48:53 2013
+# Created: Wed Nov  6 23:05:24 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,13 +15,6 @@ except AttributeError:
     def _fromUtf8(s):
         return s
 
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -203,33 +196,45 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(_translate("Form", "Form", None))
-        self.clear_pushButton.setToolTip(_translate("Form", "delete tooth data", None))
-        self.comments_comboBox.setItemText(0, _translate("Form", "ADD COMMENTS", None))
-        self.comments_comboBox.setItemText(1, _translate("Form", "!KUO", None))
-        self.comments_comboBox.setItemText(2, _translate("Form", "!Mobile Tooth", None))
-        self.comments_comboBox.setItemText(3, _translate("Form", "!Early Caries", None))
-        self.comments_comboBox.setItemText(4, _translate("Form", "!Filling Missing", None))
-        self.comments_comboBox.setItemText(5, _translate("Form", "!Chipped", None))
-        self.comments_comboBox.setItemText(6, _translate("Form", "!Cracked", None))
-        self.comments_comboBox.setItemText(7, _translate("Form", "!Poor Prognosis", None))
-        self.comments_comboBox.setItemText(8, _translate("Form", "!Extract Soon", None))
-        self.comments_comboBox.setItemText(9, _translate("Form", "!Implant required", None))
-        self.comments_comboBox.setItemText(10, _translate("Form", "DELETE COMMENTS", None))
-        self.am_pushButton.setText(_translate("Form", "AM", None))
-        self.co_pushButton.setText(_translate("Form", "CO", None))
-        self.gl_pushButton.setText(_translate("Form", "GL", None))
-        self.gold_pushButton.setText(_translate("Form", "Go", None))
-        self.porc_pushButton.setText(_translate("Form", "Po", None))
-        self.ex_pushButton.setToolTip(_translate("Form", "extract (plan only!)", None))
-        self.ex_pushButton.setText(_translate("Form", "Ex", None))
-        self.rt_pushButton.setToolTip(_translate("Form", "root treatment", None))
-        self.rt_pushButton.setText(_translate("Form", "RT", None))
-        self.leftTooth_pushButton.setToolTip(_translate("Form", "Apply and move Back a tooth", None))
-        self.defaultCrown_pushButton.setToolTip(_translate("Form", "porcelain veneer", None))
-        self.defaultCrown_pushButton.setText(_translate("Form", "Cr", None))
-        self.pushButton.setToolTip(_translate("Form", "Apply & Add Another Item", None))
-        self.pushButton.setText(_translate("Form", "&&", None))
-        self.rightTooth_pushButton.setToolTip(_translate("Form", "Apply & Move to Next Tooth", None))
+        Form.setWindowTitle(_("Form"))
+        self.clear_pushButton.setToolTip(_("delete tooth data"))
+        self.comments_comboBox.setItemText(0, _("ADD COMMENTS"))
+        self.comments_comboBox.setItemText(1, _("!KUO"))
+        self.comments_comboBox.setItemText(2, _("!Mobile Tooth"))
+        self.comments_comboBox.setItemText(3, _("!Early Caries"))
+        self.comments_comboBox.setItemText(4, _("!Filling Missing"))
+        self.comments_comboBox.setItemText(5, _("!Chipped"))
+        self.comments_comboBox.setItemText(6, _("!Cracked"))
+        self.comments_comboBox.setItemText(7, _("!Poor Prognosis"))
+        self.comments_comboBox.setItemText(8, _("!Extract Soon"))
+        self.comments_comboBox.setItemText(9, _("!Implant required"))
+        self.comments_comboBox.setItemText(10, _("DELETE COMMENTS"))
+        self.am_pushButton.setText(_("AM"))
+        self.co_pushButton.setText(_("CO"))
+        self.gl_pushButton.setText(_("GL"))
+        self.gold_pushButton.setText(_("Go"))
+        self.porc_pushButton.setText(_("Po"))
+        self.ex_pushButton.setToolTip(_("extract (plan only!)"))
+        self.ex_pushButton.setText(_("Ex"))
+        self.rt_pushButton.setToolTip(_("root treatment"))
+        self.rt_pushButton.setText(_("RT"))
+        self.leftTooth_pushButton.setToolTip(_("Apply and move Back a tooth"))
+        self.defaultCrown_pushButton.setToolTip(_("porcelain veneer"))
+        self.defaultCrown_pushButton.setText(_("Cr"))
+        self.pushButton.setToolTip(_("Apply & Add Another Item"))
+        self.pushButton.setText(_("&&"))
+        self.rightTooth_pushButton.setToolTip(_("Apply & Move to Next Tooth"))
 
 from openmolar.qt4gui import resources_rc
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Form = QtGui.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())
+

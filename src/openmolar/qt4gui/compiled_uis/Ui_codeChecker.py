@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/codeChecker.ui'
 #
-# Created: Fri Nov  1 12:52:08 2013
+# Created: Wed Nov  6 23:05:24 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,13 +15,6 @@ except AttributeError:
     def _fromUtf8(s):
         return s
 
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -101,11 +94,23 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
-        self.label.setText(_translate("Dialog", "Deciduous Teeth", None))
-        self.label_2.setText(_translate("Dialog", "Adult Teeth", None))
-        self.label_3.setText(_translate("Dialog", "Enter a Restoration Code (eg. MOD) to see how a feescale interprets the shortcut", None))
-        self.lineEdit.setToolTip(_translate("Dialog", "Enter a filling or restoration code, and check that your feetable finds the correct itemcode", None))
-        self.pushButton.setText(_translate("Dialog", "GO", None))
-        self.quit_pushButton.setText(_translate("Dialog", "QUIT", None))
+        Dialog.setWindowTitle(_("Dialog"))
+        self.label.setText(_("Deciduous Teeth"))
+        self.label_2.setText(_("Adult Teeth"))
+        self.label_3.setText(_("Enter a Restoration Code (eg. MOD) to see how a feescale interprets the shortcut"))
+        self.lineEdit.setToolTip(_("Enter a filling or restoration code, and check that your feetable finds the correct itemcode"))
+        self.pushButton.setText(_("GO"))
+        self.quit_pushButton.setText(_("QUIT"))
+
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Dialog = QtGui.QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())
 

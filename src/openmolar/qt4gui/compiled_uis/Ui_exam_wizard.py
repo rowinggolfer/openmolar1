@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar/src/openmolar/qt-designer/exam_wizard.ui'
+# Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/exam_wizard.ui'
 #
-# Created: Fri Sep 28 10:48:47 2012
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Wed Nov  6 23:05:24 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,9 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -78,11 +80,23 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_( u"Exam Wizard"))
-        self.label.setText(_( u"Type"))
-        self.examA_radioButton.setText(_( u"Standard"))
-        self.examB_radioButton.setText(_( u"Extensive"))
-        self.examC_radioButton.setText(_( u"Full Case Assessment"))
-        self.label_3.setText(_( u"Exam Date"))
-        self.label_2.setText(_( u"Dentist"))
+        Dialog.setWindowTitle(_("Exam Wizard"))
+        self.label.setText(_("Type"))
+        self.examA_radioButton.setText(_("Standard"))
+        self.examB_radioButton.setText(_("Extensive"))
+        self.examC_radioButton.setText(_("Full Case Assessment"))
+        self.label_3.setText(_("Exam Date"))
+        self.label_2.setText(_("Dentist"))
+
+
+if __name__ == "__main__":
+    import gettext
+    gettext.install("openmolar")
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    Dialog = QtGui.QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())
 
