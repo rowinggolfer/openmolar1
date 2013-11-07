@@ -88,9 +88,6 @@
 			<gross>2500</gross>
 			<charge>2500</charge>
 		</fee>
-		<feescale_add>
-			<attribute>xray</attribute>
-		</feescale_add>
 	</item>
 	<item id="E1401" obscurity="0">
 		<section>4</section>
@@ -111,6 +108,9 @@
 			<gross>3300</gross>
 			<charge>3300</charge>
 		</fee>
+		<feescale_forbid>
+			<reason>please add scale and polish to a treatment plan conventionally</reason>
+		</feescale_forbid>
 	</item>
 	<item id="E1011">
 		<section>3</section>

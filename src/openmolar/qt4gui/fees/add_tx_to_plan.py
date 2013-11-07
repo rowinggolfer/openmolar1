@@ -148,7 +148,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
     if chosen_feescale == None:
         table = pt.getFeeTable()
     else:
-        table = localsettings.FEETABLES.tables[feescale]
+        table = chosen_feescale
 
     if re.match("[ul][lr][1-8]", att):
         if itemcode is None:
@@ -495,16 +495,25 @@ def fromFeeTable(om_gui, fee_item, sub_index):
     add an item which has been selected from the fee table itself
     sub_index is when a child item has been added.
     '''
+    def show_help():
+        message = '''%s<ul>
+        <li>%s %s %s %s <b>%s</b></li><li>%s %s</li><li>%s</li>
+        </ul>'''% (
+        _("Choose"),
+        _("OK to add"), att_, _("to patient attribute"), shortcut,
+        _("Recommended"),
+        _("Use Feescale Method"), _("to overide this behaviour"),
+        _("Cancel to abandon this addition entirely"))
+
+        QtGui.QMessageBox.information(mb, _("Help"), message)
+
     LOGGER.debug("fee_item %s, sub_index %s"% (fee_item, sub_index))
-    if not fee_item.allow_feescale_add:
-        om_gui.advise(_("This item can not be added to a treatment plan "
-        "using this method, sorry")
-        ,1)
-        return
+
     if course_module.newCourseNeeded(om_gui):
         return
 
-    table = om_gui.pt.getFeeTable()
+    pt = om_gui.pt
+    table = pt.getFeeTable()
 
     if fee_item.table != table:
         table = confirmWrongFeeTable(om_gui, fee_item.table.index,
@@ -513,49 +522,95 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         if not table:
             return
 
-    type_ = fee_item.pl_cmp_type
-    if "CHART" in type_:
+    att_ = fee_item.pt_attribute
+    if att_ == "chart":
         update_charts_needed = True
-        types = om_gui.chooseTooth()
+        atts = om_gui.chooseTooth()
     else:
         update_charts_needed = False
-        types = [type_]
+        atts = [att_]
 
-    usercode = fee_item.usercode
-    itemcode = fee_item.itemcode
-    fee = fee_item.fees[sub_index][0]
+    if fee_item.shortcut is None or fee_item.is_regex:
+        shortcut = "FST"
+    else:
+        shortcut = fee_item.shortcut
 
-    if usercode == "":
-        usercode = itemcode
+    if table == pt.getFeeTable() and shortcut != "FST" and att_ != "exam":
+        message = "%s %s<hr />%s"%(
+        _("You appear to be adding a relatively straightforward code to the"
+        " ""patient's treatment plan using their default feescale"),
+        _("It is normally advisable to add this code conventionally."),
+        _("Would you like to do this now?"))
+
+        mb = QtGui.QMessageBox(None)
+        mb.setWindowTitle(_("Confirm"))
+        mb.setText(message)
+        mb.setIcon(mb.Question)
+        mb.addButton(_("Use Feescale Method"), mb.DestructiveRole)
+        mb.addButton(mb.Cancel)
+        mb.addButton(mb.Ok)
+        mb.addButton(mb.Help)
+        result = mb.exec_()
+        while result == mb.Help:
+            show_help()
+            result = mb.exec_()
+
+        if result == mb.Ok:
+            LOGGER.warning("reverting to standard treatment adding methods")
+            txs = []
+            message = ""
+            for att in atts:
+                txs.append((att, shortcut))
+                message += "<li>%s %s</li>"% (att, shortcut)
+            add_treatments_to_plan(om_gui, txs)
+            om_gui.advise("%s <ul>%s</ul>%s"% (_("Treatments"), message,
+            _("were added conventionally")), 1)
+            return
+        elif result == mb.Cancel:
+            LOGGER.info("Feescale addition abandoned by user")
+            return
+
+    if not fee_item.allow_feescale_add:
+        message = "%s<hr /><em>%s</em>"% (_(
+        "This item can not be added to the treatment plan "
+        "using the feescale method, sorry"),
+        fee_item.forbid_reason)
+        om_gui.advise(message, 1)
+        return
+
+    fee = fee_item.fees[sub_index]
 
     try:
-        pt_fee = fee_item.ptFees[sub_index][0]
+        pt_fee = fee_item.ptFees[sub_index]
     except IndexError:
         pt_fee = fee
 
-    for type_ in types:
-        try:
-            om_gui.pt.treatment_course.__dict__[type_+"pl"] += "%s "% usercode
-            if update_charts_needed:
-                om_gui.ui.planChartWidget.setToothProps(type_,
-                om_gui.pt.treatment_course.__dict__[type_+"pl"])
-        except KeyError, e:
-            print "patient class has no attribute '%spl'" %type_,
-            print "Will default to 'other'"
-            om_gui.pt.treatment_course.otherpl += "%s "% usercode
+    dentid = pt.course_dentist
+    cset = table.categories[0]
 
-        om_gui.pt.addToEstimate(1, itemcode, om_gui.pt.dnt1,
-        category = type_, type_=usercode, feescale=table.index,
-        fee=fee, ptfee=pt_fee)
+    for att in atts:
+        if not pt.treatment_course.__dict__.has_key("%spl"% att):
+            att = "other"
+        pt.treatment_course.__dict__[att+"pl"] += "%s "% shortcut
+        new_plan = pt.treatment_course.__dict__[att+"pl"]
+        if update_charts_needed:
+            om_gui.ui.planChartWidget.setToothProps(att, new_plan)
 
-    if om_gui.ui.tabWidget.currentIndex() != 7:
-        om_gui.ui.tabWidget.setCurrentIndex(7)
-    else:
-        om_gui.update_plan_est()
+        existing_txs = "%s %s"% (
+            pt.treatment_course.__dict__["%scmp"% att] , new_plan)
+
+        n_txs = existing_txs.split(" ").count(shortcut)
+        courseno = pt.treatment_course.courseno
+        tx_hash = TXHash(hash("%s%s%s%s"% (courseno, att, n_txs, shortcut)))
+
+        add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash],
+        fee_item.itemcode, cset, fee_item.description, fee, pt_fee, table)
 
     om_gui.advise(u"<b>%s</b> %s (%s)"% (
         fee_item.description, _("added to estimate"), _("from feescale"))
         ,1)
+
+    om_gui.update_plan_est()
 
 def confirmWrongFeeTable(om_gui, suggested, current):
     '''
@@ -565,11 +620,10 @@ def confirmWrongFeeTable(om_gui, suggested, current):
     suggestedTable = localsettings.FEETABLES.tables.get(suggested)
     currentTable = localsettings.FEETABLES.tables.get(current)
     message = '''<p>Confirm you wish to use the fee table <br />
-    '%s - %s'<br /><br />
+    <b>'%s'</b><br /><br />
     and not the patient's current fee table <br />
-    '%s - %s'<br /> for this item?</p>'''% (
-    suggestedTable.tablename, suggestedTable.description,
-    currentTable.tablename, currentTable.description)
+    '%s'<br /> for this item?</p>'''% (
+    suggestedTable.briefName, currentTable.briefName)
     input = QtGui.QMessageBox.question(om_gui, "Confirm", message,
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.No )

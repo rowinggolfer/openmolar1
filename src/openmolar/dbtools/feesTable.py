@@ -296,10 +296,10 @@ class FeeTable(object):
         item_nodes = self.dom.getElementsByTagName("item")
         for item_node in item_nodes:
             item_code = item_node.getAttribute("id")
-            fee_item = FeeItem(item_code, item_node)
+            fee_item = FeeItem(self, item_code, item_node)
             self.feesDict[item_code] = fee_item
 
-            if fee_item.usercode == "":
+            if fee_item.usercode is None:
                 pass
             elif fee_item.is_regex:
                 #use pre-compiled regex as the key
@@ -382,7 +382,8 @@ class FeeItem(object):
     2x an item is not necessarily
     the same as double the fee for a single item etc..
     '''
-    def __init__(self, itemcode, element):
+    def __init__(self, table, itemcode, element):
+        self.table = table
         self.itemcode = itemcode
 
         self.section = getTextFromNode(element, "section")
@@ -394,28 +395,31 @@ class FeeItem(object):
         self.ptFees = []
         self.brief_descriptions = []
         self.conditions = []
+        self.shortcut = None
         self.pt_attribute = "other"
-        self.shortcut = ""
+        self.is_regex = False
+        self._forbid_reason = None
 
         try:
             shortcut_node = element.getElementsByTagName("shortcut")[0]
             self.is_regex = shortcut_node.getAttribute("type") == "regex"
             self.pt_attribute = shortcut_node.getAttribute("att")
             self.shortcut = shortcut_node.childNodes[0].data
-
         except IndexError:
-            self.shortcut = itemcode
-            self.pt_attribute = "feescale_code"
+            self.shortcut = None
+            self.pt_attribute = "other"
             self.is_regex = False
 
         self.description = getTextFromNode(element, "description")
 
         try:
-            feescale_add_node = element.getElementsByTagName("feescale_add")[0]
-            self.allow_feescale_add = True
-            #TODO - more work needed here....
-        except IndexError:
+            node = element.getElementsByTagName("feescale_forbid")[0]
             self.allow_feescale_add = False
+            reason_nodes = node.getElementsByTagName("reason")
+            if reason_nodes:
+                self._forbid_reason = reason_nodes[0].childNodes[0].data
+        except IndexError:
+            self.allow_feescale_add = True
 
         fee_nodes = element.getElementsByTagName("fee")
         for node in fee_nodes:
@@ -458,9 +462,17 @@ class FeeItem(object):
 
     @property
     def usercode(self):
+        if self.shortcut is None:
+            return None
         if self.pt_attribute == "chart":
             return self.shortcut
         return"%s %s"% (self.pt_attribute, self.shortcut)
+
+    @property
+    def forbid_reason(self):
+        if self._forbid_reason is None:
+            return _("No reason given by feescale author.")
+        return self._forbid_reason
 
     def get_fees(self, item_no=1):
         '''
