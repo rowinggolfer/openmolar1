@@ -3219,7 +3219,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if att == "exam":
             point = self.ui.completed_listView.mapFromGlobal(
                 QtGui.QCursor.pos())
-            self.handle_completed_listview_menu(point)
+            self.show_cmp_listview_context_menu(point)
             return
         model.beginResetModel()
         complete_tx.reverse_txs(self, ((att, value),))

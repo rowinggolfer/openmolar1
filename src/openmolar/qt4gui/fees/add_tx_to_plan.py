@@ -484,7 +484,7 @@ def cmp_list_right_click(om_gui, point):
     else:
         values = [value]
 
-    exec_point = om_gui.ui.plan_listView.mapToGlobal(point)
+    exec_point = om_gui.ui.completed_listView.mapToGlobal(point)
     cmp_viewer_context_menu(om_gui, att, values, exec_point)
 
     model.reset()
