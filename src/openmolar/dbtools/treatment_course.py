@@ -264,9 +264,9 @@ class TreatmentCourse(object):
         returns a tuple (unique hash, attribute, treatment)
         hashes will be unique as multiple identical items are indexed
         eg. eg "perio SP AC SP " is hashed as follows
-        "perio 1 SP"
-        "perio 2 SP"
-        "perio 1 AC"
+        "%sperio1SP"% courseno
+        "%sperio2SP"% courseno
+        "%sperio1AC"% courseno
         '''
         if self.examt != "":
             hash_ = hash("%sexam1%s"% (self.courseno, self.examt))

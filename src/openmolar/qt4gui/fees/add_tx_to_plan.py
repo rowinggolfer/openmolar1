@@ -543,11 +543,11 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         atts = [att_]
 
     if fee_item.shortcut is None or fee_item.is_regex:
-        shortcut = "FST"
+        shortcut = "!FEE"
     else:
         shortcut = fee_item.shortcut
 
-    if table == pt.getFeeTable() and shortcut != "FST" and att_ != "exam":
+    if table == pt.getFeeTable() and shortcut != "!FEE" and att_ != "exam":
         message = "%s %s<hr />%s"%(
         _("You appear to be adding a relatively straightforward code to the"
         " ""patient's treatment plan using their default feescale"),
@@ -782,12 +782,19 @@ def recalculate_estimate(om_gui):
     for estimate in pt.estimates:
         if estimate.is_custom:
             cust_ests.append(estimate)
+
+    for hash_, att, tx in pt.tx_hashes:
+        if tx.strip(" ") == "!FEE":
+            for est in pt.ests_from_hash(hash_):
+                cust_ests.append(est)
     pt.estimates = cust_ests
 
     duplicate_txs = []
 
     for hash_, att, tx in pt.tx_hashes:
         tx = tx.strip(" ")
+        if tx == "!FEE":
+            continue
 
         tx_hash = TXHash(hash_)
 

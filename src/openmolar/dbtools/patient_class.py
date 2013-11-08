@@ -843,6 +843,7 @@ class patient(object):
     def tx_hashes(self):
         '''
         a list of unique hashes of all treatment on the current treatment plan
+        returns a tuple (unique hash, attribute, treatment)
         '''
         for tup in self.treatment_course._get_tx_hashes():
             yield tup

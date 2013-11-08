@@ -134,6 +134,9 @@ def tx_hash_complete(om_gui, tx_hash):
             if est_tx_hash == tx_hash:
                 found = True
                 est_tx_hash.completed = True
+                if treat_code.strip(" ") == "!FEE":
+                    om_gui.addNewNote(
+                    "%s %s\n"% (_("Completed"), estimate.description))
 
     if not found:
         msg = "This item '%s' was not found in the patient's estimate"% tx_hash
@@ -191,7 +194,6 @@ def tx_hash_reverse(om_gui, tx_hash):
             elif att in ("xray", "perio"):
                 pt.addHiddenNote("%s_treatment"%att, treat_code,
                     attempt_delete=True)
-
             else:
                 pt.addHiddenNote("treatment", treat_code,
                     attempt_delete=True)

@@ -3045,7 +3045,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         result=QtGui.QMessageBox.question(self, "Confirm",
         u"%s<hr /><i>(%s)</i>"% (
         _("Scrap the estimate and re-price everything?"),
-        _("Custom items will be unaffected")
+    _("Custom items and items added using feescale method will be unaffected")
         ),
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.No )
