@@ -16,13 +16,12 @@ from __future__ import division
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
-HIDE_RARE_CODES = 0 # fee iterms has an "obscurity" level of 0-2 
+HIDE_RARE_CODES = 0 # fee items have an "obscurity" level of 0-2
 
 #new for version 0.5 - categories come from the feescale XML
 
 #CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart",
 #"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
-
 
 class TreeItem(object):
     def __init__(self, table, key, data, parent=None, index=0):
@@ -44,11 +43,11 @@ class TreeItem(object):
 
     def columnCount(self):
         return 4 + self.table.feeColCount
-        
+
     @property
     def has_parent(self):
         return self.parentItem is None
-        
+
     def data(self, column):
         if column == 0:
             if self.key != self.parentItem.key:
@@ -72,20 +71,17 @@ class TreeItem(object):
         elif column == 3:
             return self.itemData.brief_descriptions[self.myindex]
         elif column == 4:
-            fee = localsettings.formatMoney(self.itemData.fees[self.myindex])
-            return QtCore.QVariant(fee)
-            
+            return localsettings.formatMoney(self.itemData.fees[self.myindex])
         elif column == 5:
             #if self.table.hasPtCols:
             try:
-                fee = localsettings.formatMoney(
-                    self.itemData.fees[self.myindex]) 
-                return fee
+                return localsettings.formatMoney(
+                    self.itemData.ptFees[self.myindex])
             except IndexError:
                 return "error in feescale"
-                
+
         return QtCore.QVariant()
-        
+
     def parent(self):
         return self.parentItem
 
@@ -104,13 +100,13 @@ class treeModel(QtCore.QAbstractItemModel):
         self.feeColNo = 1
         if self.table.hasPtCols:
             self.feeColNo = 2
-            
+
         self.rootItem = TreeItem(self.table, None, None)
-    
+
         self.setupModelData()
         self.foundItems = []
         self.search_phrase = ""
-        
+
     def columnCount(self, parent):
         if parent.isValid():
             return parent.internalPointer().columnCount()
@@ -133,10 +129,10 @@ class treeModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.UserRole:
             ## a user role which simply returns the python object
             ## in this case a FeeItem
-            return (item.itemData, item.myindex) 
-        
+            return (item.itemData, item.myindex)
+
         return QtCore.QVariant()
-        
+
     def flags(self, index):
         if not index.isValid():
             return QtCore.Qt.NoItemFlags
@@ -144,9 +140,9 @@ class treeModel(QtCore.QAbstractItemModel):
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
 
     def headerData(self, column, orientation, role):
-        if (orientation == QtCore.Qt.Horizontal and 
+        if (orientation == QtCore.Qt.Horizontal and
         role == QtCore.Qt.DisplayRole):
-            
+
             if column==1:
                 return _("Usercode")
             elif column==2:
@@ -157,7 +153,7 @@ class treeModel(QtCore.QAbstractItemModel):
                 return _("Gross Fee")
             elif column==5:
                 return _("Charge to Patient")
-            
+
         return QtCore.QVariant()
 
     def index(self, row, column, parent):
@@ -182,7 +178,7 @@ class treeModel(QtCore.QAbstractItemModel):
         childItem = index.internalPointer()
         if not childItem:
             return QtCore.QModelIndex()
-        
+
         parentItem = childItem.parent()
 
         if parentItem == self.rootItem:
@@ -203,7 +199,7 @@ class treeModel(QtCore.QAbstractItemModel):
 
     def setupModelData(self):
         parents = {0:self.rootItem}
-        
+
         current_cat = 0
         keys = self.table.feesDict.keys()
         keys.sort()
@@ -220,15 +216,15 @@ class treeModel(QtCore.QAbstractItemModel):
                 head = TreeItem(self.table, header, None, self.rootItem)
                 parents[section] = head
                 self.rootItem.appendChild(head)
-                
+
             number_in_group = len(feeItem.brief_descriptions)
             branch = TreeItem(self.table, key,feeItem, parents[section])
             parents[section].appendChild(branch)
-                
+
             for row in range(1, number_in_group):
                 branch.appendChild(
                 TreeItem(self.table, key, feeItem, branch, row))
-    
+
     def searchNode(self, node, columns=()):
         '''
         a function called recursively, looking at all nodes beneath node
@@ -238,52 +234,52 @@ class treeModel(QtCore.QAbstractItemModel):
         #columns = range(child.columnCount()) ## <-- would search entire model
         for column in columns:
             start_index = self.createIndex(0, column, child)
-        
-            indexes = self.match(start_index, QtCore.Qt.DisplayRole, 
+
+            indexes = self.match(start_index, QtCore.Qt.DisplayRole,
             QtCore.QVariant(self.search_phrase), -1, matchflags)
-            
+
             for index in indexes:
                 self.foundItems.append(index)
 
         for child in node.childItems:
             if child.childCount():
                 self.searchNode(child, columns)
-    
-    
+
+
     def search(self, search_phrase, columns=()):
         self.foundItems = []
         self.search_phrase = search_phrase
         if search_phrase == "":
             return True
         self.searchNode(self.rootItem, columns)
-        
+
         return self.foundItems != []
-    
+
 if __name__ == "__main__":
-    
+
     def resize(arg):
         print "resizing"
         for col in range(model.columnCount(arg)):
             tv.resizeColumnToContents(col)
-                
+
     app = QtGui.QApplication([])
     localsettings.initiate()
     localsettings.loadFeeTables()
     model = treeModel(localsettings.FEETABLES.tables[0])
-    
+
     dialog = QtGui.QDialog()
 
     dialog.setMinimumSize(800,300)
     layout = QtGui.QHBoxLayout(dialog)
-    
+
     tv = QtGui.QTreeView(dialog)
     tv.setModel(model)
     tv.setAlternatingRowColors(True)
     layout.addWidget(tv)
-    
-    QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"), 
+
+    QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"),
     resize)
 
     dialog.exec_()
-    
+
     app.closeAllWindows()

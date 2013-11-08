@@ -1,30 +1,21 @@
 0.5.00
-    I'm going to introduce the following features, and obsolete a lot of stuff.
-    1. new table for feetables, which will be rejected if they don't comply with an 
-       XSD schema
-    2. poll openmolar.com to check versioning, and inform of updates.
-    3. do a "release" to get some publicity?
-    
-    TODO
-    advanced tx planning dialog - apply completion of treatments
-    estimate printing is broken!
-    
-    newestimates table now has 3 dead columns, completed, type and category
+    Issues and code now tracked on github.
+    This release is imminent, barring a few release blocking bugs.
 
 0.4.10
     TODO incisal angles, max per tooth, extraction visits, special tray,
     1st in arch, partial dentures(n teeth)
     tidy up addition from feescale.
-    much of this work will be on the database itself, 
+    much of this work will be on the database itself,
     but the codebase will also need tweaking
-    
+
     estimates.recalculate_estimate needs to be rewritten
-    undoing multiple identical items is problematic (hence the 
+    undoing multiple identical items is problematic (hence the
         "just checking" placeholder currently in use.)
-      
+
 0.4.09
     as a result of 0.4.08 - the deepcopying of the patient class finally
-    bit me in the bum (deepcopy does not work with compiled regexes.) 
+    bit me in the bum (deepcopy does not work with compiled regexes.)
     this version is radically more efficient in the way a snapshot is taken.
     BUGFIX - when completing chart tx by double clicking on the plan chart the
     treatment lineEntry box is updated.
@@ -57,7 +48,7 @@
 
     NEW FUNCTIONALITY
         when synching addresses, it is not always obvious which is the best one
-        NHS form printing - should now always raise print dialog to 
+        NHS form printing - should now always raise print dialog to
             allow printer choice.
         Phrasebook - allow subheadings and spacers
         opalite cr recognition by feescales - ordered dict issue??
@@ -69,9 +60,9 @@
 0.3.9
     NEW FUNCTIONALITY
         Ability to print out a personalised MH form from record card
-    
+
     UNDECIDED (not yet implemented
-        Ability to print out a personalised MH form for all patients 
+        Ability to print out a personalised MH form for all patients
             attending today. Suggest alphabetical order?
 
 0.3.8
@@ -79,36 +70,36 @@
         MRS or MISS when entering patient details should toggle sex
         Alert the user (not just via terminal) if a feescale doesnt parse!
         Add a patient to a known family set.
-        Allow easy change of address to the stored value 
+        Allow easy change of address to the stored value
             (not just for new patients)
 
 0.3.7
     NEW FUNCTIONALITY
         allow modification of todays cashbook entries
         (+ more advanced edits for supervisors)
-        
 
-0.3.6 
+
+0.3.6
     BUGS FIXED
         hidden notes is not working when user deletes (
         as opposed to uncompletes using the check box) treatments.
 
-	dialog that pops up for multiple items on the estimate will now 
+	dialog that pops up for multiple items on the estimate will now
 	self close if it is no longer required (prevents an index error)
 
 0.3.5 (bzr 810)
     BUGS FIXED
         possible to create 2 open course on one day.
-        this can be fixed with SQL, however, the client needs to give 
+        this can be fixed with SQL, however, the client needs to give
         appropriate messages.
-        
-        advanced record tools fails to parse hidden notes. 
+
+        advanced record tools fails to parse hidden notes.
 
 
 0.3.4 (bzr 807)
     BUGS FIXED.
         save new patient -> "patient already loaded"
-        
+
         pt diary not collapsing past appointments
 
 0.3.3 (bzr 805)
