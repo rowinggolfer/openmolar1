@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/codeChecker.ui'
 #
-# Created: Wed Nov  6 23:05:24 2013
+# Created: Fri Nov  8 22:07:14 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -22,9 +22,6 @@ class Ui_Dialog(object):
         Dialog.resize(907, 686)
         self.verticalLayout_3 = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.comboBox = QtGui.QComboBox(Dialog)
-        self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        self.verticalLayout_3.addWidget(self.comboBox)
         self.splitter = QtGui.QSplitter(Dialog)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -72,23 +69,22 @@ class Ui_Dialog(object):
         self.adult_tableView.verticalHeader().setVisible(False)
         self.verticalLayout.addWidget(self.adult_tableView)
         self.verticalLayout_3.addWidget(self.splitter)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.label_3 = QtGui.QLabel(Dialog)
-        self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.horizontalLayout.addWidget(self.label_3)
-        self.lineEdit = QtGui.QLineEdit(Dialog)
-        self.lineEdit.setMinimumSize(QtCore.QSize(200, 0))
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.horizontalLayout.addWidget(self.lineEdit)
+        self.comboBox = QtGui.QComboBox(Dialog)
+        self.comboBox.setObjectName(_fromUtf8("comboBox"))
+        self.verticalLayout_3.addWidget(self.comboBox)
+        self.bottom_layout = QtGui.QHBoxLayout()
+        self.bottom_layout.setObjectName(_fromUtf8("bottom_layout"))
+        self.instruction_label = QtGui.QLabel(Dialog)
+        self.instruction_label.setObjectName(_fromUtf8("instruction_label"))
+        self.bottom_layout.addWidget(self.instruction_label)
         self.pushButton = QtGui.QPushButton(Dialog)
         self.pushButton.setMaximumSize(QtCore.QSize(40, 16777215))
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.horizontalLayout.addWidget(self.pushButton)
+        self.bottom_layout.addWidget(self.pushButton)
         self.quit_pushButton = QtGui.QPushButton(Dialog)
         self.quit_pushButton.setObjectName(_fromUtf8("quit_pushButton"))
-        self.horizontalLayout.addWidget(self.quit_pushButton)
-        self.verticalLayout_3.addLayout(self.horizontalLayout)
+        self.bottom_layout.addWidget(self.quit_pushButton)
+        self.verticalLayout_3.addLayout(self.bottom_layout)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -97,8 +93,7 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_("Dialog"))
         self.label.setText(_("Deciduous Teeth"))
         self.label_2.setText(_("Adult Teeth"))
-        self.label_3.setText(_("Enter a Restoration Code (eg. MOD) to see how a feescale interprets the shortcut"))
-        self.lineEdit.setToolTip(_("Enter a filling or restoration code, and check that your feetable finds the correct itemcode"))
+        self.instruction_label.setText(_("Enter a Restoration Code (eg. MOD) to see how a feescale interprets the shortcut"))
         self.pushButton.setText(_("GO"))
         self.quit_pushButton.setText(_("QUIT"))
 

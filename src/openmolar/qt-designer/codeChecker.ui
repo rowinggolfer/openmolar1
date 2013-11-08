@@ -15,9 +15,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="QComboBox" name="comboBox"/>
-   </item>
-   <item>
     <widget class="QSplitter" name="splitter">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -104,24 +101,14 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <widget class="QComboBox" name="comboBox"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="bottom_layout">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="instruction_label">
        <property name="text">
         <string>Enter a Restoration Code (eg. MOD) to see how a feescale interprets the shortcut</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="lineEdit">
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Enter a filling or restoration code, and check that your feetable finds the correct itemcode</string>
        </property>
       </widget>
      </item>

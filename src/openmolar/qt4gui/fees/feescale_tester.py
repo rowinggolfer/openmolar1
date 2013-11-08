@@ -11,9 +11,11 @@ from xml.dom import minidom
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.dbtools.patient_class import mouth, decidmouth
-from openmolar.qt4gui.compiled_uis import Ui_codeChecker
-
 from openmolar.dbtools.treatment_course import CURRTRT_NON_TOOTH_ATTS
+
+from openmolar.qt4gui.compiled_uis import Ui_codeChecker
+from openmolar.qt4gui.customwidgets.upper_case_line_edit \
+    import UpperCaseLineEdit
 
 DECIDMOUTH = []
 for tooth in decidmouth:
@@ -66,7 +68,6 @@ class AdultAttributeModel(DeciduousAttributeModel):
         DeciduousAttributeModel.__init__(self, table, parent)
         self.attributes = ADULTMOUTH
 
-
 class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
     def __init__(self, tables, parent = None):
         QtGui.QDialog.__init__(self, parent)
@@ -104,7 +105,11 @@ class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
             self.line_edits[att] = widg
             form_layout.addRow(att, widg)
 
+        self.lineEdit = UpperCaseLineEdit()
+        self.bottom_layout.insertWidget(1, self.lineEdit)
+
         self.lineEdit.setText("P")
+
         self.check_codes()
 
     def check_codes(self):
