@@ -34,9 +34,10 @@ class DeciduousAttributeModel(QtCore.QAbstractTableModel):
     def get_value(self, row):
         tooth = self.attributes[row]
         code = self.table.getToothCode(tooth, self.code.upper())
-        if code:
+        try:
             return self.table.feesDict[code].description
-        return "-"
+        except KeyError:
+            return code
 
     def rowCount(self, index):
         if self._rowcount is None:

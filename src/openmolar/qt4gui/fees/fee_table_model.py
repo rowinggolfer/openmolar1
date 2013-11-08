@@ -201,9 +201,7 @@ class treeModel(QtCore.QAbstractItemModel):
         parents = {0:self.rootItem}
 
         current_cat = 0
-        keys = self.table.feesDict.keys()
-        keys.sort()
-        for key in keys:
+        for key in sorted(self.table.feesDict.keys()):
             feeItem = self.table.feesDict[key]
             if feeItem.obscurity > HIDE_RARE_CODES:
                 continue

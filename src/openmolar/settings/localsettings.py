@@ -726,7 +726,7 @@ def initiateUsers(changedServer = False):
 
 def initiate(changedServer= False, debug = False):
     #print "initiating settings"
-    global fees, message, dentDict, FeesDict, ops, SUPERVISOR, \
+    global message, dentDict, ops, SUPERVISOR, \
     ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
     apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, WIKIURL
 
