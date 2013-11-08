@@ -1346,6 +1346,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 _("Active Course"),
                 _("started"),
                 localsettings.formatDate(self.pt.treatment_course.accd)))
+            self.ui.plan_buttons_stacked_widget.setCurrentIndex(0)
 
         else:
             self.ui.estimate_label.setText(
@@ -1355,9 +1356,9 @@ class OpenmolarGui(QtGui.QMainWindow):
                 localsettings.formatDate(self.pt.treatment_course.accd),
                 _("completed"),
                 localsettings.formatDate(self.pt.treatment_course.cmpd)))
-
+            self.ui.plan_buttons_stacked_widget.setCurrentIndex(1)
             if not self.pt.treatment_course.accd in ("", None):
-                self.ui.closeTx_pushButton.setText("Resume Existing Course")
+                self.ui.closeTx_pushButton.setText(_("Resume Existing Course"))
                 self.ui.closeTx_pushButton.setEnabled(True)
 
     def find_patient(self):
@@ -1861,6 +1862,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         have been clicked.
         '''
         fees_module.expandFees(self)
+
+    def plan_page_course_but_clicked(self):
+        if self.pt.underTreatment: # shouldn't happen
+            return
+        course_module.setupNewCourse(self)
 
     def closeTx_pushButton_clicked(self):
         '''
@@ -2733,6 +2739,9 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.show_plan_chart_context_menu)
         self.ui.completedChartWidget.request_tx_context_menu_signal.connect(
             self.show_cmp_chart_context_menu)
+
+        self.ui.plan_course_manage_button.clicked.connect(
+            self.plan_page_course_but_clicked)
 
     def signals_bulk_mail(self):
         QtCore.QObject.connect(self.ui.bulk_mailings_treeView,
