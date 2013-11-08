@@ -447,20 +447,24 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
     qmenu.setDefaultAction(qmenu.actions()[0])
     qmenu.exec_(point)
 
+def plan_listview_2xclick(om_gui, index):
+    model = om_gui.ui.plan_listView.model()
+    att, values = model.att_vals(index)
+    new_list = []
+    for value in values:
+        new_list.append((att, value))
+    model.beginResetModel()
+    complete_tx.complete_txs(om_gui, new_list)
+    model.endResetModel()
+    om_gui.ui.completed_listView.model().reset()
+
 def plan_list_right_click(om_gui, point):
     index = om_gui.ui.plan_listView.indexAt(point)
     LOGGER.debug("%s right clicked"% index)
     if not index.isValid():
         return
     model = om_gui.ui.plan_listView.model()
-    att, value = model.att_val(index)
-    m = re.match("(\d+)(.*)", value)
-    if m:
-        values = []
-        for i in range(int(m.groups()[0])):
-            values.append(m.groups()[1])
-    else:
-        values = [value]
+    att, values = model.att_vals(index)
 
     exec_point = om_gui.ui.plan_listView.mapToGlobal(point)
     plan_viewer_context_menu(om_gui, att, values, exec_point)
@@ -468,21 +472,29 @@ def plan_list_right_click(om_gui, point):
     model.reset()
     om_gui.ui.completed_listView.model().reset()
 
+def completed_listview_2xclick(om_gui, index):
+    model = om_gui.ui.completed_listView.model()
+    att, values = model.att_vals(index)
+    if att == "exam":
+        point = om_gui.ui.completed_listView.mapFromGlobal(
+            QtGui.QCursor.pos())
+        om_gui.show_cmp_listview_context_menu(point)
+        return
+    new_list = []
+    for value in values:
+        new_list.append((att, value))
+    model.beginResetModel()
+    complete_tx.reverse_txs(om_gui, new_list)
+    model.endResetModel()
+    om_gui.ui.plan_listView.model().reset()
+
 def cmp_list_right_click(om_gui, point):
     index = om_gui.ui.completed_listView.indexAt(point)
     LOGGER.debug("%s right clicked"% index)
     if not index.isValid():
         return
     model = om_gui.ui.completed_listView.model()
-    att, value = model.att_val(index)
-
-    m = re.match("(\d+)(.*)", value)
-    if m:
-        values = []
-        for i in range(int(m.groups()[0])):
-            values.append(m.groups()[1])
-    else:
-        values = [value]
+    att, values = model.att_vals(index)
 
     exec_point = om_gui.ui.completed_listView.mapToGlobal(point)
     cmp_viewer_context_menu(om_gui, att, values, exec_point)

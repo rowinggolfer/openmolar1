@@ -3198,12 +3198,7 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def handle_plan_listview_2xclick(self, index):
         LOGGER.debug("plan listview 2xclick %s"% index)
-        model = self.ui.plan_listView.model()
-        att, value = model.att_val(index)
-        model.beginResetModel()
-        complete_tx.complete_txs(self, ((att, value),))
-        model.endResetModel()
-        self.ui.completed_listView.model().reset()
+        add_tx_to_plan.plan_listview_2xclick(self, index)
 
     def show_cmp_listview_context_menu(self, point):
         LOGGER.debug("completed listview pressed %s"% point)
@@ -3214,17 +3209,7 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def handle_completed_listview_2xclick(self, index):
         LOGGER.debug("completed listview 2xclick %s"% index)
-        model = self.ui.completed_listView.model()
-        att, value = model.att_val(index)
-        if att == "exam":
-            point = self.ui.completed_listView.mapFromGlobal(
-                QtGui.QCursor.pos())
-            self.show_cmp_listview_context_menu(point)
-            return
-        model.beginResetModel()
-        complete_tx.reverse_txs(self, ((att, value),))
-        model.endResetModel()
-        self.ui.plan_listView.model().reset()
+        add_tx_to_plan.completed_listview_2xclick(self, index)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

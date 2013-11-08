@@ -20,6 +20,7 @@
 ##                                                                           ##
 ###############################################################################
 
+import re
 from PyQt4 import QtGui, QtCore
 
 class TreatmentListModel(QtCore.QAbstractListModel):
@@ -48,11 +49,20 @@ class TreatmentListModel(QtCore.QAbstractListModel):
             return "%s %s"% (att.ljust(8), tx)
         return QtCore.QVariant()
 
-    def att_val(self, index):
+    def att_vals(self, index):
         '''
         returns a tuple, treatment course attribute, value
         '''
-        return self._list[index.row()]
+        att, tx = self._list[index.row()]
+        m = re.match("(\d+)(.*)", tx)
+        if m:
+            values = []
+            for i in range(int(m.groups()[0])):
+                values.append(m.groups()[1])
+        else:
+            values = [tx]
+
+        return att, values
 
 class PlannedTreatmentListModel(TreatmentListModel):
     @property
