@@ -8,6 +8,7 @@
     <file>icons/wikipedia.png</file>
     <file>icons/action.png</file>
     <file>icons/memos.png</file>
+    <file alias="database.png">icons/database.png</file>
     <file>openmolar.svg</file>
     <file>icons/separate.png</file>
     <file>appt_ov.png</file>

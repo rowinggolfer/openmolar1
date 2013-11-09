@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="feescale">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="version" type="xs:string"/>
+        <xs:element name="tablename" type="xs:string"/>
+        <xs:element name="feescale_description" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="category" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+        <xs:element name="header" minOccurs="1" maxOccurs="unbounded" />
+        <xs:element ref="start" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="end" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="complex_shortcut" minOccurs="0" maxOccurs="unbounded"/>        
+        <xs:element ref="item" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="header">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="start">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="year" type="xs:string"/>
+        <xs:element name="month" type="xs:string"/>
+        <xs:element name="day" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="end">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="year" type="xs:string"/>
+        <xs:element name="month" type="xs:string"/>
+        <xs:element name="day" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="complex_shortcut">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="shortcut" minOccurs="1" maxOccurs="1"/>
+        <xs:element ref="case" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="case">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="remove_item" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="add_item" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="alter_item" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="message" minOccurs="0" type="xs:string"/>
+      </xs:sequence>
+      <xs:attribute name="condition" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="remove_item">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="add_item">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="alter_item">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="item">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="section" type="xs:string"/>
+        <xs:element ref="shortcut" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="description" type="xs:string"/>
+        <xs:element ref="fee" maxOccurs="unbounded"/>
+        <xs:element ref="feescale_forbid" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+      <xs:attribute name="obscurity" type="xs:string" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="shortcut">
+    <xs:complexType mixed="true">
+      <xs:attribute name="att" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="fee">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="brief_description" type="xs:string" minOccurs="1" maxOccurs="1" />
+        <xs:element name="gross" type="xs:string" minOccurs="1" maxOccurs="1" />
+        <xs:element name="charge" type="xs:string" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="condition" type="xs:string" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="feescale_forbid">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="reason" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

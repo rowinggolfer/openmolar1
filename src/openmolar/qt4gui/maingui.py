@@ -242,7 +242,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.fee_table_editor:
             self.fee_table_editor.show()
             self.fee_table_editor.raise_()
-            self.fee_table_editor.check_close(event)
+            self.fee_table_editor.closeEvent(event)
 
         utilities.deleteTempFiles()
         self.emit(QtCore.SIGNAL("closed")) #close the feescale tester

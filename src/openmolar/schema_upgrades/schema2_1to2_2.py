@@ -296,7 +296,7 @@ class dbUpdater(QtCore.QThread):
 
     def insert_feescales(self):
         feescale_path = os.path.join(localsettings.wkdir, 'resources',
-            "test_feescale.xml")
+            "sample_feescales", "example_feescale.xml")
         db = connect.connect()
         db.autocommit(False)
         try:

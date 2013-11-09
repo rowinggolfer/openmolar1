@@ -14,9 +14,9 @@ def get_version():
     '''
     returns a string with in the format X.Y.Z+bzr04d
     '''
-    sys.path.insert(0, 
+    sys.path.insert(0,
         os.path.join(os.path.abspath(os.path.dirname(__file__)), "src"))
-    
+
     from openmolar.settings.localsettings import __MAJOR_VERSION__
     try:
         from bzrlib import branch
@@ -81,6 +81,7 @@ setup(
                 'openmolar.qt4gui.customwidgets',
                 'openmolar.qt4gui.dialogs',
                 'openmolar.qt4gui.fees',
+                'openmolar.qt4gui.feescale_editor',
                 'openmolar.qt4gui.printing',
                 'openmolar.qt4gui.printing.gp17',
                 'openmolar.qt4gui.tools',
@@ -89,7 +90,9 @@ setup(
     package_data = {'openmolar' : ['resources/icons/*.*',
                                     'resources/teeth/*.png',
                                     'resources/gp17/*.jpg',
-                                    'resources/gp17-1/*.png',                                    
+                                    'resources/gp17-1/*.png',
+                                    'resources/sample_feescales/*.xml',
+                                    'resources/sample_feescales/*.xsd',
                                     'resources/*.*',
                                     'html/*.*',
                                     'html/images/*.*',

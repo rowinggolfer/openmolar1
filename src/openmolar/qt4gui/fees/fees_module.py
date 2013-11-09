@@ -24,7 +24,7 @@ patient_write_changes
 from openmolar.settings import localsettings
 from openmolar.qt4gui.fees import fee_table_model
 from openmolar.qt4gui.fees import feescale_tester
-from openmolar.qt4gui.fees import fee_table_editor
+from openmolar.qt4gui.feescale_editor import FeescaleEditor
 
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import permissions
@@ -183,12 +183,9 @@ def showTableXML(om_gui):
     if om_gui.fee_table_editor is not None:
         om_gui.fee_table_editor.show()
         om_gui.fee_table_editor.raise_()
-    elif permissions.granted(om_gui):
-        om_gui.wait(True)
-        rows = feesTable.getData()
-        om_gui.fee_table_editor = fee_table_editor.FeeTableEditor(rows, om_gui)
+    else:
+        om_gui.fee_table_editor = FeescaleEditor(om_gui)
         om_gui.fee_table_editor.show()
-        om_gui.wait(False)
 
 def table_clicked(om_gui, index):
     '''

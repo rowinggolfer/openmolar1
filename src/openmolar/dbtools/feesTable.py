@@ -7,15 +7,13 @@
 # See the GNU General Public License for more details.
 
 import datetime
-import inspect
 import logging
 import re
-import sys
 from xml.dom import minidom
 
 from openmolar import connect
 from openmolar.settings import localsettings
-from openmolar.ptModules import plan
+from openmolar.dbtools.feescales import feescale_handler
 
 try:
     from collections import OrderedDict
@@ -25,41 +23,6 @@ except ImportError:
     from openmolar.backports import OrderedDict
 
 LOGGER = logging.getLogger("openmolar")
-
-QUERY = ('select ix, xml_data from feescales where in_use = True '
-        'order by disp_order')
-
-
-def getData():
-    '''
-    connects and get the data from feetable_key
-    '''
-    db = connect.connect()
-    cursor = db.cursor()
-    cursor.execute(QUERY)
-    rows = cursor.fetchall()
-    cursor.close()
-    return rows
-
-def saveData(tablename, data):
-    '''
-    update the database with the new xml data
-    '''
-
-    print "deprecated function called - feesTable.saveData"
-    #TODO - fix this!
-    return False
-
-    db = connect.connect()
-    cursor = db.cursor()
-    query = "update feetable_key set data=%s where tablename = %s"
-
-    values = (data, tablename)
-
-    result = cursor.execute(query, values)
-    if result:
-        db.commit()
-    return result
 
 def isParseable(data):
     '''
@@ -152,9 +115,7 @@ class FeeTables(object):
         '''
         get the key to our tables
         '''
-        rows = getData()
-        #for (tablename, categories, description, startdate, enddate,
-        #feecoltypes, data) in rows:
+        rows = feescale_handler.get_feescales_from_database()
         for i, (ix, xml_data) in enumerate(rows):
             ft = FeeTable(ix, xml_data)
             ft.index = i

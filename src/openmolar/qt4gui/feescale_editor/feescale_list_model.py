@@ -20,46 +20,19 @@
 ##                                                                           ##
 ###############################################################################
 
-import os
-import sys
-import logging
-import gettext
+from PyQt4 import QtCore
 
-if "neil" in os.path.expanduser("~"):
-    FORMAT = \
-    '%(levelname)s {%(filename)s:%(lineno)d} %(funcName)s  - %(message)s'
-else:
-    FORMAT = '%(levelname)s - %(message)s'
+class FeescaleListModel(QtCore.QAbstractListModel):
+    def __init__(self, feescale_parser):
+        QtCore.QAbstractListModel.__init__(self)
+        self.feescale_parser = feescale_parser
+        self._rowcount = None
 
-stream_handler = logging.StreamHandler()
-formatter = logging.Formatter(FORMAT)
-stream_handler.setFormatter(formatter)
-#logging.basicConfig(level = logging.INFO, format=FORMAT)
+    def rowCount(self, index):
+        if self._rowcount is None:
+            self._rowcount = len(self.feescale_parser.items)
+        return self._rowcount
 
-LOGGER = logging.getLogger("openmolar")
-LOGGER.addHandler(stream_handler)
-
-if "-q" in sys.argv:
-    LOGGER.setLevel(logging.WARNING)
-elif "-v" in sys.argv:
-    LOGGER.setLevel(logging.DEBUG)
-else:
-    LOGGER.setLevel(logging.INFO)
-
-LOGGER.info("running openmolar base module = %s"% os.path.dirname(__file__))
-
-lang = os.environ.get("LANG")
-if lang:
-    try:
-        LOGGER.debug("trying to install your environment language", lang)
-        lang1 = gettext.translation('openmolar', languages=[lang,])
-        lang1.install(unicode=True)
-    except IOError:
-        LOGGER.warning("%s not found, using default"% lang)
-        gettext.install('openmolar', unicode=True)
-else:
-    #-- on windows.. os.environ.get("LANG") is None
-    LOGGER("no language environment found")
-    gettext.install('openmolar', unicode=True)
-
-
+    def data(self, index, role):
+        if role == QtCore.Qt.DisplayRole:
+            return self.feescale_parser.code_text(index.row())
