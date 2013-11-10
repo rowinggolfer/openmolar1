@@ -746,8 +746,6 @@ def remove_estimate_item(om_gui, est_item):
                     pt.treatment_course.__dict__[attribute] = new_completed
 
                     if re.match("[ul][lr][1-8]", att):
-                        charts_gui.updateChartsAfterTreatment(
-                            om_gui, att, new_plan, new_completed)
                         toothName = pt.chartgrid.get(att,"").upper()
                         pt.addHiddenNote("chart_treatment",
                             "%s %s"% (toothName, treat_code),
@@ -766,6 +764,10 @@ def remove_estimate_item(om_gui, est_item):
                         attribute, old_plan, new_plan))
 
                     pt.treatment_course.__dict__[attribute] = new_plan
+
+                if re.match("[ul][lr][1-8]", att):
+                    charts_gui.updateChartsAfterTreatment(om_gui,
+                    att, new_plan, new_completed)
 
     if not found:
         LOGGER.debug("NO MATCHING hash FOUND!")
