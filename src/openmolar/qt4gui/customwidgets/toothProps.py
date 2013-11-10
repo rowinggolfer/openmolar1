@@ -73,7 +73,7 @@ class chartLineEdit(QtGui.QLineEdit):
     override the keypress event for up and down arrow keys.
     '''
     def __init__(self, parent=None):
-        super(chartLineEdit,self).__init__(parent)
+        QtGui.QLineEdit.__init__(self, parent)
         self.om_gui = parent
         self.originalPropList = []
 
@@ -160,7 +160,8 @@ class chartLineEdit(QtGui.QLineEdit):
                 self.originalPropList.remove(prop)
         verified = True
         for prop in snapshotPropList:
-            if not self.propAllowed(prop):
+            if (self.om_gui.selectedChart == "st" and
+            not self.propAllowed(prop)):
                 verified = False
             else:
                 self.originalPropList.append(prop)
