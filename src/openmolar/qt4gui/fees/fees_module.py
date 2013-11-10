@@ -234,40 +234,34 @@ def feeSearch(om_gui):
             ensureVisible(parentIndex)
 
     search_phrase = om_gui.ui.feeSearch_lineEdit.text()
+    if search_phrase == "":
+        return
     model = om_gui.fee_models[
     om_gui.ui.chooseFeescale_comboBox.currentIndex()]
 
-    columns = []
-    if om_gui.ui.feesSearch_usercodes_checkBox.isChecked():
-        columns.append(1)
-    if om_gui.ui.feesSearch_descriptions_checkBox.isChecked():
-        columns.append(2)
-        columns.append(4)
-    if columns:
-        om_gui.wait(True)
-        if model.search(search_phrase, columns):
-            om_gui.ui.feeScales_treeView.collapseAll()
-            indexes = model.foundItems
+    if om_gui.ui.search_itemcodes_radioButton.isChecked():
+        columns = [0]
+    else: # om_gui.ui.search_descriptions_radioButton.isChecked():
+        columns = [2, 3]
 
-            om_gui.ui.feesearch_results_label.setText(
-            "%d %s %s"%(len(indexes), _("Items containing"), search_phrase))
-            for index in indexes:
-                ensureVisible(index)
-            om_gui.wait(False)
-        else:
-            om_gui.wait(False)
-            message = _("phrase not found in feetable")
-            if 1 in columns and 4 in columns:
-                message += " " + _("usercodes or descriptions")
-            elif 1 in columns:
-                message += " " + _("usercodes")
-            elif 4 in columns:
-                message += " " + _("descriptions")
-            om_gui.advise(message, 1)
+    om_gui.wait(True)
+    if model.search(search_phrase, columns):
+        om_gui.ui.feeScales_treeView.collapseAll()
+        indexes = model.foundItems
 
+        om_gui.ui.feesearch_results_label.setText(
+        "%d %s %s"%(len(indexes), _("Items containing"), search_phrase))
+        for index in indexes:
+            ensureVisible(index)
+        om_gui.wait(False)
     else:
-        om_gui.advise(_("nothing to search")+ "<br />" +
-        _("please select usercodes and/or descriptions then search again"), 1)
+        om_gui.wait(False)
+        message = _("phrase not found in feetable")
+        if om_gui.ui.search_itemcodes_radioButton.isChecked():
+            message += " " + _("itemcodes")
+        else:
+            message += " " + _("usercodes or descriptions")
+        om_gui.advise(message, 1)
 
 def nhsRegsPDF(om_gui):
     '''

@@ -1820,7 +1820,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         self.feeSearch_pushButton_clicked()
 
-    def feeSearch_pushButton_clicked(self):
+    def feeSearch_pushButton_clicked(self, toggled=None):
         '''
         user is searching fees
         '''
@@ -2910,8 +2910,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.feeSearch_lineEdit,
         QtCore.SIGNAL("returnPressed()"), self.feeSearch_lineEdit_edited)
 
-        QtCore.QObject.connect(self.ui.feeSearch_pushButton,
-        QtCore.SIGNAL("clicked()"), self.feeSearch_pushButton_clicked)
+        self.ui.search_descriptions_radioButton.toggled.connect(
+            self.feeSearch_pushButton_clicked)
+
+        self.ui.feeSearch_pushButton.clicked.connect(
+            self.feeSearch_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.feescale_tester_pushButton,
         QtCore.SIGNAL("clicked()"), self.feescale_tester_pushButton_clicked)
