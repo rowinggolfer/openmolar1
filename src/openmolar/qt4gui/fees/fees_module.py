@@ -159,10 +159,9 @@ def feetester(om_gui):
     '''
     raise an app which allows a few tests of the feetable logic
     '''
-    if not om_gui.feetesterdl:
+    if not om_gui.fee_table_tester:
         tables = localsettings.FEETABLES.tables
         dl = feescale_tester.test_dialog(tables)
-        dl.show()
         dl.lineEdit.setText("MOD")
         QtCore.QObject.connect(om_gui.ui.chooseFeescale_comboBox,
             QtCore.SIGNAL("currentIndexChanged (int)"), dl.change_table)
@@ -171,9 +170,9 @@ def feetester(om_gui):
         i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
         dl.comboBox.setCurrentIndex(i)
 
-        om_gui.feetesterdl = dl
-    else:
-        om_gui.feetesterdl.raise_()
+        om_gui.fee_table_tester = dl
+
+    om_gui.fee_table_tester.exec_()
 
 
 def showTableXML(om_gui):

@@ -138,6 +138,7 @@ LOGGER.setLevel(logging.INFO)
 
 class OpenmolarGui(QtGui.QMainWindow):
     fee_table_editor = None
+    fee_table_tester = None
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_main.Ui_MainWindow()
@@ -171,7 +172,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.loadDentistComboboxes()
         self.feestableLoaded = False
         self.forum_parenting_mode = (False, None)
-        self.feetesterdl = None
 
         self.ui.plan_listView.setModel(PlannedTreatmentListModel(self))
         self.ui.plan_listView.setContextMenuPolicy(
