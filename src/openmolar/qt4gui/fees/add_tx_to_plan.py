@@ -583,10 +583,13 @@ def fromFeeTable(om_gui, fee_item, sub_index):
             return
 
     if not fee_item.allow_feescale_add:
+        if att_ == "exam":
+            reason = _("Exam items can never be added this way")
+        else:
+            reason = fee_item.forbid_reason
         message = "%s<hr /><em>%s</em>"% (_(
         "This item can not be added to the treatment plan "
-        "using the feescale method, sorry"),
-        fee_item.forbid_reason)
+        "using the feescale method, sorry"), reason)
         om_gui.advise(message, 1)
         return
 
@@ -605,8 +608,13 @@ def fromFeeTable(om_gui, fee_item, sub_index):
             att = "other"
         pt.treatment_course.__dict__[att+"pl"] += "%s "% shortcut
         new_plan = pt.treatment_course.__dict__[att+"pl"]
-        if update_charts_needed:
+
+        descr = fee_item.description
+
+        if re.match("[ul][lr][1-8]", att):
             om_gui.ui.planChartWidget.setToothProps(att, new_plan)
+            tooth_name = pt.chartgrid.get(att).upper()
+            descr = descr.replace("*", " %s"% tooth_name)
 
         existing_txs = "%s %s"% (
             pt.treatment_course.__dict__["%scmp"% att] , new_plan)
@@ -616,7 +624,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         tx_hash = TXHash(hash("%s%s%s%s"% (courseno, att, n_txs, shortcut)))
 
         add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash],
-        fee_item.itemcode, cset, fee_item.description, fee, pt_fee, table)
+        fee_item.itemcode, cset, descr, fee, pt_fee, table)
 
     om_gui.advise(u"<b>%s</b> %s (%s)"% (
         fee_item.description, _("added to estimate"), _("from feescale"))
