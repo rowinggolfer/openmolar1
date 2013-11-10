@@ -739,7 +739,7 @@ def remove_estimate_item(om_gui, est_item):
 
                     if re.match("[ul][lr][1-8]", att):
                         charts_gui.updateChartsAfterTreatment(
-                            om_gui, att, plan, completed)
+                            om_gui, att, new_plan, new_completed)
                         toothName = pt.chartgrid.get(att,"").upper()
                         pt.addHiddenNote("chart_treatment",
                             "%s %s"% (toothName, treat_code),
