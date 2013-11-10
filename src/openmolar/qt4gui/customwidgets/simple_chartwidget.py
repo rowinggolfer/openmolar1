@@ -30,11 +30,11 @@ class chartWidget(QtGui.QWidget):
         QtGui.QSizePolicy.Expanding))
 
         self.grid = (
-        ["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1', 
+        ["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
         'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
-        ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1', 
+        ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
         'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
-        
+
         self.selected = set()
         self.highlighted = [-1, -1]
         self.prevSelect = ()
@@ -43,7 +43,7 @@ class chartWidget(QtGui.QWidget):
         self.showLeftRight = True
         self.showSelected = False
         self.setMouseTracking(True)
-        
+
     def clear(self):
         '''
         clears all fillings etc from the chart
@@ -74,18 +74,18 @@ class chartWidget(QtGui.QWidget):
         self.highlighted = [-1, -1]
         self.prevSelect = ()
         self.update()
-        
+
     def sizeHint(self):
         '''
         set an arbitrary size
         '''
-        return QtCore.QSize(500, 200)
+        return QtCore.QSize(800, 200)
 
     def minimumSizeHint(self):
         '''
         arbitrary minimum size
         '''
-        return QtCore.QSize(300, 100)
+        return QtCore.QSize(600, 200)
 
     def setShowLeftRight(self, arg):
         '''
@@ -107,7 +107,7 @@ class chartWidget(QtGui.QWidget):
         '''
         returns a list of selected teeth in form ["ur8", "uld"]
         '''
-        
+
         #return (self.selected, self.multiSelection)
         selectedTeeth = []
         for x, y in self.selected:
@@ -115,7 +115,7 @@ class chartWidget(QtGui.QWidget):
             selectedTeeth.append(self.grid[y][x])
         selectedTeeth.sort(reverse=True)
         return selectedTeeth
-        
+
     def setSelected(self, x, y):
         '''
         set the tooth which is currently selected
@@ -126,7 +126,7 @@ class chartWidget(QtGui.QWidget):
         else:
             self.selected.remove((x,y))
         self.update()
-       
+
     def mouseMoveEvent(self, event):
         '''
         overrides QWidget's mouse event
@@ -178,7 +178,7 @@ class chartWidget(QtGui.QWidget):
             y = 0
         else:
             y = 1
-        
+
         if (x,y) not in self.selected and shiftClick and self.prevSelect:
             prevX, prevY = self.prevSelect
             self.prevSelect = (x,y)
@@ -188,18 +188,18 @@ class chartWidget(QtGui.QWidget):
                 setX = range(x, prevX+1)
             for row in set([prevY, y]):
                 for col in setX:
-                    self.selected.add((col, row)) 
+                    self.selected.add((col, row))
             self.update()
         else:
-            self.setSelected(x,y) 
-        
+            self.setSelected(x,y)
+
     def mouseDoubleClickEvent(self, event):
         '''
         overrides QWidget's mouse double click event
         peforms the default actions
         '''
-        self.emit(QtCore.SIGNAL("DOUBLE_CLICKED"))        
-        
+        self.emit(QtCore.SIGNAL("DOUBLE_CLICKED"))
+
     def paintEvent(self, event=None):
         '''
         overrides the paint event so that we can draw our grid
@@ -246,7 +246,7 @@ class chartWidget(QtGui.QWidget):
                     painter.setBrush(colours.TRANSPARENT)
                     painter.drawRect(rect.adjusted(1, 1, -1, -1))
 
-                    
+
                 if (x, y) in self.selected:
                     painter.setPen(QtGui.QPen(QtCore.Qt.darkBlue, 2))
                     painter.setBrush(colours.TRANSPARENT)
@@ -282,7 +282,7 @@ class chartWidget(QtGui.QWidget):
         if pm:
             painter.drawPixmap(rect, pm)
         painter.restore()
-        
+
 if __name__ == "__main__":
     from gettext import gettext as _
     app = QtGui.QApplication(sys.argv)
