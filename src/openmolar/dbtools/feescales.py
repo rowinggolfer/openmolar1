@@ -25,20 +25,38 @@ import os
 import re
 import shutil
 
-
 from openmolar import connect
 from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-FEESCALE_DIR = os.path.join(localsettings.localFileDirectory, "feescales")
-if not os.path.exists(FEESCALE_DIR):
+def write_readme():
     LOGGER.info("creating directory %s"% FEESCALE_DIR)
     os.makedirs(FEESCALE_DIR)
+    f = open(os.path.join(FEESCALE_DIR, "README.txt"), "w")
+    f.write('''
+This folder is created by openmolar to store xml copies of the feescales in
+your database (see feescales table).
+Filenames herein are IMPORTANT!
+feescale1.xml relates to the xml stored in row 1 of that table
+feescale2.xml relates to the xml stored in row 2 of that table
+
+whilst you are free to edit these files using an editor of your choice,
+validation against feescale_schema.xsd is highly recommended.
+
+note - openmolar has a build in application for doing this.
+    ''')
+    f.close()
+
+
+FEESCALE_DIR = os.path.join(localsettings.localFileDirectory, "feescales")
+if not os.path.exists(FEESCALE_DIR):
+    write_readme()
 
 QUERY = ('select ix, xml_data from feescales [QUALIFIER] order by disp_order')
 
-UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
+UPDATE_QUERY = "replace into feescales (ix, xml_data) values (%s, %s)"
+
 
 class FeescaleHandler(object):
 
@@ -59,14 +77,16 @@ class FeescaleHandler(object):
         LOGGER.debug("%d feescales retrieved"% len(rows))
         return rows
 
+    def save_file(self, ix, xml_data):
+        file_path = self.index_to_local_filepath(ix)
+        LOGGER.debug("writing %s"% file_path)
+        f = open(file_path, "w")
+        f.write(xml_data)
+        f.close()
+
     def get_local_xml_versions(self):
         for ix, xml_data in self.get_feescales_from_database(False):
-            file_path = self.index_to_local_filepath(ix)
-            LOGGER.debug("writing %s"% file_path)
-            f = open(file_path, "w")
-            f.write(xml_data)
-            f.close()
-
+            self.save_file(ix, xml_data)
         LOGGER.info("feescales data written to local filesystem")
 
     def index_to_local_filepath(self, ix):
@@ -80,27 +100,40 @@ class FeescaleHandler(object):
                 ix = int(m.groups()[0])
                 yield ix, os.path.join(FEESCALE_DIR, file_)
 
-    def update_db(self):
+    def update_db_all(self):
         '''
-        apply the local file changes to the database.
+        apply all local file changes to the database.
         '''
-        db = connect.connect()
-        cursor = db.cursor()
-
         message = ""
         for ix, filepath in self.local_files:
+            message += self.update_db(ix)
+
+        return message
+
+    def update_db(self, ix):
+        message = ""
+        filepath = self.index_to_local_filepath(ix)
+
+        if not os.path.isfile(filepath):
+            message = "FATAL %s does not exist!"% filepath
+        else:
+            db = connect.connect()
+            cursor = db.cursor()
+
             f = open(filepath)
             data = f.read()
             f.close()
 
-            message += "updating feescale %s "% ix
-            values = (data, ix)
+            values = (ix, data)
             result =  cursor.execute(UPDATE_QUERY, values)
 
-            message += "result =%s\n"% result
+            r_message = "commiting feescale '%s' to database."% filepath
+            message = "updating feescale %d    result = %s\n"% (
+                ix, "OK" if result else "FAILED")
 
-        db.close()
-        LOGGER.info(message)
+            db.close()
+            LOGGER.info(r_message + " " + message)
+
         return message
 
     def save_xml(self, ix, xml):

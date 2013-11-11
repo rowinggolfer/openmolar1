@@ -32,7 +32,7 @@ from PyQt4.QtXmlPatterns import (
 
 from openmolar.settings.localsettings import resources_location
 
-LOGGER = logging.getLogger("Feescale Editor")
+LOGGER = logging.getLogger("openmolar")
 
 STYLESHEET = os.path.join(
     resources_location, "feescales", "feescale_schema.xsd")
@@ -61,11 +61,28 @@ class FeescaleParser(object):
         self._items = None
         self.filepath = filepath
         LOGGER.info("parsing feescale %s"% filepath)
+        self.orig_modified = self.last_modified
         self.dom = minidom.parse(filepath)
+
         self.document_element = self.dom.childNodes[0]
         self.saved_xml = self.text
 
         self.message_handler = MessageHandler()
+
+    @property
+    def is_externally_modified(self):
+        return self.last_modified > self.orig_modified
+
+    @property
+    def is_deleted(self):
+        return not os.path.isfile(self.filepath)
+
+    @property
+    def last_modified(self):
+        return os.path.getmtime(self.filepath)
+
+    def reset_orig_modified(self):
+        self.orig_modified = self.last_modified
 
     def refresh(self):
         LOGGER.info("refreshing feescale %s"% self.filepath)
@@ -108,6 +125,30 @@ class FeescaleParser(object):
             self._items = self.dom.getElementsByTagName("item")
             LOGGER.debug("%d items"% len(self._items))
         return self._items
+
+    @property
+    def feenodes(self):
+        for item in self.items:
+            for feenode in item.getElementsByTagName("fee"):
+                yield feenode
+
+    def increase_fees(self, percentage):
+        def increase(pence):
+            mult = 100 + percentage
+            new_pence = pence * mult
+            return int(new_pence//100)
+        for att in ("gross", "charge"):
+            for node in self.dom.getElementsByTagName(att):
+                fee = node.firstChild.data
+                new_fee = str(increase(int(fee)))
+                message = "%s %s increased to %s"% (
+                    att.ljust(8, " "), fee.rjust(8," "), new_fee.rjust(8," "))
+                node.firstChild.replaceWholeText(str(new_fee))
+
+                LOGGER.debug(message)
+
+        self._edited_text = None
+        LOGGER.info("%s fees increased by %s%%"% (self.description,percentage))
 
     @property
     def description(self):
@@ -164,11 +205,11 @@ def _test():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level = logging.DEBUG)
-
+    LOGGER.setLevel(logging.DEBUG)
     app = QtCore.QCoreApplication([])
 
     fp = _test()
     fp.is_valid()
     LOGGER.info(fp.message_handler.last_error)
+    fp.increase_fees(2.51)
     LOGGER.debug("script has finished")
