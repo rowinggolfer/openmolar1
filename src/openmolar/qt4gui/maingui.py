@@ -2010,6 +2010,16 @@ class OpenmolarGui(QtGui.QMainWindow):
         else:
             complete_tx.complete_txs(self, treatments)
 
+    def reverse_completed_chart_treatments(self, treatments):
+        '''
+        called when double clicking on a tooth in the completed chart
+        the arg is a list - [('ur5', u'MOD '), ('ur5', u'RT ')]
+        '''
+        if not self.pt.underTreatment:
+            self.advise("course has been closed", 1)
+        else:
+            complete_tx.reverse_txs(self, treatments)
+
     def complete_tx_hash(self, tx_hash):
         '''
         estwidget has sent a signal that an item is marked as completed.
@@ -2946,6 +2956,8 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         self.ui.planChartWidget.complete_treatments_signal.connect(
             self.complete_planned_chart_treatments)
+        self.ui.completedChartWidget.complete_treatments_signal.connect(
+            self.reverse_completed_chart_treatments)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
         QtCore.SIGNAL("NextTooth"), self.navigateCharts)

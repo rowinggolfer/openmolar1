@@ -338,7 +338,7 @@ class chartWidget(QtGui.QWidget):
 
         if self.isStaticChart:
             self.flip_deciduous_signal.emit()
-        elif self.isPlanChart:
+        else:
             self.signal_treatment_completed()
 
     def signal_treatment_completed(self):
@@ -346,13 +346,13 @@ class chartWidget(QtGui.QWidget):
         either a double click or default right click on the plan chart
         '''
         tooth = self.grid[self.selected[1]][self.selected[0]]
-        planned_txs = []
+        txs = []
         for item in self.__dict__[tooth]:
             tx = item.upper()
-            planned_txs.append((tooth, tx))
+            txs.append((tooth, tx))
 
-        if planned_txs != []:
-            self.complete_treatments_signal.emit(planned_txs)
+        if txs != []:
+            self.complete_treatments_signal.emit(txs)
 
     def keyPressEvent(self, event):
         '''
