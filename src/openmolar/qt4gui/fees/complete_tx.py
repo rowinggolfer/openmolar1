@@ -18,72 +18,10 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.ptModules.estimates import TXHash
 
-from openmolar.qt4gui.dialogs.complete_treatment_dialog \
-    import CompleteTreatmentDialog
-
 from openmolar.qt4gui.charts import charts_gui
 
 import logging
 LOGGER = logging.getLogger("openmolar")
-
-def reverse_txs(om_gui, treatments, confirm_multiples=True):
-    LOGGER.debug(treatments)
-    pt = om_gui.pt
-    courseno = pt.treatment_course.courseno
-    if len(treatments) > 1 and confirm_multiples:
-        txs = []
-        for att, treat in treatments:
-            txs.append((att, treat, True))
-        dl = CompleteTreatmentDialog(txs, om_gui)
-        if not dl.exec_():
-            return
-        treatments = dl.uncompleted_treatments
-
-    for att, treatment in treatments:
-        completed = pt.treatment_course.__dict__["%scmp"% att]
-
-        treat = treatment.strip(" ")
-        count = completed.split(" ").count(treat)
-        LOGGER.debug(
-            "creating tx_hash using %s %s %s"% (att, count, treat))
-        hash_ = hash("%s%s%s%s"%(courseno, att, count, treat))
-        tx_hash = TXHash(hash_)
-
-        tx_hash_reverse(om_gui, tx_hash)
-
-def complete_txs(om_gui, treatments, confirm_multiples=True):
-    '''
-    complete tooth treatment
-    #args is a list - ["ul5","MOD","RT",]
-    args is a list - [("ul5","MOD"),("ul5", "RT"), ("perio", "SP")]
-
-    '''
-    LOGGER.debug(treatments)
-
-    pt = om_gui.pt
-    courseno = pt.treatment_course.courseno
-    if len(treatments) > 1 and confirm_multiples:
-        txs = []
-        for att, treat in treatments:
-            txs.append((att, treat, False))
-        dl = CompleteTreatmentDialog(txs, om_gui)
-        dl.hide_reverse_all_but()
-        if not dl.exec_():
-            return
-        treatments = dl.completed_treatments
-
-    for att, treatment in treatments:
-        existingcompleted = pt.treatment_course.__dict__["%scmp"% att]
-        newcompleted = existingcompleted + treatment
-
-        treat = treatment.strip(" ")
-        count = newcompleted.split(" ").count(treat)
-        LOGGER.debug(
-            "creating tx_hash using %s %s %s"% (att, count, treat))
-        hash_ = hash("%s%s%s%s"%(courseno, att, count, treat))
-        tx_hash = TXHash(hash_)
-
-        tx_hash_complete(om_gui, tx_hash)
 
 def tx_hash_complete(om_gui, tx_hash):
     '''

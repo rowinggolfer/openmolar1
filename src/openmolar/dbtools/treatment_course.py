@@ -302,6 +302,9 @@ class TreatmentCourse(object):
             if tx_hash[0] == hash_:
                 return tx_hash[1], tx_hash[2]
         LOGGER.warning("couldn't find treatment %s"% hash_)
+        LOGGER.debug("listing existing hashes")
+        for tx_hash in self.tx_hashes:
+            LOGGER.debug(tx_hash)
         return None, None
 
     def pl_txs(self, att):

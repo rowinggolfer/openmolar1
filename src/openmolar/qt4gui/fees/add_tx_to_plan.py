@@ -24,6 +24,8 @@ from openmolar.ptModules.estimates import TXHash, Estimate
 from openmolar.qt4gui.compiled_uis import Ui_customTreatment
 
 from openmolar.qt4gui.dialogs.add_treatment_dialog import AddTreatmentDialog
+from openmolar.qt4gui.dialogs.complete_treatment_dialog \
+    import CompleteTreatmentDialog
 
 from openmolar.qt4gui.fees import course_module
 from openmolar.qt4gui.fees import complete_tx
@@ -227,6 +229,9 @@ def remove_treatments_from_plan(om_gui, treatments, completed=False):
 
 def remove_tx_hash(om_gui, hash_):
     LOGGER.debug("removing tx_hash %s"% hash_)
+    if hash_.completed:
+        complete_tx.tx_hash_reverse(om_gui, hash_)
+
     att_, tx = om_gui.pt.get_tx_from_hash(hash_)
     if att_ is None or tx is None:
         LOGGER.error("%s not found!"% hash_)
@@ -236,7 +241,7 @@ def remove_tx_hash(om_gui, hash_):
 
         return
 
-    att = "%scmp"% att_ if hash_.completed else "%spl"% att_
+    att = "%spl"% att_
 
     old_val = om_gui.pt.treatment_course.__dict__[att]
     new_val = old_val.replace("%s"% tx, "", 1)
@@ -378,14 +383,14 @@ def plan_viewer_context_menu(om_gui, att, values, point):
         treatments = []
         for value in values:
             treatments.append((att, value))
-        complete_tx.complete_txs(om_gui, treatments, confirm_multiples=True)
+        complete_txs(om_gui, treatments, confirm_multiples=True)
         return
 
     value = values[0]
     message = "%s %s %s"% (_("Complete"), att, value)
     complete_action = QtGui.QAction(message, om_gui)
     complete_action.triggered.connect(
-        partial(complete_tx.complete_txs, om_gui, ((att, value),)))
+        partial(complete_txs, om_gui, ((att, value),)))
 
     message = "%s %s %s"% (_("Delete"), att, value)
     delete_action = QtGui.QAction(message, om_gui)
@@ -414,7 +419,7 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
         treatments = []
         for value in values:
             treatments.append((att, value))
-        complete_tx.reverse_txs(om_gui, treatments, confirm_multiples=True)
+        reverse_txs(om_gui, treatments, confirm_multiples=True)
         return
 
     value = values[0]
@@ -425,7 +430,7 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
             om_gui.pt.treatment_course.examt)), True)
         rev_func = partial(complete_tx.tx_hash_reverse, om_gui, tx_hash)
     else:
-        rev_func = partial(complete_tx.reverse_txs, om_gui, ((att, value),))
+        rev_func = partial(reverse_txs, om_gui, ((att, value),))
         message = "%s %s %s"% (_("Reverse and Delete"), att, value)
         delete_action = QtGui.QAction(message, qmenu)
         delete_action.triggered.connect(partial(
@@ -454,7 +459,7 @@ def plan_listview_2xclick(om_gui, index):
     for value in values:
         new_list.append((att, value))
     model.beginResetModel()
-    complete_tx.complete_txs(om_gui, new_list)
+    complete_txs(om_gui, new_list)
     model.endResetModel()
     om_gui.ui.completed_listView.model().reset()
 
@@ -484,7 +489,7 @@ def completed_listview_2xclick(om_gui, index):
     for value in values:
         new_list.append((att, value))
     model.beginResetModel()
-    complete_tx.reverse_txs(om_gui, new_list)
+    reverse_txs(om_gui, new_list)
     model.endResetModel()
     om_gui.ui.plan_listView.model().reset()
 
@@ -830,6 +835,79 @@ def recalculate_estimate(om_gui):
 
     return True
 
+
+def reverse_txs(om_gui, treatments, confirm_multiples=True):
+    LOGGER.debug(treatments)
+    pt = om_gui.pt
+    courseno = pt.treatment_course.courseno
+    if len(treatments) > 1 and confirm_multiples:
+        txs = []
+        for att, treat in treatments:
+            txs.append((att, treat, True))
+        dl = CompleteTreatmentDialog(txs, om_gui)
+        if not dl.exec_():
+            return
+        treatments = dl.uncompleted_treatments
+        deleted_treatments = dl.deleted_treatments
+    else:
+        deleted_treatments = []
+
+    for att, treatment in treatments:
+        completed = pt.treatment_course.__dict__["%scmp"% att]
+
+        treat = treatment.strip(" ")
+        count = completed.split(" ").count(treat)
+        LOGGER.debug(
+            "creating tx_hash using %s %s %s"% (att, count, treat))
+        hash_ = hash("%s%s%s%s"%(courseno, att, count, treat))
+        tx_hash = TXHash(hash_)
+
+        complete_tx.tx_hash_reverse(om_gui, tx_hash)
+
+    for att, treat, completed in deleted_treatments:
+        remove_treatments_from_plan(
+            om_gui, ((att, treat.strip(" ")),), completed)
+
+def complete_txs(om_gui, treatments, confirm_multiples=True):
+    '''
+    complete tooth treatment
+    #args is a list - ["ul5","MOD","RT",]
+    args is a list - [("ul5","MOD"),("ul5", "RT"), ("perio", "SP")]
+
+    '''
+    LOGGER.debug(treatments)
+
+    pt = om_gui.pt
+    courseno = pt.treatment_course.courseno
+    if len(treatments) > 1 and confirm_multiples:
+        txs = []
+        for att, treat in treatments:
+            txs.append((att, treat, False))
+        dl = CompleteTreatmentDialog(txs, om_gui)
+        dl.hide_reverse_all_but()
+        if not dl.exec_():
+            return
+        treatments = dl.completed_treatments
+        deleted_treatments = dl.deleted_treatments
+    else:
+        deleted_treatments = []
+
+    for att, treatment in treatments:
+        existingcompleted = pt.treatment_course.__dict__["%scmp"% att]
+        newcompleted = existingcompleted + treatment
+
+        treat = treatment.strip(" ")
+        count = newcompleted.split(" ").count(treat)
+        LOGGER.debug(
+            "creating tx_hash using %s %s %s"% (att, count, treat))
+        hash_ = hash("%s%s%s%s"%(courseno, att, count, treat))
+        tx_hash = TXHash(hash_)
+
+        complete_tx.tx_hash_complete(om_gui, tx_hash)
+
+    for att, treat, completed in deleted_treatments:
+        remove_treatments_from_plan(
+            om_gui, ((att, treat.strip(" ")),), completed)
 
 if __name__ == "__main__":
     #-- test code

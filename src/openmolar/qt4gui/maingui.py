@@ -2008,7 +2008,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if not self.pt.underTreatment:
             self.advise("course has been closed", 1)
         else:
-            complete_tx.complete_txs(self, treatments)
+            add_tx_to_plan.complete_txs(self, treatments)
 
     def reverse_completed_chart_treatments(self, treatments):
         '''
@@ -2018,7 +2018,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if not self.pt.underTreatment:
             self.advise("course has been closed", 1)
         else:
-            complete_tx.reverse_txs(self, treatments)
+            add_tx_to_plan.reverse_txs(self, treatments)
 
     def complete_tx_hash(self, tx_hash):
         '''
@@ -2030,7 +2030,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         estwidget has sent a signal that an item is marked as completed.
         '''
-        complete_tx.complete_txs(self, [(att, tx)])
+        add_tx_to_plan.complete_txs(self, [(att, tx)])
 
     def reverse_tx_hash(self, tx_hash):
         '''
@@ -2043,7 +2043,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         estwidget has sent a signal that an item is marked as completed.
         '''
-        complete_tx.reverse_txs(self, [(att, tx)])
+        add_tx_to_plan.reverse_txs(self, [(att, tx)])
 
     def estwidget_deleteTxItem(self, est_item):
         '''
@@ -3184,8 +3184,8 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         dl = AdvancedTxPlanningDialog(self)
         if dl.exec_():
-            complete_tx.complete_txs(self, tuple(dl.completed_items), False)
-            complete_tx.reverse_txs(self, tuple(dl.reversed_items), False)
+            add_tx_to_plan.complete_txs(self, tuple(dl.completed_items), False)
+            add_tx_to_plan.reverse_txs(self, tuple(dl.reversed_items), False)
             LOGGER.debug("new plan items, %s"% dl.new_plan_items)
             LOGGER.debug("new cmp items, %s"% dl.new_cmp_items)
             LOGGER.debug("deleted plan items, %s"% dl.deleted_plan_items)
