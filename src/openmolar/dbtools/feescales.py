@@ -141,7 +141,11 @@ class FeescaleHandler(object):
         LOGGER.info("saving %s"% file_path)
 
         LOGGER.debug("creating backup")
-        shutil.copy(file_path, file_path+"~")
+        try:
+            shutil.copy(file_path, file_path+"~")
+        except IOError:
+            LOGGER.warning("no backup file created")
+
         f = open(file_path, "w")
         f.write(xml)
         f.close()

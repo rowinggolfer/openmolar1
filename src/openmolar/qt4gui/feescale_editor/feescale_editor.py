@@ -55,6 +55,7 @@ class XMLEditor(Qsci.QsciScintilla):
 
 class FeescaleEditor(QtGui.QMainWindow):
     _checking_files = False
+    _known_deleted_parsers = []
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.window_title = _("Feescale Editor")
@@ -241,7 +242,9 @@ class FeescaleEditor(QtGui.QMainWindow):
             return
         self._checking_files = True
         for parser in self.feescale_parsers.values():
-            if parser.is_deleted:
+            if parser in self._known_deleted_parsers:
+                pass
+            elif parser.is_deleted:
                 message = u"%s<br />%s<hr />%s"% (parser.filepath,
                 _("has been deleted!"),
                 _("Save now?") )
@@ -251,7 +254,8 @@ class FeescaleEditor(QtGui.QMainWindow):
                 QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     self.feescale_handler.save_xml(parser.ix, parser.text)
                     self.advise(_("File Saved"), 1)
-                    parser.reset_orig_modified()
+                else:
+                    self._known_deleted_parsers.append(parser)
 
             elif parser.is_externally_modified:
                 message = u"%s<br />%s<hr />%s"% (parser.filepath,
@@ -428,6 +432,8 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         i = 0
         for parser in self.feescale_parsers.itervalues():
+            if parser in self._known_deleted_parsers:
+                self._known_deleted_parsers.remove(parser)
             if not parser.is_dirty:
                 continue
 
@@ -463,6 +469,8 @@ class FeescaleEditor(QtGui.QMainWindow):
                 if os.path.dirname(filepath) == FEESCALE_DIR:
                     self.advise(_("Reload files to edit the new feescale"), 1)
             else:
+                if parser in self._known_deleted_parsers:
+                    self._known_deleted_parsers.remove(parser)
                 self.advise(_("File Saved"), 1)
         except Exception as exc:
             LOGGER.exception("unable to save")

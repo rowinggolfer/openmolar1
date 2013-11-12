@@ -82,7 +82,7 @@ class FeescaleParser(object):
         return os.path.getmtime(self.filepath)
 
     def reset_orig_modified(self):
-        self.orig_modified = self.last_modified
+            self.orig_modified = self.last_modified
 
     def refresh(self):
         LOGGER.info("refreshing feescale %s"% self.filepath)
