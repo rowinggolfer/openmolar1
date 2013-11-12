@@ -299,11 +299,11 @@ class FeeTable(object):
 
         return self.treatmentCodes.get(arg, "-----")
 
-    def getFees(self, itemcode, pt, csetype):
+    def getFees(self, itemcode, pt, csetype, shortcut):
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
-        LOGGER.debug("%s %s"% ('looking up a fee for', itemcode))
+        LOGGER.debug("%s %s %s"% ('looking up a fee for', itemcode, shortcut))
 
         try:
             fee_item = self.feesDict[itemcode]
@@ -314,6 +314,9 @@ class FeeTable(object):
 
         if fee_item.is_simple:
             return fee_item.get_fees(1)
+
+        if fee_item.has_fee_shortcuts:
+            return fee_item.get_fees_from_fee_shortcuts(shortcut)
 
         #complex codes have a different fee if there are multiple
         #in the estimate already
@@ -369,6 +372,7 @@ class FeeItem(object):
         self.pt_attribute = "other"
         self.is_regex = False
         self._forbid_reason = None
+        self.fee_shortcuts = []
 
         try:
             shortcut_node = element.getElementsByTagName("shortcut")[0]
@@ -391,8 +395,7 @@ class FeeItem(object):
         except IndexError:
             self.allow_feescale_add = True
 
-        fee_nodes = element.getElementsByTagName("fee")
-        for node in fee_nodes:
+        for node in element.getElementsByTagName("fee"):
             bd = getTextFromNode(node, "brief_description")
             self.brief_descriptions.append(bd)
 
@@ -408,6 +411,10 @@ class FeeItem(object):
             condition = node.getAttribute("condition").replace(
                 "&gt;", ">").replace("&lt;", "<")
             self.conditions.append(condition)
+
+            shortcut_match = node.getAttribute("shortcut_match")
+            if shortcut_match:
+                self.fee_shortcuts.append(re.compile(shortcut_match))
 
     def __repr__(self):
         return "FeeItem '%s' %s %s %s %s"% (
@@ -429,6 +436,10 @@ class FeeItem(object):
         many items the cost goes down with multiples, or there is a maximum fee
         '''
         return len(self.fees) == 1
+
+    @property
+    def has_fee_shortcuts(self):
+        return self.fee_shortcuts != []
 
     @property
     def usercode(self):
@@ -457,6 +468,29 @@ class FeeItem(object):
         else:
             return (fee, ptFee)
 
+    def get_fees_from_fee_shortcuts(self, shortcut):
+        '''
+        this was introduced to handle the case where a single item code
+        has different fees
+        specifically, SR_P/R321,L1 is a 4 toothed partial denture
+        but that has only 1 itemcode on NHS feescale :(
+        '''
+        for i, compiled_regex in enumerate(self.fee_shortcuts):
+            LOGGER.debug("Comparing '%s' with regex '%s'"% (
+            shortcut, compiled_regex.pattern))
+
+            if compiled_regex.match(shortcut):
+                fee = self.fees[i]
+                try:
+                    charge = self.ptFees[i]
+                except IndexError:
+                    charge = fee
+                return fee, charge
+
+        LOGGER.warning(
+        "error getting fee from fee_shortcut. returning default")
+        return self.get_fees()
+
     def get_fee(self, item_no=1, charge=False):
         '''
         get a fee for the xth item of this type
@@ -476,7 +510,7 @@ class FeeItem(object):
             LOGGER.debug("simple addition of 1st item, fee=%s"% fee)
             return fee
 
-        LOGGER.warning("COMPLEX FEE BEING APPLIED!")
+        LOGGER.warning("Complex FeeItem fee lookup, item_no=%d"% item_no)
         for i, condition in enumerate(self.conditions):
             if condition == "item_no=%d"% item_no:
                 fee = feeList[i]

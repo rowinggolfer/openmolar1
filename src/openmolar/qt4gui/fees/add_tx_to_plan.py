@@ -169,7 +169,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
 
     if fee is None and ptfee is None:
         #look up the fee here
-        est.fee, est.ptfee = table.getFees(itemcode, pt, est.csetype)
+        est.fee, est.ptfee = table.getFees(itemcode, pt, est.csetype, shortcut)
     else:
         est.fee, est.ptfee = fee, ptfee
 
@@ -825,6 +825,8 @@ def recalculate_estimate(om_gui):
             for hash_, att, tx in pt.completed_tx_hashes:
                 if tx_hash == hash_:
                     tx_hash.completed = True
+
+    om_gui.advise(_("Estimate recalculated"), 1)
 
     return True
 
