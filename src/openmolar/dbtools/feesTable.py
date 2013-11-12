@@ -158,6 +158,7 @@ class FeeTable(object):
         self.complex_shortcuts = []
         self.treatmentCodes = OrderedDict()
         self.chartRegexCodes = OrderedDict()
+        self.otherRegexCodes = OrderedDict()
 
     def __repr__(self):
         '''
@@ -265,7 +266,10 @@ class FeeTable(object):
             elif fee_item.is_regex:
                 #use pre-compiled regex as the key
                 key = re.compile(fee_item.usercode)
-                self.chartRegexCodes[key] = item_code
+                if fee_item.pt_attribute == "chart":
+                    self.chartRegexCodes[key] = item_code
+                else:
+                    self.otherRegexCodes[key] = item_code
             else:
                 self.treatmentCodes[fee_item.usercode] = item_code
 
@@ -288,6 +292,11 @@ class FeeTable(object):
         '''
         return the itemcode associated with it, otherwise, return "-----"
         '''
+        LOGGER.debug("looking up usercode %s"% arg)
+        for key in self.otherRegexCodes:
+            if key.match(arg):
+                return self.otherRegexCodes[key]
+
         return self.treatmentCodes.get(arg, "-----")
 
     def getFees(self, itemcode, pt, csetype):
