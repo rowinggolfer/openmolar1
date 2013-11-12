@@ -2000,7 +2000,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.planChartWidget.setToothProps(tooth, prop)
             self.ui.planChartWidget.update()
 
-    def complete_treatments(self, treatments):
+    def complete_planned_chart_treatments(self, treatments):
         '''
         called when double clicking on a tooth in the plan chart
         the arg is a list - [('ur5', u'MOD '), ('ur5', u'RT ')]
@@ -2945,7 +2945,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.comp_chartNavigation)
 
         self.ui.planChartWidget.complete_treatments_signal.connect(
-            self.complete_treatments)
+            self.complete_planned_chart_treatments)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
         QtCore.SIGNAL("NextTooth"), self.navigateCharts)

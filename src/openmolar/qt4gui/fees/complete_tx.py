@@ -27,7 +27,7 @@ import logging
 LOGGER = logging.getLogger("openmolar")
 
 def reverse_txs(om_gui, treatments, confirm_multiples=True):
-    LOGGER.debug("reverse_tx.reverse_txs, %s"% str(treatments))
+    LOGGER.debug(treatments)
     pt = om_gui.pt
     courseno = pt.treatment_course.courseno
     if len(treatments) > 1 and confirm_multiples:
@@ -58,7 +58,7 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
     args is a list - [("ul5","MOD"),("ul5", "RT"), ("perio", "SP")]
 
     '''
-    LOGGER.debug("complete_tx.chartComplete, %s"% str(treatments))
+    LOGGER.debug(treatments)
 
     pt = om_gui.pt
     courseno = pt.treatment_course.courseno
@@ -90,7 +90,7 @@ def tx_hash_complete(om_gui, tx_hash):
     reponds to a signal when the user completes an item of treatment by
     checking a checkbox on the estwidget
     '''
-    LOGGER.debug("tx_hash_complete %s"% tx_hash)
+    LOGGER.debug(tx_hash)
 
     pt = om_gui.pt
     found = False
@@ -143,6 +143,9 @@ def tx_hash_complete(om_gui, tx_hash):
         om_gui.advise("<p>%s</p><hr />This shouldn't happen!"% msg, 2)
         return
 
+    om_gui.ui.toothPropsWidget.setTooth(
+        om_gui.ui.toothPropsWidget.selectedTooth, om_gui.selectedChartWidget)
+
     om_gui.updateHiddenNotesLabel()
     om_gui.ui.estWidget.resetEstimate()
     om_gui.updateDetails()
@@ -152,7 +155,7 @@ def tx_hash_reverse(om_gui, tx_hash):
     reponds to a signal when the user completes an item of treatment by
     checking a checkbox on the estwidget
     '''
-    LOGGER.debug("complete_tx.tx_hash_reverse %s"% tx_hash)
+    LOGGER.debug(tx_hash)
 
     pt = om_gui.pt
     found = False
@@ -208,6 +211,9 @@ def tx_hash_reverse(om_gui, tx_hash):
         for est_tx_hash in estimate.tx_hashes:
             if est_tx_hash == tx_hash:
                 est_tx_hash.completed = False
+
+    om_gui.ui.toothPropsWidget.setTooth(
+        om_gui.ui.toothPropsWidget.selectedTooth, om_gui.selectedChartWidget)
 
     om_gui.updateHiddenNotesLabel()
     om_gui.ui.estWidget.resetEstimate()
