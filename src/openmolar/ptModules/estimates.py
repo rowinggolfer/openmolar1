@@ -99,12 +99,19 @@ class Estimate(object):
         return self.__str__()
 
     def __str__(self):
-        retarg=u"Estimate ("
-        for att in ("ix","serialno","courseno","number","fee","ptfee","dent"):
-            retarg+='%s ,'% self.__dict__[att]
-        for att in ("tx_hashes","itemcode","description","csetype","feescale"):
-            retarg+='"%s" ,'% self.__dict__[att]
-        return "%s)"% retarg.rstrip(",")
+        return "\nEstimate\n        (%s %s %s %s %s %s %s %s %s %s %s %s)"% (
+            self.ix,
+            self.serialno,
+            self.courseno,
+            self.number,
+            self.fee,
+            self.ptfee,
+            self.dent,
+            self.tx_hashes,
+            self.itemcode,
+            self.description,
+            self.csetype,
+            self.feescale)
 
     @property
     def log_text(self):

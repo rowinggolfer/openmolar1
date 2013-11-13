@@ -69,7 +69,7 @@ INDEX (est_id)
 '''
 create table feescales (
     ix            int(11) unsigned  not null auto_increment,
-    in_use        bool              not null default true,
+    in_use        bool              not null default false,
     disp_order    int(8)  not null default 0,
     xml_data      mediumtext not null,
 PRIMARY KEY (ix)

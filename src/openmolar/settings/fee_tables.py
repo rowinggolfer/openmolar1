@@ -564,6 +564,7 @@ class ComplexShortcut(object):
         self.pt_attribute = shortcut_node.getAttribute("att")
 
         shortcut = shortcut_node.childNodes[0].data
+        LOGGER.debug("Complex shortcut %s %s"% (self.pt_attribute, shortcut))
         if self.pt_attribute != "chart":
             shortcut = "%s %s"% (self.pt_attribute, shortcut)
         if self.is_regex:
@@ -571,13 +572,25 @@ class ComplexShortcut(object):
         else:
             self.shortcut = shortcut
 
-        self.cases = []
+        self.addition_cases, self.removal_cases = [], []
 
-        case_nodes = element.getElementsByTagName("case")
-        for case_node in case_nodes:
-            case_action = CaseAction(case_node)
-            self.cases.append(case_action)
-            LOGGER.debug(case_action)
+        try:
+            addition_node = element.getElementsByTagName("addition")[0]
+            for case_node in addition_node.getElementsByTagName("case"):
+                case_action = CaseAction(case_node)
+                self.addition_cases.append(case_action)
+                LOGGER.debug(case_action)
+        except IndexError:
+            LOGGER.debug("no removal cases")
+
+        try:
+            removal_node = element.getElementsByTagName("removal")[0]
+            for case_node in removal_node.getElementsByTagName("case"):
+                case_action = CaseAction(case_node)
+                self.removal_cases.append(case_action)
+                LOGGER.debug(case_action)
+        except IndexError:
+            LOGGER.debug("no removal cases")
 
     def matches(self, att, shortcut):
         LOGGER.debug("Complex shortcut, comparing '%s' '%s' with '%s'"% (

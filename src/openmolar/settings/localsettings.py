@@ -861,10 +861,10 @@ def loadFeeTables():
     load the feetables (time consuming)
     '''
     global FEETABLES
-    from openmolar.dbtools import feesTable
+    from openmolar.settings import fee_tables
 
     LOGGER.debug("loading fee and treatment logic tables")
-    FEETABLES = feesTable.FeeTables()
+    FEETABLES = fee_tables.FeeTables()
 
 def _test():
     import doctest

@@ -65,8 +65,8 @@ def add_treatments_to_plan(om_gui, treatments, completed=False):
 
         dentid = pt.course_dentist
 
-        if (
-        complex_shortcut_handled(om_gui, att, shortcut, n_txs, dentid, tx_hash)
+        if (complex_shortcut_addition_handled(om_gui,
+        att, shortcut, n_txs, tx_hash)
         or
         add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash])
         ):
@@ -219,7 +219,14 @@ def remove_treatments_from_plan(om_gui, treatments, completed=False):
         n_txs = txs.split(" ").count(shortcut)
         hash_ = hash("%s%s%s%s"% (courseno, att, n_txs, shortcut))
         tx_hash = TXHash(hash_, completed)
-        remove_tx_hash(om_gui, tx_hash)
+        if complex_shortcut_removal_handled(om_gui, att, shortcut,
+        n_txs, tx_hash):
+            p_att = "%scmp"% att if completed else "%spl"% att
+            val = pt.treatment_course.__dict__[p_att]
+            val = val.replace("%s "% shortcut, "", 1)
+            pt.treatment_course.__dict__[p_att] = val
+        else:
+            remove_tx_hash(om_gui, tx_hash)
 
         if re.match("[ul][lr[1-8]", att):
             plan = pt.treatment_course.__dict__["%spl"% att]
@@ -229,6 +236,7 @@ def remove_treatments_from_plan(om_gui, treatments, completed=False):
 
 def remove_tx_hash(om_gui, hash_):
     LOGGER.debug("removing tx_hash %s"% hash_)
+
     if hash_.completed:
         complete_tx.tx_hash_reverse(om_gui, hash_)
 
@@ -250,19 +258,20 @@ def remove_tx_hash(om_gui, hash_):
     "updated pt.treatment_course.%s to from '%s' to '%s'"% (
     att, old_val, new_val))
 
-    ests_altered = False
-    for est in om_gui.pt.ests_from_hash(hash_):
+    affected_ests = list(om_gui.pt.ests_from_hash(hash_))
+    LOGGER.debug("CURRENT_ESTS = %s"% affected_ests)
+
+    if not affected_ests:
+        om_gui.advise(u"%s %s"% (
+        _("Couldn't find item in the patient's estimate"),
+        _("This Shouldn't Happen!")), 2)
+
+    for est in affected_ests:
         LOGGER.debug("removing reference to %s in estimate %s"% (
             hash_, est))
         est.tx_hashes.remove(hash_)
         if est.tx_hashes == []:
             om_gui.pt.estimates.remove(est)
-        ests_altered = True
-
-    if not ests_altered:
-        om_gui.advise(u"%s %s"% (
-        _("Couldn't find item in the patient's estimate"),
-        _("This Shouldn't Happen!")), 2)
 
     return True
 
@@ -655,61 +664,127 @@ def confirmWrongFeeTable(om_gui, suggested, current):
     if input == QtGui.QMessageBox.Yes:
         return suggestedTable
 
-def complex_shortcut_handled(om_gui, att, shortcut, item_no, dentid, tx_hash):
+def complex_shortcut_addition_handled(om_gui, att, shortcut, item_no, tx_hash):
     LOGGER.debug(
-    "checking %s %s %s %s %s"% (att, shortcut, item_no, dentid, tx_hash))
+    "checking %s %s %s %s"% (att, shortcut, item_no, tx_hash))
     pt = om_gui.pt
+    fee_table = pt.getFeeTable()
+    dentid = pt.course_dentist
+    LOGGER.debug("Feetable being checked = %s"% fee_table)
+    for complex_shortcut in fee_table.complex_shortcuts:
+        if complex_shortcut.matches(att, shortcut):
+            LOGGER.debug(
+            "%s %s matches a complex shortcut with %d addition_cases"% (
+            att, shortcut, len(complex_shortcut.addition_cases)))
+            handled = False
+            for case in complex_shortcut.addition_cases:
+                m = re.match("n_txs=(\d+)", case.condition)
+                m2 = re.match("n_txs>(\d+)", case.condition)
+
+                if (case.condition == "True" or
+                (m and int(m.groups()[0]) == item_no) or
+                (m2 and item_no > int(m2.groups()[0]))
+                ):
+                    handled = True
+                else:
+                    continue
+                LOGGER.debug("condition met %s"% case.condition)
+                tx_hashes = [tx_hash]
+                for item_code in case.removals:
+                    for est in pt.estimates:
+                        if est.itemcode == item_code:
+                            LOGGER.debug("removing estimate %s"% est)
+                            pt.estimates.remove(est)
+                            tx_hashes += est.tx_hashes
+
+                for item_code in case.additions:
+                    LOGGER.debug("adding additional code %s"% item_code)
+                    add_treatment_to_estimate(om_gui,
+                    att, shortcut, dentid, list(tx_hashes), item_code)
+
+                for item_code in case.alterations:
+                    #instead of adding a new estimate item
+                    #add this treatment hash to existing item
+                    LOGGER.debug("altering code %s"% item_code)
+                    for est in pt.estimates:
+                        if est.itemcode == item_code:
+                            est.tx_hashes += tx_hashes
+                            LOGGER.debug("est altered %s"% est)
+
+                if case.message != "":
+                    om_gui.advise(case.message, 1)
+                    LOGGER.info(case.message)
+
+                if handled:
+                    break
+
+            if handled:
+                LOGGER.info("%s %s was handled by as a complex shortcut"% (
+                att, shortcut))
+                return True
+
+    LOGGER.debug("%s NOT handled as a complex shortcut"% shortcut)
+    return False
+
+def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
+    LOGGER.debug((att, shortcut, n_txs, tx_hash))
+    pt = om_gui.pt
+    dentid = pt.course_dentist
     fee_table = pt.getFeeTable()
     LOGGER.debug("Feetable being checked = %s"% fee_table)
     for complex_shortcut in fee_table.complex_shortcuts:
         if complex_shortcut.matches(att, shortcut):
-            LOGGER.debug("%s %s is a complex shortcut with %d cases"% (
-            att, shortcut,len(complex_shortcut.cases)))
-
-            for case in complex_shortcut.cases:
-                condition_met = False
+            LOGGER.debug(
+            "%s %s is a complex shortcut with %d removal_cases"% (
+            att, shortcut, len(complex_shortcut.removal_cases)))
+            handled = False
+            for case in complex_shortcut.removal_cases:
                 m = re.match("n_txs=(\d+)", case.condition)
                 m2 = re.match("n_txs>(\d+)", case.condition)
 
-                if case.condition == "True":
-                    condition_met = True
-                elif m and int(m.groups()[0]) == item_no:
-                    condition_met = True
-                elif m2 and item_no > int(m2.groups()[0]):
-                    condition_met = True
+                if (case.condition == "True" or
+                (m and int(m.groups()[0]) == n_txs) or
+                (m2 and n_txs > int(m2.groups()[0]))
+                ):
+                    handled = True
+                else:
+                    continue
+                LOGGER.debug("condition met %s"% case.condition)
+                tx_hashes = [tx_hash]
+                for item_code in case.removals:
+                    for est in pt.estimates:
+                        if est.itemcode == item_code:
+                            LOGGER.debug("removing estimate %s"% est)
+                            pt.estimates.remove(est)
+                            tx_hashes += est.tx_hashes
 
-                if condition_met:
-                    LOGGER.debug("condition met %s"% case.condition)
-                    tx_hashes = [tx_hash]
-                    for item_code in case.removals:
-                        for est in pt.estimates:
-                            if est.itemcode == item_code:
-                                LOGGER.debug("removing estimate %s"% est)
-                                pt.estimates.remove(est)
-                                tx_hashes += est.tx_hashes
+                for item_code in case.additions:
+                    LOGGER.debug("adding additional code %s"% item_code)
+                    add_treatment_to_estimate(om_gui,
+                    att, shortcut, dentid, tx_hashes, item_code)
 
-                    for item_code in case.additions:
-                        LOGGER.debug("adding additional code %s"% item_code)
-                        add_treatment_to_estimate(om_gui,
-                        att, shortcut, dentid, tx_hashes, item_code)
+                if case.message != "":
+                    om_gui.advise(case.message, 1)
+                    LOGGER.info(case.message)
 
-                    for item_code in case.alterations:
-                        #instead of adding a new estimate item
-                        #add this treatment hash to existing item
-                        LOGGER.debug("altering code %s"% item_code)
-                        for est in pt.estimates:
-                            if est.itemcode == item_code:
-                                est.tx_hashes += tx_hashes
-                                LOGGER.debug("est altered %s"% est)
+                if handled:
+                    break
 
-                    if case.message != "":
-                        om_gui.advise(case.message, 1)
-                        LOGGER.info(case.message)
+            if handled:
+                LOGGER.debug("removing all references to this treatment in "
+                "from the patient's estimate")
+                for hash_ in tx_hashes:
+                    for est in list(pt.ests_from_hash(hash_)):
+                        LOGGER.debug(
+                        "removing reference to %s in estimate %s"% (
+                        hash_, est))
+                        est.tx_hashes.remove(hash_)
+                        if est.tx_hashes == []:
+                            pt.estimates.remove(est)
 
-            LOGGER.info(
-            "%s %s was handled by as a complex shortcut"% (att, shortcut))
-            return True
-    LOGGER.debug("%s not a complex shortcut"% shortcut)
+                return True
+
+    LOGGER.debug("%s NOT handled as a complex shortcut"% shortcut)
     return False
 
 def remove_estimate_item(om_gui, est_item):
@@ -820,8 +895,8 @@ def recalculate_estimate(om_gui):
             pass
 
         else:
-            if not complex_shortcut_handled(om_gui, att, tx,
-            item_no, dentid, tx_hash):
+            if not complex_shortcut_addition_handled(om_gui, att, tx,
+            item_no, tx_hash):
                 add_treatment_to_estimate(om_gui, att, tx, dentid, [tx_hash])
 
     LOGGER.debug("checking for completed items")
@@ -908,6 +983,8 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
     for att, treat, completed in deleted_treatments:
         remove_treatments_from_plan(
             om_gui, ((att, treat.strip(" ")),), completed)
+
+
 
 if __name__ == "__main__":
     #-- test code

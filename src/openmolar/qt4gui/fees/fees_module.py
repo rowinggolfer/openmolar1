@@ -19,8 +19,7 @@ import subprocess
 
 from PyQt4 import QtGui, QtCore
 
-from openmolar.dbtools import feesTable, accounts, patient_class, cashbook, \
-patient_write_changes
+from openmolar.dbtools import accounts, patient_class, cashbook, patient_write_changes
 from openmolar.settings import localsettings
 from openmolar.qt4gui.fees import fee_table_model
 from openmolar.qt4gui.fees import feescale_tester

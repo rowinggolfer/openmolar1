@@ -42,7 +42,22 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="shortcut" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="case" maxOccurs="unbounded"/>
+        <xs:element ref="addition" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="removal" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="addition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="case" minOccurs="1" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="removal">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="case" minOccurs="1" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
