@@ -16,7 +16,10 @@ import logging
 from PyQt4 import QtGui, QtCore
 
 from estimate_item_widget import decimalise, EstimateItemWidget
+
 from openmolar.qt4gui.compiled_uis import Ui_estSplitItemsDialog
+from openmolar.qt4gui.fees import add_tx_to_plan
+from openmolar.qt4gui.fees import complete_tx
 
 from openmolar.qt4gui.dialogs.complete_treatment_dialog \
     import CompleteTreatmentDialog
@@ -27,19 +30,16 @@ class EstimateWidget(QtGui.QWidget):
     '''
     provides a custom widget to view/edit the patient's estimate
     '''
-    complete_txhash_signal = QtCore.pyqtSignal(object)
-    reverse_txhash_signal = QtCore.pyqtSignal(object)
-    complete_tx_signal = QtCore.pyqtSignal(object, object)
-    reverse_tx_signal = QtCore.pyqtSignal(object, object)
     separate_codes = set([])
     updated_fees_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
 
+        self.om_gui = parent
+
         size_policy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-
         self.setSizePolicy(size_policy)
 
         self.expandAll = False
@@ -313,9 +313,9 @@ class EstimateWidget(QtGui.QWidget):
     def tx_hash_complete(self, tx_hash):
         LOGGER.debug("EstimateWidget.tx_hash_complete, %s"% tx_hash)
         if tx_hash.completed:
-            self.complete_txhash_signal.emit(tx_hash)
+            complete_tx.tx_hash_complete(self.om_gui, tx_hash)
         else:
-            self.reverse_txhash_signal.emit(tx_hash)
+            complete_tx.tx_hash_reverse(self.om_gui, tx_hash)
 
     def remove_est_item_widget(self, widg):
         widg.completed_checkBox.check_first = None
@@ -471,11 +471,12 @@ class EstimateWidget(QtGui.QWidget):
                 LOGGER.warning(
                 "Special code checked via estimate widget, not allowing check")
                 if completing:
-                    self.complete_tx_signal.emit(check_att, check_tx)
+                    func_ = add_tx_to_plan.complete_txs
                 else:
-                    self.reverse_tx_signal.emit(check_att, check_tx)
+                    func_ = add_tx_to_plan.reverse_txs
+                func_(self.om_gui, [check_att, check_tx])
+
                 return False
-                #self.resetEstimate()
 
         return True
 
@@ -542,53 +543,17 @@ class EstimateWidget(QtGui.QWidget):
 
         for att, treat, already_completed in dl.deleted_treatments:
             LOGGER.debug("checking deleted %s %s"% (att, treat))
-            found = False #only complete 1 treatment!!
-            for hash_, att_, tx in reversed(list(self.pt.tx_hashes)):
-                if found:
-                    break
-                if att == att_ and tx == treat:
-                    LOGGER.debug("att and treat match... checking hashes")
-                    for item in est_item_widget.est_items:
-                        LOGGER.debug("Checking hashes of item %s"% item)
-                        for tx_hash in item.tx_hashes:
-                            if tx_hash == hash_:
-                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
-                                if tx_hash.completed and already_completed:
-                                    #this will reverse the treatment.
-                                    self.tx_hash_complete(tx_hash)
-                                item.tx_hashes.remove(tx_hash)
-                                found = True
-                                break
-                        if found:
-                            break
-
-        if dl.all_planned:
-            est_item_widget.completed_checkBox.setCheckState(QtCore.Qt.Unchecked)
-        elif dl.all_completed:
-            est_item_widget.completed_checkBox.setCheckState(QtCore.Qt.Checked)
-        else:
-            est_item_widget.completed_checkBox.setCheckState(QtCore.Qt.PartiallyChecked)
-
-        if est_item_widget.has_no_treatments:
-            self.deleteItemWidget(est_item_widget, False)
-        else:
-            for item in est_item_widget.est_items:
-                if item.tx_hashes == []:
-                    self.ests.remove(item)
+            add_tx_to_plan.remove_treatments_from_plan(
+            self.om_gui, ((att, treat.strip(" ")),), already_completed)
 
         self.resetEstimate()
 
 if __name__ == "__main__":
-    def CatchAllSignals(arg=None):
-        '''test procedure'''
-        print "signal caught argument=", arg
-
     LOGGER.setLevel(logging.DEBUG)
 
     from gettext import gettext as _
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(11956)
-    #pt = patient_class.patient(16539)
 
     app = QtGui.QApplication([])
 
@@ -598,10 +563,6 @@ if __name__ == "__main__":
     form.show()
 
     widg.setPatient(pt)
-
-    form.connect(widg, QtCore.SIGNAL("completedItem"), CatchAllSignals)
-    form.connect(widg, QtCore.SIGNAL("unCompletedItem"), CatchAllSignals)
-    form.connect(widg, QtCore.SIGNAL("deleteItem"), CatchAllSignals)
 
     form.show()
     app.exec_()

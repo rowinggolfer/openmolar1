@@ -370,8 +370,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.referralLettersComboBox.addItem(s)
 
         #-- add a header to the estimates page
-        #self.ui.estWidget = estimateWidget.estWidget()
-        self.ui.estWidget = estimate_widget.EstimateWidget()
+        self.ui.estWidget = estimate_widget.EstimateWidget(self)
 
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
@@ -2020,31 +2019,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         else:
             add_tx_to_plan.reverse_txs(self, treatments)
 
-    def complete_tx_hash(self, tx_hash):
-        '''
-        estwidget has sent a signal that an item is marked as completed.
-        '''
-        complete_tx.tx_hash_complete(self, tx_hash)
-
-    def complete_tx(self, att, tx):
-        '''
-        estwidget has sent a signal that an item is marked as completed.
-        '''
-        add_tx_to_plan.complete_txs(self, [(att, tx)])
-
-    def reverse_tx_hash(self, tx_hash):
-        '''
-        estwidget has sent a signal that a previous completed item needs
-        reversing
-        '''
-        complete_tx.tx_hash_reverse(self, tx_hash)
-
-    def reverse_tx(self, att, tx):
-        '''
-        estwidget has sent a signal that an item is marked as completed.
-        '''
-        add_tx_to_plan.reverse_txs(self, [(att, tx)])
-
     def estwidget_deleteTxItem(self, est_item):
         '''
         estWidget has removed an item from the estimates.
@@ -2720,11 +2694,6 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         QtCore.QObject.connect(self.ui.customTx_pushButton,
         QtCore.SIGNAL("clicked()"), self.addCustomItem)
-
-        self.ui.estWidget.complete_tx_signal.connect(self.complete_tx)
-        self.ui.estWidget.reverse_tx_signal.connect(self.reverse_tx)
-        self.ui.estWidget.complete_txhash_signal.connect(self.complete_tx_hash)
-        self.ui.estWidget.reverse_txhash_signal.connect(self.reverse_tx_hash)
 
         self.ui.estWidget.updated_fees_signal.connect(self.updateDetails)
 
