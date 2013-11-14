@@ -18,8 +18,7 @@ from PyQt4 import QtGui, QtCore
 from estimate_item_widget import decimalise, EstimateItemWidget
 
 from openmolar.qt4gui.compiled_uis import Ui_estSplitItemsDialog
-from openmolar.qt4gui.fees import add_tx_to_plan
-from openmolar.qt4gui.fees import complete_tx
+from openmolar.qt4gui.fees import manipulate_plan
 
 from openmolar.qt4gui.dialogs.complete_treatment_dialog \
     import CompleteTreatmentDialog
@@ -313,9 +312,9 @@ class EstimateWidget(QtGui.QWidget):
     def tx_hash_complete(self, tx_hash):
         LOGGER.debug("EstimateWidget.tx_hash_complete, %s"% tx_hash)
         if tx_hash.completed:
-            complete_tx.tx_hash_complete(self.om_gui, tx_hash)
+            manipulate_plan.tx_hash_complete(self.om_gui, tx_hash)
         else:
-            complete_tx.tx_hash_reverse(self.om_gui, tx_hash)
+            manipulate_plan.tx_hash_reverse(self.om_gui, tx_hash)
 
     def remove_est_item_widget(self, widg):
         widg.completed_checkBox.check_first = None
@@ -471,9 +470,9 @@ class EstimateWidget(QtGui.QWidget):
                 LOGGER.warning(
                 "Special code checked via estimate widget, not allowing check")
                 if completing:
-                    func_ = add_tx_to_plan.complete_txs
+                    func_ = manipulate_plan.complete_txs
                 else:
-                    func_ = add_tx_to_plan.reverse_txs
+                    func_ = manipulate_plan.reverse_txs
                 func_(self.om_gui, [check_att, check_tx])
 
                 return False
@@ -543,7 +542,7 @@ class EstimateWidget(QtGui.QWidget):
 
         for att, treat, already_completed in dl.deleted_treatments:
             LOGGER.debug("checking deleted %s %s"% (att, treat))
-            add_tx_to_plan.remove_treatments_from_plan(
+            manipulate_plan.remove_treatments_from_plan(
             self.om_gui, ((att, treat.strip(" ")),), already_completed)
 
         self.resetEstimate()

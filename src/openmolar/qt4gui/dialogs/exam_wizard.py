@@ -12,7 +12,7 @@ from openmolar.settings import localsettings
 
 from openmolar.ptModules.estimates import TXHash
 from openmolar.qt4gui.compiled_uis import Ui_exam_wizard
-from openmolar.qt4gui.fees import add_tx_to_plan
+from openmolar.qt4gui.fees import manipulate_plan
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -148,7 +148,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 hash_ = hash("%sexam1%s"% (courseno, examtype))
                 tx_hash = TXHash(hash_, True)
 
-                add_tx_to_plan.add_treatment_to_estimate(
+                manipulate_plan.add_treatment_to_estimate(
                     self.om_gui, "exam", examtype, dentid, [tx_hash])
 
                 newnotes = unicode(

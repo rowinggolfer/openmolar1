@@ -9,8 +9,7 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.ptModules.estimates import TXHash
 
-from openmolar.qt4gui.fees import add_tx_to_plan
-from openmolar.qt4gui.fees import complete_tx
+from openmolar.qt4gui.fees import manipulate_plan
 
 from openmolar.qt4gui.compiled_uis import Ui_hygenist_wizard
 
@@ -107,10 +106,10 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
                     " ").count(self.trt) + 1
                 hash_ = hash("%sperio%s%s"% (courseno, n_txs, self.trt))
                 tx_hash = TXHash(hash_)
-                complete_tx.tx_hash_complete(self.om_gui, tx_hash)
+                manipulate_plan.tx_hash_complete(self.om_gui, tx_hash)
             else:
                 trts = (("perio", "%s"% self.trt),)
-                add_tx_to_plan.add_treatments_to_plan(self.om_gui, trts, True)
+                manipulate_plan.add_treatments_to_plan(self.om_gui, trts, True)
 
             newnotes = unicode(
                 self.om_gui.ui.notesEnter_textEdit.toPlainText().toUtf8())

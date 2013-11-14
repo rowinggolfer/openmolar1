@@ -32,8 +32,7 @@ from openmolar.qt4gui import colours
 #-- fee modules which interact with the gui
 from openmolar.qt4gui.fees import fees_module
 from openmolar.qt4gui.fees import course_module
-from openmolar.qt4gui.fees import add_tx_to_plan
-from openmolar.qt4gui.fees import complete_tx
+from openmolar.qt4gui.fees import manipulate_plan
 from openmolar.qt4gui.fees import daybook_module
 from openmolar.qt4gui.fees import cashbook_module
 from openmolar.qt4gui.fees import fee_table_model
@@ -1909,37 +1908,37 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         add Xray items to the treatment plan
         '''
-        add_tx_to_plan.xrayAdd(self)
+        manipulate_plan.xrayAdd(self)
 
     def addXrays(self):
         '''
         add Xray items to COMPLETED tx
         '''
-        add_tx_to_plan.xrayAdd(self, complete=True)
+        manipulate_plan.xrayAdd(self, complete=True)
 
     def addPerioItems(self):
         '''
         add Perio items to the treatment plan
         '''
-        add_tx_to_plan.perioAdd(self)
+        manipulate_plan.perioAdd(self)
 
     def addOtherItems(self):
         '''
         add 'Other' items to the treatment plan
         '''
-        add_tx_to_plan.otherAdd(self)
+        manipulate_plan.otherAdd(self)
 
     def addCustomItem(self):
         '''
         add custom items to the treatment plan
         '''
-        add_tx_to_plan.customAdd(self)
+        manipulate_plan.customAdd(self)
 
     def feeScaleTreatAdd(self, item, subindex):
         '''
         add an item directly from the feescale
         '''
-        add_tx_to_plan.fromFeeTable(self, item, subindex)
+        manipulate_plan.fromFeeTable(self, item, subindex)
 
     def feetable_xml(self):
         '''
@@ -1979,17 +1978,17 @@ class OpenmolarGui(QtGui.QMainWindow):
             if (completed and tx in existing_pl_items):
                 hash_ = hash("%s%s%s%s"% (courseno, tooth, n_txs+1, tx))
                 tx_hash = estimates.TXHash(hash_)
-                complete_tx.tx_hash_complete(self, tx_hash)
+                manipulate_plan.tx_hash_complete(self, tx_hash)
             elif not completed and n_txs:
                 hash_ = hash("%s%s%s%s"% (courseno, tooth, n_txs, tx))
                 tx_hash = estimates.TXHash(hash_)
-                complete_tx.tx_hash_reverse(self, tx_hash)
+                manipulate_plan.tx_hash_reverse(self, tx_hash)
             else:
-                add_tx_to_plan.add_treatments_to_plan(self,
+                manipulate_plan.add_treatments_to_plan(self,
                 ((tooth, tx),), completed)
 
         if removals:
-            add_tx_to_plan.remove_treatments_from_plan(
+            manipulate_plan.remove_treatments_from_plan(
                 self, removals, completed)
 
         if completed:
@@ -2007,7 +2006,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if not self.pt.underTreatment:
             self.advise("course has been closed", 1)
         else:
-            add_tx_to_plan.complete_txs(self, treatments)
+            manipulate_plan.complete_txs(self, treatments)
 
     def reverse_completed_chart_treatments(self, treatments):
         '''
@@ -2017,14 +2016,14 @@ class OpenmolarGui(QtGui.QMainWindow):
         if not self.pt.underTreatment:
             self.advise("course has been closed", 1)
         else:
-            add_tx_to_plan.reverse_txs(self, treatments)
+            manipulate_plan.reverse_txs(self, treatments)
 
     def estwidget_deleteTxItem(self, est_item):
         '''
         estWidget has removed an item from the estimates.
         (user clicked on the delete button)
         '''
-        add_tx_to_plan.remove_estimate_item(self, est_item)
+        manipulate_plan.remove_estimate_item(self, est_item)
 
     def makeBadDebt_clicked(self):
         '''
@@ -3045,7 +3044,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if result == QtGui.QMessageBox.No:
             return
 
-        if add_tx_to_plan.recalculate_estimate(self):
+        if manipulate_plan.recalculate_estimate(self):
             self.load_newEstPage()
             self.updateDetails()
 
@@ -3153,56 +3152,56 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         dl = AdvancedTxPlanningDialog(self)
         if dl.exec_():
-            add_tx_to_plan.complete_txs(self, tuple(dl.completed_items), False)
-            add_tx_to_plan.reverse_txs(self, tuple(dl.reversed_items), False)
+            manipulate_plan.complete_txs(self, tuple(dl.completed_items), False)
+            manipulate_plan.reverse_txs(self, tuple(dl.reversed_items), False)
             LOGGER.debug("new plan items, %s"% dl.new_plan_items)
             LOGGER.debug("new cmp items, %s"% dl.new_cmp_items)
             LOGGER.debug("deleted plan items, %s"% dl.deleted_plan_items)
             LOGGER.debug("deleted cmp items, %s"% dl.deleted_cmp_items)
             if dl.new_plan_items:
-                add_tx_to_plan.tx_planning_dialog_add_txs(
+                manipulate_plan.tx_planning_dialog_add_txs(
                 self, dl.new_plan_items)
             if dl.new_cmp_items:
-                add_tx_to_plan.tx_planning_dialog_add_txs(
+                manipulate_plan.tx_planning_dialog_add_txs(
                 self, dl.new_cmp_items, completed=True)
             if dl.deleted_plan_items:
-                add_tx_to_plan.tx_planning_dialog_delete_txs(
+                manipulate_plan.tx_planning_dialog_delete_txs(
                 self, dl.deleted_plan_items)
             if dl.deleted_cmp_items:
-                add_tx_to_plan.tx_planning_dialog_delete_txs(
+                manipulate_plan.tx_planning_dialog_delete_txs(
                 self, dl.deleted_cmp_items, completed=True)
             self.update_plan_est()
             self.updateDetails()
 
     def show_plan_chart_context_menu(self, att, values, point):
         QtCore.QTimer.singleShot(100, partial(
-        add_tx_to_plan.plan_viewer_context_menu, self, att, values, point))
+        manipulate_plan.plan_viewer_context_menu, self, att, values, point))
 
     def show_cmp_chart_context_menu(self, att, values, point):
         # use singleShot to slow this down fractionally
         #(was occasionaly firing the Qmenu)
         QtCore.QTimer.singleShot(100, partial(
-        add_tx_to_plan.cmp_viewer_context_menu, self, att, values, point))
+        manipulate_plan.cmp_viewer_context_menu, self, att, values, point))
 
     def show_plan_listview_context_menu(self, point):
         LOGGER.debug("plan listview pressed %s"% point)
         QtCore.QTimer.singleShot(100,
-            partial(add_tx_to_plan.plan_list_right_click, self, point))
+            partial(manipulate_plan.plan_list_right_click, self, point))
 
     def handle_plan_listview_2xclick(self, index):
         LOGGER.debug("plan listview 2xclick %s"% index)
-        add_tx_to_plan.plan_listview_2xclick(self, index)
+        manipulate_plan.plan_listview_2xclick(self, index)
 
     def show_cmp_listview_context_menu(self, point):
         LOGGER.debug("completed listview pressed %s"% point)
         # use singleShot to slow this down fractionally
         #(was occasionaly firing the Qmenu)
         QtCore.QTimer.singleShot(100,
-            partial(add_tx_to_plan.cmp_list_right_click, self, point))
+            partial(manipulate_plan.cmp_list_right_click, self, point))
 
     def handle_completed_listview_2xclick(self, index):
         LOGGER.debug("completed listview 2xclick %s"% index)
-        add_tx_to_plan.completed_listview_2xclick(self, index)
+        manipulate_plan.completed_listview_2xclick(self, index)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
