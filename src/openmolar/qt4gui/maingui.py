@@ -1988,7 +1988,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 ((tooth, tx),), completed)
 
         if removals:
-            manipulate_plan.remove_treatments_from_plan(
+            manipulate_plan.remove_treatments_from_plan_and_est(
                 self, removals, completed)
 
         if completed:
@@ -3147,6 +3147,17 @@ class OpenmolarGui(QtGui.QMainWindow):
         fees_module.loadFeesTable(self)
 
     def advanced_tx_planning(self):
+        def _add_txs(items, completed=False):
+            cust_items = []
+            for item in items:
+                if item[0] == "custom":
+                    cust_items.append(item)
+            for item in cust_items:
+                items.remove(item)
+            manipulate_plan.add_treatments_to_plan(self, items, completed)
+            for att, shortcut in cust_items:
+                manipulate_plan.customAdd(self, shortcut)
+
         if course_module.newCourseNeeded(self):
             return
 
@@ -3154,21 +3165,15 @@ class OpenmolarGui(QtGui.QMainWindow):
         if dl.exec_():
             manipulate_plan.complete_txs(self, tuple(dl.completed_items), False)
             manipulate_plan.reverse_txs(self, tuple(dl.reversed_items), False)
-            LOGGER.debug("new plan items, %s"% dl.new_plan_items)
-            LOGGER.debug("new cmp items, %s"% dl.new_cmp_items)
-            LOGGER.debug("deleted plan items, %s"% dl.deleted_plan_items)
-            LOGGER.debug("deleted cmp items, %s"% dl.deleted_cmp_items)
             if dl.new_plan_items:
-                manipulate_plan.tx_planning_dialog_add_txs(
-                self, dl.new_plan_items)
+                _add_txs(dl.new_plan_items)
             if dl.new_cmp_items:
-                manipulate_plan.tx_planning_dialog_add_txs(
-                self, dl.new_cmp_items, completed=True)
+                _add_txs(dl.new_cmp_items, completed=True)
             if dl.deleted_plan_items:
-                manipulate_plan.tx_planning_dialog_delete_txs(
+                manipulate_plan.remove_treatments_from_plan_and_est(
                 self, dl.deleted_plan_items)
             if dl.deleted_cmp_items:
-                manipulate_plan.tx_planning_dialog_delete_txs(
+                manipulate_plan.remove_treatments_from_plan_and_est(
                 self, dl.deleted_cmp_items, completed=True)
             self.update_plan_est()
             self.updateDetails()

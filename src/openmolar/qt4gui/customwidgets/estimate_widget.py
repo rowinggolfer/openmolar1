@@ -542,7 +542,7 @@ class EstimateWidget(QtGui.QWidget):
 
         for att, treat, already_completed in dl.deleted_treatments:
             LOGGER.debug("checking deleted %s %s"% (att, treat))
-            manipulate_plan.remove_treatments_from_plan(
+            manipulate_plan.remove_treatments_from_plan_and_est(
             self.om_gui, ((att, treat.strip(" ")),), already_completed)
 
         self.resetEstimate()

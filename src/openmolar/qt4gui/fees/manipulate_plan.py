@@ -187,22 +187,9 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
         usercode,
         _("has not been succesfully priced"),
         _("Please edit the estimate manually")), 1)
-
     return True
 
-def tx_planning_dialog_add_txs(om_gui, items, completed=False):
-    LOGGER.debug(items)
-    cust_items = []
-    for item in items:
-        if item[0] == "custom":
-            cust_items.append(item)
-    for item in cust_items:
-        items.remove(item)
-    add_treatments_to_plan(om_gui, items, completed)
-    for att, shortcut in cust_items:
-        customAdd(om_gui, shortcut)
-
-def remove_treatments_from_plan(om_gui, treatments, completed=False):
+def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
     LOGGER.debug(treatments)
     pt = om_gui.pt
     courseno = pt.treatment_course.courseno
@@ -222,65 +209,37 @@ def remove_treatments_from_plan(om_gui, treatments, completed=False):
         n_txs, tx_hash):
             p_att = "%scmp"% att if completed else "%spl"% att
             val = pt.treatment_course.__dict__[p_att]
-            val = val.replace("%s "% shortcut, "", 1)
-            pt.treatment_course.__dict__[p_att] = val
+            new_val = val.replace("%s "% shortcut, "", 1)
+            pt.treatment_course.__dict__[p_att] = new_val
         else:
-            remove_tx_hash(om_gui, tx_hash)
+            if tx_hash.completed:
+                tx_hash_reverse(om_gui, tx_hash)
+            p_att = "%spl"% att
+            val = pt.treatment_course.__dict__[p_att]
+            new_val = val.replace("%s "% shortcut, "", 1)
+            pt.treatment_course.__dict__[p_att] = new_val
+
+            affected_ests = list(om_gui.pt.ests_from_hash(tx_hash))
+
+            if not affected_ests:
+                om_gui.advise(u"%s '%s' %s<hr />%s"% (
+                _("Couldn't find"),
+                "%s%s%s%s"% (courseno, att, n_txs, shortcut),
+                _("in the patient's estimate"),
+                _("This Shouldn't Happen!")), 2)
+
+            for est in affected_ests:
+                LOGGER.debug("removing reference to %s in estimate %s"% (
+                    tx_hash, est))
+                est.tx_hashes.remove(tx_hash)
+                if est.tx_hashes == []:
+                    om_gui.pt.estimates.remove(est)
 
         if re.match("[ul][lr[1-8]", att):
             plan = pt.treatment_course.__dict__["%spl"% att]
             cmp = pt.treatment_course.__dict__["%scmp"% att]
             charts_gui.updateChartsAfterTreatment(om_gui, att, plan, cmp)
     om_gui.updateDetails()
-
-def remove_tx_hash(om_gui, hash_):
-    LOGGER.debug("removing tx_hash %s"% hash_)
-
-    if hash_.completed:
-        tx_hash_reverse(om_gui, hash_)
-
-    att_, tx = om_gui.pt.get_tx_from_hash(hash_)
-    if att_ is None or tx is None:
-        LOGGER.error("%s not found!"% hash_)
-        om_gui.advise(u"%s %s"% (
-        _("Couldn't find item in the patient's treatment plan"),
-        _("This Shouldn't Happen!")), 2)
-
-        return
-
-    att = "%spl"% att_
-
-    old_val = om_gui.pt.treatment_course.__dict__[att]
-    new_val = old_val.replace("%s"% tx, "", 1)
-    om_gui.pt.treatment_course.__dict__[att] = new_val
-    LOGGER.debug(
-    "updated pt.treatment_course.%s to from '%s' to '%s'"% (
-    att, old_val, new_val))
-
-    affected_ests = list(om_gui.pt.ests_from_hash(hash_))
-    LOGGER.debug("CURRENT_ESTS = %s"% affected_ests)
-
-    if not affected_ests:
-        om_gui.advise(u"%s %s"% (
-        _("Couldn't find item in the patient's estimate"),
-        _("This Shouldn't Happen!")), 2)
-
-    for est in affected_ests:
-        LOGGER.debug("removing reference to %s in estimate %s"% (
-            hash_, est))
-        est.tx_hashes.remove(hash_)
-        if est.tx_hashes == []:
-            om_gui.pt.estimates.remove(est)
-
-    return True
-
-def tx_planning_dialog_delete_txs(om_gui, items, completed=False):
-    '''
-    these will be items such as (("perio", "SP"),). if completed, then the
-    items have already been completed.
-    '''
-    LOGGER.debug("%s %s"% (items, completed))
-    remove_treatments_from_plan(om_gui, items, completed)
 
 def perioAdd(om_gui):
     '''
@@ -403,7 +362,7 @@ def plan_viewer_context_menu(om_gui, att, values, point):
     message = "%s %s %s"% (_("Delete"), att, value)
     delete_action = QtGui.QAction(message, om_gui)
     delete_action.triggered.connect(
-        partial(remove_treatments_from_plan, om_gui, ((att, value),)))
+        partial(remove_treatments_from_plan_and_est, om_gui, ((att, value),)))
 
     cancel_action = QtGui.QAction(_("Cancel"), om_gui)
     #not connected to anything.. f clicked menu will simply die!
@@ -442,7 +401,7 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
         message = "%s %s %s"% (_("Reverse and Delete"), att, value)
         delete_action = QtGui.QAction(message, qmenu)
         delete_action.triggered.connect(partial(
-            remove_treatments_from_plan, om_gui, ((att, value), ), True))
+            remove_treatments_from_plan_and_est, om_gui, ((att, value), ), True))
 
     message = "%s %s %s"% (_("Reverse"), att, value)
     reverse_action = QtGui.QAction(message, qmenu)
@@ -532,20 +491,36 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
         QtGui.QMessageBox.information(mb, _("Help"), message)
 
+    def confirm_selected_table():
+        '''
+        check that the user is happy to use the suggested table, not the current
+        one. returns the selected table, or None to keep the current.
+        '''
+        table = pt.getFeeTable()
+        if fee_item.table == table:
+            return table
+
+        message = '%s<br /><b>%s</b>%s<hr />%s<br />%s' %(
+            _("Confirm you wish to use feescale"),
+            fee_item.table.briefName,
+            _("for this item"),
+            _("The patient's default table is"),
+            table.briefName)
+        if QtGui.QMessageBox.question(om_gui, _("Confirm"), message,
+        QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+        QtGui.QMessageBox.Ok ) == QtGui.QMessageBox.Ok:
+            return fee_item.table
+
     LOGGER.debug("fee_item %s, sub_index %s"% (fee_item, sub_index))
 
     if course_module.newCourseNeeded(om_gui):
         return
 
     pt = om_gui.pt
-    table = pt.getFeeTable()
 
-    if fee_item.table != table:
-        table = confirmWrongFeeTable(om_gui, fee_item.table.index,
-        table.index)
-
-        if not table:
-            return
+    table = confirm_selected_table()
+    if table is None:
+        return
 
     att_ = fee_item.pt_attribute
     if att_ == "chart":
@@ -644,24 +619,6 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         ,1)
 
     om_gui.update_plan_est()
-
-def confirmWrongFeeTable(om_gui, suggested, current):
-    '''
-    check that the user is happy to use the suggested table, not the current
-    one. returns the selected table, or None to keep the current.
-    '''
-    suggestedTable = localsettings.FEETABLES.tables.get(suggested)
-    currentTable = localsettings.FEETABLES.tables.get(current)
-    message = '''<p>Confirm you wish to use the fee table <br />
-    <b>'%s'</b><br /><br />
-    and not the patient's current fee table <br />
-    '%s'<br /> for this item?</p>'''% (
-    suggestedTable.briefName, currentTable.briefName)
-    input = QtGui.QMessageBox.question(om_gui, "Confirm", message,
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.No )
-    if input == QtGui.QMessageBox.Yes:
-        return suggestedTable
 
 def complex_shortcut_addition_handled(om_gui, att, shortcut, item_no, tx_hash):
     LOGGER.debug(
@@ -939,7 +896,7 @@ def reverse_txs(om_gui, treatments, confirm_multiples=True):
         tx_hash_reverse(om_gui, tx_hash)
 
     for att, treat, completed in deleted_treatments:
-        remove_treatments_from_plan(
+        remove_treatments_from_plan_and_est(
             om_gui, ((att, treat.strip(" ")),), completed)
 
 def complete_txs(om_gui, treatments, confirm_multiples=True):
@@ -980,7 +937,7 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
         tx_hash_complete(om_gui, tx_hash)
 
     for att, treat, completed in deleted_treatments:
-        remove_treatments_from_plan(
+        remove_treatments_from_plan_and_est(
             om_gui, ((att, treat.strip(" ")),), completed)
 
 def tx_hash_complete(om_gui, tx_hash):
