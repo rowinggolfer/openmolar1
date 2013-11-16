@@ -358,47 +358,8 @@ class EstimateWidget(QtGui.QWidget):
 
         assert len(item_widget.est_items) == 1, "bad est item passed"
         est = item_widget.est_items[0]
-
-        est = self._least_significant_est(est)
-
-        self.ests.remove(est)
         self.emit(QtCore.SIGNAL("deleteItem"), est)
         self.resetEstimate()
-
-    def _least_significant_est(self, est):
-        '''
-        takes an estimate item, and checks to see if it is the least
-        significant.
-        for example, perhaps the user has deleted small xray number 3 of 4.
-        to ensure the estimate applies fees correctly, item number 4
-        should be the one which is deleted.
-        '''
-        assert len(est.tx_hashes) == 1, "bad est item - too many hashes"
-        tx_hash = est.tx_hashes[0]
-
-        check_att, check_tx = self.pt.get_tx_from_hash(tx_hash)
-        LOGGER.debug(
-        "Checking '%s - %s' is not a specifically ordered item "% (
-        check_att, check_tx))
-
-        for hash_, att_, tx in reversed(list(self.pt.tx_hashes)):
-            if check_att == att_ and tx == check_tx:
-                if hash_ == tx_hash.hash:
-                    return est
-                else:
-                    for ex_est in self.ests:
-                        for ex_tx_hash in ex_est.tx_hashes:
-                            if ex_tx_hash == hash_:
-                                LOGGER.debug(
-                "\n** WAS ASKED TO DELETE %s,\n** INSTEAD DELETING    %s"% (
-                                est, ex_est))
-
-                                return ex_est
-
-        LOGGER.warning(
-            "did not definiively identify estimate (shouldn't happen)")
-
-        return est
 
     def expandItems(self):
         '''

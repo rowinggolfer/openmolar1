@@ -189,58 +189,6 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
         _("Please edit the estimate manually")), 1)
     return True
 
-def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
-    LOGGER.debug(treatments)
-    pt = om_gui.pt
-    courseno = pt.treatment_course.courseno
-    for att, shortcut in treatments:
-        if completed:
-            txs = pt.treatment_course.__dict__["%scmp"% att]
-        else:
-            txs = "%s %s"% (
-                pt.treatment_course.__dict__["%scmp"% att],
-                pt.treatment_course.__dict__["%spl"% att]
-                )
-
-        n_txs = txs.split(" ").count(shortcut)
-        hash_ = hash("%s%s%s%s"% (courseno, att, n_txs, shortcut))
-        tx_hash = TXHash(hash_, completed)
-        if complex_shortcut_removal_handled(om_gui, att, shortcut,
-        n_txs, tx_hash):
-            p_att = "%scmp"% att if completed else "%spl"% att
-            val = pt.treatment_course.__dict__[p_att]
-            new_val = val.replace("%s "% shortcut, "", 1)
-            pt.treatment_course.__dict__[p_att] = new_val
-        else:
-            if tx_hash.completed:
-                tx_hash_reverse(om_gui, tx_hash)
-            p_att = "%spl"% att
-            val = pt.treatment_course.__dict__[p_att]
-            new_val = val.replace("%s "% shortcut, "", 1)
-            pt.treatment_course.__dict__[p_att] = new_val
-
-            affected_ests = list(om_gui.pt.ests_from_hash(tx_hash))
-
-            if not affected_ests:
-                om_gui.advise(u"%s '%s' %s<hr />%s"% (
-                _("Couldn't find"),
-                "%s%s%s%s"% (courseno, att, n_txs, shortcut),
-                _("in the patient's estimate"),
-                _("This Shouldn't Happen!")), 2)
-
-            for est in affected_ests:
-                LOGGER.debug("removing reference to %s in estimate %s"% (
-                    tx_hash, est))
-                est.tx_hashes.remove(tx_hash)
-                if est.tx_hashes == []:
-                    om_gui.pt.estimates.remove(est)
-
-        if re.match("[ul][lr[1-8]", att):
-            plan = pt.treatment_course.__dict__["%spl"% att]
-            cmp = pt.treatment_course.__dict__["%scmp"% att]
-            charts_gui.updateChartsAfterTreatment(om_gui, att, plan, cmp)
-    om_gui.updateDetails()
-
 def perioAdd(om_gui):
     '''
     add perio items
@@ -743,12 +691,65 @@ def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
     LOGGER.debug("%s NOT handled as a complex shortcut"% shortcut)
     return False
 
+def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
+    '''
+    remove treatments from the treatment plan and estimate.
+    treatments is in the form ((att, shortcut),)
+    '''
+    LOGGER.debug((treatments, completed))
+    pt = om_gui.pt
+    courseno = pt.treatment_course.courseno
+    for att, shortcut in treatments:
+        if completed:
+            txs = pt.treatment_course.__dict__["%scmp"% att]
+            n_txs = txs.split(" ").count(shortcut)
+            hash_ = hash("%s%s%s%s"% (courseno, att, n_txs, shortcut))
+            tx_hash = TXHash(hash_, completed)
+            tx_hash_reverse(om_gui, tx_hash)
+
+        txs = "%s %s"% (
+            pt.treatment_course.__dict__["%scmp"% att],
+            pt.treatment_course.__dict__["%spl"% att]
+            )
+
+        n_txs = txs.split(" ").count(shortcut)
+        hash_ = hash("%s%s%s%s"% (courseno, att, n_txs, shortcut))
+        tx_hash = TXHash(hash_, completed=False)
+        p_att = "%spl"% att
+        val = pt.treatment_course.__dict__[p_att]
+        new_val = val.replace("%s "% shortcut, "", 1)
+        pt.treatment_course.__dict__[p_att] = new_val
+
+        if not complex_shortcut_removal_handled(om_gui, att, shortcut,
+        n_txs, tx_hash):
+            affected_ests = list(om_gui.pt.ests_from_hash(tx_hash))
+
+            if not affected_ests:
+                om_gui.advise(u"%s '%s' %s<hr />%s"% (
+                _("Couldn't find"),
+                "%s%s%s%s"% (courseno, att, n_txs, shortcut),
+                _("in the patient's estimate"),
+                _("This Shouldn't Happen!")), 2)
+
+            for est in affected_ests:
+                LOGGER.debug("removing reference to %s in estimate %s"% (
+                    tx_hash, est))
+                est.tx_hashes.remove(tx_hash)
+                if est.tx_hashes == []:
+                    om_gui.pt.estimates.remove(est)
+
+        if re.match("[ul][lr[1-8]", att):
+            plan = pt.treatment_course.__dict__["%spl"% att]
+            cmp = pt.treatment_course.__dict__["%scmp"% att]
+            charts_gui.updateChartsAfterTreatment(om_gui, att, plan, cmp)
+    om_gui.updateDetails()
+
 def remove_estimate_item(om_gui, est_item):
     '''
     the estimate_item has been deleted...
     remove from the plan or completed also?
     '''
-    LOGGER.debug("Apply treatment plan changes for %s"% est_item)
+    LOGGER.debug("Deleting estimate item %s"% est_item)
 
     pt = om_gui.pt
     found = False
@@ -760,59 +761,33 @@ def remove_estimate_item(om_gui, est_item):
             if hash_ == tx_hash.hash:
                 found = True
 
-                LOGGER.debug("       MATCHING hash Found!")
+                LOGGER.debug(
+                "       MATCHING hash Found! removing....'%s' '%s'"% (
+                att, treat_code))
 
                 if est_item.is_exam:
+                    LOGGER.debug("special case - removing exam")
                     pt.treatment_course.examt = ""
                     pt.treatment_course.examd = None
                     pt.addHiddenNote("exam", treat_code, attempt_delete=True)
-                    break
-
-                old_completed = pt.treatment_course.__dict__[att + "cmp"]
-                new_completed = old_completed.replace(treat_code, "", 1)
-
-                old_plan = pt.treatment_course.__dict__[att + "pl"]
-                new_plan = old_plan.replace(treat_code, "", 1)
-
-                if tx_hash.completed:
-                    attribute = att + "cmp"
-                    LOGGER.debug("%s old = '%s' new = '%s'"% (
-                        attribute, old_completed, new_completed))
-
-                    pt.treatment_course.__dict__[attribute] = new_completed
-
-                    if re.match("[ul][lr][1-8]", att):
-                        toothName = pt.chartgrid.get(att,"").upper()
-                        pt.addHiddenNote("chart_treatment",
-                            "%s %s"% (toothName, treat_code),
-                            attempt_delete=True)
-                    elif att in ("xray", "perio"):
-                        pt.addHiddenNote("%s_treatment"%att,
-                            treat_code,
-                            attempt_delete=True)
-                    else:
-                        pt.addHiddenNote("treatment",
-                            treat_code,
-                            attempt_delete=True)
+                    for est in pt.ests_from_hash(tx_hash):
+                        pt.estimates.remove(est)
+                elif treat_code.strip(" ") == "!FEE":
+                    LOGGER.debug("special case - removing feescale added item")
+                    if tx_hash.completed:
+                        tx_hash_reverse(om_gui, tx_hash)
+                    for est in pt.ests_from_hash(tx_hash):
+                        pt.estimates.remove(est)
                 else:
-                    attribute = att + "pl"
-                    LOGGER.debug("%s old = '%s' new = '%s'"% (
-                        attribute, old_plan, new_plan))
-
-                    pt.treatment_course.__dict__[attribute] = new_plan
-
-                if re.match("[ul][lr][1-8]", att):
-                    charts_gui.updateChartsAfterTreatment(om_gui,
-                    att, new_plan, new_completed)
+                    LOGGER.debug("not a special case")
+                    remove_treatments_from_plan_and_est(om_gui,
+                    ((att, treat_code.strip(" ")),), tx_hash.completed)
 
     if not found:
         LOGGER.debug("NO MATCHING hash FOUND!")
         om_gui.advise (u"%s - %s"%(
         _("couldn't pass on delete message for"), est_item.description)
         , 1)
-
-    om_gui.updateHiddenNotesLabel()
-
 
 def recalculate_estimate(om_gui):
     '''
