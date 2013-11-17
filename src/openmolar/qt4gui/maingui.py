@@ -1922,6 +1922,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         manipulate_plan.perioAdd(self)
 
+    def add_denture_items(self):
+        '''
+        add 'Other' items to the treatment plan
+        '''
+        manipulate_plan.denture_add(self)
+
     def addOtherItems(self):
         '''
         add 'Other' items to the treatment plan
@@ -2682,17 +2688,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.rec_apply_exemption_pushButton,
         QtCore.SIGNAL("clicked()"), self.apply_exemption)
 
-        QtCore.QObject.connect(self.ui.xrayTxpushButton,
-        QtCore.SIGNAL("clicked()"), self.addXrayItems)
-
-        QtCore.QObject.connect(self.ui.perioTxpushButton,
-        QtCore.SIGNAL("clicked()"), self.addPerioItems)
-
-        QtCore.QObject.connect(self.ui.otherTxpushButton,
-        QtCore.SIGNAL("clicked()"), self.addOtherItems)
-
-        QtCore.QObject.connect(self.ui.customTx_pushButton,
-        QtCore.SIGNAL("clicked()"), self.addCustomItem)
+        self.ui.xrayTxpushButton.clicked.connect(self.addXrayItems)
+        self.ui.perioTxpushButton.clicked.connect(self.addPerioItems)
+        self.ui.dentureTxpushButton.clicked.connect(self.add_denture_items)
+        self.ui.otherTxpushButton.clicked.connect(self.addOtherItems)
+        self.ui.customTx_pushButton.clicked.connect(self.addCustomItem)
 
         self.ui.estWidget.updated_fees_signal.connect(self.updateDetails)
 

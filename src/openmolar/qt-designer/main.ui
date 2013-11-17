@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>943</width>
-         <height>598</height>
+         <width>963</width>
+         <height>585</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>486</width>
+                      <width>742</width>
                       <height>477</height>
                      </rect>
                     </property>
@@ -1722,7 +1722,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>442</width>
+                      <width>724</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -2015,7 +2015,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>303</width>
+                      <width>744</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2306,7 +2306,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>718</width>
+                      <width>738</width>
                       <height>456</height>
                      </rect>
                     </property>
@@ -2690,8 +2690,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>163</width>
-                      <height>288</height>
+                      <width>590</width>
+                      <height>358</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2892,6 +2892,13 @@
                          </widget>
                         </item>
                         <item>
+                         <widget class="QPushButton" name="dentureTxpushButton">
+                          <property name="text">
+                           <string>Dentures</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
                          <widget class="QPushButton" name="otherTxpushButton">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -2993,8 +3000,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>36</width>
-                      <height>200</height>
+                      <width>549</width>
+                      <height>389</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3024,7 +3031,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>180</width>
-                      <height>274</height>
+                      <height>389</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3155,8 +3162,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>252</width>
-                      <height>376</height>
+                      <width>739</width>
+                      <height>391</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -3589,7 +3596,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>105</height>
+                     <height>92</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">

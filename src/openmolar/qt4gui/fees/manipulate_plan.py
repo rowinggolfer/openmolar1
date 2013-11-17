@@ -27,6 +27,9 @@ from openmolar.qt4gui.dialogs.add_treatment_dialog import AddTreatmentDialog
 from openmolar.qt4gui.dialogs.complete_treatment_dialog \
     import CompleteTreatmentDialog
 
+from openmolar.qt4gui.dialogs.denture_treatment_dialog \
+    import DentureTreatmentDialog
+
 from openmolar.qt4gui.fees import course_module
 
 from openmolar.qt4gui.charts import charts_gui
@@ -237,6 +240,11 @@ def xrayAdd(om_gui, complete=False):
     add_treatments_to_plan(om_gui, chosen_treatments, complete)
     if om_gui.ui.tabWidget.currentIndex() == 4: #clinical summary
         om_gui.load_clinicalSummaryPage()
+
+def denture_add(om_gui):
+    dl = DentureTreatmentDialog(om_gui)
+    if dl.exec_():
+        add_treatments_to_plan(om_gui, dl.chosen_treatments)
 
 def otherAdd(om_gui):
     '''
