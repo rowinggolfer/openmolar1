@@ -1204,7 +1204,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.pt.checkExemption()
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
-        self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         self.load_notes_summary()
 
         self.ui.notes_webView.setHtml("")
@@ -1329,6 +1328,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         details = patientDetails.details(self.pt, Saved)
         self.ui.detailsBrowser.setHtml(details)
         self.ui.detailsBrowser.update()
+        self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
         self.ui.closeTx_pushButton.setText(_("Close Course"))
 
         self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
@@ -1749,13 +1749,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.memos_pushButton,
         self.pt_diary_widget,
         self.ui.childsmile_button,
-        self.ui.plan_listView,
-        self.ui.completed_listView
         ):
 
             widg.setEnabled(arg)
 
-        self.ui.closeCourse_pushButton.setEnabled(self.pt.underTreatment)
+        self.ui.closeCourse_pushButton.setEnabled(False)
         self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)
 
         for i in (0, 1, 2, 5, 6, 7, 8, 9):
@@ -1771,6 +1769,8 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         if not arg:
             self.ui.medNotes_pushButton.setText("MedNotes")
+
+        self.updateDetails()
 
     def changeLanguage(self):
         '''
