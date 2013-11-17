@@ -241,7 +241,7 @@ class TreatmentCourse(object):
     def has_treatment_outstanding(self):
         for att in CURRTRT_ATTS:
             if att[-2:] == "pl":
-                if self.__dict__[att] != "":
+                if self.__dict__[att].strip(" ") != "":
                     return True
         return False
 
