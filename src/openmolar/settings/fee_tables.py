@@ -594,7 +594,9 @@ class ComplexShortcut(object):
 
     def matches(self, att, shortcut):
         LOGGER.debug("Complex shortcut, comparing '%s' '%s' with '%s'"% (
-                att, shortcut, self.shortcut))
+            att, shortcut,
+            self.shortcut if not self.is_regex else self.shortcut.pattern))
+
 
         if re.match("[ul][lr][1-8]", att):
             if self.is_regex:

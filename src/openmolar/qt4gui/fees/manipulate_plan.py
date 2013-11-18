@@ -576,7 +576,24 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
     om_gui.update_plan_est()
 
-def complex_shortcut_addition_handled(om_gui, att, shortcut, item_no, tx_hash):
+def complex_shortcut_addition_handled(om_gui, att, shortcut, item_no, tx_hash,
+recalculating=False):
+    def has_chart_matches(filter="[ul][lr][1-8]"):
+        '''
+        suppose a veneer is passed - is it the only veneer?
+        '''
+        if recalculating and (filter, shortcut) not in pt.first_founds:
+            LOGGER.debug("recalculating estimate, so skipping chart_matches")
+            pt.first_founds.append((filter, shortcut))
+            return False
+        for hash_, att_, s_cut in pt.tx_hashes:
+            if att_ == att or not re.match(filter, att_):
+                pass
+            elif complex_shortcut.matches(att_, s_cut.strip(" ")):
+                return True
+        LOGGER.debug("no chart match found - returning False")
+        return False
+
     LOGGER.debug(
     "checking %s %s %s %s"% (att, shortcut, item_no, tx_hash))
     pt = om_gui.pt
@@ -593,13 +610,16 @@ def complex_shortcut_addition_handled(om_gui, att, shortcut, item_no, tx_hash):
                 m = re.match("n_txs=(\d+)", case.condition)
                 m2 = re.match("n_txs>(\d+)", case.condition)
 
-                if (case.condition == "True" or
+                if not (case.condition == "True" or
+                (case.condition == "only_chart_match" and not
+                has_chart_matches()) or
                 (m and int(m.groups()[0]) == item_no) or
                 (m2 and item_no > int(m2.groups()[0]))
                 ):
-                    handled = True
-                else:
                     continue
+
+                handled = True
+
                 LOGGER.debug("condition met %s"% case.condition)
                 tx_hashes = [tx_hash]
                 for item_code in case.removals:
@@ -820,6 +840,13 @@ def recalculate_estimate(om_gui):
 
     duplicate_txs = []
 
+    # recalculating the estimate has to be handled differently than when
+    # adding treatment to a plan manually.
+    # pt.first_founds is a store of all treatments that are special cases
+    # and need to ignore the rest of the treatment plan
+    # an example is an extra fee for the first crown in an arch.
+    pt.first_founds = []
+
     for hash_, att, tx in pt.tx_hashes:
         tx = tx.strip(" ")
         if tx == "!FEE":
@@ -835,7 +862,7 @@ def recalculate_estimate(om_gui):
 
         else:
             if not complex_shortcut_addition_handled(om_gui, att, tx,
-            item_no, tx_hash):
+            item_no, tx_hash, recalculating=True):
                 add_treatment_to_estimate(om_gui, att, tx, dentid, [tx_hash])
 
     LOGGER.debug("checking for completed items")
@@ -846,6 +873,8 @@ def recalculate_estimate(om_gui):
                     tx_hash.completed = True
 
     om_gui.advise(_("Estimate recalculated"), 1)
+
+    pt.first_founds = None
 
     return True
 
