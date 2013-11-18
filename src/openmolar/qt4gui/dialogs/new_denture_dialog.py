@@ -38,6 +38,9 @@ VALID_INPUTS = (
     "CC_P/(R[1-8]{1,8},)?(L[1-8]{1,8})?$",
     "FL_F$",
     "FL_P/(R[1-8]{1,8},)?(L[1-8]{1,8})?$",
+    "SL",
+    "ST",
+    "", # this one in case of no input whatsoever!
     )
 
 class _OptionPage(QtGui.QWidget):
@@ -45,6 +48,7 @@ class _OptionPage(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.dialog = parent
         self.label = QtGui.QLabel(_("Choose from the following options"))
+        self.label.setWordWrap(True)
         self.frame = QtGui.QFrame()
 
         layout = QtGui.QVBoxLayout(self)
@@ -226,17 +230,50 @@ class PageThree(_OptionPage):
                 retval += tooth
         return retval
 
+class PageFour(_OptionPage):
+    def __init__(self, parent=None):
+        _OptionPage.__init__(self, parent)
+        self.label.setText(_(
+        "You may wish to add the following optional items"))
+
+        self.st_checkBox = QtGui.QCheckBox(_("Special Tray"))
+        self.sl_checkBox = QtGui.QCheckBox(_("Soft Lining"))
+
+        layout = QtGui.QVBoxLayout(self.frame)
+        layout.addWidget(self.st_checkBox)
+        layout.addWidget(self.sl_checkBox)
+
+    @property
+    def _additional_text(self):
+        text_ = ""
+        if self.st_checkBox.isChecked():
+            text_ += " ST"
+        if self.sl_checkBox.isChecked():
+            text_ += " SL"
+        return text_
+
+    @property
+    def ndu_text(self):
+        if self.dialog.ndu_le.text() != "":
+            return self._additional_text
+        return ""
+
+    @property
+    def ndl_text(self):
+        if self.dialog.ndl_le.text() != "":
+            return self._additional_text
+        return ""
+
+
 class AcceptPage(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
-        label = QtGui.QLabel("%s<hr />%s"% (
+        self.label.setText("%s<hr />%s"% (
         _("You have completed your input."),
         _("Please click on Apply")))
-        layout = QtGui.QVBoxLayout(self.frame)
-        layout.addWidget(label)
-        self.label.hide()
+        self.frame.hide()
 
-class DentureTreatmentDialog(ExtendableDialog):
+class NewDentureDialog(ExtendableDialog):
     def __init__(self, om_gui = None):
         ExtendableDialog.__init__(self, om_gui)
 
@@ -251,11 +288,13 @@ class DentureTreatmentDialog(ExtendableDialog):
         page1 = PageOne(self)
         page2 = PageTwo(self)
         page3 = PageThree(self)
+        page4 = PageFour(self)
         accept_page = AcceptPage(self)
 
         self.wizard_widget.addWidget(page1)
         self.wizard_widget.addWidget(page2)
         self.wizard_widget.addWidget(page3)
+        self.wizard_widget.addWidget(page4)
         self.wizard_widget.addWidget(accept_page)
 
         self.insertWidget(self.header_label)
@@ -289,7 +328,6 @@ class DentureTreatmentDialog(ExtendableDialog):
 
     @property
     def current_page(self):
-        LOGGER.debug(self.wizard_widget.widget(self.current_index))
         return self.wizard_widget.widget(self.current_index)
 
     def next_widget(self):
@@ -322,8 +360,8 @@ class DentureTreatmentDialog(ExtendableDialog):
 
     @property
     def check_valid_input(self):
-        ndu, ndl = self.upper_input, self.lower_input
-        if ndu != "":
+        ndus, ndls = self.upper_input, self.lower_input
+        for ndu in ndus.split(" "):
             matched = False
             for input_ in VALID_INPUTS:
                 if re.match(input_, ndu):
@@ -332,7 +370,8 @@ class DentureTreatmentDialog(ExtendableDialog):
                 QtGui.QMessageBox.warning(self, _("Warning"),
                 _("Your upper denture input is invalid"))
                 return False
-        if ndl != "":
+        for ndl in ndls.split(" "):
+            LOGGER.debug("checking '%s'"% ndl)
             matched = False
             for input_ in VALID_INPUTS:
                 if re.match(input_, ndl):
@@ -360,10 +399,12 @@ class DentureTreatmentDialog(ExtendableDialog):
 
     @property
     def chosen_treatments(self):
-        if self.upper_input:
-            yield ("ndu", self.upper_input)
-        if self.lower_input:
-            yield ("ndl", self.lower_input)
+        for input_ in self.upper_input.split(" "):
+            if input_ != "":
+                yield ("ndu", input_)
+        for input_ in self.lower_input.split(" "):
+            if input_ != "":
+                yield ("ndl", input_)
 
     def exec_(self):
         result = ExtendableDialog.exec_(self)
@@ -376,7 +417,7 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
-    dl = DentureTreatmentDialog(None)
+    dl = NewDentureDialog(None)
     if dl.exec_():
         print dl.upper_input.split(" ")
         print dl.lower_input.split(" ")
