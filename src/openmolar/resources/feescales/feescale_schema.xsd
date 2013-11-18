@@ -67,9 +67,11 @@
         <xs:element ref="remove_item" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="add_item" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="alter_item" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="message" minOccurs="0" type="xs:string"/>
+        <xs:element ref="shortcut_substitution" minOccurs="0"  maxOccurs="1"/>
+        <xs:element name="message" minOccurs="0" type="xs:string"/>
       </xs:sequence>
       <xs:attribute name="condition" type="xs:string" use="required"/>
+      <xs:attribute name="handled" type="xs:string" use="optional"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="remove_item">
@@ -85,6 +87,12 @@
   <xs:element name="alter_item">
     <xs:complexType>
       <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="shortcut_substitution">
+    <xs:complexType>
+      <xs:attribute name="find" type="xs:string" use="required"/>
+      <xs:attribute name="replace" type="xs:string" use="optional"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="item">

@@ -613,13 +613,27 @@ class CaseAction(object):
     a simple class to store what should be performed when a ComplexShortcut
     is matched
     '''
+    # some constants to make the code readable
+    FULLY_HANDLED = 2
+    PARTIALLY_HANDLED = 1
+    NOT_HANDLED = 0
+
     def __init__(self, case_node):
         self.removals = []
         self.additions = []
         self.alterations = []
+        self.shortcut_substitution = None
 
         self.condition = case_node.getAttribute("condition").replace(
             "&gt;", ">").replace("&lt;", "<")
+
+        handled = case_node.getAttribute("handled")
+        if handled == "no":
+            self._is_handled = self.NOT_HANDLED
+        elif handled == "part":
+            self._is_handled = self.PARTIALLY_HANDLED
+        else: #default is fully handled!
+            self._is_handled = self.FULLY_HANDLED
 
         removal_nodes = case_node.getElementsByTagName("remove_item")
         for removal_node in removal_nodes:
@@ -633,7 +647,19 @@ class CaseAction(object):
         for alt_node in alteration_nodes:
             self.alterations.append(alt_node.getAttribute("id"))
 
+        try:
+            sub_node = case_node.getElementsByTagName(
+                "shortcut_substitution")[0]
+            self.shortcut_substitution = \
+                sub_node.getAttribute("find"), sub_node.getAttribute("replace")
+        except IndexError:
+            pass
+
         self.message = getTextFromNode(case_node, "message")
+
+    @property
+    def is_handled(self):
+        return self._is_handled
 
     def __repr__(self):
         return "CaseAction '%s' '%s'"% (self.condition, self.message)

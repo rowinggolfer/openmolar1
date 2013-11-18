@@ -36,6 +36,11 @@ from openmolar.qt4gui.charts import charts_gui
 
 LOGGER = logging.getLogger("openmolar")
 
+# some constants to make the code readable
+FULLY_HANDLED = 2
+PARTIALLY_HANDLED = 1
+NOT_HANDLED = 0
+
 def offerTreatmentItems(om_gui, tx_list, completing=False):
     '''
     tx_list should be an iterable in the form ((att, shortcut),(att, shortcut))
@@ -56,6 +61,7 @@ def add_treatments_to_plan(om_gui, treatments, completed=False):
     pt = om_gui.pt
 
     for att, shortcut in treatments:
+        LOGGER.debug("adding %s %s to treatment plan"% (att, shortcut))
         existing_txs = "%s %s"% (pt.treatment_course.__dict__["%scmp"% att] ,
             pt.treatment_course.__dict__["%spl"% att]
             )
@@ -66,14 +72,19 @@ def add_treatments_to_plan(om_gui, treatments, completed=False):
         tx_hash = TXHash(hash("%s%s%s%s"% (courseno, att, n_txs, shortcut)))
 
         dentid = pt.course_dentist
+        pt.treatment_course.__dict__["%spl"% att] += "%s "% shortcut
 
-        if (complex_shortcut_addition_handled(om_gui,
-        att, shortcut, n_txs, tx_hash)
-        or
-        add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash])
-        ):
+        complex_addition_handled, shortcut = complex_shortcut_addition(
+            om_gui,att, shortcut, n_txs, tx_hash)
 
-            pt.treatment_course.__dict__["%spl"% att] += "%s "% shortcut
+        if complex_addition_handled == FULLY_HANDLED:
+            LOGGER.debug("complex addition handled the estimate in entirety")
+        elif complex_addition_handled == PARTIALLY_HANDLED:
+            LOGGER.debug("complex addition handled the estimate in part")
+            add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash])
+        else:
+            LOGGER.debug("adding only as a standard shortcut")
+            add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash])
 
         if completed:
             tx_hash_complete(om_gui, tx_hash)
@@ -576,7 +587,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
     om_gui.update_plan_est()
 
-def complex_shortcut_addition_handled(om_gui, att, shortcut, item_no, tx_hash,
+def complex_shortcut_addition(om_gui, att, shortcut, item_no, tx_hash,
 recalculating=False):
     def has_chart_matches(filter="[ul][lr][1-8]"):
         '''
@@ -600,12 +611,12 @@ recalculating=False):
     fee_table = pt.getFeeTable()
     dentid = pt.course_dentist
     LOGGER.debug("Feetable being checked = %s"% fee_table)
+    handled = NOT_HANDLED
     for complex_shortcut in fee_table.complex_shortcuts:
         if complex_shortcut.matches(att, shortcut):
             LOGGER.debug(
             "%s %s matches a complex shortcut with %d addition_cases"% (
             att, shortcut, len(complex_shortcut.addition_cases)))
-            handled = False
             for case in complex_shortcut.addition_cases:
                 m = re.match("n_txs=(\d+)", case.condition)
                 m2 = re.match("n_txs>(\d+)", case.condition)
@@ -617,8 +628,6 @@ recalculating=False):
                 (m2 and item_no > int(m2.groups()[0]))
                 ):
                     continue
-
-                handled = True
 
                 LOGGER.debug("condition met %s"% case.condition)
                 tx_hashes = [tx_hash]
@@ -647,16 +656,19 @@ recalculating=False):
                     om_gui.advise(case.message, 1)
                     LOGGER.info(case.message)
 
-                if handled:
-                    break
+                if case.shortcut_substitution is not None:
+                    find_, replace = case.shortcut_substitution
+                    shortcut = re.sub(find_, replace, shortcut)
+                    LOGGER.info("modded shortcut to '%s'"% shortcut)
 
-            if handled:
+                handled = case.is_handled
+
+            if handled == FULLY_HANDLED:
                 LOGGER.info("%s %s was handled by as a complex shortcut"% (
                 att, shortcut))
-                return True
+                return handled, shortcut
 
-    LOGGER.debug("%s NOT handled as a complex shortcut"% shortcut)
-    return False
+    return handled, shortcut
 
 def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
     LOGGER.debug((att, shortcut, n_txs, tx_hash))
@@ -832,8 +844,8 @@ def recalculate_estimate(om_gui):
         if estimate.is_custom:
             cust_ests.append(estimate)
 
-    for hash_, att, tx in pt.tx_hashes:
-        if tx.strip(" ") == "!FEE":
+    for hash_, att, shortcut in pt.tx_hashes:
+        if shortcut.strip(" ") == "!FEE":
             for est in pt.ests_from_hash(hash_):
                 cust_ests.append(est)
     pt.estimates = cust_ests
@@ -847,23 +859,27 @@ def recalculate_estimate(om_gui):
     # an example is an extra fee for the first crown in an arch.
     pt.first_founds = []
 
-    for hash_, att, tx in pt.tx_hashes:
-        tx = tx.strip(" ")
-        if tx == "!FEE":
+    for hash_, att, shortcut in pt.tx_hashes:
+        shortcut = shortcut.strip(" ")
+        if shortcut == "!FEE" or att == "custom":
             continue
 
         tx_hash = TXHash(hash_)
 
-        duplicate_txs.append("%s%s"%(att, tx))
-        item_no = duplicate_txs.count("%s%s"%(att, tx))
+        duplicate_txs.append("%s%s"%(att, shortcut))
+        n_txs = duplicate_txs.count("%s%s"%(att, shortcut))
 
-        if att == "custom":
-            pass
+        complex_addition_handled, shortcut = complex_shortcut_addition(
+        om_gui,att, shortcut, n_txs, tx_hash, recalculating=True)
 
+        if complex_addition_handled == FULLY_HANDLED:
+            LOGGER.debug("complex addition handled the estimate in entirety")
+        elif complex_addition_handled == PARTIALLY_HANDLED:
+            LOGGER.debug("complex addition handled the estimate in part")
+            add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash])
         else:
-            if not complex_shortcut_addition_handled(om_gui, att, tx,
-            item_no, tx_hash, recalculating=True):
-                add_treatment_to_estimate(om_gui, att, tx, dentid, [tx_hash])
+            LOGGER.debug("adding only as a standard shortcut")
+            add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash])
 
     LOGGER.debug("checking for completed items")
     for est in pt.estimates:
