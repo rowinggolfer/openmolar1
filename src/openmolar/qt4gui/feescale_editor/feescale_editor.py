@@ -122,6 +122,11 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_increment = QtGui.QAction(_("Increase/decrease fees"), self)
         action_increment.setToolTip(_("Apply a percentage"))
 
+        action_zero_charges = QtGui.QAction(
+            _("Zero Patient Contributions"), self)
+        action_zero_charges.setToolTip(
+            _("Set all patient charges to Zero in the current feescale"))
+
         icon = QtGui.QIcon.fromTheme("application-exit")
         action_quit = QtGui.QAction(icon, _("Quit"), self)
 
@@ -143,6 +148,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         menu_database.addAction(action_commit)
 
         menu_tools.addAction(action_increment)
+        menu_tools.addAction(action_zero_charges)
 
         self.tab_widget = QtGui.QTabWidget()
 
@@ -183,6 +189,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_commit.triggered.connect(self.apply_changes)
 
         action_increment.triggered.connect(self.increase_fees)
+        action_zero_charges.triggered.connect(self.zero_charges)
 
         action_quit.triggered.connect(
             QtGui.QApplication.instance().closeAllWindows)
@@ -394,6 +401,14 @@ class FeescaleEditor(QtGui.QMainWindow):
             return
         self.current_parser.increase_fees(percentage)
         self.text_edit.setText(self.current_parser.text)
+
+    def zero_charges(self):
+        if QtGui.QMessageBox.question(self, _("Confirm"),
+        _("Zero all patient charges in the current feescale?"),
+        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
+        QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+            self.current_parser.zero_charges()
+            self.text_edit.setText(self.current_parser.text)
 
     def pull_xml(self):
         self._checking_files = True

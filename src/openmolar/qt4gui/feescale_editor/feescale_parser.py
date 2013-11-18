@@ -150,6 +150,14 @@ class FeescaleParser(object):
         self._edited_text = None
         LOGGER.info("%s fees increased by %s%%"% (self.description,percentage))
 
+    def zero_charges(self):
+        for node in self.dom.getElementsByTagName("charge"):
+            fee = node.firstChild.data
+            node.firstChild.replaceWholeText("0")
+
+        self._edited_text = None
+        LOGGER.info("%s patient charges zeroed"% self.description)
+
     @property
     def description(self):
         try:
