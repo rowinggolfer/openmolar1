@@ -157,6 +157,7 @@ class FeeTable(object):
 
         self.complex_shortcuts = []
         self.treatmentCodes = OrderedDict()
+        self.chartPlainCodes = OrderedDict()
         self.chartRegexCodes = OrderedDict()
         self.otherRegexCodes = OrderedDict()
 
@@ -271,22 +272,26 @@ class FeeTable(object):
                 else:
                     self.otherRegexCodes[key] = item_code
             else:
-                self.treatmentCodes[fee_item.usercode] = item_code
+                if fee_item.pt_attribute == "chart":
+                    self.chartPlainCodes[fee_item.usercode] = item_code
+                else:
+                    self.treatmentCodes[fee_item.usercode] = item_code
 
         self.dom.unlink()
 
-    def getToothCode(self, tooth, arg):
+    def getToothCode(self, tooth, shortcut):
         '''
         converts fillings into four digit codes used in the feescale
         eg "MOD" -> "1404" (both are strings)
-        arg will be something like "CR,GO" or "MOD,CO"
+        shortcut will be something like "CR,GO" or "MOD,CO"
+        if not found, "-----" will be returned
         '''
-        LOGGER.debug("getToothCode for %s%s"% (tooth, arg))
+        LOGGER.debug("getToothCode for %s%s"% (tooth, shortcut))
 
         for key in self.chartRegexCodes:
-            if key.match(tooth+arg):
+            if key.match(tooth+shortcut):
                 return self.chartRegexCodes[key]
-        return "-----"
+        return self.chartPlainCodes.get(shortcut, "-----")
 
     def getItemCodeFromUserCode(self, arg):
         '''
@@ -533,6 +538,7 @@ class FeeItem(object):
 
         LOGGER.warning("Complex FeeItem fee lookup, item_no=%d"% item_no)
         for i, condition in enumerate(self.conditions):
+            LOGGER.debug("checking condition '%s'"% condition)
             if condition == "item_no=%d"% item_no:
                 fee = feeList[i]
                 LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
