@@ -385,7 +385,6 @@ class FeeItem(object):
         self.brief_descriptions = []
         self.conditions = []
         self.shortcut = None
-        self.pt_attribute = "other"
         self.is_regex = False
         self._forbid_reason = None
         self.fee_shortcuts = []
@@ -394,11 +393,17 @@ class FeeItem(object):
             shortcut_node = element.getElementsByTagName("shortcut")[0]
             self.is_regex = shortcut_node.getAttribute("type") == "regex"
             self.pt_attribute = shortcut_node.getAttribute("att")
-            self.shortcut = shortcut_node.childNodes[0].data
+            try:
+                self.shortcut = shortcut_node.childNodes[0].data
+            except IndexError:
+                self.shortcut = None
         except IndexError:
-            self.shortcut = None
             self.pt_attribute = "other"
             self.is_regex = False
+            self.shortcut = None
+
+        if not self.pt_attribute:
+            self.pt_attribute = "other"
 
         self.description = getTextFromNode(element, "description")
 
