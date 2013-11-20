@@ -53,10 +53,11 @@ FEESCALE_DIR = os.path.join(localsettings.localFileDirectory, "feescales")
 if not os.path.exists(FEESCALE_DIR):
     write_readme()
 
-QUERY = ('select ix, xml_data from feescales [QUALIFIER] order by disp_order')
+QUERY = 'select ix, xml_data from feescales [QUALIFIER] order by priority desc'
 
-UPDATE_QUERY = "replace into feescales (ix, xml_data) values (%s, %s)"
+UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
 
+NEW_FEESCALE_QUERY = "insert into feescales (xml_data) values(%s)"
 
 class FeescaleHandler(object):
 

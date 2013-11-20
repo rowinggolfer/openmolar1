@@ -70,7 +70,8 @@ INDEX (est_id)
 create table feescales (
     ix            int(11) unsigned  not null auto_increment,
     in_use        bool              not null default false,
-    disp_order    int(8)  not null default 0,
+    priority      int(8),
+    comment       varchar(255) not null default "unnamed feescale",
     xml_data      mediumtext not null,
 PRIMARY KEY (ix)
 )''',
@@ -114,7 +115,8 @@ SOURCE_QUERY = ('SELECT courseno, ix, category, type, completed '
 DEST_QUERY = ('insert into est_link (est_id, tx_hash, completed) '
 'values (%s, %s, %s)')
 
-FEESCALE_QUERY = 'insert into feescales (xml_data) values (%s)'
+FEESCALE_QUERY = ('insert into feescales (xml_data, in_use, comment) '
+'values (%s, 1, "example feescale")')
 
 #this query gets selected estimate data for all active courses
 LOGGER_SELECT_QUERY = '''
