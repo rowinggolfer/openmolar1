@@ -434,7 +434,7 @@ class EstimateWidget(QtGui.QWidget):
                     func_ = manipulate_plan.complete_txs
                 else:
                     func_ = manipulate_plan.reverse_txs
-                func_(self.om_gui, [check_att, check_tx])
+                func_(self.om_gui, ([check_att, check_tx]))
 
                 return False
 
