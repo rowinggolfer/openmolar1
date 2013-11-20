@@ -74,6 +74,9 @@ def add_treatments_to_plan(om_gui, treatments, completed=False):
         dentid = pt.course_dentist
         pt.treatment_course.__dict__["%spl"% att] += "%s "% shortcut
 
+        if re.match("[ul][lr][1-8]", att):
+            n_txs = None
+
         complex_addition_handled, shortcut = complex_shortcut_addition(
             om_gui,att, shortcut, n_txs, tx_hash)
 
@@ -587,26 +590,26 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
     om_gui.update_plan_est()
 
-def complex_shortcut_addition(om_gui, att, shortcut, item_no, tx_hash,
+def complex_shortcut_addition(om_gui, att, shortcut, n_txs, tx_hash,
 recalculating=False):
-    def has_chart_matches(filter="[ul][lr][1-8]"):
+    def number_of_chart_matches(filter="[ul][lr][1-8]"):
         '''
         suppose a veneer is passed - is it the only veneer?
         '''
         if recalculating and (filter, shortcut) not in pt.first_founds:
             LOGGER.debug("recalculating estimate, so skipping chart_matches")
             pt.first_founds.append((filter, shortcut))
-            return False
+            return 1
+        n = 0
         for hash_, att_, s_cut in pt.tx_hashes:
-            if att_ == att or not re.match(filter, att_):
-                pass
-            elif complex_shortcut.matches(att_, s_cut.strip(" ")):
-                return True
-        LOGGER.debug("no chart match found - returning False")
-        return False
+            if (re.match(filter, att_) and
+            complex_shortcut.matches(att_, s_cut.strip(" "))):
+                n += 1
+        LOGGER.debug("number_of_chart_matches = %d"% n)
+        return n
 
     LOGGER.debug(
-    "checking %s %s %s %s"% (att, shortcut, item_no, tx_hash))
+    "checking %s %s %s %s"% (att, shortcut, n_txs, tx_hash))
     pt = om_gui.pt
     fee_table = pt.getFeeTable()
     dentid = pt.course_dentist
@@ -620,12 +623,15 @@ recalculating=False):
             for case in complex_shortcut.addition_cases:
                 m = re.match("n_txs=(\d+)", case.condition)
                 m2 = re.match("n_txs>(\d+)", case.condition)
+                m3 = re.match("(\d+)<n_txs<(\d+)", case.condition)
 
-                if not (case.condition == "True" or
-                (case.condition == "only_chart_match" and not
-                has_chart_matches()) or
-                (m and int(m.groups()[0]) == item_no) or
-                (m2 and item_no > int(m2.groups()[0]))
+                if (m or m2 or m3) and n_txs is None:
+                    n_txs = number_of_chart_matches()
+                if not (
+                case.condition == "True" or
+                (m and int(m.groups()[0]) == n_txs) or
+                (m2 and n_txs > int(m2.groups()[0])) or
+                (m3 and int(m3.groups()[0]) < n_txs < int(m3.groups()[1]))
                 ):
                     continue
 
@@ -650,11 +656,15 @@ recalculating=False):
                     for est in pt.estimates:
                         if est.itemcode == item_code:
                             est.tx_hashes += tx_hashes
+                            est.fee, est.ptfee = fee_table.recalc_fee(
+                                item_code, n_txs)
+
                             LOGGER.debug("est altered %s"% est)
 
                 if case.message != "":
-                    om_gui.advise(case.message, 1)
-                    LOGGER.info(case.message)
+                    message = case.message.replace("SHORTCUT", shortcut)
+                    om_gui.advise(message, 1)
+                    LOGGER.info(message)
 
                 if case.shortcut_substitution is not None:
                     find_, replace = case.shortcut_substitution
@@ -662,6 +672,7 @@ recalculating=False):
                     LOGGER.info("modded shortcut to '%s'"% shortcut)
 
                 handled = case.is_handled
+                break
 
             if handled == FULLY_HANDLED:
                 LOGGER.info("%s %s was handled by as a complex shortcut"% (
@@ -671,6 +682,18 @@ recalculating=False):
     return handled, shortcut
 
 def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
+    def number_of_chart_matches(filter="[ul][lr][1-8]"):
+        '''
+        suppose a veneer is passed - is it the only veneer?
+        '''
+        n = 0
+        for hash_, att_, s_cut in pt.tx_hashes:
+            if (re.match(filter, att_) and
+            complex_shortcut.matches(att_, s_cut.strip(" "))):
+                n += 1
+        LOGGER.debug("number_of_chart_matches = %d"% n)
+        return n
+
     LOGGER.debug((att, shortcut, n_txs, tx_hash))
     pt = om_gui.pt
     dentid = pt.course_dentist
@@ -685,14 +708,18 @@ def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
             for case in complex_shortcut.removal_cases:
                 m = re.match("n_txs=(\d+)", case.condition)
                 m2 = re.match("n_txs>(\d+)", case.condition)
+                m3 = re.match("(\d+)<n_txs<(\d+)", case.condition)
 
-                if (case.condition == "True" or
+                if (m or m2 or m3) and n_txs is None:
+                    n_txs = number_of_chart_matches()
+
+                if not (case.condition == "True" or
                 (m and int(m.groups()[0]) == n_txs) or
-                (m2 and n_txs > int(m2.groups()[0]))
+                (m2 and n_txs > int(m2.groups()[0])) or
+                (m3 and int(m3.groups()[0]) < n_txs < int(m3.groups()[1]))
                 ):
-                    handled = True
-                else:
                     continue
+
                 LOGGER.debug("condition met %s"% case.condition)
                 tx_hashes = [tx_hash]
                 for item_code in case.removals:
@@ -707,14 +734,26 @@ def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
                     add_treatment_to_estimate(om_gui,
                     att, shortcut, dentid, tx_hashes, item_code)
 
+                for item_code in case.alterations:
+                    #instead of adding a new estimate item
+                    #add this treatment hash to existing item
+                    LOGGER.debug("altering code %s"% item_code)
+                    for est in pt.estimates:
+                        if est.itemcode == item_code:
+                            for hash_ in tx_hashes:
+                                if hash_ in est.tx_hashes:
+                                    est.tx_hashes.remove(hash_)
+                            est.fee, est.ptfee = fee_table.recalc_fee(
+                                item_code, n_txs)
+
+                            LOGGER.debug("est altered %s"% est)
+
+
                 if case.message != "":
-                    om_gui.advise(case.message, 1)
-                    LOGGER.info(case.message)
+                    message = case.message.replace("SHORTCUT", shortcut)
+                    om_gui.advise(message, 1)
+                    LOGGER.info(message)
 
-                if handled:
-                    break
-
-            if handled:
                 LOGGER.debug("removing all references to this treatment in "
                 "from the patient's estimate")
                 for hash_ in tx_hashes:
@@ -758,7 +797,9 @@ def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
         p_att = "%spl"% att
         val = pt.treatment_course.__dict__[p_att]
         new_val = val.replace("%s "% shortcut, "", 1)
-        pt.treatment_course.__dict__[p_att] = new_val
+
+        if re.match("[ul][lr][1-8]", att):
+            n_txs=None
 
         if not complex_shortcut_removal_handled(om_gui, att, shortcut,
         n_txs, tx_hash):
@@ -777,6 +818,8 @@ def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
                 est.tx_hashes.remove(tx_hash)
                 if est.tx_hashes == []:
                     om_gui.pt.estimates.remove(est)
+
+        pt.treatment_course.__dict__[p_att] = new_val
 
         if re.match("[ul][lr[1-8]", att):
             plan = pt.treatment_course.__dict__["%spl"% att]
@@ -866,8 +909,11 @@ def recalculate_estimate(om_gui):
 
         tx_hash = TXHash(hash_)
 
-        duplicate_txs.append("%s%s"%(att, shortcut))
-        n_txs = duplicate_txs.count("%s%s"%(att, shortcut))
+        if re.match("[ul][lr][1-8]", att):
+            n_txs = None
+        else:
+            duplicate_txs.append("%s%s"%(att, shortcut))
+            n_txs = duplicate_txs.count("%s%s"%(att, shortcut))
 
         complex_addition_handled, shortcut = complex_shortcut_addition(
         om_gui,att, shortcut, n_txs, tx_hash, recalculating=True)

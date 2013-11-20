@@ -72,28 +72,31 @@ class Estimate(object):
         1 = some treatments completed
         2 = all related treatments completed
         '''
-        all_planned, all_completed = True, True
-        for tx_hash in self.tx_hashes:
-            all_planned = all_planned and not tx_hash.completed
-            all_completed = all_completed and tx_hash.completed
-
-        if all_planned:
-            return 0
-        if all_completed:
+        if self.n_completed == len(self.tx_hashes):
             return 2
+        if self.n_completed == 0:
+            return 0
         return 1
+
+    @property
+    def n_completed(self):
+        n_completed = 0
+        for tx_hash in self.tx_hashes:
+            if tx_hash.completed:
+                n_completed += 1
+        return n_completed
 
     @property
     def interim_fee(self):
         if self.tx_hashes == []:
             return 0
-        return self.fee//len(self.tx_hashes)
+        return self.n_completed * self.fee//len(self.tx_hashes)
 
     @property
     def interim_pt_fee(self):
         if self.tx_hashes == []:
             return 0
-        return self.ptfee//len(self.tx_hashes)
+        return self.n_completed * self.ptfee//len(self.tx_hashes)
 
     def __repr__(self):
         return self.__str__()
@@ -234,7 +237,7 @@ def sorted_estimates(ests):
                         se.number += est.number
                     se.fee += est.fee
                     se.ptfee += est.ptfee
-                    se.type += "|" + est.type
+                    #se.type += "|" + est.type
                     return True
     for est in ests:
         if not combineEsts(est):

@@ -328,6 +328,22 @@ class FeeTable(object):
 
         return fee_item.get_fees(existing_no+1)
 
+    def recalc_fee(self, itemcode, item_no):
+        '''
+        returns a tuple of (fee, ptfee) for an item
+        '''
+        LOGGER.debug("recalculating fee for itemcode %s with %d items"% (
+            itemcode, item_no))
+
+        try:
+            fee_item = self.feesDict[itemcode]
+        except KeyError:
+            LOGGER.warning("itemcode %s not found in feetable %s"% (
+                itemcode, self.database_ix))
+            return (0, 0)
+
+        return fee_item.get_fees(item_no)
+
     def getItemDescription(self, itemcode, usercode):
         '''
         returns the patient readable (ie. estimate ready) description of the
@@ -521,28 +537,13 @@ class FeeItem(object):
                 fee = feeList[i]
                 LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
                 return fee
-            m = re.match("item_no>=(\d+)", condition)
-            if m and item_no >= int(m.groups()[0]):
-                fee = feeList[i]
-                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
-                return fee
             m = re.match("item_no<(\d+)", condition)
             if m and item_no < int(m.groups()[0]):
                 fee = feeList[i]
                 LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
                 return fee
-            m = re.match("item_no<=(\d+)", condition)
-            if m and item_no <= int(m.groups()[0]):
-                fee = feeList[i]
-                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
-                return fee
             m = re.match("(\d+)<item_no<(\d+)", condition)
             if m and int(m.groups()[0]) < item_no < int(m.groups()[1]):
-                fee = feeList[i]
-                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
-                return fee
-            m = re.match("(\d+)<=item_n<=(\d+)", condition)
-            if m and int(m.groups()[0]) <= item_no <= int(m.groups()[1]):
                 fee = feeList[i]
                 LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
                 return fee
