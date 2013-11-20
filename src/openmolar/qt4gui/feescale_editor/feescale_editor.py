@@ -56,6 +56,7 @@ class XMLEditor(Qsci.QsciScintilla):
 class FeescaleEditor(QtGui.QMainWindow):
     _checking_files = False
     _known_deleted_parsers = []
+    search_text = ""
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.window_title = _("Feescale Editor")
@@ -105,6 +106,7 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         icon = QtGui.QIcon.fromTheme("document-save")
         action_save = QtGui.QAction(icon, _("Save File"), self)
+        action_save.setShortcut("Ctrl+S")
         action_save.setToolTip(_("Save Current File"))
 
         icon = QtGui.QIcon.fromTheme("document-save-as")
@@ -118,6 +120,16 @@ class FeescaleEditor(QtGui.QMainWindow):
         icon = QtGui.QIcon.fromTheme("view-refresh")
         action_refresh = QtGui.QAction(icon, _("Refresh"), self)
         action_refresh.setToolTip(_("refresh local files"))
+
+        icon = QtGui.QIcon.fromTheme("document-find")
+        action_find = QtGui.QAction(icon, _("Find"), self)
+        action_find.setShortcut("Ctrl+F")
+        action_find.setToolTip(
+        _("Search current file for first forward match of entered text"))
+
+        action_find_again = QtGui.QAction(icon, _("Find Again"), self)
+        action_find_again.setShortcut("Ctrl+G")
+        action_find_again.setToolTip(_("Search current file again for text"))
 
         action_increment = QtGui.QAction(_("Increase/decrease fees"), self)
         action_increment.setToolTip(_("Apply a percentage"))
@@ -143,6 +155,9 @@ class FeescaleEditor(QtGui.QMainWindow):
         menu_file.addAction(action_save_all)
         menu_file.addAction(action_refresh)
         menu_file.addAction(action_quit)
+
+        menu_edit.addAction(action_find)
+        menu_edit.addAction(action_find_again)
 
         menu_database.addAction(action_pull)
         menu_database.addAction(action_commit)
@@ -185,6 +200,9 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_save_all.triggered.connect(self.save_files)
         action_refresh.triggered.connect(self.refresh_files)
 
+        action_find.triggered.connect(self.find_text)
+        action_find_again.triggered.connect(self.find_again)
+
         action_pull.triggered.connect(self.pull_xml)
         action_commit.triggered.connect(self.apply_changes)
 
@@ -209,7 +227,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             LOGGER.debug(message)
             m = QtGui.QMessageBox(self)
             m.setText(message)
-            m.setIcon(m.information)
+            m.setIcon(m.Information)
             m.setStandardButtons(QtGui.QMessageBox.NoButton)
             m.setWindowTitle(_("advisory"))
             m.setModal(False)
@@ -393,6 +411,19 @@ class FeescaleEditor(QtGui.QMainWindow):
             if "<item"in line:
                 item_count += 1
 
+    def find_text(self):
+        self.search_text, result = QtGui.QInputDialog.getText(
+            self, _("Find Text"),
+            _("Please enter the text you wish to search for"),
+            QtGui.QLineEdit.Normal, self.search_text)
+        if result:
+            self.find_again()
+
+    def find_again(self):
+        if not self.text_edit.findFirst(
+        self.search_text, True, True, True, True):
+            self.advise("'%s' %s"% (self.search_text, _("not found")))
+
     def increase_fees(self):
         percentage, result = QtGui.QInputDialog.getDouble(
             self, _("Modify all fees"),
@@ -459,6 +490,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.advise(u"%s %s"% (i, _("Files saved")), 1)
 
     def save(self):
+        LOGGER.debug("save")
         self.save_as(filepath = self.current_parser.filepath)
 
     def save_as(self, bool_=None, filepath=None):
@@ -486,6 +518,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             else:
                 if parser in self._known_deleted_parsers:
                     self._known_deleted_parsers.remove(parser)
+                parser.reset_orig_modified()
                 self.advise(_("File Saved"), 1)
         except Exception as exc:
             LOGGER.exception("unable to save")
@@ -541,6 +574,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             return False
         except:
             LOGGER.exception("property_exception")
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
