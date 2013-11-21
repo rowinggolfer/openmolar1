@@ -3145,6 +3145,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.advise(_("Reloading feescales from database"))
         localsettings.loadFeeTables()
         fees_module.loadFeesTable(self)
+        if self.pt is not None:
+            self.pt.forget_fee_table()
 
     def advanced_tx_planning(self):
         def _add_txs(items, completed=False):
