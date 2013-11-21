@@ -90,7 +90,7 @@ def details(pt, Saved=True):
         #if pt.pf11!=0:
         #    retarg += '(feescale %s)<br />'%chr(pt.pf11)
 
-        retarg += "%s<br />"% pt.getFeeTable().briefName
+        retarg += "%s<br />"% pt.fee_table.briefName
         try:
             retarg += 'dentist      = %s'% localsettings.ops[pt.dnt1]
             if pt.dnt2 != 0 and pt.dnt1 != pt.dnt2:

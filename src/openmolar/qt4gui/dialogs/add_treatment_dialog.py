@@ -38,7 +38,7 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.items = []
-        feetable = pt.getFeeTable()
+        feetable = pt.fee_table
         for att, shortcut in usercodes:
             item = feetable.getItemCodeFromUserCode("%s %s"% (att, shortcut))
             item_description = feetable.getItemDescription(item, shortcut)

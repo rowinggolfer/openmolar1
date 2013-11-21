@@ -73,7 +73,7 @@ class CrownChoiceDialog(ExtendableDialog):
             all_crowns_but.clicked.connect(self._show_all_crowns)
             self.add_advanced_widget(all_crowns_but)
 
-            self.add_buttons(self.om_gui.pt.getFeeTable().ui_lists["crowns"])
+            self.add_buttons(self.om_gui.pt.fee_table.ui_lists["crowns"])
 
     def sizeHint(self):
         return QtCore.QSize(400, 500)

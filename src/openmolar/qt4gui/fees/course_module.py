@@ -106,7 +106,7 @@ def apply_new_courseno(om_gui, new_courseno, accd=None):
         #om_gui.pt.dbstate.treatment_course = new_course
         om_gui.pt.treatment_course.setAccd(accd)
         # force a recheck for the new course date
-        om_gui.pt.feeTable = None
+        om_gui.pt.forget_fee_table()
         om_gui.pt.estimates = []
         om_gui.load_newEstPage()
         om_gui.ui.planChartWidget.clear(keepSelection=True)

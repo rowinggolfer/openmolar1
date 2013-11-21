@@ -260,7 +260,7 @@ class patient(object):
         self.MEDALERT = False
         self.HIDDENNOTES = []
         self.chartgrid = {}
-        self.feeTable = None
+        self._fee_table = None
         self.synopsis = ""
         self._n_family_members = None
         self._dayBookHistory = None
@@ -442,21 +442,20 @@ class patient(object):
         '''
         return self.ageYears < 18
 
-    def getFeeTable(self):
+    def forget_fee_table(self):
+        self._fee_table = None
+
+    @property
+    def fee_table(self):
         '''
         logic to determine which feeTable should be used for standard items
         '''
-        if self.feeTable == None:
-            feecat = self.cset
-            if self.cset == "N":
-                if self.getAge()[0] < 18:
-                    feecat = "C"
+        if self._fee_table is None:
             if self.treatment_course.accd is None:
                 cse_accd = localsettings.currentDay()
             else:
                 cse_accd = self.treatment_course.accd
             for table in localsettings.FEETABLES.tables.values():
-
                 LOGGER.debug(
                 "checking feescale %s to see if suitable a feetable"% (
                 table))
@@ -464,18 +463,18 @@ class patient(object):
                 start, end = table.startDate, table.endDate
                 LOGGER.debug("categories, start, end = %s, %s, %s"% (
                     table.categories, start, end))
-                if end == None:
+                if end is None:
                     end = localsettings.currentDay()
 
-                if feecat in table.categories and start <= cse_accd <=end:
-                    self.feeTable = table
+                if self.cset in table.categories and start <= cse_accd <=end:
+                    self._fee_table = table
 
-            if self.feeTable == None:
+            if self._fee_table is None:
                 #-- no matching table found, use the default.
-                print "WARNING - NO SUITABLE FEETABLE FOUND, RETURNING DEFAULT"
-                self.feeTable = localsettings.FEETABLES.default_table
+                LOGGER.warning("NO SUITABLE FEETABLE FOUND, RETURNING DEFAULT")
+                self._fee_table = localsettings.FEETABLES.default_table
 
-        return self.feeTable
+        return self._fee_table
 
     def getEsts(self):
         '''
@@ -896,7 +895,7 @@ if __name__ =="__main__":
             print "%s '%s'"% (att.ljust(20), pt.__dict__[att])
 
     localsettings.loadFeeTables()
-    pt.getFeeTable()
+    pt.fee_table
 
     pt.take_snapshot()
     pt.dob = datetime.date(1969,12,9)

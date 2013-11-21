@@ -164,7 +164,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
     est.courseno = pt.courseno0
 
     if chosen_feescale == None:
-        table = pt.getFeeTable()
+        table = pt.fee_table
     else:
         table = chosen_feescale
 
@@ -264,7 +264,7 @@ def otherAdd(om_gui):
     '''
     add 'other' items
     '''
-    item_list = om_gui.pt.getFeeTable().other_shortcuts
+    item_list = om_gui.pt.fee_table.other_shortcuts
 
     chosen_treatments = offerTreatmentItems(om_gui, item_list)
     if chosen_treatments:
@@ -466,7 +466,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         check that the user is happy to use the suggested table, not the current
         one. returns the selected table, or None to keep the current.
         '''
-        table = pt.getFeeTable()
+        table = pt.fee_table
         if fee_item.table == table:
             return table
 
@@ -505,7 +505,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
     else:
         shortcut = fee_item.shortcut
 
-    if table == pt.getFeeTable() and shortcut != "!FEE" and att_ != "exam":
+    if table == pt.fee_table and shortcut != "!FEE" and att_ != "exam":
         message = "%s %s<hr />%s"%(
         _("You appear to be adding a relatively straightforward code to the"
         " ""patient's treatment plan using their default feescale"),
@@ -611,7 +611,7 @@ recalculating=False):
     LOGGER.debug(
     "checking %s %s %s %s"% (att, shortcut, n_txs, tx_hash))
     pt = om_gui.pt
-    fee_table = pt.getFeeTable()
+    fee_table = pt.fee_table
     dentid = pt.course_dentist
     LOGGER.debug("Feetable being checked = %s"% fee_table)
     handled = NOT_HANDLED
@@ -697,7 +697,7 @@ def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
     LOGGER.debug((att, shortcut, n_txs, tx_hash))
     pt = om_gui.pt
     dentid = pt.course_dentist
-    fee_table = pt.getFeeTable()
+    fee_table = pt.fee_table
     LOGGER.debug("Feetable being checked = %s"% fee_table)
     for complex_shortcut in fee_table.complex_shortcuts:
         if complex_shortcut.matches(att, shortcut):

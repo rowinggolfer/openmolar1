@@ -558,7 +558,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 fees_module.loadFeesTable(self)
             if self.pt.serialno !=0:
                 self.ui.chooseFeescale_comboBox.setCurrentIndex(
-                    self.pt.getFeeTable().index)
+                    self.pt.fee_table.index)
 
         if ci == 7:
             #--forum

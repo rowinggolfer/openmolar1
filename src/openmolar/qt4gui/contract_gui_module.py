@@ -81,7 +81,7 @@ def changeCourseType(om_gui, cset):
     i = ["P", "I", "N"].index(om_gui.pt.cset[:1])
     om_gui.ui.contract_tabWidget.setCurrentIndex(i)
     #do this so that the table is reset at any lookup
-    om_gui.pt.feeTable = None 
+    om_gui.pt.forget_fee_table()
 
 def editNHScontract(om_gui):
     '''blank function which needs work'''
