@@ -31,27 +31,24 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 STATIC_LIST = []
 for shortcut, description in (
-("CR,PJ", _("Porcelain Jacket")),
-("CR,GO", _("Gold")),
-("CR,LAVA", _("Lava")),
-("CR,OPAL", _("Opalite")),
-("CR,EMAX", _("Emax")),
-("CR,EVER", _("Everest")),
-("CR,SS", _("Stainless")),
-("CR,SR", _("Resin")),
-("CR,OT", _("Other")),
-):
-    crown_type = namedtuple('CrownType',("shortcut", "description", "tooltip"))
-    crown_type.description = description
-    crown_type.tooltip = ""
-    crown_type.shortcut = shortcut
-    STATIC_LIST.append(crown_type)
+    ("IM/TIT", _("Titanium Implant")),
+    ("IM/ABUT", _("Implant Abutment")),
+    ("CR,IC", _("Implant Crown")),
+    ("BR/C,IC", _("Implant Bridge Retainer")),
+    ("BR/P,IC", _("Implant Bridge Pontic")),
+    ):
+    implant_type = namedtuple('ImplantType',
+        ("shortcut", "description", "tooltip"))
+    implant_type.description = description
+    implant_type.tooltip = ""
+    implant_type.shortcut = shortcut
+    STATIC_LIST.append(implant_type)
 
 
-class CrownChoiceDialog(ExtendableDialog):
+class ImplantChoiceDialog(ExtendableDialog):
     def __init__(self, static, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
-        self.setWindowTitle(_("Crown Choice Dialog"))
+        self.setWindowTitle(_("Implant Choice Dialog"))
         self.om_gui = parent
         self.chosen_shortcut = None
 
@@ -59,40 +56,30 @@ class CrownChoiceDialog(ExtendableDialog):
         frame = QtGui.QFrame()
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
-        self.but_layout = QtGui.QGridLayout(frame)
+        self.but_layout = QtGui.QVBoxLayout(frame)
         self.insertWidget(scroll_area)
 
         self.apply_but.hide()
-
+        self.more_but.hide()
         if static:
-            self.more_but.hide()
             self.add_buttons(STATIC_LIST)
         else:
-            all_crowns_but = QtGui.QPushButton(
-            _("Show Crowns types from all feescales"))
-            all_crowns_but.clicked.connect(self._show_all_crowns)
-            self.add_advanced_widget(all_crowns_but)
-
-            self.add_buttons(self.om_gui.pt.fee_table.ui_lists["crowns"])
+            self.add_buttons(localsettings.FEETABLES.ui_implant_types)
 
     def sizeHint(self):
-        return QtCore.QSize(400, 500)
+        return QtCore.QSize(300, 300)
 
-    def add_buttons(self, crown_types):
+    def add_buttons(self, implant_types):
         while self.but_layout.count():
             widget_item = self.but_layout.takeAt(0)
             widget_item.widget().setParent(None)
 
-        for row, crown_type in enumerate(crown_types):
-            but = QtGui.QPushButton(crown_type.description)
-            but.setToolTip(crown_type.tooltip)
-            but.clicked.connect(partial(self.but_clicked, crown_type.shortcut))
-            self.but_layout.addWidget(but, row//2, row%2)
-        self.but_layout.setRowStretch((row+2)//2,100)
-
-    def _show_all_crowns(self):
-        self.add_buttons(localsettings.FEETABLES.ui_crown_types)
-        self.hide_extension()
+        for implant_type in implant_types:
+            but = QtGui.QPushButton(implant_type.description)
+            but.setToolTip(implant_type.tooltip)
+            but.clicked.connect(partial(self.but_clicked, implant_type.shortcut))
+            self.but_layout.addWidget(but)
+        self.but_layout.addStretch(100)
 
     def but_clicked(self, shortcut):
         self.chosen_shortcut = shortcut
@@ -105,10 +92,10 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     mw = QtGui.QWidget()
     mw.pt = patient(11956)
-    dl = CrownChoiceDialog(True, mw)
+    dl = ImplantChoiceDialog(True, mw)
     if dl.exec_():
         print dl.chosen_shortcut
     localsettings.loadFeeTables()
-    dl = CrownChoiceDialog(False, mw)
+    dl = ImplantChoiceDialog(False, mw)
     if dl.exec_():
         print dl.chosen_shortcut

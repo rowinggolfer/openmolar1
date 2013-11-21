@@ -518,6 +518,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             else:
                 if parser in self._known_deleted_parsers:
                     self._known_deleted_parsers.remove(parser)
+                parser.saved_xml = parser.text
                 parser.reset_orig_modified()
                 self.advise(_("File Saved"), 1)
         except Exception as exc:

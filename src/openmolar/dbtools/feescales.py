@@ -95,7 +95,7 @@ class FeescaleHandler(object):
 
     @property
     def local_files(self):
-        for file_ in os.listdir(FEESCALE_DIR):
+        for file_ in sorted(os.listdir(FEESCALE_DIR)):
             m = re.match(".*(\d+)\.xml$", file_)
             if m:
                 ix = int(m.groups()[0])

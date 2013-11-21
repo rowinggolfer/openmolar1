@@ -15,6 +15,8 @@ from openmolar.settings import allowed
 from openmolar.qt4gui.compiled_uis import Ui_toothProps
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs.crown_choice_dialog import CrownChoiceDialog
+from openmolar.qt4gui.dialogs.implant_choice_dialog import ImplantChoiceDialog
+
 
 from openmolar.qt4gui.dialogs import toothprop_fulledit
 
@@ -295,12 +297,14 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.selectedChart = ""
         self.selectedTooth = ""
         self.comboboxes = []
+        self.implant_but = QtGui.QPushButton("Implants")
         self.populateComboBoxes()
         self.signals()
 
     def populateComboBoxes(self):
         vlayout = QtGui.QVBoxLayout(self.cb_scrollArea)
         vlayout.setMargin(0)
+        vlayout.addWidget(self.implant_but)
         for combobox_dict in COMBOBOXES:
             cb = QtGui.QComboBox(self)
             vals = combobox_dict.values()
@@ -309,9 +313,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
                 cb.addItem(val)
             vlayout.addWidget(cb)
             self.comboboxes.append(cb)
-        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum,
-        QtGui.QSizePolicy.Expanding)
-        vlayout.addItem(spacerItem)
+        vlayout.addStretch(100)
 
     def setTooth(self, selectedTooth, selectedChart):
         '''
@@ -534,6 +536,12 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
             self.lineEdit.addItem(dl.chosen_shortcut)
             self.nextTooth()
 
+    def implant_but_clicked(self):
+        dl = ImplantChoiceDialog(self.is_Static, self.om_gui)
+        if dl.exec_():
+            self.lineEdit.addItem(dl.chosen_shortcut)
+            self.nextTooth()
+
     def cb_treat(self, arg):
         if not re.match("--.*", arg.toAscii()):
             print arg
@@ -593,6 +601,8 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
 
         QtCore.QObject.connect(self.comments_comboBox,
         QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
+
+        self.implant_but.clicked.connect(self.implant_but_clicked)
 
         for cb in self.comboboxes:
             QtCore.QObject.connect(cb,

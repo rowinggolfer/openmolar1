@@ -78,6 +78,9 @@ class FeeTables(object):
     def __init__(self):
         self.tables = OrderedDict()
         self.warnings = []
+        self._ui_crown_types = None
+        self._ui_implant_types = None
+
         self.getTables()
         self.loadTables()
         if not self.default_table:
@@ -91,6 +94,40 @@ class FeeTables(object):
             return self.tables.values()[0]
         except IndexError:
             return None
+
+    @property
+    def ui_crown_types(self):
+        '''
+        A list of unique crown types from all tables.
+        '''
+        if self._ui_crown_types is None:
+            unique_shortcuts = set([])
+            types_ = []
+            for table in self.tables.values():
+                for crown_type in table.ui_lists["crowns"]:
+                    if crown_type.shortcut not in unique_shortcuts:
+                        types_.append(crown_type)
+                    unique_shortcuts.add(crown_type.shortcut)
+            self._ui_crown_types = sorted(types_, key=lambda x: x.ix)
+
+        return self._ui_crown_types
+
+    @property
+    def ui_implant_types(self):
+        '''
+        A list of unique implant types from all tables.
+        '''
+        if self._ui_implant_types is None:
+            unique_shortcuts = set([])
+            types_ = []
+            for table in self.tables.values():
+                for im_type in table.ui_lists["implants"]:
+                    if im_type.shortcut not in unique_shortcuts:
+                        types_.append(im_type)
+                    unique_shortcuts.add(im_type.shortcut)
+
+            self._ui_implant_types = sorted(types_, key=lambda x: x.ix)
+        return self._ui_implant_types
 
     def __repr__(self):
         '''
@@ -163,8 +200,7 @@ class FeeTable(object):
         self.chartRegexCodes = OrderedDict()
         self.otherRegexCodes = OrderedDict()
 
-        self.ui_lists={}
-        self.ui_lists["crowns"] = []
+        self.ui_lists = {"crowns":[], "implants":[]}
 
     def __repr__(self):
         '''
@@ -197,8 +233,11 @@ class FeeTable(object):
         LOGGER.debug("loading categories")
         self.categories = []
         for node in self.dom.getElementsByTagName("category"):
-            text = node.childNodes[0].data.strip(" \n")
-            self.categories.append(text)
+            try:
+                text = node.firstChild.data.strip(" \n")
+                self.categories.append(text)
+            except AttributeError: #no categories
+                pass
         LOGGER.debug("categories = %s"% str(self.categories))
 
     def setSectionHeaders(self):
@@ -282,14 +321,27 @@ class FeeTable(object):
                 else:
                     self.treatmentCodes[fee_item.usercode] = item_code
 
-        for crown_node in self.dom.getElementsByTagName("crown_type"):
+        for ix, crown_node in enumerate(
+        self.dom.getElementsByTagName("crown_type")):
             crown_type = namedtuple('CrownType',
-                    ("shortcut", "description", "tooltip"))
+                    ("ix", "shortcut", "description", "tooltip"))
+            crown_type.ix = ix
             crown_type.description = crown_node.getAttribute("description")
             crown_type.tooltip = crown_node.getAttribute("tooltip")
             crown_type.shortcut = crown_node.getAttribute("shortcut")
 
             self.ui_lists["crowns"].append(crown_type)
+
+        for ix, implant_node in enumerate(
+        self.dom.getElementsByTagName("implant_type")):
+            implant_type = namedtuple('ImplantType',
+                    ("ix", "shortcut", "description", "tooltip"))
+            implant_type.ix = ix
+            implant_type.description = implant_node.getAttribute("description")
+            implant_type.tooltip = implant_node.getAttribute("tooltip")
+            implant_type.shortcut = implant_node.getAttribute("shortcut")
+
+            self.ui_lists["implants"].append(implant_type)
 
         self.dom.unlink()
 
@@ -708,3 +760,5 @@ if __name__ == "__main__":
 
     print table.categories
     print table.ui_lists
+    print fts.ui_crown_types
+    print fts.ui_implant_types
