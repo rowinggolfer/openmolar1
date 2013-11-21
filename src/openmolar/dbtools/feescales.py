@@ -125,7 +125,7 @@ class FeescaleHandler(object):
             data = f.read()
             f.close()
 
-            values = (ix, data)
+            values = (data, ix)
             result =  cursor.execute(UPDATE_QUERY, values)
 
             r_message = "commiting feescale '%s' to database."% filepath

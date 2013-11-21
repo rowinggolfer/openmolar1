@@ -19,21 +19,6 @@
 		<month>8</month>
 		<day>1</day>
 	</start>
-	<complex_shortcut>
-		<shortcut att="perio">SP</shortcut>
-		<case condition="n_txs=1">
-			<add_item id="E1001"/>
-		</case>
-		<case condition="n_txs=2">
-			<remove_item id="E1001"/>
-			<add_item id="E1011"/>
-			<message>2 visit scale and polish fee added to estimate.</message>
-		</case>
-		<case condition="n_txs&gt;2">
-			<alter_item id="E1011"/>
-			<message>maximum fee already claimed for this treatment</message>
-		</case>
-	</complex_shortcut>
 	<item id="E0101">
 		<section>1</section>
 		<shortcut att="exam">CE</shortcut>
@@ -207,4 +192,42 @@
 			<charge>5500</charge>
 		</fee>
 	</item>
+	<complex_shortcut>
+		<shortcut att="perio">SP</shortcut>
+		<addition>
+			<case condition="n_txs=1" handled="no"/>
+			<case condition="n_txs=2">
+				<remove_item id="E1001"/>
+				<add_item id="E1011"/>
+				<message>1 visit scale and polish fee removed from estimate. 2 visit scale and polish fee added instead.</message>
+			</case>
+			<case condition="n_txs&gt;2">
+				<alter_item id="E1011"/>
+				<message>maximum fee already claimed for this treatment. Add Privately, or start a new course.</message>
+			</case>
+		</addition>
+		<removal>
+			<case condition="n_txs=1" handled="no"/>
+			<case condition="n_txs=2">
+				<remove_item id="E1011"/>
+				<add_item id="E1001"/>
+				<message>2 visit scale and polish fee removed from estimate, replaced by 1 visit fee.</message>
+			</case>
+			<case condition="n_txs&gt;2">
+				<alter_item id="E1011"/>
+			</case>
+		</removal>
+	</complex_shortcut>
+	<user_display>
+		<crown_type description="Porcelain Jacket" shortcut="CR,PJ" tooltip="any tooth"/>
+		<crown_type description="Gold" shortcut="CR,GO"/>
+		<crown_type description="Porcelain/Precious Metal" shortcut="CR,V1"/>
+		<crown_type description="Temporary" shortcut="CR,T1"/>
+		<crown_type description="Resin" shortcut="CR,SR"/>
+		<crown_type description="Lava" shortcut="CR,LAVA"/>
+		<crown_type description="Opalite" shortcut="CR,OPAL"/>
+		<crown_type description="Emax" shortcut="CR,EMAX"/>
+		<crown_type description="Other" shortcut="CR,OT"/>
+		<crown_type description="RECEMENT" shortcut="CR,RC"/>
+	</user_display>
 </feescale>

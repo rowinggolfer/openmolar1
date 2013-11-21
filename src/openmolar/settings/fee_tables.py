@@ -11,6 +11,8 @@ import logging
 import re
 from xml.dom import minidom
 
+from collections import namedtuple
+
 from openmolar import connect
 from openmolar.settings import localsettings
 from openmolar.dbtools.feescales import feescale_handler
@@ -127,7 +129,7 @@ class FeeTables(object):
         '''
         for table in self.tables.values():
             try:
-                table.load_fee_items_and_shortcuts()
+                table.load_from_xml()
             except Exception as exc:
                 message = "%s %s %s"%(
                     _("feesscale"),
@@ -160,6 +162,9 @@ class FeeTable(object):
         self.chartPlainCodes = OrderedDict()
         self.chartRegexCodes = OrderedDict()
         self.otherRegexCodes = OrderedDict()
+
+        self.ui_lists={}
+        self.ui_lists["crowns"] = []
 
     def __repr__(self):
         '''
@@ -247,7 +252,7 @@ class FeeTable(object):
         self.endDate = datetime.date(int(year), int(month), int(day))
         LOGGER.debug("endDate = %s"% self.endDate)
 
-    def load_fee_items_and_shortcuts(self):
+    def load_from_xml(self):
         '''
         now load the fee items and shortcuts
         '''
@@ -276,6 +281,15 @@ class FeeTable(object):
                     self.chartPlainCodes[fee_item.usercode] = item_code
                 else:
                     self.treatmentCodes[fee_item.usercode] = item_code
+
+        for crown_node in self.dom.getElementsByTagName("crown_type"):
+            crown_type = namedtuple('CrownType',
+                    ("shortcut", "description", "tooltip"))
+            crown_type.description = crown_node.getAttribute("description")
+            crown_type.tooltip = crown_node.getAttribute("tooltip")
+            crown_type.shortcut = crown_node.getAttribute("shortcut")
+
+            self.ui_lists["crowns"].append(crown_type)
 
         self.dom.unlink()
 
@@ -691,10 +705,6 @@ if __name__ == "__main__":
         print "looking for SP in complex_shortcut %d"% i
         if complex_shortcut.matches("perio", "SP"):
             print "    match found"
-            print "    shortcut has %d cases:"% len(complex_shortcut.cases)
-            for case in complex_shortcut.cases:
-                print "          %s additions=%s removals=%s message='%s'"% (
-                case.condition, case.additions, case.removals, case.message)
-
 
     print table.categories
+    print table.ui_lists

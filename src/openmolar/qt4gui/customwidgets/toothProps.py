@@ -14,7 +14,7 @@ from openmolar.settings import localsettings
 from openmolar.settings import allowed
 from openmolar.qt4gui.compiled_uis import Ui_toothProps
 from openmolar.qt4gui import colours
-from openmolar.qt4gui.compiled_uis import Ui_crownChoice
+from openmolar.qt4gui.dialogs.crown_choice_dialog import CrownChoiceDialog
 
 from openmolar.qt4gui.dialogs import toothprop_fulledit
 
@@ -359,7 +359,6 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.is_Static = arg
         self.comments_comboBox.setEnabled(arg)
 
-
     def comments(self,arg):
         '''
         comments combobox has been nav'd
@@ -530,60 +529,9 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.lineEdit.additional()
 
     def crown(self):
-        def gold():
-            self.lineEdit.addItem("CR,GO")
-            Dialog.accept()
-        def pjc():
-            self.lineEdit.addItem("CR,PJ")
-            Dialog.accept()
-        def resin():
-            self.lineEdit.addItem("CR,SR")
-            Dialog.accept()
-        def lava():
-            self.lineEdit.addItem("CR,LAVA")
-            Dialog.accept()
-        def opalite():
-            self.lineEdit.addItem("CR,OPAL")
-            Dialog.accept()
-        def everest():
-            self.lineEdit.addItem("CR,EVEREST")
-            Dialog.accept()
-        def emax():
-            self.lineEdit.addItem("CR,EMAX")
-            Dialog.accept()
-        def fortress():
-            self.lineEdit.addItem("CR,FO")
-            Dialog.accept()
-        def temp():
-            self.lineEdit.addItem("CR,T1")
-            Dialog.accept()
-        def other():
-            self.lineEdit.addItem("CR,OT")
-            Dialog.accept()
-        def bonded():
-            self.lineEdit.addItem("CR,V1")
-            Dialog.accept()
-        def recem():
-            self.lineEdit.addItem("CR,RC")
-            Dialog.accept()
-
-        Dialog = QtGui.QDialog(self)
-        ccwidg = Ui_crownChoice.Ui_Dialog()
-        ccwidg.setupUi(Dialog)
-        ccwidg.gold.clicked.connect(gold)
-        ccwidg.pjc.clicked.connect(pjc)
-        ccwidg.other.clicked.connect(other)
-        ccwidg.lava.clicked.connect(lava)
-        ccwidg.opalite.clicked.connect(opalite)
-        ccwidg.everest.clicked.connect(everest)
-        ccwidg.emax.clicked.connect(emax)
-        ccwidg.fortress.clicked.connect(fortress)
-        ccwidg.bonded.clicked.connect(bonded)
-        ccwidg.temp.clicked.connect(temp)
-        ccwidg.resin.clicked.connect(resin)
-        ccwidg.recement.clicked.connect(recem)
-
-        if Dialog.exec_():
+        dl = CrownChoiceDialog(self.is_Static, self.om_gui)
+        if dl.exec_():
+            self.lineEdit.addItem(dl.chosen_shortcut)
             self.nextTooth()
 
     def cb_treat(self, arg):
