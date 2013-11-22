@@ -17,7 +17,6 @@ from PyQt4 import QtGui, QtCore
 
 from estimate_item_widget import decimalise, EstimateItemWidget
 
-from openmolar.qt4gui.compiled_uis import Ui_estSplitItemsDialog
 from openmolar.qt4gui.fees import manipulate_plan
 
 from openmolar.qt4gui.dialogs.complete_treatment_dialog \
