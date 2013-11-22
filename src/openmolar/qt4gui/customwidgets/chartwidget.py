@@ -589,6 +589,7 @@ class toothSurfaces():
         self.innerRect = self.rect.adjusted(irw, irh, -irw, -irh)
 
     def setProps(self, props):
+        LOGGER.debug(props)
         self.props = props
 
     def draw(self, parent, painter=None):
@@ -1093,26 +1094,31 @@ class toothSurfaces():
 
                 self.painter.restore()
 
-class toothImage(QtGui.QWidget):
+class ToothImage(QtGui.QWidget):
     '''
     a class to grab an image of the tooth widget
     '''
-    def __init__(self, parent=None):
-        super(toothImage, self).__init__(parent)
+    def __init__(self, tooth, props, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.tooth = tooth
+        self.props = props
+        LOGGER.debug("tooth image %s with props %s"% (tooth, props))
 
     def paintEvent(self, event=None):
         recd = QtCore.QRectF(0, 0, self.width(), self.height())
-        toothS = toothSurfaces(self, recd, "ur8")
-        toothS.setProps(["m do,gl ",])
+        toothS = toothSurfaces(self, recd, self.tooth)
+        toothS.setProps(self.props)
         toothS.draw(self)
 
+    def sizeHint(self):
+        return QtCore.QSize(40, 40)
+
+    @property
     def image(self):
         '''
         returns a png image of the tooth
         '''
-        myimage=QtGui.QPixmap.grabWidget(self)
-
-        return myimage
+        return QtGui.QPixmap.grabWidget(self)
 
 if __name__ == "__main__":
     def signal_catcher(*args):

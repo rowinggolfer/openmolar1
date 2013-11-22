@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/toothprops_full_edit.ui'
 #
-# Created: Wed Nov  6 23:05:24 2013
+# Created: Fri Nov 22 13:49:18 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,9 +37,13 @@ class Ui_Dialog(object):
         self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(50)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(50)
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.verticalHeader().setDefaultSectionSize(50)
-        self.tableWidget.verticalHeader().setMinimumSectionSize(30)
-        self.tableWidget.verticalHeader().setStretchLastSection(True)
+        self.tableWidget.verticalHeader().setMinimumSectionSize(50)
+        self.tableWidget.verticalHeader().setStretchLastSection(False)
         self.verticalLayout.addWidget(self.tableWidget)
         self.label_2 = QtGui.QLabel(Dialog)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
