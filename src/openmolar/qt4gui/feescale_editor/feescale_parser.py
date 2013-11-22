@@ -59,6 +59,7 @@ class FeescaleParser(object):
     def __init__(self, filepath):
         self._edited_text = None
         self._items = None
+        self._c_scuts = None
         self.filepath = filepath
         LOGGER.info("parsing feescale %s"% filepath)
         self.orig_modified = self.last_modified
@@ -128,6 +129,13 @@ class FeescaleParser(object):
         return self._items
 
     @property
+    def complex_shortcuts(self):
+        if self._c_scuts is None:
+            self._c_scuts = self.dom.getElementsByTagName("complex_shortcut")
+            LOGGER.debug("%d complex shortcuts"% len(self._c_scuts))
+        return self._c_scuts
+
+    @property
     def feenodes(self):
         for item in self.items:
             for feenode in item.getElementsByTagName("fee"):
@@ -170,14 +178,21 @@ class FeescaleParser(object):
             return _("Unknown TableName")
 
     def code_text(self, index):
-        item_node = self.items[index]
-        id_ = item_node.getAttribute("id")
+        node = self.items[index]
+        id_ = node.getAttribute("id")
         try:
-            name = item_node.getElementsByTagName(
-                "description")[0].childNodes[0].data
-        except IndexError:
+            name = node.getElementsByTagName(
+                "description")[0].firstChild.data
+        except AttributeError:
             name = ""
         return "%s - %s"% (id_, name)
+
+    def complex_shortcut_text(self, index):
+        node = self.complex_shortcuts[index]
+        shortcut_node = node.getElementsByTagName("shortcut")[0]
+        att = shortcut_node.getAttribute("att")
+        shortcut = shortcut_node.firstChild.data
+        return "%s - %s"% (att, shortcut)
 
     def set_edited_text(self, text):
         self._edited_text = unicode(text)

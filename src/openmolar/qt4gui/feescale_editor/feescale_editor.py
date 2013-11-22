@@ -35,7 +35,7 @@ from openmolar.qt4gui import resources_rc
 LOGGER = logging.getLogger("openmolar")
 
 from feescale_parser import FeescaleParser
-from feescale_list_model import FeescaleListModel
+from feescale_list_model import ItemsListModel, ComplexShortcutsListModel
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
 class XMLEditor(Qsci.QsciScintilla):
@@ -53,6 +53,35 @@ class XMLEditor(Qsci.QsciScintilla):
     def focusOutEvent(self, event):
         self.editing_finished.emit(self)
 
+class ControlPanel(QtGui.QTabWidget):
+    item_selected = QtCore.pyqtSignal(object)
+    shortcut_selected = QtCore.pyqtSignal(object)
+
+    def __init__(self, parent=None):
+        QtGui.QTabWidget.__init__(self, parent)
+        self.items_list_view = QtGui.QListView()
+        self.complex_shortcuts_list_view = QtGui.QListView()
+
+        self.addTab(self.items_list_view, "Items")
+        self.addTab(self.complex_shortcuts_list_view, "Complex Shortcuts")
+
+    def set_parser(self, parser):
+        list_model = ItemsListModel(parser)
+        self.items_list_view.setModel(list_model)
+        self.items_list_view.selectionModel().currentRowChanged.connect(
+            self._item_selected)
+
+        list_model = ComplexShortcutsListModel(parser)
+        self.complex_shortcuts_list_view.setModel(list_model)
+        self.complex_shortcuts_list_view.selectionModel(
+            ).currentRowChanged.connect(self._shortcut_selected)
+
+    def _item_selected(self, new_index, old_index):
+        self.item_selected.emit(new_index)
+
+    def _shortcut_selected(self, new_index, old_index):
+        self.shortcut_selected.emit(new_index)
+
 class FeescaleEditor(QtGui.QMainWindow):
     _checking_files = False
     _known_deleted_parsers = []
@@ -63,10 +92,14 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.setWindowTitle(self.window_title)
         self.loading = True
 
-        self.list_view = QtGui.QListView()
-
         statusbar = QtGui.QStatusBar()
         self.setStatusBar(statusbar)
+
+        self.control_panel = ControlPanel()
+        self.control_panel.item_selected.connect(self.find_item)
+        self.control_panel.shortcut_selected.connect(self.find_shortcut)
+
+        self.list_view = self.control_panel.items_list_view
 
         #: a pointer to the label in the statusbar
         self.cursor_pos_label = QtGui.QLabel("Line 0, Column 0")
@@ -190,7 +223,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.prefs_toolbar.addAction(self.action_check_validity)
 
         splitter = QtGui.QSplitter()
-        splitter.addWidget(self.list_view)
+        splitter.addWidget(self.control_panel)
         splitter.addWidget(self.tab_widget)
         splitter.setSizes([150, 650])
         self.setCentralWidget(splitter)
@@ -355,10 +388,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.load_feescales()
 
     def update_index(self):
-        list_model = FeescaleListModel(self.current_parser)
-        self.list_view.setModel(list_model)
-        self.list_view.selectionModel().currentRowChanged.connect(
-            self.list_view_row_changed)
+        self.control_panel.set_parser(self.current_parser)
 
     @property
     def text_edit(self):
@@ -396,9 +426,6 @@ class FeescaleEditor(QtGui.QMainWindow):
         else:
             self.advise(_(message), 1)
 
-    def list_view_row_changed(self, new_index, old_index):
-        self.find_item(new_index)
-
     def find_item(self, index):
         item_count = 0
         for lineno, line in enumerate(self.text_edit.text().split("\n")):
@@ -410,6 +437,18 @@ class FeescaleEditor(QtGui.QMainWindow):
 
             if "<item"in line:
                 item_count += 1
+
+    def find_shortcut(self, index):
+        count_ = 0
+        for lineno, line in enumerate(self.text_edit.text().split("\n")):
+            if count_ == index.row()+1:
+                self.text_edit.setFocus(True)
+                self.text_edit.setCursorPosition(lineno-1, 0)
+                self.text_edit.ensureCursorVisible()
+                break
+
+            if "<complex_shortcut"in line:
+                count_ += 1
 
     def find_text(self):
         self.search_text, result = QtGui.QInputDialog.getText(
@@ -524,7 +563,6 @@ class FeescaleEditor(QtGui.QMainWindow):
         except Exception as exc:
             LOGGER.exception("unable to save")
             self.advise(_("File not saved")+" - %s"% exc, 2)
-
 
     def refresh_files(self):
         if self.is_dirty and (

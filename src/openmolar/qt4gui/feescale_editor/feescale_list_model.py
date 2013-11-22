@@ -22,7 +22,7 @@
 
 from PyQt4 import QtCore
 
-class FeescaleListModel(QtCore.QAbstractListModel):
+class ItemsListModel(QtCore.QAbstractListModel):
     def __init__(self, feescale_parser):
         QtCore.QAbstractListModel.__init__(self)
         self.feescale_parser = feescale_parser
@@ -36,3 +36,19 @@ class FeescaleListModel(QtCore.QAbstractListModel):
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
             return self.feescale_parser.code_text(index.row())
+
+class ComplexShortcutsListModel(QtCore.QAbstractListModel):
+    def __init__(self, feescale_parser):
+        QtCore.QAbstractListModel.__init__(self)
+        self.feescale_parser = feescale_parser
+        self._rowcount = None
+
+    def rowCount(self, index):
+        if self._rowcount is None:
+            self._rowcount = len(self.feescale_parser.complex_shortcuts)
+        return self._rowcount
+
+    def data(self, index, role):
+        if role == QtCore.Qt.DisplayRole:
+            return self.feescale_parser.complex_shortcut_text(index.row())
+
