@@ -589,7 +589,7 @@ class toothSurfaces():
         self.innerRect = self.rect.adjusted(irw, irh, -irw, -irh)
 
     def setProps(self, props):
-        LOGGER.debug(props)
+        #LOGGER.debug(props)
         self.props = props
 
     def draw(self, parent, painter=None):
