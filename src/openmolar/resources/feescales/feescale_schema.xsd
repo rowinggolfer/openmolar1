@@ -136,19 +136,19 @@
   <xs:element name="user_display">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="crown_type" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:element ref="implant_type" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="crown_chart_button" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="implant_chart_button" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="crown_type">
+  <xs:element name="crown_chart_button">
     <xs:complexType>
       <xs:attribute name="shortcut" type="xs:string" use="required"/>
       <xs:attribute name="description" type="xs:string" use="required"/>
       <xs:attribute name="tooltip" type="xs:string" use="optional"/>
     </xs:complexType>
   </xs:element>
-    <xs:element name="implant_type">
+    <xs:element name="implant_chart_button">
     <xs:complexType>
       <xs:attribute name="shortcut" type="xs:string" use="required"/>
       <xs:attribute name="description" type="xs:string" use="required"/>

@@ -78,8 +78,8 @@ class FeeTables(object):
     def __init__(self):
         self.tables = OrderedDict()
         self.warnings = []
-        self._ui_crown_types = None
-        self._ui_implant_types = None
+        self._ui_crown_chart_buttons = None
+        self._ui_implant_chart_buttons = None
 
         self.getTables()
         self.loadTables()
@@ -96,38 +96,38 @@ class FeeTables(object):
             return None
 
     @property
-    def ui_crown_types(self):
+    def ui_crown_chart_buttons(self):
         '''
         A list of unique crown types from all tables.
         '''
-        if self._ui_crown_types is None:
+        if self._ui_crown_chart_buttons is None:
             unique_shortcuts = set([])
             types_ = []
             for table in self.tables.values():
-                for crown_type in table.ui_lists["crowns"]:
-                    if crown_type.shortcut not in unique_shortcuts:
-                        types_.append(crown_type)
-                    unique_shortcuts.add(crown_type.shortcut)
-            self._ui_crown_types = sorted(types_, key=lambda x: x.ix)
+                for crown_chart_button in table.ui_lists["crown_buttons"]:
+                    if crown_chart_button.shortcut not in unique_shortcuts:
+                        types_.append(crown_chart_button)
+                    unique_shortcuts.add(crown_chart_button.shortcut)
+            self._ui_crown_chart_buttons = sorted(types_, key=lambda x: x.ix)
 
-        return self._ui_crown_types
+        return self._ui_crown_chart_buttons
 
     @property
-    def ui_implant_types(self):
+    def ui_implant_chart_buttons(self):
         '''
         A list of unique implant types from all tables.
         '''
-        if self._ui_implant_types is None:
+        if self._ui_implant_chart_buttons is None:
             unique_shortcuts = set([])
             types_ = []
             for table in self.tables.values():
-                for im_type in table.ui_lists["implants"]:
+                for im_type in table.ui_lists["implant_buttons"]:
                     if im_type.shortcut not in unique_shortcuts:
                         types_.append(im_type)
                     unique_shortcuts.add(im_type.shortcut)
 
-            self._ui_implant_types = sorted(types_, key=lambda x: x.ix)
-        return self._ui_implant_types
+            self._ui_implant_chart_buttons = sorted(types_, key=lambda x: x.ix)
+        return self._ui_implant_chart_buttons
 
     def __repr__(self):
         '''
@@ -200,7 +200,7 @@ class FeeTable(object):
         self.chartRegexCodes = OrderedDict()
         self.otherRegexCodes = OrderedDict()
 
-        self.ui_lists = {"crowns":[], "implants":[]}
+        self.ui_lists = {"crown_buttons":[], "implant_buttons":[]}
 
     def __repr__(self):
         '''
@@ -322,26 +322,26 @@ class FeeTable(object):
                     self.treatmentCodes[fee_item.usercode] = item_code
 
         for ix, crown_node in enumerate(
-        self.dom.getElementsByTagName("crown_type")):
-            crown_type = namedtuple('CrownType',
+        self.dom.getElementsByTagName("crown_chart_button")):
+            chart_button = namedtuple('CrownType',
                     ("ix", "shortcut", "description", "tooltip"))
-            crown_type.ix = ix
-            crown_type.description = crown_node.getAttribute("description")
-            crown_type.tooltip = crown_node.getAttribute("tooltip")
-            crown_type.shortcut = crown_node.getAttribute("shortcut")
+            chart_button.ix = ix
+            chart_button.description = crown_node.getAttribute("description")
+            chart_button.tooltip = crown_node.getAttribute("tooltip")
+            chart_button.shortcut = crown_node.getAttribute("shortcut")
 
-            self.ui_lists["crowns"].append(crown_type)
+            self.ui_lists["crown_buttons"].append(chart_button)
 
         for ix, implant_node in enumerate(
-        self.dom.getElementsByTagName("implant_type")):
-            implant_type = namedtuple('ImplantType',
+        self.dom.getElementsByTagName("implant_chart_button")):
+            chart_button = namedtuple('ImplantType',
                     ("ix", "shortcut", "description", "tooltip"))
-            implant_type.ix = ix
-            implant_type.description = implant_node.getAttribute("description")
-            implant_type.tooltip = implant_node.getAttribute("tooltip")
-            implant_type.shortcut = implant_node.getAttribute("shortcut")
+            chart_button.ix = ix
+            chart_button.description = implant_node.getAttribute("description")
+            chart_button.tooltip = implant_node.getAttribute("tooltip")
+            chart_button.shortcut = implant_node.getAttribute("shortcut")
 
-            self.ui_lists["implants"].append(implant_type)
+            self.ui_lists["implant_buttons"].append(chart_button)
 
         self.dom.unlink()
 
@@ -760,5 +760,5 @@ if __name__ == "__main__":
 
     print table.categories
     print table.ui_lists
-    print fts.ui_crown_types
-    print fts.ui_implant_types
+    print fts.ui_crown_chart_buttons
+    print fts.ui_implant_chart_buttons

@@ -37,12 +37,12 @@ for shortcut, description in (
     ("BR/C,IC", _("Implant Bridge Retainer")),
     ("BR/P,IC", _("Implant Bridge Pontic")),
     ):
-    implant_type = namedtuple('ImplantType',
+    implant_chart_button = namedtuple('ImplantType',
         ("shortcut", "description", "tooltip"))
-    implant_type.description = description
-    implant_type.tooltip = ""
-    implant_type.shortcut = shortcut
-    STATIC_LIST.append(implant_type)
+    implant_chart_button.description = description
+    implant_chart_button.tooltip = ""
+    implant_chart_button.shortcut = shortcut
+    STATIC_LIST.append(implant_chart_button)
 
 
 class ImplantChoiceDialog(ExtendableDialog):
@@ -64,20 +64,20 @@ class ImplantChoiceDialog(ExtendableDialog):
         if static:
             self.add_buttons(STATIC_LIST)
         else:
-            self.add_buttons(localsettings.FEETABLES.ui_implant_types)
+            self.add_buttons(localsettings.FEETABLES.ui_implant_chart_buttons)
 
     def sizeHint(self):
         return QtCore.QSize(300, 300)
 
-    def add_buttons(self, implant_types):
+    def add_buttons(self, implant_chart_buttons):
         while self.but_layout.count():
             widget_item = self.but_layout.takeAt(0)
             widget_item.widget().setParent(None)
 
-        for implant_type in implant_types:
-            but = QtGui.QPushButton(implant_type.description)
-            but.setToolTip(implant_type.tooltip)
-            but.clicked.connect(partial(self.but_clicked, implant_type.shortcut))
+        for implant_button in implant_chart_buttons:
+            but = QtGui.QPushButton(implant_button.description)
+            but.setToolTip(implant_button.tooltip)
+            but.clicked.connect(partial(self.but_clicked, implant_button.shortcut))
             self.but_layout.addWidget(but)
         self.but_layout.addStretch(100)
 

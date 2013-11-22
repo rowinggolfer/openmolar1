@@ -219,15 +219,15 @@
 		</removal>
 	</complex_shortcut>
 	<user_display>
-		<crown_type description="Porcelain Jacket" shortcut="CR,PJ" tooltip="any tooth"/>
-		<crown_type description="Gold" shortcut="CR,GO"/>
-		<crown_type description="Porcelain/Precious Metal" shortcut="CR,V1"/>
-		<crown_type description="Temporary" shortcut="CR,T1"/>
-		<crown_type description="Resin" shortcut="CR,SR"/>
-		<crown_type description="Lava" shortcut="CR,LAVA"/>
-		<crown_type description="Opalite" shortcut="CR,OPAL"/>
-		<crown_type description="Emax" shortcut="CR,EMAX"/>
-		<crown_type description="Other" shortcut="CR,OT"/>
-		<crown_type description="RECEMENT" shortcut="CR,RC"/>
+		<crown_chart_button description="Porcelain Jacket" shortcut="CR,PJ" tooltip="any tooth"/>
+		<crown_chart_button description="Gold" shortcut="CR,GO"/>
+		<crown_chart_button description="Porcelain/Precious Metal" shortcut="CR,V1"/>
+		<crown_chart_button description="Temporary" shortcut="CR,T1"/>
+		<crown_chart_button description="Resin" shortcut="CR,SR"/>
+		<crown_chart_button description="Lava" shortcut="CR,LAVA"/>
+		<crown_chart_button description="Opalite" shortcut="CR,OPAL"/>
+		<crown_chart_button description="Emax" shortcut="CR,EMAX"/>
+		<crown_chart_button description="Other" shortcut="CR,OT"/>
+		<crown_chart_button description="RECEMENT" shortcut="CR,RC"/>
 	</user_display>
 </feescale>

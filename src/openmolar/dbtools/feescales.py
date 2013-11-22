@@ -114,7 +114,7 @@ class FeescaleHandler(object):
     def update_db(self, ix):
         message = ""
         filepath = self.index_to_local_filepath(ix)
-
+        LOGGER.debug("updating database ix %s"% ix)
         if not os.path.isfile(filepath):
             message = "FATAL %s does not exist!"% filepath
         else:
@@ -130,7 +130,7 @@ class FeescaleHandler(object):
 
             r_message = "commiting feescale '%s' to database."% filepath
             message = "updating feescale %d    result = %s\n"% (
-                ix, "OK" if result else "FAILED")
+                ix, "OK" if result else "No Change applied")
 
             db.close()
             LOGGER.info(r_message + " " + message)

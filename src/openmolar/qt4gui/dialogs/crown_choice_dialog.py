@@ -41,11 +41,12 @@ for shortcut, description in (
 ("CR,SR", _("Resin")),
 ("CR,OT", _("Other")),
 ):
-    crown_type = namedtuple('CrownType',("shortcut", "description", "tooltip"))
-    crown_type.description = description
-    crown_type.tooltip = ""
-    crown_type.shortcut = shortcut
-    STATIC_LIST.append(crown_type)
+    crown_chart_button = namedtuple('CrownType',
+        ("shortcut", "description", "tooltip"))
+    crown_chart_button.description = description
+    crown_chart_button.tooltip = ""
+    crown_chart_button.shortcut = shortcut
+    STATIC_LIST.append(crown_chart_button)
 
 
 class CrownChoiceDialog(ExtendableDialog):
@@ -73,25 +74,27 @@ class CrownChoiceDialog(ExtendableDialog):
             all_crowns_but.clicked.connect(self._show_all_crowns)
             self.add_advanced_widget(all_crowns_but)
 
-            self.add_buttons(self.om_gui.pt.fee_table.ui_lists["crowns"])
+            self.add_buttons(
+                self.om_gui.pt.fee_table.ui_lists["crown_buttons"])
 
     def sizeHint(self):
         return QtCore.QSize(400, 500)
 
-    def add_buttons(self, crown_types):
+    def add_buttons(self, crown_chart_buttons):
         while self.but_layout.count():
             widget_item = self.but_layout.takeAt(0)
             widget_item.widget().setParent(None)
-
-        for row, crown_type in enumerate(crown_types):
-            but = QtGui.QPushButton(crown_type.description)
-            but.setToolTip(crown_type.tooltip)
-            but.clicked.connect(partial(self.but_clicked, crown_type.shortcut))
+        row = 0
+        for row, crown_button in enumerate(crown_chart_buttons):
+            but = QtGui.QPushButton(crown_button.description)
+            but.setToolTip(crown_button.tooltip)
+            but.clicked.connect(
+                partial(self.but_clicked, crown_button.shortcut))
             self.but_layout.addWidget(but, row//2, row%2)
         self.but_layout.setRowStretch((row+2)//2,100)
 
     def _show_all_crowns(self):
-        self.add_buttons(localsettings.FEETABLES.ui_crown_types)
+        self.add_buttons(localsettings.FEETABLES.ui_crown_chart_buttons)
         self.hide_extension()
 
     def but_clicked(self, shortcut):
