@@ -8,6 +8,8 @@
     <file>icons/wikipedia.png</file>
     <file>icons/action.png</file>
     <file>icons/memos.png</file>
+    <file alias="lower_implant.svg">icons/lower_implant.svg</file>
+    <file alias="upper_implant.svg">icons/upper_implant.svg</file>
     <file alias="database.png">icons/database.png</file>
     <file>openmolar.svg</file>
     <file>icons/separate.png</file>

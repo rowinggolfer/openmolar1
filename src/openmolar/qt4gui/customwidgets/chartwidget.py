@@ -16,7 +16,7 @@ from functools import partial
 import logging
 import re
 import sys
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, QtSvg
 
 from openmolar.qt4gui import colours
 
@@ -598,7 +598,19 @@ class toothSurfaces():
         else:
             self.painter = painter
         for prop in self.props:
+            if re.match("cr,ic|im/", prop):
+                adj = self.rect.height()/2
+                if self.isUpper:
+                    rect_ = self.rect.adjusted(0, 0, 0, adj)
+                    svg_path = ":lower_implant.svg"
+                else:
+                    rect_ = self.rect.adjusted(0,-adj,-0,0)
+                    svg_path = ":upper_implant.svg"
+                QtSvg.QSvgRenderer(svg_path).render(painter, rect_)
+
+        for prop in self.props:
             prop = prop.strip(" ")
+
             if re.match("\(.*", prop):
                 #-- brackets are used to indicate the start/end of a bridge
                 #--let's see bridge start by shrinking that edge.
@@ -637,7 +649,7 @@ class toothSurfaces():
             self.painter.drawLine(self.rect.bottomLeft(), self.innerRect.bottomLeft())
             self.painter.drawLine(self.rect.bottomRight(), self.innerRect.bottomRight())
 
-        #-deciduos (ie. indeterminate) 6, 7, 8 are marked as "*"
+        #-deciduous (ie. indeterminate) 6, 7, 8 are marked as "*"
         #--paint over these.
         if self.toothtext == "*":
             erase_color = parent.palette().background().color()
@@ -713,16 +725,18 @@ class toothSurfaces():
                         prop = prop[1:]
                     else:
                         leading_bracket = False
-                    if re.match("br/.*",prop):
+                    if re.match("br/",prop):
                         #--bridge
                         prop = prop[3:]
                         if leading_bracket:
                             prop = prop.replace(",", ",(")
                         if "p," in prop:
                             #--some gold crowns are cr/modbl,go
-                            prop = "PONTIC," + prop[2:]
+                            prop = "PONTIC,%s"% prop[2:]
                         if "mr" in prop:
                             prop = "p,mr"
+                    elif re.match("im/", prop):
+                        prop = ""
                     else:
                         if "pi" in prop:
                             #--porcelain inlays are pi/modp etc
@@ -800,8 +814,8 @@ class toothSurfaces():
                 #--set filling color
                 if material == "co":
                     self.painter.setBrush(colours.COMP)
-                elif material in ("pj", "ot", "pi", "a1", "v1", "v2", "opal",
-                "opalite", "lava"):
+                elif material in ("pj", "ot", "pi", "a1", "a2", "v1", "v2",
+                "opal", "opalite", "lava", "core", "ic", "ever"):
                     self.painter.setBrush(colours.PORC)
                 elif material == "gl":
                     self.painter.setBrush(colours.GI)
@@ -1089,8 +1103,6 @@ class toothSurfaces():
                         gx, ay, gx, cy, fx, dy, dx, dy]))
                 for shape in shapes:
                     self.painter.drawPolygon(shape)
-                    ##todo - drawPath may be MUCH better (curvier)
-                    ##- a lot of work to change though?
 
                 self.painter.restore()
 
@@ -1126,6 +1138,7 @@ if __name__ == "__main__":
 
     LOGGER.setLevel(logging.DEBUG)
     from gettext import gettext as _
+    from openmolar.qt4gui import resources_rc
     app = QtGui.QApplication(sys.argv)
     form = chartWidget()
     form.chartgrid = {'lr1': 'lr1', 'lr3': 'lr3', 'lr2': 'lr2', 'lr5': 'lr5',
@@ -1145,7 +1158,7 @@ if __name__ == "__main__":
     ("ul4", "do"), ("ul6", "mo"), ("lr8", "("),
     ("ul7", "mop,co"), ("ur8", "mdb,gl mpd,go ob"), ("ll4", "b,gl dl,co"),
     ("ll5", "ob ml"), ("ll6", "mod,co"), ("ll7", "pe"), ("ll8", "ue !watch"),
-    ("lr4", "b"), ("lr5", "dr"), ("lr7", "fs"), ("lr6", "modbl,pr")):
+    ("lr4", "im/tit"), ("lr5", "dr"), ("lr7", "fs"), ("lr6", "modbl,pr")):
         form.setToothProps(properties[0], properties[1])
 
     form.flip_deciduous_signal.connect(signal_catcher)
