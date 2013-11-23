@@ -21,42 +21,39 @@
 ###############################################################################
 
 import logging
+from gettext import gettext as _
 
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui, Qsci
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
 
-class ItemsListModel(QtCore.QAbstractListModel):
-    def __init__(self, feescale_parser):
-        QtCore.QAbstractListModel.__init__(self)
-        self.feescale_parser = feescale_parser
-        self._rowcount = None
+class XMLEditor(Qsci.QsciScintilla):
+    editing_finished = QtCore.pyqtSignal(object)
+    def __init__(self, parent=None):
+        Qsci.QsciScintilla.__init__(self, parent)
+        self.setLexer(Qsci.QsciLexerXML())
 
-    def rowCount(self, index):
-        if self._rowcount is None:
-            self._rowcount = len(self.feescale_parser.items)
-        return self._rowcount
+    def editor_settings(self):
+        '''
+        set some specifics for the large editor
+        (keep defaults for dialogs etc)
+        '''
+        self.setCaretLineVisible(True)
+        self.setMarginLineNumbers(0, True)
+        fontmetrics = QtGui.QFontMetrics(self.font())
+        #self.setMarginsFont(font)
+        self.setMarginWidth(0, fontmetrics.width("0000") + 2)
+        #self.setMarginsBackgroundColor(QColor("#cccccc"))
 
-    def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole:
-            return self.feescale_parser.code_text(index.row())
+    def focusOutEvent(self, event):
+        self.editing_finished.emit(self)
 
-    def id_from_index(self, index):
-        LOGGER.debug(index)
-        return self.feescale_parser.item_ids(index.row())
 
-class ComplexShortcutsListModel(QtCore.QAbstractListModel):
-    def __init__(self, feescale_parser):
-        QtCore.QAbstractListModel.__init__(self)
-        self.feescale_parser = feescale_parser
-        self._rowcount = None
-
-    def rowCount(self, index):
-        if self._rowcount is None:
-            self._rowcount = len(self.feescale_parser.complex_shortcuts)
-        return self._rowcount
-
-    def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole:
-            return self.feescale_parser.complex_shortcut_text(index.row())
-
+if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
+    app = QtGui.QApplication([])
+    widg = XMLEditor()
+    widg.editor_settings()
+    widg.show()
+    app.exec_()

@@ -20,7 +20,7 @@
 ##                                                                           ##
 ###############################################################################
 
-
+from functools import partial
 import logging
 import re
 import os
@@ -29,34 +29,21 @@ from gettext import gettext as _
 from xml.dom import minidom
 from collections import OrderedDict
 
-from PyQt4 import QtCore, QtGui, Qsci
+from PyQt4 import QtCore, QtGui
 from openmolar.qt4gui import resources_rc
 
 LOGGER = logging.getLogger("openmolar")
 
 from feescale_parser import FeescaleParser
 from feescale_list_model import ItemsListModel, ComplexShortcutsListModel
+from feescale_xml_editor import XMLEditor
+from feescale_compare_items_dockwidget import CompareItemsDockWidget
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
-
-class XMLEditor(Qsci.QsciScintilla):
-    editing_finished = QtCore.pyqtSignal(object)
-    def __init__(self, parent=None):
-        Qsci.QsciScintilla.__init__(self, parent)
-        self.setLexer(Qsci.QsciLexerXML())
-        self.setCaretLineVisible(True)
-        self.setMarginLineNumbers(0, True)
-        fontmetrics = QtGui.QFontMetrics(self.font())
-        #self.setMarginsFont(font)
-        self.setMarginWidth(0, fontmetrics.width("0000") + 2)
-        #self.setMarginsBackgroundColor(QColor("#cccccc"))
-
-    def focusOutEvent(self, event):
-        self.editing_finished.emit(self)
 
 class ControlPanel(QtGui.QTabWidget):
     item_selected = QtCore.pyqtSignal(object)
     shortcut_selected = QtCore.pyqtSignal(object)
-
+    compare_item_signal = QtCore.pyqtSignal(object)
     def __init__(self, parent=None):
         QtGui.QTabWidget.__init__(self, parent)
         self.items_list_view = QtGui.QListView()
@@ -64,6 +51,8 @@ class ControlPanel(QtGui.QTabWidget):
 
         self.addTab(self.items_list_view, "Items")
         self.addTab(self.complex_shortcuts_list_view, "Complex Shortcuts")
+
+        self.items_list_view.doubleClicked.connect(self.show_item_context_menu)
 
     def set_parser(self, parser):
         list_model = ItemsListModel(parser)
@@ -82,9 +71,33 @@ class ControlPanel(QtGui.QTabWidget):
     def _shortcut_selected(self, new_index, old_index):
         self.shortcut_selected.emit(new_index)
 
+    def show_item_context_menu(self, index):
+        id = self.items_list_view.model().id_from_index(index)
+        qmenu = QtGui.QMenu(self)
+
+        compare_action = QtGui.QAction("%s %s %s"%(_("Compare"),
+        id,  _("with similar ids in other feescales")), self)
+        cancel_action = QtGui.QAction(_("Cancel"), self)
+        #not connected to anything.. f clicked menu will simply die!
+
+        compare_action.triggered.connect(
+            partial(self.compare_item_signal.emit, id))
+
+        qmenu.addAction(compare_action)
+        qmenu.addSeparator()
+        qmenu.addAction(cancel_action)
+
+        qmenu.setDefaultAction(compare_action)
+
+        point = self.items_list_view.mapFromGlobal(QtGui.QCursor.pos())
+        point = QtGui.QCursor.pos()
+        qmenu.exec_(point)
+
+
 class FeescaleEditor(QtGui.QMainWindow):
     _checking_files = False
     _known_deleted_parsers = []
+    _compare_items_dockwidget = None
     search_text = ""
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
@@ -97,6 +110,7 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         self.control_panel = ControlPanel()
         self.control_panel.item_selected.connect(self.find_item)
+        self.control_panel.compare_item_signal.connect(self.compare_item)
         self.control_panel.shortcut_selected.connect(self.find_shortcut)
 
         self.list_view = self.control_panel.items_list_view
@@ -248,7 +262,6 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.tab_widget.currentChanged.connect(self.view_feescale)
         QtCore.QTimer.singleShot(1000, self.view_feescale)
 
-
         QtGui.QApplication.instance().focusChanged.connect(
             self._focus_changed)
 
@@ -340,8 +353,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.feescale_parsers = OrderedDict()
         for ix, filepath in self.feescale_handler.local_files:
             try:
-                fp = FeescaleParser(filepath)
-                fp.ix = ix
+                fp = FeescaleParser(filepath, ix)
             except:
                 message = u"%s '%s'"% (_("unable to parse file"), filepath)
                 self.advise(message, 2)
@@ -349,11 +361,12 @@ class FeescaleEditor(QtGui.QMainWindow):
                 continue
 
             editor = XMLEditor()
+            editor.editor_settings()
             editor.textChanged.connect(self.text_changed)
             editor.editing_finished.connect(self.te_editing_finished)
             editor.cursorPositionChanged.connect(self.cursor_position_changed)
 
-            title = "feescale %d"% ix
+            title = fp.label_text
             self.feescale_parsers[title] = fp
             self.text_editors.append(editor)
 
@@ -437,6 +450,23 @@ class FeescaleEditor(QtGui.QMainWindow):
 
             if "<item"in line:
                 item_count += 1
+        if self._compare_items_dockwidget:
+            id = self.list_view.model().id_from_index(index)
+            self.compare_item(id)
+
+    def compare_item(self, item_id):
+        LOGGER.debug(item_id)
+        self.compare_items_dockwidget.set_item_id(item_id)
+        self.compare_items_dockwidget.show()
+
+    @property
+    def compare_items_dockwidget(self):
+        if self._compare_items_dockwidget is None:
+            self._compare_items_dockwidget= CompareItemsDockWidget(
+                self.feescale_parsers.values(), self)
+            self.addDockWidget(QtCore.Qt.BottomDockWidgetArea,
+                self._compare_items_dockwidget)
+        return self._compare_items_dockwidget
 
     def find_shortcut(self, index):
         count_ = 0

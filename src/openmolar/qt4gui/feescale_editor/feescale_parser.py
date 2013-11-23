@@ -22,6 +22,7 @@
 
 import logging
 import os
+import re
 from xml.dom import minidom
 
 from PyQt4 import QtCore
@@ -56,11 +57,12 @@ class MessageHandler(QAbstractMessageHandler):
         self.last_error = ""
 
 class FeescaleParser(object):
-    def __init__(self, filepath):
+    def __init__(self, filepath, ix):
         self._edited_text = None
         self._items = None
         self._c_scuts = None
         self.filepath = filepath
+        self.ix = ix
         LOGGER.info("parsing feescale %s"% filepath)
         self.orig_modified = self.last_modified
         self.dom = minidom.parse(filepath)
@@ -69,6 +71,15 @@ class FeescaleParser(object):
         self.saved_xml = self.text
 
         self.message_handler = MessageHandler()
+
+    @property
+    def label_text(self):
+        return "%s %d"% (_("feescale"), self.ix)
+
+    @property
+    def detailed_label_text(self):
+        return "%s %s"% (self.label_text, self.tablename)
+
 
     @property
     def is_externally_modified(self):
@@ -128,6 +139,30 @@ class FeescaleParser(object):
             LOGGER.debug("%d items"% len(self._items))
         return self._items
 
+    def item_ids(self, index):
+        '''
+        returns the id attibute of the item at position index in the list
+        '''
+        item_node = self.items[index]
+        return item_node.getAttribute("id")
+
+    def itemnode_from_id(self, id, ignore_prefix=False):
+        '''
+        returns the itemnode which contains the item with specified id,
+        or a blank node if node exists
+        '''
+        def remove_prefix(s):
+            return s.groups()[1]
+        if ignore_prefix:
+            id = re.sub("([^\d]*)(\d+)$", remove_prefix, id)
+        LOGGER.debug("looking for %s"% id)
+        for itemnode in self.items:
+            node_id = itemnode.getAttribute("id")
+            if ignore_prefix:
+                node_id = re.sub("([^\d]*)(\d+)$", remove_prefix, node_id)
+            if node_id == id:
+                return itemnode
+
     @property
     def complex_shortcuts(self):
         if self._c_scuts is None:
@@ -168,6 +203,15 @@ class FeescaleParser(object):
         LOGGER.info("%s patient charges zeroed"% self.description)
 
     @property
+    def tablename(self):
+        try:
+            node = self.dom.getElementsByTagName("tablename")[0]
+            return node.firstChild.data
+        except:
+            LOGGER.exception("unable to get tablename from Feescale Parser")
+            return _("Unknown TableName")
+
+    @property
     def description(self):
         try:
             description_nodes = self.dom.getElementsByTagName(
@@ -175,7 +219,7 @@ class FeescaleParser(object):
             return description_nodes[0].childNodes[0].data
         except:
             LOGGER.exception("unable to get description from Feescale Parser")
-            return _("Unknown TableName")
+            return _("Unknown Description")
 
     def code_text(self, index):
         node = self.items[index]
@@ -224,7 +268,7 @@ def _test():
 
     example_path = os.path.join(
         resources_location, "feescales", "example_feescale.xml")
-    fp = FeescaleParser(example_path)
+    fp = FeescaleParser(example_path, 1)
     return fp
 
 
