@@ -71,6 +71,9 @@ def getBoolFromNode(node, id, default=False):
     else:
         return getTextFromNode(node, id) in ("True","1")
 
+def _stripped(xml_string):
+        return xml_string.replace("&gt;", ">").replace("&lt;", "<")
+
 class FeeTables(object):
     '''
     a wrapper class to contain as many fee tables as the user has outlined.
@@ -199,6 +202,7 @@ class FeeTable(object):
         self.chartPlainCodes = OrderedDict()
         self.chartRegexCodes = OrderedDict()
         self.otherRegexCodes = OrderedDict()
+        self.item_modifiers = []
 
         self.ui_lists = {"crown_buttons":[], "implant_buttons":[]}
 
@@ -300,8 +304,7 @@ class FeeTable(object):
             complex_shortcut = ComplexShortcut(shortcut_node)
             self.complex_shortcuts.append(complex_shortcut)
 
-        item_nodes = self.dom.getElementsByTagName("item")
-        for item_node in item_nodes:
+        for item_node in self.dom.getElementsByTagName("item"):
             item_code = item_node.getAttribute("id")
             fee_item = FeeItem(self, item_code, item_node)
             self.feesDict[item_code] = fee_item
@@ -320,6 +323,9 @@ class FeeTable(object):
                     self.chartPlainCodes[fee_item.usercode] = item_code
                 else:
                     self.treatmentCodes[fee_item.usercode] = item_code
+
+        for modifier_node in self.dom.getElementsByTagName("modifier"):
+            self.item_modifiers.append(Modifier(modifier_node))
 
         for ix, crown_node in enumerate(
         self.dom.getElementsByTagName("crown_chart_button")):
@@ -370,7 +376,7 @@ class FeeTable(object):
 
         return self.treatmentCodes.get(arg, "-----")
 
-    def getFees(self, itemcode, pt, csetype, shortcut):
+    def _getFees(self, itemcode, pt, csetype, shortcut):
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
@@ -398,6 +404,18 @@ class FeeTable(object):
                 existing_no += 1
 
         return fee_item.get_fees(existing_no+1)
+
+    def getFees(self, itemcode, pt, csetype, shortcut):
+        '''
+        a wrapper for the old function
+        '''
+        LOGGER.debug((itemcode, pt, csetype, shortcut))
+        gross, charge = self._getFees(itemcode, pt, csetype, shortcut)
+        for modifier in self.item_modifiers:
+            LOGGER.debug("checking modifier %s"% modifier)
+            if modifier.condition_met(pt) and modifier.item_id_match(itemcode):
+                return modifier.gross_mod(gross), modifier.charge_mod(charge)
+        return gross, charge
 
     def recalc_fee(self, itemcode, item_no):
         '''
@@ -500,8 +518,7 @@ class FeeItem(object):
             except ValueError:
                 pass
 
-            condition = node.getAttribute("condition").replace(
-                "&gt;", ">").replace("&lt;", "<")
+            condition = _stripped(node.getAttribute("condition"))
             self.conditions.append(condition)
 
             shortcut_match = node.getAttribute("shortcut_match")
@@ -702,8 +719,7 @@ class CaseAction(object):
         self.alterations = []
         self.shortcut_substitution = None
 
-        self.condition = case_node.getAttribute("condition").replace(
-            "&gt;", ">").replace("&lt;", "<")
+        self.condition = _stripped(case_node.getAttribute("condition"))
 
         handled = case_node.getAttribute("handled")
         if handled == "no":
@@ -742,6 +758,86 @@ class CaseAction(object):
     def __repr__(self):
         return "CaseAction '%s' '%s'"% (self.condition, self.message)
 
+
+class Modifier(object):
+    '''
+    feescales can have modifier elements.
+    An example of this is you may wish to not charge for some items on certain
+    age groups.
+    '''
+    def __init__(self, modifier_node):
+        self.conditions = []
+        self.item_ids = []
+        self.item_id_regexes = []
+        self._gross_fee = None
+        self._charge_fee = None
+
+        for node in modifier_node.getElementsByTagName("condition"):
+            self.conditions.append(_stripped(node.firstChild.data))
+        for node in modifier_node.getElementsByTagName("item_id"):
+            item_id = node.firstChild.data
+            if node.getAttribute("type") == "regex":
+                self.item_id_regexes.append(re.compile(item_id))
+            else:
+                self.item_ids.append(item_id)
+        try:
+            self._gross_fee = int(modifier_node.getElementsByTagName(
+            "gross")[0].firstChild.data)
+        except IndexError:
+            pass # no gross fee modification
+        try:
+            self._charge_fee = int(modifier_node.getElementsByTagName(
+            "charge")[0].firstChild.data)
+        except IndexError:
+            pass # no charge fee modication
+
+    def item_id_match(self, item_id):
+        LOGGER.debug(item_id)
+        for regex in self.item_id_regexes:
+            LOGGER.debug(regex)
+            if regex.match(item_id):
+                return True
+        for id in self.item_ids:
+            LOGGER.debug(id)
+            if id == item_id:
+                return True
+        LOGGER.debug("no match")
+        return False
+
+    def condition_met(self, pt):
+        for condition in self.conditions:
+            m = re.match("age<(/d+)$", condition)
+            if m and pt.ageYears() < int(m.groups()[0]):
+                return True
+            m = re.match("age<(\d+)years(\d+)months", condition)
+            if m:
+                years, months = pt.age_course_start
+                years_, months_ = int(m.groups()[0]), int(m.groups()[1])
+                if years < years_ or ( years == years_ and months < months_):
+                    return True
+            m = re.match("cset=(.*)$", condition)
+            if m and pt.cset == m.groups()[0]:
+                return True
+
+        return False
+
+    def gross_mod(self, fee):
+        '''
+        modify the original fee supplied by the feescale
+        this function could do more.. eg %age increases etc?
+        '''
+        if self._gross_fee is not None:
+            return self._gross_fee
+        return fee
+
+    def charge_mod(self, fee):
+        '''
+        modify the original fee supplied by the feescale
+        this function could do more.. eg %age increases etc?
+        '''
+        if self._charge_fee is not None:
+            return self._charge_fee
+        return fee
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

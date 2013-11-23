@@ -49,7 +49,7 @@ def convert_tooth(tooth):
 
 CAPITATION_SIMPLE = [
     "2771", #upper special tray
-  "2772"  #lower special tray
+    "2772"  #lower special tray
 ]
 
 CONTINUING_CARE_SIMPLE = [

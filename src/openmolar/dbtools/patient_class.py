@@ -389,44 +389,47 @@ class patient(object):
                 address += "%s\n"% line.strip(" ")
         return address
 
-    def getAge(self):
+    def getAge(self, on_date=None):
         '''
         return the age in form (year(int), months(int), isToday(bool))
         '''
+        if on_date is None:
+            #use today
+            on_date = localsettings.currentDay()
+
+        day = self.dob.day
         try:
-            today = localsettings.currentDay()
+            nextbirthday = datetime.date(on_date.year, self.dob.month,
+            self.dob.day)
+        except ValueError:
+            #catch leap years!!
+            nextbirthday = datetime.date(on_date.year, self.dob.month,
+            self.dob.day-1)
 
-            day = self.dob.day
+        ageYears = on_date.year - self.dob.year
 
-            try:
-                nextbirthday = datetime.date(today.year, self.dob.month,
-                self.dob.day)
-            except ValueError:
-                #catch leap years!!
-                nextbirthday = datetime.date(today.year, self.dob.month,
-                self.dob.day-1)
+        if nextbirthday > on_date:
+            ageYears -= 1
+            months = (12 - self.dob.month) + on_date.month
+        else:
+            months = on_date.month - self.dob.month
+        if self.dob.day > on_date.day:
+            months -= 1
 
-            ageYears = today.year - self.dob.year
+        isToday =  nextbirthday == localsettings.currentDay()
 
-            if nextbirthday > today:
-                ageYears -= 1
-                months = (12 - self.dob.month) + today.month
-            else:
-                months = today.month - self.dob.month
-            if self.dob.day > today.day:
-                months -= 1
-
-            isToday =  nextbirthday == today
-
-            return (ageYears, months, isToday)
-
-        except Exception, e:
-            print "error calculating patient's age", e
-            return (0,0,False)
+        return (ageYears, months, isToday)
 
     @property
     def ageYears(self):
         return self.getAge()[0]
+
+    @property
+    def age_course_start(self):
+        '''
+        returns a tuple (year, months) for the patient at accd
+        '''
+        return self.getAge(self.treatment_course.accd)[:2]
 
     @property
     def under_6(self):
@@ -770,10 +773,9 @@ class patient(object):
     def under_capitation(self):
         if self.cset != "N":
             return False
-        if self.treatment_course.accd is None:
-            return self.ageYears < 19
-        eighteenth = self.dob + datetime.timedelta(days = 18 * 365.24)
-        return self.treatment_course.accd < eighteenth
+        years, months = self.age_course_start
+
+        return years < 17 or ( years == 17 and months < 11)
 
     def new_tx_course(self, new_courseno):
         self.courseno0 = new_courseno
@@ -898,7 +900,9 @@ if __name__ =="__main__":
     pt.fee_table
 
     pt.take_snapshot()
-    pt.dob = datetime.date(1969,12,9)
     print list(pt.tx_hashes)
 
     print pt.treatment_course
+    print pt.ageYears
+    print pt.age_course_start
+    print pt.under_capitation

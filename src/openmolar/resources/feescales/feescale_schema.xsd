@@ -12,6 +12,7 @@
         <xs:element name="end" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="item" maxOccurs="unbounded"/>
         <xs:element ref="complex_shortcut" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="modifier" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="user_display" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
     </xs:complexType>
@@ -24,18 +25,18 @@
   <xs:element name="start">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="year" type="xs:string"/>
-        <xs:element name="month" type="xs:string"/>
-        <xs:element name="day" type="xs:string"/>
+        <xs:element name="year" type="xs:integer"/>
+        <xs:element name="month" type="xs:integer"/>
+        <xs:element name="day" type="xs:integer"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="end">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="year" type="xs:string"/>
-        <xs:element name="month" type="xs:string"/>
-        <xs:element name="day" type="xs:string"/>
+        <xs:element name="year" type="xs:integer"/>
+        <xs:element name="month" type="xs:integer"/>
+        <xs:element name="day" type="xs:integer"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -119,8 +120,8 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="brief_description" type="xs:string" minOccurs="1" maxOccurs="1" />
-        <xs:element name="gross" type="xs:string" minOccurs="1" maxOccurs="1" />
-        <xs:element name="charge" type="xs:string" minOccurs="0" maxOccurs="1" />
+        <xs:element name="gross" type="xs:integer" minOccurs="1" maxOccurs="1" />
+        <xs:element name="charge" type="xs:integer" minOccurs="0" maxOccurs="1" />
       </xs:sequence>
       <xs:attribute name="condition" type="xs:string" use="optional"/>
       <xs:attribute name="shortcut_match" type="xs:string" use="optional"/>
@@ -155,4 +156,30 @@
       <xs:attribute name="tooltip" type="xs:string" use="optional"/>
     </xs:complexType>
   </xs:element>
+  
+  
+  
+  <xs:element name="modifier">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="condition" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element ref="item_id_match" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element name="gross" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="charge" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="item_id_match">
+   <xs:complexType>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="type" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  </xs:element>
+  
+  
+  
+  
 </xs:schema>
