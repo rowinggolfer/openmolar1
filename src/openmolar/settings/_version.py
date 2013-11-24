@@ -7,7 +7,7 @@ import re
 import subprocess
 LOGGER = logging.getLogger("openmolar")
 
-VERSION = "0.4.09"
+VERSION = "0.5"
 
 try:
     p = subprocess.Popen(
