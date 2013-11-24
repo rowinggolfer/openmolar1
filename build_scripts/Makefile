@@ -73,8 +73,7 @@ TMP_DIR=$(HEAD)tmp/
 DEB_CONF_DIR=$(BUILD_SCRIPTS_DIR)debian_packaging/dh_python2/debian/
 DEB_BUILDS_DIR=$(BUILDS_DIR)debs/$(DIST)/
 
-#DEBDISTS = unstable testing stable oldstable saucy raring quantal precise
-DEBDISTS = saucy
+DEBDISTS = unstable testing stable oldstable saucy raring quantal precise
 
 CHANGE_FILES=`ls -t $(DEB_BUILDS_DIR) | grep changes | head -n1`
 CHANGES_FILE = $(CHANGE_FILES)
