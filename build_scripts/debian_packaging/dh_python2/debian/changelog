@@ -1,3 +1,10 @@
+openmolar (0.5.0-alpha1-1~__DIST__0) __DIST__; urgency=low
+
+  * modded control to include new dependency on python-qscintilla2
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Sun, 24 Nov 2013 18:51:46 +0000
+
+
 openmolar (0.5.0-alpha1-0~__DIST__0) __DIST__; urgency=low
 
   * New upstream release

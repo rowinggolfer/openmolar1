@@ -9,7 +9,7 @@ Standards-Version: 3.9.3
 
 Package: openmolar-orig
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python-qt4 (>=4.4.0), python-mysqldb, xdg-utils
+Depends: ${misc:Depends}, ${python:Depends}, python-qt4 (>=4.4.0), python-mysqldb, xdg-utils, python-qscintilla2
 Replaces: openmolar
 XB-Python-Version: ${python:Versions}
 Description: Dental Practice Management Software

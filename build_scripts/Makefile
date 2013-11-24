@@ -56,7 +56,7 @@ PACKAGE=openmolar
 
 CURRENT_MAKEFILE_LIST := $(MAKEFILE_LIST)
 BUILD_SCRIPTS_DIR := $(abspath $(dir $(firstword $(CURRENT_MAKEFILE_LIST))))/
-HEAD = `$(BUILD_SCRIPTS_DIR)get_git_branch.py`/
+HEAD = $(shell $(BUILD_SCRIPTS_DIR)get_git_branch.py)/
 BUILDS_DIR=$(HEAD)builds/
 
 DIST_DIR=$(HEAD)dist/
@@ -75,8 +75,7 @@ DEB_BUILDS_DIR=$(BUILDS_DIR)debs/$(DIST)/
 
 DEBDISTS = unstable testing stable oldstable saucy raring quantal precise
 
-CHANGE_FILES=`ls -t $(DEB_BUILDS_DIR) | grep changes | head -n1`
-CHANGES_FILE = $(CHANGE_FILES)
+CHANGELOG=$(DEB_BUILDS_DIR)$(shell ls -t $(DEB_BUILDS_DIR) | grep changes | head -n1)
 
 #                                                                              #
 ##################  Debian packaging ends  #####################################
@@ -162,7 +161,7 @@ debs:
 	
 pushdeb:
 	cd ~/www/repos/apt/debian ;\
-	reprepro include $(DIST) $(HEAD)builds/debs/$(DIST)/$(CHANGES_FILE) ; \
+	reprepro include $(DIST) $(CHANGELOG) ; \
 	reprepro export
 	
 pushdebs:
@@ -184,11 +183,14 @@ create_pbuilder:
 	)
 
 test:
-	@echo "chosen package $(PACKAGE)"
-	@echo "targetting distro $(DIST)"
-	@if [ "$(NEW_CHANGELOG)" = 'true' ]; then \
-		echo "changelog WILL be updated"; \
+	@echo chosen package $(PACKAGE)
+	@echo targetting distro $(DIST)
+	@if [ $(NEW_CHANGELOG) = 'true' ]; then \
+		echo changelog WILL be updated; \
 	fi
-	@echo "debconfdir = $(DEB_CONF_DIR)"
-	@echo "Dist = $(DIST)"
+	@echo debconfdir = $(DEB_CONF_DIR)
+	@echo Head = $(HEAD)
+	@echo Dist = $(DIST)
+	@echo DEB_BUILDS_DIR = $(DEB_BUILDS_DIR)
+	@echo changelog = $(CHANGELOG)
 	
