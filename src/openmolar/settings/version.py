@@ -7,7 +7,10 @@ import re
 import subprocess
 LOGGER = logging.getLogger("openmolar")
 
-VERSION = "0.5"
+#this is a fallback version, which will be used if
+#openmolar is not run from a git repository
+#or ig git is not installed.
+VERSION = "0.5.0-alpha1"
 
 try:
     p = subprocess.Popen(
@@ -22,7 +25,8 @@ try:
                 VERSION += "-dirty"
         except git.InvalidGitRepositoryError:
             LOGGER.debug("library is not a git repository")
-
+except OSError:
+    LOGGER.debug("git not installed")
 except ImportError:
     LOGGER.debug("unable to import git")
 

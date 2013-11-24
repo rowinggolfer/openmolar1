@@ -5,18 +5,15 @@ USAGE
    make [options] target
 
 OPTIONS
-   DIST     (the target distribution - eg. unstable, testing, lucid etc.) 
+   DIST     (the target distribution - eg. unstable, testing, lucid etc.)
        default=unstable
        allowed values - anything.. 
-       but if building a deb, have a pbuilder environment with this name    
-   DEBHELPER     (specifies with python system to use for debian source packages)                    
-       allowed=py_central, dh_python2
-       default=dh_python2
+       but if building a deb, have a pbuilder environment with this name
    NEW_CHANGELOG (run a gui to modify the changelog)
        default=true
 
 TARGETS
-   tarball 
+   tarball
    deb_src
    deb_binary
    all_tarballs
@@ -30,16 +27,10 @@ endef
 define EXAMPLES
 EXAMPLES
 make tarball
-	create a tarball for the default package (openmolar-namespace)   
-make tarball SUFFIX=client
-	create a tarball for openmolar-client   
-make all_tarballs
-	create tarballs for ALL suffixes
+	create a tarball
 
 make changelog
 	update the changelog in the template debian directory
-make changelog DEBHELPER=py_central
-	update the changelog in the template debian directory for py_central build system (which is deprecated, but necessary for lucid)
 
 make deb DIST=stable
 	debian packages for debian stable (squeeze)
@@ -55,15 +46,6 @@ export EXAMPLES
 
 ifeq ($(DIST), )
 	DIST=unstable
-endif
-
-ifeq ($(DEBHELPER), )
-	DEBHELPER=dh_python2
-endif
-
-#in case I forget!!
-ifeq ($(DIST), lucid)
-	DEBHELPER=py_central
 endif
 
 ifeq ($(NEW_CHANGELOG), )
@@ -88,11 +70,11 @@ TMP_DIR=$(HEAD)tmp/
 
 ###################  Debian Packaging Stuff ####################################
 #                                                                              #
-DEB_CONF_DIR=$(HEAD)build_scripts/debian_packaging/$(DEBHELPER)/debian/
+DEB_CONF_DIR=$(BUILD_SCRIPTS_DIR)debian_packaging/dh_python2/debian/
 DEB_BUILDS_DIR=$(BUILDS_DIR)debs/$(DIST)/
 
-DEBDISTS = unstable testing stable oldstable saucy raring quantal precise
-DEBHELPERS= py_central dh_python2
+#DEBDISTS = unstable testing stable oldstable saucy raring quantal precise
+DEBDISTS = saucy
 
 CHANGE_FILES=`ls -t $(DEB_BUILDS_DIR) | grep changes | head -n1`
 CHANGES_FILE = $(CHANGE_FILES)
@@ -150,15 +132,13 @@ deb:
 	
 	cd $(TMP_DIR) ;\
 	tar -zxf $(TARBALL); \
-	mv $(TARBALL) `$(BUILD_SCRIPTS_DIR)version_name.py $(DEB_CONF_DIR)`.orig.tar.gz 
+	mv $(TARBALL) `python $(BUILD_SCRIPTS_DIR)version_name.py $(DEB_CONF_DIR)`.orig.tar.gz 
 	
 	cd $(TMP_DIR)$(PACKAGE)-$(VERSION) ; \
 	cp -av $(DEB_CONF_DIR) . ;\
 	echo "modding changelog" ;\
 	sed -i s/__DIST__/$(DIST)/g debian/changelog ;\
 	sudo pdebuild --buildresult $(DEB_BUILDS_DIR) --pbuilderroot "sudo DIST=$(DIST)"
-	
-	#make debsign
 	
 debsign:
 	debsign $(DEB_BUILDS_DIR)*$(VERSION)*.changes -kF230408E 
@@ -168,28 +148,18 @@ debsigns:
 	
 	$(foreach dist,$(DEBDISTS), \
 		make debsign DIST=$(dist) ;\
-	) 
-	
+	)
 	
 notes:
 	#pdebuild --architecture <i386|amd64>  --buildresult /tmp --pbuilderroot "sudo DIST=<unstable|stable|testing|raring|quantal|precise|lucid> ARCH=<i386|amd64>"
 	
 debs:
 	@echo "making all debian based packages.. first we need to update the changelogs for the 2 build systems"
+	make changelog
 	
-	#make changelog DEBHELPER=<dh_python2|py_central>
-	$(foreach var,$(DEBHELPERS), make changelog DEBHELPER=$(var);)
-	
-	#make deb DIST=<unstable|testing|stable|raring|quantal|precise|lucid> NEW_CHANGELOG=False 
 	$(foreach dist,$(DEBDISTS), \
 		make deb DIST=$(dist) NEW_CHANGELOG=False;\
 	) 
-	
-	#make debsign DIST=<unstable|testing|stable|raring|quantal|precise|lucid> 
-	#$(foreach var,$(DEBDISTS), make debsign DIST=$(var);) 
-	
-	#make debsigns
-	
 	
 pushdeb:
 	cd ~/www/repos/apt/debian ;\
@@ -201,8 +171,19 @@ pushdebs:
 	$(foreach dist,$(DEBDISTS), \
 		make DIST=$(dist) pushdeb; \
 	)
-	 
 	
+update_pbuilder:
+	$(foreach dist, $(DEBDISTS), \
+		sudo DIST=${dist} ARCH=amd64 pbuilder --update --architecture amd64 \
+		--distribution ${dist} --http-proxy http://localhost:3142 ; \
+	)
+	
+create_pbuilder:
+	$(foreach dist, $(DEBDISTS), \
+		sudo DIST=${dist} ARCH=amd64 pbuilder --create --architecture amd64 \
+		--distribution ${dist} --http-proxy http://localhost:3142 ; \
+	)
+
 test:
 	@echo "chosen package $(PACKAGE)"
 	@echo "targetting distro $(DIST)"

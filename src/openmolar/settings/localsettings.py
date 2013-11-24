@@ -18,7 +18,7 @@ import types
 
 from xml.dom import minidom
 
-from openmolar.settings._version import VERSION
+from openmolar.settings.version import VERSION
 
 LOGGER = logging.getLogger("openmolar")
 

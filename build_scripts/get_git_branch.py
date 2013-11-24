@@ -21,8 +21,6 @@ try:
 except git.InvalidGitRepositoryError:
     sys.exit(1)
 
-
-
 module_path = os.path.join(repo.working_dir, "src")
 main_path = os.path.join(module_path, "openmolar", "qt4gui", "maingui.py")
 

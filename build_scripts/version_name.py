@@ -16,9 +16,15 @@ import os
 import re 
 import sys
 
-curdir = os.path.dirname(os.path.abspath(__file__))
+try:
+    debian_directory = sys.argv[1]
+except IndexError:
+    sys.exit("version_name script called with no arguments") 
 
-filepath = os.path.join(sys.argv[1], "changelog")
+if not os.path.isdir(debian_directory):
+    sys.exit("'%s' is not a directory"% debian_directory) 
+
+filepath = os.path.join(debian_directory, "changelog")
 
 try:
     f = open(filepath)

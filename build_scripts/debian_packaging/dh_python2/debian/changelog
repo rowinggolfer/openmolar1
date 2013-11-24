@@ -1,3 +1,10 @@
+openmolar (0.5.0-alpha1-dirty-0~__DIST__0) __DIST__; urgency=low
+
+  * trial deb build
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Sun, 24 Nov 2013 13:56:33 +0000
+
+
 openmolar (0.4.09+bzr0843-0~__DIST__0) __DIST__; urgency=low
 
   * upstream changes
