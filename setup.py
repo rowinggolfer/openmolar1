@@ -10,21 +10,12 @@ import os
 import re
 import sys
 
-def get_version():
-    '''
-    returns a string with in the format X.Y.Z+bzr04d
-    '''
-    sys.path.insert(0,
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "src"))
 
-    from openmolar.settings.localsettings import __MAJOR_VERSION__
-    try:
-        from bzrlib import branch
-        revno = branch.Branch.open(".").revno()
-        return "%s+bzr%04d"% (__MAJOR_VERSION__, revno)
-    except Exception as exc:
-        print ("Warning - unable to get bzr number")
-    return __MAJOR_VERSION__
+OM_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "src")
+sys.path.insert(0, OM_PATH)
+# quieten down the logger!
+sys.argv.append("-q")
+from openmolar.settings.localsettings import VERSION
 
 class InstallData(install_data):
     def run(self):
@@ -62,7 +53,7 @@ if os.path.isfile("MANIFEST"):
 
 setup(
     name = 'openmolar',
-    version = get_version(),
+    version = VERSION,
     description = 'Open Source Dental Practice Management Software',
     author = 'Neil Wallace',
     author_email = 'rowinggolfer@googlemail.com',

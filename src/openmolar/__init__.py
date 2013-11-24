@@ -46,7 +46,7 @@ elif "-v" in sys.argv:
 else:
     LOGGER.setLevel(logging.INFO)
 
-LOGGER.info("running openmolar base module = %s"% os.path.dirname(__file__))
+LOGGER.debug("running openmolar base module = %s"% os.path.dirname(__file__))
 
 lang = os.environ.get("LANG")
 if lang:

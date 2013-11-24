@@ -72,13 +72,14 @@ endif
 
 PACKAGE=openmolar
 
-HEAD=$(HOME)/openmolar/openmolar/
-BUILD_SCRIPTS_DIR = $(HEAD)/build_scripts/
+CURRENT_MAKEFILE_LIST := $(MAKEFILE_LIST)
+BUILD_SCRIPTS_DIR := $(abspath $(dir $(firstword $(CURRENT_MAKEFILE_LIST))))/
+HEAD = `$(BUILD_SCRIPTS_DIR)get_git_branch.py`/
 BUILDS_DIR=$(HEAD)builds/
 
 DIST_DIR=$(HEAD)dist/
 
-VERSION=`$(BUILD_SCRIPTS_DIR)/get_version.py`
+VERSION=`$(BUILD_SCRIPTS_DIR)get_version.py`
 
 TARBALL = $(PACKAGE)-$(VERSION).tar.gz
 TARBALL_DIR=$(HEAD)builds/tarballs/
@@ -113,15 +114,13 @@ clean_tmp:
 	mkdir -p $(TMP_DIR)
 	rm -rf $(TMP_DIR)*
 
-update_version:
-	bzr version-info --format=python > $(HEAD)src/openmolar/settings/_version.py
-
 tarball:
-	echo "making  tarball"
-	make update_version
-	mkdir -p $(TARBALL_DIR)
+	echo "making  tarball (using setup.py sdist)"
 	cd $(HEAD) ;\
 		python setup.py sdist ;\
+	echo "tarball created!"
+	mkdir -p $(TARBALL_DIR)
+	echo "moving tarball to $(TARBALL_DIR)"
 	cp -av $(DIST_DIR)$(TARBALL) $(TARBALL_DIR);
 	@echo "tarball is located $(TARBALL_DIR)$(TARBALL)"
 
