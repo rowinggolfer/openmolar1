@@ -56,7 +56,7 @@ class AppointmentCardDialog(BaseDialog):
 
         self.insertWidget(patient_label)
         self.insertWidget(self.appointments_label)
-        self.layout.insertStretch(2)
+        self.layout().insertStretch(2)
         self.insertWidget(self.check_box)
 
         self.check_box.toggled.connect(self.today_check_box_toggled)
