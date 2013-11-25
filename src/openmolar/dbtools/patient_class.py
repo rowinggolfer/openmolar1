@@ -743,9 +743,9 @@ class patient(object):
 
     def checkExemption(self):
         if (self.exemption == "S" and
-        self.self.getAge(self.treatment_course.accd)[0] > 19):
+        self.getAge(self.treatment_course.accd)[0] > 19):
             self.exemption = ""
-            self.load_warnings.append(_("Age Exemption removed"))
+            self.load_warnings.append(_("Student Exemption removed"))
         else:
             return True
 
