@@ -27,17 +27,24 @@ import os
 import sys
 from gettext import gettext as _
 from xml.dom import minidom
-from collections import OrderedDict
 
 from PyQt4 import QtCore, QtGui
 from openmolar.qt4gui import resources_rc
 
 LOGGER = logging.getLogger("openmolar")
+try:
+    from collections import OrderedDict
+except ImportError:
+    #OrderedDict only came in python 2.7
+    LOGGER.warning("using openmolar.backports for OrderedDict")
+    from openmolar.backports import OrderedDict
 
 from feescale_parser import FeescaleParser
 from feescale_list_model import ItemsListModel, ComplexShortcutsListModel
 from feescale_xml_editor import XMLEditor
 from feescale_compare_items_dockwidget import CompareItemsDockWidget
+from feescale_input_dialogs import *
+
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
 class ControlPanel(QtGui.QTabWidget):
@@ -181,6 +188,13 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_increment = QtGui.QAction(_("Increase/decrease fees"), self)
         action_increment.setToolTip(_("Apply a percentage"))
 
+        action_roundup = QtGui.QAction(_("Round fees up/down"), self)
+        action_roundup.setToolTip(
+            _("Round fees up or down to a specified accuracy"))
+
+        action_charges = QtGui.QAction(
+            _("Relate charges to fees by percentage"), self)
+
         action_zero_charges = QtGui.QAction(
             _("Zero Patient Contributions"), self)
         action_zero_charges.setToolTip(
@@ -210,6 +224,8 @@ class FeescaleEditor(QtGui.QMainWindow):
         menu_database.addAction(action_commit)
 
         menu_tools.addAction(action_increment)
+        menu_tools.addAction(action_roundup)
+        menu_tools.addAction(action_charges)
         menu_tools.addAction(action_zero_charges)
 
         self.tab_widget = QtGui.QTabWidget()
@@ -254,6 +270,8 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_commit.triggered.connect(self.apply_changes)
 
         action_increment.triggered.connect(self.increase_fees)
+        action_roundup.triggered.connect(self.roundup_fees)
+        action_charges.triggered.connect(self.relate_charges_to_gross_fees)
         action_zero_charges.triggered.connect(self.zero_charges)
 
         action_quit.triggered.connect(
@@ -493,14 +511,35 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.search_text, True, True, True, True):
             self.advise("'%s' %s"% (self.search_text, _("not found")))
 
+    def roundup_fees(self):
+        dl = RoundupFeesDialog(self)
+        if dl.exec_():
+            if dl.alter_gross:
+                func_ = self.current_parser.roundup_fees
+            else:
+                func_ = self.current_parser.roundup_charges
+            func_(dl.round_value, dl.round_up, dl.round_down)
+
+            self.text_edit.setText(self.current_parser.text)
+            self.advise(dl.message, 1)
+
     def increase_fees(self):
-        percentage, result = QtGui.QInputDialog.getDouble(
-            self, _("Modify all fees"),
-            _("Please enter a percentage"), 0, -100, 100, 2)
-        if not result:
-            return
-        self.current_parser.increase_fees(percentage)
-        self.text_edit.setText(self.current_parser.text)
+        dl = PercentageInputDialog(self)
+        if dl.exec_():
+            if dl.alter_gross:
+                self.current_parser.increase_fees(dl.percentage)
+            else:
+                self.current_parser.increase_charges(dl.percentage)
+            self.text_edit.setText(self.current_parser.text)
+            self.advise(dl.message, 1)
+
+    def relate_charges_to_gross_fees(self):
+        dl = ChargePercentageInputDialog(self)
+        if dl.exec_():
+            self.current_parser.relate_charges_to_gross_fees(
+                dl.percentage, dl.leave_zero_charges_unchanged)
+            self.text_edit.setText(self.current_parser.text)
+            self.advise(dl.message, 1)
 
     def zero_charges(self):
         if QtGui.QMessageBox.question(self, _("Confirm"),

@@ -99,12 +99,18 @@ class StaticControlPanel(QtGui.QWidget):
 
         dec_button.clicked.connect(self.deciduous_signal.emit)
 
-
     def sizeHint(self):
         return QtCore.QSize(150,150)
 
     def _but_clicked(self, message):
         self.clicked.emit(message)
+
+    def setEnabled(self, arg):
+        '''
+        this unneccesary re-implementation allows the code to run on python 2.6
+        (untested)
+        '''
+        QtGui.QWidget.setEnabled(self, arg)
 
 if __name__ == "__main__":
 
@@ -117,4 +123,5 @@ if __name__ == "__main__":
     widg = StaticControlPanel()
     widg.clicked.connect(sig_catcher)
     widg.show()
+    widg.setEnabled(1==2)
     app.exec_()

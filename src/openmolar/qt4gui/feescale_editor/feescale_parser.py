@@ -176,23 +176,78 @@ class FeescaleParser(object):
             for feenode in item.getElementsByTagName("fee"):
                 yield feenode
 
-    def increase_fees(self, percentage):
-        def increase(pence):
-            mult = 100 + percentage
-            new_pence = pence * mult
-            return int(new_pence//100)
-        for att in ("gross", "charge"):
-            for node in self.dom.getElementsByTagName(att):
-                fee = node.firstChild.data
-                new_fee = str(increase(int(fee)))
-                message = "%s %s increased to %s"% (
-                    att.ljust(8, " "), fee.rjust(8," "), new_fee.rjust(8," "))
-                node.firstChild.replaceWholeText(str(new_fee))
+    def roundup_charges(self, precision, up=False, down=False):
+        self.roundup_fees(precision, up=False, down=False, att="charge")
 
-                LOGGER.debug(message)
+    def roundup_fees(self, precision, up=False, down=False, att="gross"):
+        LOGGER.debug((precision, up, down, att))
+        def round_to_value(pence, r_up=False, r_down=False):
+            offset = pence%precision
+            LOGGER.debug(offset)
+            if offset == 0:
+                return int(pence)
+            if r_up:
+                return int(pence + (precision-offset))
+            if r_down:
+                return int(pence - offset)
+            if offset < (precision+1)//2:
+                return round_to_value(pence, r_down=True)
+            else:
+                return round_to_value(pence, r_up=True)
+
+        for node in self.dom.getElementsByTagName(att):
+            fee = node.firstChild.data
+            new_fee = str(round_to_value(int(fee), up, down))
+            message = "%s %s changed to %s"% (
+                att.ljust(8, " "), fee.rjust(8," "), new_fee.rjust(8," "))
+            node.firstChild.replaceWholeText(new_fee)
 
         self._edited_text = None
-        LOGGER.info("%s fees increased by %s%%"% (self.description,percentage))
+        LOGGER.debug(message)
+
+    def increase_charges(self, percentage):
+        self.increase_fees(percentage, att="charge")
+
+    def increase_fees(self, percentage, att="gross"):
+        def increase(pence):
+            return int((pence * mult)//100)
+
+        mult = 100 + percentage
+        for node in self.dom.getElementsByTagName(att):
+            fee = node.firstChild.data
+            new_fee = str(increase(int(fee)))
+            message = "%s %s increased to %s"% (
+                att.ljust(8, " "), fee.rjust(8," "), new_fee.rjust(8," "))
+            node.firstChild.replaceWholeText(new_fee)
+
+            LOGGER.debug(message)
+
+        self._edited_text = None
+        LOGGER.info(
+        "%s %s fees increased by %s%%"% (self.description, att, percentage))
+
+    def relate_charges_to_gross_fees(self, percentage,
+    leave_zeros_untouched=False):
+        def get_charge(pence):
+            return int(pence*percentage//100)
+
+        for node in self.dom.getElementsByTagName("gross"):
+            charge_nodes = node.parentNode.getElementsByTagName("charge")
+            if charge_nodes == []:
+                continue
+            charge_node = charge_nodes[0]
+            fee = node.firstChild.data
+            charge = charge_node.firstChild.data
+            if charge == "0" and leave_zeros_untouched:
+                continue
+            new_charge = str(get_charge(int(fee)))
+            message = "Fee %s has a charge of %s"% (
+                fee.rjust(8," "), new_charge.rjust(8," "))
+            charge_node.firstChild.replaceWholeText(new_charge)
+
+            LOGGER.debug(message)
+
+        self._edited_text = None
 
     def zero_charges(self):
         for node in self.dom.getElementsByTagName("charge"):
