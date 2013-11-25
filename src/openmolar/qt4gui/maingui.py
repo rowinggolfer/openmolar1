@@ -103,6 +103,7 @@ from openmolar.dbtools import paymentHistory
 from openmolar.dbtools import courseHistory
 from openmolar.dbtools import estimatesHistory
 from openmolar.dbtools import est_logger
+from openmolar.dbtools.distinct_statuses import DistinctStatuses
 
 
 #--modules which act upon the pt class type (and subclasses)
@@ -180,9 +181,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.completed_listView.setContextMenuPolicy(
             QtCore.Qt.CustomContextMenu)
 
-        QtCore.QTimer.singleShot(2000, self.load_fee_tables)
         QtCore.QTimer.singleShot(500, self.set_operator_label)
+        QtCore.QTimer.singleShot(500, self.load_pt_statuses)
         QtCore.QTimer.singleShot(1000, self.load_todays_patients_combobox)
+        QtCore.QTimer.singleShot(2000, self.load_fee_tables)
 
     def advise(self, arg, warning_level=0):
         '''
@@ -1308,11 +1310,23 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         updates the status combobox
         '''
+        self.ui.status_comboBox.currentIndexChanged.disconnect(
+            self.change_pt_status)
         self.ui.status_comboBox.setCurrentIndex(0)
         for i in range(self.ui.status_comboBox.count()):
-            item=self.ui.status_comboBox.itemText(i)
+            item = self.ui.status_comboBox.itemText(i)
             if str(item).lower() == self.pt.status.lower():
                 self.ui.status_comboBox.setCurrentIndex(i)
+        self.ui.status_comboBox.currentIndexChanged.connect(
+            self.change_pt_status)
+
+    def change_pt_status(self, *args):
+        if self.pt.status == "BAD DEBT" and not permissions.granted(self):
+            self.updateStatus()
+            return
+        self.pt.status = unicode(
+        self.ui.status_comboBox.currentText().toUtf8())
+        self.updateDetails()
 
     def updateDetails(self):
         '''
@@ -2823,6 +2837,9 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def signals_contract(self):
         #contract
+        self.ui.status_comboBox.currentIndexChanged.connect(
+            self.change_pt_status)
+
         QtCore.QObject.connect(self.ui.badDebt_pushButton,
         QtCore.SIGNAL("clicked()"), self.makeBadDebt_clicked)
 
@@ -3124,6 +3141,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         else:
             email = self.ui.email1Edit.text()
         webbrowser.open("mailto:%s"% email)
+
+    def load_pt_statuses(self):
+        ds = DistinctStatuses()
+        self.ui.status_comboBox.addItems(ds.DISTINCT_STATUSES)
 
     def load_fee_tables(self):
         localsettings.loadFeeTables()

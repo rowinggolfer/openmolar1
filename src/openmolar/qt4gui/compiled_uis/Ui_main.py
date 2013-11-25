@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Mon Nov 25 11:02:28 2013
+# Created: Mon Nov 25 23:22:42 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -216,7 +216,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName(_fromUtf8("scrollArea_4"))
         self.scrollAreaWidgetContents_7 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 742, 477))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 759, 477))
         self.scrollAreaWidgetContents_7.setObjectName(_fromUtf8("scrollAreaWidgetContents_7"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_7)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
@@ -553,11 +553,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_17.addWidget(self.label_40)
         self.status_comboBox = QtGui.QComboBox(self.frame_19)
         self.status_comboBox.setObjectName(_fromUtf8("status_comboBox"))
-        self.status_comboBox.addItem(_fromUtf8(""))
-        self.status_comboBox.addItem(_fromUtf8(""))
-        self.status_comboBox.addItem(_fromUtf8(""))
-        self.status_comboBox.addItem(_fromUtf8(""))
-        self.status_comboBox.addItem(_fromUtf8(""))
         self.verticalLayout_17.addWidget(self.status_comboBox)
         spacerItem1 = QtGui.QSpacerItem(20, 242, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_17.addItem(spacerItem1)
@@ -684,7 +679,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollArea_5.setObjectName(_fromUtf8("scrollArea_5"))
         self.scrollAreaWidgetContents_8 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 724, 423))
+        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 741, 423))
         self.scrollAreaWidgetContents_8.setObjectName(_fromUtf8("scrollAreaWidgetContents_8"))
         self.gridLayout = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -826,7 +821,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_5 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 744, 471))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 761, 471))
         self.scrollAreaWidgetContents_5.setObjectName(_fromUtf8("scrollAreaWidgetContents_5"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_5)
         self.horizontalLayout_26.setSpacing(3)
@@ -1232,7 +1227,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName(_fromUtf8("estimate_scrollArea"))
         self.scrollAreaWidgetContents_11 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 549, 389))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 566, 389))
         self.scrollAreaWidgetContents_11.setObjectName(_fromUtf8("scrollAreaWidgetContents_11"))
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName(_fromUtf8("horizontalLayout_19"))
@@ -1303,7 +1298,7 @@ class Ui_MainWindow(object):
         self.perioCharts_scrollArea.setWidgetResizable(True)
         self.perioCharts_scrollArea.setObjectName(_fromUtf8("perioCharts_scrollArea"))
         self.scrollAreaWidgetContents_6 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 739, 391))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 756, 391))
         self.scrollAreaWidgetContents_6.setObjectName(_fromUtf8("scrollAreaWidgetContents_6"))
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
         self.gridLayout_15.setObjectName(_fromUtf8("gridLayout_15"))
@@ -2364,11 +2359,6 @@ class Ui_MainWindow(object):
         self.label_21.setText(_("Pt is registered with Dentist"))
         self.contractType_label.setText(_("Course Type"))
         self.label_40.setText(_("Status"))
-        self.status_comboBox.setItemText(0, _("Active"))
-        self.status_comboBox.setItemText(1, _("Moved Away"))
-        self.status_comboBox.setItemText(2, _("Deceased"))
-        self.status_comboBox.setItemText(3, _("Bad Debt"))
-        self.status_comboBox.setItemText(4, _("No More Appts"))
         self.badDebt_pushButton.setText(_("Write Off Bad Debt"))
         self.contractHDP_label_2.setText(_("This label is for displaying Private contractual stuff"))
         self.editPriv_pushButton.setText(_("Edit"))

@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>742</width>
+                      <width>759</width>
                       <height>477</height>
                      </rect>
                     </property>
@@ -1365,33 +1365,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QComboBox" name="status_comboBox">
-                      <item>
-                       <property name="text">
-                        <string>Active</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Moved Away</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Deceased</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Bad Debt</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>No More Appts</string>
-                       </property>
-                      </item>
-                     </widget>
+                     <widget class="QComboBox" name="status_comboBox"/>
                     </item>
                     <item>
                      <spacer name="verticalSpacer_12">
@@ -1722,7 +1696,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>724</width>
+                      <width>741</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -2015,7 +1989,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>744</width>
+                      <width>761</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2957,7 +2931,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>549</width>
+                      <width>566</width>
                       <height>389</height>
                      </rect>
                     </property>
@@ -3119,7 +3093,7 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>739</width>
+                      <width>756</width>
                       <height>391</height>
                      </rect>
                     </property>
