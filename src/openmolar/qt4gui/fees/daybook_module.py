@@ -96,7 +96,7 @@ def updateDaybook(om_gui):
                     daybookdict["other"] += "CUSTOM:%s "% treatment
                 else:
                     #--tooth include the key ie ul7 etc...
-                    daybookdict["chart"] += "%s %s "% (key.upper(), treatment)
+                    daybookdict["chart"] += "%s %s  "% (key.upper(), treatment)
 
                 count = orig_newcmps.count(treatment)
 

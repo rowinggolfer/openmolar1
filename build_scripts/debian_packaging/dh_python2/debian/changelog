@@ -1,3 +1,17 @@
+openmolar (0.5.0-alpha4-0~__DIST__0) __DIST__; urgency=low
+
+  * New upstream release
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Mon, 25 Nov 2013 12:30:00 +0000
+
+
+openmolar (0.5.0-alpha3-0~__DIST__0) __DIST__; urgency=low
+
+  * Upstream changes
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Mon, 25 Nov 2013 11:07:08 +0000
+
+
 openmolar (0.5.0-alpha2-0~__DIST__0) __DIST__; urgency=low
 
   * New upstream release
