@@ -598,7 +598,7 @@ class toothSurfaces():
         else:
             self.painter = painter
         for prop in self.props:
-            if re.match("cr,ic|im/", prop):
+            if re.match("(br/)?cr,ic|im/", prop):
                 adj = self.rect.height()/2
                 if self.isUpper:
                     rect_ = self.rect.adjusted(0, 0, 0, adj)
@@ -1120,7 +1120,8 @@ class ToothImage(QtGui.QWidget):
         recd = QtCore.QRectF(0, 0, self.width(), self.height())
         toothS = toothSurfaces(self, recd, self.tooth)
         toothS.setProps(self.props)
-        toothS.draw(self)
+        painter = QtGui.QPainter(self)
+        toothS.draw(self, painter)
 
     def sizeHint(self):
         return QtCore.QSize(40, 40)

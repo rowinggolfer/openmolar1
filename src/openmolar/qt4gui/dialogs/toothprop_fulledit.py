@@ -76,7 +76,8 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         '''
         tooth = ToothImage(self.tooth, [str(prop).lower()])
         icon_tableitem = QtGui.QTableWidgetItem()
-        icon_tableitem.setData(QtCore.Qt.DecorationRole, tooth.image.scaled(40,40))
+        image = tooth.image.scaled(40,40)
+        icon_tableitem.setData(QtCore.Qt.DecorationRole, image)
         icon_tableitem.setToolTip(_("click to edit Item - ") + prop)
 
         self.tableWidget.setItem(row, 0, icon_tableitem)
@@ -143,7 +144,7 @@ if __name__ == "__main__":
     Dialog = QtGui.QDialog()
 
     le = QtGui.QLineEdit()
-    le.setText("MOD RT CR,GO !KUO")
+    le.setText("IM/TIT MOD RT CR,GO !KUO")
     dl = editor("ul7","st", le, Dialog)
     dl.exec_()
 

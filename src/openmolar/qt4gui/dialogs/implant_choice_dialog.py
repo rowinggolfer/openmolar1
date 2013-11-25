@@ -34,7 +34,7 @@ for shortcut, description in (
     ("IM/TIT", _("Titanium Implant")),
     ("IM/ABUT", _("Implant Abutment")),
     ("CR,IC", _("Implant Crown")),
-    ("BR/C,IC", _("Implant Bridge Retainer")),
+    ("BR/CR,IC", _("Implant Bridge Retainer")),
     ("BR/P,IC", _("Implant Bridge Pontic")),
     ):
     implant_chart_button = namedtuple('ImplantType',
