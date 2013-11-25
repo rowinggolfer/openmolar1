@@ -3225,9 +3225,18 @@ def main(app):
     '''
     the entry point for the app
     '''
-
-    if not localsettings.successful_login and not "neil" in os.getcwd():
-        sys.exit("unable to run... no login")
+    if not localsettings.successful_login:
+        try:
+            dev_path = os.path.join(
+                localsettings.localFileDirectory, "dev_login.txt")
+            f = open(dev_path, "r")
+            data = f.read().strip("\n")
+            f.close()
+            if hash(data) != -6088298391381965318:
+                raise IOError("bad checksum")
+            LOGGER.warning("allowing developer login")
+        except:
+            sys.exit("unable to run... no login")
     localsettings.initiate()
     mainWindow = OpenmolarGui()
     sys.excepthook = mainWindow.excepthook

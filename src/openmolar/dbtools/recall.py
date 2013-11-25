@@ -17,7 +17,7 @@ _("Age"),
 _("Address") + " 1",_("Address")+" 2",_("Address")+" 3", _("Town"),
 _("County"), _("PostCode"), _("Dentist"), _("Family No"),_("Recall Date"))
 
-class recalled_patient(object):
+class RecalledPatient(object):
     '''
     a data object to store a recalled patient's details
     '''
@@ -33,7 +33,7 @@ class recalled_patient(object):
             self.familyno = None
         else:
             self.familyno = row[5]
-        self.age = localsettings.getAge(row[6])
+        self._dob = row[6]
         self.addr1 = row[7].strip()
 
         self.addr2 = row[8] if row[8] != None else ""
@@ -78,6 +78,22 @@ class recalled_patient(object):
         else:
             raise IndexError
 
+    @property
+    def age(self):
+        '''
+        return the age in string form
+        '''
+
+        today = localsettings.currentDay()
+        try:
+            nextbirthday = date(today.year, self._dob.month, self._dob.day)
+        except ValueError:#leap year!
+            nextbirthday = date(today.year, self._dob.month, self._dob.day-1)
+        ageYears = today.year - self._dob.year
+        if nextbirthday > today:
+            ageYears -= 1
+        return ageYears
+
     def __len__(self):
         return 15
 
@@ -88,8 +104,10 @@ class recalled_patient(object):
         if type(self) != type(other) or self.familyno in (None, 0):
             return cmp(0, 1)
         else:
-            return cmp((self.familyno, self.addr1),
-        (other.familyno, other.addr1))
+            return cmp(
+            (self.familyno, self.addr1),
+            (other.familyno, other.addr1)
+            )
 
     def __repr__(self):
         '''
@@ -124,7 +142,7 @@ def getpatients(conditions="", values=()):
     patient = None
     for row in rows:
         prev_patient = patient
-        patient = recalled_patient(letterno, row)
+        patient = RecalledPatient(letterno, row)
         if patient == prev_patient:
             letterno -= 1
             patient.letterno = letterno

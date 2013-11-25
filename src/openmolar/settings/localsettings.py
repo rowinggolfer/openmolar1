@@ -682,25 +682,6 @@ def updateLocalSettings(setting, value):
         LOGGER.exception("error updating local settings file")
         return False
 
-def getAge(dob):
-    '''
-    return the age in string form
-    '''
-    try:
-        today = currentDay()
-        nextbirthday = datetime.date(today.year, dob.month, dob.day)
-
-        ageYears = today.year - dob.year
-
-        if nextbirthday > today:
-            ageYears -= 1
-
-        return ageYears
-
-    except Exception, e:
-        print e
-        return 0
-
 def initiateUsers(changedServer = False):
     '''
     just grab user names. necessary because the db schema could be OOD here
@@ -722,7 +703,6 @@ def initiateUsers(changedServer = False):
     allowed_logins = []
     for row in trows:
         allowed_logins.append(row[0])
-
 
 def initiate(changedServer= False, debug = False):
     #print "initiating settings"
