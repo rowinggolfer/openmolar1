@@ -26,7 +26,7 @@ class DistinctStatuses(object):
 
             self._distinct_statuses = []
             for row in sorted(rows):
-                if row[0] is not None:
+                if row[0] not in (None, "BAD DEBT"):
                     self._distinct_statuses.append(row[0])
 
         return self._distinct_statuses

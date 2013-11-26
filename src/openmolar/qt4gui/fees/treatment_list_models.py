@@ -67,16 +67,22 @@ class TreatmentListModel(QtCore.QAbstractListModel):
 class PlannedTreatmentListModel(TreatmentListModel):
     @property
     def _list(self):
-        if self.om_gui is None or self.om_gui.pt is None:
+        #if self.om_gui is None or self.om_gui.pt is None:
+        #    return []
+        try:
+            return self.om_gui.pt.treatment_course.non_tooth_plan_items
+        except AttributeError:
             return []
-        return self.om_gui.pt.treatment_course.non_tooth_plan_items
 
 class CompletedTreatmentListModel(TreatmentListModel):
     @property
     def _list(self):
-        if self.om_gui is None or self.om_gui.pt is None:
+        #if self.om_gui is None or self.om_gui.pt is None:
+        #    return []
+        try:
+            return self.om_gui.pt.treatment_course.non_tooth_cmp_items
+        except AttributeError:
             return []
-        return self.om_gui.pt.treatment_course.non_tooth_cmp_items
 
 
 if __name__ == "__main__":
