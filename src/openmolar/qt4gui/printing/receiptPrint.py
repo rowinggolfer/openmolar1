@@ -130,9 +130,11 @@ class Receipt(object):
         return True
 
 if __name__ == "__main__":
-    import sys
+    import os
+    os.chdir(os.path.expanduser("~"))
+
     localsettings.initiate()
-    app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication([])
     myreceipt = Receipt()
     myreceipt.title = "tit"
     myreceipt.fname ="fname"
