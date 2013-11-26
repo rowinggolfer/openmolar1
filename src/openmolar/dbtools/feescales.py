@@ -25,6 +25,8 @@ import os
 import re
 import shutil
 
+from collections import namedtuple
+
 from openmolar import connect
 from openmolar.settings import localsettings
 
@@ -53,7 +55,7 @@ FEESCALE_DIR = os.path.join(localsettings.localFileDirectory, "feescales")
 if not os.path.exists(FEESCALE_DIR):
     write_readme()
 
-QUERY = 'select ix, xml_data from feescales [QUALIFIER] order by priority desc'
+QUERY = 'select ix, xml_data from feescales'
 
 UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
 
@@ -61,15 +63,16 @@ NEW_FEESCALE_QUERY = "insert into feescales (xml_data) values(%s)"
 
 class FeescaleHandler(object):
 
-    def get_feescales_from_database(self, in_use_only = True):
+    def get_feescales_from_database(self,
+    in_use_only=True, priority_order=True):
         '''
         connects and get the data from feetable_key
         '''
+        query = QUERY
         if in_use_only:
-            query = QUERY.replace("[QUALIFIER]", "where in_use = True")
-        else:
-            query = QUERY.replace("[QUALIFIER]", "")
-
+            query += ' where in_use = True'
+        if priority_order:
+            query += ' order by priority desc'
         db = connect.connect()
         cursor = db.cursor()
         cursor.execute(query)
@@ -85,10 +88,33 @@ class FeescaleHandler(object):
         f.write(xml_data)
         f.close()
 
-    def get_local_xml_versions(self):
+    def _xml_data_and_filepaths(self):
         for ix, xml_data in self.get_feescales_from_database(False):
-            self.save_file(ix, xml_data)
-        LOGGER.info("feescales data written to local filesystem")
+            xml_file = namedtuple("XmlFile", ("data", "filepath"))
+            xml_file.data = xml_data
+            xml_file.filepath = self.index_to_local_filepath(ix)
+
+            yield xml_file
+
+            #self.save_file(ix, xml_data)
+        #LOGGER.info("feescales data written to local filesystem")
+
+    def non_existant_and_modified_local_files(self):
+        '''
+        returns 2 lists
+        [local files which have been created]
+        [local files which differ from stored data]
+        '''
+        unwritten, modified = [], []
+        for xml_file in self._xml_data_and_filepaths():
+            if not os.path.isfile(xml_file.filepath):
+                unwritten.append(xml_file)
+            else:
+                f = open(xml_file.filepath, "r")
+                if f.read().strip() != xml_file.data:
+                    modified.append(xml_file)
+                f.close()
+        return unwritten, modified
 
     def index_to_local_filepath(self, ix):
         return os.path.join(FEESCALE_DIR, "feescale_%d.xml"% ix)
@@ -161,4 +187,4 @@ if __name__ == "__main__":
 
     fh = FeescaleHandler()
     fh.get_feescales_from_database()
-    fh.get_local_xml_versions()
+    print fh.non_existant_and_modified_local_files()

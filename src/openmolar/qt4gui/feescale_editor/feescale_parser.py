@@ -65,12 +65,24 @@ class FeescaleParser(object):
         self.ix = ix
         LOGGER.info("parsing feescale %s"% filepath)
         self.orig_modified = self.last_modified
-        self.dom = minidom.parse(filepath)
-
+        self.dom = minidom.Document()
+        self.dom.appendChild(self.dom.createElement("feescale"))
         self.document_element = self.dom.childNodes[0]
         self.saved_xml = self.text
-
         self.message_handler = MessageHandler()
+
+    def parse_file(self):
+        try:
+            self.dom = minidom.parse(self.filepath)
+            self._edited_text = None
+            self.document_element = self.dom.childNodes[0]
+            self.saved_xml = self.text
+        except Exception as exc:
+            f = open(self.filepath, "r")
+            self._edited_text = f.read()
+            f.close()
+            LOGGER.exception("unable to parse %s"% self.filepath)
+            raise exc
 
     @property
     def label_text(self):
@@ -324,6 +336,8 @@ def _test():
     example_path = os.path.join(
         resources_location, "feescales", "example_feescale.xml")
     fp = FeescaleParser(example_path, 1)
+    fp.parse_file()
+
     return fp
 
 

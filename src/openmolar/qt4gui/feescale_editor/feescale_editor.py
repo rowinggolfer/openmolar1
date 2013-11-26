@@ -233,7 +233,6 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.feescale_parsers = OrderedDict()
         self.text_editors = []
         self.feescale_handler = feescale_handler
-        self.load_feescales()
 
         self.action_refactor = QtGui.QAction(_("XML tidy"), self)
         self.action_refactor.triggered.connect(self.refactor)
@@ -266,7 +265,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_find.triggered.connect(self.find_text)
         action_find_again.triggered.connect(self.find_again)
 
-        action_pull.triggered.connect(self.pull_xml)
+        action_pull.triggered.connect(self.get_files_from_database)
         action_commit.triggered.connect(self.apply_changes)
 
         action_increment.triggered.connect(self.increase_fees)
@@ -278,7 +277,8 @@ class FeescaleEditor(QtGui.QMainWindow):
             QtGui.QApplication.instance().closeAllWindows)
 
         self.tab_widget.currentChanged.connect(self.view_feescale)
-        QtCore.QTimer.singleShot(1000, self.view_feescale)
+
+        QtCore.QTimer.singleShot(1000, self.start_)
 
         QtGui.QApplication.instance().focusChanged.connect(
             self._focus_changed)
@@ -365,18 +365,23 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         self._checking_files = False
 
+    def start_(self):
+        self.get_files_from_database()
+        self.load_feescales()
+        self.view_feescale(0)
+
     def load_feescales(self):
         self.loading = True
         self.text_editors = []
         self.feescale_parsers = OrderedDict()
         for ix, filepath in self.feescale_handler.local_files:
+            fp = FeescaleParser(filepath, ix)
             try:
-                fp = FeescaleParser(filepath, ix)
+                fp.parse_file()
             except:
                 message = u"%s '%s'"% (_("unable to parse file"), filepath)
                 self.advise(message, 2)
                 LOGGER.exception(message)
-                continue
 
             editor = XMLEditor()
             editor.editor_settings()
@@ -403,20 +408,34 @@ class FeescaleEditor(QtGui.QMainWindow):
             "%s - %s" %(self.window_title, self.current_parser.description))
             self.update_index()
         else:
-            if QtGui.QMessageBox.question(self, _("Information"),
-            "%s %s<hr />%s"% (_("You have no local copies of the feescales"" "
-            "stored in the database."),
-            _("This is a requirement before editing can be performed."),
-            _("Would you like to fetch and save these now?")),
-            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Ok:
-                self.get_files_from_database()
+            QtGui.QMessageBox.information(self, _("Information"),
+            _("You appear to have no feescales installed in your database"))
 
     def get_files_from_database(self):
-        QtGui.QApplication.instance().setOverrideCursor(QtCore.Qt.WaitCursor)
-        self.feescale_handler.get_local_xml_versions()
-        QtGui.QApplication.instance().restoreOverrideCursor()
-        self.load_feescales()
+        unwritten, modified = \
+        self.feescale_handler.non_existant_and_modified_local_files()
+
+        for xml_file in unwritten:
+            f = open(xml_file.filepath, "w")
+            f.write(xml_file.data)
+            f.close()
+
+        self._checking_files = True
+
+        for xml_file in modified:
+            if QtGui.QMessageBox.question(self, _("Confirm"),
+            "%s '%s' %s<hr />%s"% (
+            _("Local Feescale"), xml_file.filepath,
+            _("differs from the database version"),
+            _("Do you wish to overwrite it with the stored data?")),
+            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
+            QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Ok:
+                f = open(xml_file.filepath, "w")
+                f.write(xml_file.data)
+                f.close()
+
+        self._checking_files = False
+        self._check_for_newer_local_files()
 
     def update_index(self):
         self.control_panel.set_parser(self.current_parser)
@@ -548,34 +567,6 @@ class FeescaleEditor(QtGui.QMainWindow):
         QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
             self.current_parser.zero_charges()
             self.text_edit.setText(self.current_parser.text)
-
-    def pull_xml(self):
-        self._checking_files = True
-        if QtGui.QMessageBox.question(self, _("confirm"),
-        _("Would you like to find or update local copies of your feescales?"),
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel
-        ) == QtGui.QMessageBox.Cancel:
-            return
-        in_use_only = QtGui.QMessageBox.question(self, _("question"),
-        _("Include legacy feecales?"),
-        QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
-        QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes
-        no_saved = 0
-        for ix, xml_data in self.feescale_handler.get_feescales_from_database(
-        in_use_only):
-            filepath = self.feescale_handler.index_to_local_filepath(ix)
-            if os.path.isfile(filepath):
-                if QtGui.QMessageBox.question(self, _("question"),
-                "%s '%s'"% (_("Overwrite file"), filepath),
-                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
-                QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
-                    continue
-            self.feescale_handler.save_xml(ix, xml_data)
-            no_saved += 1
-
-        self.advise(u"%s %s"% (no_saved, _("Files saved")), 1)
-        self._checking_files = False
-        self._check_for_newer_local_files()
 
     def save_files(self):
         if QtGui.QMessageBox.question(self, _("confirm"),
