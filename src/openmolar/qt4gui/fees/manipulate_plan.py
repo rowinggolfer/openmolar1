@@ -69,16 +69,20 @@ def add_treatments_to_plan(om_gui, treatments, completed=False):
         # count the existing number and add 1 for the new shortcut
         n_txs = existing_txs.split(" ").count(shortcut) + 1
         courseno = pt.treatment_course.courseno
-        tx_hash = TXHash(hash("%s%s%s%s"% (courseno, att, n_txs, shortcut)))
+        hash_ = localsettings.hash_func(
+            "%s%s%s%s"% (courseno, att, n_txs, shortcut))
+        tx_hash = TXHash(hash_)
 
         dentid = pt.course_dentist
         pt.treatment_course.__dict__["%spl"% att] += "%s "% shortcut
 
         if re.match("[ul][lr][1-8]", att):
             n_txs = None
+            tooth_name = pt.chartgrid.get(att)
+            att = "%s%s"% (att[:2], tooth_name[2])
 
         complex_addition_handled, shortcut = complex_shortcut_addition(
-            om_gui,att, shortcut, n_txs, tx_hash)
+            om_gui, att, shortcut, n_txs, tx_hash)
 
         if complex_addition_handled == FULLY_HANDLED:
             LOGGER.debug("complex addition handled the estimate in entirety")
@@ -113,7 +117,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
             if alt_code != "-----":
                 if QtGui.QMessageBox.question(om_gui, _("Confirm"),
                 u"<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" %(
-                att.upper(), shortcut,
+                att, shortcut,
                 _("was not found in the patient's default feescale"),
                 _("It is matched in another feescale -"),
                 alt_table.briefName,
@@ -168,11 +172,11 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
     else:
         table = chosen_feescale
 
-    if re.match("[ul][lr][1-8]", att):
+    if re.match("[ul][lr][1-8A-E]", att):
         if itemcode is None:
             itemcode, table = _tooth_code_search(att, shortcut)
         if descr is None:
-            tooth_name = pt.chartgrid.get(att).upper()
+            tooth_name = att.upper()
             descr = table.getItemDescription(itemcode, usercode)
             descr = descr.replace("*", " %s"% tooth_name)
     else:
@@ -300,7 +304,8 @@ def customAdd(om_gui, description=None):
             custom_txs = "%s %s"%(
                 pt.treatment_course.customcmp, pt.treatment_course.custompl)
             n = custom_txs.split(" ").count(usercode)
-            tx_hash = TXHash(hash("%scustom%s%s"% (courseno, n, usercode)))
+            hash_ = localsettings.hash_func("%scustom%s%s"% (courseno, n, usercode))
+            tx_hash = TXHash(hash_)
             dentid = om_gui.pt.course_dentist
 
             add_treatment_to_estimate(om_gui, "custom", usercode, dentid,
@@ -362,9 +367,10 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
     value = values[0]
 
     if att == "exam":
-        tx_hash = TXHash(hash("%sexam1%s"% (
+        hash = localsettings.hash_func("%sexam1%s"% (
             om_gui.pt.treatment_course.courseno,
-            om_gui.pt.treatment_course.examt)), True)
+            om_gui.pt.treatment_course.examt))
+        tx_hash = TXHash(hash_ , True)
         rev_func = partial(tx_hash_reverse, om_gui, tx_hash)
     else:
         rev_func = partial(reverse_txs, om_gui, ((att, value),))
@@ -579,7 +585,8 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
         n_txs = existing_txs.split(" ").count(shortcut)
         courseno = pt.treatment_course.courseno
-        tx_hash = TXHash(hash("%s%s%s%s"% (courseno, att, n_txs, shortcut)))
+        hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, att, n_txs, shortcut))
+        tx_hash = TXHash(hash_)
 
         add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash],
         fee_item.itemcode, cset, descr, fee, pt_fee, table)
@@ -782,7 +789,7 @@ def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
         if completed:
             txs = pt.treatment_course.__dict__["%scmp"% att]
             n_txs = txs.split(" ").count(shortcut)
-            hash_ = hash("%s%s%s%s"% (courseno, att, n_txs, shortcut))
+            hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, att, n_txs, shortcut))
             tx_hash = TXHash(hash_, completed)
             tx_hash_reverse(om_gui, tx_hash)
 
@@ -792,7 +799,7 @@ def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
             )
 
         n_txs = txs.split(" ").count(shortcut)
-        hash_ = hash("%s%s%s%s"% (courseno, att, n_txs, shortcut))
+        hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, att, n_txs, shortcut))
         tx_hash = TXHash(hash_, completed=False)
         p_att = "%spl"% att
         val = pt.treatment_course.__dict__[p_att]
@@ -911,6 +918,8 @@ def recalculate_estimate(om_gui):
 
         if re.match("[ul][lr][1-8]", att):
             n_txs = None
+            tooth_name = pt.chartgrid.get(att)
+            att = "%s%s"% (att[:2], tooth_name[2])
         else:
             duplicate_txs.append("%s%s"%(att, shortcut))
             n_txs = duplicate_txs.count("%s%s"%(att, shortcut))
@@ -964,7 +973,7 @@ def reverse_txs(om_gui, treatments, confirm_multiples=True):
         count = completed.split(" ").count(treat)
         LOGGER.debug(
             "creating tx_hash using %s %s %s"% (att, count, treat))
-        hash_ = hash("%s%s%s%s"%(courseno, att, count, treat))
+        hash_ = localsettings.hash_func("%s%s%s%s"%(courseno, att, count, treat))
         tx_hash = TXHash(hash_)
 
         tx_hash_reverse(om_gui, tx_hash)
@@ -1005,7 +1014,7 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
         count = newcompleted.split(" ").count(treat)
         LOGGER.debug(
             "creating tx_hash using %s %s %s"% (att, count, treat))
-        hash_ = hash("%s%s%s%s"%(courseno, att, count, treat))
+        hash_ = localsettings.hash_func("%s%s%s%s"%(courseno, att, count, treat))
         tx_hash = TXHash(hash_)
 
         tx_hash_complete(om_gui, tx_hash)

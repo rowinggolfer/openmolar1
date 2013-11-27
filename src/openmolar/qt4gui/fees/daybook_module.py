@@ -100,8 +100,7 @@ def updateDaybook(om_gui):
 
                 count = orig_newcmps.count(treatment)
 
-                hash_ = str(
-                hash("%s%s%s%s"%(courseno, key, count, treatment)))
+                hash_ = localsettings.hash_func("%s%s%s%s"%(courseno, key, count, treatment))
 
                 hashes.append(hash_)
 

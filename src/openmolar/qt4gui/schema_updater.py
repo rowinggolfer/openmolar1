@@ -308,7 +308,7 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
                 else:
                     completed(False,
                     _('Conversion to %s failed')% next_version)
-            
+
             ###################################################################
             ## UPDATE TO SCHEMA 2.1
             next_version = "2.1"
@@ -353,6 +353,27 @@ WARNING - PLEASE ENSURE ALL OTHER STATIONS ARE LOGGED OFF''')% (
                     completed(False,
                     _('Conversion to %s failed')% next_version)
 
+            ###################################################################
+            ## UPDATE TO SCHEMA 2.3
+            next_version = "2.3"
+            if current < next_version:
+                updateProgress(1,
+                _("upgrading to schema version")+" %s"% next_version)
+
+                from openmolar.schema_upgrades import schema2_2to2_3 as upmod
+                dbu = upmod.dbUpdater(pb)
+
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("progress"),
+                updateProgress)
+
+                QtCore.QObject.connect(dbu, QtCore.SIGNAL("completed"),
+                completed)
+
+                if dbu.run():
+                    localsettings.DB_SCHEMA_VERSION = next_version
+                else:
+                    completed(False,
+                    _('Conversion to %s failed')% next_version)
 
             else:
                 completed(False,_(

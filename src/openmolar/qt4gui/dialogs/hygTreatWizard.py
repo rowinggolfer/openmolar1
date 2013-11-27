@@ -104,7 +104,7 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
             if self.trt in pt.treatment_course.periopl:
                 n_txs = pt.treatment_course.periocmp.split(
                     " ").count(self.trt) + 1
-                hash_ = hash("%sperio%s%s"% (courseno, n_txs, self.trt))
+                hash_ = localsettings.hash_func("%sperio%s%s"% (courseno, n_txs, self.trt))
                 tx_hash = TXHash(hash_)
                 manipulate_plan.tx_hash_complete(self.om_gui, tx_hash)
             else:

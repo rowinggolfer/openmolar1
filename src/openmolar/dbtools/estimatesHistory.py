@@ -11,8 +11,8 @@ from openmolar.connect import connect
 from openmolar.ptModules.estimates import Estimate, TXHash
 
 QUERY = '''SELECT newestimates.ix, number, itemcode, description,
-fee, ptfee, feescale, csetype, dent, est_link.completed, tx_hash, courseno
-from newestimates right join est_link on newestimates.ix = est_link.est_id
+fee, ptfee, feescale, csetype, dent, est_link2.completed, tx_hash, courseno
+from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
 where serialno=%s order by courseno desc, itemcode, ix'''
 
 def getEsts(sno):

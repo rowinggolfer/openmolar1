@@ -19,7 +19,7 @@ LOGGER = logging.getLogger("openmolar")
 
 class TXHash(object):
     def __init__(self, hash_, completed=False):
-        self.hash = str(hash_)
+        self.hash = hash_
         self.completed = completed
 
     def __eq__(self, other):

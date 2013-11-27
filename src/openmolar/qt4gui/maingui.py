@@ -1996,11 +1996,11 @@ class OpenmolarGui(QtGui.QMainWindow):
             n_txs = existing_cmp_items.count(tx)
             courseno = self.pt.treatment_course.courseno
             if (completed and tx in existing_pl_items):
-                hash_ = hash("%s%s%s%s"% (courseno, tooth, n_txs+1, tx))
+                hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, tooth, n_txs+1, tx))
                 tx_hash = estimates.TXHash(hash_)
                 manipulate_plan.tx_hash_complete(self, tx_hash)
             elif not completed and n_txs:
-                hash_ = hash("%s%s%s%s"% (courseno, tooth, n_txs, tx))
+                hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, tooth, n_txs, tx))
                 tx_hash = estimates.TXHash(hash_)
                 manipulate_plan.tx_hash_reverse(self, tx_hash)
             else:
@@ -3253,7 +3253,7 @@ def main(app):
             f = open(dev_path, "r")
             data = f.read().strip("\n")
             f.close()
-            if hash(data) != -6088298391381965318:
+            if localsettings.hash_func(data) != '1fd0c27f4d65caaa10ef5ef6a714faf96ed44fdd':
                 raise IOError("bad checksum")
             LOGGER.warning("allowing developer login")
         except:

@@ -6,14 +6,14 @@
 # (at your option) any later version. See the GNU General Public License
 # for more details.
 
-import sys
 import datetime
+import hashlib
 import logging
-import os
 import locale
+import os
 import re
 import subprocess
-#import inspect
+import sys
 import types
 
 from xml.dom import minidom
@@ -26,7 +26,7 @@ SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 
 #updated 17th July 2013
-CLIENT_SCHEMA_VERSION = "2.2"
+CLIENT_SCHEMA_VERSION = "2.3"
 DB_SCHEMA_VERSION = "unknown"
 
 ENCODING = locale.getpreferredencoding()
@@ -317,6 +317,9 @@ defaultPrinterforGP17 = False
 #--from the database and no match is found
 class PatientNotFoundError(Exception):
     pass
+
+def hash_func(message):
+    return hashlib.sha1(message).hexdigest()
 
 def currentTime():
     '''

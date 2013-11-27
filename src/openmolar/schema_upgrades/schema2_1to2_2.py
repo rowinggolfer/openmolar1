@@ -190,10 +190,10 @@ class dbUpdater(QtCore.QThread):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
 
     def run(self):
-        print "running script to convert from schema 2.0 to 2.2"
+        print "running script to convert from schema 2.1 to 2.2"
         try:
             #- execute the SQL commands
-            self.progressSig(5, _("creating est_link table"))
+            self.progressSig(5, _("creating tables"))
             self.execute_statements(SQLSTRINGS)
 
             self.progressSig(10, _("populating est_link table"))
@@ -213,8 +213,8 @@ class dbUpdater(QtCore.QThread):
             + " 2.2")
 
         except UpdateException, e:
-            localsettings.CLIENT_SCHEMA_VERSION = "2.0"
-            self.completeSig(_("rolled back to") + " 2.0")
+            localsettings.CLIENT_SCHEMA_VERSION = "2.1"
+            self.completeSig(_("rolled back to") + " 2.1")
 
         except Exception, e:
             print "Exception caught",e

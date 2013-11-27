@@ -7,8 +7,8 @@
 # for more details.
 
 ESTS_QUERY = '''SELECT newestimates.ix, number, itemcode, description,
-fee, ptfee, feescale, csetype, dent, est_link.completed, tx_hash
-from newestimates right join est_link on newestimates.ix = est_link.est_id
+fee, ptfee, feescale, csetype, dent, est_link2.completed, tx_hash
+from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
 where serialno=%s and courseno=%s order by itemcode, ix'''
 
 PATIENT_QUERY = '''SELECT pf0, pf1, pf2, pf3, pf4, pf5, pf6, pf7, pf8, pf9,

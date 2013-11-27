@@ -145,7 +145,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
 
                 dentid = localsettings.ops_reverse[examdent]
 
-                hash_ = hash("%sexam1%s"% (courseno, examtype))
+                hash_ = localsettings.hash_func("%sexam1%s"% (courseno, examtype))
                 tx_hash = TXHash(hash_, True)
 
                 manipulate_plan.add_treatment_to_estimate(

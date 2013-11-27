@@ -269,8 +269,8 @@ class TreatmentCourse(object):
         "%sperio1AC"% courseno
         '''
         if self.examt != "":
-            hash_ = hash("%sexam1%s"% (self.courseno, self.examt))
-            yield (str(hash_), "exam", self.examt)
+            hash_ = localsettings.hash_func("%sexam1%s"% (self.courseno, self.examt))
+            yield (hash_, "exam", self.examt)
         else:
             LOGGER.debug(
             "no exam to be yielded as TreatmentCourse.examt='%s'" % self.examt)
@@ -289,8 +289,8 @@ class TreatmentCourse(object):
                     prev_tx = tx
                 else:
                     count += 1
-                hash_ = hash("%s%s%s%s"% (self.courseno, att, count, tx))
-                yield (str(hash_), att, tx+" ")
+                hash_ = localsettings.hash_func("%s%s%s%s"% (self.courseno, att, count, tx))
+                yield (hash_, att, tx+" ")
 
     def get_tx_from_hash(self, hash_):
         '''
