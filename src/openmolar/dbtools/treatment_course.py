@@ -270,7 +270,7 @@ class TreatmentCourse(object):
         '''
         if self.examt != "":
             hash_ = localsettings.hash_func("%sexam1%s"% (self.courseno, self.examt))
-            yield (hash_, "exam", self.examt)
+            yield (hash_, "exam", self.examt+" ")
         else:
             LOGGER.debug(
             "no exam to be yielded as TreatmentCourse.examt='%s'" % self.examt)

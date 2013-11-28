@@ -25,8 +25,8 @@ LOGGER = logging.getLogger("openmolar")
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 
-#updated 17th July 2013
-CLIENT_SCHEMA_VERSION = "2.3"
+#updated 28.11.2013
+CLIENT_SCHEMA_VERSION = "2.4"
 DB_SCHEMA_VERSION = "unknown"
 
 ENCODING = locale.getpreferredencoding()

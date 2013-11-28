@@ -24,7 +24,8 @@ QUERY = '''insert into daybook
 misc,ndu,ndl,odu,odl,other,chart,feesa,feesb,feesc)
 values (DATE(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
-HASH_QUERY = '''update est_link2 set daybook_id=%s where tx_hash=%s'''
+HASH_QUERY = 'insert into daybook_link (daybook_id, tx_hash) values (%s, %s)'
+
 
 def add(sno, cset, dent, trtid, t_dict, fee, ptfee, tx_hashes):
     '''

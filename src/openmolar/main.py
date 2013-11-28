@@ -22,7 +22,7 @@ import os
 import hashlib
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
-    
+
 ## a variable to force the first run and database update tools
 FIRST_RUN_TESTING = False
 IGNORE_SCHEMA_CHECK = False
@@ -58,7 +58,7 @@ def proceed():
     elif localsettings.CLIENT_SCHEMA_VERSION > sv:
         print "schema is out of date"
         from openmolar.qt4gui import schema_updater
-        sys.exit(schema_updater.main(sys.argv, my_app))
+        sys.exit(schema_updater.main())
 
     elif localsettings.CLIENT_SCHEMA_VERSION < sv:
         print "client is out of date....."
@@ -282,19 +282,19 @@ Are you ready to proceed?</center>''')
                 QtGui.QMessageBox.warning(my_dialog,
                 _("Login Error"),
                 u'<h2>%s %s</h2><em>%s</em>'% (
-                    _('Incorrect'), 
+                    _('Incorrect'),
                     _("User/password combination!"),
                     _('Please Try Again.')
                     )
                 )
             except Exception as exc:
+                LOGGER.exception("UNEXPECTED ERROR")
                 message = u'<p>%s</p><p>%s</p><hr /><pre>%s</pre>'% (
                     _("UNEXPECTED ERROR"),
                     _("application cannot run"),
                     exc)
 
-                QtGui.QMessageBox.warning(my_dialog,
-                _("Login Error"), message)
+                QtGui.QMessageBox.warning(my_dialog, _("Login Error"), message)
                 break
         else:
             break
@@ -371,7 +371,7 @@ def run():
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....
     LOGGER.debug("starting openMolar.... using main.py as __main__")
-    
+
     def determine_path ():
         """Borrowed from wxglade.py"""
         try:

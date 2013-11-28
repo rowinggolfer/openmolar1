@@ -40,7 +40,7 @@ def xrayDates(om_gui, arg):
 
 def updateDaybook(om_gui):
     '''
-    looks for attributes like *cmp, when record is closed
+    looks for newly completed treatments when a record is closed
     '''
     daybookdict = {
     "diagn" : "",
@@ -56,64 +56,46 @@ def updateDaybook(om_gui):
     }
     feesa = 0         #fee
     feesb = 0         #ptfee
-    writeNeeded = False
+    hashes = []
 
     courseno = om_gui.pt.treatment_course.courseno
-    is_new_course = (courseno != om_gui.pt.dbstate.treatment_course.courseno)
+    not_new_course = (courseno == om_gui.pt.dbstate.treatment_course.courseno)
 
-    hashes = []
-    for att in CURRTRT_ATTS:
-        if re.match("examt|.*cmp$", att):
-            newcmps = om_gui.pt.treatment_course.__dict__[att].split(" ")
-            orig_newcmps = newcmps[:]
-            if is_new_course:
-                existingcmps = []
-            else:
-                existingcmps = \
-                om_gui.pt.dbstate.treatment_course.__dict__[att].split(" ")
+    for tx_hash in om_gui.pt.completed_tx_hashes:
 
-            for cmp_tx in existingcmps:
-                try:
-                    newcmps.remove(cmp_tx)
-                except ValueError:
-                    pass
+        if not_new_course and tx_hash in om_gui.pt.dbstate.completed_tx_hashes:
+            continue #already written to daybook.
+        LOGGER.debug("write to daybook %s %s %s"% tx_hash)
 
-            for treatment in newcmps:
-                if treatment == "":
-                    continue
-                writeNeeded = True
+        hash_, att, treatment = tx_hash
 
-                if att == "examt":
-                    key = "exam"
-                else:
-                    key = re.sub("cmp$", "", att)
+        if att == "examt":
+            key = "exam"
+        else:
+            key = re.sub("cmp$", "", att)
 
-                if key in daybookdict.keys():
-                    daybookdict[key] += "%s "% treatment
-                elif key in ("xray", "exam"):
-                    daybookdict["diagn"] += "%s "% treatment
-                elif key == "custom":
-                    daybookdict["other"] += "CUSTOM:%s "% treatment
-                else:
-                    #--tooth include the key ie ul7 etc...
-                    daybookdict["chart"] += "%s %s  "% (key.upper(), treatment)
+        if key in daybookdict.keys():
+            daybookdict[key] += "%s"% treatment
+        elif key in ("xray", "exam"):
+            daybookdict["diagn"] += "%s"% treatment
+        elif key == "custom":
+            daybookdict["other"] += "CUSTOM:%s"% treatment
+        else:
+            #--tooth include the key ie ul7 etc...
+            daybookdict["chart"] += "%s %s "% (key.upper(), treatment)
 
-                count = orig_newcmps.count(treatment)
+        hashes.append(hash_)
 
-                hash_ = localsettings.hash_func("%s%s%s%s"%(courseno, key, count, treatment))
+        fees = fees_module.getFeesFromEst(om_gui, hash_)
 
-                hashes.append(hash_)
+        if fees:
+            feesa += fees[0]
+            feesb += fees[1]
+        else:
+            LOGGER.warning(
+            "daybook module - no fees for '%s' '%s' '%s'"% tx_hash)
 
-                fees = fees_module.getFeesFromEst(om_gui, hash_)
-
-                if fees:
-                    feesa += fees[0]
-                    feesb += fees[1]
-                else:
-                    LOGGER.warning(
-                    "daybook module - no fees for '%s' '%s'"% (att, treatment))
-
-    if writeNeeded:
+    if hashes != []:
         if om_gui.pt.dnt2 != 0 and om_gui.pt.cset != "I":
             dent = om_gui.pt.dnt2
         else:

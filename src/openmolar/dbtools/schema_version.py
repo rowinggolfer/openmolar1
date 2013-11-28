@@ -5,8 +5,11 @@
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
+import logging
 from openmolar import connect
 from openmolar.settings import localsettings
+
+LOGGER = logging.getLogger("openmolar")
 
 def getVersion():
     try:
@@ -16,8 +19,8 @@ def getVersion():
         cursor.execute(query)
         rows = cursor.fetchall()
     except connect.ProgrammingError, ex:
-        print "no settings table!",ex
-        print "schema assumed to be 1.0"
+        LOGGER.warning("no settings table! %s"% ex)
+        LOGGER.warning("schema assumed to be 1.0")
         return "1.0"
 
     version = ""
@@ -37,7 +40,7 @@ def clientCompatibility(client_schema):
         cursor.execute(query)
         rows = cursor.fetchall()
     except connect.ProgrammingError, ex:
-        print "client_schema not found"
+        LOGGER.exception("client_schema not found")
     for row in rows:
         if row[0] == client_schema:
             return True
@@ -57,10 +60,10 @@ def update(schemas, user):
             values (%s, %s, %s, NOW())'''
     values = ("Schema_Version", latest_schema, user)
 
-    print "making the db aware of it's schema version"
+    LOGGER.info("making the db aware of it's schema version")
     cursor.execute(query, values)
 
-    print "disabling old clients"
+    LOGGER.info("disabling old clients")
     query = '''delete from settings where value = "compatible_clients"'''
     cursor.execute(query)
     db.commit()
