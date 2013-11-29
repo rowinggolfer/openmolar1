@@ -9,11 +9,9 @@
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
-QUERY = '''
-select description, ptfee, completed from newestimates where courseno = %s 
-order by description;
-'''
-
+QUERY = '''SELECT description, ptfee, est_link2.completed
+from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
+where courseno = %s order by itemcode, description'''
 
 def html(courseno):
     values = (courseno,)
@@ -22,7 +20,7 @@ def html(courseno):
     cursor.execute(QUERY, values)
     rows = cursor.fetchall()
     cursor.close()
-    
+
     est_count = len(rows)
 
     if est_count == 0:
@@ -34,7 +32,7 @@ def html(courseno):
             completed.append((description, fee, localsettings.formatMoney(fee)))
         else:
             planned.append((description, fee, localsettings.formatMoney(fee)))
-    
+
     n_rows = len(planned)
     if len(completed) > n_rows:
         n_rows = len(completed)
@@ -59,7 +57,7 @@ def html(courseno):
             p_tot += fee
         except IndexError:
             p_desc, p_fee = "", ""
-            
+
         html_ += '''<tr>
         <td width= '30%%'>%s</td>
         <td width= '20%%' align='right'>%s</td>
@@ -68,16 +66,16 @@ def html(courseno):
         <td width= '20%%' align='right'>%s</td>
         </tr>'''% (
             p_desc, p_fee, c_desc, c_fee)
-        
+
     html_ += '''<tr>
     <td colspan="2" align='right'><b>%s</b></td>
     <td />
     <td colspan="2" align='right'><b>%s</b></td>
-    </tr>'''% ( 
+    </tr>'''% (
     localsettings.formatMoney(p_tot), localsettings.formatMoney(c_tot))
 
     return html_ + "</table><br />"
-            
-            
+
+
 if __name__ == "__main__":
     print html(41146).encode("ascii", "replace")
