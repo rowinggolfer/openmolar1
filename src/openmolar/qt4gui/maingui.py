@@ -1967,7 +1967,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         fees_module.showTableXML(self)
 
     def handle_chart_treatment_input(self, tooth, prop, completed):
-        LOGGER.debug("%s %s %s"% (tooth, prop, completed))
+        LOGGER.debug("%s %s completed=%s"% (tooth, prop, completed))
         if course_module.newCourseNeeded(self):
             return
 
@@ -1996,11 +1996,13 @@ class OpenmolarGui(QtGui.QMainWindow):
             n_txs = existing_cmp_items.count(tx)
             courseno = self.pt.treatment_course.courseno
             if (completed and tx in existing_pl_items):
-                hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, tooth, n_txs+1, tx))
+                hash_ = localsettings.hash_func(
+                    "%s%s%s%s"% (courseno, tooth, n_txs+1, tx))
                 tx_hash = estimates.TXHash(hash_)
                 manipulate_plan.tx_hash_complete(self, tx_hash)
             elif not completed and n_txs:
-                hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, tooth, n_txs, tx))
+                hash_ = localsettings.hash_func(
+                    "%s%s%s%s"% (courseno, tooth, n_txs, tx))
                 tx_hash = estimates.TXHash(hash_)
                 manipulate_plan.tx_hash_reverse(self, tx_hash)
             else:
@@ -2920,7 +2922,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.hide_rare_feescale_codes_checkBox.toggled.connect(
             self.hide_rare_feescale_items)
 
-        self.ui.reload_feescales_pushButton.clicked.connect(self.reload_feescales)
+        self.ui.reload_feescales_pushButton.clicked.connect(
+            self.reload_feescales)
 
     def signals_charts(self):
 
@@ -3253,7 +3256,8 @@ def main(app):
             f = open(dev_path, "r")
             data = f.read().strip("\n")
             f.close()
-            if localsettings.hash_func(data) != '1fd0c27f4d65caaa10ef5ef6a714faf96ed44fdd':
+            if localsettings.hash_func(data) != \
+            '1fd0c27f4d65caaa10ef5ef6a714faf96ed44fdd':
                 raise IOError("bad checksum")
             LOGGER.warning("allowing developer login")
         except:
