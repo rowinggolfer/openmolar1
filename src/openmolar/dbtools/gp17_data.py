@@ -526,7 +526,7 @@ class Gp17Data(object):
         counts these items.
         '''
         if "tx" in self.exclusions:
-            return []
+            return {}
 
         items = {}
 
@@ -563,7 +563,7 @@ class Gp17Data(object):
     @property
     def tooth_specific_codes(self):
         if "tx" in self.exclusions:
-            return []
+            return {}
 
         ts_items = {}
 
