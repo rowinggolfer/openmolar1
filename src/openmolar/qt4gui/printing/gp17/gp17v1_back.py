@@ -27,6 +27,7 @@ import os
 
 from PyQt4 import QtCore, QtGui
 
+from openmolar.settings import localsettings
 from openmolar.backports.printed_form import PrintedForm
 from openmolar.qt4gui.printing.gp17.gp17_config import gp17config
 
@@ -79,53 +80,61 @@ RECTS["observations"]           = QtCore.QRectF(384, 210, 320, 328)
 
 for i, x in enumerate([610,627,644,670,687]):
     RECTS["paid_%02d"%i]          = T_BOX.translated(x, 784)
- 
+
 class GP17iBack(PrintedForm):
     '''
     a class to set up and print a GP17 (tooth specific version)
     '''
     NAME = "GP17(1) Back"
     data = None
-        
+    _bg_pixmap = None
+
     def __init__(self):
         PrintedForm.__init__(self)
         self.rects = RECTS
-    
+
     @classmethod
     def is_active(self):
         #return QtCore.QDate.currentDate() >= QtCore.QDate(2013,7,1)
         return False
-        
+
     def set_data(self, data):
         self.data = data
-    
+
+    @property
+    def BACKGROUND_IMAGE(self):
+        if self._bg_pixmap is None:
+            self._bg_pixmap = QtGui.QPixmap(os.path.join(
+            localsettings.resources_location, "gp17-1", "back.png"))
+        return self._bg_pixmap
+
     def print_(self):
         self.set_offset(
             gp17config.GP17iback_OFFSET_LEFT, gp17config.GP17iback_OFFSET_TOP)
         self.set_scaling(
-            gp17config.GP17iback_SCALE_X, gp17config.GP17iback_SCALE_Y) 
-        
+            gp17config.GP17iback_SCALE_X, gp17config.GP17iback_SCALE_Y)
+
         painter = PrintedForm.print_(self)
         self._fill(painter)
-        
+
     def _fill(self, painter):
         if self.data is None:
             return
-       
-            
+
+
 if __name__ == "__main__":
     os.chdir(os.path.expanduser("~")) # for print to file
     from openmolar.settings import localsettings
     TEST_IMAGE = os.path.join(localsettings.resources_location,
         "gp17-1", "back.png")
-    
+
     app = QtGui.QApplication([])
     form = GP17iBack()
-   
+
     form.testing_mode = True
-    
+
     form.print_background = True
     form.BACKGROUND_IMAGE = TEST_IMAGE
-   
+
     form.controlled_print()
-    
+

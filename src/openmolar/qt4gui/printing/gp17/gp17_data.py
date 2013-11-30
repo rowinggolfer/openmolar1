@@ -23,9 +23,10 @@
 '''
 Provides Gp17Data class for the data required by a GP17(Scotland) NHS form
 '''
-import logging
-
 from datetime import date
+import logging
+import re
+
 from openmolar.settings import localsettings
 from openmolar.ptModules import dec_perm
 
@@ -35,6 +36,8 @@ def convert_tooth(tooth):
     '''
     take something like "ul5" and return the iso code
     '''
+    if not re.match("[ul][lr][1-8A-E]", tooth):
+        return None
     quadrant = tooth[:2].lower()
     iso_quadrant = ["ur", "ul", "ll", "lr"].index(quadrant)
     try:
@@ -572,12 +575,18 @@ class Gp17Data(object):
         #iterate over the estimates
         for item in self.pt.nhs_claims:
             if item.itemcode in allowed_claim_codes:
-                att, tx = self.pt.get_tx_from_hash(item.tx_hashes[0].hash)
-                iso_tooth = convert_tooth(att)
-                try:
-                    ts_items[item.itemcode].append(iso_tooth)
-                except KeyError:
-                    ts_items[item.itemcode] = [iso_tooth]
+                for hash_ in item.tx_hashes:
+                    att, tx = self.pt.get_tx_from_hash(hash_)
+                    iso_tooth = convert_tooth(att)
+                    if iso_tooth is None:
+                        LOGGER.error(
+                        "GP17 IGNORING itemcode %s as not tooth specific?"%
+                        item.itemcode)
+                        continue
+                    try:
+                        ts_items[item.itemcode].append(iso_tooth)
+                    except KeyError:
+                        ts_items[item.itemcode] = [iso_tooth]
         return ts_items
 
         return []

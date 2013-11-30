@@ -41,6 +41,13 @@ class ChooseFormWidget(QtGui.QWidget):
             self.checkboxes.append(cb)
             layout.addWidget(cb)
 
+        self.boxes_checkbox = QtGui.QCheckBox(_("use test mode (print boxes)"))
+        self.image_checkbox = QtGui.QCheckBox(
+            _("use a background image for the form (if available)"))
+
+        layout.addWidget(self.boxes_checkbox)
+        layout.addWidget(self.image_checkbox)
+
     def sizeHint(self):
         return QtCore.QSize(300,100)
 
@@ -49,6 +56,7 @@ class ChooseFormWidget(QtGui.QWidget):
         for i, form in enumerate(self.FORMS):
             if self.checkboxes[i].isChecked():
                 yield form
+
 
 class GP17PrintDialog(ExtendableDialog):
     def __init__(self, patient, parent=None):
@@ -136,13 +144,20 @@ class GP17PrintDialog(ExtendableDialog):
         self.cmpd_cb.setChecked(True)
         self.tx_cb.setChecked(True)
 
-
     def sizeHint(self):
         return QtCore.QSize(300,350)
 
     @property
     def chosen_forms(self):
         return self.choose_form_widget.chosen_forms
+
+    @property
+    def print_boxes(self):
+        return self.choose_form_widget.boxes_checkbox.isChecked()
+
+    @property
+    def print_background(self):
+        return self.choose_form_widget.image_checkbox.isChecked()
 
     @property
     def dent_inits(self):
@@ -186,13 +201,12 @@ if __name__ == "__main__":
 
     pt = patient_class.patient(20862)
     dl = GP17PrintDialog(pt)
-
     if dl.exec_():
         for Form in dl.chosen_forms:
             form = Form()
             form.set_data(dl.data)
 
-            form.testing_mode = True
-
+            form.set_testing_mode(dl.print_boxes)
+            form.set_background_mode(dl.print_background)
             form.controlled_print()
 

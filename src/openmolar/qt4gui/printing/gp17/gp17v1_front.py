@@ -27,6 +27,7 @@ import os
 
 from PyQt4 import QtCore, QtGui
 
+from openmolar.settings import localsettings
 from openmolar.backports.printed_form import PrintedForm
 from openmolar.qt4gui.printing.gp17.gp17_config import gp17config
 
@@ -184,6 +185,7 @@ class GP17iFront(PrintedForm):
     data = None
     unhandled_ts_codes = []
     unhandled_codes = []
+    _bg_pixmap = None
 
     def __init__(self):
         PrintedForm.__init__(self)
@@ -199,6 +201,13 @@ class GP17iFront(PrintedForm):
         self.data = data
         self.unhandled_ts_codes = []
         self.unhandled_codes = []
+
+    @property
+    def BACKGROUND_IMAGE(self):
+        if self._bg_pixmap is None:
+            self._bg_pixmap = QtGui.QPixmap(os.path.join(
+            localsettings.resources_location, "gp17-1", "front.png"))
+        return self._bg_pixmap
 
     def print_(self):
         self.set_offset(
@@ -366,7 +375,6 @@ class GP17iFront(PrintedForm):
             except IndexError:
                 break
 
-
     def _fill_misc_cbs(self, painter):
         for key in ["on_referral", "not_extending", "special_needs","on_referral",
                     "radiographs","models","trauma"]:
@@ -438,7 +446,6 @@ class GP17iFront(PrintedForm):
 if __name__ == "__main__":
     os.chdir(os.path.expanduser("~")) # for print to file
 
-    from openmolar.settings import localsettings
     from openmolar.qt4gui.printing.gp17.gp17_data import Gp17Data
 
     data = Gp17Data(testing_mode=True)
@@ -448,13 +455,8 @@ if __name__ == "__main__":
 
     form.set_data(data)
 
-    form.testing_mode = True
-
-    TEST_IMAGE = os.path.join(localsettings.resources_location,
-        "gp17-1", "front.png")
-
-    form.print_background = True
-    form.BACKGROUND_IMAGE = TEST_IMAGE
+    form.set_testing_mode(True)
+    form.set_background_mode(True)
 
     form.controlled_print()
 

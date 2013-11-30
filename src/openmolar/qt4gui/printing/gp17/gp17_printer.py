@@ -40,10 +40,10 @@ class GP17Printer(object):
     def print_(self, final_paperwork=False, test=False):
         '''
         a GP17 is a scottish NHS form
-        if test=True you also get boxes printed on the form 
+        if test=True you also get boxes printed on the form
         (to check alignment)
         '''
-        
+
         if final_paperwork:
             result = QtGui.QMessageBox.question(self.om_gui,
             _("Question"),
@@ -52,13 +52,14 @@ class GP17Printer(object):
             QtGui.QMessageBox.Yes )
             if result == QtGui.QMessageBox.No:
                 return
-        
+
         if test: #self.om_gui.pt.serialno == 0:
             pt = None
         else:
             pt = self.om_gui.pt
         dl = GP17PrintDialog(pt, self.om_gui)
-        
+
+        dl.choose_form_widget.boxes_checkbox.setChecked(test)
         #chosenDent = str(dl.dents_comboBox.currentText())
         #dent = localsettings.ops_reverse.get(chosenDent)
         #form = GP17.gp17(self.om_gui.pt, dent, self.om_gui, test)
@@ -66,11 +67,12 @@ class GP17Printer(object):
             for Form in dl.chosen_forms:
                 form = Form()
                 form.set_data(dl.data)
-                
-                form.testing_mode = test                 
+                form.printer.setDocName(form.NAME)
+                form.set_testing_mode(dl.print_boxes)
+                form.set_background_mode(dl.print_background)
                 if form.controlled_print() and not test:
                     commitPDFtoDB(self.om_gui, form.NAME)
-            
+
                     self.om_gui.pt.addHiddenNote(
                         "printed", "%s %s"% (form.NAME, dl.dent_inits))
                     self.om_gui.updateHiddenNotesLabel()
@@ -80,17 +82,17 @@ if __name__ == "__main__":
     from openmolar.settings import localsettings
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class
-    
+
     os.chdir(os.path.expanduser("~")) #for save pdf
 
     localsettings.initiate()
     localsettings.station="reception" #prevent no clinician popup
-    
+
     app = QtGui.QApplication([])
-    
+
     om_gui = maingui.OpenmolarGui()
-    
+
     om_gui.pt = patient_class.patient(2981)
-    
+
     p = GP17Printer(om_gui)
     p.test_print()

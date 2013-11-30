@@ -27,6 +27,7 @@ import os
 
 from PyQt4 import QtCore, QtGui
 
+from openmolar.settings import localsettings
 from openmolar.backports.printed_form import PrintedForm
 from openmolar.qt4gui.printing.gp17.gp17_config import gp17config
 
@@ -271,6 +272,7 @@ class GP17Front(PrintedForm):
     '''
     NAME = "OLD GP17 Front"
     data = None
+    _bg_pixmap = None
 
     def __init__(self):
         PrintedForm.__init__(self)
@@ -285,6 +287,13 @@ class GP17Front(PrintedForm):
 
     def set_data(self, data):
         self.data = data
+
+    @property
+    def BACKGROUND_IMAGE(self):
+        if self._bg_pixmap is None:
+            self._bg_pixmap = QtGui.QPixmap(os.path.join(
+            localsettings.resources_location, "gp17", "front.jpg"))
+        return self._bg_pixmap
 
     def print_(self):
         self.set_offset(gp17config.OFFSET_LEFT, gp17config.OFFSET_TOP)

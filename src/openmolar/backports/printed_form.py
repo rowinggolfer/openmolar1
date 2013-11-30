@@ -25,37 +25,45 @@ Provides a Class for printing on an A4 Sheet
 '''
 
 from __future__ import division
+import logging
 from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
+
+LOGGER = logging.getLogger("openmolar")
 
 class PrintedForm(object):
     '''
     a class to set up and print an a4 form
     '''
     testing_mode = False
-
     print_background = False
-    BACKGROUND_IMAGE = ""
 
     rects = {}
     off_set = QtCore.QPoint(0,0)
     scale_x = 1
     scale_y = 1
-    
+
     def __init__(self):
 
         self.printer = QtGui.QPrinter()
         self.pdfprinter = QtGui.QPrinter()
+        self.pdfprinter.setPrinterName("PDF PRINTER")
         self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
         self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
-        
+
         self.chosen_printer = self.printer
-            
+
         for printer in (self.printer, self.pdfprinter):
             printer.setPageSize(QtGui.QPrinter.A4)
             printer.setFullPage(True)
             printer.setResolution(96)
+
+    def set_testing_mode(self, mode):
+        self.testing_mode = mode
+
+    def set_background_mode(self, mode):
+        self.print_background = mode
 
     def set_offset(self, x, y):
         '''
@@ -74,13 +82,25 @@ class PrintedForm(object):
         '''
         raise a dialog before printing
         '''
-        dialog = QtGui.QPrintDialog(self.printer)
-        if dialog.exec_():
-            for printer in (self.pdfprinter, self.printer):
-                self.chosen_printer = printer
-                self.print_()
+        dl = QtGui.QPrintDialog(self.printer)
+        if dl.exec_():
+            self.chosen_printer = self.printer
+            self.print_()
+            self.set_background_mode(False)
+            self.set_testing_mode(True)
+            self.chosen_printer = self.pdfprinter
+            self.print_()
+
             return True
-    
+
+    @property
+    def BACKGROUND_IMAGE(self):
+        '''
+        overwrite this image when subclassing.
+        '''
+        LOGGER.error("No pixmap set")
+        return QtGui.QPixmap()
+
     def print_(self, painter=None):
         '''
         print the background and any rects if in testing_mode
@@ -88,39 +108,39 @@ class PrintedForm(object):
         note - this functions return the active painter so that classes which
         inherit from PrintedForm can finalise the printing.
         '''
-        
+        LOGGER.info("printing to %s"% self.chosen_printer.printerName())
         if painter is None:
             painter = QtGui.QPainter(self.chosen_printer)
 
         if self.print_background:
-            painter.save()
-            painter.translate(
-                -self.printer.pageRect().x(),
-                -self.printer.pageRect().y()
-                )
+            pm = self.BACKGROUND_IMAGE
+            if not pm.isNull():
+                painter.save()
+                painter.translate(
+                    -self.printer.pageRect().x(),
+                    -self.printer.pageRect().y()
+                    )
+                painter.drawPixmap(self.printer.paperRect(), pm, pm.rect())
+                painter.restore()
 
-            pm = QtGui.QPixmap(self.BACKGROUND_IMAGE)
-            if pm.isNull():
-                print "unable to load pixmap from '%s'"% self.BACKGROUND_IMAGE
-            painter.drawPixmap(self.printer.paperRect(), pm, pm.rect())
-
-            painter.restore()
+            else:
+                LOGGER.warning("background image is null")
 
         painter.translate(self.off_set)
-        print "translating form by %s"% self.off_set
+        LOGGER.info("translating form by %s"% self.off_set)
         painter.scale(self.scale_x, self.scale_y)
-        print "scaling output by %s x %s"% (self.scale_x, self.scale_y)
-        
+        LOGGER.info("scaling output by %s x %s"% (self.scale_x, self.scale_y))
+
         if self.testing_mode: #outline the boxes
             painter.save()
             painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
             painter.setBrush(QtGui.QBrush(QtCore.Qt.black))
             painter.drawRect(0,0,20,5)
-            painter.drawRect(0,0,5,20)            
+            painter.drawRect(0,0,5,20)
             painter.restore()
-            
+
             # put down a marker at position 0 (for alignment purposes)
-            
+
             painter.save()
             painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
             for rect in self.rects.values():
@@ -132,7 +152,7 @@ class PrintedForm(object):
 if __name__ == "__main__":
     import os
     os.chdir(os.path.expanduser("~")) # for print to file
-    
+
     app = QtGui.QApplication([])
     form = PrintedForm()
     form.testing_mode = True
