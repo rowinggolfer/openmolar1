@@ -72,22 +72,22 @@ class chartWidget(QtGui.QWidget):
         #--clear comments
         self.commentedTeeth = []
 
-        #-- set to an adult dentition
-        self.chartgrid = {
-        'lr1' : 'lr1', 'lr3' : 'lr3', 'lr2' : 'lr2', 'lr5' : 'lr5',
-        'lr4' : 'lr4', 'lr7' : 'lr7', 'lr6' : 'lr6', 'lr8' : 'lr8',
-        'ul8' : 'ul8', 'ul2' : 'ul2', 'ul3' : 'ul3', 'ul1' : 'ul1',
-        'ul6' : 'ul6', 'ul7' : 'ul7', 'ul4' : 'ul4', 'ul5' : 'ul5',
-        'ur4' : 'ur4', 'ur5' : 'ur5', 'ur6' : 'ur6', 'ur7' : 'ur7',
-        'ur1' : 'ur1', 'ur2' : 'ur2', 'ur3' : 'ur3', 'ur8' : 'ur8',
-        'll8' : 'll8', 'll3' : 'll3', 'll2' : 'll2', 'll1' : 'll1',
-        'll7' : 'll7', 'll6' : 'll6', 'll5' : 'll5', 'll4': 'll4'
-        }
-
         #-- select the ur8
         if keepSelection:
             LOGGER.debug("keeping existing chart selection(s)")
         else:
+            #-- set to an adult dentition
+            self.chartgrid = {
+            'lr1' : 'lr1', 'lr3' : 'lr3', 'lr2' : 'lr2', 'lr5' : 'lr5',
+            'lr4' : 'lr4', 'lr7' : 'lr7', 'lr6' : 'lr6', 'lr8' : 'lr8',
+            'ul8' : 'ul8', 'ul2' : 'ul2', 'ul3' : 'ul3', 'ul1' : 'ul1',
+            'ul6' : 'ul6', 'ul7' : 'ul7', 'ul4' : 'ul4', 'ul5' : 'ul5',
+            'ur4' : 'ur4', 'ur5' : 'ur5', 'ur6' : 'ur6', 'ur7' : 'ur7',
+            'ur1' : 'ur1', 'ur2' : 'ur2', 'ur3' : 'ur3', 'ur8' : 'ur8',
+            'll8' : 'll8', 'll3' : 'll3', 'll2' : 'll2', 'll1' : 'll1',
+            'll7' : 'll7', 'll6' : 'll6', 'll5' : 'll5', 'll4': 'll4'
+            }
+
             self.showSelected = False
             self.selected = [0, 0]
             self.multiSelection = []

@@ -411,13 +411,9 @@ class FeeTable(object):
         '''
         LOGGER.debug((itemcode, pt, csetype, shortcut))
         gross, charge = self._getFees(itemcode, pt, csetype, shortcut)
-        for modifier in self.item_modifiers:
-            LOGGER.debug("checking modifier %s"% modifier)
-            if modifier.condition_met(pt) and modifier.item_id_match(itemcode):
-                return modifier.gross_mod(gross), modifier.charge_mod(charge)
-        return gross, charge
+        return self.apply_modifiers(gross, charge, itemcode, pt)
 
-    def recalc_fee(self, itemcode, item_no):
+    def recalc_fee(self, pt, itemcode, item_no):
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
@@ -431,7 +427,15 @@ class FeeTable(object):
                 itemcode, self.database_ix))
             return (0, 0)
 
-        return fee_item.get_fees(item_no)
+        gross, charge = fee_item.get_fees(item_no)
+        return self.apply_modifiers(gross, charge, itemcode, pt)
+
+    def apply_modifiers(self, gross, charge, itemcode, pt):
+        for modifier in self.item_modifiers:
+            LOGGER.debug("checking modifier %s"% modifier)
+            if modifier.condition_met(pt) and modifier.item_id_match(itemcode):
+                return modifier.gross_mod(gross), modifier.charge_mod(charge)
+        return gross, charge
 
     def getItemDescription(self, itemcode, usercode):
         '''
@@ -688,12 +692,10 @@ class ComplexShortcut(object):
             LOGGER.debug("no removal cases")
 
     def matches(self, att, shortcut):
-        LOGGER.debug("Complex shortcut, comparing '%s' '%s' with '%s'"% (
-            att, shortcut,
-            self.shortcut if not self.is_regex else self.shortcut.pattern))
-
-
-        if re.match("[ul][lr][1-8]", att):
+        '''
+        check to see if condition is met
+        '''
+        if re.match("[ul][lr][1-8A-E]", att):
             if self.is_regex:
                 return self.shortcut.match("%s%s"% (att, shortcut))
             return self.shortcut == shortcut
@@ -702,6 +704,10 @@ class ComplexShortcut(object):
             if self.is_regex:
                 return self.shortcut.match(usercode)
             return self.shortcut == usercode
+
+    def __repr__(self):
+        return ("Complex shortcut, '%s'"% (
+            self.shortcut if not self.is_regex else self.shortcut.pattern))
 
 class CaseAction(object):
     '''
@@ -838,6 +844,9 @@ class Modifier(object):
         if self._charge_fee is not None:
             return self._charge_fee
         return fee
+
+    def __repr__(self):
+        return "Modifier conditions = %s"% self.conditions
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

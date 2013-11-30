@@ -783,19 +783,31 @@ class patient(object):
         self.treatment_course = TreatmentCourse(self.serialno, new_courseno)
 
     @property
-    def user_changeable_attributes(self):
+    def COPIED_ATTRIBUTES(self):
         '''
-        the attributes used to determine whether the patient has been edited.
+        these are what is copied over into pt.dbstate
         '''
         return (patientTableAtts +
             exemptionTableAtts + bpeTableAtts + mnhistTableAtts +
-            perioTableAtts + clinical_memos + ("fees", "estimate_charges",
-            "serialno", "estimates", "appt_prefs", "treatment_course"))
+            perioTableAtts + clinical_memos + (
+            "fees", "estimate_charges", "serialno", "estimates",
+            "appt_prefs", "treatment_course", "chartgrid"))
+
+    @property
+    def USER_CHANGEABLE_ATTRIBUTES(self):
+        '''
+        the attributes, common to pt and the object copy pt.db_state
+        which is generated during take_snapshot
+        used to determine whether the patient has been edited.
+        '''
+        for att in self.COPIED_ATTRIBUTES:
+            #if att not in ("treatment_course", "estimates", "chartgrid"):
+            yield att
 
     @property
     def changes(self):
         changes = []
-        for att in self.user_changeable_attributes:
+        for att in self.USER_CHANGEABLE_ATTRIBUTES:
             new_value = self.__dict__.get(att, "")
             db_value = self.dbstate.__dict__.get(att, "")
             if  new_value != db_value:
@@ -815,7 +827,7 @@ class patient(object):
         snapshot = cls.__new__(cls)
         memo[id(self)] = snapshot
         for att, v in self.__dict__.items():
-            if att in self.user_changeable_attributes:
+            if att in self.COPIED_ATTRIBUTES:
                 setattr(snapshot, att, deepcopy(v, memo))
         self.dbstate = snapshot
 
@@ -842,25 +854,34 @@ class patient(object):
                         self.dbstate.treatment_course.courseno)
 
     @property
-    def tx_hashes(self):
+    def tx_hash_tups(self):
         '''
         a list of unique hashes of all treatment on the current treatment plan
         returns a tuple (unique hash, attribute, treatment)
         '''
-        for tup in self.treatment_course._get_tx_hashes():
-            yield tup
+        for hash_, att, tx in self.treatment_course._get_tx_hashes():
+            if re.match("[ul][lr][1-8]", att):
+                att = self.chartgrid.get(att)
+            yield hash_, att, tx
+
+    @property
+    def completed_tx_hash_tups(self):
+        for hash_, att, tx in self.treatment_course.completed_tx_hash_tups:
+            if re.match("[ul][lr][1-8]", att):
+                att = self.chartgrid.get(att)
+            yield hash_, att, tx
 
     @property
     def completed_tx_hashes(self):
-        return self.treatment_course.completed_tx_hashes
+        return list(self.treatment_course.completed_tx_hashes)
 
     @property
-    def planned_tx_hashes(self):
-        return self.treatment_course.planned_tx_hashes
+    def planned_tx_hash_tups(self):
+        return self.treatment_course.planned_tx_hash_tups
 
     @property
     def has_planned_perio_txs(self):
-        for hash_, att, tx in self.planned_tx_hashes:
+        for hash_, att, tx in self.planned_tx_hash_tups:
             if att == "perio":
                 return True
         return False
@@ -901,7 +922,7 @@ if __name__ =="__main__":
     pt.fee_table
 
     pt.take_snapshot()
-    print list(pt.tx_hashes)
+    print list(pt.tx_hash_tups)
 
     print pt.treatment_course
     print pt.ageYears

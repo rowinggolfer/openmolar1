@@ -425,7 +425,7 @@ class EstimateWidget(QtGui.QWidget):
 
         #check this treatment off against the other treatments which still
         #require completing/reversing
-        for hash_, att_, tx in self.pt.tx_hashes:
+        for hash_, att_, tx in self.pt.tx_hash_tups:
             if check_att == att_ and tx == check_tx and  hash_ != tx_hash.hash:
                 LOGGER.warning(
                 "Special code checked via estimate widget, not allowing check")
@@ -451,7 +451,7 @@ class EstimateWidget(QtGui.QWidget):
             "no treatments found.. this shouldn't happen"
 
         txs = []
-        for hash_, att, tx in self.pt.tx_hashes:
+        for hash_, att, tx in self.pt.tx_hash_tups:
             for tx_hash in tx_hashes:
                 if hash_ == tx_hash:
                     txs.append((att, tx, tx_hash.completed))
@@ -463,7 +463,7 @@ class EstimateWidget(QtGui.QWidget):
         for att, treat in dl.completed_treatments:
             LOGGER.debug("checking completed %s %s"% (att, treat))
             found = False #only complete 1 treatment!!
-            for hash_, att_, tx in self.pt.tx_hashes:
+            for hash_, att_, tx in self.pt.tx_hash_tups:
                 if found:
                     break
                 if att == att_ and tx == treat:
@@ -483,7 +483,7 @@ class EstimateWidget(QtGui.QWidget):
         for att, treat in dl.uncompleted_treatments:
             LOGGER.debug("checking completed %s %s"% (att, treat))
             found = False #only complete 1 treatment!!
-            for hash_, att_, tx in reversed(list(self.pt.tx_hashes)):
+            for hash_, att_, tx in reversed(list(self.pt.tx_hash_tups)):
                 if found:
                     break
                 if att == att_ and tx == treat:

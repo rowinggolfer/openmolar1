@@ -363,7 +363,7 @@ class EstimateItemWidget(QtGui.QWidget):
             "no treatments found.. this shouldn't happen"
 
         txs = []
-        for hash_, att, tx in self.est_widget.pt.tx_hashes:
+        for hash_, att, tx in self.est_widget.pt.tx_hash_tups:
             for tx_hash in tx_hashes:
                 if hash_ == tx_hash:
                     txs.append((att, tx, tx_hash.completed))

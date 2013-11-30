@@ -76,10 +76,13 @@ def add_treatments_to_plan(om_gui, treatments, completed=False):
         dentid = pt.course_dentist
         pt.treatment_course.__dict__["%spl"% att] += "%s "% shortcut
 
+        #check for deciduous tooth.
         if re.match("[ul][lr][1-8]", att):
             n_txs = None
             tooth_name = pt.chartgrid.get(att)
-            att = "%s%s"% (att[:2], tooth_name[2])
+            if tooth_name != att:
+                LOGGER.debug("Deciduous tooth treatment! on %s"% tooth_name)
+                att = "%s%s"% (att[:2], tooth_name[2])
 
         complex_addition_handled, shortcut = complex_shortcut_addition(
             om_gui, att, shortcut, n_txs, tx_hash)
@@ -599,16 +602,19 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
 def complex_shortcut_addition(om_gui, att, shortcut, n_txs, tx_hash,
 recalculating=False):
-    def number_of_chart_matches(filter="[ul][lr][1-8]"):
+    def number_of_chart_matches(filter="[ul][lr][1-8A-E]"):
         '''
         suppose a veneer is passed - is it the only veneer?
         '''
-        if recalculating and (filter, shortcut) not in pt.first_founds:
-            LOGGER.debug("recalculating estimate, so skipping chart_matches")
-            pt.first_founds.append((filter, shortcut))
-            return 1
+        if recalculating:
+            LOGGER.debug(
+            "recalculating estimate, so not using pt.tx_hash_tups")
+            pt.new_hash_tups.append((tx_hash, att, shortcut))
+            iterable_ = pt.new_hash_tups
+        else:
+            iterable_ = pt.tx_hash_tups
         n = 0
-        for hash_, att_, s_cut in pt.tx_hashes:
+        for hash_, att_, s_cut in iterable_:
             if (re.match(filter, att_) and
             complex_shortcut.matches(att_, s_cut.strip(" "))):
                 n += 1
@@ -616,7 +622,7 @@ recalculating=False):
         return n
 
     LOGGER.debug(
-    "checking %s %s %s %s"% (att, shortcut, n_txs, tx_hash))
+    "checking %s %s n_txs=%s %s"% (att, shortcut, n_txs, tx_hash))
     pt = om_gui.pt
     fee_table = pt.fee_table
     dentid = pt.course_dentist
@@ -624,9 +630,8 @@ recalculating=False):
     handled = NOT_HANDLED
     for complex_shortcut in fee_table.complex_shortcuts:
         if complex_shortcut.matches(att, shortcut):
-            LOGGER.debug(
-            "%s %s matches a complex shortcut with %d addition_cases"% (
-            att, shortcut, len(complex_shortcut.addition_cases)))
+            LOGGER.debug("%s %s matches complex shortcut %s"% (
+            att, shortcut, complex_shortcut))
             for case in complex_shortcut.addition_cases:
                 m = re.match("n_txs=(\d+)", case.condition)
                 m2 = re.match("n_txs>(\d+)", case.condition)
@@ -664,7 +669,7 @@ recalculating=False):
                         if est.itemcode == item_code:
                             est.tx_hashes += tx_hashes
                             est.fee, est.ptfee = fee_table.recalc_fee(
-                                item_code, n_txs)
+                                pt, item_code, n_txs)
 
                             LOGGER.debug("est altered %s"% est)
 
@@ -689,12 +694,12 @@ recalculating=False):
     return handled, shortcut
 
 def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
-    def number_of_chart_matches(filter="[ul][lr][1-8]"):
+    def number_of_chart_matches(filter="[ul][lr][1-8A-E]"):
         '''
         suppose a veneer is passed - is it the only veneer?
         '''
         n = 0
-        for hash_, att_, s_cut in pt.tx_hashes:
+        for hash_, att_, s_cut in pt.tx_hash_tups:
             if (re.match(filter, att_) and
             complex_shortcut.matches(att_, s_cut.strip(" "))):
                 n += 1
@@ -751,7 +756,7 @@ def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
                                 if hash_ in est.tx_hashes:
                                     est.tx_hashes.remove(hash_)
                             est.fee, est.ptfee = fee_table.recalc_fee(
-                                item_code, n_txs)
+                                pt, item_code, n_txs)
 
                             LOGGER.debug("est altered %s"% est)
 
@@ -789,7 +794,8 @@ def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
         if completed:
             txs = pt.treatment_course.__dict__["%scmp"% att]
             n_txs = txs.split(" ").count(shortcut)
-            hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, att, n_txs, shortcut))
+            hash_ = localsettings.hash_func(
+                "%s%s%s%s"% (courseno, att, n_txs, shortcut))
             tx_hash = TXHash(hash_, completed)
             tx_hash_reverse(om_gui, tx_hash)
 
@@ -799,7 +805,8 @@ def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
             )
 
         n_txs = txs.split(" ").count(shortcut)
-        hash_ = localsettings.hash_func("%s%s%s%s"% (courseno, att, n_txs, shortcut))
+        hash_ = localsettings.hash_func(
+            "%s%s%s%s"% (courseno, att, n_txs, shortcut))
         tx_hash = TXHash(hash_, completed=False)
         p_att = "%spl"% att
         val = pt.treatment_course.__dict__[p_att]
@@ -846,7 +853,7 @@ def remove_estimate_item(om_gui, est_item):
 
     for i, tx_hash in enumerate(est_item.tx_hashes):
         LOGGER.debug("est_item.tx_hash %d = %s" %(i, tx_hash))
-        for hash_, att, treat_code in pt.tx_hashes:
+        for hash_, att, treat_code in pt.tx_hash_tups:
             #LOGGER.debug("comparing %s with %s"% (hash_, tx_hash))
             if hash_ == tx_hash.hash:
                 found = True
@@ -887,6 +894,8 @@ def recalculate_estimate(om_gui):
     pt = om_gui.pt
     dentid = pt.course_dentist
 
+    LOGGER.info("USER IS RECALCULATING ESTIMATE FOR PATIENT %s"% pt.serialno)
+
     #drop all existing estimates except custom items.
     #and reverse fee for completed items.
     cust_ests = []
@@ -894,7 +903,7 @@ def recalculate_estimate(om_gui):
         if estimate.is_custom:
             cust_ests.append(estimate)
 
-    for hash_, att, shortcut in pt.tx_hashes:
+    for hash_, att, shortcut in pt.tx_hash_tups:
         if shortcut.strip(" ") == "!FEE":
             for est in pt.ests_from_hash(hash_):
                 cust_ests.append(est)
@@ -904,28 +913,26 @@ def recalculate_estimate(om_gui):
 
     # recalculating the estimate has to be handled differently than when
     # adding treatment to a plan manually.
-    # pt.first_founds is a store of all treatments that are special cases
+    # pt.new_hash_tups is a store of all treatments that are special cases
     # and need to ignore the rest of the treatment plan
     # an example is an extra fee for the first crown in an arch.
-    pt.first_founds = []
+    pt.new_hash_tups = []
 
-    for hash_, att, shortcut in pt.tx_hashes:
+    for hash_, att, shortcut in pt.tx_hash_tups:
         shortcut = shortcut.strip(" ")
         if shortcut == "!FEE" or att == "custom":
             continue
 
         tx_hash = TXHash(hash_)
 
-        if re.match("[ul][lr][1-8]", att):
+        if re.match("[ul][lr][1-8A-E]", att):
             n_txs = None
-            tooth_name = pt.chartgrid.get(att)
-            att = "%s%s"% (att[:2], tooth_name[2])
         else:
             duplicate_txs.append("%s%s"%(att, shortcut))
             n_txs = duplicate_txs.count("%s%s"%(att, shortcut))
 
         complex_addition_handled, shortcut = complex_shortcut_addition(
-        om_gui,att, shortcut, n_txs, tx_hash, recalculating=True)
+        om_gui, att, shortcut, n_txs, tx_hash, recalculating=True)
 
         if complex_addition_handled == FULLY_HANDLED:
             LOGGER.debug("complex addition handled the estimate in entirety")
@@ -939,13 +946,12 @@ def recalculate_estimate(om_gui):
     LOGGER.debug("checking for completed items")
     for est in pt.estimates:
         for tx_hash in est.tx_hashes:
-            for hash_, att, tx in pt.completed_tx_hashes:
-                if tx_hash == hash_:
-                    tx_hash.completed = True
+            if tx_hash in pt.completed_tx_hashes:
+                tx_hash.completed = True
 
     om_gui.advise(_("Estimate recalculated"), 1)
 
-    pt.first_founds = None
+    pt.new_hash_tups = None
 
     return True
 
@@ -1032,11 +1038,13 @@ def tx_hash_complete(om_gui, tx_hash):
 
     pt = om_gui.pt
     found = False
-    for hash_, att, treat_code in pt.tx_hashes:
+    for hash_, att, treat_code in pt.tx_hash_tups:
         #print "comparing %s with %s"% (hash_, tx_hash)
         if hash_ == tx_hash:
             found = True
-            #print "Match!"
+
+            #convert back from deciduous here
+            att = localsettings.convert_deciduous(att)
             plan = pt.treatment_course.__dict__[att + "pl"].replace(
                 treat_code, "", 1)
             pt.treatment_course.__dict__[att + "pl"] = plan
@@ -1097,7 +1105,7 @@ def tx_hash_reverse(om_gui, tx_hash):
 
     pt = om_gui.pt
     found = False
-    for hash_, att, treat_code in pt.tx_hashes:
+    for hash_, att, treat_code in pt.tx_hash_tups:
         LOGGER.debug("comparing %s with %s"% (hash_, tx_hash))
         if hash_ == tx_hash:
             found = True
@@ -1114,6 +1122,9 @@ def tx_hash_reverse(om_gui, tx_hash):
                             pt.estimates.remove(estimate)
                             break
                 break
+
+            #convert back from deciduous here
+            att = localsettings.convert_deciduous(att)
 
             old_completed = pt.treatment_course.__dict__[att + "cmp"]
             new_completed = old_completed.replace(treat_code, "", 1)

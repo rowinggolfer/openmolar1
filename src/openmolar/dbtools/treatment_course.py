@@ -250,13 +250,18 @@ class TreatmentCourse(object):
         return self._get_tx_hashes()
 
     @property
-    def completed_tx_hashes(self):
+    def completed_tx_hash_tups(self):
         return self._get_tx_hashes(True)
 
     @property
-    def planned_tx_hashes(self):
+    def completed_tx_hashes(self):
+        for hash_, att, tx in self._get_tx_hashes(True):
+            yield hash_
+
+    @property
+    def planned_tx_hash_tups(self):
         for tup in self._get_tx_hashes():
-            if not tup in self.completed_tx_hashes:
+            if not tup in self.completed_tx_hash_tups:
                 yield tup
 
     def _get_tx_hashes(self, completed_only=False):
@@ -269,11 +274,9 @@ class TreatmentCourse(object):
         "%sperio1AC"% courseno
         '''
         if self.examt != "":
-            hash_ = localsettings.hash_func("%sexam1%s"% (self.courseno, self.examt))
+            hash_ = localsettings.hash_func(
+                "%sexam1%s"% (self.courseno, self.examt))
             yield (hash_, "exam", self.examt+" ")
-        else:
-            LOGGER.debug(
-            "no exam to be yielded as TreatmentCourse.examt='%s'" % self.examt)
 
         for att in CURRTRT_ROOT_ATTS:
             treats = self.__dict__[att+"cmp"]
@@ -281,6 +284,7 @@ class TreatmentCourse(object):
                 treats += " " + self.__dict__[att+"pl"]
             treat_list = sorted(treats.split(" "))
             prev_tx, count = None, 1
+
             for tx in treat_list:
                 if tx == "":
                     continue
@@ -289,7 +293,8 @@ class TreatmentCourse(object):
                     prev_tx = tx
                 else:
                     count += 1
-                hash_ = localsettings.hash_func("%s%s%s%s"% (self.courseno, att, count, tx))
+                hash_ = localsettings.hash_func(
+                    "%s%s%s%s"% (self.courseno, att, count, tx))
                 yield (hash_, att, tx+" ")
 
     def get_tx_from_hash(self, hash_):
@@ -320,7 +325,7 @@ class TreatmentCourse(object):
     def cmp_txs(self, att):
         '''
         returns the list of treatments currently planned for this attribute.
-        eg pl_txs("ul8") may return ["O", "B,CO"]
+        eg cmp_txs("ul8") may return ["O", "B,CO"]
         '''
         txs = self.__dict__["%scmp"%att].split(" ")
         while "" in txs:

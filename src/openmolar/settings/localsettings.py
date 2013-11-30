@@ -319,7 +319,21 @@ class PatientNotFoundError(Exception):
     pass
 
 def hash_func(message):
+    '''
+    the function to get a unique value for all treatments in the database
+    '''
     return hashlib.sha1(message).hexdigest()
+
+def convert_deciduous(tooth):
+    '''
+    if the tooth is a match for ulD or llE etc..
+    return the corresponding adult tooth
+    (necessary to find the attribute used for treatment
+    returns tooth unchanged if not a match
+    '''
+    def my_sub(m):
+        return "%s%s"% (m.groups()[0], "*ABCDE".index(m.groups()[1]))
+    return re.sub("^([ul][lr])([A-E])", my_sub, tooth)
 
 def currentTime():
     '''

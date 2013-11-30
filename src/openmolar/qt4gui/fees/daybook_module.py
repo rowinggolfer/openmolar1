@@ -61,9 +61,9 @@ def updateDaybook(om_gui):
     courseno = om_gui.pt.treatment_course.courseno
     not_new_course = (courseno == om_gui.pt.dbstate.treatment_course.courseno)
 
-    for tx_hash in om_gui.pt.completed_tx_hashes:
+    for tx_hash in om_gui.pt.completed_tx_hash_tups:
 
-        if not_new_course and tx_hash in om_gui.pt.dbstate.completed_tx_hashes:
+        if not_new_course and tx_hash in om_gui.pt.dbstate.completed_tx_hash_tups:
             continue #already written to daybook.
         LOGGER.debug("write to daybook %s %s %s"% tx_hash)
 
