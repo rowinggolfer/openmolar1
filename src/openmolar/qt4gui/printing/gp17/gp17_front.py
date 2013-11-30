@@ -37,7 +37,7 @@ CB_WIDTH = 16
 CB_HEIGHT = 16
 
 
-teeth_x = [ 50,92,133,173,216,256,300,342, 394,434,474,516,560,599,640,681] 
+teeth_x = [ 50,92,133,173,216,256,300,342, 394,434,474,516,560,599,640,681]
 
 RECTS = {}
 
@@ -50,7 +50,7 @@ for i,x in enumerate(teeth_x):
     RECTS["lower%db"% (i+1)] = QtCore.QRectF(x, 511, 32, CB_HEIGHT)
     RECTS["lower%dc"% (i+1)] = QtCore.QRectF(x, 538, 32, CB_HEIGHT)
 
-  
+
 #row1
 xs = [80, 100, 175, 195, 292, 312, 383, 403, 439, 460, 481, 501, 532, 552, 578, 596]
 ys= [594, 627, 661, 694, 727, 760, 794, 828, 860, 894, 927, 961, 994, 1028]
@@ -180,7 +180,7 @@ RECTS["4404b"] = QtCore.QRectF(xs[15], ys[1], CB_WIDTH, CB_HEIGHT)
 RECTS["DENTIST_USE_pound"] = QtCore.QRectF(634, ys[0], 48, 410)
 RECTS["DENTIST_USE_pence"] = QtCore.QRectF(688, ys[0], 30, 410)
 
-for i in range(1,10):     
+for i in range(1,10):
     RECTS["other%dA"% i] = QtCore.QRectF(
         xs[8], ys[2+i], CB_WIDTH, CB_HEIGHT)
     RECTS["other%dB"% i] = QtCore.QRectF(
@@ -203,14 +203,14 @@ RECTS["4600b"] = QtCore.QRectF(xs[15], ys[12], CB_WIDTH, CB_HEIGHT)
 RECTS["radiographs"] = QtCore.QRectF(229, ys[13], CB_WIDTH, CB_HEIGHT)
 RECTS["models"] = QtCore.QRectF(359, ys[13], CB_WIDTH, CB_HEIGHT)
 RECTS["trauma"] = QtCore.QRectF(460, ys[13], CB_WIDTH, CB_HEIGHT)
- 
+
 RECTS["TOTAL1"] = QtCore.QRectF(602, ys[13], CB_WIDTH, CB_HEIGHT)
 RECTS["TOTAL2"] = QtCore.QRectF(622, ys[13], CB_WIDTH, CB_HEIGHT)
 RECTS["TOTAL3"] = QtCore.QRectF(642, ys[13], CB_WIDTH, CB_HEIGHT)
 RECTS["TOTAL4"] = QtCore.QRectF(662, ys[13], CB_WIDTH, CB_HEIGHT)
 RECTS["TOTAL5"] = QtCore.QRectF(684, ys[13], CB_WIDTH, CB_HEIGHT)
 RECTS["TOTAL6"] = QtCore.QRectF(702, ys[13], CB_WIDTH, CB_HEIGHT)
- 
+
 ##sname boxes
 PADDING = 3.1
 for i in range(14):
@@ -264,44 +264,44 @@ RECTS["special_needs"] = QtCore.QRectF(697, 290, CB_WIDTH, CB_HEIGHT)
 RECTS["not_extending"] = QtCore.QRectF(697, 316, CB_WIDTH, CB_HEIGHT)
 
 OPTION = QtGui.QTextOption(QtCore.Qt.AlignCenter|QtCore.Qt.AlignVCenter)
-        
+
 class GP17Front(PrintedForm):
     '''
     a class to set up and print a GP17
     '''
     NAME = "OLD GP17 Front"
     data = None
-    
+
     def __init__(self):
         PrintedForm.__init__(self)
         self.row = 1
         self.rects = RECTS
-    
+
     @classmethod
     def is_active(self):
         if "neil" in os.path.expanduser("~"):
             return False
         return QtCore.QDate.currentDate() < QtCore.QDate(2013,7,1)
-    
+
     def set_data(self, data):
         self.data = data
-    
+
     def print_(self):
         self.set_offset(gp17config.OFFSET_LEFT, gp17config.OFFSET_TOP)
-        self.set_scaling(gp17config.SCALE_X, gp17config.SCALE_Y) 
-        
+        self.set_scaling(gp17config.SCALE_X, gp17config.SCALE_Y)
+
         painter = PrintedForm.print_(self)
         self._fill(painter)
-        
+
     def _fill(self, painter):
         if self.data is None:
             return
-            
+
         serifFont = QtGui.QFont("Courier", 12)
         serifFont.setBold(True)
         fm=QtGui.QFontMetrics(serifFont)
         serifLineHeight = fm.height()
-        
+
         painter.setPen(QtGui.QPen(QtCore.Qt.black,1))
         painter.setFont(serifFont)
 
@@ -316,16 +316,16 @@ class GP17Front(PrintedForm):
             self._fill_misc_cbs,
             self._fill_stampbox,
             self._fill_previous_surname,
-            self._fill_address,            
+            self._fill_address,
             self._fill_simple_codes,
             self._fill_complex_codes
             ):
-            
+
             painter.save()
             #painter.translate(self.off_set)
             func_(painter)
             painter.restore()
-        
+
     def _fill_surname(self, painter):
         for i in range(14):
             rect = self.rects["surname_%02d"% i]
@@ -333,7 +333,7 @@ class GP17Front(PrintedForm):
                 painter.drawText(rect, self.data.pt.sname[i], OPTION)
             except IndexError:
                 break
-        
+
     def _fill_forename(self, painter):
         for i in range(14):
             rect = self.rects["forename_%02d"% i]
@@ -341,7 +341,7 @@ class GP17Front(PrintedForm):
                 painter.drawText(rect, self.data.pt.fname[i], OPTION)
             except IndexError:
                 break
-    
+
     def _fill_dob(self, painter):
         for i in range(8):
             rect = self.rects["dob_%d"% i]
@@ -351,14 +351,14 @@ class GP17Front(PrintedForm):
                 break
 
     def _fill_sex(self, painter):
-        sex = self.data.pt.sex 
+        sex = self.data.pt.sex
         if sex=="M":
             painter.drawText(self.rects["male"], "M", OPTION)
         elif sex=="F":
             painter.drawText(self.rects["female"],"F", OPTION)
         else:
             print "UNKNOWN SEX for GP17!"
-    
+
     def _fill_pid(self, painter):
         for i in range(10):
             rect = self.rects["pid_%d"% i]
@@ -375,9 +375,9 @@ class GP17Front(PrintedForm):
             except IndexError:
                 break
 
-    def _fill_stampbox(self, painter):        
+    def _fill_stampbox(self, painter):
         painter.drawText(self.rects["stampbox"], self.data.stamp_text)
-    
+
     def _fill_address(self, painter):
         for i in range(18):
             rect = self.rects["addr1_%02d"% i]
@@ -414,7 +414,7 @@ class GP17Front(PrintedForm):
                 painter.drawText(rect, self.data.accd[i], OPTION)
             except IndexError:
                 break
-                
+
     def _fill_cmpd(self, painter):
         for i in range(8):
             rect = self.rects["cmpd_%d"% i]
@@ -422,82 +422,82 @@ class GP17Front(PrintedForm):
                 painter.drawText(rect, self.data.cmpd[i], OPTION)
             except IndexError:
                 break
-                
+
     def _fill_misc_cbs(self, painter):
         for key in ["on_referral", "not_extending", "special_needs","on_referral",
                     "radiographs","models","trauma"]:
             if self.data.misc_dict.get(key, False):
                 rect = self.rects[key]
                 painter.drawText(rect, "X", OPTION)
-            
+
     def _fill_simple_codes(self, painter):
         self.row = 1
         def other_treatment():
-                
-            painter.drawText(self.rects["other%dA"% self.row], code[0], OPTION) 
-            painter.drawText(self.rects["other%dB"% self.row], code[1], OPTION) 
-            painter.drawText(self.rects["other%dC"% self.row], code[2], OPTION) 
-            painter.drawText(self.rects["other%dD"% self.row], code[3], OPTION)     
-            painter.drawText(self.rects["other%da"% self.row], "0", OPTION) 
-            painter.drawText(self.rects["other%db"% self.row], "1", OPTION) 
+
+            painter.drawText(self.rects["other%dA"% self.row], code[0], OPTION)
+            painter.drawText(self.rects["other%dB"% self.row], code[1], OPTION)
+            painter.drawText(self.rects["other%dC"% self.row], code[2], OPTION)
+            painter.drawText(self.rects["other%dD"% self.row], code[3], OPTION)
+            painter.drawText(self.rects["other%da"% self.row], "0", OPTION)
+            painter.drawText(self.rects["other%db"% self.row], "1", OPTION)
             self.row += 1
-             
+
         for code in self.data.simple_codes:
             try:
-                painter.drawText(self.rects[code], "X", OPTION) 
+                painter.drawText(self.rects[code], "X", OPTION)
             except KeyError:
                 other_treatment()
-    
+
     def _fill_complex_codes(self, painter):
         def other_treatment():
-                
-            painter.drawText(self.rects["other%dA"% self.row], code.code[0], OPTION) 
-            painter.drawText(self.rects["other%dB"% self.row], code.code[1], OPTION) 
-            painter.drawText(self.rects["other%dC"% self.row], code.code[2], OPTION) 
-            painter.drawText(self.rects["other%dD"% self.row], code.code[3], OPTION)     
+
+            painter.drawText(self.rects["other%dA"% self.row], code.code[0], OPTION)
+            painter.drawText(self.rects["other%dB"% self.row], code.code[1], OPTION)
+            painter.drawText(self.rects["other%dC"% self.row], code.code[2], OPTION)
+            painter.drawText(self.rects["other%dD"% self.row], code.code[3], OPTION)
             n = "%02d"% code.number
-            painter.drawText(self.rects["other%da"% self.row], n[0], OPTION) 
-            painter.drawText(self.rects["other%db"% self.row], n[1], OPTION) 
-            
+            painter.drawText(self.rects["other%da"% self.row], n[0], OPTION)
+            painter.drawText(self.rects["other%db"% self.row], n[1], OPTION)
+
             if code.free_replace:
                 painter.drawText(self.rects["free_replace%d"% self.row], "X", OPTION)
             self.row += 1
-         
+
         for code in self.data.complex_codes:
             if code.free_replace:
                 other_treatment()
                 continue
             try:
                 n = "%02d"% code.number
-                painter.drawText(self.rects["%sa"% code.code], n[0], OPTION) 
-                painter.drawText(self.rects["%sb"% code.code], n[1], OPTION) 
+                painter.drawText(self.rects["%sa"% code.code], n[0], OPTION)
+                painter.drawText(self.rects["%sb"% code.code], n[1], OPTION)
             except KeyError:
                 other_treatment()
-        
-            
+
+
 if __name__ == "__main__":
     os.chdir(os.path.expanduser("~")) # for print to file
     from openmolar.settings import localsettings
-    from openmolar.dbtools.gp17_data import Gp17Data
+    from openmolar.qt4gui.printing.gp17.gp17_data import Gp17Data
 
     data = Gp17Data(testing_mode=True)
-    TEST_IMAGE = os.path.join(localsettings.resources_location, "gp17", 
+    TEST_IMAGE = os.path.join(localsettings.resources_location, "gp17",
         "front.jpg")
-    
+
     data = Gp17Data(testing_mode=True)
 
     app = QtGui.QApplication([])
     form = GP17Front()
-   
+
     form.set_data(data)
-    
+
     form.testing_mode = True
-    
+
     form.print_background = True
     form.BACKGROUND_IMAGE = TEST_IMAGE
-   
+
     form.controlled_print()
-    
+
     #for key in sorted(form.rects.keys()):
-    #    print key, 
-    
+    #    print key,
+
