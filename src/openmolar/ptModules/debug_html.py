@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
+# Copyright (c) 2009-2013 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
@@ -12,7 +12,7 @@ existing=""
 
 def toHtml(pt, tableCalled=None, changesOnly=False):
     '''
-    this sub puts all the attributes found for patient 1 and patient 2 
+    this sub puts all the attributes found for patient 1 and patient 2
     (normaly a deep copy of patient 1 taken at the moment of load from db)
      into an html table (for comparison)
     '''
@@ -21,21 +21,21 @@ def toHtml(pt, tableCalled=None, changesOnly=False):
     retarg='<html><body><div align="center">'
     #attribs=p1.__dict__.keys()
     #attribs.sort()
-    
+
     attributesDict={}
-    if tableCalled == "Patient": 
+    if tableCalled == "Patient":
         attributesDict["Patient Table"] = patient_class.patientTableAtts
-    elif tableCalled == "Treatment": 
-        attributesDict["Treatment Items"] = CURRTRT_ATTS
-    elif tableCalled == "HDP": 
+    elif tableCalled == "Treatment":
+        attributesDict["Treatment Items"] = ("treatment_course",)
+    elif tableCalled == "HDP":
         attributesDict["HDP"] = ("plandata",)
-    elif tableCalled == "Estimates": 
+    elif tableCalled == "Estimates":
         attributesDict["Estimates"] = ("estimates", )
-    elif tableCalled=="Perio": 
+    elif tableCalled=="Perio":
         attributesDict["Perio Data"] = ("perioData",)
     else:
         attributesDict["all attributes"] = pt.dbstate.__dict__.keys()
-    
+
     changes=False
     for key in sorted(attributesDict.keys()):
         attribs = attributesDict[key]
@@ -57,7 +57,7 @@ def toHtml(pt, tableCalled=None, changesOnly=False):
         existing = key
     if not changes:
         retarg += "<br />No data or relevant changes found"
-        
+
     retarg += '</div></body></html>'
     return retarg
 
