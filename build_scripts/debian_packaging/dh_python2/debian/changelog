@@ -1,5 +1,12 @@
 openmolar (0.5.0-beta05-0~__DIST__0) __DIST__; urgency=low
 
+  * New Upstream
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Mon, 02 Dec 2013 23:33:50 +0000
+
+
+openmolar (0.5.0-beta05-0~__DIST__0) __DIST__; urgency=low
+
   * New Upstream (fixes #74 and #73)
 
  -- Neil Wallace <rowinggolfer@googlemail.com>  Mon, 02 Dec 2013 09:53:32 +0000
