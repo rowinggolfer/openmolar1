@@ -163,13 +163,14 @@ debs:
 pushdeb:
 	cd ~/www/repos/apt/debian ;\
 	reprepro include $(DIST) $(CHANGELOG) ; \
-	reprepro export
+	#reprepro export
 	
 pushdebs:
 	@echo "updating the local repo"
 	$(foreach dist,$(DEBDISTS), \
 		make DIST=$(dist) pushdeb; \
 	)
+	reprepro export
 	
 update_pbuilder:
 	$(foreach dist, $(DEBDISTS), \

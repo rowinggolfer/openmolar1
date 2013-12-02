@@ -45,6 +45,7 @@ from feescale_xml_editor import XMLEditor
 from feescale_compare_items_dockwidget import CompareItemsDockWidget
 from feescale_input_dialogs import *
 from feescale_diff_dialog import DiffDialog
+from feescale_choice_dialog import ChoiceDialog
 
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
@@ -211,10 +212,15 @@ class FeescaleEditor(QtGui.QMainWindow):
         icon = QtGui.QIcon.fromTheme("application-exit")
         action_quit = QtGui.QAction(icon, _("Quit"), self)
 
-        action_diff = QtGui.QAction(_("Show Diff"), self)
+        action_diff = QtGui.QAction(_("Show Database Diff"), self)
         action_diff.setToolTip(
         _("Show the diff between the current file and the "
         "corresponding file stored in the database"))
+
+        action_compare = QtGui.QAction(_("Compare 2 Feescales"), self)
+        action_compare.setToolTip(
+        _("Show the diff between the current file and a selected other"))
+
         self.main_toolbar.addAction(action_pull)
         self.main_toolbar.addAction(action_commit)
         self.main_toolbar.addAction(action_save)
@@ -241,6 +247,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         menu_tools.addAction(action_zero_charges)
 
         menu_diffs.addAction(action_diff)
+        menu_diffs.addAction(action_compare)
 
         self.tab_widget = QtGui.QTabWidget()
 
@@ -266,6 +273,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.prefs_toolbar.addAction(self.action_check_validity)
 
         self.diffs_toolbar.addAction(action_diff)
+        self.diffs_toolbar.addAction(action_compare)
 
         splitter = QtGui.QSplitter()
         splitter.addWidget(self.control_panel)
@@ -290,6 +298,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_zero_charges.triggered.connect(self.zero_charges)
 
         action_diff.triggered.connect(self.show_database_diff)
+        action_compare.triggered.connect(self.compare_files)
 
         self.tab_widget.currentChanged.connect(self.view_feescale)
 
@@ -711,6 +720,33 @@ class FeescaleEditor(QtGui.QMainWindow):
         new = unicode(self.text_edit.text().toUtf8())
         dl = DiffDialog(orig, new)
         dl.exec_()
+
+    def compare_files(self):
+        options = []
+        for i in range(self.tab_widget.count()):
+            if i != self.tab_widget.currentIndex():
+                options.append(self.tab_widget.tabText(i))
+
+        if len(options) == 1:
+            QtGui.QMessageBox.information(self, _("whoops"),
+            _("you have no other files available for comparison"))
+            return
+
+        message = "%s<br /><b>%s (%s)</b><hr />%s"% (
+        _("Which feescale would you like to compare "
+        "with the current feescale"),
+        self.current_parser.ix,
+        self.current_parser.description,
+        _("Please make a choice"))
+
+        dl = ChoiceDialog(message, options, self)
+        if dl.exec_():
+            chosen = dl.chosen_index
+
+            orig = unicode(self.text_edit.text().toUtf8())
+            new = unicode(self.text_editors[chosen].text().toUtf8())
+            dl = DiffDialog(orig, new)
+            dl.exec_()
 
     @property
     def is_dirty(self):

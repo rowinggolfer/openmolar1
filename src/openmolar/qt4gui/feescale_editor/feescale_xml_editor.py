@@ -52,11 +52,17 @@ class TextObject(object):
 
 
 class XMLEditor(Qsci.QsciScintilla):
+    MARKER_COLUMN = 8
     editing_finished = QtCore.pyqtSignal(object)
     def __init__(self, parent=None):
         Qsci.QsciScintilla.__init__(self, parent)
         self.setLexer(Qsci.QsciLexerXML())
         self.text_object = TextObject("")
+        self.highlight_index =  self.indicatorDefine(
+            self.RoundBoxIndicator, -1)
+        self.setIndicatorDrawUnder(True, self.highlight_index)
+        self.setIndicatorForegroundColor(
+            QtGui.QColor("#dddddd"), self.highlight_index)
 
     def editor_settings(self):
         '''
@@ -65,11 +71,12 @@ class XMLEditor(Qsci.QsciScintilla):
         '''
         self.setCaretLineVisible(True)
         self.setMarginLineNumbers(0, True)
-        fontmetrics = QtGui.QFontMetrics(self.font())
-        #self.setMarginsFont(font)
-        self.setMarginWidth(0, fontmetrics.width("0000") + 2)
-        #self.setMarginsBackgroundColor(QColor("#cccccc"))
+        self.setMarginWidth(0, "00000")
         self.setFolding(self.CircledTreeFoldStyle)
+        #self.setWhitespaceVisibility(True)
+        self.markerDefine(Qsci.QsciScintilla.RightArrow, self.MARKER_COLUMN)
+        self.setMarkerBackgroundColor(
+            QtGui.QColor("#ee1111"), self.MARKER_COLUMN)
 
     def focusOutEvent(self, event):
         self.editing_finished.emit(self)
@@ -78,6 +85,11 @@ class XMLEditor(Qsci.QsciScintilla):
         LOGGER.debug("setText")
         self.text_object.reset_text(text)
         Qsci.QsciScintilla.setText(self, text)
+
+    def highlight_line(self, lineno):
+        #LOGGER.debug("highlight line %d"% lineno)
+        self.markerAdd(lineno, self.MARKER_COLUMN)
+        self.fillIndicatorRange(lineno, 0, lineno + 1, 0, self.highlight_index)
 
     @property
     def is_dirty(self):
