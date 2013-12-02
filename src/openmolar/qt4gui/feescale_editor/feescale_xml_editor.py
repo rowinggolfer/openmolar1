@@ -69,6 +69,7 @@ class XMLEditor(Qsci.QsciScintilla):
         #self.setMarginsFont(font)
         self.setMarginWidth(0, fontmetrics.width("0000") + 2)
         #self.setMarginsBackgroundColor(QColor("#cccccc"))
+        self.setFolding(self.CircledTreeFoldStyle)
 
     def focusOutEvent(self, event):
         self.editing_finished.emit(self)

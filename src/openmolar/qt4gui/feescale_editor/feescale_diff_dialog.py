@@ -49,7 +49,9 @@ class DiffDialog(BaseDialog):
         self.main_toolbar.toggleViewAction().setText(_("Toolbar"))
 
         self.xml_editor1 = XMLEditor()
+        self.xml_editor1.editor_settings()
         self.xml_editor2 = XMLEditor()
+        self.xml_editor2.editor_settings()
 
         icon = QtGui.QIcon.fromTheme("document-save")
         action_save = QtGui.QAction(icon, _("Save File"), self)
@@ -98,11 +100,11 @@ class DiffDialog(BaseDialog):
                 line_no2 = int(m.groups()[2])
                 continue
             if not line_.startswith("-"):
-                formatted_line = "%03d %s"% (line_no2, line_)
+                formatted_line = "%s"% (line_)
                 text2 += formatted_line
                 line_no2 += 1
             if not line_.startswith("+"):
-                formatted_line = "%03d %s"% (line_no1, line_)
+                formatted_line = "%s"% (line_)
                 text1 += formatted_line
                 line_no1 += 1
 

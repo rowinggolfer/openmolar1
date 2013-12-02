@@ -708,7 +708,8 @@ class FeescaleEditor(QtGui.QMainWindow):
     def show_database_diff(self):
         orig = self.feescale_handler.get_feescale_from_database(
             self.current_parser.ix)
-        dl = DiffDialog(orig, self.text_edit.text())
+        new = unicode(self.text_edit.text().toUtf8())
+        dl = DiffDialog(orig, new)
         dl.exec_()
 
     @property

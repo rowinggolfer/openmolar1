@@ -862,6 +862,8 @@ def remove_estimate_item(om_gui, est_item):
                 "       MATCHING hash Found! removing....'%s' '%s'"% (
                 att, treat_code))
 
+                att = localsettings.convert_deciduous(att)
+
                 if est_item.is_exam:
                     LOGGER.debug("special case - removing exam")
                     pt.treatment_course.examt = ""
