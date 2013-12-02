@@ -28,11 +28,35 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
 
+class TextObject(object):
+    def __init__(self, text):
+        self.orig_text = text
+        self._text = None
+
+    def reset_text(self, text):
+        self.orig_text = text
+        self._text = None
+
+    def update_text(self, text):
+        self._text = text
+
+    @property
+    def text(self):
+        if self._text is None:
+            return self.orig_text
+        return self._text
+
+    @property
+    def is_dirty(self):
+        return self.text != self.orig_text
+
+
 class XMLEditor(Qsci.QsciScintilla):
     editing_finished = QtCore.pyqtSignal(object)
     def __init__(self, parent=None):
         Qsci.QsciScintilla.__init__(self, parent)
         self.setLexer(Qsci.QsciLexerXML())
+        self.text_object = TextObject("")
 
     def editor_settings(self):
         '''
@@ -49,6 +73,14 @@ class XMLEditor(Qsci.QsciScintilla):
     def focusOutEvent(self, event):
         self.editing_finished.emit(self)
 
+    def setText(self, text):
+        LOGGER.debug("setText")
+        self.text_object.reset_text(text)
+        Qsci.QsciScintilla.setText(self, text)
+
+    @property
+    def is_dirty(self):
+        return self.text_object.is_dirty
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

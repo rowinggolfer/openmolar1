@@ -57,11 +57,26 @@ if not os.path.exists(FEESCALE_DIR):
 
 QUERY = 'select ix, xml_data from feescales'
 
+SPECIFIC_QUERY = 'select xml_data from feescales where ix=%s'
+
 UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
 
 NEW_FEESCALE_QUERY = "insert into feescales (xml_data) values(%s)"
 
 class FeescaleHandler(object):
+
+    def get_feescale_from_database(self, ix):
+        '''
+        connects and gets the xml_data associated with ix
+        '''
+        db = connect.connect()
+        cursor = db.cursor()
+        cursor.execute(SPECIFIC_QUERY, (ix,))
+        row = cursor.fetchone()
+        cursor.close()
+        if row:
+            return row[0]
+        return ""
 
     def get_feescales_from_database(self,
     in_use_only=True, priority_order=True):
@@ -111,7 +126,7 @@ class FeescaleHandler(object):
                 unwritten.append(xml_file)
             else:
                 f = open(xml_file.filepath, "r")
-                if f.read().strip() != xml_file.data:
+                if f.read().strip() != xml_file.data.strip():
                     modified.append(xml_file)
                 f.close()
         return unwritten, modified

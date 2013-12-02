@@ -44,6 +44,7 @@ from feescale_list_model import ItemsListModel, ComplexShortcutsListModel
 from feescale_xml_editor import XMLEditor
 from feescale_compare_items_dockwidget import CompareItemsDockWidget
 from feescale_input_dialogs import *
+from feescale_diff_dialog import DiffDialog
 
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
@@ -134,19 +135,26 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.prefs_toolbar.setObjectName("Prefs Toolbar")
         self.prefs_toolbar.toggleViewAction().setText(_("Preferences Toolbar"))
 
+        self.diffs_toolbar = QtGui.QToolBar()
+        self.diffs_toolbar.setObjectName("Diffs Toolbar")
+        self.diffs_toolbar.toggleViewAction().setText(_("Diffs Toolbar"))
+
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.main_toolbar)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.prefs_toolbar)
+        self.addToolBar(QtCore.Qt.TopToolBarArea, self.diffs_toolbar)
 
         menu_file = QtGui.QMenu(_("&File"), self)
         menu_edit = QtGui.QMenu(_("&Edit"), self)
         menu_database = QtGui.QMenu(_("&Database"), self)
         menu_tools = QtGui.QMenu(_("&Tools"), self)
         menu_preferences = QtGui.QMenu(_("&Preferences"), self)
+        menu_diffs = QtGui.QMenu(_("Diffs"), self)
 
         self.menuBar().addMenu(menu_file)
         self.menuBar().addMenu(menu_edit)
         self.menuBar().addMenu(menu_database)
         self.menuBar().addMenu(menu_tools)
+        self.menuBar().addMenu(menu_diffs)
         self.menuBar().addMenu(menu_preferences)
 
         icon = QtGui.QIcon(":database.png")
@@ -203,6 +211,10 @@ class FeescaleEditor(QtGui.QMainWindow):
         icon = QtGui.QIcon.fromTheme("application-exit")
         action_quit = QtGui.QAction(icon, _("Quit"), self)
 
+        action_diff = QtGui.QAction(_("Show Diff"), self)
+        action_diff.setToolTip(
+        _("Show the diff between the current file and the "
+        "corresponding file stored in the database"))
         self.main_toolbar.addAction(action_pull)
         self.main_toolbar.addAction(action_commit)
         self.main_toolbar.addAction(action_save)
@@ -228,6 +240,8 @@ class FeescaleEditor(QtGui.QMainWindow):
         menu_tools.addAction(action_charges)
         menu_tools.addAction(action_zero_charges)
 
+        menu_diffs.addAction(action_diff)
+
         self.tab_widget = QtGui.QTabWidget()
 
         self.feescale_parsers = OrderedDict()
@@ -251,6 +265,8 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.prefs_toolbar.addAction(self.action_check_parseable)
         self.prefs_toolbar.addAction(self.action_check_validity)
 
+        self.diffs_toolbar.addAction(action_diff)
+
         splitter = QtGui.QSplitter()
         splitter.addWidget(self.control_panel)
         splitter.addWidget(self.tab_widget)
@@ -273,8 +289,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_charges.triggered.connect(self.relate_charges_to_gross_fees)
         action_zero_charges.triggered.connect(self.zero_charges)
 
-        action_quit.triggered.connect(
-            QtGui.QApplication.instance().closeAllWindows)
+        action_diff.triggered.connect(self.show_database_diff)
 
         self.tab_widget.currentChanged.connect(self.view_feescale)
 
@@ -282,6 +297,8 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         QtGui.QApplication.instance().focusChanged.connect(
             self._focus_changed)
+        action_quit.triggered.connect(
+            QtGui.QApplication.instance().closeAllWindows)
 
     def advise(self, message, importance=0):
         '''
@@ -412,6 +429,9 @@ class FeescaleEditor(QtGui.QMainWindow):
             _("You appear to have no feescales installed in your database"))
 
     def get_files_from_database(self):
+        '''
+        gets files from the database at startup
+        '''
         unwritten, modified = \
         self.feescale_handler.non_existant_and_modified_local_files()
 
@@ -423,16 +443,37 @@ class FeescaleEditor(QtGui.QMainWindow):
         self._checking_files = True
 
         for xml_file in modified:
-            if QtGui.QMessageBox.question(self, _("Confirm"),
-            "%s '%s' %s<hr />%s"% (
+            message = "%s '%s' %s<hr />%s"% (
             _("Local Feescale"), xml_file.filepath,
             _("differs from the database version"),
-            _("Do you wish to overwrite it with the stored data?")),
-            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Ok:
+            _("Do you wish to overwrite it with the stored data?"))
+
+            mb = QtGui.QMessageBox(None)
+            mb.setWindowTitle(_("Confirm"))
+            mb.setText(message)
+            mb.setIcon(mb.Question)
+            mb.addButton(_("Show Diff"), mb.DestructiveRole)
+            mb.addButton(mb.Cancel)
+            mb.addButton(mb.Ok)
+            result = mb.exec_()
+            if result not in (mb.Ok, mb.Cancel):
+                #show diff
+                f = open(xml_file.filepath, "r")
+                local_data = f.read()
+                f.close()
+                dl = DiffDialog(xml_file.data, local_data)
+                dl.apply_but.setText(_("Overwrite Local File"))
+                dl.cancel_but.setText(_("Keep Local File Unchanged"))
+                dl.enableApply()
+                result = mb.Ok if dl.exec_() else mb.Cancel
+
+            if result == mb.Ok:
+                LOGGER.debug("saving file")
                 f = open(xml_file.filepath, "w")
                 f.write(xml_file.data)
                 f.close()
+            else:
+                LOGGER.debug("not saving file")
 
         self._checking_files = False
         self._check_for_newer_local_files()
@@ -481,6 +522,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         for lineno, line in enumerate(self.text_edit.text().split("\n")):
             if item_count == index.row()+1:
                 self.text_edit.setFocus(True)
+                self.text_edit.setFirstVisibleLine(lineno-2)
                 self.text_edit.setCursorPosition(lineno-1, 0)
                 self.text_edit.ensureCursorVisible()
                 break
@@ -662,6 +704,12 @@ class FeescaleEditor(QtGui.QMainWindow):
         i = self.text_editors.index(te)
         new_text = te.text()
         self.feescale_parsers.values()[i].set_edited_text(new_text)
+
+    def show_database_diff(self):
+        orig = self.feescale_handler.get_feescale_from_database(
+            self.current_parser.ix)
+        dl = DiffDialog(orig, self.text_edit.text())
+        dl.exec_()
 
     @property
     def is_dirty(self):
