@@ -825,6 +825,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if they are, function will return the user to that part of the gui
         and return True. otherwise, will return False.
         '''
+        LOGGER.debug("enteringNewPatient")
         if not self.ui.newPatientPushButton.isEnabled():
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.ui.tabWidget.setCurrentIndex(0)

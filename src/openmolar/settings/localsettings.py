@@ -71,6 +71,8 @@ MH_HEADER = ("The Academy Dental Practice",
 
 WINDOWS = False
 
+DEFAULT_COURSETYPE = "P"
+
 def determine_path ():
     '''
     returns the true working directory, regardless of any symlinks.

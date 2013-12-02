@@ -3,13 +3,18 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version.
+# See the GNU General Public License for more details.
 
-import copy
+import logging
+from gettext import gettext as _
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import writeNewPatient
+
+LOGGER = logging.getLogger("openmolar")
 
 def enterNewPatient(om_gui):
     '''
@@ -18,7 +23,8 @@ def enterNewPatient(om_gui):
 
     #--check for unsaved changes
     if not om_gui.okToLeaveRecord():
-        print "not entering new patient - still editing current record"
+        LOGGER.debug(
+        "not entering new patient - still editing current record")
         return
 
     #--disable the newPatient Button
@@ -47,17 +53,20 @@ def enterNewPatient(om_gui):
     om_gui.ui.titleEdit.setFocus()
 
     #--give some help
-    om_gui.ui.detailsBrowser.setHtml(_('''<div align="center">
-<h3>Enter New Patient</h3>Please enter at least the required fields,
-then use the Save Changes button to commit this patient to the database.
-</div>'''))
+    om_gui.ui.detailsBrowser.setHtml(
+        '<div align="center"><h2>%s</h2>%s<hr /><em>%s</em></div>'% (
+        _("New Patient Mode"),
+        _("Please enter at least the required fields."),
+        _("Use the Save Changes button to commit to the database, "
+        "or the home button to leave this page")
+        ))
 
 def checkNewPatient(om_gui):
     '''
     check to see what the user has entered for a new patient
     before commiting to database
     '''
-
+    LOGGER.debug("check new patient")
     atts=[]
     allfields_entered=True
 
@@ -70,38 +79,24 @@ def checkNewPatient(om_gui):
     if allfields_entered:
         #--update 'pt'
         om_gui.apply_editpage_changes()
-
-        if saveNewPatient(om_gui):
+        om_gui.pt.cset = localsettings.DEFAULT_COURSETYPE
+        sno = writeNewPatient.commit(om_gui.pt)
+        if sno == -1:
+            om_gui.advise(_("Error saving new patient, sorry!"), 2)
+        else:
             #--sucessful save
             #--reset the gui
             finishedNewPatientInput(om_gui)
-            #--reload the patient from the db.
-            om_gui.getrecord(om_gui.pt.serialno, newPatientReload=True)
-        else:
-            om_gui.advise(_("Error saving new patient, sorry!"), 2)
+            #--set that serialno
+            #om_gui.pt.serialno = sno
+            #om_gui.clearRecord()
+            om_gui.getrecord(sno, newPatientReload=True)
     else:
         #-- prompt user for more info
-        om_gui.advise(_('''insufficient data to create a new record...
-please fill in all highlighted fields'''), 2)
-
-def saveNewPatient(om_gui):
-    '''
-    User has entered a new patient
-    '''
-
-    #--write to the database
-    #--the next available serialno is returned or -1 if problems
-    sno = writeNewPatient.commit(om_gui.pt)
-    if sno == -1:
-        om_gui.advise(_("Error saving patient"), 2)
-        return False
-    else:
-        #--set that serialno
-        om_gui.pt.serialno = sno
-        #--messy, but avoids a "previous pt has changed"
-        #--dialog when reloaded
-        om_gui.pt.take_snapshot()
-        return True
+        om_gui.advise(_(
+        "insufficient data to create a new record."
+        "please fill in all highlighted fields"
+        ), 2)
 
 def finishedNewPatientInput(om_gui):
     '''
@@ -112,6 +107,7 @@ def finishedNewPatientInput(om_gui):
     disable the edit tab
     and restore the save button text
     '''
+    LOGGER.debug("restoring gui to normal state (after entering new patient)")
     om_gui.ui.detailsBrowser.setText("")
     om_gui.ui.newPatientPushButton.setEnabled(True)
 
@@ -129,12 +125,10 @@ def abortNewPatientEntry(om_gui):
     '''
     om_gui.ui.main_tabWidget.setCurrentIndex(0)
 
-    result=QtGui.QMessageBox.question(om_gui, "Confirm",
+    if QtGui.QMessageBox.question(om_gui, "Confirm",
     _("New Patient not saved. Abandon Changes?"),
     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-    QtGui.QMessageBox.Yes )
-
-    if result == QtGui.QMessageBox.Yes:
+    QtGui.QMessageBox.Yes ) == QtGui.QMessageBox.Yes:
         finishedNewPatientInput(om_gui)
         return True
 
