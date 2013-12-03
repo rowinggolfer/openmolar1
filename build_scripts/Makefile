@@ -170,6 +170,7 @@ pushdebs:
 	$(foreach dist,$(DEBDISTS), \
 		make DIST=$(dist) pushdeb; \
 	)
+	cd ~/www/repos/apt/debian ;\
 	reprepro export
 	
 update_pbuilder:
