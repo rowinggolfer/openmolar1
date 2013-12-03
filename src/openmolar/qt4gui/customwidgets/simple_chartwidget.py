@@ -12,68 +12,41 @@ has one class, a custom widget which inherits from QWidget
 
 from __future__ import division
 
+import re
 import sys
 from PyQt4 import QtGui, QtCore
 
 from openmolar.qt4gui import colours
 from openmolar.settings import images
 
-class chartWidget(QtGui.QWidget):
+GRID =  (
+["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
+'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
+["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
+'ll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8']
+)
+
+
+class SimpleChartWidg(QtGui.QWidget):
     '''
     a custom widget to show a standard UK dental chart
     - allows for user navigation with mouse and/or keyboard
     '''
     def __init__(self, parent=None):
-        super(chartWidget, self).__init__(parent)
+        QtGui.QWidget.__init__(self, parent)
 
         self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
         QtGui.QSizePolicy.Expanding))
 
-        self.grid = (
-        ["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
-        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
-        ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
-        'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
+        self.grid = GRID
 
         self.selected = set()
         self.highlighted = [-1, -1]
         self.prevSelect = ()
-        self.clear()
         self.setMinimumSize(self.minimumSizeHint())
         self.showLeftRight = True
         self.showSelected = False
         self.setMouseTracking(True)
-
-    def clear(self):
-        '''
-        clears all fillings etc from the chart
-        '''
-        #--clear individual teeth
-        self.ur8, self.ur7, self.ur6, self.ur5, self.ur4, self.ur3, self.ur2, \
-        self.ur1 = [] ,[], [], [], [], [], [], []
-        self.ul8, self.ul7, self.ul6, self.ul5, self.ul4, self.ul3, self.ul2, \
-        self.ul1 = [], [], [], [], [], [], [], []
-        self.ll8, self.ll7, self.ll6, self.ll5, self.ll4, self.ll3, self.ll2, \
-        self.ll1 = [], [], [], [], [], [], [], []
-        self.lr8, self.lr7, self.lr6, self.lr5, self.lr4, self.lr3, self.lr2, \
-        self.lr1 = [], [], [], [], [], [], [], []
-
-
-        #-- set to an adult dentition
-        self.chartgrid = {
-        'lr1' : 'lr1', 'lr3' : 'lr3', 'lr2' : 'lr2', 'lr5' : 'lr5',
-        'lr4' : 'lr4', 'lr7' : 'lr7', 'lr6' : 'lr6', 'lr8' : 'lr8',
-        'ul8' : 'ul8', 'ul2' : 'ul2', 'ul3' : 'ul3', 'ul1' : 'ul1',
-        'ul6' : 'ul6', 'ul7' : 'ul7', 'ul4' : 'ul4', 'ul5' : 'ul5',
-        'ur4' : 'ur4', 'ur5' : 'ur5', 'ur6' : 'ur6', 'ur7' : 'ur7',
-        'ur1' : 'ur1', 'ur2' : 'ur2', 'ur3' : 'ur3', 'ur8' : 'ur8',
-        'll8' : 'll8', 'll3' : 'll3', 'll2' : 'll2', 'll1' : 'll1',
-        'll7' : 'll7', 'll6' : 'll6', 'll5' : 'll5', 'll4': 'll4'
-        }
-        self.selected.clear()
-        self.highlighted = [-1, -1]
-        self.prevSelect = ()
-        self.update()
 
     def sizeHint(self):
         '''
@@ -138,25 +111,15 @@ class chartWidget(QtGui.QWidget):
             y = 0
         else:
             y = 1
-        self.setHighlighted(x, y)
+        if x > 15:
+            x = 15
+        if x < 0:
+            x = 0
 
-        #--show detailed info
-        try:
-            tooth = self.grid[y][x]
-            show = False
-            advisory = "<center><b>   %s   </b></center><hr />"% tooth.upper()
-            for fill in self.__dict__[tooth]:
-                if not re.match("!.*", fill):
-                    fill = fill.upper()
-                advisory += "%s <br />"% fill
-                show = True
-            if show:
-                QtGui.QToolTip.showText(event.globalPos(),
-                advisory.rstrip("<br />"))
-            else:
-                QtGui.QToolTip.showText(event.globalPos(), "")
-        except IndexError:
-            pass
+        if self.grid[y][x] is None:
+            self.setHighlighted(-1, -1)
+        else:
+            self.setHighlighted(x, y)
 
     def leaveEvent(self, event):
         '''
@@ -179,6 +142,9 @@ class chartWidget(QtGui.QWidget):
         else:
             y = 1
 
+        if self.grid[y][x] is None:
+            return
+
         if (x,y) not in self.selected and shiftClick and self.prevSelect:
             prevX, prevY = self.prevSelect
             self.prevSelect = (x,y)
@@ -192,13 +158,6 @@ class chartWidget(QtGui.QWidget):
             self.update()
         else:
             self.setSelected(x,y)
-
-    def mouseDoubleClickEvent(self, event):
-        '''
-        overrides QWidget's mouse double click event
-        peforms the default actions
-        '''
-        self.emit(QtCore.SIGNAL("DOUBLE_CLICKED"))
 
     def paintEvent(self, event=None):
         '''
@@ -217,7 +176,7 @@ class chartWidget(QtGui.QWidget):
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
         else:
             painter.setPen(QtGui.QPen(QtCore.Qt.gray, 2))
-        sansFont = QtGui.QFont("Helvetica", 8)
+        sansFont = QtGui.QFont(14)
         painter.setFont(sansFont)
         fm = QtGui.QFontMetrics(sansFont)
         leftpad = fm.width("Right ")
@@ -229,28 +188,32 @@ class chartWidget(QtGui.QWidget):
         #--vertical dissection of entire widget
         painter.drawLine(self.width() / 2, 0, self.width() / 2, self.height())
 
+        highlight_rects, selected_rects = [], []
+
         for x in range(16):
-            if x > 7:
-                midx = midline
-            else:
-                midx = 0
+            midx = midline if x > 7 else 0
             for y in range(2):
-                tooth_notation  =  self.grid[y][x]
+                ident  =  self.grid[y][x]
                 rect  =  QtCore.QRect(x * xOffset + midx, y *yOffset,
-                xOffset, yOffset).adjusted(0.5, 0.5, -0.5, -0.5)
+                xOffset, yOffset)
 
-                #-- draw a tooth (subroutine)
-                self.tooth(painter, rect, tooth_notation)
+                if ident is not None:
+                    self.tooth(painter, rect.adjusted(-2, -2, 2, 2), ident)
+
                 if [x, y] == self.highlighted:
-                    painter.setPen(QtGui.QPen(QtCore.Qt.cyan, 1))
-                    painter.setBrush(colours.TRANSPARENT)
-                    painter.drawRect(rect.adjusted(1, 1, -1, -1))
-
+                    highlight_rects.append(rect.adjusted(1, 1, -1, -1))
 
                 if (x, y) in self.selected:
-                    painter.setPen(QtGui.QPen(QtCore.Qt.darkBlue, 2))
-                    painter.setBrush(colours.TRANSPARENT)
-                    painter.drawRect(rect.adjusted(1, 1, -1, -1))
+                    selected_rects.append(rect.adjusted(1, 1, -1, -1))
+
+        painter.setPen(QtGui.QPen(QtCore.Qt.cyan, 1))
+        painter.setBrush(colours.TRANSPARENT)
+        for rect in highlight_rects:
+            painter.drawRoundedRect(rect, 5, 5)
+
+        painter.setPen(QtGui.QPen(QtCore.Qt.darkBlue, 2))
+        for rect in selected_rects:
+            painter.drawRoundedRect(rect, 5, 5)
 
         if self.isEnabled():
             painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
@@ -272,29 +235,40 @@ class chartWidget(QtGui.QWidget):
         painter.restore()
 
     def tooth(self, painter, rect, ident):
+        if ident is None:
+            return
         painter.save()
-        rect = rect.adjusted(2,8,-2,-8)
-        painter.setPen(QtGui.QPen(QtGui.QColor("black"),1))
-        painter.drawRect(rect)
-        painter.drawText(rect, QtCore.Qt.AlignHCenter| QtCore.Qt.AlignVCenter,
-        ident[2])
         pm = images.toothPixmaps().get(ident)
         if pm:
             painter.drawPixmap(rect, pm)
+        else:
+            painter.drawText(rect, QtCore.Qt.AlignCenter, ident)
+
         painter.restore()
+
+    def set_regex_mask(self, mask):
+        new_grid = ([],[])
+        for i, arch in enumerate(self.grid):
+            for tooth in arch:
+                if re.match(mask, tooth):
+                    new_grid[i].append(tooth)
+                else:
+                    new_grid[i].append(None)
+        self.grid = new_grid
+        self.update()
+
+    def disable_lowers(self):
+        self.set_regex_mask("l[lr][1-8]")
+
+    def disable_uppers(self):
+        self.set_regex_mask("u[lr][1-8]")
 
 if __name__ == "__main__":
     from gettext import gettext as _
     app = QtGui.QApplication(sys.argv)
-    form = chartWidget()
-    form.chartgrid = {'lr1': 'lr1', 'lr3': 'lr3', 'lr2': 'lr2', 'lr5': 'lr5',
-    'lr4': 'lr4', 'lr7': 'lr7', 'lr6': 'lr6', 'lr8': 'lr8','ul8': '***',
-    'ul2': 'ul2', 'ul3': 'ulC', 'ul1': 'ul1', 'ul6': 'ul6', 'ul7': 'ul7',
-    'ul4': 'ul4', 'ul5': 'ul5', 'ur4': 'ur4','ur5': 'ur5', 'ur6': 'ur6',
-    'ur7': 'ur7', 'ur1': 'ur1', 'ur2': 'ur2', 'ur3': 'ur3', 'ur8': 'ur8',
-    'll8': 'll8', 'll3': 'll3','ll2': 'll2', 'll1': 'll1', 'll7': 'll7',
-    'll6': 'll6', 'll5': 'll5', 'll4': 'll4'}
-
+    form = SimpleChartWidg()
+    #form.disable_lowers()
+    form.disable_uppers()
     form.show()
     sys.exit(app.exec_())
 

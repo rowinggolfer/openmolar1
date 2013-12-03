@@ -63,7 +63,7 @@ from openmolar.qt4gui.dialogs import newBPE
 from openmolar.qt4gui.dialogs import saveMemo
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
-from openmolar.qt4gui.dialogs import choose_tooth_dialog
+from openmolar.qt4gui.dialogs.choose_tooth_dialog import ChooseToothDialog
 from openmolar.qt4gui.dialogs import clinician_select_dialog
 from openmolar.qt4gui.dialogs import assistant_select_dialog
 from openmolar.qt4gui.dialogs.phrasebook_dialog import PhraseBookDialog
@@ -500,7 +500,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         ask the user to select a tooth
         '''
-        return choose_tooth_dialog.run(self)
+        dl = ChooseToothDialog(self)
+        return dl.getInput()
 
     def okToLeaveRecord(self, cont=False):
         '''

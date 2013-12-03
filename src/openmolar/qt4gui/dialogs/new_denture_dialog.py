@@ -27,7 +27,7 @@ from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.customwidgets.upper_case_line_edit import \
 UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
-from openmolar.qt4gui.customwidgets import simple_chartwidget
+from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -74,11 +74,7 @@ class _OptionPage(QtGui.QWidget):
         return _("You haven't completed this option")
 
     @property
-    def ndu_text(self):
-        return ""
-
-    @property
-    def ndl_text(self):
+    def return_text(self):
         return ""
 
     @property
@@ -92,63 +88,56 @@ class PageTwo(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         layout = QtGui.QVBoxLayout(self.frame)
-        self.full_upper_radioButton = QtGui.QRadioButton(
-            _("Complete Upper Denture"))
-        self.full_lower_radioButton = QtGui.QRadioButton(
-            _("Complete Lower Denture"))
-        self.partial_upper_radioButton = QtGui.QRadioButton(
-            _("Partial Upper Denture"))
-        self.partial_lower_radioButton = QtGui.QRadioButton(
-            _("Partial Lower Denture"))
+        self.full_radioButton = QtGui.QRadioButton(
+            _("Complete Denture"))
+        self.partial_radioButton = QtGui.QRadioButton(
+            _("Partial Denture"))
 
-        layout.addWidget(self.full_upper_radioButton)
-        layout.addWidget(self.full_lower_radioButton)
-        layout.addWidget(self.partial_upper_radioButton)
-        layout.addWidget(self.partial_lower_radioButton)
+        layout.addWidget(self.full_radioButton)
+        layout.addWidget(self.partial_radioButton)
 
     @property
     def is_completed(self):
         '''
-        should be overwritten!
+        simply check user has checked a box
         '''
-        for widg in (
-        self.full_upper_radioButton,
-        self.full_lower_radioButton,
-        self.partial_upper_radioButton,
-        self.partial_lower_radioButton):
+        for widg in (self.full_radioButton, self.partial_radioButton):
             if widg.isChecked():
                 return True
         return False
 
     @property
     def next_index(self):
-        if (self.partial_lower_radioButton.isChecked() or
-        self.partial_upper_radioButton.isChecked()):
+        if self.partial_radioButton.isChecked():
             return 1
         #skip the teeth choosing page if a complete denture
         return 2
 
     @property
-    def ndu_text(self):
-        if self.full_upper_radioButton.isChecked():
+    def return_text(self):
+        if self.full_radioButton.isChecked():
             return "F"
-        if self.partial_upper_radioButton.isChecked():
-            return "P/"
+        return "P/"
+
+class PageZero(_OptionPage):
+    def __init__(self, parent=None):
+        _OptionPage.__init__(self, parent)
+        self.upper_radioButton = QtGui.QRadioButton(_("Upper Denture"))
+        self.lower_radioButton = QtGui.QRadioButton(_("Lower Denture"))
+
+        layout = QtGui.QVBoxLayout(self.frame)
+        layout.addWidget(self.upper_radioButton)
+        layout.addWidget(self.lower_radioButton)
+
+    @property
+    def return_text(self):
         return ""
 
     @property
-    def ndl_text(self):
-        if self.full_lower_radioButton.isChecked():
-            return "F"
-        if self.partial_lower_radioButton.isChecked():
-            return "P/"
-        return ""
-
-    def cleanup(self):
-        if not self.ndl_text:
-            self.dialog.ndl_le.setText("")
-        if not self.ndu_text:
-            self.dialog.ndu_le.setText("")
+    def chosen_arch(self):
+        if self.upper_radioButton.isChecked():
+            return "upper"
+        return "lower"
 
 class PageOne(_OptionPage):
     def __init__(self, parent=None):
@@ -163,7 +152,7 @@ class PageOne(_OptionPage):
         layout.addWidget(self.flexible_radioButton)
 
     @property
-    def ndu_text(self):
+    def return_text(self):
         if self.acrylic_radioButton.isChecked():
             return "SR_"
         if self.metal_radioButton.isChecked():
@@ -171,24 +160,24 @@ class PageOne(_OptionPage):
         if self.flexible_radioButton.isChecked():
             return "FL_"
 
-    @property
-    def ndl_text(self):
-        return self.ndu_text
-
 class PageThree(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.label.setText(_(
         "Please select teeth which this denture is to replace"))
-        self.chartwidg = simple_chartwidget.chartWidget(self)
+        self.chartwidg = SimpleChartWidg(self)
+        if parent.is_upper_input:
+            self.chartwidg.disable_lowers()
+        else:
+            self.chartwidg.disable_uppers()
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
 
     @property
-    def ndu_text(self):
+    def return_text(self):
         r_teeth, l_teeth = set([]), set([])
         for tooth in self.chartwidg.getSelected():
-            m = re.match("u([lr])(\d)", tooth)
+            m = re.match("[ul]([lr])(\d)", tooth)
             if m:
                 if m.groups()[0] == "r":
                     r_teeth.add(m.groups()[1])
@@ -197,36 +186,13 @@ class PageThree(_OptionPage):
         retval = ""
         if r_teeth:
             retval += "R"
-            for tooth in r_teeth:
+            for tooth in sorted(r_teeth, reverse=True):
                 retval += tooth
         if l_teeth:
             if retval != "":
                 retval += ","
             retval += "L"
-            for tooth in l_teeth:
-                retval += tooth
-        return retval
-
-    @property
-    def ndl_text(self):
-        r_teeth, l_teeth = set([]), set([])
-        for tooth in self.chartwidg.getSelected():
-            m = re.match("l([lr])(\d)", tooth)
-            if m:
-                if m.groups()[0] == "r":
-                    r_teeth.add(m.groups()[1])
-                else:
-                    l_teeth.add(m.groups()[1])
-        retval = ""
-        if r_teeth:
-            retval += "R"
-            for tooth in r_teeth:
-                retval += tooth
-        if l_teeth:
-            if retval != "":
-                retval += ","
-            retval += "L"
-            for tooth in l_teeth:
+            for tooth in sorted(l_teeth):
                 retval += tooth
         return retval
 
@@ -253,14 +219,8 @@ class PageFour(_OptionPage):
         return text_
 
     @property
-    def ndu_text(self):
+    def return_text(self):
         if self.dialog.ndu_le.text() != "":
-            return self._additional_text
-        return ""
-
-    @property
-    def ndl_text(self):
-        if self.dialog.ndl_le.text() != "":
             return self._additional_text
         return ""
 
@@ -283,14 +243,21 @@ class NewDentureDialog(ExtendableDialog):
         self.header_label = QtGui.QLabel(message)
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
 
+        self.ndu_le = UpperCaseLineEdit()
+        self.ndl_le = UpperCaseLineEdit()
+
+        self.set_default_lineedit(self.ndl_le)
+
         self.wizard_widget = QtGui.QStackedWidget()
 
+        page0 = PageZero(self)
         page1 = PageOne(self)
         page2 = PageTwo(self)
         page3 = PageThree(self)
         page4 = PageFour(self)
         accept_page = AcceptPage(self)
 
+        self.wizard_widget.addWidget(page0)
         self.wizard_widget.addWidget(page1)
         self.wizard_widget.addWidget(page2)
         self.wizard_widget.addWidget(page3)
@@ -299,9 +266,6 @@ class NewDentureDialog(ExtendableDialog):
 
         self.insertWidget(self.header_label)
         self.insertWidget(self.wizard_widget)
-
-        self.ndu_le = UpperCaseLineEdit()
-        self.ndl_le = UpperCaseLineEdit()
 
         frame = QtGui.QFrame()
         layout = QtGui.QFormLayout(frame)
@@ -321,7 +285,6 @@ class NewDentureDialog(ExtendableDialog):
         self.ndu_le.editingFinished.connect(self.advanced_apply)
         self.ndl_le.editingFinished.connect(self.advanced_apply)
 
-
     @property
     def current_index(self):
         return self.wizard_widget.currentIndex()
@@ -336,8 +299,11 @@ class NewDentureDialog(ExtendableDialog):
             self.current_page.error_message)
             return
 
-        self.ndu_le.setText(self.ndu_le.text() + self.current_page.ndu_text)
-        self.ndl_le.setText(self.ndl_le.text() + self.current_page.ndl_text)
+        if self.current_index == 0:
+            self.set_default_lineedit(self.current_page.chosen_arch)
+
+        le = self.default_lineedit
+        le.setText(le.text() + self.current_page.return_text)
 
         self.current_page.cleanup()
 
@@ -347,6 +313,21 @@ class NewDentureDialog(ExtendableDialog):
             self.next_but.hide()
 
         self.wizard_widget.setCurrentIndex(index_)
+
+    @property
+    def is_upper_input(self):
+        return self.default_lineedit == self.ndu_le
+
+    @property
+    def default_lineedit(self):
+        return self._default_lineedit
+
+    def set_default_lineedit(self, value="upper"):
+        if value == "upper":
+            self._default_lineedit = self.ndu_le
+        else:
+            self._default_lineedit = self.ndl_le
+
 
     def _clicked(self, but):
         '''
