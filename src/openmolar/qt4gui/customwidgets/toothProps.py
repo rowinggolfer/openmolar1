@@ -97,9 +97,11 @@ class chartLineEdit(QtGui.QLineEdit):
         '''
         deletes all props
         '''
-        newProps = self.propListFromText()
-        newProps.remove(prop)
-        self.updateFromPropList(newProps)
+        new_props = []
+        for ex_prop in self.propListFromText():
+            if ex_prop.upper() != prop:
+                new_props.append(ex_prop)
+        self.updateFromPropList(new_props)
 
     def finishedEdit(self):
         '''
