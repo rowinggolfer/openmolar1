@@ -105,11 +105,11 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         self.feesLinked = arg
 
-    def setChain(self, cset):
+    def setChain(self, linked):
         '''
-        break the chain if the course type is not P
+        break the chain if the fee does not match the charge
         '''
-        self.chain.setValue(cset == "P")
+        self.chain.setValue(linked)
 
     def addItem(self, item):
         self.est_items.append(item)
@@ -153,10 +153,11 @@ class EstimateItemWidget(QtGui.QWidget):
             self.setItemCode(item.itemcode)
 
             self.setCset(item.csetype)
-            self.setChain(item.csetype)
 
             all_planned = all_planned and not item.completed
             all_completed = all_completed and item.completed
+
+        self.setChain(fee == ptfee)
 
         n_items = len(self.est_items)
         if n_items > 1:
