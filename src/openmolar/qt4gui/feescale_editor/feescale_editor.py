@@ -108,6 +108,8 @@ class FeescaleEditor(QtGui.QMainWindow):
     _known_deleted_parsers = []
     _compare_items_dockwidget = None
     search_text = ""
+    closed_signal = QtCore.pyqtSignal()
+
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.window_title = _("Feescale Editor")
@@ -347,6 +349,8 @@ class FeescaleEditor(QtGui.QMainWindow):
             QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
             QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 event.ignore()
+                return
+        self.closed_signal.emit()
 
     def _focus_changed(self, o1d_widget, new_widget):
         if o1d_widget is None:

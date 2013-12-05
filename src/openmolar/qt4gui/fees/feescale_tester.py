@@ -68,7 +68,7 @@ class AdultAttributeModel(DeciduousAttributeModel):
         DeciduousAttributeModel.__init__(self, table, parent)
         self.attributes = ADULTMOUTH
 
-class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
+class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
     def __init__(self, tables, parent = None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -113,9 +113,15 @@ class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         self.check_codes()
 
     def check_codes(self):
-        tx = str(self.lineEdit.text().toAscii())
+        tx = str(self.lineEdit.text().toAscii()).upper()
+
+        complex_matches = []
         for att in CURRTRT_NON_TOOTH_ATTS:
-            usercode = "%s %s"% (att, tx.upper())
+            for complex_shortcut in self.current_table.complex_shortcuts:
+                if complex_shortcut.matches(att, tx):
+                    complex_matches.append(att)
+
+            usercode = "%s %s"% (att, tx)
             code = self.current_table.getItemCodeFromUserCode(usercode)
             if code == "-----":
                 self.line_edits[att].setText("")
@@ -126,6 +132,17 @@ class test_dialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         for model in (self.model2, self.model3):
             model.code = tx
             model.reset()
+        for att in DECIDMOUTH + ADULTMOUTH:
+            for complex_shortcut in self.current_table.complex_shortcuts:
+                if complex_shortcut.matches(att, tx):
+                    complex_matches.append(att)
+
+        if complex_matches != []:
+            QtGui.QMessageBox.information(self, _("Information"),
+            "%s '%s' %s<hr />%s"% (
+            _("This feescale handles"), tx,
+            _("as a complex code for the following attributes."),
+            complex_matches))
 
     @property
     def current_table(self):
@@ -143,6 +160,6 @@ if __name__ == "__main__":
     tables = localsettings.FEETABLES.tables
 
     app = QtGui.QApplication([])
-    dl = test_dialog(tables)
+    dl = FeescaleTestingDialog(tables)
     dl.exec_()
     app.closeAllWindows()

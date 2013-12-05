@@ -19,10 +19,15 @@ import subprocess
 
 from PyQt4 import QtGui, QtCore
 
-from openmolar.dbtools import accounts, patient_class, cashbook, patient_write_changes
 from openmolar.settings import localsettings
+
+from openmolar.dbtools import accounts
+from openmolar.dbtools import patient_class
+from openmolar.dbtools import cashbook
+from openmolar.dbtools import patient_write_changes
+
 from openmolar.qt4gui.fees import fee_table_model
-from openmolar.qt4gui.fees import feescale_tester
+from openmolar.qt4gui.fees.feescale_tester import FeescaleTestingDialog
 from openmolar.qt4gui.feescale_editor import FeescaleEditor
 
 from openmolar.qt4gui.printing import om_printing
@@ -160,11 +165,10 @@ def feetester(om_gui):
     '''
     if not om_gui.fee_table_tester:
         tables = localsettings.FEETABLES.tables
-        dl = feescale_tester.test_dialog(tables)
+        dl = FeescaleTestingDialog(tables)
         dl.lineEdit.setText("MOD")
         QtCore.QObject.connect(om_gui.ui.chooseFeescale_comboBox,
             QtCore.SIGNAL("currentIndexChanged (int)"), dl.change_table)
-        QtCore.QObject.connect(om_gui, QtCore.SIGNAL("closed"), dl.accept)
 
         i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
         dl.comboBox.setCurrentIndex(i)
@@ -178,12 +182,16 @@ def showTableXML(om_gui):
     '''
     user wants to view the full table logic!
     '''
+    def editor_closed():
+        om_gui.fee_table_editor.setParent(None)
+        om_gui.fee_table_editor = None
     if om_gui.fee_table_editor is not None:
         om_gui.fee_table_editor.show()
         om_gui.fee_table_editor.raise_()
     else:
         om_gui.fee_table_editor = FeescaleEditor(om_gui)
         om_gui.fee_table_editor.show()
+        om_gui.fee_table_editor.closed_signal.connect(editor_closed)
 
 def table_clicked(om_gui, index):
     '''
