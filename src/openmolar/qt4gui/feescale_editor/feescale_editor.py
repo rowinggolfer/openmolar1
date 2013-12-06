@@ -466,8 +466,11 @@ class FeescaleEditor(QtGui.QMainWindow):
             mb.setText(message)
             mb.setIcon(mb.Question)
             mb.addButton(_("Show Diff"), mb.DestructiveRole)
-            mb.addButton(mb.Cancel)
-            mb.addButton(mb.Ok)
+            but = mb.addButton(mb.Cancel)
+            but.setText(_("Keep Local File Unchanged"))
+            but = mb.addButton(mb.Ok)
+            but.setText(_("Overwrite Local File"))
+
             result = mb.exec_()
             if result not in (mb.Ok, mb.Cancel):
                 #show diff

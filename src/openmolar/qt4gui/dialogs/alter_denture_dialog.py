@@ -32,8 +32,12 @@ from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
 LOGGER = logging.getLogger("openmolar")
 
 VALID_INPUTS = (
+    "A/T/.*[LR](\d)",
+    "A/(\d+)C",
+    "RL",
     "SL",
-    "ST",
+    "RE",
+    "IMP",
     "", # this one in case of no input whatsoever!
     )
 
@@ -107,30 +111,6 @@ class PageZero(_OptionPage):
             return "upper"
         return "lower"
 
-class PageTwo(_OptionPage):
-    def __init__(self, parent=None):
-        _OptionPage.__init__(self, parent)
-
-        self.label.setText(_("What best describes the denture type?"))
-
-        self.acrylic_radioButton = QtGui.QRadioButton(_("Acrylic Denture"))
-        self.metal_radioButton = QtGui.QRadioButton(_("Metal Denture"))
-
-        layout = QtGui.QVBoxLayout(self.frame)
-        layout.addWidget(self.acrylic_radioButton)
-        layout.addWidget(self.metal_radioButton)
-
-    @property
-    def is_completed(self):
-        return self.return_text is not None
-
-    @property
-    def return_text(self):
-        if self.acrylic_radioButton.isChecked():
-            return "SR_"
-        if self.metal_radioButton.isChecked():
-            return "CC_"
-
 class PageOne(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
@@ -158,9 +138,9 @@ class PageOne(_OptionPage):
     @property
     def next_index(self):
         if self.rad_buts[3].isChecked():
-            return 1
-        if self.rad_buts[4].isChecked():
             return 2
+        if self.rad_buts[4].isChecked():
+            return 3
         return 4 #ALL DONE!
 
     @property
@@ -175,6 +155,36 @@ class PageOne(_OptionPage):
             return "A/T/"
         if self.rad_buts[4].isChecked():
             return "A/C"
+        return ""
+
+class PageTwo(_OptionPage):
+    def __init__(self, parent=None):
+        _OptionPage.__init__(self, parent)
+
+        self.label.setText(_("What best describes the denture type?"))
+
+        self.acrylic_radioButton = QtGui.QRadioButton(_("Acrylic Denture"))
+        self.metal_radioButton = QtGui.QRadioButton(_("Metal Denture"))
+
+        layout = QtGui.QVBoxLayout(self.frame)
+        layout.addWidget(self.acrylic_radioButton)
+        layout.addWidget(self.metal_radioButton)
+
+    @property
+    def is_completed(self):
+        return (self.acrylic_radioButton.isChecked() or
+        self.metal_radioButton.isChecked())
+
+    def cleanup(self):
+        text = self.dialog.default_lineedit.text()
+        if self.acrylic_radioButton.isChecked():
+            text = "%s%s"% ("SR_", text)
+        if self.metal_radioButton.isChecked():
+            text = "%s%s"% ("CC_", text)
+        self.dialog.default_lineedit.setText(text)
+
+    @property
+    def return_text(self):
         return ""
 
 class PageThree(_OptionPage):
@@ -406,17 +416,20 @@ class AlterDentureDialog(ExtendableDialog):
             for input_ in VALID_INPUTS:
                 if re.match(input_, odu):
                     matched = True
+                    break
             if not matched:
+                LOGGER.debug("failed to match %s %s"% (input_, odu))
                 QtGui.QMessageBox.warning(self, _("Warning"),
                 _("Your upper denture input is invalid"))
                 return False
         for odl in odls.split(" "):
-            LOGGER.debug("checking '%s'"% odl)
             matched = False
             for input_ in VALID_INPUTS:
                 if re.match(input_, odl):
                     matched = True
+                    break
             if not matched:
+                LOGGER.debug("failed to match %s %s"% (input_, odu))
                 QtGui.QMessageBox.warning(self, _("Warning"),
                 _("Your lower denture input is invalid"))
                 return False
