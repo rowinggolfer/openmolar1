@@ -563,7 +563,8 @@ class FeeItem(object):
         except IndexError:
             pass
         except AttributeError: #not regex? I can't see this happening?
-            return self.usercode
+            pass
+        return self.usercode
 
     @property
     def usercode(self):
