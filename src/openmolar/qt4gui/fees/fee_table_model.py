@@ -13,6 +13,8 @@ this module provides a model class so that feescales can be displayed
 
 from __future__ import division
 
+import logging
+
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
@@ -22,6 +24,8 @@ HIDE_RARE_CODES = 0 # fee items have an "obscurity" level of 0-2
 
 #CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart",
 #"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
+
+LOGGER = logging.getLogger("openmolar")
 
 class TreeItem(object):
     def __init__(self, table, key, data, parent=None, index=0):
@@ -55,12 +59,15 @@ class TreeItem(object):
         if self.itemData is None:
             pass
         elif column == 1:
-            uc = self.itemData.usercode
+            uc = self.itemData.fee_shortcut_for_display(0)
             try:
                 if uc == self.parentItem.itemData.usercode:
-                    return ""
+                    uc = ""
+                if self.itemData.has_fee_shortcuts:
+                    uc = self.itemData.fee_shortcut_for_display(self.row()+1)
             except AttributeError:
-                return uc
+                pass
+            return uc
         elif column == 2:
             desc = self.itemData.description
             try:
@@ -254,11 +261,11 @@ class treeModel(QtCore.QAbstractItemModel):
         return self.foundItems != []
 
 if __name__ == "__main__":
-
     def resize(arg):
-        print "resizing"
         for col in range(model.columnCount(arg)):
             tv.resizeColumnToContents(col)
+
+    LOGGER.setLevel(logging.DEBUG)
 
     app = QtGui.QApplication([])
     localsettings.initiate()
@@ -273,10 +280,10 @@ if __name__ == "__main__":
     tv = QtGui.QTreeView(dialog)
     tv.setModel(model)
     tv.setAlternatingRowColors(True)
+    tv.resizeColumnToContents(0)
     layout.addWidget(tv)
 
-    QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"),
-    resize)
+    tv.expanded.connect(resize)
 
     dialog.exec_()
 

@@ -107,7 +107,7 @@ class PageZero(_OptionPage):
             return "upper"
         return "lower"
 
-class PageOne(_OptionPage):
+class PageTwo(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
 
@@ -131,7 +131,7 @@ class PageOne(_OptionPage):
         if self.metal_radioButton.isChecked():
             return "CC_"
 
-class PageTwo(_OptionPage):
+class PageOne(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
 
@@ -161,7 +161,7 @@ class PageTwo(_OptionPage):
             return 1
         if self.rad_buts[4].isChecked():
             return 2
-        return 3 #ALL DONE!
+        return 4 #ALL DONE!
 
     @property
     def return_text(self):

@@ -554,6 +554,17 @@ class FeeItem(object):
     def has_fee_shortcuts(self):
         return self.fee_shortcuts != []
 
+    def fee_shortcut_for_display(self, index):
+        try:
+            fsfd = self.fee_shortcuts[index].pattern
+            if self.pt_attribute == "chart":
+                return fsfd
+            return "%s %s"% (self.pt_attribute, fsfd)
+        except IndexError:
+            pass
+        except AttributeError: #not regex? I can't see this happening?
+            return self.usercode
+
     @property
     def usercode(self):
         if self.shortcut is None:
