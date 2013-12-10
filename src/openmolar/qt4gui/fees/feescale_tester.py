@@ -69,15 +69,12 @@ class AdultAttributeModel(DeciduousAttributeModel):
         self.attributes = ADULTMOUTH
 
 class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
-    def __init__(self, tables, parent = None):
+    def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.table_list = []
         tablenames = []
-        for table in tables.values():
-            self.table_list.append(table)
-            tablenames.append(table.briefName)
-        self.comboBox.addItems(tablenames)
+        self.load_feescales()
 
         self.model2 = DeciduousAttributeModel(self.current_table)
         self.model3 = AdultAttributeModel(self.current_table)
@@ -111,6 +108,14 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         self.lineEdit.setText("P")
 
         self.check_codes()
+
+    def load_feescales(self):
+        self.table_list = []
+        self.tablenames = []
+        for table in localsettings.FEETABLES.tables.values():
+            self.table_list.append(table)
+            self.tablenames.append(table.briefName)
+        self.comboBox.addItems(self.tablenames)
 
     def check_codes(self):
         tx = str(self.lineEdit.text().toAscii()).upper()
@@ -157,9 +162,8 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
 if __name__ == "__main__":
     localsettings.initiate()
     localsettings.loadFeeTables()
-    tables = localsettings.FEETABLES.tables
 
     app = QtGui.QApplication([])
-    dl = FeescaleTestingDialog(tables)
+    dl = FeescaleTestingDialog()
     dl.exec_()
     app.closeAllWindows()

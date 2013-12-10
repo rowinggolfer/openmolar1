@@ -164,8 +164,7 @@ def feetester(om_gui):
     raise an app which allows a few tests of the feetable logic
     '''
     if not om_gui.fee_table_tester:
-        tables = localsettings.FEETABLES.tables
-        dl = FeescaleTestingDialog(tables)
+        dl = FeescaleTestingDialog()
         dl.lineEdit.setText("MOD")
         QtCore.QObject.connect(om_gui.ui.chooseFeescale_comboBox,
             QtCore.SIGNAL("currentIndexChanged (int)"), dl.change_table)

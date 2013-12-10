@@ -3173,6 +3173,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         fees_module.loadFeesTable(self)
         if self.pt is not None:
             self.pt.forget_fee_table()
+        if self.fee_table_tester is not None:
+            self.fee_table_tester.load_feescales()
 
     def advanced_tx_planning(self):
         def _add_txs(items, completed=False):
