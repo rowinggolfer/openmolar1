@@ -33,6 +33,7 @@ STATIC_LIST = []
 for shortcut, description in (
 ("CR,PJ", _("Porcelain Jacket")),
 ("CR,GO", _("Gold")),
+("CR,V1", _("Porcelain/Metal")),
 ("CR,LAVA", _("Lava")),
 ("CR,OPAL", _("Opalite")),
 ("CR,EMAX", _("Emax")),
