@@ -26,6 +26,7 @@ from functools import partial
 
 from PyQt4 import QtGui, QtCore
 
+from openmolar.connect import database_name
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import colours
 
@@ -180,6 +181,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.completed_listView.setModel(CompletedTreatmentListModel(self))
         self.ui.completed_listView.setContextMenuPolicy(
             QtCore.Qt.CustomContextMenu)
+
+        self.setWindowTitle("OpenMolar - %s '%s'"% (
+            _("connected to"), database_name()))
 
         QtCore.QTimer.singleShot(500, self.set_operator_label)
         QtCore.QTimer.singleShot(500, self.load_pt_statuses)

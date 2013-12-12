@@ -58,6 +58,9 @@ if settingsversion == "1.1":
 
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
+def database_name():
+    return "%s %s:%s"% (myDb, myHost, myPort)
+
 kwargs = {
     "host":myHost,
     "port":myPort,
@@ -85,7 +88,7 @@ ProgrammingError = MySQLdb.ProgrammingError
 IntegrityError = MySQLdb.IntegrityError
 OperationalError = MySQLdb.OperationalError
 
-class omSQLresult():
+class omSQLresult(object):
     '''
     a class used in returning the result of sql queries
     '''
@@ -158,7 +161,7 @@ if __name__ == "__main__":
     import time
     from openmolar.settings import localsettings
     localsettings.initiate()
-    
+
     LOGGER.setLevel(logging.DEBUG)
 
     LOGGER.debug("using conffile -  %s"% localsettings.cflocation)

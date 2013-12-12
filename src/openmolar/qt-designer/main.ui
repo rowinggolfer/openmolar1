@@ -26,7 +26,7 @@
    <font/>
   </property>
   <property name="windowTitle">
-   <string>Open Molar - YOUR dental database application</string>
+   <string>Open Molar</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>759</width>
+                      <width>486</width>
                       <height>477</height>
                      </rect>
                     </property>
@@ -1696,7 +1696,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>741</width>
+                      <width>441</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -1989,7 +1989,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>761</width>
+                      <width>303</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2931,8 +2931,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>566</width>
-                      <height>389</height>
+                      <width>98</width>
+                      <height>200</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -2961,8 +2961,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>180</width>
-                      <height>389</height>
+                      <width>179</width>
+                      <height>274</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3093,8 +3093,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>756</width>
-                      <height>391</height>
+                      <width>252</width>
+                      <height>376</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
