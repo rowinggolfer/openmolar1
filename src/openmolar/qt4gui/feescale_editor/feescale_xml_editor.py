@@ -50,7 +50,6 @@ class TextObject(object):
     def is_dirty(self):
         return self.text != self.orig_text
 
-
 class XMLEditor(Qsci.QsciScintilla):
     MARKER_COLUMN = 8
     editing_finished = QtCore.pyqtSignal(object)
@@ -63,6 +62,8 @@ class XMLEditor(Qsci.QsciScintilla):
         self.setIndicatorDrawUnder(True, self.highlight_index)
         self.setIndicatorForegroundColor(
             QtGui.QColor("#dddddd"), self.highlight_index)
+
+        self.orig_text = self.text_object.orig_text
 
     def editor_settings(self):
         '''
@@ -79,11 +80,15 @@ class XMLEditor(Qsci.QsciScintilla):
             QtGui.QColor("#ee1111"), self.MARKER_COLUMN)
 
     def focusOutEvent(self, event):
+        self.text_object.update_text(unicode(self.text().toUtf8()))
         self.editing_finished.emit(self)
 
     def setText(self, text):
         LOGGER.debug("setText")
         self.text_object.reset_text(text)
+        Qsci.QsciScintilla.setText(self, text)
+
+    def update_text(self, text):
         Qsci.QsciScintilla.setText(self, text)
 
     def highlight_line(self, lineno):
@@ -93,6 +98,7 @@ class XMLEditor(Qsci.QsciScintilla):
 
     @property
     def is_dirty(self):
+        self.text_object.update_text(unicode(self.text().toUtf8()))
         return self.text_object.is_dirty
 
 if __name__ == "__main__":
@@ -101,4 +107,6 @@ if __name__ == "__main__":
     widg = XMLEditor()
     widg.editor_settings()
     widg.show()
+    widg.setText("hello world")
     app.exec_()
+    print "Text modified = %s"% widg.is_dirty

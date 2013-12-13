@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="phrasebook">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="section" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="section">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="header" type="xs:string"/>
+        <xs:element ref="phrase"/>
+        <xs:element name="widget" type="xs:string"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="phrase">
+    <xs:complexType mixed="true">
+      <xs:attribute name="spacer" type="xs:string" use="optional"/>
+      <xs:attribute name="sub_heading" type="xs:string" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -67,7 +67,9 @@ from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs.choose_tooth_dialog import ChooseToothDialog
 from openmolar.qt4gui.dialogs import clinician_select_dialog
 from openmolar.qt4gui.dialogs import assistant_select_dialog
-from openmolar.qt4gui.dialogs.phrasebook_dialog import PhraseBookDialog
+from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
+from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
+from openmolar.qt4gui.phrasebook.phrasebook_editor import PhrasebookEditor
 from openmolar.qt4gui.dialogs.recall_dialog import RecallDialog
 from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
 from openmolar.qt4gui.dialogs.alter_todays_notes \
@@ -140,6 +142,7 @@ LOGGER.setLevel(logging.INFO)
 class OpenmolarGui(QtGui.QMainWindow):
     fee_table_editor = None
     fee_table_tester = None
+    phrasebook_editor = None
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_main.Ui_MainWindow()
@@ -249,6 +252,10 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.fee_table_editor.show()
             self.fee_table_editor.raise_()
             self.fee_table_editor.closeEvent(event)
+        if self.phrasebook_editor:
+            self.phrasebook_editor.show()
+            self.phrasebook_editor.raise_()
+            self.phrasebook_editor.closeEvent(event)
 
         utilities.deleteTempFiles()
 
@@ -1588,6 +1595,22 @@ class OpenmolarGui(QtGui.QMainWindow):
             if newNotes != "":
                 self.addNewNote(newNotes)
 
+    def show_clinician_phrase_book_dialog(self):
+        '''
+        show the phraseBook
+        '''
+        if self.pt.serialno == 0:
+            self.advise("no patient selected", 1)
+            return
+        dl = PhraseBookDialog(self, localsettings.clinicianNo)
+        newNotes = ""
+        if dl.exec_():
+            for phrase in dl.selectedPhrases:
+                newNotes +=  phrase + "\n"
+            if newNotes != "":
+                self.addNewNote(newNotes)
+
+
     def addNewNote(self, arg):
         '''
         used when I programatically add text to the user textEdit
@@ -1601,16 +1624,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         this updates a database with the record in use
         '''
-        if localsettings.surgeryno == -1:
-            Dialog=QtGui.QDialog(self)
-            dl=Ui_surgeryNumber.Ui_Dialog()
-            dl.setupUi(Dialog)
-            if Dialog.exec_():
-                localsettings.surgeryno=dl.comboBox.currentIndex()+1
-                localsettings.updateLocalSettings(
-                "surgeryno", str(localsettings.surgeryno))
-            else:
-                return
+        if localsettings.surgeryno == -1 and not self.set_surgery_number():
+            return
         calldurr.commit(self.pt.serialno, localsettings.surgeryno)
 
     def showMedNotes(self):
@@ -1751,6 +1766,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         self.pt_diary_widget.hide_appointment_buttons()
 
+        self.ui.clinician_phrasebook_pushButton.setVisible(
+            arg and PHRASEBOOKS.has_phrasebook(localsettings.clinicianNo))
+
         for widg in (
         self.ui.summaryChartWidget,
         self.ui.printEst_pushButton,
@@ -1758,6 +1776,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.relatedpts_pushButton,
         self.ui.saveButton,
         self.ui.phraseBook_pushButton,
+        self.ui.clinician_phrasebook_pushButton,
         self.ui.exampushButton,
         self.ui.xray_pushButton,
         self.ui.medNotes_pushButton,
@@ -2520,8 +2539,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.medNotes_pushButton,
         QtCore.SIGNAL("clicked()"), self.showMedNotes)
 
-        QtCore.QObject.connect(self.ui.phraseBook_pushButton,
-        QtCore.SIGNAL("clicked()"), self.show_phrase_book_dialog)
+        self.ui.phraseBook_pushButton.clicked.connect(
+            self.show_phrase_book_dialog)
+        self.ui.clinician_phrasebook_pushButton.clicked.connect(
+            self.show_clinician_phrase_book_dialog)
 
         QtCore.QObject.connect(self.ui.memos_pushButton,
         QtCore.SIGNAL("clicked()"), self.newCustomMemo)
@@ -2689,9 +2710,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.actionFix_Locked_New_Course_of_Treatment.triggered.connect(
             self.fix_zombied_course)
 
-
         self.ui.actionAllow_Full_Edit.triggered.connect(
             self.ui.cashbookTextBrowser.allow_full_edit)
+
+        self.ui.actionSet_Surgery_Number.triggered.connect(
+            self.set_surgery_number)
+        self.ui.actionEdit_Phrasebooks.triggered.connect(
+            self.edit_phrasebooks)
 
     def signals_estimates(self):
         #Estimates and course ManageMent
@@ -3241,6 +3266,31 @@ class OpenmolarGui(QtGui.QMainWindow):
     def handle_completed_listview_2xclick(self, index):
         LOGGER.debug("completed listview 2xclick %s"% index)
         manipulate_plan.completed_listview_2xclick(self, index)
+
+    def set_surgery_number(self):
+        LOGGER.debug("setting surgery number")
+        dialog = QtGui.QDialog(self)
+        dl = Ui_surgeryNumber.Ui_Dialog()
+        dl.setupUi(dialog)
+        if dialog.exec_():
+            localsettings.surgeryno = dl.comboBox.currentIndex()
+            localsettings.updateLocalSettings(
+            "surgeryno", str(localsettings.surgeryno))
+            return True
+        return False
+
+    def edit_phrasebooks(self):
+        def editor_closed():
+            self.phrasebook_editor.setParent(None)
+            self.phrasebook_editor = None
+
+        if self.phrasebook_editor is not None:
+            self.phrasebook_editor.show()
+            self.phrasebook_editor.raise_()
+        else:
+            self.phrasebook_editor = PhrasebookEditor(self)
+            self.phrasebook_editor.show()
+            self.phrasebook_editor.closed_signal.connect(editor_closed)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

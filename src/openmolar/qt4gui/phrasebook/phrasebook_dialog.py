@@ -10,7 +10,7 @@ from PyQt4 import QtGui, QtCore
 import types
 from xml.dom import minidom
 
-from openmolar.dbtools.phrasebook import Phrasebook
+from openmolar.dbtools.phrasebook import PHRASEBOOKS
 
 try:
     from collections import OrderedDict
@@ -50,7 +50,7 @@ class shadePicker(QtGui.QFrame):
         return _("Shade") + " - " + self.comboBox.currentText()
 
 class PhraseBookDialog(QtGui.QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, id=0):
         QtGui.QDialog.__init__(self, parent)
         self.setWindowTitle(_("Phrase Book"))
 
@@ -67,27 +67,25 @@ class PhraseBookDialog(QtGui.QDialog):
         layout.addWidget(self.tabWidget)
         layout.addWidget(self.buttonBox)
 
-        self.phrasebook = Phrasebook()
-
         self.dict = OrderedDict()
 
-        self.xml = minidom.parseString(self.phrasebook.xml)
+        self.xml = minidom.parseString(PHRASEBOOKS.book(id).xml)
         sections = self.xml.getElementsByTagName("section")
         icon = QtGui.QIcon(":icons/expand.svg")
-        
+
         for section in sections:
             header = section.getElementsByTagName("header")
             page = QtGui.QWidget(self)
             layout = QtGui.QVBoxLayout(page)
             phrases = section.getElementsByTagName("phrase")
             for phrase in phrases:
-                    
+
                 if phrase.hasAttribute("spacer"):
-                    layout.addStretch()                    
+                    layout.addStretch()
                 elif phrase.hasAttribute("sub_heading"):
                     text = phrase.firstChild.data
                     label = QtGui.QLabel(u"<b>%s</b>"%text)
-                    layout.addWidget(label)                    
+                    layout.addWidget(label)
                 else:
                     text = phrase.firstChild.data
                     cb = QtGui.QCheckBox(page)
@@ -100,7 +98,7 @@ class PhraseBookDialog(QtGui.QDialog):
                     sp = shadePicker(self)
                     layout.addWidget(sp)
                     self.dict[sp.cb] = sp.result
-            
+
             spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
             layout.addItem(spacerItem)
@@ -123,9 +121,10 @@ class PhraseBookDialog(QtGui.QDialog):
         return retlist
 
 if __name__ == "__main__":
+    import time
     from openmolar.qt4gui import resources_rc
     app = QtGui.QApplication([])
-    ui = PhraseBookDialog()
-    if ui.exec_():
-        print ui.selectedPhrases
+    dl = PhraseBookDialog()
+    if dl.exec_():
+        print dl.selectedPhrases
     app.closeAllWindows()

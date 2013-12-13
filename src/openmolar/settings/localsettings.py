@@ -673,33 +673,23 @@ def updateLocalSettings(setting, value):
     '''
     adds or updates node "setting" with text value "value"
     '''
-    try:
-        localSets = os.path.join(localFileDirectory, "localsettings.conf")
-        LOGGER.debug("updating local settings... %s = %s"% (setting, value))
-        if os.path.exists(localSets):
-            dom = minidom.parse(localSets)
-            nodeToChange = dom.getElementsByTagName(setting)
-            if len(nodeToChange) == 0:
-                nodeToChange = dom.createElement(setting)
-                dom.firstChild.appendChild(nodeToChange)
-            #--remove any existing values
-            else:
-                if nodeToChange[0].firstChild.data == value:
-                    #-- setting unchanged
-                    return
-            for children in nodeToChange.childNodes:
-                nodeToChange.removeChild(children)
-            valueNode = dom.createTextNode(value)
-            nodeToChange.appendChild(valueNode)
-            f = open(localSets,"w")
-            f.write(dom.toxml())
-            f.close()
-            dom.unlink()
-            return True
-
-    except Exception as exc:
-        LOGGER.exception("error updating local settings file")
-        return False
+    localSets = os.path.join(localFileDirectory, "localsettings.conf")
+    LOGGER.debug("updating local settings... %s = %s"% (setting, value))
+    dom = minidom.parse(localSets)
+    nodes = dom.getElementsByTagName(setting)
+    if len(nodes) == 0:
+        new_node = dom.createElement(setting)
+        dom.firstChild.appendChild(new_node)
+        text_node = dom.createTextNode(value)
+        new_node.appendChild(text_node)
+        dom.firstChild.appendChild(new_node)
+    else:
+        nodes[0].firstChild.replaceWholeText(value)
+    f = open(localSets,"w")
+    f.write(dom.toxml())
+    f.close()
+    dom.unlink()
+    return True
 
 def initiateUsers(changedServer = False):
     '''

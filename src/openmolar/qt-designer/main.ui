@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>486</width>
+                      <width>759</width>
                       <height>477</height>
                      </rect>
                     </property>
@@ -1696,7 +1696,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>441</width>
+                      <width>741</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -1989,7 +1989,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>303</width>
+                      <width>761</width>
                       <height>471</height>
                      </rect>
                     </property>
@@ -2931,8 +2931,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>98</width>
-                      <height>200</height>
+                      <width>567</width>
+                      <height>389</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -2962,7 +2962,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>179</width>
-                      <height>274</height>
+                      <height>389</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3093,8 +3093,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>252</width>
-                      <height>376</height>
+                      <width>756</width>
+                      <height>391</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -3488,7 +3488,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <property name="spacing">
                  <number>3</number>
                 </property>
-                <item row="0" column="1" rowspan="2">
+                <item row="0" column="1" rowspan="3">
                  <widget class="Line" name="line">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -3501,7 +3501,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2" rowspan="2">
+                <item row="0" column="2" rowspan="3">
                  <widget class="QScrollArea" name="scrollArea_8">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -3579,7 +3579,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="5" rowspan="2">
+                <item row="0" column="5" rowspan="3">
                  <widget class="Line" name="line_2">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -3592,7 +3592,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="4">
+                <item row="2" column="4">
                  <widget class="QPushButton" name="phraseBook_pushButton">
                   <property name="text">
                    <string>PhraseBook</string>
@@ -3606,7 +3606,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="6" rowspan="2">
+                <item row="0" column="6" rowspan="3">
                  <widget class="QPushButton" name="saveButton">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -3635,7 +3635,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="3" rowspan="2">
+                <item row="0" column="3" rowspan="3">
                  <widget class="QTextEdit" name="notesEnter_textEdit">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -3657,7 +3657,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0" rowspan="2">
+                <item row="0" column="0" rowspan="3">
                  <widget class="QPushButton" name="memos_pushButton">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -3671,6 +3671,17 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <property name="icon">
                    <iconset resource="../resources/resources.qrc">
                     <normaloff>:/icons/memos.png</normaloff>:/icons/memos.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="4">
+                 <widget class="QPushButton" name="clinician_phrasebook_pushButton">
+                  <property name="text">
+                   <string>Phrases</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../resources/resources.qrc">
+                    <normaloff>:/txt.png</normaloff>:/txt.png</iconset>
                   </property>
                  </widget>
                 </item>
@@ -5028,12 +5039,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
      </property>
      <addaction name="actionSurgery_Mode"/>
     </widget>
-    <widget class="QMenu" name="menuFeescales">
-     <property name="title">
-      <string>Feescales</string>
-     </property>
-     <addaction name="actionShow_Geek_Column"/>
-    </widget>
     <widget class="QMenu" name="menuCashbook">
      <property name="title">
       <string>Cashbook</string>
@@ -5047,7 +5052,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="menuAppointments"/>
     <addaction name="menuForum"/>
     <addaction name="menuCashbook"/>
-    <addaction name="menuFeescales"/>
     <addaction name="menuPrinting"/>
     <addaction name="separator"/>
     <addaction name="menuMode"/>
@@ -5063,6 +5067,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="separator"/>
     <addaction name="actionSet_Clinician"/>
     <addaction name="actionSet_Assistant"/>
+    <addaction name="actionSet_Surgery_Number"/>
+    <addaction name="separator"/>
+    <addaction name="actionEdit_Phrasebooks"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -5184,14 +5191,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <string>Advanced Record Management</string>
    </property>
   </action>
-  <action name="actionShow_Geek_Column">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show Geek Column</string>
-   </property>
-  </action>
   <action name="actionFix_Locked_New_Course_of_Treatment">
    <property name="text">
     <string>Fix Locked New Course of Treatment</string>
@@ -5203,6 +5202,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
    </property>
    <property name="text">
     <string>Allow Full Edit</string>
+   </property>
+  </action>
+  <action name="actionSet_Surgery_Number">
+   <property name="text">
+    <string>Set Surgery Number</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Surgery Number (used so other applications can see which record is loaded)</string>
+   </property>
+  </action>
+  <action name="actionEdit_Phrasebooks">
+   <property name="text">
+    <string>Edit Phrasebooks</string>
    </property>
   </action>
  </widget>

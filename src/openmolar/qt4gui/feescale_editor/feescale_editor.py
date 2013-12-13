@@ -511,7 +511,9 @@ class FeescaleEditor(QtGui.QMainWindow):
         xml = unicode(self.text_edit.text().toUtf8())
         xml = re.sub(">[\s]*<", "><", xml)
         dom = minidom.parseString(xml)
-        self.text_edit.setText(dom.toprettyxml())
+
+        #don't use setText here that updates orig_text and is_dirty won't work
+        self.text_edit.update_text(dom.toprettyxml())
 
     def check_parseable(self, action=None, show_message=True):
         xml = self.text_edit.text().toUtf8()

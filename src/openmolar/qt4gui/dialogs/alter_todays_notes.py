@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-from openmolar.qt4gui.dialogs.phrasebook_dialog import PhraseBookDialog
+from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
 
 from openmolar import connect
 from openmolar.dbtools import patient_write_changes
