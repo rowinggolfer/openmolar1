@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/toothProps.ui'
 #
-# Created: Wed Nov  6 23:05:24 2013
+# Created: Sat Dec 14 19:08:51 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -152,11 +152,11 @@ class Ui_Form(object):
         self.leftTooth_pushButton.setFlat(True)
         self.leftTooth_pushButton.setObjectName(_fromUtf8("leftTooth_pushButton"))
         self.gridLayout_2.addWidget(self.leftTooth_pushButton, 0, 0, 1, 1)
-        self.defaultCrown_pushButton = QtGui.QPushButton(Form)
-        self.defaultCrown_pushButton.setMinimumSize(QtCore.QSize(32, 24))
-        self.defaultCrown_pushButton.setMaximumSize(QtCore.QSize(80, 40))
-        self.defaultCrown_pushButton.setObjectName(_fromUtf8("defaultCrown_pushButton"))
-        self.gridLayout_2.addWidget(self.defaultCrown_pushButton, 1, 2, 1, 1)
+        self.dressing_pushButton = QtGui.QPushButton(Form)
+        self.dressing_pushButton.setMinimumSize(QtCore.QSize(32, 24))
+        self.dressing_pushButton.setMaximumSize(QtCore.QSize(80, 40))
+        self.dressing_pushButton.setObjectName(_fromUtf8("dressing_pushButton"))
+        self.gridLayout_2.addWidget(self.dressing_pushButton, 1, 2, 1, 1)
         self.pushButton = QtGui.QPushButton(Form)
         self.pushButton.setMinimumSize(QtCore.QSize(32, 24))
         self.pushButton.setMaximumSize(QtCore.QSize(80, 40))
@@ -215,12 +215,12 @@ class Ui_Form(object):
         self.gold_pushButton.setText(_("Go"))
         self.porc_pushButton.setText(_("Po"))
         self.ex_pushButton.setToolTip(_("extract (plan only!)"))
-        self.ex_pushButton.setText(_("Ex"))
+        self.ex_pushButton.setText(_("EX"))
         self.rt_pushButton.setToolTip(_("root treatment"))
         self.rt_pushButton.setText(_("RT"))
         self.leftTooth_pushButton.setToolTip(_("Apply and move Back a tooth"))
-        self.defaultCrown_pushButton.setToolTip(_("porcelain veneer"))
-        self.defaultCrown_pushButton.setText(_("Cr"))
+        self.dressing_pushButton.setToolTip(_("porcelain veneer"))
+        self.dressing_pushButton.setText(_("DR"))
         self.pushButton.setToolTip(_("Apply & Add Another Item"))
         self.pushButton.setText(_("&&"))
         self.rightTooth_pushButton.setToolTip(_("Apply & Move to Next Tooth"))

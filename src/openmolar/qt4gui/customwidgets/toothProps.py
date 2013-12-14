@@ -16,57 +16,13 @@ from openmolar.qt4gui.compiled_uis import Ui_toothProps
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs.crown_choice_dialog import CrownChoiceDialog
 from openmolar.qt4gui.dialogs.implant_choice_dialog import ImplantChoiceDialog
+from openmolar.qt4gui.dialogs.chart_tx_choice_dialog import ChartTxChoiceDialog
+
 
 
 from openmolar.qt4gui.dialogs import toothprop_fulledit
 
 LOGGER = logging.getLogger("openmolar")
-
-FS_OPTIONS = {
-"--"        : "--"+_("Fissure Sealants"),
-"FS"        : _( u"Fissure Sealant"),
-"FS,CO"     : _( u"Fissure Sealant/Composite")
-}
-
-BR_RE_OPTIONS = {
-"--"        : "--"+_("Bridge Retainers"),
-"BR/CR,V1"  : _( u"Bonded"),
-"BR/CR,GO"  : _( u"Gold"),
-"BR/CR,LAVA": _( u"Lava Retainer"),
-"BR/CR,OT"  : _( u"Other"),
-"BR,AE"     : _( u"Adhesive Wing"),
-}
-
-BR_PO_OPTIONS = {
-"--"        : "--"+_("Bridge Pontics"),
-"BR/P,V1"   : _( u"Bonded_"),
-"BR/P,GO"   : _( u"Gold_"),
-"BR/P,LAVA" : _( u"Lava_"),
-"BR/P,OT"   : _( u"Other_")
-}
-
-ENDO_OPTIONS = {
-"--"        : "--"+_("Endodontics"),
-"PX"        : _( u"Pulp Extirpation - 1 canal"),
-"PX+"       : _( u"Pulp Extirpation - multiple canals"),
-"RT"        : _( u"Root Canal"),
-"IE"        : _( u"Incomplete Endodontics"),
-}
-
-SURGICAL_OPTIONS = {
-"--"        : "--"+_("Surgical"),
-"EX"        : _( u"Extraction"),
-"EX/S1"     : _( u"Surgical Extraction"),
-"AP"        : _( u"Apicectomy")
-}
-
-COMBOBOXES = (
-FS_OPTIONS,
-BR_RE_OPTIONS,
-BR_PO_OPTIONS,
-ENDO_OPTIONS,
-SURGICAL_OPTIONS,
-)
 
 class chartLineEdit(QtGui.QLineEdit):
     '''
@@ -299,23 +255,31 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.selectedChart = ""
         self.selectedTooth = ""
         self.comboboxes = []
-        self.implant_but = QtGui.QPushButton("Implants")
-        self.populateComboBoxes()
+        self.crown_but = QtGui.QPushButton(_("Crowns"))
+        self.implant_but = QtGui.QPushButton(_("Implants"))
+        self.fs_but = QtGui.QPushButton(_("Fissure Sealants"))
+        self.bridges_but = QtGui.QPushButton(_("Bridges"))
+        self.endo_but = QtGui.QPushButton(_("Endodontics"))
+        self.surgical_but = QtGui.QPushButton(_("Surgical Tx"))
+
+        frame = QtGui.QFrame()
+        vlayout = QtGui.QVBoxLayout(frame)
+        vlayout.setMargin(0)
+        vlayout.addWidget(self.fs_but)
+        vlayout.addWidget(self.endo_but)
+        vlayout.addWidget(self.crown_but)
+        vlayout.addWidget(self.bridges_but)
+        vlayout.addWidget(self.surgical_but)
+        vlayout.addWidget(self.implant_but)
+        vlayout.addStretch(100)
+
+        self.cb_scrollArea.setWidget(frame)
+        self.cb_scrollArea.setWidgetResizable(True)
+
         self.signals()
 
-    def populateComboBoxes(self):
-        vlayout = QtGui.QVBoxLayout(self.cb_scrollArea)
-        vlayout.setMargin(0)
-        vlayout.addWidget(self.implant_but)
-        for combobox_dict in COMBOBOXES:
-            cb = QtGui.QComboBox(self)
-            vals = combobox_dict.values()
-            vals.sort()
-            for val in vals:
-                cb.addItem(val)
-            vlayout.addWidget(cb)
-            self.comboboxes.append(cb)
-        vlayout.addStretch(100)
+    def sizeHint(self):
+        return QtCore.QSize(120, 500)
 
     def setTooth(self, selectedTooth, selectedChart):
         '''
@@ -532,11 +496,15 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.lineEdit.addItem("RT")
         self.lineEdit.additional()
 
+    def dressing(self):
+        self.lineEdit.addItem("DR")
+        self.lineEdit.additional()
+
     def crown(self):
         dl = CrownChoiceDialog(self.is_Static, self.om_gui)
         if dl.exec_():
             self.lineEdit.addItem(dl.chosen_shortcut)
-            self.nextTooth()
+            self.lineEdit.additional()
 
     def implant_but_clicked(self):
         dl = ImplantChoiceDialog(self.is_Static, self.om_gui)
@@ -544,15 +512,44 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
             self.lineEdit.addItem(dl.chosen_shortcut)
             self.nextTooth()
 
-    def cb_treat(self, arg):
-        if not re.match("--.*", arg.toAscii()):
-            print arg
-            for cb in self.comboboxes:
-                cb.setCurrentIndex(0)
-            for combobox_dict in COMBOBOXES:
-                for key in combobox_dict.keys():
-                    if combobox_dict[key] == arg:
-                        self.lineEdit.addItem(key)
+    def fs_but_clicked(self):
+        dl = ChartTxChoiceDialog(self.is_Static, self.om_gui)
+        if self.is_Static:
+            dl.set_items(dl.FS_ITEMS)
+        else:
+            dl.add_buttons(
+                self.om_gui.pt.fee_table.ui_lists["fs_buttons"],
+                localsettings.FEETABLES.ui_fs_chart_buttons)
+        if dl.exec_():
+            self.lineEdit.addItem(dl.chosen_shortcut)
+            self.lineEdit.additional()
+
+    def bridges_but_clicked(self):
+        QtGui.QMessageBox.information(self, "todo", "bridges button")
+
+    def endo_but_clicked(self):
+        dl = ChartTxChoiceDialog(self.is_Static, self.om_gui)
+        if self.is_Static:
+            dl.set_items(dl.ENDO_ITEMS)
+        else:
+            dl.add_buttons(
+                self.om_gui.pt.fee_table.ui_lists["endo_buttons"],
+                localsettings.FEETABLES.ui_endo_chart_buttons)
+        if dl.exec_():
+            self.lineEdit.addItem(dl.chosen_shortcut)
+            self.lineEdit.additional()
+
+    def surgical_but_clicked(self):
+        dl = ChartTxChoiceDialog(self.is_Static, self.om_gui)
+        if self.is_Static:
+            dl.set_items(dl.SURGICAL_ITEMS)
+        else:
+            dl.add_buttons(
+                self.om_gui.pt.fee_table.ui_lists["surgical_buttons"],
+                localsettings.FEETABLES.ui_surgical_chart_buttons)
+        if dl.exec_():
+            self.lineEdit.addItem(dl.chosen_shortcut)
+            self.lineEdit.additional()
 
     def signals(self):
         QtCore.QObject.connect(self.am_pushButton,
@@ -597,19 +594,18 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
 
         QtCore.QObject.connect(self.rt_pushButton,
         QtCore.SIGNAL("clicked()"), self.rt)
-
-        QtCore.QObject.connect(self.defaultCrown_pushButton,
-        QtCore.SIGNAL("clicked()"), self.crown)
+        self.dressing_pushButton.clicked.connect(self.dressing)
 
         QtCore.QObject.connect(self.comments_comboBox,
         QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
 
+        self.crown_but.clicked.connect(self.crown)
         self.implant_but.clicked.connect(self.implant_but_clicked)
 
-        for cb in self.comboboxes:
-            QtCore.QObject.connect(cb,
-            QtCore.SIGNAL("currentIndexChanged (const QString&)"),
-            self.cb_treat)
+        self.fs_but.clicked.connect(self.fs_but_clicked)
+        self.bridges_but.clicked.connect(self.bridges_but_clicked)
+        self.endo_but.clicked.connect(self.endo_but_clicked)
+        self.surgical_but.clicked.connect(self.surgical_but_clicked)
 
 class Tooth(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -846,9 +842,10 @@ class Tooth(QtGui.QWidget):
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
-    Form = QtGui.QWidget()
-    ui = ToothPropertyEditingWidget(Form)
+    mw = QtGui.QMainWindow()
+    ui = ToothPropertyEditingWidget()
     ui.setExistingProps("MOD B,GL !COMMENT_TWO")
-    Form.show()
+    mw.setCentralWidget(ui)
+    mw.show()
     sys.exit(app.exec_())
 
