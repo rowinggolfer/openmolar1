@@ -28,45 +28,10 @@ templist = []
 for quad in ("ur", "ul", "ll", "lr"):
     for tooth in range(1, 9):
         templist.append("%s%d"%(quad, tooth))
+
 tup_toothAtts = tuple(templist)
 
-tup_Atts = ('xray','perio','anaes','other','ndu',
-'ndl','odu','odl','custom')
-
-def plannedDict(pt):
-    '''
-    returns a dicitonary for use in the plan treeWidget
-    '''
-    items = plannedItems(pt)
-    pdict = {}
-    for header in treatmentTypeHeaders.keys():
-        for att in treatmentTypeHeaders[header]:
-            for item in items:
-                if att in item[0]:
-                    istring = "%s - %s"%(item)
-                    if pdict.has_key(header):
-                        pdict[header].append(istring)
-                    else:
-                        pdict[header] = [istring]
-    return pdict
-
-
-def completedDict(pt):
-    '''
-    returns a dicitonary for use in the completed treeWidget
-    '''
-    items = completedItems(pt)
-    pdict = {}
-    for header in treatmentTypeHeaders.keys():
-        for att in treatmentTypeHeaders[header]:
-            for item in items:
-                if att in item[0]:
-                    istring = "%s - %s"%(item)
-                    if pdict.has_key(header):
-                        pdict[header].append(istring)
-                    else:
-                        pdict[header] = [istring]
-    return pdict
+tup_Atts = ('xray','perio','anaes','other','ndu','ndl','odu','odl','custom')
 
 def plannedItems(pt):
     plannedList = []
@@ -76,9 +41,13 @@ def plannedItems(pt):
         tx = pt.treatment_course.__dict__[attrib+"pl"]
         if not tx in ("", None):
             items = tx.strip(" ").split(" ")
-            for item in items:
-                item = item.decode("latin-1")
-                if re.match("[ul][lr][0-8]",attrib):
+            for item in set(items):
+                if item == "":
+                    continue
+                n = items.count(item)
+                if n != 1:
+                    item = "%d%s"% (n, item)
+                if re.match("[ul][lr][1-8]",attrib):
                     #check for deciduous
                     toothName = str(pt.chartgrid.get(attrib)).upper()
                     plannedList.append((toothName, item),)
@@ -94,8 +63,10 @@ def completedItems(pt, teethOnly=False):
             if not tx in ("", None):
                 items = tx.strip(" ").split(" ")
                 for item in items:
+                    if item == "":
+                        continue
                     item = item.decode("latin-1")
-                    if re.match("[ul][lr][0-8]",tooth):
+                    if re.match("[ul][lr][1-8]",tooth):
                         compList.append((tooth, item),)
     else:
         if pt.treatment_course.examt!="" and pt.treatment_course.examd:
@@ -105,15 +76,18 @@ def completedItems(pt, teethOnly=False):
             tx = pt.treatment_course.__dict__[attrib+"cmp"]
             if not tx in ("",None):
                 items = tx.strip(" ").split(" ")
-                for item in items:
-                    item = item.decode("latin-1")
-                    if re.match("[ul][lr][0-8]",attrib):
+                for item in set(items):
+                    if item == "":
+                        continue
+                    n = items.count(item)
+                    if n != 1:
+                        item = "%d%s"% (n, item)
+                    if re.match("[ul][lr][1-8]",attrib):
                         #check for deciduous
                         toothName = str(pt.chartgrid.get(attrib)).upper()
                         compList.append((toothName, item),)
                     else:
-                        if not teethOnly:
-                            compList.append((attrib, item), )
+                        compList.append((attrib, item), )
     return compList
 
 def summary(pt):
@@ -123,7 +97,7 @@ def summary(pt):
 
     if pt.treatment_course is None:
         return ""
-    
+
     retarg = '''<html><body><head>
     <link rel="stylesheet" href="%s" type="text/css">
     </head>\n'''%localsettings.stylesheet
@@ -135,18 +109,24 @@ def summary(pt):
     if pt.treatment_course.cmpd != None:
         retarg += '%s %s<br />'% (_('End'),
         localsettings.formatDate(pt.treatment_course.cmpd))
-    plan = u""
+    plan = ""
     for item in plannedItems(pt):
         plan+='%s - %s<br />'%(item)
+    if plan != "":
+        plan = "<h5>%s</h5>%s"% (_("PLAN"), plan)
+
     comp = ""
     for item in completedItems(pt):
-        comp+='%s - %s<br />'%(item)
+        comp += '%s - %s<br />'% (item)
+    if comp != "":
+        comp = "<h5>%s</h5>%s"% (_("COMPLETED"), comp)
+        if plan != "":
+            plan = "<hr />" + plan
 
-    if plan=="" and comp=="":
+    if plan == "" and comp == "":
         return "%s%s</body></html>"% (retarg, _("No treatment"))
     else:
-        return '%s<h4>%s</h4>%s<hr /><h4>%s</h4>%s</body></html>'%(
-        retarg, _("PLAN"),plan, _("COMPLETED"), comp)
+        return '%s%s%s</body></html>'% (retarg, plan, comp)
 
     return retarg
 
@@ -183,10 +163,8 @@ if __name__ == "__main__":
     try:
         serialno = int(sys.argv[len(sys.argv)-1])
     except:
-        serialno = 29833
+        serialno = 14860
     pt = patient_class.patient(serialno)
     print plannedItems(pt)
     print completedItems(pt)
     print summary(pt)
-    print plannedDict(pt)
-    print completedDict(pt)

@@ -9,18 +9,21 @@
 This module replaces notes.py with schema version 1.9
 '''
 
+import logging
 import re
 import sys
+
 from openmolar.settings import localsettings
 from openmolar.dbtools import db_notes
 from openmolar.dbtools import db_patients
 
+LOGGER = logging.getLogger("openmolar")
 
 try:
     from collections import OrderedDict
 except ImportError:
     #OrderedDict only came in python 2.7
-    print "using openmolar.backports for OrderedDict"
+    LOGGER.warning("using openmolar.backports for OrderedDict")
     from openmolar.backports import OrderedDict
 
 ## some user variables which determine the verbosity of the notes
@@ -65,11 +68,12 @@ def s_t_l(note):
     '''
     return re.sub("(<br /> *)*$", "", note)
 
-
 def get_notes_for_date(lines, full_notes=False):
     '''
     this is the actual user clinically relevant stuff!
     '''
+    txs = []
+    rev_txs = []
     tx, note, metadata = "", "", ""
     for ntype, noteline in lines:
         if "NOTE" in ntype and noteline != "":
@@ -77,7 +81,9 @@ def get_notes_for_date(lines, full_notes=False):
                 "<","&lt;").replace(">","&gt;")
         else:
             if "TC" in ntype:
-                tx += "<b>%s</b><br />"% noteline
+                txs.append((ntype, noteline))
+            elif ntype == "UNCOMPLETED":
+                rev_txs.append((ntype, noteline))
             elif full_notes:
                 if "RECEIVED" in ntype:
                     receipt_text = noteline.replace("sundries 0.00", "")
@@ -94,6 +100,18 @@ def get_notes_for_date(lines, full_notes=False):
                     metadata += "<b>%s</b>%s<br />"% (ntype, noteline)
 
     note = note.replace("\n","<br />")
+
+    for tuple_ in set(txs):
+        n = txs.count(tuple_)
+        ntype, treatment = tuple_
+        if n != 1:
+            tx += "<b>%d%s</b><br />"% (n, treatment)
+        else:
+            tx += "<b>%s</b><br />"% treatment
+
+    for tuple_ in rev_txs:
+        ntype, treatment = tuple_
+        tx += "<b>%s</b><br />"% treatment
 
     return s_t_l(tx), s_t_l(note), s_t_l(metadata)
 
@@ -223,17 +241,13 @@ def todays_notes(serialno):
     return html
 
 if __name__ == "__main__":
-    sys.path.insert(1, "/home/neil/openmolar/openmolar/src")
+    LOGGER.setLevel(logging.DEBUG)
     from openmolar.dbtools import patient_class
     try:
-        serialno=int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv)-1])
     except:
-        serialno=1
-    if "-v" in sys.argv:
-        verbose=True
-    else:
-         verbose=False
+        serialno = 1
 
-    #print rec_notes(patient_class.patient(serialno).notes_dict)
-    print notes(patient_class.patient(serialno).notes_dict)
+    notes_ = notes(patient_class.patient(serialno).notes_dict)
+    print notes_.encode("ascii", "replace")
 

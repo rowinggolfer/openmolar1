@@ -2942,7 +2942,7 @@
                  <item>
                   <widget class="QScrollArea" name="scrollArea">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -2974,47 +2974,38 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QGroupBox" name="groupBox_16">
-                       <property name="title">
-                        <string>Estimate Management</string>
+                      <widget class="QPushButton" name="estLetter_pushButton">
+                       <property name="text">
+                        <string>Custom Estimate Letter</string>
                        </property>
-                       <layout class="QVBoxLayout" name="verticalLayout_12">
-                        <item>
-                         <widget class="QPushButton" name="estLetter_pushButton">
-                          <property name="text">
-                           <string>Custom Estimate Letter</string>
-                          </property>
-                          <property name="checkable">
-                           <bool>false</bool>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="recalcEst_pushButton">
-                          <property name="toolTip">
-                           <string>Use this feature to re-price all items in the &quot;tooth&quot; category of treatments. i.e all those which appear on the charts.
+                       <property name="checkable">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="recalcEst_pushButton">
+                       <property name="toolTip">
+                        <string>Use this feature to re-price all items in the &quot;tooth&quot; category of treatments. i.e all those which appear on the charts.
 
 Note - this will not remove items which are currently there. </string>
-                          </property>
-                          <property name="text">
-                           <string>ReCalculate Estimate</string>
-                          </property>
-                          <property name="checkable">
-                           <bool>false</bool>
-                          </property>
-                          <property name="checked">
-                           <bool>false</bool>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="apply_exemption_pushButton">
-                          <property name="text">
-                           <string>Apply Exemption</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
+                       </property>
+                       <property name="text">
+                        <string>ReCalculate Estimate</string>
+                       </property>
+                       <property name="checkable">
+                        <bool>false</bool>
+                       </property>
+                       <property name="checked">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="apply_exemption_pushButton">
+                       <property name="text">
+                        <string>Apply Exemption</string>
+                       </property>
                       </widget>
                      </item>
                      <item>
@@ -3031,42 +3022,36 @@ Note - this will not remove items which are currently there. </string>
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QGroupBox" name="groupBox_5">
-                       <property name="title">
-                        <string>Course Management</string>
+                      <widget class="QLabel" name="label_22">
+                       <property name="layoutDirection">
+                        <enum>Qt::LeftToRight</enum>
                        </property>
-                       <layout class="QGridLayout" name="gridLayout_12">
-                        <item row="0" column="0">
-                         <widget class="QLabel" name="label_22">
-                          <property name="text">
-                           <string>Course Dentist</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="1">
-                         <widget class="QComboBox" name="dnt2comboBox">
-                          <property name="maximumSize">
-                           <size>
-                            <width>50</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="0" colspan="2">
-                         <widget class="QPushButton" name="closeTx_pushButton">
-                          <property name="enabled">
-                           <bool>true</bool>
-                          </property>
-                          <property name="text">
-                           <string>Close Course</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
+                       <property name="text">
+                        <string>Course Dentist</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QComboBox" name="dnt2comboBox">
+                       <property name="maximumSize">
+                        <size>
+                         <width>16777215</width>
+                         <height>16777215</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="closeTx_pushButton">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="text">
+                        <string>Close Course</string>
+                       </property>
                       </widget>
                      </item>
                     </layout>
@@ -5283,7 +5268,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>bpeDateComboBox</tabstop>
   <tabstop>perioChartData_scrollArea</tabstop>
   <tabstop>contract_tabWidget</tabstop>
-  <tabstop>closeTx_pushButton</tabstop>
   <tabstop>notesPrintButton</tabstop>
   <tabstop>loadAccountsTable_pushButton</tabstop>
  </tabstops>

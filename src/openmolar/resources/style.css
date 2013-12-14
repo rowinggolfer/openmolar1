@@ -8,7 +8,7 @@ body{background-color:#ffffff;}
 /*-- DIVS --*/
 div.center{text-align:center;}
 
-h1,h2,h3,h4{margin:3px;color:#4322a8;}
+h1,h2,h3,h4,h5,h6{margin:3px;color:#4322a8;}
 h1{text-align:center;}
 .debt{color:red;}
 .ut_label{font-style:italic;color:#99ccff;}
