@@ -2449,7 +2449,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         A function to implement NHS Scotland's Childsmile.
         '''
         dl = ChildSmileDialog(self)
-        dl.exec_()
+        if dl.exec_():
+            manipulate_plan.add_treatments_to_plan(self, dl.tx_items, True)
 
     def notes_link_clicked(self, url):
         url_text = url.toString()

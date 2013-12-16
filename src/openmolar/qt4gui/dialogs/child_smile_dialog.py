@@ -57,6 +57,8 @@ EXAMPLE_RESULT = '''
 </html>
 '''
 
+TODAYS_LOOKUPS = {} #{"IV1 1PP": "SIMD Area: 1"}
+
 class ChildSmileDialog(BaseDialog):
     result = ""
     is_checking_website = False
@@ -71,9 +73,24 @@ class ChildSmileDialog(BaseDialog):
         self.simd_label = QtGui.QLabel()
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
 
+        self.tbi_checkbox = QtGui.QCheckBox(
+            _("ToothBrushing Instruction Given"))
+        self.tbi_checkbox.setChecked(True)
+
+        self.di_checkbox = QtGui.QCheckBox(_("Dietary Advice Given"))
+        self.di_checkbox.setChecked(True)
+
+        self.fl_checkbox = QtGui.QCheckBox(_("Fluoride Varnish Applied"))
+        self.fl_checkbox.setToolTip(
+            _("Fee claimable for patients betwen 2 and 5"))
+        self.fl_checkbox.setChecked(2 <= self.main_ui.pt.ageYears <=5)
+
         self.insertWidget(self.header_label)
         self.insertWidget(self.pcde_le)
         self.insertWidget(self.simd_label)
+        self.insertWidget(self.tbi_checkbox)
+        self.insertWidget(self.di_checkbox)
+        self.insertWidget(self.fl_checkbox)
 
         self.pcde_le.textEdited.connect(self.check_pcde)
 
@@ -116,6 +133,15 @@ class ChildSmileDialog(BaseDialog):
         '''
         poll the server for a simd for a postcode
         '''
+        global TODAYS_LOOKUPS
+        try:
+            self.result = TODAYS_LOOKUPS[self.pcde]
+            self.simd_label.setText(self.result)
+            self.enableApply(True)
+            LOGGER.debug("simd_lookup unnecessary, value known")
+            return
+        except KeyError:
+            pass
         try:
             self.is_checking_website = True
             QtCore.QTimer.singleShot(15000, self.check_hung)
@@ -132,6 +158,7 @@ class ChildSmileDialog(BaseDialog):
             response = urllib2.urlopen(req)
             result = response.read()
             self.result = self._parse_result(result)
+            TODAYS_LOOKUPS[self.pcde] = self.result
             self.simd_label.setText(self.result)
 
             self.enableApply(True)
@@ -153,9 +180,53 @@ class ChildSmileDialog(BaseDialog):
     def simd_number(self):
         return int(re.search("(\d+)", self.result).groups()[0])
 
+    @property
+    def tbi_performed(self):
+        return self.tbi_checkbox.isChecked()
+
+    @property
+    def di_performed(self):
+        return self.di_checkbox.isChecked()
+
+    @property
+    def fl_applied(self):
+        return self.fl_checkbox.isChecked()
+
+    @property
+    def tx_items(self):
+        age = self.main_ui.pt.ageYears
+        dentist = localsettings.clinicianNo in localsettings.dentDict.keys()
+        LOGGER.debug("Performed by dentist = %s"% dentist)
+        if age < 3:
+            if self.simd_number < 4:
+                yield ("other", "CS1")
+            else:
+                yield ("other", "CS2")
+            if self.tbi_performed:
+                code = "TB1" if dentist else "TB2"
+                yield ("other", code)
+            if self.di_performed:
+                code = "DI1" if dentist else "DI2"
+                yield ("other", code)
+        else:
+            if self.simd_number < 4:
+                yield ("other", "CS3")
+            if self.tbi_performed:
+                code = "TB3" if dentist else "TB4"
+                yield ("other", code)
+            if self.di_performed:
+                code = "DI3" if dentist else "DI4"
+                yield ("other", code)
+
+        if 2 <= age <= 5:
+            if self.fl_applied:
+                yield ("other", "CSFL")
+
+
     def exec_(self):
         self.check_pcde()
-        QtCore.QTimer.singleShot(0, self.postcode_warning)
+        QtCore.QTimer.singleShot(100, self.postcode_warning)
+
         if BaseDialog.exec_(self):
             if self.valid_postcode:
                 self.main_ui.pt.pcde = self.pcde
@@ -167,7 +238,7 @@ class ChildSmileDialog(BaseDialog):
 
 
 if __name__ == "__main__":
-
+    LOGGER.setLevel(logging.DEBUG)
     def _mock_function(*args):
         pass
     from collections import namedtuple
@@ -176,9 +247,10 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
 
     ui = QtGui.QMainWindow()
-    ui.pt = namedtuple("pt",("pcde",))
+    ui.pt = namedtuple("pt",("pcde","ageYears"))
 
     ui.pt.pcde = "Iv1 1P"
+    ui.pt.ageYears = 3
     ui.addNewNote = _mock_function
 
     dl = ChildSmileDialog(ui)
@@ -186,3 +258,8 @@ if __name__ == "__main__":
     if dl.exec_():
         print (dl.result)
         print (dl.simd_number)
+        print ("toothbrush instruction = %s"% dl.tbi_performed)
+        print ("dietary advice = %s"% dl.di_performed)
+
+        for item in dl.tx_items:
+            print item
