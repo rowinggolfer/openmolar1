@@ -1963,7 +1963,7 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def add_denture_items(self):
         '''
-        add 'Other' items to the treatment plan
+        add 'denture' items to the treatment plan
         '''
         manipulate_plan.denture_add(self)
 

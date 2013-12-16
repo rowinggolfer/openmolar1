@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Sat Dec 14 18:54:38 2013
+# Created: Mon Dec 16 11:22:23 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,7 +45,7 @@ class Ui_MainWindow(object):
         self.scrollArea_main.setWidgetResizable(True)
         self.scrollArea_main.setObjectName(_fromUtf8("scrollArea_main"))
         self.scrollAreaWidgetContents_12 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_12.setGeometry(QtCore.QRect(0, 0, 980, 585))
+        self.scrollAreaWidgetContents_12.setGeometry(QtCore.QRect(0, 0, 1071, 585))
         self.scrollAreaWidgetContents_12.setObjectName(_fromUtf8("scrollAreaWidgetContents_12"))
         self.horizontalLayout_7 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_12)
         self.horizontalLayout_7.setSpacing(0)
@@ -216,7 +216,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName(_fromUtf8("scrollArea_4"))
         self.scrollAreaWidgetContents_7 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 759, 477))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 850, 477))
         self.scrollAreaWidgetContents_7.setObjectName(_fromUtf8("scrollAreaWidgetContents_7"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_7)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
@@ -679,7 +679,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollArea_5.setObjectName(_fromUtf8("scrollArea_5"))
         self.scrollAreaWidgetContents_8 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 741, 423))
+        self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 441, 423))
         self.scrollAreaWidgetContents_8.setObjectName(_fromUtf8("scrollAreaWidgetContents_8"))
         self.gridLayout = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -821,7 +821,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_5 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 761, 471))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 303, 471))
         self.scrollAreaWidgetContents_5.setObjectName(_fromUtf8("scrollAreaWidgetContents_5"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_5)
         self.horizontalLayout_26.setSpacing(3)
@@ -948,7 +948,7 @@ class Ui_MainWindow(object):
         self.scrollArea_6.setWidgetResizable(True)
         self.scrollArea_6.setObjectName(_fromUtf8("scrollArea_6"))
         self.scrollAreaWidgetContents_9 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 755, 456))
+        self.scrollAreaWidgetContents_9.setGeometry(QtCore.QRect(0, 0, 846, 456))
         self.scrollAreaWidgetContents_9.setObjectName(_fromUtf8("scrollAreaWidgetContents_9"))
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents_9)
         self.gridLayout_4.setMargin(0)
@@ -1227,7 +1227,7 @@ class Ui_MainWindow(object):
         self.estimate_scrollArea.setWidgetResizable(True)
         self.estimate_scrollArea.setObjectName(_fromUtf8("estimate_scrollArea"))
         self.scrollAreaWidgetContents_11 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 567, 389))
+        self.scrollAreaWidgetContents_11.setGeometry(QtCore.QRect(0, 0, 98, 200))
         self.scrollAreaWidgetContents_11.setObjectName(_fromUtf8("scrollAreaWidgetContents_11"))
         self.horizontalLayout_19 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_11)
         self.horizontalLayout_19.setObjectName(_fromUtf8("horizontalLayout_19"))
@@ -1243,7 +1243,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_4 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 179, 389))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 153, 224))
         self.scrollAreaWidgetContents_4.setObjectName(_fromUtf8("scrollAreaWidgetContents_4"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_9.setObjectName(_fromUtf8("verticalLayout_9"))
@@ -1289,7 +1289,7 @@ class Ui_MainWindow(object):
         self.perioCharts_scrollArea.setWidgetResizable(True)
         self.perioCharts_scrollArea.setObjectName(_fromUtf8("perioCharts_scrollArea"))
         self.scrollAreaWidgetContents_6 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 756, 391))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 252, 376))
         self.scrollAreaWidgetContents_6.setObjectName(_fromUtf8("scrollAreaWidgetContents_6"))
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
         self.gridLayout_15.setObjectName(_fromUtf8("gridLayout_15"))

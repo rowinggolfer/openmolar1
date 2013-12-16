@@ -76,11 +76,8 @@ def updateCharts(om_gui, arg):
     args are the new tooth properties eg modbl,co
     '''
     LOGGER.debug(arg)
-    try:
-        tooth = str(om_gui.ui.chartsTableWidget.item(
-        om_gui.ui.chartsTableWidget.currentRow(), 0).text())
-    except AttributeError:
-        return
+
+    tooth = om_gui.ui.toothPropsWidget.selectedTooth
     if om_gui.selectedChartWidget == "st":
         om_gui.pt.__dict__[tooth + om_gui.selectedChartWidget] = arg
         #--update the patient!!

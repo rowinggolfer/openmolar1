@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
+# Copyright (c) 2009-2013 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+# (at your option) any later version.
+# See the GNU General Public License for more details.
 
 import logging
 import re
@@ -17,8 +18,7 @@ from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs.crown_choice_dialog import CrownChoiceDialog
 from openmolar.qt4gui.dialogs.implant_choice_dialog import ImplantChoiceDialog
 from openmolar.qt4gui.dialogs.chart_tx_choice_dialog import ChartTxChoiceDialog
-
-
+from openmolar.qt4gui.dialogs.bridge_dialog import BridgeDialog
 
 from openmolar.qt4gui.dialogs import toothprop_fulledit
 
@@ -203,7 +203,9 @@ class chartLineEdit(QtGui.QLineEdit):
             self.additional()
 
     def keyPressEvent(self, event):
-        '''overrudes QWidget's keypressEvent'''
+        '''
+        overrides QWidget's keypressEvent
+        '''
         if event.key() == QtCore.Qt.Key_Up:
             self.specialKeyPressed("up")
         elif event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Down):
@@ -237,28 +239,24 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.toothlayout.setContentsMargins(0,0,0,0)
         self.toothlayout.addWidget(self.tooth)
         self.am_pushButton.setStyleSheet(
-        "background-color: %s"% colours.AMALGAM_ )
-
+            "background-color: %s"% colours.AMALGAM_ )
         self.co_pushButton.setStyleSheet(
-        "background-color: %s"% colours.COMP_ )
-
+            "background-color: %s"% colours.COMP_ )
         self.gl_pushButton.setStyleSheet(
-        "background-color: %s"% colours.GI_ )
-
+            "background-color: %s"% colours.GI_ )
         self.gold_pushButton.setStyleSheet(
-        "background-color: %s"% colours.GOLD_ )
-
+            "background-color: %s"% colours.GOLD_ )
         self.porc_pushButton.setStyleSheet(
-        "background-color: %s"% colours.PORC_ )
+            "background-color: %s"% colours.PORC_ )
 
         self.is_Static = False
         self.selectedChart = ""
         self.selectedTooth = ""
         self.comboboxes = []
         self.crown_but = QtGui.QPushButton(_("Crowns"))
+        self.bridge_but = QtGui.QPushButton(_("Bridges"))
         self.implant_but = QtGui.QPushButton(_("Implants"))
         self.fs_but = QtGui.QPushButton(_("Fissure Sealants"))
-        self.bridges_but = QtGui.QPushButton(_("Bridges"))
         self.endo_but = QtGui.QPushButton(_("Endodontics"))
         self.surgical_but = QtGui.QPushButton(_("Surgical Tx"))
 
@@ -268,7 +266,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         vlayout.addWidget(self.fs_but)
         vlayout.addWidget(self.endo_but)
         vlayout.addWidget(self.crown_but)
-        vlayout.addWidget(self.bridges_but)
+        vlayout.addWidget(self.bridge_but)
         vlayout.addWidget(self.surgical_but)
         vlayout.addWidget(self.implant_but)
         vlayout.addStretch(100)
@@ -298,8 +296,9 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.tooth.clear()
         self.tooth.update()
 
-        self.tooth_label.setText(self.om_gui.pt.chartgrid[selectedTooth].upper())
-        #--ALLOWS for deciduos teeth
+        #--ALLOWS for deciduous teeth
+        self.tooth_label.setText(
+            self.om_gui.pt.chartgrid[selectedTooth].upper())
 
         if selectedChart == "st":
             self.isStatic(True)
@@ -336,11 +335,6 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         elif arg ==_("DELETE COMMENTS"):
             self.lineEdit.deleteComments()
         else:
-            #result=QtGui.QMessageBox.question(self, "Confirm",
-            #'Add comment "%s"'% arg,
-            #QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
-            #if result == QtGui.QMessageBox.Yes:
             newComment = "%s"% arg.replace(" ","_")
             self.lineEdit.addItem(newComment)
 
@@ -506,6 +500,15 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
             self.lineEdit.addItem(dl.chosen_shortcut)
             self.lineEdit.additional()
 
+    def bridge(self):
+        dl = BridgeDialog(self.om_gui)
+        if dl.exec_():
+            for tooth, tx in dl.chosen_treatments:
+                LOGGER.debug("adding bridge unit '%s' '%s'"% (tooth, tx))
+                self.setTooth(tooth, self.selectedChart)
+                self.lineEdit.addItem(tx)
+            self.lineEdit.additional()
+
     def implant_but_clicked(self):
         dl = ImplantChoiceDialog(self.is_Static, self.om_gui)
         if dl.exec_():
@@ -523,9 +526,6 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         if dl.exec_():
             self.lineEdit.addItem(dl.chosen_shortcut)
             self.lineEdit.additional()
-
-    def bridges_but_clicked(self):
-        QtGui.QMessageBox.information(self, "todo", "bridges button")
 
     def endo_but_clicked(self):
         dl = ChartTxChoiceDialog(self.is_Static, self.om_gui)
@@ -600,10 +600,10 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
 
         self.crown_but.clicked.connect(self.crown)
+        self.bridge_but.clicked.connect(self.bridge)
         self.implant_but.clicked.connect(self.implant_but_clicked)
 
         self.fs_but.clicked.connect(self.fs_but_clicked)
-        self.bridges_but.clicked.connect(self.bridges_but_clicked)
         self.endo_but.clicked.connect(self.endo_but_clicked)
         self.surgical_but.clicked.connect(self.surgical_but_clicked)
 

@@ -168,15 +168,20 @@ class PageOne(_OptionPage):
 class PageThree(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
+        self.dl = parent
         self.label.setText(_(
         "Please select teeth which this denture is to replace"))
         self.chartwidg = SimpleChartWidg(self)
-        if parent.is_upper_input:
-            self.chartwidg.disable_lowers()
-        else:
-            self.chartwidg.disable_uppers()
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
+
+    def showEvent(self, event=None):
+        if self.dl.is_upper_input:
+            LOGGER.debug("hiding lower teeth")
+            self.chartwidg.disable_lowers()
+        else:
+            LOGGER.debug("hiding upper teeth")
+            self.chartwidg.disable_uppers()
 
     @property
     def return_text(self):

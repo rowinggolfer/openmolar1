@@ -253,22 +253,22 @@ class SimpleChartWidg(QtGui.QWidget):
                 if re.match(mask, tooth):
                     new_grid[i].append(tooth)
                 else:
-                    new_grid[i].append(None)
+                    new_grid[i].append("")
         self.grid = new_grid
         self.update()
 
     def disable_lowers(self):
-        self.set_regex_mask("l[lr][1-8]")
+        self.set_regex_mask("u[lr][1-8]")
 
     def disable_uppers(self):
-        self.set_regex_mask("u[lr][1-8]")
+        self.set_regex_mask("l[lr][1-8]")
 
 if __name__ == "__main__":
     from gettext import gettext as _
     app = QtGui.QApplication(sys.argv)
     form = SimpleChartWidg()
     #form.disable_lowers()
-    form.disable_uppers()
+    #form.disable_uppers()
     form.show()
     sys.exit(app.exec_())
 
