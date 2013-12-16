@@ -325,6 +325,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         '''
         self.is_Static = arg
         self.comments_comboBox.setEnabled(arg)
+        self.ex_pushButton.setEnabled(not arg)
 
     def comments(self,arg):
         '''
