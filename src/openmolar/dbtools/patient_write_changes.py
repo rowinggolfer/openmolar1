@@ -42,7 +42,7 @@ insert into clinical_memos (serialno, synopsis, author, datestamp)
 values (%s, %s, %s, NOW())'''
 
 def all_changes(pt, changes):
-    LOGGER.debug("writing_changes to patient")
+    LOGGER.debug("writing_changes to patient - %s"% str(changes))
     if changes == []:
         LOGGER.warning(
             "write changes called, but no changes for patient %d!"% (
@@ -50,7 +50,6 @@ def all_changes(pt, changes):
         )
         return True
     else:
-
         #set up some booleans to prevent multiple updates of the same data
         #example exemption AND exemption text have changed..
         exemptionsHandled = False
@@ -114,7 +113,7 @@ def all_changes(pt, changes):
 
                 for est in pt.estimates:
                     if est.ix == None: #--new item
-                        values = (pt.serialno, pt.courseno0, est.number,
+                        values = (pt.serialno, est.courseno, est.number,
                         est.itemcode, est.description,
                         est.fee, est.ptfee, est.feescale, est.csetype,
                         est.dent, localsettings.operator)
@@ -122,12 +121,6 @@ def all_changes(pt, changes):
                         estimate_commands["insertions"].append(
                             (ESTS_INS_QUERY, values, est.tx_hashes)
                             )
-
-                        #for tx_hash in est.tx_hashes:
-                        #    values = (tx_hash,)
-                        #    sqlcommands["estimate_insertions"].append(
-                        #    (EST_LINK_INS_QUERY, values)
-                        #    )
 
                     elif est.ix in oldEstDict.keys():
                         oldEst = oldEstDict[est.ix]
@@ -162,11 +155,6 @@ def all_changes(pt, changes):
                                 query += 'dent=%d,'
                                 values.append(est.dent)
 
-                            #obsolete code.. completed is now in tx_hash!
-                            #if oldEst.completed != est.completed:
-                            #    query += 'completed=%s,'
-                            #   values.append(est.completed)
-
                             query += ('modified_by = %s, '
                             'time_stamp = NOW() where ix = %s')
 
@@ -177,15 +165,18 @@ def all_changes(pt, changes):
                             (query, tuple(values), est))
 
                         oldEstDict.pop(est.ix)
+
+
                 #-- all that is left in oldEstDict now are items which
                 #-- have been removed.
-                #-- so remove from database also.
-                for ix in oldEstDict.keys():
+                #-- so remove from database if they are current course!
+                for ix, old_est in oldEstDict.iteritems():
                     #--removed
-                    values = (ix,)
-                    deletions = sqlcommands["estimate_deletions"]
-                    deletions.append((EST_DEL_QUERY, values))
-                    deletions.append((EST_LINK_DEL_QUERY, values))
+                    if old_est.courseno == pt.courseno0:
+                        values = (ix,)
+                        deletions = sqlcommands["estimate_deletions"]
+                        deletions.append((EST_DEL_QUERY, values))
+                        deletions.append((EST_LINK_DEL_QUERY, values))
 
             elif change == "treatment_course": #patient.CURRTRT_ATTS:
                 for trt_att in CURRTRT_ATTS:
@@ -218,14 +209,14 @@ def all_changes(pt, changes):
         sqlcommands['currtrtmt'] = ((query, values),)
 
     if sqlcommands != {} or estimate_commands != {}:
+        LOGGER.debug(sqlcommands)
+        LOGGER.debug(estimate_commands)
         db = connect()
         cursor = db.cursor()
         tables = sqlcommands.keys()
         for table in tables:
             for query, values in sqlcommands[table]:
                 try:
-                    LOGGER.debug(query)
-                    LOGGER.debug(values)
                     cursor.execute(query, values)
                 except Exception as exc:
                     LOGGER.exception("error executing query %s"% query)

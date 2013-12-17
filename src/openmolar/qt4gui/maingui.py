@@ -3086,6 +3086,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         Adds ALL tooth items to the estimate.
         prompts the user to confirm tooth treatment fees
         '''
+        if not self.pt.underTreatment:
+            self.advise(
+            _("Recalculate Estimate is for active courses only"), 1)
+            return
         result=QtGui.QMessageBox.question(self, "Confirm",
         u"%s<hr /><i>(%s)</i>"% (
         _("Scrap the estimate and re-price everything?"),
