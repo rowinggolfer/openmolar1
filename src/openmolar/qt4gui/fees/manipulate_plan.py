@@ -321,7 +321,8 @@ def plan_viewer_context_menu(om_gui, att, values, point):
     provides and handles a context menu for the ui.plan_listView and
     the ui.planChartWidget
     '''
-    qmenu = QtGui.QMenu(om_gui)
+    if len(values) == 0:
+        return
 
     if len(values) > 1:
         treatments = []
@@ -330,6 +331,7 @@ def plan_viewer_context_menu(om_gui, att, values, point):
         complete_txs(om_gui, treatments, confirm_multiples=True)
         return
 
+    qmenu = QtGui.QMenu(om_gui)
     value = values[0]
     message = "%s %s %s"% (_("Complete"), att, value)
     complete_action = QtGui.QAction(message, om_gui)
@@ -357,7 +359,8 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
     provides and handles a context menu for the ui.completed_listView and
     the ui.completedChartWidget
     '''
-    qmenu = QtGui.QMenu(om_gui)
+    if len(values) == 0:
+        return
 
     if len(values) > 1:
         treatments = []
@@ -366,6 +369,7 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
         reverse_txs(om_gui, treatments, confirm_multiples=True)
         return
 
+    qmenu = QtGui.QMenu(om_gui)
     value = values[0]
 
     if att == "exam":
