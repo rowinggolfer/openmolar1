@@ -513,6 +513,7 @@ class patient(object):
             est = estimates.Estimate()
 
             est.ix = ix
+            est.courseno = row[11]
             est.number = row[1]
             est.itemcode = row[2]
             est.description = row[3]
