@@ -16,6 +16,7 @@ from openmolar.settings import allowed
 from openmolar.qt4gui.compiled_uis import Ui_toothProps
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs.crown_choice_dialog import CrownChoiceDialog
+from openmolar.qt4gui.dialogs.post_choice_dialog import PostChoiceDialog
 from openmolar.qt4gui.dialogs.implant_choice_dialog import ImplantChoiceDialog
 from openmolar.qt4gui.dialogs.chart_tx_choice_dialog import ChartTxChoiceDialog
 from openmolar.qt4gui.dialogs.bridge_dialog import BridgeDialog
@@ -254,6 +255,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.selectedTooth = ""
         self.comboboxes = []
         self.crown_but = QtGui.QPushButton(_("Crowns"))
+        self.post_but = QtGui.QPushButton(_("Posts"))
         self.bridge_but = QtGui.QPushButton(_("Bridges"))
         self.implant_but = QtGui.QPushButton(_("Implants"))
         self.fs_but = QtGui.QPushButton(_("Fissure Sealants"))
@@ -266,6 +268,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         vlayout.addWidget(self.fs_but)
         vlayout.addWidget(self.endo_but)
         vlayout.addWidget(self.crown_but)
+        vlayout.addWidget(self.post_but)
         vlayout.addWidget(self.bridge_but)
         vlayout.addWidget(self.surgical_but)
         vlayout.addWidget(self.implant_but)
@@ -501,6 +504,12 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
             self.lineEdit.addItem(dl.chosen_shortcut)
             self.lineEdit.additional()
 
+    def posts(self):
+        dl = PostChoiceDialog(self.is_Static, self.om_gui)
+        if dl.exec_():
+            self.lineEdit.addItem(dl.chosen_shortcut)
+            self.lineEdit.additional()
+
     def bridge(self):
         dl = BridgeDialog(self.om_gui)
         if dl.exec_():
@@ -601,6 +610,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
 
         self.crown_but.clicked.connect(self.crown)
+        self.post_but.clicked.connect(self.posts)
         self.bridge_but.clicked.connect(self.bridge)
         self.implant_but.clicked.connect(self.implant_but_clicked)
 

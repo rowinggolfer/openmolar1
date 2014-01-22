@@ -82,6 +82,7 @@ class FeeTables(object):
         self.tables = OrderedDict()
         self.warnings = []
         self._ui_crown_chart_buttons = None
+        self._ui_post_chart_buttons = None
         self._ui_implant_chart_buttons = None
         self._ui_fs_chart_buttons = None
         self._ui_endo_chart_buttons = None
@@ -125,6 +126,15 @@ class FeeTables(object):
         if self._ui_crown_chart_buttons is None:
             self._ui_crown_chart_buttons = self.get_all_buts("crown_buttons")
         return self._ui_crown_chart_buttons
+
+    @property
+    def ui_post_chart_buttons(self):
+        '''
+        A list of unique post types from all tables.
+        '''
+        if self._ui_post_chart_buttons is None:
+            self._ui_post_chart_buttons = self.get_all_buts("post_buttons")
+        return self._ui_post_chart_buttons
 
     @property
     def ui_implant_chart_buttons(self):
@@ -233,7 +243,8 @@ class FeeTable(object):
             "implant_buttons":[],
             "fs_buttons":[],
             "endo_buttons":[],
-            "surgical_buttons":[]
+            "surgical_buttons":[],
+            "post_buttons":[],
             }
 
     def __repr__(self):
@@ -369,6 +380,9 @@ class FeeTable(object):
 
         for button in self.get_ui_buttons("crown_chart_button"):
             self.ui_lists["crown_buttons"].append(button)
+
+        for button in self.get_ui_buttons("post_chart_button"):
+            self.ui_lists["post_buttons"].append(button)
 
         for button in self.get_ui_buttons("fs_chart_button"):
             self.ui_lists["fs_buttons"].append(button)
