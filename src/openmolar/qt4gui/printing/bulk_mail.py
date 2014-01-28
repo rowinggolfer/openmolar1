@@ -8,9 +8,12 @@
 
 from __future__ import division
 
+import logging
 import os
 import re
 import sys
+
+LOGGER = logging.getLogger("openmolar")
 
 from PyQt4 import QtCore, QtGui
 
@@ -27,7 +30,7 @@ _("We are writing to inform you that your dental examination is now due."),
 _("Please contact the surgery to arrange an appointment. *")
 )
 
-FAMILY_BODY = '''%s\n\n%s'''%(
+FAMILY_BODY = '''%s\n%s'''%(
 _("We are writing to inform you that your dental examinations are now due."),
 _("Please contact the surgery to arrange suitable appointments. *"),
 )
@@ -41,34 +44,45 @@ please accept our apologies and ignore this letter.''')
 
 
 try:
-    f = open(os.path.join(
-        localsettings.localFileDirectory, "recall_footer.txt"), "r")
-    PROMO_TEXT = f.read()
+    filepath = os.path.join(localsettings.localFileDirectory,
+        "recall_footer.txt")
+    f = open(filepath, "r")
+    CUSTOM_TEXT = f.read()
     f.close()
 except IOError:
-    print "no recall footer found"
-    PROMO_TEXT= ""
+    LOGGER.warning("no recall footer found in '%s'"% filepath)
+    CUSTOM_TEXT= ""
+
+try:
+    filepath = os.path.join(localsettings.localFileDirectory,
+        "recall_postscript.txt")
+    f = open(filepath, "r")
+    PS_TEXT = f.read()
+    f.close()
+except IOError:
+    LOGGER.exception("no recall ps found in %s"% filepath)
+    PS_TEXT= ""
 
 
 class OMLetter(object):
     def __init__(self, recipients):
         self.recipients = recipients
-        
-    
+
+
     @property
     def head(self):
         return self.recipients[0]
-    
+
     @property
     def recd(self):
         return self.head.recd
-    
+
     @property
     def _topline(self):
         head = self.head
         line_ = u"%s %s %s"% (
             head.title,
-            head.fname.strip(), 
+            head.fname.strip(),
             head.sname.strip()
             )
         for r in self.recipients[1:]:
@@ -80,65 +94,65 @@ class OMLetter(object):
         if ", " in line_:
             i = line_.rindex(", ")
             line_ = "%s and%s"% (line_[:i], line_[i+1:])
-        
+
         return line_
-    
+
     @property
     def address(self):
         head = self.head
-            
+
         address_ = u'%s\n%s\n%s\n%s\n%s\n%s\n%s'% (
             self._topline,
-            head.addr1.title(), 
+            head.addr1.title(),
             head.addr2.title(),
-            head.addr3.title(), 
+            head.addr3.title(),
             head.town,
-            head.county, 
+            head.county,
             head.pcde)
 
         while re.search(" *\n *\n", address_):
             address_ = re.sub(" *\n\n", "\n", address_)
-        
+
         return address_
-    
+
     @property
     def subjects(self):
         subjects_ = []
         for r in self.recipients:
             subjects_.append("%s %s %s - %s %s"% (
-                r.title, r.fname, r.sname, 
+                r.title, r.fname, r.sname,
                 _("our ref"), r.serialno))
         return subjects_
-    
+
     @property
     def subject_text(self):
         text = ""
         for subject in self.subjects:
             text += "%s\n"% subject
         return text
-    
+
     @property
     def is_family(self):
         return len(self.recipients) > 1
-    
+
     @property
     def salutation(self):
-        
+
         if self.is_family:
             salut_ = _("Patients")
         elif self.head.age < 18:
             salut_ = self.head.fname
         else:
             salut_ = "%s %s"% (self.head.title, self.head.sname.strip())
-            
+
         return u"%s %s,"% (SALUTATION, salut_)
-    
+
     @property
     def text(self):
         if self.is_family:
             return FAMILY_BODY
         return BODY
-        
+
 class TreeItem(object):
     def __init__(self, data, parent=None):
         self.parentItem = parent
@@ -407,7 +421,10 @@ class bulkMails(object):
         font = QtGui.QFont("Sans", 11)
         fm = QtGui.QFontMetrics(font)
         line_height = fm.height()
-        
+
+        italic_font = QtGui.QFont(font)
+        italic_font.setItalic(True)
+
         sigFont = QtGui.QFont("URW Chancery L",15)
         sigFont.setBold(True)
         sig_font_height = QtGui.QFontMetrics(sigFont).height()*1.2
@@ -417,20 +434,20 @@ class bulkMails(object):
 
         LEFT = 60
         RIGHT = 80
-        TOP = 130
+        TOP = 170
         RECT_WIDTH = pageRect.width() - (LEFT + RIGHT)
 
-        ADDRESS_LEFT = 100
-        ADDRESS_HEIGHT = 100
+        ADDRESS_LEFT = 80
+        ADDRESS_HEIGHT = 140
         FOOTER_HEIGHT = 150
-        DATE_HEIGHT = 3 * line_height
+        DATE_HEIGHT = 1 * line_height
         BODY_HEIGHT = pageRect.height() - (
             TOP + ADDRESS_HEIGHT + FOOTER_HEIGHT + DATE_HEIGHT)
 
         addressRect = QtCore.QRectF(ADDRESS_LEFT, TOP,
                                     300, ADDRESS_HEIGHT)
 
-        dateRect = QtCore.QRectF(LEFT, addressRect.bottom(), 
+        dateRect = QtCore.QRectF(LEFT, addressRect.bottom(),
             RECT_WIDTH, DATE_HEIGHT)
 
         bodyRect = QtCore.QRectF(LEFT, dateRect.bottom(),
@@ -468,9 +485,9 @@ class bulkMails(object):
             ##address
             painter.drawText(addressRect, letter.address, option)
             if DEBUG:
-                painter.drawRect(addressRect)
+                painter.drawRect(addressRect.adjusted(2,2,-2,-2))
             ##date
-            
+
             if self.use_given_recall_date:
                 pdate = letter.recd
             else:
@@ -482,95 +499,107 @@ class bulkMails(object):
                 pdate_str = "%s %s"% (localsettings.monthName(pdate),
                 pdate.year)
 
-            painter.drawText(dateRect, pdate_str, 
+            painter.drawText(dateRect, pdate_str,
                 QtGui.QTextOption(QtCore.Qt.AlignRight))
             if DEBUG:
-                painter.drawRect(dateRect)
-
+                painter.drawRect(dateRect.adjusted(2,2,-2,-2))
             ##salutation
             rect = bodyRect.adjusted(
                 0, 0, 0, 2*line_height- bodyRect.height())
             painter.drawText(rect, letter.salutation, option)
             if DEBUG:
-                painter.drawRect(rect)
-            
+                painter.drawRect(rect.adjusted(2,2,-2,-2))
+
             ##subject
-            option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
+            #option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             font.setBold(True)
             painter.setFont(font)
-            subject_count = len(letter.subjects) + 1            
+            subject_count = len(letter.subjects) + 1
             rect = QtCore.QRectF(
                 rect.bottomLeft().x(), rect.bottomLeft().y(),
                 bodyRect.width(), line_height * subject_count)
-            painter.drawText(rect, letter.subject_text, option)
+
+            subj_rect = rect.adjusted(50,0,-50,0)
+            painter.drawText(subj_rect, letter.subject_text, option)
             if DEBUG:
-                painter.drawRect(rect)
+                painter.drawRect(subj_rect.adjusted(2,2,-2,-2))
             font.setBold(False)
             painter.setFont(font)
-            
+
             ##body
-            option = QtGui.QTextOption(QtCore.Qt.AlignLeft)
-            line_count = letter.text.count("\n")+3            
+            line_count = letter.text.count("\n")+3
             body_rect = QtCore.QRectF(
-                rect.bottomLeft().x(), rect.bottomLeft().y(),
+                rect.bottomLeft().x(), subj_rect.bottomLeft().y(),
                 bodyRect.width(), line_height * line_count)
-            
+
             painter.drawText(body_rect, letter.text, option)
             if DEBUG:
-                painter.drawRect(body_rect)
+                painter.drawRect(body_rect.adjusted(2,2,-2,-2))
+
+            ##custom
+            line_count = CUSTOM_TEXT.count("\n") + 5
+            custom_rect = QtCore.QRectF(
+                body_rect.bottomLeft().x(), body_rect.bottomLeft().y(),
+                bodyRect.width(), line_height * line_count)
+
+            painter.setFont(font)
+            painter.drawText(custom_rect, CUSTOM_TEXT, option)
+
+            if DEBUG:
+                painter.drawRect(custom_rect.adjusted(2,2,-2,-2))
 
             ##signature
-            #place signature immediately after the body text (which will vary)
-            
-            sigRect = QtCore.QRectF(
-                body_rect.bottomLeft().x(), body_rect.bottomLeft().y(),
-                body_rect.width(), line_height * 2)
-            painter.drawText(sigRect, SIGN_OFF, option)
-            if DEBUG:
-                painter.drawRect(sigRect)
+            #place signature immediately after the body
+            # + custom text (which will vary)
 
-            sigRect = sigRect.adjusted(0, sigRect.height(), 0, sig_font_height)
-            painter.setFont(sigFont)
-            painter.drawText(sigRect, SIGNATURE, option)
+            sign_off_rect = QtCore.QRectF(
+                custom_rect.bottomLeft().x(), custom_rect.bottomLeft().y(),
+                body_rect.width(), line_height * 1.5)
+            painter.drawText(sign_off_rect, SIGN_OFF, option)
             if DEBUG:
-                painter.drawRect(sigRect)
-            
-            option = QtGui.QTextOption(QtCore.Qt.AlignVCenter)
-            
-            ##promo
-            promoRect = QtCore.QRectF(
-                QtCore.QPointF(
-                    sigRect.bottomLeft().x(), sigRect.bottomLeft().y()),
-                QtCore.QPointF(
-                    footerRect.topRight().x(), footerRect.topRight().y())
-                )
-            promoRect = promoRect.adjusted(50, 30, -50, -30)
+                painter.drawRect(sign_off_rect.adjusted(2,2,-2,-2))
+
+            sig_rect = sign_off_rect.adjusted(
+                20, sign_off_rect.height(), 0, sig_font_height)
+            painter.save()
+            painter.setFont(sigFont)
+            painter.drawText(sig_rect, SIGNATURE, option)
+            if DEBUG:
+                painter.drawRect(sig_rect.adjusted(2,2,-2,-2))
+            painter.restore()
+
+            ##ps
+            line_count = PS_TEXT.count("\n")+2
+            ps_rect = QtCore.QRectF(
+                body_rect.bottomLeft().x(),
+                sig_rect.bottomLeft().y() + line_height,
+                bodyRect.width(), line_height * line_count)
+
             painter.setFont(font)
-            painter.drawText(promoRect, PROMO_TEXT, option)
-            promoRect = promoRect.adjusted(-10, -10, 10, 10)
-            
-            #if DEBUG:
-            painter.drawRect(promoRect)
-            
+            painter.drawText(ps_rect, PS_TEXT, option)
+
+            if DEBUG:
+                painter.drawRect(ps_rect.adjusted(2,2,-2,-2))
+
+            ##footer
             option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
-            
-            ##footer
+
             painter.drawLine(footerRect.topLeft(), footerRect.topRight())
-            font.setItalic(True)
-            painter.setFont(font)
+            painter.setFont(italic_font)
 
             painter.drawText(footerRect, FOOTER, option)
             if DEBUG:
-                painter.drawRect(footerRect)
+                painter.drawRect(footerRect.adjusted(2,2,-2,-2))
 
             ##fold marks
+            pen = QtGui.QPen(QtGui.QBrush(QtCore.Qt.black),3)
+            painter.setPen(pen)
             top_fold_y = pageRect.height()/3
             painter.drawLine(0, top_fold_y, 10, top_fold_y)
 
             top_fold_y = pageRect.height()*2/3
             painter.drawLine(0, top_fold_y, 10, top_fold_y)
-
 
             painter.restore()
 
