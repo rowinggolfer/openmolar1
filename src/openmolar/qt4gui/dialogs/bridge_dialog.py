@@ -31,10 +31,10 @@ from openmolar.qt4gui.dialogs.new_bridge_dialog import NewBridgeDialog
 LOGGER = logging.getLogger("openmolar")
 
 class BridgeDialog(BaseDialog):
-    chosen_treatments = []
     def __init__(self, om_gui = None):
         BaseDialog.__init__(self, om_gui)
 
+        self.chosen_treatments = []
         self.om_gui = om_gui
         message = _("Bridge Treatment Dialog")
         self.setWindowTitle(message)

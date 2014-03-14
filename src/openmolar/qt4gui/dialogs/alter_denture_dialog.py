@@ -192,7 +192,7 @@ class PageThree(_OptionPage):
         _OptionPage.__init__(self, parent)
         self.label.setText(_(
         "Please select teeth to be added to this denture"))
-        self.chartwidg = SimpleChartWidg(self)
+        self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         if parent.is_upper_input:
             self.chartwidg.disable_lowers()
         else:

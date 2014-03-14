@@ -163,7 +163,7 @@ class PageThree(_OptionPage):
         self.dl = parent
         self.label.setText(_(
         "Please select teeth which are to be used as retainers"))
-        self.chartwidg = SimpleChartWidg(self)
+        self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
 
@@ -188,7 +188,7 @@ class PageFour(_OptionPage):
         self.dl = parent
         self.label.setText(_(
         "Please select teeth which are to be used as pontics"))
-        self.chartwidg = SimpleChartWidg(self)
+        self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
 
@@ -216,10 +216,10 @@ class AcceptPage(_OptionPage):
         self.frame.hide()
 
 class NewBridgeDialog(ExtendableDialog):
-    chosen_properties = {}
     def __init__(self, om_gui = None):
         ExtendableDialog.__init__(self, om_gui)
 
+        self.chosen_properties = {}
         self.om_gui = om_gui
         message = (_("Chart/Plan a Bridge"))
         self.setWindowTitle(message)

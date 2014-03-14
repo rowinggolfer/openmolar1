@@ -32,7 +32,7 @@ class SimpleChartWidg(QtGui.QWidget):
     a custom widget to show a standard UK dental chart
     - allows for user navigation with mouse and/or keyboard
     '''
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, auto_ctrl_key=False):
         QtGui.QWidget.__init__(self, parent)
 
         self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
@@ -40,6 +40,7 @@ class SimpleChartWidg(QtGui.QWidget):
 
         self.grid = GRID
 
+        self.auto_ctrl_key = auto_ctrl_key
         self.selected = set()
         self.highlighted = [-1, -1]
         self.prevSelect = ()
@@ -131,7 +132,8 @@ class SimpleChartWidg(QtGui.QWidget):
     def mousePressEvent(self, event):
         '''overrides QWidget's mouse event'''
         shiftClick = (event.modifiers() == QtCore.Qt.ShiftModifier)
-        ctrlClick = (event.modifiers() == QtCore.Qt.ControlModifier)
+        ctrlClick = self.auto_ctrl_key or (
+            event.modifiers() == QtCore.Qt.ControlModifier)
         if not (shiftClick or ctrlClick):
             self.selected.clear()
         xOffset = self.width() / 16

@@ -171,7 +171,7 @@ class PageThree(_OptionPage):
         self.dl = parent
         self.label.setText(_(
         "Please select teeth which this denture is to replace"))
-        self.chartwidg = SimpleChartWidg(self)
+        self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
 
