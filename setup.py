@@ -91,6 +91,7 @@ setup(
                                     'html/images/*.*',
                                     'html/firstrun/*.*',] },
     data_files = [
+        ('/usr/share/man/man1', ['bin/openmolar.1']),
         ('/usr/share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
         ('/usr/share/applications', ['bin/openmolar.desktop']),],
     cmdclass = {'install_data': InstallData},
