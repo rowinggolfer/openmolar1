@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>943</width>
-    <height>642</height>
+    <width>964</width>
+    <height>631</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1071</width>
-         <height>585</height>
+         <width>964</width>
+         <height>592</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -463,8 +463,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>850</width>
-                      <height>477</height>
+                      <width>469</width>
+                      <height>462</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -1696,8 +1696,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>441</width>
-                      <height>423</height>
+                      <width>423</width>
+                      <height>421</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout">
@@ -1989,8 +1989,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>303</width>
-                      <height>471</height>
+                      <width>283</width>
+                      <height>470</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -2280,7 +2280,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>846</width>
+                      <width>739</width>
                       <height>456</height>
                      </rect>
                     </property>
@@ -2949,7 +2949,7 @@
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>180</width>
+                     <width>200</width>
                      <height>0</height>
                     </size>
                    </property>
@@ -2961,8 +2961,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>153</width>
-                      <height>224</height>
+                      <width>139</width>
+                      <height>212</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3079,7 +3079,7 @@ Note - this will not remove items which are currently there. </string>
                       <x>0</x>
                       <y>0</y>
                       <width>252</width>
-                      <height>376</height>
+                      <height>374</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -3512,7 +3512,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>92</height>
+                     <height>110</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4527,12 +4527,12 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    <number>3</number>
                   </property>
                   <item>
-                   <widget class="QPushButton" name="nhsRegs_pushButton">
+                   <widget class="QPushButton" name="documents_pushButton">
                     <property name="toolTip">
                      <string>Open A PDF of the latest NHS Regulations</string>
                     </property>
                     <property name="text">
-                     <string>NHS Documents</string>
+                     <string>Documents</string>
                     </property>
                     <property name="icon">
                      <iconset resource="../resources/resources.qrc">
@@ -4960,8 +4960,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>943</width>
-     <height>22</height>
+     <width>964</width>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
@@ -5053,6 +5053,8 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="actionSet_Clinician"/>
     <addaction name="actionSet_Assistant"/>
     <addaction name="actionSet_Surgery_Number"/>
+    <addaction name="separator"/>
+    <addaction name="actionDocuments_Dialog"/>
     <addaction name="separator"/>
     <addaction name="actionEdit_Phrasebooks"/>
    </widget>
@@ -5200,6 +5202,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionEdit_Phrasebooks">
    <property name="text">
     <string>Edit Phrasebooks</string>
+   </property>
+  </action>
+  <action name="actionDocuments_Dialog">
+   <property name="text">
+    <string>Documents Dialog</string>
    </property>
   </action>
  </widget>

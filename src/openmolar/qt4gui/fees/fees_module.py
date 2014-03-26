@@ -33,7 +33,6 @@ from openmolar.qt4gui.feescale_editor import FeescaleEditor
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs.payment_dialog import PaymentDialog
-from openmolar.qt4gui.compiled_uis import Ui_chooseDocument
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -267,68 +266,6 @@ def feeSearch(om_gui):
         else:
             message += " " + _("usercodes or descriptions")
         om_gui.advise(message, 1)
-
-def nhsRegsPDF(om_gui):
-    '''
-    I have some stored PDF documents
-    the user wants to see these
-    '''
-    Dialog = QtGui.QDialog(om_gui)
-    dl = Ui_chooseDocument.Ui_Dialog()
-    dl.setupUi(Dialog)
-    if Dialog.exec_():
-        if dl.tabWidget.currentIndex() == 0:
-            if dl.info_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "Dental_Information_Guide_2008_v4.pdf")
-            else:
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "scotNHSremuneration08.pdf")
-        elif dl.tabWidget.currentIndex() == 1:
-            if dl.info2009_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "Dental_Information_Guide_2009.pdf")
-            else:
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "scotNHSremuneration09.pdf")
-        elif dl.tabWidget.currentIndex() == 2:
-            if dl.info2010_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "information_guide_2010_v2.pdf")
-            else:
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "scotNHSremuneration10.pdf")
-        elif dl.tabWidget.currentIndex() == 3:
-            if dl.info2012_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "information-guide-2012-final.pdf")
-            elif dl.terms_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "ssi_20100208_en.pdf")
-            else:
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "scotNHSremuneration12.pdf")
-        else:
-            if dl.info2013_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "information-guide-2012-final.pdf")
-            elif dl.tooth_specific_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "guidance-issue-2-v17.pdf")
-            elif dl.terms2013_radioButton.isChecked():
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "ssi_20100208_en.pdf")
-            else:
-                doc = os.path.join(localsettings.wkdir, 'resources',
-                "scotNHSremuneration13.pdf")
-
-        try:
-            print "opening %s"% doc
-            localsettings.openPDF(doc)
-        except Exception as exc:
-            message = _("Error opening PDF file")
-            LOGGER.exception(message)
-            om_gui.advise(message, 2)
 
 def chooseFeescale(om_gui, i):
     '''

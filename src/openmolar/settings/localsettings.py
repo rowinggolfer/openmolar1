@@ -141,8 +141,12 @@ else:
     global_cflocation = '/etc/openmolar/openmolar.conf'
     localFileDirectory = os.path.join(os.environ.get("HOME"),".openmolar")
 
-cflocation = os.path.join(localFileDirectory,"openmolar.conf")
+cflocation = os.path.join(localFileDirectory, "openmolar.conf")
 TEMP_PDF = os.path.join(localFileDirectory, "temp.pdf")
+DOCS_DIRECTORY = os.path.join(localFileDirectory, "documents")
+
+if not os.path.exists(DOCS_DIRECTORY):
+    os.makedirs(DOCS_DIRECTORY)
 
 #this is updated if correct password is given
 successful_login = False
@@ -179,9 +183,10 @@ def about():
 OpenMolar - open Source dental practice management software.<br />
 Version %s<br />
 Client Schema Version is %s, DataBase is at version %s<br /><hr />
-Copyright (C) 2009  Neil A. Wallace B.Ch.D.<br />
-sourcecode available at <a href="http://launchpad.net/openmolar">
-"http://www.openmolar.com"</a>.
+Copyright (C) 2009-2014 Neil A. Wallace B.Ch.D.<br />
+Project Homepage 
+<a href="http://www.openmolar.com">
+http://www.openmolar.com</a>.
 </p>
 Thanks to <a href="http://rfquerin.org">Richard Querin</a>
 for the wonderful icon and Logo.'''%(

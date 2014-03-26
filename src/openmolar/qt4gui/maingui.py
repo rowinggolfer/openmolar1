@@ -85,6 +85,7 @@ from openmolar.qt4gui.dialogs.nhs_forms_config_dialog \
     import NHSFormsConfigDialog
 from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog \
     import AdvancedTxPlanningDialog
+from openmolar.qt4gui.dialogs.document_dialog import DocumentDialog
 
 #secondary applications
 from openmolar.qt4gui.tools import new_setup
@@ -1869,11 +1870,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         fees_module.feetester(self)
 
-    def nhsRegs_pushButton_clicked(self):
+    def documents_pushButton_clicked(self):
         '''
         user should be offered a PDF of the current regulations
         '''
-        fees_module.nhsRegsPDF(self)
+        dl = DocumentDialog()
+        dl.exec_()
 
     def feeScale_clicked(self, model_index):
         '''
@@ -2552,6 +2554,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.SIGNAL("clicked()"), self.childsmile_button_clicked)
 
         self.ui.actionSurgery_Mode.toggled.connect(self.set_surgery_mode)
+        self.ui.actionDocuments_Dialog.triggered.connect(
+            self.documents_pushButton_clicked)
 
     def signals_admin(self):
         #admin frame
@@ -2933,8 +2937,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.feeCompress_radioButton,
         QtCore.SIGNAL("clicked()"), self.feeExpand_radiobuttons_clicked)
 
-        QtCore.QObject.connect(self.ui.nhsRegs_pushButton,
-        QtCore.SIGNAL("clicked()"), self.nhsRegs_pushButton_clicked)
+        self.ui.documents_pushButton.clicked.connect(
+            self.documents_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.feeSearch_lineEdit,
         QtCore.SIGNAL("returnPressed()"), self.feeSearch_lineEdit_edited)

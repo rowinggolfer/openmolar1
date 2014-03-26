@@ -1,3 +1,10 @@
+openmolar (0.5.0-beta18-0~__DIST__0) __DIST__; urgency=low
+
+  * New Upstream (removes pdf files from resources)
+
+ -- Neil Wallace <rowinggolfer@googlemail.com>  Wed, 26 Mar 2014 17:18:44 +0000
+
+
 openmolar (0.5.0-beta17-0~__DIST__0) __DIST__; urgency=low
 
   * New Upstream

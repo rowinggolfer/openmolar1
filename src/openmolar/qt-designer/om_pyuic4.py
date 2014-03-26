@@ -62,9 +62,13 @@ def compile_ui(ui_fname, outdir=""):
 
     logger.info("compiling %s"% ui_fname)
 
-    f = open(pyfile,"w")
-    uic.compileUi(ui_fname, f, execute=MAKE_EX)
-    f.close()
+    try:
+    	f = open(pyfile,"w")
+    	uic.compileUi(ui_fname, f, execute=MAKE_EX)
+    except IOError: #ui has been removed by git?
+        pass
+    finally:    
+        f.close()
 
     f = open(pyfile,"r")
     data = f.read()
