@@ -1,10 +1,24 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+###############################################################################
+##                                                                           ##
+##  Copyright 2009-2014,  Neil Wallace <neil@openmolar.com>                  ##
+##                                                                           ##
+##  This program is free software: you can redistribute it and/or modify     ##
+##  it under the terms of the GNU General Public License as published by     ##
+##  the Free Software Foundation, either version 3 of the License, or        ##
+##  (at your option) any later version.                                      ##
+##                                                                           ##
+##  This program is distributed in the hope that it will be useful,          ##
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
+##  GNU General Public License for more details.                             ##
+##                                                                           ##
+##  You should have received a copy of the GNU General Public License        ##
+##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
+##                                                                           ##
+###############################################################################
 
 from copy import deepcopy
 import datetime
@@ -670,11 +684,10 @@ class patient(object):
         self.money3 = 0
         self.money8 = 0
 
-    @property
-    def nhs_claims(self):
+    def nhs_claims(self, completed_only=True):
         claims = []
         for est in self.estimates:
-            if est.csetype == "N" and est.completed == 2:
+            if est.csetype == "N" and (not completed_only or est.completed == 2):
                 #yield est
                 claims.append(est)
         return claims

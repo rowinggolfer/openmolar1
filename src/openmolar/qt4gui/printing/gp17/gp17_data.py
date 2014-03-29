@@ -335,7 +335,10 @@ class DuckPatient(object):
     bpe = [""]
     under_capitation = False
     estimates = []
-    nhs_claims = []
+
+    def nhs_claims(self, completed=True):
+        return []
+        
     def __init__(self):
         self.treatment_course = DuckCourse()
 
@@ -359,6 +362,7 @@ class Gp17Data(object):
             self.misc_dict = test_misc_dict
 
         self.exclusions = []
+        self.completed_only = True
 
     def format_date(self, date):
         '''
@@ -538,7 +542,7 @@ class Gp17Data(object):
         else:
             allowed_claim_codes = CONTINUING_CARE_SIMPLE
 
-        for item in self.pt.nhs_claims:
+        for item in self.pt.nhs_claims(self.completed_only):
             if item.itemcode in allowed_claim_codes:
                 try:
                     items[item.itemcode] += item.number
@@ -573,7 +577,7 @@ class Gp17Data(object):
         allowed_claim_codes = TOOTH_SPECIFIC_CODES
 
         #iterate over the estimates
-        for item in self.pt.nhs_claims:
+        for item in self.pt.nhs_claims(self.completed_only):
             if item.itemcode in allowed_claim_codes:
                 for hash_ in item.tx_hashes:
                     att, tx = self.pt.get_tx_from_hash(hash_)

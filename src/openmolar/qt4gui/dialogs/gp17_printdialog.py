@@ -28,10 +28,10 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.printing.gp17.gp17_data import Gp17Data
 from openmolar.qt4gui.printing.gp17 import GP17Front, GP17iFront, GP17iBack
 
-class ChooseFormWidget(QtGui.QWidget):
+class ChooseFormWidget(QtGui.QGroupBox):
     FORMS = (GP17Front, GP17iFront, GP17iBack)
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QGroupBox.__init__(self, _("Form options"), parent)
         layout = QtGui.QVBoxLayout(self)
 
         self.checkboxes = []
@@ -49,7 +49,7 @@ class ChooseFormWidget(QtGui.QWidget):
         layout.addWidget(self.image_checkbox)
 
     def sizeHint(self):
-        return QtCore.QSize(300,100)
+        return QtCore.QSize(200,100)
 
     @property
     def chosen_forms(self):
@@ -57,6 +57,26 @@ class ChooseFormWidget(QtGui.QWidget):
             if self.checkboxes[i].isChecked():
                 yield form
 
+class CourseChoiceWidget(QtGui.QWidget):
+    DEFAULT = 0
+    PRIOR_APPROVAL = 1
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        layout = QtGui.QHBoxLayout(self)
+        
+        cb = QtGui.QRadioButton(_("Completed Treatment"))
+        self.pa_cb = QtGui.QRadioButton(_("Prior Approval"))
+
+        cb.setChecked(True)
+        
+        layout.addWidget(cb)
+        layout.addWidget(self.pa_cb)
+        
+    @property
+    def chosen(self):
+        if self.pa_cb.isChecked():
+            return self.PRIOR_APPROVAL
+        return self.DEFAULT
 
 class GP17PrintDialog(ExtendableDialog):
     def __init__(self, patient, parent=None):
@@ -65,18 +85,24 @@ class GP17PrintDialog(ExtendableDialog):
         self.pt = patient
         self.data = Gp17Data(patient)
 
-        title = _("GP17 Dialog")
-        self.setWindowTitle(title)
-        label = QtGui.QLabel(u"<b>%s</b>"% title)
-        label.setAlignment(QtCore.Qt.AlignCenter)
+        self.setWindowTitle(_("GP17 Dialog"))
 
+        label = QtGui.QLabel("<b>%s</b>"% _("Print a GP17 Form"))
+        label.setAlignment(QtCore.Qt.AlignCenter)
+        self.insertWidget(label)
 
         self.dentist_combobox = QtGui.QComboBox()
         self.dentist_combobox.addItems(localsettings.activedents)
 
+        self.course_choice_widget = CourseChoiceWidget(self)
+
         frame = QtGui.QFrame()
-        layout = QtGui.QFormLayout(frame)
-        layout.addRow(_("Use this dentists stamp?"), self.dentist_combobox)
+
+        layout = QtGui.QGridLayout(frame)
+        label = QtGui.QLabel(_("Use this dentists stamp?"))
+        layout.addWidget(label, 0, 0)
+        layout.addWidget(self.dentist_combobox, 0, 1)
+        layout.addWidget(self.course_choice_widget, 1, 0, 1, 2)
 
         self.chart_cb = QtGui.QCheckBox(_("Chart"))
         self.bpe_cb = QtGui.QCheckBox(_("BPE"))
@@ -87,29 +113,36 @@ class GP17PrintDialog(ExtendableDialog):
 
         self.charting_gb = QtGui.QGroupBox(_("Include Chart Details"))
         self.charting_gb.setCheckable(True)
-        layout = QtGui.QVBoxLayout(self.charting_gb)
-        layout.addWidget(self.chart_cb)
-        layout.addWidget(self.bpe_cb)
+
+        gb_layout = QtGui.QVBoxLayout(self.charting_gb)
+        gb_layout.addWidget(self.chart_cb)
+        gb_layout.addWidget(self.bpe_cb)
 
         self.course_gb = QtGui.QGroupBox(_("Include Course Details"))
         self.course_gb.setCheckable(True)
-        layout = QtGui.QVBoxLayout(self.course_gb)
-        layout.addWidget(self.accd_cb)
-        layout.addWidget(self.cmpd_cb)
-        layout.addWidget(self.tx_cb)
 
-        self.insertWidget(label)
+        gb_layout = QtGui.QVBoxLayout(self.course_gb)
+        gb_layout.addWidget(self.accd_cb)
+        gb_layout.addWidget(self.cmpd_cb)
+        gb_layout.addWidget(self.tx_cb)
+
+        self.choose_form_widget = ChooseFormWidget(self)
+
+        adv_widg = QtGui.QFrame()
+        layout = QtGui.QGridLayout(adv_widg)
+
+        layout.addWidget(self.charting_gb,0,0)
+        layout.addWidget(self.course_gb,1,0)
+        layout.addWidget(self.choose_form_widget, 0,1,2,1)
+
+        self.set_advanced_but_text(_("Options"))
+        self.add_advanced_widget(adv_widg)
+
         self.insertWidget(frame)
-        self.insertWidget(self.charting_gb)
-        self.insertWidget(self.course_gb)
 
         self.set_dentist()
         self.set_default_values()
         self.enableApply()
-
-        self.choose_form_widget = ChooseFormWidget(self)
-        self.set_advanced_but_text(_("select form(s) to print"))
-        self.add_advanced_widget(self.choose_form_widget)
 
         self.course_gb.toggled.connect(self.toggle_cbs)
         self.charting_gb.toggled.connect(self.toggle_cbs)
@@ -145,7 +178,7 @@ class GP17PrintDialog(ExtendableDialog):
         self.tx_cb.setChecked(True)
 
     def sizeHint(self):
-        return QtCore.QSize(300,350)
+        return QtCore.QSize(450,150)
 
     @property
     def chosen_forms(self):
@@ -167,9 +200,14 @@ class GP17PrintDialog(ExtendableDialog):
     def chosen_dentist(self):
         return localsettings.ops_reverse.get(self.dent_inits)
 
+    @property
+    def prior_approval(self):
+        return self.course_choice_widget.chosen == \
+        self.course_choice_widget.PRIOR_APPROVAL
+
     def apply(self):
         '''
-        todo - apply changes to the gp17 data object
+        applies user specified changes to the gp17 data object
         '''
         self.data.dentist = self.chosen_dentist
 
@@ -182,6 +220,8 @@ class GP17PrintDialog(ExtendableDialog):
         ):
             if not cb.isChecked():
                 self.data.exclusions.append(att)
+        
+        self.data.completed_only = not self.prior_approval
 
     def exec_(self):
         if ExtendableDialog.exec_(self):
