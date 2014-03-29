@@ -36,7 +36,7 @@ class AutoAddressDialog(BaseDialog):
         self.setWindowTitle(title)
         label = QtGui.QLabel(u"<b>%s</b>"% title)
         label.setAlignment(QtCore.Qt.AlignCenter)
-        
+
         frame = QtGui.QFrame()
         layout = QtGui.QGridLayout(frame)
 
@@ -63,7 +63,7 @@ class AutoAddressDialog(BaseDialog):
         self.county_le = QtGui.QLineEdit()
         self.pcde_le = QtGui.QLineEdit()
         self.tel1_le = QtGui.QLineEdit()
-        
+
         self.addr1_cb = QtGui.QCheckBox()
         self.addr2_cb = QtGui.QCheckBox()
         self.addr3_cb = QtGui.QCheckBox()
@@ -71,10 +71,10 @@ class AutoAddressDialog(BaseDialog):
         self.county_cb = QtGui.QCheckBox()
         self.pcde_cb = QtGui.QCheckBox()
         self.tel1_cb = QtGui.QCheckBox()
-        
+
         self.old_header_label = QtGui.QLabel(u"%s"% _("Existing"))
         new_header_label = QtGui.QLabel(u"%s"% _("New"))
-        
+
 
         rows = (
             (label_1, self.old_addr1_le, self.addr1_le, self.addr1_cb),
@@ -95,23 +95,23 @@ class AutoAddressDialog(BaseDialog):
             layout.addWidget(new_le, row+1, 2)
             layout.addWidget(cb, row+1, 3)
             cb.setChecked(True)
-            
-            
 
-        
+
+
+
         self.insertWidget(label)
         self.insertWidget(frame)
 
         self.load_values()
         self.enableApply()
-        
+
     def load_values(self):
         '''
         default NP has been pressed - so apply the address and surname
         from the previous patient
         '''
         dup_tup = localsettings.LAST_ADDRESS
-        
+
         self.addr1_le.setText(dup_tup[1])
         self.addr2_le.setText(dup_tup[2])
         self.addr3_le.setText(dup_tup[3])
@@ -119,7 +119,7 @@ class AutoAddressDialog(BaseDialog):
         self.county_le.setText(dup_tup[5])
         self.pcde_le.setText(dup_tup[6])
         self.tel1_le.setText(dup_tup[7])
-        
+
         self.old_addr1_le.setText(self.om_gui.ui.addr1Edit.text())
         self.old_addr2_le.setText(self.om_gui.ui.addr2Edit.text())
         self.old_addr3_le.setText(self.om_gui.ui.addr3Edit.text())
@@ -162,6 +162,5 @@ if __name__ == "__main__":
     mw = QtGui.QWidget()
 
     dl = AutoAddressDialog(mw)
-    
+
     print (dl.exec_())
-        

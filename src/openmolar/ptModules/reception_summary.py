@@ -50,8 +50,8 @@ def header_html(pt):
     else:
         html_ = u"<h3>Last course of treatment</h3>completed %s"% (
             localsettings.readableDate(pt.treatment_course.cmpd))
-    
-    return html_ 
+
+    return html_
 
 def treatment_html(pt):
     return u"<h4>Treatments (courseno %s)</h4>%s"% (
@@ -72,7 +72,7 @@ def html(pt):
 if __name__ == '__main__':
     from openmolar.dbtools.patient_class import patient
     localsettings.initiate()
-    
+
     pt = patient(1314)
     html = html(pt)
     html = html.encode("ascii","replace")

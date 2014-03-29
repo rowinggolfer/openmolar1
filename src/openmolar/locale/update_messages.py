@@ -32,6 +32,5 @@ def main(PATH):
     print "finished"
 
 if __name__ == "__main__":
-    
+
     main(os.getcwd())
-    

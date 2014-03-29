@@ -19,26 +19,26 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         self.dnt1_comboBox.addItems(localsettings.activedents)
         try:
-            pos=localsettings.activedents.index(dnt1)                                      
+            pos=localsettings.activedents.index(dnt1)
         except ValueError:
             pos=-1
         self.dnt1_comboBox.setCurrentIndex(pos)
         self.dnt2_comboBox.addItems(localsettings.activedents)
         try:
-            pos=localsettings.activedents.index(dnt2)                                     
+            pos=localsettings.activedents.index(dnt2)
         except ValueError:
             pos=-1
         self.dnt2_comboBox.setCurrentIndex(pos)
         self.cseType_comboBox.addItems(localsettings.csetypes)
         try:
-            pos=localsettings.csetypes.index(csetype)  
+            pos=localsettings.csetypes.index(csetype)
         except ValueError:
             pos=-1
         self.cseType_comboBox.setCurrentIndex(pos)
-        
+
     def getInput(self):
         '''
-        called to show and execute the dialog until 
+        called to show and execute the dialog until
         sensible values are returned
         '''
         while True:
@@ -48,13 +48,13 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
                 cset = str(self.cseType_comboBox.currentText())
                 retarg = (dnt1, dnt2, cset, self.dateEdit.date())
                 if "" in retarg:
-                    QtGui.QMessageBox.information(self.dialog, 
+                    QtGui.QMessageBox.information(self.dialog,
                     _("Error"), _("Some fields are missing, please check"))
                 else:
                     return (True,retarg)
             else:
                 return(False, None)
-    
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
@@ -62,4 +62,4 @@ if __name__ == "__main__":
     dl = QtGui.QDialog()
     ui = NewCourseDialog(dl, "BW", "AH", "")
     print ui.getInput()
-   
+

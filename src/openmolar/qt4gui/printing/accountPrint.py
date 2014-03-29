@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or 
+# by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtCore,QtGui
@@ -18,7 +18,7 @@ class document():
         self.printer.setPageSize(QtGui.QPrinter.A5)
         self.pdfprinter = QtGui.QPrinter()
         self.pdfprinter.setPageSize(QtGui.QPrinter.A5)
-         
+
         self.title=title
         self.fname=fname
         self.sname=sname
@@ -29,14 +29,14 @@ class document():
         self.previousCorrespondenceDate=""
         self.requireDialog=True
         self.dialog = QtGui.QPrintDialog(self.printer)
-        
+
     def setTone(self,arg):
         '''determines how aggressive the letter is'''
         if arg in ("A","B","C"):
             self.tone=arg
     def setPreviousCorrespondenceDate(self,arg):
         self.previousCorrespondenceDate=arg
-    
+
     def dialogExec(self):
         retarg=False
         if self.requireDialog:
@@ -44,13 +44,13 @@ class document():
         else:
             retarg=True
         return retarg
-    
+
     def print_(self):
         if not self.dialogExec():
             return False
         self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
         self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
-    
+
         for printer in (self.printer,self.pdfprinter):
             AddressMargin=80
             LeftMargin = 50
@@ -62,7 +62,7 @@ class document():
             sigFont=QtGui.QFont("Lucida Handwriting",8)
             fm = QtGui.QFontMetrics(serifFont)
             DateWidth = fm.width(" September 99, 2999 ")
-            
+
             painter = QtGui.QPainter(printer)
             pageRect = printer.pageRect()
             painter.save()
@@ -78,10 +78,10 @@ class document():
             if self.postcode:
                 painter.drawText(x, y, self.postcode.upper()+".")  #postcode
             y += serifLineHeight
-            
+
             painter.setFont(serifFont)
             x,y=LeftMargin,(pageRect.height()*0.35)
-            painter.drawText(x+250, y, 
+            painter.drawText(x+250, y,
             QtCore.QDate.currentDate().toString(localsettings.QDATE_FORMAT))
             y += sansLineHeight
             y += serifLineHeight
@@ -134,7 +134,7 @@ class document():
                     option)
             painter.restore()
         return True
-    
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()

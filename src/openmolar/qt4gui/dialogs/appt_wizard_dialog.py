@@ -16,14 +16,14 @@ class apptWidget(Ui_apptWizardItem.Ui_Form):
         self.setupUi(widget)
         self.signals()
         self.appointments = []
-        
+
     def signals(self):
         '''
         sets the various signals required to monitor user input
         '''
         QtCore.QObject.connect(self.pushButton,
         QtCore.SIGNAL("clicked()"), self.add)
-    
+
     def addAppointments(self, arg):
         '''
         let this widget be self aware, give it control over the appointments
@@ -40,18 +40,18 @@ class apptWidget(Ui_apptWizardItem.Ui_Form):
             mystr = "%s %d mins with %s"% (
             appt.get("trt1"), appt.get("length"), initials )
             self.comboBox.addItems([mystr])
-        
+
     def setLabelText(self, arg):
         '''
         this label has the description for the shortcut
         '''
         self.label.setText(arg)
-    
+
     def add(self):
         '''
         user is applying the appointments contained by this widget
         '''
-        self.parent.dialog.emit(QtCore.SIGNAL("AddAppointments"), 
+        self.parent.dialog.emit(QtCore.SIGNAL("AddAppointments"),
         (self.appointments))
         self.parent.dialog.accept()
 
@@ -62,7 +62,7 @@ class apptWizard(Ui_apptWizard.Ui_Dialog):
         self.items = []
         self.parent = parent
         self.setShortcuts()
-        
+
     def setShortcuts(self):
         self.shortcuts = appointment_shortcuts.getShortCuts()
         self.showAppts()
@@ -77,22 +77,22 @@ class apptWizard(Ui_apptWizard.Ui_Dialog):
             i.addAppointments(shortcut.get("appointments"))
             self.apptWidgets.append(i)
             vlayout.addWidget(iw)
-        spacerItem = QtGui.QSpacerItem(1, 20, QtGui.QSizePolicy.Minimum, 
+        spacerItem = QtGui.QSpacerItem(1, 20, QtGui.QSizePolicy.Minimum,
         QtGui.QSizePolicy.Expanding)
-        
+
         vlayout.addItem(spacerItem)
-        
-            
+
+
 if __name__ == "__main__":
     import sys
     from openmolar.dbtools import patient_class
-    
+
     class testGui():
         def __init__(self):
             self.pt = patient_class.patient(3)
     def test(a):
         print "signal caught",a
-    
+
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     Dialog = QtGui.QDialog()

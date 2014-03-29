@@ -26,11 +26,11 @@ full_edit = False
 
 def viewitems(obj):
     '''
-    provides 2.7 functionality for 2.6 and under 
+    provides 2.7 functionality for 2.6 and under
     '''
     for key in obj.keys():
         yield (key, obj[key])
-    
+
 
 class CashBookCodesDict(dict):
     '''
@@ -43,7 +43,7 @@ class CashBookCodesDict(dict):
             self.viewitems
         except AttributeError: #patched for python <2.7
             self.viewitems = functools.partial(viewitems, self)
-    
+
     def get_values(self):
         db = connect()
         cursor = db.cursor()
@@ -58,7 +58,7 @@ class CashBookCodesDict(dict):
             LOGGER.exception("error loading cashbook codes")
         finally:
             cursor.close()
-            
+
 
 def paymenttaken(sno, name, dent, csetyp, cash, cheque, card,
 sundry_cash, sundry_cheque, sundry_card, hdp, other, refund):
@@ -71,7 +71,7 @@ sundry_cash, sundry_cheque, sundry_card, hdp, other, refund):
         codes = (2, 4, 6, 14, 15, 17, 21, 24, 125)
     queries = []
     for i, amount in enumerate(
-        (cash, cheque, card, sundry_cash, 
+        (cash, cheque, card, sundry_cash,
         sundry_cheque, sundry_card, hdp, other, refund)
         ):
         if amount != 0:
@@ -90,8 +90,8 @@ sundry_cash, sundry_cheque, sundry_card, hdp, other, refund):
         #db.close()
         return dbOK
 
-def details(dent, startdate, enddate, 
-treatment_only=False, sundries_only=False):    
+def details(dent, startdate, enddate,
+treatment_only=False, sundries_only=False):
     '''
     retrns an html version of the cashbook table
     '''
@@ -102,8 +102,8 @@ treatment_only=False, sundries_only=False):
     #note - len(headers) is used writing out the html
     headers = ("cbdate", "Serial NO", "Dentist", "Patient", "code", "cash",
     "cheque", "card", "unknown", "amt")
-    
-    if full_edit or (startdate.toPyDate() <= 
+
+    if full_edit or (startdate.toPyDate() <=
     localsettings.currentDay() <= enddate.toPyDate()):
         headers += ("edit",)
 
@@ -123,13 +123,13 @@ treatment_only=False, sundries_only=False):
         restriction_header = "SUNDRIES ONLY"
     else:
         restriction_header = "ALL PAYMENTS"
-        
+
 
     #-- note - mysqldb doesn't play nice with DATE_FORMAT
     #-- hence the string is formatted entirely using python formatting
-    query = '''select 
+    query = '''select
     DATE_FORMAT(cbdate, '%s'), ref, dntid, descr, code, amt, cbdate, id
-    from cashbook where %s cbdate>='%s' and cbdate<='%s' 
+    from cashbook where %s cbdate>='%s' and cbdate<='%s'
     order by cbdate'''%(
     localsettings.OM_DATE_FORMAT, cond1,
     startdate.toPyDate(), enddate.toPyDate())
@@ -195,14 +195,14 @@ treatment_only=False, sundries_only=False):
                 retarg += '<td align="center">n/a</a>'
         retarg += '</tr>\n'
         total += amt
-    
+
     sum_text = "= %s + %s + %s + %s"% (
         localsettings.pence_to_pounds(cashTOT),
-        localsettings.pence_to_pounds(chequeTOT), 
-        localsettings.pence_to_pounds(cardTOT), 
-        localsettings.pence_to_pounds(otherTOT) 
+        localsettings.pence_to_pounds(chequeTOT),
+        localsettings.pence_to_pounds(cardTOT),
+        localsettings.pence_to_pounds(otherTOT)
         )
-        
+
     retarg += '''<tr><td colspan="4">%s</td>
     <td><b>TOTAL</b></td>
     <td align="right"><b>%s</b></td>

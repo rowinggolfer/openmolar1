@@ -338,7 +338,7 @@ class DuckPatient(object):
 
     def nhs_claims(self, completed=True):
         return []
-        
+
     def __init__(self):
         self.treatment_course = DuckCourse()
 

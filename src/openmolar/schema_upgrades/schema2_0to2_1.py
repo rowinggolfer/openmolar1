@@ -123,75 +123,75 @@ INDEX (serialno)
 
 
 SOURCE_QUERY = '''
-SELECT courseno, serialno, examt, examd, accd, cmpd, 
-xraypl, periopl, anaespl, otherpl, ndupl, ndlpl, 
+SELECT courseno, serialno, examt, examd, accd, cmpd,
+xraypl, periopl, anaespl, otherpl, ndupl, ndlpl,
 odupl, odlpl, custompl,
-ur8pl, ur7pl, ur6pl, ur5pl, ur4pl, ur3pl, ur2pl, ur1pl, ul1pl, ul2pl, 
-ul3pl, ul4pl, ul5pl, ul6pl, ul7pl, ul8pl, ll8pl, ll7pl, ll6pl, ll5pl, ll4pl, 
-ll3pl, ll2pl, ll1pl, lr1pl, lr2pl, lr3pl, lr4pl, lr5pl, lr6pl, lr7pl, lr8pl, 
-ur8cmp, ur7cmp, ur6cmp, ur5cmp, ur4cmp, ur3cmp, ur2cmp, ur1cmp, ul1cmp, 
-ul2cmp, ul3cmp, ul4cmp, ul5cmp, ul6cmp, ul7cmp, ul8cmp, ll8cmp, ll7cmp, 
-ll6cmp, ll5cmp, ll4cmp, ll3cmp, ll2cmp, ll1cmp, lr1cmp, lr2cmp, lr3cmp, 
+ur8pl, ur7pl, ur6pl, ur5pl, ur4pl, ur3pl, ur2pl, ur1pl, ul1pl, ul2pl,
+ul3pl, ul4pl, ul5pl, ul6pl, ul7pl, ul8pl, ll8pl, ll7pl, ll6pl, ll5pl, ll4pl,
+ll3pl, ll2pl, ll1pl, lr1pl, lr2pl, lr3pl, lr4pl, lr5pl, lr6pl, lr7pl, lr8pl,
+ur8cmp, ur7cmp, ur6cmp, ur5cmp, ur4cmp, ur3cmp, ur2cmp, ur1cmp, ul1cmp,
+ul2cmp, ul3cmp, ul4cmp, ul5cmp, ul6cmp, ul7cmp, ul8cmp, ll8cmp, ll7cmp,
+ll6cmp, ll5cmp, ll4cmp, ll3cmp, ll2cmp, ll1cmp, lr1cmp, lr2cmp, lr3cmp,
 lr4cmp, lr5cmp, lr6cmp, lr7cmp, lr8cmp,
-xraycmp, periocmp, anaescmp, othercmp, 
-nducmp, ndlcmp, oducmp, odlcmp, customcmp 
+xraycmp, periocmp, anaescmp, othercmp,
+nducmp, ndlcmp, oducmp, odlcmp, customcmp
 from currtrtmt order by courseno'''
 
 DEST_QUERY = '''
-insert into currtrtmt2 (serialno, examt, examd, accd, cmpd, 
-xraypl, periopl, anaespl, otherpl, ndupl, ndlpl, 
+insert into currtrtmt2 (serialno, examt, examd, accd, cmpd,
+xraypl, periopl, anaespl, otherpl, ndupl, ndlpl,
 odupl, odlpl, custompl,
-ur8pl, ur7pl, ur6pl, ur5pl, ur4pl, ur3pl, ur2pl, ur1pl, ul1pl, ul2pl, 
-ul3pl, ul4pl, ul5pl, ul6pl, ul7pl, ul8pl, ll8pl, ll7pl, ll6pl, ll5pl, ll4pl, 
-ll3pl, ll2pl, ll1pl, lr1pl, lr2pl, lr3pl, lr4pl, lr5pl, lr6pl, lr7pl, lr8pl, 
-ur8cmp, ur7cmp, ur6cmp, ur5cmp, ur4cmp, ur3cmp, ur2cmp, ur1cmp, ul1cmp, 
-ul2cmp, ul3cmp, ul4cmp, ul5cmp, ul6cmp, ul7cmp, ul8cmp, ll8cmp, ll7cmp, 
-ll6cmp, ll5cmp, ll4cmp, ll3cmp, ll2cmp, ll1cmp, lr1cmp, lr2cmp, lr3cmp, 
+ur8pl, ur7pl, ur6pl, ur5pl, ur4pl, ur3pl, ur2pl, ur1pl, ul1pl, ul2pl,
+ul3pl, ul4pl, ul5pl, ul6pl, ul7pl, ul8pl, ll8pl, ll7pl, ll6pl, ll5pl, ll4pl,
+ll3pl, ll2pl, ll1pl, lr1pl, lr2pl, lr3pl, lr4pl, lr5pl, lr6pl, lr7pl, lr8pl,
+ur8cmp, ur7cmp, ur6cmp, ur5cmp, ur4cmp, ur3cmp, ur2cmp, ur1cmp, ul1cmp,
+ul2cmp, ul3cmp, ul4cmp, ul5cmp, ul6cmp, ul7cmp, ul8cmp, ll8cmp, ll7cmp,
+ll6cmp, ll5cmp, ll4cmp, ll3cmp, ll2cmp, ll1cmp, lr1cmp, lr2cmp, lr3cmp,
 lr4cmp, lr5cmp, lr6cmp, lr7cmp, lr8cmp,
-xraycmp, periocmp, anaescmp, othercmp, 
+xraycmp, periocmp, anaescmp, othercmp,
 nducmp, ndlcmp, oducmp, odlcmp, customcmp)
-values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 '''
 
-PATIENT_QUERY = ''' 
+PATIENT_QUERY = '''
 update patients set courseno0=%s where serialno=%s and courseno0=%s
 '''
 
-ESTIMATES_QUERY = ''' 
+ESTIMATES_QUERY = '''
 update newestimates set courseno=%s where serialno=%s and courseno=%s
 '''
 
 GARBAGE_QUERY = '''
-delete from currtrtmt2 
-WHERE examt="" AND xraypl="" AND periopl="" AND anaespl="" AND otherpl="" 
-AND ndupl="" AND ndlpl="" AND odupl="" AND odlpl="" AND custompl="" 
-AND ur8pl="" AND ur7pl="" AND ur6pl="" AND ur5pl="" AND ur4pl="" AND ur3pl="" 
-AND ur2pl="" AND ur1pl="" AND ul1pl="" AND ul2pl="" AND ul3pl="" AND ul4pl="" 
-AND ul5pl="" AND ul6pl="" AND ul7pl="" AND ul8pl="" AND ll8pl="" AND ll7pl="" 
-AND ll6pl="" AND ll5pl="" AND ll4pl="" AND ll3pl="" AND ll2pl="" AND ll1pl="" 
-AND lr1pl="" AND lr2pl="" AND lr3pl="" AND lr4pl="" AND lr5pl="" AND lr6pl="" 
-AND lr7pl="" AND lr8pl="" AND 
-ur8cmp="" AND ur7cmp="" AND ur6cmp="" AND ur5cmp="" AND ur4cmp="" AND 
-ur3cmp="" AND ur2cmp="" AND ur1cmp="" AND ul1cmp="" AND ul2cmp="" AND 
-ul3cmp="" AND ul4cmp="" AND ul5cmp="" AND ul6cmp="" AND ul7cmp="" AND 
-ul8cmp="" AND ll8cmp="" AND ll7cmp="" AND ll6cmp="" AND ll5cmp="" AND 
-ll4cmp="" AND ll3cmp="" AND ll2cmp="" AND ll1cmp="" AND lr1cmp="" AND 
-lr2cmp="" AND lr3cmp="" AND lr4cmp="" AND lr5cmp="" AND lr6cmp="" AND 
-lr7cmp="" AND lr8cmp="" AND 
-xraycmp="" AND periocmp="" AND anaescmp="" AND othercmp="" AND nducmp="" 
+delete from currtrtmt2
+WHERE examt="" AND xraypl="" AND periopl="" AND anaespl="" AND otherpl=""
+AND ndupl="" AND ndlpl="" AND odupl="" AND odlpl="" AND custompl=""
+AND ur8pl="" AND ur7pl="" AND ur6pl="" AND ur5pl="" AND ur4pl="" AND ur3pl=""
+AND ur2pl="" AND ur1pl="" AND ul1pl="" AND ul2pl="" AND ul3pl="" AND ul4pl=""
+AND ul5pl="" AND ul6pl="" AND ul7pl="" AND ul8pl="" AND ll8pl="" AND ll7pl=""
+AND ll6pl="" AND ll5pl="" AND ll4pl="" AND ll3pl="" AND ll2pl="" AND ll1pl=""
+AND lr1pl="" AND lr2pl="" AND lr3pl="" AND lr4pl="" AND lr5pl="" AND lr6pl=""
+AND lr7pl="" AND lr8pl="" AND
+ur8cmp="" AND ur7cmp="" AND ur6cmp="" AND ur5cmp="" AND ur4cmp="" AND
+ur3cmp="" AND ur2cmp="" AND ur1cmp="" AND ul1cmp="" AND ul2cmp="" AND
+ul3cmp="" AND ul4cmp="" AND ul5cmp="" AND ul6cmp="" AND ul7cmp="" AND
+ul8cmp="" AND ll8cmp="" AND ll7cmp="" AND ll6cmp="" AND ll5cmp="" AND
+ll4cmp="" AND ll3cmp="" AND ll2cmp="" AND ll1cmp="" AND lr1cmp="" AND
+lr2cmp="" AND lr3cmp="" AND lr4cmp="" AND lr5cmp="" AND lr6cmp="" AND
+lr7cmp="" AND lr8cmp="" AND
+xraycmp="" AND periocmp="" AND anaescmp="" AND othercmp="" AND nducmp=""
 AND ndlcmp="" AND oducmp="" AND odlcmp="" AND customcmp=""
 '''
 
 ## don't use this one.. seems unnecessary.
 
 CORRECTION_QUERY = '''
-update patients join 
-(select serialno, max(courseno) cno from currtrtmt2 group by serialno) as t 
-on t.serialno = patients.serialno set courseno0 = cno 
+update patients join
+(select serialno, max(courseno) cno from currtrtmt2 group by serialno) as t
+on t.serialno = patients.serialno set courseno0 = cno
 where cno > courseno0
 '''
 
@@ -259,12 +259,12 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(5, _("creating currtrtmt2 table"))
             self.execute_statements(SQLSTRINGS)
             self.progressSig(10, _('transferring data'))
-            
+
             self.transfer_data()
 
             self.progressSig(95, _("deleting void courses"))
             self.execute_statements([GARBAGE_QUERY, CORRECTION_QUERY])
-            
+
             self.progressSig(97, _('updating settings'))
             print "update database settings..."
 
@@ -297,7 +297,7 @@ class dbUpdater(QtCore.QThread):
             rows = cursor.fetchall()
             cursor.close()
             cursor = db.cursor()
-            step = 1 / len(rows)      
+            step = 1 / len(rows)
             for i, row in enumerate(rows):
                 courseno = row[0]
                 serialno = row[1]
@@ -306,7 +306,7 @@ class dbUpdater(QtCore.QThread):
                 cursor.execute(PATIENT_QUERY, (new_cno, serialno, courseno))
                 cursor.execute(ESTIMATES_QUERY, (new_cno, serialno, courseno))
                 if i % 100 == 0:
-                    self.progressSig(80 * i/len(rows) + 10, 
+                    self.progressSig(80 * i/len(rows) + 10,
                     _("transfering data"))
             cursor.close()
             db.commit()

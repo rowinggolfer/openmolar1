@@ -184,7 +184,7 @@ OpenMolar - open Source dental practice management software.<br />
 Version %s<br />
 Client Schema Version is %s, DataBase is at version %s<br /><hr />
 Copyright (C) 2009-2014 Neil A. Wallace B.Ch.D.<br />
-Project Homepage 
+Project Homepage
 <a href="http://www.openmolar.com">
 http://www.openmolar.com</a>.
 </p>

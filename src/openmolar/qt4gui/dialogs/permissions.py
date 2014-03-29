@@ -23,7 +23,7 @@ def granted(parent=None):
     dl = Ui_permissions.Ui_Dialog()
     dl.setupUi(Dialog)
     if Dialog.exec_():
-        hash = hashlib.sha1(str((dl.lineEdit.text().toAscii()))).hexdigest() 
+        hash = hashlib.sha1(str((dl.lineEdit.text().toAscii()))).hexdigest()
         if  hash == localsettings.SUPERVISOR:
             localsettings.permissionsRaised=True
             resetExpireTime()

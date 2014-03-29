@@ -28,13 +28,13 @@ def getAvailableLanguages():
     return a list of installed languages - I do this manually at the moment :(
     '''
     available = [
-    _("English (United Kingdom)") +" - en_GB", 
-    _("English (Australia)") +" - en_AUS",     
-    _("Afrikaans") + " - af",    
+    _("English (United Kingdom)") +" - en_GB",
+    _("English (Australia)") +" - en_AUS",
+    _("Afrikaans") + " - af",
     _("Danish") + " - da",
-    _("French") + " - fr", 
-    _("German") + " - de",     
-    _("Hungarian") + " - hu", 
+    _("French") + " - fr",
+    _("German") + " - de",
+    _("Hungarian") + " - hu",
     _("Indonesian") + " - id",
     _("Italian") + " - it",
     _("Occitan") + " - oc",
@@ -59,7 +59,7 @@ def setLanguage(lang):
         print "trying install your environment language", lang1
         lang1 = gettext.translation('openmolar', languages=[lang,])
         lang1.install(unicode=True)
-    except IOError:    
+    except IOError:
         LOGGER.exception("%s not found, sorry"% lang1)
         gettext.install('openmolar', unicode=True)
 
@@ -76,13 +76,13 @@ class language_dialog(Ui_choose_language.Ui_Dialog):
                 rb.setChecked(True)
             self.radioboxes.append(rb)
             vbox.addWidget(rb)
-        
-            
+
+
     def getInput(self):
         if self.dialog.exec_():
             for rb in self.radioboxes:
                 if rb.isChecked():
-                    lang = rb.text().toAscii()          
+                    lang = rb.text().toAscii()
                     try:
                         print "changing language to '%s' ...."% lang,
                         setLanguage(str(lang))
@@ -90,10 +90,10 @@ class language_dialog(Ui_choose_language.Ui_Dialog):
                         return True
                     except IOError:
                         LOGGER.exception("unable to find translation file")
-                        message = _("no translation file found for %s")% lang 
+                        message = _("no translation file found for %s")% lang
                         QtGui.QMessageBox.information(self.dialog,
                         _("Advisory"), message)
-                
+
 def run(parent=None):
     '''
     fire up a dialog to offer a selection of languages
@@ -101,11 +101,11 @@ def run(parent=None):
     Dialog = QtGui.QDialog()
     dl = language_dialog(Dialog, parent)
     return dl.getInput()
-        
+
 if __name__ == "__main__":
     import sys
     logging.basicConfig()
-    
+
     app = QtGui.QApplication(sys.argv)
     gettext.install('openmolar')
-    print run()   
+    print run()

@@ -7,7 +7,7 @@
 # See the GNU General Public License for more details.
 
 '''
-This module provides a function 'run' which will move data from the estimates 
+This module provides a function 'run' which will move data from the estimates
 table in schema 1_1 to the newestimates table in schema 1_2
 '''
 
@@ -32,11 +32,11 @@ KEY (serialno))''',
 ]
 
 import sys
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar import connect
 
-    
+
 class dbUpdater(QtCore.QThread):
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
@@ -44,7 +44,7 @@ class dbUpdater(QtCore.QThread):
         self.path = None
         self.completed = False
         self.MESSAGE = "upating database"
-    
+
     def create_alter_tables(self):
         '''
         execute the above commands
@@ -67,7 +67,7 @@ class dbUpdater(QtCore.QThread):
             db.commit()
             db.autocommit(True)
         return sucess
-        
+
     def progressSig(self, val, message=""):
         '''
         emits a signal showhing how we are proceeding.
@@ -79,19 +79,19 @@ class dbUpdater(QtCore.QThread):
 
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
-                
+
     def run(self):
         print "running script to convert from schema 1.2 to 1.3"
         try:
             self.progressSig(10, _("creating new tables"))
             if self.create_alter_tables():
                 self.progressSig(90, _('updating settings'))
-                print "update database settings..." 
-                
+                print "update database settings..."
+
                 #pass a tuple of compatible clients and the "user"
                 #who made these changes.
                 schema_version.update(("1.2","1.3"), "1_2 to 1_3 script")
-                
+
                 self.progressSig(100, _("updating stored schema version"))
                 self.completed = True
                 self.completeSig(_("ALL DONE - sucessfully moved db to")
@@ -100,7 +100,7 @@ class dbUpdater(QtCore.QThread):
                 localsettings.CLIENT_SCHEMA_VERSION = " 1.2"
                 self.completeSig(_("couldn't create tables, rolled back to")
                 + "1.2")
-        
+
         except Exception, e:
             print "Exception caught",e
             self.completeSig(str(e))

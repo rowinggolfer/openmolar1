@@ -30,10 +30,10 @@ from openmolar.qt4gui.dialogs import permissions
 from openmolar.dbtools.cashbook import cashbookCodesDict
 
 
-QUERY = '''select cbdate, ref, descr, code, dntid, amt from cashbook 
+QUERY = '''select cbdate, ref, descr, code, dntid, amt from cashbook
 where id = %s'''
 
-UPDATE_QUERY = '''update cashbook 
+UPDATE_QUERY = '''update cashbook
 set cbdate=%s, ref=%s, descr=%s, code=%s, dntid=%s, amt=%s
 where id = %s'''
 
@@ -47,7 +47,7 @@ class AlterCashbookDialog(ExtendableDialog):
         self.setWindowTitle(title)
         label = QtGui.QLabel(u"<b>%s</b>"% title)
         label.setAlignment(QtCore.Qt.AlignCenter)
-        
+
         frame = QtGui.QFrame()
         form_layout = QtGui.QFormLayout(frame)
 
@@ -56,28 +56,28 @@ class AlterCashbookDialog(ExtendableDialog):
         self.date_edit = QtGui.QDateEdit()
         self.dentist_cb = QtGui.QComboBox()
         self.dentist_cb.addItems(localsettings.activedents)
-        
+
         self.code_cb = QtGui.QComboBox()
         self.amount_sb = QtGui.QDoubleSpinBox()
         self.amount_sb.setRange(0,10000)
-        
+
         self.codestrings = cashbookCodesDict.values()
         self.code_cb.addItems(self.codestrings)
-        
+
         form_layout.addRow(_("Patient Number"), self.serialno_le)
         form_layout.addRow(_("Patient Name"), self.patient_le)
         form_layout.addRow(_("Date"), self.date_edit)
         form_layout.addRow(_("Dentist"), self.dentist_cb)
         form_layout.addRow(_("Payment Type"), self.code_cb)
         form_layout.addRow(_("Amount"), self.amount_sb)
-        
+
         self.serialno_le.setEnabled(False)
-        self.patient_le.setEnabled(False)        
+        self.patient_le.setEnabled(False)
         self.date_edit.setEnabled(False)
         self.dentist_cb.setEnabled(False)
         self.amount_sb.setEnabled(False)
-                    
-        
+
+
         self.insertWidget(label)
         self.insertWidget(frame)
 
@@ -96,7 +96,7 @@ class AlterCashbookDialog(ExtendableDialog):
             self.dentist_cb.setEnabled(True)
             self.code_cb.setEnabled(True)
             self.amount_sb.setEnabled(True)
-            self.patient_le.setEnabled(True)        
+            self.patient_le.setEnabled(True)
         self.showExtension(False)
 
     def check_enable(self):
@@ -112,26 +112,26 @@ class AlterCashbookDialog(ExtendableDialog):
         cursor.execute(QUERY, (self.ix,))
         cbdate, ref, descr, code, dntid, amt = cursor.fetchone()
         cursor.close()
-        
+
         self.serialno_le.setText(ref)
         self.patient_le.setText(descr)
         self.date_edit.setDate(cbdate)
         self.dentist_cb.setCurrentIndex(0)
-        
+
         try:
-            pos = localsettings.activedent_ixs.index(dntid)                                      
+            pos = localsettings.activedent_ixs.index(dntid)
         except ValueError:
             pos = -1
         self.dentist_cb.setCurrentIndex(pos)
-        
+
         code_str = cashbookCodesDict.get(code)
         self.code_cb.setCurrentIndex(self.codestrings.index(code_str))
 
-        pounds = amt // 100 
+        pounds = amt // 100
         pence = amt % 100
         double_val = float("%s.%s"% (pounds, pence))
         self.amount_sb.setValue(double_val)
-        
+
         self.check_enable()
 
     def apply(self):
@@ -144,11 +144,11 @@ class AlterCashbookDialog(ExtendableDialog):
                 break
         dntid = localsettings.ops_reverse[str(self.dentist_cb.currentText())]
 
-        currency = "%.02f"%self.amount_sb.value() 
+        currency = "%.02f"%self.amount_sb.value()
         amt = int(currency.replace(".", ""))
-        
+
         values = (date_, ref, descr, code, dntid, amt, self.ix)
-    
+
         db = connect()
         cursor = db.cursor()
         cursor.execute(UPDATE_QUERY, values)
@@ -169,6 +169,5 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
 
     dl = AlterCashbookDialog(152039)
-    
+
     print (dl.exec_())
-        

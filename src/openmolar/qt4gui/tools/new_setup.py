@@ -28,15 +28,15 @@ class om_user():
         self.deactivation_dt = None
         self.active = False
         self.parent_ui = parent_ui
-    
+
     def toTuple(self):
         '''
-        changes the class to a tuple of xml friendly attribs, consistent with 
+        changes the class to a tuple of xml friendly attribs, consistent with
         the USER_ATTRIBS expected
         '''
-        return (str(self.id), self.inits.upper(), self.name, self.group, 
+        return (str(self.id), self.inits.upper(), self.name, self.group,
         str(self.active), str(self.deactivation_dt))
-        
+
     def fromTuple(self, tup):
         '''
         reloads the values from a tuple
@@ -48,9 +48,9 @@ class om_user():
         self.active = tup[4] == "True"
         if not self.active:
             da = tup[5].split("-")
-            self.deactivation_dt = datetime.date(int(da[0]), int(da[1]), 
+            self.deactivation_dt = datetime.date(int(da[0]), int(da[1]),
             int(da[2]))
-        
+
     def load(self):
         '''
         grab the user entered values
@@ -61,7 +61,7 @@ class om_user():
                 self.parent_ui.userGroup_comboBox.currentText().toAscii())
         self.deactivation_dt = self.parent_ui.user_dateEdit.date().toPyDate()
         self.active = self.parent_ui.userActive_checkBox.isChecked()
-        
+
     def verifies(self):
         '''
         check the data for integrity, return (True,"") if ok
@@ -72,7 +72,7 @@ class om_user():
             error = "<p>%s</p>"% _("Please enter initials for this user")
         if self.name == "":
             error += "<p>%s</p>"% _("Please set a name for this user")
-        
+
         return (error == "", error)
 
     def toNode(self):
@@ -90,7 +90,7 @@ class om_user():
                 unode.appendChild(c)
             i += 1
         return unode
-    
+
     def fromNode(self, unode):
         '''
         creates an instance from existing xml
@@ -106,9 +106,9 @@ class om_user():
                 except IndexError:
                     value = None
             tup.append(value)
-        
-        self.fromTuple(tuple(tup))    
-        
+
+        self.fromTuple(tuple(tup))
+
 class setup_gui(QtGui.QMainWindow):
     '''
     a ui for customising the database of openmolar
@@ -125,7 +125,7 @@ class setup_gui(QtGui.QMainWindow):
         self.template.appendChild(self.template.createElement("template"))
         self.ui.user_dateEdit.setDate(QtCore.QDate.currentDate())
         self.ui.user_dateEdit.hide()
-        self.ui.user_date_label.hide()        
+        self.ui.user_date_label.hide()
         self.ui.user_groupBox.hide()
         self.ui.modifyUser_pushButton.hide()
         self.signals()
@@ -188,7 +188,7 @@ class setup_gui(QtGui.QMainWindow):
         filename = QtGui.QFileDialog.getOpenFileName(self,
         _("load an existing template file"),"",
         _("openmolar template files")+" (*.om_xml)")
-        
+
         if filename != '':
             try:
                 self.template = minidom.parse(str(filename))
@@ -205,7 +205,7 @@ class setup_gui(QtGui.QMainWindow):
         current tab is i
         previous tab stored in self.previousTabIndex
         '''
-        if updateTemplate: 
+        if updateTemplate:
             #always true unless called following a load from file
             if self.previousTabIndex == 1:
                 self.save_addy()
@@ -218,7 +218,7 @@ class setup_gui(QtGui.QMainWindow):
             self.ui.xml_label.setText(self.template.toprettyxml())
 
         self.previousTabIndex = i
-    
+
     def blankdb_radioButton(self, i):
         '''
         user has altered the state of the newdb from template checkbox
@@ -256,7 +256,7 @@ class setup_gui(QtGui.QMainWindow):
                 i += 1
         if foundText:
             self.template.childNodes[0].appendChild(d)
-        
+
     def load_addy(self):
         '''
         load the practice address
@@ -307,18 +307,18 @@ class setup_gui(QtGui.QMainWindow):
                     d.removeChild(d.childNodes[selected])
                     self.ui.users_tableWidget.setCurrentCell(-1,-1)
                     self.ui.modifyUser_pushButton.hide()
-                    
+
                 d.appendChild(user.toNode())
                 self.template.childNodes[0].appendChild(d)
                 self.ui.user_groupBox.hide()
                 self.ui.userName_lineEdit.setText("")
                 self.ui.userGroup_comboBox.setCurrentIndex(0)
                 self.ui.newUser_pushButton.setText(_("Add New User"))
-                    
+
                 self.tab_navigated(self.ui.tabWidget.currentIndex(), False)
             else:
                 self.advise(error,1)
-                
+
         else:
             self.ui.users_tableWidget.setCurrentCell(-1, -1)
             self.ui.user_groupBox.show()
@@ -334,7 +334,7 @@ class setup_gui(QtGui.QMainWindow):
             self.ui.modifyUser_pushButton.show()
         else:
             self.ui.modifyUser_pushButton.hide()
-            
+
     def modifyUser(self):
         '''
         modify user pushButton ha been pressed
@@ -355,15 +355,15 @@ class setup_gui(QtGui.QMainWindow):
             self.ui.user_dateEdit.setDate(user.deactivation_dt)
         except TypeError:
             self.ui.user_dateEdit.setDate(QtCore.QDate.currentDate())
-            
-            
+
+
     def handleUserActive(self, arg):
         '''
         hide/show the deactivation date
         '''
         self.ui.user_dateEdit.setVisible(not arg)
         self.ui.user_date_label.setVisible(not arg)
-            
+
     def load_users(self):
         '''
         populate the user table from the template
@@ -380,7 +380,7 @@ class setup_gui(QtGui.QMainWindow):
                 self.ui.users_tableWidget.setItem(rowno, colno, item)
                 colno += 1
             rowno += 1
-            
+
     def signals(self):
         '''
         set up signals/slots
@@ -390,35 +390,35 @@ class setup_gui(QtGui.QMainWindow):
 
         QtCore.QObject.connect(self.ui.actionLoad_Template,
         QtCore.SIGNAL("triggered()"), self.load_template)
-        
+
         QtCore.QObject.connect(self.ui.blankdb_radioButton,
         QtCore.SIGNAL("toggled (bool)"), self.blankdb_radioButton)
-        
+
         QtCore.QObject.connect(self.ui.newdb_template_radioButton,
         QtCore.SIGNAL("toggled (bool)"), self.newdb_from_template_radioButton)
-        
+
         QtCore.QObject.connect(self.ui.tabWidget,
         QtCore.SIGNAL("currentChanged(int)"), self.tab_navigated)
-        
+
         QtCore.QObject.connect(self.ui.userName_lineEdit,
         QtCore.SIGNAL("textChanged (const QString&)"), self.nameEntered)
-        
+
         QtCore.QObject.connect(self.ui.newUser_pushButton,
         QtCore.SIGNAL("clicked()"), self.add_modify_User)
-        
+
         QtCore.QObject.connect(self.ui.users_tableWidget,
         QtCore.SIGNAL("itemSelectionChanged()"), self.userSelected)
-        
+
         QtCore.QObject.connect(self.ui.users_tableWidget,
-        QtCore.SIGNAL("itemDoubleClicked (QTableWidgetItem *)"), 
+        QtCore.SIGNAL("itemDoubleClicked (QTableWidgetItem *)"),
         self.modifyUser)
-        
+
         QtCore.QObject.connect(self.ui.modifyUser_pushButton,
         QtCore.SIGNAL("clicked()"), self.modifyUser)
-        
+
         QtCore.QObject.connect(self.ui.userActive_checkBox,
         QtCore.SIGNAL("stateChanged (int)"), self.handleUserActive)
-        
+
 def main(args):
     app = QtGui.QApplication(args)
     ui = setup_gui(app)
@@ -427,5 +427,5 @@ def main(args):
 
 
 if __name__ == "__main__":
-    
+
     main(sys.argv)

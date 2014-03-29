@@ -1069,7 +1069,7 @@ def day_summary(adate, dent):
     if daydata != ():
         query = ('SELECT start, end, serialno, name, char(flag1), '
         'concat(code0, " ", code1," ", code2) FROM aslot '
-        'WHERE adate = %s and apptix = %s AND flag0!=-128 ' 
+        'WHERE adate = %s and apptix = %s AND flag0!=-128 '
         'ORDER BY start')
         cursor.execute(query, values)
         results = cursor.fetchall()

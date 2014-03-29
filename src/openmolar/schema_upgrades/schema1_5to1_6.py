@@ -7,11 +7,11 @@
 # See the GNU General Public License for more details.
 
 '''
-This module provides a function 'run' which will move data 
+This module provides a function 'run' which will move data
 to schema 1_6
 '''
 import sys
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar import connect
 
@@ -70,11 +70,11 @@ TYPEDICT = {
            '5900', '5901', '5903', '5911', '5931', '5941', '5951'),
 "odu"   : ('2801', '2803', '2821', '2831', '2851', '2853', '2855', '2861', '2863', '2865', '5501',
            '5503', '5521', '5531', '5551', '5553', '5555', '5561', '5563', '5565'),
-"ndl"   : ('2712', '2732', '2735', '2747', '2748', '2749', '2762', '2772', '2782', 
+"ndl"   : ('2712', '2732', '2735', '2747', '2748', '2749', '2762', '2772', '2782',
            '5902', '5905', '5923', '5932', '5942', '5952'),
 "odl"   : ('2802', '2804', '2822', '2832', '2852', '2854', '2856', '2862', '2864', '2866', '5502',
            '5504', '5522', '5532', '5551', '5553', '5555', '5562', '5564', '5566', ),
-           
+
 "ortho" : ('3241', '3242', '3243', '3244', '3245', '3246', '3247', '3248', '3249', '3261', '3262',
            '3263', '3264', '3281', '3282', '3283', '3284', '3285', '3291', '5581', '5582', '5583',
            '5584', '5585', '5586', '5587', '5588', '5589' )
@@ -86,7 +86,7 @@ class UpdateException(Exception):
     A custom exception. If this is thrown the db will be rolled back
     '''
     pass
-    
+
 class dbUpdater(QtCore.QThread):
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
@@ -94,7 +94,7 @@ class dbUpdater(QtCore.QThread):
         self.path = None
         self.completed = False
         self.MESSAGE = "upating database"
-    
+
     def progressSig(self, val, message=""):
         '''
         emits a signal showhing how we are proceeding.
@@ -107,7 +107,7 @@ class dbUpdater(QtCore.QThread):
     def create_alter_tables(self):
         '''
         execute the above commands
-        NOTE - this function may fail depending on the mysql permissions 
+        NOTE - this function may fail depending on the mysql permissions
         in place
         '''
         db = connect.connect()
@@ -134,37 +134,37 @@ class dbUpdater(QtCore.QThread):
             db.autocommit(True)
         else:
             raise UpdateException("couldn't execute all statements!")
-    
+
     def addColumns(self):
         '''
         fee tables need a new column
         '''
-                                 
+
         db = connect.connect()
         cursor=db.cursor()
-        
+
         cursor.execute('select tablename from feetable_key')
         rows = cursor.fetchall()
-        
+
         for row in rows:
             print "altering feetable", row[0]
             query = 'alter table %s add column pl_cmp char(20)'% row[0]
             cursor.execute(query)
-            
+
         db.commit()
-        
+
         cursor.close()
         db.close()
         return True
-    
+
     def insertValues(self):
         '''
         fee tables need a new column
         '''
-                                 
+
         db = connect.connect()
         cursor=db.cursor()
-        
+
         cursor.execute('select tablename from feetable_key')
         rows = cursor.fetchall()
         for row in rows:
@@ -175,14 +175,14 @@ class dbUpdater(QtCore.QThread):
                     values = (key, code)
                     cursor.execute(query, values)
         db.commit()
-        
+
         cursor.close()
         db.close()
         return True
-        
+
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
-                
+
     def run(self):
         print "running script to convert from schema 1.5 to 1.6"
         try:
@@ -192,34 +192,34 @@ class dbUpdater(QtCore.QThread):
 
             #- transfer data between tables
             self.progressSig(40, _('transfering data'))
-            
+
             print "adding columns to the feetables table, ...",
             if self.addColumns():
                 print "ok"
             else:
                 print "FAILED!!!!!"
             self.progressSig(60, _('inserting values'))
-                
+
             print "inserting values"
             if self.insertValues():
                 print "ok"
             else:
-                print "FAILED!!!!!"            
+                print "FAILED!!!!!"
 
             self.progressSig(90, _('updating settings'))
-            print "update database settings..." 
-            
+            print "update database settings..."
+
             schema_version.update(("1.6",), "1_5 to 1_6 script")
-            
+
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
             + " 1.6")
-        
+
         except UpdateException, e:
             localsettings.CLIENT_SCHEMA_VERSION = "1.5"
             self.completeSig(_("rolled back to") + " 1.5")
-            
+
         except Exception, e:
             print "Exception caught",e
             self.completeSig(str(e))

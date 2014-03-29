@@ -17,7 +17,7 @@ class FiveMinuteTimeEdit(QtGui.QTimeEdit):
     def __init__(self,parent=None):
         super(FiveMinuteTimeEdit, self).__init__(parent)
         self.setDisplayFormat("hh:mm")
-        QtCore.QObject.connect(self, 
+        QtCore.QObject.connect(self,
         QtCore.SIGNAL("timeChanged (const QTime&)"), self.timeChanged)
 
     def stepBy(self, steps):
@@ -25,18 +25,18 @@ class FiveMinuteTimeEdit(QtGui.QTimeEdit):
             QtGui.QTimeEdit.stepBy(self, steps * 5)
         else:
             QtGui.QTimeEdit.stepBy(self, steps)
-        
+
     def timeChanged(self, t):
         min = self.time().minute()
         if min % 5 != 0:
-            min -= min % 5 
+            min -= min % 5
             self.setTime(QtCore.QTime(self.time().hour(), min))
         self.emit(QtCore.SIGNAL("verifiedTime"), self.time())
-        
+
 if __name__ == "__main__":
     def test(t):
         print "signal received", t
-    
+
     import sys
     app = QtGui.QApplication([])
     te = FiveMinuteTimeEdit()

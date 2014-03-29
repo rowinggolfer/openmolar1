@@ -15,11 +15,11 @@ def extend(dents, startdate, enddate):
     inserts new days into the aday table for dents
     this is like buying next year's diary
     '''
-    
+
     delta = datetime.timedelta(days=1)
     query = '''insert into aday (adate, apptix, start, end, flag, memo)
 values (%s, %s, %s, %s, %s, %s)'''
-    
+
     db = connect()
     cursor = db.cursor()
 
@@ -40,9 +40,9 @@ values (%s, %s, %s, %s, %s, %s)'''
 
 
 if __name__ == "__main__":
-    
+
     #-- test procedures......
-    
+
     startdate = datetime.date(2010,1,1)
     enddate = datetime.date(2010,2,1)
     extend((4,5,6,7,13,14),startdate, enddate)

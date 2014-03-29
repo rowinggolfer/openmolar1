@@ -40,101 +40,101 @@ class GP17Config(ConfigParser.ConfigParser):
                 self.add_section(section)
             except ConfigParser.DuplicateSectionError:
                 pass
-    
+
     def read_conf(self):
         self.read([CONF_PATH])
-            
+
     @property
     def OFFSET_LEFT(self):
         try:
             return int(self.get("gp17Front", "left"))
         except ConfigParser.NoOptionError:
             return 0
-    
+
     @property
     def OFFSET_TOP(self):
         try:
             return int(self.get("gp17Front", "top"))
         except ConfigParser.NoOptionError:
             return 0
-    
+
     @property
     def SCALE_X(self):
         try:
             return float(self.get("gp17Front", "scale_x"))
         except ConfigParser.NoOptionError:
             return 1.0
-    
+
     @property
     def SCALE_Y(self):
         try:
             return float(self.get("gp17Front", "scale_y"))
         except ConfigParser.NoOptionError:
             return 1.0
-    
+
     @property
     def GP17i_OFFSET_LEFT(self):
         try:
             return int(self.get("gp17iFront", "left"))
         except ConfigParser.NoOptionError:
             return 0
-    
+
     @property
     def GP17i_OFFSET_TOP(self):
         try:
             return int(self.get("gp17iFront", "top"))
         except ConfigParser.NoOptionError:
             return 0
-    
+
     @property
     def GP17i_SCALE_X(self):
         try:
             return float(self.get("gp17iFront", "scale_x"))
         except ConfigParser.NoOptionError:
             return 1.0
-    
+
     @property
     def GP17i_SCALE_Y(self):
         try:
             return float(self.get("gp17iFront", "scale_y"))
         except ConfigParser.NoOptionError:
             return 1.0
-    
+
     @property
     def GP17iback_OFFSET_LEFT(self):
         try:
             return int(self.get("gp17iBack", "left"))
         except ConfigParser.NoOptionError:
             return 0
-    
+
     @property
     def GP17iback_OFFSET_TOP(self):
         try:
             return int(self.get("gp17iBack", "top"))
         except ConfigParser.NoOptionError:
             return 0
-    
+
     @property
     def GP17iback_SCALE_X(self):
         try:
             return float(self.get("gp17iBack", "scale_x"))
         except ConfigParser.NoOptionError:
             return 1.0
-    
+
     @property
     def GP17iback_SCALE_Y(self):
         try:
             return float(self.get("gp17iBack", "scale_y"))
         except ConfigParser.NoOptionError:
             return 1.0
-    
-    
+
+
     def save_config(self):
         self.set("gp17Front", "left", self.OFFSET_LEFT)
         self.set("gp17Front", "top", self.OFFSET_TOP)
         self.set("gp17Front", "scale_x", self.SCALE_X)
         self.set("gp17Front", "scale_y", self.SCALE_Y)
-        
+
         self.set("gp17iFront", "left", self.GP17i_OFFSET_LEFT)
         self.set("gp17iFront", "top", self.GP17i_OFFSET_TOP)
         self.set("gp17iFront", "scale_x", self.GP17i_SCALE_X)
@@ -144,7 +144,7 @@ class GP17Config(ConfigParser.ConfigParser):
         self.set("gp17iBack", "top", self.GP17iback_OFFSET_TOP)
         self.set("gp17iBack", "scale_x", self.GP17iback_SCALE_X)
         self.set("gp17iBack", "scale_y", self.GP17iback_SCALE_Y)
-                
+
         f = open(CONF_PATH, "w")
         self.write(f)
         f.close()
@@ -153,4 +153,3 @@ gp17config = GP17Config()
 
 if __name__ == "__main__":
     gp17config.save_config()
-        

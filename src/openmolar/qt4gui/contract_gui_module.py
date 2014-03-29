@@ -59,13 +59,13 @@ def changeCourseDentist(om_gui, inits):
     '''
     newdentist = localsettings.ops_reverse[str(inits)]
     if newdentist == om_gui.pt.dnt2:
-        return 
+        return
     if om_gui.pt.dnt2 == 0 and newdentist == om_gui.pt.dnt1:
         return
     if om_gui.pt.cset == "N" and om_gui.pt.underTreatment:
         om_gui.advise(
         "think about getting some nhs forms signed for both dentists", 1)
-    else: 
+    else:
         om_gui.advise("changed course dentist to %s"% inits, 1)
 
     print "changing course dentist to ", inits
@@ -98,7 +98,7 @@ def exemption_edited(om_gui):
         om_gui.advise(_("erroneous exemption category entered"),1)
         om_gui.ui.exemption_lineEdit.setText(om_gui.pt.dbstate.exemption)
     om_gui.updateDetails()
-    
+
 def editPrivateContract(om_gui):
     '''blank function which needs work'''
     om_gui.advise("edit Private", 1)

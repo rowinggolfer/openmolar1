@@ -7,14 +7,14 @@
 # See the GNU General Public License for more details.
 
 '''
-This module provides a function 'run' which will move data 
-from the patients table 
+This module provides a function 'run' which will move data
+from the patients table
 in schema 1_4 to a new exemptions table in schema 1_5
 also, remove the key for calendar, it makes more sense to have the date
 as the primary key. (cleaner code for updates)
 '''
 import sys
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar import connect
 
@@ -42,7 +42,7 @@ class UpdateException(Exception):
     A custom exception. If this is thrown the db will be rolled back
     '''
     pass
-    
+
 class dbUpdater(QtCore.QThread):
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
@@ -50,7 +50,7 @@ class dbUpdater(QtCore.QThread):
         self.path = None
         self.completed = False
         self.MESSAGE = "upating database"
-    
+
     def progressSig(self, val, message=""):
         '''
         emits a signal showhing how we are proceeding.
@@ -63,7 +63,7 @@ class dbUpdater(QtCore.QThread):
     def create_alter_tables(self):
         '''
         execute the above commands
-        NOTE - this function may fail depending on the mysql permissions 
+        NOTE - this function may fail depending on the mysql permissions
         in place
         '''
         db = connect.connect()
@@ -90,21 +90,21 @@ class dbUpdater(QtCore.QThread):
             db.autocommit(True)
         else:
             raise UpdateException("couldn't execute all statements!")
-    
+
     def transferData(self):
         '''
         move data into the new tables
-        ''' 
+        '''
         db = connect.connect()
         cursor=db.cursor()
         cursor.execute('lock tables patients read, exemptions write')
-            
+
         cursor.execute('select serialno, exmpt, exempttext from patients')
         rows=cursor.fetchall()
-            
-        query = '''insert into exemptions (serialno, exemption, exempttext) 
+
+        query = '''insert into exemptions (serialno, exemption, exempttext)
         values (%s, %s, %s)'''
-        
+
         values = []
         for row in rows:
             if row[1] != "" or row[2] != "":
@@ -114,14 +114,14 @@ class dbUpdater(QtCore.QThread):
 
         db.commit()
         cursor.execute("unlock tables")
-        
+
         cursor.close()
         db.close()
         return True
 
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
-                
+
     def run(self):
         print "running script to convert from schema 1.4 to 1.5"
         try:
@@ -131,7 +131,7 @@ class dbUpdater(QtCore.QThread):
 
             #- transfer data between tables
             self.progressSig(50, _('transfering data'))
-            
+
             print "transfering data to new table, ...",
             if self.transferData():
                 print "ok"
@@ -139,19 +139,19 @@ class dbUpdater(QtCore.QThread):
                 print "FAILED!!!!!"
 
             self.progressSig(90, _('updating settings'))
-            print "update database settings..." 
-            
+            print "update database settings..."
+
             schema_version.update(("1.5",), "1_4 to 1_5 script")
-            
+
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
             + " 1.5")
-        
+
         except UpdateException, e:
             localsettings.CLIENT_SCHEMA_VERSION = "1.4"
             self.completeSig(_("rolled back to") + " 1.4")
-            
+
         except Exception, e:
             print "Exception caught",e
             self.completeSig(str(e))

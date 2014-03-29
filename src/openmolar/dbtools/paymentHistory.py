@@ -24,13 +24,13 @@ HEADERS = (
         )
 
 QUERY = '''
-select DATE_FORMAT(cbdate, %s), dntid, descr, code, amt 
+select DATE_FORMAT(cbdate, %s), dntid, descr, code, amt
 from cashbook where ref=%s order by cbdate desc
 '''
 
 SUMMARY_QUERY = '''
-select DATE_FORMAT(cbdate, %s), dntid, code, amt 
-from cashbook where ref=%s and (code<10 or code>123) 
+select DATE_FORMAT(cbdate, %s), dntid, code, amt
+from cashbook where ref=%s and (code<10 or code>123)
 and cbdate >= %s order by cbdate
 '''
 
@@ -41,7 +41,7 @@ def summary_details(sno, start_date):
     cursor.execute(SUMMARY_QUERY, values)
     rows = cursor.fetchall()
     cursor.close()
-    
+
     claimNo = len(rows)
 
     if claimNo==0:
@@ -52,32 +52,32 @@ def summary_details(sno, start_date):
     for header in HEADERS[:3] + HEADERS[8:]:
         retarg += "<th>%s</th>"% header
     retarg += '</tr>'
-    
+
     total = 0
     for i, row in enumerate(rows):
         if i %2 == 0:
             retarg+='<tr bgcolor="#eeeeee">'
         else:
             retarg+='<tr>'
-            
+
         #-- a row is  (date,sno,dnt,patient,code,amount)
-            
+
         retarg += '<td>%s</td>'% (row[0])
         retarg += '<td>%s</td>'% localsettings.ops.get(row[1])
         CODE = cashbookCodesDict.get(row[2], "UNKNOWN")
-        retarg += '<td>%s</td>'% CODE                
+        retarg += '<td>%s</td>'% CODE
         amt = row[3]
-        
+
         retarg += '<td align="right">%s</td>'% localsettings.formatMoney(amt)
-    
+
         retarg += '</tr>\n'
         total += amt
-    
+
     retarg += '''<tr class="table_header">
     <td colspan="3" align="right"><b>TOTAL</b></td>
     <td align="right"><b>%s</b></td></tr>'''% (
         localsettings.formatMoney(total))
-    
+
     retarg += '</table>'
 
     return retarg
@@ -87,13 +87,13 @@ def details(sno):
     returns an html page showing pt's payment History
     '''
     values = (localsettings.OM_DATE_FORMAT, "%06d"% sno)
-    
+
     db = connect()
     cursor = db.cursor()
     cursor.execute(QUERY, values)
     rows = cursor.fetchall()
     cursor.close()
-    
+
     claimNo = len(rows)
 
     if claimNo==0:
@@ -113,14 +113,14 @@ def details(sno):
         else:
             retarg+='<tr>'
             odd = True
-            
+
         #-- a row is  (date,sno,dnt,patient,code,amount)
-            
+
         retarg += '<td>%s</td>'%(row[0])
         retarg += '<td>%s</td>'%localsettings.ops.get(row[1])
         retarg += '<td>%s</td>'%row[2]
         CODE = cashbookCodesDict.get(row[3], "UNKNOWN")
-        retarg += '<td>%s</td>'%CODE                
+        retarg += '<td>%s</td>'%CODE
         amt = row[4]
         amt_str = localsettings.formatMoney(amt)
         if "CASH" in CODE:
@@ -140,12 +140,12 @@ def details(sno):
             retarg += "<td> </td>"*3
             retarg += '<td align="right">%s</td>'% amt_str
             otherTOT += amt
-        
+
         retarg += '<td align="right">%s</td>'% amt_str
-    
+
         retarg += '</tr>\n'
         total += amt
-    
+
     retarg += '''<tr><td colspan="3"></td>
     <td><b>TOTAL</b></td>
     <td align="right"><b>%s</b></td>
@@ -153,12 +153,12 @@ def details(sno):
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td></tr>'''% (
-        localsettings.formatMoney(cashTOT), 
-        localsettings.formatMoney(chequeTOT), 
-        localsettings.formatMoney(cardTOT), 
-        localsettings.formatMoney(otherTOT), 
+        localsettings.formatMoney(cashTOT),
+        localsettings.formatMoney(chequeTOT),
+        localsettings.formatMoney(cardTOT),
+        localsettings.formatMoney(otherTOT),
         localsettings.formatMoney(total))
-    
+
     retarg += '</table></body></html>'
 
     return retarg
@@ -166,4 +166,3 @@ def details(sno):
 if __name__ == "__main__":
     from datetime import date
     print summary_details(1, date(2000,1,1)).encode("ascii", "replace")
-    

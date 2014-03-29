@@ -13,7 +13,7 @@ from openmolar.settings import localsettings
 
 def getData(ix):
     '''
-    gets the binary data for the file from the database, 
+    gets the binary data for the file from the database,
     along with the version number
     '''
     db = connect.connect()
@@ -36,7 +36,7 @@ def storedDocs(sno):
     query = '''select DATE_FORMAT(filedate,'%s'), name, size, datatype, ix
     from docsimported where serialno=%s order by ix DESC '''%(
     localsettings.OM_DATE_FORMAT, sno)
-     
+
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
@@ -71,14 +71,14 @@ def add(sno, filepath):
     st = os.stat(filepath)
     db = connect.connect()
     cursor = db.cursor()
-    query = '''insert into docsimported 
+    query = '''insert into docsimported
     (serialno, datatype, name, size, filedate) values (%s, %s, %s, %s, %s)'''
     file_type = mimetypes.guess_type(filepath)[0]
     if file_type == None:
         file_type = "unknown"
-    values = (sno, file_type, os.path.basename(filepath), st.st_size, 
+    values = (sno, file_type, os.path.basename(filepath), st.st_size,
     datetime.datetime.fromtimestamp (st.st_mtime))
-    
+
     cursor.execute(query, values)
     fileid = db.insert_id()
     query = 'INSERT INTO docsimporteddata (masterid, filedata) VALUES (%s, %s)'

@@ -15,24 +15,24 @@ def getData(value):
     try:
         db = connect.connect()
         cursor = db.cursor()
-        query = 'select data from settings where value = %s' 
+        query = 'select data from settings where value = %s'
         cursor.execute(query, value)
         rows = cursor.fetchall()
         cursor.close()
         return rows
     except connect.ProgrammingError:
         return ()
-    
+
 def insertData(value, data, user):
     '''
     insert a setting (leaving old values behind)
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query = '''insert into settings (value,data,modified_by,time_stamp) 
+    query = '''insert into settings (value,data,modified_by,time_stamp)
     values (%s, %s, %s, NOW())'''
     values = (value, data, user)
-    
+
     print "saving setting (%s, %s) to settings table"% (value, data)
     cursor.execute(query, values)
     db.commit()
@@ -44,10 +44,10 @@ def updateData(value, data, user):
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query = '''update settings set data = %s, modified_by = %s, 
+    query = '''update settings set data = %s, modified_by = %s,
     time_stamp = NOW() where value=%s'''
     values = (data, user, value)
-    
+
     print "updating setting (%s, %s) to settings table"% (value, data)
     if not cursor.execute(query, values):
         return insertData(value, data, user)
@@ -55,15 +55,15 @@ def updateData(value, data, user):
         db.commit()
         return True
 
-def getWikiUrl(): 
+def getWikiUrl():
     '''
     the database may know of the url (presumably an internally facing ip)
     for the practice wiki??
-    ''' 
+    '''
     try:
         db = connect.connect()
         cursor = db.cursor()
-        query = 'select data from settings where value = "wikiurl"' 
+        query = 'select data from settings where value = "wikiurl"'
         cursor.execute(query)
         rows = cursor.fetchall()
     except connect.ProgrammingError, ex:
@@ -71,7 +71,7 @@ def getWikiUrl():
     if rows:
         return rows[-1][0]
     else:
-        return "http://openmolar.wikidot.com/"    
+        return "http://openmolar.wikidot.com/"
 
 if __name__ == "__main__":
     print getData("enddate")

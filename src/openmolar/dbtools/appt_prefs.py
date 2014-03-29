@@ -26,7 +26,7 @@ UPDATE_QUERY = '''replace into appt_prefs
         rechyg_period, rechyg, recall_method, note)
         values (%s,%s,%s,%s,%s,%s,%s,%s)
         '''
-        
+
 
 class ApptPrefs(object):
     '''
@@ -91,7 +91,7 @@ class ApptPrefs(object):
         cursor = db.cursor()
         cursor.execute(UPDATE_QUERY, values)
         cursor.close()
-        
+
     def __repr__(self):
         return self.__str__()
 
@@ -110,7 +110,7 @@ class ApptPrefs(object):
 
     def __ne__(self, other):
         return str(self)!= str(other)
-    
+
 if __name__ =="__main__":
     try:
         serialno=int(sys.argv[len(sys.argv)-1])
@@ -120,8 +120,8 @@ if __name__ =="__main__":
     prefs = ApptPrefs(serialno)
     for att in prefs.__dict__.keys():
         print att, prefs.__dict__[att]
-        
+
     prefs2 = ApptPrefs(serialno)
-    
+
     print prefs == prefs2
     print prefs != prefs2

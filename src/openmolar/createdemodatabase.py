@@ -17,7 +17,7 @@ correct user permissions.
 
 import MySQLdb
 import os
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 
 def create_database(myhost, myport, myuser, mypassword, databaseName,
 rootMySQLpassword):
@@ -35,7 +35,7 @@ rootMySQLpassword):
         pass
     print "creating database...",
     print cursor.execute("CREATE DATABASE %s"% databaseName)
-    
+
     #-- note for production deployments, only grant
     #-- select,insert,update,delete privileges
     query = 'GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY "%s"'% (

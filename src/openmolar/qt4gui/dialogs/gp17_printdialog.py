@@ -63,15 +63,15 @@ class CourseChoiceWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         layout = QtGui.QHBoxLayout(self)
-        
+
         cb = QtGui.QRadioButton(_("Completed Treatment"))
         self.pa_cb = QtGui.QRadioButton(_("Prior Approval"))
 
         cb.setChecked(True)
-        
+
         layout.addWidget(cb)
         layout.addWidget(self.pa_cb)
-        
+
     @property
     def chosen(self):
         if self.pa_cb.isChecked():
@@ -220,7 +220,7 @@ class GP17PrintDialog(ExtendableDialog):
         ):
             if not cb.isChecked():
                 self.data.exclusions.append(att)
-        
+
         self.data.completed_only = not self.prior_approval
 
     def exec_(self):

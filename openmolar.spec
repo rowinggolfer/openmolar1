@@ -19,7 +19,7 @@ Vendor: Neil Wallace <rowinggolfer@googlemail.com>
 Url: https://launchpad.net/openmolar
 
 %description
-Dental Practice Management Suite, using a Mysql database server to maintain patient records, accounts, and correspondence. 
+Dental Practice Management Suite, using a Mysql database server to maintain patient records, accounts, and correspondence.
 
 %prep
 %setup -n %{name}-%{unmangled_version}

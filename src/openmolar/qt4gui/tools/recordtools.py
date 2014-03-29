@@ -269,7 +269,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         for tooth in TEETH:
             self.om_gui.pt.treatment_course.__dict__[tooth+"cmp"] = \
                 self.planEntryCheck(self.chartcompleted_lineEdits[tooth])
-        
+
         course = self.om_gui.pt.treatment_course
 
         course.xraycmp = self.planEntryCheck(self.xraycmp_lineEdit)
@@ -289,7 +289,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         self.hidden_notes_tableWidget.clear()
         self.hidden_notes_tableWidget.setColumnCount(2)
         self.hidden_notes_tableWidget.setRowCount(
-            len(self.om_gui.pt.HIDDENNOTES))        
+            len(self.om_gui.pt.HIDDENNOTES))
         header = self.hidden_notes_tableWidget.horizontalHeader()
         self.hidden_notes_tableWidget.setHorizontalHeaderLabels(
             ["type", "note"])
@@ -311,7 +311,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
             note = self.hidden_notes_tableWidget.item(row_no, 1).text()
 
             HN.append((ntype, note))
-            
+
         self.om_gui.pt.HIDDENNOTES = HN
         self.om_gui.updateHiddenNotesLabel()
         self.om_gui.advise(_("updated hidden notes list"), 1)
@@ -352,7 +352,7 @@ if __name__ == "__main__":
     om_gui = maingui.OpenmolarGui()
     om_gui.getrecord(1)
     om_gui.pt.HIDDENNOTES = [
-        ('COURSE OPENED', '= = = = = '), 
+        ('COURSE OPENED', '= = = = = '),
         ('TC: EXAM', 'CE')
         ]
 

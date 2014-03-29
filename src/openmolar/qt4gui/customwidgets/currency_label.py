@@ -24,7 +24,7 @@ from PyQt4 import QtCore, QtGui
 
 class CurrencyLabel(QtGui.QWidget):
     '''
-    a re-implimentation of QLabel which adds the local currency prefix 
+    a re-implimentation of QLabel which adds the local currency prefix
     if possible.
     '''
     def __init__(self, text="", parent=None):
@@ -34,24 +34,24 @@ class CurrencyLabel(QtGui.QWidget):
         except AttributeError:
             #currencySymbol is Qt 4.8 and above
             c_txt = ""
-            
+
         self.suffix_label = QtGui.QLabel(c_txt, self)
         self.suffix_label.setFixedWidth(
             self.suffix_label.fontMetrics().width(c_txt))
         self.label = QtGui.QLabel(text,self)
         self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
-            
+
         self.text = self.label.text
         self.setText = self.label.setText
-        
+
         layout = QtGui.QHBoxLayout(self)
         layout.addWidget(self.suffix_label)
         layout.addWidget(self.label)
-    
+
     def setFont(self, font):
         self.label.setFont(font)
         self.suffix_label.setFont(font)
-        
+
 
 if __name__ == "__main__":
 

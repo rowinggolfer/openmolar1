@@ -16,15 +16,15 @@ def details(sno):
     '''
     db=connect()
     cursor=db.cursor()
-    
+
     query = '''select DATE_FORMAT(date,'%s'), coursetype,
-    dntid, trtid, concat(diagn,perio,anaes,misc,ndu,ndl,odu,odl), 
+    dntid, trtid, concat(diagn,perio,anaes,misc,ndu,ndl,odu,odl),
     other,chart,feesa,feesb from daybook
     where serialno = %s order by date desc, id desc'''% (
-    localsettings.OM_DATE_FORMAT, sno)    
-    
+    localsettings.OM_DATE_FORMAT, sno)
 
-    ## can't use the preffered query, values 
+
+    ## can't use the preffered query, values
     ## here as the dateformat of %d/%m/%Y stuffs it up!
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -41,7 +41,7 @@ def details(sno):
     for header in headers:
         retarg+="<th>%s</th>"%header
     retarg+='</tr>'
-    
+
     odd=True
     fee_total,ptfee_total=0,0
     for row in rows:

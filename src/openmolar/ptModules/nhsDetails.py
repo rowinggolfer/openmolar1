@@ -13,26 +13,26 @@ def toHtml(pt):
     '''
     returns an HTML table of the patients pt
     '''
-    
+
     retarg='''<html><body><center>
     <h3>NHS DETAILS</h3>
     <table width ="100%" border="1">
     '''
     retarg+="<tr><td>EXEMPTION</td><td>%s</td></tr>"%pt.exemption
-    retarg+="<tr><td>EXEMPTION TEXT</td><td>%s</td></tr>"%pt.exempttext 
+    retarg+="<tr><td>EXEMPTION TEXT</td><td>%s</td></tr>"%pt.exempttext
     retarg+="<tr><td>PREVIOUS SURNAME</td><td>%s</td></tr>"%pt.psn
     retarg+="<tr><td>NHS NUMBER</td><td>%s</td></tr>"%pt.nhsno
-    
+
     retarg+="<tr><td>LAST CLAIM</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd3)
     retarg+="<tr><td>INITIAL ACCEPTANCE</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd12)
     retarg+="<tr><td>LAST REACCEPTANCE</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd14)
     retarg+="<tr><td>EXPIRY</td><td>%s</td></tr>"% localsettings.formatDate(pt.expiry)
     retarg+="<tr><td>CSTATUS</td><td>%s</td></tr>"% localsettings.formatDate(pt.cstatus)
     retarg+="<tr><td>TRANSFER</td><td>%s</td></tr>"% localsettings.formatDate(pt.transfer)
-    
+
     if pt.sex=="F":
         retarg+="<tr><td>CONFINEMENT DATE</td><td>%s</td></tr>"% localsettings.formatDate(pt.cnfd)
-    
+
     retarg+='</table></body></html>'
 
     return retarg

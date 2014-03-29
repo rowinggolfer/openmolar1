@@ -18,7 +18,7 @@ def commit(pt):
         if value:
             sqlcond += '%s = %%s,'% attr
             values.append(value)
-    
+
     sqlcommand= "insert into patients SET %s serialno=%%s"%sqlcond
 
     query = "select max(serialno) from patients"
@@ -39,12 +39,12 @@ def commit(pt):
             cursor.close()
             db.commit()
             break
-        
+
         except connect.IntegrityError, e:
             print "error saving new patient, will retry with new serialno"
             print e
             newSerialno = -1
-        
+
         Attempts += 1
         if Attemps > 20:
             break

@@ -15,24 +15,24 @@ def toHtml(plandata):
     '''
     if not plandata.retrieved:
         return "There was an error retrieving this information"
-    
+
     retarg='''<html><body><center>
     <h3>PLAN DETAILS</h3>
     <table width ="100%" border="1">
     '''
     retarg+="<tr><td>PLAN TYPE</td><td>%s</td></tr>"%plandata.plantype
-    retarg+="<tr><td>BAND</td><td>%s</td></tr>"%plandata.band 
+    retarg+="<tr><td>BAND</td><td>%s</td></tr>"%plandata.band
     retarg+="<tr><td>GROSS CHARGE</td><td>%s</td></tr>"%(
-    localsettings.formatMoney(plandata.grosschg)) 
-    
-    retarg+="<tr><td>DISCOUNT</td><td>%s&#37;</td></tr>"%plandata.discount 
+    localsettings.formatMoney(plandata.grosschg))
+
+    retarg+="<tr><td>DISCOUNT</td><td>%s&#37;</td></tr>"%plandata.discount
     retarg+="<tr><td>NET CHARGE</td><td>%s</td></tr>"%(
     localsettings.formatMoney(plandata.netchg))
 
-    retarg+="<tr><td>CATEGORY</td><td>%s</td></tr>"%plandata.catcode 
-    retarg+="<tr><td>DATE JOINED</td><td>%s</td></tr>"%plandata.planjoin 
-    retarg+="<tr><td>REGISTRATION NUMBER</td><td>%s</td></tr>"%plandata.regno 
-    
+    retarg+="<tr><td>CATEGORY</td><td>%s</td></tr>"%plandata.catcode
+    retarg+="<tr><td>DATE JOINED</td><td>%s</td></tr>"%plandata.planjoin
+    retarg+="<tr><td>REGISTRATION NUMBER</td><td>%s</td></tr>"%plandata.regno
+
     retarg+='</table></body></html>'
 
     return retarg

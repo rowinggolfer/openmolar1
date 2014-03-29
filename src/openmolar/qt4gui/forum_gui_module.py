@@ -93,7 +93,7 @@ def loadForum(om_gui):
             parentItems[post.ix] = item
 
     twidg.expandAll()
-    
+
     twidg.setSortingEnabled(True)
     #if GROUP_TOPICS:
     #    twidg.sortByColumn(7)
@@ -105,7 +105,7 @@ def loadForum(om_gui):
     twidg.setColumnWidth(1, 0)
     twidg.setColumnWidth(5, 0)
     #twidg.setColumnWidth(7, 0)
-    
+
     om_gui.ui.forumDelete_pushButton.setEnabled(False)
     om_gui.ui.forumReply_pushButton.setEnabled(False)
     om_gui.ui.forumParent_pushButton.setEnabled(False)
@@ -117,7 +117,7 @@ def forumItemSelected(om_gui):
     user has selected an item in the forum
     '''
     item = om_gui.ui.forum_treeWidget.currentItem()
-        
+
     datetext = item.data(4,
     QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
 
@@ -134,12 +134,12 @@ def forumItemSelected(om_gui):
 
     if om_gui.forum_parenting_mode[0]:
         parentix = int(item.text(1))
-        forum.setParent(om_gui.forum_parenting_mode[1], parentix) 
+        forum.setParent(om_gui.forum_parenting_mode[1], parentix)
         om_gui.forum_parenting_mode = (False, None)
         om_gui.ui.forumParent_pushButton.setStyleSheet("")
         loadForum(om_gui)
-    
-        
+
+
 def forumNewTopic(om_gui):
     '''
     create a new post
@@ -238,11 +238,11 @@ def forumParent(om_gui):
         om_gui.advise(_("Parenting Cancelled"))
         om_gui.ui.forumParent_pushButton.setStyleSheet("")
         return
-        
+
     om_gui.ui.forumParent_pushButton.setStyleSheet("background-color: red")
     om_gui.advise(_("Click on the Parent Item"))
     om_gui.forum_parenting_mode = (True, ix)
-    
+
 def viewFilterChanged(om_gui, chosen):
     #print "viewFilterChanged", chosen
     loadForum(om_gui)

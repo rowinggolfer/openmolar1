@@ -38,7 +38,7 @@ class UpperCaseLineEdit(QtGui.QLineEdit):
         QtGui.QLineEdit.keyPressEvent(self, event)
         self.setText(self.text())
         self.textEdited.emit(self.text())
-        
+
 if __name__ == "__main__":
     app = QtGui.QApplication([])
     te = UpperCaseLineEdit()

@@ -30,10 +30,10 @@ class post():
 def commitPost(post):
     #use a different connection for forum, as it runs in a separate thread
 
-    db = connect.connect() 
+    db = connect.connect()
     cursor = db.cursor()
     columns = "parent_ix,inits,recipient,fdate,topic,comment"
-    
+
     values = (post.parent_ix, post.inits, post.recipient,
     post.topic, post.comment.replace("\n"," "))
 
@@ -42,23 +42,23 @@ def commitPost(post):
 
     cursor.execute(query, values)
     db.commit()
-    
+
 def deletePost(ix):
     db=connect.connect()
     cursor=db.cursor()
     query = "update forum set open=False where ix=%s"
-    cursor.execute(query, (ix,))    
+    cursor.execute(query, (ix,))
     db.commit()
     cursor.close()
-    
+
 def setParent(ix, parent_ix):
     db = connect.connect()
     cursor = db.cursor()
     query = "update forum set parent_ix=%s where ix=%s"
-    cursor.execute(query, (parent_ix, ix))    
+    cursor.execute(query, (parent_ix, ix))
     db.commit()
     cursor.close()
-    
+
 def newPosts():
     result = False
     try:
@@ -75,13 +75,13 @@ def newPosts():
             query += " op='%s' or"% user
         cursor.execute(query.strip("or"))
         row2 = cursor.fetchone()
-        
+
         cursor.close()
         result = row[0] > row2[0]
     except connect.ProgrammingError, e:
         print e
     return result
-        
+
 def updateReadHistory():
     users = localsettings.operator.split("/")
     #print "updating forumread for new posts for ", users
@@ -91,11 +91,11 @@ def updateReadHistory():
     cursor=db.cursor()
     query="insert into forumread set id=%s, op=%s, readdate=NOW()"
     for user in users:
-        values = (HIGHESTID, user) 
+        values = (HIGHESTID, user)
         cursor.execute(query, values)
-    
+
     cursor.close()
-        
+
 
 def getPosts(user=None, include_closed=False):
     '''
@@ -104,7 +104,7 @@ def getPosts(user=None, include_closed=False):
     global HIGHESTID
     filter = ""
     if not include_closed:
-        filter += ' open ' 
+        filter += ' open '
     if user:
         if filter == "":
             filter += "and"
@@ -113,13 +113,13 @@ def getPosts(user=None, include_closed=False):
         filter = "where " + filter
     db = connect.connect()
     cursor = db.cursor()
-    query = ('SELECT ix, parent_ix, topic, inits, fdate, recipient, comment ' 
+    query = ('SELECT ix, parent_ix, topic, inits, fdate, recipient, comment '
     'FROM forum %s ORDER BY parent_ix, ix' % filter)
 
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
-    
+
     retarg = []
     update = False
     for row in rows:
@@ -147,4 +147,3 @@ if __name__ == "__main__":
     posts = getPosts()
     for post in posts:
         print post.parent_ix, post.ix, post.topic
-    

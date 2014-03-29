@@ -81,7 +81,7 @@ RECTS["paid_b"]                   = QtCore.QRectF(641, 795, checkBoxWidth, check
 RECTS["paid_c"]                   = QtCore.QRectF(660, 795, checkBoxWidth, checkBoxHeight)
 RECTS["paid_d"]                   = QtCore.QRectF(686, 795, checkBoxWidth, checkBoxHeight)
 RECTS["paid_s"]                   = QtCore.QRectF(706, 795, checkBoxWidth, checkBoxHeight)
- 
+
 RECTS["Dent_sig"]                = QtCore.QRectF(477, 497, 242, 26)
 RECTS["Dent_sig_date"]           = QtCore.QRectF(477, 532, 130, 26)
 
@@ -94,36 +94,36 @@ class Gp17Back(PrintedForm):
     a class to set up and print a GP17
     '''
     data = None
-        
+
     def __init__(self):
         PrintedForm.__init__(self)
         self.rects = RECTS
-    
+
     def print_(self):
         self.set_offset(gp17config.OFFSET_LEFT, gp17config.OFFSET_TOP)
-        self.set_scaling(gp17config.SCALE_X, gp17config.SCALE_Y) 
-        
+        self.set_scaling(gp17config.SCALE_X, gp17config.SCALE_Y)
+
         painter = PrintedForm.print_(self)
         self._fill(painter)
-        
+
     def _fill(self, painter):
         if self.data is None:
             return
-       
-            
+
+
 if __name__ == "__main__":
     os.chdir(os.path.expanduser("~")) # for print to file
     from openmolar.settings import localsettings
     TEST_IMAGE = os.path.join(localsettings.resources_location,
         "gp17", "back.jpg")
-    
+
     app = QtGui.QApplication([])
     form = Gp17Back()
-   
+
     form.testing_mode = True
-    
+
     form.print_background = True
     form.BACKGROUND_IMAGE = TEST_IMAGE
-   
+
     form.controlled_print()
-    
+

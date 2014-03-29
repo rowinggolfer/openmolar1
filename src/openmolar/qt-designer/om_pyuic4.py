@@ -67,7 +67,7 @@ def compile_ui(ui_fname, outdir=""):
     	uic.compileUi(ui_fname, f, execute=MAKE_EX)
     except IOError: #ui has been removed by git?
         pass
-    finally:    
+    finally:
         f.close()
 
     f = open(pyfile,"r")

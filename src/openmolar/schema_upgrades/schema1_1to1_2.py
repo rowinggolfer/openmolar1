@@ -7,7 +7,7 @@
 # See the GNU General Public License for more details.
 
 '''
-This module provides a function 'run' which will move data from the estimates 
+This module provides a function 'run' which will move data from the estimates
 table in schema 1_0 to the newestimates table in schema 1_1
 The NewTable schema is contained in module variable NEW_TABLE_SQLSTRINGS
 Incidentally - this script introduces the "settings table" in which the schema
@@ -28,7 +28,7 @@ PRIMARY KEY (ix),
 KEY (id))''',
 '''
 CREATE TABLE if not exists tasks (
-ix int(10) unsigned NOT NULL auto_increment, 
+ix int(10) unsigned NOT NULL auto_increment,
 op char(8),
 author char(8),
 type char(8),
@@ -41,7 +41,7 @@ PRIMARY KEY (ix))''',
 ]
 
 import sys
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar import connect
 
@@ -56,25 +56,25 @@ def create_alter_tables():
         cursor.execute(sql_string)
     db.commit()
     return True
-    
-def copy_OMforum_into_forum():  
+
+def copy_OMforum_into_forum():
     '''
     I am scrapping the omforum table, put these posts into the forum
-    '''  
+    '''
     db = connect.connect()
     cursor=db.cursor()
     cursor.execute('''lock tables omforum read,forum write''')
     cursor.execute('''select ix, parent_ix, inits, fdate, topic, comment, open
 from omforum order by ix''')
     rows=cursor.fetchall()
-    
+
     cursor.execute('''select max(ix) from forum''')
     start_ix = cursor.fetchone()[0]+1
-    print "start_ix =", start_ix 
-    
-    query = '''insert into forum (parent_ix, inits, fdate, topic, comment, 
+    print "start_ix =", start_ix
+
+    query = '''insert into forum (parent_ix, inits, fdate, topic, comment,
     open) values (%s, %s, %s, %s, %s, %s)'''
-    
+
     for row in rows:
         if row[1]:
             parent_ix = row[1] + start_ix
@@ -84,10 +84,10 @@ from omforum order by ix''')
         cursor.execute(query, values)
 
     db.commit()
-    
+
     cursor.execute("unlock tables")
     cursor.close()
-    
+
     db.close()
     return True
 
@@ -107,25 +107,25 @@ class dbUpdater(QtCore.QThread):
 
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
-                
+
     def run(self):
         print "running script to convert from schema 1.1 to 1.2"
         try:
             self.progressSig(30, "updating schema to 1,2")
             if create_alter_tables():
                 self.progressSig(50, 'created new table "forumread"')
-                
+
                 if copy_OMforum_into_forum():
-                    self.progressSig(80, 
+                    self.progressSig(80,
                     'copied data from obsolete table OMforum')
-                
+
                 schema_version.update(("1.2",), "1_1 to 1_2 script")
-                
+
                 self.progressSig(100, _("updating stored schema version"))
                 self.completed = True
                 self.completeSig(_("ALL DONE - sucessfully moved db to")
                 +" 1.2")
-            
+
         except Exception, e:
             print "Exception caught",e
             self.completeSig(str(e))

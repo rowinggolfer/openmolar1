@@ -65,32 +65,32 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
         self.back_pushButton.hide()
         self.groupBox.setEnabled(False)
         self.specificLabel()
-        
+
     def specificLabel(self):
         '''
         offer customised advice depending on the OS
         '''
         if "win" in sys.platform:
-            advice = _("If you ever need to run this again, ") 
+            advice = _("If you ever need to run this again, ")
             advice += _("delete the openmolar.conf file in ")
             advice += "C:\\Program Files\\openmolar\\"
         else:
             advice = _("If you ever need to run this wizard again, ") +\
             "(" + _("Eg. if your server location changes, ") +\
-            _("or you require a new password")+")" 
-            advice += "<br>"+ _("type") + " 'openmolar firstrun' " 
+            _("or you require a new password")+")"
+            advice += "<br>"+ _("type") + " 'openmolar firstrun' "
             advice += _("on the command line, or delete the file")
-            advice += "<br />"+"~/.openmolar/openmolar.conf" +"<br />"*2 
+            advice += "<br />"+"~/.openmolar/openmolar.conf" +"<br />"*2
             advice += _(
-            "For a more secure setup, you should move this file to") 
+            "For a more secure setup, you should move this file to")
             advice += "/etc/openmolar/openmolar.conf"
-            
+
         self.sysAdvice_label.setText(advice)
-        
+
     def signals(self):
         self.connect(self.go_pushButton, QtCore.SIGNAL("clicked()"), self.next)
-    
-        self.connect(self.back_pushButton, 
+
+        self.connect(self.back_pushButton,
         QtCore.SIGNAL("clicked()"), self.back)
 
         self.connect(self.rootPassword_checkBox, QtCore.SIGNAL(
@@ -98,19 +98,19 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
 
         self.connect(self.mainpassword_checkBox, QtCore.SIGNAL(
         "stateChanged(int)"), self.echomode)
-        
+
         self.connect(self.dbpassword_checkBox, QtCore.SIGNAL(
         "stateChanged(int)"), self.dbechomode)
-    
+
         self.connect(self.existingDB_radioButton, QtCore.SIGNAL(
         "toggled(bool)"),self.demo_or_existing)
-        
-        self.connect(self.testDB_pushButton, 
+
+        self.connect(self.testDB_pushButton,
         QtCore.SIGNAL("clicked()"), self.testConnection)
-        
-        self.connect(self.stackedWidget, 
+
+        self.connect(self.stackedWidget,
         QtCore.SIGNAL("currentChanged (int)"), self.title_label_update)
-        
+
         for le in (self.rootPassword_lineEdit,
                     self.user_lineEdit,
                     self.password_lineEdit,
@@ -118,9 +118,9 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
                     self.repeat_password_lineEdit,
                     self.host_lineEdit,
                     self.port_lineEdit):
-            self.connect(le, 
+            self.connect(le,
             QtCore.SIGNAL("returnPressed()"), self.next)
-    
+
     def advise(self, message, warning = False):
         '''
         throws up a message box
@@ -128,16 +128,16 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
         if warning:
             QtGui.QMessageBox.warning(self, _("Error"), message)
         else:
-            QtGui.QMessageBox.information(self, _("Advisory"), 
+            QtGui.QMessageBox.information(self, _("Advisory"),
             message)
-        
+
     def next(self):
         '''
         time to move on to the next screen
         assuming all is well
         '''
         i = self.stackedWidget.currentIndex()
-        
+
         if i == 0:
             self.stackedWidget.setCurrentIndex(1)
             self.main_password_lineEdit.setFocus()
@@ -151,10 +151,10 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
             else:
                 self.PASSWORD = self.main_password_lineEdit.text()
                 self.stackedWidget.setCurrentIndex(2)
-        
+
         elif i == 2:
             self.stackedWidget.setCurrentIndex(3)
-            
+
         elif i == 3:
             if self.createDemo_radioButton.isChecked():
                 self.stackedWidget.setCurrentIndex(5)
@@ -162,17 +162,17 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
             else:
                 self.stackedWidget.setCurrentIndex(4)
                 self.go_pushButton.setFocus()
-        
+
         elif i == 4:
             self.finish()
             if self.checkBox.isChecked():
                 self.accept()
             else:
                 self.reject()
-        
+
         elif i == 5:
             self.snapshot()
-            result=QtGui.QMessageBox.question(self, 
+            result=QtGui.QMessageBox.question(self,
             _("Create Database"),
             _("Create Demo Database now with the following settings?") +
             '''<br><ul><li>host - %s </li><li>port - %s</li>
@@ -181,7 +181,7 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
             self.HOST,self.PORT,self.DB,self.MysqlUser),
             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes )
-            
+
             if result == QtGui.QMessageBox.Yes:
                 self.stackedWidget.setCurrentIndex(6)
                 if self.createDemoDatabase():
@@ -190,24 +190,24 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
                     self.testDB_pushButton.setEnabled(True)
                     return
             else:
-                self.stackedWidget.setCurrentIndex(3)        
-            
+                self.stackedWidget.setCurrentIndex(3)
+
             self.advise(_("Database NOT Created"))
-            self.stackedWidget.setCurrentIndex(4)        
-                
+            self.stackedWidget.setCurrentIndex(4)
+
     def back(self):
         '''
         time to move on to the next screen
         assuming all is well
         '''
         i = self.stackedWidget.currentIndex()
-        
+
         if i == 1:
             self.back_pushButton.hide()
         elif i == 5:
             i -= 1
         self.stackedWidget.setCurrentIndex(i-1)
-        
+
     def title_label_update(self, i):
         '''
         updates the header label when the stacked widget changes
@@ -220,9 +220,9 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
         _("Save settings and exit"),
         _("Create a demo database"),
         _("Creating Database"))[i]
-         
+
         self.title_label.setText(message)
-        
+
     def snapshot(self):
         '''
         grab the current settings
@@ -241,13 +241,13 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
         '''
         user is choosing between demo or existing db
         '''
-        
+
         self.groupBox.setEnabled(checked)
-            
+
         if checked:
             self.database_lineEdit.setFocus()
             self.database_lineEdit.selectAll()
-    
+
     def testConnection(self):
         '''
         tries to connect to a mysql database with the settings
@@ -255,10 +255,10 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
         self.snapshot()
         result = False
         try:
-            
+
             print "attempting to connect to mysql server on %s port %s..."% (
             self.HOST, self.PORT)
-            db = MySQLdb.connect(host = self.HOST, 
+            db = MySQLdb.connect(host = self.HOST,
             port = self.PORT, db = self.DB,
             passwd = self.MysqlPassword, user = self.MysqlUser)
 
@@ -270,14 +270,14 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
             self.advise(_("The connection attempt threw an exception")
             + "<hr>%s"% e, True)
             return
-        
-        if result:        
+
+        if result:
             QtGui.QMessageBox.information(None,
             _("Success!"),
             _("The %s database accepted the connection.")% self.DB)
 
         else:
-            self.advise(_('''The connection attempt failed, 
+            self.advise(_('''The connection attempt failed,
 please recheck your settings'''), True)
             print "Connection failed!"
 
@@ -290,12 +290,12 @@ please recheck your settings'''), True)
             if val < PB_LIMIT:
                 self.progressBar.setValue(val+5)
                 self.progressBar.update()
-                
-        self.timer1 = QtCore.QTimer()        
+
+        self.timer1 = QtCore.QTimer()
         self.timer1.start(10) # 1/100thsecond
         self.connect(self.timer1, QtCore.SIGNAL("timeout()"),
         updatePB)
-        
+
         try:
             from openmolar import createdemodatabase
             self.progressBar.setValue(10)
@@ -315,13 +315,13 @@ please recheck your settings'''), True)
                 print "error loading tables"
                 raise IOError ("error loading tables")
             self.progressBar.setValue(100)
-            
+
             return True
-        
+
         except Exception, e:
             print "error in creatDemoDB",  e
             self.advise( _("Error Creating Database") +"<hr>%s"% e,2)
-        
+
     def echomode(self, arg):
         '''
         toggle the echo mode of the password input boxes
@@ -383,9 +383,9 @@ please recheck your settings'''), True)
             "dbname")[0].firstChild.replaceWholeText(self.DB)
 
             settingsDir = os.path.dirname(localsettings.global_cflocation)
-            
+
             sucessful_save = False
-            
+
             try:
                 if not os.path.exists(settingsDir):
                     print 'putting a global settings file in', settingsDir,
@@ -402,11 +402,11 @@ please recheck your settings'''), True)
                 pass
             except IOError:
                 pass
-                
+
             if not sucessful_save:
                 print 'unable to write to %s...'%settingsDir,
-                print ' we need root privileges for that' 
-                
+                print ' we need root privileges for that'
+
                 print "will resort to putting settings into a local file",
                 print localsettings.cflocation
 
@@ -414,24 +414,24 @@ please recheck your settings'''), True)
 
                 if not os.path.exists(settingsDir):
                     os.mkdir(settingsDir)
-                
+
                 print 'putting a local settings file in', settingsDir,
-                                    
+
                 f = open(localsettings.cflocation,"w")
                 f.write(dom.toxml())
                 f.close()
                 print '...ok'
                 localsettings.cflocation = localsettings.cflocation
-                
+
             self.accept()
 
         except Exception, e:
             print "error saving settings",  e
             QtGui.QMessageBox.warning(self, _("FAILURE"), str(e))
-            
-            
+
+
 def run():
-    dl = newsetup()    
+    dl = newsetup()
     return dl.exec_()
 
 

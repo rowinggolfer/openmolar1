@@ -11,7 +11,7 @@ from openmolar.settings import localsettings
 
 def getData(ix):
     '''
-    gets the binary data for the file from the database, 
+    gets the binary data for the file from the database,
     along with the version number
     '''
     db = connect.connect()
@@ -31,7 +31,7 @@ def previousDocs(sno):
     query='''select DATE_FORMAT(printdate,'%s'),docname,docversion,ix
     from newdocsprinted where serialno=%s order by ix DESC '''%(
     localsettings.OM_DATE_FORMAT, sno)
-    
+
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
@@ -45,7 +45,7 @@ def add(sno, docname, object, version=1):
     db = connect.connect()
     cursor = db.cursor()
     query = '''INSERT INTO newdocsprinted
-(serialno,printdate,docname,docversion,data) 
+(serialno,printdate,docname,docversion,data)
 VALUES (%s, date(NOW()), %s, %s, %s)'''
     values = (sno, docname, version, object)
     print "adding letter to newdocsprinted table"

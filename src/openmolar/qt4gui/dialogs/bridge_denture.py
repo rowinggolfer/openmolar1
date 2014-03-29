@@ -30,7 +30,7 @@ class tooth(QtGui.QWidget):
     def leaveEvent(self,event):
         self.setDefaultColors()
         self.update()
-        
+
     def paintEvent(self,event=None):
         painter = QtGui.QPainter(self)
         painter.save()
@@ -58,7 +58,7 @@ class labChartWidget(QtGui.QWidget):
         self.props={}
         self.teeth=[]
         self.addTeeth()
-        
+
     def sizeHint(self):
         return QtCore.QSize(100, 200)
     def minimumSizeHint(self):
@@ -71,18 +71,18 @@ class labChartWidget(QtGui.QWidget):
             self.selected=[x,y]
             self.repaint()
             self.emit(QtCore.SIGNAL("toothSelected"),self.grid[y][x])                      #emit a signal that the user has selected a tooth
-    
+
     def addTeeth(self):
         for i in self.grid:
             t=tooth("ur%s"%i,self)
             self.teeth.append(t)
         self.update()
-     
+
     def paintEvent(self,event=None):
         '''override the paint event so that we can draw our grid'''
-     
+
         centrepoint=(self.width()/2,self.height()/2)
-         
+
         painter = QtGui.QPainter(self)
         painter.save()
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
@@ -102,10 +102,10 @@ class labChartWidget(QtGui.QWidget):
         textRect=QtCore.QRectF(0,0,self.width(),self.height())
         painter.drawText(textRect,QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter,(QtCore.QString("Left")))
         painter.drawText(textRect,QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter,(QtCore.QString("Right")))
-        
+
         for tooth in self.teeth:
             tooth.update()
-        
+
         painter.restore()
 
 

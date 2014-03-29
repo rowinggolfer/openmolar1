@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or 
+# by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtGui, QtCore
@@ -20,7 +20,7 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
         self.parent = parent
         self.setupUi(parent)
         self.signals()
-    
+
     def advise(self, arg, warning_level=1):
         '''
         inform the user of events -
@@ -37,7 +37,7 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
             QtGui.QMessageBox.warning(self.parent, _("Error"), arg)
             #--for logging purposes
             print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
-    
+
     def openDay(self):
         print "openDay called"
         Dialog=QtGui.QDialog(self.parent)
@@ -46,51 +46,51 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
             print "openDay returned True"
         else:
             print "openDay returned False"
-            
+
     def extendBooks(self):
         print "extending books"
-        
-        message = "%s %s %s %s"%( _("Books Currently end on"), 
+
+        message = "%s %s %s %s"%( _("Books Currently end on"),
         localsettings.formatDate(localsettings.bookEnd),"<br />",
           _("extend the books now?"))
 
-        result = QtGui.QMessageBox.question(self.parent, _("Confirm"), 
+        result = QtGui.QMessageBox.question(self.parent, _("Confirm"),
         message,QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
         QtGui.QMessageBox.Yes )
-    
+
         if result == QtGui.QMessageBox.No:
             return
         else:
-            months, result = QtGui.QInputDialog.getInteger(self.parent, 
+            months, result = QtGui.QInputDialog.getInteger(self.parent,
             _("Extend Books"), _("How many months?"))
-        
+
         if result:
-            
+
             newBookEnd = QtCore.QDate(
             localsettings.bookEnd).addMonths(months).toPyDate()
-        
+
             if extend_books.extend(localsettings.apptix.values(),
             localsettings.bookEnd, newBookEnd):
                 #now put this date into the settings database.
-                
+
                 db_format= "%s,%s,%s"% newBookEnd.timetuple()[:3]
                 db_settings.insertData(
                 "bookend", db_format, localsettings.operator)
-        
+
     def removeOld(self):
         '''
         throw the old diaries away now?
         '''
         print "removing old weeks"
         self.advise(_("not yet implemented"))
-    
+
     def editWeeks(self):
         '''
         edit the working hours for a standard week for a dentist/hygenist
         '''
         print "editing weeks"
         self.advise(_("not yet implemented"))
-    
+
     def blocks(self):
         '''
         insert blocks and appointments
@@ -99,27 +99,27 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
         Dialog = QtGui.QDialog(self.parent)
         dl = block_wizard.blocker(Dialog)
         Dialog.exec_()
-    
-    
+
+
     def signals(self):
         '''
         connect signals
         '''
         QtCore.QObject.connect(self.openDay_pushButton,
         QtCore.SIGNAL("clicked()"), self.openDay)
-    
+
         QtCore.QObject.connect(self.extendBook_pushButton,
         QtCore.SIGNAL("clicked()"), self.extendBooks)
-        
+
         QtCore.QObject.connect(self.editWeeks_pushButton,
         QtCore.SIGNAL("clicked()"), self.editWeeks)
 
         QtCore.QObject.connect(self.removeOld_pushButton,
         QtCore.SIGNAL("clicked()"), self.removeOld)
-    
+
         QtCore.QObject.connect(self.blocks_pushButton,
         QtCore.SIGNAL("clicked()"), self.blocks)
-    
+
 if __name__ == "__main__":
     localsettings.initiate()
     import sys
@@ -128,4 +128,4 @@ if __name__ == "__main__":
     ui = apptTools(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-   
+

@@ -24,7 +24,7 @@ def getPDF():
         return data
     except Exception as exc:
         LOGGER.exception("exception in utilities.getPdf")
-        
+
 def deleteTempFiles():
     '''
     delete's any temprorary pdf file
@@ -34,7 +34,7 @@ def deleteTempFiles():
         fpath = os.path.join(localsettings.localFileDirectory, name)
         if os.path.exists(fpath):
             os.remove(fpath)
-    
+
 if __name__ == "__main__":
     '''
     testing only

@@ -47,7 +47,7 @@ class MiscPaymentWidget(QtGui.QWidget):
         self.other_le = MoneyLineEdit()
         self.refund_le = MoneyLineEdit()
         self.refund_le.setStyleSheet("color:red")
-        
+
         layout.addRow(_("Annual Hdp Payment"),self.hdp_le)
         layout.addRow(_("Other Payments"),self.other_le)
         layout.addRow(_("Patient Refunds"),self.refund_le)
@@ -60,7 +60,7 @@ class MiscPaymentWidget(QtGui.QWidget):
         if hide:
             self.hdp_le.setEnabled(False)
             self.refund_le.setEnabled(False)
-        
+
     @property
     def hdp_value(self):
         return self.hdp_le.pence_value
@@ -178,7 +178,7 @@ class PaymentDialog(ExtendableDialog):
 
     def int_to_decimal(self, i):
         assert type(i) == IntType, "input must be an integer, not %s, (%s)"% (
-                                                i, type(i))        
+                                                i, type(i))
         ss = str(i)
         negative = "-" if "-" in ss else ""
         ss = ss.strip("-")
@@ -236,11 +236,11 @@ class PaymentDialog(ExtendableDialog):
     @property
     def other_text(self):
         return self.int_to_decimal(self.other)
-    
+
     @property
     def refund_text(self):
         return self.int_to_decimal(self.refund)
-    
+
     @property
     def cash_total(self):
         return self.cash_le.pence_value + self.cash_sundries_le.pence_value

@@ -112,7 +112,7 @@ class treeModel(QtCore.QAbstractItemModel):
         self.emit(QtCore.SIGNAL("selectedAppt"),appt)
 
     def clear(self):
-        
+
         self.selectedAppt = None
         self.appointments = []
         self.rootItem = TreeItem("Appointments",None, None, None)

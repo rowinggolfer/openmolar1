@@ -169,7 +169,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     def advise(message, severity):
         QtGui.QMessageBox.information(dl, "message", message)
-    
+
     mw = QtGui.QWidget()
     dl = DocumentDialog(mw)
     dl.exec_()

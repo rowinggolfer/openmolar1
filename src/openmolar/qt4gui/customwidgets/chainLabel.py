@@ -20,32 +20,32 @@ class ChainLabel(QtGui.QLabel):
         self.setFixedWidth(30)
         self._chained = True
         self._update()
-        
+
     def mousePressEvent(self, event):
         self._chained = not self._chained
         self._update()
-        
+
     def setValue(self, chained):
         self._chained = chained
         self._update()
-        
+
     def _update(self):
         if self._chained:
             self.setPixmap(self.chainpic)
         else:
             self.setPixmap(self.unchainpic)
         self.toggled.emit(self._chained)
-    
+
 if __name__ == "__main__":
     def test(arg):
         print ("chained = %s"% arg)
-    
-    import sys    
+
+    import sys
     app = QtGui.QApplication(sys.argv)
     widg = ChainLabel()
     widg.setMinimumSize(QtCore.QSize(100,100))
     widg.toggled.connect(test)
-    
+
     widg.show()
     sys.exit(app.exec_())
 

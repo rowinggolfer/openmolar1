@@ -34,7 +34,7 @@ class MoneyLineEdit(QtGui.QLineEdit):
     def __init__(self, parent=None):
         QtGui.QLineEdit.__init__(self, parent)
         self.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
-        
+
     @property
     def pence_value(self):
         '''
@@ -43,7 +43,7 @@ class MoneyLineEdit(QtGui.QLineEdit):
         '''
         s = "0" + self.text()
         return int (s.replace(".",""))
-        
+
     def check_val(self):
         current_txt = self.text()
 
@@ -59,18 +59,18 @@ class MoneyLineEdit(QtGui.QLineEdit):
                 new_txt = "0" + new_txt
         else:
             new_txt = "0.00"
-        
+
         self.setText(new_txt)
         if new_txt != current_txt:
             self.textEdited.emit(self.text())
-            
-        
+
+
     def keyPressEvent(self, event):
         '''
         overrides QWidget's keypressEvent
         '''
-        
-        if event.key() in (QtCore.Qt.Key_Tab, 
+
+        if event.key() in (QtCore.Qt.Key_Tab,
                             QtCore.Qt.Key_Return,
                             QtCore.Qt.Key_Backspace,
                             QtCore.Qt.Key_Right,
@@ -79,27 +79,27 @@ class MoneyLineEdit(QtGui.QLineEdit):
                             ):
             QtGui.QLineEdit.keyPressEvent(self, event)
             self.check_val()
-            return 
-        
+            return
+
         input_ = event.text().toAscii()
         current_txt = self.text()
-        
+
         if not re.match("[\d]", input_):
             event.ignore()
             return
-            
+
         if current_txt == "":
             self.setText("0.0%s"% input_)
             self.textEdited.emit(self.text())
             return
-        
+
         pos = self.cursorPosition()
-        
+
         if pos != len(current_txt):
             QtGui.QLineEdit.keyPressEvent(self, event)
             self.check_val()
-            return 
-        
+            return
+
         m = re.match("(\d+)\.(\d)(\d)", unicode(current_txt))
         if m and pos == len(current_txt):
             pounds = m.groups()[0] + m.groups()[1]
@@ -110,7 +110,7 @@ class MoneyLineEdit(QtGui.QLineEdit):
             new_txt = "%s.%s"% (pounds, pence)
             self.setText(new_txt)
             self.textEdited.emit(self.text())
-        
+
         event.ignore()
 
 

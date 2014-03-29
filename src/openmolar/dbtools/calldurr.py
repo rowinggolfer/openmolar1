@@ -20,7 +20,7 @@ def commit(serialno, surgeryno):
     query = "update calldurr set serialno=%s where stn=%s"
     values = (serialno, surgeryno)
     cursor = db.cursor()
-    
+
     result = cursor.execute(query, values)
     if result:
         db.commit()

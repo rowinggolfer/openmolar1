@@ -49,7 +49,7 @@ class AppointmentWidget(QtGui.QFrame):
     #signal has dent, time, length
     slotClicked = QtCore.pyqtSignal(object, object, object)
     print_mh_signal = QtCore.pyqtSignal(object)
-    
+
     def __init__(self, sTime, fTime, om_gui):
         QtGui.QFrame.__init__(self, om_gui)
 
@@ -746,13 +746,13 @@ class appointmentCanvas(QtGui.QWidget):
 
             if selectedPatients[0]>0:
                 actions.append(_("Load Patient"))
-    
+
                 actions.append(None)
                 actions.append(_("Add/Edit Memo"))
                 actions.append(_("Cancel Appointment"))
                 actions.append(None)
                 actions.append(_("Print A Medical Form"))
-    
+
                 self.pWidget.emit(QtCore.SIGNAL("PatientClicked"),
                     tuple(selectedPatients))
             else:

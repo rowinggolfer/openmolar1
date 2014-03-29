@@ -26,7 +26,7 @@ class printDaylist():
         self.sheets[d][0].append(localsettings.apptix_reverse[dentist]) #dentist
         self.sheets[d][1].append(apps[0])
         self.sheets[d][2].append(apps[1:])
-    
+
     def print_(self):
         '''
         print all.
@@ -34,7 +34,7 @@ class printDaylist():
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
-        LeftMargin,RightMargin,TopMargin,BottomMargin = 30,30,30,30     
+        LeftMargin,RightMargin,TopMargin,BottomMargin = 30,30,30,30
         AbsoluteLeft = LeftMargin
         sansFont = QtGui.QFont("Helvetica", 6)
         fm = QtGui.QFontMetrics(sansFont)

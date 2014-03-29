@@ -28,17 +28,17 @@ from openmolar.settings import localsettings
 from openmolar.connect import connect
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
-QUERY = '''select 
-    case when addr1 = %s then 4 else 0 end + 
-    case when addr1 like %s then 3 else 0 end + 
-    case when addr2 like %s then 3 else 0 end + 
-    case when addr3 like %s then 1 else 0 end + 
-    case when town like %s then 1 else 0 end + 
+QUERY = '''select
+    case when addr1 = %s then 4 else 0 end +
+    case when addr1 like %s then 3 else 0 end +
+    case when addr2 like %s then 3 else 0 end +
+    case when addr3 like %s then 1 else 0 end +
+    case when town like %s then 1 else 0 end +
     case when pcde = %s then 5 else 0 end as matches ,
     serialno, title, fname, sname, dob, addr1, addr2, addr3, town, pcde
 from patients
-where  
-addr1 like %s or 
+where
+addr1 like %s or
 ((addr2 != "" and addr2 is not NULL) and addr2 like %s) or
 ((town != "" and town is not NULL) and town like %s)or
 (pcde=%s and pcde != "")
@@ -46,50 +46,50 @@ order by matches desc
 limit 12
 '''
 
-HEADERS = ['score', 'serialno', _('Title'), _('Forename'), _('Surname'), 
-_('dob'), _('Address1'), _('Address2'), _('Address3'), _('Town'), 
+HEADERS = ['score', 'serialno', _('Title'), _('Forename'), _('Surname'),
+_('dob'), _('Address1'), _('Address2'), _('Address3'), _('Town'),
 _('POSTCODE')]
-        
+
 
 class AddressMatchDialog(BaseDialog):
     def __init__(self, om_gui):
         BaseDialog.__init__(self, om_gui, remove_stretch=True)
 
         self.om_gui = om_gui
-        
+
         title = _("Address Matches")
         self.setWindowTitle(title)
-        
+
         self.table_widget = QtGui.QTableWidget()
         self.table_widget.setSelectionBehavior(
             QtGui.QAbstractItemView.SelectRows)
         self.table_widget.setAlternatingRowColors(True)
         self.table_widget.setSortingEnabled(True)
-        
+
         addr = "%s, %s, %s, %s, %s, %s"% (
             self.om_gui.pt.addr1,
             self.om_gui.pt.addr2,
             self.om_gui.pt.addr3,
             self.om_gui.pt.town,
-            self.om_gui.pt.county,            
+            self.om_gui.pt.county,
             self.om_gui.pt.pcde)
-        
+
         while re.search(", *,", addr):
             addr =  re.sub(", *,",", ", addr)
-           
+
         message = u"<b>%s<b><hr />%s"% (
             _("Top 12 address matches for"), addr)
-    
+
         label = QtGui.QLabel()
         label.setText(message)
-        
+
         self.insertWidget(label)
         self.insertWidget(self.table_widget)
-        
+
         self.load_values()
-        
+
         self.table_widget.itemSelectionChanged.connect(self.enableApply)
-        
+
     def sizeHint(self):
         return QtCore.QSize(1000,600)
 
@@ -108,11 +108,11 @@ class AddressMatchDialog(BaseDialog):
             self.om_gui.pt.town[:10],
             self.om_gui.pt.pcde[:10],
             )
-        
+
         cursor.execute(QUERY, (values))
         rows = cursor.fetchall()
         cursor.close()
-        
+
         self.table_widget.clear()
         self.table_widget.setSortingEnabled(False)
         #--good practice to disable this while loading
@@ -135,7 +135,7 @@ class AddressMatchDialog(BaseDialog):
                 else:
                     item = QtGui.QTableWidgetItem(field)
                 self.table_widget.setItem(row, col, item)
-            
+
         self.table_widget.resizeColumnsToContents()
         #hide match and serialno column
         self.table_widget.setColumnWidth(0, 0)
@@ -143,8 +143,8 @@ class AddressMatchDialog(BaseDialog):
         self.table_widget.setSortingEnabled(True)
         self.table_widget.sortItems(0, QtCore.Qt.DescendingOrder)
         #--allow user to sort pt attributes
-        
-        
+
+
     @property
     def selected_patients(self):
         '''
@@ -157,7 +157,7 @@ class AddressMatchDialog(BaseDialog):
         for row in rows:
             patients.append(int(self.table_widget.item(row, 1).text()))
         return patients
-        
+
 
 if __name__ == "__main__":
 
@@ -169,9 +169,8 @@ if __name__ == "__main__":
     mw = QtGui.QWidget()
     mw.pt = _DuckPatient((1,"","","","The Gables",
         "Craggiemore Daviot","Inverness","","","IV2 5XQ", "", "active", ""))
-    
+
     print mw.pt
     dl = AddressMatchDialog(mw)
     if dl.exec_():
         print dl.selected_patients
-    

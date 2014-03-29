@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Neil Wallace. All rights reserved.
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or 
+# by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version. See the GNU General Public License for more details.
 
 from PyQt4 import QtCore,QtGui
@@ -17,7 +17,7 @@ class RecallPrinter():
         self.printer = QtGui.QPrinter()
         self.printer.setPageSize(QtGui.QPrinter.A5)
         self.recalls = rows
-        
+
     def print_(self):
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
@@ -40,7 +40,7 @@ class RecallPrinter():
             painter.setPen(QtCore.Qt.black)
             painter.setFont(sansFont)
             #put dent serialno in topleft corner
-            painter.drawText(LeftMargin, TopMargin, "%s %d"%(localsettings.ops[recall[3]],recall[4]))                                   
+            painter.drawText(LeftMargin, TopMargin, "%s %d"%(localsettings.ops[recall[3]],recall[4]))
             x,y = AddressMargin,TopMargin+50
             painter.drawText(x, y, "%s %s %s"%(recall[0].title(),recall[1].title(),recall[2].title()))
             y += sansLineHeight
@@ -59,7 +59,7 @@ class RecallPrinter():
             y += serifLineHeight
             painter.drawText(x, y, _("Dear %s %s,") %(recall[0].title(),recall[2].title()))
             y += serifLineHeight*2
-            painter.drawText(x, y, 
+            painter.drawText(x, y,
             _('We are writing to inform you that your dental examination is now due.'))
             y += serifLineHeight
             painter.drawText(x, y, _('Please contact the surgery to arrange an appointment. *'))
@@ -70,7 +70,7 @@ class RecallPrinter():
             painter.drawText(x, y, _("Yours sincerely,"))
             y += serifLineHeight * 1.5
             painter.setFont(sigFont)
-            y += serifLineHeight * 2            
+            y += serifLineHeight * 2
             painter.drawText(x, y, "The Academy Dental Practice")
             painter.setFont(serifFont)
             y = pageRect.height() - 120
@@ -97,11 +97,11 @@ if __name__ == "__main__":
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
     pts = (
-        ('TITLE', 'FNAME', 'SNAME', 6, 1809L, 
+        ('TITLE', 'FNAME', 'SNAME', 6, 1809L,
         "6 ST MARY'S ROAD", 'KIRKHILL', '', '', '', 'IV5 7NX'),
         )
-    
+
     recall_printer = RecallPrinter(pts)
     recall_printer.print_()
-        
+
 

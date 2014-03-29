@@ -8,7 +8,7 @@ I will give instructions tested debian jessie
 ----------------------------------------------------------------------------------------------------------------
 ##CLIENT MACHINE##
 ensure depenencies are met on the client machine
-~$sudo apt-get install python-mysqldb python-qt4
+~$sudo apt-get install python-mysqldb python-qt4 python-qscintilla2 xdg-utils
 
 that's it!
 
@@ -28,7 +28,7 @@ You are ready to try openmolar (you can do this without installing ANYTHING)
 cd into the src directory and type
 ./main.py
 
-on first run of openMolar, you set a password for the app, you are given an opportunity to install a test database. 
+on first run of openMolar, you set a password for the app, you are given an opportunity to install a test database.
 
 
 NB - The test database is currently very limited with only 1 patient. (serial no 1)

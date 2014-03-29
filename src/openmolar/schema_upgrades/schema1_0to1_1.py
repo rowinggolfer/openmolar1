@@ -7,7 +7,7 @@
 # See the GNU General Public License for more details.
 
 '''
-This module provides a function 'run' which will move data from the estimates 
+This module provides a function 'run' which will move data from the estimates
 table in schema 1_0 to the newestimates table in schema 1_1
 The NewTable schema is contained in module variable NEW_TABLE_SQLSTRINGS
 Incidentally - this script introduces the "settings table" in which the schema
@@ -42,7 +42,7 @@ KEY (courseno));
 '''
 CREATE TABLE IF NOT EXISTS settings (
 `ix` int(10) unsigned NOT NULL auto_increment ,
-`value` varchar(128), 
+`value` varchar(128),
 `data` text,
 `hostname` varchar(128),
 `station` char(20),
@@ -55,7 +55,7 @@ KEY (value));
 '''
 CREATE TABLE IF NOT EXISTS calendar (
 `ix` int(10) unsigned NOT NULL auto_increment ,
-`adate` DATE NOT NULL, 
+`adate` DATE NOT NULL,
 `memo` char(30),
 PRIMARY KEY (ix),
 KEY (adate));
@@ -63,7 +63,7 @@ KEY (adate));
 ]
 
 import sys
-from openmolar.settings import localsettings 
+from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar import connect
 '''this checks for names which have changed.'''
@@ -91,16 +91,16 @@ class dbUpdater(QtCore.QThread):
             return True
         except Exception, e:
             print e
-            print "unable to execute createNewEstimates" 
-            
-    def getRowsFromOld(self):  
+            print "unable to execute createNewEstimates"
+
+    def getRowsFromOld(self):
         '''
         get ALL data from the estimates table
-        '''  
+        '''
         db = connect.connect()
         cursor=db.cursor()
-        cursor.execute('''select serialno, courseno, type, number, itemcode, 
-        description, fee, ptfee, feescale, csetype, dent, completed, 
+        cursor.execute('''select serialno, courseno, type, number, itemcode,
+        description, fee, ptfee, feescale, csetype, dent, completed,
         carriedover, linked from estimates''')
         rows=cursor.fetchall()
         cursor.close()
@@ -130,10 +130,10 @@ class dbUpdater(QtCore.QThread):
                 elif i == 8:
                     newrow.append(row[9])
                 elif i == 9:
-                    newrow.append(row[8])                
+                    newrow.append(row[8])
                 else:
                     newrow.append(data)
-                
+
                 if i % 100 == 0:
                     self.progressSig((i / progress_var) * 40 + 20)
             if len(row) != len(newrow)-1:
@@ -151,17 +151,17 @@ class dbUpdater(QtCore.QThread):
         progress_var = len(rows)
         i = 0
         query='''insert into newestimates
-        (serialno, courseno, category, type, number, itemcode, description, 
-        fee, ptfee , csetype, feescale, dent, completed, carriedover , 
-        linked , modified_by , time_stamp) values (%s, %s, %s, %s, %s, %s, 
+        (serialno, courseno, category, type, number, itemcode, description,
+        fee, ptfee , csetype, feescale, dent, completed, carriedover ,
+        linked , modified_by , time_stamp) values (%s, %s, %s, %s, %s, %s,
         %s, %s, %s, %s, %s, %s, %s, %s, %s, '1_0to1_1script', NOW())'''
-            
+
         for values in rows:
             cursor.execute(query, values)
             i += 1
             if i % 100 == 0:
                 self.progressSig((i / progress_var) * 90 + 40)
-                
+
         db.commit()
         db.close()
 
@@ -177,7 +177,7 @@ class dbUpdater(QtCore.QThread):
 
     def completeSig(self, arg):
         self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
-                
+
     def run(self):
         print "running script to convert from schema 1.0 to 1.1"
         try:
@@ -186,17 +186,17 @@ class dbUpdater(QtCore.QThread):
                 oldrows = self.getRowsFromOld()
                 self.progressSig(20, "converting data")
                 newRows = self.convertData(oldrows)
-                
+
                 self.progressSig(40, "exporting into newestimates table")
                 print 'now exporting, this can take some time'
                 self.insertRowsIntoNew(newRows)
                 self.progressSig(90, "updating stored schema version")
                 schema_version.update(("1.1",), "1_0 to 1_1 script")
-                
+
                 self.progressSig(100)
                 self.completed = True
                 self.completeSig("ALL DONE - sucessfully moved db to 1,1")
-            
+
         except Exception, e:
             print "Exception caught",e
             self.completeSig(str(e))

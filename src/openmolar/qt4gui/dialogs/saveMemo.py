@@ -18,33 +18,33 @@ class Ui_Dialog(Ui_saveMemo.Ui_Dialog):
         self.author_comboBox.addItems(localsettings.allowed_logins)
         self.serialno=sno
         self.author_comboBox.setCurrentIndex(-1)
-    
+
     def getInput(self):
         if not self.dialog.exec_():
             return False
         if not self.noExpire_radioButton.isChecked():
             exdate = self.dateEdit.date().toPyDate()
-        else: 
+        else:
             exdate = None
-        
+
         author = str(self.author_comboBox.currentText())
         if author == "":
             author = "Anon"
-        
+
         open = True
-        
+
         message = self.textEdit.toPlainText().toAscii()
-        
+
         if self.viewSurgery_radioButton.isChecked():
             type = "surg"
         elif self.viewReception_radioButton.isChecked():
             type = "rec"
         else:
             type = "all"
-        
-        return memos.saveMemo(self.serialno, author, type, exdate, 
-            message, open) 
-    
+
+        return memos.saveMemo(self.serialno, author, type, exdate,
+            message, open)
+
 if __name__ == "__main__":
     localsettings.initiate()
     import sys

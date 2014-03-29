@@ -116,7 +116,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     d=datetime.date.today()
     apps=appointments.printableDaylistData(d,4)
-   
+
     p=printDaylist()
     p.addDaylist(QtCore.QDate.currentDate(),4,apps[0],apps[1:])
     p.print_(True)

@@ -3,7 +3,7 @@
 # This program or module is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License 
+# (at your option) any later version. See the GNU General Public License
 # for more details.
 
 from xml.dom import minidom
@@ -51,17 +51,17 @@ def getShortCuts():
                 if memo:
                         memo_=int(length[0].firstChild.data)
                         apptDict["memo"] = memo_
-                
+
                 shortCutDict["appointments"].append(apptDict)
             retarg.append(shortCutDict)
         return retarg
-    
+
     except IOError, e:
         print "error getting appointment shortcuts",
         print localsettings.appt_shortcut_file
         #-- return an iterable variable
         return ()
-        
+
 if __name__ == "__main__":
     localsettings.initiate()
     print getShortCuts()

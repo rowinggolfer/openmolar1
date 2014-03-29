@@ -59,7 +59,7 @@ def header(pt):
 
     if not pt.status in ("Active", "", None):
         retarg += "<hr /><h1>%s</h1>"% pt.status
-        
+
     return retarg
 
 def details(pt, Saved=True):

@@ -27,7 +27,7 @@ def delete(serialno, courseno):
     cursor.execute(DEL_QUERY, (serialno, courseno))
     cno = db.insert_id()
     cursor.close()
-    
+
 
 if __name__ == "__main__":
     print "started course %d"% write(31720, "20081225")
