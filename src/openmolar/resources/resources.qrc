@@ -51,5 +51,6 @@
     <file alias="ps.png">icons/ps.png</file>
     <file alias="kfm.png">icons/kfm.png</file>
     <file alias="add_user.png">icons/add_user.png</file>
+    <file alias="pin.png">icons/pin.png</file>
   </qresource>
 </RCC>

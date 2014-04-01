@@ -13,6 +13,7 @@ OPTIONS
        default=true
 
 TARGETS
+   version
    tarball
    deb_src
    deb_binary
@@ -61,7 +62,7 @@ BUILDS_DIR=$(HEAD)builds/
 
 DIST_DIR=$(HEAD)dist/
 
-VERSION=`$(BUILD_SCRIPTS_DIR)get_version.py`
+VERSION=`git describe`
 
 TARBALL = $(PACKAGE)-$(VERSION).tar.gz
 TARBALL_DIR=$(HEAD)builds/tarballs/
@@ -94,9 +95,17 @@ clean_tmp:
 	mkdir -p $(TMP_DIR)
 	rm -rf $(TMP_DIR)*
 
+version:
+	@echo "modding version.py"
+	@echo "sed -i s/VERSION = \".*\"/VERSION = \"$(VERSION)\"/ src/openmolar/settings/version.py"
+	cd $(HEAD) ;\
+		sed -i s/VERSION\ =\ \".*\"/VERSION\ =\ \"$(VERSION)\"/ src/openmolar/settings/version.py
+	@echo "version updated"
+
 tarball:
 	echo "making  tarball (using setup.py sdist)"
 	make clean_tmp
+	make version        
 	cd $(HEAD) ;\
 		python setup.py sdist ;\
 	echo "tarball created!"

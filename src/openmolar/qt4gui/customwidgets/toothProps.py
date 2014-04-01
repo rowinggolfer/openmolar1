@@ -235,10 +235,20 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.lineEdit=chartLineEdit(self)
         self.lineEdit.setMaxLength(34) #as defined in the sql tables for a static entry - may exceed the plan stuff.... but I will validate that anyway.
         hlayout.addWidget(self.lineEdit)
-        self.tooth = Tooth()  #self.frame)
+        self.tooth = Tooth()
         self.toothlayout = QtGui.QHBoxLayout(self.frame)
-        self.toothlayout.setContentsMargins(0,0,0,0)
+        self.toothlayout.setContentsMargins(2,2,2,2)
+        self.toothlayout.setSpacing(2)
         self.toothlayout.addWidget(self.tooth)
+
+        icon = QtGui.QIcon(":/pin.png")
+        pin_button = QtGui.QPushButton(icon, "")
+        pin_button.setMaximumWidth(30)
+        pin_button.setSizePolicy(
+            QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        pin_button.setToolTip(_("Toggle Pin Retention for current Filling"))
+        self.toothlayout.addWidget(pin_button)
+
         self.am_pushButton.setStyleSheet(
             "background-color: %s"% colours.AMALGAM_ )
         self.co_pushButton.setStyleSheet(
@@ -278,6 +288,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.cb_scrollArea.setWidgetResizable(True)
 
         self.signals()
+        pin_button.clicked.connect(self.toggle_pin)
 
     def sizeHint(self):
         return QtCore.QSize(120, 500)
@@ -386,32 +397,63 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
             currentFill = mat+self.tooth.filledSurfaces
         else:                                           #virgin tooth
             currentFill = self.tooth.filledSurfaces
+
+        if currentFill.startswith(",") or currentFill.endswith("/ "):
+            currentFill = ""
+
         self.lineEdit.setText(keep+currentFill)
 
     def changeFillColour(self,arg):
-        self.tooth.fillcolour=arg
+        self.tooth.fillcolour = arg
         self.tooth.update()
 
-    def plasticMaterial(self,arg):
-        existing=str(self.lineEdit.text().toAscii())
+    def plasticMaterial(self, arg):
+        existing = str(self.lineEdit.text().toAscii())
         if " " in existing:
-            colonPos=existing.rindex(" ")
-            keep=existing[:colonPos+1]
-            currentFill=existing[colonPos+1:]
+            colonPos = existing.rindex(" ")
+            keep = existing[:colonPos+1]
+            currentFill = existing[colonPos+1:]
         else:
-            keep=""
-            currentFill=existing
-        if "," in currentFill: #already a material set! replace it.
-            split=currentFill.split(",")
-            surfaces=split[0]
-            currentFill=surfaces+","+arg
-        elif "/" in currentFill: #already has a lab item
-            split=currentFill.split("/")
-            surfaces=split[1]
-            currentFill=surfaces+","+arg
+            keep = ""
+            currentFill = existing
+        pinned = ",PR" in currentFill
+        if pinned:
+            currentFill = currentFill.replace(",PR", "")
+        if currentFill.strip(" ") == "":
+            return
+        if "/" in currentFill: #already has a lab item
+            split = currentFill.split("/")
+            surfaces = split[1]
+            currentFill = surfaces+","+arg
+        elif "," in currentFill: #already a material set! replace it.
+            split = currentFill.split(",")
+            surfaces = split[0]
+            currentFill = surfaces + "," + arg
         else:
-            currentFill+=","+arg
+            currentFill += "," + arg
+
+        if pinned:
+            currentFill += ",PR"
+
         self.lineEdit.setText(keep+currentFill)
+
+    def toggle_pin(self):
+        existing = str(self.lineEdit.text().toAscii())
+        if " " in existing:
+            colonPos = existing.rindex(" ")
+            keep = existing[:colonPos+1]
+            current = existing[colonPos+1:]
+        else:
+            keep = ""
+            current = existing
+        if current.strip(" ") == "":
+            return
+        if ",PR" in current:
+            current = current.replace(",PR", "")
+        else:
+            current += ",PR"
+        self.lineEdit.setText(keep+current)
+
 
     def labMaterial(self,arg):
         existing=str(self.lineEdit.text().toAscii())
@@ -422,6 +464,12 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         else:
             keep=""
             currentFill=existing
+        if currentFill.strip(" ") == "":
+            return
+        pinned = ",PR" in currentFill
+        if pinned:
+            currentFill = currentFill.replace(",PR", "")
+
         if "," in currentFill: #already a material set! replace it.
             split=currentFill.split(",")
             surfaces=split[0]
@@ -432,6 +480,10 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
             currentFill=arg+"/"+surfaces
         else:
             currentFill=arg+"/"+currentFill
+
+        if pinned:
+            currentFill += ",PR"
+
         self.lineEdit.setText(keep+currentFill)
 
     def am(self):
@@ -654,24 +706,27 @@ class Tooth(QtGui.QWidget):
             self.fillcolour=colours.COMP
 
     def sortSurfaces(self,arg):
-        '''sort the filling surfaces to fit with conventional notation eg... MOD not DOM etc..'''
-        retarg=""
+        '''
+        sort the filling surfaces to fit with conventional notation
+        eg... MOD not DOM etc..
+        '''
+        retarg = ""
         if "M" in arg:
-            retarg+="M"
+            retarg += "M"
         if "D" in arg and not "M" in retarg:
-            retarg+="D"
+            retarg += "D"
         if "O" in arg:
-            retarg+="O"
+            retarg += "O"
         if "D" in arg and not "D" in retarg:
-            retarg+="D"
+            retarg += "D"
         if "B" in arg:
-            retarg+="B"
+            retarg += "B"
         if "P" in arg:
-            retarg+="P"
+            retarg += "P"
         if "L" in arg:
-            retarg+="L"
+            retarg += "L"
         if "I" in arg:
-            retarg+="I"
+            retarg += "I"
 
         return retarg
 
@@ -855,7 +910,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     mw = QtGui.QMainWindow()
     ui = ToothPropertyEditingWidget()
-    ui.setExistingProps("MOD B,GL !COMMENT_TWO")
+    ui.setExistingProps("MOD B,GL !COMMENT_TWO ")
     mw.setCentralWidget(ui)
     mw.show()
     sys.exit(app.exec_())
