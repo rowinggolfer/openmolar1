@@ -10,14 +10,15 @@ LOGGER = logging.getLogger("openmolar")
 #this is a fallback version, which will be used if
 #openmolar is not run from a git repository
 #or ig git is not installed.
-VERSION = "v0.5.0-beta19"
+VERSION = "0.5.0-beta19"
 
 try:
     p = subprocess.Popen(
     ["git","describe"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     git_version = p.communicate()[0].strip()
     if git_version:
-        VERSION = git_version
+        VERSION = re.sub("v", "", git_version, 1)
+
         import git
         try:
             repo = git.Repo(os.path.dirname(__file__))
@@ -30,7 +31,6 @@ except OSError:
 except ImportError:
     LOGGER.debug("unable to import git")
 
-VERSION = re.sub("v", "", VERSION, 1)
 
 if __name__ == '__main__':
     print "version = %s"% VERSION

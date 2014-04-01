@@ -62,7 +62,8 @@ BUILDS_DIR=$(HEAD)builds/
 
 DIST_DIR=$(HEAD)dist/
 
-VERSION=`git describe`
+#VERSION=`git describe | sed s/v//`
+VERSION=`$(BUILD_SCRIPTS_DIR)get_version.py`
 
 TARBALL = $(PACKAGE)-$(VERSION).tar.gz
 TARBALL_DIR=$(HEAD)builds/tarballs/
@@ -97,7 +98,7 @@ clean_tmp:
 
 version:
 	@echo "modding version.py"
-	@echo "sed -i s/VERSION = \".*\"/VERSION = \"$(VERSION)\"/ src/openmolar/settings/version.py"
+	echo "sed -i s/VERSION = \".*\"/VERSION = \"$(VERSION)\"/ src/openmolar/settings/version.py"
 	cd $(HEAD) ;\
 		sed -i s/VERSION\ =\ \".*\"/VERSION\ =\ \"$(VERSION)\"/ src/openmolar/settings/version.py
 	@echo "version updated"
