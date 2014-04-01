@@ -51,7 +51,7 @@ LOGGER.debug("running openmolar base module = %s"% os.path.dirname(__file__))
 lang = os.environ.get("LANG")
 if lang:
     try:
-        LOGGER.debug("trying to install your environment language", lang)
+        LOGGER.debug("trying to install your environment language %s"% lang)
         lang1 = gettext.translation('openmolar', languages=[lang,])
         lang1.install(unicode=True)
     except IOError:
