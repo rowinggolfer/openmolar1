@@ -29,9 +29,9 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
         except ValueError:
             pos=-1
         self.dnt2_comboBox.setCurrentIndex(pos)
-        self.cseType_comboBox.addItems(localsettings.csetypes)
+        self.cseType_comboBox.addItems(localsettings.CSETYPES)
         try:
-            pos=localsettings.csetypes.index(csetype)
+            pos=localsettings.CSETYPES.index(csetype)
         except ValueError:
             pos=-1
         self.cseType_comboBox.setCurrentIndex(pos)

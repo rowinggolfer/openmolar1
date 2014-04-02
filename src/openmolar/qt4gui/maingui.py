@@ -1239,7 +1239,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         charts_gui.bpe_dates(self)
 
         try:
-            pos = localsettings.csetypes.index(self.pt.cset)
+            pos = localsettings.CSETYPES.index(self.pt.cset)
         except ValueError:
             if not newPatientReload:
                 QtGui.QMessageBox.information(self, "Advisory",
@@ -1459,7 +1459,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.pcdeEdit, self.ui.sexEdit):
             widg.setPalette(palette)
 
-        self.ui.cseType_comboBox.addItems(localsettings.csetypes)
         self.ui.forumViewFilter_comboBox.addItems(
             localsettings.allowed_logins)
 
@@ -3195,6 +3194,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.advise(u"<b>%s</b><hr />%s"% (
             _("error loading feetable"), warning)
             ,2)
+        self.ui.cseType_comboBox.addItems(localsettings.CSETYPES)
 
     def hide_rare_feescale_items(self, bool):
         #TODO - this could actually have 3 levels.

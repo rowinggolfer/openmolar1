@@ -86,9 +86,6 @@ def details(pt, Saved=True):
 
         else:
             retarg += 'UNKNOWN COURSETYPE = %s <br />'% str(pt.cset)
-        #-- removed this next code as feescale is always the same
-        #if pt.pf11!=0:
-        #    retarg += '(feescale %s)<br />'%chr(pt.pf11)
 
         retarg += "%s<br />"% pt.fee_table.briefName
         try:

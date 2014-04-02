@@ -71,8 +71,6 @@ MH_HEADER = ("The Academy Dental Practice",
 
 WINDOWS = False
 
-DEFAULT_COURSETYPE = "P"
-
 def determine_path ():
     '''
     returns the true working directory, regardless of any symlinks.
@@ -305,7 +303,9 @@ station = "surgery"
 surgeryno = -1
 
 #-- pt's are "private, independent, NHS etc...."
-csetypes = ["P","I","N","N OR","N O"]
+CSETYPES = []
+DEFAULT_COURSETYPE = ""
+
 
 #--for debugging purposes... set this to true.- not yet implemented throughout.
 
@@ -854,11 +854,14 @@ def loadFeeTables():
     '''
     load the feetables (time consuming)
     '''
-    global FEETABLES
+    global FEETABLES, CSETYPES, DEFAULT_COURSETYPE
+
     from openmolar.settings import fee_tables
 
     LOGGER.debug("loading fee and treatment logic tables")
     FEETABLES = fee_tables.FeeTables()
+    CSETYPES = FEETABLES.csetypes
+    DEFAULT_COURSETYPE = FEETABLES.default_csetype
 
 def _test():
     import doctest

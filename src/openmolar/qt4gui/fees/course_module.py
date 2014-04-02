@@ -116,7 +116,12 @@ def apply_new_courseno(om_gui, new_courseno, accd=None):
         om_gui.load_receptionSummaryPage()
         om_gui.pt.addHiddenNote("open_course")
         om_gui.updateHiddenNotesLabel()
-        om_gui.advise(_("Sucessfully started new course of treatment"))
+        message = "%s<hr />%s <em>%s</em>"%(
+            _("Sucessfully started new course of treatment"),
+            _("Using Feescale"),
+            om_gui.pt.fee_table.briefName
+            )
+        om_gui.advise(message, 1)
         return True
 
 def prompt_close_course(om_gui):

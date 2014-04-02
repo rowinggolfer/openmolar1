@@ -96,6 +96,22 @@ class FeeTables(object):
             LOGGER.info("Default FeeTable = %s"% self.default_table)
 
     @property
+    def default_csetype(self):
+        try:
+            return self.default_table.categories[0]
+        except AttributeError:
+            return ""
+
+    @property
+    def csetypes(self):
+        csetypes = []
+        for table in self.tables.values():
+            for cset in table.categories:
+                if not cset in csetypes:
+                    csetypes.append(cset)
+        return csetypes
+
+    @property
     def default_table(self):
         try:
             return self.tables.values()[0]
