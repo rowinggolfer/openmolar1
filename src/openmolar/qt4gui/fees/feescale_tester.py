@@ -115,6 +115,7 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         for table in localsettings.FEETABLES.tables.values():
             self.table_list.append(table)
             self.tablenames.append(table.briefName)
+        self.comboBox.clear()
         self.comboBox.addItems(self.tablenames)
 
     def check_codes(self):
