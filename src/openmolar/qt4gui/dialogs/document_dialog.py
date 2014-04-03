@@ -50,8 +50,8 @@ class _FileListWidget(QtGui.QScrollArea):
         layout = QtGui.QVBoxLayout(frame)
         self.setWidget(frame)
         self.setWidgetResizable(True)
-        for file_ in self.files:
-            rb = QtGui.QRadioButton(file_)
+        for label in self.labels:
+            rb = QtGui.QRadioButton(label)
             layout.addWidget(rb)
             self.radio_buts.append(rb)
 
