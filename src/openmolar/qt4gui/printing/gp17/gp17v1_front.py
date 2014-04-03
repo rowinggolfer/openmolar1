@@ -408,7 +408,7 @@ class GP17iFront(PrintedForm):
         row = 1
         for code, teeth in self.data.tooth_specific_codes.iteritems():
             if row > 9:
-                self.unhandled_ts_codes.appen(code)
+                self.unhandled_ts_codes.append(code)
                 continue
 
             for i in range(4):
