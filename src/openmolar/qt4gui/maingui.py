@@ -857,6 +857,7 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         self.ui.saveButton.setEnabled(True)
         self.ui.saveButton.setText(_("SAVE NEW PATIENT"))
+        self.ui.saveButton.setStyleSheet("background-color:yellow;")
 
     def restoreSaveButtonAfterNewPatient(self):
         '''
@@ -869,6 +870,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.SIGNAL("clicked()"), self.save_changes)
 
         self.ui.saveButton.setText(_("SAVE CHANGES"))
+        self.ui.saveButton.setStyleSheet("")
 
     def defaultNP(self):
         '''

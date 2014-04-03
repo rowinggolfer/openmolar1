@@ -126,9 +126,11 @@ def abortNewPatientEntry(om_gui):
     om_gui.ui.main_tabWidget.setCurrentIndex(0)
 
     if QtGui.QMessageBox.question(om_gui, "Confirm",
-    _("New Patient not saved. Abandon Changes?"),
-    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-    QtGui.QMessageBox.Yes ) == QtGui.QMessageBox.Yes:
+    "%s<hr /><em>%s</em>"% (
+    _("New Patient not saved."),
+    _("Abandon Changes?")),
+    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+    QtGui.QMessageBox.Cancel ) == QtGui.QMessageBox.Ok:
         finishedNewPatientInput(om_gui)
         return True
 
