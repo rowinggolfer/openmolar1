@@ -687,7 +687,9 @@ class patient(object):
     def nhs_claims(self, completed_only=True):
         claims = []
         for est in self.estimates:
-            if est.csetype == "N" and (not completed_only or est.completed == 2):
+            if (est.csetype.startswith("N") and
+            (not completed_only or est.completed == 2)
+            ):
                 #yield est
                 claims.append(est)
         return claims
