@@ -6,17 +6,32 @@ USAGE
 
 TARGETS
    version
+   git-tag
    tarball
-   deb_src
    
-EXAMPLES are available.
-	make examples
-endef
-
-define EXAMPLES
 EXAMPLES
-make tarball
-	create a tarball
+	make NEW_VERSION=0.5.0-beta1 version
+		this will update version.py, but will not update the git tag
+
+	make git-tag
+		this will tag the git repo with the version number set in version.py
+		performs the following
+		git tag -a v0.5.0-beta1 -m "v0.5.0-beta1" 
+
+	make FORCE=true git-tag
+		as above, but deleting any other reference to the tag
+		performsthe following
+		git tag -f -a v0.5.0-beta1 -m "v0.5.0-beta1"
+
+	make tarball
+		create a tarball
+		needn't be a tagged (or even clean repo) for this
+
+usual steps for a release would be as follows.
+	make NEW_VERSION=0.5.1 version
+	git commit -a
+	make git-tag
+	make tarball
 
 endef
 	
@@ -32,11 +47,16 @@ BUILDS_DIR=$(HEAD)builds/
 DIST_DIR=$(HEAD)dist/
 
 #VERSION=`git describe | sed s/v//`
-VERSION=`$(BUILD_SCRIPTS_DIR)get_version.py`
+VERSION=`python $(HEAD)setup.py --version`
 
 ifeq ($(NEW_VERSION), )
 	NEW_VERSION=$(VERSION)
 endif
+
+ifeq ($(FORCE), true)
+	FORCE_TAG=-f
+endif
+
 
 TARBALL = $(PACKAGE)-$(VERSION).tar.gz
 TARBALL_DIR=$(HEAD)builds/tarballs/
@@ -66,6 +86,7 @@ clean_codebase:
 	./code_cleaner.py
 
 git_tag:
+	@echo "writing git tag  - if this fails and you haven't pushed tags to parent repo, try 'make FORCE=true git_tag'" 
 	git tag $(FORCE_TAG) -a v$(NEW_VERSION) -m "$(NEW_VERSION)"
 
 version:
@@ -77,7 +98,6 @@ version:
 
 tarball:
 	echo "making  tarball (using setup.py sdist)"
-	make FORCE_TAG=-f git_tag
 	make clean_tmp
 	cd $(HEAD) ;\
 		python setup.py sdist ;\
