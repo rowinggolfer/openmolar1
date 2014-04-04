@@ -4,6 +4,6 @@ recursive-include src/openmolar/schema_upgrades *.py
 recursive-include src/openmolar/dbtools *.py
 recursive-include src/openmolar/ptModules *.py
 recursive-include src/openmolar/qt4gui *.py
-recursive-include src/openmolar/resources *.xml *.png *.pdf *.css *.sql *.svg
+recursive-include src/openmolar/resources *.qrc *.xsd *.xml *.html *.css *.sql *.svg *.png 
 recursive-include src/openmolar/settings *.py
 recursive-include src/openmolar/locale *.po *.pot

@@ -96,6 +96,15 @@ clean_tmp:
 	mkdir -p $(TMP_DIR)
 	rm -rf $(TMP_DIR)*
 
+resources:
+	pyrcc4 -py2 $(HEAD)/src/openmolar/resources/resources.qrc > $(HEAD)/src/openmolar/qt4gui/resources_rc.py
+
+ui_files:
+	./om_pyuic4.py
+
+clean_codebase:
+	./code_cleaner.py
+
 version:
 	@echo "modding version.py"
 	echo "sed -i s/VERSION = \".*\"/VERSION = \"$(VERSION)\"/ src/openmolar/settings/version.py"

@@ -100,6 +100,8 @@ class CodeCleaner(object):
         '''
         check to see if file is a python file
         '''
+        if filename.endswith("resources_rc.py"):
+            return False
         return filename == "openmolar" or re.match(".*.py$", filename)
 
     def _changed_files(self):
@@ -115,8 +117,9 @@ class CodeCleaner(object):
         '''
         files = self.repo.git.status("--porcelain")
         for info in files.split("\n"):
-            file_ = re.sub(r"(\?\? )|( M )", "", info)
-            if self._valid_file(file_):
+            operation = info[:3]
+            file_ = info[3:]
+            if operation in (" M ", " A ") and self._valid_file(file_):
                 yield os.path.join(self.root_path, file_)
 
     def _all_files(self):
