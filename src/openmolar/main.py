@@ -203,13 +203,13 @@ Are you ready to proceed?</center>''')
             "system_password")[0].firstChild.data
 
         servernames = dom.getElementsByTagName("connection")
-        for server in servernames:
+        
+        for i, server in enumerate(servernames):
             nameDict = server.attributes
-            if "name" in nameDict:
+            try:
                 localsettings.server_names.append(nameDict["name"].value)
-
-        if localsettings.server_names == []:
-            localsettings.server_names.append("")
+            except KeyError:
+                localsettings.server_names.append("%d" % i+1)
 
     except IOError as e:
         print "still no settings... %s\nquitting politely" % e
@@ -408,4 +408,5 @@ if __name__ == "__main__":
 
     wkdir = determine_path()
     sys.path.insert(0, os.path.dirname(wkdir))
+    print sys.path
     run()
