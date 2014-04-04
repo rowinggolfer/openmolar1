@@ -65,6 +65,10 @@ DIST_DIR=$(HEAD)dist/
 #VERSION=`git describe | sed s/v//`
 VERSION=`$(BUILD_SCRIPTS_DIR)get_version.py`
 
+ifeq ($(NEW_VERSION), )
+	NEW_VERSION=$(VERSION)
+endif
+
 TARBALL = $(PACKAGE)-$(VERSION).tar.gz
 TARBALL_DIR=$(HEAD)builds/tarballs/
 
@@ -105,17 +109,20 @@ ui_files:
 clean_codebase:
 	./code_cleaner.py
 
+git_tag:
+	git tag -a v$(NEW_VERSION) -m "$(NEW_VERSION)"
+
 version:
 	@echo "modding version.py"
-	echo "sed -i s/VERSION = \".*\"/VERSION = \"$(VERSION)\"/ src/openmolar/settings/version.py"
+	echo "sed -i s/VERSION = \".*\"/VERSION = \"$(NEW_VERSION)\"/ src/openmolar/settings/version.py"
 	cd $(HEAD) ;\
-		sed -i s/VERSION\ =\ \".*\"/VERSION\ =\ \"$(VERSION)\"/ src/openmolar/settings/version.py
+		sed -i s/VERSION\ =\ \".*\"/VERSION\ =\ \"$(NEW_VERSION)\"/ src/openmolar/settings/version.py
 	@echo "version updated"
 
 tarball:
 	echo "making  tarball (using setup.py sdist)"
 	make clean_tmp
-	make version        
+	make git_tag
 	cd $(HEAD) ;\
 		python setup.py sdist ;\
 	echo "tarball created!"
@@ -137,9 +144,7 @@ changelog:
 	@echo $(BUILD_SCRIPTS_DIR)deb_maker.py -s$(TARBALL_DIR) -d$(DEB_CONF_DIR) 
 	$(BUILD_SCRIPTS_DIR)deb_maker.py -p$(PACKAGE) -s$(TARBALL_DIR) -d$(DEB_CONF_DIR)
 	
-deb:
-	@if [ ! -e "$(TARBALL_DIR)$(TARBALL)" ]; then make tarball; fi
-	
+deb:	
 	make clean_tmp
 
 	@echo "Making debian packages target distro = $(DIST)"
@@ -174,7 +179,11 @@ notes:
 debs:
 	@echo "making all debian based packages.. first we need to update the changelogs for the 2 build systems"
 	make changelog
-	
+	make git_tag
+	git commit -a -m "versioning"
+
+	@if [ ! -e "$(TARBALL_DIR)$(TARBALL)" ]; then make tarball; fi
+
 	$(foreach dist,$(DEBDISTS), \
 		make deb DIST=$(dist) NEW_CHANGELOG=False;\
 	) 
