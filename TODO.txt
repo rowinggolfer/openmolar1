@@ -1,6 +1,7 @@
 0.5.00
     Issues and code now tracked on github.
     This release is imminent, barring a few release blocking bugs.
+    All debian and rpm work has been removed from git repository.
 
 0.4.10
     TODO incisal angles, max per tooth, extraction visits, special tray,
