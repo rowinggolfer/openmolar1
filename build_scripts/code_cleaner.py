@@ -33,15 +33,15 @@ OPTIONS:
      no-pep8  - do not apply autopep8
 
 EXAMPLES:
-    ./code_cleaner.py 
-        this will check formatting of any file marked as new or modified 
+    ./code_cleaner.py
+        this will check formatting of any file marked as new or modified
         in the git repo this should be done before each commit!
-    
+
     ./code_cleaner.py ALL
         check and modify all files.
-        
+
     ./code_cleaner.py ALL no-pep8
-        does not apply the autopep8 tool, so only changes will be the 
+        does not apply the autopep8 tool, so only changes will be the
         shebang lines and license.
 '''
 
@@ -82,12 +82,16 @@ LICENSE = '''
 
 
 class CodeCleaner(object):
+
+    '''
+    A class which takes a git repository, and cleans up python code within.
+    '''
     pep8 = True
     license_lines = set([])
 
-    def __init__(self, repo, all_files=False):
-        self.repo = repo
-        self.root_path = repo.working_dir
+    def __init__(self, repository, all_files=False):
+        self.repo = repository
+        self.root_path = self.repo.working_dir
 
         self.files = self._all_files if all_files else self._changed_files
         LOGGER.info("CodeCleaner object created")
@@ -111,11 +115,15 @@ class CodeCleaner(object):
         '''
         files = self.repo.git.status("--porcelain")
         for info in files.split("\n"):
-            file_ = re.sub("(\?\? )|( M )", "", info)
+            file_ = re.sub(r"(\?\? )|( M )", "", info)
             if self._valid_file(file_):
                 yield os.path.join(self.root_path, file_)
 
     def _all_files(self):
+        '''
+        an iterator returning all files in child directories of the git repo
+        which conform with _valid_file
+        '''
         for root, dir_, files in os.walk(self.root_path):
             for file_ in files:
                 if self._valid_file(file_):
@@ -123,7 +131,9 @@ class CodeCleaner(object):
                     yield file_path
 
     def autopep8(self, file_path):
-        '''apply the wonderful autopep8 tool'''
+        '''
+        apply the wonderful autopep8 tool
+        '''
         if self.pep8:
             LOGGER.debug("applying  autopep8")
             p = subprocess.Popen(
@@ -157,11 +167,17 @@ class CodeCleaner(object):
         LOGGER.info("changed %d out of %d files" % (changed, count))
 
     def _check_shebang(self, data):
+        '''
+        apply the python shebang line if not present
+        '''
         if data.split("\n")[0] == SHEBANG_LINE:
             return data
         return "%s\n%s" % (SHEBANG_LINE, data)
 
     def _check_encoding(self, data):
+        '''
+        apply the encoding shebang line if not present
+        '''
         lines = data.split("\n")
         if lines[1] == ENCODING_LINE:
             return data
@@ -187,13 +203,17 @@ class CodeCleaner(object):
             lines.insert(i + 2, new_line)
         return "\n".join(lines)
 
-def help():
-    print __doc__ 
+
+def help_():
+    '''
+    print a help message and exit
+    '''
+    print __doc__
     sys.exit(0)
 
 if __name__ == "__main__":
     if "help" in sys.argv:
-        help()
+        help_()
     LOGGER.setLevel(logging.DEBUG)
     repo = git.Repo(os.getcwd())
     cc = CodeCleaner(repo, "ALL" in sys.argv)
