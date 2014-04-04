@@ -122,7 +122,6 @@ version:
 tarball:
 	echo "making  tarball (using setup.py sdist)"
 	make clean_tmp
-	make git_tag
 	cd $(HEAD) ;\
 		python setup.py sdist ;\
 	echo "tarball created!"
